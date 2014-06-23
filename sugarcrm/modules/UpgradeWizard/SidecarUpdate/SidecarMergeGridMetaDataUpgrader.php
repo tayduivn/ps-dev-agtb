@@ -1025,6 +1025,24 @@ END;
     }
 
     /**
+     * Determines if a field is special by the name that is used in Sidecar field name convention.
+     * Is a reverse variant of SidecarMergeGridMetaDataUpgrader::isSpecialField() method.
+     *
+     * @param string $fieldName The name of the field to check
+     * @return boolean
+     */
+    protected function isSpecialFieldBySidecarName($fieldName)
+    {
+        $allFields = array_merge($this->knownFields, $this->addressFields);
+        foreach ($allFields as $def) {
+            if (!empty($def['name']) && $def['name'] == $fieldName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Updates relevant information for a field on the parser prior to saving new
      * defs
      *
@@ -1120,6 +1138,10 @@ END;
         }
 
         foreach($defaultFields as $field => $def) {
+            // If the special field was not present on legacy layout we shouldn't add it.
+            if ($this->isSpecialFieldBySidecarName($field) && empty($currentFields[$field])) {
+                continue;
+            }
             //If a field wasn't on the lagacy layout, add it to the custom one.
             if (empty($origFields[$field]) && empty($currentFields[$field]) && !empty($newDefs['panels'][1]['fields'])) {
                 $newDefs['panels'][1]['fields'][] = $def;
