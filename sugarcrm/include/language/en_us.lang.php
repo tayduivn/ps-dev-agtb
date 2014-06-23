@@ -2707,6 +2707,7 @@ $app_strings = array (
     'LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION' => 'system default',
     'LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION' => 'user default',
     'LBL_USER_OUTBOUND_EMAIL_ACCOUNT_CONFIGURATION' => 'user account',
+    'LBL_GROUP_EMAIL_ACCOUNT_CONFIGURATION' => 'group account',
     'LBL_NAME' => 'Name',
     'LBL_NEW_BUTTON_KEY' => 'N',
     'LBL_NEW_BUTTON_LABEL' => 'Create',
