@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['ForecastWorksheetss']['base']['view']['filter'] = array(
+$viewdefs['ForecastWorksheets']['base']['view']['filter'] = array(
     'panels' => array(
         0 => array(
             'label' => 'LBL_PANEL_1',
@@ -45,5 +45,8 @@ $viewdefs['ForecastWorksheetss']['base']['view']['filter'] = array(
                 ),
             ),
         ),
-    )
+    ),
+    'last_state' => array(
+        'id' => 'filter',
+    ),
 );

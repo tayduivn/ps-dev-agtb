@@ -29,11 +29,17 @@
     },
 
     /**
-     * Initialize because we need to set the selectedUser variable
-     * @param options
+     * Key for saving the users last selected filters
      */
-    initialize:function (options) {
-        app.view.View.prototype.initialize.call(this, options);
+    userLastWorksheetFilterKey: undefined,
+
+    /**
+     * Initialize because we need to set the selectedUser variable
+     * @param {Object} options
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.userLastWorksheetFilterKey = app.user.lastState.key('worksheet-filter', this);
         this.selectedUser = {
             id: app.user.get('id'),
             is_manager: app.user.get('is_manager'),
@@ -68,7 +74,8 @@
      */
     _setUpFilters: function() {
         var ctx = this.context.parent || this.context,
-            selectedRanges = ctx.has("selectedRanges") ? ctx.get("selectedRanges") : app.defaultSelections.ranges;
+            user_ranges = app.user.lastState.get(this.userLastWorksheetFilterKey),
+            selectedRanges = user_ranges || ctx.get('selectedRanges') || app.defaultSelections.ranges;
 
         this.node.select2({
             data:this._getRangeFilters(),
@@ -100,14 +107,15 @@
             {
                 context: ctx
             },
-            function(event) {
+            _.bind(function(event) {
                 app.alert.show('worksheet_filtering',
                     {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
                 );
+                app.user.lastState.set(this.userLastWorksheetFilterKey, event.val);
                 _.delay(function() {
-                    event.data.context.set("selectedRanges", event.val);
+                    event.data.context.set('selectedRanges', event.val);
                 }, 25);
-            }
+            }, this)
         );
     },
     /**

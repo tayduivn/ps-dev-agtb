@@ -179,7 +179,19 @@ describe("Forecasts.Layout.Records", function() {
         it('should set a once trigger on initOptions.context', function() {
             layout.initForecastsModule(initData, {});
             expect(ctxOnceStub).toHaveBeenCalled();
-        })
+        });
+
+        it('will use the users last selected ranges when set', function() {
+            sinon.collection.stub(app.user.lastState, 'get', function() {
+                return ['include', 'exclude'];
+            });
+
+            layout.initForecastsModule(initData, {});
+
+            expect(layout.initOptions.context.get('selectedRanges')).toEqual(['include', 'exclude']);
+
+            sinon.collection.restore();
+        });
     });
 
     describe('_onceInitSelectedUser', function() {
