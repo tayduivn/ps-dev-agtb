@@ -273,7 +273,7 @@
             return value;
         }
 
-        value = app.date(value);
+        value = app.date(value).zone(value);
 
         if (!value.isValid()) {
             return;
