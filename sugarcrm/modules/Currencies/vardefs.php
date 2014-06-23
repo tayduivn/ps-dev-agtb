@@ -115,6 +115,7 @@ $dictionary['Currency'] = array('table' => 'currencies',
     'type' => 'id',
     'len'  => '36',
     'required' => true,
+    'isnull' => false,
   	'comment' => 'User ID who created record'
   ),
     'forecastworksheet' =>
@@ -133,4 +134,3 @@ $dictionary['Currency'] = array('table' => 'currencies',
                                                       )
 
                             );
-?>

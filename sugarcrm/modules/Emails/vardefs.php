@@ -96,6 +96,7 @@ $dictionary['Email'] = array(
             'type' => 'id',
             'len' => '36',
             'reportable' => false,
+            'isnull' => false,
             'comment' => 'User name who created record',
         ),
         'created_by_name' => array(

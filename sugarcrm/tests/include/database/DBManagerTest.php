@@ -2539,4 +2539,71 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
     }
+
+    /**
+     * Test asserts behavior of isNullable method
+     *
+     * @dataProvider getIsNullable
+     * @param array $vardef
+     * @param string $expected
+     */
+    public function testIsNullable($vardef, $expected)
+    {
+        $db = new DBManagerBug58371();
+        $this->assertEquals($expected, $db->isNullable($vardef), 'Vardef has incorrect definition');
+    }
+
+    /**
+     * Data provider for testIsNullable
+     * Return vardef of field & flag should it be nullable or not
+     * @return array
+     */
+    public static function getIsNullable()
+    {
+        return array(
+            'id-non-pk' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'test',
+                ),
+                true,
+            ),
+            'id-pk' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'id',
+                ),
+                false,
+            ),
+            'not-null' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'test',
+                    'isnull' => false,
+                ),
+                false,
+            ),
+            'by-db-type' => array(
+                array(
+                    'type' => 'relate',
+                    'dbType' => 'id',
+                    'name' => 'test',
+                ),
+                true,
+            ),
+        );
+    }
+}
+
+/**
+ * Mock for MysqliManager to allow to call isNullable method
+ *
+ * Class DBManagerBug58371
+ */
+class DBManagerBug58371 extends MysqliManager
+{
+    public function isNullable($vardef)
+    {
+        return parent::isNullable($vardef);
+    }
 }

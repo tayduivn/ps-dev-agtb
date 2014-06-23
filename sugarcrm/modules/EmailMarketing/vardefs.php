@@ -135,6 +135,7 @@ $dictionary['EmailMarketing'] = array('table' => 'email_marketing'
 	    'vname' => 'LBL_TEMPLATE',
 	    'type' => 'id',
 	    'required'=>true,
+        'isnull' => false,
 	    'importable' => 'required',
   	),
   	'status' =>
@@ -211,4 +212,3 @@ $dictionary['EmailMarketing'] = array('table' => 'email_marketing'
 							  'relationship_type'=>'one-to-many'),
   ),
 );
-?>

@@ -117,6 +117,7 @@ $dictionary['ACLField'] = array('table' => 'acl_fields', 'comment' => 'Determine
     'vname' => 'LBL_ID',
     'required'=>true,
     'type' => 'id',
+    'isnull' => false,
     'reportable'=>false,
     'comment' => 'Unique identifier'
   ),
@@ -128,4 +129,3 @@ $dictionary['ACLField'] = array('table' => 'acl_fields', 'comment' => 'Determine
                                                    )
 
                             );
-?>
