@@ -42,9 +42,11 @@
      */
     _alertKeys: {
         adminOnly: 'admin_only',
+        invalidGrant: 'invalid_grant_error',
         login: 'login',
-        unsupportedBrowser: 'unsupported_browser',
-        offsetProblem: 'offset_problem'
+        needLogin: 'needs_login_error',
+        offsetProblem: 'offset_problem',
+        unsupportedBrowser: 'unsupported_browser'
     },
 
     /**
@@ -130,7 +132,7 @@
 
         this._super('_render');
 
-        this.refreshAddtionalComponents();
+        this.refreshAdditionalComponents();
 
         if (!this._isSupportedBrowser()) {
             app.alert.show(this._alertKeys.unsupportedBrowser, {
@@ -163,7 +165,7 @@
     /**
      * Refresh additional components
      */
-    refreshAddtionalComponents: function() {
+    refreshAdditionalComponents: function() {
         _.each(app.additionalComponents, function(component) {
             component.render();
         });
@@ -177,6 +179,7 @@
      * propagate changes into the model.
      */
     login: function() {
+        //FIXME: Login fields should trigger model change (SC-3106)
         this.model.set({
             password: this.$('input[name=password]').val(),
             username: this.$('input[name=username]').val()
@@ -204,6 +207,8 @@
                         },
                         success: _.bind(function() {
                             app.logger.debug('logged in successfully!');
+                            app.alert.dismiss(this._alertKeys.invalidGrant);
+                            app.alert.dismiss(this._alertKeys.needLogin);
 
                             app.events.on('app:sync:complete', function() {
                                 app.logger.debug('sync in successfully!');
@@ -228,7 +233,7 @@
     postLogin: function() {
         if (!app.user.get('show_wizard')) {
 
-            this.refreshAddtionalComponents();
+            this.refreshAdditionalComponents();
 
             if (new Date().getTimezoneOffset() != (app.user.getPreference('tz_offset_sec') / -60)) {
                 var link = new Handlebars.SafeString('<a href="#' +
