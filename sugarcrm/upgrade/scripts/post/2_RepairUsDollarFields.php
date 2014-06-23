@@ -9,7 +9,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
 class SugarUpgradeRepairUsDollarFields extends UpgradeScript
 {
@@ -40,7 +40,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE product_templates
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
@@ -61,7 +61,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE product_bundles
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
@@ -77,7 +77,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE opportunities
             SET amount_usdollar = amount / base_rate
             WHERE base_rate > 0
-            AND format(amount / base_rate, 6) <> format(amount_usdollar, 6)
+            AND " . $this->dbRoundString("amount/base_rate") . " <> " . $this->dbRoundString('amount_usdollar') . "
             AND deleted = 0
             "
         );
@@ -93,15 +93,24 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
         );
         foreach ($fields as $field => $fieldUSDollar) {
             $this->db->query(
-                "
-            UPDATE products
+                "UPDATE products
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
         }
     }
 
+    /**
+     * convert a string into a round function string with a precision of 6
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function dbRoundString($string)
+    {
+        return $this->db->convert($string, 'round', array(6));
+    }
 }

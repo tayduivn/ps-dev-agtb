@@ -50,4 +50,23 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $fieldDef['default'] = 0;
         $this->assertContains('NOT NULL', $this->_db->addColumnSQL('testTable', $fieldDef), 'New column should be not null if required with default');
     }
+
+    public function providerConvert()
+    {
+        $returnArray = array(
+            array(
+                array('1.23', 'round', array(6)),
+                "round(1.23, 6)"
+            )
+        );
+        return $returnArray;
+    }
+
+    /**
+     * @dataProvider providerConvert
+     */
+    public function testConvert(array $parameters, $result)
+    {
+        $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
+    }
 }
