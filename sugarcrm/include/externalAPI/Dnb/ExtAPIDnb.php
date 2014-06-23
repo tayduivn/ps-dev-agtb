@@ -55,6 +55,10 @@ class ExtAPIDnb extends ExternalAPIBase
     //cache time to live in seconds
     private $cacheTTL = 8640000;
     public $supportedModules = array();
+    /**
+     * @var resource curl handle
+     */
+    private $curlHandle;
 
     //commonly used json paths
     private $familyTreePaths = array(
@@ -82,14 +86,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $this->dnbPassword = trim($this->getConnectorParam('dnb_password'));
         $this->dnbEnv = trim($this->getConnectorParam('dnb_env'));
         $this->contactModules = array('Contacts','Leads','Prospects');
-        // start a session if one hasnt been started
-        try {
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-        } catch (Exception $e) {
-            $GLOBALS['log']->debug('Tried to start new session for dnb but was not able to.');
-        }
+        $this->logger = LoggerManager::getLogger();
     }
 
     /**
@@ -103,18 +100,18 @@ class ExtAPIDnb extends ExternalAPIBase
         $apiResponse = sugar_cache_retrieve($cacheKey);
         //obtain results from dnb service if cache does not contain result
         if (empty($apiResponse) || $apiResponse === SugarCache::EXTERNAL_CACHE_NULL_VALUE) {
-            $GLOBALS['log']->debug('Cache does not contain'.$cacheKey);
+            $this->logger->debug('Cache does not contain'.$cacheKey);
             $apiResponse = $this->makeRequest($requestType, $endPoint);
             if (!$apiResponse['success']) {
-                $GLOBALS['log']->error('D&B failed, reply said: ' . print_r($apiResponse, true));
+                $this->logger->error('D&B failed, reply said: ' . print_r($apiResponse, true));
                 return $apiResponse;
             } else {
                 //cache the result if the dnb service response was a success
                 sugar_cache_put($cacheKey, $apiResponse, $this->cacheTTL);
-                $GLOBALS['log']->debug('Cached ' . $cacheKey);
+                $this->logger->debug('Cached ' . $cacheKey);
             }
         } else {
-            $GLOBALS['log']->debug('Getting cached results for ' . $cacheKey);
+            $this->logger->debug('Getting cached results for ' . $cacheKey);
         }
         return $apiResponse;
     }
@@ -131,7 +128,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbRefreshCheckURL, $duns_num);
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
             return $reply;
         }
         return $reply['responseJSON'];
@@ -147,7 +144,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbNewsURL, $duns_num);
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
             return $reply;
         }
         return $reply['responseJSON'];
@@ -287,7 +284,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbCleanseMatchURL . $cmQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
             return array('error' => 'ERROR_DNB_CONFIG');
         }
         // get existing duns
@@ -320,7 +317,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALURL . $balQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
             return array('error' => 'ERROR_DNB_CONFIG');
         }
         $path = $this->commonJsonPaths['findcompany'];
@@ -355,7 +352,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALContactURL . $balQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
             return array('error' => 'ERROR_DNB_CONFIG');
         }
         if (in_array($contactType, $this->contactModules)) {
@@ -544,7 +541,6 @@ class ExtAPIDnb extends ExternalAPIBase
         $reply = $this->dnbIndustryConversion($indMapParams);
         $responseCode = $this->getObjectValue($reply, $this->commonJsonPaths['industryResponseCode']);
         if (empty($responseCode) || $responseCode !== 'CM000') {
-            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r('Error Converting Industry Code', true));
             $responseMessage = $this->getObjectValue($reply, $this->commonJsonPaths['industryResponseMsg']);
             if (empty($responseMessage)) {
                 $responseMessage = 'ERROR_DNB_SVC_ERR';
@@ -758,12 +754,11 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Check if a valid token was procurable
-     * @param string token. if not provided, we try to get a valid one
      * @return boolean True if token was procurable, false if not
      */
-    public function checkTokenValidity($token = null)
+    public function checkTokenValidity()
     {
-        $dnbToken = $token ?: $this->getRecentToken();
+        $dnbToken = $this->getAuthenticationToken();
         return isset($dnbToken);
     }
 
@@ -771,59 +766,94 @@ class ExtAPIDnb extends ExternalAPIBase
      * Invokes REST API
      * @param $requestMethod Method type GET|POST
      * @param $url Service End Point
-     * @param $urlParams Parameters to be appended to URL
-     * @param $postData Data to be posted for POST method
      * @return array
      */
-    private function makeRequest($requestMethod, $url, $urlParams = null, $postData = null)
+    private function makeRequest($requestMethod, $url)
     {
         //check if connector is configured
         if (!$this->isConnectorConfigured()) {
             return array('error' => 'ERROR_DNB_CONFIG');
         }
+        //if the request is not to obtain D&B authorization token then check for authorization token in session
         $dnbToken = $this->getRecentToken();
-        //check if token is valid
-        $GLOBALS['log']->debug("DNB Session Token Get :".$_SESSION[$this->dnbEnv . 'dnbToken']);
-        if (!$this->checkTokenValidity($dnbToken)) {
+        if (empty($dnbToken)) {
             return array('success' => false, 'errorMessage' => 'Error Obtaining Authorization Token');
         }
-        $dnbApplicationId = $this->dnbApplicationId;
-        $curl_handle = curl_init();
-        if (!empty($dnbApplicationId)) {
-            $curl_headers = array(
-                "Authorization: $dnbToken",
-                "ApplicationId: $dnbApplicationId",
-                "Accept: application/json",
-                "Content-type: application/json"
-            );
+        $curl_headers = array(
+            "Authorization: $dnbToken",
+            "Accept: application/json"
+        );
+        $apiResponse = $this->curlRequest($url, $curl_headers, $requestMethod);
+        if (array_key_exists('error',$apiResponse)) {
+            //if the request is not for D&B authorization token send the response to client
+            //client handles the error handling
+            return $apiResponse;
         } else {
-            $curl_headers = array(
-                "Authorization: $dnbToken",
-                "Accept: application/json",
-                "Content-type: application/json"
-            );
+            $response = $apiResponse['curlResponse'];
+            $response = json_decode($response, true);
+            if (empty($response)) {
+                return array('success' => false, 'errorMessage' => 'Error in JSON Decoding');
+            }
+            return array('success' => true, 'responseJSON' => $response);
         }
+    }
+
+    /**
+     * @param String $url D&B Endpoint
+     * @param bool   $headerOutputRequired if header is required in the output
+     * @param Array  $requestHeaders request Headers
+     * @param String $requestMethod GET / POST ect
+     */
+    private function curlRequest ($url, $requestHeaders, $requestMethod, $headerOutputRequired=false) {
         // setting curl options
-        curl_setopt_array($curl_handle, $this->getCurlOptions($requestMethod, $url, $curl_headers, false));
-        $GLOBALS['log']->debug("curl header[0] : $curl_headers[0]");
-        $GLOBALS['log']->debug("curl header[1] : $curl_headers[1]");
-        $GLOBALS['log']->debug("curl header[2] : $curl_headers[2]");
-        $GLOBALS['log']->debug("dnbToken: $dnbToken");
-        $GLOBALS['log']->debug("url: $url");
-        $response = curl_exec($curl_handle);
+        $curl_options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_HEADER => $headerOutputRequired,
+            CURLOPT_HTTPHEADER => $requestHeaders,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLINFO_HEADER_OUT => false,
+            CURLOPT_CUSTOMREQUEST => $requestMethod
+        );
+        /* CURL SET PROXY CONFIG USING SUGAR SYSTEM SETTINGS */
+        $proxy_config = Administration::getSettings('proxy');
+        if (!empty($proxy_config) &&
+            !empty($proxy_config->settings['proxy_on']) &&
+            $proxy_config->settings['proxy_on'] === 1) {
+            $curl_options[CURLOPT_PROXY] = $proxy_config->settings['proxy_host'];
+            $curl_options[CURLOPT_PROXYPORT] = $proxy_config->settings['proxy_port'];
+            if (!empty($proxy_settings['proxy_auth'])) {
+                $curl_options[CURLOPT_PROXYUSERPWD] = $proxy_settings['proxy_username'] . ':' . $proxy_settings['proxy_password'];
+            }
+        }
+        if (empty($this->curlHandle)) {
+            $this->curlHandle = curl_init();
+        }
+        curl_setopt_array($this->curlHandle, $curl_options);
+        $response = curl_exec($this->curlHandle);
+        $httpStatus = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
+        //logging information in debug mode
+        if ($this->logger->wouldLog('debug')) {
+            if (!empty($requestHeaders) && count($requestHeaders) > 0) {
+                foreach($requestHeaders as $headerVal) {
+                    $this->logger->debug("curl header : $headerVal");
+                }
+            }
+            $this->logger->debug("url: $url");
+            $this->logger->debug("HTTP client response: $response");
+        }
         if ($response === false) {
-            $curl_errno = curl_errno($curl_handle);
-            $curl_error = curl_error($curl_handle);
-            $GLOBALS['log']->error("HTTP client: cURL call failed: error $curl_errno: $curl_error");
-            return array('error' => 'ERROR_CURL_' . $curl_errno);
+            $curl_errno = curl_errno($this->curlHandle);
+            $curl_error = curl_error($this->curlHandle);
+            if (isset($curl_errno) && isset($curl_error)) {
+                $this->logger->error("HTTP client: cURL call failed: error $curl_errno: $curl_error");
+                return array('error' => 'ERROR_CURL_' . $curl_errno);
+            } else {
+                $this->logger->error("HTTP client: cURL call failed: Unknown cURL error");
+                return array('error' => 'ERROR_CURL_UNKNOWN');
+            }
         }
-        $GLOBALS['log']->debug("HTTP client response: $response");
-        curl_close($curl_handle);
-        $response = json_decode($response, true);
-        if (empty($response)) {
-            return array('success' => false, 'errorMessage' => 'Error in JSON Decoding');
-        }
-        return array('success' => true, 'responseJSON' => $response);
+        return array('httpStatus' => $httpStatus, 'curlResponse' => $response);
     }
 
     /**
@@ -833,41 +863,6 @@ class ExtAPIDnb extends ExternalAPIBase
     public function isConnectorConfigured()
     {
         return !(empty($this->dnbUsername) || empty($this->dnbPassword) || empty($this->dnbEnv));
-    }
-
-    /**
-     * Gets Curl Options Array
-     * @param $method GET | POST
-     * @param $url
-     * @param $headersArray
-     * @param $header TRUE | FALSE to set CURLOPT_HEADER
-     * @param $data
-     * @return array
-     */
-    private function getCurlOptions($method, $url, $headersArray, $header, $data = null)
-    {
-        $curl_options = array(
-            CURLOPT_URL => $url,
-            CURLOPT_HEADER => $header,
-            CURLOPT_POST => ((strcmp('POST', $method) === 0) ? true : false),
-            CURLOPT_HTTPHEADER => $headersArray,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLINFO_HEADER_OUT => false
-        );
-        /* CURL SET PROXY CONFIG USING SUGAR SYSTEM SETTINGS */
-        $proxy_config = Administration::getSettings('proxy');
-        if (!empty($proxy_config) &&
-            !empty($proxy_config->settings['proxy_on']) &&
-            $proxy_config->settings['proxy_on'] === 1
-        ) {
-            $curl_options[CURLOPT_PROXY] = $proxy_config->settings['proxy_host'];
-            $curl_options[CURLOPT_PROXYPORT] = $proxy_config->settings['proxy_port'];
-            if (!empty($proxy_settings['proxy_auth'])) {
-                $curl_options[CURLOPT_PROXYUSERPWD] = $proxy_settings['proxy_username'] . ':' . $proxy_settings['proxy_password'];
-            }
-        }
-        return $curl_options;
     }
 
     /**
@@ -885,7 +880,7 @@ class ExtAPIDnb extends ExternalAPIBase
         if (!$isTokenSet || ($isTokenSet && $isTokenExpired)) {
             return $this->getAuthenticationToken();
         } else {
-            $GLOBALS['log']->debug('Using Valid D&B Old Token');
+            $this->logger->debug('Using Valid D&B Old Token');
             return $dnbToken;
         }
     }
@@ -898,43 +893,34 @@ class ExtAPIDnb extends ExternalAPIBase
     {
         $username = $this->dnbUsername;
         $password = $this->dnbPassword;
-        $token = '';
-        $curl_handle = curl_init();
+        $curl_headers = array(
+            "x-dnb-user: $username",
+            "x-dnb-pwd: $password"
+        );
+        $token = "";
         if (!array_key_exists($this->dnbEnv, $this->dnbBaseURL)) {
             return null;
         }
-        $auth_url = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbAuthURL;
-        $curl_headers = array(
-            "x-dnb-user: $username",
-            "x-dnb-pwd: $password",
-            "Accept: application/json",
-            "Content-type: application/json"
-        );
-        // setting curl options
-        curl_setopt_array($curl_handle, $this->getCurlOptions('POST', $auth_url, $curl_headers, true));
-        $response = curl_exec($curl_handle);
-        if ($response === false) {
-            $curl_errno = curl_errno($curl_handle);
-            $curl_error = curl_error($curl_handle);
-            $GLOBALS['log']->debug("HTTP client: cURL call failed: error $curl_errno: $curl_error");
+        $authUrl = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbAuthURL;
+        $apiResponse = $this->curlRequest($authUrl, $curl_headers, 'POST', true);
+        if (array_key_exists('error',$apiResponse)) {
+            //if the request is not for D&B authorization token send the response to client
+            //client handles the error handling
             return null;
-        }
-        $curl_info = curl_getinfo($curl_handle);
-        if ($curl_info['http_code'] === 200) {
-            preg_match("/Authorization:\s(\S*)/", $response, $tokenArray);
-            if (count($tokenArray) > 0) {
-                $token = $tokenArray[1];
-            } else {
-                return null;
-            }
         } else {
-            return null;
+            if (in_array($apiResponse['httpStatus'], array(200,204))) {
+                //extracting D&B token from curl headers
+                preg_match("/Authorization:\s(\S*)/", $apiResponse['curlResponse'], $tokenArray);
+                if (count($tokenArray) > 0) {
+                    $token = $tokenArray[1];
+                } else {
+                    return null;
+                }
+            }
+            $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
+            $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
+            return $token;
         }
-        $GLOBALS['log']->debug("HTTP client response: $response");
-        curl_close($curl_handle);
-        $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
-        $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
-        return $token;
     }
 
     /**
