@@ -25,8 +25,10 @@ include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();
-require_once('include/MVC/SugarApplication.php');
-$app = new SugarApplication();
+
+SugarAutoLoader::requireWithCustom('include/MVC/SugarApplication.php');
+$appClass = SugarAutoLoader::customClass('SugarApplication');
+$app = new $appClass();
 /*
 $app->startSession() is now part of SugarApplication::execute() method.
 We only load session if the entry point requires it.
