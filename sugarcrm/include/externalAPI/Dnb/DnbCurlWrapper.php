@@ -34,12 +34,41 @@ class DnbCurlWrapper
     }
 
     /**
+     * Sets the proxy options
+     * @param array $curlOptions
+     * @return array $curlOptions
+     */
+    public function setProxyOptions($curlOptions) {
+        //detects if the sugar proxy setting is on
+        //if yes we need to append it to the curlOptions
+        /* CURL SET PROXY CONFIG USING SUGAR SYSTEM SETTINGS */
+        $proxy_config = Administration::getSettings('proxy');
+        if (!empty($proxy_config) &&
+            !empty($proxy_config->settings['proxy_on']) &&
+            $proxy_config->settings['proxy_on'] === 1) {
+            $curlOptions[CURLOPT_PROXY] = $proxy_config->settings['proxy_host'];
+            $curlOptions[CURLOPT_PROXYPORT] = $proxy_config->settings['proxy_port'];
+            if (!empty($proxy_settings['proxy_auth'])) {
+                $curlOptions[CURLOPT_PROXYUSERPWD] = $proxy_settings['proxy_username'] . ':' . $proxy_settings['proxy_password'];
+            }
+        }
+        return $curlOptions;
+    }
+
+    /**
      * @param array $curlOptions
      * @return mixed
      */
     public function execute($curlOptions) {
+        //set the proxy
+        $curlOptions = $this->setProxyOptions($curlOptions);
         $this->setCurlOptions($curlOptions);
-        return curl_exec($this->curlHandle);
+        $curlResponse = curl_exec($this->curlHandle);
+        $httpStatus = $this->getInfo(CURLINFO_HTTP_CODE);
+        return array(
+            'httpStatus' => $httpStatus,
+            'curlResponse' => $curlResponse
+        );
     }
 
     /**

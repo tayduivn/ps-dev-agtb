@@ -126,8 +126,6 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-            //send error
-            return array('error' => 'ERROR_BAD_REQUEST');
      * Checks when the duns_num was last refreshed
      * @param $duns_num unique identifier for a company
      * @return jsonarray
@@ -769,20 +767,8 @@ class ExtAPIDnb extends ExternalAPIBase
             CURLINFO_HEADER_OUT => false,
             CURLOPT_CUSTOMREQUEST => $requestMethod
         );
-        /* CURL SET PROXY CONFIG USING SUGAR SYSTEM SETTINGS */
-        $proxy_config = Administration::getSettings('proxy');
-        if (!empty($proxy_config) &&
-            !empty($proxy_config->settings['proxy_on']) &&
-            $proxy_config->settings['proxy_on'] === 1) {
-            $curl_options[CURLOPT_PROXY] = $proxy_config->settings['proxy_host'];
-            $curl_options[CURLOPT_PROXYPORT] = $proxy_config->settings['proxy_port'];
-            if (!empty($proxy_settings['proxy_auth'])) {
-                $curl_options[CURLOPT_PROXYUSERPWD] = $proxy_settings['proxy_username'] . ':' . $proxy_settings['proxy_password'];
-            }
-        }
 
         $response = $this->curlWrapper->execute($curl_options);
-        $httpStatus = $this->curlWrapper->getInfo(CURLINFO_HTTP_CODE);
         //logging information in debug mode
         if ($this->logger->wouldLog('debug')) {
             if (!empty($requestHeaders) && count($requestHeaders) > 0) {
@@ -793,7 +779,7 @@ class ExtAPIDnb extends ExternalAPIBase
             $this->logger->debug("url: $url");
             $this->logger->debug("HTTP client response: $response");
         }
-        if ($response === false) {
+        if ($response['curlResponse'] === false) {
             $curl_errno = $this->curlWrapper->getErrorNo();
             $curl_error = $this->curlWrapper->getError();
             if (isset($curl_errno) && isset($curl_error)) {
@@ -804,7 +790,7 @@ class ExtAPIDnb extends ExternalAPIBase
                 return array('error' => 'ERROR_CURL_UNKNOWN');
             }
         }
-        return array('httpStatus' => $httpStatus, 'curlResponse' => $response);
+        return $response;
     }
 
     /**
