@@ -62,7 +62,9 @@ class ChartsDashlet extends Dashlet {
     function display() {
     	require_once("modules/Reports/Report.php");
 
-		$chartReport = BeanFactory::getBean('Reports', $this->report_id, array("encode" => false));
+        $chartReport = BeanFactory::getBean(
+            'Reports', $this->report_id, array('encode' => false, 'strict_retrieve' => true)
+        );
 
 		if (!empty($chartReport)){
 			$title = getReportNameTranslation($chartReport->name);
