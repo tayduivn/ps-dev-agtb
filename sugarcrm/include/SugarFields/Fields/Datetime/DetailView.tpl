@@ -30,19 +30,22 @@
 {*
     check to see if 'date_formatted_value' has been added to the vardefs, and use it if it has, otherwise use the normal sugarvar function
 *}
-{{if !empty($vardef.date_formatted_value) }}
-    {assign var="value" value={{$vardef.date_formatted_value}} }
-{{else}}
-    {if strlen({{sugarvar key='value' string=true}}) <= 0}
-        {assign var="value" value={{sugarvar key='default_value' string=true}} }
-    {else}
-        {assign var="value" value={{sugarvar key='value' string=true}} }
-    {/if}
-{{/if}}
+
+{if strlen({{sugarvar key='value' string=true}}) <= 0}
+    {assign var="value" value={{sugarvar key='default_value' string=true}} }
+{else}
+    {assign var="value" value={{sugarvar key='value' string=true}} }
+{/if}
 
 
 
 <span class="sugar_field" id="{{sugarvar key='name'}}">{$value}</span>
+{{if !empty($vardef.group) && $vardef.group == 'created_by_name' }}
+    {$APP.LBL_BY} {$fields.created_by_name.value}
+{{elseif !empty($vardef.group) && $vardef.group == 'modified_by_name' }}
+    {$APP.LBL_BY} {$fields.modified_by_name.value}
+{{/if}}
+
 {{if !empty($displayParams.enableConnectors)}}
 {if !empty($value)}
 {{sugarvar_connector view='DetailView'}}
