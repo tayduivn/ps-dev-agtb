@@ -204,23 +204,37 @@ To ease the core team work, always include the modified modules in your pull req
 The pull request description must include the following check list to ensure that contributions may be reviewed without needless feedback loops and that your contributions can be included into SugarCRM as quickly as possible:
 
 ```text
-Bug fix: [yes|no]
-Feature addition: [yes|no]
-Backwards compatibility break: [yes|no]
-Tests pass: [yes|no]
-Fixes the following bugs: [comma separated list of bugs fixed by the PR]
-Todo: [list of todos pending]
+| Q             | A
+| ------------- | ---
+| Bug fix?      | [yes|no]
+| New feature?  | [yes|no]
+| BC breaks?    | [yes|no]
+| Deprecations? | [yes|no]
+| Tests pass?   | [yes|no]
+| Fixed bugs    | [comma separated list of bugs fixed by this PR]
+| Doc PR        | sugarcrm/devdocs#123
+
+### TODO
+List of pending items
+
 ```
 
 An example submission could now look as follows:
 
 ```text
-Bug fix: no
-Feature addition: yes
-Backwards compatibility break: no
-Tests pass: yes
-Fixes the following tickets: #51284, #51324
-Todo: -
+| Q             | A
+| ------------- | ---
+| Bug fix?      | no
+| New feature?  | no
+| BC breaks?    | no
+| Deprecations? | no
+| Tests pass?   | yes
+| Fixed bugs    | #51284, #51324
+| Doc PR        | sugarcrm/devdocs#123
+
+### TODO
+- [x] Find a way to setup the config automatically
+- [ ] Provide better extensibility
 ```
 
 In the pull request description, give as much details as possible about your changes (don't hesitate to give code examples to illustrate your points). If your pull request is about adding a new feature or modifying an existing one, explain the rationale for the changes. The pull request description helps the code review and it serves as a reference when the code is merged (the pull request description and all its associated comments are part of the merge commit message).
