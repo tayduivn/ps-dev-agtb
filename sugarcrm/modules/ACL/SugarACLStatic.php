@@ -138,6 +138,7 @@ class SugarACLStatic extends SugarACLStrategy
                 return $field_access > 0;
             case 'read':
             case 'detail':
+            case 'list':
                 $access = 1;
                 break;
             case 'write':
