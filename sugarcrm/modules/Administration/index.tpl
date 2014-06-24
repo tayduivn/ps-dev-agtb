@@ -1,4 +1,4 @@
-{* {*
+{*
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
-<!-- $Id: index.html 25545 2007-08-13 22:45:44Z dwheeler $ -->
-
-*}
-
-
 <div class="dashletPanelMenu wizard">
 <div class="bd">
 
