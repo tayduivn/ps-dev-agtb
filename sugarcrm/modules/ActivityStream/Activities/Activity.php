@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
@@ -43,12 +41,6 @@ class Activity extends Basic
     public $disable_custom_fields = true;
 
     public static $enabled = true;
-
-    /**
-     * For mocking out BeanFactory
-     * @var string
-     */
-    protected $beanFactoryClass = 'BeanFactory';
 
     /**
      * Constructor for the Activity bean.
@@ -196,13 +188,12 @@ class Activity extends Basic
      */
     protected function getParentBean()
     {
-        $bf = $this->beanFactoryClass;
         if (empty($this->parent_type)) {
             return null;
         }
 
         if (empty($this->parent_id)) {
-            return $bf::getBean($this->parent_type);
+            return BeanFactory::getBean($this->parent_type);
         }
 
         $ignoreDeleted = true;
@@ -211,7 +202,7 @@ class Activity extends Basic
             $ignoreDeleted = false;
             $beanParams['disable_row_level_security'] = true;
         }
-        return $bf::retrieveBean($this->parent_type, $this->parent_id, $beanParams, $ignoreDeleted);
+        return BeanFactory::retrieveBean($this->parent_type, $this->parent_id, $beanParams, $ignoreDeleted);
     }
 
     /**
@@ -242,7 +233,8 @@ class Activity extends Basic
     protected function processEmbed()
     {
         if (!empty($this->data['value'])) {
-            $val = EmbedLinkService::get($this->data['value']);
+            $service = new EmbedLinkService();
+            $val = $service->get($this->data['value']);
             if (!empty($val)) {
                 $this->data = array_merge($this->data, $val);
             }
@@ -268,13 +260,12 @@ class Activity extends Basic
      */
     public function processTags(array $tags)
     {
-        $bf = $this->beanFactoryClass;
         foreach ($tags as $tag) {
             //if tag is a User and the activity has a parent, we need to check access
             if ($tag['module'] === 'Users' && !empty($this->parent_id)) {
                 $this->processUserRelationships(array($tag['id']));
             } elseif ($tag['module'] !== 'Users' || $this->userHasViewAccessToParentModule($tag['id'])) {
-                $bean = $bf::retrieveBean($tag['module'], $tag['id']);
+                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
                 $this->processRecord($bean);
             }
         }
@@ -314,7 +305,6 @@ class Activity extends Basic
      */
     public function processUserRelationships(array $userIds = array())
     {
-        $bf = $this->beanFactoryClass;
         if (!$this->load_relationship('activities_users')) {
             $GLOBALS['log']->error('Could not load the activity/user relationship.');
             return false;
@@ -322,20 +312,32 @@ class Activity extends Basic
         $deleteActivity = ($this->activity_type === 'delete');
         $bean = $this->getParentBean();
         foreach ($userIds as $userId) {
-            $user = $bf::retrieveBean('Users', $userId);
+            $user = BeanFactory::retrieveBean('Users', $userId);
             if ($user && $bean) {
-                if ($deleteActivity || $bean->checkUserAccess($user)) {
-                    // if user has access to the bean, we allow the user to see the activity on home and list views
-                    $fields = $this->getChangedFieldsForUser($user, $bean);
-                    $this->activities_users->add($user, array('fields' => json_encode($fields)));
-                } else {
-                    // if user does not have access to the bean, remove the user's subscription to the bean.
-                    $subscriptionsBeanName = $bf::getBeanName('Subscriptions');
-                    $subscriptionsBeanName::unsubscribeUserFromRecord($user, $bean);
-                }
+                $this->handleUserToBeanRelationship($bean, $user, $deleteActivity);
             }
         }
         return true;
+    }
+
+    /**
+     * Associates the user to the activity, if it is a delete activity or the user can access the record. Otherwise, the
+     * the user's subscription to the record is removed.
+     *
+     * We allow the user to see the activity on home and list views if the user has access to the bean.
+     *
+     * @param SugarBean $bean
+     * @param User $user
+     * @param bool $isADeleteActivity
+     */
+    protected function handleUserToBeanRelationship(SugarBean $bean, User $user, $isADeleteActivity = false)
+    {
+        if ($isADeleteActivity || $bean->checkUserAccess($user)) {
+            $fields = $this->getChangedFieldsForUser($user, $bean);
+            $this->activities_users->add($user, array('fields' => json_encode($fields)));
+        } else {
+            Subscription::unsubscribeUserFromRecord($user, $bean);
+        }
     }
 
     /**

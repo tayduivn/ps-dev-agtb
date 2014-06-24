@@ -1,26 +1,14 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once('modules/Emails/Email.php');
 require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
@@ -139,17 +127,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         OutboundEmailConfigurationTestHelper::setUp();
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($config);
-
-        $MockMailerFactoryClass = $this->getMockClass('MailerFactory', array('getMailer'));
-        $MockMailerFactoryClass::staticExpects($this->once())
-            ->method('getMailer')
-            ->with($config)
-            ->will($this->returnValue($mockMailer));
+        MockMailerFactory::setMailer($mockMailer);
 
         $em = new Email();
         $em->email2init();
-
-        $em->_setMailerFactoryClassName($MockMailerFactoryClass);
+        $em->_setMailerFactoryClassName('MockMailerFactory');
 
         $em->name = "This is the Subject";
         $em->description_html = "This is the HTML Description";
@@ -182,12 +164,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $em->send();
 
         $data = $mockMailer->toArray();
-        //print_r($data);
         $this->assertEquals($em->description_html, $data['htmlBody']);
         $this->assertEquals($em->description, $data['textBody']);
 
         $headers = $mockMailer->getHeaders();
-        // print_r($headers);
         $this->assertEquals($em->name, $headers['Subject']);
         $this->assertEquals($from->getEmail(), $headers['From'][0]);
         $this->assertEquals($from->getName(),  $headers['From'][1]);
@@ -195,7 +175,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($replyto->getName(),  $headers['Reply-To'][1]);
 
         $recipients = $mockMailer->getRecipients();
-        // print_r($recipients);
 
         $actual_to=array_values($recipients['to']);
         $this->assertEquals($to->getEmail(), $actual_to[0]->getEmail(), "TO Email Address Incorrect");
@@ -271,4 +250,18 @@ class MockMailer extends SmtpMailer
         return $d;
     }
 }
-?>
+
+class MockMailerFactory extends MailerFactory
+{
+    private static $mailer;
+
+    public static function setMailer(BaseMailer $mailer)
+    {
+        static::$mailer = $mailer;
+    }
+
+    public static function getMailer(OutboundEmailConfiguration $config)
+    {
+        return static::$mailer;
+    }
+}

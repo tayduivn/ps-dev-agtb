@@ -2,15 +2,16 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-/*********************************************************************************
- * The contents of this file are subject to
- * *******************************************************************************/
-/*********************************************************************************
- * $Id: Delete.php,v 1.22 2006/01/17 22:50:52 majed Exp $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- *********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 
 /**
@@ -20,6 +21,7 @@ class SugarTinyMCE
 {
     var $jsroot = "include/javascript/tiny_mce/";
     var $customConfigFile = 'custom/include/tinyButtonConfig.php';
+    public $customPluginConfigFile = 'custom/include/tinyPluginConfig.php';
     var $customDefaultConfigFile = 'custom/include/tinyMCEDefaultConfig.php';
     var $buttonConfigs
         = array(
@@ -84,6 +86,7 @@ class SugarTinyMCE
 
         $this->overloadButtonConfigs();
         $this->overloadDefaultConfigs();
+        $this->overloadPluginConfigs();
     }
 
     /**
@@ -205,42 +208,70 @@ eoq;
     {
         if (SugarAutoLoader::existing($this->customConfigFile)) {
             require_once($this->customConfigFile);
+        }
 
-            if (!isset($buttonConfigs)) {
-                return;
-            }
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
 
-            foreach ($buttonConfigs as $k => $v) {
-                if (isset($this->buttonConfigs[$k])) {
-                    $this->buttonConfigs[$k] = $v;
-                }
-            }
+        if (!isset($buttonConfigs)) {
+            return;
+        }
+
+        foreach ($buttonConfigs as $k => $v) {
+            $this->buttonConfigs[$k] = $v;
         }
     }
 
     /**
-     * Reload the default tinyMCE config, preserving our default extended
-     * allowable tag set.
+     * Reload the default tinyMCE plugin config
+     *
+     */
+    private function overloadPluginConfigs()
+    {
+        if (SugarAutoLoader::existing($this->customPluginConfigFile)) {
+            require_once($this->customPluginConfigFile);
+        }
+
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
+
+        if (!isset($pluginsConfig)) {
+            return;
+        }
+
+        foreach ($pluginsConfig as $k => $v) {
+            $this->pluginsConfig[$k] = $v;
+        }
+    }
+
+    /**
+     * Reload the default tinyMCE config
      *
      */
     private function overloadDefaultConfigs()
     {
         if (SugarAutoLoader::existing($this->customDefaultConfigFile)) {
             require_once($this->customDefaultConfigFile);
+        }
 
-            if (!isset($defaultConfig)) {
-                return;
-            }
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
 
-            foreach ($defaultConfig as $k => $v) {
-                if (isset($this->defaultConfig[$k])) {
+        if (!isset($defaultConfig)) {
+            return;
+        }
 
-                    if ($k == "extended_valid_elements") {
-                        $this->defaultConfig[$k] .= "," . $v;
-                    } else {
-                        $this->defaultConfig[$k] = $v;
-                    }
-                }
+        foreach ($defaultConfig as $k => $v) {
+            if ($k == "extended_valid_elements") {
+                $this->defaultConfig[$k] .= "," . $v;
+            } else {
+                $this->defaultConfig[$k] = $v;
             }
         }
     }

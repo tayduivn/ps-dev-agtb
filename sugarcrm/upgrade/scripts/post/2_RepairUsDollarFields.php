@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 class SugarUpgradeRepairUsDollarFields extends UpgradeScript
 {
@@ -40,7 +38,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE product_templates
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
@@ -61,7 +59,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE product_bundles
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
@@ -77,7 +75,7 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
             UPDATE opportunities
             SET amount_usdollar = amount / base_rate
             WHERE base_rate > 0
-            AND format(amount / base_rate, 6) <> format(amount_usdollar, 6)
+            AND " . $this->dbRoundString("amount/base_rate") . " <> " . $this->dbRoundString('amount_usdollar') . "
             AND deleted = 0
             "
         );
@@ -93,15 +91,24 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
         );
         foreach ($fields as $field => $fieldUSDollar) {
             $this->db->query(
-                "
-            UPDATE products
+                "UPDATE products
             SET {$fieldUSDollar} = {$field} / base_rate
             WHERE base_rate > 0
-            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND " . $this->dbRoundString("{$field}/base_rate") . " <> " . $this->dbRoundString($fieldUSDollar) . "
             AND deleted = 0
             "
             );
         }
     }
 
+    /**
+     * convert a string into a round function string with a precision of 6
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function dbRoundString($string)
+    {
+        return $this->db->convert($string, 'round', array(6));
+    }
 }

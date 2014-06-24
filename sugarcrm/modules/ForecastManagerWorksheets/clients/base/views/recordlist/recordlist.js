@@ -1,17 +1,15 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Forecast Manger Worksheet Record List
+ * Forecast Manager Worksheet Record List.
  *
  * Events
  *
@@ -45,6 +43,9 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the Assign Quota button is pressed
  *
+ * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
+ * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
+ * @extends View.Views.Base.RecordListView
  */
 ({
     /**
@@ -691,7 +692,7 @@
      * Check the collection for any rows that may have been saved as a draft or rolled up from a reportee commit and
      * trigger the commit button to be enabled
      *
-     * @trigger forecasts:worksheet:needs_commit
+     * @fires forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
@@ -864,7 +865,7 @@
     /**
      * Calculates the display totals for the worksheet
      *
-     * @triggers forecasts:worksheet:totals
+     * @fires forecasts:worksheet:totals
      */
     calculateTotals: function() {
         if (this.layout.isVisible()) {
@@ -959,7 +960,7 @@
     /**
      * Call the worksheet save event
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      * @param {bool} isDraft
      * @param {bool} [suppressMessage]
      * @returns {number}
@@ -1019,7 +1020,7 @@
     /**
      * Helper function for worksheet save
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({

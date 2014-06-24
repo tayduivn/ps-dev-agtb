@@ -1,26 +1,14 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 /**
  * SugarCurrencyTest
@@ -174,7 +162,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test dollar amount conversions between currencies
      *
-     * @dataProvider testConvertWithRateProvider
+     * @dataProvider dataProviderConvertWithRateProvider
      * @param $amount
      * @param $rate
      * @param $result
@@ -191,7 +179,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testConvertWithRateProvider() {
+    public static function dataProviderConvertWithRateProvider() {
         return array(
             array(1000,0.5,2000),
             array(1000,2.0,500),
@@ -204,7 +192,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test formatting of currency amount with user locale settings
      *
-     * @dataProvider testFormatAmountUserLocaleProvider
+     * @dataProvider dataProviderFormatAmountUserLocaleProvider
      * @param $amount
      * @param $currencyId
      * @param $result
@@ -222,7 +210,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testFormatAmountUserLocaleProvider() {
+    public static function dataProviderFormatAmountUserLocaleProvider() {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
         return array(
@@ -236,7 +224,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test formatting of currency amount manually
      *
-     * @dataProvider testFormatAmountProvider
+     * @dataProvider dataProviderFormatAmountProvider
      * @param $amount
      * @param $currencyId
      * @param $precision
@@ -259,7 +247,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testFormatAmountProvider() {
+    public static function dataProviderFormatAmountProvider() {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
         return array(
@@ -305,7 +293,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test affects of changing base currency type
      *
-     * @dataProvider testBaseCurrencyChangeProvider
+     * @dataProvider dataProviderBaseCurrencyChangeProvider
      * @param $amount
      * @param $currencyId1
      * @param $currencyId2
@@ -335,7 +323,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testBaseCurrencyChangeProvider() {
+    public static function dataProviderBaseCurrencyChangeProvider() {
         return array(
             array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
             array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
@@ -363,13 +351,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 
         $currency->conversion_rate = '1.1';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarBean $bean */
 
@@ -405,13 +388,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->fetched_row['currency_id'] = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
         $sc::verifyCurrencyBaseRateSet($bean);
@@ -443,13 +421,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
 
@@ -497,13 +470,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once())
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
 
@@ -542,5 +510,23 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
             $expected,
             SugarTestReflection::callProtectedMethod($field, 'hasCurrencyIdChanged', array($bean))
         );
+    }
+}
+
+class MockSugarCurrency extends SugarCurrency
+{
+    /**
+     * Which currency the getCurrency method should return
+     *
+     * @var SugarCurrency
+     */
+    public static $mockCurrency = null;
+
+    /**
+     * @return Currency|SugarCurrency
+     */
+    protected static function getCurrency()
+    {
+        return static::$mockCurrency;
     }
 }
