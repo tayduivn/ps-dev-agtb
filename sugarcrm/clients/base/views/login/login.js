@@ -13,8 +13,9 @@
 /**
  * Login form view.
  *
- * @class View.Views.LoginView
+ * @class View.Views.Base.LoginView
  * @alias SUGAR.App.view.views.BaseLoginView
+ * @extends View.View
  */
 ({
     /**

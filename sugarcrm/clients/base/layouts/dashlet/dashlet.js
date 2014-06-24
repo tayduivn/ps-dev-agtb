@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.DashletLayout
+ * @alias SUGAR.App.view.layouts.BaseDashletLayout
+ * @extends View.Layout
+ */
 ({
     /**
      * A reference to the main dashboard

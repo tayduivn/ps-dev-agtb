@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.Accounts.RecordView
+ * @alias SUGAR.App.view.views.BaseAccountsRecordView
+ * @extends View.Views.Base.RecordView
+ */
 ({
     extendsFrom: 'RecordView',
 

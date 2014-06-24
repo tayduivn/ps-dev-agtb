@@ -8,15 +8,14 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * Forecast Records View
+ * Forecasts Records Layout
  *
- * @class BaseForecastsRecordsLayout
+ * @class View.Layouts.Base.Forecasts.RecordsLayout
  * @alias SUGAR.App.view.layouts.BaseForecastsRecordsLayout
- * @extends BaseRecordsLayout
+ * @extends View.Layouts.Base.RecordsLayout
  *
  * Events
  *
@@ -384,7 +383,7 @@
     /**
      * Commit A Forecast
      *
-     * @triggers forecasts:worksheet:committed
+     * @fires forecasts:worksheet:committed
      * @param {Object} user
      * @param {String} worksheet_type
      * @param {Object} forecast_totals

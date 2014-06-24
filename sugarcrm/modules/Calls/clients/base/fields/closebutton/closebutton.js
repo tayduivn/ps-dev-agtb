@@ -1,4 +1,4 @@
-/**
+/*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
  * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
@@ -9,6 +9,11 @@
  * certifying that you have authority to bind Company accordingly.
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Fields.Base.Calls.ClosebuttonField
+ * @alias SUGAR.App.view.fields.BaseCallsClosebuttonField
+ * @extends View.Fields.Base.ClosebuttonField
  */
 ({
     extendsFrom: 'ClosebuttonField',

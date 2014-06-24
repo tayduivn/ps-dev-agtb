@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.SelectionListLayout
+ * @alias SUGAR.App.view.layouts.BaseSelectionListLayout
+ * @extends View.Layout
+ */
 ({
     loadData: function(options) {
         var fields = _.union(this.getFieldNames(), (this.context.get('fields') || []));

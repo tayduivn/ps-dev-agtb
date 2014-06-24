@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.TextareaField
+ * @alias SUGAR.App.view.fields.BaseTextareaField
+ * @extends View.Field
+ */
 ({
     /**
      * {@inheritDoc}

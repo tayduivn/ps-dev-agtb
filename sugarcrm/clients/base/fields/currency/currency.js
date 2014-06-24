@@ -8,11 +8,10 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * @class BaseCurrencyField
+ * @class View.Fields.Base.CurrencyField
  * @alias SUGAR.App.view.fields.BaseCurrencyField
  * @extends View.Field
  */

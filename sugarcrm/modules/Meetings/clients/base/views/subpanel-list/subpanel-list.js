@@ -11,14 +11,20 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * See similar {@link View.Views.BaseCallsSubpanelListView}
+ * See similar {@link View.Views.Base.Calls.SubpanelListView}
  *
  * FIXME: This will be removed once SC-447 gets in.
  *
- * @class View.Views.BaseMeetingsSubpanelListView
+ * @class View.Views.Base.Meetings.SubpanelListView
  * @alias SUGAR.App.view.views.BaseMeetingsSubpanelListView
+ * @extends View.Views.Base.SubpanelListView
  */
 ({
+    /**
+     * @inheritDoc
+     */
+    extendsFrom: 'SubpanelListView',
+
     /**
      * {@inheritDoc}
      *

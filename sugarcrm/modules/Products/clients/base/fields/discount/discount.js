@@ -10,15 +10,10 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
 /**
- *
- */
-
-/**
- * @class BaseProductsDiscountField
+ * @class View.Fields.Base.Products.DiscountField
  * @alias SUGAR.App.view.fields.BaseProductsDiscountField
- * @extends BaseCurrencyField
+ * @extends View.Fields.Base.CurrencyField
  */
 ({
     extendsFrom: 'CurrencyField',

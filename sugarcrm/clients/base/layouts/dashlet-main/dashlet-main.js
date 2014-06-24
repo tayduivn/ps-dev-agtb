@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.DashletMainLayout
+ * @alias SUGAR.App.view.layouts.BaseDashletMainLayout
+ * @extends View.Layout
+ */
 ({
     tagName: "ul",
     className: "dashlets row-fluid",

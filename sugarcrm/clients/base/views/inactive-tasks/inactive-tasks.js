@@ -8,14 +8,14 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Inactive tasks dashlet takes advantage of the tabbed dashlet abstraction by
  * using its metadata driven capabilities to configure its tabs in order to
  * display information about tasks module.
  *
- * @class View.Views.BaseInactiveTasksView
+ * @class View.Views.Base.InactiveTasksView
  * @alias SUGAR.App.view.views.BaseInactiveTasksView
  * @extends View.Views.BaseTabbedDashletView
  */
@@ -25,6 +25,7 @@
     /**
      * {@inheritDoc}
      *
+     * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '10'.
      * @property {String} _defaultSettings.visibility Records visibility
@@ -55,6 +56,7 @@
      * Create new record.
      *
      * @param {Event} event Click event.
+     * @param {Object} params
      * @param {String} params.layout Layout name.
      * @param {String} params.module Module name.
      */

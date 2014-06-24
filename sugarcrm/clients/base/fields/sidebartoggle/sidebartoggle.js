@@ -10,8 +10,9 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
+ * Sidebar toggle field that is used in the RHS layout toggle (show/hide).
+ *
  * Some events have been deprecated in 7.2 and removed.
  * List of changes:
  *
@@ -29,6 +30,10 @@
  *
  * - The app event `app:toggle:sidebar` has been removed. Listen to
  *   `sidebar:state:changed` instead.
+ *
+ * @class View.Fields.Base.SidebartoggleField
+ * @alias SUGAR.App.view.fields.BaseSidebartoggleField
+ * @extends View.Field
  */
 ({
     events: {

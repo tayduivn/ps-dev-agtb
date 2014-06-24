@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.CopyField
+ * @alias SUGAR.App.view.fields.BaseCopyField
+ * @extends View.Field
+ */
 ({
     'events': {
         'click input[type=checkbox]': 'toggle',
@@ -26,9 +31,7 @@
      * Initializes the initialValues and fields properties.
      * Enables sync by default.
      *
-     * @param {Object} options
-     *
-     * @see app.view.Field.initialize
+     * @inheritDoc
      */
     initialize: function(options) {
 

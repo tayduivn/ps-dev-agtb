@@ -8,14 +8,14 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * View for merge duplicates.
  *
- * @class View.Views.BaseMergeDuplicatesView
+ * @class View.Views.Base.MergeDuplicatesView
  * @alias SUGAR.App.view.views.BaseMergeDuplicatesView
- * @extends View.Views.BaseListView
+ * @extends View.Views.Base.ListView
  */
 ({
     plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline', 'MergeDuplicates'],

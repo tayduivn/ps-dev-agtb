@@ -11,7 +11,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
 /**
- * @class BaseForecastsInfoView
+ * @class View.Views.Base.Forecasts.InfoView
  * @alias SUGAR.App.view.views.BaseForecastsInfoView
  * @extends View.View
  */

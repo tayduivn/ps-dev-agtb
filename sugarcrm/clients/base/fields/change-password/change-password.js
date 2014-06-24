@@ -1,6 +1,6 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ('Company') that Company is bound by
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
  * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
@@ -8,18 +8,18 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
+/**
+ * Widget for changing a password.
+ *
+ * It does not require old password confirmation.
+ *
+ * @class View.Fields.Base.ChangePasswordField
+ * @alias SUGAR.App.view.fields.BaseChangePasswordField
+ * @extends View.Field
+ */
 ({
-    /**
-     * Widget for changing a password
-     * It does not require old password confirmation
-     *
-     * @class View.Fields.ChangePasswordField
-     * @alias SUGAR.App.view.fields.ChangePasswordField
-     * @extends View.Field
-     */
     fieldTag: 'input:not(:disabled)',
 
     events: {
@@ -185,9 +185,8 @@
     },
 
     /**
-     * @override
-     * @see View.Fields.Email
-     * @returns {boolean}
+     * @return {Boolean} `true` if there is another input to focus, `false` if
+     *   it is the last input already.
      */
     focus: function() {
         if (!this.$inputs.length) {

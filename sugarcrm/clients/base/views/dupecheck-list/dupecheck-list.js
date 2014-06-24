@@ -10,12 +10,12 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.DupecheckListView
+ * @alias SUGAR.App.view.views.BaseDupecheckListMenuView
+ * @extends View.Views.Base.FlexListView
+ */
 ({
-    /**
-     * @class View.DupecheckListView
-     * @alias SUGAR.App.view.views.DupecheckListView
-     * @extends View.FlexListView
-     */
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListDisableSort', 'ListRemoveLinks', 'Pagination'],
     collectionSync: null,

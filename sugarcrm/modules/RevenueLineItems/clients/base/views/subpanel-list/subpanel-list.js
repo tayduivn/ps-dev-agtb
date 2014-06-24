@@ -8,22 +8,16 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * @class BaseRevenueLineItemsSubpanelListView
+ * Custom Subpanel Layout for Revenue Line Items.
+ *
+ * @class View.Views.Base.RevenueLineItems.SubpanelListView
  * @alias SUGAR.App.view.views.BaseRevenueLineItemsSubpanelListView
- * @extends BaseSubpanelListView
+ * @extends View.Views.Base.SubpanelListView
  */
 ({
-    /**
-     * Custom Subpanel Layout for Revenue Line Items
-     *
-     * @class RevenueLineItem.View.SubpanelListView
-     * @extends View.SubpanelListView
-     */
-
     extendsFrom: 'SubpanelListView',
 
     /**

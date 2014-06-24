@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.ForecastsWorksheets.DateField
+ * @alias SUGAR.App.view.fields.BaseForecastsWorksheetsDateField
+ * @extends View.Fields.Base.DateField
+ */
 ({
     extendsFrom: 'DateField',
 

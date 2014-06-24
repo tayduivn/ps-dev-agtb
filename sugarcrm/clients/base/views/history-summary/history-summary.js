@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.HistorySummaryView
+ * @alias SUGAR.App.view.views.BaseHistorySummaryView
+ * @extends View.Views.Base.FlexListView
+ */
 ({
     extendsFrom: 'FlexListView',
 

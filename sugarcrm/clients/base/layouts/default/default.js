@@ -10,7 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
+/**
+ * @class View.Layouts.Base.DefaultLayout
+ * @alias SUGAR.App.view.layouts.BaseDefaultLayout
+ * @extends View.Layout
+ */
 /**
  * Some events have been deprecated in 7.2 and removed.
  * List of changes:
@@ -34,8 +38,7 @@
     /**
      * Name of the last state.
      *
-     * @const
-     * @type {String}
+     * @cfg {String}
      */
     HIDE_KEY: 'hide',
 

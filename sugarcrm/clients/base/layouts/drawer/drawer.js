@@ -8,11 +8,15 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
+/**
+ * @class View.Layouts.Base.DrawerLayout
+ * @alias SUGAR.App.view.layouts.BaseDrawerLayout
+ * @extends View.Layout
+ */
 ({
-    backdropHtml: "<div class='drawer-backdrop'></div>",
+    backdropHtml: '<div class="drawer-backdrop"></div>',
     plugins: ['Tooltip'],
     onCloseCallback: null, //callbacks to be called once drawers are closed
     scrollTopPositions: [], //stores scroll positions for main and side pane

@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.MassupdateView
+ * @alias SUGAR.App.view.views.BaseMassupdateView
+ * @extends View.View
+ */
 ({
     events: {
         'click [data-action="add"]' : 'addItem',

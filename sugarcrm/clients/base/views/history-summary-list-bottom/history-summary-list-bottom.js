@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.HistorySummaryListBottomView
+ * @alias SUGAR.App.view.views.BaseHistorySummaryListBottomView
+ * @extends View.Views.Base.ListBottomView
+ */
 ({
     extendsFrom: 'ListBottomView',
 

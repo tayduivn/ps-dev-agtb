@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.StatusField
+ * @alias SUGAR.App.view.fields.BaseStatusField
+ * @extends View.Field
+ */
 ({
     /**
      * Additional CSS Classes to be added to hbs

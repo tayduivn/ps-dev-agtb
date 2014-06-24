@@ -10,15 +10,16 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * Form for creating a filter.
+ *
+ * Part of {@link View.Layouts.Base.FilterpanelLayout}.
+ *
+ * @class View.Views.Base.FilterRowsView
+ * @alias SUGAR.App.view.views.BaseFilterRowsView
+ * @extends View.View
+ */
 ({
-    /**
-     * Form for creating a filter
-     * Part of BaseFilterpanelLayout layout
-     *
-     * @class BaseFilterRowsView
-     * @extends View
-     */
-
     events: {
         'click [data-action=add]': 'addRow',
         'click [data-action=remove]': 'removeRow',

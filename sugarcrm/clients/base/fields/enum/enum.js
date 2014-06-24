@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.EnumField
+ * @alias SUGAR.App.view.fields.BaseEnumField
+ * @extends View.Field
+ */
 ({
     fieldTag: 'input.select2',
 

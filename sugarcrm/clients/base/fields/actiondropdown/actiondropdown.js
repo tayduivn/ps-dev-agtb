@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Create a dropdown button that contains multiple rowaction fields
@@ -31,12 +31,9 @@
  *     buttons: @params {Array} list of actions.
  *          First action goes to the default action (unless no_default_action set as true)
  *
- */
-
-/**
- * @class BaseActiondropdownField
+ * @class View.Fields.Base.ActiondropdownField
  * @alias SUGAR.App.view.fields.BaseActiondropdownField
- * @extends BaseFieldsetField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',

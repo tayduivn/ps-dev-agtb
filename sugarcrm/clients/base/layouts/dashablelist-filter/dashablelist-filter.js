@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.DashablelistFilterLayout
+ * @alias SUGAR.App.view.layouts.BaseDashablelistFilterLayout
+ * @extends View.Layout
+ */
 ({
     className: 'dashablelist-filter',
 

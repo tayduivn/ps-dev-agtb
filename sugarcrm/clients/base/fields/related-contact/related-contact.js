@@ -15,6 +15,10 @@
  * on the model, and for the HistorySummaryView list, we need to set values on the model
  * that are different from what BaseField uses so it doesn't conflict with the other values
  * on BaseField's model
+ *
+ * @class View.Fields.Base.RelatedContactField
+ * @alias SUGAR.App.view.fields.BaseRelatedContactField
+ * @extends View.Field
  */
 ({
     events: {

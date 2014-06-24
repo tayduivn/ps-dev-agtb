@@ -8,18 +8,17 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
-
 /**
- * @class BaseDashboardLayout
- * @extends app.view.Layout
- *
  * The outer layout of the dashboard.
- * This layout contains the header view and wraps the daslet-main layout.
- * The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/<id>)
  *
+ * This layout contains the header view and wraps the daslet-main layout.
+ * The layouts for each dashboard are stored in the server.
+ *
+ * @class View.Layouts.Base.DashboardLayout
+ * @alias SUGAR.App.view.layouts.BaseDashboardLayout
+ * @extends View.Layout
  */
 ({
     className: 'row-fluid',

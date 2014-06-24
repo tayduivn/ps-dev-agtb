@@ -16,8 +16,9 @@
  * This also helps doing customization of the menu per module and provides more
  * metadata driven features.
  *
- * @class View.Views.BaseModuleMenuView
+ * @class View.Views.Base.ModuleMenuView
  * @alias SUGAR.App.view.views.BaseModuleMenuView
+ * @extends View.View
  */
 ({
 

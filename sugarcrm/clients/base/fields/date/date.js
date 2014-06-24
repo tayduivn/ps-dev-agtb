@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.DateField
+ * @alias SUGAR.App.view.fields.BaseDateField
+ * @extends View.Field
+ */
 ({
     /**
      * {@inheritDoc}

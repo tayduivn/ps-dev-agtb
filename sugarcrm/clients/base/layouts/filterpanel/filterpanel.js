@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.FilterpanelLayout
+ * @alias SUGAR.App.view.layouts.BaseFilterpanelLayout
+ * @extends View.Layouts.Base.TogglepanelLayout
+ */
 ({
     extendsFrom: 'TogglepanelLayout',
 

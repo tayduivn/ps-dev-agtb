@@ -19,8 +19,9 @@
  * and keeps it in sync to provide the best user experience possible, while
  * keeping the DOM changes to a minimum.
  *
- * @class View.Views.BaseModuleListLayout
+ * @class View.Layouts.Base.ModuleListLayout
  * @alias SUGAR.App.view.layouts.BaseModuleListLayout
+ * @extends View.Layout
  */
 ({
     className: 'module-list',

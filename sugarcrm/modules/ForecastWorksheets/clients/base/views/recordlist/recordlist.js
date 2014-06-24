@@ -8,16 +8,16 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * Forecast Sales Rep Worksheet Record List
+ * Forecast Sales Rep Worksheet Record List.
  *
- * @class BaseForecastWorksheetsRecordlistView
- * @alias SUGAR.App.view.views.BaseForecastWorksheetsRecordlistView
- * @extends BaseRecordlistView
- *
+ * @class View.Views.Base.ForecastsWorksheets.RecordlistView
+ * @alias SUGAR.App.view.views.BaseForecastsWorksheetsRecordlistView
+ * @extends View.Views.Base.RecordlistView
+ */
+/**
  * Events
  *
  * forecasts:worksheet:is_dirty
@@ -628,7 +628,7 @@
      * Check to make sure that if there are dirty rows, then trigger the needs_commit event to enable
      * the buttons
      *
-     * @triggers forecasts:worksheet:needs_commit
+     * @fires forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
@@ -693,7 +693,7 @@
     /**
      * Save the worksheet to the database
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet: function(isDraft) {
