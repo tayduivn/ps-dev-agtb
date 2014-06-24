@@ -167,7 +167,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
      */
     protected function getLinkedRecords(SugarBean $parent, $relName, array $fields, $limit)
     {
-        if (! $relSeed = $this->getRelatedSeedBean($parent, $relName)) {
+        if (empty($parent->id) || !$relSeed = $this->getRelatedSeedBean($parent, $relName)) {
             return array();
         }
 
