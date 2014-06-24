@@ -1,31 +1,15 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
         
@@ -87,9 +71,8 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $mm = MetaDataManager::getManager(array($platform));
         $data = $mm->getModuleViews('Bugs');
-        $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
-        $this->assertTrue(isset($data['detail']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
-        $this->assertTrue(isset($data['edit']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
+        $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for list not set for $platform platform of Bugs module");
+        $this->assertTrue(isset($data['record']['meta']['panels']), "Panels meta array for record not set for $platform platform of Bugs module");
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
@@ -107,8 +90,8 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertTrue(isset($child['module']), 'Module is not set in a child node');
             $this->assertNotEmpty($this->_expectedPortalModules[$child['module']], "$child[module] not found in expected portal modules");
             $this->assertNotEmpty($child['children'], 'Children of the child not set');
-            $hasDetailView = $this->_hasDetailViewLink($child['children']);
-            $this->assertTrue($hasDetailView, "$child[module] does not have a detail view link");
+            $hasDetailView = $this->_hasRecordViewLink($child['children']);
+            $this->assertTrue($hasDetailView, "$child[module] does not have a record view link");
         }
     }
     //END SUGARCRM flav=ent ONLY
@@ -117,12 +100,9 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('module' => 'Accounts', 'view' => 'edit', 'filepath' => 'modules/Accounts/clients/mobile/views/edit/edit.php'),
-            array('module' => 'Bugs', 'view' => 'list', 'filepath' => 'modules/Bugs/clients/mobile/views/list/list.php'),
-            array('module' => 'Calls', 'view' => 'search', 'filepath' => 'modules/Calls/clients/mobile/views/search/search.php'),
             array('module' => 'Cases', 'view' => 'detail', 'filepath' => 'modules/Cases/clients/mobile/views/detail/detail.php'),
             array('module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/mobile/views/edit/edit.php'),
             array('module' => 'Employees', 'view' => 'list', 'filepath' => 'modules/Employees/clients/mobile/views/list/list.php'),
-            array('module' => 'Leads', 'view' => 'search', 'filepath' => 'modules/Leads/clients/mobile/views/search/search.php'),
             array('module' => 'Meetings', 'view' => 'detail', 'filepath' => 'modules/Meetings/clients/mobile/views/detail/detail.php'),
         );
     }
@@ -131,10 +111,10 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     public function _portalMetaDataFilesExistsProvider()
     {
         return array(
-            array('module' => 'Bugs', 'view' => 'detail', 'filepath' => 'modules/Bugs/clients/portal/views/detail/detail.php'),
+            array('module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'),
             array('module' => 'Cases', 'view' => 'list', 'filepath' => 'modules/Cases/clients/portal/views/list/list.php'),
-            array('module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/portal/views/edit/edit.php'),
-            array('module' => 'KBDocuments', 'view' => 'detail', 'filepath' => 'modules/KBDocuments/clients/portal/views/detail/detail.php'),
+            array('module' => 'Contacts', 'view' => 'record', 'filepath' => 'modules/Contacts/clients/portal/views/record/record.php'),
+            array('module' => 'KBDocuments', 'view' => 'record', 'filepath' => 'modules/KBDocuments/clients/portal/views/record/record.php'),
         );
     }
     //END SUGARCRM flav=ent ONLY
@@ -150,10 +130,10 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
-    protected function _hasDetailViewLink($child) 
+    protected function _hasRecordViewLink($child)
     {
         foreach ($child as $props) {
-            if (isset($props['action']) && strpos($props['action'], 'DetailView') !== false) {
+            if (isset($props['action']) && strpos($props['action'], 'RecordView') !== false) {
                 return true;
             }
         }

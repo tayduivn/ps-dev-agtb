@@ -232,9 +232,6 @@
     .select2-container {
       z-index: 1;
       margin: -5px 0 0 -7px;
-      .select2-choice {
-        color: @gray;
-      }
     }
 
     input[type="radio"],
@@ -526,6 +523,23 @@
         }
       }
     }
+
+    &:not([data-type=recipients]) {
+      .select2-container {
+        .select2-choice {
+          color: @gray;
+        }
+        &.select2-container-disabled {
+          .opacity(35);
+          .select2-choice {
+            cursor: not-allowed;
+            .select2-arrow {
+              display: none;
+            }
+          }
+        }
+      }
+    }
   }
 
   .record-edit-link-wrapper {
@@ -534,7 +548,6 @@
     width: 100%;
     height: 100%;
   }
-
 
   .wide {
     width: 100%;

@@ -14,10 +14,6 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        //restore the BeanFactory name
-        $activity = SugarTestActivityUtilities::createUnsavedActivity();
-        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', 'BeanFactory');
-
         SugarTestActivityUtilities::removeAllCreatedActivities();
         SugarTestCommentUtilities::removeAllCreatedComments();
         parent::tearDown();
@@ -178,7 +174,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessPostSubscription()
     {
-        $relationshipStub = $this->getMockRelationship();;
+        $relationshipStub = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationshipStub->expects($this->once())
             ->method('add');
 
@@ -225,83 +221,66 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $activity = SugarTestActivityUtilities::createUnsavedActivity();
         $activity->parent_type = null;
         $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
-        $this->assertEquals(null, $result, "Should return null if parent type is null");
+        $this->assertNull($result, 'Should return null when parent_type is null');
     }
 
     /**
      * @covers Activity::getParentBean
      */
-    public function testGetParentBean_NullParentId_RetrievesEmptyBean()
+    public function testGetParentBean_NullParentId_ReturnsAnEmptyBean()
     {
-        $parentType = 'FooBean';
-        $mockBean = array('module' => $parentType);
-
         $activity = SugarTestActivityUtilities::createUnsavedActivity();
-        $activity->parent_type = $parentType;
+        $activity->parent_type = 'Contacts';
         $activity->parent_id = null;
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('getBean'));
-        $bf::staticExpects($this->once())
-            ->method('getBean')
-            ->will($this->returnValue($mockBean));
-
-        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', get_class($bf));
         $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
-        $this->assertEquals($mockBean, $result, "Should return empty bean");
+        $this->assertEmpty($result->id, 'Should return an empty bean');
     }
 
     /**
      * @covers Activity::getParentBean
      */
-    public function testGetParentBean_DeleteActivity_RetrievesBeanDisablingRowSecurity()
+    public function testGetParentBean_DeleteActivity_ReturnsTheDeletedBean()
     {
-        $parentType = 'FooBean';
-        $parentId = '123';
-        $mockBean = array('module' => $parentType, 'id' => $parentId, 'deleted' => 1);
-
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->mark_deleted($contact->id);
         $activity = SugarTestActivityUtilities::createUnsavedActivity();
-        $activity->parent_type = $parentType;
-        $activity->parent_id = $parentId;
+        $activity->parent_type = $contact->module_name;
+        $activity->parent_id = $contact->id;
         $activity->activity_type = 'delete';
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->with($this->equalTo($parentType),
-                $this->equalTo($parentId),
-                $this->equalTo(array('disable_row_level_security' => true)),
-                $this->equalTo(false))
-            ->will($this->returnValue($mockBean));
-
         $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
-        $this->assertEquals($mockBean, $result, "Should return deleted bean");
+        $this->assertEquals($contact->id, $result->id, 'Should return deleted bean');
+        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     /**
      * @covers Activity::getParentBean
      */
-    public function testGetParentBean_NonDeleteActivity_RetrievesBean()
+    public function testGetParentBean_NonDeleteActivity_ReturnsTheBean()
     {
-        $parentType = 'FooBean';
-        $parentId = '123';
-        $mockBean = array('module' => $parentType, 'id' => $parentId);
-
+        $contact = SugarTestContactUtilities::createContact();
         $activity = SugarTestActivityUtilities::createUnsavedActivity();
-        $activity->parent_type = $parentType;
-        $activity->parent_id = $parentId;
+        $activity->parent_type = $contact->module_name;
+        $activity->parent_id = $contact->id;
         $activity->activity_type = 'update';
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->with($this->equalTo($parentType),
-                $this->equalTo($parentId),
-                $this->equalTo(array()),
-                $this->equalTo(true))
-            ->will($this->returnValue($mockBean));
-
         $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
-        $this->assertEquals($mockBean, $result, "Should return retrieved bean");
+        $this->assertEquals($contact->id, $result->id, 'Should return the bean');
+        SugarTestContactUtilities::removeAllCreatedContacts();
+    }
+
+    /**
+     * @covers Activity::getParentBean
+     */
+    public function testGetParentBean_NonDeleteActivityAndTheBeanIsDeleted_ReturnsNull()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->mark_deleted($contact->id);
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = $contact->module_name;
+        $activity->parent_id = $contact->id;
+        $activity->activity_type = 'update';
+        $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
+        $this->assertNull($result, 'Should return null when the bean is deleted and it is not a delete activity');
+        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     /**
@@ -423,28 +402,28 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessTags_UserTagPostToModuleWithUserAccess_CallsProcessRecord()
     {
+        $user = BeanFactory::newBean('Users');
+        BeanFactory::registerBean($user);
         $tags = array(
-            array('module'=>'Users', 'id'=>'123'),
+            array(
+                'module' => $user->module_name,
+                'id' => $user->id,
+            ),
         );
-        $activity = $this->getMock('Activity', array(
-            'processUserRelationships',
-            'processRecord',
-            'userHasViewAccessToParentModule',
-        ));
-        $activity->expects($this->once())
-            ->method('userHasViewAccessToParentModule')
-            ->will($this->returnValue(true));
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'processUserRelationships',
+                'processRecord',
+                'userHasViewAccessToParentModule',
+            )
+        );
+        $activity->expects($this->once())->method('userHasViewAccessToParentModule')->will($this->returnValue(true));
         $activity->expects($this->once())->method('processRecord');
         $activity->expects($this->never())->method('processUserRelationships');
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->with($this->equalTo('Users'), $this->equalTo('123'))
-            ->will($this->returnValue(new SugarBean()));
-
         $activity->parent_type = 'Foo';
         $activity->processTags($tags);
+        BeanFactory::unregisterBean($user);
     }
 
     /**
@@ -475,23 +454,25 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessTags_NonUserTag_CallsProcessRecord()
     {
+        $contact = BeanFactory::newBean('Contacts');
+        BeanFactory::registerBean($contact);
         $tags = array(
-            array('module'=>'Blah', 'id'=>'123'),
+            array(
+                'module' => $contact->module_name,
+                'id' => $contact->id,
+            ),
         );
-        $activity = $this->getMock('Activity', array(
-            'processUserRelationships',
-            'processRecord',
-        ));
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'processUserRelationships',
+                'processRecord',
+            )
+        );
         $activity->expects($this->once())->method('processRecord');
         $activity->expects($this->never())->method('processUserRelationships');
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->with($this->equalTo('Blah'), $this->equalTo('123'))
-            ->will($this->returnValue(new SugarBean()));
-
         $activity->processTags($tags);
+        BeanFactory::unregisterBean($contact);
     }
 
     /**
@@ -526,156 +507,150 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers Activity::processUserRelationships
      */
-    public function testProcessUserRelationships_NoUserIds_NoRelationshipAdded()
+    public function testProcessUserRelationships_NoUserIds_HandleUserToBeanRelationshipIsNotCalled()
     {
-        $relationship = $this->getMockRelationship();;
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-
-        $activity = $this->getMock('Activity', array(
-            'load_relationship',
-            'getParentBean',
-        ));
-        $activity->expects($this->once())
-            ->method('load_relationship')
-            ->will($this->returnValue(true));
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'load_relationship',
+                'getParentBean',
+                'handleUserToBeanRelationship'
+            )
+        );
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue(null));
+        $activity->expects($this->never())->method('handleUserToBeanRelationship');
         $activity->activities_users = $relationship;
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->never())->method('retrieveBean');
-
         $activity->processUserRelationships(array());
     }
 
     /**
      * @covers Activity::processUserRelationships
      */
-    public function testProcessUserRelationships_ParentBeanNotRetrieved_NoRelationshipAdded()
+    public function testProcessUserRelationships_OneOfTwoUsersExists_HandleUserToBeanRelationshipIsOnlyCalledOnce()
     {
-        $relationship = $this->getMockRelationship();;
+        $parentBean = BeanFactory::newBean('Contacts');
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-
-        $activity = $this->getMock('Activity', array(
-            'load_relationship',
-            'getParentBean',
-        ));
-        $this->mockActivitiesUserRelationship($activity, $relationship);
-
-        $activity->expects($this->once())
-            ->method('getParentBean')
-            ->will($this->returnValue(null));
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->never())->method('retrieveBean');
-
-        $activity->processUserRelationships(array());
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'load_relationship',
+                'getParentBean',
+                'handleUserToBeanRelationship'
+            )
+        );
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
+        $activity->expects($this->once())->method('handleUserToBeanRelationship')->will($this->returnValue(true));
+        $activity->activities_users = $relationship;
+        $user = BeanFactory::newBean('Users');
+        BeanFactory::registerBean($user);
+        $activity->processUserRelationships(array($user->id, create_guid()));
+        BeanFactory::unregisterBean($user);
     }
 
     /**
      * @covers Activity::processUserRelationships
      */
-    public function testProcessUserRelationships_UserHasAccessToParent_RelationshipAdded()
+    public function testProcessUserRelationships_ParentBeanDoesNotExist_HandleUserToBeanRelationshipIsNotCalled()
     {
-        $relationship = $this->getMockRelationship();
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $relationship->expects($this->never())->method('add');
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'load_relationship',
+                'getParentBean',
+                'handleUserToBeanRelationship'
+            )
+        );
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue(null));
+        $activity->expects($this->never())->method('handleUserToBeanRelationship');
+        $activity->activities_users = $relationship;
+        $user = BeanFactory::newBean('Users');
+        BeanFactory::registerBean($user);
+        $activity->processUserRelationships(array($user->id));
+        BeanFactory::unregisterBean($user);
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_UserAndParentExist_HandleUserToBeanRelationshipIsCalled()
+    {
+        $parentBean = BeanFactory::newBean('Contacts');
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $relationship->expects($this->never())->method('add');
+        $activity = $this->getMock(
+            'Activity',
+            array(
+                'load_relationship',
+                'getParentBean',
+                'handleUserToBeanRelationship'
+            )
+        );
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
+        $activity->expects($this->once())->method('handleUserToBeanRelationship');
+        $activity->activities_users = $relationship;
+        $user = BeanFactory::newBean('Users');
+        BeanFactory::registerBean($user);
+        $activity->processUserRelationships(array($user->id));
+        BeanFactory::unregisterBean($user);
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_UserHasAccessToParent_RelationshipIsAdded()
+    {
+        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
+        $parentBean->expects($this->once())->method('checkUserAccess')->will($this->returnValue(true));
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->once())->method('add');
-
-        $activity = $this->getMock('Activity', array(
-            'load_relationship',
-            'getParentBean',
-            'getChangedFieldsForUser',
-        ));
-        $this->mockActivitiesUserRelationship($activity, $relationship);
-
-        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
-        $parentBean->expects($this->once())
-            ->method('checkUserAccess')
-            ->will($this->returnValue(true));
-
-        $activity->expects($this->once())
-            ->method('getParentBean')
-            ->will($this->returnValue($parentBean));
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->will($this->returnValue(new User()));
-
-        $activity->processUserRelationships(array('123'));
+        $activity = $this->getMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
+        $activity->expects($this->once())->method('getChangedFieldsForUser')->will($this->returnValue(true));
+        $activity->activities_users = $relationship;
+        $user = BeanFactory::newBean('Users');
+        BeanFactory::registerBean($user);
+        $activity->processUserRelationships(array($user->id));
+        BeanFactory::unregisterBean($user);
     }
 
     /**
      * @covers Activity::processUserRelationships
      */
-    public function testProcessUserRelationships_UserNoAccessToParent_SubscriptionRemoved()
+    public function testProcessUserRelationships_UserDoesNotHaveAccessToTheParent_SubscriptionIsRemoved()
     {
-        $relationship = $this->getMockRelationship();
+        $contact = SugarTestContactUtilities::createContact();
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        Subscription::subscribeUserToRecord($user, $contact, array('disable_row_level_security' => true));
+        $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-
-        $activity = $this->getMock('Activity', array(
-            'load_relationship',
-            'getParentBean',
-            'getChangedFieldsForUser',
-        ));
-        $this->mockActivitiesUserRelationship($activity, $relationship);
-
-        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
-        $parentBean->expects($this->once())
-            ->method('checkUserAccess')
-            ->will($this->returnValue(false));
-
-        $activity->expects($this->once())
-            ->method('getParentBean')
-            ->will($this->returnValue($parentBean));
-
-        $subscription = $this->getMock('Subscription', array('unsubscribeUserFromRecord'));
-        $subscription::staticExpects($this->once())->method('unsubscribeUserFromRecord');
-
-        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean', 'getBeanName'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->will($this->returnValue(new User()));
-        $bf::staticExpects($this->once())
-            ->method('getBeanName')
-            ->with($this->equalTo('Subscriptions'))
-            ->will($this->returnValue(get_class($subscription)));
-
-        $activity->processUserRelationships(array('123'));
-    }
-
-    /**
-     * Helper to get a mock relationship
-     * @return mixed
-     */
-    protected function getMockRelationship()
-    {
-        return $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * Helper for mocking out the activities_users relationship on an activity
-     * @param $activity
-     * @param $relationship
-     */
-    protected function mockActivitiesUserRelationship($activity, $relationship)
-    {
-        $activity->expects($this->once())
-            ->method('load_relationship')
-            ->will($this->returnValue(true));
+        $activity = $this->getMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
+        $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($contact));
+        $activity->expects($this->never())->method('getChangedFieldsForUser');
         $activity->activities_users = $relationship;
+        $this->assertNotEmpty(Subscription::checkSubscription($user, $contact), 'The user should be subscribed');
+        $data = array(
+            'module' => array(
+                'access' => array(
+                    'aclaccess' => ACL_ALLOW_DISABLED,
+                ),
+            ),
+        );
+        ACLAction::setACLData($user->id, 'Contacts', $data);
+        $activity->processUserRelationships(array($user->id));
+        $this->assertEmpty(Subscription::checkSubscription($user, $contact), 'The user should not be subscribed');
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarACL::$acls = array();
     }
-
-    /**
-     * Helper to create a mock BeanFactory and set it on the activity
-     * @param $activity
-     * @param $methods
-     * @return PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function mockBeanFactoryOnActivity($activity, $methods)
-    {
-        $beanFactory = $this->getMock('BeanFactory', $methods);
-        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', get_class($beanFactory));
-        return $beanFactory;
-    }
-
 }

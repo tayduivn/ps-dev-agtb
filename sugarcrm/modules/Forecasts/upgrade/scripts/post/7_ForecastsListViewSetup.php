@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 /**
@@ -101,13 +99,18 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
     {
         $columns = array_unique(array_merge(ForecastsDefaults::getWorksheetColumns($this->from_flavor), array('likely_case', 'best_case', 'worst_case')));
 
-        $map = array('likely_case' => 'show_worksheet_likely', 'best_case' => 'show_worksheet_best', 'worst_case' => 'show_worksheet_worst');
+        $map = array(
+            'likely_case' => 'show_worksheet_likely',
+            'best_case' => 'show_worksheet_best',
+            'worst_case' => 'show_worksheet_worst'
+        );
 
-        $final = array_filter($columns, function($val) {
+        $final = array();
+        foreach($columns as $val) {
             if(!isset($map[$val]) || $config[$map[$val]] == 1) {
-                return(true);
+                $final[] = $val;
             }
-        });
+        }
 
         // save the columns to the worksheet list viewdefs
         $this->client->setWorksheetColumns($this->api, $final, $config['forecast_by']);

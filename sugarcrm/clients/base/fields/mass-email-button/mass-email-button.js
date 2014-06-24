@@ -1,26 +1,26 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.MassEmailButtonField
- * @alias SUGAR.App.view.fields.MassEmailButtonField
- * @extends View.Fields.ButtonField
-
- * This field uses the EmailClientLaunch plugin to launch the appropriate email client.
+ * This field uses the `EmailClientLaunch` plugin to launch the appropriate
+ * email client.
+ *
  * Recipients to pre-populate are pulled from the mass_collection.
  * For external email client: Changes to the mass_collection will rebuild the mailto: link
  * For internal email client: Recipients are gathered from the mass_collection on click.
  * In order for the recipients to be prepopulated, this field requires the models in the
  * mass_collection contain the email field - if not, recipients will simply be blank (no error).
+ *
+ * @class View.Fields.Base.MassEmailButtonField
+ * @alias SUGAR.App.view.fields.BaseMassEmailButtonField
+ * @extends View.Fields.Base.ButtonField
  */
 ({
     extendsFrom: 'ButtonField',
@@ -28,7 +28,8 @@
     /**
      * {@inheritDoc}
      *
-     * Add the EmailClientLaunch plugin and force use of ButtonField hbs templates
+     * Add the `EmailClientLaunch` plugin and force use of `ButtonField`
+     * templates.
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['EmailClientLaunch']);

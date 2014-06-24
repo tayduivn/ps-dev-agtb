@@ -108,9 +108,9 @@ See https://github.com/sugarcrm/Mango/wiki/SugarCRM-Build-System for more detail
 
 #### Choose the right Branch
 
-Before working on a patch, you must determine on which branch you need to work. The branch should be based on the `sugar7` branch if you want to add a new feature. But if you want to fix a bug, use the oldest but still maintained version of SugarCRM where the bug was found (like `6_7_1`).
+Before working on a patch, you must determine on which branch you need to work. The branch should be based on the `master` branch if you want to add a new feature. But if you want to fix a bug, use the oldest but still maintained version of SugarCRM where the bug was found (like `7_1_x`).
 
-> All bug fixes merged into maintenance branches are also merged into more recent branches on a regular basis. For instance, if you submit a patch for the `6_7_1` branch, the patch will also be applied by the core team on the `sugar7` branch.
+> All bug fixes merged into maintenance branches are also merged into more recent branches on a regular basis. For instance, if you submit a patch for the `7_1_x` branch, the patch will also be applied by SugarCRM team on the `master` branch.
 
 #### Create a Topic Branch
 
@@ -120,16 +120,16 @@ Each time you want to work on a patch for a bug or on an enhancement, create a t
 $ git checkout -b BRANCH_NAME master
 ```
 
-Or, if you want to provide a bug fix for the `6_7_1` branch, first track the remote `6_7_1` branch locally:
+Or, if you want to provide a bug fix for the `7_1_x` branch, first track the remote `7_1_x` branch locally:
 
 ```bash
-$ git checkout -t origin/6_7_1
+$ git checkout -t origin/7_1_x
 ```
 
-Then create a new branch of the `6_7_1` branch to work on the bug fix:
+Then create a new branch of the `7_1_x` branch to work on the bug fix:
 
 ```bash
-$ git checkout -b BRANCH_NAME 6_7_1
+$ git checkout -b BRANCH_NAME 7_1_x
 ```
 
 > Use a descriptive name for your branch (`bug_XXX` where `XXX` is the bug number is a good convention for bug fixes, `SC-XXX` where `XXX` is the issue number in JIRA is a good convention for new features).
@@ -168,10 +168,10 @@ Before submitting your patch, update your branch (needed if it takes a while to 
 ```bash
 $ git checkout BRANCH_NAME
 $ git fetch upstream
-$ git rebase upstream/sugar7
+$ git rebase upstream/master
 ```
 
-> Replace `sugar7` with `6_7_1` if you are working on a bug fix
+> Replace `master` with `7_1_x` if you are working on a bug fix
 
 When doing the `rebase` command, you might have to fix merge conflicts. `git status` will show you the *unmerged* files. Resolve all the conflicts, then continue the rebase:
 
@@ -190,7 +190,7 @@ $ git push origin BRANCH_NAME
 
 You can now make a pull request on the `sugarcrm/Mango` Github repository.
 
-> Take care to point your pull request towards `Mango:6_7_1` if you want the core team to pull a bug fix based on the `6_7_1` branch.
+> Take care to point your pull request towards `Mango:7_1_x` if you want the core team to pull a bug fix based on the `7_1_x` branch.
 
 To ease the core team work, always include the modified modules in your pull request message, like in:
 
@@ -204,23 +204,37 @@ To ease the core team work, always include the modified modules in your pull req
 The pull request description must include the following check list to ensure that contributions may be reviewed without needless feedback loops and that your contributions can be included into SugarCRM as quickly as possible:
 
 ```text
-Bug fix: [yes|no]
-Feature addition: [yes|no]
-Backwards compatibility break: [yes|no]
-Tests pass: [yes|no]
-Fixes the following bugs: [comma separated list of bugs fixed by the PR]
-Todo: [list of todos pending]
+| Q             | A
+| ------------- | ---
+| Bug fix?      | [yes|no]
+| New feature?  | [yes|no]
+| BC breaks?    | [yes|no]
+| Deprecations? | [yes|no]
+| Tests pass?   | [yes|no]
+| Fixed bugs    | [comma separated list of bugs fixed by this PR]
+| Doc PR        | sugarcrm/devdocs#123
+
+### TODO
+List of pending items
+
 ```
 
 An example submission could now look as follows:
 
 ```text
-Bug fix: no
-Feature addition: yes
-Backwards compatibility break: no
-Tests pass: yes
-Fixes the following tickets: #51284, #51324
-Todo: -
+| Q             | A
+| ------------- | ---
+| Bug fix?      | no
+| New feature?  | no
+| BC breaks?    | no
+| Deprecations? | no
+| Tests pass?   | yes
+| Fixed bugs    | #51284, #51324
+| Doc PR        | sugarcrm/devdocs#123
+
+### TODO
+- [x] Find a way to setup the config automatically
+- [ ] Provide better extensibility
 ```
 
 In the pull request description, give as much details as possible about your changes (don't hesitate to give code examples to illustrate your points). If your pull request is about adding a new feature or modifying an existing one, explain the rationale for the changes. The pull request description helps the code review and it serves as a reference when the code is merged (the pull request description and all its associated comments are part of the merge commit message).
@@ -229,7 +243,7 @@ In addition to this "code" pull request, you must also link to the documentation
 
 #### Rework your Patch
 
-Based on the feedback of the pull request, you might need to rework your patch. Before re-submitting the patch, rebase with `upstream/sugar7`, don't merge; and force the push to the origin:
+Based on the feedback of the pull request, you might need to rework your patch. Before re-submitting the patch, rebase with `upstream/master`, don't merge; and force the push to the origin:
 
 ```bash
 $ git rebase -f upstream/master
@@ -238,10 +252,10 @@ $ git push -f origin BRANCH_NAME
 
 > when doing a `push --force`, always specify the branch name explicitly to avoid messing other branches in the repo (`--force` tells git that you really want to mess with things **so do it carefully**).
 
-Often, tech leads will ask you to "squash" or review your commits. This means you will convert many commits to less commits. To do this, use the rebase command:
+Often, team leads will ask you to "squash" or review your commits. This means you will convert many commits to less commits. To do this, use the rebase command:
 
 ```bash
-$ git rebase --interactive --autosquash upstream/sugar7
+$ git rebase --interactive --autosquash upstream/master
 $ git push -f origin BRANCH_NAME
 ```
 
