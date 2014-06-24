@@ -18,6 +18,8 @@ module.exports = function(config) {
             '/include': '/base/include',
             '/modules': '/base/modules'
         },
-        reportSlowerThan: 500
+        reportSlowerThan: 500,
+        browserDisconnectTimeout: 5000,
+        browserDisconnectTolerance: 5
     });
 };
