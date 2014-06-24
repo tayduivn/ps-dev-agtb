@@ -140,7 +140,16 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             }
 
             if (isset($def['sort_on'])) {
-                $this->assertArrayHasKey($def['sort_on'], $bean->field_defs, "Sort on for {$bean->module_dir}/$key points to an invalid field.");
+                // Sort on can be either a string or an array... make it an array
+                // for testing
+                if (is_string($def['sort_on'])) {
+                    $def['sort_on'] = array($def['sort_on']);
+                }
+
+                // Loop and test
+                foreach ($def['sort_on'] as $sortField) {
+                    $this->assertArrayHasKey($sortField, $bean->field_defs, "Sort on for {$bean->module_dir}/$key points to an invalid field.");
+                }
             }
 
             if (isset($def['fields'])) {
