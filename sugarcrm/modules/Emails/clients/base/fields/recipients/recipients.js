@@ -289,7 +289,7 @@
     /**
      * Formats a set of recipients into an array of objects that select2 understands.
      *
-     * See {@link #_formatRecipient()} for the acceptable/expected attributes to
+     * See {@link #_formatRecipient} for the acceptable/expected attributes to
      * be found on each recipient.
      *
      * @param {*} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of

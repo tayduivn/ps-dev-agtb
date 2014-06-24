@@ -110,7 +110,7 @@
      * Returns a default TinyMCE init configuration for the htmleditable widget.
      * This function can be overridden to provide a custom TinyMCE configuration.
      *
-     * {@link http://www.tinymce.com/wiki.php/Configuration TinyMCE Configuration Documentation} for details.
+     * See [TinyMCE Configuration Documentation](http://www.tinymce.com/wiki.php/Configuration)for details.
      *
      * @return {Object} TinyMCE configuration to use with this widget
      */

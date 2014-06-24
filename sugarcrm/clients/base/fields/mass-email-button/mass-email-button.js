@@ -11,8 +11,8 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * This field uses the EmailClientLaunch plugin to launch the appropriate email
- * client.
+ * This field uses the `EmailClientLaunch` plugin to launch the appropriate
+ * email client.
  *
  * Recipients to pre-populate are pulled from the mass_collection.
  * For external email client: Changes to the mass_collection will rebuild the mailto: link
@@ -24,15 +24,14 @@
  * @alias SUGAR.App.view.fields.BaseMassEmailButtonField
  * @extends View.Fields.Base.ButtonField
  */
-/**
- */
 ({
     extendsFrom: 'ButtonField',
 
     /**
      * {@inheritDoc}
      *
-     * Add the EmailClientLaunch plugin and force use of ButtonField hbs templates
+     * Add the `EmailClientLaunch` plugin and force use of `ButtonField`
+     * templates.
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['EmailClientLaunch']);

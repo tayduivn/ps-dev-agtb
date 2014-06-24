@@ -27,11 +27,12 @@
     },
 
     /**
-     * Get the fields metadata from panels and declare a Bean with the metadata attached
+     * Get the fields metadata from panels and declare a Bean with the metadata
+     * attached.
      *
-     * {@link  View.Views.Base.LoginView}
+     * {@link View.Views.Base.LoginView}
      *
-     * @param meta
+     * @param {Object} meta The view's metadata supplied.
      * @private
      */
     _declareModel: function(meta) {

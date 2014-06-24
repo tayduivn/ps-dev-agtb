@@ -16,9 +16,6 @@
  * @extends View.Views.Base.PreviewView
  */
 ({
-    /**
-     * Who is my parent
-     */
     extendsFrom: 'PreviewView',
 
     /**

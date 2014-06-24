@@ -11,7 +11,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * Form for creating a filter..
+ * Form for creating a filter.
  *
  * Part of {@link View.Layouts.Base.FilterpanelLayout}.
  *

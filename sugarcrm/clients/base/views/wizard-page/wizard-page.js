@@ -11,21 +11,23 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * An abstract WizardPageView.  Wizard pages should extend this and provide
- * field metadata, custom logic, etc.  This view is detached from Wizard
- * layout when it is not the current page.  When it becomes the current
- * page it is appended to Wizard layout and render is called.
+ * An abstract WizardPageView.
  *
- * If you want to use the default Wizard template, you'll need to load it in initialize.
+ * Wizard pages should extend this and provide field metadata, custom logic,
+ * etc. This view is detached from Wizard layout when it is not the current
+ * page. When it becomes the current page it is appended to Wizard layout and
+ * render is called.
+ *
+ * If you want to use the default Wizard template, you'll need to load it in
+ * `initialize`.
+ *
  * For example,
  *
- * <pre>
- * initialize: function(options){
- *   //Load the default wizard page template, if you want to.
- *   options.template = app.template.getView("wizard-page");
- *   this._super("initialize", [options]);
- * },
- * </pre>
+ *     initialize: function(options){
+ *         //Load the default wizard page template, if you want to.
+ *         options.template = app.template.getView("wizard-page");
+ *         this._super("initialize", [options]);
+ *     }
  *
  * @class View.Views.Base.WizardPageView
  * @alias SUGAR.App.view.views.BaseWizardPageView

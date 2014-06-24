@@ -11,13 +11,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * Forecast Manger Worksheet Record List.
- *
- * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
- * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
- * @extends View.Views.Base.RecordListView
- */
-/**
+ * Forecast Manager Worksheet Record List.
  *
  * Events
  *
@@ -51,6 +45,9 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the Assign Quota button is pressed
  *
+ * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
+ * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
+ * @extends View.Views.Base.RecordListView
  */
 ({
     /**

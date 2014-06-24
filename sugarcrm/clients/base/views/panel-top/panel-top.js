@@ -11,7 +11,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * Header section for Subpanel layouts
+ * Header section for Subpanel layouts.
  *
  * @class View.Views.Base.PanelTopView
  * @alias SUGAR.App.view.views.BasePanelTopView
