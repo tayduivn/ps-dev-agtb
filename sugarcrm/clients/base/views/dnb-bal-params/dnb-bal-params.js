@@ -539,7 +539,7 @@
         tagIndex = tagCount + 1;
         //obtain user input
         tagText = this.model.get(paramMeta.inputKey);
-        var tagId = paramMeta.modelSubKey + tagIndex;
+        var tagId = paramMeta.tagLimit > 1 ? paramMeta.modelSubKey + tagIndex : paramMeta.modelSubKey;
         //add tag with tag id to tag container
         this.appendTag(tagId, tagText, paramMeta.container, this.tagTmpl2, modelKey);
         //clearing the input box
@@ -555,7 +555,11 @@
         //translates the user tags to D&B api parameters
         _.each(tags, function(tagItem, index) {
             var tagIndex = index + 1;
-            modelAttr[paramMeta.modelSubKey + tagIndex] = tagItem;
+            if(paramMeta.tagLimit > 1) {
+                modelAttr[paramMeta.modelSubKey + tagIndex] = tagItem;
+            } else {
+                modelAttr[paramMeta.modelSubKey] = tagItem;
+            }
         }, this);
         this.model.set(modelKey, modelAttr);
         this.triggerBAL();
