@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,32 +12,34 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Meetings';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
-        'label' =>'LNK_NEW_MEETING',
-        'acl_action'=>'create',
-        'acl_module'=>$module_name,
+        'route' => "#{$module_name}/create",
+        'label' => 'LNK_NEW_MEETING',
+        'acl_action' => 'create',
+        'acl_module' => $module_name,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_MEETING_LIST',
-        'acl_action'=>'list',
-        'acl_module'=>$module_name,
+        'route' => "#{$module_name}",
+        'label' => 'LNK_MEETING_LIST',
+        'acl_action' => 'list',
+        'acl_module' => $module_name,
         'icon' => 'icon-reorder',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Meetings&return_module=Meetings&return_action=index',
-        'label' =>'LNK_IMPORT_MEETINGS',
-        'acl_action'=>'import',
-        'acl_module'=>$module_name,
+        'route' => "#bwc/index.php?module=Import&action=Step1&import_module={$module_name}&return_module={$module_name}&return_action=index",
+        'label' => 'LNK_IMPORT_MEETINGS',
+        'acl_action' => 'import',
+        'acl_module' => $module_name,
         'icon' => 'icon-upload',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=meetings&query=true&report_module=Meetings',
-        'label' =>'LBL_ACTIVITIES_REPORTS',
-        'acl_action'=>'',
-        'acl_module'=>'',
+        'route' => "#bwc/index.php?module=Reports&action=index&view="
+        . strtolower($module_name)
+        . "&query=true&report_module={$module_name}",
+        'label' => 'LBL_ACTIVITIES_REPORTS',
+        'acl_action' => '',
+        'acl_module' => '',
         'icon' => 'icon-bar-chart',
     ),
     //END SUGARCRM flav=int ONLY
