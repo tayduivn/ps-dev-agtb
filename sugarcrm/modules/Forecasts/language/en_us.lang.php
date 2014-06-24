@@ -246,6 +246,7 @@ $mod_strings = array (
 
     //Labels for worksheet items
     'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
+    'LBL_DISPLAYED_TOTAL' => 'Displayed Total',
     'LBL_TOTAL' => 'Total',
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {0}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {0} and {1}',

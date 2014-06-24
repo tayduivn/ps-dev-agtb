@@ -334,6 +334,7 @@
                         app.alert.dismiss('worksheet_filtering');
                     });
                     this.filterCollection();
+                    this.calculateTotals();
                     if (!this.disposed) this.render();
                 }, this);
 
@@ -873,6 +874,10 @@
         var includedAmount = 0,
             includedBest = 0,
             includedWorst = 0,
+            filteredAmount = 0,
+            filteredBest = 0,
+            filteredWorst = 0,
+            filteredCount = 0,
             overallAmount = 0,
             overallBest = 0,
             overallWorst = 0,
@@ -889,7 +894,8 @@
             includedClosedAmount = 0,
             cfg = app.metadata.getModule('Forecasts', 'config'),
             startEndDates = this.context.get('selectedTimePeriodStartEnd') ||
-                this.context.parent.get('selectedTimePeriodStartEnd');
+                this.context.parent.get('selectedTimePeriodStartEnd'),
+            activeFilters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges') || [];
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
         var sales_stage_won_setting = cfg.sales_stage_won || [],
@@ -914,7 +920,8 @@
                     worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate) || 0,
                     amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate) || 0,
                     best_base = app.currency.convertWithRate(model.get('best_case'), base_rate) || 0,
-                    includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
+                    includedInForecast = _.include(commit_stages_in_included_total, commit_stage),
+                    includedInFilter = _.include(activeFilters, commit_stage);
 
                 if (won && includedInForecast) {
                     wonAmount = app.math.add(wonAmount, amount_base);
@@ -929,6 +936,13 @@
                     lostBest = app.math.add(lostBest, best_base);
                     lostWorst = app.math.add(lostWorst, worst_base);
                     lostCount++;
+                }
+
+                if (includedInFilter || _.isEmpty(activeFilters)) {
+                    filteredAmount = app.math.add(filteredAmount, amount_base);
+                    filteredBest = app.math.add(filteredBest, best_base);
+                    filteredWorst = app.math.add(filteredWorst, worst_base);
+                    filteredCount++;
                 }
 
                 if (includedInForecast) {
@@ -957,6 +971,9 @@
             'overall_amount': overallAmount,
             'overall_best': overallBest,
             'overall_worst': overallWorst,
+            'filtered_amount': filteredAmount,
+            'filtered_best': filteredBest,
+            'filtered_worst': filteredWorst,
             'timeperiod_id': this.dirtyTimeperiod || this.selectedTimeperiod,
             'lost_count': lostCount,
             'lost_amount': lostAmount,
