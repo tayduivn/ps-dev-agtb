@@ -325,7 +325,6 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'name' => 'products',
             'type' => 'link',
@@ -334,6 +333,10 @@ $dictionary['Contact'] = array(
             'relationship' => 'contact_products',
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCTS_TITLE',
+            'populate_list' => array(
+                'account_id',
+                'account_name'
+            )
         ),
         'contracts' => array(
             'name' => 'contracts',
@@ -342,7 +345,6 @@ $dictionary['Contact'] = array(
             'relationship' => 'contracts_contacts',
             'source' => 'non-db',
         ),
-        //END SUGARCRM flav=pro ONLY
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
