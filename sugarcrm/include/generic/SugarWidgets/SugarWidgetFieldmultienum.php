@@ -29,7 +29,7 @@ class SugarWidgetFieldMultiEnum extends SugarWidgetFieldEnum {
             $value = preg_replace("/'$/", "^%'", $value, 1);
 			$query .= $value;
 			if ($key != ($arr_count - 1))
-    			$query.= " OR " ;	
+    			$query.= " AND " ;
     	}
 		return '('.$query.')';        
 	}
