@@ -188,7 +188,7 @@ class AdministrationController extends SugarController
             $result = $searchEngine->getServerStatus();
             if ($result['valid']) {
                 $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_SUCCESS'];
-            } else {
+            } else if(!is_string($result['status'])) {
                 if (!empty($result['status']['message']) && is_string($result['status']['message'])) {
                     $result['status'] = $result['status']['message'];
                 } else {
