@@ -2245,9 +2245,6 @@ return str_replace(' > ','_',
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
                         $display = "";
                     }
-                    if ($display_column['type'] == 'int') {
-                        $display = $displayData;
-                    } // if
                 } // if
             } // if
 
