@@ -684,5 +684,41 @@ describe("ForecastWorksheets.View.RecordList", function() {
             expect(totals.likely_case).toEqual(500);
             expect(totals.overall_amount).toEqual(1000);
         });
+
+        describe('filteredTotals', function() {
+            var getStub;
+            beforeEach(function() {
+                getStub = sinon.collection.stub(view.context, 'get')
+                    .withArgs('selectedTimePeriodStartEnd').returns({end: '2014-03-31', start: '2014-01-01'});
+            });
+
+            afterEach(function() {
+                sinon.collection.restore();
+            });
+
+            it('will only include items when filter is include', function() {
+                getStub.withArgs('selectedRanges').returns(['include']);
+                var totals = view.getCommitTotals();
+
+                expect(totals.filtered_amount).toEqual(1000);
+                expect(totals.overall_amount).toEqual(1500);
+            });
+
+            it('will include all items when filter is include and exclude', function() {
+                getStub.withArgs('selectedRanges').returns(['include', 'exclude']);
+                var totals = view.getCommitTotals();
+
+                expect(totals.filtered_amount).toEqual(1500);
+                expect(totals.overall_amount).toEqual(1500);
+            });
+
+            it('will include all items when filter is empty', function() {
+                getStub.withArgs('selectedRanges').returns([]);
+                var totals = view.getCommitTotals();
+
+                expect(totals.filtered_amount).toEqual(1500);
+                expect(totals.overall_amount).toEqual(1500);
+            });
+        });
     });
 });
