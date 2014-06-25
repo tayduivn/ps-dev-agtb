@@ -1,0 +1,75 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+require_once __DIR__ . '/Scanner.php';
+
+/**
+ *
+ * HealthCheck Scanner CLI support
+ *
+ */
+class ScannerCli extends Scanner
+{
+    /**
+     *
+     * @param array $argv
+     */
+    public function parseCliArgs($argv)
+    {
+        for ($i=0; $i < (count($argv) - 1); $i++) {
+
+            // logfile name
+            if ($argv[$i] == '-l') {
+                $i++;
+                $this->logfile = $argv[$i];
+            }
+
+            // verbose level 1
+            if ($argv[$i] == '-v') {
+                $this->verbose = 1;
+            }
+
+            // verbose level 2 (curently not used)
+            if ($argv[$i] == '-vv') {
+                $this->verbose = 2;
+            }
+        }
+
+        // instance directory
+        $this->instance = $argv[count($argv)-1];
+    }
+
+    /**
+     *
+     * Console output - temp solution, need proper central logging
+     * @see Scanner::fail()
+     */
+    public function fail($msg)
+    {
+        $result = parent::fail($msg);
+        echo "$msg\n";
+        return $result;
+    }
+
+    /**
+     *
+     * Console output - temp solution, need proper central logging
+     * @see Scanner::log()
+     */
+    protected function log($msg, $tag = 'INFO')
+    {
+        $fmsg = parent::log($msg, $tag);
+        if ($this->verbose) {
+            echo $fmsg;
+        }
+    }
+}

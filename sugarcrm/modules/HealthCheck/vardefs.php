@@ -11,25 +11,23 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- *
- * Standalone CLI HealthCheck runner
- *
- */
+$dictionary['HealthCheck'] = array(
+    'table' => 'healthcheck',
+    'fields' => array(
+        // FIXME: add log file name field
+    ),
+    'relationships' => array(),
+    'acls' => array(
+        'SugarACLAdminOnly' => true,
+    ),
+);
 
-if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php scan.php [-l logfile] [-v] /path/to/instance\n");
+if (!class_exists('VardefManager')) {
+    require_once 'include/SugarObjects/VardefManager.php';
 }
 
-$sapi_type = php_sapi_name();
-if (substr($sapi_type, 0, 3) != 'cli') {
-    die("This is a command-line only script");
-}
-
-require_once __DIR__ . '/ScannerCli.php';
-
-$scanner = new ScannerCli();
-$scanner->parseCliArgs($argv);
-$scanner->scan();
-
-exit($scanner->getResultCode());
+VardefManager::createVardef(
+    'HealthCheck',
+    'HealthCheck',
+    array('basic')
+);
