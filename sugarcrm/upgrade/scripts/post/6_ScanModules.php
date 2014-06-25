@@ -227,6 +227,18 @@ class SugarUpgradeScanModules extends UpgradeScript
                 $this->log("Bad vardefs - key $key, name {$value['name']}");
                 $status = false;
             }
+
+            // Check "name" field type, @see CRYS-130
+            if ($key == 'name' && $value['type'] != 'name') {
+
+                // Assume those types are valid too, cause they used in stock modules for "name" field
+                $validNameTypes = array('id', 'fullname', 'varchar');
+                if (!in_array($value['type'], $validNameTypes)) {
+                    $this->log("Bad vardefs - 'name' field type is invalid '{$value['type']}', module - '$module'");
+                    $status = false;
+                }
+            }
+
             if(!empty($value['type']) && ($value['type'] == 'enum' || $value['type'] == 'multienum')
                 && !empty($value['function']['returns']) && $value['function']['returns'] == 'html'
             ) {
