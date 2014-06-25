@@ -87,7 +87,7 @@
      */
     _renderHtml: function() {
         var label;
-        this.model = this.layout.context.get('model');
+        this.model = this.context.get('model');
         label = app.lang.get(
             this.model.get('label'),
             this.model.get('module') || this.module,
