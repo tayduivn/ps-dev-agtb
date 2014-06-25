@@ -17,6 +17,32 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.model.on('change:likely_case', this._handleLikelyChange, this);
+        this._super('bindDataChange');
+    },
+
+    /**
+     * Handle a change to likely value (requiring copy to unit price when empty).
+     */
+    _handleLikelyChange: function(new_model, val, options) {
+        if (
+            _.isEmpty(new_model.get('product_template_id')) &&
+            !_.isFinite(new_model.get('discount_price'))
+        ) {
+            var quantity = new_model.get('quantity');
+
+            if (!_.isFinite(quantity) || parseFloat(quantity) === 0) {
+                quantity = 1;
+            }
+
+            new_model.set({ discount_price: app.math.div(val, quantity) });
+        }
+    },
+
+    /**
      * Parse the fields in the panel for the different requirement that we have
      *
      * @param {Array} panels

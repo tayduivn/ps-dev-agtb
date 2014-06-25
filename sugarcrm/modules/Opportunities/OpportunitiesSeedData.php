@@ -177,9 +177,10 @@ class OpportunitiesSeedData {
 
                 $doPT = false;
 
+                $quantity = rand(1, 100);
                 $cost_price = $amount/2;
                 $list_price = $amount;
-                $discount_price = $amount;
+                $discount_price = ($amount / $quantity);
 
 
                 if ($rlis_created%2 === 0) {
@@ -189,7 +190,7 @@ class OpportunitiesSeedData {
 
                     $cost_price = $pt['cost_price'];
                     $list_price = $pt['list_price'];
-                    $discount_price = $pt['discount_price'];
+                    $discount_price = ($pt['discount_price'] / $quantity);
                     $amount = $discount_price;
                     $rand_best_worst = rand(100, $cost_price);
                 }
@@ -209,7 +210,7 @@ class OpportunitiesSeedData {
                 $rli->list_price = $list_price;
                 $rli->discount_price = $discount_price;
                 $rli->cost_price = $cost_price;
-                $rli->quantity = rand(1, 100);
+                $rli->quantity = $quantity;
                 $rli->currency_id = $currency_id;
                 $rli->base_rate = $base_rate;
                 //BEGIN SUGARCRM flav=pro && flav != ent ONLY
