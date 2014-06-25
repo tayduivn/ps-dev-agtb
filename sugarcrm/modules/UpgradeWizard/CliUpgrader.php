@@ -25,6 +25,8 @@ class CliUpgrader extends UpgradeDriver
         "backup" => array(false, 'b', 'backup'),
         "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
+        "health_check_path" => array(false, 'H', 'healthcheck'),
+        "autoconfirm" => array(false, 'A', 'autoconfirm')
     );
 
     /**
@@ -188,6 +190,9 @@ eoq2;
     public function init()
     {
         parent::init();
+        if(empty($this->context['autoconfirm'])) {
+            $this->context['autoconfirm'] = false;
+        }
         if($this->zip_as_dir) {
             $this->context['extract_dir'] = $this->context['zip'];
         }
@@ -445,6 +450,24 @@ eoq2;
     {
         $duration = $end - $begin;
         return $duration . ' second' . ($duration == 1 ? '' : 's');
+    }
+
+    protected function confirmDialog($message = 'Continue?')
+    {
+        if($this->context['autoconfirm']) {
+            return true;
+        }
+        $output = "* $message (Yes/No) ";
+        echo "\n".$output;
+        $line = readline("");
+
+        $line = strtolower($line);
+        if (in_array($line, array('yes', 'y'))) {
+            return true;
+        } else if (in_array($line, array('no', 'n'))) {
+            return false;
+        }
+        return false;
     }
 }
 

@@ -17,20 +17,15 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if(empty($argv[1])) {
-	die("Use pack.php name.zip");
+	die("Use pack_cli.php name.zip");
 }
 
 $name = $argv[1];
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(
-	"UpgradeWizard.php",
 	"modules/UpgradeWizard/UpgradeDriver.php",
-	"modules/UpgradeWizard/WebUpgrader.php",
-	"modules/UpgradeWizard/upgrade_screen.php",
-	"modules/UpgradeWizard/upgrader_version.json",
-	"include/javascript/jquery/jquery-min.js",
-	"sidecar/lib/jquery/jquery.iframe.transport.js",
+	"modules/UpgradeWizard/CliUpgrader.php",
     'modules/HealthCheck/Scanner/Scanner.php',
     'modules/HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/language/en_us.lang.php',
@@ -39,13 +34,13 @@ $files=array(
 $manifest = array(
 	'acceptable_sugar_versions' =>
 	array (
-        'regex_matches' => array('6\.[5-7]\.*','7\.[012]\.*')
+	'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
 	),
 	'author' => 'SugarCRM, Inc.',
-	'description' => 'SugarCRM Upgrader 2.0',
+	'description' => 'SugarCRM CLI Upgrader 2.0',
 	'icon' => '',
 	'is_uninstallable' => 'true',
-	'name' => 'SugarCRM Upgrader 2.0',
+	'name' => 'SugarCRM CLI Upgrader 2.0',
 	'published_date' => date("Y-m-d H:i:s"),
 	'type' => 'module',
 );
@@ -63,6 +58,11 @@ foreach($files as $file) {
 	$zip->addFile($file);
 	$installdefs['copy'][] = array("from" => "<basepath>/$file", "to" => $file);
 }
+
+$installdefs['copy'][] = array("from" => "<basepath>/upgrader2.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/upgrader2.php");
+
+$zip->addFromString("upgrader2.php", "<?php\n\$admin_group_header[2][3]['Administration']['upgrade_wizard']= array('Upgrade','LBL_UPGRADE_WIZARD_TITLE','LBL_UPGRADE_WIZARD','./UpgradeWizard.php');");
+
 
 $cont = sprintf("<?php\n\$manifest = %s;\n\$installdefs = %s;\n", var_export($manifest, true), var_export($installdefs, true));
 $zip->addFromString("manifest.php", $cont);

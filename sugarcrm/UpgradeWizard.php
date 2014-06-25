@@ -56,7 +56,7 @@ if($res !== false && $upg->success) {
     }
 } else {
     // error
-    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed");
+    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed", 'data' => $res);
 }
 $msg = ob_get_clean();
 

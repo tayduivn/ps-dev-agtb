@@ -34,9 +34,9 @@ $zipFile = $argv[1];
 
 $files = array(
     'scan.php',
-    'Scanner.php',
-    'ScannerCli.php',
-    'ScannerMeta.php',
+    'Scanner/Scanner.php',
+    'Scanner/ScannerCli.php',
+    'Scanner/ScannerMeta.php',
     'language/en_us.lang.php',
 );
 

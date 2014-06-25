@@ -346,7 +346,7 @@ class ScannerMeta
 
     /**
      *
-     * @var HealthCheckMeta
+     * @var ScannerMeta
      */
     protected static $instance;
 
@@ -425,7 +425,7 @@ class ScannerMeta
         return $meta;
     }
 
-    protected function getDefaultFlag($bucket)
+    public function getDefaultFlag($bucket)
     {
         return $this->defaultFlagMap[$bucket];
     }

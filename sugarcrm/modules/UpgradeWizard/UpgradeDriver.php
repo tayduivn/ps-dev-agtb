@@ -18,6 +18,8 @@ abstract class UpgradeDriver
 {
     const STATE_FILE = "upgrade_state.php";
 
+    const DEFAULT_HEALTHCHECK_PATH =  '/../HealthCheck/Scanner/Scanner.php';
+
     /**
      * If upgrade is successful
      * @var bool
@@ -307,6 +309,9 @@ abstract class UpgradeDriver
         $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
         if(isset($this->context['script_mask'])) {
             $this->script_mask &= $this->context['script_mask'];
+        }
+        if(empty($this->context['health_check_path'])) {
+            $this->context['health_check_path'] = __DIR__ . self::DEFAULT_HEALTHCHECK_PATH;
         }
         $this->context['case_insensitive_fs'] = $this->testFilesystemCaseInsensitive();
         $this->initialized = true;
@@ -1459,7 +1464,7 @@ abstract class UpgradeDriver
         write_array_to_file("sugar_config", $this->config, $this->context['source_dir']."/config.php");
     }
 
-    protected $stages = array('unpack', 'pre', 'commit', 'post', 'cleanup');
+    protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
 
     /**
      * Run one step in the upgrade
@@ -1519,6 +1524,25 @@ abstract class UpgradeDriver
             $this->state['stage'][$stage] = 'started';
             $this->saveState();
             switch($stage) {
+                case "healthcheck":
+                    // FIXME: we need a packer too for CLI as we have the module for Web upgrader
+                    // this will only work for now from within an actual sugar install
+                    $scanner = $this->getHealthCheckScanner();
+                    if(!$scanner) {
+                        $this->log('Cannot find health check scanner. Skipping health check stage');
+                        break;
+                    }
+                    $scanner->scan();
+                    if($scanner->isFlagRed()) {
+                        $this->error("Health check stage failed! Please fix issues described above and re-run upgrader.");
+                        return false;
+                    }
+                    if($scanner->isFlagYellow() && !$this->confirmDialog("Are you agree with the changes above?")) {
+                        $this->error("Health check stage failed! User has canceled upgrade process.");
+                        return false;
+                    }
+                    $this->log("Health check passed. All good.");
+                    break;
                 case "unpack":
                     // Verify package
                     if(!$this->verify($this->context['zip'], $this->context['extract_dir'])) {
@@ -1641,6 +1665,32 @@ abstract class UpgradeDriver
         }
         return array($version, $build);
     }
+
+    protected function isHealthCheckInstalled()
+    {
+        return file_exists($this->context['health_check_path']);
+    }
+
+    protected function  getHealthCheckScanner()
+    {
+        if ($this->isHealthCheckInstalled()) {
+            require_once $this->context['health_check_path'];
+            $scanner = new Scanner();
+            $scanner->setVerboseLevel(0);
+            $scanner->setLogFilePointer($this->fp);
+            $scanner->setInstanceDir($this->context['source_dir']);
+            return $scanner;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if user has confirmed to proceed with the stage
+     * @param $stage
+     * @return boolean
+     */
+    protected abstract function confirmDialog($message = '');
+
 }
 
 /**

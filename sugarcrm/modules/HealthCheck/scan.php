@@ -26,7 +26,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is a command-line only script");
 }
 
-require_once __DIR__ . '/ScannerCli.php';
+require_once __DIR__ . '/Scanner/ScannerCli.php';
 
 $scanner = new ScannerCli();
 $scanner->parseCliArgs($argv);

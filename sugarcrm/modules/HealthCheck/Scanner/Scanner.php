@@ -122,6 +122,13 @@ class Scanner
     protected $status_log = array();
 
     /**
+     * @var resource
+     */
+    protected $fp;
+
+    protected $logMeta = array();
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -216,15 +223,23 @@ class Scanner
 
         $reason = "[$report][$code] " . vsprintf($scanMeta['log'], $params);
 
-        if($reason) {
-            $this->log($reason, 'CHECK-'.$status);
-            $this->logReason($status, $code, $reason);
-        }
+        $this->log($reason, 'CHECK-'.$status);
+        $this->logReason($status, $code, $reason);
+        $this->logMeta[] = $scanMeta;
+
 
         if($status > $this->status) {
             $this->log("===> Status changed to $status", 'STATUS');
             $this->status = $status;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getLogMeta()
+    {
+        return $this->logMeta;
     }
 
     /**
@@ -236,6 +251,32 @@ class Scanner
     {
         $this->logfile = $fileName;
     }
+
+    /**
+     * Setter fp
+     * @param $fp
+     */
+    public function setLogFilePointer($fp)
+    {
+        $this->fp = $fp;
+    }
+
+    public function isFlagGreen()
+    {
+        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_GREEN;
+    }
+
+    public function isFlagYellow()
+    {
+        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_YELLOW;
+    }
+
+    public function isFlagRed()
+    {
+        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_RED;
+    }
+
+
 
     /**
      *
@@ -379,7 +420,7 @@ class Scanner
             }
         }
 
-        return $this->status_log;
+        return $this->logMeta;
     }
 
     /**
