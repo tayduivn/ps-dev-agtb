@@ -57,9 +57,8 @@ function process_workflow_alerts(& $target_module, $alert_user_array, $alert_she
         }
     }
 
-
     //now you have the bucket so you can send out the alert to all the recipients
-    send_workflow_alert($target_module, $address_array, $alert_msg, $admin, $alert_shell_array, $check_for_bridge);
+    send_workflow_alert($target_module, $address_array, $alert_msg, $admin, $alert_shell_array, $check_for_bridge, $alert_user_array);
 
 //end function process_workflow_alerts
 }
@@ -359,7 +358,7 @@ function create_alert_email($notify_user) {
 	}
 
 
-function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $alert_shell_array, $check_for_bridge = false) {
+function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $alert_shell_array, $check_for_bridge = false, $alert_user_array = array()) {
     $invitePerson = false;
 
     $users    = array();
@@ -426,7 +425,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
 
             // add the message content to the mailer
             // return: true=encountered an error; false=no errors
-            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
+            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, "", $alert_user_array);
 
             if ($error) {
                 throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
@@ -479,13 +478,13 @@ function setup_mail_object(&$mail_object, &$admin) {
 }
 
 
-function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_shell_array, $notify_user_id = "") {
+function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_shell_array, $notify_user_id = "", $alert_user_array = array()) {
     global $current_language;
     $modStrings = return_module_language($current_language, 'WorkFlow');
 
     if ($alert_shell_array['source_type'] == "Custom Template") {
         // use custom template
-        $error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
+        $error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id, $alert_user_array);
         return $error;
     }
 
@@ -614,7 +613,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 
 /////////////////////////////////////////Parsing Custom Templates//////////
 
-function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "") {
+function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "", $alert_user_array = array()) {
     $template = BeanFactory::getBean('EmailTemplates');
     $template->disable_row_level_security = true;
 
@@ -646,23 +645,23 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
     }
 
     if (!empty($template->body)) {
-        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id)));
+        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id, $alert_user_array)));
     }
 
     if (!empty($template->body_html)) {
-        $mail_object->setHtmlBody(parse_alert_template($focus, $template->body_html, $notify_user_id));
+        $mail_object->setHtmlBody(parse_alert_template($focus, $template->body_html, $notify_user_id, $alert_user_array));
     }
 
-    $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
+    $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id, $alert_user_array));
 
     return false; // false=no errors
 }
 
-function parse_alert_template($focus, $target_body, $notify_user_id=""){
+function parse_alert_template($focus, $target_body, $notify_user_id="", $alert_user_array = array()){
 
 	//Parse target body and return an array of components
 	$component_array = parse_target_body($target_body, $focus->module_dir);
-	$parsed_target_body = reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id);
+	$parsed_target_body = reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id, $alert_user_array);
 	return $parsed_target_body;
 
 //end function parse_alert_template
@@ -713,7 +712,7 @@ function decodeMultienumField($field) {
     return implode(', ', unencodeMultienum($field));
 }
 
-function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id=""){
+function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id="", $alert_user_array = array()){
 	global $beanList;
 
 	$replace_array = Array();
@@ -775,6 +774,17 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 				}
 				//obtain the rel_module object
 				$rel_list = $rel_handler->build_related_list("base");
+
+                foreach ($alert_user_array as $user_meta_array) {
+                    ////Filter the first related module
+                    $rel_list = process_rel_type("rel_module1_type", "rel1_filter", $rel_list, $user_meta_array);
+
+                    ////Filter using second filter if necessary
+                    if (!empty($user_meta_array['expression']) && $user_meta_array['rel_module2']=="") {
+                        $rel_list = process_rel_type("filter", "expression", $rel_list, $user_meta_array, true);
+                        //end second filter if necessary
+                    }
+                }
 				//$rel_list = $focus->get_linked_beans($relationship_name, $bean_name);
 				if(!empty($rel_list[0]))
 				{

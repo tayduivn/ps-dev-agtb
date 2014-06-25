@@ -82,7 +82,7 @@ function compare_values(& $target_object, $lhs_field, $operator, $rhs_value){
 	if($rhs_value=="bool_true" || $rhs_value=="bool_false"){
 		return compare_bool_values($target_object, $lhs_field, $operator, $rhs_value);
 	}
-	if($operator=="="){
+    if ($operator == "==") {
 		if($target_object->$lhs_field == $rhs_value) return true;
 	}
 	if($operator=="!="){
