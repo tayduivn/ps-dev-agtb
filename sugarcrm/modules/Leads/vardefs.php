@@ -484,6 +484,14 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROSPECT_LIST',
         ),
+        'prospect' => array(
+            'name' => 'prospect',
+            'type' => 'link',
+            'relationship' => 'lead_prospect',
+            'module' => 'Prospects',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROSPECT',
+        ),
         'preferred_language' => array(
             'name' => 'preferred_language',
             'type' => 'enum',
@@ -552,6 +560,15 @@ $dictionary['Lead'] = array(
         array('name' => 'idx_lead_mkto_id', 'type' => 'index', 'fields' => array('mkto_id')),
     ),
     'relationships' => array(
+        'lead_prospect' => array(
+            'lhs_module' => 'Leads',
+            'lhs_table' => 'leads',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Prospects',
+            'rhs_table' => 'prospects',
+            'rhs_key' => 'lead_id',
+            'relationship_type' => 'one-to-one'
+        ),
         'lead_direct_reports' => array(
             'lhs_module' => 'Leads',
             'lhs_table' => 'leads',
