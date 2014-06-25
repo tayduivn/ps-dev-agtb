@@ -3,16 +3,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once "modules/Mailer/MailerFactory.php";  // imports all but one of the Mailer classes that are needed
 require_once "modules/Mailer/AttachmentPeer.php"; // AttachmentPeer is needed to factor Attachments and EmbeddedImages
@@ -2571,6 +2569,10 @@ class Email extends SugarBean {
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
 
+        $GLOBALS['log']->debug("---- Email Search - FullQuery --------------------------------");
+        $GLOBALS['log']->debug("FullQuery: ({$fullQuery})");
+        $GLOBALS['log']->debug("--------------------------------------------------------------");
+
         return $fullQuery;
     }
         /**
@@ -2612,26 +2614,38 @@ class Email extends SugarBean {
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
         //Handle date from and to separately
+        $dbFormatDateFrom = '';
+        $dbFormatDateTo = '';
         if($bothDateRangesSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
-            $dbFormatDateFrom = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'date');
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false) . " 00:00:00";
+            $dbFormatDateFrom = $this->toDatabaseSearchDateTime($dbFormatDateFrom);
+            $dbFormatDateFrom = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'datetime');
 
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
-            $dbFormatDateTo = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'date');
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false) . " 23:59:59";
+            $dbFormatDateTo = $this->toDatabaseSearchDateTime($dbFormatDateTo);
+            $dbFormatDateTo = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'datetime');
 
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND emails.date_sent <= $dbFormatDateTo )";
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
-            $additionalWhereClause[] = "emails.date_sent <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'date');
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false) . " 23:59:59";
+            $dbFormatDateTo = $this->toDatabaseSearchDateTime($dbFormatDateTo);
+            $additionalWhereClause[] = "emails.date_sent <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'datetime');
         }
         elseif ($isDateFromSearchSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
-            $additionalWhereClause[] = "emails.date_sent >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'date');
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false) . " 00:00:00";
+            $dbFormatDateFrom = $this->toDatabaseSearchDateTime($dbFormatDateFrom);
+            $additionalWhereClause[] = "emails.date_sent >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'datetime');
         }
+
+        $GLOBALS['log']->debug("------ EMAIL SEARCH DATETIME Values ---------------------------------------------");
+        $GLOBALS['log']->debug("dbFormatDateFrom: {$dbFormatDateFrom}");
+        $GLOBALS['log']->debug("dbFormatDateTo: {$dbFormatDateTo}");
+        $GLOBALS['log']->debug("$additionalWhereClause: " . $additionalWhereClause[count($additionalWhereClause)-1]);
+        $GLOBALS['log']->debug("---------------------------------------------------------------------------------");
 
         $additionalWhereClause = implode(" AND ", $additionalWhereClause);
 
@@ -3081,4 +3095,26 @@ eoq;
             unset($this->modifiedFieldDefs[$field]);
             }
     	}
+
+    /**
+     * Set the DateTime Search Data based on Current User TimeZone
+     *
+     * @param  string $userSearchDateTime  - user Search Datetime
+     * @return string $dbSearchDateTime    - database Search Datetime
+     */
+    public function toDatabaseSearchDateTime($userSearchDateTime) {
+        global $timedate;
+        global $current_user;
+
+        $usertimezone = $current_user->getPreference('timezone');
+        if (empty($usertimezone)) {
+           $usertimezone = "UTC";
+        }
+        $tz = new DateTimeZone($usertimezone);
+
+        $sugarDateTime = new SugarDateTime($userSearchDateTime);
+        $sugarDateTime->setTimezone($tz);
+        $dbSearchDateTime = $timedate->asDb($sugarDateTime);
+        return $dbSearchDateTime;
+    }
 } // end class def

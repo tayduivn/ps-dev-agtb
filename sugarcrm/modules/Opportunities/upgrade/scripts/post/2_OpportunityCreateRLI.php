@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
@@ -32,14 +30,15 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
         $this->log("Creating missing RLIs for orphaned Opportunities");
         $sql = "SELECT '' as id, 
                        o.id as opportunity_id, 
-                       o.name, 
+                       o.name,
+                       o.amount as discount_price,
                        o.worst_case, 
                        o.amount, 
                        o.best_case, 
                        o.amount as cost_price, 
                        1 as quantity, 
                        o.currency_id, 
-                       o.amount_usdollar/o.amount as base_rate, 
+                       o.amount/o.amount_usdollar as base_rate,
                        o.probability, 
                        o.date_closed, 
                        o.date_closed_timestamp, 
@@ -78,7 +77,8 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
         $insertSQL = "INSERT INTO revenue_line_items 
                 (id, 
                  opportunity_id, 
-                 name, 
+                 name,
+                 discount_price,
                  worst_case, 
                  likely_case, 
                  best_case, 

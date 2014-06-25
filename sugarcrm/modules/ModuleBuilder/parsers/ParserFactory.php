@@ -2,31 +2,15 @@
 if (! defined ( 'sugarEntry' ) || ! sugarEntry)
     die ( 'Not A Valid Entry Point' ) ;
 
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/ModuleBuilder/parsers/constants.php';
@@ -113,7 +97,7 @@ class ParserFactory
                     //BEGIN SUGARCRM flav=ent ONLY
                     if ($lView == MB_PORTALRECORDVIEW || $lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW) {
                         $client = MB_PORTAL;
-                    }
+                }
                     //END SUGARCRM flav=ent ONLY
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
@@ -129,7 +113,7 @@ class ParserFactory
                     //BEGIN SUGARCRM flav=ent ONLY
                     if ($lView == MB_PORTALLISTVIEW) {
                         $client = MB_PORTAL;
-                    }
+                }
                     //END SUGARCRM flav=ent ONLY
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
@@ -168,10 +152,15 @@ class ParserFactory
                         return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
                     }
                 } else {
-                    require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
-                    // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
-                    $client = empty($client) ? 'base' : $client;
-                    return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
+                    if (isModuleBWC($moduleName)) {
+                        require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php' ;
+                        return new SubpanelMetaDataParser($subpanelName, $moduleName, $packageName);
+                    } else {
+                        // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
+                        $client = empty($client) ? 'base' : $client;
+                        require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
+                        return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
+                    }
                 }
             case MB_DASHLET :
             case MB_DASHLETSEARCH :

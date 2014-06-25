@@ -1,31 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: Save.php 55192 2010-03-10 19:47:04Z clee $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'modules/MySettings/TabController.php';
@@ -77,17 +61,15 @@ if (empty($focus->user_name)) {
     $newUser = false;
 }
 
-if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
-    && $current_user->id != $focus->id) {
-    $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
-    header("Location: index.php?module=Users&action=Logout");
-    exit;
-}
-if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Users')
-    && !empty($_POST['is_admin'])) {
-    $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change is_admin settings for user:". $focus->id);
-    header("Location: index.php?module=Users&action=Logout");
-    exit;
+if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')) {
+    if($current_user->id != $focus->id
+    || !empty($_POST['is_admin'])
+    || (!empty($_POST['UserType']) && $_POST['UserType'] == 'Administrator')
+    ) {
+        $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
+        header("Location: index.php?module=Users&action=Logout");
+        exit;
+    }
 }
 
     // Populate the custom fields
@@ -354,7 +336,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
             // This will more than likely already be true, but force it to be sure
             $focus->update_date_modified = true;
         }
-        
+
         $GLOBALS['sugar_config']['disable_team_access_check'] = true;
         $focus->save();
         $GLOBALS['sugar_config']['disable_team_access_check'] = false;

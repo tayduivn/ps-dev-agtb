@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once('modules/Opportunities/OpportunityHooks.php');
@@ -50,7 +48,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $hookMock::setSalesStatus($oppMock, 'before_save', array());
 
@@ -70,7 +68,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock->fetched_row['id'] = 'test';
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -141,7 +139,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -183,11 +181,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock->id = 'test_id';
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
-
-        $hookMock::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hookMock = new MockOpportunityHooks();
 
         $hr = new ReflectionClass($hookMock);
         $hr->setStaticPropertyValue(
@@ -204,5 +198,13 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         // unset it here
         BeanFactory::setBeanClass('RevenueLineItems');
+    }
+}
+
+class MockOpportunityHooks extends OpportunityHooks
+{
+    public static function isForecastSetup()
+    {
+        return true;
     }
 }

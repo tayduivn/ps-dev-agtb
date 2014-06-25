@@ -1,34 +1,70 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
-    extendsFrom:'ResultsView',
+
     plugins: ['Tooltip'],
+
     sidebarClosed: false,
-    closeSidebar: function () {
+
+    fallbackFieldTemplate: "detail",
+
+    events: {
+        'click [name=name]': 'gotoDetail',
+        'click .icon-eye-open': 'loadPreview',
+        'click [name=show_more_button]': 'showMoreResults'
+    },
+
+    /**
+     * Uses MixedBeanCollection to fetch search results.
+     */
+    fireSearchRequest: function (cb, offset) {
+        var self = this, options;
+        var mlist = app.metadata.getModuleNames({filter: 'visible'}); // visible
+        options = {
+            //Show alerts for this request
+            showAlerts: true,
+            query: self.lastQuery,
+            success:function(collection) {
+                cb(collection);
+            },
+            module_list: mlist,
+            error:function(error) {
+                cb(null); // lets callback know to dismiss the alert
+            }
+        };
+        if (offset) options.offset = offset;
+        this.collection.fetch(options);
+    },
+
+    /**
+     * Show more search results
+     */
+    showMoreResults: function() {
+        var self = this, options = {};
+        options.add = true;
+        //Show alerts for this request
+        options.showAlerts = true;
+        options.success = function() {
+            app.view.View.prototype._render.call(self);
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
+    },
+
+    gotoDetail: function(evt) {
+        var href = this.$(evt.currentTarget).parent().parent().attr('href');
+        window.location = href;
+    },
+
+    closeSidebar: function() {
         if (!this.sidebarClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.sidebarClosed = true;
@@ -45,6 +81,9 @@
         self.fireSearchRequest(function(collection) {
             // Bug 57853: Will brute force dismiss search dropdown if still present.
             $('.search-query').searchahead('hide');
+            if (self.disposed) {
+                return;
+            }
             // Add the records to context's collection
             if(collection && collection.length) {
                 app.view.View.prototype._render.call(self);
@@ -81,7 +120,10 @@
             this.$("li.search[data-id=" + model.get("id") + "]").addClass("on");
         }
     },
-    // Loads the right side preview view when clicking icon for a particular search result.
+
+    /**
+     * Loads the right side preview view when clicking icon for a particular search result.
+     */
     loadPreview: function(e) {
         var searchRow, selectedResultId, model;
         if (this.sidebarClosed) {

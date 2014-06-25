@@ -1,17 +1,15 @@
 <?php
  if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarSubpanelMetaDataUpgrader.php';
 
@@ -182,6 +180,16 @@ class SidecarMetaDataUpgrader
     public $extensions = array();
 
     /**
+     * Flag that is used in the upgrader to let the process know that this is an
+     * installation process and not a typical upgrade. This is used in getting the
+     * proper name of the module for upgrading pre-6.6 mobile metadata to 6.6+
+     * during installation of a package.
+     * 
+     * @var boolean
+     */
+    public $fromInstallation = false;
+
+    /**
      * Sets the list of files that need to be upgraded. Will look in directories
      * contained in $legacyFilePaths and will also attempt to identify custom
      * modules that are found within modules/
@@ -210,6 +218,7 @@ class SidecarMetaDataUpgrader
     public function setBaseFilesToUpgrade()
     {
         $this->setUpgradeFiles('base');
+        $this->getCustomModuleMetadata();
         $this->setUpgradeMBFiles($this->getMBModules());
         $this->setQuickCreateFiles();
         $this->setMenuFiles();
@@ -309,13 +318,13 @@ class SidecarMetaDataUpgrader
                 // For deployed modules we need to get
                 if ($deployed) {
                     // Reset the module name to the key_module name format
-                    $module = $package->key . '_' . $module;
+                    $modulename = $package->key . '_' . $module;
 
                     // Get the metadata directory
                     $metadatadir = "$appModulePath/metadata/{$customPath}";
 
                     // Get our upgrade files as base files since these are regular metadata
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', null, true, $subpanels);
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $modulename, $metatype, 'base', null, true, $subpanels);
                     $count += count($files);
                     $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
@@ -332,8 +341,8 @@ class SidecarMetaDataUpgrader
                     // Handle undeployed history metadata
                     $metadatadir = "$packagePath/metadata/{$customPath}";
 
-                    // Get our upgrade files
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false, $subpanels);
+                    // Get our upgrade files... these are still 'base' type files
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false, $subpanels);
                     $count += count($files);
                     $undeployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
@@ -963,9 +972,17 @@ class SidecarMetaDataUpgrader
             $type = 'history';
         }
 
-        if (empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
-            // if the module is not among active, not upgrading it for now
-            $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules ($module) not supported");
+        // if the module is not among active, not upgrading it for now, but letting
+        // undeployed get through to the next step of validation
+        if (empty($GLOBALS['beanList'][$module]) && $client != 'wireless' && $deployed) {
+            $this->logUpgradeStatus("Not upgrading $file: Module $module is deployed but not in the module list");
+            return false;
+        }
+
+        // If this is an undeployed module and a history file, stop. We only
+        // upgrade history files for deployed modules.
+        if (!$deployed && $history) {
+            $this->logUpgradeStatus("Not upgrading $file: This $module module is not deployed and this file is a history file");
             return false;
         }
 

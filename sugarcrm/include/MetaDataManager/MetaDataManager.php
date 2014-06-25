@@ -1,31 +1,15 @@
 <?php
 if(!defined('sugarEntry'))define('sugarEntry', true);
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
@@ -1707,7 +1691,6 @@ class MetaDataManager
     protected function getConfigs()
     {
         $sugarConfig = $this->getSugarConfig();
-
         $administration = new Administration();
         $administration->retrieveSettings();
 
@@ -1727,9 +1710,13 @@ class MetaDataManager
                 $configs['forgotpasswordON'] = false;
             }
         }
-        $auth = AuthenticationController::getInstance();
-        if($auth->isExternal()) {
-            $configs['externalLogin'] = true;
+
+        if (!empty($sugarConfig['authenticationClass'])) {
+            $auth = new AuthenticationController($sugarConfig['authenticationClass']);
+
+            if($auth->isExternal()) {
+                $configs['externalLogin'] = true;
+            }
         }
 
         if (isset($sugarConfig['analytics'])) {
@@ -2314,6 +2301,7 @@ class MetaDataManager
      * Get the data element of the language file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string  A JSON string of langauge data
      */
     protected function getLanguageFileData($lang, $ordered = false)
@@ -2541,7 +2529,7 @@ class MetaDataManager
     /**
      * Returns a list of URL's pointing to json-encoded versions of the strings
      *
-     * @param  array $data The metadata array
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array
      */
     public function getStringUrls($ordered = false)
@@ -2574,11 +2562,12 @@ class MetaDataManager
      * Public read only accessor for getting a language file hash if there is one
      *
      * @param string $lang The language to get a hash for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string The hash if there is one, false otherwise
      */
-    public function getLanguageHash($lang)
+    public function getLanguageHash($lang, $ordered = false)
     {
-        return $this->getCachedLanguageHash($lang);
+        return $this->getCachedLanguageHash($lang, $ordered);
     }
 
     /**
@@ -2617,6 +2606,7 @@ class MetaDataManager
      * Gets a url for a language file
      *
      * @param string $language The language to get the file for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string
      */
     protected function getLangUrl($language, $ordered = false)
@@ -2631,6 +2621,7 @@ class MetaDataManager
      * Get the hash element of the language file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string  The hash of the contents of the language file
      */
     protected function getLanguageFileHash($lang, $ordered = false)
@@ -2643,14 +2634,15 @@ class MetaDataManager
      * Gets the file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array   Array containing the hash and data for a language file
      */
     protected function getLanguageFileProperties($lang, $ordered = false)
     {
-        $hash = $this->getCachedLanguageHash($lang);
+        $hash = $this->getCachedLanguageHash($lang, $ordered);
         $resp = $this->buildLanguageFile($lang, $this->getModuleList(), $ordered);
         if (empty($hash) || $hash != $resp['hash']) {
-            $this->putCachedLanguageHash($lang, $resp['hash']);
+            $this->putCachedLanguageHash($lang, $resp['hash'], $ordered);
         }
 
         return $resp;
@@ -2660,11 +2652,12 @@ class MetaDataManager
      * Gets a hash for a cached language
      *
      * @param string $lang The lang to get the hash for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string
      */
-    protected function getCachedLanguageHash($lang)
+    protected function getCachedLanguageHash($lang, $ordered = false)
     {
-        $key = $this->getLangUrl($lang);
+        $key = $this->getLangUrl($lang, $ordered);
 
         return $this->getFromHashCache($key);
     }
@@ -2674,12 +2667,13 @@ class MetaDataManager
      *
      * @param string $language The language for this file
      * @param array $modules The module list
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array Array containing the language file contents and the hash for the data
      */
     protected function buildLanguageFile($language, $modules, $ordered = false)
     {
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
-        $filePath = $this->getLangUrl($language);
+        $filePath = $this->getLangUrl($language, $ordered);
         if (SugarAutoLoader::fileExists($filePath)) {
             // Get the contents of the file so that we can get the hash
             $v1data = file_get_contents($filePath);
@@ -2779,10 +2773,11 @@ class MetaDataManager
      *
      * @param string $lang The language string for the language file
      * @param string $hash The hash for the language file
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      */
-    protected function putCachedLanguageHash($lang, $hash)
+    protected function putCachedLanguageHash($lang, $hash, $ordered = false)
     {
-        $key = $this->getLangUrl($lang);
+        $key = $this->getLangUrl($lang, $ordered);
         $this->addToHashCache($key, $hash);
     }
 
@@ -2882,19 +2877,21 @@ class MetaDataManager
         @include($path);
 
         // Delete language caches and remove from the hash cache
-        $pattern = $this->getLangUrl('(.*)');
-        foreach ($hashes as $k => $v) {
-            if (preg_match("#^{$pattern}$#", $k, $m)) {
-                // Add the deleted language to the stack
-                $this->deletedLanguageCaches[] = $m[1];
+        foreach (array(true, false) as $ordered) {
+            $pattern = $this->getLangUrl('(.*)', $ordered);
+            foreach ($hashes as $k => $v) {
+                if (preg_match("#^{$pattern}$#", $k, $m)) {
+                    // Add the deleted language to the stack
+                    $this->deletedLanguageCaches[] = $m[1];
 
-                // Remove from the cache
-                unset($hashes[$k]);
+                    // Remove from the cache
+                    unset($hashes[$k]);
 
-                // Delete the file
-                unlink($k);
+                    // Delete the file
+                    unlink($k);
 
-                $deleted = true;
+                    $deleted = true;
+                }
             }
         }
 

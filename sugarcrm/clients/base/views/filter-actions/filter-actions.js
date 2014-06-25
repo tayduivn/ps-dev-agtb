@@ -1,23 +1,23 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * Actions for {@link View.Views.Base.FilterRowsView}.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Part of {@link View.Layouts.Base.FilterpanelLayout}.
+ *
+ * @class View.Views.Base.FilterActionsView
+ * @alias SUGAR.App.view.views.BaseFilterActionsView
+ * @extends View.View
  */
 ({
-    /**
-     * Actions for BaseFilterRowsViews
-     * Part of BaseFilterpanelLayout
-     *
-     * @class BaseFilterActionsView
-     * @extends View
-     */
     events: {
         'change input': 'filterNameChanged',
         'keyup input': 'filterNameChanged',
@@ -145,18 +145,44 @@
     },
 
     /**
-     * Trigger `filter:create:close` to close the filter create panel.
+     * Handler for canceling form editing.
+     *
+     * @triggers filter:apply to apply the previous filter definition.
+     * @triggers filter:select:filter to switch back to the default filter.
+     * @triggers filter:create:close to close the filter creation form.
      */
     triggerClose: function() {
-        var id = this.context.editingFilter.get('id');
+        var filter = this.context.editingFilter,
+            filterLayout = this.layout.getComponent('filter'),
+            id = filter.get('id'),
+            changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
 
-        //Check the current filter definition
-        var filterDef = this.layout.getComponent('filter-rows').buildFilterDef(true);
         //Apply the previous filter definition if something has changed meanwhile
-        if (!_.isEqual(this.context.editingFilter.get('filter_definition'), filterDef)) {
-            this.layout.trigger('filter:apply', null, this.context.editingFilter.get('filter_definition'));
+        if (changedAttributes && changedAttributes.filter_definition) {
+            filter.revertAttributes();
+            this.layout.trigger(
+                /**
+                 * @event
+                 * See {@link View.Layouts.Base.FilterPanelLayout#filter:apply}.
+                 */
+                'filter:apply', null, filter.get('filter_definition'));
         }
-        this.layout.getComponent('filter').trigger('filter:create:close', true, id);
+        if (!id) {
+            filterLayout.clearLastFilter(this.layout.currentModule, filterLayout.layoutType);
+            filterLayout.trigger(
+                /**
+                 * @event
+                 * See {@link View.Layouts.Base.FilterLayout#filter:select:filter}.
+                 */
+                'filter:select:filter', filterLayout.filters.defaultFilterFromMeta);
+            return;
+        }
+        this.layout.trigger(
+            /**
+             * @event
+             * See {@link View.Layouts.Base.FilterLayout#filter:create:close}.
+             */
+            'filter:create:close');
     },
 
     /**

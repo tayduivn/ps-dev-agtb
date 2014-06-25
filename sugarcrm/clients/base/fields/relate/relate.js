@@ -1,14 +1,12 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
  * Relate field provides a link to a module that is set in the definition of
@@ -65,7 +63,7 @@
  * TODO: we have a mix of properties here with camelCase and underscore.
  * Needs to be addressed.
  *
- * @class View.Fields.BaseRelateField
+ * @class View.Fields.Base.RelateField
  * @alias SUGAR.App.view.fields.BaseRelateField
  * @extends View.Field
  */
@@ -479,8 +477,31 @@
      */
     bindDomChange: function () {
     },
+
+    /**
+     * Gets the correct module to search based on field/link defs. 
+     * 
+     * If both `this.def.module` and `link.module` are empty, fall back onto the 
+     * metadata manager to get the proper module as a last resort.
+     * 
+     * @return {String} The module to search on.
+     */
     getSearchModule: function () {
-        return this.def.module;
+        // If we have a module property on this field, use it
+        if (this.def.module) {
+            return this.def.module;
+        }
+
+        // No module in the field def, so check if there is a module in the def
+        // for the link field
+        var link = this.def.link && this.model.fields && this.model.fields[this.def.link] || {};
+        if (link.module) {
+            return link.module;
+        }
+
+        // At this point neither the def nor link field def have a module... let
+        // metadata manager try find it
+        return app.data.getRelatedModule(this.model.module, this.def.link);
     },
     getPlaceHolder: function () {
         var module,

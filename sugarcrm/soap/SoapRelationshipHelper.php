@@ -1,24 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 require_once('soap/SoapError.php');
 
 function check_for_relationship($relationships, $module){
@@ -226,20 +217,13 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 
 	if($has_join == false){
 		$query .= " inner join $mod->table_name m2 on $table_alias.$mod2_key = m2.id AND m2.id = '$current_user->id'";
-		//BEGIN SUGARCRM flav=pro ONLY
-		if(!$mod2->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm2 on tm2.user_id = '$current_user->id' AND tm2.team_id = $table_alias.team_id AND tm2.deleted=0 AND m2.id = '$current_user->id'";
-		//END SUGARCRM flav=pro ONLY
+		$mod2->add_team_security_where_clause($query, 'm2');
 	}
 	else{
 		$query .= " inner join $mod->table_name m1 on rt.$mod_key = m1.id ";
 		$query .= " inner join $mod2->table_name m2 on rt.$mod2_key = m2.id AND m2.id = '$current_user->id'";
-		//BEGIN SUGARCRM flav=pro ONLY
-		if(!$mod->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm1 on tm1.user_id = '$current_user->id' AND tm1.team_id = m1.team_id AND tm1.deleted=0";
-		if(!$mod2->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm2 on tm2.user_id = '$current_user->id' AND tm2.team_id = m2.team_id AND tm2.deleted=0";
-		//END SUGARCRM flav=pro ONLY
+		$mod->add_team_security_where_clause($query, 'm1');
+		$mod2->add_team_security_where_clause($query, 'm2');
 	}
 
 	if(!empty($relationship_query)){

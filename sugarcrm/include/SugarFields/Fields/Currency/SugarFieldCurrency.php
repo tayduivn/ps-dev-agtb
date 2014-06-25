@@ -1,24 +1,15 @@
 <?php
 
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once('include/SugarFields/Fields/Float/SugarFieldFloat.php');
 
@@ -82,10 +73,24 @@ class SugarFieldCurrency extends SugarFieldFloat
         /** @var Currency $base_currency */
         $base_currency = SugarCurrency::getBaseCurrency();
         $currency_id = $settings->currency_id;
+
+        // Remove the grouping separator
+        $value = str_replace($settings->num_grp_sep, '', $value);
+
+        // change the decimal separator to a . if it's not already one
+        if ($settings->dec_sep != '.') {
+            $value = str_replace($settings->dec_sep, '.', $value);
+        }
+
         if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
             // convert amount from base
             $value = str_replace($base_currency->symbol, '', $value);
-            $value = SugarCurrency::convertAmountFromBase($value, $settings->currency_id);
+            try {
+                $value = SugarCurrency::convertAmountFromBase($value, $settings->currency_id);
+            } catch (SugarMath_Exception $sme) {
+                $GLOBALS['log']->error('Currency Field Import Error: ' . $sme->getMessage());
+                return false;
+            }
         } elseif (isset($vardef['is_base_currency']) && $vardef['is_base_currency']) {
             $value = str_replace($base_currency->symbol, '', $value);
             $currency_id = $base_currency->id;
@@ -93,9 +98,8 @@ class SugarFieldCurrency extends SugarFieldFloat
             $value = str_replace($settings->currency_symbol, '', $value);
         }
 
-        $value = $settings->float($value, $vardef, $focus);
-
-        if ($value === false) {
+        // last check, if for some reason we get here and the value is not numeric, we should just fail out.
+        if (!is_numeric($value)) {
             return false;
         }
 

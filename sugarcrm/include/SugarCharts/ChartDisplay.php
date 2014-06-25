@@ -1,30 +1,14 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 
@@ -127,7 +111,8 @@ class ChartDisplay
             $sugarChart = SugarChartFactory::getInstance('', 'Reports');
 
             $sugarChart->setData($this->chartRows);
-            $sugarChart->setProperties($this->chartTitle, '', $this->chartType);
+            global $do_thousands;
+            $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands);
 
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();
@@ -218,7 +203,19 @@ class ChartDisplay
 
         $mod_strings = return_module_language($current_language, 'Reports');
 
-        $this->chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . $this->get_k();
+        // Use Locale values if we are not rounding to thousands
+        $round = null;
+        $precision = null;
+        if ($do_thousands) {
+            $round = 0;
+            $precision = 0;
+        }
+
+        $this->chartTitle = $mod_strings['LBL_TOTAL_IS']
+            . ' '
+            . $symbol
+            . format_number($total, $round, $precision)
+            . $this->get_k();
     }
 
     /**
@@ -234,9 +231,23 @@ class ChartDisplay
                 continue;
             }
             $chart_groupings[$row_remap['group_base_text']] = true; // store all the groupingstem
+            if (!empty($row['cells'][$this->reporter->chart_numerical_position]['key'])) {
+                $fieldKey = $row['cells'][$this->reporter->chart_numerical_position]['key'];
+
+                if (!empty($this->reporter->all_fields[$fieldKey])) {
+                    $fieldDef = $this->reporter->all_fields[$fieldKey];
+                    if ($fieldDef['type'] == 'currency') {
+                        $numKey = "numerical_is_currency";
+                        $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']][$numKey] = true;
+                    }
+                }
+            }
             if (empty($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']])) {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']] = $row_remap;
             } else {
+                if (!isset($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'])) {
+                    $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] = 0;
+                }
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
         }

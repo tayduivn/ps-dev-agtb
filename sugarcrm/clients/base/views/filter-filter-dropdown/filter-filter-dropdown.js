@@ -1,37 +1,23 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * View for the filter dropdown.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Part of {@link View.Layouts.Base.FilterLayout}.
+ *
+ * @class View.Views.Base.FilterFilterDropdownView
+ * @alias SUGAR.App.view.views.BaseFilterFilterDropdownView
+ * @extends View.View
+ */
 ({
-    /**
-     * View for the filter dropdown.
-     * Part of BaseFilterLayout
-     *
-     * @class BaseFilterFilterDropdown
-     * @extends View
-     */
     tagName: "span",
 
     events: {
@@ -68,7 +54,7 @@
         this._select2formatSelectionTemplate = app.template.get("filter-filter-dropdown.selection-partial");
         this._select2formatResultTemplate = app.template.get("filter-filter-dropdown.result-partial");
 
-        this.listenTo(this.layout, "filter:change:filter", this.handleChange);
+        this.listenTo(this.layout, "filter:select:filter", this.handleSelect);
         this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
         this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
     },
@@ -152,49 +138,26 @@
         this.filterNode.on("change",
             /**
              * Called when the user selects a filter in the dropdown
-             * Triggers filter:change:filter on filter layout
              *
-             * @param {Event} e
+             * @triggers filter:change:filter on filter layout to indicate a new
+             *   filter has been selected.
+             *
+             * @param {Event} e The `change` event.
              */
             function(e) {
-                //When user clicks on `Create` we expect to see the form totally empty.
-                if (e.val === 'create') {
-                    self.layout.clearFilterEditState();
-                }
-                self.layout.trigger("filter:change:filter", e.val);
+                self.layout.trigger('filter:change:filter', e.val);
             }
         );
     },
 
     /**
-     * Handler for when the custom filter dropdown value changes.
-     * @param  {String} id      The GUID of the filter to apply.
+     * This handler is useful for other components that trigger
+     * `filter:select:filter` in order to select the dropdown value.
+     *
+     * @param {String} id The id of the filter to select in the dropdown.
      */
-    handleChange: function(id) {
-        var filter;
-        // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
-        // the filter form in the state he left it.
-        var editState = this.layout.retrieveFilterEditState();
-        if (id === 'create' || (editState && editState.id === id)) {
-            filter = app.data.createBean('Filters');
-            filter.set(editState);
-        } else {
-            filter = this.layout.filters.get(id) || this.layout.emptyFilter;
-        }
-        if (id === "create") {
-            this.layout.layout.trigger("filter:set:name", '');
-            this.layout.trigger("filter:create:open", filter);
-        } else {
-            if (filter.get("editable") === false) {
-                this.layout.trigger("filter:create:close");
-            }
-
-            if (this.layout.createPanelIsOpen()) {
-                this.layout.trigger("filter:create:open", filter);
-            }
-        }
-
-        this.filterNode.select2("val", id);
+    handleSelect: function(id) {
+        this.filterNode.select2('val', id, true);
     },
 
     /**
@@ -298,7 +261,7 @@
      * @returns {Boolean} TRUE if filter is editable, FALSE otherwise
      */
     isFilterEditable: function(id) {
-        if (!this.filterDropdownEnabled || this.layout.showingActivities) {
+        if (!this.layout.canCreateFilter() || !this.filterDropdownEnabled || this.layout.showingActivities) {
             return false;
         }
         if (id === "create" || id === 'all_records') {
@@ -356,7 +319,7 @@
         if (filterId === 'all_records') {
             // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
             // the filter form in the state he left it.
-            this.layout.trigger("filter:change:filter", 'create');
+            this.layout.trigger("filter:select:filter", 'create');
         } else {
             filterModel = this.layout.filters.get(filterId);
         }
@@ -382,7 +345,7 @@
         //We want to stop propagation so it doesn't bubble up.
         evt.stopPropagation();
         this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
-        this.layout.trigger('filter:change:filter', this.layout.filters.defaultFilterFromMeta);
+        this.layout.trigger('filter:select:filter', this.layout.filters.defaultFilterFromMeta);
     },
 
     /**

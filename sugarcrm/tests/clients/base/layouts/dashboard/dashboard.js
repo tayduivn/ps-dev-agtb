@@ -1,17 +1,15 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Base.Layout.Dashboard", function(){
+describe("Base.Layout.Dashboard", function() {
 
     var app, layout;
 
@@ -24,10 +22,10 @@ describe("Base.Layout.Dashboard", function(){
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        sinon.collection.restore();
         layout.dispose();
         layout.context = null;
         layout = null;
-        sinon.collection.restore();
     });
 
     describe("Home Dashboard", function() {
@@ -62,8 +60,8 @@ describe("Base.Layout.Dashboard", function(){
 
         it('should show help dashboard', function() {
             var collection = new Backbone.Collection();
-            collection.add(new Backbone.Model({'dashboard_type' : 'help-dashboard', id: 'help-dash'}));
-            collection.add(new Backbone.Model({'dashboard_type' : 'dashboard', id: 'normal-dash'}));
+            collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
+            collection.add(new Backbone.Model({'dashboard_type': 'dashboard', id: 'normal-dash'}));
 
             sandbox.stub(app, 'navigate', function(context, id) {
             });
@@ -74,8 +72,8 @@ describe("Base.Layout.Dashboard", function(){
 
         it('should hide help dashboard when another dashboard is present', function() {
             var collection = new Backbone.Collection();
-            collection.add(new Backbone.Model({'dashboard_type' : 'help-dashboard', id: 'help-dash'}));
-            collection.add(new Backbone.Model({'dashboard_type' : 'dashboard', id: 'normal-dash'}));
+            collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
+            collection.add(new Backbone.Model({'dashboard_type': 'dashboard', id: 'normal-dash'}));
 
             sandbox.stub(app, 'navigate', function(context, id) {
             });
@@ -92,7 +90,6 @@ describe("Base.Layout.Dashboard", function(){
             var expectedApiUrl = "Dashboards";
             expect(syncStuff).toHaveBeenCalledWith("read", expectedApiUrl);
             syncStuff.restore();
-
 
             syncStuff = sinon.stub(app.api, 'records');
             model.set("foo", "Blah");
@@ -118,12 +115,12 @@ describe("Base.Layout.Dashboard", function(){
                 module: parentModule,
                 layout: "records"
             }),
-            parentLayout = app.view.createLayout({
-                name : "records",
-                type: "records",
-                module: "Accounts",
-                context : context
-            });
+                parentLayout = app.view.createLayout({
+                    name: "records",
+                    type: "records",
+                    module: "Accounts",
+                    context: context
+                });
             layout = SugarTest.createLayout("base", "Home", "dashboard", null, parentLayout.context.getChildContext({
                 module: "Home"
             }));
@@ -293,6 +290,44 @@ describe("Base.Layout.Dashboard", function(){
                 sandbox.restore();
             });
 
+            describe('when on home module and help-dashboard visible', function() {
+                var _renderCalled = false;
+                beforeEach(function() {
+                    layout.module = 'Home';
+                    sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return true;
+                    });
+
+                    sandbox.stub(layout, 'getComponent', function() {
+                        return {
+                            getComponent: function() {
+                                return {
+                                    meta: {
+                                        buttons: [],
+                                        last_state: {}
+                                    },
+                                    render: function() {
+                                        _renderCalled = true;
+                                    }
+                                };
+                            }
+                        };
+                    });
+
+                    sandbox.stub(app.metadata, 'getView', function() {
+                        return {
+                            buttons: [],
+                            last_state: {}
+                        };
+                    });
+                });
+
+                it('should re-render the header pane', function() {
+                    layout.model.trigger('sync');
+                    expect(_renderCalled).toBeTruthy();
+                });
+            });
+
             describe('when sidebar is open', function() {
                 var isHelpStub;
                 beforeEach(function() {
@@ -365,7 +400,9 @@ describe("Base.Layout.Dashboard", function(){
                 expectedApiUrl;
             expect(model.apiModule).toBe("Dashboards");
             expect(model.dashboardModule).toBe(parentModule);
-            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() { return true; });
+            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() {
+                return true;
+            });
             var syncStub = sinon.stub(app.api, 'records');
             layout.loadData();
 
@@ -390,7 +427,9 @@ describe("Base.Layout.Dashboard", function(){
 
         it("should navigate RHS panel without replacing document URL", function() {
             var syncStub, expectedApiUrl;
-            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() { return true; });
+            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() {
+                return true;
+            });
             syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
             expectedApiUrl = "Dashboards";
@@ -436,6 +475,50 @@ describe("Base.Layout.Dashboard", function(){
         it('should return false when handleValidationError is invoked', function() {
             var result = layout.error.handleValidationError();
             expect(result).toBe(false);
+        });
+    });
+
+    describe('navigateLayout', function() {
+        var _componentDef, parentModule, parentLayout, context;
+        beforeEach(function() {
+
+            parentModule = 'Tasks';
+            context = app.context.getContext({
+                module: parentModule,
+                layout: 'records'
+            });
+            parentLayout = app.view.createLayout({
+                name: 'records',
+                type: 'records',
+                module: 'Accounts',
+                context: context
+            });
+            layout = SugarTest.createLayout('base', 'Home', 'dashboard', null,
+                    parentLayout.context.getChildContext({
+                        module: 'Home'
+                    })
+                );
+            sinon.collection.stub(layout, 'dispose');
+            parentLayout.addComponent(layout);
+            sinon.collection.stub(layout.layout, 'render');
+            sinon.collection.stub(layout.layout, '_addComponentsFromDef', function(def) {
+                _componentDef = def;
+            });
+        });
+
+        it('will set type to dashboard when undefined', function() {
+            layout.navigateLayout('hello-world');
+            expect(_componentDef[0].layout.components[0].view).toEqual('dashboard-headerpane');
+        });
+
+        it('will set type to dashboard when not equal to dashboard or help-dashboard', function() {
+            layout.navigateLayout('hello-world', 'test-dashboard');
+            expect(_componentDef[0].layout.components[0].view).toEqual('dashboard-headerpane');
+        });
+
+        it('will set headerpane to help-dashboard when type is help-dashboard', function() {
+            layout.navigateLayout('hello-world', 'help-dashboard');
+            expect(_componentDef[0].layout.components[0].view).toEqual('help-dashboard-headerpane');
         });
     });
 });

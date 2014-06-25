@@ -110,8 +110,10 @@ describe("Record View", function () {
 
         oRouter = SugarTest.app.router;
         SugarTest.app.router = {
-            buildRoute: function() {},
-            navigate: function() {}
+            buildRoute: $.noop,
+            navigate: $.noop,
+            hasAccessToModule: $.noop,
+            bwcRedirect: $.noop
         };
         buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function (module, id, action, params) {
             return module + '/' + id;

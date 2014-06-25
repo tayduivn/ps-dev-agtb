@@ -1,25 +1,22 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-
 /**
- * @class BaseDashboardLayout
- * @extends app.view.Layout
- *
  * The outer layout of the dashboard.
- * This layout contains the header view and wraps the daslet-main layout.
- * The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/<id>)
  *
+ * This layout contains the header view and wraps the daslet-main layout.
+ * The layouts for each dashboard are stored in the server.
+ *
+ * @class View.Layouts.Base.DashboardLayout
+ * @alias SUGAR.App.view.layouts.BaseDashboardLayout
+ * @extends View.Layout
  */
 ({
     className: 'row-fluid',
@@ -110,6 +107,21 @@
         this.model.on('sync', function() {
             if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
                 app.events.trigger('app:help:shown');
+
+                // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
+                // which means we need to re-render the dashboard-headerpane to contain the meta from
+                // the help-dashboard-headerpane view
+                if (this.module === 'Home') {
+                    var list = this.getComponent('list'),
+                        headerpane = (!_.isUndefined(list)) ? list.getComponent('dashboard-headerpane') : undefined;
+
+                    if (headerpane) {
+                        var help_headerpane_meta = app.metadata.getView(this.module, 'help-dashboard-headerpane');
+                        help_headerpane_meta.last_state = headerpane.meta.last_state;
+                        headerpane.meta = help_headerpane_meta;
+                        headerpane.render();
+                    }
+                }
             }
         }, this);
 
@@ -431,7 +443,7 @@
 
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
-            this._navigateLayout(dashboard.get('id'));
+            this._navigateLayout(dashboard.get('id'), dashboard.get('dashboard_type'));
         } else if (hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
             this._navigateLayout('list');
@@ -449,13 +461,14 @@
      * Intercept the navigateLayout calls to make sure that the dashboard we are currently one didn't change,
      * if it did, we need to prompt and make sure they want to continue or cancel.
      *
-     * @param {String} dashboard        What dashboard do we want to display
+     * @param {String} dashboard What dashboard do we want to display
+     * @param {string} [type] What type of dashboard are we loading, default `dashboard`
      * @return {Boolean}
      * @private
      */
-    _navigateLayout: function(dashboard) {
+    _navigateLayout: function(dashboard, type) {
         var onConfirm = _.bind(function() {
-                this.navigateLayout(dashboard);
+                this.navigateLayout(dashboard, type);
             }, this),
             headerpane = this.getComponent('dashboard-headerpane');
 
@@ -482,11 +495,17 @@
      * <pre><code>dashboard_type</code></pre> gets used in dashletselect to filter dashlets
      *
      * @param {String} id dashboard id
+     * @param {String} [type] what type of dashboard are we dealing with, default: `dashboard`
      */
-    navigateLayout: function(id) {
+    navigateLayout: function(id, type) {
         var layout = this.layout,
-            lastVisitedStateKey = this.getLastStateKey();
+            lastVisitedStateKey = this.getLastStateKey(),
+            type = (_.isUndefined(type)) ? 'dashboard' : type;
         this.dispose();
+
+        if (!_.contains(['dashboard', 'help-dashboard'], type)) {
+            type = 'dashboard';
+        }
 
         //if dashboard layout navigates to the different dashboard,
         //it should store last visited dashboard id.
@@ -509,7 +528,7 @@
                     type: 'dashboard',
                     components: (id === 'list') ? [] : [
                         {
-                            view: 'dashboard-headerpane'
+                            view: type + '-headerpane'
                         },
                         {
                             layout: 'dashlet-main'

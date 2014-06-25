@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php';
@@ -28,50 +26,38 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
     /**
      * The constructor
-     * @param string $linkName
+     * @param string $subpanelName
      * @param string $loadedModule - Accounts
      * @param string $client - base
      */
-    public function __construct($linkName, $loadedModule, $client = 'base')
+    public function __construct($subpanelName, $loadedModule, $client = 'base')
     {
-        $GLOBALS['log']->debug(get_class($this) . "->__construct($linkName , $loadedModule)");
+        $GLOBALS['log']->debug(get_class($this) . "->__construct($subpanelName , $loadedModule)");
 
         $this->mdc = new MetaDataConverter();
         $this->loadedModule = $loadedModule;
         $this->setViewClient($client);
-        $this->linkName = $this->getLinkName($linkName, $loadedModule);
-
-        $focus = BeanFactory::getBean($loadedModule);
-        if ($focus) {
-            $this->legacySubpanelName = $this->mdc->getLegacySubpanelFileName($focus, $this->linkName);
-        } else {
-            $this->legacySubpanelName = 'For' . $loadedModule;
-        }
+        $linkName = $this->linkName = $this->getLinkName($subpanelName, $loadedModule);
 
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
-
         // Get the linkdef, but make sure to tell VardefManager to use name instead by passing true
-        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName, true);
-
+        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $subpanelName, true);
         if ($bean->load_relationship($linkName)) {
             $link = $bean->$linkName;
         } else {
             $link = new Link2($linkName, $bean);
         }
-
         $this->_moduleName = $link->getRelatedModuleName();
-
         $this->bean = BeanFactory::getBean($this->_moduleName);
 
         $subpanelFixed = true;
-
         if(empty($this->bean)) {
             $subpanelFixed = $this->fixUpSubpanel();
         }
 
         if(empty($linkDef['name']) && (!$subpanelFixed && isModuleBWC($this->loadedModule))) {
-            $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
+            $GLOBALS['log']->error("Cannot find a link for {$subpanelName} on {$loadedModule}");
             return true;
         }
 
@@ -149,7 +135,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
      */
     protected function convertLegacyViewDef($listFields)
     {
-        $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($this->legacySubpanelName);
+        $this->sidecarSubpanelName = $this->getSidecarSubpanelViewName($this->loadedModule, $this->linkName);
         $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient(
             ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
         if (!file_exists($this->sidecarFile)) {
@@ -157,6 +143,16 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->deploy($viewDefs);
         }
         return true;
+    }
+
+    /**
+     * @param $parentModule
+     * @param $linkName
+     *
+     * @return string the custom subpanel name for this given parent module and link name
+     */
+    protected function getSidecarSubpanelViewName($parentModule, $linkName) {
+        return strtolower("subpanel-for-$parentModule-$linkName");
     }
 
     /**
@@ -210,52 +206,50 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
      */
     protected function setupSubpanelViewDefFileInfo()
     {
-        $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($this->legacySubpanelName);
+        $client = $this->getViewClient();
+        $this->sidecarSubpanelName = $this->getSidecarSubpanelViewName($this->loadedModule, $this->linkName);
+
+        if ($client !== 'base') {
+            $layoutFiles[] = "modules/{$this->loadedModule}/clients/base/layouts/subpanels/subpanels.php";
+        }
 
         // check if there is an override
         $layoutFiles = array(
-            "modules/{$this->loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php",
+            "modules/{$this->loadedModule}/clients/{$client}/layouts/subpanels/subpanels.php",
         );
-        $layoutExtensionName = array("sidecar");
 
-        if ($this->getViewClient() !== 'base') {
-            $layoutFiles[] = "modules/{$this->loadedModule}/clients/base/layouts/subpanels/subpanels.php";
-        }
         foreach ($layoutFiles as $file) {
             @include $file;
         }
-        foreach ($layoutExtensionName as $extension) {
-            $file = SugarAutoLoader::loadExtension($extension, $this->loadedModule);
-            if ($file !== false) {
-                @include $file;
-            }
+        $extension = "custom/modules/{$this->loadedModule}/Ext/clients/$client/layouts/subpanels/subpanels.ext.php";
+        if (SugarAutoLoader::fileExists($extension)){
+            @include $extension;
         }
 
-        if(!empty($viewdefs[$this->loadedModule]['base']['layout']['subpanels']['components'])) {
-
-            $components = $viewdefs[$this->loadedModule]['base']['layout']['subpanels']['components'];
-
+        if(!empty($viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'])) {
+            $components = $viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'];
             foreach ($components as $key => $component) {
                 if (empty($component['override_subpanel_list_view'])) {
                     continue;
                 }
-                if (is_array($component['override_subpanel_list_view']) && $component['override_subpanel_list_view']['link'] == $this->linkName) {
-                    if ($this->legacySubpanelName == "default") {
-                        $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
-                    }
+                if (is_array($component['override_subpanel_list_view'])
+                    && $component['override_subpanel_list_view']['link'] == $this->linkName
+                ) {
                     $this->loadedSubpanelName = $component['override_subpanel_list_view']['view'];
-                    $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php") ?
-                        "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php"
-                        : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php";
-                    $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+                    $path = "modules/{$this->_moduleName}/clients/{$client}"
+                          . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php";
+
+                    $this->loadedSubpanelFileName = file_exists("custom/$path") ? "custom/$path" : $path;
+                    $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/{$client}"
+                                       . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
                     $this->overrideArrayKey = $key;
                     return true;
                 }
             }
         }
 
-        $subpanelFile = "modules/{$this->_moduleName}/clients/" . $this->getViewClient(
-            ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+        $subpanelFile = "modules/{$this->_moduleName}/clients/{$client}"
+                      . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
 
         $defaultSubpanelFile = "modules/{$this->_moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
         $this->loadedSubpanelName = $this->sidecarSubpanelName;
@@ -355,8 +349,58 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->_viewdefs,
             $this->sidecarFile
         );
+
+        $this->saveSidecarSubpanelDefOverride();
         // clear the cache for this modules only
         MetaDataManager::refreshModulesCache(array($this->loadedModule, $this->_moduleName));
+    }
+
+    /**
+     * Saves a sidecar layout extension to use the new view override for this subpanel
+     */
+    protected function saveSidecarSubpanelDefOverride()
+    {
+
+        $client = $this->getViewClient();
+        $layoutPath = "custom/Extension/modules/{$this->loadedModule}/Ext/clients/$client/layouts/subpanels";
+        $layoutDefsName = "viewdefs['{$this->loadedModule}']['$client']['layout']['subpanels']['components'][]";
+        $viewName = $filename = $this->sidecarSubpanelName;
+        $overrideName = 'override_subpanel_list_view';
+
+        $this->removeOldOverideExtension($layoutPath, $client);
+
+        $overrideValue = array(
+            "link" => $this->linkName,
+            "view" => $viewName,
+        );
+
+        $newValue = override_value_to_string($layoutDefsName, $overrideName, $overrideValue);
+        mkdir_recursive($layoutPath, true);
+
+        $extname = '_override' . $filename;
+
+        sugar_file_put_contents(
+            "{$layoutPath}/{$extname}.php",
+            "<?php\n//auto-generated file DO NOT EDIT\n$newValue\n"
+        );
+    }
+
+    /**
+     * Searches for and removes any older layout override extensions that reference this subpanel
+     * @param $layoutPath path to the layout extension folder for the current module
+     */
+    protected function removeOldOverideExtension($layoutPath, $client = 'base')
+    {
+        $files = glob("$layoutPath/_override*.php");
+        foreach ($files as $override) {
+            $viewdefs = array();
+            @include $override;
+            if (!empty($viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'][0]['override_subpanel_list_view']['link'])
+                && $viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'][0]['override_subpanel_list_view']['link'] == $this->linkName
+            ) {
+                unlink($override);
+            }
+        }
     }
 
     /**

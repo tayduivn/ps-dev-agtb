@@ -1,29 +1,13 @@
 <?php
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
@@ -759,7 +743,6 @@ function process_advanced_actions(& $focus, $field, $meta_array, & $rel_this){
 	if($meta_array['adv_type']=='value_calc'){
 
 		$jang = get_expression($meta_array['ext1'], $rel_this->$field, $meta_array['value']);
-		echo $jang;
 		return $jang;
 	}
 
@@ -819,9 +802,15 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 		}
 	} elseif($field_name == 'modified_by_name' && $use_past_array) {
         return $source_object->old_modified_by_name;
-    } elseif($field_name == 'assigned_user_name' && $use_past_array) {
-	    // We have to load the user here since fetched_row only has the ID, not the name
-        return get_username_by_id($source_object->fetched_row['assigned_user_id']);
+    } elseif($field_name == 'assigned_user_name') {
+        //load the user for either the current value or past value.
+        // We have to load the user here since fetched_row only has the ID, not the name
+         if($use_past_array) {
+             //return previous assigned user from fetched row
+             return get_username_by_id($source_object->fetched_row['assigned_user_id']);
+         }
+        //return current assigned user in source object
+        return get_username_by_id($source_object->assigned_user_id);
     }
     elseif ($field_name == 'team_name')
     {

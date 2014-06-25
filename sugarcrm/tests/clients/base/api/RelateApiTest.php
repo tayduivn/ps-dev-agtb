@@ -1,30 +1,14 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 
 
@@ -95,6 +79,8 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         unset($_SESSION['ACL']);
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
 
+        SugarTestEmailUtilities::removeAllCreatedEmails();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
         parent::tearDown();        
     }
@@ -229,6 +215,121 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->assertEquals(2, count($reply['records']), 'Should return two records');
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
+    }
+
+    /**
+     * Related records should be accessible for record owner
+     *
+     * @dataProvider aclProvider
+     */
+    public function testFetchRelatedRecordsByOwner(array $acl)
+    {
+        global $current_user;
+
+        list($lead, $email) = $this->setUpArchivedEmails($current_user);
+        $records = $this->getRelatedEmails($lead, $acl);
+        $this->assertCount(1, $records, 'There should be exactly one record');
+        $record = array_shift($records);
+        $this->assertEquals($email->id, $record['id']);
+    }
+
+    /**
+     * Related records should not be accessible for a non-owner
+     *
+     * @dataProvider aclProvider
+     */
+    public function testFetchRelatedRecordsByNonOwner($acl, $exception)
+    {
+        $owner = SugarTestUserUtilities::createAnonymousUser();
+
+        list($lead) = $this->setUpArchivedEmails($owner);
+
+        $this->setExpectedException($exception);
+        $this->getRelatedEmails($lead, $acl);
+    }
+
+    private function setUpArchivedEmails(User $owner)
+    {
+        $lead = SugarTestLeadUtilities::createLead();
+        $lead->assigned_user_id = $owner->id;
+        $lead->save();
+
+        // remove the lead from cache since it doesn't consider ACL
+        BeanFactory::unregisterBean($lead);
+
+        $email = SugarTestEmailUtilities::createEmail();
+        $email->load_relationship('leads');
+        $email->leads->add($lead);
+
+        return array($lead, $email);
+    }
+
+    private function getRelatedEmails(Lead $lead, array $acl)
+    {
+        global $current_user;
+
+        ACLAction::setACLData($current_user->id, $lead->module_dir, array(
+            'module' => array_merge(array(
+                'access' => array('aclaccess' => ACL_ALLOW_ENABLED),
+            ), $acl),
+        ));
+
+        $serviceBase = SugarTestRestUtilities::getRestServiceMock();
+        $response = $this->relateApi->filterRelated($serviceBase, array(
+            'fields' => 'id',
+            'link_name' => 'archived_emails',
+            'module' => $lead->module_dir,
+            'record' => $lead->id,
+        ));
+        $this->assertArrayHasKey('records', $response);
+
+        return $response['records'];
+    }
+
+    public static function aclProvider()
+    {
+        SugarAutoLoader::autoload('ACLAction');
+
+        return array(
+            // lack of list permission should cause SugarApiExceptionNotFound
+            array(
+                array(
+                    'list' => array('aclaccess' => ACL_ALLOW_OWNER),
+                    'view' => array('aclaccess' => ACL_ALLOW_ALL),
+                ),
+                'SugarApiExceptionNotFound',
+            ),
+            // lack of view permission should cause SugarApiExceptionNotAuthorized
+            array(
+                array(
+                    'list' => array('aclaccess' => ACL_ALLOW_ALL),
+                    'view' => array('aclaccess' => ACL_ALLOW_OWNER),
+                ),
+                'SugarApiExceptionNotAuthorized',
+            ),
+        );
+    }
+
+    /**
+     * BR-1514
+     * @coversNothing
+     */
+    public function testFilterRelatedSetup()
+    {
+        $opp_id = $this->opportunities[0]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+        list(, $q) = $this->relateApi->filterRelatedSetup(
+            $serviceMock,
+            array(
+                'module' => 'Opportunities',
+                'record' => $opp_id,
+                'link_name' => 'contacts',
+                'fields' => 'id, name, opportunity_role',
+                'order_by' => 'opportunity_role:DESC'
+            )
+        );
+        $test = 'AND team_memberships.deleted=0 group by tst.team_set_id) contacts_tf on contacts_tf.team_set_id  = contacts.team_set_id';
+        $this->assertContains($test, $q->compileSql(), "Should have team security join applied");
     }
 }
 

@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/Forecasts/ForecastHooks.php';
@@ -18,11 +16,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testSetCommitStageWhenNotSetup()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(false));
+        $hook = new MockForecastHooks();
 
         /* @var $bean Opportunity */
         $bean = $this->getMock('Opportunity', array('save'));
@@ -36,11 +30,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetCommitStageToInclude()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastHooks();
 
         $settings = array(
             'forecast_ranges' => 'show_binary',
@@ -72,11 +62,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetCommitStageToExclude()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastHooks();
 
         $settings = array(
             'forecast_ranges' => 'show_binary',
@@ -108,11 +94,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetCommitStageDoesNotChangeValue()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastHooks();
 
         $settings = array(
             'forecast_ranges' => 'show_binary',
@@ -145,15 +127,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetBestWorstEqualToLikelyAmountWorks()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup', 'getForecastClosedStages'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
-
-        $hook::staticExpects($this->any())
-            ->method('getForecastClosedStages')
-            ->will($this->returnValue(array('Closed Won')));
+        $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
         $bean = $this->getMock('Opportunity', array('save'));
@@ -171,15 +145,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetBestWorstEqualToLikelyAmountDoesntCopyValues()
     {
-        $hook = $this->getMock('ForecastHooks', array('isForecastSetup', 'getForecastClosedStages'));
-
-        $hook::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
-
-        $hook::staticExpects($this->any())
-            ->method('getForecastClosedStages')
-            ->will($this->returnValue(array('Closed Won')));
+        $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
         $bean = $this->getMock('Opportunity', array('save'));
@@ -193,5 +159,18 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(600, $bean->best_case);
         $this->assertEquals(400, $bean->worst_case);
+    }
+}
+
+class MockForecastHooks extends ForecastHooks
+{
+    public static function isForecastSetup()
+    {
+        return true;
+    }
+
+    public static function getForecastClosedStages()
+    {
+        return array('Closed Won');
     }
 }

@@ -1,31 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
@@ -33,8 +17,16 @@ require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 
 class TemplateRelatedTextField extends TemplateText{
     var $type = 'relate';
-    //ext1 is the name field
-    //ext2 is the related module
+
+    public function __construct()
+    {
+        // ext2 is the related module
+        // Adding the match for this (module => ext2) has unexpected consequences
+        // in module builder, since 'module' in module builder is 'ModuleBuilder'.
+        // There is code down below that handles the mapping of module to ext2.
+        // This mapping will set $this->module = $_REQUEST['ext2'].
+        $this->vardef_map['ext2'] = 'module';
+    }
 
     function get_html_edit(){
         $this->prepare();
@@ -182,8 +174,34 @@ class TemplateRelatedTextField extends TemplateText{
      function get_field_def(){
         $def = parent::get_field_def();
         $def['id_name'] = $this->ext3;
-        $def['ext2'] = $this->ext2;
-        $def['module'] = $def['ext2'];
+
+        // This should pretty much always eval to true, but better safe than sorry
+        if (empty($def['ext2'])) {
+            // In most cases $this->ext2 will have already been set by either the
+            // request or the vardef row from module builder
+            $def['ext2'] = empty($this->ext2) ? '' : $this->ext2;
+        }
+
+        // Handle setting the related module. In most cases this will be driven
+        // by $this->ext2
+        if (empty($def['module'])) {
+            if (!empty($this->module)) {
+                $def['module'] = $this->module;
+            } else {
+                if (empty($def['ext2']) && !empty($this->ext2)) {
+                    $def['ext2'] = $this->ext2;
+                }
+                
+                $def['module'] = $def['ext2'];
+            }
+        } else {
+            if (empty($def['ext2'])) {
+                $def['ext2'] = $def['module'];
+            }
+            
+            $this->ext2 = $def['ext2'];
+        }
+
         //Special case for documents, which use a document_name rather than name
         if ($def['module'] == "Documents") {
         	$def['rname'] = 'document_name';
@@ -327,7 +345,63 @@ class TemplateRelatedTextField extends TemplateText{
     	return "";
     }
 
+    function populateFromRow($row=array()) 
+    {
+        parent::populateFromRow($row);
+        // In some cases, MB Controller sets $this->module to a bean or mbmodule
+        // object. If that's the case get the string module value from what we know.
+        $this->module = $this->getModuleNameFromModule($this->module);
+        if (!empty($this->module) && empty($this->ext2)) {
+            $this->ext2 = $this->module;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @return array
+     */
+    public function getFieldMetaDataMapping()
+    {
+        $fmdMap = parent::getFieldMetaDataMapping();
+        $fmdMap['module'] = 'ext2';
+        return $fmdMap;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function applyVardefRules()
+    {
+        parent::applyVardefRules();
+        if (!empty($this->ext2) && !empty($this->module) && $this->ext2 !== $this->module) {
+            $this->module = $this->ext2;
+        }
+    }
+
+    /**
+     * Gets the module name from the existing module property that was set in 
+     * the controller
+     * 
+     * @param mixed $module A string value, or a SugarBean or an MBModule object
+     * @return string
+     */
+    protected function getModuleNameFromModule($module)
+    {
+        if (is_string($module)) {
+            return $module;
+        }
+
+        if ($module instanceof SugarBean) {
+            return $module->module_dir;
+        }
+
+        if ($module instanceof MBModule && !empty($module->key_name)) {
+            return $module->key_name;
+        }
+
+        return '';
+    }
 }
 
 
-?>

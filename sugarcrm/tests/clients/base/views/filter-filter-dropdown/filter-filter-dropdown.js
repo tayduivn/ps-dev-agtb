@@ -1,4 +1,4 @@
-describe("BaseFilterFilterDropdownView", function () {
+describe('Base.View.FilterFilterDropdown', function() {
     var view, layout, app, sinonSandbox;
 
     beforeEach(function () {
@@ -32,65 +32,18 @@ describe("BaseFilterFilterDropdownView", function () {
         view = null;
     });
 
-    describe('handleChange callback of filter:change:module', function() {
-        var layoutStub, panelOpenStub, filter;
+    describe('handleSelect callback of filter:select:module', function() {
 
-        beforeEach(function() {
-            layoutStub = sinonSandbox.stub(view.layout, 'trigger');
-            panelOpenStub = sinonSandbox.stub(view.layout, 'createPanelIsOpen', function() {
-                return !!_.reduce(layoutStub.args, function(memo, args){
-                    if (!_.isArray(args)) return memo;
-                    if (args[0] === 'filter:create:open') return 1;
-                    if (args[0] === 'filter:create:close') return 0;
-                    return memo;
-                }, 1);
-            });
-            view.filterNode = $('');
-            view.layout.filters = new Backbone.Collection();
-            filter = new Backbone.Model({id: 'test_id', editable: false });
-            view.layout.filters.add(filter);
+        it('should select the dropdown value', function() {
+            view.filterNode = {};
+            view.filterNode.select2 = sinon.collection.stub();
+
+            view.handleSelect('my_awesome_filter');
+
+            expect(view.filterNode.select2).toHaveBeenCalled();
+            expect(view.filterNode.select2).toHaveBeenCalledWith('val', 'my_awesome_filter', true);
         });
 
-        it('should open the filter form because id equals to create', function() {
-            view.handleChange('create');
-
-            expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[0]).toEqual('filter:create:open');
-        });
-
-        it('should close the filter form because filter is not editable', function() {
-            view.handleChange('test_id');
-
-            expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[0]).toEqual('filter:create:close');
-            expect(layoutStub.secondCall).toBeNull();
-        });
-
-        it('should open and populate the filter form because filter is editable', function() {
-            filter.set('editable', true);
-            view.handleChange('test_id');
-
-            expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[1]).toEqual(filter);
-            expect(layoutStub.secondCall).toBeNull();
-        });
-
-        it('should retrieve and populate last edit state', function() {
-            filter.set('editable', true);
-
-            var editState = new Backbone.Model({ id: 'test_id', filter_definition: [{'my_filter': {'is': 'cool'}}]});
-
-            view.layout.retrieveFilterEditState = $.noop;
-            sinonSandbox.stub(view.layout, 'retrieveFilterEditState', function() {
-                return editState.toJSON();
-            });
-
-            view.handleChange('test_id');
-            expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[1].toJSON()).not.toEqual(filter.toJSON());
-            expect(layoutStub.firstCall.args[1].toJSON()).toEqual(editState.toJSON());
-            expect(layoutStub.secondCall).toBeNull();
-        });
     });
 
     describe('handleModuleChange', function(){
@@ -387,7 +340,7 @@ describe("BaseFilterFilterDropdownView", function () {
             var triggerStub = sinonSandbox.stub(layout, 'trigger');
             view.handleEditFilter();
             expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'create');
+            expect(triggerStub).toHaveBeenCalledWith('filter:select:filter', 'create');
         });
     });
 
@@ -406,7 +359,7 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(evt.stopPropagation).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'test_default_filter');
+            expect(triggerStub).toHaveBeenCalledWith('filter:select:filter', 'test_default_filter');
         });
     });
 });

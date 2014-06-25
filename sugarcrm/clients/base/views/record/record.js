@@ -1,14 +1,17 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Views.Base.RecordView
+ * @alias SUGAR.App.view.views.BaseRecordView
+ * @extends View.View
  */
 ({
     inlineEditMode: false,
@@ -105,8 +108,9 @@
      *
      * Check changes for fields that are editable only.
      *
+     * {@link app.plugins.view.editable}
+     *
      * @return {Boolean} `true` if current model contains unsaved changes, otherwise `false`.
-     * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
         var changedAttributes,
@@ -202,7 +206,7 @@
         // Field labels in headerpane should be hidden on view but displayed in edit and create
         _.each(this.fields, function(field) {
             var toggleLabel = _.bind(function() {
-                this.toggleLabelByField(field);
+                this.toggleLabelByField(field, this.createMode);
             }, this);
 
             field.off('render', toggleLabel);
@@ -543,8 +547,8 @@
      * @param {View.Field} field The field to toggle the label based on current
      *   action.
      */
-    toggleLabelByField: function(field) {
-        if (field.action === 'edit') {
+    toggleLabelByField: function(field, inCreate) {
+        if (field.action === 'edit' || (field.action === 'disabled' && inCreate)) {
             field.$el.closest('.record-cell')
                 .addClass('edit')
                 .find('.record-label')

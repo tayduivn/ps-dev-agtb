@@ -1,25 +1,16 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- *********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
@@ -67,6 +58,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         'panelDefault',
         'newTab'
     );
+
+    /**
+     * Gets the maximum span units for for a panel
+     * 
+     * @return int
+     */
+    public function getMaxSpan()
+    {
+        return $this->maxSpan;
+    }
 
     /**
      * Sets the fields that are part of fieldsets. This is used when setting 
@@ -550,8 +551,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             foreach ($panel['fields'] as $field) {
 
                 // figure out the colspan of the current field
-                if (is_array($field) && !empty($field['span'])) {
-                    $colspan = floor($field['span']/$this->maxSpan*$panelColumns);
+                if (is_array($field) && ($span = $this->getFieldSpan($field)) > 0) {
+                    $colspan = floor($span / $this->maxSpan * $panelColumns);
                 } else {
                     // Simple aesthetics... make the name field a full span but
                     // only if this is the header panel
@@ -565,8 +566,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                 // figure out how much space is taken up already by other fields
                 foreach($row as $rowField) {
-                    if (is_array($rowField) && !empty($rowField['span'])) {
-                        $colsTaken = $colsTaken + floor($rowField['span']/$this->maxSpan*$panelColumns);
+                    if (is_array($rowField) && ($span = $this->getFieldSpan($rowField)) > 0) {
+                        $colsTaken = $colsTaken + floor($span / $this->maxSpan * $panelColumns);
                     } else {
                         $colsTaken = $colsTaken + 1;
                     }
@@ -874,5 +875,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $this->unsetAvailableField($availableFields, $field);
             }
         }
+    }
+    
+    /**
+     * Gets a field span attribute if it is set
+     * 
+     * @param array $field A field definition
+     * @return integer
+     */
+    protected function getFieldSpan(array $field)
+    {
+        // Checkout both old and new styles
+        if (!empty($field['span'])) {
+            return $field['span'];
+        }
+
+        if (!empty($field['displayParams']['colspan'])) {
+            return $field['displayParams']['colspan'];
+        }
+
+        // Return a reasonable default
+        return 0;
     }
 }

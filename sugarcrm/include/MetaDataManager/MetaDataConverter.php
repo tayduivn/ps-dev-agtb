@@ -2,32 +2,16 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'data/Link2.php';
 /**
@@ -351,10 +335,11 @@ class MetaDataConverter
             // where a vardef defines it's own link_class and link_file, we need
             // to honor that. For example, archived_emails in Accounts.
             $linkClass = 'Link2';
-            if (isset($bean->field_defs[$def['context']['link']])) {
-                $linkClass = load_link_class($bean->field_defs[$def['context']['link']]);
+            $linkName = $def['context']['link'];
+            if (isset($bean->field_defs[$linkName])) {
+                $linkClass = load_link_class($bean->field_defs[$linkName]);
             }
-            $link = new $linkClass($def['context']['link'], $bean);
+            $link = new $linkClass($linkName, $bean);
             $linkModule = $link->getRelatedModuleName();
 
             $legacySubpanelName = $this->toLegacySubpanelName($def);
@@ -362,14 +347,14 @@ class MetaDataConverter
             // if we don't have a label at least set the module name as the label
             // similar to configure shortcut bar
             $label = isset($def['label']) ? $def['label'] : translate($linkModule);
-            $return[$def['context']['link']] = array(
+            $return[$linkName] = array(
                 'order' => $order,
                 'module' => $linkModule,
                 'subpanel_name' => $legacySubpanelName,
                 'sort_order' => 'asc',
                 'sort_by' => 'id',
                 'title_key' => $label,
-                'get_subpanel_data' => $def['context']['link'],
+                'get_subpanel_data' => $linkName,
                 'top_buttons' => array(
                     array(
                         'widget_class' => 'SubPanelTopButtonQuickCreate',
@@ -380,6 +365,9 @@ class MetaDataConverter
                     ),
                 ),
             );
+            if (!empty($def['override_subpanel_list_view'])) {
+                $return[$linkName]['override_subpanel_name'] = $def['override_subpanel_list_view'];
+            }
         }
         return array('subpanel_setup' => $return);
     }
@@ -453,7 +441,14 @@ class MetaDataConverter
      */
     public function fromLegacySubpanelName($subpanelName)
     {
-        $newName = ($subpanelName === 'default') ? 'list' : str_replace('for', 'for-', strtolower($subpanelName));
+        if (substr($subpanelName, 0, 9) == 'subpanel-') {
+            return $subpanelName;
+        }
+
+        $newName = ($subpanelName === 'default') ? 'list' : strtolower($subpanelName);
+        if (substr($newName, 0, 3) === "for") {
+            $newName = "for-" . substr($newName, 3);
+        }
         return 'subpanel-' . $newName;
     }
 
@@ -517,6 +512,7 @@ class MetaDataConverter
      */
     public function getLegacySubpanelFileName(SugarBean $bean, $linkName)
     {
+
         $field = $bean->getFieldDefinition($linkName);
         if ($field && $field['type'] == 'link') {
             if (!empty($bean->field_defs[$linkName]['relationship'])) {
@@ -581,9 +577,11 @@ class MetaDataConverter
                             if ($relationship) {
                                 $relDef = $relationship->getDefinition();
                             }
-                            if (isset($relDef['is_custom']) && $relDef['is_custom']
-                            && isset($relDef['from_studio']) && $relDef['from_studio']) {
-                                $subpanelFileName = "For{$relDef['relationship_name']}";
+                            if (!empty($relDef['is_custom']) && !empty($relDef['from_studio']) &&
+                                (!empty($relDef['name']) || !empty($relDef['relationship_name']))
+                            ) {
+                                $name = !empty($relDef['name']) ? $relDef['name'] : $relDef['relationship_name'];
+                                $subpanelFileName = "For{$name}";
                             } else {
                                 $subpanelFileName = "For{$focus->module_name}";
                             }
@@ -594,9 +592,11 @@ class MetaDataConverter
                     'view' => $this->fromLegacySubpanelName($subpanelFileName),
                     'link' => $layoutdef['get_subpanel_data'],
                 );
-            } elseif ($key == 'title_key') {
+            }
+            elseif ($key == 'title_key') {
                 $viewdefs['label'] = $value;
-            } elseif ($key == 'get_subpanel_data') {
+            }
+            elseif ($key == 'get_subpanel_data') {
                 $viewdefs['context']['link'] = $value;
             }
         }

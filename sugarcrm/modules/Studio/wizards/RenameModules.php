@@ -1,17 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 require_once 'modules/Studio/DropDowns/DropDownHelper.php';
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 require_once 'modules/Administration/Common.php';
@@ -431,16 +429,91 @@ class RenameModules
 
         $layout_defs = array();
 
-        foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file) {
-            require $file;
-        }
+        // Handle things differently for BWC modules
+        if(isModuleBWC($bean->module_dir)) {
+            foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file) {
+                require $file;
+            }
 
-        $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
-        if($defs) {
-            require $defs;
+            $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
+            if($defs) {
+                require $defs;
+            }
+        } else {
+            // Handle things the new way
+            foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/clients/base/layouts/subpanels/subpanels.php') as $file) {
+                require $file;
+            }
+            
+            // Add in any studio customizations
+            $ext = 'custom/modules/' . $bean->module_dir . '/Ext/clients/base/layouts/subpanels/subpanels.ext.php';
+            if (SugarAutoLoader::fileExists($ext)) {
+                require $ext;
+            }
+
+            // Massage defs to look like old style for use in the rename process
+            if (isset($viewdefs[$bean->module_dir]['base']['layout']['subpanels']['components'])) {
+                $layout_defs = $this->getSidecarSubpanelDefsAsLegacy($viewdefs[$bean->module_dir]['base']['layout']['subpanels']['components'], $bean);
+            }
         }
 
         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+    }
+
+    /**
+     * Gets sidecar subpanel layout defs in the BWC format
+     * 
+     * @param Array $components Existing sidecar subpanel layout
+     * @param SugarBean $bean The bean that the subpanels are being scraped for
+     * @return array
+     */
+    protected function getSidecarSubpanelDefsAsLegacy(Array $components, SugarBean $bean) 
+    {
+        $return = array();
+
+        // Used in keeping uniqueness of link name based keys
+        $counter = 0;
+
+        foreach ($components as $component) {
+            // We can only really do this if there is a label and a link
+            if (isset($component['label']) && isset($component['context']['link'])) {
+                // The link is used as an index and a module finder
+                $link = $component['context']['link'];
+
+                // If there is a module on the link field, we are good
+                if (!empty($bean->field_defs[$link]['module'])) {
+                    $def['module'] = $bean->field_defs[$link]['module'];
+                } else {
+                    // If there isn't a module then we need to load the
+                    // relationship to get the related module
+                    $bean->load_relationship($link);
+                    if (!empty($bean->$link)) {
+                        $relMod = $bean->$link->getRelatedModuleName();
+                        if (!empty($relMod)) {
+                            $def['module'] = $relMod;
+                        }
+                    }
+                }
+
+                // If a module was found then proceed to set the def
+                if (!empty($def['module'])) {
+                    // Add the title key in
+                    $def['title_key'] = $component['label'];
+
+                    // Make sure we are not overriding this index
+                    if (isset($return[$bean->module_dir]['subpanel_setup'][$link])) {
+                        // this is actually meaningless in the scope of 
+                        // things so manipulating this isn't a world changer
+                        $link .= '_' . ++$counter;
+                    }
+
+                    // Set the new def into the expected 
+                    $return[$bean->module_dir]['subpanel_setup'][$link] = $def;
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**

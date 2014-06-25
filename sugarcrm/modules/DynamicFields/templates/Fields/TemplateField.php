@@ -1,31 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 $GLOBALS['studioReadOnlyFields'] = array('date_entered'=>1, 'date_modified'=>1, 'created_by'=>1, 'id'=>1, 'modified_user_id'=>1);
 class TemplateField{
 	/*
@@ -474,30 +458,33 @@ class TemplateField{
 		}
 	}
 
-	/**
-	 * populateFromRow
-	 * This function supports setting the values of all TemplateField instances.
-	 * @param $row The Array key/value pairs from fields_meta_data table
-	 */
-	function populateFromRow($row=array()) {
-		$fmd_to_dyn_map = array('comments' => 'comment', 'require_option' => 'required', 'label' => 'vname',
-							    'mass_update' => 'massupdate', 'max_size' => 'len', 'default_value' => 'default', 'id_name' => 'ext3');
-		if(!is_array($row)) {
-			$GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
-		}
-		//Bug 24189: Copy fields from FMD format to Field objects and vice versa
-		foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
+    /**
+     * This function supports setting the values of all TemplateField instances.
+     * 
+     * @param $row The Array key/value pairs from fields_meta_data table
+     */
+    function populateFromRow($row=array()) {
+        if (!is_array($row)) {
+            // Make it an array so as to prevent issues later on in this method
+            $row = (array) $row;
+            $GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
+        }
+
+        //Bug 24189: Copy fields from FMD format to Field objects and vice versa
+        $fmd_to_dyn_map = $this->getFieldMetaDataMapping();
+        foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
             if (isset($row[$dyn_key])) {
                 $this->$fmd_key = $row[$dyn_key];
             }
             if (isset($row[$fmd_key])) {
-				$this->$dyn_key = $row[$fmd_key];
-			}
-		}
-		foreach($row as	$key=>$value) {
-			$this->$key = $value;
-		}
-	}
+                $this->$dyn_key = $row[$fmd_key];
+            }
+        }
+
+        foreach($row as $key => $value) {
+            $this->$key = $value;
+        }
+    }
 
 	function populateFromPost(){
 		foreach($this->vardef_map as $vardef=>$field){
@@ -531,24 +518,27 @@ class TemplateField{
 
 	}
 
-	protected function applyVardefRules()
-	{
-		//BEGIN SUGARCRM flav=pro ONLY
-		if (!empty($this->calculated) && !empty($this->formula)
-		      && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
-		{
-				$this->importable = 'false';
-				$this->duplicate_merge = 0;
-				$this->duplicate_merge_dom_value = 0;
-
-		}
-		//END SUGARCRM flav=pro ONLY
+    /**
+     * Applies rules for type specific fields vardefs. This can be overridden in 
+     * child classes.
+     */
+    protected function applyVardefRules()
+    {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!empty($this->calculated) && !empty($this->formula)
+            && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
+        {
+            $this->importable = 'false';
+            $this->duplicate_merge = 0;
+            $this->duplicate_merge_dom_value = 0;
+        }
+        //END SUGARCRM flav=pro ONLY
 
         if(!empty($this->full_text_search))
         {
             $this->full_text_search['enabled'] = ($this->full_text_search['boost'] != 0);
         }
-	}
+    }
 
 	function get_additional_defs(){
 		return array();
@@ -604,7 +594,26 @@ class TemplateField{
         }
 	}
 
+    /**
+     * Gets mapping of fields_meta_data to DynamicField properties. This can be 
+     * overridden or extended in child classes.
+     * 
+     * @return array
+     */
+    public function getFieldMetaDataMapping()
+    {
+        return array(
+            'comments' => 'comment',
+            'require_option' => 'required',
+            'label' => 'vname',
+            'mass_update' => 'massupdate',
+            'max_size' => 'len',
+            'default_value' => 'default',
+            'id_name' => 'ext3',
+        );
+    }
+
 }
 
 
-?>
+

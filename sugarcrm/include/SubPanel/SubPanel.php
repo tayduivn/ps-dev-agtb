@@ -1,32 +1,14 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/**
- * Generic sub-panel class
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/SubPanel/registered_layout_defs.php');
 /**
@@ -277,30 +259,6 @@ class SubPanel
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
         $overrideValue = $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
-        // Set a reasonable default value in case we ARE bwc. Without this BWC
-        // $viewName isn't set for BWC modules and throws errors later on.
-        $viewName = $panel->_instance_properties['subpanel_name'];
-
-        if(!isModuleBWC($panel->parent_bean->module_dir)) {
-            require_once 'include/MetaDataManager/MetaDataConverter.php';
-            $mc = new MetaDataConverter();
-            $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
-            $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
-            $layoutDefsExtName = "sidecar";
-            $filename = "subpanel-for-{$panel->name}";
-            $overrideName = 'override_subpanel_list_view';
-            if($panel->_instance_properties['subpanel_name'] == 'default') {
-                $viewName = 'subpanel-for-' . strtolower($panel->name);
-            } else {
-                $viewName = $mc->fromLegacySubpanelName($panel->_instance_properties['subpanel_name']);
-            }
-
-            $overrideValue = array(
-                "link" => $panel->name,
-                "view" => $viewName,
-            );
-        }
-
 
         //save the new subpanel
         $name = "subpanel_layout['list_fields']";

@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarAbstractMetaDataUpgrader.php';
@@ -21,21 +19,38 @@ class SidecarSelectionListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrad
 
     public function convertLegacyViewDefsToSidecar()
     {
-        $legacyListViewDefs = $this->upgrader->getUpgradeFileParams(
+        $filedata = $this->upgrader->getUpgradeFileParams(
             "modules/{$this->module}/metadata/listviewdefs.php",
             $this->module,
             $this->client,
-            $this->type
+            $this->type,
+            $this->package,
+            $this->deployed
         );
-        $listViewUpgrader = new SidecarListMetaDataUpgrader($this->upgrader, $legacyListViewDefs);
-        // Load Sidecar ListView defs.
-        $listViewUpgrader->setLegacyViewdefs();
-        $listViewUpgrader->convertLegacyViewDefsToSidecar();
-        $sidecarListViewDefs = $listViewUpgrader->getSidecarViewDefs();
 
-        $this->logUpgradeStatus("Setting new {$this->client} selection-list internally for {$this->module}");
-        $this->sidecarViewdefs[$this->module][$this->client]['view']['selection-list'] =
-            $sidecarListViewDefs[$this->module][$this->client]['view']['list'];
+        // If by some chance the getter returned a false, stop
+        if (!$filedata) {
+            $this->logUpgradeStatus("No upgrade file params found for {$this->module} selection-list");
+            return;
+        }
+
+        $upgrader = new SidecarListMetaDataUpgrader($this->upgrader, $filedata);
+
+        // "Upgrade" list view defs
+        $upgrader->setLegacyViewdefs();
+        $upgrader->convertLegacyViewDefsToSidecar();
+        // Get the converted defs
+        $sidecarViewDefs = $upgrader->getSidecarViewDefs();
+        if ($sidecarViewDefs) {
+            // Twitterizing the assignment of the converted list view defs
+            $this->logUpgradeStatus("Setting new {$this->client} selection-list internally for {$this->module}");
+            $converted = $sidecarViewDefs[$this->module][$this->client]['view']['list'];
+            $newdefs[$this->getNormalizedModuleName()][$this->client]['view']['selection-list'] = $converted;
+            $this->sidecarViewdefs = $newdefs;
+        } else {
+            $this->logUpgradeStatus("No selection-list metadata found for {$this->module}");
+            return;
+        }
     }
 
     /**

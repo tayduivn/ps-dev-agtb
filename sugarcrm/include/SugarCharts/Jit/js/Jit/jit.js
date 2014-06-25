@@ -12920,7 +12920,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  }
 					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					  ctx.fillStyle = ctx.strokeStyle = label.color;
-					  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
+					  ctx.fillText(acumValueLabel, mtxt.width/2, 4);
 					  ctx.restore();
 					}
 				}
@@ -12947,7 +12947,7 @@ $jit.ST.Plot.NodeTypes.implement({
             	
             	//background box
             	gridWidth = canvasSize.width - (config.Margin.left + config.Margin.right);
-            	mtxt = ctx.measureText(node.name + ": " + valAcum);
+            	mtxt = ctx.measureText(node.name + ": " + valuelabelArray);
             	boxWidth = mtxt.width+10;
             	inset = 10;
             	
@@ -12973,7 +12973,7 @@ $jit.ST.Plot.NodeTypes.implement({
 		
 				
 				ctx.fillStyle = label.color;
-				ctx.fillText(node.name + ": " + valAcum, 0, 0);
+				ctx.fillText(node.name + ": " + valuelabelArray, 0, 0);
 
             } else {
 			  if(nodeCount > 8) {

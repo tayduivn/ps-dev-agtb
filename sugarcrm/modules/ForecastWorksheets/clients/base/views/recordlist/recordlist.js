@@ -1,23 +1,21 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 /**
- * Forecast Sales Rep Worksheet Record List
+ * Forecast Sales Rep Worksheet Record List.
  *
- * @class BaseForecastWorksheetsRecordlistView
- * @alias SUGAR.App.view.views.BaseForecastWorksheetsRecordlistView
- * @extends BaseRecordlistView
- *
+ * @class View.Views.Base.ForecastsWorksheets.RecordlistView
+ * @alias SUGAR.App.view.views.BaseForecastsWorksheetsRecordlistView
+ * @extends View.Views.Base.RecordlistView
+ */
+/**
  * Events
  *
  * forecasts:worksheet:is_dirty
@@ -628,7 +626,7 @@
      * Check to make sure that if there are dirty rows, then trigger the needs_commit event to enable
      * the buttons
      *
-     * @triggers forecasts:worksheet:needs_commit
+     * @fires forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
@@ -693,7 +691,7 @@
     /**
      * Save the worksheet to the database
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet: function(isDraft) {

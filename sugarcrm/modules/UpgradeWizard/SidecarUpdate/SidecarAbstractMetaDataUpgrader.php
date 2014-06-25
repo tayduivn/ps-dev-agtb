@@ -1,17 +1,15 @@
 <?php
  if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 // Get the meta data files handler for the new setup
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
@@ -482,7 +480,12 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return string
      */
     public function getNormalizedModuleName() {
-        return isset($this->modulename) && !in_array($this->modulename, MetaDataFiles::getModuleNamePlaceholders()) ? $this->modulename : $this->module;
+        // Use module name if it's set AND the module name is not a placeholder
+        if (isset($this->modulename) && !in_array($this->modulename, MetaDataFiles::getModuleNamePlaceholders())) {
+            return $this->modulename;
+        }
+
+        return $this->module;
     }
 
     /**
@@ -534,44 +537,58 @@ abstract class SidecarAbstractMetaDataUpgrader
 
         // Fallback to the object type if there were no defs found
         // Bug 57216 - Upgrade wizard was dying on undeployed modules getType
-        if (empty($newdefs) && $this->deployed) {
-            require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
-            $sm = StudioModuleFactory::getStudioModule($this->module);
-            $moduleType = $sm->getType();
-            $this->base_defsfile = 'include/SugarObjects/templates/' . $moduleType . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
-            if (file_exists($this->base_defsfile)) {
-                require $this->base_defsfile;
-            } else {
-                $this->base_defsfile = 'include/SugarObjects/templates/basic/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
+        if (empty($newdefs)) {
+            if ($this->deployed) {
+                require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
+                $sm = StudioModuleFactory::getStudioModule($this->module);
+                $moduleType = $sm->getType();
+            } elseif ($this->package) {
+                require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
+                $mb = new ModuleBuilder();
+                $package = $mb->getPackage($this->package);
+                $module = $package->getModule($this->module);
+                $moduleType = $module->getModuleType();
+            }
+            
+            if (!empty($moduleType)) {
+                $this->base_defsfile = 'include/SugarObjects/templates/' . $moduleType . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
                 if (file_exists($this->base_defsfile)) {
                     require $this->base_defsfile;
                 } else {
-                    $this->logUpgradeStatus("Could not find basic $viewname template for module {$this->module} type $moduleType");
+                    $this->base_defsfile = 'include/SugarObjects/templates/basic/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
+                    if (file_exists($this->base_defsfile)) {
+                        require $this->base_defsfile;
+                    } else {
+                        $this->logUpgradeStatus("Could not find basic $viewname template for module {$this->module} type $moduleType");
+                    }
                 }
-            }
-            // See if there are viewdefs defined that we can use
-            if (isset($viewdefs['<module_name>'][$client]['view'][$viewname])) {
-                //Need to perform variable replacement for some field defs
-                $convertedDefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($this->module, $viewdefs);
-                if (isset($convertedDefs[$this->module][$client]['view'][$viewname])) {
-                    $newdefs = $convertedDefs[$this->module][$client]['view'][$viewname];
-                } else {
-                    $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];
-                }
-            }
 
-            if($newdefs) {
-                // If we used the template, create the basic one
-                $this->logUpgradeStatus(get_class($this) . ": Copying template defs {$this->base_defsfile} to {$this->defsfile}");
-                mkdir_recursive(dirname($this->defsfile));
-                $viewname = pathinfo($this->defsfile, PATHINFO_FILENAME);
-                $export = var_export($newdefs, true);
-                $data  = <<<END
+                // See if there are viewdefs defined that we can use
+                if (isset($viewdefs['<module_name>'][$client]['view'][$viewname])) {
+                    //Need to perform variable replacement for some field defs
+                    $module = $this->getNormalizedModuleName();
+                    $convertedDefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($module, $viewdefs);
+                    if (isset($convertedDefs[$module][$client]['view'][$viewname])) {
+                        $newdefs = $convertedDefs[$module][$client]['view'][$viewname];
+                    } else {
+                        $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];
+                    }
+                }
+
+                // Only write a defs file for deployed modules
+                if($newdefs && $this->deployed) {
+                    // If we used the template, create the basic one
+                    $this->logUpgradeStatus(get_class($this) . ": Copying template defs {$this->base_defsfile} to {$this->defsfile}");
+                    mkdir_recursive(dirname($this->defsfile));
+                    $viewname = pathinfo($this->defsfile, PATHINFO_FILENAME);
+                    $export = var_export($newdefs, true);
+                    $data  = <<<END
 <?php
 /* Generated by SugarCRM Upgrader */
 \$viewdefs['{$this->module}']['{$client}']['view']['{$viewname}'] = {$export};
 END;
-                sugar_file_put_contents($this->defsfile, $data);
+                    sugar_file_put_contents($this->defsfile, $data);
+                }
             }
         }
         return $newdefs;

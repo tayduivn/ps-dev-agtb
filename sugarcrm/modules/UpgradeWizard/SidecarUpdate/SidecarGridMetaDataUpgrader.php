@@ -1,17 +1,15 @@
 <?php
  if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 // This will need to be pathed properly when packaged
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarAbstractMetaDataUpgrader.php';
@@ -98,16 +96,21 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      * 
      * @param array $panel The legacy panel
      * @param integer $maxcols The maximum number of columns for the layout
+     * @param integer $maxspan The maximum number of cells to span for a field
      * @return array
      */
-    public function getConvertedPanelDefs($panel, $maxcols)
+    public function getConvertedPanelDefs($panel, $maxcols, $maxspan = 12)
     {
         $fields = array();
         if (is_array($panel)) {
             foreach ($panel as $rowIndex => $row) {
                 // This is a single panel, most likely mobile or portal
                 if (is_string($row)) {
-                    $fields[] = $row;
+                    // This needs to span the maxcols amount
+                    $fields[] = array(
+                        'name' => $row,
+                        'span' => $maxspan,
+                    );
                     continue;
                 }
 
@@ -116,7 +119,6 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 // Assumption here is that Portal and Wireless will never have
                 // more than 2 columns in the old setup
                 if ($cols == 1) {
-                    $displayParams = array('colspan' => $maxcols);
                     // Either a string field name or an instruction
                     if (is_string($row[0])) {
                         if (!$this->isValidField($row[0])) {
@@ -127,7 +129,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                         } else {
                             $fields[] = array(
                                 'name' => $row[0],
-                                'displayParams' => $displayParams
+                                'span' => $maxspan,
                             );
                         }
                     } elseif (is_array($row[0])) {
@@ -142,7 +144,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                             $fields[] = array_merge(
                                 array('name' => $field),
                                 $row[0],
-                                $maxcols == 1 ? array() : array('displayParams' => $displayParams)
+                                $maxcols == 1 ? array() : array('span' => $maxspan)
                             );
                         } else {
                             // Fallback... take it as is
@@ -160,6 +162,9 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                                 $fields[] = $rowFields['name'];
                             }
                         } else {
+                            if (!$this->isValidField($rowFields)) {
+                                continue;
+                            }
                             $fields[] = $rowFields;
                         }
                     }

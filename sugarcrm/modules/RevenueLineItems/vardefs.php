@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
@@ -79,7 +77,16 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'total_amount' => array(
             'name' => 'total_amount',
-            'formula' => 'currencySubtract(currencyMultiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
+            'formula' => '
+                ifElse(isNumeric($quantity),
+                    currencySubtract(
+                        currencyMultiply(
+                            ifElse(isNumeric($discount_price), $discount_price, 0),
+                            ifElse(isNumeric($quantity), $quantity, 0)
+                        ),
+                    ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                ), 0
+            )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
@@ -433,6 +440,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'decimal',
             'len' => 12,
             'precision' => 2,
+            'validation' => array('type' => 'range', 'min' => 0),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),
@@ -1018,6 +1026,7 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_probability', 'type' => 'index', 'fields' => array('probability')),
         array('name' => 'idx_revenuelineitem_commit_stage', 'type' => 'index', 'fields' => array('commit_stage')),
         array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
+        array('name' => 'idx_revenuelineitem_oppid', 'type' => 'index', 'fields' => array('opportunity_id')),
     ),
     'relationships' => array(
         'revenuelineitem_currencies' => array(

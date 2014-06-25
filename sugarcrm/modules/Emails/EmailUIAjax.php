@@ -171,10 +171,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $configArray=array();
         $configs = OutboundEmailConfigurationPeer::listMailConfigurations($current_user);
         foreach ($configs as $config) {
+            $config_id = $config->getInboxId();
+            if (empty($config_id)) {
+                $config_id = $config->getConfigId();
+            }
             $configItem = array(
-                    "value" => $config->getConfigId(),
-                    "text"  => $config->getDisplayName()
-             );
+                "value" => $config_id,
+                "text"  => $config->getDisplayName()
+            );
             $configArray[] = $configItem;
         }
 

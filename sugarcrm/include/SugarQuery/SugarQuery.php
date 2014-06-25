@@ -1,16 +1,14 @@
 <?php
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'include/SugarQuery/SugarQueryException.php';
 require_once 'include/SugarQuery/Compiler.php';
@@ -393,7 +391,6 @@ class SugarQuery
             $bean->table_name
         );
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
-        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
         if (!$bean->load_relationship($link_name)) {
@@ -412,11 +409,6 @@ class SugarQuery
         }
 
         $bean->$link_name->buildJoinSugarQuery($this, $joinParams);
-
-
-        if ($team_security === true) {
-            $bean->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
-        }
 
         $this->join[$alias]->addLinkName($link_name);
         $this->join[$alias]->on()->equals($alias . '.id', $bean->id);
