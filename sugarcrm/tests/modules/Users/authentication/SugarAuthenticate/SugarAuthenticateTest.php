@@ -7,7 +7,7 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * @var SugarAuthenticate
      */
-    protected $authenticate;
+    private $authenticate;
 
     protected function setUp()
     {
@@ -26,7 +26,7 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
      * @coversNothing
      * @group BR-1721
      */
-    public function testLoginAuthenticateTriggersUpdateUserLastLogin()
+    public function testLoadUserOnSessionTriggersUpdateUserLastLogin()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $this->authenticate->expects($this->once())->method('updateUserLastLogin');
