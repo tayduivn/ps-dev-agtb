@@ -2533,8 +2533,15 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsNullable($vardef, $expected)
     {
-        $db = new DBManagerBug58371();
-        $this->assertEquals($expected, $db->isNullable($vardef), 'Vardef has incorrect definition');
+        $class = new ReflectionClass($this->_db);
+        $method = $class->getMethod('isNullable');
+        $method->setAccessible(true);
+
+        $this->assertEquals(
+            $expected,
+            $method->invokeArgs($this->_db, array($vardef)),
+            'Vardef has incorrect definition'
+        );
     }
 
     /**
@@ -2576,18 +2583,5 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
             ),
         );
-    }
-}
-
-/**
- * Mock for MysqliManager to allow to call isNullable method
- *
- * Class DBManagerBug58371
- */
-class DBManagerBug58371 extends MysqliManager
-{
-    public function isNullable($vardef)
-    {
-        return parent::isNullable($vardef);
     }
 }
