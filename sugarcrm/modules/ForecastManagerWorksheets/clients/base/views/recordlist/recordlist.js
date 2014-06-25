@@ -83,13 +83,13 @@
      */
     defaultValues: {
         id: '',         // set id to empty so it fails the isNew() check as we don't want this to override the currency
-        quota: 0,
-        best_case: 0,
-        best_case_adjusted: 0,
-        likely_case: 0,
-        likely_case_adjusted: 0,
-        worst_case: 0,
-        worst_case_adjusted: 0,
+        quota: '0',
+        best_case: '0',
+        best_case_adjusted: '0',
+        likely_case: '0',
+        likely_case_adjusted: '0',
+        worst_case: '0',
+        worst_case_adjusted: '0',
         show_history_log: 0
     },
 
@@ -835,11 +835,14 @@
             // lets sort the collection
             if (this.orderBy.field !== 'name') {
                 records = _.sortBy(records, function(item) {
+                    // typecast values to Number since it's not the 'name'
+                    // column (the only string value in the manager worksheet)
+                    var val = +item[this.orderBy.field];
 
                     if (this.orderBy.direction == "desc") {
-                        return -item[this.orderBy.field];
+                        return -val;
                     } else {
-                        return item[this.orderBy.field];
+                        return val;
                     }
                 }, this);
             } else {
