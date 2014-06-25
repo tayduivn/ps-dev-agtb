@@ -144,15 +144,13 @@ class JitReports extends Jit {
 			$data .= $this->tabValue('value',$total, 3);
 
             $label = $total;
-            if ($this->isCurrencyReportGroupTotal($dataset))
-            {;
+            if ($this->isCurrencyReportGroupTotal($dataset)) {
                 $label = currency_format_number($total, array(
                     'currency_symbol' => $this->currency_symbol,
                     'decimals' => ($this->chart_properties['thousands'] ? 0 : null)
                 ));
             }
-            if ($this->chart_properties['thousands'])
-            {
+            if ($this->chart_properties['thousands']) {
                 $label .= $app_strings['LBL_THOUSANDS_SYMBOL'];
             }
             $data .= $this->tabValue('label', $label, 3);
