@@ -1740,29 +1740,30 @@ EOQ;
     /**
 	 * @see DBManager::massageValue()
 	 */
-    public function massageValue($val, $fieldDef, $useQuotes = true)
+    public function massageValue($val, $fieldDef, $forPrepared = false)
     {
-       $type = $this->getFieldType($fieldDef);
-       $ctype = $this->getColumnType($type);
+        $type = $this->getFieldType($fieldDef);
+        $ctype = $this->getColumnType($type);
 
-       // Deal with values that would exceed the 32k constant limit of DB2
-       if(strpos($ctype, 'clob') !== false && strlen($val) > 32000) //Note we assume DB2 counts bytes and not characters
-       {
-           for($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) // Incrementing with number of bytes of chunk to not loose any characters
-           {
-               $chunk = mb_strcut($val, $pos, 32000);  //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
-               if(!isset($massagedValue))
-               {
-                   $massagedValue = "TO_CLOB('$chunk')";
-               } else {
-                   $massagedValue = "CONCAT($massagedValue, '$chunk')";
-               }
+        // Deal with values that would exceed the 32k constant limit of DB2
+        //Note we assume DB2 counts bytes and not characters
+        if (strpos($ctype, 'clob') !== false && strlen($val) > 32000 && !$forPrepared) {
+            $chunk = '';
+            // Incrementing with number of bytes of chunk to not loose any characters
+            for ($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) {
+                //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
+                $chunk = mb_strcut($val, $pos, 32000);
+                if (!isset($massagedValue)) {
+                    $massagedValue = "TO_CLOB('$chunk')";
+                } else {
+                    $massagedValue = "CONCAT($massagedValue, '$chunk')";
+                }
            }
 
            return $massagedValue;
-       }
+        }
 
-       return parent::massageValue($val, $fieldDef, $useQuotes);
+        return parent::massageValue($val, $fieldDef, $forPrepared);
     }
 
 
