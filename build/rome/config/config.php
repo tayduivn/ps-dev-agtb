@@ -19,7 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $config = array();
-$config['license']['search'] = array('contents of this file are subject to', 'SugarCRM" logo. If the display of the logo');
 $config['excludeFileTypes'] = array('.xls'=>1, '.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1, '.eot' => 1, '.ttf' => 1, '.svg' => 1, '.svgz' => 1, '.woff' => 1, 'phar'=>1);
 $config['excludeFiles'] = array('sugarportal/jscalendar/lang/calendar-hr.js'=>1);
 $config['skipBuilds'] = array('spotactions'=>1, 'richtext'=>1, 'sugarmdle'=>1, 'following'=>1,'inlineedit'=>1, 'notifications'=>1,'sugarsurvey'=>1, 'int'=>1,'internal'=>1 );
@@ -77,7 +76,4 @@ foreach($config['registry']['reg'] as $flav=>$x){
 foreach($config['builds'] as $flav=>$info){
 		if(!defined($flav))define($flav, $flav);
        	if(empty($config['builds'][$flav]['dep']))$config['builds'][$flav]['dep'][] = 'os';
-
-        //load the license for the build
-        $config['license'][$flav] = file_get_contents('license/header.' . $flav . '.txt');
 }
