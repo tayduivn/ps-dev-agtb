@@ -186,12 +186,15 @@ class AdministrationController extends SugarController
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance($type, $ftsConfig);
             $result = $searchEngine->getServerStatus();
+
+
+            //if result is valid, send back succesful connection message
             if ($result['valid']) {
                 $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_SUCCESS'];
-            } else if(!is_string($result['status'])) {
-                if (!empty($result['status']['message']) && is_string($result['status']['message'])) {
-                    $result['status'] = $result['status']['message'];
-                } else {
+            } else {
+                //result valid came back empty, use current $result['status'] message by default
+                //if status element is empty, send back unknown failure message
+                if(empty($result['status'])) {
                     $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_UNKNOWN_FAILURE'];
                 }
             }
