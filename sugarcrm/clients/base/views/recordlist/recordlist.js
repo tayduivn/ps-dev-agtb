@@ -574,14 +574,14 @@
             if (($cancelButton.length > 0) && $cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
-        }, this);
+        }, this, true);
 
         app.shortcuts.register('List:Inline:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('.selected [name=inline-save]');
             if (($saveButton.length > 0) && $saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
-        }, this);
+        }, this, true);
 
         app.shortcuts.register('List:Favorite', 'f a', function() {
             this.$('.selected .icon-favorite:visible').click();

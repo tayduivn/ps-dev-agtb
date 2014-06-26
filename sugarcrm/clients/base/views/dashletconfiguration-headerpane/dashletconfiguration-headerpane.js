@@ -44,13 +44,13 @@
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
-        }, this);
+        }, this, true);
         app.shortcuts.register('Dashlet:Config:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('a[name=save_button]');
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
-        }, this);
+        }, this, true);
     },
 
     /**

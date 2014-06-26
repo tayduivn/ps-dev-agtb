@@ -1269,14 +1269,14 @@
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
-        }, this);
+        }, this, true);
 
         app.shortcuts.register('Record:Cancel', ['esc','ctrl+alt+l'], function() {
             var $cancelButton = this.$('a[name=cancel_button]');
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
-        }, this);
+        }, this, true);
 
         app.shortcuts.register('Record:Previous', 'h', function() {
             var $previous = this.$('.btn.previous-row');

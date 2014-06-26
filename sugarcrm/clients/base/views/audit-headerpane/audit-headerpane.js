@@ -28,7 +28,7 @@
             if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
                 $closeButton.click();
             }
-        }, this);
+        }, this, true);
     },
 
     close: function() {

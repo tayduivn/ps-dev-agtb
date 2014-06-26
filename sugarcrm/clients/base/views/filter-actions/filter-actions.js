@@ -57,7 +57,8 @@
                 function() {
                     this.$('a.filter-close').click();
                 },
-                this
+                this,
+                true
             );
             app.shortcuts.register(
                 'Filter:Save',
@@ -65,7 +66,8 @@
                 function() {
                     this.$('a.save_button:not(.disabled)').click();
                 },
-                this
+                this,
+                true
             );
             app.shortcuts.register('Filter:Delete', 'd', function() {
                 this.$('a.delete_button:not(.hide)').click();

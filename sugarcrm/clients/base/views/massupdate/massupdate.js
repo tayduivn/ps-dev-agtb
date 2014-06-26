@@ -919,10 +919,10 @@
         },this);
         app.shortcuts.register('MassUpdate:Cancel', ['esc', 'ctrl+opt+l'], function() {
                 this.$('a.cancel_button').click();
-            }, this);
+            }, this, true);
         app.shortcuts.register('MassUpdate:Update', ['ctrl+s', 'ctrl+opt+a'], function() {
                 this.$('[name=update_button]:not(.disabled)').click();
-        }, this);
+        }, this, true);
     },
     /**
      * Clear shortcuts and restore previous shortcut session.

@@ -644,14 +644,14 @@
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.get(0).click();
             }
-        }, this);
+        }, this, true);
 
         app.shortcuts.register('Create:Cancel', ['esc','ctrl+alt+l'], function() {
             var $cancelButton = this.$('a[name=' + this.cancelButtonName + ']');
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.get(0).click();
             }
-        }, this);
+        }, this, true);
     },
 
     alerts: {

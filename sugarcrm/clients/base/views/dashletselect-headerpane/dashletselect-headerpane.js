@@ -28,7 +28,7 @@
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
-        }, this);
+        }, this, true);
     },
 
     close: function() {

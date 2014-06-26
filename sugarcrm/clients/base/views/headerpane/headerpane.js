@@ -36,13 +36,13 @@
             } else if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
                 $closeButton.click();
             }
-        }, this);
+        }, this, true);
         app.shortcuts.register('Headerpane:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('a[name=save_button]');
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
-        }, this);
+        }, this, true);
     },
 
     _renderHtml: function() {
