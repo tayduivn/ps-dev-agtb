@@ -37,7 +37,8 @@ describe('Base.Field.TextArea', function() {
 
     describe('format', function() {
         beforeEach(function() {
-            field.action = 'detail';
+            // FIXME will be moved back to action once SC-2608 is done
+            field.tplName = 'detail';
         });
 
         using('various field actions', [
@@ -74,7 +75,8 @@ describe('Base.Field.TextArea', function() {
         ], function(value) {
             it('should only set a `long` value if in detail mode', function() {
                 field.parent = value.parent;
-                field.action = value.action;
+                // FIXME will be moved back to action once SC-2608 is done
+                field.tplName = value.action;
                 var returnVal = field.format('testvalue');
 
                 expect(returnVal.hasOwnProperty('long')).toBe(value.longExists);
@@ -151,7 +153,8 @@ describe('Base.Field.TextArea', function() {
         ], function(value) {
             it('should call the parent `setMode` with the appropriate mode', function() {
                 var superStub = sinon.collection.stub(field, '_super');
-                field.action = value.action;
+                // FIXME will be moved back to action once SC-2608 is done
+                field.tplName = value.action;
                 field.setMode(value.mode);
 
                 expect(superStub).toHaveBeenCalledWith('setMode', [value.expectedMode]);

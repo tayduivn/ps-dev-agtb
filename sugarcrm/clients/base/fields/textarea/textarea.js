@@ -114,7 +114,7 @@
     setMode: function(name) {
         // FIXME: This will be updated pending changes to fields in sidecar,
         // see SC-2608, SC-2776.
-        var mode = (this.action === 'list') && _.contains(['edit', 'disabled'], name) ? this.action : name;
+        var mode = (this.tplName === 'list') && _.contains(['edit', 'disabled'], name) ? this.tplName : name;
         this._super('setMode', [mode]);
     },
 
@@ -133,8 +133,8 @@
     format: function(value) {
         //Format for the detail template if the action is detail, or if the current action is disabled but the parent
         //action is detail (for use with copy fields that are disabled, but show up on the detail view)
-        if ((this.action === 'detail') ||
-            (this.action === 'disabled' && (!this.parent || this.parent.action === 'detail'))) {
+        if ((this.tplName === 'detail') ||
+            (this.tplName === 'disabled' && (!this.parent || this.parent.action === 'detail'))) {
             var max = this._settings.max_display_chars;
             value = {long: value};
 
