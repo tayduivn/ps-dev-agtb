@@ -130,7 +130,7 @@ $viewdefs['base']['view']['history'] = array(
             'active' => true,
             'filter_applied_to' => 'date_start',
             'filters' => array(
-                'status' => array('$equals' => 'Held'),
+                'status' => array('$in' => array('Held', 'Not Held')),
             ),
             'link' => 'meetings',
             'module' => 'Meetings',
@@ -176,7 +176,7 @@ $viewdefs['base']['view']['history'] = array(
         array(
             'filter_applied_to' => 'date_start',
             'filters' => array(
-                'status' => array('$equals' => 'Held'),
+                'status' => array('$in' => array('Held', 'Not Held')),
             ),
             'link' => 'calls',
             'module' => 'Calls',
