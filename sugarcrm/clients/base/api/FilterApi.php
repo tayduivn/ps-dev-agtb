@@ -473,7 +473,6 @@ class FilterApi extends SugarApi
             $i++;
 
             $this->populateRelatedFields($bean, $rows[$bean_id]);
-            $bean->call_custom_logic("process_record");  
 
         }
 

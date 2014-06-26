@@ -3237,6 +3237,7 @@ class SugarBean
             }
             //true parameter below tells populate to perform conversions on row data
             $bean->fetched_row = $bean->populateFromRow($row, true);
+            $bean->call_custom_logic("process_record");
             $beans[$bean->id] = $bean;
             $rawRows[$bean->id] = $row;
         }
