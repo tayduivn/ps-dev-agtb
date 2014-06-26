@@ -1882,7 +1882,7 @@ class SugarBean
 
         $this->call_custom_logic('after_save', array(
             'isUpdate' => $isUpdate,
-            'dataChanges' => $auditDataChanges,
+            'dataChanges' => $dataChanges,
         ));
 
         $this->in_save = false;
