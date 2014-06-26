@@ -2251,7 +2251,19 @@ return str_replace(' > ','_',
             //  for charts
             if ($column_field_name == 'summary_columns' && $this->do_chart) {
                 //_pp($display);
-                $cell_arr = array('val' => $raw_display, 'key' => $display_column['column_key']);
+                $raw_value = "";
+                foreach ($this->report_def['summary_columns'] as $index => $column) {
+                    if ($column['name'] == $display_column['name']) {
+                        $keys = array_keys($fields);
+                        $raw_value = $fields[$keys[$index]];
+                        break;
+                    }
+                }
+                $cell_arr = array(
+                    'val' => $raw_display,
+                    'key' => $display_column['column_key'],
+                    'raw_value' => $raw_value
+                );
                 //_pp($cell_arr);
                 array_push($chart_cells, $cell_arr);
             }
