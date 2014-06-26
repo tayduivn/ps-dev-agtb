@@ -354,8 +354,8 @@
      * @param {Boolean} right
      */
     scrollHorizontally: function(right) {
-        var $scrollableDiv = this.$el.closest('.main-pane .flex-list-view-content'),
-            scrollEnabled = this.$el.closest('.main-pane .flex-list-view').hasClass('scroll-width'),
+        var $scrollableDiv = this.$('.flex-list-view-content'),
+            scrollEnabled = this.$el.hasClass('scroll-width'),
             nextScrollPosition,
             increment = 60;
 
