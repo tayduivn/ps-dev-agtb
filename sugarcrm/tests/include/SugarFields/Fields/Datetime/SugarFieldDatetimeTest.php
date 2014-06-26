@@ -101,4 +101,32 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), $q, $w, $op);
         $this->assertEquals($fixedDate, $date);
     }
+
+    public function providerApiSaveDateTest()
+    {
+        return array(
+            array('2014-05-16T13:01:00Z'),
+            array('2014-05-16')
+        );
+    }
+
+    /**
+     * @dataProvider providerApiSaveDateTest
+     */
+    public function testApiSaveDateTest($date)
+    {
+        /* @var $bean SugarBean */
+        $bean = $this->getMock('Opportunity', array('save'));
+
+        $params = array(
+            'test_c' => $date
+        );
+
+        /* @var $field SugarFieldDatetime */
+        $field = SugarFieldHandler::getSugarField('datetime');
+
+        $field->apiSave($bean, $params, 'test_c', array('type' => 'date'));
+
+        $this->assertEquals('2014-05-16', $bean->test_c);
+    }
 }
