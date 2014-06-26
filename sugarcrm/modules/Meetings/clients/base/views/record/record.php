@@ -1,8 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,12 +9,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 $viewdefs['Meetings']['base']['view']['record'] = array(
     'panels' => array(
         array(
@@ -26,27 +16,32 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name'          => 'picture',
-                    'type'          => 'avatar',
-                    'size'          => 'large',
+                    'name' => 'picture',
+                    'type' => 'avatar',
+                    'size' => 'large',
                     'dismiss_label' => true,
-                    'readonly'      => true,
+                    'readonly' => true,
                 ),
                 'name',
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
+                    'readonly' => true,
                     'dismiss_label' => true,
                 ),
                 array(
                     'name' => 'follow',
-                    'label'=> 'LBL_FOLLOW',
+                    'label' => 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
                     'dismiss_label' => true,
                 ),
-            )
+                array(
+                    'name' => 'status',
+                    'type' => 'status',
+                ),
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -55,18 +50,22 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'type',
-                'status',
                 'date_start',
-                'location',
-                'date_end',
-                'parent_name',
+                'repeat_type',
                 array(
-                    'name' => 'fieldset_duration',
-                    'type' => 'fieldset',
-                    'label' => 'Duration',
-                    'fields' => array('duration_hours', 'duration_minutes')
+                    'name' => 'date_end',
+                    'required' => true,
                 ),
+                array(),
+                'location',
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'parent_name',
+                'type',
+                'assigned_user_name',
+                'team_name',
             ),
         ),
         array(
@@ -77,11 +76,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'description', 'span' => 8),
-                array('type' => 'html', 'default_value' => ''),
-                'teams',
-                'password',
-                'join_url',
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
@@ -101,7 +95,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'reminder_checked',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -121,7 +114,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-            )
-        )
+            ),
+        ),
     ),
 );

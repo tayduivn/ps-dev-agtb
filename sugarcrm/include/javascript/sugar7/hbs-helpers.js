@@ -134,5 +134,22 @@
         Handlebars.registerHelper('buildUrl', function(options) {
             return new Handlebars.SafeString(app.utils.buildUrl(options.hash.url));
         });
+
+        /**
+         * Returns a relative time using
+         * {@link http://momentjs.com/docs/#/displaying/calendar-time/ momentjs's calendar API}.
+         *
+         * Example:
+         * <pre><code>
+         * {{calendarTime timestamp}}
+         * </code></pre>
+         *
+         * @param {String} iso8601 the ISO-8601 date string to be converted
+         * @param {Object} [options] more attributes to be used on this element
+         * @return {String} the relative calendar time like `Today 2:30 AM`
+         */
+        Handlebars.registerHelper('calendarTime', function(iso8601, options) {
+            return moment(iso8601).calendar();
+        });
     });
 })(SUGAR.App);
