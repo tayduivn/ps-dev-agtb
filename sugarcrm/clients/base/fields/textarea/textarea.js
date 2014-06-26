@@ -28,8 +28,6 @@
      * - {Boolean} collapsed Defines whether or not the textarea detail view
      *   should be collapsed on initial render.
      *
-     *     @example
-     *     ```
      *     // ...
      *     'settings' => array(
      *         'max_display_chars' => 50,
@@ -37,7 +35,6 @@
      *         //...
      *     ),
      *     //...
-     *     ```
      *
      * @protected
      * @type {Object}
