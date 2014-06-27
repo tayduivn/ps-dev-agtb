@@ -111,6 +111,8 @@ class ListViewDisplay {
 
         $this->fillDisplayColumnsWithVardefs();
 
+        $data = $this->setupHTMLFields($data);
+
 		$this->process($file, $data, $seed->object_name);
 		return true;
 	}
@@ -590,20 +592,6 @@ EOF;
                 $this->displayColumns[$columnName]['options'] = $seedDef['options'];
             }
 
-            //C.L. Fix for 11177
-            if ($this->displayColumns[$columnName]['type'] == 'html') {
-                $cField = $this->seed->custom_fields;
-                if (isset($cField) && isset($cField->bean->$seedName)) {
-                    $seedName2 = strtoupper($columnName);
-                    $htmlDisplay = html_entity_decode($cField->bean->$seedName);
-                    $count = 0;
-                    while ($count < count($data['data'])) {
-                        $data['data'][$count][$seedName2] = &$htmlDisplay;
-                        $count++;
-                    }
-                }
-            }//fi == 'html'
-
             //Bug 40511, make sure relate fields have the correct module defined
             if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']) && empty( $this->displayColumns[$columnName]['module'])) {
                 $link = $seedDef['link'];
@@ -632,5 +620,30 @@ EOF;
                 $this->displayColumns[$columnName]['id'] = strtoupper($this->displayColumns[$columnName]['id_name']);
             }
         }
+    }
+
+    /**
+     * Fill in the HTML fields, since the values come from the vardefs
+     *
+     * @param $data - ListView Data
+     */
+    protected function setupHTMLFields($data)
+    {
+        foreach ($this->displayColumns as $columnName => $def) {
+            $columnLower = strtolower($columnName);
+            if ($this->displayColumns[$columnName]['type'] == 'html') {
+                if (isset($this->seed->custom_fields)) {
+                    $customField = $this->seed->custom_fields;
+                    if (isset($customField->bean) && isset($customField->bean->$columnLower)) {
+                        $htmlDisplay = html_entity_decode($customField->bean->$columnLower);
+                        for ($count = 0; $count < count($data['data']); $count++) {
+                            $data['data'][$count][$columnName] = $htmlDisplay;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }

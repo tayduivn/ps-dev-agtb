@@ -615,12 +615,58 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check setupHTMLFields
+     *
+     * @dataProvider setupHTMLFieldsDataProvider
+     * @param $expected - Expected HTML field value
+     * @param $field - Field name
+     * @param $displayColumns - Display columns def containing the definition for HTML $field
+     */
+    public function testSetupHTMLFields($expected, $field, $displayColumns)
+    {
+        $this->_lvd->displayColumns = $displayColumns;
+
+        $this->_lvd->seed = new stdClass;
+        $this->_lvd->seed->custom_fields = new stdClass;
+        $this->_lvd->seed->custom_fields->bean = new stdClass;
+        $this->_lvd->seed->custom_fields->bean->test_c = $displayColumns[$field]['default'];
+
+        $data = array(
+            'data' => array(
+                0 => array(),
+            ),
+        );
+
+        $data = $this->_lvd->setupHTMLFields($data);
+
+        $this->assertEquals($expected, $data['data'][0][$field], 'HTML Field value not set');
+    }
+
+    public static function setupHTMLFieldsDataProvider()
+    {
+        return array(
+            array(
+                '<p>test</p>',
+                'test_c',
+                array(
+                    'test_c' => array(
+                        'type' => 'html',
+                        'default' => '<p>test</p>',
+                    )
+                ),
+            ),
+        );
+    }
+
+    /**
      * bug 50645 Blank value for URL custom field in DetailView and subpanel
      * @dataProvider testDefaultSeedDefValuesProvider
      */
     public function testDefaultSeedDefValues($expected, $displayColumns, $fieldDefs)
     {
         $this->_lvd->displayColumns = $displayColumns;
+        $this->_lvd->lvd = new stdClass;
+        $this->_lvd->lvd->seed = new stdClass;
         $this->_lvd->lvd->seed->field_defs = $fieldDefs;
         $this->_lvd->fillDisplayColumnsWithVardefs();
         foreach ($this->_lvd->displayColumns as $columnName => $def) {
@@ -705,5 +751,15 @@ class ListViewDisplayMock extends ListViewDisplay
     public function buildTargetList()
     {
         return parent::buildTargetList();
+    }
+
+    public function fillDisplayColumnsWithVardefs()
+    {
+        return parent::fillDisplayColumnsWithVardefs();
+    }
+
+    public function setupHTMLFields($data)
+    {
+        return parent::setupHTMLFields($data);
     }
 }

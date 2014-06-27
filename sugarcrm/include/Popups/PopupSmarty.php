@@ -410,6 +410,7 @@ class PopupSmarty extends ListViewSmarty{
 		}
 
         $this->fillDisplayColumnsWithVardefs();
+        $data = $this->setupHTMLFields($data);
 
 		$this->process($file, $data, $this->seed->object_name);
 	}
