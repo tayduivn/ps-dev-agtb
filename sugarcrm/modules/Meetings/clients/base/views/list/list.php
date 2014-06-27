@@ -56,7 +56,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'enabled' => true,

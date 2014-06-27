@@ -576,7 +576,6 @@ $bwcModules = array(
     'KBContents',
     //END SUGARCRM flav=pro ONLY
     'Manufacturers',
-    'Meetings',
     'MergeRecords',
     'ModuleBuilder',
     'MySettings',
