@@ -144,7 +144,7 @@
         // called, not just on render
         app.shortcuts.register(
             'Filter:Create',
-            ['f c', 'ctrl+opt+8'],
+            ['f c', 'ctrl+alt+8'],
             function() {
                 // trigger the change event to open the edit filter drawer
                 this.filterNode.select2('val', 'create', true);

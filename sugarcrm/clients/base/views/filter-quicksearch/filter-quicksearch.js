@@ -43,7 +43,9 @@
 
         //shortcut keys
         app.shortcuts.register('Filter:Search', ['f i','ctrl+alt+9'], function() {
-            this.$el.focus();
+            if (this.$el.is(':visible')) {
+                this.$el.focus();
+            }
         }, this);
     },
 
