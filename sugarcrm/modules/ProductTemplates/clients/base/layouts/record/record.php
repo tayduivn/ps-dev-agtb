@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -25,6 +24,60 @@ $viewdefs['ProductTemplates']['base']['layout']['record'] = array(
                                 ),
                                 array(
                                     'layout' => 'extra-info',
+                                ),
+                                array(
+                                    'layout' => array(
+                                        'name' => 'filterpanel',
+                                        'span' => 12,
+                                        'last_state' => array(
+                                            'id' => 'record-filterpanel',
+                                            'defaults' => array(
+                                                'toggle-view' => 'subpanels',
+                                            ),
+                                        ),
+                                        'availableToggles' => array(
+                                            array(
+                                                'name' => 'subpanels',
+                                                'icon' => 'icon-table',
+                                                'label' => 'LBL_DATA_VIEW',
+                                            ),
+                                            array(
+                                                'name' => 'list',
+                                                'icon' => 'icon-table',
+                                                'label' => 'LBL_LISTVIEW',
+                                            ),
+                                            array(
+                                                'name' => 'activitystream',
+                                                'icon' => 'icon-th-list',
+                                                'label' => 'LBL_ACTIVITY_STREAM',
+                                            ),
+                                        ),
+                                        'components' => array(
+                                            array(
+                                                'layout' => 'filter',
+                                                'targetEl' => '.filter',
+                                                'position' => 'prepend'
+                                            ),
+                                            array(
+                                                'view' => 'filter-rows',
+                                                "targetEl" => '.filter-options'
+                                            ),
+                                            array(
+                                                'view' => 'filter-actions',
+                                                "targetEl" => '.filter-options'
+                                            ),
+                                            array(
+                                                'layout' => 'activitystream',
+                                                'context' =>
+                                                array(
+                                                    'module' => 'Activities',
+                                                ),
+                                            ),
+                                            array(
+                                                'layout' => 'subpanels',
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                             'type' => 'simple',
