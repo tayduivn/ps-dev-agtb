@@ -2562,7 +2562,7 @@ class SugarBean
                         //Load the relationship
                         if ($this->load_relationship($oldParentLink))
                         {
-                            $this->$oldParentLink->delete($this->fetched_row[$idField]);
+                            $this->$oldParentLink->delete($this->id, $this->fetched_row[$idField]);
                             // Should resave the old parent, if the current user has access to it and can save it
                             $beanToSave = BeanFactory::getBean($this->fetched_row[$typeField], $this->fetched_row[$idField]);
                             if (!empty($beanToSave->id)) {
