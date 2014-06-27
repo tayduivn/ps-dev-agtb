@@ -18,6 +18,7 @@
         'change [name="dnb_bal_founding"]': 'toggleFormControls',
         'change [name="dnb_bal_offer_amt"]': 'toggleFormControls',
         'change [name="dnb_bal_ipo_price_range"]': 'toggleFormControls',
+        'change [name="dnb_bal_ipo_date"]': 'toggleFormControls',
         'change [name="dnb_bal_emp_cnt"]': 'toggleFormControls',
         'change [name="dnb_bal_net_income"]': 'toggleFormControls',
         'change [name="dnb_bal_net_income_growth"]': 'toggleFormControls',
@@ -400,8 +401,10 @@
             fields[operatorKey].objType = 'operator';
             fields[paramMeta.upperLimit] = this.moduleFields[paramMeta.upperLimit];
             fields[paramMeta.upperLimit].objType = 'upperLimit';
+            fields[paramMeta.upperLimit].required = true;
             if (this.model.get(operatorKey) === 'btw') {
                 fields[paramMeta.lowerLimit] = this.moduleFields[paramMeta.lowerLimit];
+                fields[paramMeta.lowerLimit].required = true;
                 fields[paramMeta.lowerLimit].objType = 'lowerLimit';
             }
             this.model.doValidate(fields, _.bind(function(isValid) {
