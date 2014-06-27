@@ -113,6 +113,33 @@ class ProductBundle extends SugarBean {
 		$this->team_id = 1; // make the item globally accessible
 	}
 
+    /**
+     * @deprecated
+     */
+    function get_index($quote_id)
+    {
+        $values = array('quote_id' => $quote_id, 'bundle_id' => $this->id);
+        return $this->retrieve_relationships($this->rel_quotes, $values, 'bundle_index');
+    }
+
+    /**
+     * @deprecated
+     */
+    function get_bundle_product_indexes()
+    {
+        $values = array('bundle_id' => $this->id);
+        return $this->retrieve_relationships($this->rel_products, $values, 'product_index');
+    }
+
+    /**
+     * @deprecated
+     */
+    function get_bundle_note_indexes()
+    {
+        $values = array('bundle_id' => $this->id);
+        return $this->retrieve_relationships($this->rel_notes, $values, 'note_index');
+    }
+
 	/** Returns a list of the associated products
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
 	 * All Rights Reserved..
