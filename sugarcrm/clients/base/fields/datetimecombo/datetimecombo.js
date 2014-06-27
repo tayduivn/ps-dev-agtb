@@ -273,10 +273,15 @@
             return value;
         }
 
-        value = app.date(value).zone(value);
+        value = app.date(value);
 
         if (!value.isValid()) {
             return;
+        }
+
+        // set time zone if specified
+        if (value._tzm) {
+            value.parseZone();
         }
 
         if (this.action === 'edit') {
