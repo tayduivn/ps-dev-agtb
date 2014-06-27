@@ -452,9 +452,13 @@ class SavedReport extends SugarBean
 }
 
   // returns the available modules for the specific user
-  function getACLAllowedModules() {
+/**
+ * @param bool $ignoreSessionCache  When true, just ignore any session and re-generate it
+ * @return array
+ */
+function getACLAllowedModules($ignoreSessionCache = false) {
 
-	if (isset($_SESSION['reports_getACLAllowedModules'])) {
+	if ($ignoreSessionCache === false && isset($_SESSION['reports_getACLAllowedModules'])) {
         return $_SESSION['reports_getACLAllowedModules'];
     }
 

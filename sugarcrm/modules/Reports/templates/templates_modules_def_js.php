@@ -25,7 +25,7 @@ $currentModule = 'Reports';
 
 $global_json = getJSONobj();
 global $ACLAllowedModules;
-$ACLAllowedModules = getACLAllowedModules();
+$ACLAllowedModules = getACLAllowedModules(true);
 echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules)) .";\n";
 
 ?>
