@@ -93,16 +93,11 @@ class ViewConfiguretabs extends SugarView
         $hidpanels_arr = SubPanelDefinitions::get_hidden_subpanels();
         
         if(!$hidpanels_arr || !is_array($hidpanels_arr)) $hidpanels_arr = array();
-
-        global $modInvisList;
         
         //create array of subpanels to show, used to create Drag and Drop widget
         $enabled = array();
         foreach ($panels_arr as $key) {
             if(empty($key)) continue;
-            if (($key == 'project' || $key == 'projecttask') && in_array('Project', $modInvisList)) {
-                continue;
-            }
             $key = strtolower($key);
             $enabled[] =  array("module" => $key, "label" => $mod_list_strings_key_to_lower[$key]);
         }
@@ -111,9 +106,6 @@ class ViewConfiguretabs extends SugarView
         $disabled = array();
         foreach ($hidpanels_arr as $key) {
             if(empty($key)) continue;
-            if (($key == 'project' || $key == 'projecttask') && in_array('Project', $modInvisList)) {
-                continue;
-            }
             $key = strtolower($key);
             $disabled[] =  array("module" => $key, "label" => $mod_list_strings_key_to_lower[$key]);
         }

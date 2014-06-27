@@ -1602,6 +1602,15 @@ function displayWorkflowForCurrentUser()
     foreach ($moduleList as $module) {
         $workflow_mod_list[$module] = $module;
     }
+    // This list is taken from the previous version of workflow_utils.php
+    $workflow_mod_list['Tasks'] = "Tasks";
+    $workflow_mod_list['Calls'] = "Calls";
+    $workflow_mod_list['Meetings'] = "Meetings";
+    $workflow_mod_list['Notes'] = "Notes";
+    $workflow_mod_list['ProjectTask'] = "Project Tasks";
+    $workflow_mod_list['Leads'] = "Leads";
+    $workflow_mod_list['Opportunities'] = "Opportunities";
+    // End of list
 
     $access = get_workflow_admin_modules_for_user($GLOBALS['current_user']);
     foreach ($access as $key=>$val) {
@@ -1638,14 +1647,21 @@ function get_admin_modules_for_user($user)
         return $_SESSION['get_workflow_admin_modules_for_user'];
     }
 
-    global $moduleList, $modInvisList;
+    global $moduleList;
     $workflow_mod_list = array();
     foreach ($moduleList as $module) {
-        if($module == 'ProjectTask' && in_array('Project', $modInvisList)) {
-            continue;
-        }
         $workflow_mod_list[$module] = $module;
     }
+
+    // This list is taken from teh previous version of workflow_utils.php
+    $workflow_mod_list['Tasks'] = "Tasks";
+    $workflow_mod_list['Calls'] = "Calls";
+    $workflow_mod_list['Meetings'] = "Meetings";
+    $workflow_mod_list['Notes'] = "Notes";
+    $workflow_mod_list['ProjectTask'] = "Project Tasks";
+    $workflow_mod_list['Leads'] = "Leads";
+    $workflow_mod_list['Opportunities'] = "Opportunities";
+    // End of list
 
     $workflow_admin_modules = array();
     if (empty($user)) {
@@ -2850,6 +2866,10 @@ function parse_list_modules(&$listArray)
         }
         //END SUGARCRM flav=pro ONLY
 
+        // special case for projects
+        if (array_key_exists('Project', $modListHeader)) {
+            $returnArray['ProjectTask'] = $listArray['ProjectTask'];
+        }
     }
     $returnArray = SugarACL::filterModuleList($listArray, 'access', true);
     asort($returnArray);
@@ -3713,6 +3733,10 @@ function convert_module_to_singular($module_array)
 
         if ($value=="Cases") {
             $module_array[$key] = "Case";
+        }
+        if ($key=="projecttask") {
+            $module_array['ProjectTask'] = "Project Task";
+            unset($module_array[$key]);
         }
     }
 
