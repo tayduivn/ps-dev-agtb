@@ -469,6 +469,26 @@ eoq2;
         }
         return false;
     }
+
+    protected function doHealthcheck()
+    {
+        $scanner = $this->getHealthCheckScanner();
+        if (!$scanner) {
+            $this->log('Cannot find health check scanner. Skipping health check stage');
+            return true;
+        }
+        $scanner->scan();
+        if ($scanner->isFlagRed()) {
+            $this->error("Health check stage failed! Please fix issues described above and re-run upgrader.");
+            return false;
+        }
+        if ($scanner->isFlagYellow() && !$this->confirmDialog("Are you agree with the changes above?")) {
+            $this->error("Health check stage failed! User has canceled upgrade process.");
+            return false;
+        }
+        $this->log("Health check passed. All good.");
+        return true;
+    }
 }
 
 if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;

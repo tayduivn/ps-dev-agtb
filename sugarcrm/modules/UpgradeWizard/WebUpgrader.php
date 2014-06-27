@@ -165,9 +165,6 @@ class WebUpgrader extends UpgradeDriver
             }
         }
         $res = $this->runStep($action);
-        if($action == 'healthcheck' && $this->isHealthCheckInstalled()) {
-            $res = $this->getHealthCheckScanner()->getLogMeta();
-        }
         if ($res !== false && $action == 'unpack') {
             $manifest = $this->getManifest();
             if (empty($manifest)) {
@@ -260,8 +257,20 @@ class WebUpgrader extends UpgradeDriver
         $this->removeDir($this->cacheDir("upgrades/driver/"));
     }
 
-    protected function confirmDialog($message = '')
+    public function doHealthcheck()
     {
-        return false;
+        return $this->getHealthCheckScanner()->verifyLastVerdict();
     }
+
+    protected function  getHealthCheckScanner()
+    {
+        require_once 'modules/HealthCheck/Scanner/ScannerWeb.php';
+        $scanner = new ScannerWeb();
+        $scanner->setVerboseLevel(0);
+        $scanner->setLogFilePointer($this->fp);
+        $scanner->setInstanceDir($this->context['source_dir']);
+        return $scanner;
+    }
+
+
 }

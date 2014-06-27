@@ -392,7 +392,7 @@ class ScannerMeta
      * @param string $id Scan id
      * @return array|boolean
      */
-    public function getMeta($id)
+    public function getMeta($id, $params = array())
     {
         if (!isset($this->meta[$id])) {
             return false;
@@ -404,9 +404,9 @@ class ScannerMeta
         $meta['id'] = $id;
 
         // add labels from modStrings
-        $meta['log'] = $this->getModString("LBL_SCAN_{$id}_LOG");
-        $meta['title'] = $this->getModString("LBL_SCAN_{$id}_TITLE");
-        $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR");
+        $meta['log'] = $this->getModString("LBL_SCAN_{$id}_LOG", $params);
+        $meta['title'] = $this->getModString("LBL_SCAN_{$id}_TITLE", $params);
+        $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $params);
 
         // set defaults
         if (!isset($meta['flag'])) {
@@ -435,10 +435,10 @@ class ScannerMeta
      * @param unknown $reportId
      * @return array|boolean
      */
-    public function getMetaFromReportId($reportId)
+    public function getMetaFromReportId($reportId, $params = array())
     {
         if (isset($this->metaByReportId[$reportId])) {
-            return $this->getMeta($this->metaByReportId[$reportId]);
+            return $this->getMeta($this->metaByReportId[$reportId], $params);
         }
         return false;
     }
@@ -448,12 +448,12 @@ class ScannerMeta
      * @param string $label
      * @return string
      */
-    protected function getModString($label)
+    protected function getModString($label, $params = array())
     {
         if (!empty($this->modStrings[$label])) {
-            return $this->modStrings[$label];
+            $label = $this->modStrings[$label];
         }
-        return $label;
+        return vsprintf($label, $params);
     }
 
     /**
@@ -464,7 +464,7 @@ class ScannerMeta
         if (is_callable('return_module_language') && isset($GLOBALS['current_language'])) {
             $this->modStrings = return_module_language($GLOBALS['current_language'], 'HealthCheck');
         } else {
-            include __DIR__ . '/language/en_us.lang.php';
+            include __DIR__ . '/../language/en_us.lang.php';
             $this->modStrings = $mod_strings;
         }
     }

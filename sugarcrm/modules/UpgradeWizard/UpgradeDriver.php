@@ -1525,23 +1525,9 @@ abstract class UpgradeDriver
             $this->saveState();
             switch($stage) {
                 case "healthcheck":
-                    // FIXME: we need a packer too for CLI as we have the module for Web upgrader
-                    // this will only work for now from within an actual sugar install
-                    $scanner = $this->getHealthCheckScanner();
-                    if(!$scanner) {
-                        $this->log('Cannot find health check scanner. Skipping health check stage');
-                        break;
-                    }
-                    $scanner->scan();
-                    if($scanner->isFlagRed()) {
-                        $this->error("Health check stage failed! Please fix issues described above and re-run upgrader.");
+                    if(!$this->doHealthcheck()) {
                         return false;
                     }
-                    if($scanner->isFlagYellow() && !$this->confirmDialog("Are you agree with the changes above?")) {
-                        $this->error("Health check stage failed! User has canceled upgrade process.");
-                        return false;
-                    }
-                    $this->log("Health check passed. All good.");
                     break;
                 case "unpack":
                     // Verify package
@@ -1684,12 +1670,7 @@ abstract class UpgradeDriver
         return false;
     }
 
-    /**
-     * Returns true if user has confirmed to proceed with the stage
-     * @param $stage
-     * @return boolean
-     */
-    protected abstract function confirmDialog($message = '');
+    protected abstract function doHealthcheck();
 
 }
 

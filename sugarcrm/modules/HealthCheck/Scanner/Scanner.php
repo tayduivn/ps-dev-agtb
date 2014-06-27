@@ -206,10 +206,11 @@ class Scanner
         $params = func_get_args();
 
         $id = array_shift($params);
+
         if (is_int($id)) {
-            $scanMeta = $this->meta->getMeta($id);
+            $scanMeta = $this->meta->getMeta($id, $params);
         } else {
-            $scanMeta = $this->meta->getMetaFromReportId($id);
+            $scanMeta = $this->meta->getMetaFromReportId($id, $params);
         }
 
         // load default failure if no metadata can be found for given $id
@@ -328,7 +329,7 @@ class Scanner
         set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
         $this->log("Starting scanning $this->instance");
         if(!$this->init()) {
-            return;
+            return $this->logMeta;
         }
 
         $sugar_version = '9.9.9';
@@ -340,7 +341,7 @@ class Scanner
         if(version_compare($sugar_version, '7.0', '>')) {
             $this->updateStatus("alreadyUpgraded");
             $this->log("Instance already upgraded to 7");
-            return;
+            return $this->logMeta;
         }
 
         if($GLOBALS['sugar_config']['site_url']) {
@@ -415,8 +416,7 @@ class Scanner
         foreach($this->status_log as $status => $items) {
             $this->log("=> $status: ".count($items)." total", 'BUCKET');
             foreach($items as $item) {
-                $scanMeta = $this->meta->getMeta($item['code']);
-                $this->log(sprintf("=> %s: [%s][%s] %s", $status, $scanMeta['report'], $item['code'], $item['reason']), 'BUCKET');
+                $this->log(sprintf("=> %s: %s", $status, $item['reason']), 'BUCKET');
             }
         }
 
