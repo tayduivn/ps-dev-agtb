@@ -2250,4 +2250,9 @@ EOQ;
         $str = str_replace(array('['), array('[[]'), $str);
         return parent::sqlLikeString($str, $wildcard, $appendWildcard);
     }
+
+    public function prepareStatement($sql, array $fieldDefs = array() )
+    {
+        return new MysqliPreparedStatement($this, $sql, $data);
+    }
 }

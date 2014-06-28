@@ -84,12 +84,14 @@ class SugarQuery_Compiler_SQL
             throw new SugarQueryException("Incorrect union query.");
         }
 
+        $this->sugar_query->startData('union');
         foreach ($unions as $union) {
             if (isset($union['query'])) {
                 $sql .= (!empty($sql)) ? ' UNION ' . ($union['all'] ? 'ALL ' : '') : '';
-                $sql .= '(' . $union['query']->compileSql() . ')';
+                $sql .= '(' . $union['query']->compileSql($this->sugar_query) . ')';
             }
         }
+        $this->sugar_query->endData();
 
         if (!empty($this->sugar_query->order_by)) {
             $sql .= " ORDER BY " . $this->compileOrderBy($this->sugar_query->order_by, false) . " ";
@@ -105,6 +107,7 @@ class SugarQuery_Compiler_SQL
                 false
             );
         }
+        $this->sugar_query->data = $this->sugar_query->getData('union');
 
         return $sql;
     }
@@ -140,7 +143,9 @@ class SugarQuery_Compiler_SQL
             );
         }
         if (!empty($this->sugar_query->where)) {
+            $this->sugar_query->startData('where');
             $where_part = trim($this->compileWhere($this->sugar_query->where));
+            $this->sugar_query->endData();
         }
 
         if ($this->sugar_query->distinct) {
@@ -152,7 +157,9 @@ class SugarQuery_Compiler_SQL
         }
 
         if (!empty($this->sugar_query->having)) {
+            $this->sugar_query->startData('having');
             $having_part = $this->compileHaving($this->sugar_query->having);
+            $this->sugar_query->endData();
         }
 
         if (!empty($this->sugar_query->order_by)) {
@@ -160,22 +167,27 @@ class SugarQuery_Compiler_SQL
         }
 
         if (!empty($this->sugar_query->join)) {
+            $this->sugar_query->startData('join');
             $join_part = trim($this->compileJoin($this->sugar_query->join));
+            $this->sugar_query->endData();
         }
 
-
+        $data = array();
         $sql = "SELECT {$distinct} {$select_part} FROM {$from_part}";
         if (!empty($join_part)) {
             $sql .= " {$join_part} ";
+            $data = array_merge($data, $this->sugar_query->getData('join'));
         }
         if (!empty($where_part)) {
             $sql .= " WHERE {$where_part} ";
+            $data = array_merge($data, $this->sugar_query->getData('where'));
         }
         if (!empty($group_by_part)) {
             $sql .= " GROUP BY {$group_by_part} ";
         }
         if (!empty($having_part)) {
             $sql .= " HAVING {$having_part} ";
+            $data = array_merge($data, $this->sugar_query->getData('having'));
         }
         if (!empty($order_by_part)) {
             $sql .= " ORDER BY {$order_by_part} ";
@@ -183,6 +195,7 @@ class SugarQuery_Compiler_SQL
         if (!empty($this->sugar_query->limit) && $this->sugar_query->select->getCountQuery() === false) {
             $sql = $this->db->limitQuery($sql, $this->sugar_query->offset, $this->sugar_query->limit, false, '', false);
         }
+        $this->sugar_query->data = $data;
 
         return trim($sql);
     }
@@ -279,7 +292,7 @@ class SugarQuery_Compiler_SQL
             }
             $compiledField = $this->compileField($field);
             $return[$compiledField] = $compiledField;
-    
+
             if ($selectObj->getCountQuery() === true) {
                 $this->sugar_query->groupBy("{$field->table}.{$field->field}");
             }
@@ -423,6 +436,25 @@ class SugarQuery_Compiler_SQL
 
 
     /**
+     * Prepares value for insertion into SQL
+     * @param string $value
+     * @param SugarQuery_Builder_Condition $condition
+     * @return string
+     */
+    protected function prepareValue($value, SugarQuery_Builder_Condition $condition)
+    {
+        if($this->sugar_query->usePreparedStatements && !empty($condition->field->def)
+            && !($value instanceof SugarQuery_Builder_Literal)
+        ) {
+            $type = $this->db->getFieldType($condition->field->def);
+            $this->sugar_query->addData($condition->field->quoteValue($value, $condition->operator, true));
+            return "?$type";
+        } else {
+            return $condition->field->quoteValue($value, $condition->operator);
+        }
+    }
+
+    /**
      * Compile a condition into SQL
      *
      * @param SugarQuery_Builder_Condition $condition
@@ -431,9 +463,8 @@ class SugarQuery_Compiler_SQL
      *
      * @return string
      */
-    public function compileCondition(
-        SugarQuery_Builder_Condition $condition
-    ) {
+    public function compileCondition(SugarQuery_Builder_Condition $condition)
+    {
         $sql = '';
         $field = $this->compileField($condition->field);
 
@@ -450,10 +481,10 @@ class SugarQuery_Compiler_SQL
                 case 'IN':
                     $valArray = array();
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} IN (" . $condition->values->compileSql() . ")";
+                        $sql .= "{$field} IN (" . $condition->values->compileSql($this->sugar_query) . ")";
                     } else {
                         foreach ($condition->values as $val) {
-                            $valArray[] = $condition->field->quoteValue($val, $condition->operator);
+                            $valArray[] = $this->prepareValue($val, $condition);
                         }
                         $sql .= "{$field} IN (" . implode(',', $valArray) . ")";
                     }
@@ -461,17 +492,17 @@ class SugarQuery_Compiler_SQL
                 case 'NOT IN':
                     $valArray = array();
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} NOT IN (" . $condition->values->compileSql() . ")";
+                        $sql .= "{$field} NOT IN (" . $condition->values->compileSql($this->sugar_query) . ")";
                     } else {
                         foreach ($condition->values as $val) {
-                            $valArray[] = $condition->field->quoteValue($val, $condition->operator);
+                            $valArray[] = $this->prepareValue($val, $condition);
                         }
                         $sql .= "{$field} NOT IN (" . implode(',', $valArray) . ")";
                     }
                     break;
                 case 'BETWEEN':
-                    $value['min'] = $condition->field->quoteValue($condition->values['min'], $condition->operator);
-                    $value['max'] = $condition->field->quoteValue($condition->values['max'], $condition->operator);
+                    $value['min'] = $this->prepareValue($condition->values['min'], $condition);
+                    $value['max'] = $this->prepareValue($condition->values['max'], $condition);
                     $sql .= "{$field} BETWEEN {$value['min']} AND {$value['max']}";
                     break;
                 case 'STARTS':
@@ -488,7 +519,7 @@ class SugarQuery_Compiler_SQL
 
                     if (is_array($condition->values)) {
                         foreach ($condition->values as $value) {
-                            $val = $condition->field->quoteValue($value, $condition->operator);
+                            $val = $this->prepareValue($value, $condition);
                             $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
                         }
                         $sql = rtrim($sql, "$chainWith ");
@@ -496,7 +527,7 @@ class SugarQuery_Compiler_SQL
                             $sql .= " OR {$field} IS NULL ";
                         }
                     } else {
-                        $value = $condition->field->quoteValue($condition->values, $condition->operator);
+                        $value = $this->prepareValue($condition->values, $condition);
                         $sql .= "{$field} {$comparitor} {$value}";
                     }
                     break;
@@ -514,9 +545,9 @@ class SugarQuery_Compiler_SQL
                 case '<=':
                 default:
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} {$condition->operator} (" . $condition->values->compileSql() . ")";
+                        $sql .= "{$field} {$condition->operator} (" . $condition->values->compileSql($this->sugar_query) . ")";
                     } else {
-                        $value = $condition->field->quoteValue($condition->values, $condition->operator);
+                        $value = $this->prepareValue($condition->values, $condition);
                         $sql .= "{$field} {$condition->operator} {$value}";
                     }
                     break;
@@ -592,7 +623,7 @@ class SugarQuery_Compiler_SQL
         $table = $join->table;
 
         if ($table instanceof SugarQuery) {
-            $table = "(" . $table->compileSql() . ")";
+            $table = "(" . $table->compileSql($this->sugar_query) . ")";
         }
         // Quote the table name that is being joined
         $sql .= ' ' . $table;

@@ -28,6 +28,7 @@
 ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
+require_once 'include/database/IBMDB2PreparedStatement.php';
 
 /**
  * Note that we are only supporting LUW 9.7 and higher at this moment
@@ -105,7 +106,10 @@ class IBMDB2Manager  extends DBManager
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
         "recursive_query" => true,
+        "prepared_statements" => true,
 	);
+
+	public $preparedStatementClass = 'IBMDB2PreparedStatement';
 
 	/**
 	 * Schema in which all the DB2 objects live.
@@ -823,7 +827,7 @@ public function convert($string, $type, array $additional_parameters = array())
                 $ref = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
                 if($ref['required'] == 'NULL' // DB2 doesn't have NULL definition, only NOT NULL
                         || ($ref['required'] == 'NOT NULL' && $ref['default'] == '')) { // Make it nullable if no default value provided
-                    $ref['required'] = ''; 
+                    $ref['required'] = '';
                 }
                 $sql = $this->alterTableColumnSQL($action, "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}");
 				break;
@@ -1736,29 +1740,30 @@ EOQ;
     /**
 	 * @see DBManager::massageValue()
 	 */
-    public function massageValue($val, $fieldDef)
+    public function massageValue($val, $fieldDef, $forPrepared = false)
     {
-       $type = $this->getFieldType($fieldDef);
-       $ctype = $this->getColumnType($type);
+        $type = $this->getFieldType($fieldDef);
+        $ctype = $this->getColumnType($type);
 
-       // Deal with values that would exceed the 32k constant limit of DB2
-       if(strpos($ctype, 'clob') !== false && strlen($val) > 32000) //Note we assume DB2 counts bytes and not characters
-       {
-           for($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) // Incrementing with number of bytes of chunk to not loose any characters
-           {
-               $chunk = mb_strcut($val, $pos, 32000);  //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
-               if(!isset($massagedValue))
-               {
-                   $massagedValue = "TO_CLOB('$chunk')";
-               } else {
-                   $massagedValue = "CONCAT($massagedValue, '$chunk')";
-               }
+        // Deal with values that would exceed the 32k constant limit of DB2
+        //Note we assume DB2 counts bytes and not characters
+        if (strpos($ctype, 'clob') !== false && strlen($val) > 32000 && !$forPrepared) {
+            $chunk = '';
+            // Incrementing with number of bytes of chunk to not loose any characters
+            for ($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) {
+                //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
+                $chunk = mb_strcut($val, $pos, 32000);
+                if (!isset($massagedValue)) {
+                    $massagedValue = "TO_CLOB('$chunk')";
+                } else {
+                    $massagedValue = "CONCAT($massagedValue, '$chunk')";
+                }
            }
 
            return $massagedValue;
-       }
+        }
 
-       return parent::massageValue($val, $fieldDef);
+        return parent::massageValue($val, $fieldDef, $forPrepared);
     }
 
 

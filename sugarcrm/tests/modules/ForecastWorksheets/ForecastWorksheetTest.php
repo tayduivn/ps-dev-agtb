@@ -29,6 +29,9 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
 
         SugarTestForecastUtilities::setUpForecastConfig();
+        // this is needed to preload vardefs & ACLs so DB mocking won't mess with them
+        BeanFactory::getBean('ForecastWorksheets');
+        BeanFactory::getBean('Accounts');
     }
 
     public function setUp()
