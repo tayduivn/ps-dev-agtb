@@ -16,9 +16,23 @@
  * @extends View.View
  */
 ({
-    className: "subpanel-header",
+    /**
+     * @inheritDoc
+     */
+    className: 'subpanel-header',
+
+    /**
+     * @inheritDoc
+     */
+    attributes: {
+        'data-sortable-subpanel': 'true'
+    },
+
+    /**
+     * @inheritDoc
+     */
     events: {
-        "click": "togglePanel",
+        'click': 'togglePanel',
         'click a[name=create_button]:not(".disabled")': 'createRelatedClicked',
     },
 
