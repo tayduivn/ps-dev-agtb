@@ -1225,37 +1225,51 @@ class Email extends SugarBean {
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	////	RETRIEVERS
-	function retrieve($id, $encoded=true, $deleted=true) {
-		// cn: bug 11915, return SugarBean's retrieve() call bean instead of $this
-		$ret = parent::retrieve($id, $encoded, $deleted);
+    ///////////////////////////////////////////////////////////////////////////
+    ////	RETRIEVERS
+    function retrieve($id, $encoded = true, $deleted = true)
+    {
+        // cn: bug 11915, return SugarBean's retrieve() call bean instead of $this
+        $bean = parent::retrieve($id, $encoded, $deleted);
 
-		if($ret) {
-			$ret->retrieveEmailText();
-            //$ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
-			$ret->description = to_html($ret->description);
-            //$ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
-			$ret->retrieveEmailAddresses();
+        if ($bean) {
+            $bean->loadAdditionalEmailData($bean);
+        }
 
-			$ret->date_start = '';
-			$ret->time_start = '';
-			$dateSent = explode(' ', $ret->date_sent);
-			if (!empty($dateSent)) {
-			    $ret->date_start = $dateSent[0];
-			    if ( isset($dateSent[1]) )
-			        $ret->time_start = $dateSent[1];
-			}
-			// for Email 2.0
-			foreach($ret as $k => $v) {
-				$this->$k = $v;
-			}
-		}
-		return $ret;
-	}
+        return $bean;
+    }
 
+    /**
+     * Load any additional data and perform any additional postRetrieve processing
+     */
+    function loadAdditionalEmailData(SugarBean $emailBean = null)
+    {
+        if (is_null($emailBean)) {
+            $bean = $this;
+        } else {
+            $bean = $emailBean;
+        }
+        $bean->retrieveEmailText();
+        $bean->description = to_html($bean->description);
+        $bean->retrieveEmailAddresses();
 
-	/**
+        $bean->date_start = '';
+        $bean->time_start = '';
+        $dateSent = explode(' ', $bean->date_sent);
+        if (!empty($dateSent)) {
+            $bean->date_start = $dateSent[0];
+            if (isset($dateSent[1])) {
+                $bean->time_start = $dateSent[1];
+            }
+        }
+        if ($bean !== $this) {
+           foreach ($bean as $k => $v) {
+                $this->$k = $v;
+            }
+        }
+    }
+
+    /**
 	 * Retrieves email addresses from GUIDs
 	 */
 	function retrieveEmailAddresses() {
@@ -1307,6 +1321,18 @@ class Email extends SugarBean {
 		$this->cc_addrs_names = $a['cc_addrs'];
 		$this->bcc_addrs_names = $a['bcc_addrs'];
 	}
+
+    /**
+     * @see SugarBean::populateFromRow
+     */
+    public function populateFromRow($row, $convert = false)
+    {
+        $row = parent::populateFromRow($row, $convert);
+
+        $this->loadAdditionalEmailData();
+
+        return $row;
+    }
 
 	function delete($id='') {
 		if(empty($id))
