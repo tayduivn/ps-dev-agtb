@@ -123,6 +123,13 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
         'link' => 'campaigns',
       ),
     ),
+      array(
+          'layout' => 'subpanel',
+          'label' => 'LBL_PROJECTS_SUBPANEL_TITLE',
+          'context' => array(
+              'link' => 'project',
+          ),
+      ),
   ),
   'type' => 'subpanels',
   'span' => 12,
