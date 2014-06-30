@@ -11,73 +11,9 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['base']['view']['dnb-bal-params'] = array(
+$viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
     'action' => 'edit',
     "panels" => array(
-        array(
-            'name' => 'panel_body',
-            'title' => 'LBL_DNB_BAL_PARAM_PEOPLE',
-            'label' => 'LBL_RECORD_BODY',
-            'columns' => 2,
-            'paramGrp' => 'people',
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'rows' => array(
-                array(
-                    'fields' => array(
-                        array(
-                            'type' => 'label',
-                            'cell_css_class' => 'span2',
-                            'default_value' => 'LBL_DNB_BAL_PARAM_JOB_FN',
-                            'name' => 'dnb_bal_job_fn_lbl',
-                            'css' => 'dnb-bal-param-label'
-                        ),
-                        array(
-                            'name' => 'dnb_bal_job_fn',
-                            'type' => 'enum',
-                            'options' => 'dnb_job_codes',
-                            'cell_css_class' => 'span3'
-                        )
-                    ),
-                ),
-                array(
-                    'fields' => array(
-                        array(
-                            'type' => 'label',
-                            'cell_css_class' => 'span2',
-                            'default_value' => 'LBL_DNB_BAL_PARAM_KEYWORD',
-                            'css' => 'dnb-bal-param-label',
-                            'name' => 'dnb_bal_param_kw_lbl'
-                        ),
-                        array(
-                            'name' => 'dnb_bal_kw_scope',
-                            'type' => 'enum',
-                            'cell_css_class' => 'span2',
-                            'options' => 'dnb_contact_kw_scope'
-                        ),
-                        array(
-                            'name' => 'dnb_bal_kw',
-                            'cell_css_class' => 'span3',
-                            'placeholder' => 'LBL_DNB_BAL_PARAM_KEYWORD',
-                            'no_required_placeholder' => true,
-                            'required' => true
-                        ),
-                        array(
-                            'type' => 'rowaction',
-                            'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
-                            'css_class' => 'dnb-bal-add-btn btn',
-                            'event' => 'dnb-bal-kw-scope-btn'
-                        ),
-                        array(
-                            'type' => 'tagcontainer',
-                            'cell_css_class' => 'tagcontainer span3',
-                            'id' => 'dnb-kw-tags'
-                        )
-                    )
-                )
-            )
-        ),
         array(
             'name' => 'panel_body',
             'title' => 'LBL_DNB_BAL_PARAM_COMP',
@@ -1193,19 +1129,6 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             'inputKey' => 'dnb_bal_org_id',
             'modelKey' => 'orgid', //keys to be used in model
             'modelSubKey' => 'OrganizationIdentificationNumber-'
-        ),
-        'dnb-bal-kw-scope-btn' => array(
-            'addBtn' => '.dnb-bal-kw-scope-btn',
-            'container' => '#dnb-kw-tags',
-            'operator' => array('dnb_bal_kw_scope', 'dnb_bal_kw'),
-            'tagLimit' => 1,
-            'modelKey' => 'contactKw', //keys to be used in model
-            'modelSubKey' => array('KeywordContactScopeText', 'KeywordContactText')
-        ),
-        'dnb_bal_job_fn' => array(
-            'modelSubKey' => 'ManagementResponsibilityCode',
-            'modelKey' => 'jobCode',
-            'multiple' => false
         )
     ),
     'balParamGroups' => array(
@@ -1298,16 +1221,6 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
         'industry' => array(
             'industryCode' => array(
                 'id' => 'dnb-ind-code-tags'
-            )
-        ),
-        'people' => array(
-            'jobCode' => array(
-                'label' => 'LBL_DNB_BAL_PARAM_JOB_FN',
-                'select2' => 'dnb_bal_job_fn'
-            ),
-            'contactKw' => array(
-                'label' => 'LBL_DNB_BAL_PARAM_KEYWORD',
-                'id' => 'dnb-kw-tags'
             )
         )
     )

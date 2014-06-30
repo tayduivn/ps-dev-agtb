@@ -31,6 +31,7 @@
         'click .tagcontainer .select2-search-choice-close': 'removeTag',
         'change [name="dnb_bal_ctry"]': 'mapSelect2Params',
         'change [name="dnb_bal_prescreen_score"]': 'mapSelect2Params',
+        'change [name="dnb_bal_job_fn"]': 'mapSelect2Params',
         'change [name="dnb_bal_ind_code_type"]': 'modifyIndustryModel',
         'shown #dnb_bal_accordian': 'handlePanelShown',
         'hidden #dnb_bal_accordian': 'handlePanelHidden',
@@ -328,7 +329,11 @@
                 paramIndex = _.keys(modelAttr).length + 1;
             }
             //add data to modelKey
-            modelAttr[modelSubKey + paramIndex] = event.added.id;
+            if (modelMeta.multiple) {
+                modelAttr[modelSubKey + paramIndex] = event.added.id;
+            } else {
+                modelAttr[modelSubKey] = event.added.id;
+            }
         } else if (event.removed) {
             //remove the data from model
             var removedData = event.removed.id;

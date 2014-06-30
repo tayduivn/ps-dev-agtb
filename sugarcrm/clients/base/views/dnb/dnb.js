@@ -505,6 +505,106 @@
     //formatting functions map
     formatTypeMap: null,
 
+    contactConst: {
+        'responseCode' : 'FindContactResponse.TransactionResult.ResultID',
+        'responseMsg' : 'FindContactResponse.TransactionResult.ResultText',
+        'contactsPath' : 'FindContactResponse.FindContactResponseDetail.FindCandidate',
+        'contactsDetailPath' : 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.PrincipalsAndManagement.CurrentPrincipal.0',
+        'premCntct' : 'dnb-cnt-prem',
+        'stdCntct' : 'dnb-cnt-std',
+        'srchCount': 'FindContactResponse.FindContactResponseDetail.CandidateMatchedQuantity',
+        'orgName': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$'
+    },
+
+    contactsListDD: {
+        'jobTitle' : {
+            'json_path' : 'JobTitle.0.JobTitleText.$'
+        },
+        'fullName' : {
+            'json_path' : 'ContactName.FullName'
+        },
+        'principalId' : {
+            'json_path' : 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
+        },
+        'emailInd' : {
+            'json_path' : 'DirectTelephoneInformationAvailableIndicator'
+        },
+        'phoneInd' : {
+            'json_path' : 'DirectEmailInformationAvailableIndicator'
+        },
+        'isDupe' : {
+            'json_path' : 'isDupe'
+        },
+        'companyName' : {
+            'json_path' : 'OrganizationPrimaryName.OrganizationName.$'
+        },
+        'dunsNum' : {
+            'json_path' : 'DUNSNumber'
+        }
+    },
+
+    //contacts detail data dictionary
+    contactsDetailDD: {
+        'account_name': {
+            'json_path' : 'orgName',
+            'label' : 'LBL_DNB_BAL_ORG_NAME'
+        },
+        'dnb_principal_id': {
+            'json_path': 'PrincipalIdentificationNumberDetail.PrincipalIdentificationNumber'
+        },
+        'email' : {
+            'json_path' : 'Telecommunication.EmailAddress.0.TelecommunicationAddress',
+            'label' : 'LBL_DNB_CONTACT_EMAIL'
+        },
+        'phone_work' : {
+            'json_path' : 'Telecommunication.TelephoneNumber.0.TelecommunicationNumber',
+            'label' : 'LBL_DNB_CONTACT_PHONE'
+        },
+        'first_name': {
+            'json_path': 'PrincipalName.FirstName'
+        },
+        'last_name': {
+            'json_path': 'PrincipalName.LastName'
+        },
+        'full_name' : {
+            'json_path' : 'PrincipalName.FullName',
+            'label' : 'LBL_DNB_CONTACT_NAME'
+        },
+        'department' : {
+            'json_path' : 'CurrentManagementResponsibility.0.ManagementResponsibilityText.$',
+            'label' : 'LBL_DNB_CONTACT_RESP'
+        },
+        'job_title' : {
+            'json_path' : 'JobTitle',
+            'sub_object': {
+                'data_type' : 'job_hist',
+                'title' : 'JobTitleText.$',
+                'start_date' : 'StartDate.$',
+                'end_date' : 'EndDate.$'
+            }
+        },
+        'salutation': {
+            'json_path': 'PrincipalName.NamePrefix.NamePrefixText'
+        },
+        'emp_bio' : {
+            'json_path' : 'EmploymentBiography.EmploymentBiographyText',
+            'label' : 'LBL_DNB_CONTACT_BIO'
+        },
+        'comp_hist' : {
+            'json_path' : 'FormerCompensation',
+            'sub_object': {
+                'data_type' : 'comp_hist',
+                'comp_det' : 'CompensationDetail',
+                'comp_date' : 'CompensationDate.$',
+                'comp_type' : 'CompensationTypeText.$',
+                'comp_amt' : 'CompensationAmount.$',
+                'comp_curr' : 'CompensationAmount.@CurrencyISOAlpha3Code'
+            }
+        }
+    },
+
+    contactAttr: ['email', 'phone_work', 'dnb_principal_id', 'first_name', 'last_name', 'full_name', 'department', 'title', 'salutation'],
+
     //dashlet initialize
     initDashlet: function() {
         this.accountsDD = {
@@ -545,6 +645,14 @@
             'tpa': this.formatTPA,
             'sales_rev': this.formatAnnualSales,
             'prim_sic': this.formatPrimSic
+        };
+        this.leadsAttr = this.contactAttr.slice();
+        this.leadsAttr.push('account_name');
+        this.targetAttr = this.leadsAttr.slice();
+        this.personTypeAttrList = {
+            'Contacts': this.contactAttr,
+            'Leads': this.leadsAttr,
+            'Prospects': this.targetAttr
         };
     },
 
@@ -610,9 +718,6 @@
     },
 
     /**
-        //adding the '*' t0 searchString for wildcard search
-        searchString = searchString + '*';
-        searchString = encodeURI(searchString);
      * Gets company information for a DUNS number
      * @param {String} duns_num -- duns_num of the company
      * @param {String} prod_code -- CST_PRD_1 or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
@@ -639,7 +744,8 @@
             resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
             app.api.call('create', dnbProfileUrl, {'qdata': firmoParams}, {
                 success: function(data) {
-                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode), responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                        responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (!_.isUndefined(responseCode) && responseCode === 'CM000') {
                         resultData.product = data;
                         //if primary sic is available set it
@@ -1197,18 +1303,67 @@
     /**
      * Checks the Sugar data base for duplicate duns or contacts
      * @param {Object} dupeCheckParams
+     * @params {Function} callBack
      * dupeCheckParams must have the following keys
      * 1.type Possible values are duns,contacts
      * 2.apiResponse
      * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts
      * @param renderFunction
      */
-    baseDuplicateCheck: function(dupeCheckParams, renderFunction) {
+    baseDuplicateCheck: function(dupeCheckParams, callBack) {
         var dupeCheckURL = app.api.buildURL('connector/dnb/dupecheck', '', {}, {});
         var self = this;
         app.api.call('create', dupeCheckURL, {'qdata': dupeCheckParams}, {
             success: function(data) {
-                renderFunction.call(self, {'product': data});
+                callBack.call(self, {'product': data});
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
             },
             error: _.bind(self.checkAndProcessError, self)
         });
@@ -1270,5 +1425,381 @@
                 this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().addClass('disabled');
             }
         }
+    },
+
+    /**
+     * Build a list of contacts
+     * @param {Object} balParams
+     * @param {Function} renderFunction
+     */
+    baseContactsBAL: function(balParams, renderFunction) {
+        var self = this,
+            balRslt = {'product': null, 'errmsg': null},
+            dnbBalURL = app.api.buildURL('connector/dnb/Contacts/bal', '', {}, {});
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
+                    responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                renderFunction.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Preprocessing contacts list
+     * @param {Array} dnbApiResponse DNB API Response for Contacts
+     * @param {Object} contactsListDD Contacts data dictionary
+     * @return {Array} frmtCntctList formatted contacts
+     */
+    formatContactList: function(dnbApiResponse, contactsListDD) {
+        var frmtCntctList = [];
+        _.each(dnbApiResponse, function(contactObj) {
+            //initialize empty formatted obj
+            var frmCntctObj = {};
+            //iterate through data dictionary and extract info
+            _.each(contactsListDD, function(value, key) {
+                var dataElement = this.getJsonNode(contactObj, value.json_path);
+                if (dataElement) {
+                    frmCntctObj[key] = dataElement;
+                }
+            },this);
+            //only if the contact has a name and a principal id will we display it
+            if (frmCntctObj.principalId && frmCntctObj.fullName) {
+                if (frmCntctObj.emailInd || frmCntctObj.phoneInd) {
+                    frmCntctObj.contactType = this.contactConst.premCntct;
+                } else {
+                    frmCntctObj.contactType = this.contactConst.stdCntct;
+                }
+                frmtCntctList.push(frmCntctObj);
+            }
+        },this);
+        return frmtCntctList;
+    },
+
+    /**
+     * Gets contact details for a duns and principal identification number combination
+     * @param {Object} evt
+     */
+    baseGetContactDetails: function(evt) {
+        if (this.disposed) {
+            return;
+        }
+        var contact_id = evt.target.id;
+        var duns_num = this.$(evt.target).data('duns');
+        var contact_name = evt.target.text, contact_type;
+        if (this.$(evt.target).hasClass(this.contactConst.premCntct)) {
+            contact_type = this.contactConst.premCntct;
+        } else if (this.$(evt.target).hasClass(this.contactConst.stdCntct)) {
+            contact_type = this.contactConst.stdCntct;
+        }
+        if (this.name === 'dnb-bal-results') {
+            this.template = app.template.get(this.name + '.dnb-bal-contact-details');
+        } else if (this.name === 'dnb-contact-info') {
+            this.template = app.template.get(this.name + '.dnb-contact-details');
+        }
+        this.cntctLoadMsg = {'contactName' : contact_name};
+        this.render();
+        this.$('div#dnb-contact-details-loading').show();
+        this.$('div#dnb-contact-details').hide();
+        var contactParams = {
+            'duns_num' : duns_num,
+            'contact_id' : contact_id,
+            'contact_type' : contact_type
+        };
+        //check if cache has this data already
+        var cacheKey = 'dnb:' + contactParams.contact_type + ':'
+            + contactParams.duns_num + ':' + contactParams.contact_id;
+        var cacheContent = app.cache.get(cacheKey);
+        if (cacheContent) {
+            this.currentContact = cacheContent.contactDetail;
+            this.renderContactDetails(cacheContent);
+        } else {
+            var dnbContactDetailsURL = app.api.buildURL('connector/dnb/contacts', '', {},{}),
+                resultData = {'contactDetail': null, 'errmsg' : null},
+                self = this;
+            //maintaining dashlet state
+            this.currentContact = null;
+            if (!_.isUndefined(this.dashletState)) {
+                this.dashletState.view = 'detail';
+                this.dashletState.content = cacheKey;
+                this.dashletState.params = null;
+            }
+            app.api.call('create', dnbContactDetailsURL, {'qdata': contactParams},{
+                success: function(data) {
+                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                        responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                    if (responseCode && responseCode === self.responseCodes.success) {
+                        var contactDetail = self.getJsonNode(data, self.contactConst.contactsDetailPath);
+                        if (contactDetail) {
+                            var orgName = self.getJsonNode(data, self.contactConst.orgName);
+                            if (orgName) {
+                                contactDetail.orgName = orgName;
+                            }
+                            resultData.contactDetail = contactDetail;
+                            self.currentContact = resultData.contactDetail;
+                            app.cache.set(cacheKey, resultData);
+                        } else {
+                            resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                        }
+                    } else {
+                        resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                    }
+                    self.renderContactDetails(resultData);
+                },
+                error: _.bind(this.checkAndProcessError, self)
+            });
+        }
+    },
+
+    /**
+     * Renders the contact details
+     * @param {Object} dnbApiResponse dnb api response for contactDetails
+     */
+    renderContactDetails: function(dnbApiResponse) {
+        if (this.disposed) {
+            return;
+        }
+        if (this.name === 'dnb-bal-results') {
+            this.template = app.template.get(this.name + '.dnb-bal-contact-details');
+        } else if (this.name === 'dnb-contact-info') {
+            this.template = app.template.get(this.name + '.dnb-contact-details');
+        }
+        var frmtCntctDet, dnbCntctDet = {};
+        if (dnbApiResponse.contactDetail) {
+            frmtCntctDet = this.formatContactDetails(dnbApiResponse.contactDetail, this.contactsDetailDD);
+            if (frmtCntctDet) {
+                dnbCntctDet.product = frmtCntctDet;
+                //passing the list of import_enabled_modules for bal contact details
+                if (!_.isUndefined(this.import_enabled_modules)) {
+                    dnbCntctDet.product.import_enabled_modules = this.import_enabled_modules;
+                }
+            } else {
+                dnbCntctDet.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+            }
+        } else if (dnbApiResponse.errmsg) {
+            dnbCntctDet.errmsg = dnbApiResponse.errmsg;
+        }
+        this.dnbCntctDet = dnbCntctDet;
+        this.render();
+        //if there are no contact details hide the import button
+        if (dnbCntctDet.errmsg) {
+            if (this.name === 'dnb-bal-results') {
+                this.$('.importContacts').hide();
+            }
+        } else if (dnbCntctDet.product) {
+            if (this.name === 'dnb-bal-results') {
+                this.$('.importContacts').show();
+            } else if (this.name === 'dnb-contact-info') {
+                if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().removeClass('hide');
+                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
+                }
+            }
+            this.currentContact = dnbCntctDet.product;
+        }
+        this.$('div#dnb-contact-details-loading').hide();
+        this.$('div#dnb-contact-details').show();
+    },
+
+    /**
+     * Preprocessing contact details
+     * @param  {Object} contactDetail DNB API Response for contact details
+     * @param  {Object} contactsDetailDD Contact Details Data Dictionary
+     * @return {Object} frmtCntctDet Format Contact Details Array
+     */
+    formatContactDetails: function(contactDetail, contactsDetailDD) {
+        var frmtCntctDet = {};
+        frmtCntctDet.contact_profile = [];
+        _.each(contactsDetailDD, function(value, key) {
+            var dataElement = this.getJsonNode(contactDetail, value.json_path);
+            if (dataElement) {
+                if (key === 'job_title') {
+                    var frmtJobTitles = this.formatJobTitles(dataElement, value.sub_object);
+                    if (frmtJobTitles && frmtJobTitles.length > 0) {
+                        //first job title is the current job title
+                        frmtCntctDet[key] = frmtJobTitles[0].title;
+                        //the rest are used to display job history
+                        if (frmtJobTitles.length > 1) {
+                            frmtJobTitles.splice(0, 1);
+                            frmtCntctDet[value.sub_object.data_type] = frmtJobTitles;
+                        }
+                    }
+                } else if (key === 'comp_hist') {
+                    var frmtCompHist = this.formatCompHist(dataElement, value.sub_object);
+                    if (frmtCompHist && frmtCompHist.length > 0) {
+                        frmtCntctDet[value.sub_object.data_type] = frmtCompHist;
+                    }
+                } else {
+                    //this takes care of formatting general employee information
+                    var maskedDataElement, dataObj = {};
+                    if (key === 'email') {
+                        maskedDataElement = this.emailMask(dataElement);
+                    } else if (key === 'phone_work') {
+                        maskedDataElement = this.phoneMask(dataElement);
+                    }
+                    dataObj.dataLabel = value.label;
+                    if (!_.isUndefined(maskedDataElement)) {
+                        dataObj.dataElement = maskedDataElement;
+                    } else {
+                        dataObj.dataElement = dataElement;
+                    }
+                    //this array is for making the hbs readable
+                    frmtCntctDet.contact_profile.push(dataObj);
+                    //this property is for importing the contact
+                    frmtCntctDet[key] = dataElement;
+                }
+            }
+        },this);
+        return frmtCntctDet;
+    },
+
+    /**
+     * Preprocessing job titles
+     * @param {Array} jobTitles job titles
+     * @param {Object} jobTitleDD job titles data dictionary
+     * @return {Array} formatted job titles
+     */
+    formatJobTitles: function(jobTitles, jobTitleDD) {
+        var jobTitleArray = [];
+        _.each(jobTitles, function(jobObj) {
+            var jobTitleObj = {
+                title: this.getJsonNode(jobObj, jobTitleDD.title),
+                start_date: this.getJsonNode(jobObj, jobTitleDD.start_date),
+                end_date: this.getJsonNode(jobObj, jobTitleDD.end_date)
+            };
+            if (jobTitleObj.title) {
+                jobTitleArray.push(jobTitleObj);
+            }
+        },this);
+        return jobTitleArray;
+    },
+
+    /**
+     * Preprocessing compensation history
+     * @param {Array} compHist compensation history
+     * @param {Object} compHistDD compensation history data dictionary
+     * @return {Array} frmtCompHist formatted compensation history
+     */
+    formatCompHist: function(compHist, compHistDD) {
+        var frmtCompHist = [];
+        _.each(compHist, function(compHistObj) {
+            var compDate = this.getJsonNode(compHistObj, compHistDD.comp_date),
+                compDet = this.getJsonNode(compHistObj, compHistDD.comp_det),
+                frmtCompHistObj = {};
+            var frmtCompDet = [];
+            _.each(compDet, function(compDetObj) {
+                var frmtCompDetObj = {
+                    'comp_type' : this.getJsonNode(compDetObj, compHistDD.comp_type),
+                    'comp_amt' : this.getJsonNode(compDetObj, compHistDD.comp_amt),
+                    'comp_curr' : this.getJsonNode(compDetObj, compHistDD.comp_curr)
+                };
+                if (frmtCompDetObj.comp_amt) {
+                    frmtCompDetObj.comp_amt = this.formatSalesRevenue(frmtCompDetObj.comp_amt);
+                    frmtCompDet.push(frmtCompDetObj);
+                }
+            },this);
+            if (frmtCompDet.length > 0 && compDate) {
+                frmtCompHistObj.comp_date = compDate;
+                frmtCompHistObj.comp_det = frmtCompDet;
+                frmtCompHist.push(frmtCompHistObj);
+            }
+        },this);
+        return frmtCompHist;
+    },
+
+    /**
+     * Masks the email address
+     * @param  {String} email
+     * @return {String} masked email
+     */
+    emailMask: function(email) {
+        var match = email.match(/([A-Za-z]{2})(.*)(@)(.*)/);
+        return match[1] + match[2].replace(/./g, 'x') + match[3] + match[4];
+    },
+
+    /**
+     * Masks the email address
+     * @param  {String} phone
+     * @return {String} masked phone
+     */
+    phoneMask: function(phone) {
+        var match = phone.match(/([0-9]{2})(.*)([0-9]{2})/);
+        return match[1] + match[2].replace(/./g, 'x') + match[3];
+    },
+
+    /**
+     * Imports the current contact information
+     * @param {String} moduleName Possible values for module are Contact / LinkedContacts / Leads / Prospects
+     * LinkedContacts is used to import a contact that is imported from a contacts dashlet that is linked
+     * to a sugar account
+     */
+    baseImportContact: function(moduleName) {
+        var model = this.getModuleModel(this.currentContact, moduleName);
+        var self = this;
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                module: model.module,
+                model: model
+            }
+        }, function(model) {
+            if (!model) {
+                return;
+            }
+            self.context.resetLoadFlag();
+            self.context.set('skipFetch', false);
+            self.context.loadData();
+            _.each(app.controller.context.children, function(childContext) {
+                if (childContext.get('module') === 'Contacts') {
+                    childContext.reloadData(true);
+                }
+            });
+        });
+    },
+
+    /**
+     * Creates and returns a Module bean
+     * @param {Object} modelBean
+     * @param {String} moduleName possible values could be Contacts/LinkedContacts/Leads/Prospects
+     * @return {Object} moduleModel
+     */
+    getModuleModel: function(modelBean, moduleName) {
+        var module, moduleModel;
+        if (moduleName === 'LinkedContacts') {
+            module = 'Contacts';
+        } else {
+            module = moduleName;
+        }
+        var filteredModelBean = _.pick(modelBean, this.personTypeAttrList[module]);
+        if (filteredModelBean.email) {
+            var emailObj = {
+                email_address: filteredModelBean.email,
+                opt_out: false,
+                primary_address: true,
+                reply_to_address: false
+            };
+            filteredModelBean.email = [emailObj];
+        }
+        //adding properties specific to leads alone
+        if (module === 'Leads') {
+            filteredModelBean.lead_source = app.lang.get('LBL_DNB_OTHER');
+            filteredModelBean.lead_source_description = app.lang.get('LBL_DNB_BAL');
+        }
+        //handling the scenario where we need to add a contact associated with an account
+        if (moduleName === 'LinkedContacts') {
+            filteredModelBean.account_id = this.model.get('id');
+            filteredModelBean.account_name = this.model.get('name');
+            moduleModel = app.data.createRelatedBean(this.model, null, 'contacts', filteredModelBean);
+        } else {
+            moduleModel = app.data.createBean(module, filteredModelBean);
+        }
+        return moduleModel;
     }
 })

@@ -164,7 +164,7 @@
             if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField(fieldName))) {
                 this.layout.getComponent('dashlet-toolbar').getField(fieldName).getFieldElement().hide();
             }
-        });
+        }, this);
         this.baseDuplicateCheck(dupeCheckParams, this.renderCompanyList);
     },
 

@@ -291,6 +291,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'phone_fax',
                 'twitter',
                 array(
+                    'name' => 'dnb_principal_id',
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'description',
                     'span' => 12,
                 ),

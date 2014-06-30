@@ -39,6 +39,7 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbFamilyTreeURL = "V3.1/organizations/%s/products/%s";
     private $dnbCleanseMatchURL = "V3.0/organizations";
     private $dnbBALURL = "V6.0/organizations?SearchModeDescription=Advanced&findcompany=true&";
+    private $dnbBALContactURL = "V6.0/organizations?SearchModeDescription=Advanced&findcontact=true&";
     private $dnbFindIndustryURL = "V4.0/industries?KeywordText=%s&findindustry=true";
     private $dnbFindContactsURL = "V4.0/organizations?findcontact=true&DUNSNumber-1=%s&SearchModeDescription=Advanced";
     private $dnbContactDetPremURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s";
@@ -77,6 +78,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
         $this->dnbPassword = trim($this->getConnectorParam('dnb_password'));
         $this->dnbEnv = trim($this->getConnectorParam('dnb_env'));
+        $this->contactModules = array('Contacts','Leads','Prospects');
         // start a session if one hasnt been started
         try {
             if (!isset($_SESSION)) {
@@ -115,16 +117,8 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-        parse_str($queryString, $queryParams);
-        if (array_key_exists('q',$queryParams)) {
-            $keyword = $queryParams['q'];
-                $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
-                return $reply;
-            }
-        } else {
             //send error
             return array('error' => 'ERROR_BAD_REQUEST');
-        }
      * Checks when the duns_num was last refreshed
      * @param $duns_num unique identifier for a company
      * @return jsonarray
@@ -269,26 +263,6 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Gets Contacts For A Given Duns Number
-     * @param $duns_num
-     * @return jsonarray
-     */
-    public function dnbFindContacts($duns_num)
-    {
-        //dnb contacts list
-        $cache_key = 'dnb.contactsearch.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFindContactsURL, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        // get existing contacts
-        $path = $this->commonJsonPaths['contacts'];
-        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
-        }
-        return $reply['responseJSON'];
-    }
-
-    /**
      * Gets Cleanse and Matched Data from DNB API for the cleanse and match parameters
      * @param $cmParams Array
      * cmParams array must be in the following format
@@ -302,7 +276,7 @@ class ExtAPIDnb extends ExternalAPIBase
      *  }
      * @return jsonarray
      */
-    public function dnbCMRrequest($cmParams)
+    public function dnbCMRequest($cmParams)
     {
         //convert $cmParams to queryString
         //TO DO: validate the POST parameters
@@ -357,6 +331,41 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
+     * Builds A List Of Contacts from DNB API for the build a list parameters
+     * @param $balParams Array
+     * $balParams must look like the following
+     * not all keys are mandatory but atleast one of them
+     * {
+     *   "SalesLowRangeAmount": , <decimal> //optionsl
+     *   "SalesHighRangeAmount": , <decimal> //optionsl
+     *  }
+     * @return jsonarray
+     */
+    public function dnbBALContacts($balParams)
+    {
+        //contactType is required for duplicate check
+        $contactType = $balParams['contactType'];
+        //delete the contactType key as the rest of the array is being used to build a query string
+        unset($balParams['contactType']);
+        //convert $balParams to queryString
+        $balQueryString = http_build_query($balParams);
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALContactURL . $balQueryString;
+        $reply = $this->makeRequest('GET', $dnbendpoint);
+        if (!$reply['success']) {
+            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            return array('error' => 'ERROR_DNB_CONFIG');
+        }
+        if (in_array($contactType, $this->contactModules)) {
+            $path = $this->commonJsonPaths['contacts'];
+            if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+                $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path, $contactType);
+            }
+        }
+        return $reply['responseJSON'];
+    }
+
+
+    /**
      * Gets Contacts Details For Principal Identification Number and Duns Number
      * @param $contactParams
      * @return jsonarray
@@ -388,32 +397,6 @@ class ExtAPIDnb extends ExternalAPIBase
         return $reply['responseJSON'];
     }
 
-    /**
-     * Finds Contacts For a Given DUNS Number based on contact name and job title
-     * @param $contactParams array can have the following keys
-     * duns -- DUNS Number -- required
-     * namekw -- Contact Name Key Word -- optional
-     * jobkw -- Job Title Key Word -- optional
-     * either the namekw or the jobkw must be provided
-     * @return array
-     */
-    public function dnbFindContactsPost($contactParams) {
-        $contactQueryString = http_build_query($contactParams);
-        //dnb contacts list
-        $cache_key = 'dnb.contactsearch.' . $contactQueryString;
-        if (!empty($contactParams['KeywordContactText'])) {
-            $contactParams['KeywordContactScopeText'] = 'Title';
-        }
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbContactsBALURL . '&' . http_build_query($contactParams);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        // get existing contacts
-        $path = $this->commonJsonPaths['contacts'];
-        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
-        }
-        return $reply['responseJSON'];
-    }
 
     /**
      * Get the Linkage / Family Tree For a Given DUNS Number
@@ -563,7 +546,7 @@ class ExtAPIDnb extends ExternalAPIBase
             $industryCodePath = "FindIndustryResponse.FindIndustryResponseDetail.IndustryCode";
             if ($this->arrayKeyExists($reply, $industryCodePath)) {
                 $industryArray = $reply['FindIndustryResponse']['FindIndustryResponseDetail']['IndustryCode'];
-                //get the primaru hic
+                //get the primary hic
                 $primaryHIC = $this->underscoreFind(
                     $industryArray,
                     function ($industryObj) {
@@ -598,7 +581,7 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Lists Records already present in sugar db using the $columnName & $moduleName paramerts
+     * Lists Records already present in sugar db using the $columnName & $moduleName parameters
      * @param $columnName
      * @param $moduleName
      * @param $recordIds array (array of id to be used in the in clause of the query)
@@ -937,7 +920,6 @@ class ExtAPIDnb extends ExternalAPIBase
         curl_close($curl_handle);
         $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
         $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
-        $GLOBALS['log']->debug("DNB Session Token Set :".$_SESSION[$this->dnbEnv . 'dnbToken']);
         return $token;
     }
 
@@ -998,7 +980,6 @@ class ExtAPIDnb extends ExternalAPIBase
         $firstNodeDuns = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['duns']);
         $firstNodeDuns = str_pad($firstNodeDuns, 9, "0", STR_PAD_LEFT);
         $dunsArray[] = $firstNodeDuns;
-        $GLOBALS['log']->debug('ft duns count: ' . count($dunsArray));
         //omit the current DUNS from the dunsArray
         $currentDUNS = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['inquiryDet']);
         if (!empty($currentDUNS) && in_array($currentDUNS, $dunsArray)) {
@@ -1030,9 +1011,10 @@ class ExtAPIDnb extends ExternalAPIBase
      * Checks the D&B List of contacts for contacts already existing in SugarDB
      * @param array $dnbApiResponse
      * @param string $path
+     * @param string $contactType
      * @return mixed
      */
-    private function checkAndMarkDuplicateContacts($dnbApiResponse,$path)
+    private function checkAndMarkDuplicateContacts($dnbApiResponse, $path, $contactType)
     {
         $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
         // get existing contacts
@@ -1045,7 +1027,7 @@ class ExtAPIDnb extends ExternalAPIBase
             }
         );
         //get the list of principal ids existing in sugar that match with the above list of principal ids
-        $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', 'Contacts', $dnbPrincIdArray), true);
+        $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', $contactType, $dnbPrincIdArray), true);
         if (count($existingPrincIdArray) > 0) {
             //identify the contacts common in the api response and in the sugar db and mark the dupe
             $modifiedContactsList = $this->getCommonRecords($dnbContactsList, $existingPrincIdArray, $this->commonJsonPaths['principalIdPath'], 'dnb_principal_id');
@@ -1091,10 +1073,10 @@ class ExtAPIDnb extends ExternalAPIBase
                     return array('error' => 'ERROR_INVALID_MODULE_NAME');
                 }
             }
-        } else if ($type === 'contacts') {
+        } else if (in_array($type, $this->contactModules)) {
             $path = $this->commonJsonPaths[$module];
             if (!empty($path)) {
-                $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse, $path);
+                $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse, $path, $type);
                 if (!empty($modifiedApiResponse)) {
                     return $modifiedApiResponse;
                 } else {

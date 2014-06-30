@@ -57,7 +57,8 @@
                                 {{/eq}}
                             </div>
                             <div class="dnb-company-label dnb-company-list">
-                                <a id="{{this.principalId}}" class="{{this.contactType}}">
+                                <a class="{{this.contactType}}" id="{{this.principalId}}"
+                                   data-duns="{{this.dunsNum}}">
                                     {{this.fullName}}
                                 </a>
                                 {{#if this.isDupe}}

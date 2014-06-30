@@ -14,20 +14,17 @@
     extendsFrom: 'DnbView',
 
     events: {
-        'click .importDNBData': 'importDNBData',
-        'click a.dnb-company-name': 'getCompanyDetails',
-        'click .backToList': 'backToCompanyList'
+        'click .importContacts': 'importContacts',
+        'click .backToContactsList': 'backToContactsList',
+        'click .dnb-cnt-prem': 'baseGetContactDetails',
+        'click .dnb-cnt-std': 'baseGetContactDetails'
     },
 
     selectors: {
         'load': '#dnb-bal-result-loading',
-        'rslt': '#dnb-bal-result'
+        'rslt': '#dnb-bal-result',
+        'contactrslt': '#dnb-bal-contact-list'
     },
-
-    /*
-     * @property {Object} balAcctDD Data Dictionary For D&B BAL Response
-     */
-    balAcctDD: null,
 
     /**
      * @override
@@ -36,23 +33,20 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         app.events.on('dnbbal:invoke', this.invokeBAL, this);
-        this.initDD();
+        var originalMeta = app.metadata.getView('','dnb-bal-results');
+        if (originalMeta.import_enabled_modules) {
+            this.import_enabled_modules = originalMeta.import_enabled_modules;
+        }
     },
 
     /**
-     * Initialize the bal data dictionary
+     * Overriding the render function to populate the import type drop down
      */
-    initDD: function() {
-        this.balAcctDD = {
-            'name': this.searchDD.companyname,
-            'duns_num': this.searchDD.dunsnum,
-            'billing_address_street': this.searchDD.streetaddr,
-            'billing_address_city': this.searchDD.town,
-            'billing_address_state': this.searchDD.territory,
-            'billing_address_country': this.searchDD.ctrycd
-        };
-        this.balAcctDD.locationtype = this.searchDD.locationtype;
-        this.balAcctDD.isDupe = this.searchDD.isDupe;
+    _render: function() {
+        //TODO: Investigate why using this._super('_renderHtml');
+        //we get Unable to find method _renderHtml on parent class of dnb-bal-results
+        app.view.View.prototype._renderHtml.call(this);
+        this.$('#importType').select2();
     },
 
     loadData: function(options) {
@@ -70,7 +64,7 @@
      */
     invokeBAL: function(balParams) {
         if (!_.isEmpty(balParams)) {
-            this.buildAListAccounts(balParams);
+            this.buildAList(balParams);
         } else {
             this.loadData();
         }
@@ -80,114 +74,73 @@
      * Build a list of accounts
      * @param {Object} balParams
      */
-    buildAListAccounts: function(balParams) {
+    buildAList: function(balParams) {
         if (this.disposed) {
             return;
         }
-        this.template = app.template.get(this.name + '.dnb-bal-acct-rslt');
-        if (this.dnbBalRslt && this.dnbBalRslt.count) {
-            delete this.dnbBalRslt['count'];
+        this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
+        if (this.dnbContactsList && this.dnbContactsList.count) {
+            delete this.dnbContactsList['count'];
         }
         this.render();
         this.$(this.selectors.load).removeClass('hide');
         this.$(this.selectors.rslt).addClass('hide');
-        this.baseAccountsBAL(balParams, this.renderBALAcct);
+        //this is required for duplicate check
+        balParams.contactType = this.module;
+        this.baseContactsBAL(balParams, this.renderBAL);
     },
 
     /**
-     * Render BAL Accounts results
-     * @param {Object} dnbBalApiRsp BAL API Response
+     * Renders the list of D&B Contacts
+     * @param {Object} dnbApiResponse
      */
-    renderBALAcct: function(dnbBalApiRsp) {
+    renderBAL: function(dnbApiResponse) {
         if (this.disposed) {
             return;
         }
-        var dnbBalRslt = {};
-        if (dnbBalApiRsp.product) {
-            this.companyList = dnbBalApiRsp.product;
-            var apiCompanyList = this.getJsonNode(dnbBalApiRsp.product, this.commonJSONPaths.srchRslt);
-            dnbBalRslt.product = this.formatSrchRslt(apiCompanyList, this.balAcctDD);
-            dnbBalRslt.count = this.getJsonNode(dnbBalApiRsp.product, this.commonJSONPaths.srchCount);
-            //template for displaying count in dashlet headers
-            if (dnbBalRslt.count) {
-                dnbBalRslt.count = app.lang.get('LBL_DNB_BAL_ACCT_HEADER') + "(" + this.formatSalesRevenue(dnbBalRslt.count) + ")";
+        this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
+        var dnbContactsList = {};
+        if (dnbApiResponse.product) {
+            this.contactsList = dnbApiResponse.product;
+            var apiContactList = this.getJsonNode(dnbApiResponse.product, this.contactConst.contactsPath);
+            dnbContactsList.product = this.formatContactList(apiContactList, this.contactsListDD);
+            dnbContactsList.count = this.getJsonNode(dnbApiResponse.product, this.contactConst.srchCount);
+            if (dnbContactsList.count) {
+                dnbContactsList.count = app.lang.get('LBL_DNB_BAL_RSLT_CNT', this.module) + " (" + this.formatSalesRevenue(dnbContactsList.count) + ")";
             }
+        } else if (dnbApiResponse.errmsg) {
+            dnbContactsList.errmsg = dnbApiResponse.errmsg;
         }
-        if (dnbBalApiRsp.errmsg) {
-            dnbBalRslt.errmsg = dnbBalApiRsp.errmsg;
-        }
-        this.dnbBalRslt = dnbBalRslt;
-        this.template = app.template.get(this.name + '.dnb-bal-acct-rslt');
+        this.dnbContactsList = dnbContactsList;
         this.render();
         this.$(this.selectors.load).addClass('hide');
         this.$(this.selectors.rslt).removeClass('hide');
     },
 
     /**
-     * Gets D&B Company Details For A DUNS number
-     * DUNS number is stored as an id in the anchor tag
-     * @param {Object} evt
+     * Back to contacts list functionality
      */
-    getCompanyDetails: function(evt) {
+    backToContactsList: function() {
         if (this.disposed) {
             return;
         }
-        var duns_num = evt.target.id;
-        if (duns_num) {
-            this.template = app.template.get(this.name + '.dnb-company-details');
-            this.render();
-            this.$('div#dnb-company-details').hide();
-            this.$('.importDNBData').hide();
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_BAL_LIST'), this.renderCompanyDetails);
+        this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
+        if (this.dnbContactsList && this.dnbContactsList.count) {
+            delete this.dnbContactsList['count'];
         }
-    },
-
-    /**
-     * Renders the dnb company details for adding companies from dashlets
-     * Overriding the base dashlet function
-     * @param {Object} companyDetails dnb api response for company details
-     */
-    renderCompanyDetails: function(companyDetails) {
-        if (this.disposed) {
-            return;
-        }
-        var formattedFirmographics, dnbFirmo = {};
-        //if there are no company details hide the import button
-        if (companyDetails.errmsg) {
-            this.$('.importDNBData').hide();
-            dnbFirmo.errmsg = companyDetails.errmsg;
-        } else if (companyDetails.product) {
-            this.$('.importDNBData').show();
-            formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
-            dnbFirmo.product = formattedFirmographics;
-            dnbFirmo.backToListLabel = companyDetails.backToListLabel;
-            this.currentCompany = companyDetails.product;
-        }
-        this.dnbFirmo = dnbFirmo;
-        this.render();
-        this.$('div#dnb-company-detail-loading').hide();
-        this.$('div#dnb-company-details').show();
-    },
-
-    /**
-     * navigates users from company details back to results pane
-     */
-    backToCompanyList: function() {
-        if (this.disposed) {
-            return;
-        }
-        if (this.dnbBalRslt && this.dnbBalRslt.count) {
-            delete this.dnbBalRslt['count'];
-        }
-        this.template = app.template.get(this.name + '.dnb-bal-acct-rslt');
         this.render();
         this.$(this.selectors.load).removeClass('hide');
         this.$(this.selectors.rslt).addClass('hide');
         var dupeCheckParams = {
-            'type': 'duns',
-            'apiResponse': this.companyList,
-            'module': 'findcompany'
+            'type': this.module,
+            'apiResponse': this.contactsList,
+            'module': 'contacts'
         };
-        this.baseDuplicateCheck(dupeCheckParams, this.renderBALAcct);
+        this.baseDuplicateCheck(dupeCheckParams, this.renderBAL);
+    },
+
+    importContacts: function() {
+        var module = this.$('#importType').val();
+        this.baseImportContact(module);
     }
 })
