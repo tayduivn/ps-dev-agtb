@@ -500,6 +500,7 @@ class ACLAction  extends SugarBean
                     if($cat_name=='Users'&& $act_name=='admin'){
                         $categories[$cat_name][$type_name][$act_name]['accessOptions'][ACL_ALLOW_DEFAULT]=ACLAction::AccessName(ACL_ALLOW_DEFAULT);;
                         $categories[$cat_name][$type_name][$act_name]['accessOptions'][ACL_ALLOW_DEV]=ACLAction::AccessName(ACL_ALLOW_DEV);;
+                        $categories[$cat_name][$type_name][$act_name]['accessOptions'][ACL_ALLOW_ADMIN_DEV]=ACLAction::AccessName(ACL_ALLOW_ADMIN_DEV);
                     }
                     else{
                     $categories[$cat_name][$type_name][$act_name]['accessOptions'] =  ACLAction::getAccessOptions($act_name, $type_name);

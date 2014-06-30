@@ -15,9 +15,6 @@
  */
 ({
     extendsFrom: 'FlexListView',
-    events: {
-        'click .search-and-select .single': 'triggerCheck'
-    },
 
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
@@ -44,6 +41,10 @@
         }
 
         this._super('initialize', [options]);
+
+        this.events = _.extend({}, this.events, {
+            'click .search-and-select .single': 'triggerCheck'
+        });
 
         if (this.oneToMany) {
             //Set up mass linker component

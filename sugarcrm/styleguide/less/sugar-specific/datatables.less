@@ -462,12 +462,11 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 28px;
+        height: 27px;
         top: 0;
         left: 0;
         padding: 7px 8px;
         border-right: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
         z-index: 999;
       }
@@ -543,11 +542,10 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 28px;
+        height: 27px;
         top: 0;
         right: 0;
         padding: 7px 8px;
-        border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
         &.open {
           z-index: 999;
@@ -957,4 +955,9 @@ table th.nosort span:after {
       }
     }
   }
+}
+
+.touch .flex-list-view.right-actions .dataTable th:last-child > span,
+.touch .flex-list-view.right-actions .dataTable th:last-child > .dropdown { /*UIUX-1760*/
+  height: 30px;
 }

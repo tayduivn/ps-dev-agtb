@@ -17,9 +17,9 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 </script>
 
 
-<script type="text/javascript" src="cache/modules/modules_def_{$LANG}_{$USER_ID_MD5}.js?{$ENTROPY}"></script>
+<script type="text/javascript" src="cache/modules/modules_def_{$LANG}_{$USER_ID_MD5}.js?v=_{$ENTROPY}"></script>
 {if !empty($fiscalStartDate)}
-<script type="text/javascript" src="cache/modules/modules_def_fiscal_{$LANG}_{$USER_ID_MD5}.js?{$ENTROPY}"></script>
+<script type="text/javascript" src="cache/modules/modules_def_fiscal_{$LANG}_{$USER_ID_MD5}.js?v=_{$ENTROPY}"></script>
 {/if}
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='vendor/ytree/TreeView/css/folders/tree.css'}" />
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Reports/tpls/reports.css'}" />

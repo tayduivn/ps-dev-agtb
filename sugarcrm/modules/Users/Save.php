@@ -65,6 +65,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
     if($current_user->id != $focus->id
     || !empty($_POST['is_admin'])
     || (!empty($_POST['UserType']) && $_POST['UserType'] == 'Administrator')
+    || (!$newUser && !empty($_POST['user_name']) && $_POST['user_name'] != $focus->user_name)
     ) {
         $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
         header("Location: index.php?module=Users&action=Logout");

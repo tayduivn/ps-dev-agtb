@@ -107,6 +107,21 @@
         this.model.on('sync', function() {
             if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
                 app.events.trigger('app:help:shown');
+
+                // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
+                // which means we need to re-render the dashboard-headerpane to contain the meta from
+                // the help-dashboard-headerpane view
+                if (this.module === 'Home') {
+                    var list = this.getComponent('list'),
+                        headerpane = (!_.isUndefined(list)) ? list.getComponent('dashboard-headerpane') : undefined;
+
+                    if (headerpane) {
+                        var help_headerpane_meta = app.metadata.getView(this.module, 'help-dashboard-headerpane');
+                        help_headerpane_meta.last_state = headerpane.meta.last_state;
+                        headerpane.meta = help_headerpane_meta;
+                        headerpane.render();
+                    }
+                }
             }
         }, this);
 
@@ -423,19 +438,25 @@
      * @private
      */
     _navigate: function(dashboard) {
+        // if we get here and it's disposed, just return out
+        if (this.disposed) {
+            return;
+        }
         var hasParentContext = (this.context && this.context.parent),
-            hasModelId = (dashboard && dashboard.has('id'));
+            hasModelId = (dashboard && dashboard.has('id')),
+            actualModule = (hasParentContext) ? this.context.parent.get('module') : this.module,
+            isHomeModule = (actualModule === 'Home');
 
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
-            this._navigateLayout(dashboard.get('id'));
+            this._navigateLayout(dashboard.get('id'), dashboard.get('dashboard_type'));
         } else if (hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
             this._navigateLayout('list');
-        } else if (!hasParentContext && hasModelId) {
+        } else if (!hasParentContext && hasModelId && isHomeModule) {
             // we on the Home module and we have a dashboard id
             app.navigate(this.context, dashboard);
-        } else {
+        } else if (isHomeModule) {
             // we on the Home module and we don't have a dashboard
             var route = app.router.buildRoute(this.module);
             app.router.navigate(route, {trigger: true});
@@ -446,13 +467,14 @@
      * Intercept the navigateLayout calls to make sure that the dashboard we are currently one didn't change,
      * if it did, we need to prompt and make sure they want to continue or cancel.
      *
-     * @param {String} dashboard        What dashboard do we want to display
+     * @param {String} dashboard What dashboard do we want to display
+     * @param {string} [type] What type of dashboard are we loading, default `dashboard`
      * @return {Boolean}
      * @private
      */
-    _navigateLayout: function(dashboard) {
+    _navigateLayout: function(dashboard, type) {
         var onConfirm = _.bind(function() {
-                this.navigateLayout(dashboard);
+                this.navigateLayout(dashboard, type);
             }, this),
             headerpane = this.getComponent('dashboard-headerpane');
 
@@ -479,11 +501,17 @@
      * <pre><code>dashboard_type</code></pre> gets used in dashletselect to filter dashlets
      *
      * @param {String} id dashboard id
+     * @param {String} [type] what type of dashboard are we dealing with, default: `dashboard`
      */
-    navigateLayout: function(id) {
+    navigateLayout: function(id, type) {
         var layout = this.layout,
-            lastVisitedStateKey = this.getLastStateKey();
+            lastVisitedStateKey = this.getLastStateKey(),
+            type = (_.isUndefined(type)) ? 'dashboard' : type;
         this.dispose();
+
+        if (!_.contains(['dashboard', 'help-dashboard'], type)) {
+            type = 'dashboard';
+        }
 
         //if dashboard layout navigates to the different dashboard,
         //it should store last visited dashboard id.
@@ -506,7 +534,7 @@
                     type: 'dashboard',
                     components: (id === 'list') ? [] : [
                         {
-                            view: 'dashboard-headerpane'
+                            view: type + '-headerpane'
                         },
                         {
                             layout: 'dashlet-main'

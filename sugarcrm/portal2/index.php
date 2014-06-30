@@ -37,20 +37,15 @@ ensureJSCacheFilesExist();
             <script src="../sidecar/minified/sidecar.min.js"></script>
         <? endif; ?>
 
-        <!-- App Scripts -->
+        <!-- Sidecar Scripts -->
         <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
-        <script src="../include/javascript/sugar7/bwc.js"></script>
-        <script src="../include/javascript/sugar7/utils.js"></script>
-        <script src="../include/javascript/sugar7/utils-filters.js"></script>
-        <script src="../include/javascript/sugar7/field.js"></script>
-        <script src="../include/javascript/sugar7/hacks.js"></script>
-        <script src="../include/javascript/sugar7/alert.js"></script>
-        <script src="../include/javascript/sugar7/hbs-helpers.js"></script>
 
         <!-- Portal specific JS -->
-        <script src="portal.js"></script>
-        <script src="portal-ui.js"></script>
+        <script src="../cache/portal2/portal.min.js"></script>
         <script src="config.js"></script>
+
+        <!-- App Scripts -->
+        <script src="../cache/portal2/sugar_portal.min.js"></script>
     </head>
     <body>
         <div id="sidecar">

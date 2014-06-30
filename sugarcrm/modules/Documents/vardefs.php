@@ -89,6 +89,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'docType' => 'doc_type',
             'docUrl' => 'doc_url',
             'docId' => 'doc_id',
+            'sort_on' => array('document_name'),
         ),
 
         'active_date' =>

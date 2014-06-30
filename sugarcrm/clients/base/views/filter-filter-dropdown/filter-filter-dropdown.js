@@ -345,7 +345,13 @@
         //We want to stop propagation so it doesn't bubble up.
         evt.stopPropagation();
         this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
-        this.layout.trigger('filter:select:filter', this.layout.filters.defaultFilterFromMeta);
+        var filterId;
+        if (this.context.get('currentFilterId') === this.layout.filters.defaultFilterFromMeta) {
+            filterId = 'all_records';
+        } else {
+            filterId = this.layout.filters.defaultFilterFromMeta;
+        }
+        this.layout.trigger('filter:select:filter', filterId);
     },
 
     /**

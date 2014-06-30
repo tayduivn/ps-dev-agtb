@@ -384,9 +384,9 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 {id: 'ghkl', name: 'GH KL'}
             ];
             models = [
-                {user_id: 'test1', best_case: 1234},
-                {user_id: 'asdf', best_case: 5678},
-                {user_id: 'ghkl', best_case: 854}
+                {user_id: 'test1', best_case: '1234'},
+                {user_id: 'asdf', best_case: '5678'},
+                {user_id: 'ghkl', best_case: '854'}
             ];
         });
         afterEach(function() {
@@ -421,10 +421,10 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     view.orderBy = {field: 'best_case', direction: 'desc'};
                     view.collectionSuccess(models);
 
-                    expect(sortedModels[0].best_case).toEqual(5678);
-                    expect(sortedModels[1].best_case).toEqual(1234);
-                    expect(sortedModels[2].best_case).toEqual(854);
-                    expect(sortedModels[3].best_case).toEqual(0);
+                    expect(sortedModels[0].best_case).toEqual('5678');
+                    expect(sortedModels[1].best_case).toEqual('1234');
+                    expect(sortedModels[2].best_case).toEqual('854');
+                    expect(sortedModels[3].best_case).toEqual('0');
                 });
                 it("name_field", function() {
                     view.orderBy = {field: 'name', direction: 'desc'};
@@ -446,10 +446,10 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     view.orderBy = {field: 'best_case', direction: 'asc'};
                     view.collectionSuccess(models);
 
-                    expect(sortedModels[3].best_case).toEqual(5678);
-                    expect(sortedModels[2].best_case).toEqual(1234);
-                    expect(sortedModels[1].best_case).toEqual(854);
-                    expect(sortedModels[0].best_case).toEqual(0);
+                    expect(sortedModels[3].best_case).toEqual('5678');
+                    expect(sortedModels[2].best_case).toEqual('1234');
+                    expect(sortedModels[1].best_case).toEqual('854');
+                    expect(sortedModels[0].best_case).toEqual('0');
                 });
                 it("name_field", function() {
                     view.orderBy = {field: 'name', direction: 'asc'};

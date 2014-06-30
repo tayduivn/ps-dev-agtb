@@ -16,8 +16,16 @@ class SugarWidgetFieldInt extends SugarWidgetReportField
 {
  function displayList($layout_def)
  {
+        $rawField = parent::displayList($layout_def);
+        $vardef = $this->reporter->all_fields[$layout_def['column_key']];
 
- 	return $this->displayListPlain($layout_def);
+        if (!empty($vardef['disable_num_format'])) {
+            return $rawField;
+        }
+        if ($rawField === '' || $rawField === null) {
+            return '';
+        }
+        return format_number($rawField, 0, 0);
  }
 
  function queryFilterEquals(&$layout_def)
