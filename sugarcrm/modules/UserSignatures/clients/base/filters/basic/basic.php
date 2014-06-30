@@ -16,6 +16,14 @@ $viewdefs['UserSignatures']['base']['filter']['basic'] = array(
     'quicksearch_split_terms' => false,
     'filters' => array(
         array(
+            'id' => 'all_records',
+            'name' => 'LBL_LISTVIEW_FILTER_ALL',
+            'filter_definition' => array(
+                '$creator' => '',
+            ),
+            'editable' => false
+        ),
+        array(
             'id' => 'created_by_me',
             'name' => 'LBL_CREATED_BY_ME',
             'filter_definition' => array(

@@ -120,8 +120,6 @@ class SugarEmailAddress extends SugarBean
                 $this->addresses = array();
 
                 // Check the collection of emails first if they are there
-                $optOut = (isset($bean->email_opt_out) && $bean->email_opt_out == "1") ? true : false;
-                $invalid = (isset($bean->invalid_email) && $bean->invalid_email == "1") ? true : false;
                 $isPrimary = true;
                 if (!empty($bean->email) && is_array($bean->email)) {
                     foreach ($bean->email as $emailAddr) {
@@ -141,8 +139,6 @@ class SugarEmailAddress extends SugarBean
                 // Now check legacy style emailXX fields to see if any of those 
                 // were added.
                 $this->addresses = array();
-                $optOut = (isset($bean->email_opt_out) && $bean->email_opt_out == "1") ? true : false;
-                $invalid = (isset($bean->invalid_email) && $bean->invalid_email == "1") ? true : false;
                 $isPrimary = true;
                 // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness.
                 for ($i = 1; $i <= 10; $i++) {
@@ -157,6 +153,8 @@ class SugarEmailAddress extends SugarBean
                     //$colIndex = $i - 1;
                     //$handleField = (!isset($collection[$colIndex]) || $collection[$colIndex]['email_address'] != $bean->$email);
                     if (isset($bean->$email) && !empty($bean->$email) && $handleField) {
+                        $optOut = isset($bean->email[$i-1]['opt_out']) && $bean->email[$i-1]['opt_out'] == "1";
+                        $invalid = isset($bean->email[$i-1]['invalid_email']) && $bean->email[$i-1]['invalid_email'] == "1";
                         $opt_out_field = $email . '_opt_out';
                         $invalid_field = $email . '_invalid';
                         $field_optOut = (isset($bean->$opt_out_field)) ? $bean->$opt_out_field : $optOut;

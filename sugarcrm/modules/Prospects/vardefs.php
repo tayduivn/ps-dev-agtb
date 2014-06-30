@@ -148,7 +148,14 @@ $dictionary['Prospect'] = array(
             'hideacl' => true,
             'readonly' => true,
         ),
-
+        'lead' => array(
+            'name' => 'lead',
+            'type' => 'link',
+            'relationship' => 'lead_prospect',
+            'module' => 'Leads',
+            'source' => 'non-db',
+            'vname' => 'LBL_LEAD',
+        ),
     ),
     'indices' => array(
         array(

@@ -158,7 +158,24 @@
     </testsuites>
     <filter>
         <blacklist>
-            <directory suffix=".php">./cache</directory>
+            <file>./../config.php</file>
+            <file>./../modules/*/vardefs.php</file>
+            <directory>./cache</directory>
+            <directory>../cache</directory>
+            <directory>../clients/*/</directory>
+            <directory>../custom/</directory>
+            <directory>../include/language/</directory>
+            <directory>../metadata/</directory>
+            <directory>../modules/*/clients/*/</directory>
+            <directory>../modules/*/language/</directory>
+            <directory>../modules/*/metadata/</directory>
+            <directory>../soap</directory>
+            <directory>../tests</directory>
+            <directory>../vendor</directory>
+            <exclude>
+                <directory>./../clients/*/api/</directory>
+                <directory>./../modules/*/clients/*/api/</directory>
+            </exclude>
         </blacklist>
         <whitelist>
             <exclude>

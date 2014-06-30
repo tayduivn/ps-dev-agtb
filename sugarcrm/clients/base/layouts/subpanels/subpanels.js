@@ -41,7 +41,7 @@
         var prunedComponents = [];
         var layoutFromContext = this.context ? this.context.get('layout') || this.context.get('layoutName') : null;
         this.layoutType = layoutFromContext ? layoutFromContext : app.controller.context.get('layout');
-        this.aclToCheck = this.aclToCheck || (this.layoutType === 'record') ? 'view' : 'list';
+        this.aclToCheck = this.aclToCheck || 'list';
         _.each(components, function(component) {
             var relatedModule,
                 link = component.context ? component.context.link : null;

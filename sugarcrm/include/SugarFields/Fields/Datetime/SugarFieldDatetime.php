@@ -406,7 +406,10 @@ class SugarFieldDatetime extends SugarFieldBase {
             $date = $timedate->fromIsoDate($inputDate);
         } else if ( $properties['type'] == 'time' ) {
             $date = $timedate->fromIsoTime($inputDate);
-        } else {
+        }
+
+        // if both of those fail above, lets check to make sure it's not the full ISO String
+        if (!$date) {
             $date = $timedate->fromIso($inputDate);
         }
 

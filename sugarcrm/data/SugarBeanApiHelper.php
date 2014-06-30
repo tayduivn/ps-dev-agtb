@@ -220,6 +220,10 @@ class SugarBeanApiHelper
             $this->checkOptimisticLocking($bean, $options['optimistic_lock']);
         }
 
+        if (isset($submittedData['id']) && !empty($bean->id) && $submittedData['id'] != $bean->id) {
+            throw new SugarApiExceptionInvalidParameter('Not allowed to change record id: '.$bean->id. ' in module: '.$submittedData['module']);
+        }
+
         // Some of the SugarFields require ID's, so lets set it up
         if (empty($bean->id)) {
             $bean->id = create_guid();

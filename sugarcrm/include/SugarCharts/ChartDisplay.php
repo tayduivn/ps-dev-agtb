@@ -111,7 +111,8 @@ class ChartDisplay
             $sugarChart = SugarChartFactory::getInstance('', 'Reports');
 
             $sugarChart->setData($this->chartRows);
-            $sugarChart->setProperties($this->chartTitle, '', $this->chartType);
+            global $do_thousands;
+            $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands);
 
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();
@@ -202,7 +203,19 @@ class ChartDisplay
 
         $mod_strings = return_module_language($current_language, 'Reports');
 
-        $this->chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . $this->get_k();
+        // Use Locale values if we are not rounding to thousands
+        $round = null;
+        $precision = null;
+        if ($do_thousands) {
+            $round = 0;
+            $precision = 0;
+        }
+
+        $this->chartTitle = $mod_strings['LBL_TOTAL_IS']
+            . ' '
+            . $symbol
+            . format_number($total, $round, $precision)
+            . $this->get_k();
     }
 
     /**
@@ -218,11 +231,27 @@ class ChartDisplay
                 continue;
             }
             $chart_groupings[$row_remap['group_base_text']] = true; // store all the groupingstem
+            if (!empty($row['cells'][$this->reporter->chart_numerical_position]['key'])) {
+                $fieldKey = $row['cells'][$this->reporter->chart_numerical_position]['key'];
+
+                if (!empty($this->reporter->all_fields[$fieldKey])) {
+                    $fieldDef = $this->reporter->all_fields[$fieldKey];
+                    if ($fieldDef['type'] == 'currency') {
+                        $numKey = "numerical_is_currency";
+                        $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']][$numKey] = true;
+                    }
+                }
+            }
             if (empty($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']])) {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']] = $row_remap;
             } else {
+                if (!isset($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'])) {
+                    $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] = 0;
+                }
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['raw_value'] = $row_remap['raw_value'];
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['group_base_text'] = $row_remap['group_base_text'];
         }
 
         //Determine if the original report def has a grouping level greater than one
@@ -334,6 +363,7 @@ class ChartDisplay
             foreach ($row['cells'] as $cell) {
                 if ($cell['key'] == $second_group_by_key) {
                     $row_remap['group_base_text'] = $cell['val'];
+                    $row_remap['raw_value'] = isset($cell['raw_value']) ? $cell['raw_value'] : '';
                 }
             }
         } else { // single group by
@@ -489,6 +519,7 @@ class ChartDisplay
 
         $sugarChart = $this->getSugarChart();
         if (is_object($sugarChart)) {
+            $sugarChart->reporter = $this->reporter;
             $xmlFile = $this->get_cache_file_name();
             $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
             return $sugarChart->display($guid, $xmlFile, $width, $height);

@@ -30,9 +30,16 @@ class NowExpression extends DateExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		  var d = SUGAR.util.DateUtils.getUserTime();
-		  d.setSeconds(0);
-		  return d;
+		    var d = SUGAR.util.DateUtils.getUserTime();
+		    d.setSeconds(0);
+
+		    // if we're calling this from Sidecar, we need to pass back the date
+            // as a string, not a Date object otherwise it won't validate properly
+            if (this.context.view) {
+                d = App.date.format(d, 'Y-m-d H:i:s');
+            }
+
+		    return d;
 EOQ;
 	}
 

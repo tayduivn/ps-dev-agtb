@@ -2928,4 +2928,65 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $ps->preparedStatementClose();
 
     }
+
+    /**
+     * Test asserts behavior of isNullable method
+     *
+     * @dataProvider getIsNullable
+     * @param array $vardef
+     * @param string $expected
+     */
+    public function testIsNullable($vardef, $expected)
+    {
+        $class = new ReflectionClass($this->_db);
+        $method = $class->getMethod('isNullable');
+        $method->setAccessible(true);
+
+        $this->assertEquals(
+            $expected,
+            $method->invokeArgs($this->_db, array($vardef)),
+            'Vardef has incorrect definition'
+        );
+    }
+
+    /**
+     * Data provider for testIsNullable
+     * Return vardef of field & flag should it be nullable or not
+     * @return array
+     */
+    public static function getIsNullable()
+    {
+        return array(
+            'id-non-pk' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'test',
+                ),
+                true,
+            ),
+            'id-pk' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'id',
+                ),
+                false,
+            ),
+            'not-null' => array(
+                array(
+                    'type' => 'id',
+                    'name' => 'test',
+                    'isnull' => false,
+                ),
+                false,
+            ),
+            'by-db-type' => array(
+                array(
+                    'type' => 'relate',
+                    'dbType' => 'id',
+                    'name' => 'test',
+                ),
+                true,
+            ),
+        );
+    }
 }
