@@ -22,7 +22,7 @@
     },
     //common constants
     commonConst: {
-        'sic_code': 399,
+        'sic_code': 3599,
         'hoovers_ind_code': 25838,
         'sic_to_hic': 3599
     },
@@ -129,8 +129,7 @@
         'primaddrstate': {
             'json_path': 'Location.PrimaryAddress.0.TerritoryOfficialName',
             'label': 'LBL_DNB_PRIM_STATE',
-            'desc': 'LBL_DNB_PRIM_STATE_DESC',
-            'case_fmt': true
+            'desc': 'LBL_DNB_PRIM_STATE_DESC'
         },
         'primaddrctrycd': {
             'json_path': 'Location.PrimaryAddress.0.CountryISOAlpha2Code',
@@ -469,7 +468,6 @@
         'isDupe': {
             'json_path': 'isDupe'
         }
-
     },
     accountsDD: null,
     //dnb append service json paths
@@ -488,7 +486,8 @@
         'srchRespMsg': 'FindCompanyResponse.TransactionResult.ResultText',
         'srchRslt': 'FindCompanyResponse.FindCompanyResponseDetail.FindCandidate',
         'competitors': 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
-        'industryprofile': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile'
+        'industryprofile': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile',
+        'srchCount': 'FindCompanyResponse.FindCompanyResponseDetail.CandidateMatchedQuantity'
     },
     //common error codes with error labels
     commonErrorMap: {
@@ -534,7 +533,7 @@
                 'json_path': 'IndustryCode.IndustryCode',
                 'sub_object': {
                     'data_type': 'prim_sic',
-                    'sic_type_code' : 399,
+                    'sic_type_code' : 3599,
                     'ind_code': 'IndustryCode.$',
                     'label': 'LBL_DNB_SIC'
                 }
@@ -611,52 +610,9 @@
     },
 
     /**
-     * Company search based on keyword
-     * @param {String} searchString
-     * @param {Function} renderFunction, a function to be called to render the search results
-     */
-    baseCompanySearch: function(searchString, renderFunction) {
         //adding the '*' t0 searchString for wildcard search
         searchString = searchString + '*';
         searchString = encodeURI(searchString);
-        var srchResults = {'companies': null, 'errmsg': null};
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/q=' + searchString, '', {}, {});
-        var self = this;
-        app.api.call('READ', dnbSearchUrl, {}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode), responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    srchResults.companies = self.getJsonNode(data, self.commonJSONPaths.srchRslt);
-                    //assigning location type
-                    _.each(srchResults.companies, function(companyObj) {
-                        if (companyObj.FamilyTreeMemberRole) {
-                            //we are relying on DNBCodeValue
-                            //higher the code value more the precedence in the family tree role
-                            //hence we are using the _.max function
-                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole) {
-                                return memberRole.FamilyTreeMemberRoleText['@DNBCodeValue'];
-                            });
-                            //if the location type is parent then we need not display it
-                            if (locationType.FamilyTreeMemberRoleText['$'] !== 'Parent') {
-                                companyObj.locationtype = locationType.FamilyTreeMemberRoleText['$'];
-                            }
-                        }
-                    });
-                    self.companyList = srchResults.companies;
-                } else {
-                    // Normalize no data message to sugar label.
-                    if (responseCode === 'CM018') {
-                        responseMsg = app.lang.get('LBL_NO_DATA_AVAILABLE');
-                    }
-                    srchResults.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                renderFunction.call(self, srchResults);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
      * Gets company information for a DUNS number
      * @param {String} duns_num -- duns_num of the company
      * @param {String} prod_code -- CST_PRD_1 or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
@@ -669,23 +625,25 @@
             'duns_num': duns_num,
             'prod_code': prod_code
         };
-        var cacheKey = 'dnb:' + firmoParams.duns_num + ':' + firmoParams.prod_code;
+        var cacheKey = 'dnb:' + firmoParams.duns_num + ':' + firmoParams.prod_code,
+            resultData;
         var cacheContent = app.cache.get(cacheKey);
         if (cacheContent) {
-            var resultData = cacheContent;
+            resultData = cacheContent;
             if (backToListLabel) {
                 resultData.backToListLabel = backToListLabel;
             }
             renderFunction.call(self, resultData);
         } else {
-            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {}, {}), resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
+            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {}, {});
+            resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
             app.api.call('create', dnbProfileUrl, {'qdata': firmoParams}, {
                 success: function(data) {
                     var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode), responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (!_.isUndefined(responseCode) && responseCode === 'CM000') {
                         resultData.product = data;
                         //if primary sic is available set it
-                        //TO DO: move to js preprocessing
+                        //TODO: move to js preprocessing
                         // as a part of the handlebars normalization
                         var industryCodeArray = self.getJsonNode(data, self.appendSVCPaths.industry);
                         if (!_.isUndefined(industryCodeArray)) {
@@ -731,26 +689,26 @@
             //iterate thru the compinfo map
             _.each(dataElementsMap, function(value, key) {
                 //extract the informtaion
-                var dnbDataElement = null;
+                var dnbDataElement = null, dnbDataObj;
                 //if the data map is array then traverse the nested array
                 if (value.sub_array) {
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
                     _.each(dnbDataElement, function(dnbSubData) {
-                        var dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
+                        dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
                         if (!_.isNull(dnbDataObj)) {
                             formattedDataElements.push(dnbDataObj);
                         }
                     }, this);
                 } else if (value.sub_object) {
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
-                    var dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dnbDataElement, value.sub_object);
+                    dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dnbDataElement, value.sub_object);
                     if (!_.isNull(dnbDataObj)) {
                         formattedDataElements.push(dnbDataObj);
                     }
                 } else {
                     //else it is a straightforward data element
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
-                    var dnbDataObj = {};
+                    dnbDataObj = {};
                     //populate a json object
                     if (dnbDataElement) {
                         if (value.case_fmt) {
@@ -866,6 +824,22 @@
      */
     formatSrchRslt: function(srchResults, searchDD) {
         var formattedSrchRslts = [];
+        //assigning location type
+        _.each(srchResults, function(companyObj) {
+            if (companyObj.FamilyTreeMemberRole) {
+                //we are relying on DNBCodeValue
+                //higher the code value more the precedence in the family tree role
+                //hence we are using the _.max function
+                var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole) {
+                    return memberRole.FamilyTreeMemberRoleText['@DNBCodeValue'];
+                });
+                //if the location type is parent then we need not display it
+                var ftRole = this.getJsonNode(locationType, 'FamilyTreeMemberRoleText.$');
+                if (!_.isUndefined(ftRole) && ftRole !== 'Parent') {
+                    companyObj.locationtype = ftRole;
+                }
+            }
+        }, this);
         //iterate thru the search results, extract the necessary info
         //populate a js object
         //push it through an array
@@ -873,13 +847,21 @@
             var frmtSrchRsltObj = {};
             _.each(searchDD, function(value, key) {
                 var dataElement = this.getJsonNode(searchResultObj, value.json_path);
-                if (dataElement) {
-                    if (value.case_fmt) {
-                        dataElement = this.properCase(dataElement);
+                if (value.sub_object) {
+                    var dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dataElement, value.sub_object);
+                    if (!_.isNull(dnbDataObj)) {
+                        frmtSrchRsltObj[key] = dnbDataObj;
                     }
-                    frmtSrchRsltObj[key] = dataElement;
+                } else {
+                    if (dataElement) {
+                        if (value.case_fmt) {
+                            dataElement = this.properCase(dataElement);
+                        }
+                        frmtSrchRsltObj[key] = dataElement;
+                    }
                 }
             }, this);
+            frmtSrchRsltObj.isChecked = true;
             formattedSrchRslts.push(frmtSrchRsltObj);
         }, this);
         return formattedSrchRslts;
@@ -899,14 +881,14 @@
         var financial_yr = this.getJsonNode(annsalesObj, annsalesDD.financial_yr);
         if (amount) {
             dnbDataObj = {};
-            var finYrHTML = null, unitsStr = null, dnbLabel = '';
+            var finYrHTML = null, unitsStr = null, dnbLabel;
             if (financial_yr) {
                 finYrHTML = '<span class="label label-success pull-right" data-placement="right">' + financial_yr + '</span>';
             }
             if (units && currency_cd) {
                 unitsStr = '(' + app.lang.get('LBL_DNB_IN') + ' ' + units + ' ' + currency_cd + ')';
             }
-            dnbDataObj.dataElement = amount;
+            dnbDataObj.dataElement = this.formatSalesRevenue(amount);
             dnbLabel = app.lang.get(annsalesDD.label);
             if (unitsStr) {
                 dnbLabel = dnbLabel + unitsStr;
@@ -928,8 +910,7 @@
         if (this.disposed) {
             return;
         }
-        _.extend(this, companyDetails);
-        this.render();
+        var formattedFirmographics, dnbFirmo = {};
         //if there are no company details hide the import button
         if (companyDetails.errmsg) {
             if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
@@ -939,8 +920,17 @@
             if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
                 this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
             }
+            if (companyDetails.product) {
+                formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
+                dnbFirmo.product = formattedFirmographics;
+                dnbFirmo.backToListLabel = companyDetails.backToListLabel;
+            } else if (companyDetails.errmsg) {
+                dnbFirmo.errmsg = companyDetails.errmsg;
+            }
             this.currentCompany = companyDetails.product;
         }
+        this.dnbFirmo = dnbFirmo;
+        this.render();
         this.$('div#dnb-company-detail-loading').hide();
         this.$('div#dnb-company-details').show();
     },
@@ -958,8 +948,7 @@
         if (companyDetails.product) {
             formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.filteredDD);
             dnbFirmo.product = formattedFirmographics;
-        }
-        if (companyDetails.errmsg) {
+        } else if (companyDetails.errmsg) {
             dnbFirmo.errmsg = companyDetails.errmsg;
         }
         this.dnbFirmo = dnbFirmo;
@@ -973,7 +962,7 @@
      * Import D&B Accounts Data
      */
     importDNBData: function() {
-        var parentModel = this.context.get('model'), accountsModel = this.getAccountsModel(this.currentCompany);
+        var accountsModel = this.getAccountsModel(this.currentCompany);
         if (!_.isUndefined(accountsModel)) {
             var self = this;
             app.drawer.open({
@@ -1010,6 +999,9 @@
             _.each(this.accountsMap, function(dataElementPath, sugarColumnName) {
                 var dnbDataElement = this.getJsonNode(organizationDetails, dataElementPath);
                 if (dnbDataElement) {
+                    if (sugarColumnName === 'annual_revenue') {
+                        dnbDataElement = this.formatSalesRevenue(dnbDataElement);
+                    }
                     accountsBean[sugarColumnName] = dnbDataElement;
                 }
             }, this);
@@ -1051,7 +1043,9 @@
      * @return {String} formatted string
      */
     formatSalesRevenue: function(amount) {
-        amount = amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g, '$1,');
+        if (_.isNumber(amount)) {
+            amount = amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g, '$1,');
+        }
         return amount;
     },
 
@@ -1221,9 +1215,33 @@
     },
 
     /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
      * Toggles the visibility of the import button in the dashlet
      * @param {String} btnName
-     * @param {isVisible} visibility
+     * @param {Boolean} isVisible
      */
     toggleImportBtn: function(btnName, isVisible) {
         if (this.layout.getComponent('dashlet-toolbar').getField(btnName)) {

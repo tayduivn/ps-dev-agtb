@@ -142,7 +142,30 @@
      * Renders the company list when the back button is clicked
      */
     backToCompanyList: function() {
-        this.renderCompanyList({'companies' : this.companyList});
+        if (this.disposed) {
+            return;
+        }
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.companyList
+        };
+        if (this.companyList.GetCleanseMatchResponse) {
+            dupeCheckParams.module = 'cleansematch';
+            this.template = app.template.get(this.name + '.dnb-cm-results');
+        } else {
+            dupeCheckParams.module = 'findcompany';
+            this.template = app.template.get(this.name + '.dnb-company-list');
+        }
+        this.render();
+        this.$('div#dnb-company-list-loading').show();
+        this.$('div#dnb-company-list').hide();
+        var targetFields = ['dnb_import', 'data_valid_ind'];
+        _.each(targetFields, function(fieldName) {
+            if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField(fieldName))) {
+                this.layout.getComponent('dashlet-toolbar').getField(fieldName).getFieldElement().hide();
+            }
+        });
+        this.baseDuplicateCheck(dupeCheckParams, this.renderCompanyList);
     },
 
     /**
@@ -154,18 +177,20 @@
             return;
         }
         var dnbCompanyList = {};
-        if (dnbApiResponse.companies) {
-            this.companyList = dnbApiResponse.companies;
-            if (dnbApiResponse.companies[0].MatchQualityInformation) {
+        if (dnbApiResponse.product) {
+            this.companyList = dnbApiResponse.product;
+            var apiCompanyList;
+            if (dnbApiResponse.product.GetCleanseMatchResponse) {
                 this.template = app.template.get(this.name + '.dnb-cm-results');
-                dnbCompanyList.product = this.formatSrchRslt(dnbApiResponse.companies, this.cleanseMatchDD);
+                apiCompanyList = this.getJsonNode(dnbApiResponse.product, this.compInfoConst.cmCandidates);
+                dnbCompanyList.product = this.formatSrchRslt(apiCompanyList, this.cleanseMatchDD);
                 dnbCompanyList.product = this.formatConfidenceCodes(dnbCompanyList.product);
             } else {
                 this.template = app.template.get(this.name + '.dnb-company-list');
-                dnbCompanyList.product = this.formatSrchRslt(dnbApiResponse.companies, this.searchDD);
+                apiCompanyList = this.getJsonNode(dnbApiResponse.product, this.commonJSONPaths.srchRslt);
+                dnbCompanyList.product = this.formatSrchRslt(apiCompanyList, this.searchDD);
             }
-        }
-        if (dnbApiResponse.errmsg) {
+        } else if (dnbApiResponse.errmsg) {
             dnbCompanyList.errmsg = dnbApiResponse.errmsg;
         }
         this.dnbCompanyList = dnbCompanyList;
@@ -178,7 +203,7 @@
     },
 
     /**
-     * Invokes D&B Search API based on the company nanme
+     * Invokes D&B Search API based on the company name
      */
     dnbSearch: function() {
         if (this.disposed) {
@@ -191,7 +216,10 @@
             this.$('div#dnb-company-list-loading').show();
             this.$('div#dnb-company-list').hide();
             this.companyList = null;
-            this.baseCompanySearch(companyName, this.renderCompanyList);
+            var balParams = {
+                'KeywordText': companyName
+            };
+            this.baseAccountsBAL(balParams, this.renderCompanyList);
         }
     },
 
@@ -228,7 +256,6 @@
             if (!_.isUndefined(duns_num)) {
                 this.duns_num = duns_num;
                 app.controller.context.set('dnb_temp_duns_num', this.duns_num);
-                var orgDetails = this.getJsonNode(companyDetails.product, this.appendSVCPaths.product);
                 this.dnbProduct.product = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
                 this.dnbProduct.product = this.getDataIndicators(this.accountsDD, this.dnbProduct.product);
                 //check if there are any new data
@@ -244,6 +271,8 @@
                     this.toggleImportBtn(true, 'dnb_import');
                 }
             }
+        } else if (companyDetails.errmsg) {
+            this.dnbProduct.errmsg = companyDetails.errmsg;
         }
         this.template = app.template.get(this.name + '.dnb-company-details');
         if (!this.model.get('duns_num')) {
@@ -268,8 +297,8 @@
             var dnbDataElement = dataObj.dataElement,
                 sugarDataElement = accountsModel.get(sugarColumnName);
             if (dnbDataElement && sugarDataElement) {
-                dnbDataElement = $.trim(dnbDataElement),
-                    sugarDataElement = $.trim(sugarDataElement);
+                dnbDataElement = $.trim(dnbDataElement);
+                sugarDataElement = $.trim(sugarDataElement);
                 if (sugarDataElement == dnbDataElement) {
                     dataObj.dataInd = 'dup';
                 } else if (sugarDataElement != dnbDataElement) {
@@ -386,13 +415,14 @@
             self.$('div#dnb-company-list-loading').show();
             self.$('div#dnb-company-list').hide();
             var dnbCMRequestURL = app.api.buildURL('connector/dnb/cmRequest', '', {},{});
-            var cmResults = {'companies': null, 'errmsg': null};
+            var cmResults = {'product': null, 'errmsg': null};
             app.api.call('create', dnbCMRequestURL, {'qdata': cmRequestParams}, {
                 success: function(data) {
                     var responseCode = self.getJsonNode(data, self.compInfoConst.responseCode),
                         responseMsg = self.getJsonNode(data, self.compInfoConst.responseMsg);
                     if (responseCode && responseCode === self.responseCodes.success) {
                         cmResults.companies = self.getJsonNode(data, self.compInfoConst.cmCandidates);
+                        cmResults.product = data;
                     } else {
                         cmResults.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                     }

@@ -1,0 +1,58 @@
+{{!--
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+--}}
+<div class="accordion" id="dnb_bal_accordian">
+    {{#each meta.panels}}
+        <div class="accordion-group">
+            <div class="accordion-heading enabled {{#eq @index 0}}active{{/eq}}"
+                 data-toggle="collapse" data-parent="#dnb_bal_accordian" data-target="#dnb_bal_param_tab_{{@index}}">
+                <span class="pull-left step-circle">
+                    <span>{{moduleNumber}}</span>
+                    <i class="icon-ok-sign"></i>
+                </span>
+                <span class="btn btn-invisible active-indicator pull-right"><i class="icon-chevron-down"></i></span>
+                <span class="title">{{str title}}</span>
+                <span class="hide dnb-params-header"></span>
+            </div>
+            <div id="dnb_bal_param_tab_{{@index}}" class="accordion-body collapse {{#eq @index 0}}in{{/eq}}"
+                 {{#if paramGrp}}data-paramgrp="{{paramGrp}}"{{/if}}>
+                <div class="accordion-inner">
+                    <div class="record">
+                        {{#each rows}}
+                            <div class="row-fluid {{../../name}}">
+                            {{#each this.fields}}
+                                <div class="record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}"
+                                     data-type="{{type}}" data-name="{{name}}">
+                                    {{#notEq this.type 'tagcontainer'}}
+                                        <span class="{{#notEq type 'label'}}normal{{/notEq}}{{#if css}} {{css}}{{/if}} index{{index}}"
+                                              data-fieldname="{{name}}" data-index="{{index}}"
+                                            {{#if this.tooltip}}data-placement="right" rel="tooltip" data-title="{{this.tooltip}}"{{/if}}>
+                                            {{field ../../../../this model=../../../../model template=../../../../this.action}}
+                                        </span>
+                                    {{/notEq}}
+                                    {{#eq this.type 'tagcontainer'}}
+                                        <div class="select2-container select2-container-multi select2-choices-pills-close select2 inherit-width" style="width: 100%;">
+                                            <ul class="select2-choices" id="{{#if id}}{{id}}{{/if}}"></ul>
+                                        </div>
+                                    {{/eq}}
+                                </div>
+                            {{/each}}
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+</div>

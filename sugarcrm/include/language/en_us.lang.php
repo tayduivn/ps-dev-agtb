@@ -3296,6 +3296,7 @@ $app_strings = array (
     'LBL_DNB_WITH' => ' with ',
     'LBL_DNB_AND' => 'and',
     'LBL_DNB_IN' => 'in',
+    'LBL_DNB_FROM' => 'from',
     'LBL_DNB_OTHER_FIELDS' => ' other field(s)',
     'LBL_DNB_OVERRIDE_SUCCESS' => 'D&B data imported successfully',
     'LBL_DNB_SHOW_LESS' => 'Show Less',
@@ -3689,6 +3690,88 @@ $app_strings = array (
     'LBL_DNB_NEWS_TWITTER' => 'Twitter',
     'LBL_DNB_NEWS_YOUTUBE' => 'YouTube',
     'LBL_DNB_NEWS_WIKI' => 'Wikipedia',
+
+    /* D&B Build A List */
+    'LBL_DNB_BAL_RSLT' => 'D&B: Build A List Preview',
+    'LBL_BAL' => 'Build A List',
+    'LBL_DNB_BAL' => 'D&B Build A List',
+    'LBL_DNB_BAL_ACCT_HEADER' => 'Accounts',
+    'LBL_DNB_BAL_ACCT_PREVIEW' => 'Accounts Preview',
+    'LBL_DNB_BAL_LIST' => 'Back To D&B Build A List Results',
+    'LBL_DNB_BAL_HINT' => 'Choose crtieria to build a list',
+    'LBL_DNB_BAL_PARAM_COMP' => 'Company Location',
+    'LBL_DNB_BAL_PARAM_STATES' => 'States',
+    'LBL_DNB_BAL_LOAD' => 'Building list',
+    'LBL_DNB_BAL_LTE' => 'Less than or Equal to',
+    'LBL_DNB_BAL_GTE' => 'Greater than or Equal to',
+    'LBL_DNB_BAL_BTW' => 'Between',
+    'LBL_DNB_BAL_PARAM_COMP_SZ' => 'Company Size',
+    'LBL_DNB_BAL_PARAM_ANNL_SALES' => 'Annual Sales',
+    'LBL_DNB_BAL_PARAM_NUM_EMP' => 'Employee Count',
+    'LBL_DNB_BAL_PARAM_EMP_GRWT' => 'Total Employee Growth %',
+    'LBL_DNB_BAL_PARAM_MRKT_CAP' => 'Market Cap',
+    'LBL_DNB_BAL_PARAM_LIMIT_ERR' => 'Maximum criteria limit reached. Please clear previously entered parameters',
+    'LBL_DNB_BAL_PARAM_EMP_CNT' => 'Number of Employees',
+    'LBL_DNB_BAL_SINGLE_SITE' => 'Single Site',
+    'LBL_DNB_BAL_ALL_SITE' => 'All Sites',
+    'LBL_DNB_BAL_PARAM_EMP_GRWTH' => 'Total Employee Growth %',
+    'LBL_DNB_BAL_PARAM_MKT_CAP' => 'Market Cap',
+    'LBL_DNB_BAL_AREA_CODE' => 'Area Code',
+    'LBL_DNB_BAL_POSTAL_CODE' => 'Zip/Postal Code',
+    'LBL_DNB_BAL_PARAM_COMP_INFORMATION' => 'Company Information',
+    'LBL_DNB_BAL_YEAR_OF_FOUNDING' => 'Year of Founding',
+    'LBL_DNB_BAL_DUNS' => 'DUNS',
+    'LBL_DNB_BAL_UK_REG_NO' => 'UK Reg. No.',
+    'LBL_DNB_BAL_UK_VAT_NO' => 'UK VAT No.',
+    'LBL_DNB_BAL_INDUSTRY' => 'Industry',
+    'LBL_DNB_BAL_IND_CODE_TYPE' => 'Industry Code Type',
+    'LBL_DNB_BAL_SIC' => 'SIC Code',
+    'LBL_DNB_BAL_NAICS' => 'NAICS Code',
+    'LBL_DNB_BAL_SIC_NAICS_EXAMPLE' => 'Ex: SIC Codes :  5734 ->  Computer & Software Stores , 3711 -> Automobile Manufacturing ',
+    'LBL_DNB_BAL_IND_CODE_TYPE_PRI_SEC' => 'Include Primary/Secondary',
+    'LBL_DNB_BAL_PRIMARY_ONLY' => 'Primary Only',
+    'LBL_DNB_BAL_PRIMARY_SECONDARY' => 'Primary and Secondary',
+    'LBL_DNB_BAL_FINANCIAL_INFO' => 'Financial Information',
+    'LBL_DNB_BAL_NET_INCOME' => 'Net Income',
+    'LBL_DNB_BAL_NET_INCOME_GROWTH' => 'Net Income Growth',
+    'LBL_DNB_BAL_ASSETS' => 'Assets',
+    'LBL_DNB_BAL_IPO_DATA' => 'IPO Data',
+    'LBL_DNB_BAL_IPO_OFFER_AMT' => 'IPO Offer Amount',
+    'LBL_DNB_BAL_IPO_PRICE_RANGE' => 'IPO Price Range',
+    'LBL_DNB_IPO_DATE' => 'IPO Date',
+    'LBL_DNB_BAL_BEFORE' => 'Before',
+    'LBL_DNB_BAL_AFTER' => 'After',
+    'LBL_DNB_BAL_FILING_DATE' => 'Filing Date',
+    'LBL_DNB_BAL_TRADING_DATE' => 'Trading Date',
+    'LBL_DNB_BAL_INDUSTRY_WARN' => 'Switching industry types will clear previously selected industry criteria. Do you want to change the Industry Code Type ?',
+    'LBL_DNB_BAL_RADIUS_SRCH' => 'Radius Search',
+    'LBL_DNB_BAL_DISTANCE' => 'Distance',
+    'LBL_DNB_BAL_MILES' => 'Miles',
+    'LBL_DNB_BAL_KM' => 'KM',
+    'LBL_DNB_BAL_ZIP' => 'ZIP',
+    'LBL_DNB_BAL_PRESCREEN_SCORE' => 'D&B Prescreen Score',
+    'LBL_DNB_BAL_LOW' => 'Low',
+    'LBL_DNB_BAL_MED' => 'Medium',
+    'LBL_DNB_BAL_HIGH' => 'High',
+    'LBL_DNB_BAL_ORG_ID' => 'Organization Identification #',
+
+    /*Tool tips for BAL*/
+    'LBL_TT_DNB_BAL_MILLIONS' => 'in $USD Millions',
+    'LBL_TT_DNB_BAL_STATES' => 'State/Province/Region',
+    'LBL_TT_DNB_BAL_AREA_CODE' => 'US and Canadian phone area codes. Example: 512 or 732 or 973',
+    'LBL_TT_DNB_BAL_POSTAL_CODE' => 'US ZIP code ranges are supported.  Examples: 78701 or SW1P 1JA or SWW1, or 78701-78752',
+    'LBL_TT_DNB_BAL_RADIUS_SRCH' => 'Search for results within a given distance of a single ZIP/Postal Code',
+    'LBL_TT_DNB_BAL_IND_CODE' => '2 to 8 digit SIC codes are supported OR 2 to 6 digit NAICS codes are supported.  Separate multiple codes by comma.',
+    'LBL_TT_DNB_BAL_CODE_TYPE' => 'Select industry code type: SIC or NAICS',
+    'LBL_TT_DNB_BAL_YEAR_OF_FOUNDING' => 'Examples: 1964 or 2009. Only one Year of Founding can be added.',
+    'LBL_TT_DNB_BAL_PRESCREEN_SCORE' => 'Select risk level: High, Medium, or Low',
+    'LBL_TT_DNB_BAL_DUNS' => 'Enter 9 digit DUNS® number.  Example:  060704780, 047897855',
+    'LBL_TT_DNB_BAL_MILLIONS_EX' => 'In $USD Millions. Example: 100 or 4.3',
+    'LBL_TT_DNB_BAL_NET_INCOME_GROWTH' => 'Percentage (%)',
+    'LBL_TT_DNB_BAL_IPO_PRICE_RANGE' => 'In $USD. Example: IPO Price Range 2.00 to 2.50',
+
+    /* D&B BAL Validation Messages */
+    'ERR_DNB_BAL_COMPARISON' => 'Error. Lower limit must be less than upper limit',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
@@ -6131,6 +6214,43 @@ $app_list_strings['dnb_countries_iso'] = array(
    "YE" => "Yemen",
    "ZM" => "Zambia",
    "ZW" => "Zimbabwe"
+);
+
+$app_list_strings['dnb_countries_radius_iso'] = array(
+    "US" => "United States",
+    "CA" => "Canada"
+);
+
+$app_list_strings['dnb_sic_naics_code'] = array(
+    "3599" => "SIC Code",
+    "700" => "NAICS Code"
+);
+
+$app_list_strings['dnb_bal_gte_lte_btw'] = array(
+    'gte' => 'Greater than or Equal to',
+    'lte' => 'Lesser than or Equal to',
+    'btw' => 'Between'
+);
+
+$app_list_strings['dnb_bal_prescreen_options'] = array(
+    '10925' => 'Low',
+    '10926' => 'Medium',
+    '10927' => 'High'
+);
+
+$app_list_strings['dnb_bal_primary_secondary'] = array(
+    'true' => 'Primary Only',
+    'false' => 'Primary and Secondary'
+);
+
+$app_list_strings['dnb_bal_miles_km'] = array(
+    '3353' => 'Miles',
+    '3349' => 'KM'
+);
+
+$app_list_strings['dnb_bal_single_all'] = array(
+    'singlesite' => 'Single Site',
+    'allsites' => 'All Sites'
 );
 
 $app_list_strings['dnb_states_iso'] = array(

@@ -83,7 +83,20 @@
      * Navigates from the company details screen to the search results screen
      */
     backToCompanyList: function() {
-        this.renderCompanyList.call(this, this.companyList);
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('div#dnb-company-list-loading').show();
+        this.$('div#dnb-search-results').hide();
+        this.$('.importDNBData').hide();
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.companyList,
+            'module': 'findcompany'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderCompanyList);
     },
 
     /**
@@ -96,11 +109,11 @@
         }
         this.template = app.template.get(this.name);
         var dnbSrchResults = {};
-        if (dnbSrchApiResponse.companies) {
-            this.companyList = dnbSrchApiResponse;
-            dnbSrchResults.product = this.formatSrchRslt(dnbSrchApiResponse.companies, this.searchDD);
-        }
-        if (dnbSrchApiResponse.errmsg) {
+        if (dnbSrchApiResponse.product) {
+            this.companyList = dnbSrchApiResponse.product;
+            var apiCompanyList = this.getJsonNode(dnbSrchApiResponse.product, this.commonJSONPaths.srchRslt);
+            dnbSrchResults.product = this.formatSrchRslt(apiCompanyList, this.searchDD);
+        } else if (dnbSrchApiResponse.errmsg) {
             dnbSrchResults.errmsg = dnbSrchApiResponse.errmsg;
         }
         this.dnbSrchResults = dnbSrchResults;
@@ -128,7 +141,10 @@
             this.$('.clearDNBResults').removeClass('enabled');
             this.$('.clearDNBResults').addClass('disabled');
             this.companyList = null;
-            this.baseCompanySearch(searchString, this.renderCompanyList);
+            var balParams = {
+                'KeywordText': searchString
+            };
+            this.baseAccountsBAL(balParams, this.renderCompanyList);
         }
     },
 
@@ -155,7 +171,7 @@
             this.$('div#dnb-company-details').hide();
             this.$('.importDNBData').hide();
             this.baseCompanyInformation(duns_num, this.compInfoProdCD.std,
-                app.lang.get('LBL_DNB_BACK_TO_SRCH'), this.renderCompanyDetails);
+            app.lang.get('LBL_DNB_BACK_TO_SRCH'), this.renderCompanyDetails);
         }
     },
 
