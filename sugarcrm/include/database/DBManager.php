@@ -1082,10 +1082,6 @@ protected function checkQuery($sql, $object_name = false)
             if (isset($correctedIndexes[$name]))
                 continue;
 
-            //don't bother checking primary nothing we can do about them
-            if (isset($value['type']) && $value['type'] == 'primary')
-                continue;
-
             //database helpers do not know how to handle full text indices
             if ($value['type']=='fulltext')
                 continue;
@@ -1110,6 +1106,11 @@ protected function checkQuery($sql, $object_name = false)
                     }
                 }
                 if ($found) {
+                    // do not rename primary indices since they are nameless in most supported databases
+                    if ($value['type'] === 'primary') {
+                        continue;
+                    }
+
                     $sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
                     $rename = $this->renameIndexDefs($ex_value, $value, $tableName);
                     if($execute) {
