@@ -25,6 +25,9 @@ class SugarUpgradeFixCustomFieldsForFTS extends UpgradeScript
         }
 
         foreach (glob('custom/Extension/modules/*/Ext/Vardefs/*', GLOB_BRACE) as $customFieldFile) {
+            if (is_dir($customFieldFile)) {
+                continue;
+            }
             $dictionary = array();
             require $customFieldFile;
 
