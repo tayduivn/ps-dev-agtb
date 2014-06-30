@@ -75,30 +75,22 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestHelper::tearDown();
     }
 
-    public function testSugarViewProcessLogicHookWithModule()
+    public function testFetchByQueryCallsProcessRecordLogicHooks()
     {
+        require_once('include/SugarQuery/SugarQuery.php');
         global $accountHookRunCount;
         $accountHookRunCount = 0;
-
-        require_once('include/SugarQuery/SugarQuery.php');
-        $sugarQuery = new SugarQuery();
-
-        //add fields to select
-        $sugarQuery->select(array('id', 'name'));
 
         //fetch the bean of the module to query
         $bean = BeanFactory::newBean('Accounts');
 
-        //add from table of the module we are querying
+        //create query for accounts
+        $sugarQuery = new SugarQuery();
+        $sugarQuery->select(array('id', 'name'));
         $sugarQuery->from($bean);
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
-
+        //run fetch from Query to test that logic hook event gets fired
         $bean->fetchFromQuery($sugarQuery);
-        $this->assertGreaterThan(0, $accountHookRunCount);
-
+        $this->assertGreaterThan(0, $accountHookRunCount, 'logic hook did not update run count');
     }
 
-}
-
-?>
+}?>
