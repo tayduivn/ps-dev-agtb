@@ -1026,7 +1026,7 @@ class Report
 
         foreach ($panelParents as $panel => $parent) {
             if (isset($filters[$parent])) {
-                array_push($filters[$parent], $filters[$panel]);
+                array_unshift($filters[$parent], $filters[$panel]);
             }
         }
         array_splice($filters, 1);
