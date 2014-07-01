@@ -32,6 +32,7 @@ class HistoryApi extends RelateApi
     protected $validFields = array(
         'name',
         'status',
+        'description',
         'date_entered',
         'date_modified',
         'related_contact',
@@ -101,7 +102,7 @@ class HistoryApi extends RelateApi
         } else {
             $args['fields'] = implode(',', $this->validFields);
         }
-        
+
         if (!empty($args['order_by']) || !empty($args['fields'])) {
             $args = $this->scrubFields($args);
         }
@@ -134,12 +135,18 @@ class HistoryApi extends RelateApi
                 if ($field == 'module') {
                     continue;
                 }
-                if (isset($args['placeholder_fields'][$module][$field])) {
-                    $q->select()->fieldRaw("'' {$args['placeholder_fields'][$module][$field]}");
+                // special case for description on emails
+                if($module == 'Emails' && $field == 'description') {
+                    $q->select()->fieldRaw("'' email_description");
                 } else {
-                    $q->select()->field($field);
+                    if (isset($args['placeholder_fields'][$module][$field])) {
+                        $q->select()->fieldRaw("'' {$args['placeholder_fields'][$module][$field]}");
+                    } else {
+                        $q->select()->field($field);
+                    }
                 }
             }
+
             $q->select()->field('id');
             $q->select()->field('assigned_user_id');
             $q->limit = $q->offset = null;
@@ -193,7 +200,7 @@ class HistoryApi extends RelateApi
             foreach ($this->moduleList as $module_name) {
                 $seed = BeanFactory::getBean($module_name);
                 if (!isset($seed->field_defs[$field])) {
-                    $args['placeholder_fields'][$module_name][$field] = $field;                    
+                    $args['placeholder_fields'][$module_name][$field] = $field;
                 }
             }
         }
@@ -239,6 +246,21 @@ class HistoryApi extends RelateApi
         foreach ($data['records'] as $id => $record) {
             $data['records'][$id]['moduleNameSingular'] = $GLOBALS['app_list_strings']['moduleListSingular'][$record['_module']];
             $data['records'][$id]['moduleName'] = $GLOBALS['app_list_strings']['moduleList'][$record['_module']];
+
+            // Have to tack on from/to/description here due to not all modules
+            // having all these fields
+            if($record['_module'] == 'Emails') {
+                /* @var $q SugarQuery */
+                $q = new SugarQuery();
+                $q->select(array('description', 'from_addr', 'to_addrs'));
+                $q->from(BeanFactory::getBean('EmailText'));
+                $q->where()->equals('email_id', $data['records'][$id]['id']);
+                foreach ($q->execute() as $row) {
+                    $data['records'][$id]['description'] = $row['description'];
+                    $data['records'][$id]['from_addr'] = $row['from_addr'];
+                    $data['records'][$id]['to_addrs'] = $row['to_addrs'];
+                }
+            }
         }
 
         return $data;
