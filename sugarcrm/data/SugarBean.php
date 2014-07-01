@@ -559,11 +559,13 @@ class SugarBean
         }
         //END SUGARCRM flav=pro ONLY
 
-        if($this->bean_implements('ACL') && !empty($current_user->id)){
+        if($this->bean_implements('ACL')){
             $this->acl_fields = (isset($dictionary[$this->object_name]['acl_fields']) && $dictionary[$this->object_name]['acl_fields'] === false)?false:true;
-            //BEGIN SUGARCRM flav=pro ONLY
-            ACLField::loadUserFields($this->module_dir,$this->object_name, $current_user->id);
-            //END SUGARCRM flav=pro ONLY
+
+            if (!empty($current_user->id)) {
+                ACLField::loadUserFields($this->module_dir,$this->object_name, $current_user->id);
+            }
+
             $this->addVisibilityStrategy("ACLVisibility");
         }
         $this->populateDefaultValues();
