@@ -23,10 +23,9 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'contact_name',
-                    'label' => 'LBL_LIST_CONTACT',
-                    'link' => true,
-                    'id' => 'CONTACT_ID',
+                    'name' => 'date_start',
+                    'label' => 'LBL_LIST_DATE',
+                    'link' => false,
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -40,12 +39,20 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'sortable' => false,
                 ),
                 array(
-                    'name' => 'date_start',
-                    'label' => 'LBL_LIST_DATE',
-                    'link' => false,
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'enabled' => true,
                 ),
+                array(
+                    'name' => 'date_entered',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'default' => true,
+                    'enabled' => true,
+                    'readonly' => true,
+                ),
+                /*-------------------------------*/
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
@@ -55,33 +62,11 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'id' => 'ASSIGNED_USER_ID',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'direction',
-                    'type' => 'enum',
-                    'label' => 'LBL_LIST_DIRECTION',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'status',
                     'label' => 'LBL_LIST_STATUS',
                     'link' => false,
                     'default' => false,
                     'enabled' => true,
-                ),
-                array(
-                    'name' => 'date_entered',
-                    'width' => '10%',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'default' => true,
-                    'enabled' => true,
-                    'readonly' => true,
                 ),
             ),
         ),

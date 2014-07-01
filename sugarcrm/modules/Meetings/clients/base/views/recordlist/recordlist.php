@@ -55,6 +55,12 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
                 'acl_action' => 'edit',
             ),
             array(
+                'type' => 'follow',
+                'name' => 'follow_button',
+                'event' => 'list:follow:fire',
+                'acl_action' => 'view',
+            ),
+            array(
                 'type' => 'rowaction',
                 'icon' => 'icon-trash',
                 'event' => 'list:deleterow:fire',
