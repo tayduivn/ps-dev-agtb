@@ -390,11 +390,11 @@ class SugarFieldDatetime extends SugarFieldBase {
         }
 
         // if both of those fail above, lets check to make sure it's not the full ISO String
-        if (empty($date)) {
+        if (!$date) {
             $date = $timedate->fromIso($inputDate);
         }
 
-        if (empty($date)) {
+        if ( !$date ) {
             require_once('include/api/SugarApiException.php');
             throw new SugarApiExceptionInvalidParameter("Did not recognize $field as a date/time, it looked like {$params[$field]}");
         }
