@@ -73,8 +73,8 @@ class ChartDisplay
         // set the default stuff we need on the reporter
         // and run the queries
         $this->reporter->is_saved_report = true;
-        // only run if the chart_rows variable is empty
-        if (empty($this->reporter->chart_rows)) {
+        // only run if the chart_header_row variable is empty
+        if (empty($this->reporter->chart_header_row)) {
             $this->reporter->get_total_header_row();
             $this->reporter->run_chart_queries();
         }
