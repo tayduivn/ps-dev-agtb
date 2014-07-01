@@ -17,7 +17,8 @@
         'click .importContacts': 'importContacts',
         'click .backToContactsList': 'backToContactsList',
         'click .dnb-cnt-prem': 'baseGetContactDetails',
-        'click .dnb-cnt-std': 'baseGetContactDetails'
+        'click .dnb-cnt-std': 'baseGetContactDetails',
+        'click [data-action="show-more"]': 'invokePagination'
     },
 
     selectors: {
@@ -37,6 +38,7 @@
         if (originalMeta.import_enabled_modules) {
             this.import_enabled_modules = originalMeta.import_enabled_modules;
         }
+        this.paginationCallback = this.baseContactsBAL;
     },
 
     /**
@@ -55,6 +57,10 @@
         }
         this.template = app.template.get(this.name + '.dnb-bal-hint');
         this.render();
+        //placed here instead of initialize
+        //so that pagination params are reset when
+        //reset is clicked on dnb-bal-params view
+        this.initPaginationParams();
     },
 
     /**
@@ -64,7 +70,13 @@
      */
     invokeBAL: function(balParams) {
         if (!_.isEmpty(balParams)) {
-            this.buildAList(balParams);
+            //resetting the pagination parameters every time a new bal call is made
+            this.initPaginationParams();
+            //setting the balParams to context
+            //this is required to invoke the api with the altered
+            //pagination parameters
+            this.balParams = balParams;
+            this.buildAList(this.setApiPaginationParams(balParams));
         } else {
             this.loadData();
         }
@@ -95,26 +107,49 @@
      * @param {Object} dnbApiResponse
      */
     renderBAL: function(dnbApiResponse) {
-        if (this.disposed) {
-            return;
-        }
-        this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
         var dnbContactsList = {};
+        if (this.resetPaginationFlag) {
+            this.initPaginationParams();
+        }
         if (dnbApiResponse.product) {
-            this.contactsList = dnbApiResponse.product;
             var apiContactList = this.getJsonNode(dnbApiResponse.product, this.contactConst.contactsPath);
-            dnbContactsList.product = this.formatContactList(apiContactList, this.contactsListDD);
-            dnbContactsList.count = this.getJsonNode(dnbApiResponse.product, this.contactConst.srchCount);
-            if (dnbContactsList.count) {
-                dnbContactsList.count = app.lang.get('LBL_DNB_BAL_RSLT_CNT', this.module) + " (" + this.formatSalesRevenue(dnbContactsList.count) + ")";
+            //setting the formatted set of records to context
+            //will be required when we paginate from the client side itself
+            this.formattedRecordSet = this.formatContactList(apiContactList, this.contactsListDD);
+            //setting the api recordCount to context
+            //will be used to determine if the pagination controls must be displayed
+            this.recordCount = this.getJsonNode(dnbApiResponse.product, this.contactConst.srchCount);
+            this.paginateRecords();
+            dnbContactsList.product = this.currentPage;
+            if (this.recordCount) {
+                dnbContactsList.count = this.recordCount;
             }
         } else if (dnbApiResponse.errmsg) {
             dnbContactsList.errmsg = dnbApiResponse.errmsg;
         }
-        this.dnbContactsList = dnbContactsList;
+        this.renderPage(dnbContactsList);
+    },
+
+    /**
+     * Renders the currentPage
+     * @param {Object} pageData
+     */
+    renderPage: function(pageData) {
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
+        this.dnbContactsList = pageData;
+        if (_.isUndefined(pageData.count)) {
+            pageData.count = this.recordCount;
+        }
+        this.dnbContactsList.count = app.lang.get('LBL_DNB_BAL_RSLT_CNT', this.module) + " (" + this.formatSalesRevenue(pageData.count) + ")";
         this.render();
         this.$(this.selectors.load).addClass('hide');
         this.$(this.selectors.rslt).removeClass('hide');
+        if (pageData.product) {
+            this.renderPaginationControl();
+        }
     },
 
     /**
@@ -125,22 +160,48 @@
             return;
         }
         this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
-        if (this.dnbContactsList && this.dnbContactsList.count) {
-            delete this.dnbContactsList['count'];
+        if (this.dnbBalRslt && this.dnbBalRslt.count) {
+            delete this.dnbBalRslt['count'];
         }
         this.render();
         this.$(this.selectors.load).removeClass('hide');
         this.$(this.selectors.rslt).addClass('hide');
         var dupeCheckParams = {
             'type': this.module,
-            'apiResponse': this.contactsList,
-            'module': 'contacts'
+            'apiResponse': this.currentPage,
+            'module': 'contactsPage'
         };
-        this.baseDuplicateCheck(dupeCheckParams, this.renderBAL);
+        this.baseDuplicateCheck(dupeCheckParams, this.renderPage);
     },
 
     importContacts: function() {
         var module = this.$('#importType').val();
         this.baseImportContact(module);
+    },
+
+    /**
+     * Event handler for pagination controls
+     * Renders next page from context if available
+     * else invokes the D&B API to get the next page
+     */
+    invokePagination: function() {
+        this.displayPaginationLoading();
+        this.setPaginationParams();
+        //if the endRecord after pagination is greater than apiPageEndRecord
+        //we have to invoke the api with the pagination controls
+        if (this.endRecord > this.apiPageEndRecord) {
+            this.apiPageEndRecord = (this.startRecord + this.apiPageSize) - 1;
+            this.resetPaginationFlag = false;
+            //setting the apiPageOffset
+            this.apiPageOffset = this.startRecord;
+            this.paginationCallback(this.setApiPaginationParams(this.balParams), this.renderBAL);
+        } else {
+            this.paginateRecords();
+            var pageData = {
+              'product': this.currentPage,
+              'count': this.recordCount
+            };
+            this.renderPage(pageData);
+        }
     }
 })

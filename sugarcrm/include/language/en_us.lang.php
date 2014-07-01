@@ -6348,53 +6348,6 @@ $app_list_strings['dnb_bal_single_all'] = array(
     'allsites' => 'All Sites'
 );
 
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code..."
-);
-
 $app_list_strings['dnb_states_iso'] = array(
    "Country" => array(
       "1"  =>  array("code" => "","name" => "States")

@@ -25,3 +25,4 @@ $viewdefs['base']['view']['dnb-account-create'] = array(
         ),
     )
 );
+

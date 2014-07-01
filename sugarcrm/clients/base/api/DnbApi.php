@@ -158,8 +158,6 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbFamilyTree($queryData);
         } else if ($queryType === 'dupecheck') {
             $result = $extDnbApi->dupeCheck($queryData);
-        } else if ($queryType === 'balAccounts') {
-            $result = $extDnbApi->dnbBALAccounts($queryData);
         }
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);

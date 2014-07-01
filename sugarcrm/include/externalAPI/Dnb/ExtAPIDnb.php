@@ -796,6 +796,11 @@ class ExtAPIDnb extends ExternalAPIBase
         }
         // setting curl options
         curl_setopt_array($curl_handle, $this->getCurlOptions($requestMethod, $url, $curl_headers, false));
+        $GLOBALS['log']->debug("curl header[0] : $curl_headers[0]");
+        $GLOBALS['log']->debug("curl header[1] : $curl_headers[1]");
+        $GLOBALS['log']->debug("curl header[2] : $curl_headers[2]");
+        $GLOBALS['log']->debug("dnbToken: $dnbToken");
+        $GLOBALS['log']->debug("url: $url");
         $response = curl_exec($curl_handle);
         if ($response === false) {
             $curl_errno = curl_errno($curl_handle);
@@ -920,6 +925,7 @@ class ExtAPIDnb extends ExternalAPIBase
         curl_close($curl_handle);
         $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
         $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
+        $GLOBALS['log']->debug("DNB Session Token Set :".$_SESSION[$this->dnbEnv . 'dnbToken']);
         return $token;
     }
 
@@ -1016,9 +1022,9 @@ class ExtAPIDnb extends ExternalAPIBase
      */
     private function checkAndMarkDuplicateContacts($dnbApiResponse, $path, $contactType)
     {
-        $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
         // get existing contacts
         $dnbPrincIdArray = array();
+        $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
         //get the list of dnb principal ids from the above list of contacts
         $this->underscoreEach(
             $dnbContactsList,
@@ -1043,9 +1049,9 @@ class ExtAPIDnb extends ExternalAPIBase
      * This API is primarily being created to check the browser cached responses for duplicates
      * @param array $dupeCheckParams
      * $dupeCheckParams must have two keys
-     * 1. type -- Currently two possible values (duns,contacts)
+     * 1. type -- Currently four possible values (duns,contacts,leads,prospects)
      * 2. apiResponse -- The api response to be marked as duplicates
-     * 3. module -- findcompany, competitors, cleansematch, familytree, contacts
+     * 3. module -- findcompany, competitors, cleansematch, familytree, contacts, contactsPage
      * @return array
      */
     public function dupeCheck($dupeCheckParams)
@@ -1061,6 +1067,9 @@ class ExtAPIDnb extends ExternalAPIBase
             if ($module === 'familytree') {
                 $modifiedApiResponse = $this->checkAndMarkFTDuplicateDuns($apiResponse);
                 return $modifiedApiResponse;
+            } else if ($module === 'dunsPage') {
+                $modifiedApiResponse = $this->checkAndMarkDuplicateLists($apiResponse, 'duns_num', 'Accounts', 'duns_num');
+                return $modifiedApiResponse;
             } else {
                 $path = $this->commonJsonPaths[$module];
                 if (!empty($path)) {
@@ -1075,7 +1084,11 @@ class ExtAPIDnb extends ExternalAPIBase
             }
         } else if (in_array($type, $this->contactModules)) {
             $path = $this->commonJsonPaths[$module];
-            if (!empty($path)) {
+            if ($module === 'contactsPage') {
+                $modifiedApiResponse = $this->checkAndMarkDuplicateLists($apiResponse, 'principalId', $type, 'dnb_principal_id');
+                return $modifiedApiResponse;
+            } else if (!empty($path)) {
+                //handle the dupe check for a contacts page
                 $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse, $path, $type);
                 if (!empty($modifiedApiResponse)) {
                     return $modifiedApiResponse;
@@ -1086,5 +1099,30 @@ class ExtAPIDnb extends ExternalAPIBase
                 return array('error' => 'ERROR_INVALID_MODULE_NAME');
             }
         }
+    }
+
+    /**
+     * Checks the D&B List of contacts / companies for duplicates SugarDB
+     * @param array $list
+     * @param string $listKey (to retrieve the key to duplicate check against)
+     * @param string $module possible values are Accounts, Contacts, Leads, Prospects
+     * @param string $moduleKey (refers to the key in the module against which the duplicate check is done)
+     * @return array
+     */
+    protected function checkAndMarkDuplicateLists($list, $listKey, $module, $moduleKey)
+    {
+        //array to hold a list of ids
+        $idArray = array();
+        //get the list of ids to dupe check
+        foreach ($list as $listItem) {
+            $idArray[] = $listItem[$listKey];
+        }
+        //gets the list of records from sugardb that match the idArrsy
+        $existingIdsArray = json_decode($this->getExistingRecords($moduleKey, $module, $idArray), true);
+        if (count($existingIdsArray) > 0) {
+            //mark the records in the sugardb as dupes
+            $list = $this->getCommonRecords($list, $existingIdsArray, $listKey, $moduleKey);
+        }
+        return $list;
     }
 }
