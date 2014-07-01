@@ -87,6 +87,9 @@
             <directory>./jssource/</directory>
             <directory>./ModuleInstall/</directory>
         </testsuite>
+        <testsuite name="Sugar Vendor Test Suite">
+            <directory>./vendor/</directory>
+        </testsuite>
         <testsuite name="Sugar API Test Suite">
             <directory>./clients/base/api/</directory>
             <directory>./clients/portal/api/</directory>
