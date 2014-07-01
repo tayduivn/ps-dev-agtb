@@ -81,7 +81,7 @@ $viewdefs['base']['layout']['merge-duplicates'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'merge-duplicates',
     'name' => 'base',
     'span' => 12,
 );

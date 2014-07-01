@@ -73,6 +73,14 @@
         // TODO: Calling 'across controllers' considered harmful .. please consider using a plugin instead.
         var actiondropdownField = app.view._getController({type: 'field', name: 'actiondropdown'});
         this.setPlaceholder = _.throttle(actiondropdownField.prototype.setPlaceholder, 100);
+
+        //shortcut keys
+        app.shortcuts.register('Dropdown:More', 'm', function() {
+            var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
+            if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
+                $primaryDropdown.click();
+            }
+        }, this);
     },
     renderDropdown: function() {
         if (_.isEmpty(this.dropdownFields) || this.isDisabled()) {
@@ -132,7 +140,7 @@
             caret = '<a track="click:actiondropdown" class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" title="'+app.lang.get('LBL_LISTVIEW_ACTIONS')+'">' +
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
-            dropdown = '<ul data-menu="dropdown" class="dropdown-menu">';
+            dropdown = '<ul data-menu="dropdown" class="dropdown-menu" role="menu">';
 
         //Since zero-index points to the default action placeholder,
         //assigning the beginning index to one will skip the default action placeholder

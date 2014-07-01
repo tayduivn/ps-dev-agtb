@@ -14,8 +14,8 @@
     <li class="dropdown" id="createList">
         <div class="btn-group">
             <a data-toggle="dropdown" href="javascript:void(0);" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="left" title="{{str "LBL_QUICK_CREATE_TITLE"}}" track="click:quickCreate"><i class="icon-plus icon-md"></i></a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
+            <div class="dropdown-menu scroll pull-right" role="menu">
+                <ul>
                     {{#each createMenuItems}}
                         <li>{{field ../this model=model template=../this.action}}</li>
                     {{/each}}

@@ -108,6 +108,10 @@
 
     /**
      * Render select2 dropdown
+     *
+     * This function may be called even when this.render() is not because of
+     * the "filter:render:filter" event listener.
+     *
      * @private
      */
     _renderDropdown: function(data) {
@@ -127,8 +131,32 @@
             escapeMarkup: function(m) {
                 return m;
             },
+            shouldFocusInput: function() {
+                // We return false here so that we do not refocus on the field once
+                // it has been blurred. If we return true, blur needs to happen
+                // twice before it is really blurred.
+                return false;
+            },
             width: 'off'
         });
+
+        // the shortcut keys need to be registered anytime this function is
+        // called, not just on render
+        app.shortcuts.register(
+            'Filter:Create',
+            ['f c', 'ctrl+alt+8'],
+            function() {
+                // trigger the change event to open the edit filter drawer
+                this.filterNode.select2('val', 'create', true);
+            },
+            this
+        );
+        app.shortcuts.register('Filter:Edit', 'f e', function() {
+            this.$('.choice-filter.choice-filter-clickable').click();
+        }, this);
+        app.shortcuts.register('Filter:Show', 'f m', function() {
+            this.filterNode.select2('open');
+        }, this);
 
         if (!this.filterDropdownEnabled) {
             this.filterNode.select2("disable");

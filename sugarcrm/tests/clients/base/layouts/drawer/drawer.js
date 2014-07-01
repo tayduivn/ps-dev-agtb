@@ -60,6 +60,12 @@ describe("Drawer Layout", function() {
         drawer = SugarTest.app.drawer;
         components = drawer._components;
         app = SugarTest.app;
+
+        sinonSandbox.stub(app, 'triggerBefore', function() {
+            return true;
+        });
+        sinonSandbox.stub(app.shortcuts, 'saveSession');
+        sinonSandbox.stub(app.shortcuts, 'restoreSession');
     });
 
     afterEach(function() {
@@ -699,6 +705,49 @@ describe("Drawer Layout", function() {
             });
 
             expect(drawer._isMainAppContent($mainDiv)).toBe(true);
+        });
+    });
+
+    describe('getActiveDrawerLayout()', function() {
+        beforeEach(function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+        });
+
+        it('Should return the currently opened drawer layout', function() {
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components:[{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {
+                    name: 'bar',
+                    components:[{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            expect(drawer.getActiveDrawerLayout().name).toBe('bar');
+        });
+
+        it('Should return the main controller layout when no drawers are open', function() {
+            var result,
+                oldController = app.controller,
+                controllerLayoutStub = sinonSandbox.stub();
+
+            app.controller = {
+                layout: {
+                    name: 'controllerLayout'
+                }
+            };
+
+            result = drawer.getActiveDrawerLayout();
+            expect(result.name).toBe('controllerLayout');
+
+            app.controller = oldController;
         });
     });
 });

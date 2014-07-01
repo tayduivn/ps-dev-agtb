@@ -71,7 +71,7 @@ $viewdefs['base']['layout']['find-duplicates'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'find-duplicates',
     'name' => 'base',
     'span' => 12,
 );

@@ -14,5 +14,17 @@
  * @extends View.Views.Base.HeaderpaneView
  */
 ({
-    extendsFrom: 'HeaderpaneView'
+    extendsFrom: 'HeaderpaneView',
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        //shortcut keys
+        app.shortcuts.register('List:Headerpane:Create', 'a', function() {
+            var $createButton = this.$('a[name=create_button]');
+            if ($createButton.is(':visible') && !$createButton.hasClass('disabled')) {
+                $createButton.get(0).click();
+            }
+        }, this);
+    }
 })
