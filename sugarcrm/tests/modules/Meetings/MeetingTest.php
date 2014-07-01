@@ -164,4 +164,60 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($meeting->reminder_checked);
         $this->assertTrue($meeting->email_reminder_checked);
     }
+
+    public function testCalculateDuration_NoDateEndAndNoDuration_DateEndIsOneHourAfterDateStart()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->date_start = date('Y-m-d H:i:s');
+        $meeting->calculateDuration();
+        $diff = $GLOBALS['timedate']->fromDb($meeting->date_start)
+            ->diff($GLOBALS['timedate']->fromDb($meeting->date_end));
+        $expected = 60;
+        $actual = $diff->h * 60 + $diff->i;
+        $this->assertEquals($expected, $actual, "date_end should be exactly {$expected} minutes after date_start");
+    }
+
+    public function testCalculateDuration_NoDateEnd_DateEndIsDateStartPlusDuration()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->date_start = date('Y-m-d H:i:s');
+        $meeting->duration_hours = 1;
+        $meeting->duration_minutes = 12;
+        $meeting->calculateDuration();
+        $diff = $GLOBALS['timedate']->fromDb($meeting->date_start)
+            ->diff($GLOBALS['timedate']->fromDb($meeting->date_end));
+        $expected = 72;
+        $actual = $diff->h * 60 + $diff->i;
+        $this->assertEquals($expected, $actual, "date_end should be exactly {$expected} minutes after date_start");
+    }
+
+    public function testCalculateDuration_NoDuration_DurationIsCalculated()
+    {
+        $starts = new DateTime();
+        $ends = clone $starts;
+        $ends = $ends->modify('+1 hour')->modify('+12 minutes');
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->date_start = $starts->format('Y-m-d H:i:s');
+        $meeting->date_end = $ends->format('Y-m-d H:i:s');
+        $meeting->calculateDuration();
+        $expected = 72;
+        $actual = $meeting->duration_hours * 60 + $meeting->duration_minutes;
+        $this->assertEquals($expected, $actual, "duration should be {$expected} minutes");
+    }
+
+    public function testCalculateDuration_DurationDoesNotMatchDifferenceOfDateStartAndDateEnd_DurationIsRecalculated()
+    {
+        $starts = new DateTime();
+        $ends = clone $starts;
+        $ends = $ends->modify('+1 hour')->modify('+12 minutes');
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->date_start = $starts->format('Y-m-d H:i:s');
+        $meeting->date_end = $ends->format('Y-m-d H:i:s');
+        $meeting->duration_hours = 2;
+        $meeting->duration_minutes = 43;
+        $meeting->calculateDuration();
+        $expected = 72;
+        $actual = $meeting->duration_hours * 60 + $meeting->duration_minutes;
+        $this->assertEquals($expected, $actual, "duration should be {$expected} minutes");
+    }
 }

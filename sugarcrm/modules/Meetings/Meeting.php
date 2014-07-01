@@ -138,33 +138,80 @@ class Meeting extends SugarBean {
 		return false;
 	}
 
-	// save date_end by calculating user input
-	// this is for calendar
-	function save($check_notify = FALSE) {
-		global $timedate;
-		global $current_user;
-
-        if(isset($this->date_start))
-        {
-            $td = $timedate->fromDb($this->date_start);
-            if(!$td){
-            		$this->date_start = $timedate->to_db($this->date_start);
-            		$td = $timedate->fromDb($this->date_start);
+    /**
+     * Calculates the datetime components of the meeting.
+     *
+     * The end datetime is set for one hour after the start datetime when the start datetime is the only component that
+     * is set.
+     *
+     * The end datetime is calculated from the start datetime and duration fields when the start datetime and duration
+     * components are set but the end datetime is not.
+     *
+     * The duration fields are calculated from the difference between the start and end components.
+     */
+    public function calculateDuration()
+    {
+        /**
+         * Returns a database formatted SugarDateTime object created from the date passed in.
+         *
+         * @param mixed $dateTime
+         * @return SugarDateTime
+         */
+        $getDbDateTime = function($dateTime) {
+            $dbDateTime = $GLOBALS['timedate']->fromDb($dateTime);
+            if (!$dbDateTime) {
+                $dateTime = $GLOBALS['timedate']->to_db($dateTime);
+                $dbDateTime = $GLOBALS['timedate']->fromDb($dateTime);
             }
-            if($td)
-            {
-                if (isset($this->duration_hours) && $this->duration_hours != '')
-                {
-                    $td->modify("+{$this->duration_hours} hours");
+            return $dbDateTime;
+        };
+
+        // only date_start has been set
+        if (
+            !empty($this->date_start)
+            && empty($this->date_end)
+            && empty($this->duration_hours)
+            && empty($this->duration_minutes)
+        ) {
+            $this->duration_hours = 1;
+            $this->duration_minutes = 0;
+        }
+
+        // date_start and date_end have been set... recalculate the duration
+        if (!empty($this->date_start) && !empty($this->date_end)) {
+            $starts = $getDbDateTime($this->date_start);
+            $ends = $getDbDateTime($this->date_end);
+            if ($starts && $ends) {
+                $this->duration_hours = $this->duration_minutes = 0;
+                $duration = $ends->format('U') - $starts->format('U');
+                if ($duration > 0) {
+                    $this->duration_hours = floor($duration / 3600);
+                    $this->duration_minutes = floor(($duration / 60) % 60);
                 }
-                if (isset($this->duration_minutes) && $this->duration_minutes != '')
-                {
-                    $td->modify("+{$this->duration_minutes} mins");
-                }
-                $this->date_end = $td->asDb();
             }
         }
 
+        // only date_start and duration have been set... calculate date_end
+        if (
+            !empty($this->date_start)
+            && empty($this->date_end)
+            && (!empty($this->duration_hours) || !empty($this->duration_minutes))
+        ) {
+            if ($starts = $getDbDateTime($this->date_start)) {
+                if (!empty($this->duration_hours)) {
+                    $starts->modify("+{$this->duration_hours} hours");
+                }
+                if (!empty($this->duration_minutes)) {
+                    $starts->modify("+{$this->duration_minutes} mins");
+                }
+                $this->date_end = $starts->asDb();
+            }
+        }
+    }
+
+	function save($check_notify = FALSE) {
+		global $current_user;
+        $this->calculateDuration();
         $check_notify = $this->send_invites;
         if($this->send_invites == false) {
         	$old_assigned_user_id = '';
@@ -181,11 +228,6 @@ class Meeting extends SugarBean {
                 }
 			}
 		}
-		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
-		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
-			$this->reminder_checked = '1';
-			$this->reminder_time = $current_user->getPreference('reminder_time');
-		}*/
 
 		// prevent a mass mailing for recurring meetings created in Calendar module
 		if(empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id))
