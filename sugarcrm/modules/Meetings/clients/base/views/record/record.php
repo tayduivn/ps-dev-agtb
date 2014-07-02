@@ -59,6 +59,20 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 array(),
                 'location',
                 array(
+                    'name' => 'reminders',
+                    'type' => 'fieldset-with-labels',
+                    'fields' => array(
+                        array(
+                            'name' => 'reminder_time',
+                            'span' => 6,
+                        ),
+                        array(
+                            'name' => 'email_reminder_time',
+                            'span' => 6,
+                        ),
+                    ),
+                ),
+                array(
                     'name' => 'description',
                     'span' => 12,
                 ),
