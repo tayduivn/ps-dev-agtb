@@ -79,6 +79,23 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    _initPlaceholderAttribute: function() {
+        this._super('_initPlaceholderAttribute');
+
+        var placeholder = this.getTimePlaceHolder(this.getUserTimeFormat());
+
+        this.secondaryFieldPlaceholder = this.def.placeholder && app.lang.get(
+            this.def.placeholder,
+            this.module,
+            {format: placeholder}
+        ) || placeholder;
+
+        return this;
+    },
+
+    /**
      * Handler to show time picker on icon click.
      *
      * We trigger the focus on element instead of the jqueryfied element, to
@@ -133,21 +150,14 @@
      * @protected
      */
     _setupTimePicker: function() {
-        var $field = this.$(this.secondaryFieldTag),
-            userTimeFormat = this.getUserTimeFormat();
+        var $field = this.$(this.secondaryFieldTag);
 
         $field.timepicker({
-            timeFormat: userTimeFormat,
+            timeFormat: this.getUserTimeFormat(),
             // FIXME: add metadata driven support for the following properties
             scrollDefaultNow: true,
             step: 15
         });
-
-        $field.attr('placeholder', this.getTimePlaceHolder(userTimeFormat));
-
-        if (this.def.required) {
-            this.setRequiredPlaceholder($field);
-        }
     },
 
     /**

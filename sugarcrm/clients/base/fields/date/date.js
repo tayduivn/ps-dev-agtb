@@ -43,6 +43,7 @@
         this._super('initialize', [options]);
         this._initEvents();
         this._initDefaultValue();
+        this._initPlaceholderAttribute();
     },
 
     /**
@@ -99,6 +100,43 @@
     },
 
     /**
+     * Initializes the field's placeholder attribute.
+     *
+     * Placeholder attribute can be used in different ways. Based on metadata
+     * settings one can do:
+     *
+     *     // ...
+     *     array(
+     *         'name' => 'my_date_field',
+     *         'type' => 'date',
+     *         'placeholder' => 'TPL_MY_PLACEHOLDER',
+     *         // ...
+     *     )
+     *     // ...
+     *
+     * Where `TPL_MY_PLACEHOLDER` is able to receive the `format` flag such as:
+     *
+     *     'TPL_MY_PLACEHOLDER' => 'Accepts the {{format}} format'
+     *
+     * If none supplied, user date format is used instead
+     * {@link #getUserDateformat}.
+     *
+     * @chainable
+     * @protected
+     */
+    _initPlaceholderAttribute: function() {
+        var placeholder = app.date.toDatepickerFormat(this.getUserDateFormat());
+
+        this.fieldPlaceholder = this.def.placeholder && app.lang.get(
+            this.def.placeholder,
+            this.module,
+            {format: placeholder}
+        ) || placeholder;
+
+        return this;
+    },
+
+    /**
      * Return user date format.
      *
      * @return {String} User date format.
@@ -118,9 +156,8 @@
     _setupDatePicker: function() {
         var $field = this.$(this.fieldTag),
             userDateFormat = this.getUserDateFormat(),
-            datePickerDateFormat = app.date.toDatepickerFormat(userDateFormat),
             options = {
-                format: datePickerDateFormat,
+                format: app.date.toDatepickerFormat(userDateFormat),
                 languageDictionary: this._patchPickerMeta()
             };
 
@@ -130,11 +167,6 @@
         }
 
         $field.datepicker(options);
-        $field.attr('placeholder', datePickerDateFormat);
-
-        if (this.def.required) {
-            this.setRequiredPlaceholder($field);
-        }
     },
 
     /**
