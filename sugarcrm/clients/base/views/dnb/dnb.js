@@ -551,12 +551,30 @@
 
     //contacts detail data dictionary
     contactsDetailDD: {
+        'full_name' : {
+            'json_path' : 'PrincipalName.FullName',
+            'label' : 'LBL_DNB_CONTACT_NAME'
+        },
         'account_name': {
             'json_path' : 'orgName',
             'label' : 'LBL_DNB_BAL_ORG_NAME'
         },
         'dnb_principal_id': {
             'json_path': 'PrincipalIdentificationNumberDetail.PrincipalIdentificationNumber'
+        },
+        'title' : {
+            'json_path' : 'JobTitle',
+            'label' : 'LBL_DNB_CONTACT_JOBTITLE',
+            'sub_object': {
+                'data_type' : 'job_hist',
+                'title' : 'JobTitleText.$',
+                'start_date' : 'StartDate.$',
+                'end_date' : 'EndDate.$'
+            }
+        },
+        'department' : {
+            'json_path' : 'CurrentManagementResponsibility.0.ManagementResponsibilityText.$',
+            'label' : 'LBL_DNB_CONTACT_RESP'
         },
         'email' : {
             'json_path' : 'Telecommunication.EmailAddress.0.TelecommunicationAddress',
@@ -571,23 +589,6 @@
         },
         'last_name': {
             'json_path': 'PrincipalName.LastName'
-        },
-        'full_name' : {
-            'json_path' : 'PrincipalName.FullName',
-            'label' : 'LBL_DNB_CONTACT_NAME'
-        },
-        'department' : {
-            'json_path' : 'CurrentManagementResponsibility.0.ManagementResponsibilityText.$',
-            'label' : 'LBL_DNB_CONTACT_RESP'
-        },
-        'job_title' : {
-            'json_path' : 'JobTitle',
-            'sub_object': {
-                'data_type' : 'job_hist',
-                'title' : 'JobTitleText.$',
-                'start_date' : 'StartDate.$',
-                'end_date' : 'EndDate.$'
-            }
         },
         'salutation': {
             'json_path': 'PrincipalName.NamePrefix.NamePrefixText'
@@ -1560,6 +1561,12 @@
         this.render();
         this.$('div#dnb-contact-details-loading').show();
         this.$('div#dnb-contact-details').hide();
+        //hiding the import buttons
+        if (this.name === 'dnb-bal-results') {
+            this.$('.importContacts').hide();
+        } else if (this.name === 'dnb-contact-info') {
+            this.toggleImportBtn('import_dnb_data', false);
+        }
         var contactParams = {
             'duns_num' : duns_num,
             'contact_id' : contact_id,
@@ -1672,11 +1679,15 @@
         _.each(contactsDetailDD, function(value, key) {
             var dataElement = this.getJsonNode(contactDetail, value.json_path);
             if (dataElement) {
-                if (key === 'job_title') {
+                if (key === 'title') {
                     var frmtJobTitles = this.formatJobTitles(dataElement, value.sub_object);
                     if (frmtJobTitles && frmtJobTitles.length > 0) {
                         //first job title is the current job title
                         frmtCntctDet[key] = frmtJobTitles[0].title;
+                        frmtCntctDet.contact_profile.push({
+                            'dataLabel': value.label,
+                            'dataElement': frmtJobTitles[0].title
+                        });
                         //the rest are used to display job history
                         if (frmtJobTitles.length > 1) {
                             frmtJobTitles.splice(0, 1);
