@@ -101,10 +101,7 @@ class SugarUpgradeClearHooks extends UpgradeScript
             foreach ($hooks as $j => $hook) {
                 $validHooks = false;
                 if (count($hook) >= 5 && file_exists($hook[2])) {
-                    include_once $hook[2];
-                    if (class_exists($hook[3]) && method_exists($hook[3], $hook[4])) {
-                        $validHooks = true;
-                    }
+                    $validHooks = $this->checkClassMethodInFile($hook[2], $hook[3], $hook[4]);
                 }
                 if (!$validHooks) {
                     $this->log("DELETE bad hook '{$hook[1]}' in '{$hook_file}'");
@@ -119,5 +116,76 @@ class SugarUpgradeClearHooks extends UpgradeScript
         if ($needRewrite) {
             $this->rewriteHookFile($hook_file, $hook_array);
         }
+    }
+
+    /**
+     * Check whether file contains a class with provided method.
+     * @param string $file
+     * @param string $class
+     * @param string $method
+     * @return bool
+     */
+    protected function checkClassMethodInFile($file, $class, $method)
+    {
+        if (empty($class) || empty ($method)) {
+            return false;
+        }
+        $source = file_get_contents($file);
+        $tokens = token_get_all($source);
+        $classes = array();
+        $current = '';
+        $level = 0;
+        foreach ($tokens as $ind => $token) {
+            if (is_array($token)) {
+                switch ($token[0]) {
+                    case T_CLASS:
+                        $current = $this->findName($tokens, $ind, T_STRING);
+                        $classes[$current] = array(
+                            'level' => $level,
+                            'methods' => array()
+                        );
+                        break;
+                    case T_FUNCTION:
+                        if (!empty($current)) {
+                            $classes[$current]['methods'][] = $this->findName($tokens, $ind, T_STRING);
+                        }
+                        break;
+                }
+            } else {
+                switch($token) {
+                    case '{':
+                        $level++;
+                        break;
+                    case '}':
+                        $level--;
+                        if (!empty($current) && $classes[$current]['level'] == $level) {
+                            $current = '';
+                        }
+                        break;
+                }
+            }
+        }
+        if (!empty($classes[$class]) && in_array($method, $classes[$class]['methods'])) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Find next token with provided type.
+     * @param array $tokens
+     * @param int $start
+     * @param int $type
+     * @return string|bool
+     */
+    protected function findName($tokens, $start, $type)
+    {
+        $count = count($tokens);
+        for ($i = $start + 1; $i < $count; $i++) {
+            if (is_array($tokens[$i]) && $tokens[$i][0] == $type) {
+                return $tokens[$i][1];
+            }
+        }
+        return false;
     }
 }
