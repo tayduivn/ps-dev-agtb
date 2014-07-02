@@ -510,6 +510,7 @@ describe('Base.View.FilterRows', function() {
                     readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
+                expect($row.data('valueField').action).toEqual('detail');
             });
             it('should convert a boolean field into an enum field', function() {
                 sinon.collection.stub($.fn, 'select2').returns('priority'); //return `priority` as field
@@ -589,6 +590,9 @@ describe('Base.View.FilterRows', function() {
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(_.size($valueField.find('input'))).toEqual(2);
+                _.each($row.data('valueField'), function(data) {
+                    expect(data.action).toEqual('detail');
+                });
             });
             describe('teamset and relate field', function() {
                 var fetchStub;
