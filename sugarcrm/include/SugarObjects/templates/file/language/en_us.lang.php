@@ -76,6 +76,8 @@ $mod_strings = array (
 	'LBL_LIST_ACTIVE_DATE' => 'Publish Date',
 	'LBL_LIST_EXP_DATE' => 'Expiration Date',
 	'LBL_LIST_STATUS'=>'Status',
+    'LBL_LIST_DOC_TYPE' => 'Document Type',
+    'LBL_LIST_FILENAME' => 'File Name',
 
 	//document search form.
 	'LBL_SF_DOCUMENT' => 'Document Name:',
