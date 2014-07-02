@@ -585,6 +585,8 @@ class MetaDataConverter
                             } else {
                                 $subpanelFileName = "For{$focus->module_name}";
                             }
+                        } else {
+                            $subpanelFileName = "For{$focus->module_name}";
                         }
                     }
                 }
