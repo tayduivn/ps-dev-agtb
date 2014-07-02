@@ -1423,30 +1423,6 @@
     },
 
     /**
-     * Build a list of accounts
-     * @param {Object} balParams
-     * @param {Function} callBack (function used to render api response)
-     */
-    baseAccountsBAL: function(balParams, callBack) {
-        var balRslt = {'product': null, 'errmsg': null};
-        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
-        var self = this;
-        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
-                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    balRslt.product = data;
-                } else {
-                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                callBack.call(self, balRslt);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
      * Toggles the visibility of the import button in the dashlet
      * @param {String} btnName
      * @param {Boolean} isVisible

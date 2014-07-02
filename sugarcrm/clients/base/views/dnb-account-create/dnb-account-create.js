@@ -140,22 +140,13 @@
         }
         this.template = app.template.get(this.name);
         this.dnbSrchResults = pageData;
-        //pageData count is not defined when the page is being rendered after
-        //dupe check
-        //hence using the count from the context variable
         if (_.isUndefined(pageData.count)) {
             pageData.count = this.recordCount;
         }
-        //if the api returns a success response then only set the count
-        if (pageData.product) {
-            this.dnbSrchResults.count = app.lang.get('LBL_DNB_BAL_ACCT_HEADER') + " (" + this.formatSalesRevenue(pageData.count) + ")";
-        } else {
-            delete this.dnbSrchResults['count'];
-        }
+        this.dnbSrchResults.count = app.lang.get('LBL_DNB_BAL_ACCT_HEADER') + " (" + this.formatSalesRevenue(pageData.count) + ")";
         this.render();
         this.$('div#dnb-company-list-loading').hide();
         this.$('div#dnb-search-results').show();
-        //render pagination controls only if the api returns a success response
         if (pageData.product) {
             this.renderPaginationControl();
         }
@@ -197,10 +188,6 @@
         if (!this.keyword || (this.keyword && this.keyword !== searchString)) {
             this.keyword = searchString;
             this.template = app.template.get(this.name);
-            //deleting the count of the previous search results
-            if (this.dnbSrchResults && this.dnbSrchResults.count) {
-                delete this.dnbSrchResults['count'];
-            }
             this.render();
             this.$('table#dnb_company_list').empty(); //empty results table
             this.$('div#dnb-search-results').hide(); //hide results div
