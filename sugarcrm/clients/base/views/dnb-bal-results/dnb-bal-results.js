@@ -140,22 +140,13 @@
         }
         this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
         this.dnbContactsList = pageData;
-        //pageData count is not defined when the page is being rendered after
-        //dupe check
-        //hence using the count from the context variable
         if (_.isUndefined(pageData.count)) {
             pageData.count = this.recordCount;
         }
-        //if the api returns a success response then only set the count
-        if (pageData.product) {
-            this.dnbContactsList.count = app.lang.get('LBL_DNB_BAL_RSLT_CNT', this.module) + " (" + this.formatSalesRevenue(pageData.count) + ")";
-        } else {
-            delete this.dnbContactsList['count'];
-        }
+        this.dnbContactsList.count = app.lang.get('LBL_DNB_BAL_RSLT_CNT', this.module) + " (" + this.formatSalesRevenue(pageData.count) + ")";
         this.render();
         this.$(this.selectors.load).addClass('hide');
         this.$(this.selectors.rslt).removeClass('hide');
-        //render pagination controls only if the api returns a success response
         if (pageData.product) {
             this.renderPaginationControl();
         }
