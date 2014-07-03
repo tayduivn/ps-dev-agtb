@@ -173,7 +173,6 @@ $mod_strings = array (
     'LBL_MEETING_CLOSE_SUCCESS' => 'Meeting closed successfully.',
 
     //record save
-    'LBL_RECORD_SAVED' => '{{moduleSingular}} scheduled.',
     'LBL_RECORD_SAVED_SUCCESS' => 'You scheduled the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a> for {{calendarTime date_start}}.',
     'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You scheduled the {{moduleSingularLower}} for {{calendarTime date_start}}, but you do not have permission to access it.',
 );
