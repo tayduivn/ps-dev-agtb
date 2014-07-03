@@ -554,13 +554,36 @@ abstract class SugarRelationship
     }
 
     /**
-     * @param $optional_array clause to add to the where query when populating this relationship. It should be in the
-     * @param string $add_and
-     * @param string $prefix
-     *
+     * Gets the correct table to select a custom where from
+     * 
+     * @param string $whereTable Existing whereTable
+     * @param SugarBean $relatedBean The related bean
+     * @param string $fieldName The field name to check for a custom where table
      * @return string
      */
-    protected function getOptionalWhereClause($optional_array)
+    public function getWhereTable($whereTable, $relatedBean, $fieldName)
+    {
+        // Its just easier to work on a shorter variable
+        $defs = $relatedBean->field_defs;
+
+        // If the field is sourced from custom fields, get the custom table it 
+        // belongs to
+        if ($fieldName && isset($defs[$fieldName]['source']) && $defs[$fieldName]['source'] === 'custom_fields') {
+            $whereTable = $relatedBean->get_custom_table_name();
+        }
+
+        return $whereTable;
+    }
+
+    /**
+     * Gets an optional where clause
+     * 
+     * @param $optional_array List of conditionals to apply to a custom where
+     * @param string $whereTable The existing where table to select from
+     * @param SugarBean $relatedBean
+     * @return string
+     */
+    protected function getOptionalWhereClause($optional_array, $whereTable = '', $relatedBean = null)
     {
         //lhs_field, operator, and rhs_value must be set in optional_array
         foreach (array("lhs_field", "operator", "rhs_value") as $required) {
@@ -569,7 +592,17 @@ abstract class SugarRelationship
             }
         }
 
-        return $optional_array['lhs_field'] . "" . $optional_array['operator'] . "'" . $optional_array['rhs_value'] . "'";
+        // If there was a related bean passed, use it to get the where table
+        if ($relatedBean instanceof SugarBean) {
+            $whereTable = $this->getWhereTable($whereTable, $relatedBean, $optional_array['lhs_field']);
+        }
+
+        // If $whereTable is not empty, add the dot
+        if (!empty($whereTable)) {
+            $whereTable .= '.';
+        }
+
+        return $whereTable . $optional_array['lhs_field'] . "" . $optional_array['operator'] . "'" . $optional_array['rhs_value'] . "'";
     }
 
     /**
