@@ -808,6 +808,9 @@
                 var fieldPanelArrow = fieldPanel.prev().find('i');
                 fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
+        } else if (field.$el.is(':hidden')) {
+            this.$('.more[data-moreless]').trigger('click');
+            app.user.lastState.set(this.SHOW_MORE_KEY, this.$('.less[data-moreless]'));
         }
     },
 
