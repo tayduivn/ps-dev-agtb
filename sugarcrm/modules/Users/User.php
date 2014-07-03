@@ -538,6 +538,9 @@ class User extends Person {
 
 		//END SUGARCRM flav=pro ONLY
 
+        // track the current reports to id to be able to use it if it has changed
+        $old_reports_to_id = isset($this->fetched_row['reports_to_id']) ? $this->fetched_row['reports_to_id'] : '';
+
 		parent::save($check_notify);
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -563,6 +566,11 @@ class User extends Person {
             }
 		}
 		//END SUGARCRM flav=pro ONLY
+
+        // If reports to has changed, call update team memberships to correct the membership tree
+        if ($old_reports_to_id != $this->reports_to_id) {
+            $this->update_team_memberships($old_reports_to_id);
+        }
 
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
