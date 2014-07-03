@@ -123,11 +123,7 @@
         }
 
         if (app.metadata.getModule(model.module).isBwcEnabled) {
-            app.events.trigger('preview:close');
-            app.alert.show('preview_bwc_error', {
-                level: 'error',
-                messages: app.lang.getAppString('LBL_PREVIEW_BWC_ERROR')
-            });
+            // if module is in BWC mode, just return
             return;
         }
 
