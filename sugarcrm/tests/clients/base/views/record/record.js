@@ -149,6 +149,7 @@ describe("Record View", function () {
         SugarTest.app.view.reset();
         SugarTest.app.router = oRouter;
         sinonSandbox.restore();
+        sinon.collection.restore();
         view = null;
     });
 
@@ -944,6 +945,30 @@ describe("Record View", function () {
             view.meta.panels.push({header: 0, newTab: 0});
 
             expect(view.checkFirstPanel()).toBeFalsy();
+        });
+    });
+
+    describe('handle Field Errors', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'myField', 'base', 'edit');
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        it('should expand the `show more` panel if there is an error with a field in that panel', function() {
+            var triggerStub = sinon.collection.stub();
+            sinon.collection.stub(view, '$')
+                .withArgs('.more[data-moreless]').returns({'trigger' : triggerStub});
+            sinon.collection.stub(field.$el, 'is')
+                .withArgs(':hidden').returns(true);
+
+            view.handleFieldError(field, true);
+
+            expect(triggerStub).toHaveBeenCalledWith('click');
+            expect(app.user.lastState.get(view.SHOW_MORE_KEY)).not.toEqual(view.$('.more[data-moreless]'));
         });
     });
 });
