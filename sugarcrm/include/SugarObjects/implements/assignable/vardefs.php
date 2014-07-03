@@ -46,6 +46,7 @@ $vardefs = array(
 		    'duplicate_merge'=>'disabled',
             'duplicate_on_record_copy' => 'always',
             'sort_on' => array('last_name'),
+            'exportable'=>true,
      ),
 		      'assigned_user_link' =>
   array (

@@ -35,6 +35,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'comment' => 'The name of the account represented by the account_id field',
     'required' => true,
     'importable' => 'required',
+    'exportable'=>true,
   ),
 
     'account_id'=>

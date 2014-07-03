@@ -471,6 +471,7 @@ $dictionary['User'] = array(
                     'wirelessdetailview' => false,
                     'wirelesseditview' => false,
                 ),
+                'exportable'=> true,
 			),
 			'team_link' =>
 		    array (
@@ -669,6 +670,7 @@ $dictionary['User'] = array(
             'merge_filter' => 'enabled',
             'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
             'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
+            'exportable'=>true,
         ), 
         'email'=> array(
             'name' => 'email',
