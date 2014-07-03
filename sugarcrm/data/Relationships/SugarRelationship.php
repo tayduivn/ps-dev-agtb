@@ -591,9 +591,10 @@ abstract class SugarRelationship
     /**
      *
      * @static
+     * @param Bool $refresh using the newest version of the bean, not the one queued
      * @return void
      */
-    public static function resaveRelatedBeans()
+    public static function resaveRelatedBeans($refresh = true)
     {
         if (SugarBean::inOperation('updating_relationships') || !SugarBean::enterOperation('saving_related')) {
             return;
@@ -603,10 +604,12 @@ abstract class SugarRelationship
         foreach (self::$beansToResave as $module => $beans) {
             foreach ($beans as $bean) {
                 if (empty($bean->deleted) && empty($bean->in_save)) {
-                    // Make sure we're using the newest version of the bean, not the one queued
-                    $latestBean = BeanFactory::getBean($module, $bean->id);
-                    if ($latestBean !== false) {
-                        $bean = $latestBean;
+                    if ($refresh) {
+                        // Make sure we're using the newest version of the bean, not the one queued
+                        $latestBean = BeanFactory::getBean($module, $bean->id);
+                        if ($latestBean !== false) {
+                            $bean = $latestBean;
+                        }
                     }
                     $bean->save();
                 } else {

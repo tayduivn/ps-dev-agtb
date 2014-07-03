@@ -85,7 +85,7 @@ class One2MBeanRelationship extends One2MRelationship
         //One2MBean relationships require that the RHS bean be saved or else the relationship will not be saved.
         //If we aren't already in a relationship save, intitiate a save now.
         if (!$lhs->inOperation('saving_related')) {
-            SugarRelationship::resaveRelatedBeans();
+            SugarRelationship::resaveRelatedBeans(false);
         }
 
         return true;
