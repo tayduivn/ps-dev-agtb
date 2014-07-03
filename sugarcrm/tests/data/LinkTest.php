@@ -39,6 +39,9 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
+
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
 	}
 
 
@@ -396,5 +399,29 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $result = array_values($opp->contacts->getBeans());
         $this->assertEquals($contact->id, $result[0]->id);
         $this->assertEquals("Observer", $result[0]->opportunity_role);
+    }
+
+    public function testGetBeans()
+    {
+        global $db;
+
+        $account = SugarTestAccountUtilities::createAccount();
+        $contact = SugarTestContactUtilities::createContact();
+        $account->load_relationship('contacts');
+        $account->contacts->add($contact);
+
+        $beans = $account->contacts->getBeans();
+        $this->assertCount(1, $beans);
+        $bean = array_shift($beans);
+        $this->assertEquals($contact->id, $bean->id, 'Related bean is not retrieved');
+
+        // manually remove related bean in order to not let the link know about that
+        BeanFactory::unregisterBean($contact);
+        $query = 'DELETE FROM ' . $contact->table_name . ' WHERE id = ' . $db->quoted($contact->id);
+        $db->query($query);
+
+        $account->contacts->beans = null;
+        $beans = $account->contacts->getBeans();
+        $this->assertCount(0, $beans, 'Empty bean is retrieved instead of deleted one');
     }
 }
