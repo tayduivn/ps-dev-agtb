@@ -147,23 +147,6 @@ ul.nav.nav-tabs li.activity > p {
   }
 }
 
-.dataTable {
-  & > thead {
-    th {
-      &> * {
-        display: inline-block;
-        width: 100%;
-        overflow-x: hidden;
-        white-space: nowrap;
-        word-break: break-word;
-        position: relative;
-        vertical-align: middle;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-}
-
 .dataTables_filter {
   position: relative;
   padding: 5px;
@@ -189,26 +172,4 @@ ul.nav.nav-tabs li.activity > p {
 .results .search .label {
   float: left;
   margin: 0 1em 0 2em;
-}
-
-.sorting_asc,
-.sorting_desc,
-.sorting {
-  span {
-    margin-right: auto;
-    position: static !important;
-  }
-  span::after{
-      right: 4px;
-      top: 15px;
-  }
-}
-.dataTable th{
-    padding-right: 16px;
-    position: relative;
-}
-.sorting_desc{
-    span::after{
-        top: 21px;
-    }
 }
