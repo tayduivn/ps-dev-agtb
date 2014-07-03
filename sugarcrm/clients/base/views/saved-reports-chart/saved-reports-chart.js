@@ -50,16 +50,31 @@
             this.getAllSavedReports();
         } else {
             var autoRefresh = this.settings.get("auto_refresh");
-            if (autoRefresh) {
+            if (autoRefresh > 0) {
                 if (this.timerId) {
-                    clearInterval(this.timerId);
+                    clearTimeout(this.timerId);
                 }
-                this.timerId = setInterval(_.bind(function () {
-                    this.context.resetLoadFlag();
-                    this.loadData();
-                }, this), autoRefresh * 1000 * 60);
+
+                this._scheduleReload(autoRefresh * 1000 * 60);
             }
         }
+    },
+
+    /**
+     * Schedules chart data reload
+     *
+     * @param {Number} delay Number of milliseconds which the reload should be delayed for
+     * @private
+     */
+    _scheduleReload: function (delay) {
+        this.timerId = setTimeout(_.bind(function () {
+            this.context.resetLoadFlag();
+            this.loadData({
+                success: function () {
+                    this._scheduleReload(delay);
+                }
+            });
+        }, this), delay);
     },
 
     /**
@@ -219,6 +234,10 @@
                 // set reportData's rawChartData to the chartData from the server
                 // this will trigger chart.js' change:rawChartData and the chart will update
                 this.reportData.set({rawChartData: serverData.chartData});
+
+                if (options && options.success) {
+                    options.success.apply(this, arguments);
+                }
             }, this),
             complete: options ? options.complete : null
         });
