@@ -170,9 +170,22 @@ class RevenueLineItem extends SugarBean
         if (empty($this->worst_case)) {
             $this->worst_case = $this->likely_case;
         }
-        
+
         if ($this->quantity == '') {
             $this->quantity = 1;
+        }
+
+        if (
+            empty($this->discount_price) &&
+            empty($this->product_template_id)
+        ) {
+            $quantity = floatval($this->quantity);
+
+            if (empty($quantity)) {
+                $quantity = 1;
+            }
+
+            $this->discount_price = SugarMath::init($this->likely_case)->div($quantity)->result();
         }
 
         if ($this->probability === '') {
