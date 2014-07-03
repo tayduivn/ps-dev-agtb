@@ -43,16 +43,21 @@ class SubPanelTiles
 	}
 
     /*
-     * Determine which subpanels should be shown within the selected tab group (e.g., 'Other');
-     * @param boolean $showTabs		True if we should call the code to render each visible tab
-     * @param string $selectedGroup	The requested tab group
+     * Return all subpanels available (order by user preference)
+     *
      * @return array Visible tabs
      */
     function getTabs()
     {
+        // if the user has a custom subpanel layout, just return it
+        global $current_user;
+        $userCustomLayout = $current_user->getPreference('subpanelLayout', $this->module);
+        if (!empty($userCustomLayout)) {
+            return $userCustomLayout;
+        }
+
         //get all the "tabs" - this actually means all the subpanels available for display within a tab
 	    return $this->subpanel_definitions->get_available_tabs();
-
 	}
 	function display($showContainer = true)
 	{

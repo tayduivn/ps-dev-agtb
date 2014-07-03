@@ -56,6 +56,9 @@
             this.toggleState(defaultLayout.isSidePaneVisible() ? 'open' : 'close');
             this.listenTo(defaultLayout, 'sidebar:state:changed', this.toggleState);
         }
+
+        //shortcut keys
+        app.shortcuts.register('Sidebar:Toggle', 't', this.toggle, this);
     },
 
     /**

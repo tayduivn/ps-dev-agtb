@@ -426,6 +426,7 @@ array (
     'link'=>'assigned_user_link',
 	'len' => '255',
 	'source'=>'non-db',
+    'exportable'=> true,
 	),
 
 	),

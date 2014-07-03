@@ -113,6 +113,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'table' => 'users',
     'id_name' => 'assigned_user_id',
     'module'=>'Users',
+    'exportable'=> true,
   ),
   'assigned_user_link' =>
    array (

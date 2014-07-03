@@ -77,7 +77,7 @@ $viewdefs['base']['layout']['create-actions'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'create-actions',
     'name' => 'base',
     'span' => 12,
 );

@@ -128,7 +128,7 @@ $viewdefs['base']['layout']['records'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'records',
     'name' => 'base',
     'span' => 12,
 );

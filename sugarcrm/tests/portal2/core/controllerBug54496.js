@@ -9,6 +9,7 @@ describe("bug 54496", function () {
             app.config.appStatus = 'offline';
             var logoutSpy = sinon.spy(app, 'logout');
             var ajaxPrevention = sinon.stub(app.api, 'call', function() {});
+            var triggerBeforeStub = sinon.stub(app, 'triggerBefore');
 
             app.controller.loadView(params);
 
@@ -16,6 +17,7 @@ describe("bug 54496", function () {
             app.config.appStatus = 'online';
             ajaxPrevention.restore();
             logoutSpy.restore();
+            triggerBeforeStub.restore();
         });
     });
 });

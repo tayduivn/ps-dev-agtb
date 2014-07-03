@@ -202,6 +202,7 @@
             }, this);
         }
         this._initializeSettings();
+        this.metaFields = this._getColumnsForDisplay();
 
         if (this.settings.get('intelligent') == '1') {
 
@@ -263,7 +264,6 @@
 
             this._displayDashlet(filterDef);
         }
-        this.metaFields = this.meta.panels && _.first(this.meta.panels).fields || [];
     },
 
     /**

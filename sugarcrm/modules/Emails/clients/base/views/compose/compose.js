@@ -777,6 +777,19 @@
     },
 
     /**
+     * Register keyboard shortcuts.
+     */
+    registerShortcuts: function() {
+        app.shortcuts.register('Compose:Action:More', 'm', function() {
+            var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
+            if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
+                $primaryDropdown.click();
+            }
+        }, this);
+        this._super('registerShortcuts');
+    },
+
+    /**
      * Resize the html editor based on height of the drawer it is in
      *
      * @param drawerHeight current height of the drawer or height the drawer will be after animations

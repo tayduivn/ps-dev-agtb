@@ -22,7 +22,7 @@
     },
     //common constants
     commonConst: {
-        'sic_code': 399,
+        'sic_code': 3599,
         'hoovers_ind_code': 25838,
         'sic_to_hic': 3599
     },
@@ -129,8 +129,7 @@
         'primaddrstate': {
             'json_path': 'Location.PrimaryAddress.0.TerritoryOfficialName',
             'label': 'LBL_DNB_PRIM_STATE',
-            'desc': 'LBL_DNB_PRIM_STATE_DESC',
-            'case_fmt': true
+            'desc': 'LBL_DNB_PRIM_STATE_DESC'
         },
         'primaddrctrycd': {
             'json_path': 'Location.PrimaryAddress.0.CountryISOAlpha2Code',
@@ -444,7 +443,7 @@
             'json_path': 'OrganizationPrimaryName.OrganizationName.$',
             'case_fmt': true
         },
-        'dunsnum': {
+        'duns_num': {
             'json_path': 'DUNSNumber'
         },
         'locationtype': {
@@ -468,8 +467,10 @@
         },
         'isDupe': {
             'json_path': 'isDupe'
+        },
+        'recordNum': {
+            'json_path': 'DisplaySequence'
         }
-
     },
     accountsDD: null,
     //dnb append service json paths
@@ -488,7 +489,8 @@
         'srchRespMsg': 'FindCompanyResponse.TransactionResult.ResultText',
         'srchRslt': 'FindCompanyResponse.FindCompanyResponseDetail.FindCandidate',
         'competitors': 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
-        'industryprofile': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile'
+        'industryprofile': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile',
+        'srchCount': 'FindCompanyResponse.FindCompanyResponseDetail.CandidateMatchedQuantity'
     },
     //common error codes with error labels
     commonErrorMap: {
@@ -505,6 +507,110 @@
     },
     //formatting functions map
     formatTypeMap: null,
+
+    contactConst: {
+        'responseCode' : 'FindContactResponse.TransactionResult.ResultID',
+        'responseMsg' : 'FindContactResponse.TransactionResult.ResultText',
+        'contactsPath' : 'FindContactResponse.FindContactResponseDetail.FindCandidate',
+        'contactsDetailPath' : 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.PrincipalsAndManagement.CurrentPrincipal.0',
+        'premCntct' : 'dnb-cnt-prem',
+        'stdCntct' : 'dnb-cnt-std',
+        'srchCount': 'FindContactResponse.FindContactResponseDetail.CandidateMatchedQuantity',
+        'orgName': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$'
+    },
+
+    contactsListDD: {
+        'jobTitle' : {
+            'json_path' : 'JobTitle.0.JobTitleText.$'
+        },
+        'fullName' : {
+            'json_path' : 'ContactName.FullName'
+        },
+        'principalId' : {
+            'json_path' : 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
+        },
+        'emailInd' : {
+            'json_path' : 'DirectTelephoneInformationAvailableIndicator'
+        },
+        'phoneInd' : {
+            'json_path' : 'DirectEmailInformationAvailableIndicator'
+        },
+        'isDupe' : {
+            'json_path' : 'isDupe'
+        },
+        'companyName' : {
+            'json_path' : 'OrganizationPrimaryName.OrganizationName.$'
+        },
+        'dunsNum' : {
+            'json_path' : 'DUNSNumber'
+        },
+        'recordNum': {
+            'json_path': 'DisplaySequence'
+        }
+    },
+
+    //contacts detail data dictionary
+    contactsDetailDD: {
+        'full_name' : {
+            'json_path' : 'PrincipalName.FullName',
+            'label' : 'LBL_DNB_CONTACT_NAME'
+        },
+        'account_name': {
+            'json_path' : 'orgName',
+            'label' : 'LBL_DNB_BAL_ORG_NAME'
+        },
+        'dnb_principal_id': {
+            'json_path': 'PrincipalIdentificationNumberDetail.PrincipalIdentificationNumber'
+        },
+        'title' : {
+            'json_path' : 'JobTitle',
+            'label' : 'LBL_DNB_CONTACT_JOBTITLE',
+            'sub_object': {
+                'data_type' : 'job_hist',
+                'title' : 'JobTitleText.$',
+                'start_date' : 'StartDate.$',
+                'end_date' : 'EndDate.$'
+            }
+        },
+        'department' : {
+            'json_path' : 'CurrentManagementResponsibility.0.ManagementResponsibilityText.$',
+            'label' : 'LBL_DNB_CONTACT_RESP'
+        },
+        'email' : {
+            'json_path' : 'Telecommunication.EmailAddress.0.TelecommunicationAddress',
+            'label' : 'LBL_DNB_CONTACT_EMAIL'
+        },
+        'phone_work' : {
+            'json_path' : 'Telecommunication.TelephoneNumber.0.TelecommunicationNumber',
+            'label' : 'LBL_DNB_CONTACT_PHONE'
+        },
+        'first_name': {
+            'json_path': 'PrincipalName.FirstName'
+        },
+        'last_name': {
+            'json_path': 'PrincipalName.LastName'
+        },
+        'salutation': {
+            'json_path': 'PrincipalName.NamePrefix.NamePrefixText'
+        },
+        'emp_bio' : {
+            'json_path' : 'EmploymentBiography.EmploymentBiographyText',
+            'label' : 'LBL_DNB_CONTACT_BIO'
+        },
+        'comp_hist' : {
+            'json_path' : 'FormerCompensation',
+            'sub_object': {
+                'data_type' : 'comp_hist',
+                'comp_det' : 'CompensationDetail',
+                'comp_date' : 'CompensationDate.$',
+                'comp_type' : 'CompensationTypeText.$',
+                'comp_amt' : 'CompensationAmount.$',
+                'comp_curr' : 'CompensationAmount.@CurrencyISOAlpha3Code'
+            }
+        }
+    },
+
+    contactAttr: ['email', 'phone_work', 'dnb_principal_id', 'first_name', 'last_name', 'full_name', 'department', 'title', 'salutation'],
 
     //dashlet initialize
     initDashlet: function() {
@@ -534,7 +640,7 @@
                 'json_path': 'IndustryCode.IndustryCode',
                 'sub_object': {
                     'data_type': 'prim_sic',
-                    'sic_type_code' : 399,
+                    'sic_type_code' : 3599,
                     'ind_code': 'IndustryCode.$',
                     'label': 'LBL_DNB_SIC'
                 }
@@ -546,6 +652,14 @@
             'tpa': this.formatTPA,
             'sales_rev': this.formatAnnualSales,
             'prim_sic': this.formatPrimSic
+        };
+        this.leadsAttr = this.contactAttr.slice();
+        this.leadsAttr.push('account_name');
+        this.targetAttr = this.leadsAttr.slice();
+        this.personTypeAttrList = {
+            'Contacts': this.contactAttr,
+            'Leads': this.leadsAttr,
+            'Prospects': this.targetAttr
         };
     },
 
@@ -611,52 +725,6 @@
     },
 
     /**
-     * Company search based on keyword
-     * @param {String} searchString
-     * @param {Function} renderFunction, a function to be called to render the search results
-     */
-    baseCompanySearch: function(searchString, renderFunction) {
-        //adding the '*' t0 searchString for wildcard search
-        searchString = searchString + '*';
-        searchString = encodeURI(searchString);
-        var srchResults = {'companies': null, 'errmsg': null};
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/q=' + searchString, '', {}, {});
-        var self = this;
-        app.api.call('READ', dnbSearchUrl, {}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode), responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    srchResults.companies = self.getJsonNode(data, self.commonJSONPaths.srchRslt);
-                    //assigning location type
-                    _.each(srchResults.companies, function(companyObj) {
-                        if (companyObj.FamilyTreeMemberRole) {
-                            //we are relying on DNBCodeValue
-                            //higher the code value more the precedence in the family tree role
-                            //hence we are using the _.max function
-                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole) {
-                                return memberRole.FamilyTreeMemberRoleText['@DNBCodeValue'];
-                            });
-                            //if the location type is parent then we need not display it
-                            if (locationType.FamilyTreeMemberRoleText['$'] !== 'Parent') {
-                                companyObj.locationtype = locationType.FamilyTreeMemberRoleText['$'];
-                            }
-                        }
-                    });
-                    self.companyList = srchResults.companies;
-                } else {
-                    // Normalize no data message to sugar label.
-                    if (responseCode === 'CM018') {
-                        responseMsg = app.lang.get('LBL_NO_DATA_AVAILABLE');
-                    }
-                    srchResults.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                renderFunction.call(self, srchResults);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
      * Gets company information for a DUNS number
      * @param {String} duns_num -- duns_num of the company
      * @param {String} prod_code -- CST_PRD_1 or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
@@ -669,23 +737,26 @@
             'duns_num': duns_num,
             'prod_code': prod_code
         };
-        var cacheKey = 'dnb:' + firmoParams.duns_num + ':' + firmoParams.prod_code;
+        var cacheKey = 'dnb:' + firmoParams.duns_num + ':' + firmoParams.prod_code,
+            resultData;
         var cacheContent = app.cache.get(cacheKey);
         if (cacheContent) {
-            var resultData = cacheContent;
+            resultData = cacheContent;
             if (backToListLabel) {
                 resultData.backToListLabel = backToListLabel;
             }
             renderFunction.call(self, resultData);
         } else {
-            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {}, {}), resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
+            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {}, {});
+            resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
             app.api.call('create', dnbProfileUrl, {'qdata': firmoParams}, {
                 success: function(data) {
-                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode), responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                        responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (!_.isUndefined(responseCode) && responseCode === 'CM000') {
                         resultData.product = data;
                         //if primary sic is available set it
-                        //TO DO: move to js preprocessing
+                        //TODO: move to js preprocessing
                         // as a part of the handlebars normalization
                         var industryCodeArray = self.getJsonNode(data, self.appendSVCPaths.industry);
                         if (!_.isUndefined(industryCodeArray)) {
@@ -731,26 +802,26 @@
             //iterate thru the compinfo map
             _.each(dataElementsMap, function(value, key) {
                 //extract the informtaion
-                var dnbDataElement = null;
+                var dnbDataElement = null, dnbDataObj;
                 //if the data map is array then traverse the nested array
                 if (value.sub_array) {
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
                     _.each(dnbDataElement, function(dnbSubData) {
-                        var dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
+                        dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
                         if (!_.isNull(dnbDataObj)) {
                             formattedDataElements.push(dnbDataObj);
                         }
                     }, this);
                 } else if (value.sub_object) {
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
-                    var dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dnbDataElement, value.sub_object);
+                    dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dnbDataElement, value.sub_object);
                     if (!_.isNull(dnbDataObj)) {
                         formattedDataElements.push(dnbDataObj);
                     }
                 } else {
                     //else it is a straightforward data element
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
-                    var dnbDataObj = {};
+                    dnbDataObj = {};
                     //populate a json object
                     if (dnbDataElement) {
                         if (value.case_fmt) {
@@ -866,6 +937,22 @@
      */
     formatSrchRslt: function(srchResults, searchDD) {
         var formattedSrchRslts = [];
+        //assigning location type
+        _.each(srchResults, function(companyObj) {
+            if (companyObj.FamilyTreeMemberRole) {
+                //we are relying on DNBCodeValue
+                //higher the code value more the precedence in the family tree role
+                //hence we are using the _.max function
+                var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole) {
+                    return memberRole.FamilyTreeMemberRoleText['@DNBCodeValue'];
+                });
+                //if the location type is parent then we need not display it
+                var ftRole = this.getJsonNode(locationType, 'FamilyTreeMemberRoleText.$');
+                if (!_.isUndefined(ftRole) && ftRole !== 'Parent') {
+                    companyObj.locationtype = ftRole;
+                }
+            }
+        }, this);
         //iterate thru the search results, extract the necessary info
         //populate a js object
         //push it through an array
@@ -873,13 +960,21 @@
             var frmtSrchRsltObj = {};
             _.each(searchDD, function(value, key) {
                 var dataElement = this.getJsonNode(searchResultObj, value.json_path);
-                if (dataElement) {
-                    if (value.case_fmt) {
-                        dataElement = this.properCase(dataElement);
+                if (value.sub_object) {
+                    var dnbDataObj = this.formatTypeMap[value.sub_object.data_type].call(this, dataElement, value.sub_object);
+                    if (!_.isNull(dnbDataObj)) {
+                        frmtSrchRsltObj[key] = dnbDataObj;
                     }
-                    frmtSrchRsltObj[key] = dataElement;
+                } else {
+                    if (dataElement) {
+                        if (value.case_fmt) {
+                            dataElement = this.properCase(dataElement);
+                        }
+                        frmtSrchRsltObj[key] = dataElement;
+                    }
                 }
             }, this);
+            frmtSrchRsltObj.isChecked = true;
             formattedSrchRslts.push(frmtSrchRsltObj);
         }, this);
         return formattedSrchRslts;
@@ -899,14 +994,14 @@
         var financial_yr = this.getJsonNode(annsalesObj, annsalesDD.financial_yr);
         if (amount) {
             dnbDataObj = {};
-            var finYrHTML = null, unitsStr = null, dnbLabel = '';
+            var finYrHTML = null, unitsStr = null, dnbLabel;
             if (financial_yr) {
                 finYrHTML = '<span class="label label-success pull-right" data-placement="right">' + financial_yr + '</span>';
             }
             if (units && currency_cd) {
                 unitsStr = '(' + app.lang.get('LBL_DNB_IN') + ' ' + units + ' ' + currency_cd + ')';
             }
-            dnbDataObj.dataElement = amount;
+            dnbDataObj.dataElement = this.formatSalesRevenue(amount);
             dnbLabel = app.lang.get(annsalesDD.label);
             if (unitsStr) {
                 dnbLabel = dnbLabel + unitsStr;
@@ -928,8 +1023,7 @@
         if (this.disposed) {
             return;
         }
-        _.extend(this, companyDetails);
-        this.render();
+        var formattedFirmographics, dnbFirmo = {};
         //if there are no company details hide the import button
         if (companyDetails.errmsg) {
             if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
@@ -939,8 +1033,17 @@
             if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
                 this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
             }
+            if (companyDetails.product) {
+                formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
+                dnbFirmo.product = formattedFirmographics;
+                dnbFirmo.backToListLabel = companyDetails.backToListLabel;
+            } else if (companyDetails.errmsg) {
+                dnbFirmo.errmsg = companyDetails.errmsg;
+            }
             this.currentCompany = companyDetails.product;
         }
+        this.dnbFirmo = dnbFirmo;
+        this.render();
         this.$('div#dnb-company-detail-loading').hide();
         this.$('div#dnb-company-details').show();
     },
@@ -958,8 +1061,7 @@
         if (companyDetails.product) {
             formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.filteredDD);
             dnbFirmo.product = formattedFirmographics;
-        }
-        if (companyDetails.errmsg) {
+        } else if (companyDetails.errmsg) {
             dnbFirmo.errmsg = companyDetails.errmsg;
         }
         this.dnbFirmo = dnbFirmo;
@@ -973,7 +1075,7 @@
      * Import D&B Accounts Data
      */
     importDNBData: function() {
-        var parentModel = this.context.get('model'), accountsModel = this.getAccountsModel(this.currentCompany);
+        var accountsModel = this.getAccountsModel(this.currentCompany);
         if (!_.isUndefined(accountsModel)) {
             var self = this;
             app.drawer.open({
@@ -1010,6 +1112,9 @@
             _.each(this.accountsMap, function(dataElementPath, sugarColumnName) {
                 var dnbDataElement = this.getJsonNode(organizationDetails, dataElementPath);
                 if (dnbDataElement) {
+                    if (sugarColumnName === 'annual_revenue') {
+                        dnbDataElement = this.formatSalesRevenue(dnbDataElement);
+                    }
                     accountsBean[sugarColumnName] = dnbDataElement;
                 }
             }, this);
@@ -1051,7 +1156,9 @@
      * @return {String} formatted string
      */
     formatSalesRevenue: function(amount) {
-        amount = amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g, '$1,');
+        if (_.isNumber(amount)) {
+            amount = amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g, '$1,');
+        }
         return amount;
     },
 
@@ -1203,18 +1310,138 @@
     /**
      * Checks the Sugar data base for duplicate duns or contacts
      * @param {Object} dupeCheckParams
+     * @params {Function} callBack
      * dupeCheckParams must have the following keys
      * 1.type Possible values are duns,contacts
      * 2.apiResponse
-     * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts
-     * @param renderFunction
+     * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts, dunsPage, contactsPage
      */
-    baseDuplicateCheck: function(dupeCheckParams, renderFunction) {
+    baseDuplicateCheck: function(dupeCheckParams, callBack) {
         var dupeCheckURL = app.api.buildURL('connector/dnb/dupecheck', '', {}, {});
         var self = this;
         app.api.call('create', dupeCheckURL, {'qdata': dupeCheckParams}, {
             success: function(data) {
-                renderFunction.call(self, {'product': data});
+                callBack.call(self, {'product': data});
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
             },
             error: _.bind(self.checkAndProcessError, self)
         });
@@ -1223,7 +1450,7 @@
     /**
      * Toggles the visibility of the import button in the dashlet
      * @param {String} btnName
-     * @param {isVisible} visibility
+     * @param {Boolean} isVisible
      */
     toggleImportBtn: function(btnName, isVisible) {
         if (this.layout.getComponent('dashlet-toolbar').getField(btnName)) {
@@ -1252,5 +1479,490 @@
                 this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().addClass('disabled');
             }
         }
+    },
+
+    /**
+     * Build a list of contacts
+     * @param {Object} balParams
+     * @param {Function} renderFunction
+     */
+    baseContactsBAL: function(balParams, renderFunction) {
+        var self = this,
+            balRslt = {'product': null, 'errmsg': null},
+            dnbBalURL = app.api.buildURL('connector/dnb/Contacts/bal', '', {}, {});
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
+                    responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                renderFunction.call(self, balRslt);
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Preprocessing contacts list
+     * @param {Array} dnbApiResponse DNB API Response for Contacts
+     * @param {Object} contactsListDD Contacts data dictionary
+     * @return {Array} frmtCntctList formatted contacts
+     */
+    formatContactList: function(dnbApiResponse, contactsListDD) {
+        var frmtCntctList = [];
+        _.each(dnbApiResponse, function(contactObj) {
+            //initialize empty formatted obj
+            var frmCntctObj = {};
+            //iterate through data dictionary and extract info
+            _.each(contactsListDD, function(value, key) {
+                var dataElement = this.getJsonNode(contactObj, value.json_path);
+                if (dataElement) {
+                    frmCntctObj[key] = dataElement;
+                }
+            },this);
+            //only if the contact has a name and a principal id will we display it
+            if (frmCntctObj.principalId && frmCntctObj.fullName) {
+                if (frmCntctObj.emailInd || frmCntctObj.phoneInd) {
+                    frmCntctObj.contactType = this.contactConst.premCntct;
+                } else {
+                    frmCntctObj.contactType = this.contactConst.stdCntct;
+                }
+                frmtCntctList.push(frmCntctObj);
+            }
+        },this);
+        return frmtCntctList;
+    },
+
+    /**
+     * Gets contact details for a duns and principal identification number combination
+     * @param {Object} evt
+     */
+    baseGetContactDetails: function(evt) {
+        if (this.disposed) {
+            return;
+        }
+        var contact_id = evt.target.id;
+        var duns_num = this.$(evt.target).data('duns');
+        var contact_name = evt.target.text, contact_type;
+        if (this.$(evt.target).hasClass(this.contactConst.premCntct)) {
+            contact_type = this.contactConst.premCntct;
+        } else if (this.$(evt.target).hasClass(this.contactConst.stdCntct)) {
+            contact_type = this.contactConst.stdCntct;
+        }
+        if (this.name === 'dnb-bal-results') {
+            this.template = app.template.get(this.name + '.dnb-bal-contact-details');
+        } else if (this.name === 'dnb-contact-info') {
+            this.template = app.template.get(this.name + '.dnb-contact-details');
+        }
+        this.cntctLoadMsg = {'contactName' : contact_name};
+        this.render();
+        this.$('div#dnb-contact-details-loading').show();
+        this.$('div#dnb-contact-details').hide();
+        //hiding the import buttons
+        if (this.name === 'dnb-bal-results') {
+            this.$('.importContacts').hide();
+        } else if (this.name === 'dnb-contact-info') {
+            this.toggleImportBtn('import_dnb_data', false);
+        }
+        var contactParams = {
+            'duns_num' : duns_num,
+            'contact_id' : contact_id,
+            'contact_type' : contact_type
+        };
+        //check if cache has this data already
+        var cacheKey = 'dnb:' + contactParams.contact_type + ':'
+            + contactParams.duns_num + ':' + contactParams.contact_id;
+        var cacheContent = app.cache.get(cacheKey);
+        if (cacheContent) {
+            this.currentContact = cacheContent.contactDetail;
+            this.renderContactDetails(cacheContent);
+        } else {
+            var dnbContactDetailsURL = app.api.buildURL('connector/dnb/contacts', '', {},{}),
+                resultData = {'contactDetail': null, 'errmsg' : null},
+                self = this;
+            //maintaining dashlet state
+            this.currentContact = null;
+            if (!_.isUndefined(this.dashletState)) {
+                this.dashletState.view = 'detail';
+                this.dashletState.content = cacheKey;
+                this.dashletState.params = null;
+            }
+            app.api.call('create', dnbContactDetailsURL, {'qdata': contactParams},{
+                success: function(data) {
+                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                        responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                    if (responseCode && responseCode === self.responseCodes.success) {
+                        var contactDetail = self.getJsonNode(data, self.contactConst.contactsDetailPath);
+                        if (contactDetail) {
+                            var orgName = self.getJsonNode(data, self.contactConst.orgName);
+                            if (orgName) {
+                                contactDetail.orgName = orgName;
+                            }
+                            resultData.contactDetail = contactDetail;
+                            self.currentContact = resultData.contactDetail;
+                            app.cache.set(cacheKey, resultData);
+                        } else {
+                            resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                        }
+                    } else {
+                        resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                    }
+                    self.renderContactDetails(resultData);
+                },
+                error: _.bind(this.checkAndProcessError, self)
+            });
+        }
+    },
+
+    /**
+     * Renders the contact details
+     * @param {Object} dnbApiResponse dnb api response for contactDetails
+     */
+    renderContactDetails: function(dnbApiResponse) {
+        if (this.disposed) {
+            return;
+        }
+        if (this.name === 'dnb-bal-results') {
+            this.template = app.template.get(this.name + '.dnb-bal-contact-details');
+        } else if (this.name === 'dnb-contact-info') {
+            this.template = app.template.get(this.name + '.dnb-contact-details');
+        }
+        var frmtCntctDet, dnbCntctDet = {};
+        if (dnbApiResponse.contactDetail) {
+            frmtCntctDet = this.formatContactDetails(dnbApiResponse.contactDetail, this.contactsDetailDD);
+            if (frmtCntctDet) {
+                dnbCntctDet.product = frmtCntctDet;
+                //passing the list of import_enabled_modules for bal contact details
+                if (!_.isUndefined(this.import_enabled_modules)) {
+                    dnbCntctDet.product.import_enabled_modules = this.import_enabled_modules;
+                }
+            } else {
+                dnbCntctDet.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+            }
+        } else if (dnbApiResponse.errmsg) {
+            dnbCntctDet.errmsg = dnbApiResponse.errmsg;
+        }
+        this.dnbCntctDet = dnbCntctDet;
+        this.render();
+        //if there are no contact details hide the import button
+        if (dnbCntctDet.errmsg) {
+            if (this.name === 'dnb-bal-results') {
+                this.$('.importContacts').hide();
+            }
+        } else if (dnbCntctDet.product) {
+            if (this.name === 'dnb-bal-results') {
+                this.$('.importContacts').show();
+            } else if (this.name === 'dnb-contact-info') {
+                if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().removeClass('hide');
+                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
+                }
+            }
+            this.currentContact = dnbCntctDet.product;
+        }
+        this.$('div#dnb-contact-details-loading').hide();
+        this.$('div#dnb-contact-details').show();
+    },
+
+    /**
+     * Preprocessing contact details
+     * @param  {Object} contactDetail DNB API Response for contact details
+     * @param  {Object} contactsDetailDD Contact Details Data Dictionary
+     * @return {Object} frmtCntctDet Format Contact Details Array
+     */
+    formatContactDetails: function(contactDetail, contactsDetailDD) {
+        var frmtCntctDet = {};
+        frmtCntctDet.contact_profile = [];
+        _.each(contactsDetailDD, function(value, key) {
+            var dataElement = this.getJsonNode(contactDetail, value.json_path);
+            if (dataElement) {
+                if (key === 'title') {
+                    var frmtJobTitles = this.formatJobTitles(dataElement, value.sub_object);
+                    if (frmtJobTitles && frmtJobTitles.length > 0) {
+                        //first job title is the current job title
+                        frmtCntctDet[key] = frmtJobTitles[0].title;
+                        frmtCntctDet.contact_profile.push({
+                            'dataLabel': value.label,
+                            'dataElement': frmtJobTitles[0].title
+                        });
+                        //the rest are used to display job history
+                        if (frmtJobTitles.length > 1) {
+                            frmtJobTitles.splice(0, 1);
+                            frmtCntctDet[value.sub_object.data_type] = frmtJobTitles;
+                        }
+                    }
+                } else if (key === 'comp_hist') {
+                    var frmtCompHist = this.formatCompHist(dataElement, value.sub_object);
+                    if (frmtCompHist && frmtCompHist.length > 0) {
+                        frmtCntctDet[value.sub_object.data_type] = frmtCompHist;
+                    }
+                } else {
+                    //this takes care of formatting general employee information
+                    var maskedDataElement, dataObj = {};
+                    if (key === 'email') {
+                        maskedDataElement = this.emailMask(dataElement);
+                    } else if (key === 'phone_work') {
+                        maskedDataElement = this.phoneMask(dataElement);
+                    }
+                    dataObj.dataLabel = value.label;
+                    if (!_.isUndefined(maskedDataElement)) {
+                        dataObj.dataElement = maskedDataElement;
+                    } else {
+                        dataObj.dataElement = dataElement;
+                    }
+                    //this array is for making the hbs readable
+                    frmtCntctDet.contact_profile.push(dataObj);
+                    //this property is for importing the contact
+                    frmtCntctDet[key] = dataElement;
+                }
+            }
+        },this);
+        return frmtCntctDet;
+    },
+
+    /**
+     * Preprocessing job titles
+     * @param {Array} jobTitles job titles
+     * @param {Object} jobTitleDD job titles data dictionary
+     * @return {Array} formatted job titles
+     */
+    formatJobTitles: function(jobTitles, jobTitleDD) {
+        var jobTitleArray = [];
+        _.each(jobTitles, function(jobObj) {
+            var jobTitleObj = {
+                title: this.getJsonNode(jobObj, jobTitleDD.title),
+                start_date: this.getJsonNode(jobObj, jobTitleDD.start_date),
+                end_date: this.getJsonNode(jobObj, jobTitleDD.end_date)
+            };
+            if (jobTitleObj.title) {
+                jobTitleArray.push(jobTitleObj);
+            }
+        },this);
+        return jobTitleArray;
+    },
+
+    /**
+     * Preprocessing compensation history
+     * @param {Array} compHist compensation history
+     * @param {Object} compHistDD compensation history data dictionary
+     * @return {Array} frmtCompHist formatted compensation history
+     */
+    formatCompHist: function(compHist, compHistDD) {
+        var frmtCompHist = [];
+        _.each(compHist, function(compHistObj) {
+            var compDate = this.getJsonNode(compHistObj, compHistDD.comp_date),
+                compDet = this.getJsonNode(compHistObj, compHistDD.comp_det),
+                frmtCompHistObj = {};
+            var frmtCompDet = [];
+            _.each(compDet, function(compDetObj) {
+                var frmtCompDetObj = {
+                    'comp_type' : this.getJsonNode(compDetObj, compHistDD.comp_type),
+                    'comp_amt' : this.getJsonNode(compDetObj, compHistDD.comp_amt),
+                    'comp_curr' : this.getJsonNode(compDetObj, compHistDD.comp_curr)
+                };
+                if (frmtCompDetObj.comp_amt) {
+                    frmtCompDetObj.comp_amt = this.formatSalesRevenue(frmtCompDetObj.comp_amt);
+                    frmtCompDet.push(frmtCompDetObj);
+                }
+            },this);
+            if (frmtCompDet.length > 0 && compDate) {
+                frmtCompHistObj.comp_date = compDate;
+                frmtCompHistObj.comp_det = frmtCompDet;
+                frmtCompHist.push(frmtCompHistObj);
+            }
+        },this);
+        return frmtCompHist;
+    },
+
+    /**
+     * Masks the email address
+     * @param  {String} email
+     * @return {String} masked email
+     */
+    emailMask: function(email) {
+        var match = email.match(/([A-Za-z]{2})(.*)(@)(.*)/);
+        return match[1] + match[2].replace(/./g, 'x') + match[3] + match[4];
+    },
+
+    /**
+     * Masks the email address
+     * @param  {String} phone
+     * @return {String} masked phone
+     */
+    phoneMask: function(phone) {
+        var match = phone.match(/([0-9]{2})(.*)([0-9]{2})/);
+        return match[1] + match[2].replace(/./g, 'x') + match[3];
+    },
+
+    /**
+     * Imports the current contact information
+     * @param {String} moduleName Possible values for module are Contact / LinkedContacts / Leads / Prospects
+     * LinkedContacts is used to import a contact that is imported from a contacts dashlet that is linked
+     * to a sugar account
+     */
+    baseImportContact: function(moduleName) {
+        var model = this.getModuleModel(this.currentContact, moduleName);
+        var self = this;
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                module: model.module,
+                model: model
+            }
+        }, function(model) {
+            if (!model) {
+                return;
+            }
+            self.context.resetLoadFlag();
+            self.context.set('skipFetch', false);
+            self.context.loadData();
+            _.each(app.controller.context.children, function(childContext) {
+                if (childContext.get('module') === 'Contacts') {
+                    childContext.reloadData(true);
+                }
+            });
+        });
+    },
+
+    /**
+     * Creates and returns a Module bean
+     * @param {Object} modelBean
+     * @param {String} moduleName possible values could be Contacts/LinkedContacts/Leads/Prospects
+     * @return {Object} moduleModel
+     */
+    getModuleModel: function(modelBean, moduleName) {
+        var module, moduleModel;
+        if (moduleName === 'LinkedContacts') {
+            module = 'Contacts';
+        } else {
+            module = moduleName;
+        }
+        var filteredModelBean = _.pick(modelBean, this.personTypeAttrList[module]);
+        if (filteredModelBean.email) {
+            var emailObj = {
+                email_address: filteredModelBean.email,
+                opt_out: false,
+                primary_address: true,
+                reply_to_address: false
+            };
+            filteredModelBean.email = [emailObj];
+        }
+        //adding properties specific to leads alone
+        if (module === 'Leads') {
+            filteredModelBean.lead_source = app.lang.get('LBL_DNB_OTHER');
+            filteredModelBean.lead_source_description = app.lang.get('LBL_DNB_BAL');
+        }
+        //handling the scenario where we need to add a contact associated with an account
+        if (moduleName === 'LinkedContacts') {
+            filteredModelBean.account_id = this.model.get('id');
+            filteredModelBean.account_name = this.model.get('name');
+            moduleModel = app.data.createRelatedBean(this.model, null, 'contacts', filteredModelBean);
+        } else {
+            moduleModel = app.data.createBean(module, filteredModelBean);
+        }
+        return moduleModel;
+    },
+
+    /**
+     * Gets the next set of records from the recordSet
+     * @param {Array} recordSet
+     * @param {Number} pageStart
+     * @param {Number} pageEnd
+     * @returns {Array} recordSet
+     */
+    getNextPage: function(recordSet, pageStart, pageEnd) {
+        return  _.filter(recordSet, function(resultObj) {
+            return resultObj.recordNum >= pageStart && resultObj.recordNum <= pageEnd;
+        });
+    },
+
+    /**
+     * Render pagination control
+     */
+    renderPaginationControl: function() {
+        //it more records exist in api display pagination controls
+        if (this.recordCount > this.endRecord) {
+            //display pagination controls
+            this.$('#dnb-page-ctrl').toggleClass('hide', false);
+            this.$('[data-action="show-more"]').removeClass('hide');
+            this.$('.loading').hide();
+        } else {
+            //hide pagination controls
+            this.$('#dnb-page-ctrl').toggleClass('hide', true);
+        }
+    },
+
+    /**
+     * Display pagination loading message
+     */
+    displayPaginationLoading: function() {
+        this.$('[data-action="show-more"]').addClass('hide');
+        this.$('.loading').show();
+    },
+
+    /**
+     * Sets pagination offset and page numbers
+     */
+    setPaginationParams: function() {
+        this.pageNo = this.pageNo + 1;
+        this.endRecord = this.pageNo * this.pageSize;
+        this.startRecord = (this.endRecord - this.pageSize) + 1;
+    },
+
+    /**
+     * Gets the next set of records from the context
+     * Else invoke the
+     */
+    paginateRecords: function() {
+        var nextPage = this.getNextPage(this.formattedRecordSet, this.startRecord, this.endRecord);
+        if (_.isUndefined(this.currentPage) || _.isNull(this.currentPage)) {
+            this.currentPage = nextPage;
+        } else {
+            this.currentPage = this.currentPage.concat(nextPage);
+        }
+    },
+
+    /**
+     * Initialize pagination parameters
+     */
+    initPaginationParams: function() {
+        //# of records to be displayed in the dashlet
+        this.pageSize = 10;
+        //initial page no.
+        this.pageNo = 1;
+        //max # of records D&B API to return
+        //default to 10 times page size
+        this.apiPageSize = 2 * this.pageSize;
+        this.apiPageOffset = 1;
+        this.startRecord = 1;
+        this.endRecord = this.pageSize;
+        //sets the record no for the last record from the api
+        //this will be used to determine if we can fetch the next set of records
+        // from the context or do we need to invoke the api
+        this.apiPageEndRecord = (this.apiPageOffset + this.apiPageSize) - 1;
+        //setting the current set of formatted records to the context
+        //this is to be used for:
+        //1. concatenating the next page
+        //2. dupe check for back to list
+        this.currentPage = null;
+        //this flag is used to determine whether pagination params must be reset
+        //this would be set to false when we invoke the API pagination
+        //this would help us preserve the pagination params across API calls
+        this.resetPaginationFlag = true;
+    },
+
+    /**
+     * Sets pagination params to existing params
+     * @param {Object} apiParams
+     * @returns {Object}
+     */
+    setApiPaginationParams: function(apiParams) {
+        apiParams.CandidatePerPageMaximumQuantity = this.apiPageSize;
+        apiParams.CandidateDisplayStartSequenceNumber = this.apiPageOffset;
+        return apiParams;
     }
 })

@@ -71,6 +71,8 @@
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
         this.metaFields = this.meta.panels ? _.first(this.meta.panels).fields : [];
+
+        this.registerShortcuts();
     },
 
     /**
@@ -292,5 +294,108 @@
     _dispose: function() {
         this._fields = null;
         app.view.View.prototype._dispose.call(this);
+    },
+
+    /**
+     * Select next or previous row.
+     * @param {Boolean} down
+     */
+    selectRow: function(down) {
+        var $rows = this.$('.dataTable tbody tr'),
+            $selected,
+            $next;
+
+        if ($rows.hasClass('selected')) {
+            $selected = $rows.filter('.selected');
+            $next = down ? $selected.next() : $selected.prev();
+            if($next.length > 0) {
+                $selected.removeClass('selected');
+                $next.addClass('selected');
+                this.makeRowVisible($next);
+            }
+        } else {
+            $rows.first().addClass('selected');
+            this.makeRowVisible();
+        }
+    },
+
+    /**
+     * Scroll list view such that the selected row is visible.
+     * @param {jQuery} $selected
+     */
+    makeRowVisible: function($selected) {
+        var $mainpane = this.$el.closest('.main-pane'),
+            mainpaneHeight,
+            selectedHeight,
+            selectedTopPosition,
+            selectedOffsetParent;
+
+        if (_.isUndefined($selected)) {
+            $mainpane.scrollTop(0);
+            return;
+        }
+
+        mainpaneHeight = $mainpane.height();
+        selectedHeight = $selected.height();
+        selectedOffsetParent = $selected.offsetParent();
+        selectedTopPosition = $selected.position().top + selectedOffsetParent.position().top;
+
+        if ((selectedTopPosition + selectedHeight) > mainpaneHeight) {
+            $mainpane.scrollTop($mainpane.scrollTop() + mainpaneHeight/2);
+        }
+
+        if (selectedTopPosition < 0) {
+            $mainpane.scrollTop($mainpane.scrollTop() - mainpaneHeight/2);
+        }
+    },
+
+    /**
+     * Scroll list view either right or left.
+     * @param {Boolean} right
+     */
+    scrollHorizontally: function(right) {
+        var $scrollableDiv = this.$('.flex-list-view-content'),
+            scrollEnabled = this.$el.hasClass('scroll-width'),
+            nextScrollPosition,
+            increment = 60;
+
+        if (scrollEnabled) {
+            if (right) {
+                nextScrollPosition = $scrollableDiv.scrollLeft() + increment;
+            } else {
+                nextScrollPosition = $scrollableDiv.scrollLeft() - increment;
+            }
+
+            $scrollableDiv.scrollLeft(nextScrollPosition);
+        }
+    },
+
+    /**
+     * Register shortcut keys.
+     */
+    registerShortcuts: function() {
+        app.shortcuts.register('List:Select:Down', 'j', function() {
+            this.selectRow(true);
+        }, this);
+
+        app.shortcuts.register('List:Select:Up', 'k', function() {
+            this.selectRow(false);
+        }, this);
+
+        app.shortcuts.register('List:Scroll:Left', 'h', function() {
+            this.scrollHorizontally(false);
+        }, this);
+
+        app.shortcuts.register('List:Scroll:Right', 'l', function() {
+            this.scrollHorizontally(true);
+        }, this);
+
+        app.shortcuts.register('List:Select:Open', 'o', function() {
+            if (this.$('.selected [data-type=name] a:visible').length > 0) {
+                this.$('.selected [data-type=name] a:visible').get(0).click();
+            } else if (this.$('.selected [data-type=fullname] a:visible').length > 0) {
+                this.$('.selected [data-type=fullname] a:visible').get(0).click();
+            }
+        }, this);
     }
 })

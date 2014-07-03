@@ -257,7 +257,9 @@ $dictionary['Contract'] = array(
             'reportable' => false,
             'source' => 'non-db',
             'link' => 'contract_types',
-            'comment' => 'The contract type'
+            'comment' => 'The contract type',
+            'exportable'=> true,
+            'export_link_type' => 'one',//relationship type to be used during export
         ),
         'contract_types' => array(
             'name' => 'contract_types',

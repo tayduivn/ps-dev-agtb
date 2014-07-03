@@ -52,11 +52,9 @@
             </table>
         </div>
     {{else}}
-        <div>
-            <aside class="txt">
-                <em>{{dnbProduct.errmsg}}</em>
-            </aside>
-        </div>
+        <aside class='create-no-data'>
+            <em>{{dnbProduct.errmsg}}</em>
+        </aside>
     {{/if}}
     {{#if dnbProduct.isNotLinked}}
         <div class="dnb-show-more">
