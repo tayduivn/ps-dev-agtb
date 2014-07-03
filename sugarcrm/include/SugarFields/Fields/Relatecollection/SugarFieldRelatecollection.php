@@ -167,21 +167,20 @@ class SugarFieldRelatecollection extends SugarFieldBase
      */
     protected function getLinkedRecords(SugarBean $parent, $relName, array $fields, $limit)
     {
-        if (empty($parent->id) || !$relSeed = $this->getRelatedSeedBean($parent, $relName)) {
+        if (!$relSeed = $this->getRelatedSeedBean($parent, $relName)) {
             return array();
         }
 
         // base query object for related module
         $sq = $this->getSugarQuery();
-        $sq->select($fields);
         $sq->from($relSeed);
+        // join against parent module
+        $sq->joinSubpanel($parent, $relName);
+        $sq->select($fields);
 
         if ($limit > 0) {
             $sq->limit($limit);
         }
-
-        // join against parent module
-        $sq->joinSubpanel($parent, $relName);
 
         $result = array();
         foreach ($sq->execute('array') as $record) {
