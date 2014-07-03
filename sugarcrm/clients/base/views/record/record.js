@@ -811,6 +811,9 @@
                 fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
         }
+        else if(field.$el.closest('.panel_hidden.hide')) {
+            this.toggleMoreLess(this.MORE_LESS_STATUS.MORE);
+        }
     },
 
     /**
