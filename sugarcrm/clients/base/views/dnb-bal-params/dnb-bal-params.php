@@ -60,7 +60,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span3',
                             'placeholder' => 'LBL_DNB_BAL_PARAM_KEYWORD',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 30
                         ),
                         array(
                             'type' => 'rowaction',
@@ -121,6 +122,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => "LBL_DNB_BAL_PARAM_STATES",
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 64
                         ),
                         array(
                             'type' => 'rowaction',
@@ -150,6 +152,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => 'LBL_DNB_CI_CITY',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 240
                         ),
                         array(
                             'type' => 'rowaction',
@@ -180,6 +183,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => 'LBL_DNB_BAL_AREA_CODE',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 16
                         ),
                         array(
                             'type' => 'rowaction',
@@ -210,6 +214,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => 'LBL_DNB_BAL_POSTAL_CODE',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 16
                         ),
                         array(
                             'type' => 'rowaction',
@@ -248,7 +253,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => 'LBL_DNB_BAL_DISTANCE',
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 5
                         ),
                         array(
                             'name' => 'dnb_bal_distance_units',
@@ -261,7 +267,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'placeholder' => 'LBL_DNB_BAL_ZIP',
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 16
                         ),
                         array(
                             'type' => 'rowaction',
@@ -317,11 +324,10 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'name' => 'dnb_bal_ind_code_val',
                             'tooltip' => 'LBL_TT_DNB_BAL_IND_CODE',
                             'type' => 'int',
-                            'minLen' => 2,
-                            'maxLen' => 8,
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 16
                         ),
                         array(
                             'type' => 'rowaction',
@@ -368,7 +374,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'type' => 'enum',
                             'cell_css_class' => 'span3',
                             'searchBarThreshold' => -1,
-                            'options' => 'dnb_bal_gte_lte_btw',
+                            'options' => 'dnb_bal_gte_lte_btw'
                         ),
                         array(
                             'name' => 'dnb_bal_sales_low', //lower limit
@@ -376,7 +382,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'tooltip' => 'LBL_TT_DNB_BAL_MILLIONS',
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_annl_sale_and_str',
@@ -391,7 +398,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'tooltip' => 'LBL_TT_DNB_BAL_MILLIONS',
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -435,6 +443,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span1',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_annl_sale_and_str',
@@ -448,7 +457,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'type' => 'int',
                             'cell_css_class' => 'span1',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -485,6 +495,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span1',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_annl_sale_and_str',
@@ -498,7 +509,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'type' => 'float',
                             'cell_css_class' => 'span1',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -537,6 +549,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_annl_sale_and_str',
@@ -552,6 +565,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -600,6 +614,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'tooltip' => 'LBL_TT_DNB_BAL_YEAR_OF_FOUNDING',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 4
                         ),
                         array(
                             'name' => 'dnb_bal_year_of_founding_and_str',
@@ -615,6 +630,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span1',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 4
                         ),
                         array(
                             'type' => 'rowaction',
@@ -665,6 +681,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 15
                         ),
                         array(
                             'type' => 'rowaction',
@@ -695,6 +712,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 40
                         ),
                         array(
                             'type' => 'rowaction',
@@ -744,6 +762,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_net_income_and_str',
@@ -759,6 +778,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -796,7 +816,8 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'tooltip' => 'LBL_TT_DNB_BAL_NET_INCOME_GROWTH',
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
-                            'required' => true
+                            'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_net_income_growth_and_str',
@@ -812,6 +833,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -850,6 +872,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_assets_and_str',
@@ -865,6 +888,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -914,6 +938,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_offer_amt_and_str',
@@ -929,6 +954,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
@@ -967,6 +993,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'hide toggleCandidate span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'name' => 'dnb_bal_ipo_price_range_and_str',
@@ -982,6 +1009,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                             'cell_css_class' => 'span2',
                             'no_required_placeholder' => true,
                             'required' => true,
+                            'len' => 7
                         ),
                         array(
                             'type' => 'rowaction',
