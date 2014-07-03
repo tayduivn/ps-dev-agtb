@@ -50,9 +50,10 @@
             chartConfig = this.getChartConfig(),
             params = {
                 contentEl: chartId,
-                minColumnWidth: 120
+                minColumnWidth: 120,
+                margin: {top: 0, right: 10, bottom: 10, left: 10}
             },
-            chart = new loadSugarChartD3(chartId, this.model.get('rawChartData'), [], chartConfig, params, _.bind(function(chart) {
+            chart = new loadSugarChart(chartId, this.model.get('rawChartData'), [], chartConfig, params, _.bind(function(chart) {
                 this.chart = chart;
                 this.chart_loaded = _.isFunction(this.chart.update);
             }, this));

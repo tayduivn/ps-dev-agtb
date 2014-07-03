@@ -19,7 +19,7 @@
 {$SUGAR_CSS}
 {if $AUTHENTICATED}
 <link rel='stylesheet' href='{sugar_getjspath file="vendor/ytree/TreeView/css/folders/tree.css"}'/>
-<link rel='stylesheet' href='{sugar_getjspath file="include/SugarCharts/Jit/css/base.css"}'/>
+<link rel='stylesheet' href='{sugar_getjspath file="styleguide/assets/css/nvd3.css"}'/>
 {/if}
 {$SUGAR_JS}
 {literal}
