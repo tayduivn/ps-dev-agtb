@@ -26,7 +26,6 @@ class DnbApi extends SugarApi
                 'pathVars' => array('connector','dnb','qtype','qparam'),
                 'method' => 'dnbDirectGet',
                 'shortHelp' => 'Invoke DNB API using GET',
-                'noLoginRequired' => true,
                 'longHelp' => 'include/api/help/dnb_get_help.html',
             ),
             'dnbDirectPost' => array(
@@ -35,7 +34,22 @@ class DnbApi extends SugarApi
                 'pathVars' => array('connector','dnb','qtype'),
                 'method' => 'dnbDirectPost',
                 'shortHelp' => 'Invoke DNB API using POST',
-                'noLoginRequired' => true,
+                'longHelp' => 'include/api/help/dnb_post_help.html',
+            ),
+            'dnbAccountsBAL' => array(
+                'reqType' => 'POST',
+                'path' => array('connector', 'dnb', 'Accounts', 'bal'),
+                'pathVars' => array('connector', 'dnb', 'Accounts', 'bal'),
+                'method' => 'dnbAccountsBAL',
+                'shortHelp' => 'Invoke BAL For Accounts',
+                'longHelp' => 'include/api/help/dnb_post_help.html',
+            ),
+            'dnbContactsBAL' => array(
+                'reqType' => 'POST',
+                'path' => array('connector', 'dnb', 'Contacts', 'bal'),
+                'pathVars' => array('connector', 'dnb', 'Contacts', 'bal'),
+                'method' => 'dnbContactsBAL',
+                'shortHelp' => 'Invoke BAL For Contacts',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
             ),
         );
@@ -81,9 +95,7 @@ class DnbApi extends SugarApi
             return array('error' =>'ERROR_DNB_CONFIG');
         }
         $result = '';
-        if ($queryType === 'search'){
-            $result = $extDnbApi->dnbSearch($queryParam);
-        } else if ($queryType === 'profile') {
+        if ($queryType === 'profile') {
             $result = $extDnbApi->dnbProfile($queryParam);
         } else if ($queryType ==='competitors') {
             $result = $extDnbApi->dnbCompetitors($queryParam);
@@ -131,9 +143,7 @@ class DnbApi extends SugarApi
         $queryData = $args['qdata']; //data posted 
         $result = '';
         if ($queryType === 'cmRequest') {
-            $result = $extDnbApi->dnbCMRrequest($queryData);
-        } else if ($queryType === 'bal') {
-            $result = $extDnbApi->dnbBALRequest($queryData);
+            $result = $extDnbApi->dnbCMRequest($queryData);
         } else if ($queryType === 'contacts') {
             $result = $extDnbApi->dnbContactDetails($queryData);
         } else if ($queryType === 'indMap') {
@@ -149,6 +159,50 @@ class DnbApi extends SugarApi
         } else if ($queryType === 'dupecheck') {
             $result = $extDnbApi->dupeCheck($queryData);
         }
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+        }
+        return $result;
+    }
+
+    /**
+     * Invokes BAL for accounts
+     * @param $api
+     * @param $args
+     * @return mixed
+     * @throws SugarApiExceptionRequestMethodFailure
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function dnbAccountsBAL($api,$args) {
+        //invoke dnb api based on query type and query data
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+        }
+        $queryData = $args['qdata']; //data posted
+        $result = $extDnbApi->dnbBALAccounts($queryData);
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+        }
+        return $result;
+    }
+
+    /**
+     * Invokes BAL for contacts, leads and prospects
+     * @param $api
+     * @param $args
+     * @return mixed
+     * @throws SugarApiExceptionRequestMethodFailure
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function dnbContactsBAL($api,$args) {
+        //invoke dnb api based on query type and query data
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+        }
+        $queryData = $args['qdata']; //data posted
+        $result = $extDnbApi->dnbBALContacts($queryData);
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
         }

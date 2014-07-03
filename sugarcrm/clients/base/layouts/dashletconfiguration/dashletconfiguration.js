@@ -14,6 +14,13 @@
  * @extends View.Layout
  */
 ({
+    plugins: ['ShortcutSession'],
+
+    shortcuts: [
+        'Dashlet:Config:Cancel',
+        'Dashlet:Config:Save'
+    ],
+
     initialize: function(options) {
         var meta = app.metadata.getLayout(options.module, options.name),
             main_panel;

@@ -24,7 +24,7 @@ class ACLVisibility extends SugarVisibility
     public function addVisibilityWhere(&$query)
     {
         $action = $this->getOption('action', 'list');
-        if($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, $action)) {
+        if($this->bean->bean_implements('ACL') && !empty($GLOBALS['current_user']->id) && ACLController::requireOwner($this->bean->module_dir, $action)) {
             $owner_where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $this->getOption('table_alias'));
             if(!empty($query)) {
                 $query .= " AND $owner_where";

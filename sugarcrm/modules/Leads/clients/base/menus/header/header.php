@@ -20,6 +20,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
+        'route' => '#'.$module_name.'/layout/dnb-bal',
+        'label' => 'LBL_BAL',
+        'acl_action' => 'create',
+        'acl_module' => $module_name,
+        'icon' => 'icon-plus',
+    ),
+    array(
         'route'=>'#'.$module_name.'/vcard-import',
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'create',

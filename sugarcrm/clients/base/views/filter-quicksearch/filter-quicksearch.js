@@ -40,6 +40,13 @@
         app.view.View.prototype.initialize.call(this, opts);
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
+
+        //shortcut keys
+        app.shortcuts.register('Filter:Search', ['f i','ctrl+alt+9'], function() {
+            if (this.$el.is(':visible')) {
+                this.$el.focus();
+            }
+        }, this);
     },
 
     /**

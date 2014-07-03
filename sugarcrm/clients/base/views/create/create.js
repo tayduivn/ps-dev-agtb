@@ -637,6 +637,24 @@
         });
     },
 
+    registerShortcuts: function() {
+        this._super('registerShortcuts');
+
+        app.shortcuts.register('Create:Save', ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=' + this.saveButtonName + ']');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.get(0).click();
+            }
+        }, this, true);
+
+        app.shortcuts.register('Create:Cancel', ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=' + this.cancelButtonName + ']');
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.get(0).click();
+            }
+        }, this, true);
+    },
+
     alerts: {
         showInvalidModel: function () {
             app.alert.show('invalid-data', {

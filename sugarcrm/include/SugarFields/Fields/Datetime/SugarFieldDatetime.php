@@ -1,7 +1,16 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to
- * *******************************************************************************/
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldDatetime extends SugarFieldBase {
@@ -335,25 +344,6 @@ class SugarFieldDatetime extends SugarFieldBase {
         return preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
     }
 
-    function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-        global $timedate,$current_user;
-
-        //check to see if the date is in the proper format
-        $user_dateFormat = $timedate->get_date_format();
-        if(!empty($vardef['value']) && !$timedate->check_matching_format( $vardef['value'],$user_dateFormat)){
-
-            //date is not in proper user format, so get the SugarDateTiemObject and inject the vardef with a new element
-            $sdt = $timedate->fromString($vardef['value'],$current_user);
-
-            if (!empty($sdt)) {
-                //the new 'date_formatted_value' array element will be used in include/SugarFields/Fields/Datetime/DetailView.tpl if it exists
-                $vardef['date_formatted_value'] = $timedate->asUserDate($sdt,$current_user);
-            }
-        }
-
-        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
-    }
-
     /**
      * @see SugarFieldBase::apiFormatField
      */
@@ -409,11 +399,11 @@ class SugarFieldDatetime extends SugarFieldBase {
         }
 
         // if both of those fail above, lets check to make sure it's not the full ISO String
-        if (!$date) {
+        if (empty($date)) {
             $date = $timedate->fromIso($inputDate);
         }
 
-        if ( !$date ) {
+        if (empty($date)) {
             require_once('include/api/SugarApiException.php');
             throw new SugarApiExceptionInvalidParameter("Did not recognize $field as a date/time, it looked like {$params[$field]}");
         }
@@ -421,6 +411,5 @@ class SugarFieldDatetime extends SugarFieldBase {
 
         $bean->$field = $timedate->asDbType($date,$properties['type']);
     }
-
 
 }

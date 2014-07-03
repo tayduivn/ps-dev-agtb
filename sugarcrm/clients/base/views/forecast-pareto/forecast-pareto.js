@@ -137,6 +137,9 @@
      * Callback function for Forecasts/init success
      */
     forecastInitCallback: function(initData) {
+        if (this.disposed) {
+            return;
+        }
         var defaultOptions = {
             user_id: app.user.get('id'),
             // Default to 'user' view for reps, and 'group' view for managers.

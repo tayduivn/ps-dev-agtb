@@ -54,7 +54,7 @@ $viewdefs['portal']['layout']['create'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'create',
     'name' => 'base',
     'span' => 12,
 );

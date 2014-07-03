@@ -267,6 +267,11 @@ $mod_strings = array (
 	'LBL_ENTERDATE' => 'Enter Date' /*for 508 compliance fix*/,
 	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
+    //D&B Principal Identification
+    'LBL_DNB_PRINCIPAL_ID' => 'D&B Principal Id',
+    'LBL_DNB_BAL_PREVIEW' => 'Leads Preview',
+    'LBL_DNB_BAL_RSLT_CNT' => 'Leads',
+    'LBL_DNB_BAL_RSLT_HEADER' => 'D&B: Lead Information',
     //Dashlet
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
 

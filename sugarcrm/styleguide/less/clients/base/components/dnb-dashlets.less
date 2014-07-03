@@ -32,20 +32,27 @@ div.txt {
   font-size: 12px;
   color: #454545;
 }
-
+/*dnb mixins*/
 .common-font {
-  font-size: 12px;
+  font-size: 11px;
   color: #454545;
+}
+
+.dnb-chk-box {
+  float: left;
+  width: 20px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.dnb-company-list {
+  .common-font;
+  clear: both;
 }
 
 div.dnb-company-title {
   .common-font;
   margin: 0 0 0 30px;
-}
-
-div.dnb-company-list {
-  .common-font;
-  clear: both;
 }
 
 div.url-txt {
@@ -94,8 +101,13 @@ input[type="checkbox"] .dnb_checkbox {
 #dnb-search-results .unstyled li .label,
 #dnb-contact-list .unstyled li .label,
 #dnb-competitors-list .unstyled li .label,
+#dnb-bal-result .unstyled li .label,
 #dnb-company-list .unstyled li .label {
   margin: 0px;
+}
+
+ul.dnb-results-list li {
+  padding: 10px 14px 10px 14px;
 }
 
 .dnb-hide {
@@ -104,12 +116,9 @@ input[type="checkbox"] .dnb_checkbox {
 
 /* D&B Import Enrich */
 
-div.dnb-checkbox-nav {
-  float: left;
-  width: 20px;
+.dnb-checkbox-nav {
+  .dnb-chk-box;
   margin: 10px 5px;
-  padding: 0;
-  overflow: hidden;
 }
 
 .btn-toolbar .dashlet-toolbar .label {
@@ -310,3 +319,218 @@ li.txt {
   .common-font;
   margin: 5px 10px;
 }
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+#dnb-results-list li {
+  padding: 8px 14px;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+#dnb-results-list li {
+  padding: 8px 14px;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+
+/*Build A List Styles*/
+.dnb-bal-add-btn {
+  margin-top: -5px;
+}
+.dnb-bal-param-label {
+  font-size: 14px;
+}
+.tagcontainer {
+  margin-left: 0px; !important;
+}
+#dnb_bal_accordian {
+  .select2-chosen {
+    font-size: 12px;
+  }
+}
+.dnb-bal-list {
+  .common-font;
+}
+.dnb-bal-rslt {
+  font-size: @fontSizeLarge;
+  font-weight: 500;
+}
+.dnb-params-header {
+  .common-font;
+}
+

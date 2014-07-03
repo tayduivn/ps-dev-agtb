@@ -52,6 +52,12 @@
   }
   .thumbnail.dashlet:not(.collapsed) {
     max-height: 400px;
+    &.dashlet-dnb-tall {
+      max-height: 615px;
+      .dashlet-content {
+        max-height: 541px;
+      }
+    }
     //400(max)-33(menubar)-1(bottom-border)
     .dashlet-content,
     .block {

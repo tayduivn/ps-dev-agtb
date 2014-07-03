@@ -26,19 +26,20 @@ class ExtAPIDnb extends ExternalAPIBase
         'prod' => 'https://maxcvservices.dnb.com/'
     );
     private $dnbAuthURL = "rest/Authentication";
-    private $dnbSearchURL = "V4.0/organizations?KeywordText=%s&findcompany=true&SearchModeDescription=Basic";
-    private $dnbFirmographicURL = "V2.0/organizations/%s/products/%s";
+    //OrderReasonCode is a parameter required to fetch Firmographic info for all companies
+    //if this is not set, API calls for companies in Germany will fail
+    private $dnbFirmographicURL = "V2.0/organizations/%s/products/%s?OrderReasonCode=6332";
     private $dnbFirmoLiteURL = "V2/organizations/%s/products/CST_PRD_1";
     private $dnbStandardSearch = "V2.0/organizations/%s/products/DCP_STD";
     private $dnbPremiumSearch = "V2.0/organizations/%s/products/DCP_PREM";
     private $dnbLiteSearchURL = "V2/organizations/%s/products/CST_PRD_1?CountryISOAlpha2Code=US";
-    private $dnbProfileURL = "V2/organizations/%s/products/DCP_STD?CountryISOAlpha2Code=US";
     private $dnbCompetitorsURL = "V4.0/organizations/%s/competitors";
     private $dnbIndustryURL = "V3.0/industries/industrycode-%s/IND_STD";
     private $dnbFinancialURL = "V3.0/organizations/%s/products/FIN_HGLT";
     private $dnbFamilyTreeURL = "V3.1/organizations/%s/products/%s";
     private $dnbCleanseMatchURL = "V3.0/organizations";
-    private $dnbBALURL = "V4.0/organizations";
+    private $dnbBALURL = "V6.0/organizations?SearchModeDescription=Advanced&findcompany=true&";
+    private $dnbBALContactURL = "V6.0/organizations?SearchModeDescription=Advanced&findcontact=true&";
     private $dnbFindIndustryURL = "V4.0/industries?KeywordText=%s&findindustry=true";
     private $dnbFindContactsURL = "V4.0/organizations?findcontact=true&DUNSNumber-1=%s&SearchModeDescription=Advanced";
     private $dnbContactDetPremURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s";
@@ -77,6 +78,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
         $this->dnbPassword = trim($this->getConnectorParam('dnb_password'));
         $this->dnbEnv = trim($this->getConnectorParam('dnb_env'));
+        $this->contactModules = array('Contacts','Leads','Prospects');
         // start a session if one hasnt been started
         try {
             if (!isset($_SESSION)) {
@@ -115,39 +117,8 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Searches for companies in DNB based on the keyword
-     * @param $quertString queryString
-     * @return jsonarray
-     */
-    public function dnbSearch($queryString)
-    {
-        $queryParams = array();
-        parse_str($queryString, $queryParams);
-        if (array_key_exists('q',$queryParams)) {
-            $keyword = $queryParams['q'];
-            $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbSearchURL, urlencode($keyword));
-            $reply = $this->makeRequest('GET', $dnbendpoint);
-            if (!$reply['success']) {
-                $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
-                return $reply;
-            }
-            // get existing duns
-            $path = $this->commonJsonPaths['findcompany'];
-            if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-                //get the list of companies from dnb
-                $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'],$path);
-                if (!empty($modifiedCompaniesList)) {
-                    $reply['responseJSON']['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'] = $modifiedCompaniesList;
-                }
-            }
-            return $reply['responseJSON'];
-        } else {
             //send error
             return array('error' => 'ERROR_BAD_REQUEST');
-        }
-    }
-
-    /**
      * Checks when the duns_num was last refreshed
      * @param $duns_num unique identifier for a company
      * @return jsonarray
@@ -292,26 +263,6 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Gets Contacts For A Given Duns Number
-     * @param $duns_num
-     * @return jsonarray
-     */
-    public function dnbFindContacts($duns_num)
-    {
-        //dnb contacts list
-        $cache_key = 'dnb.contactsearch.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFindContactsURL, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        // get existing contacts
-        $path = $this->commonJsonPaths['contacts'];
-        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
-        }
-        return $reply['responseJSON'];
-    }
-
-    /**
      * Gets Cleanse and Matched Data from DNB API for the cleanse and match parameters
      * @param $cmParams Array
      * cmParams array must be in the following format
@@ -325,7 +276,7 @@ class ExtAPIDnb extends ExternalAPIBase
      *  }
      * @return jsonarray
      */
-    public function dnbCMRrequest($cmParams)
+    public function dnbCMRequest($cmParams)
     {
         //convert $cmParams to queryString
         //TO DO: validate the POST parameters
@@ -351,30 +302,68 @@ class ExtAPIDnb extends ExternalAPIBase
     /**
      * Builds A List Of Companies from DNB API for the build a list parameters
      * @param $balParams Array
-     * cmParams array must be in the following format
+     * $balParams must look like the following
+     * not all keys are mandatory but atleast one of them
      * {
-     *   "IncludeCleansedAndStandardizedInformationIndicator":"true", //mandatory
-     *   "CountryISOAlpha2Code":"US", //country code mandatory
-     *   "cleansematch":"true",//mandatory
-     *   "SubjectName":"ibm", //company name mandatory
-     *   "PrimaryTownName":"town name", //optional
-     *   "TerritoryName": "territory" //optional
+     *   "SalesLowRangeAmount": , <decimal> //optionsl
+     *   "SalesHighRangeAmount": , <decimal> //optionsl
      *  }
      * @return jsonarray
      */
-    public function dnbBALRequest($balParams)
+    public function dnbBALAccounts($balParams)
     {
         //convert $balParams to queryString
-        //TO DO: validate the POST parameters
-        $balQueryString = '?' . http_build_query($balParams);
+        $balQueryString =  http_build_query($balParams);
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALURL . $balQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
             $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
-            return $reply;
+            return array('error' => 'ERROR_DNB_CONFIG');
+        }
+        $path = $this->commonJsonPaths['findcompany'];
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'],$path);
+            if (!empty($modifiedCompaniesList)) {
+                $reply['responseJSON']['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'] = $modifiedCompaniesList;
+            }
         }
         return $reply['responseJSON'];
     }
+
+    /**
+     * Builds A List Of Contacts from DNB API for the build a list parameters
+     * @param $balParams Array
+     * $balParams must look like the following
+     * not all keys are mandatory but atleast one of them
+     * {
+     *   "SalesLowRangeAmount": , <decimal> //optionsl
+     *   "SalesHighRangeAmount": , <decimal> //optionsl
+     *  }
+     * @return jsonarray
+     */
+    public function dnbBALContacts($balParams)
+    {
+        //contactType is required for duplicate check
+        $contactType = $balParams['contactType'];
+        //delete the contactType key as the rest of the array is being used to build a query string
+        unset($balParams['contactType']);
+        //convert $balParams to queryString
+        $balQueryString = http_build_query($balParams);
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALContactURL . $balQueryString;
+        $reply = $this->makeRequest('GET', $dnbendpoint);
+        if (!$reply['success']) {
+            $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+            return array('error' => 'ERROR_DNB_CONFIG');
+        }
+        if (in_array($contactType, $this->contactModules)) {
+            $path = $this->commonJsonPaths['contacts'];
+            if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+                $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path, $contactType);
+            }
+        }
+        return $reply['responseJSON'];
+    }
+
 
     /**
      * Gets Contacts Details For Principal Identification Number and Duns Number
@@ -408,32 +397,6 @@ class ExtAPIDnb extends ExternalAPIBase
         return $reply['responseJSON'];
     }
 
-    /**
-     * Finds Contacts For a Given DUNS Number based on contact name and job title
-     * @param $contactParams array can have the following keys
-     * duns -- DUNS Number -- required
-     * namekw -- Contact Name Key Word -- optional
-     * jobkw -- Job Title Key Word -- optional
-     * either the namekw or the jobkw must be provided
-     * @return array
-     */
-    public function dnbFindContactsPost($contactParams) {
-        $contactQueryString = http_build_query($contactParams);
-        //dnb contacts list
-        $cache_key = 'dnb.contactsearch.' . $contactQueryString;
-        if (!empty($contactParams['KeywordContactText'])) {
-            $contactParams['KeywordContactScopeText'] = 'Title';
-        }
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbContactsBALURL . '&' . http_build_query($contactParams);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        // get existing contacts
-        $path = $this->commonJsonPaths['contacts'];
-        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
-        }
-        return $reply['responseJSON'];
-    }
 
     /**
      * Get the Linkage / Family Tree For a Given DUNS Number
@@ -583,7 +546,7 @@ class ExtAPIDnb extends ExternalAPIBase
             $industryCodePath = "FindIndustryResponse.FindIndustryResponseDetail.IndustryCode";
             if ($this->arrayKeyExists($reply, $industryCodePath)) {
                 $industryArray = $reply['FindIndustryResponse']['FindIndustryResponseDetail']['IndustryCode'];
-                //get the primaru hic
+                //get the primary hic
                 $primaryHIC = $this->underscoreFind(
                     $industryArray,
                     function ($industryObj) {
@@ -618,7 +581,9 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Lists Records already present in sugar db using the $columnName & $moduleName paramerts
+     * Lists Records already present in sugar db using the $columnName & $moduleName parameters
+     * @param $columnName
+     * @param $moduleName
      * @param $recordIds array (array of id to be used in the in clause of the query)
      * @return array
      */
@@ -809,6 +774,7 @@ class ExtAPIDnb extends ExternalAPIBase
         }
         $dnbToken = $this->getRecentToken();
         //check if token is valid
+        $GLOBALS['log']->debug("DNB Session Token Get :".$_SESSION[$this->dnbEnv . 'dnbToken']);
         if (!$this->checkTokenValidity($dnbToken)) {
             return array('success' => false, 'errorMessage' => 'Error Obtaining Authorization Token');
         }
@@ -830,6 +796,11 @@ class ExtAPIDnb extends ExternalAPIBase
         }
         // setting curl options
         curl_setopt_array($curl_handle, $this->getCurlOptions($requestMethod, $url, $curl_headers, false));
+        $GLOBALS['log']->debug("curl header[0] : $curl_headers[0]");
+        $GLOBALS['log']->debug("curl header[1] : $curl_headers[1]");
+        $GLOBALS['log']->debug("curl header[2] : $curl_headers[2]");
+        $GLOBALS['log']->debug("dnbToken: $dnbToken");
+        $GLOBALS['log']->debug("url: $url");
         $response = curl_exec($curl_handle);
         if ($response === false) {
             $curl_errno = curl_errno($curl_handle);
@@ -862,6 +833,7 @@ class ExtAPIDnb extends ExternalAPIBase
      * @param $headersArray
      * @param $header TRUE | FALSE to set CURLOPT_HEADER
      * @param $data
+     * @return array
      */
     private function getCurlOptions($method, $url, $headersArray, $header, $data = null)
     {
@@ -953,7 +925,6 @@ class ExtAPIDnb extends ExternalAPIBase
         curl_close($curl_handle);
         $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
         $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
-        $GLOBALS['log']->debug('New DNB Token Issued');
         return $token;
     }
 
@@ -1003,7 +974,6 @@ class ExtAPIDnb extends ExternalAPIBase
     /**
      * Checks Family tree response for duns_num already existing in SugarDB
      * @param array $dnbFTApiResponse
-     * @param string $path
      * @return mixed
      */
     private function checkAndMarkFTDuplicateDuns($dnbFTApiResponse)
@@ -1015,7 +985,6 @@ class ExtAPIDnb extends ExternalAPIBase
         $firstNodeDuns = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['duns']);
         $firstNodeDuns = str_pad($firstNodeDuns, 9, "0", STR_PAD_LEFT);
         $dunsArray[] = $firstNodeDuns;
-        $GLOBALS['log']->debug('ft duns count: ' . count($dunsArray));
         //omit the current DUNS from the dunsArray
         $currentDUNS = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['inquiryDet']);
         if (!empty($currentDUNS) && in_array($currentDUNS, $dunsArray)) {
@@ -1047,13 +1016,14 @@ class ExtAPIDnb extends ExternalAPIBase
      * Checks the D&B List of contacts for contacts already existing in SugarDB
      * @param array $dnbApiResponse
      * @param string $path
+     * @param string $contactType
      * @return mixed
      */
-    private function checkAndMarkDuplicateContacts($dnbApiResponse,$path)
+    private function checkAndMarkDuplicateContacts($dnbApiResponse, $path, $contactType)
     {
-        $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
         // get existing contacts
         $dnbPrincIdArray = array();
+        $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
         //get the list of dnb principal ids from the above list of contacts
         $this->underscoreEach(
             $dnbContactsList,
@@ -1062,7 +1032,7 @@ class ExtAPIDnb extends ExternalAPIBase
             }
         );
         //get the list of principal ids existing in sugar that match with the above list of principal ids
-        $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', 'Contacts', $dnbPrincIdArray), true);
+        $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', $contactType, $dnbPrincIdArray), true);
         if (count($existingPrincIdArray) > 0) {
             //identify the contacts common in the api response and in the sugar db and mark the dupe
             $modifiedContactsList = $this->getCommonRecords($dnbContactsList, $existingPrincIdArray, $this->commonJsonPaths['principalIdPath'], 'dnb_principal_id');
@@ -1078,9 +1048,9 @@ class ExtAPIDnb extends ExternalAPIBase
      * This API is primarily being created to check the browser cached responses for duplicates
      * @param array $dupeCheckParams
      * $dupeCheckParams must have two keys
-     * 1. type -- Currently two possible values (duns,contacts)
+     * 1. type -- Currently four possible values (duns,contacts,leads,prospects)
      * 2. apiResponse -- The api response to be marked as duplicates
-     * 3. module -- findcompany, competitors, cleansematch, familytree, contacts
+     * 3. module -- findcompany, competitors, cleansematch, familytree, contacts, contactsPage
      * @return array
      */
     public function dupeCheck($dupeCheckParams)
@@ -1096,10 +1066,13 @@ class ExtAPIDnb extends ExternalAPIBase
             if ($module === 'familytree') {
                 $modifiedApiResponse = $this->checkAndMarkFTDuplicateDuns($apiResponse);
                 return $modifiedApiResponse;
+            } else if ($module === 'dunsPage') {
+                $modifiedApiResponse = $this->checkAndMarkDuplicateLists($apiResponse, 'duns_num', 'Accounts', 'duns_num');
+                return $modifiedApiResponse;
             } else {
                 $path = $this->commonJsonPaths[$module];
                 if (!empty($path)) {
-                    $modifiedApiResponse = $this->checkAndMarkDuplicateDuns($apiResponse,$path);
+                    $modifiedApiResponse = $this->checkAndMarkDuplicateDuns($apiResponse, $path);
                     if (!empty($modifiedApiResponse)) {
                         $this->setObjectValue($apiResponse, $path, $modifiedApiResponse);
                     }
@@ -1108,10 +1081,14 @@ class ExtAPIDnb extends ExternalAPIBase
                     return array('error' => 'ERROR_INVALID_MODULE_NAME');
                 }
             }
-        } else if ($type === 'contacts') {
+        } else if (in_array($type, $this->contactModules)) {
             $path = $this->commonJsonPaths[$module];
-            if (!empty($path)) {
-                $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse,$path);
+            if ($module === 'contactsPage') {
+                $modifiedApiResponse = $this->checkAndMarkDuplicateLists($apiResponse, 'principalId', $type, 'dnb_principal_id');
+                return $modifiedApiResponse;
+            } else if (!empty($path)) {
+                //handle the dupe check for a contacts page
+                $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse, $path, $type);
                 if (!empty($modifiedApiResponse)) {
                     return $modifiedApiResponse;
                 } else {
@@ -1121,5 +1098,30 @@ class ExtAPIDnb extends ExternalAPIBase
                 return array('error' => 'ERROR_INVALID_MODULE_NAME');
             }
         }
+    }
+
+    /**
+     * Checks the D&B List of contacts / companies for duplicates SugarDB
+     * @param array $list
+     * @param string $listKey (to retrieve the key to duplicate check against)
+     * @param string $module possible values are Accounts, Contacts, Leads, Prospects
+     * @param string $moduleKey (refers to the key in the module against which the duplicate check is done)
+     * @return array
+     */
+    protected function checkAndMarkDuplicateLists($list, $listKey, $module, $moduleKey)
+    {
+        //array to hold a list of ids
+        $idArray = array();
+        //get the list of ids to dupe check
+        foreach ($list as $listItem) {
+            $idArray[] = $listItem[$listKey];
+        }
+        //gets the list of records from sugardb that match the idArrsy
+        $existingIdsArray = json_decode($this->getExistingRecords($moduleKey, $module, $idArray), true);
+        if (count($existingIdsArray) > 0) {
+            //mark the records in the sugardb as dupes
+            $list = $this->getCommonRecords($list, $existingIdsArray, $listKey, $moduleKey);
+        }
+        return $list;
     }
 }

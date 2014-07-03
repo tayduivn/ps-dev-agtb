@@ -73,8 +73,8 @@ class ChartDisplay
         // set the default stuff we need on the reporter
         // and run the queries
         $this->reporter->is_saved_report = true;
-        // only run if the chart_rows variable is empty
-        if (empty($this->reporter->chart_rows)) {
+        // only run if the chart_header_row variable is empty
+        if (empty($this->reporter->chart_header_row)) {
             $this->reporter->get_total_header_row();
             $this->reporter->run_chart_queries();
         }
@@ -186,12 +186,15 @@ class ChartDisplay
                 $total = 0;
             }
             $total = $total_row['cells'][$total];
-            if (unformat_number($total) > 100000) {
+
+            if(is_string($total) && !is_numeric($total)) {
+                $total = unformat_number($total, true);
+            }
+            if ($total > 100000) {
                 $do_thousands = true;
-                $total = round(unformat_number($total) / 1000);
+                $total = (string) round($total / 1000);
             } else {
                 $do_thousands = false;
-                $total = unformat_number($total);
             }
             array_pop($this->reporter->chart_rows);
         } else {
@@ -343,14 +346,20 @@ class ChartDisplay
         if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
             return $row_remap;
         }
-        $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
+
+        $val = strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']);
+        if(is_string($val) && !is_numeric($val)) {
+            $val = unformat_number($val, true);
+        }
+        $row_remap['numerical_value'] = $val;
         global $do_thousands;
         if ($do_thousands) {
             // MRF - Bug # 13501, 47148 - added floor() below:
-            $row_remap['numerical_value'] = round(unformat_number(floor($row_remap['numerical_value'])) / 1000);
+            $row_remap['numerical_value'] = round( floor($row_remap['numerical_value']) / 1000 );
         }
-        $precision = $locale->getPrecision();
-        $row_remap['numerical_value'] = round($row_remap['numerical_value'], $precision);
+        // format to user prefs
+        $row_remap['formatted_value'] = $this->print_currency_symbol(true) . format_number($row_remap['numerical_value']);
+
         $row_remap['group_text'] = $group_text = (isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? chop($row['cells'][$this->reporter->chart_group_position]['val']) : '';
         $row_remap['group_key'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $row['cells'][$this->reporter->chart_group_position]['key'] : '');
         $row_remap['count'] = (isset($row['count'])) ? $row['count'] : 0;
@@ -399,16 +408,18 @@ class ChartDisplay
             $total_index = 0; // special for dashlets!!
         }
         $total = $total_row['cells'][$total_index]['val'];
+        if(is_string($total) && !is_numeric($total)) {
+            $total = unformat_number($total, true);
+        }
         global $do_thousands;
         if ($this->get_maximum() > 100000 && (!isset($this->reporter->report_def['do_round'])
             || (isset($this->reporter->report_def['do_round']) && $this->reporter->report_def['do_round'] == 1))
         ) {
             $do_thousands = true;
-            $total = round(unformat_number($total) / 1000);
-            return $total;
+            return (string) round($total / 1000);
         } else {
             $do_thousands = false;
-            return unformat_number($total);
+            return (string) $total;
         }
 
     }

@@ -265,6 +265,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'assigned_user_name',
                 'twitter',
                 array(
+                    'name' => 'dnb_principal_id',
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'description',
                     'span' => 12,
                     'related_fields' => array('lead_id'),

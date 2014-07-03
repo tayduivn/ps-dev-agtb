@@ -21,6 +21,14 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.title = app.lang.get(this.meta.title, this.module);
+
+        //shortcut keys
+        app.shortcuts.register('AuditHeaderPanel:Close', ['esc','ctrl+alt+l'], function() {
+            var $closeButton = this.$('a[name=close_button]');
+            if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                $closeButton.click();
+            }
+        }, this, true);
     },
 
     close: function() {
