@@ -606,8 +606,8 @@ abstract class SugarRelationship
                 if (empty($bean->deleted) && empty($bean->in_save)) {
                     if ($refresh) {
                         // Make sure we're using the newest version of the bean, not the one queued
-                        $latestBean = BeanFactory::getBean($module, $bean->id);
-                        if ($latestBean !== false) {
+                        $latestBean = BeanFactory::retrieveBean($module, $bean->id);
+                        if ($latestBean !== null) {
                             $bean = $latestBean;
                         }
                     }
