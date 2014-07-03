@@ -56,7 +56,7 @@ class ResaveRelatedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             $account->name,
             $savedAccount->name,
-            'resaveRelatedBeand() should pull in the latest version from the cache'
+            'resaveRelatedBeans() should pull in the latest version from the cache'
         );
     }
 }
