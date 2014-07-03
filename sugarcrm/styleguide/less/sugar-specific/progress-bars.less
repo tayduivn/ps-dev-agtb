@@ -4,9 +4,9 @@
 .progress .bar {
   height: 8px;
   .border-radius(4px);
+  background-color: @blue;
 }
 
-//this was changed from hidden to hide in commit b1eb832e636cdc1de6fe01852b15a89f227328f6
 .progress {
   overflow: hidden;
   margin: 5px 0 0;
@@ -16,7 +16,7 @@
 .loading.gate {
   .progress {
     .border-radius(0);
-    background: #dcdcdc;
+    background: @grayLighter;
     .bar {
       .box-shadow(none);
       background-color: @BorderColor;
@@ -25,43 +25,57 @@
   }
 }
 
-//this has been set to #149bdf in bootstrap 2.0.4 ??remove??
 .progress-striped .bar {
-  #gradient > .striped(#62c462);
+  background: fade(@black, 90%);
+}
+
+.progress-success .bar, 
+.bar-success .bar,  {
+  background: @successBackground;
+}
+
+.progress-info .bar, 
+.bar-info .bar,  {
+  background: @infoBackground;
+}
+
+.progress-danger .bar, 
+.bar-danger .bar,  {
+  background: @errorBackground;
 }
 
 .progress-files .bar {
-  #gradient > .vertical(@orange, darken(@orange, 10%));
+  background: @orange;
 }
 .progress-leads .bar {
-  #gradient > .vertical(@green, darken(@green, 10%));
+  background: @green;
 }
 .progress-notes .bar {
-  #gradient > .vertical(@yellow, darken(@yellow, 10%));
+  background: @yellow;
 }
 .progress-contacts .bar {
-  #gradient > .vertical(@blue, darken(@blue, 10%));
+  background: @blue;
 }
 .progress-documents .bar {
-  #gradient > .vertical(@purple, darken(@purple, 10%));
+  background: @purple;
 }
 .progress-min .bar {
-  #gradient > .vertical(@red, darken(@red, 10%));
+  background: @red;
 }
 .progress-mid .bar {
-  #gradient > .vertical(@orange, darken(@orange, 10%));
+  background: @orange;
 }
 .progress-near .bar {
-  #gradient > .vertical(@yellow, darken(@yellow, 10%));
+  background: @yellow;
 }
 .progress-closed .bar {
-  #gradient > .vertical(@green, darken(@green, 10%));
+  background: @green;
 }
 .progress-halt .bar {
-  #gradient > .vertical(@gray, darken(@gray, 10%));
+  background: @gray;
 }
 
-// COMMUNICATIONS STYLES (from Mango/sugarcrm/styleguide/less/clients/base/custom.less) [4]
+// COMMUNICATIONS STYLES
 .progress-bar-container.custom {
     width: 98%;
     display: table;
@@ -123,7 +137,7 @@
         height: 20px;
         line-height: 20px;
         &.bar-pending {
-            background: #CB9500 !important;
+            background: @yellow !important;
             &:before {
                 content: "Pending...";
             }
@@ -135,28 +149,30 @@
             }
         }
         &.bar-scheduled {
-            background: #CB9500 !important;
+            background: @yellow !important;
             &:before {
                 content: "Scheduled";
             }
         }
         &.bar-draft {
-            background: #787878 !important;
+            background: transparent !important;
+            border: 1px solid @gray;
+            color: @gray;
             &:before {
                 content: "Draft";
             }
         }
         &.bar-optout {
-            background: #797979 !important;
+            background: @gray !important;
         }
         &.bar-bounce {
-            background: #EB351C !important;
+            background: @red !important;
         }
         &.bar-open {
-            background: #489500 !important;
+            background: @green !important;
         }
         &.bar-blank {
-            background: none !important;
+            background: darken(@grayLighter,10%) !important;
         }
     }
 }

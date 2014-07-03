@@ -26,7 +26,7 @@ table {
     line-height: @baseLineHeight;
     text-align: left;
     vertical-align: top;
-    border-top: 1px solid @tableBorder;
+    border-top: @tableBorder;
   }
   th {
     font-weight: bold;
@@ -46,7 +46,7 @@ table {
   }
   // Account for multiple tbody instances
   tbody + tbody {
-    border-top: 2px solid @tableBorder;
+    border-top: 2px solid @tableBorderColor;
   }
 
   // Nesting
@@ -72,14 +72,14 @@ table {
 // ----------------
 
 .table-bordered {
-  border: 1px solid @tableBorder;
+  border: @tableBorder;
   border-collapse: separate; // Done so we can round those corners!
   *border-collapse: collapse; // IE7 can't round corners anyway
   border-left: 0;
   .border-radius(@baseBorderRadius);
   th,
   td {
-    border-left: 1px solid @tableBorder;
+    border-left: @tableBorder;
   }
   // Prevent a double border
   caption + thead tr:first-child th,

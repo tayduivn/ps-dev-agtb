@@ -2,8 +2,6 @@
   ----------------*/
 .subpanels-layout {
   .subpanel {
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    border-top: 1px solid @white;
     background-color: @white;
     &.closed {
       background-color: @grayLighter;
@@ -16,17 +14,23 @@
     }
     &.empty {
       .label {
-        background-color: darken(@grayLighter, 15%);
+        border: 1px solid @gray;
+        background: transparent;
+        color: @gray;
       }
       h4 {
         color: @grayLight;
       }
     }
     tbody {
-      border-bottom: 1px solid darken(@grayLighter, 15%);
+      border-bottom: 1px solid darken(@grayLighter, 10%);
     }
     .more {
-      height: 32px;
+      height: 42px;
+      border-bottom: @borderWidget !important;
+    }
+    .block-footer{
+      border-bottom: @borderWidget;
     }
     .list-view {
       overflow: visible;
@@ -34,15 +38,15 @@
   }
 
   .subpanel-header {
-    border-bottom: 1px solid darken(@grayLighter, 15%);
-    height: 44px;
+    border-bottom: @borderWidget;
+    height: 42px;
     display: block;
     cursor: pointer;
     &:hover {
-      background-color: lighten(@grayLighter,2%);
+      background-color: darken(@grayLighter,2%);
     }
     h4 {
-      line-height: 26px;
+      line-height: 24px;
       font-weight: normal;
       white-space: nowrap;
       width: 65%;
@@ -50,6 +54,7 @@
       padding-right: 10px;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin: 10px 0 8px;
     }
     .label-module {
       margin: 9px 10px;

@@ -68,16 +68,13 @@
   // Inner needs the styles because you can't animate properly with any styles on the element
   .accordion-inner {
     padding: 0;
-    border-top: 1px solid #dcdcdc;
-    border-bottom: 1px solid #dcdcdc;
-    .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
-    background: #F2F2F2;
+    border-top: 1px dotted darken(@grayLighter, 10%);
+    border-bottom: @borderWidget;
   }
   .accordion-group {
     margin-bottom: 0;
     border: none;
-    border-bottom: 1px solid #DCDCDC;
-    border-top: 1px solid @white;
+    border-bottom: @borderWidget;
     // for record edit view in duplist
     .headerpane {
       background: none;
@@ -113,46 +110,44 @@
 // Want Filter for Duplist
 div.want_filter {
   line-height: 20px;
-  border-top: 1px solid @white;
+  border-bottom: 1px solid @warningBorder;
   &.highlight {
-    padding: 11px;
+    padding: 10px;
     text-align: center;
-    border-bottom: 1px solid darken(#F8F8F8,10%);
-    background-color: @yellow_duplicate;
+    border-bottom: 1px solid @warningBorder;
+    background-color: @warningBorder;
+    font-weight: bold;
   }
 }
 
 .step-circle {
   .border-radius(14px);
-  border: 1px solid #CCC;
   height: 26px;
   width: 26px;
   position: relative;
   display: inline-block;
-  #gradient > .vertical(darken(@grayLighter, 6%), lighten(@grayLighter, 1%));
-  filter: none;
+  background: @grayLighter;
   text-align: center;
   margin-right: 12px;
+  border: @borderWidget;
   > span {
     display: inline-block;
-    #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 12%));
-    filter: none;
-    background-color: @grayLighter;
+    background: @white;
     width: 18px;
     height: 18px;
-    border: 1px solid #CCC;
+    border: @borderWidget;
     .border-radius(10px);
     margin-top: 3px;
     font-weight: bold;
   }
   .icon-ok-sign {
     display: none;
-    color: #359B2C;
+    color: @green;
     font-size: 22px;
     line-height: 22px;
     margin-top: 3px;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
   }
   &.complete {
     > span {

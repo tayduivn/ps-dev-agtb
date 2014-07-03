@@ -68,8 +68,7 @@
     .border-radius(3px);
     border: 1px solid #aaaaaa;
     box-shadow: 0 -1px 1px rgba(0,0,0,0.3)inset, 1px 1px 1px rgba(0, 0, 0, 0.5);
-
-    color: #fff;
+    color: @white;
     cursor: pointer;
     .user-select(none);
 }
@@ -91,8 +90,8 @@
     .box-shadow(0 0 1px rgba(0,0,0,0.3)inset);
 /*-webkit-mask-image :
     -webkit-gradient(linear, left top, right bottom,
-        from(#000000),
-        color-stop(0.4,#000000),
+        from(@black),
+        color-stop(0.4,@black),
         color-stop(0.5, transparent),
         to(transparent));
 */
@@ -111,8 +110,8 @@
     display: block;
     width: 8px;
     top: 4px;
-    border-left: 1px solid #dddddd;
-    border-right: 1px solid #dddddd;
+    border-left: 1px solid darken(@grayLighter, 10%);
+    border-right: 1px solid darken(@grayLighter, 10%);
 
 }
 .noUi-handle > div,

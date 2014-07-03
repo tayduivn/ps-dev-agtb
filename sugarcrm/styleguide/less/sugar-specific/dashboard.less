@@ -75,23 +75,24 @@
       position: relative;
       margin: 0;
       padding-top: 18px;
-      border: 3px dashed lighten(@grayLight,8%);
+      border: 1px dashed darken(@grayLighter, 10%);
       background-color: @white;
       cursor: pointer;
       p {
-        font-size: @fontSizeMedium;
+        font-size: @fontSizeLarge;
         font-weight: 500;
         text-align: center;
-        color: lighten(@grayLight,8%);
+        color: @grayLight;
         &.header {
           line-height: 40px;
         }
       }
       .add-dashlet {
-        color: lighten(@grayLight,8%);
+        color: @grayLight;
         text-align: center;
         small {
           font-size: @baseFontSize;
+          font-weight: bold;
         }
         strong {
           font-size: 60px;
@@ -112,7 +113,7 @@
     clear: both;
     .well-invisible {
       .empty {
-        margin: 20px 5px 0 5px;
+        margin: 0;
       }
     }
     .well {
@@ -130,7 +131,8 @@
       .dashlet-content + .block-footer {
         text-align: left;
         font-weight: normal;
-        .border-radius(0 0 3px 3px);
+        border-top: @borderWidget;
+        .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
       }
 
       .block-footer {
@@ -168,8 +170,9 @@
       .dashlet-container {
         padding-top: 20px;
       }
-      .rows.well {
-        //margin-top: -15px;
+      .well {
+        border: 1px dashed darken(@grayLighter 10%);
+        background: none;
       }
     }
   }
@@ -181,14 +184,14 @@
 /* Dashboard inside right hand side panel */
 .sidebar-content {
   .dashboard {
+    padding-top: 10px;
     .headerpane {
       .calcWidth(~"34.042553198% + 1px");
-      border-left: 1px solid darken(@grayLighter,10%);
+      border-left: @borderWidget;
       background: url(@textureSecondary);
       right: auto;
+      padding: 0 5px;
       margin-left: -1px;
-      /* middle div is unnecessary, filipe said it cannot
-         be removed from template, doing this for now */
       .record-cell {
         display: none;
         .detail {
@@ -211,12 +214,14 @@
         padding-top: 16px;
       }
       h1 {
+        font-weight: normal;
+        font-size: @fontSizeHeader;
         input {
           margin-left: -4px;
         }
         div.error {
           input {
-            font-size: 18px;
+            font-size: @fontSizeHeader;
             margin-top: 0;
           }
         }
@@ -248,7 +253,7 @@
           }
           ul.dropdown-menu {
             min-width: 160px;
-            .border-radius(2px);
+            .border-radius(@borderRadiusSmall);
             &> li {
               font-size: @baseFontSize;
               .alert-process {
@@ -261,7 +266,7 @@
     }
     &.edit {
       .preview-headerbar {
-        border-bottom-color: #CCC;
+        border-bottom-color: darken(@grayLighter, 10%);
       }
       .dashlets {
         width: 90%;
@@ -274,17 +279,23 @@
         margin-left: 1.5%;
         .rows.well:not(.well-invisible) {
           margin: 0 -0.5% auto;
+          border: 1px dashed darken(@grayLighter, 10%);
         }
       }
     }
     .well {
-      padding: 19px 2px 2px 2px;
+      padding: 20px 2px 2px 2px;
+      background: transparent;
+      .box-shadow(none);
       &.well-invisible {
         padding-right: 0;
         padding-left: 0;
       }
       .dashlet-container {
         padding: 2px;
+      }
+      .dashlet-container + .dashlet-container {
+        padding-top: 20px;
       }
     }
     .dashlet-row {
@@ -305,15 +316,17 @@
   margin-top: -18px;
   padding: 10px;
   background: @white;
-  border: 1px solid @grayLight;
+  border: @borderWidget;
   border-top: none;
-  @shadow: 0 1px 3px rgba(0,0,0,.1);
-  .box-shadow(@shadow);
+  .box-shadow(@shadowWidget);
 }
 
 .dashlet-unordered-list {
   .tab-content {
     height: 230px;
     overflow: auto;
+    .block-footer {
+      border-top: none;
+    }
   }
 }

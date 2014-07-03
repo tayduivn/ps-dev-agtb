@@ -3,22 +3,20 @@
 
 .preview-pane {
  .preview-headerbar {
-    .calcWidth(~"34.042553198% + 1px");
+    .calcWidth(~"34.042553198%");
     position: fixed;
     right: 0;
     top: 48px;
-    height: 61px;
-    border-bottom: 1px solid #CCC;
+    height: 60px;
+    border-bottom: @borderWidget;
+    border-left: @borderWidget;
     background: url(@textureSecondary);
-    border-left: 1px solid darken(@grayLighter,10%);
     z-index: 1002;
-    .box-sizing(border-box);
-    .box-shadow(~"inset 4px 0 16px -4px rgba(0, 0, 0, .2)");
     h1 {
       float: left;
       margin-top: 18px;
       margin-left: 20px;
-      font-size: 18px;
+      font-size: @fontSizeHeader;
     }
     .btn-toolbar {
       margin: 16px 10px 9px;
@@ -34,7 +32,7 @@
       text-align: right;
       padding: 6px;
       font-size: 11px;
-      color: lighten(@gray,15%);
+      color: @gray;
     }
     .span7 {
       padding: 6px;
@@ -48,7 +46,7 @@
     label.original {
       margin-bottom: 0;
       display: inline-block;
-      background-color: #CDCCCB;
+      background-color:  @borderWidget;
       padding: 2px 4px;
       .border-radius(4px);
     }

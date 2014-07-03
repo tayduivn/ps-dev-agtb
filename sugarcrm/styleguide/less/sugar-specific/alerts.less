@@ -3,10 +3,12 @@
 
 // Base alert styles
 .alert {
-  padding: 8px 26px 8px 10px;
+  text-shadow: none;
+  padding: 5px 10px;
   background-color: @grayLighter;
-  border: 1px solid @grayLight;
-
+  border: 1px solid darken(@grayLighter, 15%);
+  .box-shadow(@shadowWidget);
+  .border-radius(@baseBorderRadius);
   position: relative;
 }
 .alert [class^=icon-] {
@@ -19,15 +21,16 @@
 
 // Adjust close link position
 .alert .close {
-  right: 7px;
-  top: 7px;
+  right: 10px;
+  top: 5px;
   font-size: 14px;
   font-weight: normal;
-  .opacity(40);
+  .opacity(20);
   text-shadow: none;
-  color: inherit;
+  color: @black;
   position: absolute;
   &:hover {
+    color: inherit;
     .opacity(100);
   }
 }
@@ -39,28 +42,42 @@
 .alert-success .alert-heading {
   background-color: @successBackground;
   border-color: @successBorder;
-  color:  darken(@successBackground, 70%);
-}
-.alert-danger,
-.alert-error {
-  background: @errorBackground;
-  border-color: @errorBorder;
+  color: @successText !important;
+  padding-right: 30px;
 }
 .alert-danger,
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
-  color: darken(@red, 10%);
+  background: @errorBackground;
+  border-color: @errorBorder;
+  color: @errorTextAlert !important;
+  padding-right: 30px;
 }
-.alert-warning {
+.alert-success a,
+.alert-danger a,
+.alert-error a,
+.alert-info a,
+.alert-sucess .alert-heading a,
+.alert-danger .alert-heading a,
+.alert-error .alert-heading a, 
+.alert-info .alert-heading a {
+  color: @white;
+  text-decoration: underline;
+}
+.alert-warning,
+.alert-warning .alert-heading {
   border: 1px solid @warningBorder;
   background-color: @warningBackground;
+  color: @warningText !important;
+  padding-right: 30px;
 }
 .alert-info,
 .alert-info .alert-heading {
   background-color: @infoBackground;
   border-color: @infoBorder;
-  color:  darken(@infoBackground, 70%);
+  color:  @infoText  !important;
+  padding-right: 30px;
 }
 
 
@@ -69,7 +86,7 @@
 
 .alert-top {
   position: fixed;
-  top: 38px;
+  top: 31px;
   height: 0;
   width: 100%;
   z-index: 1060;
@@ -81,8 +98,6 @@
 }
 .alert-top .alert {
   text-align: left;
-  @shadow: 0 1px 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
   margin-top: 0;
   margin-bottom: 10px;
 }
@@ -148,10 +163,10 @@
 
     //Alert buttons
     .row-fluid {
-      border-top: 1px solid #EDC959;
+      border-top: 1px solid @warningBorder;
 
       .alert-btn-cancel {
-        border-right: 1px solid #EDC959;
+        border-right: 1px solid @warningBorder;
       }
       .alert-btn-confirm {
         font-weight: bold;
@@ -166,7 +181,7 @@
         width: 50%;
 
         &:hover {
-          background-color: #F1EDD7;
+          background-color: @warningBorder;
           text-decoration: none;
         }
       }

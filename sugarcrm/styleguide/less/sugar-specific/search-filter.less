@@ -5,11 +5,10 @@
 .search-filter {
   // outer wrapper
   .control-group {
-    padding: 5px 8px 5px 9px;
+    padding: 5px 8px;
     margin-bottom: 0;
     background: @grayLighter;
-    border-top: 1px solid darken(@grayLighter,10%);
-    border-bottom: 1px solid darken(@grayLighter, 10%);
+    border-top: @borderWidget;
   }
   // toggle view
   .controls.btn-group-fit .btn-group {
@@ -19,20 +18,18 @@
 
 // search filter inputs
 .filter-view {
-  border: 1px solid @inputBorder;
+  border: @inputBorder;
   position: relative;
   margin-left: 0;
   background-color: @white;
   margin-bottom: 0;
   overflow: hidden;
   height: 26px;
-  .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
   .border-radius(@baseBorderRadius);
   .user-select(none);
   //not working for input focus
   &:focus {
-    border-color: rgba(82,168,236,0.8);
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
+    border-color: @linkColor !important;
   }
   // non-select2 filter pills
   .choice-related,
@@ -46,34 +43,35 @@
     margin-left: -6px;
     font-size: @fontSizeSmall;
     font-weight: bold;
-    line-height: 12px;
+    line-height: 14px;
     vertical-align: top;
-
     .choice-filter-label {
       vertical-align: top;
     }
     .choice-filter-close {
       margin-left: 2px;
       margin-right: -2px;
+      font-size: 14px;
+      vertical-align: top;
       i {
-        color: #b7d7f8;
-        font-size: 14px;
+        color: fade(@white, 70%);
         line-height: 12px;
+        vertical-align: middle;
         &:hover {
-          color: #4398ec;
+          color: @white;
           cursor: pointer;
         }
       }
     }
   }
   .choice-related {
-    background: darken(@grayLighter, 5%);
-    color: @gray;
+    background: @gray;
+    color: @white;
     cursor: text;
   }
   .choice-filter {
-    background: @dropdownLinkBackgroundHover;
-    color: @dropdownLinkColorHover;
+    background: @gray;
+    color: @white;
   }
   // select2 filter pills
   .select2-container {
@@ -111,6 +109,7 @@
       span {
         display: inline-block;
         margin-right: 0;
+        font-weight: 600;
       }
       .select2-arrow {
         display: none;
@@ -128,7 +127,7 @@
           margin-left: 4px;
         }
         &:hover {
-          .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
+          background: darken(@grayLighter, 10%);
         }
       }
       .select2-choice-related,
@@ -138,14 +137,9 @@
         display: inline-block;
         line-height: 12px;
       }
-      .select2-choice-related {
-        background: #c0f0ca;
-        color: #407648;
-        cursor: text;
-      }
       .select2-choice-filter {
-        background: @dropdownLinkBackgroundHover;
-        color: @dropdownLinkColorHover;
+        background: @gray;
+        color: @white;
       }
       a:hover {
         text-decoration: none;
@@ -182,8 +176,9 @@
         line-height: 12px;
         height: 12px;
         background: @grayLighter;
+
         &:hover {
-          .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
+          background: darken(@grayLighter, 10%);
         }
       }
     }
@@ -197,12 +192,7 @@
   .search-name {
     position: absolute;
     left: auto;
-    //In IE, focusing on this input field programmatically causes the filter dropdown to shift left.
-    //To work around this issue, width is set to 70% instead of 100%. The same problem still does
-    //exist if the width of the filter dropdown is wide enough that 70% is too wide.  However, it
-    //is an edge case. This workaround should cover the vast majority of cases. To really fix this
-    //issue, we need to re-implement how we layout components in our application.
-    width: 70%;
+    width: 100%;
     .box-sizing(border-box);
     height: 22px;
     border: 0;
@@ -231,13 +221,10 @@
 }
 
 .extend {
-  .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
-  margin: -1px 0 0;
   background: @grayLighter;
 
   .filter-header {
-    padding: 9px 8px 7px 9px;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
+    padding: 5px 8px;
     .controls {
       padding: 7px 0 0 10px;
     }
@@ -248,10 +235,11 @@
       margin-left: 1px;
     }
   }
+
   .filter-body {
-    padding: 7px 8px 7px 9px;
-    border-top: 1px solid lighten(@grayLighter, 5%);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
+    padding: 5px 0;
+    margin: 0 8px;
+    border-top: 1px dashed darken(@grayLighter, 15%);
     > .row-fluid {
       position: relative;
       padding-right: 64px;
@@ -269,7 +257,6 @@
             display: table-cell;
             height: inherit;
             vertical-align: middle;
-            position: relative;
           }
         }
       }
@@ -278,7 +265,7 @@
       .input-prepend.input-append {
         .add-on:first-child {
           background: none;
-          color: darken(@grayLighter, 40%);
+          color: @grayLight;
           left: 0;
           .calcWidth(~"30% - 6px");
         }
@@ -303,6 +290,7 @@
       left: 0px;
     }
   }
+
   // containing divs for create filter
   .filter-value {
     position: relative;
@@ -315,6 +303,7 @@
       }
     }
   }
+
   .filter-actions {
     position: absolute;
     right: 0;
@@ -358,8 +347,8 @@
       .box-shadow(none);
       span {
         .border-radius(10px 0 0 10px);
-        background: #ddd;
-        color: #777;
+        background: darken(@grayLighter, 10%);
+        color: @gray;
         padding: 2px 4px 2px 6px;
         margin-right: 2px;
       }
@@ -371,7 +360,7 @@
         background: @grayLighter;
       }
       a {
-        background: #E5F4FB;
+        background: @dropdownLinkBackgroundHover;
       }
       a:hover {
         text-decoration: none;
@@ -405,13 +394,11 @@
 .filter-options {
   .filter-definition-container:first-child {
     .filter-body {
-      padding: 9px 8px 7px 9px;
       border-top: none;
+      border-bottom: 1px dashed #d0d0d0;
     }
   }
   .filter-header {
-    border-top: 1px solid lighten(@grayLighter, 5%);
-    padding: 7px 8px 7px 9px;
     .controls {
       padding: 0;
     }
@@ -421,6 +408,12 @@
   }
 }
 
+.main-content {
+  .extend {
+    display: none;
+    border-top: @borderWidget;
+  }
+}
 
 // dropdown menu for filter pills
 .search-filter-dropdown {
@@ -428,7 +421,7 @@
   width: auto;
   margin-top: 5px;
   &.select2-drop.select2-drop-active {
-    .box-shadow(0px 0px 1px 0px @gray);//uiux-1172, using box-shadow over border because of artifacts
+    .box-shadow(0px 0px 1px 0px @gray);
     .border-radius(2px);
   }
   .result-selected {
@@ -441,7 +434,7 @@
     max-height: 235px;
     li {
       line-height: 26px;
-      border-bottom: 1px solid darken(@grayLighter, 5%);
+      border-bottom: @borderWidgetLight;
     }
     li:hover,
     .select2-highlighted {
@@ -450,10 +443,10 @@
     }
   }
   .select2-result.select2-result-border-top {
-    border-top: 1px solid #bbb;
+    border-top: 1px solid darken(@grayLighter, 20%);
   }
   .select2-result.select2-result-border-bottom {
-    border-bottom: 1px solid #bbb;
+    border-bottom: 1px solid darken(@grayLighter, 20%);
   }
   .select2-result {
     .select2-icon-prepend {
@@ -473,16 +466,17 @@
 .search-related-dropdown {
   margin-top: 0;
   .select2-drop-active {
-    border-top: 1px solid #5897FB;
+    border-top: 1px solid @linkColor;
   }
 }
+
 .drawer .dashablelist-filter {
   > div >.search-filter::before {
     content: "Default Data Filter";
     position: relative;
     left: 20px;
     font-size: 11px;
-    color: #76777a;
+    color: @grayLight;
   }
   .search-filter {
     .control-group {
@@ -498,3 +492,4 @@
 .filter.controls {
   margin-left: 0 !important;
 }
+

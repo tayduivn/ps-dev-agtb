@@ -2658,11 +2658,11 @@ $app_strings = array (
     'LBL_IMPORT_STARTED' => 'Import Started: ',
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
-    'LBL_SHOW_LESS' => 'Show Less',
-    'LBL_SHOW_MORE' => 'Show More',
+    'LBL_SHOW_LESS' => 'Show less',
+    'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
-    'LBL_SHOW_LESS_RECENTS' => 'Less recents...',
+    'LBL_SHOW_LESS_RECENTS' => '...Less recents',
     'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
@@ -2734,7 +2734,7 @@ $app_strings = array (
     'TPL_MASSLINK_SUCCESS' => '{{num}} records were linked successfully.',
     'TPL_MASSLINK_TITLE' => '{{module}} Mass Link',
 
-    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
+    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',

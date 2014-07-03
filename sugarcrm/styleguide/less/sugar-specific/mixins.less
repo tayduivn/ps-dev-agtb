@@ -124,6 +124,22 @@
       border-top-left-radius: @tl-radius;
 }
 
+.grayscale(@val) {
+  -webkit-filter: grayscale(@val);
+  -moz-filter: grayscale(@val);
+  -ms-filter: grayscale(@val);
+  -o-filter: grayscale(@val);
+  filter: grayscale(@val);
+}
+
+.brightness(@val) {
+  -webkit-filter: brightness(@val);
+  -moz-filter: brightness(@val);
+  -ms-filter: brightness(@val);
+  -o-filter: brightness(@val);
+  filter: brightness(@val);
+}
+
 .calcWidth(@val) {
   width: ~"-moz-calc(@{val})";
   width: ~"-webkit-calc(@{val})";
@@ -135,25 +151,25 @@
 }
 
 /* Mixins for .scroll-width classes on flex lists */
-.right-shadow {
+.right-shadow(@height: 37px) {
   content: "";
   position: absolute;
   right: -5px;
   top: 0;
   bottom: 0;
   width: 5px;
-  height: 43px;
+  height: @height;
   #gradient > .horizontal(rgba(0,0,0,0.1), rgba(255,255,255,0));
   background-color: transparent;
 }
-.left-shadow {
+.left-shadow(@height: 37px) {
   content: "";
   position: absolute;
   left: -5px;
   top: 0;
   bottom: 0;
   width: 5px;
-  height: 43px;
+  height: @height;
   #gradient > .horizontal(rgba(255,255,255,0), rgba(0,0,0,0.1));
   background-color: transparent;
 }
@@ -178,7 +194,7 @@
   display: inline-block;
   line-height: 14px;
   font-size: 14px;
-  color: lighten(@gray,20%);
+  color: @gray;
   background: none;
   font-family: FontAwesome;
   font-weight: normal;

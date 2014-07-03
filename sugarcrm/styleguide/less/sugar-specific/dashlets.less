@@ -53,7 +53,7 @@
         font-weight: 900;
         text-align: center;
         top: 30%;
-        text-shadow: 0px 0px 3px rgb(0,0,0);
+        text-shadow: none;
         color: @white !important;
       }
     }
@@ -64,7 +64,7 @@
   font-size: @baseFontSize;
   overflow: hidden;
   width: 100%;
-  .border-radius(0 0 3px 3px);
+  .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
   & > div {
     overflow-x: hidden;
     overflow-y: auto;
@@ -72,7 +72,7 @@
 }
 
 .dashlet {
-  border: 0;
+  border: @borderWidget;
   padding: 0;
   .box-shadow(@shadowWidget);
   position: relative;
@@ -88,37 +88,38 @@
       .border-radius(4px);
     }
     h4 {
-      .border-radius(4px 0 0 4px);
+      .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
     }
   }
   h4,
   .dashlet-options {
     font-size: @baseFontSize;
-    color: @tableHeader;
     line-height: @baseLineHeight;
     font-weight: 500;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
+    color: @gray;
+    background: @grayLighter;
+    border-bottom: @borderWidget;
     margin: 0;
     .rtlPadding(@direction,7px 10px 7px 80px);
     .rtl(@direction,ltr);
     .rtlTextAlign(@direction,right);
     a {
-      color: lighten(@gray, 20%);
+      color: @gray;
     }
   }
   .dashlet-header {
-    .border-radius(4px 4px 0 0);
-    #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
+    .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+    background: @grayLighter;
   }
   h4 {
     padding: 7px 80px 8px 10px;
     cursor: move;
-    .border-radius(4px 0 0 0);
+    .border-radius(@baseBorderRadius 0 0 0);
+    font-size: @fontSizeLarge;
   }
 
   .dashlet-options {
     .border-radius(0);
-    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
     padding: 6px 8px;
     .select2-container,
     .btn-group {
@@ -128,10 +129,12 @@
     .btn:first-child {
       margin: 0;
     }
-    .btn,
     .btn-slider,
     .dropdown {
       font-size: @baseFontSize;
+    }
+    .btn {
+      font-size: @fontSizeSmall;
     }
     .dropdown-toggle {
       margin-left: 0;
@@ -145,7 +148,7 @@
   &.out {
     padding: 0;
     h4 {
-      .border-radius(4px);
+      .border-radius(@baseBorderRadius);
       border-bottom: 0 !important;
     }
     .dashlet-content,
@@ -297,7 +300,7 @@
   //DNB dashlet
   .jstree-sugar ul.list {
     border-top: none;
-    border-bottom: 1px solid darken(@grayLighter,5%);
+    border-bottom: @borderWidgetLight;
     li {
       padding: 0;
       &> a {
@@ -316,7 +319,7 @@
   .accordion-group {
     margin-bottom: 0;
     border: none;
-    border-bottom: 1px solid darken(@grayLighter,5%);
+    border-bottom: @borderWidgetLight;
   }
   .accordion-inner {
     div.dnb-subtitle {
@@ -347,17 +350,17 @@
     iframe {
       border: 0;
       width: 100%;
-      .border-radius(0 0 3px 3px);
+      .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
     }
   }
 
-  .dataTable tr:last-child td {
+  .dataTable tr:last-child {
     border-bottom-width: 0;
-    &:first-child {
-      .border-bottom-left-radius(3px);
+    td:first-child {
+      .border-bottom-left-radius(@baseBorderRadius);
     }
-    &:last-child {
-      .border-bottom-right-radius(3px);
+    td:last-child {
+      .border-bottom-right-radius(@baseBorderRadius);
     }
   }
 
@@ -419,10 +422,10 @@
     padding: 10px;
   }
   .help-body {
-    padding: 10px 0 5px;
+    padding: 10px 0px;
   }
   .help-more {
-    margin-top: 15px 0 10px;
+    margin-top: 20px;
   }
 }
 
