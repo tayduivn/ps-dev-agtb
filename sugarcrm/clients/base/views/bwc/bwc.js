@@ -14,10 +14,7 @@
  * @extends View.View
  */
 ({
-    tagName: 'iframe',
     className: 'bwc-frame',
-    // TODO check if we need to support multiple bwc views
-    id: 'bwc-frame',
     // Precompiled regex (note-regex literal causes errors but RegExp doesn't)
     moduleRegex: new RegExp('module=([^&]*)'),
     idRegex: new RegExp('record=([^&]*)'),
@@ -39,10 +36,10 @@
             app.router.navigate('#Home', {trigger: true});
             return;
         }
-        this.$el.attr('src', app.utils.addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
 
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
+        app.routing.before('route', this.unbindDom, this, true);
     },
 
     /**
@@ -51,7 +48,7 @@
      * Inspect changes on current HTML input elements with initial values.
      */
     hasUnsavedChanges: function() {
-        var bwcWindow = this.$el.get(0).contentWindow;
+        var bwcWindow = this.$('iframe').get(0).contentWindow;
         //if bwcModel is empty, then it should return false (since it's not in enabled actions)
         // or we couldnt find a edit view to compare or the view doesn't want to be compared
         if (_.isEmpty(this.bwcModel.attributes) || _.isUndefined(bwcWindow.EditView) || $(bwcWindow.EditView).data('disablebwchaschanged')) {
@@ -104,33 +101,37 @@
      * Render the iFrame and listen for content changes on it.
      *
      * Every time there is an update on the iFrame, we:
-     * <li>update the controller context to mach our bwc module (if exists)</li>
-     * <li>update our url to match the current iFrame location in bwc way</li>
-     * <li>rewrite links for sidecar modules</li>
-     * <li>rewrite links that go for new windows</li>
-     * <li>memorize the form input elements in order to warn unsaved changes</li>
-     * <li>update the context model to mach our current bwc module (if exists)</li>
+     * - clear any '.bwc.sugarcrm' event (namespace for any bind in this view);
+     * - update the controller context to mach our bwc module (if exists);
+     * - update our url to match the current iFrame location in bwc way;
+     * - rewrite links for sidecar modules;
+     * - rewrite links that go for new windows;
+     * - memorize the form input elements in order to warn unsaved changes;
+     * - update the context model to mach our current bwc module (if exists);
      *
      * @private
      */
     _renderHtml: function() {
         var self = this;
 
+        this.url = app.utils.addIframeMark(this.context.get('url') || 'index.php?module=' + this.module + '&action=index');
         app.view.View.prototype._renderHtml.call(this);
 
-        this.$el.load(function() {
+        this.$('iframe').load(function() {
             //In order to update current location once bwc link is clicked.
             var url = '#bwc/index.php' + this.contentWindow.location.search;
             self._setCurrentUrl(url);
-
-            self._setModule(this.contentWindow);
-            self._setBwcModel(this.contentWindow);
-            self._setModel(this.contentWindow);
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback
                 return;
             }
+
+            $(this.contentWindow).one('beforeunload', _.bind(self.unbindDom, self));
+
+            self._setModule(this.contentWindow);
+            self._setBwcModel(this.contentWindow);
+            self._setModel(this.contentWindow);
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
             self._cloneBodyClasses(this.contentWindow);
@@ -254,7 +255,7 @@
                 return;
             }
             // Reload the BWC to update subpanels.
-            self.$el.get(0).contentWindow.location.reload(true);
+            self.$('iframe').get(0).contentWindow.location.reload(true);
         });
     },
 
@@ -278,7 +279,7 @@
         }, function(model) {
             if (model) {
                 // Reload the BWC to update subpanels.
-                self.$el.get(0).contentWindow.location.reload(true);
+                self.$('iframe').get(0).contentWindow.location.reload(true);
             }
         });
     },
@@ -299,7 +300,7 @@
      * Revert model attributes with the current form elements.
      */
     revertBwcModel: function() {
-        var bwcWindow = this.$el.get(0).contentWindow;
+        var bwcWindow = this.$('iframe').get(0).contentWindow;
         var newAttributes = this.serializeObject(bwcWindow.EditView);
         this.resetBwcModel(newAttributes);
     },
@@ -381,7 +382,7 @@
             return;
         }
 
-        elem.click(function(e) {
+        elem.on('click.bwc.sugarcrm', function(e) {
             if (e.button !== 0 || e.ctrlKey || e.metaKey) {
                 return;
             }
@@ -403,6 +404,9 @@
      *
      * See `include/modules.php` for the list (`$bwcModules`) of modules not
      * sidecar ready.
+     *
+     * This method is private because it binds data and might cause memory
+     * leaks. Please use this with caution and with {@link #unbindDom}.
      *
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
@@ -447,9 +451,41 @@
     },
 
     /**
+     * Unbinds all events that were hooked in this view with the `bwc.sugarcrm`
+     * namespace into links (`<a>` anchor tags).
+     *
+     * Only unbinds if the content window has jQuery and the `iframe` is
+     * loaded.
+     * To avoid memory leaks, please always confirm that this function is
+     * called when any event is added to the `iframe` from this view or
+     * sidecar.
+     *
+     * Example:
+     *
+     *     // write some `methodWithBind` that binds click events in bwc
+     *     // elements in this bwc view.
+     *     // call that method from within the bwc view like:
+     *     parent.SUGAR.App.view.views.BaseBwcView.prototype.methodWithBind();
+     *     // memory leak will happen if `methodWithBind` doesn't use the
+     *     // `.bwc.sugarcrm` namespace.
+     *
+     * If the BWC view is replacing it's current html with a new one, it should
+     * also call this method before replacing the contents, so that it won't
+     * cause memory leak.
+     */
+    unbindDom: function() {
+        var bwcWindow = this.$('iframe').get(0).contentWindow;
+        if (!bwcWindow || bwcWindow.$ === undefined) {
+            return;
+        }
+        $('a', bwcWindow.document).off('.bwc.sugarcrm');
+    },
+
+    /**
      * {@inheritDoc}
      */
     _dispose: function() {
+        app.routing.offBefore('route', this.unbindDom, this, true);
         if (this.bwcModel) {
             this.bwcModel.off();
             this.bwcModel = null;
