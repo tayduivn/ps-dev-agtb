@@ -24,6 +24,42 @@ class HistoryApi extends RelateApi
         'tasks' => 'Tasks',
         'emails' => 'Emails',
     );
+    /**
+     * filters per module for list requests
+     * @var array
+     */
+    protected $moduleFilters = array(
+        'Calls' => array(
+            array(
+                'status' => array(
+                    '$in' => array(
+                        'Not Held',
+                        'Held'
+                    ),
+                ),
+            ),
+        ),
+        'Meetings' =>array(
+            array(
+                'status' => array(
+                    '$in' => array(
+                        'Not Held',
+                        'Held'
+                    ),
+                ),
+            ),
+        ),
+        'Tasks' =>array(
+            array(
+                'status' => array(
+                    '$in' => array(
+                        'Deferred',
+                        'Completed'
+                    ),
+                ),
+            ),
+        )
+    );
 
     /**
      * This is the list of valid fields that should be on each select
@@ -76,7 +112,6 @@ class HistoryApi extends RelateApi
 
         $query = new SugarQuery();
         $api->action = 'list';
-        $seeds = array();
         $orderBy = array();
 
         // modules is a char field used for sorting on module name
@@ -101,13 +136,14 @@ class HistoryApi extends RelateApi
         } else {
             $args['fields'] = implode(',', $this->validFields);
         }
-        
+
         if (!empty($args['order_by']) || !empty($args['fields'])) {
             $args = $this->scrubFields($args);
         }
 
         unset($args['order_by']);
         foreach ($this->moduleList as $link_name => $module) {
+            $args['filter'] = array();
             $savedFields = $args['fields'];
             $args['link_name'] = $link_name;
 
@@ -120,6 +156,9 @@ class HistoryApi extends RelateApi
             }
 
             $args['fields'] = implode(',', $fields);
+            if (!empty($this->moduleFilters[$module])) {
+                $args['filter'] = $this->moduleFilters[$module];
+            }
 
             list($args, $q, $options, $linkSeed) = $this->filterRelatedSetup($api, $args);
             $q->select()->selectReset();
@@ -193,7 +232,7 @@ class HistoryApi extends RelateApi
             foreach ($this->moduleList as $module_name) {
                 $seed = BeanFactory::getBean($module_name);
                 if (!isset($seed->field_defs[$field])) {
-                    $args['placeholder_fields'][$module_name][$field] = $field;                    
+                    $args['placeholder_fields'][$module_name][$field] = $field;
                 }
             }
         }
