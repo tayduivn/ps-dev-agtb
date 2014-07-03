@@ -2252,9 +2252,10 @@ return str_replace(' > ','_',
             if ($column_field_name == 'summary_columns' && $this->do_chart) {
                 //_pp($display);
                 $raw_value = "";
+                $keys = array_keys($fields);
                 foreach ($this->report_def['summary_columns'] as $index => $column) {
-                    if ($column['name'] == $display_column['name']) {
-                        $keys = array_keys($fields);
+                    if ($column['name'] == $display_column['name'] && isset($keys[$index])
+                    && isset($fields[$keys[$index]])) {
                         $raw_value = $fields[$keys[$index]];
                         break;
                     }
