@@ -248,21 +248,18 @@
                 return;
             }
 
-            var filterDef = this._getFilterDefFromMeta(filterId);
-            if (!filterDef) {
-                this._fetchCustomFilter(filterId, {
-                    success: _.bind(function(model) {
-                        var filterDef = model.get('filter_definition');
-                        this._displayDashlet(filterDef);
-                    }, this),
-                    error: _.bind(function(err) {
-                        this._displayDashlet();
-                    }, this)
-                });
-                return;
-            }
-
-            this._displayDashlet(filterDef);
+            var filters = app.data.createBeanCollection('Filters');
+            filters.setModuleName(this.settings.get('module'));
+            filters.load({
+                success: _.bind(function() {
+                    var filter = filters.collection.get(filterId);
+                    var filterDef = filter && filter.get('filter_definition');
+                    this._displayDashlet(filterDef);
+                }, this),
+                error: _.bind(function(err) {
+                    this._displayDashlet();
+                }, this)
+            });
         }
     },
 
@@ -508,58 +505,6 @@
         this.layout._addComponentsFromDef([{
             layout: 'dashablelist-filter'
         }]);
-    },
-
-    /**
-     * Acquires predefined filters that may exist in metadata, for a given
-     * module.
-     *
-     * @param {String} module The module to fetch predefined filters from.
-     * @return {Array} The list of predefined filter objects.
-     * @private
-     */
-    _getPreDefinedFilters: function(module) {
-        var moduleMeta = app.utils.deepCopy(app.metadata.getModule(module));
-
-        if (_.isObject(moduleMeta)) {
-            return _.compact(_.flatten(_.pluck(_.compact(_.pluck(moduleMeta.filters, 'meta')), 'filters')));
-        }
-    },
-
-    /**
-     * Fetches the appropriate filter definition from the module metadata,
-     * for a given filter ID.
-     *
-     * @param {String} id The ID of the filter.
-     * @return {Array} The filter definition array.
-     * @private
-     */
-    _getFilterDefFromMeta: function(id) {
-        if (!id) {
-            return;
-        }
-
-        var module = this.settings.get('module'),
-            filtersFromMeta = this._getPreDefinedFilters(module),
-            filter = _.find(filtersFromMeta, function(filter) {
-                return filter.id === id;
-            }, this);
-
-        if (filter) {
-            return filter.filter_definition;
-        }
-    },
-
-    /**
-     * Fetches a Filters bean record from the server using the supplied ID.
-     *
-     * @param {String} id The ID of the filter to fetch.
-     * @param {Function} callbacks Callback functions to execute after fetch.
-     * @private
-     */
-    _fetchCustomFilter: function(id, callbacks) {
-        var filterModel = app.data.createBean('Filters', {id: id});
-        filterModel.fetch(callbacks);
     },
 
     /**

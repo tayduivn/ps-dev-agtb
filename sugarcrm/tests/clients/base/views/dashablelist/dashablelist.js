@@ -143,46 +143,31 @@ describe('Base.View.Dashablelist', function() {
                 expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
             });
 
-            it('should call _displayDashlet & _getFilterDefFromMeta when in view mode with a filter_id found in meta', function() {
-                var stubGetFilterDefFromMeta = sinon.collection.stub(view, '_getFilterDefFromMeta')
-                        .withArgs('testFilterID')
-                        .returns('testFilterDef'),
-                    getStub = sinon.collection.stub(view.settings, 'get', function(param) {
-                        if (param === 'filter_id') {
-                            return 'testFilterID';
-                        } else {
-                            return this.attributes[param];
-                        }
-                    });
+            it('should call _displayDashlet when in view mode with a filter_id found', function() {
+                SugarTest.declareData('base', 'Filters');
+                sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+                    options.success();
+                });
+
+                var filterTest = {
+                    id: 'testFilterID',
+                    filter_definition: [
+                        {name: 'test'}
+                    ]
+                };
+
+                view.settings.set('module', moduleName);
+                view.settings.set('filter_id', filterTest.id);
+
+                // Prepare a collection with this filter.
+                var filters = app.data.createBeanCollection('Filters');
+                filters.setModuleName(moduleName);
+                filters.load();
+                filters.collection.add(filterTest);
 
                 view.initDashlet('view');
 
-                expect(stubGetFilterDefFromMeta).toHaveBeenCalledWith('testFilterID');
-                expect(stubInitializeSettings).toHaveBeenCalledOnce();
-                expect(stubConfigureDashlet).not.toHaveBeenCalled();
-                expect(view.settings._events['change:module']).not.toBeDefined();
-                expect(view.layout.context._events['filter:add']).not.toBeDefined();
-                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
-            });
-
-            it('should call _fetchCustomFilter when in view mode with filter_id not found in meta', function() {
-                var stubFetchCustomFilter = sinon.collection.stub(view, '_fetchCustomFilter'),
-                    getStub = sinon.collection.stub(view.settings, 'get', function(param) {
-                        if (param === 'filter_id') {
-                            return 'testFilterID';
-                        } else {
-                            return this.attributes[param];
-                        }
-                    });
-
-                view.initDashlet('view');
-
-                expect(stubFetchCustomFilter).toHaveBeenCalledWith('testFilterID');
-                expect(stubInitializeSettings).toHaveBeenCalledOnce();
-                expect(stubConfigureDashlet).not.toHaveBeenCalled();
-                expect(view.settings._events['change:module']).not.toBeDefined();
-                expect(view.layout.context._events['filter:add']).not.toBeDefined();
-                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
+                expect(stubDisplayDashlet).toHaveBeenCalledWith(filterTest.filter_definition);
             });
         });
 
@@ -424,82 +409,6 @@ describe('Base.View.Dashablelist', function() {
         });
     });
 
-    describe('_getPreDefinedFilters', function() {
-        it('should return all predefined filters from a specified module', function() {
-            var fakeModuleMeta = {
-                    'filters': {
-                        'basic': {
-                            'meta': {
-                                'filters': [
-                                    {'filter_definition': {'$test1': ''},'id': 'test1'},
-                                    {'filter_definition': {'$test2': ''},'id': 'test2'}
-                                ]
-                            }
-                        },
-                        'default': {
-                            'meta': {
-                                'filters': [
-                                    {'filter_definition': {'$test3': ''},'id': 'test3'},
-                                    {'filter_definition': {'$test4': ''},'id': 'test4'}
-                                ]
-                            }
-                        },
-                        'person': {
-                            'meta': {
-                                'filters': [
-                                    {'filter_definition': {'$test5': ''},'id': 'test5'},
-                                    {'filter_definition': {'$test6': ''},'id': 'test6'}
-                                ]
-                            }
-                        }
-                    }
-                },
-                expectedArray = [
-                    {'filter_definition': {'$test1': ''},'id': 'test1'},
-                    {'filter_definition': {'$test2': ''},'id': 'test2'},
-                    {'filter_definition': {'$test3': ''},'id': 'test3'},
-                    {'filter_definition': {'$test4': ''},'id': 'test4'},
-                    {'filter_definition': {'$test5': ''},'id': 'test5'},
-                    {'filter_definition': {'$test6': ''},'id': 'test6'}
-                ],
-                getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns(fakeModuleMeta);
-
-            var result = view._getPreDefinedFilters('test');
-
-            expect(getModuleStub).toHaveBeenCalled();
-            expect(result).toEqual(expectedArray);
-        });
-    });
-
-    describe('_getFilterDefFromMeta', function() {
-        it('should find the filterDef from meta corresponding to the supplied filter ID', function() {
-            var fakePredefinedFilters = [
-                    {'filter_definition': {'$test1': ''},'id': 'test1'},
-                    {'filter_definition': {'$test2': ''},'id': 'test2'}
-                ],
-                getPreDefinedFiltersStub = sinon.collection.stub(view, '_getPreDefinedFilters').returns(fakePredefinedFilters);
-
-            var result = view._getFilterDefFromMeta('test2');
-
-            expect(getPreDefinedFiltersStub).toHaveBeenCalled();
-            expect(result).toEqual(fakePredefinedFilters[1]['filter_definition']);
-        });
-    });
-
-    describe('_fetchCustomFilter', function() {
-        it('should do an app.api.call to fetch the specified filter', function() {
-            var testFilterID = 'testID',
-                testCallbacks = {success: function(){}, error: function(){}},
-                _fetch = {fetch: sinon.collection.stub()},
-                createBeanStub = sinon.collection.stub(app.data, 'createBean').returns(_fetch);
-
-            view._fetchCustomFilter(testFilterID, testCallbacks);
-
-            expect(createBeanStub).toHaveBeenCalledWith('Filters', {id: testFilterID});
-            expect(_fetch.fetch).toHaveBeenCalledWith(testCallbacks);
-        });
-    });
-
     describe('_applyFilterDef', function() {
         var getModuleStub,
             filter1 = {'name': {'$starts': 'A'}},
@@ -541,6 +450,7 @@ describe('Base.View.Dashablelist', function() {
         describe('_displayDashlet', function() {
             var stubStartAutoRefresh,
                 stubGetColumns,
+                stubGetFields,
                 stubApplyFilterDef,
                 stubContextReload;
 
