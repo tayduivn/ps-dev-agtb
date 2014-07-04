@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     plugins: [
         'EllipsisInline',
@@ -23,19 +23,19 @@
     ],
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     fieldTag: 'input[data-type=date]',
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     events: {
         'hide': 'handleHideDatePicker'
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     initialize: function(options) {
         // FIXME: Remove this when SIDECAR-517 gets in
@@ -227,7 +227,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     unbindDom: function() {
         this._super('unbindDom');
@@ -340,7 +340,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     _render: function() {
         this._super('_render');
@@ -353,7 +353,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     _dispose: function() {
         // FIXME: new date picker versions have support for plugin removal/destroy

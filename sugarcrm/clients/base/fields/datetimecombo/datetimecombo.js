@@ -24,7 +24,7 @@
     secondaryFieldTag: 'input[data-type=time]',
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Add `FieldDuplicate` plugin to the list of required plugins.
      */
@@ -39,7 +39,7 @@
     },
 
     /**
-     *{@inheritDoc}
+     * @inheritDoc
      *
      * Add `show-timepicker` on click listener.
      */
@@ -79,7 +79,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     _initPlaceholderAttribute: function() {
         this._super('_initPlaceholderAttribute');
@@ -210,7 +210,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Bind time picker `changeTime` event expecting to set the default date if
      * not filled yet, see {@link #handleDateTimeChanges}.
@@ -237,7 +237,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Add extra logic to unbind secondary field tag.
      */
@@ -370,7 +370,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     _render: function() {
         this._super('_render');
@@ -383,7 +383,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     _dispose: function() {
         if (this.$(this.secondaryFieldTag).timepicker) {
