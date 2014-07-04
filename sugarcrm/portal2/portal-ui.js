@@ -26,16 +26,4 @@
         }
     };
 
-    /**
-     * Overrides Field::_render() to fix placeholders on IE and old browsers
-     */
-    var __superFieldRender__ = app.view.Field.prototype._render;
-    app.view.Field.prototype._render = function() {
-        __superFieldRender__.call(this);
-        if($.fn.placeholder){
-            this.$("input[placeholder]").placeholder();
-        }
-    };
-
-
 })(SUGAR.App);
