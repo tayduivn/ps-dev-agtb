@@ -858,17 +858,6 @@ protected function checkQuery($sql, $object_name = false)
 		) {
 			return true;
 		}
-
-        // field of "id" type is nullable, unless its name is "id" or "isnull" attribute is set to FALSE
-        if (isset($vardef['name']) && $vardef['name'] != 'id'
-            && ((isset($vardef['type']) && $vardef['type'] == 'id')
-                || (isset($vardef['dbType']) && $vardef['dbType'] == 'id'))
-            && (!isset($vardef['isnull'])
-                || ($vardef['isnull'] !== false && $vardef['isnull'] !== 'false'))
-        ) {
-            return true;
-        }
-
 		return false;
 	}
 
