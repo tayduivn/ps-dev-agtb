@@ -402,6 +402,34 @@ class MssqlManager extends DBManager
         return $limitUnionSQL;
     }
 
+    /**
+     * Checks the query for UNION.
+     * If UNION(s) in main query and sub queries not exists then this's union query.
+     * If UNION(s) in sub queries and not exists in main query then this's not union query.
+     * If UNION(s) in sub queries and in main query then this's union query.
+     *
+     * @param string $sql
+     * @return boolean
+     */
+    protected function isUnionQuery($sql)
+    {
+        if (stripos($sql, 'UNION') && !preg_match("/(')(UNION).?(')/i", $sql)) {
+            if (preg_match_all('/\(\s*(select[^)]+)\)/i', $sql, $matches)) {
+                $isUnionInSub = false;
+                $sqlMain = $sql;
+                foreach ($matches[0] as $query) {
+                    if (stripos($query, 'UNION') && !preg_match("/(')(UNION).?(')/i", $query)) {
+                        $isUnionInSub = true;
+                    }
+                    $sqlMain = str_ireplace($query, '', $sqlMain);
+                }
+                return !$isUnionInSub || (stripos($sqlMain, 'UNION') && !preg_match("/(')(UNION).?(')/i", $sqlMain));
+            }
+            return true;
+        }
+        return false;
+    }
+
 	/**
 	 * FIXME: verify and thoroughly test this code, these regexps look fishy
      * @see DBManager::limitQuery()
@@ -412,7 +440,7 @@ class MssqlManager extends DBManager
         $count = (int)$count;
         $newSQL = $sql;
         $distinctSQLARRAY = array();
-        if (strpos($sql, "UNION") && !preg_match("/(')(UNION).?(')/i", $sql))
+        if ($this->isUnionQuery($sql))
             $newSQL = $this->handleUnionLimitQuery($sql,$start,$count);
         else {
             if ($start < 0)
