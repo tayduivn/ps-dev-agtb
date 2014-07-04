@@ -51,8 +51,18 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $this->SetKeywords($pdfTemplate->keywords);
                 $this->templateLocation = $this->buildTemplateFile($pdfTemplate, $previewMode);
 
-                if (!empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
-                    $this->setHeaderData('', 0, $pdfTemplate->header_title, $pdfTemplate->header_text);
+                if (!empty($pdfTemplate->header_logo) &&
+                    !empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
+                    // Create a temporary copy of the header logo
+                    // and append the original filename, so TCPDF can figure the extension
+                    $headerLogo = 'upload/' . $pdfTemplate->id . $pdfTemplate->header_logo;
+                    copy('upload/' . $pdfTemplate->id, $headerLogo);
+                    $this->setHeaderData(
+                        $headerLogo,
+                        PDF_HEADER_LOGO_WIDTH,
+                        $pdfTemplate->header_title,
+                        $pdfTemplate->header_text
+                    );
                     $this->setPrintHeader(true);
                 }
                 if (!empty($pdfTemplate->footer_text)) {
@@ -421,6 +431,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
   				$this->SetX($ormargins['left']);
   			}
   			$this->Cell(0, 0, '', 'T', 0, 'C');
+
+            // Remove the temporary logo copy
+            unlink($headerdata['logo']);
   		}
 
     /**

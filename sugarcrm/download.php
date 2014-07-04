@@ -128,6 +128,14 @@ else {
             //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE notes.id = '" . $db->quote($_REQUEST['id']) ."'";
             $check_image = true;
+        }  elseif ($file_type === 'pdfmanager') {
+            $query = "SELECT header_logo name FROM pdfmanager ";
+            //BEGIN SUGARCRM flav=pro ONLY
+            if(!$focus->disable_row_level_security){
+                $focus->add_team_security_where_clause($query);
+            }
+            //END SUGARCRM flav=pro ONLY
+            $query .= "WHERE pdfmanager.id = '" . $db->quote($_REQUEST['id']) ."'";
 		} elseif( !isset($_REQUEST['isTempFile']) && !isset($_REQUEST['tempName'] ) && isset($_REQUEST['type']) && $file_type!='temp' ){ //make sure not email temp file.
 			$query = "SELECT filename name FROM ". $file_type ." ";
             //BEGIN SUGARCRM flav=pro ONLY
