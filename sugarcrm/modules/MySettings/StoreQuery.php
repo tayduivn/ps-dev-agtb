@@ -81,7 +81,7 @@ class StoreQuery{
 		   }
 		}
 
-		$current_user->setPreference($name.'Q', $this->query);
+		$current_user->setPreference($name.'Q', $this->query, 0, "sq_{$name}Q");
 	}
 	
 	function clearQuery($name){
@@ -240,7 +240,7 @@ class StoreQuery{
 	public static function getStoredQueryForUser($module)
 	{
 		global $current_user;
-		return $current_user->getPreference($module.'Q');
+		return $current_user->getPreference($module.'Q', "sq_{$module}Q");
 	}	
 }
 ?>
