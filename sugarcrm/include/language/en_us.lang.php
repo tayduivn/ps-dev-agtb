@@ -4184,10 +4184,6 @@ $app_strings = array (
     'UPLOAD_MAXIMUM_EXCEEDED'    => 'Size of Upload ({0} bytes) Exceeded Allowed Maximum: {1} bytes',
     'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
-
-    // Preview pane
-    'LBL_PREVIEW_BWC_ERROR' => 'Cannot preview a record operating in backwards compatibility mode.',
-
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
@@ -4894,6 +4890,7 @@ $app_strings = array (
     'LBL_CHART_LEGEND_OPEN' => 'Show legend',
     'LBL_CHART_CONTROLS_CLOSE' => 'Hide controls',
     'LBL_CHART_CONTROLS_OPEN' => 'Show controls',
+    'LBL_CHART_UNDEFINED' => 'Undefined',
 
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',
@@ -4997,6 +4994,9 @@ $app_strings = array (
     'LBL_MORE_HISTORY' => 'More history...',
     'LBL_RELATED_CONTACT' => 'Related Contact',
     'LBL_MODULE_TYPE' => 'Type',
+    'LBL_EMAIL_TO' => 'Email To',
+    'LBL_EMAIL_FROM' => 'Email From',
+    'LBL_PREVIEW_BWC_TOOLTIP' => 'Legacy modules cannot be previewed',
 
     //SFA
     'LBL_BEST' => 'Best',

@@ -473,9 +473,10 @@ class Link2 {
             {
                 if (empty($this->beans[$id]))
                 {
-                    $tmpBean = BeanFactory::getBean($rel_module, $id);
-                    if($tmpBean !== false)
+                    $tmpBean = BeanFactory::retrieveBean($rel_module, $id);
+                    if ($tmpBean) {
                         $result[$id] = $tmpBean;
+                    }
                 } else {
                     $result[$id] = $this->beans[$id];
                 }

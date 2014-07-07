@@ -116,8 +116,7 @@ class ChartDisplay
 
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();
-                foreach ($this->reporter->report_def['group_defs'] as $group_def)
-                {
+                foreach ($this->reporter->report_def['group_defs'] as $group_def) {
                     $groupByNames[] = $group_def['name'];
                 }
                 $sugarChart->group_by = $groupByNames;
@@ -326,7 +325,7 @@ class ChartDisplay
             $currency = BeanFactory::getBean('Currencies')->getUserCurrency();
 
             $currency_symbol = $currency->symbol;
-        } else if (!isset($report_defs['numerical_chart_column_type'])) {
+        } elseif (!isset($report_defs['numerical_chart_column_type'])) {
             return '';
         }
 
@@ -464,8 +463,9 @@ class ChartDisplay
     {
         if (!empty ($numbers)) {
             $max = max($numbers);
-            if ($max < 1)
+            if ($max < 1) {
                 return $max;
+            }
             $base = pow(10, floor(log10($max)));
             return ceil($max / $base) * $base;
         } else {
@@ -481,7 +481,7 @@ class ChartDisplay
      */
     public function get_cache_file_name($reporter = null)
     {
-        if(is_null($reporter)) {
+        if (is_null($reporter)) {
             $reporter = $this->reporter;
         }
         global $current_user;
@@ -521,8 +521,7 @@ class ChartDisplay
         }
 
         // Bug #57213 : Reports with data series removed render charts inconsistently
-        if ( $this->reporter && !$this->reporter->has_summary_columns() )
-        {
+        if ($this->reporter && !$this->reporter->has_summary_columns()) {
             global $current_language;
             $mod_strings = return_module_language($current_language, 'Reports');
             return $mod_strings['LBL_CANNOT_DISPLAY_CHART_MESSAGE'];

@@ -39,7 +39,20 @@ class TemplateField{
 	var $audited= 0;
 	var $massupdate = 0;
 	var $importable = 'true' ;
-	var $duplicate_merge=0;
+
+    /**
+     * "duplicate_merge" attribute is considered enabled, if not specified
+     * "merge_filter" attribute is considered disabled, if not specified
+     *
+     * @var int
+     *
+     * @see get_dup_merge_def()
+     * @see modules/MergeRecords/Step1.php
+     * @see show_field()
+     * @see MergeDuplicatesView#_isDuplicateMergeEnabled
+     */
+    public $duplicate_merge = 1;
+
 	var $new_field_definition;
 	var $reportable = true;
 	var $label_value = '';

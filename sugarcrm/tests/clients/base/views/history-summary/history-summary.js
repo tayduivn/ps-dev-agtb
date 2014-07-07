@@ -98,7 +98,10 @@ describe('Base.View.HistorySummary', function() {
         beforeEach(function() {
             field = {
                 name: '',
-                model: new Backbone.Model()
+                model: new Backbone.Model(),
+                def: {
+                    type: 'default'
+                }
             };
             superStub = sinon.stub(view, '_super', function() {});
             testModule = 'TestModule';

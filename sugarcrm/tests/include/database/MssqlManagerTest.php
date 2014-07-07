@@ -226,4 +226,135 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $likestr = $this->_db->sqlLikeString($str, '%', false);
         $this->assertEquals('[[][[]A-Z]', $likestr);
     }
+
+    /**
+     * Data provider for test of check union(s) in query.
+     *
+     * @return array
+     */
+    public function providerIsUnionQuery()
+    {
+        return array(
+            // If UNION(s) in main query and sub queries not exists then this's union query.
+            array(
+                "
+                    select
+                        emails1.id id,
+                        emails1.date_modified date_modified
+                    from emails1
+                    union
+                    select
+                        emails.id id,
+                        emails.date_modified date_modified
+                    from emails
+                    where emails.deleted = 0
+                    order by emails.date_modified desc
+                ",
+                true
+            ),
+            // If UNION(s) in sub queries and not exists in main query then this's not union query.
+            array(
+                "
+                    select
+                          emails.id id,
+                          emails.date_modified date_modified,
+                          emails.assigned_user_id assigned_user_id,
+                          emails.created_by created_by
+                    from emails
+                    inner join (
+                        select tst.team_set_id
+                        from team_sets_teams tst
+                        inner join team_memberships team_memberships on tst.team_id = team_memberships.team_id
+                                and team_memberships.user_id = N'2e98b15e-89a9-b6c2-a8a1-53b42599bd14'
+                                and team_memberships.deleted=0 group by tst.team_set_id
+                    ) emails_tf on emails_tf.team_set_id  = emails.team_set_id
+                    inner join (
+                        select eb.email_id, N'direct' source
+                        from emails_beans eb
+                        where eb.bean_module = N'leads'
+                            and eb.bean_id = N'c2c77a37-1732-96f0-1403-53b4253853cd' and eb.deleted=0
+                        union
+                        select distinct eear.email_id, N'relate' source
+                        from emails_email_addr_rel eear
+                        inner join email_addr_bean_rel eabr
+                        on eabr.bean_id = N'c2c77a37-1732-96f0-1403-53b4253853cd' and eabr.bean_module = N'leads' and
+                        eabr.email_address_id = eear.email_address_id and eabr.deleted=0
+                        where eear.deleted=0
+                    ) email_ids on emails.id=email_ids.email_id
+                    where emails.deleted = 0
+                    order by emails.date_modified desc
+                ",
+                false
+            ),
+            // If UNION(s) in sub queries and in main query then this's union query.
+            array(
+                "
+                    select
+                        emails1.id id,
+                        emails1.date_modified date_modified
+                    from emails1
+                    union
+                    select
+                        emails.id id,
+                        emails.date_modified date_modified
+                    from emails
+                    inner join (
+                        select tst.team_set_id
+                        from team_sets_teams tst
+                        inner join team_memberships team_memberships on tst.team_id = team_memberships.team_id
+                                and team_memberships.user_id = N'2e98b15e-89a9-b6c2-a8a1-53b42599bd14'
+                                and team_memberships.deleted=0 group by tst.team_set_id
+                    ) emails_tf on emails_tf.team_set_id  = emails.team_set_id
+                    inner join (
+                        select eb.email_id, N'direct' source
+                        from emails_beans eb
+                        where eb.bean_module = N'leads'
+                            and eb.bean_id = N'c2c77a37-1732-96f0-1403-53b4253853cd' and eb.deleted=0
+                        union
+                        select distinct eear.email_id, N'relate' source
+                        from emails_email_addr_rel eear
+                        inner join email_addr_bean_rel eabr
+                        on eabr.bean_id = N'c2c77a37-1732-96f0-1403-53b4253853cd' and eabr.bean_module = N'leads' and
+                        eabr.email_address_id = eear.email_address_id and eabr.deleted=0
+                        where eear.deleted=0
+                    ) email_ids on emails.id=email_ids.email_id
+                    where emails.deleted = 0
+                    order by emails.date_modified desc
+                ",
+                true
+            ),
+            // Without union(s)
+            array(
+                "
+                    select
+                          emails.id id,
+                          emails.date_modified date_modified,
+                          emails.assigned_user_id assigned_user_id,
+                          emails.created_by created_by
+                    from emails
+                    where emails.deleted = 0
+                    order by emails.date_modified desc
+                ",
+                false
+            ),
+        );
+    }
+
+    /**
+     * test of check union(s) in query.
+     *
+     * @dataProvider providerIsUnionQuery
+     *
+     * @param string $sql
+     * @param boolean $isUnionExpected
+     */
+    public function testIsUnionQuery($sql, $isUnionExpected)
+    {
+        if (!$this->_db instanceof MssqlManager) {
+            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
+        }
+        $isUnion = SugarTestReflection::callProtectedMethod($this->_db, 'isUnionQuery', array($sql));
+
+        $this->assertEquals($isUnionExpected, $isUnion);
+    }
 }

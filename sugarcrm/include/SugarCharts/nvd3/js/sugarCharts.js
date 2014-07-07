@@ -9,17 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
-function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, callback) {
-    this.chartObject = "";
+function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callback) {
+    this.chartObject = '';
 
     // get chartId from params or use the default for sugar
-    var d3ChartId = 'd3_'+chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
-    var canvasChartId = 'canvas_'+chartId || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
+    var d3ChartId = 'd3_' + chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
+    var canvasChartId = 'canvas_' + chartId || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
 
-    //Bug#45831
     if (document.getElementById(d3ChartId) === null) {
         return false;
     }
@@ -31,54 +27,68 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
         /**
          * the main container to render chart
          */
-            contentEl = 'content',
+        contentEl = 'content',
         /**
-         * with of one column to render bars
+         * width of one column to render bars
          */
-            minColumnWidth = 40;
+        minColumnWidth = 40;
 
-    params = params ? params : {};
+    params = _.extend({
+        show_title: true,
+        show_legend: true,
+        show_controls: false,
+        show_tooltips: true,
+        show_y_label: false,
+        y_axis_label: '',
+        show_x_label: false,
+        x_axis_label: '',
+        rotateTicks: 0,
+        staggerTicks: false,
+        reduceXTicks: false,
+        colorData: 'default',
+        margin: {top: 10, right: 10, bottom: 10, left: 10}
+    }, params);
 
     contentEl = params.contentEl || contentEl;
     minColumnWidth = params.minColumnWidth || minColumnWidth;
 
-    switch(chartConfig["chartType"]) {
+    switch (chartConfig['chartType']) {
 
-        case "paretoChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+        case 'paretoChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
 
-                if(SUGAR.chartsD3.isDataEmpty(data)){
-                    var json = SUGAR.chartsD3.translateParetoDataToD3(data,params,chartConfig);
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    var json = SUGAR.charts.translateParetoDataToD3(data, params, chartConfig);
 
-                    var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
+                    var marginBottom = (chartConfig['orientation'] == 'vertical' && data.values.length > 8) ? 20 * 4 : 20;
 
                     var paretoChart = nv.models.paretoChart()
-                        .margin({top: 0, right: 10, bottom: 10, left: 10})
+                        .margin(params.margin)
                         .showTitle(false)
                         .tooltips(true)
                         .tooltipLine(function(key, x, y, e, graph) {
                             // Format the value using currency class and user settings
                             var val = App.currency.formatAmountLocale(e.point.y);
-                            return '<p>' + key +': <b>' + val + '</b></p>';
+                            return '<p>' + key + ': <b>' + val + '</b></p>';
                         })
                         .tooltipBar(function(key, x, y, e, graph) {
                             // Format the value using currency class and user settings
                             var val = App.currency.formatAmountLocale(e.value);
-                            return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
-                                '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
-                                '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
+                            return '<p>' + SUGAR.charts.translateString('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                                   '<p>' + SUGAR.charts.translateString('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                                   '<p>' + SUGAR.charts.translateString('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
                         })
                         .showControls(false)
-                        .colorData( 'default' )
-                        .colorFill( 'default' )
+                        .colorData('default')
+                        .colorFill('default')
                         .stacked(!params.display_manager)
                         .id(chartId)
                         .strings({
                             legend: {
-                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
                     // get chartId from params or use the default for sugar
@@ -93,52 +103,64 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .call(paretoChart)
                         .selectAll('.nv-y.nv-axis text')
                         .text(function(d) {
-                            return App.user.get('preferences').currency_symbol + d3.format(",.2s")(d);
+                            return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
                         });
 
                     that.chartObject = paretoChart;
 
-                    SUGAR.chartsD3.setChartObject(paretoChart);
+                    SUGAR.charts.setChartObject(paretoChart);
                 }
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
 
-        case "barChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+        case 'barChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
 
-                if (SUGAR.chartsD3.isDataEmpty(data)) {
-                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
-                    var rotateTicks = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 25 : 0;
+                    var rotateTicks = (chartConfig['orientation'] === 'vertical' && data.values.length > 8) ? 25 : (params.rotateTicks || 0);
 
-                    var barChart = (chartConfig["orientation"] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
+                    var barChart = (chartConfig['orientation'] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
 
                     barChart
-                        .margin({top: 0, right: 10, bottom: 10, left: 10})
-                        .showTitle(true)
-                        .tooltips(true)
-                        .tooltipContent( function(key, x, y, e, graph) {
-                            return '<h3>' + key + '</h3>' +
-                                '<p>' +  y + '</p>';
-                        })
-                        .showControls(false)
-                        .rotateTicks(rotateTicks)
-                        .reduceXTicks(false)
-                        .colorData('default')
-                        .stacked(chartConfig.barType === 'stacked'? true : true)
                         .id(d3ChartId)
+                        .margin(params.margin)
+                        .showTitle(params.show_title)
+                        .tooltips(params.show_tooltips)
+                        .tooltipContent(function(key, x, y, e, graph) {
+                            return '<h3>' + key + '</h3>' +
+                                '<p>' + y + '</p>';
+                        })
+                        .showLegend(params.show_legend)
+                        .showControls(params.show_controls)
+                        .rotateTicks(rotateTicks)
+                        .reduceXTicks(params.reduceXTicks)
+                        .colorData(params.colorData)
+                        .stacked(chartConfig.barType === 'stacked' ? true : true)
                         .strings({
                             legend: {
-                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
                     barChart.yAxis
                         .tickSize(0)
-                        .tickFormat(d3.format(",.0f"));
+                        .axisLabel(params.show_y_label)
+                        .tickFormat(d3.format(',.0f'));
+
+                    if (params.show_x_label) {
+                        barChart.xAxis
+                            .axisLabel(params.x_axis_label);
+                    }
+
+                    if (params.show_y_label) {
+                        barChart.yAxis
+                            .axisLabel(params.y_axis_label);
+                    }
 
                     d3.select('#' + d3ChartId)
                         .append('svg')
@@ -148,45 +170,57 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
 
                     that.chartObject = barChart;
 
-                    SUGAR.chartsD3.setChartObject(barChart);
+                    SUGAR.charts.setChartObject(barChart);
                 }
 
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
 
-        case "lineChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
-                if(SUGAR.chartsD3.isDataEmpty(data)){
-                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
+        case 'lineChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
                     var xLabels = data.label;
 
                     var lineChart = nv.models.lineChart()
+                        .id(d3ChartId)
                         .x(function(d) { return d[0]; })
                         .y(function(d) { return d[1]; })
                         .size(function() { return 123; })
-                        .margin({top: 0, right: 10, bottom: 10, left: 10})
-                        .tooltipContent( function(key, x, y, e, graph) {
+                        .margin(params.margin)
+                        .tooltips(params.show_tooltips)
+                        .tooltipContent(function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
-                                '<p>' +  y + '</p>';
+                                '<p>' + y + '</p>';
                         })
-                        .showTitle(true)
-                        .tooltips(true)
-                        .showControls(false)
-                        .colorData('default')
-                        .id(d3ChartId)
+                        .showTitle(params.show_title)
+                        .showLegend(params.show_legend)
+                        .showControls(params.show_controls)
+                        .colorData(params.colorData)
                         .strings({
                             legend: {
-                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
+
+                    if (params.show_x_label) {
+                        lineChart.xAxis
+                            .axisLabel(params.x_axis_label);
+                    }
+
+                    if (params.show_y_label) {
+                        lineChart.yAxis
+                            .axisLabel(params.y_axis_label);
+                    }
 
                     lineChart.xAxis
                         .showMaxMin(false)
                         .highlightZero(false)
-                        .tickFormat(function(d,i) { return xLabels[d]; });
+                        .axisLabel(params.show_x_label)
+                        .tickFormat(function(d, i) { return xLabels[d]; });
 
                     d3.select('#' + d3ChartId)
                         .append('svg')
@@ -196,29 +230,30 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
 
                     that.chartObject = lineChart;
 
-                    SUGAR.chartsD3.setChartObject(lineChart);
+                    SUGAR.charts.setChartObject(lineChart);
                 }
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
 
-        case "pieChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
-                if(SUGAR.chartsD3.isDataEmpty(data)){
-                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
+        case 'pieChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
                     var pieChart = nv.models.pieChart()
-                        .margin({top: 0, right: 10, bottom: 10, left: 10})
-                        .showTitle(true)
-                        .tooltips(true)
-                        .colorData('default')
                         .id(d3ChartId)
+                        .margin(params.margin)
+                        .tooltips(params.show_tooltips)
+                        .showTitle(params.show_title)
+                        .showLegend(params.show_legend)
+                        .colorData(params.colorData)
                         .strings({
                             legend: {
-                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
                     d3.select('#' + d3ChartId)
@@ -229,36 +264,36 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
 
                     that.chartObject = pieChart;
 
-                    SUGAR.chartsD3.setChartObject(pieChart);
+                    SUGAR.charts.setChartObject(pieChart);
                 }
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
 
-        case "funnelChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
-                if(SUGAR.chartsD3.isDataEmpty(data)){
-                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
+        case 'funnelChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
                     var funnelChart = nv.models.funnelChart()
-                        .margin({top: 0, right: 10, bottom: 10, left: 10})
-                        .showTitle(true)
-                        .tooltips(true)
-                        .fmtValueLabel(function(d) {
-                            return d.value;
-                        })
-                        .tooltipContent( function(key, x, y, e, graph) {
+                        .id(d3ChartId)
+                        .margin(params.margin)
+                        .showTitle(params.show_title)
+                        .tooltips(params.show_tooltips)
+                        .tooltipContent(function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
                                 '<p>' + e.value + '</p>';
                         })
-                        .colorData('default')
-                        .id(d3ChartId)
+                        .colorData(params.colorData)
+                        .fmtValueLabel(function(d) {
+                            return d.value;
+                        })
                         .strings({
                             legend: {
-                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
                     d3.select('#' + d3ChartId)
@@ -269,15 +304,15 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
 
                     that.chartObject = funnelChart;
 
-                    SUGAR.chartsD3.setChartObject(funnelChart);
+                    SUGAR.charts.setChartObject(funnelChart);
                 }
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
 
-        case "gaugeChart":
-            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
-                if(SUGAR.chartsD3.isDataEmpty(data)){
+        case 'gaugeChart':
+            SUGAR.charts.get(jsonFilename, params, function(data) {
+                if (SUGAR.charts.isDataEmpty(data)) {
                     var properties = $jit.util.splat(data.properties)[0];
 
                     //init Gauge Chart
@@ -286,7 +321,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         injectInto: chartId,
                         //whether to add animations
                         animate: animate,
-                        renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+                        renderBackground: chartConfig['imageExportType'] == 'jpg' ? true : false,
                         backgroundColor: 'rgb(255,255,255)',
                         colorStop1: 'rgba(255,255,255,.8)',
                         colorStop2: 'rgba(255,255,255,0)',
@@ -301,7 +336,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         Subtitle: {
                             text: properties['subtitle'],
                             size: 11,
-                            color: css["color"],
+                            color: css['color'],
                             offset: 5
                         },
                         //offsets
@@ -315,74 +350,74 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                             positionOffset: 2
                         },
                         //slice style
-                        type: useGradients? chartConfig["gaugeType"]+':gradient' : chartConfig["gaugeType"],
+                        type: useGradients ? chartConfig['gaugeType'] + ':gradient' : chartConfig['gaugeType'],
                         //whether to show the labels for the slices
-                        showLabels:true,
+                        showLabels: true,
                         Events: {
                             enable: true,
                             onClick: function(node) {
-                                if(!node || $jit.util.isTouchScreen()) return;
-                                if(node.link == 'undefined' || node.link == '') return;
-                                window.location.href=node.link;
+                                if (!node || $jit.util.isTouchScreen()) return;
+                                if (node.link == 'undefined' || node.link === '') return;
+                                window.location.href = node.link;
                             }
                         },
                         //label styling
                         Label: {
                             type: labelType, //Native or HTML
                             size: 12,
-                            family: css["font-family"],
-                            color: css["color"]
+                            family: css['font-family'],
+                            color: css['color']
                         },
                         //enable tips
                         Tips: {
                             enable: true,
                             onShow: function(tip, elem) {
-                                if(elem.link != 'undefined' && elem.link != '') {
-                                    drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+                                if (elem.link !== 'undefined' && elem.link !== '') {
+                                    drillDown = ($jit.util.isTouchScreen()) ? '<br><a href="' + elem.link + '">Click to drilldown</a>' : '<br>Click to drilldown';
                                 } else {
-                                    drillDown = "";
+                                    drillDown = '';
                                 }
-                                if(elem.valuelabel != 'undefined' && elem.valuelabel != undefined && elem.valuelabel != '') {
-                                    value = "elem.valuelabel";
+                                if (elem.valuelabel !== 'undefined' && elem.valuelabel != undefined && elem.valuelabel !== '') {
+                                    value = 'elem.valuelabel';
                                 } else {
-                                    value = "elem.value";
+                                    value = 'elem.value';
                                 }
-                                eval("tip.innerHTML = '<b>' + elem.label + '</b>: ' + "+ value +" + drillDown");
+                                eval('tip.innerHTML = "<b>" + elem.label + "</b>: " + ' + value + ' + drillDown');
                             }
                         }
                     });
                     //load JSON data.
                     gaugeChart.loadJSON(data);
 
-                    var list = SUGAR.chartsD3.generateLegend(gaugeChart, chartId);
+                    var list = SUGAR.charts.generateLegend(gaugeChart, chartId);
 
                     //save canvas to image for pdf consumption
-                    $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+                    $jit.util.saveImageTest(chartId, jsonFilename, chartConfig['imageExportType']);
 
-                    SUGAR.chartsD3.trackWindowResize(gaugeChart, chartId, data);
+                    SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
                     that.chartObject = gaugeChart;
                 }
-                SUGAR.chartsD3.callback(callback);
+                SUGAR.charts.callback(callback);
             });
             break;
     }
 }
 /*
- function updateChart(jsonFilename, chart, params) {
- params = params ? params : {};
- SUGAR.chartsD3.get(jsonFilename, params, function(data) {
- if(SUGAR.chartsD3.isDataEmpty(data)){
- chart.busy = false;
- chart.updateJSON(data);
- }
- });
- }
- */
-function swapChart(chartId,jsonFilename,css,chartConfig){
-    $("#"+chartId).empty();
-    $("#legend"+chartId).empty();
-    $("#tiptip_holder").empty();
-    var chart = new loadSugarChartD3(chartId,jsonFilename,css,chartConfig);
+function updateChart(jsonFilename, chart, params) {
+    params = params ? params : {};
+    SUGAR.charts.get(jsonFilename, params, function(data) {
+        if(SUGAR.charts.isDataEmpty(data)){
+            chart.busy = false;
+            chart.updateJSON(data);
+        }
+    });
+}
+*/
+function swapChart(chartId, jsonFilename, css, chartConfig) {
+    $('#' + chartId).empty();
+    $('#legend' + chartId).empty();
+    $('#tiptip_holder').empty();
+    var chart = new loadSugarChart(chartId, jsonFilename, css, chartConfig);
     return chart;
 }
 
@@ -391,16 +426,16 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
  */
 (function($) {
 
-    if (typeof SUGAR == "undefined" || !SUGAR) {
+    if (typeof SUGAR == 'undefined' || !SUGAR) {
         SUGAR = {};
     }
-    SUGAR.chartsD3 = {
+    SUGAR.charts = {
 
-        chart : null,
+        chart: null,
         /**
          * Execute callback function if specified
          *
-         * @param callback
+         * @param callback function
          */
         callback: function(callback) {
             if (callback) {
@@ -409,7 +444,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             }
         },
 
-        setChartObject : function(chart) {
+        setChartObject: function(chart) {
             this.chart = chart;
         },
 
@@ -421,134 +456,163 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
          * @return {*}
          */
         generateLegend: function(chart, chartId) {
-            var list = $jit.id('legend'+chartId);
+            var list = $jit.id('legend' + chartId);
             var legend = chart.getLegend();
             var table, i;
-            if (typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
-                table = "<div class='col'>";
+            if (typeof legend['wmlegend'] != 'undefined' && legend['wmlegend']['name'].length > 0) {
+                table = '<div class="col">';
             } else {
-                table = "<div class='row'>";
+                table = '<div class="row">';
             }
-            for (i=0;i<legend['name'].length;i++) {
-                if(legend["name"][i] !== undefined) {
-                    table += "<div class='legendGroup'>";
-                    table += '<div class=\'query-color\' style=\'background-color:' +
-                        legend["color"][i] +'\'></div>';
-                    table += '<div class=\'label\'>';
-                    table += legend["name"][i];
+            for (i = 0; i < legend['name'].length; i++) {
+                table += '<div class="legendGroup">';
+                table += '<div class="query-color" style="background-color:' + legend['color'][i] + '"></div>';
+                table += '<div class="label">';
+                table += legend['name'][i];
+                table += '</div>';
+                table += '</div>';
+            }
+
+            table += '</div>';
+
+
+            if (typeof legend['wmlegend'] != 'undefined' && legend['wmlegend']['name'].length > 0) {
+
+                table += '<div class="col2">';
+                for (i = 0; i < legend['wmlegend']['name'].length; i++) {
+                    table += '<div class="legendGroup">';
+                    table += '<div class="waterMark  ' + legend['wmlegend']['type'][i] + '" style="background-color:' + legend['wmlegend']['color'][i] + '"></div>';
+                    table += '<div class="label">' + legend['wmlegend']['name'][i] + '</div>';
                     table += '</div>';
-                    table += "</div>";
                 }
-            }
-
-            table += "</div>";
-
-
-            if(typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
-
-                table += "<div class='col2'>";
-                for(i=0;i<legend['wmlegend']['name'].length;i++) {
-                    table += "<div class='legendGroup'>";
-                    table += "<div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div>";
-                    table += "<div class='label'>"+ legend["wmlegend"]['name'][i] +"</div>";
-                    table += "</div>";
-                }
-                table += "</div>";
+                table += '</div>';
 
             }
 
             list.innerHTML = table;
 
             //adjust legend width to chart width
-            jQuery('#legend'+chartId).ready(function() {
-                var chartWidth = jQuery('#'+chartId).width();
+            jQuery('#legend' + chartId).ready(function() {
+                var chartWidth = jQuery('#' + chartId).width();
                 var sel;
                 chartWidth = chartWidth - 20;
-                $('#legend'+chartId).width(chartWidth);
+                $('#legend' + chartId).width(chartWidth);
                 var legendGroupWidth = [];
-                if(typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
-                    sel = ".col .legendGroup";
+                if (typeof legend['wmlegend'] != 'undefined' && legend['wmlegend']['name'].length > 0) {
+                    sel = '.col .legendGroup';
                 } else {
-                    sel = ".row .legendGroup";
+                    sel = '.row .legendGroup';
                 }
                 $(sel).each(function(index) {
                     legendGroupWidth[index] = $(this).width();
                 });
                 var largest = Math.max.apply(Math, legendGroupWidth);
-                $(sel).width(largest+2);
+                $(sel).width(largest + 2);
             });
 
             return list;
         },
 
         /**
-         * @override
-         *
+         * Calls the server to retrieve chart data, but
          * For D3 charts we already have the data, don't need to make an ajax call to get anything
+         * so this is now a polymorphic method.
          *
-         * @param data - JSON data for the chart
+         * @param urlordata - JSON data for the chart field or target url for Reports module
          * @param param - object of parameters to pass to the server
-         * @param success - callback function to be executed
+         * @param success - callback function to be executed after a successful call
          */
-        get: function(data, params, success) {
-            success(data);
+        get: function(urlordata, params, success) {
+            if (typeof urlordata === 'string') {
+                var data = {
+                    r: new Date().getTime()
+                };
+                $.extend(data, params);
+                $.ajax({
+                    url: urlordata,
+                    data: data,
+                    dataType: 'json',
+                    async: false,
+                    success: success
+                });
+            } else {
+                success(urlordata);
+            }
         },
 
-        translateDataToD3 : function( json, params, chartConfig ) {
-            var data = [];
+        translateString: function(appString, module) {
+            if (SUGAR.language) {
+                if (module) {
+                    return SUGAR.language.get(module, appString);
+                } else {
+                    return SUGAR.language.get('app_strings', appString);
+                }
+            } else if (SUGAR.App) {
+                if (module) {
+                    return SUGAR.App.lang.getAppString(appString, module);
+                } else {
+                    return SUGAR.App.lang.getAppString(appString);
+                }
+            } else {
+                return appString;
+            }
+        },
+
+        translateDataToD3: function(json, params, chartConfig) {
+            var data = [],
+                strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
 
             if (json.values.filter(function(d) { return d.values.length; }).length) {
 
-                switch(chartConfig["chartType"]) {
+                switch (chartConfig['chartType']) {
 
-                    case "barChart":
+                    case 'barChart':
                         data = (chartConfig.barType === 'stacked') ?
-                            json.label.map( function(d,i){
+                            json.label.map(function(d, i) {
                                 return {
-                                    "key": (d !== '')?d:'',
-                                    "type": "bar",
-                                    "values": json.values.map( function(e,j) {
-                                        return { "series": i, "x": j+1, "y": (parseInt(e.values[i],10) || 0), y0: 0 };
+                                    'key': (d !== '') ? d : strUndefined,
+                                    'type': 'bar',
+                                    'values': json.values.map(function(e, j) {
+                                        return { 'series': i, 'x': j + 1, 'y': (parseInt(e.values[i], 10) || 0), y0: 0};
                                     })
                                 };
                             }) :
-                            json.values.map( function(d,i){
+                            json.values.map(function(d, i) {
                                 return {
-                                    "key": (d.label[0] !== '')?d.label[0]:'',
-                                    "type": "bar",
-                                    "values": json.values.map( function(e,j) {
-                                        return { "series": i, "x": j+1, "y": (i===j?parseInt(e.values[0],10):0), y0: 0 };
+                                    'key': (d.label[0] !== '') ? d.label[0] : strUndefined,
+                                    'type': 'bar',
+                                    'values': json.values.map(function(e, j) {
+                                        return { 'series': i, 'x': j + 1, 'y': (i === j ? parseInt(e.values[0], 10) : 0), y0: 0};
                                     })
                                 };
                             });
                         break;
 
-                    case "pieChart":
-                        data = json.values.map( function(d,i){
+                    case 'pieChart':
+                        data = json.values.map(function(d, i) {
                             return {
-                                "key": (d.label[0] !== '')?d.label[0]:'',
-                                "value": parseInt(d.values[0],10)
+                                'key': (d.label[0] !== '') ? d.label[0] : strUndefined,
+                                'value': parseInt(d.values[0], 10)
                             };
                         });
                         break;
 
-                    case "funnelChart":
-
-                        data = json.values.reverse().map( function(d,i){
+                    case 'funnelChart':
+                        data = json.values.reverse().map(function(d, i) {
                             return {
-                                "key": (d.label[0] !== '')?d.label[0]:'',
-                                "values": [{ "series": i, "x": 0, "y": (parseInt(d.values[0],10) || 0), y0: 0 }]
+                                'key': (d.label[0] !== '') ? d.label[0] : strUndefined,
+                                'values': [{ 'series': i, 'x': 0, 'y': (parseInt(d.values[0], 10) || 0), y0: 0 }]
                             };
                         });
                         break;
 
 
-                    case "lineChart":
-                        data = json.values.map( function(d,i){
+                    case 'lineChart':
+                        data = json.values.map(function(d, i) {
                             return {
-                                "key": (d.label !== '')?d.label:'',
-                                "values": d.values.map( function(e,j) {
-                                    return [j, parseInt(e,10)];
+                                'key': (d.label !== '') ? d.label : strUndefined,
+                                'values': d.values.map(function(e, j) {
+                                    return [j, parseInt(e, 10)];
                                 })
                             };
                         });
@@ -557,75 +621,75 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             }
 
             return {
-                "properties":{
-                    "title": json.properties[0].title,
+                'properties': {
+                    'title': json.properties[0].title,
                     // bar group data (x-axis)
-                    "labels": (!json.values.filter(function(d) { return d.values.length; }).length) ? []
-                        : json.values.map( function(d,i) {
+                    'labels': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
+                        json.values.map(function(d, i) {
                         return {
-                            "group": i+1,
-                            "l": (d.label !== '')?d.label:''
+                            'group': i + 1,
+                            'l': (d.label !== '') ? d.label : strUndefined
                         };
                     }),
-                    "values": (!json.values.filter(function(d) { return d.values.length; }).length) ? []
-                        : json.values.map( function(d,i) {
+                    'values': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
+                        json.values.map(function(d, i) {
                         return {
-                            "group": i+1,
-                            "t": d.values.reduce( function(p, c, i, a) {
-                                return parseInt(p,10) + parseInt(c,10);
+                            'group': i + 1,
+                            't': d.values.reduce(function(p, c, i, a) {
+                                return parseInt(p, 10) + parseInt(c, 10);
                             })
                         };
                     })
                 },
                 // series data
-                "data": data
+                'data': data
             };
         },
 
-        translateParetoDataToD3 : function( json, params ) {
+        translateParetoDataToD3: function(json, params) {
             return {
-                'properties':{
+                'properties': {
                     'title': json.properties[0].title,
-                    'quota': parseInt(json.values[0].goalmarkervalue[0],10),
+                    'quota': parseInt(json.values[0].goalmarkervalue[0], 10),
                     // bar group data (x-axis)
-                    'groupData': (!json.values.filter(function(d) { return d.values.length; }).length) ? []
-                        : json.values.map( function(d,i){
+                    'groupData': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
+                        json.values.map(function(d, i) {
                         return {
                             'group': i,
                             'l': json.values[i].label,
-                            't': json.values[i].values.reduce( function(p, c, i, a){
-                                return parseInt(p,10) + parseInt(c,10);
+                            't': json.values[i].values.reduce(function(p, c, i, a) {
+                                return parseInt(p, 10) + parseInt(c, 10);
                             })
                         };
                     })
                 },
                 // series data
                 'data': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
-                    json.label.map( function(d,i){
+                    json.label.map(function(d, i) {
                         return {
                             'key': d,
                             'type': 'bar',
                             'series': i,
-                            'values': json.values.map( function(e,j){
-                                return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                            'values': json.values.map(function(e, j) {
+                                return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0};
                             }),
-                            'valuesOrig': json.values.map( function(e,j){
-                                return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                            'valuesOrig': json.values.map(function(e, j) {
+                                return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0};
                             })
                         };
                     }).concat(
-                            json.properties[0].goal_marker_label.filter( function(d,i){
+                            json.properties[0].goal_marker_label.filter(function(d, i) {
                                 return d !== 'Quota';
-                            }).map( function(d,i){
+                            }).map(function(d, i) {
                                     return {
                                         'key': d,
                                         'type': 'line',
                                         'series': i,
-                                        'values': json.values.map( function(e,j){
-                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        'values': json.values.map(function(e, j) {
+                                            return {'series': i, 'x': j + 1, 'y': parseInt(e.goalmarkervalue[i + 1], 10)};
                                         }),
-                                        'valuesOrig': json.values.map( function(e,j){
-                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        'valuesOrig': json.values.map(function(e, j) {
+                                            return {'series': i, 'x': j + 1, 'y': parseInt(e.goalmarkervalue[i + 1], 10)};
                                         })
                                     };
                                 })
@@ -639,7 +703,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
          * @return {Boolean}
          */
         isDataEmpty: function(data) {
-            if (data !== undefined && data !== "No Data" && data !== "") {
+            if (data !== undefined && data !== 'No Data' && data !== '') {
                 return true;
             } else {
                 return false;
@@ -658,7 +722,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                 delay = 500,
                 origWindowWidth = document.documentElement.scrollWidth,
                 container = document.getElementById(chartId),
-                widget = document.getElementById(chartId + "-canvaswidget");
+                widget = document.getElementById(chartId + '-canvaswidget');
 
             // refresh graph on window resize
             $(window).resize(function() {
@@ -674,7 +738,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         // hide widget in order to let it's container have
                         // width corresponding to current window size,
                         // not it's contents
-                        widget.style.display = "none";
+                        widget.style.display = 'none';
 
                         // add one more timeout in order to let all widgets
                         // on the page hide
@@ -682,11 +746,11 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                             // measure container width
                             var width = container.offsetWidth;
                             var chartWidth = width - 20;
-                            $('#legend'+chartId).width(chartWidth);
+                            $('#legend' + chartId).width(chartWidth);
 
                             // display widget before resize, otherwise
                             // it will be rendered incorrectly in IE
-                            widget.style.display = "";
+                            widget.style.display = '';
 
                             chart.resizeGraph(json, width);
                             origWindowWidth = newWindowWidth;
@@ -709,7 +773,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             params = params ? params : {};
             self.chart = chart;
             this.get(url, params, function(data) {
-                if(self.isDataEmpty(data)){
+                if (self.isDataEmpty(data)) {
                     self.chart.busy = false;
                     self.chart.updateJSON(data);
                     self.callback(callback);
@@ -718,37 +782,37 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         },
 
 
-        saveImageFile: function (id,jsonfilename,imageExt,saveTo) {
-            var parts = jsonfilename.split("/"),
-                filename = parts[parts.length - 1].replace(".js","."+imageExt),
+        saveImageFile: function(id, jsonfilename, imageExt, saveTo) {
+            var parts = jsonfilename.split('/'),
+                filename = parts[parts.length - 1].replace('.js', '.' + imageExt),
                 oCanvas = document.getElementById(id),
                 strDataURI,
                 url;
 
             if (oCanvas) {
-                if (imageExt === "jpg") {
-                    strDataURI = oCanvas.toDataURL("image/jpeg");
+                if (imageExt === 'jpg') {
+                    strDataURI = oCanvas.toDataURL('image/jpeg');
                 } else {
-                    strDataURI = oCanvas.toDataURL("image/png");
+                    strDataURI = oCanvas.toDataURL('image/png');
                 }
 
                 if (!saveTo) {
-                    url =  "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+                    url = 'index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1';
                 } else {
                     url = saveTo;
                 }
 
-                jQuery.post(url, {imageStr: strDataURI, filename: filename  })
-                    .success(function() {  })
-                    .error(function() {  });
+                jQuery.post(url, {imageStr: strDataURI, filename: filename})
+                    .success(function() { return; })
+                    .error(function() { return; });
             }
         },
 
-        saveImageTest: function (id,jsonfilename,imageExt,saveTo) {
-            if (typeof FlashCanvas != "undefined") {
-                setTimeout(function(){SUGAR.charts.saveImageFile(id,jsonfilename,imageExt,saveTo);},10000);
+        saveImageTest: function(id, jsonfilename, imageExt, saveTo) {
+            if (typeof FlashCanvas != 'undefined') {
+                setTimeout(function() {SUGAR.charts.saveImageFile(id, jsonfilename, imageExt, saveTo);}, 10000);
             } else {
-                SUGAR.charts.saveImageFile(id,jsonfilename,imageExt,saveTo);
+                SUGAR.charts.saveImageFile(id, jsonfilename, imageExt, saveTo);
             }
         }
     };

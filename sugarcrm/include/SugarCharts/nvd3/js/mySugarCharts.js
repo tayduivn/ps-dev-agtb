@@ -9,59 +9,52 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id$
+initmySugarCharts = function() {
 
-initmySugarCharts = function(){
+    SUGAR.mySugar.sugarCharts = function() {
 
-	SUGAR.mySugar.sugarCharts = function() {
+        var activeTab = activePage,
+            charts = {};
 
-		var activeTab = activePage,
-			charts = {};
+        return {
+            loadSugarCharts: function(activeTab) {
+                var chartFound = false;
 
-		return {
-			loadSugarCharts: function(activeTab) {
-				var chartFound = false;
+                for (var id in charts[activeTab]) {
+                    if (id !== 'undefined') {
+                        chartFound = true;
+                        loadSugarChart(
+                            charts[activeTab][id]['chartId'], charts[activeTab][id]['jsonFilename'], charts[activeTab][id]['css'], charts[activeTab][id]['chartConfig']);
+                    }
+                }
+                //clear charts array
+                charts = {};
+            },
 
-				for (var id in charts[activeTab]){
-					if (id !== 'undefined') {
-						chartFound = true;
-					//alert(charts[activeTab][id]['chartType']);
-						loadSugarChart(
-							charts[activeTab][id]['chartId'],
-							charts[activeTab][id]['jsonFilename'],
-							charts[activeTab][id]['css'],
-							charts[activeTab][id]['chartConfig']
-						);
-					}
-				}
-				//clear charts array
-				charts = {};
-			},
+            addToChartsArrayJson: function(json, activeTab) {
+                for (var id in json) {
+                    if (json[id]['supported'] === 'true') {
+                        SUGAR.mySugar.sugarCharts.addToChartsArray(
+                            json[id]['chartId'],
+                            json[id]['filename'],
+                            json[id]['css'],
+                            json[id]['chartConfig'],
+                            activeTab
+                        );
+                    }
+                }
+            },
 
-			addToChartsArrayJson: function(json,activeTab) {
-				for (var id in json) {
-					if (json[id]['supported'] === "true") {
-						SUGAR.mySugar.sugarCharts.addToChartsArray(
-							json[id]['chartId'],
-							json[id]['filename'],
-							json[id]['css'],
-							json[id]['chartConfig'],
-							activeTab
-						);
-					}
-				}
-			},
-
-			addToChartsArray: function(chartId,jsonFilename,css,chartConfig,activeTab) {
-				if (charts[activeTab] === null) {
-					charts[activeTab] = {};
-				}
-				charts[activeTab][chartId] = {};
-				charts[activeTab][chartId]['chartId'] = chartId;
-				charts[activeTab][chartId]['jsonFilename'] = jsonFilename;
-				charts[activeTab][chartId]['css'] = css;
-				charts[activeTab][chartId]['chartConfig'] = chartConfig;
-			}
-		};
-	}();
+            addToChartsArray: function(chartId, jsonFilename, css, chartConfig, activeTab) {
+                if (!charts[activeTab]) {
+                    charts[activeTab] = {};
+                }
+                charts[activeTab][chartId] = {};
+                charts[activeTab][chartId]['chartId'] = chartId;
+                charts[activeTab][chartId]['jsonFilename'] = jsonFilename;
+                charts[activeTab][chartId]['css'] = css;
+                charts[activeTab][chartId]['chartConfig'] = chartConfig;
+            }
+        };
+    }();
 };

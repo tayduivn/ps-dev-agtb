@@ -75,9 +75,17 @@ class SetOptionsAction extends AbstractAction{
 					var visAction = new SUGAR.forms.SetVisibilityAction(this.target, (empty ? 'false' : 'true'), '');
 					visAction.setContext(context);
 					visAction.exec();
-					if (!_.contains(keys, field.model.get(this.target))) {
-						context.setValue(this.target, empty ? '' : keys[0]);
+
+					//Remove from the selected options those options that are no longer available to select
+					selected = _.filter([].concat(field.model.get(this.target)), function(key) {
+					    return _.contains(keys, key);
+					});
+
+					if (selected.length == 0 && field.model.fields[field.name].type != 'multienum') {
+					    selected = selected.concat(empty ? '' : keys[0]);
 					}
+
+					context.setValue(this.target, selected);
 				}
 				else {
 					var field = context.getElement(this.target);
@@ -88,10 +96,11 @@ class SetOptionsAction extends AbstractAction{
 					{
 						// get the options of this select
 						var options = field.options;
+						selected = [];
 
 						for (var i = 0; i < options.length; i++) {
 							if (options[i].selected)
-								selected = options[i].value;
+								selected = selected.concat(options[i].value);
 						}
 
 						// empty the options
@@ -136,16 +145,20 @@ class SetOptionsAction extends AbstractAction{
 									}
 								}
 							}
-							if (keys[i] == selected)
+							if (_.indexOf(selected, keys[i]) > -1) {
 								new_opt.selected = true;
+							}
 
 						}
 
-						if(field.value != selected)
+						if(!field.multiple && field.value != selected) {
 							SUGAR.forms.AssignmentHandler.assign(this.target, field.value);
+						}
 
 						//Hide fields with empty lists
-						var empty =  (field.options.length == 0 || field.options.length == 1) && field.value == '';
+
+						var empty = (field.multiple && field.options.length == 0)
+						 || (!field.multiple && field.options.length <= 1 && field.value == '');
 						var visAction = new SUGAR.forms.SetVisibilityAction(this.target, (empty ? 'false' : 'true'), '');
 						visAction.setContext(context);
 						visAction.exec();

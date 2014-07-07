@@ -50,7 +50,6 @@ $dictionary['OAuthToken'] = array(
             'name' => 'consumer',
             'type' => 'id',
             'required' => true,
-            'isnull' => false,
             'comment' => 'Token related to the consumer',
       ),
       'token_ts' =>

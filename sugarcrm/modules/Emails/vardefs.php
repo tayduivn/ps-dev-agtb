@@ -94,7 +94,6 @@ $dictionary['Email'] = array(
             'type' => 'id',
             'len' => '36',
             'reportable' => false,
-            'isnull' => false,
             'comment' => 'User name who created record',
         ),
         'created_by_name' => array(
@@ -441,6 +440,24 @@ $dictionary['Email'] = array(
             'module' => 'Meetings',
             'bean_name' => 'Meeting',
             'source' => 'non-db',
+        ),
+        'email_contacts' => array(
+            'name' => 'email_contacts',
+            'vname' => 'LBL_CONTACTS_SUBPANEL_TITLE_SNIP',
+            'type' => 'link',
+            'link_file' => 'data/Link/FunctionLink.php',
+            'link_class' => 'FunctionLink',
+            'link' => 'contacts',
+            'link_type' => 'many',
+            'link_function' => 'get_beans_by_email_addr',
+            'generate_select'=>true,
+            'function_parameters' => array('module'=>'Contacts'),
+            'relationship' => 'emails_contacts_rel',
+            'module' => 'Contacts',
+            'bean_name' => 'Contact',
+            'source' => 'non-db',
+            'hideacl' => true,
+            'readonly' => true,
         ),
         /* end relationship collections */
     ), /* end fields() array */

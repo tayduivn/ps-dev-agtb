@@ -46,6 +46,8 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins, ['ReorderableColumns', 'ListColumnEllipsis']);
+
         if (options.context.parent) {
             this.baseModule = options.context.parent.get('module');
             this.baseRecord = options.context.parent.get('modelId');
@@ -123,7 +125,8 @@
      */
     _renderField: function(field) {
         var fieldName = field.name,
-            fieldModule = field.model.get('_module');
+            fieldModule = field.model.get('_module'),
+            fieldType = field.def.type || 'default';
 
         // check the fieldName and set the proper values
         if (fieldName === 'name') {
@@ -163,8 +166,8 @@
             var emailStatusDom = app.lang.getAppListStrings('dom_email_status');
             field.model.set({
                 status: emailStatusDom[field.model.get('status')]
-            })
-        } else if (field.def.id && field.def.id === 'previewBtn') {
+            });
+        } else if (fieldType === 'preview-button') {
             // set the field module to the model's module for preview button
             field.model.module = fieldModule;
         }

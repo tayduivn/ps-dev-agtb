@@ -104,6 +104,13 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
+                    'event' => 'button:historical_summary_button:click',
+                    'name' => 'historical_summary_button',
+                    'label' => 'LBL_HISTORICAL_SUMMARY',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',

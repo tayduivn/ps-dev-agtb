@@ -122,6 +122,7 @@ tmpMetadata = {
     "modules": {
         "Cases": {
             '_hash': '12345678910Cases',
+            'isBwcEnabled': false,
             "fields": {
                 "id": {
                     "name": "id",
@@ -437,6 +438,7 @@ tmpMetadata = {
         },
         "Contacts": {
             '_hash': '12345678910Contacts',
+            'isBwcEnabled': false,
             'nameFormat': {
                 'f': 'first_name',
                 'l': 'last_name',
