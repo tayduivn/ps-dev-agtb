@@ -42,7 +42,7 @@ class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sugarChart = SugarChartFactory::getInstance();
         $name = get_class($sugarChart);
-        $this->assertEquals('Jit', $name, 'Assert chart engine defaults to Jit');
+        $this->assertEquals('nvd3', $name, 'Assert chart engine defaults to nvd3');
     }
 
     public function testChartFactoryJit()

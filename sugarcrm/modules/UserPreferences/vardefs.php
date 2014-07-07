@@ -54,7 +54,6 @@ $GLOBALS['dictionary']['UserPreference'] = array('table' => 'user_preferences',
     'type' => 'assigned_user_name',
     'table' => 'users',
     'required' => true,
-    'isnull' => false,
     'dbType' => 'id',
   ),
   'assigned_user_name' => 

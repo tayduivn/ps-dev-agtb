@@ -966,7 +966,13 @@ table th.nosort span:after {
   }
 }
 
-.touch .flex-list-view.right-actions .dataTable th:last-child > span,
-.touch .flex-list-view.right-actions .dataTable th:last-child > .dropdown { /*UIUX-1760*/
-  height: 30px;
+.touch .flex-list-view.right-actions .dataTable {
+  th:last-child > span,
+  th:first-child > *,
+  th:last-child > .dropdown { /*UIUX-1760*/
+    height: 30px;
+  }
+  td:last-child > * { /*SC-3006*/
+    -webkit-transform: translatez(0);
+  }
 }

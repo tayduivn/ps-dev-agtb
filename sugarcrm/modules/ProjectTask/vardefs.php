@@ -45,11 +45,11 @@ $dictionary['ProjectTask'] = array('audited'=>true,
         'project_id' => array(
             'name' => 'project_id',
             'vname' => 'LBL_PROJECT_ID',
+            'required' => false,
             'type' => 'id',
             'reportable' => false,
             'importable' => 'required',
             'required' => true,
-            'isnull' => false,
         ),
         'project_task_id' => array(
             'name' => 'project_task_id',
@@ -482,3 +482,4 @@ VardefManager::createVardef('ProjectTask','ProjectTask', array(
 'team_security',
 //END SUGARCRM flav=pro ONLY
 ));
+?>

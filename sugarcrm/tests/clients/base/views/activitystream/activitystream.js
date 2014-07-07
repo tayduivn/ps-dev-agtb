@@ -34,6 +34,7 @@ describe("Activity Stream View", function() {
         context.get('model').set({
             id: "edf88cef-1be4-9bcc-4cbc-51caf35c5bb1",
             activity_type: "post",
+            display_parent_type: 'Contacts',
             data: {
                 embeds: [{
                     type: "video",

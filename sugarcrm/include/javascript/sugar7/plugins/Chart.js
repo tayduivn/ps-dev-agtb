@@ -153,16 +153,16 @@
              */
             handlePrinting: function(state) {
                 var self = this,
-                    mediaQueryList = window.matchMedia && window.matchMedia('print'),
-                    pausecomp = function(millis) {
+                    mediaQueryList = window.matchMedia && window.matchMedia('print');
+                var pausecomp = function(millis) {
                         // www.sean.co.uk
                         var date = new Date(),
                             curDate = null;
                         do {
                             curDate = new Date();
                         } while (curDate - date < millis);
-                    },
-                    printResize = function(mql) {
+                    };
+                var printResize = function(mql) {
                         if (mql.matches) {
                             if (!_.isUndefined(self.chart.legend) && _.isFunction(self.chart.legend.showAll)) {
                                 self.chart.legend.showAll(true);
@@ -173,8 +173,8 @@
                         } else {
                             browserResize();
                         }
-                    },
-                    browserResize = function() {
+                    };
+                var browserResize = function() {
                         if (!_.isUndefined(self.chart.legend) && _.isFunction(self.chart.legend.showAll)) {
                             self.chart.legend.showAll(false);
                         }

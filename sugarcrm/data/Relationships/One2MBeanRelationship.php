@@ -218,11 +218,11 @@ class One2MBeanRelationship extends One2MRelationship
 
             //Add any optional where clause
             if (!empty($params['where'])) {
-                $add_where = is_string(
-                    $params['where']
-                ) ? $params['where'] : "$rhsTable." . $this->getOptionalWhereClause(
-                    $params['where']
-                );
+                $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                $add_where = is_string($params['where']) ? 
+                             $params['where'] : 
+                             $this->getOptionalWhereClause($params['where'], $rhsTable, $relatedSeed);
+
                 if (!empty($add_where)) {
                     $where .= " AND $add_where";
                 }
@@ -231,7 +231,10 @@ class One2MBeanRelationship extends One2MRelationship
             $from = $this->def['rhs_table'];
             //BEGIN SUGARCRM flav=pro ONLY
             if (!empty($params['enforce_teams'])) {
-                $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                // This may have been set already
+                if (empty($relatedSeed)) {
+                    $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                }
                 if ($this->def['rhs_table'] != $relatedSeed->table_name) {
                     $from .= ", $relatedSeed->table_name";
                 }
