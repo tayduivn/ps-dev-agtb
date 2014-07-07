@@ -163,9 +163,17 @@
         } else if (fieldName === 'status' && fieldModule === 'Emails') {
             // if this is the Status field and an Emails row,
             // translate the email status
-            var emailStatusDom = app.lang.getAppListStrings('dom_email_status');
+            var fieldStatus = field.model.get('status'),
+                emailStatusDom = app.lang.getAppListStrings('dom_email_status');
+
+            // If this field is rendering again (like after "More history..." has been clicked)
+            // it's 'status' will have already been run through the dom object
+            if(!_.contains(emailStatusDom, fieldStatus)) {
+                // if it hasn't already been translated, do it, do it now!
+                fieldStatus = emailStatusDom[fieldStatus]
+            }
             field.model.set({
-                status: emailStatusDom[field.model.get('status')]
+                status: fieldStatus
             });
         } else if (fieldType === 'preview-button') {
             // set the field module to the model's module for preview button
