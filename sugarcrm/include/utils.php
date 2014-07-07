@@ -5797,3 +5797,72 @@ function isTruthy($value)
 {
     return ($value === true || $value === 'true' || $value === 1 || $value === '1' || $value === 'on' || $value === 'yes') ? true : false;
 }
+
+/**
+ * Warn a message to log
+ * @param string $param
+ * @param array $backtrace
+ */
+function sugar_upgrade_print($param, $backtrace)
+{
+    if ($backtrace) {
+        $GLOBALS['log']->warn("Found {$param} in file: {$backtrace['file']}, line: {$backtrace['line']}");
+    }
+}
+
+/**
+ * Replace base print_r function call
+ */
+function sugar_upgrade_print_r()
+{
+    sugar_upgrade_print('print_r', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base var_dump function call
+ */
+function sugar_upgrade_var_dump()
+{
+    sugar_upgrade_print('var_dump', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base echo function call
+ */
+function sugar_upgrade_echo()
+{
+    sugar_upgrade_print('echo', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base exit function call
+ */
+function sugar_upgrade_exit()
+{
+    sugar_upgrade_print('exit', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base die function call
+ */
+function sugar_upgrade_die()
+{
+    sugar_upgrade_print('die', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Getting backtrace information for called function
+ * @param $function
+ * @return bool | array
+ */
+function getBacktraceData($function) {
+    if(inDeveloperMode()) {
+        $backtrace = debug_backtrace();
+        foreach($backtrace as $backtraceItem) {
+            if ($backtraceItem['function'] == $function) {
+                return $backtraceItem;
+            }
+        }
+    }
+    return false;
+}
