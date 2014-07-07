@@ -208,7 +208,7 @@
         this._super('addActions');
         if (this.meta.showPreview !== false) {
             this.rightColumns.push({
-                type: 'rowaction',
+                type: 'preview-button',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
                 event: 'list:preview:fire',
