@@ -65,18 +65,28 @@ class SugarCronJobs
      */
     public $disable_schedulers = false;
 
+    /**
+     * Should we enforce the job limit with pcntl?
+     * We may put it to false for testing
+     * @var bool
+     */
+    public $enforceHardLimit = true;
+
     public function __construct()
     {
         $this->queue = new SugarJobQueue();
         $this->lockfile = sugar_cached("modules/Schedulers/lastrun");
-        if(!empty($GLOBALS['sugar_config']['cron']['max_cron_jobs'])) {
+        if (!empty($GLOBALS['sugar_config']['cron']['max_cron_jobs'])) {
             $this->max_jobs = $GLOBALS['sugar_config']['cron']['max_cron_jobs'];
         }
-        if(!empty($GLOBALS['sugar_config']['cron']['max_cron_runtime'])) {
+        if (!empty($GLOBALS['sugar_config']['cron']['max_cron_runtime'])) {
             $this->max_runtime = $GLOBALS['sugar_config']['cron']['max_cron_runtime'];
         }
-        if(isset($GLOBALS['sugar_config']['cron']['min_cron_interval'])) {
+        if (isset($GLOBALS['sugar_config']['cron']['min_cron_interval'])) {
             $this->min_interval = $GLOBALS['sugar_config']['cron']['min_cron_interval'];
+        }
+        if (isset($GLOBALS['sugar_config']['cron']['enforce_runtime'])) {
+            $this->enforceHardLimit = $GLOBALS['sugar_config']['cron']['enforce_runtime'];
         }
     }
 
@@ -157,7 +167,7 @@ class SugarCronJobs
      */
     protected function setTimeLimit($limit)
     {
-        if (function_exists('pcntl_alarm')) {
+        if (function_exists('pcntl_alarm') && $this->enforceHardLimit) {
             pcntl_alarm($limit);
         }
     }
@@ -167,7 +177,7 @@ class SugarCronJobs
      */
     protected function clearTimeLimit()
     {
-        if (function_exists('pcntl_alarm')) {
+        if (function_exists('pcntl_alarm') && $this->enforceHardLimit) {
             pcntl_alarm(0);
         }
     }
