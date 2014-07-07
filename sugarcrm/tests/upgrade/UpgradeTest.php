@@ -62,28 +62,6 @@ END;
         $mock->run();
     }
 
-
-    public function testSearchVendors()
-    {
-
-        $searchVendors = $this->upgrader->getScript("pre", "SearchVendors");
-        $this->assertNotEmpty($searchVendors);
-
-        $searchVendors->checkFiles(
-            array(
-                'needsFixed' => 'custom/modules/Accounts/NeedsFixed.php',
-                'noFixNeeded' => 'custom/modules/Accounts/NoFixNeeded.php',
-            )
-        );
-
-        $expectedResults = array(
-            'custom/modules/Accounts/NeedsFixed.php',
-        );
-
-        $this->assertNotEmpty($searchVendors->filesToFix);
-        $this->assertEquals($expectedResults, $searchVendors->filesToFix);
-    }
-
     public function dataRunSQL()
     {
         return array(

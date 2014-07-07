@@ -16,7 +16,7 @@
  */
 class SugarUpgradeRemoveFiles extends UpgradeScript
 {
-    public $order = 9000;
+    public $order = 9100;
 
     // ALL since some DB-only modules may request file deletions
     public $type = self::UPGRADE_ALL;
