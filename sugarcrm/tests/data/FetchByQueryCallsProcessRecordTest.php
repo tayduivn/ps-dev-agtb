@@ -34,10 +34,9 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
             $this->hasCustomAccountLogicHookFile = true;
             copy($this->accountsHookFile, $this->accountsHookFile.'.bak');
         }
-        $hookArrayCont = '
-        <?php
+        $hookArrayCont = '<?php
         $hook_version = 1;
-        $hook_array = Array();
+        $hook_array = array();
         $hook_array[\'process_record\'] = array();
         $hook_array[\'process_record\'][] = array(1,\'test\',\'custom/modules/Accounts/checkProcess.php\',\'checkProcess\',\'account_check\',);
         ?>';
