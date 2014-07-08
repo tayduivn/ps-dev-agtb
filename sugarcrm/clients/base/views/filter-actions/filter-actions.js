@@ -182,10 +182,10 @@
             filterLayout = this.layout.getComponent('filter'),
             id = filter.get('id'),
             changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
+            filter.revertAttributes();
 
         //Apply the previous filter definition if something has changed meanwhile
         if (changedAttributes && changedAttributes.filter_definition) {
-            filter.revertAttributes();
             this.layout.trigger(
                 /**
                  * @event
@@ -200,7 +200,7 @@
                  * @event
                  * See {@link View.Layouts.Base.FilterLayout#filter:select:filter}.
                  */
-                'filter:select:filter', filterLayout.filters.defaultFilterFromMeta);
+                'filter:select:filter', filterLayout.filters.collection.defaultFilterFromMeta);
             return;
         }
         this.layout.trigger(

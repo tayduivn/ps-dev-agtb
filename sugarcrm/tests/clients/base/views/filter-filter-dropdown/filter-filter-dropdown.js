@@ -2,6 +2,7 @@ describe('Base.View.FilterFilterDropdown', function() {
     var view, layout, app, sinonSandbox;
 
     beforeEach(function () {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-filter-dropdown');
         SugarTest.testMetadata.set();
@@ -14,15 +15,22 @@ describe('Base.View.FilterFilterDropdown', function() {
             null,
             {layout: new Backbone.View()}
         );
+        SugarTest.declareData('base', 'Filters');
         layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
+        sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+            options.success();
+        });
+        layout.filters = app.data.createBeanCollection('Filters');
+        layout.filters.setModuleName('Cases');
+        layout.filters.load();
         layout.layout = filterpanel;
         view = SugarTest.createView("base", "Cases", "filter-filter-dropdown", null, null, null, layout);
         view.layout = layout;
-        app = SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
     });
 
     afterEach(function () {
+        sinon.collection.restore();
         sinonSandbox.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
@@ -62,18 +70,17 @@ describe('Base.View.FilterFilterDropdown', function() {
         var expected, filterList;
 
         beforeEach(function() {
-            view.layout.filters = new Backbone.Collection();
-            view.layout.filters.add(new Backbone.Model({id: 'all_records', name: 'ALL_RECORDS', editable: false }));
-            view.layout.filters.add(new Backbone.Model({id: 'test_id', name: 'TEST' }));
-            view.layout.filters.add(new Backbone.Model({id: 'test_id_2', name: 'TEST_2' }));
+            view.layout.filters.collection.add({id: 'all_records', name: 'ALL_RECORDS', editable: false});
+            view.layout.filters.collection.add({id: 'test_id', name: 'TEST' });
+            view.layout.filters.collection.add({id: 'test_id_2', name: 'TEST_2' });
         });
 
         it('should return filter list with translated labels', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
             expected = [
-                { id: 'all_records', text: app.lang.get('ALL_RECORDS'),  firstNonUserFilter: true},
-                { id: 'test_id', text: app.lang.get('TEST')},
-                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+                {id: 'test_id', text: app.lang.get('TEST')},
+                {id: 'test_id_2', text: app.lang.get('TEST_2')},
+                {id: 'all_records', text: app.lang.get('ALL_RECORDS'),  firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
@@ -84,9 +91,9 @@ describe('Base.View.FilterFilterDropdown', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
             sinonSandbox.stub(view.layout.filters, 'sort');
             expected = [
-                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES'), firstNonUserFilter: true},
                 { id: 'test_id', text: app.lang.get('TEST')},
-                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+                { id: 'test_id_2', text: app.lang.get('TEST_2')},
+                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES'), firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
@@ -96,9 +103,9 @@ describe('Base.View.FilterFilterDropdown', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
             expected = [
                 { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
-                { id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true},
                 { id: 'test_id', text: app.lang.get('TEST')},
-                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+                { id: 'test_id_2', text: app.lang.get('TEST_2')},
+                { id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
@@ -114,8 +121,7 @@ describe('Base.View.FilterFilterDropdown', function() {
             beforeEach(function() {
                 $input = $('<input type="text">');
                 callback = sinon.stub();
-                view.layout.filters = new Backbone.Collection();
-                view.layout.filters.add(new Backbone.Model({id: 'test_id', name: 'TEST' }));
+                view.layout.filters.collection.add({id: 'test_id', name: 'TEST'});
             });
 
 
@@ -142,7 +148,7 @@ describe('Base.View.FilterFilterDropdown', function() {
             });
 
             it('should call "formatAllRecordsFilter" when selected filter is "all_records"', function() {
-                view.layout.filters.add(new Backbone.Model({id: 'all_records', name: 'ALL_RECORDS' }));
+                view.layout.filters.collection.add({id: 'all_records', name: 'ALL_RECORDS'});
                 var $input = $('<input type="text">').val('all_records'),
                     callback = sinon.stub(),
                     formatStub = sinonSandbox.spy(view, 'formatAllRecordsFilter');
@@ -215,15 +221,13 @@ describe('Base.View.FilterFilterDropdown', function() {
             });
             describe('make the selected filter editable or not', function() {
                 it('should be editable because it is a custom filter', function() {
-                    view.layout.filters = new Backbone.Collection();
-                    view.layout.filters.add({id: 'my_filter_id', editable: true});
+                    view.layout.filters.collection.add({id: 'my_filter_id', editable: true});
                     view.formatSelection({id: 'my_filter_id', text: 'LBL_LISTVIEW_FILTER_ALL'});
                     expect(toggleFilterCursorStub).toHaveBeenCalled();
                     expect(toggleFilterCursorStub).toHaveBeenCalledWith(true);
                 });
                 it('should not be editable because it is a predefined filter', function() {
-                    view.layout.filters = new Backbone.Collection();
-                    view.layout.filters.add({id: 'favorites', editable: false});
+                    view.layout.filters.collection.add({id: 'favorites', editable: false});
                     view.formatSelection({id: 'favorites', text: 'LBL_LISTVIEW_FILTER_ALL'});
                     expect(toggleFilterCursorStub).toHaveBeenCalled();
                     expect(toggleFilterCursorStub).toHaveBeenCalledWith(false);
@@ -255,7 +259,7 @@ describe('Base.View.FilterFilterDropdown', function() {
         describe('formatAllRecordsFilter', function() {
             var model;
             beforeEach(function() {
-                model = new Backbone.Model({id: 'all_records'});
+                model = app.data.createBean('Filters', {id: 'all_records'}, {moduleName: 'Cases'});
                 view.layout.layoutType = 'record';
                 view.layout.layout.currentModule = 'Cases';
             });
@@ -326,7 +330,7 @@ describe('Base.View.FilterFilterDropdown', function() {
         beforeEach(function() {
             view.filterNode = $('');
             sinonSandbox.stub(view.filterNode, 'val', function() { return filterId; });
-            view.layout.filters.add({id: 'test_id'});
+            view.layout.filters.collection.add({id: 'test_id'});
         });
         it('should trigger "filter:create:open" if action is edit filter', function() {
             filterId = 'test_id';
@@ -347,8 +351,7 @@ describe('Base.View.FilterFilterDropdown', function() {
     describe('handleClearFilter', function() {
 
         it('should stop propagation, clear last filter and trigger "filter:reinitialize"', function() {
-            view.layout.filters = new Backbone.Collection();
-            view.layout.filters.defaultFilterFromMeta = 'test_default_filter';
+            view.layout.filters.collection.defaultFilterFromMeta = 'test_default_filter';
             view.filterNode = $('');
             var evt = {
                 'stopPropagation': sinon.spy()

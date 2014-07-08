@@ -109,8 +109,14 @@ describe('Base.View.FilterActions', function() {
                 clearLastFilter: $.noop,
                 trigger: $.noop
             };
+            sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+                options.success();
+            });
+            SugarTest.declareData('base', 'Filters');
             component.filters = app.data.createBeanCollection('Filters');
-            component.filters.defaultFilterFromMeta = 'my_metadata_default_filter';
+            component.filters.setModuleName('Accounts');
+            component.filters.load();
+            component.filters.collection.defaultFilterFromMeta = 'my_metadata_default_filter';
             view.layout.getComponent = function() {
                 return component;
             };
