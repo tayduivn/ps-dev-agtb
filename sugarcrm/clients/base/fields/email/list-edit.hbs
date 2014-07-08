@@ -12,6 +12,6 @@
 --}}
 {{#each value}}
 {{#if primary_address}}
-<input type="text" name="{{../../name}}" value="{{../email_address}}"{{#if ../../def.len}} maxlength="{{../../def.len}}"{{/if}}{{#if ../../def.placeholder}} placeholder="{{str ../../../def.placeholder ../../../model.module}}"{{/if}} class="inherit-width">
+<input type="text" name="{{../../name}}" value="{{../email_address}}"{{#if ../../def.len}} maxlength="{{../../def.len}}"{{/if}}{{#if ../../def.placeholder}} placeholder="{{str ../../../def.placeholder ../../../model.module}}"{{/if}} class="inherit-width existingAddress">
 {{/if}}
 {{/each}}

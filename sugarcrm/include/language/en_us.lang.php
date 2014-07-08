@@ -4874,7 +4874,7 @@ $app_strings = array (
     'LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as completed?',
     'LBL_ACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
     'LBL_ACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
-
+    'LBL_LIST_REMOVE_EMAIL_INFO' => 'There was an additional email on the record you are modifying. It is now the primary and has been populated below.',
     // inactive tasks dashlet
     'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',
     'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Tasks dashlet displays deferred and completed Tasks.',
