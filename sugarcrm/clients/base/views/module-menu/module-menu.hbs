@@ -11,11 +11,11 @@
  */
 --}}
 {{#if meta.short}}
-    <a class="module-list-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}"><span class="label label-module label-module-mini label-{{module}}" title="{{str 'LBL_MODULE_NAME' module}}">{{moduleIconLabel module}}</span>{{str 'LBL_MODULE_NAME' module}}</a>
+    <a class="module-list-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}" tabindex="-1"><span class="label label-module label-module-mini label-{{module}}" title="{{str 'LBL_MODULE_NAME' module}}">{{moduleIconLabel module}}</span>{{str 'LBL_MODULE_NAME' module}}</a>
 {{else}}
-    <a class="btn btn-invisible btn-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}">{{str 'LBL_MODULE_NAME' module}}</a>
+    <a class="btn btn-invisible btn-link module-name" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}" aria-label="{{str 'LBL_MODULE_NAME' module}}">{{str 'LBL_MODULE_NAME' module}}</a>
     {{#if actions}}
-    <button type="button" title="{{str 'LBL_LINK_MORE' module}}" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:{{name}}-dropdown"><i class="icon-caret-down"></i></button>
+    <button type="button" title="{{str 'LBL_LINK_MORE' module}}" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:{{name}}-dropdown" aria-label="{{str 'LBL_MODULE_NAME' module}} - {{str 'LBL_LINK_MORE' module}}"><i class="icon-caret-down"></i></button>
     <div class="dropdown-menu scroll">
         <ul role="menu">
             {{#each actions}}

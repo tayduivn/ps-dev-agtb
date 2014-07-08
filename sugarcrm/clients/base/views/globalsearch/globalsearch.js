@@ -20,6 +20,13 @@
     postTag: '</strong>',
 
     plugins: ['Dropdown'],
+
+    /**
+     * @property {String}
+     * Used by Dropdown plugin to determine which items to select when using the arrow keys
+     */
+    dropdownItemSelector: '[data-action="select-module"]',
+
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
