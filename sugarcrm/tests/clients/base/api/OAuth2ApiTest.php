@@ -44,7 +44,7 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
         $api->expects($this->never())
             ->method('getOAuth2Server');
-        
+
         $caughtException = false;
         try {
             $api->sudo($service,$stdArgs);
@@ -74,12 +74,12 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(false));
-        
+
         $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));
-        
+
         $caughtException = false;
         try {
             $api->sudo($service,$stdArgs);
@@ -87,18 +87,18 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
             $caughtException = true;
         }
         $this->assertTrue($caughtException,'Did not fail when the token was false');
-        
+
         // Try a successful run
         $oauth2 = $this->getMock('stdClass',array('getSudoToken'));
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(array('access_token'=>'i_am_only_a_test')));
-        
+
         $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));
-        
+
         $ret = $api->sudo($service, $stdArgs);
     }
 
@@ -121,6 +121,28 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $ret = $api->isSupportedClientVersion($service, $info);
         $this->assertEquals($expected, $ret, $message);
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     * (Shut up about headers)
+     */
+    public function testLogoutApi()
+    {
+        $serviceBase = SugarTestRestUtilities::getRestServiceMock();
+
+        $oauth2 = $this->getMock('stdClass', array('unsetRefreshToken'));
+        $oauth2->expects($this->once())
+        ->method('unsetRefreshToken')
+        ->with($this->equalTo("test_refresh"))
+        ->will($this->returnValue(true));
+
+        $api = $this->getMock('OAuth2Api', array('getOAuth2Server'));
+        $api->expects($this->once())
+            ->method('getOAuth2Server')
+            ->will($this->returnValue($oauth2));
+
+        $api->logout($serviceBase, array("token" => "test_token", "refresh_token" => "test_refresh"));
     }
 
     public static function clientVersionProvider()

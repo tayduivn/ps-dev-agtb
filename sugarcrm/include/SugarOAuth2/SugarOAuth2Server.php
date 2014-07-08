@@ -178,4 +178,13 @@ class SugarOAuth2Server extends OAuth2
 
         return $token;
     }
+
+    /**
+     * Destroy refresh token
+     * @param string $token
+     */
+    public function unsetRefreshToken($token)
+    {
+        $this->storage->unsetRefreshToken($token);
+    }
 }
