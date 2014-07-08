@@ -177,7 +177,8 @@ class RevenueLineItem extends SugarBean
 
         if (
             empty($this->discount_price) &&
-            empty($this->product_template_id)
+            empty($this->product_template_id) &&
+            !empty($this->likely_case)
         ) {
             $quantity = floatval($this->quantity);
 
