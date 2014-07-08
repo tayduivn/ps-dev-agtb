@@ -2,11 +2,12 @@ describe('Base.Field.Relate', function() {
 
     var app, field, fieldDef;
 
-    beforeEach(function () {
+    beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('relate', 'field', 'base', 'overwrite-confirmation');
         SugarTest.testMetadata.set();
         app = SugarTest.app;
+        SugarTest.declareData('base', 'Filters');
 
         fieldDef = {
             "name": "account_name",
@@ -27,6 +28,12 @@ describe('Base.Field.Relate', function() {
             "required": true,
             "importable": "required"
         };
+
+        sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+            if (options.success) {
+                options.success();
+            }
+        });
     });
 
     afterEach(function() {
@@ -493,6 +500,91 @@ describe('Base.Field.Relate', function() {
                 expect(filterOptions.initial_filter_label).toEqual(option.expected.label);
                 expect(filterOptions.filter_populate).toEqual(option.expected.filter_populate);
                 expect(filterOptions.stickiness).toEqual(false);
+            });
+        });
+    });
+
+    describe('search', function() {
+        it('should call `buildFilterDefinition`', function() {
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            var buildFilterDefinitionStub = sinon.collection.stub(field, 'buildFilterDefinition'),
+                queryObj = {
+                    term: 'asdf',
+                    context: {
+                        fetch: sinon.collection.stub()
+                    }
+                };
+
+            field.search(queryObj);
+            expect(buildFilterDefinitionStub).toHaveBeenCalled();
+            expect(queryObj.context.fetch).toHaveBeenCalled();
+            field.dispose();
+        });
+    });
+
+    describe('buildFilterDefinition', function() {
+
+        beforeEach(function() {
+            sinon.collection.stub(app.metadata, 'getModule').returns({fields: {}});
+            field = SugarTest.createField('base', 'account_name', 'relate');
+
+            sinon.collection.stub(field, 'getSearchModule').returns('Contacts');
+            field.initialize(field.options);
+
+            sinon.collection.stub(app.data.getBeanClass('Filters').prototype, 'buildSearchTermFilter',
+                function(module, term) {
+                    if (!term) {
+                        return;
+                    }
+                    return { 'test': {$starts: term}};
+                }
+            );
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        using('different field defs', [
+            {
+                def: {
+                    filter_relate: {
+                        'account_name': 'account_name'
+                    }
+                },
+                term: 'asdf',
+                defined: true
+            },
+            {
+                def: {
+                    filter_relate: {
+                        'account_name': 'account_name'
+                    }
+                },
+                term: undefined,
+                defined: true
+            },
+            {
+                def: {
+                    filter_relate: {
+                        'account_name': 'account_name'
+                    }
+                },
+                term: 'asdf',
+                defined: true
+            },
+            {
+                def: {},
+                term: undefined,
+                defined: false
+            }
+        ], function(value) {
+            it('should return an appropriate filter definition', function() {
+                field.def.filter_relate = value.def.filter_relate;
+                field.filters.setFilterOptions(field.getFilterOptions());
+                field.filters.load();
+
+                expect(_.isEmpty(field.buildFilterDefinition(value.term))).toBe(!value.defined);
             });
         });
     });

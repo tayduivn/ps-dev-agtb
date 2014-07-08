@@ -90,6 +90,15 @@
                     this.getSearchModule() + '::' + source);
             }
         }, this);
+
+        this.model.on('change', function() {
+            this.getFilterOptions(true);
+        }, this);
+
+        this.filters = app.data.createBeanCollection('Filters');
+        this.filters.setModuleName(this.getSearchModule());
+        this.filters.setFilterOptions(this.getFilterOptions());
+        this.filters.load();
     },
 
     /**
@@ -388,7 +397,7 @@
 
             if (before !== after) {
                 var def = this.model.fields[field];
-                    messages.push(fieldMessageTpl({
+                messages.push(fieldMessageTpl({
                     before: before,
                     after: after,
                     field_label: app.lang.get(def.label || def.vname || field, this.module)
@@ -434,18 +443,12 @@
      *      the value is the field name in the Opportunities record.
      */
     openSelectDrawer: function() {
-        var filterOptions = new app.utils.FilterOptions()
-            .config(this.def)
-            .setInitialFilter('$relate')
-            .populateRelate(this.model)
-            .format();
-
         app.drawer.open({
             layout: 'selection-list',
             context: {
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
-                filterOptions: filterOptions
+                filterOptions: this.getFilterOptions()
             }
         }, _.bind(this.setValue, this));
     },
@@ -479,11 +482,11 @@
     },
 
     /**
-     * Gets the correct module to search based on field/link defs. 
-     * 
-     * If both `this.def.module` and `link.module` are empty, fall back onto the 
+     * Gets the correct module to search based on field/link defs.
+     *
+     * If both `this.def.module` and `link.module` are empty, fall back onto the
      * metadata manager to get the proper module as a last resort.
-     * 
+     *
      * @return {String} The module to search on.
      */
     getSearchModule: function () {
@@ -520,12 +523,62 @@
     },
 
     /**
+     * Formats the filter options.
+     *
+     * @param {Boolean} force `true` to force retrieving the filter options
+     *   whether or not it is available in memory.
+     * @return {Object} The filter options.
+     */
+    getFilterOptions: function(force) {
+        if (this._filterOptions && !force) {
+            return this._filterOptions;
+        }
+        this._filterOptions = new app.utils.FilterOptions()
+            .config(this.def)
+            .setInitialFilter(this.def.initial_filter || '$relate')
+            .populateRelate(this.model)
+            .format();
+        return this._filterOptions;
+    },
+
+    /**
+     * Builds the filter definition to pass to the request when doing a quick
+     * search.
+     *
+     * It will combine the filter definition for the search term with the
+     * initial filter definition. Both are optional, so this method may return
+     * an empty filter definition (empty `array`).
+     *
+     * @param {String} searchTerm The term typed in the quick search field.
+     * @return {Array} The filter definition.
+     */
+    buildFilterDefinition: function(searchTerm) {
+        var filterBeanClass = app.data.getBeanClass('Filters').prototype,
+            filterOptions = this.getFilterOptions() || {},
+            filter = this.filters.collection.get(filterOptions.initial_filter),
+            filterDef,
+            populate,
+            searchTermFilter,
+            searchModule;
+
+        if (filter) {
+            populate = filter.get('is_template') && filterOptions.filter_populate;
+            filterDef = filterBeanClass.populateFilterDefinition(filter.get('filter_definition') || {}, populate);
+            searchModule = filter.moduleName;
+        }
+
+        searchTermFilter = filterBeanClass.buildSearchTermFilter(searchModule || this.getSearchModule(), searchTerm);
+
+        return filterBeanClass.combineFilterDefinitions(filterDef, searchTermFilter);
+    },
+
+    /**
      * Searches for related field
      * @param event
      */
     search: _.debounce(function (query) {
         var term = query.term || '',
-            self = this, searchCollection, filterDef,
+            self = this, searchCollection,
             searchModule = this.getSearchModule(),
             params = {},
             limit = self.def.limit || 5,
@@ -536,8 +589,8 @@
         if (query.context) {
             params.offset = searchCollection.next_offset;
         }
-        filterDef = self.getFilterDef(searchModule, term);
-        params.filter = app.utils.deepCopy(filterDef);
+
+        params.filter = self.buildFilterDefinition(term);
 
         searchCollection.fetch({
             //Don't show alerts for this request

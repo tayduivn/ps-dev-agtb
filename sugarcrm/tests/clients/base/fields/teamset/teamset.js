@@ -34,6 +34,7 @@ describe('Base.Field.Teamset', function() {
                 'comment': 'The name of the account represented by the account_id field',
                 'required': true, 'importable': 'required'
             };
+            SugarTest.declareData('base', 'Filters');
             SugarTest.loadComponent('base', 'field', 'relate');
             var model = new Backbone.Model({
                 id: 'blahblahid',
@@ -43,6 +44,10 @@ describe('Base.Field.Teamset', function() {
                 setDefaultAttribute: sinon.collection.stub(),
                 removeDefaultAttribute: sinon.collection.stub()
             });
+
+            sinon.collection.stub(Backbone.Collection.prototype, 'fetch');
+            sinon.collection.stub(app.BeanCollection.prototype, 'fetch');
+
             field = SugarTest.createField('base', 'team_name', 'teamset', 'edit', fieldDef, null, model);
 
             if (!$.fn.select2) {
@@ -65,6 +70,7 @@ describe('Base.Field.Teamset', function() {
         });
 
         afterEach(function() {
+            sinon.collection.restore();
             SugarTest.app.router = oRouter;
             field.dispose();
         });
