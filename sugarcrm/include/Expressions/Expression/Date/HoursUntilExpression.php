@@ -42,6 +42,7 @@ class HoursUntilExpression extends NumericExpression
     {
         return <<<EOQ
             var then = SUGAR.util.DateUtils.parse(this.getParameters().evaluate());
+            if (!then && then !== 0) return false;
             var now = new Date();
             var diff = then - now;
 
