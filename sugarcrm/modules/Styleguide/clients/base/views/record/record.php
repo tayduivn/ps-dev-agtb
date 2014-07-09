@@ -59,6 +59,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'name' => 'do_not_call',
                     'label' => 'Boolean',
                     'type' => 'bool',
+                    'text' => 'Do not call',
                 ),
                 array(
                     'name' => 'parent_name',
@@ -84,6 +85,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'label' => 'Teamset',
                     'type' => 'teamset',
                     'module' => 'Teams',
+                    'help' => 'Teamset fields provide a way for records to be assigned to a group of users.',
                 ),
             ),
         ),
