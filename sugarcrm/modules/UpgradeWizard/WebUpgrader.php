@@ -257,20 +257,19 @@ class WebUpgrader extends UpgradeDriver
         $this->removeDir($this->cacheDir("upgrades/driver/"));
     }
 
+    /**
+     *
+     * @see UpgradeDriver::doHealthcheck()
+     */
     public function doHealthcheck()
     {
-        return $this->getHealthCheckScanner()->verifyLastVerdict();
+        if (!isset($_REQUEST['confirm_id'])) {
+            $this->log("No previous health check id set in session");
+            return false;
+        }
+
+        // TODO - check the confirm_id against actual run ? Need db connection though which isnt there yet ...
+        $this->log("Skipping health check - we have a confirmed id");
+        return true;
     }
-
-    protected function  getHealthCheckScanner()
-    {
-        require_once 'modules/HealthCheck/Scanner/ScannerWeb.php';
-        $scanner = new ScannerWeb();
-        $scanner->setVerboseLevel(0);
-        $scanner->setLogFilePointer($this->fp);
-        $scanner->setInstanceDir($this->context['source_dir']);
-        return $scanner;
-    }
-
-
 }

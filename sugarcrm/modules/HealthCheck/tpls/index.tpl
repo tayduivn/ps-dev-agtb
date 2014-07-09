@@ -1,4 +1,3 @@
-<?php ob_clean(); ?>
 
 <link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=1"/>
 <script src='include/javascript/jquery/jquery-min.js?v=1'></script>
@@ -34,8 +33,8 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 6.5 to 7.5 Upgrade: Prerequisites</h3>
-                <span>Before performing an upgrade there are some prerequisites that should be followed to ensure a successful upgrade.</span>
+                <h3>Sugar 7 Health Check</h3>
+                <span></span>
             </div>
             <div class="progress-section span5 pull-right">
                 <span><img src="modules/HealthCheck/static/company_logo.png" alt="SugarCRM" class="logo"></span>
@@ -49,45 +48,14 @@
             <div class="row-fluid">
                 <h1>Upgrading</h1>
 
-                <p>To get the most out of Sugar we recommend being on the latest version. Newer versions of Sugar come
-                    with increased performance, bug fixes, and new features in general.
-                    Before upgrading Sugar it is highly recommended that the upgrade be run on a test or backup copy of
-                    your production system first. This will not only allow you to be familiar with the process, but can
-                    point out any potential issue(s) you may encounter when upgrading your production instance. We also
-                    recommend checking the <a target="_blank"
-                                              href="http://support.sugarcrm.com/05_Resources/03_Supported_Platforms/Sugar_7.5.x_Supported_Platforms/">Support
-                        Platforms</a> page before upgrading to make sure your current technology is still supported on
-                    the version you are upgrading to.
-                    To obtain the correct backup files, please follow the steps in the <a target="_blank"
-                                                                                          href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate/Sugar_Ultimate_7.5/Installation_and_Upgrade_Guide/">Downloading
-                        Sugar</a> section and download the proper upgrade zip file matching your current version of
-                    Sugar and the desired upgraded version.</p>
+                <p>To ensure a succesful upgrade this health check wizard will scan your current SugarCRM
+                instance and will generate a full report of any incompatible customizations. This report
+                will explain which changes will be performed to your instance during an upgrade. In case
+                of any incompatible issues which cannot be automatically resolved by the upgrade wizard,
+                this health check tool will report what needs to be addressed.</p>
 
-                <h1>Prerequisites</h1>
+                <p>If not all prerequisits pass, an upgrade to Sugar 7 will not be possible.</p>
 
-                <p>Before performing an upgrade there are some prerequisites that should be followed to ensure a
-                    successful upgrade.</p>
-
-                <ul>
-                    <li>Backup your current Sugar directory on the web server and the database.</li>
-                    <li>Verify the PHP post_max_size and upload_max_filesize settings are larger than the size of the
-                        upgrade zip file. These settings can be verified by performing a
-                        http://us.php.net/manual/en/function.phpinfo.php function or by checking the php.ini file.
-                    </li>
-                    <li>Verify that the user the web server is running under has read and write permissions to the Sugar
-                        directory as well as the config.php file in the Sugar directory.
-                    </li>
-                    <li>If you have made code level changes to a file, verify the changes are in the custom directory or
-                        they may be removed during the upgrade.
-                    </li>
-                    <li>If op-code caching is enabled in PHP, disable it to ensure cached code is not used during the
-                        upgrade. Op-code caching can be re-enabled after the upgrade is complete.
-                    </li>
-                    <li>If you are using Zend Core 2.0, increase the values for ConnectionTimeout to 3000 seconds and
-                        RequestTimeout to 6000 seconds.
-                    </li>
-                    <li>If you are running on Apache, set the LimitRequestBody value in the httpd.conf file to 2GB.</li>
-                </ul>
             </div>
         </div>
         <div class="modal-footer">
@@ -104,47 +72,14 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 6.5 to 7.5 Upgrade: Health Check</h3>
-                <span>We need to verify your instance before upgrade</span>
+                <h3>Sugar 7 Health Check</h3>
+                <span>Review health check results</span>
             </div>
             <div class="progress-section span5 pull-right">
                 <span><img src="modules/HealthCheck/static/company_logo.png" alt="SugarCRM" class="logo"></span>
 
                 <div class="progress progress-success">
                     <div class="bar" style="width: 66%;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-body record">
-            <div class="row-fluid ">
-                <h1>Health Check</h1>
-
-                <p>Before upgrade health check is required. Health check may take up to 30 minutes to complete. Press
-                    Next to perform the Health Check.</p>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible" href="javascript:void(0);">Cancel</a>
-            <a class="btn btn-primary" href="#3" name="next_button">Next</a>
-          </span>
-        </div>
-    </div>
-    <div class="modal" data-step="3">
-        <div class="modal-header modal-header-upgrade row-fluid">
-            <span class="step-circle">
-                <span>3</span>
-            </span>
-
-            <div class="upgrade-title span7">
-                <h3>Sugar 6.5 to 7.5 Upgrade: Pre-check...</h3>
-                <span>Running tasks and preparing for upgrade...</span>
-            </div>
-            <div class="progress-section span5 pull-right">
-                <span><img src="modules/HealthCheck/static/company_logo.png" alt="SugarCRM" class="logo"></span>
-
-                <div class="progress progress-success">
-                    <div class="bar" style="width: 100%;"></div>
                 </div>
             </div>
         </div>
@@ -157,13 +92,14 @@
           <span sfuuid="25" class="detail">
             <a class="btn btn-invisible" href="javascript:void(0);">Cancel</a>
             <a class="btn btn-invisible" href="javascript:void(0);">Send Log to Sugar</a>
-            <a class="btn btn-invisible" href="javascript:void(0);">Export Log</a>
-            <a class="btn btn-primary disabled" href="UpgradeWizard.php" name="next_button">Next</a>
+            <a class="btn btn-invisible" href="index.php?module=HealthCheck&action=export">Export Log</a>
+            <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm" name="next_button">Confirm</a>
           </span>
         </div>
     </div>
 </div>
 
+{literal}
 <style>
     [data-step="2"], [data-step="3"] {
         display: none;
@@ -173,11 +109,13 @@
         display: none;
     }
 </style>
+{/literal}
 
+{literal}
 <script>
     (function () {
         var currentStep = 1,
-            maxSteps = 3,
+            maxSteps = 2,
             hashStep = parseInt(window.location.hash),
             nodes = document.querySelectorAll('[data-step] a[name="next_button"]');
 
@@ -189,7 +127,7 @@
             nodes[i].addEventListener('click', showNextStep, false);
         }
 
-        document.querySelector('[data-step="2"] a[name="next_button"]').addEventListener('click', doHealthCheck, false);
+        document.querySelector('[data-step="1"] a[name="next_button"]').addEventListener('click', doHealthCheck, false);
 
         function showNextStep() {
             var nextStep = currentStep + 1;
@@ -202,7 +140,7 @@
         }
 
         function doHealthCheck() {
-            $.ajax('index.php?module=HealthCheck&action=scan&bwcMode=1', {
+            $.ajax('index.php?module=HealthCheck&action=scan', {
                 dataType: 'json',
                 success: function (data) {
                     data = data.sort(_sortByBucket);
@@ -215,7 +153,7 @@
                     }
                     var flag = data[data.length - 1].flag;
                     _displayAlert(flag);
-                    if(flag == 1) {
+                    if(flag < 3) {
                         $('.btn.btn-primary.disabled').removeClass('disabled');
                     }
 
@@ -236,3 +174,4 @@
 
     })();
 </script>
+{/literal}

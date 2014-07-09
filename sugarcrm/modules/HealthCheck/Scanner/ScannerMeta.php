@@ -425,6 +425,13 @@ class ScannerMeta
         return $meta;
     }
 
+    /**
+     *
+     * Return default flag for given bucket
+     *
+     * @param string $bucket Bucket
+     * @return integer
+     */
     public function getDefaultFlag($bucket)
     {
         return $this->defaultFlagMap[$bucket];

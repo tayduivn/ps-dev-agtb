@@ -14,20 +14,44 @@
 $dictionary['HealthCheck'] = array(
     'table' => 'healthcheck',
     'fields' => array(
-        // FIXME: add log file name field
+        'logfile' => array(
+            'name' => 'logfile',
+            'vname' => 'LBL_LOGFILE',
+            'type' => 'varchar',
+            'len' => 255,
+        ),
+        'bucket' => array(
+            'name' => 'bucket',
+            'vname' => 'LBL_BUCKET',
+            'type' => 'varchar',
+            'len' => 1,
+        ),
+        'flag' => array(
+            'name' => 'flag',
+            'vname' => 'LBL_FLAG',
+            'type' => 'int',
+            'len' => 1,
+        ),
+        'logmeta' => array(
+            'name' => 'logmeta',
+            'vname' => 'LBL_LOGMETA',
+            'type' => 'text',
+        ),
+        'error' => array(
+            'name' => 'error',
+            'vname' => 'LBL_ERROR',
+            'type' => 'varchar',
+            'len' => 255,
+        ),
     ),
     'relationships' => array(),
+    'optimistic_locking' => false,
+    'uses' => array(
+        'default',
+    ),
     'acls' => array(
         'SugarACLAdminOnly' => true,
     ),
 );
 
-if (!class_exists('VardefManager')) {
-    require_once 'include/SugarObjects/VardefManager.php';
-}
-
-VardefManager::createVardef(
-    'HealthCheck',
-    'HealthCheck',
-    array('basic')
-);
+VardefManager::createVardef('HealthCheck', 'HealthCheck');

@@ -13,8 +13,11 @@
 
 /**
  *
- * Pack standalone CLI HealthCheck Scanner
- * usage: see scan.php
+ * Pack standalone CLI HealthCheck Scanner for OnDemand. This is the same
+ * as the previous SortingHat CLI script and can be executed as follows:
+ *
+ * php ScannerCli.php (for options see ScannerCli.php)
+ *
  */
 
 if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
@@ -27,13 +30,12 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use pack.php name.zip\n");
+    die("Use pack.php healthcheck.zip\n");
 }
 
 $zipFile = $argv[1];
 
 $files = array(
-    'scan.php',
     'Scanner/Scanner.php',
     'Scanner/ScannerCli.php',
     'Scanner/ScannerMeta.php',

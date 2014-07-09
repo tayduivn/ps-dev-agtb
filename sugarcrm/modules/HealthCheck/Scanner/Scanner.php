@@ -111,9 +111,15 @@ class Scanner
     /**
      *
      * Instance status (bucket)
-     * @var int
+     * @var string
      */
     protected $status = ScannerMeta::VANILLA;
+
+    /**
+     *
+     * @var int
+     */
+    protected $flag = ScannerMeta::FLAG_GREEN;
 
     /**
      *
@@ -154,8 +160,7 @@ class Scanner
             $this->fp = @fopen($this->logfile, 'a+');
         }
         if(empty($this->fp)) {
-            // FIXME: throw exception instead ?
-            die("Cannot open logfile: $this->logfile");
+            throw new RuntimeException("Cannot open logfile: $this->logfile");
         }
 
         fwrite($this->fp, $fmsg);
@@ -229,9 +234,19 @@ class Scanner
         $this->logMeta[] = $scanMeta;
 
 
-        if($status > $this->status) {
+        if ($status > $this->status) {
             $this->log("===> Status changed to $status", 'STATUS');
             $this->status = $status;
+        }
+
+        /*
+         * Every scan code can have a separate flag apart from the actual
+         * bucket. This has only meaning for the health check module.
+         *
+         * @see ScannerMeta::$defaultFlagMap
+         */
+        if ($scanMeta['flag'] > $this->flag) {
+            $this->flag = $scanMeta['flag'];
         }
     }
 
@@ -254,6 +269,17 @@ class Scanner
     }
 
     /**
+     *
+     * Getter logfile
+     * @return string
+     */
+    public function getLogFile()
+    {
+        return $this->logfile;
+    }
+
+    /**
+     *
      * Setter fp
      * @param $fp
      */
@@ -262,22 +288,35 @@ class Scanner
         $this->fp = $fp;
     }
 
+    /**
+     *
+     * Check if flag is green
+     * @return boolean
+     */
     public function isFlagGreen()
     {
-        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_GREEN;
+        return $this->flag == ScannerMeta::FLAG_GREEN;
     }
 
+    /**
+     *
+     * Check if flag is yello
+     * @return boolean
+     */
     public function isFlagYellow()
     {
-        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_YELLOW;
+        return $this->flag == ScannerMeta::FLAG_YELLOW;
     }
 
+    /**
+     *
+     * Check if flag is red
+     * @return boolean
+     */
     public function isFlagRed()
     {
-        return $this->meta->getDefaultFlag($this->status) == ScannerMeta::FLAG_RED;
+        return $this->flag == ScannerMeta::FLAG_RED;
     }
-
-
 
     /**
      *
@@ -307,6 +346,16 @@ class Scanner
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     *
+     * Getter flag
+     * @return integer
+     */
+    public function getFlag()
+    {
+        return $this->flag;
     }
 
     /**
@@ -1674,7 +1723,7 @@ ENDP;
             'TimePeriods','Trackers','TrackerSessions','TrackerPerfs',
             'TrackerQueries','UserPreferences','UserSignatures','Users','vCals',
             'vCards','Versions','WorkFlow','WorkFlowActions','WorkFlowActionShells',
-            'WorkFlowAlerts','WorkFlowAlertShells','WorkFlowTriggerShells'
+            'WorkFlowAlerts','WorkFlowAlertShells','WorkFlowTriggerShells', 'HealthCheck',
     );
 
     /**

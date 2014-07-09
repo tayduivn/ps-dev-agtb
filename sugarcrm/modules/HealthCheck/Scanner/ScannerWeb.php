@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once __DIR__ . '/Scanner.php';
+require_once 'modules/HealthCheck/Scanner/Scanner.php';
 
 /**
  *
@@ -20,32 +20,44 @@ require_once __DIR__ . '/Scanner.php';
  */
 class ScannerWeb extends Scanner
 {
-    const VERDICT_FILE = 'healthcheck_verdict.log';
+    /**
+     *
+     * @var User
+     */
+    protected $currentUserBackup;
 
     /**
+     *
+     * Add additional init/cleanup because we run Healthcheck
+     * inline with sugar code directly.
+     *
      * @see Scanner::scan
      * @return array|void
      */
     public function scan() {
+        $this->initWeb();
         $result = parent::scan();
-        $this->saveVerdict();
+        $this->cleanupWeb();
         return $result;
     }
 
-    public function getLastVerdict()
+    /**
+     * Initialize before running scanner
+     */
+    protected function initWeb()
     {
-        return file_get_contents(static::VERDICT_FILE);
+        if (isset($GLOBALS['current_user'])) {
+            $this->currentUserBackup = $GLOBALS['current_user'];
+        }
     }
 
-    public function saveVerdict()
+    /**
+     * Cleanup after running scanner
+     */
+    protected function cleanupWeb()
     {
-        file_put_contents(static::VERDICT_FILE, $this->getStatus());
+        if (!empty($this->currentUserBackup)) {
+            $GLOBALS['current_user'] = $this->currentUserBackup;
+        }
     }
-
-    public function verifyLastVerdict()
-    {
-        $verdict = (string)$this->getLastVerdict();
-        return $verdict != '' && $this->meta->getDefaultFlag($verdict) != ScannerMeta::FLAG_RED;
-    }
-
 }

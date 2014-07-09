@@ -15,6 +15,11 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Health Check',
     'LBL_MODULE_NAME_SINGULAR' => 'Health Check',
     'LBL_MODULE_TITLE' => 'Health Check',
+    'LBL_LOGFILE' => 'Log file',
+    'LBL_BUCKET' => 'Bucket',
+    'LBL_FLAG' => 'Flag',
+    'LBL_LOGMETA' => 'Log meta',
+    'LBL_ERROR' => 'Error',
 
     'LBL_SCAN_101_LOG' => '%s has studio history',
     'LBL_SCAN_102_LOG' => '%s has extensions: %s',

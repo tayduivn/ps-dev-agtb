@@ -25,7 +25,6 @@ class CliUpgrader extends UpgradeDriver
         "backup" => array(false, 'b', 'backup'),
         "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
-        "health_check_path" => array(false, 'H', 'healthcheck'),
         "autoconfirm" => array(false, 'A', 'autoconfirm')
     );
 
@@ -61,9 +60,9 @@ class CliUpgrader extends UpgradeDriver
 
     protected static function bannerError($msg)
     {
-    	echo "*******************************************************************************\n";
-    	echo "*** ERROR: $msg\n";
-    	echo "FAILURE\n";
+        echo "*******************************************************************************\n";
+        echo "*** ERROR: $msg\n";
+        echo "FAILURE\n";
     }
 
     protected function argError($msg)
@@ -94,6 +93,7 @@ Optional arguments:
                                            Supported types: core, db, custom, all, none. Default is all.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
+    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
 
 eoq2;
         echo $usage;
@@ -317,9 +317,9 @@ eoq2;
     public function parseArgs($argv)
     {
         if(defined('PHP_BINDIR')) {
-        	$php_path = PHP_BINDIR."/";
+            $php_path = PHP_BINDIR."/";
         } else {
-        	$php_path = '';
+            $php_path = '';
         }
         if(!file_exists($php_path . 'php')) {
             $php_path = '';
@@ -423,9 +423,9 @@ eoq2;
      */
     protected function buildArgString($arguments=array())
     {
-    	$argument_string = '';
+        $argument_string = '';
 
-    	$arguments = array_merge($this->context, $arguments);
+        $arguments = array_merge($this->context, $arguments);
 
         foreach($this->options as $ctx => $data) {
             if(!$data[0] && !isset($arguments[$ctx])) {
@@ -435,7 +435,7 @@ eoq2;
             $argument_string .= sprintf(" -%s %s", $data[1], escapeshellarg($arguments[$ctx]));
         }
 
-    	return $argument_string;
+        return $argument_string;
    }
 
     /**
@@ -452,11 +452,14 @@ eoq2;
         return $duration . ' second' . ($duration == 1 ? '' : 's');
     }
 
+    /**
+     *
+     * Interactive dialog to confirm yellow flag
+     * @param string $message
+     * @return boolean
+     */
     protected function confirmDialog($message = 'Continue?')
     {
-        if($this->context['autoconfirm']) {
-            return true;
-        }
         $output = "* $message (Yes/No) ";
         echo "\n".$output;
         $line = readline("");
@@ -470,24 +473,73 @@ eoq2;
         return false;
     }
 
+    /**
+     *
+     * @see UpgradeDriver::doHealthcheck()
+     */
     protected function doHealthcheck()
     {
         $scanner = $this->getHealthCheckScanner();
         if (!$scanner) {
-            $this->log('Cannot find health check scanner. Skipping health check stage');
-            return true;
+            return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
         $scanner->scan();
         if ($scanner->isFlagRed()) {
-            $this->error("Health check stage failed! Please fix issues described above and re-run upgrader.");
-            return false;
+            $this->dumpHealthCheckMeta($scanner);
+            return $this->error("Health check stage failed! Please fix issues described in the log file.");
         }
-        if ($scanner->isFlagYellow() && !$this->confirmDialog("Are you agree with the changes above?")) {
-            $this->error("Health check stage failed! User has canceled upgrade process.");
-            return false;
+        if ($scanner->isFlagYellow()) {
+            if ($this->context['autoconfirm']) {
+                $this->dumpHealthCheckMeta($scanner);
+                $this->log('Yellow flag(s) present - proceeding because of autoconfirm option has been set');
+                return true;
+            } else {
+                $this->dumpHealthCheckMeta($scanner, true);
+                if ($this->confirmDialog("Are you agree with the changes above?")) {
+                    $this->log('User interactively confirmed yellow flag(s) - proceeding');
+                    return true;
+                } else {
+                    return $this->error("Health check stage failed! User has canceled upgrade process.");
+                }
+            }
         }
         $this->log("Health check passed. All good.");
         return true;
+    }
+
+    /**
+     *
+     * Dump Scanner issues to log and optional stdout
+     * @param Scanner $scanner
+     * @param boolean $stdOut
+     */
+    protected function dumpHealthCheckMeta(Scanner $scanner, $stdOut = false)
+    {
+        $this->logHealthCheck('*** START HEALTHCHECK ISSUES ***', $stdOut);
+        foreach ($scanner->getLogMeta() as $key => $entry) {
+            $this->logHealthCheck(" => Issue $key (flag = {$entry['flag']}):", $stdOut);
+            $this->logHealthCheck("  {$entry['log']}", $stdOut);
+            $this->logHealthCheck("  {$entry['title']}", $stdOut);
+            $this->logHealthCheck("  {$entry['descr']}", $stdOut);
+            if ($entry['kb']) {
+                $this->logHealthCheck("  {$entry['kb']}", $stdOut);
+            }
+        }
+        $this->logHealthCheck('*** STOP HEALTHCHECK ISSUES ***', $stdOut);
+    }
+
+    /**
+     *
+     * Send message to log an optional to stdout
+     * @param string $msg
+     * @param boolean $stdOut
+     */
+    protected function logHealthCheck($msg, $stdOut = false)
+    {
+        $this->log($msg);
+        if ($stdOut) {
+            echo "$msg\n";
+        }
     }
 }
 

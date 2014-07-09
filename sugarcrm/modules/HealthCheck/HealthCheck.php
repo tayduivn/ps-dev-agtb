@@ -13,51 +13,78 @@
 
 /**
  *
- * HealthCheck bean
+ * HealthCheck
  */
 class HealthCheck extends Basic
 {
+    const CACHE_DIR = 'healthcheck';
+
     public $module_dir = 'HealthCheck';
     public $object_name = 'HealthCheck';
     public $table_name = 'healthcheck';
 
-    // FIXME: add $beanList defs etc ...
+    /**
+     *
+     * Perform healthcheck
+     * @param Scanner $scanner
+     * @return HealthCheck
+     */
+    public static function runHealthCheck(Scanner $scanner)
+    {
+        $hc = BeanFactory::getBean('HealthCheck');
+
+        // log file setup
+        $cacheDir = sugar_cached(self::CACHE_DIR);
+        SugarAutoLoader::ensureDir($cacheDir);
+        $hc->logfile = 'healthcheck-' . time() . '.log';
+        $scanner->setLogFile($cacheDir . "/" .$hc->logfile);
+
+        try {
+            $logMeta = $scanner->scan();
+            $hc->logmeta = json_encode($logMeta);
+            $hc->bucket = $scanner->getStatus();
+            $hc->flag = $scanner->getFlag();
+
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal("Error executing Health Check: " . $e->getMessage());
+            $hc->error = $e->getMessage();
+        }
+
+        $hc->save();
+        return $hc;
+    }
 
     /**
      *
-     * @var Scanner
+     * Get most recent healtcheck run
+     * @return HealthCheck
      */
-    protected $scanner;
-
-    public function bean_implements($interface)
+    public static function getLastRun()
     {
-        switch ($interface) {
-            case 'ACL':
-                return true;
+        $sql = "SELECT id FROM healthcheck WHERE deleted = 0 ORDER BY date_entered DESC";
+        $id = DBManagerFactory::getInstance()->getOne($sql, false, 'Error fetching most recent healtcheck record');
+        if ($id) {
+            return BeanFactory::getBean('HealthCheck', $id);
         }
-        return false;
     }
 
     /**
-     * FIXME: non functional yet ...
-     * @return HealthCheck
+     *
+     * Return full path for log file
      */
-    public function runHealthCheck()
+    public function getLogFileName()
     {
-        $this->initScanner();
-        $this->scanner->setInstanceDir(__DIR__ . '../..');
-        $this->scanner->setLogFile("cache/xxxxx");
-
-        $this->log_file = "cache/xxxx";
-        $this->save();
-
-        return $this;
+        if (!empty($this->logfile)) {
+            return sugar_cached(self::CACHE_DIR) . "/" . $this->logfile;
+        }
     }
 
-    protected function initScanner()
+    /**
+     *
+     * @see Basic::get_summary_text()
+     */
+    public function get_summary_text()
     {
-        if (empty($this->scanner)) {
-            $this->scanner = new Scanner();
-        }
+        return '';
     }
 }

@@ -531,7 +531,6 @@ $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
-
 // TODO: this definition should be grouped with all the others definitions like $beanList, $beanFiles and so on
 $bwcModules = array(
     'ACLFields',
@@ -655,6 +654,13 @@ $bwcModules = array(
     'WorkFlowTriggerShells'
     //END SUGARCRM flav=pro ONLY
 );
+
+// Health Check module
+$beanList['HealthCheck'] = 'HealthCheck';
+$beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';
+$modInvisList[] = 'HealthCheck';
+$adminOnlyList['HealthCheck'] = array('all' => 1);
+$bwcModules[] = 'HealthCheck';
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;

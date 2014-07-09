@@ -74,7 +74,6 @@ class ScannerCli extends Scanner
     }
 }
 
-
 /**
  *
  * Standalone CLI HealthCheck runner
@@ -82,7 +81,7 @@ class ScannerCli extends Scanner
  */
 
 if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php scan.php [-l logfile] [-v] /path/to/instance\n");
+    die("Use php ScannerCli.php [-l logfile] [-v] /path/to/instance\n");
 }
 
 $sapi_type = php_sapi_name();
@@ -95,4 +94,3 @@ $scanner->parseCliArgs($argv);
 $scanner->scan();
 
 exit($scanner->getResultCode());
-
