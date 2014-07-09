@@ -56,11 +56,11 @@ function createBouncedCampaignLogEntry($row,$email, $email_description)
     $bounce->related_type='Emails';
     $bounce->related_id= $email->id;
 
-    //do we have the phrase permanent error in the email body.
-    if (preg_match('/permanent[ ]*error/',$email_description))
+    // Do we have the phrase permanent error|failure in the email body.
+    if (preg_match('/permanent[ ]*(error|failure)/', $email_description))
     {
         $bounce->activity_type='invalid email';
-        markEmailAddressInvalid($email);
+        markEmailAddressInvalid($row['more_information']);
     }
     else 
         $bounce->activity_type='send error';
