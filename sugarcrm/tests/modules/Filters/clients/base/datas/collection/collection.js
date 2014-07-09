@@ -1,6 +1,6 @@
 describe('Data.Base.FiltersBeanCollection', function() {
     var app, filters, filterModuleName = 'Accounts', fetchStub, metadata,
-        fixturePath = './modules/Filters/clients/base/datas/fixtures';
+        fixturePath = '../tests/modules/Filters/clients/base/datas/fixtures';
 
     beforeEach(function() {
         app = SugarTest.app;
