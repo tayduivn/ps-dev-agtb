@@ -471,6 +471,212 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarBean::resetOperations();
     }
+
+    /**
+     *
+     * Test logging for distinct mismatch/compensation and the
+     * proper return of offending record ids.
+     *
+     * @covers SugarBean::logDistinctMismatch
+     * @dataProvider providerTestLogDistinctMismatch
+     * @group unit
+     *
+     * @param array $sqlRows
+     * @param array $beans
+     * @param string $level
+     * @param array $expected
+     */
+    public function testLogDistinctMismatch(array $sqlRows, array $beans, $level, array $expected)
+    {
+        LoggerManager::getLogger()->setLevel($level);
+
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $methodArgs = array($sqlRows, $beans);
+        $this->assertEquals(
+            $expected,
+            SugarTestReflection::callProtectedMethod($bean, 'logDistinctMismatch', $methodArgs),
+            "Wrong offending record ids returned"
+        );
+    }
+
+    public function providerTestLogDistinctMismatch()
+    {
+        return array(
+
+            // matching sqlRows vs beanSet
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a2', 'name' => 'record2'),
+                    2 => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                'debug',
+                array(),
+            ),
+
+            // duplicate sqlRows
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a1', 'name' => 'record1'),
+                    2 => array('id' => 'a2', 'name' => 'record2'),
+                    3 => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                'debug',
+                array('a1' => 2),
+            ),
+
+            // duplicate sqlRows, no detailed logging (not enabled by default)
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a1', 'name' => 'record1'),
+                    2 => array('id' => 'a2', 'name' => 'record2'),
+                    3 => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                'fatal',
+                array(),
+            ),
+        );
+    }
+
+    /**
+     *
+     * Test fetchFromQuery with distinct compensation.
+     *
+     * @covers SugarBean::fetchFromQuery
+     * @covers SugarBean::computeDistinctCompensation
+     * @dataProvider providerTestFetchFromQueryWithDistinctCompensation
+     * @group unit
+     */
+    public function testFetchFromQueryWithDistinctCompensation($sqlRows, $expected, $compensation)
+    {
+        // prepare SugarQuery
+        $query = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('execute'))
+            ->getMock();
+
+        $query->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($sqlRows));
+
+        // sut
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('call_custom_logic', 'logDistinctMismatch'))
+            ->getMock();
+        $bean->field_defs = array('id' => 'id', 'name' => 'name');
+
+        if ($compensation) {
+            $bean->expects($this->once())
+                ->method('logDistinctMismatch');
+        }
+
+        // execute fetch
+        $options = array('compensateDistinct' => true);
+        $results = $bean->fetchFromQuery($query, array(), $options);
+
+        // tests
+        $this->assertArrayHasKey(
+            '_distinctCompensation',
+            $results,
+            'No distinct compensation returned'
+        );
+
+        $this->assertEquals(
+            $compensation,
+            $results['_distinctCompensation'],
+            'Incorrect compensation result'
+        );
+
+        unset($results['_distinctCompensation']);
+
+        foreach ($results as $key => $bean) {
+            $this->assertEquals(
+                $expected[$key],
+                $bean->toArray(),
+                'Incorrect bean result set'
+            );
+        }
+    }
+
+    public function providerTestFetchFromQueryWithDistinctCompensation()
+    {
+        return array(
+
+            // matching sqlRows vs beanSet
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a2', 'name' => 'record2'),
+                    2 => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                0,
+            ),
+
+            // one duplicate sqlRows
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a1', 'name' => 'record1'),
+                    2 => array('id' => 'a2', 'name' => 'record2'),
+                    3 => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                ),
+                1,
+            ),
+
+            // multiple duplicate sqlRows with different records
+            array(
+                array(
+                    0 => array('id' => 'a1', 'name' => 'record1'),
+                    1 => array('id' => 'a1', 'name' => 'record1'),
+                    2 => array('id' => 'a2', 'name' => 'record2'),
+                    3 => array('id' => 'a3', 'name' => 'record3'),
+                    4 => array('id' => 'a3', 'name' => 'record3'),
+                    5 => array('id' => 'a3', 'name' => 'record3'),
+                    6 => array('id' => 'a4', 'name' => 'record4'),
+                    7 => array('id' => 'a5', 'name' => 'record5'),
+                    8 => array('id' => 'a5', 'name' => 'record5'),
+                    9 => array('id' => 'a1', 'name' => 'record1'),
+                ),
+                array(
+                    'a1' => array('id' => 'a1', 'name' => 'record1'),
+                    'a2' => array('id' => 'a2', 'name' => 'record2'),
+                    'a3' => array('id' => 'a3', 'name' => 'record3'),
+                    'a4' => array('id' => 'a4', 'name' => 'record4'),
+                    'a5' => array('id' => 'a5', 'name' => 'record5'),
+                ),
+                5,
+            ),
+        );
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting

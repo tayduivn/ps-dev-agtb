@@ -173,147 +173,145 @@ h4.merge-interface-header {
 	input[type=text] {
 		width: 86px;
 	}
-    input[type=password] {
-      width: 86px;
-    }
-    input[type=radio] {
-      width: 16px
-    }
-    input[type=checkbox] {
-      width: 14px;
-      margin-left: -3px;
-      display: inline-block;
-    }
-    textarea {
-      display: inline;
-    }
-    .merge-row {
-      width: auto;
+  input[type=password] {
+    width: 86px;
+  }
+  input[type=radio] {
+    width: 16px
+  }
+  label input[type=checkbox] {
+    margin-top: 0;
+  }
+  textarea {
+    display: inline;
+  }
+  .merge-row {
+    width: auto;
+    margin: 0;
+    line-height: @mergeFieldHeight;
+    height: (@mergeFieldHeight + 5);
+    padding: 0 5px;
+    white-space: nowrap;
+	&.odd {
+	    background: #FEFBF4;
+	}
+	&.even {
+	    background: #FDF9EA;
+	}
+	.ellipsis_inline {
+		display: inline-block !important;
+		width: 90%;
+	}
+	.select2-container {
+		width: 100px !important;
+	}
+	textarea {
+		height: 17px;
+		width: 86px;
+          resize: none;
+	}
+    .controls {
+      width: 100%;
+      height: @mergeFieldHeight;
+      padding: 2px 0 2px 0;
       margin: 0;
-      line-height: @mergeFieldHeight;
+    }
+    &.control-group .controls>label {
+      width: 120px;
+      overflow: hidden;
+      margin: 0;
+      line-height: (@mergeFieldHeight + 5);
       height: (@mergeFieldHeight + 5);
-      padding: 0 5px;
       white-space: nowrap;
-		&.odd {
-		    background: #FEFBF4;
-		}
-		&.even {
-		    background: #FDF9EA;
-		}
-		.ellipsis_inline {
-			display: inline-block !important;
-			width: 90%;
-		}
-		.select2-container {
-			width: 100px !important;
-		}
-		textarea {
-			height: 17px;
-			width: 86px;
-            resize: none;
-		}
-      .controls {
-        width: 100%;
-        height: @mergeFieldHeight;
-        padding: 2px 0 2px 0;
-        margin: 0;
+      position: absolute;
+    }
+    &.control-group {
+      height: (@mergeFieldHeight + 5);
+    }
+    &.merge-row-field-parent {
+      height: 70px;
+      .controls label {
+        height: 75px;
       }
-      &.control-group .controls>label {
-        width: 120px;
-        overflow: hidden;
-        margin: 0;
-        line-height: (@mergeFieldHeight + 5);
-        height: (@mergeFieldHeight + 5);
-        white-space: nowrap;
-        position: absolute;
+      .controls label > span > div {
+        width: 90%;
+        margin-left: 0;
       }
-      &.control-group {
-        height: (@mergeFieldHeight + 5);
+    }
+    &.merge-row-field-avatar {
+      height: 65px;
+      .controls label {
+        height: 60px;
       }
-      &.merge-row-field-parent {
-        height: 70px;
-        .controls label {
-          height: 75px;
-        }
-        .controls label > span > div {
-          width: 90%;
-          margin-left: 0;
-        }
-      }
-      &.merge-row-field-avatar {
-        height: 65px;
-        .controls label {
-          height: 60px;
-        }
-        .image_field {
-          top: 0;
-          left:0;
-          label {
-            height: 50px;
-            width: 50px;
-            position: static;
-          }
-        }
-        .label-module {
+      .image_field {
+        top: 0;
+        left:0;
+        label {
           height: 50px;
           width: 50px;
+          position: static;
         }
       }
-      &.merge-row-field-image {
-        height: 110px;
-        .controls label {
-          height: 100px;
+      .label-module {
+        height: 50px;
+        width: 50px;
+      }
+    }
+    &.merge-row-field-image {
+      height: 110px;
+      .controls label {
+        height: 100px;
+      }
+    }
+    &.merge-row-field-datetimecombo {
+      height: 70px;
+      .controls label {
+        height: 75px;
+        overflow: visible;
+      }
+      .controls label > span > div {
+        width: 90%;
+        margin-left: 0;
+        &.input-append {
+          white-space: normal;
         }
       }
-      &.merge-row-field-datetimecombo {
-        height: 70px;
-        .controls label {
-          height: 75px;
-          overflow: visible;
-        }
-        .controls label > span > div {
-          width: 90%;
-          margin-left: 0;
-          &.input-append {
-            white-space: normal;
-          }
-        }
+    }
+    &.merge-row-field-currency {
+      height: 70px;
+      .controls label {
+        height: 75px;
       }
-      &.merge-row-field-currency {
-        height: 70px;
-        .controls label {
-          height: 75px;
+      .controls label > span > div {
+        width: 90%;
+        margin-left: 0;
+        .span4, span8 {
+          width: 99%;
         }
-        .controls label > span > div {
-          width: 90%;
-          margin-left: 0;
-          .span4, span8 {
-            width: 99%;
-          }
-          .converted {
-            display: block;
-            position: relative;
-          }
-          .original{
-            display: inline;
-            position: relative;
-          }
-          input {
-            width: 86px;
-          }
-        }
-      }
-      &.merge-row-field-teamset {
-        height: auto;
-        padding-bottom: 2px;
-        .controls label {
-          height: auto;
-        }
-        button {
-          left: 61px;
+        .converted {
+          display: block;
           position: relative;
         }
+        .original{
+          display: inline;
+          position: relative;
+        }
+        input {
+          width: 86px;
+        }
       }
+    }
+    &.merge-row-field-teamset {
+      height: auto;
+      padding-bottom: 2px;
+      .controls label {
+        height: auto;
+      }
+      button {
+        left: 61px;
+        position: relative;
+      }
+    }
 	}
 }
 

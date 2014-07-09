@@ -104,6 +104,13 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
+                    'event' => 'button:historical_summary_button:click',
+                    'name' => 'historical_summary_button',
+                    'label' => 'LBL_HISTORICAL_SUMMARY',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
@@ -265,6 +272,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'phone_work',
                 'assigned_user_name',
                 'twitter',
+                array(
+                    'name' => 'dnb_principal_id',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'description',
                     'span' => 12,

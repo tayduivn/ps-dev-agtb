@@ -217,27 +217,27 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         array(
                             'name' => 'primary_address_street',
                             'css_class' => 'address_street',
-                            'placeholder' => 'LBL_STREET',
+                            'placeholder' => 'LBL_PRIMARY_ADDRESS_STREET',
                         ),
                         array(
                             'name' => 'primary_address_city',
                             'css_class' => 'address_city',
-                            'placeholder' => 'LBL_CITY',
+                            'placeholder' => 'LBL_PRIMARY_ADDRESS_CITY',
                         ),
                         array(
                             'name' => 'primary_address_state',
                             'css_class' => 'address_state',
-                            'placeholder' => 'LBL_STATE',
+                            'placeholder' => 'LBL_PRIMARY_ADDRESS_STATE',
                         ),
                         array(
                             'name' => 'primary_address_postalcode',
                             'css_class' => 'address_zip',
-                            'placeholder' => 'LBL_POSTAL_CODE',
+                            'placeholder' => 'LBL_PRIMARY_ADDRESS_POSTALCODE',
                         ),
                         array(
                             'name' => 'primary_address_country',
                             'css_class' => 'address_country',
-                            'placeholder' => 'LBL_COUNTRY',
+                            'placeholder' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
                         ),
                     ),
                 ),
@@ -250,27 +250,27 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         array(
                             'name' => 'alt_address_street',
                             'css_class' => 'address_street',
-                            'placeholder' => 'LBL_STREET',
+                            'placeholder' => 'LBL_ALT_ADDRESS_STREET',
                         ),
                         array(
                             'name' => 'alt_address_city',
                             'css_class' => 'address_city',
-                            'placeholder' => 'LBL_CITY',
+                            'placeholder' => 'LBL_ALT_ADDRESS_CITY',
                         ),
                         array(
                             'name' => 'alt_address_state',
                             'css_class' => 'address_state',
-                            'placeholder' => 'LBL_STATE',
+                            'placeholder' => 'LBL_ALT_ADDRESS_STATE',
                         ),
                         array(
                             'name' => 'alt_address_postalcode',
                             'css_class' => 'address_zip',
-                            'placeholder' => 'LBL_POSTAL_CODE',
+                            'placeholder' => 'LBL_ALT_ADDRESS_POSTALCODE',
                         ),
                         array(
                             'name' => 'alt_address_country',
                             'css_class' => 'address_country',
-                            'placeholder' => 'LBL_COUNTRY',
+                            'placeholder' => 'LBL_ALT_ADDRESS_COUNTRY',
                         ),
                         array(
                             'name' => 'copy',
@@ -291,6 +291,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'campaign_name',
                 'phone_fax',
                 'twitter',
+                array(
+                    'name' => 'dnb_principal_id',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'description',
                     'span' => 12,

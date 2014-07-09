@@ -37,6 +37,20 @@
         this.before('save', function(model) {
             return this.layout.triggerBefore('dashletconfig:save', model);
         }, this);
+
+        //shortcut keys
+        app.shortcuts.register('Dashlet:Config:Cancel', ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=cancel_button]');
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.click();
+            }
+        }, this, true);
+        app.shortcuts.register('Dashlet:Config:Save', ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=save_button]');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.click();
+            }
+        }, this, true);
     },
 
     /**
@@ -87,7 +101,7 @@
      */
     _renderHtml: function() {
         var label;
-        this.model = this.layout.context.get('model');
+        this.model = this.context.get('model');
         label = app.lang.get(
             this.model.get('label'),
             this.model.get('module') || this.module,

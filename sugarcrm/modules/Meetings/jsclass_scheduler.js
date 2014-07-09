@@ -605,7 +605,7 @@ SugarWidgetScheduleRow.prototype.load = function (thetableid) {
 	var self = this;
 
 	vcalClient = new SugarVCalClient();
-	if(typeof (GLOBAL_REGISTRY['freebusy_adjusted']) == 'undefined' ||	typeof (GLOBAL_REGISTRY['freebusy_adjusted'][this.focus_bean.fields.id]) == 'undefined') {
+	if (this.focus_bean.module === 'User' && (typeof (GLOBAL_REGISTRY['freebusy_adjusted']) == 'undefined' || typeof (GLOBAL_REGISTRY['freebusy_adjusted'][this.focus_bean.fields.id]) == 'undefined')) {
 		global_request_registry[req_count] = [this,'display'];
 		vcalClient.load(this.focus_bean.fields.id,req_count);
 		req_count++;

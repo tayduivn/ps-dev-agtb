@@ -10,46 +10,45 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id$
-
 require_once("include/SugarCharts/JsChart.php");
 
-class nvd3 extends JsChart {
+class nvd3 extends JsChart
+{
 
-	var $supports_image_export = true;
-	var $print_html_legend_pdf = true;
+    var $supports_image_export = true;
+    var $print_html_legend_pdf = true;
 
-	function __construct() {
-		parent::__construct();
-	}
+    function __construct()
+    {
+        parent::__construct();
+    }
 
-	function getChartResources() {
-		return '
-		<script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/lib/d3.min.js').'"></script>
-		<script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/nv.d3.min.js').'"></script>
-		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/nvd3/js/sugarCharts.js').'"></script>
-		';
-	}
+    function getChartResources()
+    {
+        return '
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/lib/d3.min.js').'"></script>
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/nv.d3.min.js').'"></script>
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/nvd3/js/sugarCharts.js').'"></script>
+        ';
+    }
 
-	function getMySugarChartResources() {
-		return '
-		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/nvd3/js/mySugarCharts.js').'"></script>
-		';
-	}
+    function getMySugarChartResources()
+    {
+        return '
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/nvd3/js/mySugarCharts.js').'"></script>
+        ';
+    }
 
-	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
+    function display($name, $xmlFile, $width = '320', $height = '480', $resize = false)
+    {
+        parent::display($name, $xmlFile, $width, $height, $resize);
 
-		parent::display($name, $xmlFile, $width, $height, $resize);
+        return $this->ss->fetch('include/SugarCharts/nvd3/tpls/chart.tpl');
+    }
 
-		return $this->ss->fetch('include/SugarCharts/nvd3/tpls/chart.tpl');
-	}
-
-	function getDashletScript($id,$xmlFile="") {
-
-		parent::getDashletScript($id,$xmlFile);
-		return $this->ss->fetch('include/SugarCharts/nvd3/tpls/DashletGenericChartScript.tpl');
-	}
-
+    function getDashletScript($id, $xmlFile = "")
+    {
+        parent::getDashletScript($id, $xmlFile);
+        return $this->ss->fetch('include/SugarCharts/nvd3/tpls/DashletGenericChartScript.tpl');
+    }
 }
-
-?>

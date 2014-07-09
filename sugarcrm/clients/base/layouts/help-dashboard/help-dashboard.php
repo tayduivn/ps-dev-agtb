@@ -26,6 +26,13 @@ $viewdefs['base']['layout']['help-dashboard'] = array(
                             ),
                             'width' => 12,
                         ),
+                        array(
+                            'view' => array(
+                                'type' => 'learning-resources',
+                                'label' => 'LBL_LEARNING_RESOURCES_NAME',
+                            ),
+                            'width' => 12,
+                        ),
                     ),
                 ),
                 'width' => 12,

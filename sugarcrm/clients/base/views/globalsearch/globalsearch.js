@@ -20,6 +20,13 @@
     postTag: '</strong>',
 
     plugins: ['Dropdown'],
+
+    /**
+     * @property {String}
+     * Used by Dropdown plugin to determine which items to select when using the arrow keys
+     */
+    dropdownItemSelector: '[data-action="select-module"]',
+
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
@@ -30,6 +37,11 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:sync:complete', this.populateModules, this);
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s','ctrl+alt+0'], function() {
+            this.$('input.search-query').focus();
+        }, this);
     },
     /**
      * Handle module 'select/unselect' event.

@@ -626,7 +626,7 @@
             }
         }
 
-        filterId = filterId || this.getLastFilter(moduleName, this.layoutType) || 'all_records';
+        filterId = filterId || this.getLastFilter(moduleName, this.layoutType);
 
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:change:module', moduleName, linkName, true);
@@ -654,6 +654,7 @@
                 this.filters.add(app.data.createBean('Filters', filter));
             }, this);
             this.loadPredefinedFilters(moduleName);
+            defaultId = defaultId || this.filters.defaultFilterFromMeta;
             this.selectFilter(defaultId);
 
         } else {
@@ -670,6 +671,7 @@
                     filterLayout.loadedModules[moduleName] = true;
                     this.saveFilterCollection(moduleName);
                     this.loadPredefinedFilters(moduleName);
+                    defaultId = defaultId || this.filters.defaultFilterFromMeta;
                     this.selectFilter(defaultId);
                 }, this)
             });

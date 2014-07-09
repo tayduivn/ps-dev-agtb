@@ -37,6 +37,13 @@ class TodayExpression extends DateExpression
 		  d.setHours(0);
 		  d.setMinutes(0);
 		  d.setSeconds(0);
+
+		    // if we're calling this from Sidecar, we need to pass back the date
+            // as a string, not a Date object otherwise it won't validate properly
+            if (this.context.view) {
+                d = App.date.format(d, 'Y-m-d');
+            }
+
 		  return d;
 EOQ;
 	}

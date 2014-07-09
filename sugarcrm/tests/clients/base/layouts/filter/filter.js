@@ -669,7 +669,7 @@ describe('Base.Layout.Filter', function() {
                     params: ['Accounts'],
                     layoutType: 'record',
                     showingActivities: false,
-                    expected: ['Accounts', 'all_records']
+                    expected: ['Accounts', undefined]
                 },
                 {
                     params: ['Accounts'],
@@ -705,7 +705,7 @@ describe('Base.Layout.Filter', function() {
                     lastStateFilter: undefined,
                     layoutType: 'record',
                     showingActivities: true,
-                    expected: ['Activities', 'all_records']
+                    expected: ['Activities', undefined]
                 }
             ], function(option) {
                 it('should retrieve the module to filter and the filter to select', function() {

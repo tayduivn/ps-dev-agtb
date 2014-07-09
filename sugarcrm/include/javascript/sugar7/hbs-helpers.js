@@ -13,7 +13,7 @@
  * Handlebars helpers.
  *
  * These functions are to be used in handlebars templates.
- * @class Handlebars.helpers
+ * @class View.Handlebars.helpers
  * @singleton
  */
 (function(app) {

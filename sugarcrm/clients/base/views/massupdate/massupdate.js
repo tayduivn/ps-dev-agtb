@@ -876,6 +876,9 @@
         // the view is disposed.
         this.$el.show();
         this.render();
+
+        this.createShortcutSession();
+        this.registerShortcuts();
     },
     /**
      * Hide all views that make up the list mass action section (ie. massupdate, massaddtolist)
@@ -889,6 +892,46 @@
         }
         this.visible = false;
         this.$el.hide();
+
+        this.clearAndRestorePreviousShortcuts();
+    },
+    /**
+     * Create new shortcut session.
+     */
+    createShortcutSession: function() {
+        app.shortcuts.saveSession();
+        app.shortcuts.createSession([
+            'MassUpdate:Add',
+            'MassUpdate:Remove',
+            'MassUpdate:Cancel',
+            'MassUpdate:Update'
+        ], this);
+    },
+    /**
+     * Register shortcuts for mass update inline drawer.
+     */
+    registerShortcuts: function() {
+        app.shortcuts.register('MassUpdate:Add', '+', function() {
+            this.$('[data-action=add]').last().click();
+        }, this);
+        app.shortcuts.register('MassUpdate:Remove', '-', function() {
+            this.$('[data-action=remove]').last().click();
+        },this);
+        app.shortcuts.register('MassUpdate:Cancel', ['esc', 'ctrl+opt+l'], function() {
+                this.$('a.cancel_button').click();
+            }, this, true);
+        app.shortcuts.register('MassUpdate:Update', ['ctrl+s', 'ctrl+opt+a'], function() {
+                this.$('[name=update_button]:not(.disabled)').click();
+        }, this, true);
+    },
+    /**
+     * Clear shortcuts and restore previous shortcut session.
+     */
+    clearAndRestorePreviousShortcuts: function() {
+        var activeShortcutSession = app.shortcuts.getCurrentSession();
+        if (activeShortcutSession && (activeShortcutSession.layout === this)) {
+            app.shortcuts.restoreSession();
+        }
     },
     setDisabledOnUpdate: function() {
         var massUpdate = this.context.get('mass_collection');

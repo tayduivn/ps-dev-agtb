@@ -102,11 +102,15 @@ class VisibilityAction extends AbstractAction
                 }
                 else {
                     context.removeClass(this.target, inv_class, true);
-                    context.setFieldDisabled(this.target, false);
-                    if (wasHidden)
+                    if (!field.def.calculated || !field.def.enforced) {
+                        context.setFieldDisabled(this.target, false);
+                    }
+                    if (wasHidden) {
                         SUGAR.forms.FlashField(target, null, this.target);
-                    if (field.wasRequired === true)
+                    }
+                    if (field.wasRequired === true) {
                         context.setFieldRequired(this.target, true);
+                    }
                 }
                 if (row) {
                     this.checkRowSidecar(row, inv_class);

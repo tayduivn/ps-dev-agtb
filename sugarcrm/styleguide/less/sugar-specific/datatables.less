@@ -66,7 +66,7 @@
       }
     }
     > span {
-      display: inline-block;
+      display: block;
       width: 100%;
       overflow-x: hidden;
       white-space: nowrap;
@@ -130,13 +130,15 @@
       max-width: 86px;
     }
     &[data-type="datetimecombo"] {
-      input[type="text"].datepicker {
+      input[type="text"] {
         min-width: 0;
+        z-index: 0;
+      }
+      input[type="text"].datepicker {
         width: 50%;
         .calcWidth(~"55% - 2px");
       }
       input[type="text"].ui-timepicker-input {
-        min-width: 0;
         width: 40%;
         .calcWidth(~"45% - 2px");
       }
@@ -260,6 +262,17 @@
           color:@black !important;
         }
       }
+    }
+    //selecting a row using shortcut keys
+    &.selected td:first-child:before {
+      content: " ";
+      position: absolute;
+      z-index: 11;
+      background: #e61718;
+      height: 36px;
+      margin-top: -18px;
+      width: 4px;
+      left: 0;
     }
     //inline editing
     &.tr-inline-edit {
@@ -465,12 +478,11 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 28px;
+        height: 27px;
         top: 0;
         left: 0;
         padding: 7px 8px;
         border-right: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
         z-index: 999;
       }
@@ -546,11 +558,10 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 28px;
+        height: 27px;
         top: 0;
         right: 0;
         padding: 7px 8px;
-        border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
         &.open {
           z-index: 999;
@@ -959,5 +970,16 @@ table th.nosort span:after {
         right: 4px;
       }
     }
+  }
+}
+
+.touch .flex-list-view.right-actions .dataTable {
+  th:last-child > span,
+  th:first-child > *,
+  th:last-child > .dropdown { /*UIUX-1760*/
+    height: 30px;
+  }
+  td:last-child > * { /*SC-3006*/
+    -webkit-transform: translatez(0);
   }
 }

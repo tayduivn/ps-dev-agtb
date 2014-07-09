@@ -1,31 +1,25 @@
 /* CHARTS
   ----------------*/
+
+//HOMEPAGE
 .dashboard {
-  .pagination {
-    .thumbnail.dashlet:not(.collapsed) {
-      .dashlet-content{
-        max-height: 426px;
-      }
-    }
-  }
   .thumbnail.dashlet:not(.collapsed) {
     max-height: 500px;
-
-    //500(max)-33(menubar)-1(bottom-border)
-    .dashlet-content,
-    .block {
+    //500 (max) - 34 (menubar) = 466
+    .dashlet-content > div {
       max-height: 466px;
     }
-
-    .dashlet-options+.block {
-      height: 417px;
+    //466 (max) - 40 (block footer) = 426
+    .dashlet-content .list-view {
+      max-height: 426px;
+      overflow: auto;
     }
-    //466(max)-16(margins)
+    //466 (max) - 16 (chart margins) = 450
     .nv-chart {
       height: 450px;
       margin: 8px;
     }
-    .dashlet-options+.block .nv-chart,
+    //450 (chart height) - 41 (dashlet options) = 409
     .dashlet-options+.nv-chart,
     .opportunity-pipeline-wrapper .nv-chart,
     .forecasts-chart-wrapper .nv-chart {
@@ -37,36 +31,37 @@
     .nv-chart-cases {
       height: 399px;
     }
+    //466 (max) - 39 (block footer) = 427
+    .twitter-widget.scroll {
+      max-height: 427px;
+    }
   }
 }
 
-
+//SIDEBAR
 .sidebar-content {
-  .pagination {
-    .thumbnail.dashlet:not(.collapsed) {
-      //max-height - pagination(40px)
-      .dashlet-content{
-        max-height: 326px;
-      }
-    }
-  }
   .thumbnail.dashlet:not(.collapsed) {
     max-height: 400px;
-    //400(max)-33(menubar)-1(bottom-border)
-    .dashlet-content,
-    .block {
+    &.dashlet-dnb-tall {
+      max-height: 615px;
+      .dashlet-content > div {
+        max-height: 541px;
+      }
+    }
+    //400 (max) - 34 (menubar) = 366
+    .dashlet-content > div {
       max-height: 366px;
     }
-    .dashlet-options+.block {
-      height: 317px;
+    //366 (max) - 40 (block footer) = 326
+    .dashlet-content .list-view {
+      max-height: 326px;
     }
-    //366(max)-16(margins)
+    //366 (max) - 16 (chart margins) = 350
     .nv-chart {
       height: 350px;
       margin: 8px;
     }
-    //350(h)-41(options)
-    .dashlet-options+.block .nv-chart,
+    //350 (chart height) - 41 (dashlet options) = 309
     .dashlet-options+.nv-chart,
     .opportunity-pipeline-wrapper .nv-chart,
     .forecasts-chart-wrapper .nv-chart {
@@ -80,6 +75,10 @@
     }
     .saved-reports-chart .nv-chart {
       max-height: 348px;
+    }
+    //366 (max) - 39 (block footer) = 327
+    .twitter-widget.scroll {
+      max-height: 327px;
     }
   }
 }

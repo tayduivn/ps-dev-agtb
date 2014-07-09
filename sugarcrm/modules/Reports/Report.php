@@ -1026,7 +1026,7 @@ class Report
 
         foreach ($panelParents as $panel => $parent) {
             if (isset($filters[$parent])) {
-                array_push($filters[$parent], $filters[$panel]);
+                array_unshift($filters[$parent], $filters[$panel]);
             }
         }
         array_splice($filters, 1);
@@ -2245,16 +2245,26 @@ return str_replace(' > ','_',
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
                         $display = "";
                     }
-                    if ($display_column['type'] == 'int') {
-                        $display = $displayData;
-                    } // if
                 } // if
             } // if
 
             //  for charts
             if ($column_field_name == 'summary_columns' && $this->do_chart) {
                 //_pp($display);
-                $cell_arr = array('val' => $raw_display, 'key' => $display_column['column_key']);
+                $raw_value = "";
+                $keys = array_keys($fields);
+                foreach ($this->report_def['summary_columns'] as $index => $column) {
+                    if ($column['name'] == $display_column['name'] && isset($keys[$index])
+                    && isset($fields[$keys[$index]])) {
+                        $raw_value = $fields[$keys[$index]];
+                        break;
+                    }
+                }
+                $cell_arr = array(
+                    'val' => $raw_display,
+                    'key' => $display_column['column_key'],
+                    'raw_value' => $raw_value
+                );
                 //_pp($cell_arr);
                 array_push($chart_cells, $cell_arr);
             }

@@ -190,7 +190,8 @@ $dictionary['OAuthToken'] = array(
 		    'table' => 'users',
 		    'id_name' => 'assigned_user_id',
 		    'module'=>'Users',
-		    'duplicate_merge'=>'disabled'
+		    'duplicate_merge'=>'disabled',
+            'exportable'=> true,
 	 ),
 	 'assigned_user_link' =>
       array (

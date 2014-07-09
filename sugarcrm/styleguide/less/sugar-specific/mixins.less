@@ -7,17 +7,16 @@
   margin-left: 0; // undo default grid column styles
 }
 .rtl(rtl, @directionality: inherit) {
-   direction: @directionality;
+    direction: @directionality;
 }
 .rtlFloat(rtl,@float: inherit) {
     float: @float;
 }
 .rtlRight(rtl,@right: inherit){
-     right: @right;
+    right: @right;
 }
-
 .rtlLeft(rtl,@left: inherit){
-     left: @left;
+    left: @left;
 }
 .rtlMargin(rtl,@margin: inherit) {
     margin: @margin;
@@ -197,5 +196,13 @@
   &:hover {
     border-bottom: 1px solid @black;
   }
+}
+
+.tab-focus-light() {
+    // Default
+    outline: 1px dotted @white;
+    // Webkit
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
 }
 

@@ -197,7 +197,12 @@
   .search-name {
     position: absolute;
     left: auto;
-    width: 100%;
+    //In IE, focusing on this input field programmatically causes the filter dropdown to shift left.
+    //To work around this issue, width is set to 70% instead of 100%. The same problem still does
+    //exist if the width of the filter dropdown is wide enough that 70% is too wide.  However, it
+    //is an edge case. This workaround should cover the vast majority of cases. To really fix this
+    //issue, we need to re-implement how we layout components in our application.
+    width: 70%;
     .box-sizing(border-box);
     height: 22px;
     border: 0;
@@ -264,6 +269,7 @@
             display: table-cell;
             height: inherit;
             vertical-align: middle;
+            position: relative;
           }
         }
       }

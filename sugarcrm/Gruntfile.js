@@ -1,7 +1,19 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 var os = require('os');
 
 module.exports = function(grunt) {
     grunt.loadTasks('grunt/tasks');
+    grunt.loadNpmTasks('grunt-jsduck');
 
     var path = grunt.option('path');
     path = path && path.replace(/\/+$/, '') + '/' || os.tmpdir();
@@ -60,6 +72,27 @@ module.exports = function(grunt) {
                     'dots',
                     'junit'
                 ]
+            }
+        },
+        jsduck: {
+            all: {
+                src: [
+                    'clients/**/*.js',
+                    'include/javascript/sugar7/{*,plugins/*}.js',
+                    'modules/*/clients/**/*.js',
+                    'sidecar/src/**/*.js',
+                    'sidecar/lib/sugarapi.js'
+                ],
+
+                dest: 'docs',
+
+                options: {
+                    'title': 'SugarCRM Javascript Documentation',
+                    'color': true,
+                    'head-html': '<link rel="stylesheet" href="../styleguide/assets/css/jsduck.css" type="text/css">',
+                    'builtin-classes': true,
+                    'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib/sugarapi']
+                }
             }
         }
     });

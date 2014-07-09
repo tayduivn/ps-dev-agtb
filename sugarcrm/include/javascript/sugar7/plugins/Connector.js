@@ -35,7 +35,9 @@
                 }
                 else {
                     connectors = app.cache.get(hashKey);
-                    connector = connectors[name];
+                    if (connectors && connectors[name]) {
+                        connector = connectors[name];
+                    }
                     // if connector exists and all connectorCriteria is true, call the success call
                     if ((connector) &&
                         (this.checkCriteria(connector, connectorCriteria))) {

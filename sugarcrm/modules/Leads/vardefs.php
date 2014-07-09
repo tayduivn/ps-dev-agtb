@@ -131,7 +131,34 @@ $dictionary['Lead'] = array(
             'vname' => 'LBL_CONTACTS',
             'reportable' => false
         ),
+        //d&b principal id, a unique id assigned to a contact by D&B API
+        //this contact is used for dupe check
+        'dnb_principal_id' => array (
+           'name' => 'dnb_principal_id',
+           'vname' => 'LBL_DNB_PRINCIPAL_ID',
+           'type' => 'varchar',
+           'len' => 30,
+           'comment' => 'Unique Id For D&B Contact',
+        ),
         'account_name' => array(
+  //d&b principal id, a unique id assigned to a contact by D&B API
+  //this contact is used for dupe check
+  'dnb_principal_id' => array (
+    'name' => 'dnb_principal_id',
+    'vname' => 'LBL_DNB_PRINCIPAL_ID',
+    'type' => 'varchar',
+    'len' => 30,
+    'comment' => 'Unique Id For D&B Contact',
+  ),
+  //d&b principal id, a unique id assigned to a contact by D&B API
+  //this contact is used for dupe check
+  'dnb_principal_id' => array (
+    'name' => 'dnb_principal_id',
+    'vname' => 'LBL_DNB_PRINCIPAL_ID',
+    'type' => 'varchar',
+    'len' => 30,
+    'comment' => 'Unique Id For D&B Contact',
+  ),
             'name' => 'account_name',
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'varchar',
@@ -484,6 +511,14 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROSPECT_LIST',
         ),
+        'prospect' => array(
+            'name' => 'prospect',
+            'type' => 'link',
+            'relationship' => 'lead_prospect',
+            'module' => 'Prospects',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROSPECT',
+        ),
         'preferred_language' => array(
             'name' => 'preferred_language',
             'type' => 'enum',
@@ -552,6 +587,15 @@ $dictionary['Lead'] = array(
         array('name' => 'idx_lead_mkto_id', 'type' => 'index', 'fields' => array('mkto_id')),
     ),
     'relationships' => array(
+        'lead_prospect' => array(
+            'lhs_module' => 'Leads',
+            'lhs_table' => 'leads',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Prospects',
+            'rhs_table' => 'prospects',
+            'rhs_key' => 'lead_id',
+            'relationship_type' => 'one-to-one'
+        ),
         'lead_direct_reports' => array(
             'lhs_module' => 'Leads',
             'lhs_table' => 'leads',
@@ -646,6 +690,7 @@ $dictionary['Lead'] = array(
                                         array('account_name' => array('$starts' => '$account_name')),
                                         array('first_name' => array('$starts' => '$first_name')),
                                         array('last_name' => array('$starts' => '$last_name')),
+                                        array('dnb_principal_id' => array('$equals' => '$dnb_principal_id')),
                                     )
                                 ),
                                 array('phone_work' => array('$equals' => '$phone_work')),
@@ -664,6 +709,7 @@ $dictionary['Lead'] = array(
     ),
     //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
+
 );
 
 VardefManager::createVardef(

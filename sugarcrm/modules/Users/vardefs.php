@@ -471,6 +471,7 @@ $dictionary['User'] = array(
                     'wirelessdetailview' => false,
                     'wirelesseditview' => false,
                 ),
+                'exportable'=> true,
 			),
 			'team_link' =>
 		    array (
@@ -669,6 +670,7 @@ $dictionary['User'] = array(
             'merge_filter' => 'enabled',
             'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
             'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
+            'exportable'=>true,
         ), 
         'email'=> array(
             'name' => 'email',
@@ -682,6 +684,7 @@ $dictionary['User'] = array(
             ),
             'vname' =>'LBL_ANY_EMAIL',
             'studio' => array('visible'=>false, 'searchview'=>true),
+            'sort_on' => 'email_addresses',
         ),
         'email_addresses' => array(
             'name' => 'email_addresses',
@@ -693,6 +696,8 @@ $dictionary['User'] = array(
             'vname' => 'LBL_EMAIL_ADDRESSES',
             'reportable' => false,
             'required' => true,
+            'link' => 'email_addresses_primary',
+            'rname' => 'email_address',
         ) ,
         'email_addresses_primary' => array(
             'name' => 'email_addresses_primary',

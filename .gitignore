@@ -27,3 +27,5 @@ sugarcrm/custom/themes/
 build/rome/MAMP
 atlassian-ide-plugin.xml
 sugarcrm/node_modules
+sugarcrm/vendor/autoload.php
+sugarcrm/vendor/composer/

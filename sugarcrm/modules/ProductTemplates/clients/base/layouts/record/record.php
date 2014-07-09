@@ -84,7 +84,7 @@ $viewdefs['ProductTemplates']['base']['layout']['record'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'record',
     'name' => 'base',
     'span' => 12,
 );

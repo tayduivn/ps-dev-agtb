@@ -66,6 +66,8 @@ $dictionary['Contact'] = array(
             ),
             'populate_confirm_label' => 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR',
             'importable' => 'true',
+            'exportable'=>true,
+            'export_link_type' => 'one',//relationship type to be used during export
         ),
         'account_id' => array(
             'name' => 'account_id',
@@ -84,7 +86,8 @@ $dictionary['Contact'] = array(
             'hideacl' => true,
             'link' => 'accounts',
         ),
-        //d&b principal id num
+        //d&b principal id, a unique id assigned to a contact by D&B API
+        //this contact is used for dupe check
         'dnb_principal_id' =>
           array (
             'name' => 'dnb_principal_id',

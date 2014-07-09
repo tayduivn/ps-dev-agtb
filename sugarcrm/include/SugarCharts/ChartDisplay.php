@@ -73,8 +73,8 @@ class ChartDisplay
         // set the default stuff we need on the reporter
         // and run the queries
         $this->reporter->is_saved_report = true;
-        // only run if the chart_rows variable is empty
-        if (empty($this->reporter->chart_rows)) {
+        // only run if the chart_header_row variable is empty
+        if (empty($this->reporter->chart_header_row)) {
             $this->reporter->get_total_header_row();
             $this->reporter->run_chart_queries();
         }
@@ -116,8 +116,7 @@ class ChartDisplay
 
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();
-                foreach ($this->reporter->report_def['group_defs'] as $group_def)
-                {
+                foreach ($this->reporter->report_def['group_defs'] as $group_def) {
                     $groupByNames[] = $group_def['name'];
                 }
                 $sugarChart->group_by = $groupByNames;
@@ -186,12 +185,15 @@ class ChartDisplay
                 $total = 0;
             }
             $total = $total_row['cells'][$total];
-            if (unformat_number($total) > 100000) {
+
+            if(is_string($total) && !is_numeric($total)) {
+                $total = unformat_number($total, true);
+            }
+            if ($total > 100000) {
                 $do_thousands = true;
-                $total = round(unformat_number($total) / 1000);
+                $total = (string) round($total / 1000);
             } else {
                 $do_thousands = false;
-                $total = unformat_number($total);
             }
             array_pop($this->reporter->chart_rows);
         } else {
@@ -250,6 +252,8 @@ class ChartDisplay
                 }
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['raw_value'] = isset($row_remap['raw_value']) ? $row_remap['raw_value'] : '';
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['group_base_text'] = $row_remap['group_base_text'];
         }
 
         //Determine if the original report def has a grouping level greater than one
@@ -321,7 +325,7 @@ class ChartDisplay
             $currency = BeanFactory::getBean('Currencies')->getUserCurrency();
 
             $currency_symbol = $currency->symbol;
-        } else if (!isset($report_defs['numerical_chart_column_type'])) {
+        } elseif (!isset($report_defs['numerical_chart_column_type'])) {
             return '';
         }
 
@@ -341,14 +345,20 @@ class ChartDisplay
         if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
             return $row_remap;
         }
-        $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
+
+        $val = strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']);
+        if(is_string($val) && !is_numeric($val)) {
+            $val = unformat_number($val, true);
+        }
+        $row_remap['numerical_value'] = $val;
         global $do_thousands;
         if ($do_thousands) {
             // MRF - Bug # 13501, 47148 - added floor() below:
-            $row_remap['numerical_value'] = round(unformat_number(floor($row_remap['numerical_value'])) / 1000);
+            $row_remap['numerical_value'] = round( floor($row_remap['numerical_value']) / 1000 );
         }
-        $precision = $locale->getPrecision();
-        $row_remap['numerical_value'] = round($row_remap['numerical_value'], $precision);
+        // format to user prefs
+        $row_remap['formatted_value'] = $this->print_currency_symbol(true) . format_number($row_remap['numerical_value']);
+
         $row_remap['group_text'] = $group_text = (isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? chop($row['cells'][$this->reporter->chart_group_position]['val']) : '';
         $row_remap['group_key'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $row['cells'][$this->reporter->chart_group_position]['key'] : '');
         $row_remap['count'] = (isset($row['count'])) ? $row['count'] : 0;
@@ -361,6 +371,7 @@ class ChartDisplay
             foreach ($row['cells'] as $cell) {
                 if ($cell['key'] == $second_group_by_key) {
                     $row_remap['group_base_text'] = $cell['val'];
+                    $row_remap['raw_value'] = isset($cell['raw_value']) ? $cell['raw_value'] : '';
                 }
             }
         } else { // single group by
@@ -396,16 +407,18 @@ class ChartDisplay
             $total_index = 0; // special for dashlets!!
         }
         $total = $total_row['cells'][$total_index]['val'];
+        if(is_string($total) && !is_numeric($total)) {
+            $total = unformat_number($total, true);
+        }
         global $do_thousands;
         if ($this->get_maximum() > 100000 && (!isset($this->reporter->report_def['do_round'])
             || (isset($this->reporter->report_def['do_round']) && $this->reporter->report_def['do_round'] == 1))
         ) {
             $do_thousands = true;
-            $total = round(unformat_number($total) / 1000);
-            return $total;
+            return (string) round($total / 1000);
         } else {
             $do_thousands = false;
-            return unformat_number($total);
+            return (string) $total;
         }
 
     }
@@ -450,8 +463,9 @@ class ChartDisplay
     {
         if (!empty ($numbers)) {
             $max = max($numbers);
-            if ($max < 1)
+            if ($max < 1) {
                 return $max;
+            }
             $base = pow(10, floor(log10($max)));
             return ceil($max / $base) * $base;
         } else {
@@ -467,7 +481,7 @@ class ChartDisplay
      */
     public function get_cache_file_name($reporter = null)
     {
-        if(is_null($reporter)) {
+        if (is_null($reporter)) {
             $reporter = $this->reporter;
         }
         global $current_user;
@@ -507,8 +521,7 @@ class ChartDisplay
         }
 
         // Bug #57213 : Reports with data series removed render charts inconsistently
-        if ( $this->reporter && !$this->reporter->has_summary_columns() )
-        {
+        if ($this->reporter && !$this->reporter->has_summary_columns()) {
             global $current_language;
             $mod_strings = return_module_language($current_language, 'Reports');
             return $mod_strings['LBL_CANNOT_DISPLAY_CHART_MESSAGE'];
@@ -516,6 +529,7 @@ class ChartDisplay
 
         $sugarChart = $this->getSugarChart();
         if (is_object($sugarChart)) {
+            $sugarChart->reporter = $this->reporter;
             $xmlFile = $this->get_cache_file_name();
             $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
             return $sugarChart->display($guid, $xmlFile, $width, $height);

@@ -50,7 +50,7 @@ $dictionary['Prospect'] = array(
             'len' => '150',
         ),
         'campaign_id' => array(
-            'name' => 'campaign_id',
+        'name' => 'campaign_id',
             'comment' => 'Campaign that generated lead',
             'vname' => 'LBL_CAMPAIGN_ID',
             'rname' => 'id',
@@ -121,7 +121,16 @@ $dictionary['Prospect'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
-        'tasks' => array(
+        //d&b principal id, a unique id assigned to a contact by D&B API
+        //this contact is used for dupe check
+        'dnb_principal_id' => array (
+            'name' => 'dnb_principal_id',
+            'vname' => 'LBL_DNB_PRINCIPAL_ID',
+            'type' => 'varchar',
+            'len' => 30,
+            'comment' => 'Unique Id For D&B Contact',
+        ),
+        'tasks' => array (
             'name' => 'tasks',
             'type' => 'link',
             'relationship' => 'prospect_tasks',
@@ -148,7 +157,14 @@ $dictionary['Prospect'] = array(
             'hideacl' => true,
             'readonly' => true,
         ),
-
+        'lead' => array(
+            'name' => 'lead',
+            'type' => 'link',
+            'relationship' => 'lead_prospect',
+            'module' => 'Leads',
+            'source' => 'non-db',
+            'vname' => 'LBL_LEAD',
+        ),
     ),
     'indices' => array(
         array(
@@ -256,6 +272,7 @@ $dictionary['Prospect'] = array(
                                 array('first_name' => array('$starts' => '$first_name')),
                                 array('last_name' => array('$starts' => '$last_name')),
                                 array('account_name' => array('$starts' => '$account_name')),
+                                array('dnb_principal_id' => array('$equals' => '$dnb_principal_id')),
                             )
                         ),
                         array('phone_work' => array('$equals' => '$phone_work'))

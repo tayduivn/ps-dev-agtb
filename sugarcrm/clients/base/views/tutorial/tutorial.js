@@ -30,6 +30,9 @@
         this.keyupCallback = _.bind(this.processKeyCode, this);
         $(document).on('keyup', this.keyupCallback);
         app.view.TutorialView.prototype.initialize.call(this, options);
+        app.events.on("cache:clean", function(callback) {
+            callback(["tutorialPrefs"]);
+        });
     },
     processKeyCode: function(e) {
         switch(e.which) {

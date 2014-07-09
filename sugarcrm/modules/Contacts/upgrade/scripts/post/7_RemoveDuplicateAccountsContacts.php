@@ -40,7 +40,11 @@ class SugarUpgradeRemoveDuplicateAccountsContacts extends UpgradeScript
                              . "SELECT ROWNUMBER() OVER (PARTITION BY account_id, contact_id, primary_account, deleted) "
                              . "AS rn FROM accounts_contacts) AS row WHERE rn > 1";
             } else {
-                $createTempTableQuery = "CREATE table accounts_contacts_tmp AS SELECT * FROM accounts_contacts";
+                if ($this->db instanceof MssqlManager) {
+                    $createTempTableQuery = "SELECT * INTO accounts_contacts_tmp FROM accounts_contacts";
+                } else {
+                    $createTempTableQuery = "CREATE TABLE accounts_contacts_tmp AS SELECT * FROM accounts_contacts";
+                }
                 $deDupeQuery = "DELETE t1 FROM accounts_contacts t1, accounts_contacts t2 "
                  . "WHERE t1.id > t2.id AND t1.contact_id = t2.contact_id AND t1.account_id = t2.account_id "
                  . "AND t1.deleted = t2.deleted AND t1.primary_account = t2.primary_account";

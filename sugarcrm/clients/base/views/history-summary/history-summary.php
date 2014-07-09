@@ -14,13 +14,12 @@ $viewdefs['base']['view']['history-summary'] = array(
     'rowactions' => array(
         'actions' => array(
             array(
-                'type' => 'rowaction',
+                'type' => 'preview-button',
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
-                'acl_action' => 'view',
-                'id' => 'previewBtn'
+                'acl_action' => 'view'
             ),
         ),
     ),
@@ -58,12 +57,36 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'link' => true
                 ),
                 array(
+                    'name' => 'description',
+                    'type' => 'textarea',
+                    'label' => 'LBL_DESCRIPTION',
+                    'enabled' => true,
+                    'default' => true,
+                    'css_class' => 'description_col'
+                ),
+                array(
+                    'name' => 'to_addrs',
+                    'type' => 'email',
+                    'label' => 'LBL_EMAIL_TO',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+
+                array(
+                    'name' => 'from_addr',
+                    'type' => 'email',
+                    'label' => 'LBL_EMAIL_FROM',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+
+                array(
                     'name' => 'date_entered',
                     'label' => 'LBL_LIST_DATE_ENTERED',
                     'type' => 'date',
                     'enabled' => true,
                     'default' => true,
-                    'isSortable' => true
+                    'isSortable' => true,
                 ),
                 array(
                     'name' => 'date_modified',
@@ -71,9 +94,12 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'type' => 'date',
                     'enabled' => true,
                     'default' => true,
-                    'isSortable' => true
+                    'isSortable' => true,
                 ),
             )
         )
+    ),
+    'last_state' => array(
+        'id' => 'history-summary',
     ),
 );

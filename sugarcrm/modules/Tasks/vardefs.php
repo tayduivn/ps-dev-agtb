@@ -45,6 +45,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'default'=>0,
     'group'=>'date_due',
   	'studio' => false,
+    'massupdate' => false,
   ),
   'date_due' =>
   array (
@@ -75,6 +76,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'group'=>'date_start',
     'default'=>0,
   	'studio' => false,
+    'massupdate' => false,
   ),
   'date_start' =>
   array (

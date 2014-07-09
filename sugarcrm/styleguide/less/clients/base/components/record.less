@@ -26,7 +26,7 @@
   .compose-sender-options {
     padding: 0;
     top: 0;
-    right: 33px;
+    right: 0;
     .btn {
       position: relative;
     }
@@ -42,6 +42,11 @@
   .btn {
     top: 0;
     right: -36px;
+  }
+  .compose-sender-options {
+    .btn {
+      right: 0;
+    }
   }
   .select2-container {
     .select2-choices {
@@ -100,7 +105,6 @@
       .compose-sender-options {
         position: absolute;
         top: 3px;
-        right: 39px;
         z-index: 2;
         background-color: #FFF;
         padding: 2px;
@@ -517,10 +521,11 @@
 
     &[data-type="compose-actionbar"] {
       min-height: 0;
+      padding-bottom: 8px;
+      z-index: 2;
       .normal {
         min-height: 0;
       }
-      padding-bottom: 8px;
       .btn {
         [class^="icon-"] {
           margin-right: 6px;

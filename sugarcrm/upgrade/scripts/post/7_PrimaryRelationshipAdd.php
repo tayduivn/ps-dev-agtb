@@ -42,7 +42,7 @@ class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
                 $fixupRecords = array();
 
                 while ($row = $this->db->fetchByAssoc($ret)) {
-                    $fixupRecords[] = $this->db->quote($row['child_id']);
+                $fixupRecords[] = $this->db->quoted($row['child_id']);
                 }
                 if (empty($fixupRecords)) {
                     // We have fixed everything
@@ -52,7 +52,7 @@ class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
                 // Find the most recent record for child and we'll unset the rest of them as primary
                 $ret = $this->db->query("SELECT id, contact_id child_id, date_modified "
                         . "FROM accounts_contacts WHERE "
-                        . "contact_id IN ('" . implode("','", $fixupRecords) . "') "
+                                    ."contact_id IN (" . implode (',', $fixupRecords) . ") "
                         . "AND deleted = 0 ORDER BY date_modified DESC"
                 );
 
@@ -64,8 +64,8 @@ class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
                         $this->db->query("UPDATE accounts_contacts "
                                 . "SET primary_account = 0 "
                                 . "WHERE deleted = 0 "
-                                . "AND id <> '" . $row['id'] . "' "
-                                . "AND contact_id = '" . $row['child_id'] . "'"
+                                . "AND id <> " . $this->db->quoted($row['id'])
+                                . " AND contact_id = " . $this->db->quoted($row['child_id'])
                         );
                     }
                 }

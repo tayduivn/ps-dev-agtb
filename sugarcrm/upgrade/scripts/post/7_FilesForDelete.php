@@ -175,6 +175,14 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Meetings/clients/mobile/api/MobileMeetingsApi.php',
         );
 
+        // must be upgrading from between 710 to 722
+        if (version_compare($this->from_version, '7.1.0', '>') && version_compare($this->from_version, '7.2.2', '<')) {
+            // can be files or directories
+            $this->fileToDelete('modules/WebLogicHooks/clients/base/layouts/record/record.php');
+            $this->fileToDelete('modules/WebLogicHooks/clients/base/layouts/records/records.php');
+            $this->fileToDelete('modules/WebLogicHooks/clients/base/views/list-headerpane/headerpane.php');
+        }
+
         if (version_compare($this->from_version, '7.2', '<')) {
             // SC-2664
             $files[] = 'modules/Notifications/clients/base/layouts/records/records.php';

@@ -133,7 +133,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'active' => true,
             'filter_applied_to' => 'date_start',
             'filters' => array(
-                'status' => array('$not_equals' => 'Held'),
+                'status' => array('$not_in' => array('Held', 'Not Held')),
             ),
             'link' => 'meetings',
             'module' => 'Meetings',
@@ -173,7 +173,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
         array(
             'filter_applied_to' => 'date_start',
             'filters' => array(
-                'status' => array('$not_equals' => 'Held'),
+                'status' => array('$not_in' => array('Held', 'Not Held')),
             ),
             'link' => 'calls',
             'module' => 'Calls',

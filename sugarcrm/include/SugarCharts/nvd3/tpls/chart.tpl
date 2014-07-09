@@ -15,7 +15,7 @@
 <script type="text/javascript">
 	{literal}
 	SUGAR.util.doWhen(
-		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || (SUGAR.loadChart && typeof loadSugarChartD3 == 'function')  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChartD3) != undefined",
+		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || (SUGAR.loadChart && typeof loadSugarChart == 'function')  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
 		function(){
 			{/literal}
 			var css = [];
@@ -27,7 +27,7 @@
 				chartConfig["scroll"] = true;
 			{/if}
 			loadCustomChartForReports = function(){ldelim}
-				loadSugarChartD3('{$chartId}', '{$filename}', css, chartConfig);
+				loadSugarChart('{$chartId}', '{$filename}', css, chartConfig);
 			{rdelim};
 			// bug51857: fixed issue on report running in a loop when clicking on hide chart then run report in IE8 only
 			// When hide chart button is clicked, the value of element showHideChartButton is set to $showchart.

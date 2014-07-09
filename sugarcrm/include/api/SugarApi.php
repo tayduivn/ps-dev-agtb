@@ -196,10 +196,6 @@ abstract class SugarApi {
             }
         }
 
-        if ($bean->hasEmails()) {
-            $bean->emailAddress->dontLegacySave = true;
-        }
-
         $bean->save($check_notify);
 
         /*
@@ -266,7 +262,6 @@ abstract class SugarApi {
             $fav->assigned_user_id = $GLOBALS['current_user']->id;
             $fav->deleted = 0;
             $fav->save();
-            $reindexBean = true;
         }
 
         $bean->my_favorite = $favorite;

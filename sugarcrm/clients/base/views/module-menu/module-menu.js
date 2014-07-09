@@ -19,7 +19,7 @@
  * @extends View.View
  */
 ({
-
+    tagName: 'span',
     events: {
         'click [data-event]': 'handleMenuEvent',
         'click [data-route]': 'handleRouteEvent'
@@ -193,35 +193,62 @@
      *   integer `> 0`.
      */
     populate: function(tplName, filter, limit) {
-
         if (limit <= 0) {
             return;
         }
-
-        var renderPartial = function(data) {
-            if (this.disposed || !this.isOpen()) {
-                return;
-            }
-
-            var tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
-                app.template.getView(this.name + '.' + tplName);
-
-            var $placeholder = this.$('[data-container="' + tplName + '"]'),
-                $old = $placeholder.nextUntil('.divider');
-
-            $old.remove();
-            $placeholder.after(tpl(this.collection));
-        };
 
         this.collection.fetch({
             'showAlerts': false,
             'fields': ['id', 'name'],
             'filter': filter,
             'limit': limit,
-            'success': _.bind(renderPartial, this)
+            'success': _.bind(function() {
+                this._renderPartial(tplName);
+            }, this)
         });
+    },
 
-        return;
+    /**
+     * Renders the data in the partial template given.
+     *
+     * The partial template can receive more data from the options parameter.
+     *
+     * @param {String} tplName The template to use to render the partials.
+     * @param {Object} [options] Other optional data to pass to the template.
+     * @protected
+     */
+    _renderPartial: function(tplName, options) {
+        var tpl, $placeholder, $old, focusedRoute, focusSelector, $new, $newFocus;
+
+        if (this.disposed || !this.isOpen()) {
+            return;
+        }
+
+        options = options || {};
+        tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
+            app.template.getView(this.name + '.' + tplName);
+        $placeholder = this.$('[data-container="' + tplName + '"]');
+        $old = $placeholder.nextUntil('.divider');
+
+        //grab the focused element's route (if exists) for later re-focusing
+        focusedRoute = $old.find(document.activeElement).data('route');
+
+        //replace the partial using newly updated collection
+        $old.remove();
+        $placeholder.after(tpl(_.extend({
+            'collection': this.collection
+        }, options)));
+
+        //if there was a focused element previously, restore its focus
+        if (focusedRoute) {
+            $new = $placeholder.nextUntil('.divider');
+            focusSelector = '[data-route="' + focusedRoute + '"]';
+            $newFocus = $new.find(focusSelector);
+            if ($newFocus.length > 0) {
+                $newFocus.focus();
+            }
+        }
+
     },
 
     /**

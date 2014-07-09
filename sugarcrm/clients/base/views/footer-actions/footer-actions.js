@@ -16,6 +16,7 @@
 ({
     // TODO remove the id links in footer and replace to data-attributes (SC-2580)
     events: {
+        'click #shortcuts': 'shortcuts',
         'click #tour': 'showTutorialClick',
         'click #feedback': 'feedback',
         'click #support': 'support',
@@ -23,6 +24,7 @@
     },
     tagName: 'span',
     layoutName: '',
+    watchingForDashboard: false,
 
     /**
      * Array of layout names where the help button should be disabled
@@ -36,7 +38,7 @@
         var module = params && params.module ? params.module : null;
         // should we disable the help button or not, this only happens when layout is 'bwc'
         this.layoutName = _.isObject(layout) ? layout.name : layout;
-        this.disableHelpButton(this.shouldHelpBeDisabled());
+        this.disableHelpButton(true);
         if (app.tutorial.hasTutorial(this.layoutName, module)) {
             this.enableTourButton();
             if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
@@ -86,16 +88,59 @@
 
         app.events.on('app:help:shown', function() {
             this.toggleHelpButton(true);
+            this.disableHelpButton(false);
         }, this);
 
         app.events.on('app:help:hidden', function() {
             this.toggleHelpButton(false);
+            this.disableHelpButton(true);
         }, this);
 
         app.events.on('alert:cancel:clicked', function() {
             // re-check if help should be disabled or not and set accordingly
             this.disableHelpButton(this.shouldHelpBeDisabled());
         }, this);
+
+        this._watchForDashboard();
+
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Help', '?', this.shortcuts, this);
+
+        app.user.lastState.preserve(app.user.lastState.key('toggle-show-tutorial', this));
+    },
+
+    /**
+     * Watch for when the dashboard container gets rendered and enable the help buttons
+     *
+     * @private
+     */
+    _watchForDashboard: function() {
+        if (this.watchingForDashboard === false) {
+            this.watchingForDashboard = true;
+            app.utils.doWhen(function() {
+                var layout = app.controller.layout;
+                if (!_.isUndefined(layout)) {
+                    if (layout.module == 'Home') {
+                        // if the layout exists and it's the `Home` Module, just enable the button as
+                        // a url redirect is what is used here.
+                        return true;
+                    } else {
+                        var sidebar = layout.getComponent('sidebar');
+                        if (sidebar) {
+                           var dashboard = sidebar.getComponent('dashboard-pane');
+                           if (dashboard) {
+                               // return true if we have dashlets or if we are on the list
+                               return (dashboard.$('.dashlets').length > 0 ||
+                                        dashboard.$('.container-fluid').length == 1);
+                           }
+                        }
+                    }
+                }
+                return false;
+            }, _.bind(function() {
+                this.watchingForDashboard = false;
+                this.disableHelpButton(false);
+            }, this));
+        }
     },
 
     /**
@@ -153,6 +198,10 @@
             button.toggleClass('disabled', disable);
         }
 
+        if (disable) {
+            this._watchForDashboard();
+        }
+
         return disable;
     },
 
@@ -168,7 +217,20 @@
         }
 
         if (button) {
-            button.removeClass('disabled').toggleClass('active', active);
+            button.toggleClass('active', active);
+        }
+    },
+
+    /**
+     * Open shortcut help.
+     * @param event
+     */
+    shortcuts: function(event) {
+        var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
+        if (activeDrawerLayout.type !== 'shortcuts') {
+            app.drawer.open({
+                layout: 'shortcuts'
+            });
         }
     },
 

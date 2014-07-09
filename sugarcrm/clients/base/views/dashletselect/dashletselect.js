@@ -124,6 +124,8 @@
      * @param {Object} metadata Configuration metadata.
      */
     selectDashlet: function(metadata) {
+        var model = new Backbone.Model();
+
         app.drawer.load({
             layout: {
                 type: 'dashletconfiguration',
@@ -140,6 +142,7 @@
             },
             context: {
                 module: metadata.config.module || metadata.module,
+                model: model,
                 forceNew: true,
                 skipFetch: true
             }

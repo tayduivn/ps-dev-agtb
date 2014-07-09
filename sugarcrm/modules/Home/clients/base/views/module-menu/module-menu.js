@@ -19,11 +19,7 @@
  * @extends View.Views.Base.ModuleMenuView
  */
 ({
-    extendsFrom: 'ModuleListView',
-
-    events: {
-        'click [data-toggle="recently-viewed"]': 'handleToggleRecentlyViewed'
-    },
+    extendsFrom: 'ModuleMenuView',
 
     /**
      * The collection used to list dashboards on the dropdown.
@@ -107,8 +103,11 @@
      * is opened.
      */
     initialize: function(options) {
-
         this._super('initialize', [options]);
+
+        this.events = _.extend({}, this.events, {
+            'click [data-toggle="recently-viewed"]': 'handleToggleRecentlyViewed'
+        });
 
         this._initCollections();
         this._initLegacyDashboards();
@@ -181,7 +180,7 @@
      */
     populateMenu: function() {
         var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
-
+        this.$('.active').removeClass('active');
         this.dashboards.fetch({
             'limit': this._settings['dashboards'],
             'showAlerts': false,
@@ -207,7 +206,7 @@
             }
         });
 
-        this.populateRecentlyViewed();
+        this.populateRecentlyViewed(false);
     },
 
     /**
@@ -220,9 +219,9 @@
      *
      * Defaults to `recently_viewed_toggle` if no state is defined.
      *
-     * @param {String} state Populates recently viewed based on the state.
+     * @param {Boolean} focusToggle Whether to set focus on the toggle after rendering
      */
-    populateRecentlyViewed: function() {
+    populateRecentlyViewed: function(focusToggle) {
 
         var visible = app.user.lastState.get(this._recentToggleKey),
             threshold = this._settings['recently_viewed_toggle'],
@@ -249,6 +248,10 @@
                     open: !visible,
                     showRecentToggle: data.models.length > threshold || data.next_offset !== -1
                 });
+                if (focusToggle && this.isOpen()) {
+                    // put focus back on toggle after renderPartial
+                    this.$('[data-toggle="recently-viewed"]').focus();
+                }
             }, this),
             'endpoint': function(method, model, options, callbacks) {
                 var url = app.api.buildURL('recent', 'read', options.attributes, options.params);
@@ -288,35 +291,6 @@
     },
 
     /**
-     * Renders the data in the partial template given.
-     *
-     * The partial template can receive more data from the options parameter.
-     *
-     * @param {String} tplName The template to use to render the partials.
-     * @param {Object} [options] Other optional data to pass to the template.
-     * @protected
-     */
-    _renderPartial: function(tplName, options) {
-
-        if (this.disposed || !this.isOpen()) {
-            return;
-        }
-
-        options = options || {};
-
-        var tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
-            app.template.getView(this.name + '.' + tplName);
-
-        var $placeholder = this.$('[data-container="' + tplName + '"]'),
-            $old = $placeholder.nextUntil('.divider');
-
-        $old.remove();
-        $placeholder.after(tpl(_.extend({
-            'collection': this.collection
-        }, options)));
-    },
-
-    /**
      * Handles the toggle of the more recently viewed mixed records.
      *
      * This triggers a refresh on the data to be retrieved based on the amount
@@ -328,7 +302,7 @@
      */
     handleToggleRecentlyViewed: function(event) {
         app.user.lastState.set(this._recentToggleKey, Number(!app.user.lastState.get(this._recentToggleKey)));
-        this.populateRecentlyViewed();
+        this.populateRecentlyViewed(true);
         event.stopPropagation();
     }
 })

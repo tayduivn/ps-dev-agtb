@@ -48,7 +48,8 @@ describe("Base.Layout.Dashboard", function() {
             sandbox.stub(app.user.lastState, 'get', function() {
                 return '#bwc/index.php?module=Home&action=bwc_dashboard'
             });
-            navSpy = sandbox.spy(app.router, 'navigate');
+            var navSpy = sandbox.stub(app.router, 'navigate', function() {
+            });
 
             layout.setDefaultDashboard();
             expect(navSpy).toHaveBeenCalledWith('#bwc/index.php?module=Home&action=bwc_dashboard', {trigger: true});
@@ -213,22 +214,48 @@ describe("Base.Layout.Dashboard", function() {
         });
 
         describe('showHelpDashboard', function() {
+            var collection;
             beforeEach(function() {
-                sandbox.stub(layout, 'navigateLayout', function(id) {
-                });
+                sandbox.stub(layout, 'navigateLayout');
+                sandbox.stub(app, 'navigate');
+                collection = new SUGAR.App.BeanCollection([
+                    {'dashboard_type': 'help-dashboard', id: 'help-dash'},
+                    {'dashboard_type': 'dashboard', id: 'normal-dash'}
+                ]);
             });
 
             afterEach(function() {
+                delete collection;
                 sandbox.restore();
             });
 
             it('will call navigateLayout', function() {
-                var collection = new Backbone.Collection();
-                collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
-                collection.add(new Backbone.Model({'dashboard_type': 'dashboard', id: 'normal-dash'}));
-
                 layout.showHelpDashboard(collection);
                 expect(layout.navigateLayout).toHaveBeenCalledWith('help-dash');
+            });
+
+            describe('when context does not have parent', function() {
+                var parentContext;
+                beforeEach(function() {
+                    parentContext = layout.context.parent;
+                    layout.context.parent = null;
+                });
+
+                afterEach(function() {
+                    layout.context.parent = parentContext;
+                });
+
+                it('will not call app.navigate when module is not Home', function() {
+                    layout.module = 'TestModule';
+                    layout.showHelpDashboard(collection);
+                    expect(app.navigate).not.toHaveBeenCalled();
+                });
+
+                it('will call app.navigate when module is Home', function() {
+                    layout.module = 'Home';
+                    layout.showHelpDashboard(collection);
+                    expect(app.navigate).toHaveBeenCalled();
+                });
             });
         });
 

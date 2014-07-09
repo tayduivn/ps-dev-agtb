@@ -304,6 +304,7 @@
                     'include/javascript/sugar7/plugins/LinkedModel.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleVisibility.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Pagination.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ShortcutSession.js' => 'include/javascript/sugar_sidecar.min.js',
                     // Support Portal features for Sugar7
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',
@@ -323,9 +324,6 @@
                     'portal2/user.js'                => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
-                    'include/javascript/sugar7/language.js'           => 'portal2/portal.min.js',
-                    'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
-                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
                 )
             ),
            //END SUGARCRM flav=ent ONLY
@@ -343,6 +341,18 @@
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
+            ),
+
+            $sugar_grp_sugar7_portal2 = array(
+                'include/javascript/sugar7/bwc.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/utils.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/utils-filters.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/field.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/hacks.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/alert.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/hbs-helpers.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/language.js' => 'portal2/portal.min.js',
+                'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
             ),
         );
 

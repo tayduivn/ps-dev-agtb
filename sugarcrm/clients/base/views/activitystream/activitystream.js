@@ -582,9 +582,13 @@
             preview = {
                 enabled: true,
                 label: 'LBL_PREVIEW'
-            };
+            },
+            isBwcEnabled = app.metadata.getModule(this.model.get('display_parent_type')).isBwcEnabled;
 
-        if (this.model.get("activity_type") === 'attach') { //no preview for attachments
+        if (isBwcEnabled) {
+            preview.enabled = false;
+            preview.label = 'LBL_PREVIEW_BWC_TOOLTIP';
+        } else if (this.model.get("activity_type") === 'attach') { //no preview for attachments
             preview.enabled = false;
             preview.label = 'LBL_PREVIEW_DISABLED_ATTACHMENT';
         } else if (_.isEmpty(this.model.get('display_parent_id')) || _.isEmpty(this.model.get('display_parent_type'))) {  //no related record
