@@ -104,6 +104,8 @@
         this._watchForDashboard();
 
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Help', '?', this.shortcuts, this);
+
+        app.user.lastState.preserve(app.user.lastState.key('toggle-show-tutorial', this));
     },
 
     /**

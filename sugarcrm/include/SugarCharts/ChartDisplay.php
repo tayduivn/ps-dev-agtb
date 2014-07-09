@@ -252,7 +252,7 @@ class ChartDisplay
                 }
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
-            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['raw_value'] = $row_remap['raw_value'];
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['raw_value'] = isset($row_remap['raw_value']) ? $row_remap['raw_value'] : '';
             $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['group_base_text'] = $row_remap['group_base_text'];
         }
 

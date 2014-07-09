@@ -57,4 +57,7 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
             ),
         ),
     ),
+    'last_state' => array(
+        'id' => 'list',
+    ),
 );

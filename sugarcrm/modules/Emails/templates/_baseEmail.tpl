@@ -60,11 +60,6 @@
             <button class="button" id="composeButton" onclick="SUGAR.email2.composeLayout.c0_composeNewEmail();"><img src="themes/default/images/icon_email_compose.gif" alt=$mod_strings.LBL_COMPOSEEMAIL align="absmiddle" border="0"> {$mod_strings.LNK_NEW_SEND_EMAIL}</button>
             <button class="button" id="settingsButton" onclick="SUGAR.email2.settings.showSettings();"><img src="themes/default/images/icon_email_settings.gif" alt=$mod_strings.LBL_EMAILSETTINGS align="absmiddle" border="0"> {$app_strings.LBL_EMAIL_SETTINGS}</button>
         </td>
-        <td NOWRAP align="right" style="padding-bottom: 2px;">
-            <a href="index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module=Emails&help_action=index&key={$server_unique_key}" width='13' height='13' alt='{$app_strings.LNK_HELP}' border='0' align='absmiddle' target="_blank"></a>
-            &nbsp;
-            <a href="index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module=Emails&help_action=index&key={$server_unique_key}" class='utilsLink' target="_blank">{$app_strings.LNK_HELP}</a>
-        </td>
     </tr>
 </table>
 

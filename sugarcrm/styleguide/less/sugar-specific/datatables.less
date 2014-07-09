@@ -130,13 +130,15 @@
       max-width: 86px;
     }
     &[data-type="datetimecombo"] {
-      input[type="text"].datepicker {
+      input[type="text"] {
         min-width: 0;
+        z-index: 0;
+      }
+      input[type="text"].datepicker {
         width: 50%;
         .calcWidth(~"55% - 2px");
       }
       input[type="text"].ui-timepicker-input {
-        min-width: 0;
         width: 40%;
         .calcWidth(~"45% - 2px");
       }

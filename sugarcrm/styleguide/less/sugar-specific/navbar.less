@@ -89,7 +89,11 @@
           .border-radius(~"0 !important");
           border-left: 0;
           border-right: 0;
-          outline: none !important;
+          outline: none;
+          &:focus {
+            .tab-focus-light();
+            outline-offset: 3px;
+          }
         }
       }
     }
@@ -117,6 +121,13 @@
           border-color: transparent;
           background: none;
         }
+      }
+      /*This is all buttons in the mega menu*/
+      &> .btn:focus {
+          .tab-focus-light();
+      }
+      &> .btn.module-name:focus {
+          outline-offset: 3px;
       }
 
       &.open {
