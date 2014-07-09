@@ -7,7 +7,7 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * @var SugarAuthenticate
      */
-    private $authenticate;
+    protected $authenticate;
 
     protected function setUp()
     {
