@@ -12,6 +12,8 @@
  */
 //require_once("include/Expressions/Expression/Date/DateExpression.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
+require_once 'include/Expressions/Expression/String/StringLiteralExpression.php';
+require_once 'include/Expressions/Expression/Date/HoursUntilExpression.php';
 
 class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -129,7 +131,52 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(5, $result);
 	}
     */
-	
+
+
+    /**
+     * @dataProvider hoursUntilProvider
+     */
+    public function testHoursUntil($date, $now, $expected)
+    {
+        global $timedate;
+
+        $now = $timedate->fromString($now);
+        $timedate->setNow($now);
+
+        // manually convert string to object in order to avoid dependency
+        // on user-preferred date format
+        $date = $timedate->fromString($date);
+        $params = new StringLiteralExpression(array($date));
+        $expr = new HoursUntilExpression(array($params));
+        $actual = $expr->evaluate();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function hoursUntilProvider()
+    {
+        return array(
+            // one hour difference
+            array(
+                '2014-06-10 14:17:45',
+                '2014-06-10 13:17:45',
+                1
+            ),
+            // value is rounded down
+            array(
+                '2014-06-10 16:17:00',
+                '2014-06-10 13:17:45',
+                2
+            ),
+            // value is rounded down by modulus
+            array(
+                '2014-06-10 13:17:45',
+                '2014-06-10 16:17:00',
+                -2
+            ),
+        );
+    }
+
 	public function testBeforeAfter()
 	{
 	    $task = new Task();
