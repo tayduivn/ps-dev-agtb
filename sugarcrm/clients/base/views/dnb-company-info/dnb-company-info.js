@@ -54,6 +54,8 @@
         //initializing the data dictionary for cleanse match
         this.cleanseMatchDD = this.searchDD;
         this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };
+        //listen on expand all button click on the dashboard
+        this.layout.layout.context.on('dashboard:collapse:fire', this.loadImportEnrich, this);
     },
 
     /**
