@@ -624,9 +624,10 @@ abstract class SugarRelationship
     /**
      *
      * @static
+     * @param Bool $refresh using the newest version of the bean, not the one queued
      * @return void
      */
-    public static function resaveRelatedBeans()
+    public static function resaveRelatedBeans($refresh = true)
     {
         if (SugarBean::inOperation('updating_relationships') || !SugarBean::enterOperation('saving_related')) {
             return;
@@ -636,6 +637,13 @@ abstract class SugarRelationship
         foreach (self::$beansToResave as $module => $beans) {
             foreach ($beans as $bean) {
                 if (empty($bean->deleted) && empty($bean->in_save)) {
+                    if ($refresh) {
+                        // Make sure we're using the newest version of the bean, not the one queued
+                        $latestBean = BeanFactory::retrieveBean($module, $bean->id);
+                        if ($latestBean !== null) {
+                            $bean = $latestBean;
+                        }
+                    }
                     $bean->save();
                 } else {
                     // Bug 55942 save the in-save id which will be used to send workflow alert later

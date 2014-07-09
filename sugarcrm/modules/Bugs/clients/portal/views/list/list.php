@@ -82,6 +82,9 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
             ),
         ),
     ),
+    'last_state' => array(
+        'id' => 'list',
+    ),
 );
 
 

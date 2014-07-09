@@ -203,6 +203,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->max_jobs = 10;
         $this->jq->max_runtime = 1; // only 1 sec runtime
+        $this->jq->enforceHardLimit = false;
         $this->jq->disable_schedulers = true;
         $this->jq->runCycle();
 

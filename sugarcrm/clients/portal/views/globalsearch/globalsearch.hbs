@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<form class="navbar-search">
-    <input type="text" class="search-query" placeholder="{{str "LBL_SEARCH"}}" data-provide="typeahead" data-items="5">
+<form class="navbar-search" aria-role="search">
+    <input type="text" class="search-query" placeholder="{{str 'LBL_SEARCH'}}" data-provide="typeahead" data-items="5" aria-label="{{str 'LBL_GLOBAL_SEARCH'}}">
     <div class="advanced">
         <div class="btn-toolbar pull-right">
             <div class="btn-group">
-                <a class="btn btn-inverse" data-action="search" href="javascript:void(0);"><i class="icon icon-search"></i></a>
+                <button class="btn btn-inverse" data-action="search" track="click:globalsearch" aria-label="{{str 'LBL_GLOBAL_SEARCH_RUN'}}"><i class="icon icon-search"></i></button>
             </div>
         </div>
     </div>

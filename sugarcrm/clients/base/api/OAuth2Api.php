@@ -152,7 +152,7 @@ class OAuth2Api extends SugarApi
             // Nuke the refresh token as well.
             // No security checks needed here to make sure the refresh token is theirs,
             // because if someone else has your refresh token logging out is the nicest possible thing they could do.
-            $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
+            $oauth2Server->unsetRefreshToken($args['refresh_token']);
         }
 
         setcookie(RestService::DOWNLOAD_COOKIE.'_'.$api->platform, false, -1, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
