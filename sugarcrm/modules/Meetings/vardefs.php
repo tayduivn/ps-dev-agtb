@@ -200,7 +200,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
      'len' => 255,
      'function' => 'getMeetingsExternalApiDropDown',
      'comment' => 'Meeting type (ex: WebEx, Other)',
-     'options' => 'eapm_list',
      'default'	=> 'Sugar',
      'massupdate' => false,
    	 //BEGIN SUGARCRM flav=com ONLY

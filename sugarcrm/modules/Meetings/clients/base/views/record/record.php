@@ -76,8 +76,12 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12,
                 ),
-                'parent_name',
                 'type',
+                'parent_name',
+                array(
+                    'name' => 'password',
+                    'span' => 12,
+                ),
                 'assigned_user_name',
                 'team_name',
             ),
