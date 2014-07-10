@@ -199,6 +199,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/portal/views/detail';
             $files[] = 'clients/portal/views/subdetail';
             $files[] = 'clients/portal/views/subnav';
+            $files[] = 'modules/ModuleBuilder/tpls/portalpreview.tpl';
+            $files[] = 'modules/ModuleBuilder/views/view.portalpreview.php';
+            $files[] = 'LICENSE.txt';
         }
 
         $this->fileToDelete($files);
