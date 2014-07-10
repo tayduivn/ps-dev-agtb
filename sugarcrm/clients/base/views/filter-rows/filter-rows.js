@@ -603,6 +603,7 @@
 
             data['valueField'] = minmax;
             _.each(minmax, function(field) {
+                field.action = 'detail';
                 var fieldContainer = $(field.getPlaceholder().string);
                 $fieldValue.append(fieldContainer);
                 this.listenTo(field, 'render', function() {
@@ -620,6 +621,7 @@
             // Render the value field
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
+            field.action = 'detail';
             $fieldValue.append(fieldContainer);
             data['valueField'] = field;
 
