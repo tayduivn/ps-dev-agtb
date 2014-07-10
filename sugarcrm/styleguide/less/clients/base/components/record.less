@@ -7,14 +7,6 @@
       max-height: 45px;
       overflow-y: auto;
       .border-radius(@baseBorderRadius);
-      &:before {
-        content: attr(data-content-before);
-        float: right;
-        font-size: @baseFontSize;
-        padding: 2px 1px 2px 14px;
-        width: auto;
-        color: transparent;
-      }
     }
     .select2-search-field input {
       padding: 0 6px;
@@ -29,6 +21,7 @@
     right: 0;
     .btn {
       position: relative;
+      right: 0;
     }
   }
 }
@@ -43,24 +36,12 @@
     top: 0;
     right: -36px;
   }
-  .compose-sender-options {
-    .btn {
-      right: 0;
-    }
-  }
   .select2-container {
     .select2-choices {
       max-height: 45px;
       overflow-y: auto;
       .border-radius(@baseBorderRadius);
-      &:before {
-        content: attr(data-content-before);
-        float: right;
-        font-size: @baseFontSize;
-        padding: 2px 1px 2px 14px;
-        width: auto;
-        color: transparent;
-      }
+      .box-shadow(0 0 1px transparent);
     }
     .select2-search-field input {
       padding: 0 6px;
@@ -141,6 +122,7 @@
       .border-radius(4px);
     }
   }
+
   .record-cell {
     display: inline-block;
     position: relative;
@@ -539,6 +521,7 @@
       .select2-container {
         .select2-choice {
           color: @gray;
+          .box-shadow(0 0 1px transparent);
         }
         &.select2-container-disabled {
           .opacity(35);
@@ -625,6 +608,7 @@
       }
       .edit {
         padding: 0;
+        margin: 0;
         .select2-container {
           margin-top: 0;
         }
