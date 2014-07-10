@@ -3297,6 +3297,7 @@ $app_strings = array (
     'LBL_DNB_NO_INDUSTRY' => 'No linked industry code',
     'LBL_DNB_SVC_ERR' => 'D&B service error',
     'LBL_DNB_NOT_CONFIGURED' => 'D&B connector not configured. Please configure the connector.',
+    'LBL_DNB_CONNECTOR_ERR' => 'D&B connector not configured. Contact administrator',
     'LBL_DNB_DATA_OVERRIDE_SINGLE_FIELD' => 'Do you want to overwrite {{fieldName}} with {{value}} ?',
     'LBL_DNB_DATA_OVERRIDE_TWO_FIELDS' => 'Do you want to overwrite {{fields}} ?',
     'LBL_DNB_DATA_OVERRIDE_MULTIPLE_FIELDS' => 'Do you want to overwrite {{fields}} and other field(s) ?',

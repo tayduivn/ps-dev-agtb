@@ -35,6 +35,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.initDD();
+        this.initDashlet();
         this.paginationCallback = this.baseAccountsBAL;
     },
 
@@ -58,15 +59,10 @@
     },
 
     loadData: function(options) {
-        if (this.disposed) {
-            return;
-        }
-        this.template = app.template.get(this.name + '.dnb-bal-hint');
-        this.render();
-        //placed here instead of initialize
-        //so that pagination params are reset when
-        //reset is clicked on dnb-bal-params view
-        this.initPaginationParams();
+        this.checkConnector('ext_rest_dnb',
+            _.bind(this.loadDataWithValidConnector, this),
+            _.bind(this.handleLoadError, this),
+            ['test_passed']);
     },
 
     /**
