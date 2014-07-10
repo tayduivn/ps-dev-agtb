@@ -185,22 +185,6 @@
             cloneField.label = cloneField.label || cloneField.vname;
             if (cloneField.type === 'multienum') {
                 cloneField.type = 'enum';
-                cloneField.css_class = 'span9';
-                cloneField = {
-                    type: 'fieldset',
-                    name: cloneField.name,
-                    label: cloneField.label,
-                    css_class: 'row-fluid',
-                    fields: [
-                        cloneField,
-                        {
-                            'name': cloneField.name + '_replace',
-                            'type': 'bool',
-                            'text': 'LBL_SELECT_APPEND_VALUES',
-                            'css_class': 'span3'
-                        }
-                    ]
-                };
             }
             massFields.push(cloneField);
         });
@@ -788,10 +772,13 @@
             attributes = _.union(attributes,
                 _.values(_.pick(value, 'name', 'id_name'))
             );
+            //FIXME: remove these hard coded conditions (SC-2836)
             if (value.name === 'parent_name') {
                 attributes.push('parent_id', 'parent_type');
             } else if (value.name === 'team_name') {
                 attributes.push('team_name_type');
+            } else if (value.isMultiSelect) {
+                attributes.push(value.name + '_replace');
             }
         }, this);
         return _.pick(this.model.attributes, attributes);
