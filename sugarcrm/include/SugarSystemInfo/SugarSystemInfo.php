@@ -34,7 +34,7 @@ class SugarSystemInfo
     /**
      * @var SugarSystemInfo
      */
-    protected static $instance;
+    private static $instance;
 
     private function __construct()
     {
