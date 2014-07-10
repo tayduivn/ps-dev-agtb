@@ -15,7 +15,7 @@
             <div class="alert alert-success alert-block" data-flag="1">
                 <button class="btn btn-link btn-invisible close" data-action="close">
                 </button>
-                <strong>Success:</strong>
+                <strong>Success</strong>
                 You have passed the upgrade check.
             </div>
             <div class="alert alert-warning alert-block"  data-flag="2">
@@ -23,6 +23,18 @@
                 </button>
                 <strong>Warning</strong>
                 Adjustments to your system will be automatically applied, please take a note.
+            </div>
+            <div class="alert alert-success alert-block"  data-send="ok">
+                <button class="btn btn-link btn-invisible close" data-action="close">
+                </button>
+                <strong>Success</strong>
+                Log was sent successfully.
+            </div>
+            <div class="alert alert-danger alert-block"  data-send="error">
+                <button class="btn btn-link btn-invisible close" data-action="close">
+                </button>
+                <strong>Error</strong>
+                Unable to send log to Sugar. Please make sure you've internet connection.
             </div>
         </div>
     </div>
@@ -60,7 +72,7 @@
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible" href="javascript:void(0);">Cancel</a>
+            <a class="btn btn-invisible" href="index.php">Cancel</a>
             <a class="btn btn-primary" href="#2" name="next_button">Next</a>
           </span>
         </div>
@@ -90,8 +102,8 @@
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible" href="javascript:void(0);">Cancel</a>
-            <a class="btn btn-invisible" href="javascript:void(0);">Send Log to Sugar</a>
+            <a class="btn btn-invisible" href="index.php">Cancel</a>
+            <a class="btn btn-invisible send-logs" href="javascript:void(0);">Send Log to Sugar</a>
             <a class="btn btn-invisible" href="index.php?module=HealthCheck&action=export">Export Log</a>
             <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm" name="next_button">Confirm</a>
           </span>
@@ -129,6 +141,8 @@
 
         document.querySelector('[data-step="1"] a[name="next_button"]').addEventListener('click', doHealthCheck, false);
 
+        document.querySelector('.send-logs').addEventListener('click', sendLogs, false);
+
         function showNextStep() {
             var nextStep = currentStep + 1;
             if (nextStep <= maxSteps) {
@@ -140,11 +154,11 @@
         }
 
         function doHealthCheck() {
+            var flagToIcon = [,'icon-check color_green', 'icon-gear color_yellow', 'icon-exclamation-sign color_red'];
             $.ajax('index.php?module=HealthCheck&action=scan', {
                 dataType: 'json',
                 success: function (data) {
                     data = data.sort(_sortByBucket);
-                    var flagToIcon = [,'icon-check color_green', 'icon-gear color_yellow', 'icon-exclamation-sign color_red'];
                     $("#healthcheck").html("");
                     for (var i = 0; i < data.length; i++) {
                         var item = data[i];
@@ -156,7 +170,12 @@
                     if(flag < 3) {
                         $('.btn.btn-primary.disabled').removeClass('disabled');
                     }
-
+                },
+                error: function () {
+                    var html = ["<h1><i class='", flagToIcon[parseInt(3)],
+                            "'></i> Unexpected error occurred!</h1><p>We've encountered an unexpected error during heath check procedure. Please <a href='mailto:support@sugarcrm.com'>contact support</a>.</p>"];
+                    $("#healthcheck").html(html.join(""));
+                    _displayAlert(3);
                 }
             });
         }
@@ -169,7 +188,18 @@
 
         function _displayAlert(flag) {
             $('#alerts [data-flag=' + flag + ']').show();
+        }
 
+        function sendLogs() {
+            $.ajax('index.php?module=HealthCheck&action=send', {
+               dataType: 'json',
+                success: function (data) {
+                    $('[data-send=' + data.status + ']').show();
+                },
+                error: function () {
+                    $('[data-send="error"]').show();
+                }
+            });
         }
 
     })();

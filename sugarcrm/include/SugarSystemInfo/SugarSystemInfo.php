@@ -344,6 +344,15 @@ class SugarSystemInfo
     }
 
     /**
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        $license = Administration::getSettings('license');
+        return $license->settings['license_key'];
+    }
+
+    /**
      * Returns db-formatted 30-days-ago date
      *
      * @param $days

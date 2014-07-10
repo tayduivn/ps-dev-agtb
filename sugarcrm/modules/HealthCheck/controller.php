@@ -11,6 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
+require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
+require_once 'modules/HealthCheck/HealthCheckClient.php';
+
 /**
  *
  * HealthCheck Controller
@@ -54,8 +58,30 @@ class HealthcheckController extends SugarController
             echo $hc->logmeta;
         }
 
-        // TODO - add heartbeat send including bucket ...
-        // Also verify that Scanner::ping() is fully removed from there ...
+        if($this->pingHeartbeat($hc)) {
+            $GLOBALS['log']->info("HealthCheck: Heartbeat server has been pinged successfully.");
+        } else {
+            $GLOBALS['log']->error("HealthCheck: Unable to ping Heartbeat server.");
+        }
+    }
+
+    protected function pingHeartbeat($hc)
+    {
+        $client = new SugarHeartbeatClient();
+
+        $client->sugarPing();
+
+        if (!$client->getError()) {
+            $data = $this->getSystemInfo()->getInfo();
+            $data['bucket'] = $hc->bucket;
+            $data['flag'] = $hc->flag;
+            $client->sugarHome($data['license_key'], $data);
+            return $client->getError() == false;
+        } else {
+            $GLOBALS['log']->error("HealthCheck: " . $client->getError());
+        }
+
+        return false;
     }
 
     /**
@@ -76,7 +102,6 @@ class HealthcheckController extends SugarController
     }
 
     /**
-     *
      * Send health check log file to sugar
      */
     public function action_send()
@@ -84,8 +109,16 @@ class HealthcheckController extends SugarController
         $this->view = 'ajax';
 
         if ($hc = HealthCheck::getLastRun()) {
-            // TODO - return json with success or error
+            $client = new HealthCheckClient();
+            if ($client->send($this->getSystemInfo()->getLicenseKey(), $hc->getLogFileName())) {
+                $GLOBALS['log']->info("HealthCheck: Logs have been successfully sent to HealthCheck server.");
+                echo json_encode(array('status' => 'ok'));
+                sugar_cleanup(true);
+            }
         }
+        $GLOBALS['log']->error("HealthCheck: Unable to send logs to HealthCheck server.");
+        echo json_encode(array('status' => 'error'));
+        sugar_cleanup(true);
     }
 
     /**
@@ -117,6 +150,11 @@ class HealthcheckController extends SugarController
         ob_clean();
         flush();
         readfile($file);
+    }
+
+    protected function getSystemInfo()
+    {
+        return SugarSystemInfo::getInstance();
     }
 
     /**
