@@ -50,7 +50,7 @@ class HealthcheckController extends SugarController
         $scanner = $this->getWebScanner();
         $scanner->setInstanceDir(__DIR__ . '/../..');
 
-        $hc = HealthCheck::runHealthCheck($scanner);
+        $hc = BeanFactory::getBean('HealthCheck')->run($scanner);
         if (!empty($hc->error)) {
             echo json_encode(array('error' => $hc->error));
         } else {
@@ -92,7 +92,7 @@ class HealthcheckController extends SugarController
     {
         $this->view = 'ajax';
 
-        if ($hc = HealthCheck::getLastRun()) {
+        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
             $file = $hc->getLogFileName();
             if ($file && file_exists($file)) {
                 $this->streamFileToBrowser($file);
@@ -108,7 +108,7 @@ class HealthcheckController extends SugarController
     {
         $this->view = 'ajax';
 
-        if ($hc = HealthCheck::getLastRun()) {
+        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
             $client = new HealthCheckClient();
             if ($client->send($this->getSystemInfo()->getLicenseKey(), $hc->getLogFileName())) {
                 $GLOBALS['log']->info("HealthCheck: Logs have been successfully sent to HealthCheck server.");
@@ -130,11 +130,11 @@ class HealthcheckController extends SugarController
         $this->view = 'ajax';
         $url = SugarConfig::getInstance()->get('site_url');
         $redirect = "{$url}/UpgradeWizard.php";
-        if ($hc = HealthCheck::getLastRun()) {
+        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
             $redirect .= "?confirm_id={$hc->id}";
         }
-        header("Location: {$redirect}");
-        exit();
+        $this->set_redirect($redirect);
+        $this->redirect();
     }
 
     /**

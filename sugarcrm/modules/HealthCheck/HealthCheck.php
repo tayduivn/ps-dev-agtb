@@ -29,7 +29,7 @@ class HealthCheck extends Basic
      * @param Scanner $scanner
      * @return HealthCheck
      */
-    public static function runHealthCheck(Scanner $scanner)
+    public function run(Scanner $scanner)
     {
         $hc = BeanFactory::getBean('HealthCheck');
 
@@ -59,7 +59,7 @@ class HealthCheck extends Basic
      * Get most recent healtcheck run
      * @return HealthCheck
      */
-    public static function getLastRun()
+    public function getLastRun()
     {
         $sql = "SELECT id FROM healthcheck WHERE deleted = 0 ORDER BY date_entered DESC";
         $id = DBManagerFactory::getInstance()->getOne($sql, false, 'Error fetching most recent healtcheck record');
