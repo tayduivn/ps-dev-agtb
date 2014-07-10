@@ -64,7 +64,7 @@ $viewdefs['WebLogicHooks']['base']['view']['list'] = array(
                     'action' => 'SetValue',
                     'params' => array(
                         'target' => 'webhook_target_module',
-                        'value' => '"Users"'
+                        'value' => 'ifElse(isInList($trigger_event, createList("after_login", "after_logout", "login_failed")), "Users", $webhook_target_module)'
                     )
                 )
             )
