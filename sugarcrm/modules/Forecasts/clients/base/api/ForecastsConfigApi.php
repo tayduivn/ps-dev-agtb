@@ -239,8 +239,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             'likely_case',
             'best_case',
             'date_closed',
-            'sales_stage',
-            'probability'
+            'sales_stage'
         );
 
         $currency_fields = array(

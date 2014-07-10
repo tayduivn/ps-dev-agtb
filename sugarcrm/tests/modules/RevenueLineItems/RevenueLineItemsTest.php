@@ -364,20 +364,6 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(42, $revenuelineitem->quantity, "Null not converted to 1");
     }
 
-    /**
-     * @dataProvider dataProviderMapProbabilityFromSalesStage
-     * @group revenuelineitems
-     */
-    public function testProbabilityNotOverwrittenBySaleStageIfGiven($salesStage)
-    {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-
-        $revenuelineitem->sales_stage = $salesStage;
-        $revenuelineitem->probability = 22;
-        $revenuelineitem->save();
-        $this->assertEquals(22, $revenuelineitem->probability);
-    }
-
     // BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group revenuelineitems

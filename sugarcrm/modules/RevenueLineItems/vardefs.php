@@ -695,6 +695,7 @@ $dictionary['RevenueLineItem'] = array(
             'merge_filter' => 'enabled',
             'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
             'calculated' => true,
+            'enforced' => true,
         ),
         'lead_source' => array(
             'name' => 'lead_source',

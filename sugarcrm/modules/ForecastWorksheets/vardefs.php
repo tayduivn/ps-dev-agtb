@@ -353,7 +353,10 @@ $dictionary['ForecastWorksheet'] = array(
             'importable' => 'required',
             'sortable' => true,
             'required' => true,
-            'studio' => false
+            'studio' => false,
+            'related_fields' => array(
+                'probability'
+            )
         ),
         'probability' =>
         array(
@@ -366,7 +369,13 @@ $dictionary['ForecastWorksheet'] = array(
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
             'sortable' => true,
-            'studio' => false
+            'studio' => false,
+            'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
+            'calculated' => true,
+            'enforced' => true,
+            'related_fields' => array(
+                'sales_stage'
+            )
         ),
         'commit_stage' =>
         array(
