@@ -947,6 +947,10 @@ class SugarTestHelper
                 if (substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @SugarAutoLoader::unlink($filename, false);
+                    if(file_exists($filename)) {
+                        // still have it in map if it exists in template
+                        SugarAutoLoader::addToMap($filename, false);
+                    }
                     continue;
                 }
             }
