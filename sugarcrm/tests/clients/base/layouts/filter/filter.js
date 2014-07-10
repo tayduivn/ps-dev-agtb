@@ -1,9 +1,13 @@
 describe('Base.Layout.Filter', function() {
 
-    var app, layout;
+    var app, layout, moduleName = 'Accounts';
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.declareData('base', 'Filters');
+        sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+            options.success();
+        });
     });
 
     afterEach(function() {
@@ -20,7 +24,7 @@ describe('Base.Layout.Filter', function() {
         var parentLayout;
         beforeEach(function () {
             parentLayout = new Backbone.View();
-            layout = SugarTest.createLayout('base', 'Accounts', 'filter', {last_state: {id: "filter"}}, false, false, {layout: parentLayout});
+            layout = SugarTest.createLayout('base', moduleName, 'filter', {last_state: {id: "filter"}}, false, false, {layout: parentLayout});
         });
 
         describe('events', function () {
@@ -88,10 +92,17 @@ describe('Base.Layout.Filter', function() {
                 parentLayout.trigger('filterpanel:change');
                 expect(stub).toHaveBeenCalled();
             });
+
             describe('addFilter', function() {
-                var saveFilterCollectionStub, setLastFilterStub, clearFilterEditStateStub, layoutTriggerStub;
+
                 beforeEach(function() {
-                    saveFilterCollectionStub = sinon.collection.stub(layout, 'saveFilterCollection');
+                    layout.filters = app.data.createBeanCollection('Filters');
+                    layout.filters.setModuleName(moduleName);
+                    layout.filters.load();
+                });
+
+                var setLastFilterStub, clearFilterEditStateStub, layoutTriggerStub;
+                beforeEach(function() {
 
                     setLastFilterStub = sinon.collection.stub(layout, 'setLastFilter');
                     clearFilterEditStateStub = sinon.collection.stub(layout, 'clearFilterEditState');
@@ -112,8 +123,7 @@ describe('Base.Layout.Filter', function() {
                     function() {
                         layoutTriggerStub = sinon.collection.stub(layout.layout, 'trigger');
                         layout.addFilter(new Backbone.Model({id: 'new_filter'}));
-                        expect(layout.filters.get('new_filter')).toBeDefined();
-                        expect(saveFilterCollectionStub).toHaveBeenCalled();
+                        expect(layout.filters.collection.get('new_filter')).toBeDefined();
                         expect(clearFilterEditStateStub).toHaveBeenCalled();
                         expect(layoutTriggerStub).toHaveBeenCalled();
                         expect(layoutTriggerStub).toHaveBeenCalledWith('filter:reinitialize');
@@ -186,17 +196,17 @@ describe('Base.Layout.Filter', function() {
 
         it('should remove filters', function () {
             var model = new Backbone.Model({id: '123'});
-            var saveFilterCollectionStub = sinon.collection.stub(layout, 'saveFilterCollection'),
-                clearLastFilterStub = sinon.collection.stub(layout, 'clearLastFilter');
-            layout.filters.add(model);
+            var clearLastFilterStub = sinon.collection.stub(layout, 'clearLastFilter');
+            layout.filters = app.data.createBeanCollection('Filters');
+            layout.filters.setModuleName(moduleName);
+            layout.filters.load();
+            layout.filters.collection.add(model);
             parentLayout.off();
             var spy = sinon.spy();
             parentLayout.on('filter:reinitialize', spy);
             layout.removeFilter(model);
             // removed the model
-            expect(_.contains(layout.filters.models, model)).toBeFalsy();
-            // updated cache of filters
-            expect(saveFilterCollectionStub).toHaveBeenCalled();
+            expect(_.contains(layout.filters.collection.models, model)).toBeFalsy();
             // triggered filter reinit
             expect(spy).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
@@ -206,16 +216,16 @@ describe('Base.Layout.Filter', function() {
 
         it('should add filters', function() {
             var model = new Backbone.Model({id: '123'});
-            var saveFilterCollectionStub = sinon.collection.stub(layout, 'saveFilterCollection');
-            layout.filters.add(model);
+            layout.filters = app.data.createBeanCollection('Filters');
+            layout.filters.setModuleName(moduleName);
+            layout.filters.load();
+            layout.filters.collection.add(model);
             parentLayout.off();
             var spy = sinon.spy();
             parentLayout.on('filter:reinitialize', spy);
             layout.addFilter(model);
             // added the model
-            expect(_.contains(layout.filters.models, model)).toBeTruthy();
-            // updated cache of filters
-            expect(saveFilterCollectionStub).toHaveBeenCalled();
+            expect(_.contains(layout.filters.collection.models, model)).toBeTruthy();
             // triggered filter reinit
             expect(spy).toHaveBeenCalled();
         });
@@ -225,12 +235,10 @@ describe('Base.Layout.Filter', function() {
             var spy2 = sinon.spy();
             layout.on("filter:render:module", spy1);
             layout.on("filter:change:module", spy2);
-            var saveFilterCollectionStub = sinon.collection.stub(layout, 'saveFilterCollection');
-            var stubData = sinon.collection.stub(app.data, 'getRelatedModule');
+            sinon.collection.stub(app.data, 'getRelatedModule');
 
-            layout.handleFilterPanelChange('Accounts', true);
+            layout.handleFilterPanelChange(moduleName, true);
 
-            sinon.assert.notCalled(saveFilterCollectionStub);
             sinon.assert.notCalled(spy1);
             sinon.assert.notCalled(spy2);
         });
@@ -263,7 +271,7 @@ describe('Base.Layout.Filter', function() {
                 return 'Test';
             });
 
-            layout.handleFilterPanelChange('Accounts', false);
+            layout.handleFilterPanelChange(moduleName, false);
 
             expect(spy1).toHaveBeenCalled();
             expect(spy2.getCall(0).args[1]).toEqual('Bugs');
@@ -292,7 +300,10 @@ describe('Base.Layout.Filter', function() {
 
                 model = new Backbone.Model({id: '123', filter_definition: 'test'});
                 model.getSyncedAttributes = $.noop;
-                layout.filters.add(model);
+                layout.filters = app.data.createBeanCollection('Filters');
+                layout.filters.setModuleName(moduleName);
+                layout.filters.load();
+                layout.filters.collection.add(model);
             });
 
             it('should save last filter into cache', function() {
@@ -343,7 +354,7 @@ describe('Base.Layout.Filter', function() {
         it('should be able to apply a filter', function(){
             var ctxt = app.context.getContext();
             ctxt.set({
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter'
             });
             ctxt._recordListFields = ['name', 'date_modified'];
@@ -405,7 +416,7 @@ describe('Base.Layout.Filter', function() {
             var ctxt = app.context.getContext();
             ctxt.set({
                 collection: new Backbone.Collection(),
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter'
             });
             ctxt.prepare();
@@ -424,7 +435,7 @@ describe('Base.Layout.Filter', function() {
             var ctxt = app.context.getContext();
             ctxt.set({
                 collection: new Backbone.Collection(),
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter'
             });
             ctxt.prepare();
@@ -440,7 +451,7 @@ describe('Base.Layout.Filter', function() {
             var ctxt = app.context.getContext();
             ctxt.set({
                 collection: new Backbone.Collection(),
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter',
                 link:'test1',
                 isSubpanel:true,
@@ -451,7 +462,7 @@ describe('Base.Layout.Filter', function() {
             var ctxt1 = app.context.getContext();
             ctxt1.set({
                 collection: new Backbone.Collection(),
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter',
                 link:'test1',
                 isSubpanel:true,
@@ -461,7 +472,7 @@ describe('Base.Layout.Filter', function() {
 
             var ctxtWithoutCollection = app.context.getContext();
             ctxtWithoutCollection.set({
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter',
                 link:'testNoCollection',
                 isSubpanel:true,
@@ -473,7 +484,7 @@ describe('Base.Layout.Filter', function() {
             ctxtWithModelId.set({
                 collection: new Backbone.Collection(),
                 modelId: 'model_id',
-                module: 'Accounts',
+                module: moduleName,
                 layout: 'filter',
                 link:'testModelId',
                 isSubpanel:true,
@@ -519,7 +530,7 @@ describe('Base.Layout.Filter', function() {
                     ctxt = app.context.getContext();
 
                 ctxt.set({
-                    module: 'Accounts',
+                    module: moduleName,
                     layout: 'filter'
                 });
                 ctxt.prepare();
@@ -542,7 +553,7 @@ describe('Base.Layout.Filter', function() {
                     ctxt = app.context.getContext();
 
                 ctxt.set({
-                    module: 'Accounts',
+                    module: moduleName,
                     layout: 'filter'
                 });
                 ctxt.prepare();
@@ -565,7 +576,7 @@ describe('Base.Layout.Filter', function() {
                     }
                 }];
                 ctxt.set({
-                    module: 'Accounts',
+                    module: moduleName,
                     layout: 'filter'
                 });
 
@@ -601,7 +612,7 @@ describe('Base.Layout.Filter', function() {
                     ]
                 }];
                 ctxt.set({
-                    module: 'Accounts',
+                    module: moduleName,
                     layout: 'filter'
                 });
 
@@ -632,7 +643,7 @@ describe('Base.Layout.Filter', function() {
                     ]
                 }];
                 ctxt.set({
-                    module: 'Accounts',
+                    module: moduleName,
                     layout: 'filter'
                 });
 
@@ -656,8 +667,13 @@ describe('Base.Layout.Filter', function() {
                     return lastStateFilter;
                 });
                 nextCallStub = sinon.collection.stub(layout, 'getFilters');
+
+                layout.filters = app.data.createBeanCollection('Filters');
+                layout.filters.setModuleName(moduleName);
+                layout.filters.load();
+
                 // Add the test filter to the filter collection
-                layout.filters.add(new Backbone.Model({'id': 'testFilter'}));
+                layout.filters.collection.add(new Backbone.Model({'id': 'testFilter'}));
 
                 sinon.collection.stub(app.data, 'getRelatedModule', function() {
                     return relatedModule;
@@ -666,27 +682,27 @@ describe('Base.Layout.Filter', function() {
 
             using('different params (layoutType, module, link, filter)', [
                 {
-                    params: ['Accounts'],
+                    params: [moduleName],
                     layoutType: 'record',
                     showingActivities: false,
-                    expected: ['Accounts', undefined]
+                    expected: [moduleName, undefined]
                 },
                 {
-                    params: ['Accounts'],
+                    params: [moduleName],
                     lastStateFilter: 'testFilter',
                     layoutType: 'record',
                     showingActivities: false,
-                    expected: ['Accounts', 'testFilter']
+                    expected: [moduleName, 'testFilter']
                 },
                 {
-                    params: ['Accounts', null, 'anotherFilter'],
+                    params: [moduleName, null, 'anotherFilter'],
                     lastStateFilter: 'testFilter',
                     layoutType: 'record',
                     showingActivities: false,
-                    expected: ['Accounts', 'anotherFilter']
+                    expected: [moduleName, 'anotherFilter']
                 },
                 {
-                    params: ['Accounts', 'contacts'],
+                    params: [moduleName, 'contacts'],
                     lastStateFilter: 'testFilter',
                     relatedModule: 'Contacts',
                     layoutType: 'record',
@@ -694,14 +710,14 @@ describe('Base.Layout.Filter', function() {
                     expected: ['Contacts', 'testFilter']
                 },
                 {
-                    params: ['Accounts'],
+                    params: [moduleName],
                     lastStateFilter: 'testFilter',
                     layoutType: 'record',
                     showingActivities: true,
                     expected: ['Activities', 'testFilter']
                 },
                 {
-                    params: ['Accounts'],
+                    params: [moduleName],
                     lastStateFilter: undefined,
                     layoutType: 'record',
                     showingActivities: true,
@@ -723,133 +739,24 @@ describe('Base.Layout.Filter', function() {
             });
         });
 
-        it('should get filters from cache', function(){
-            var modName = 'Accounts', defaultName = 'testDefault';
-            var stubs = {
-                selectFilter: sinon.collection.stub(layout, 'selectFilter'),
-                loadPredefinedFilter: sinon.collection.stub(layout, 'loadPredefinedFilters')
-            };
-            var baseController = app.view._getController({type:'layout',name:'filter'});
-            baseController.loadedModules[modName] = true;
-            sinon.collection.stub(layout, 'getFilterCollection', function() {
-                return [
-                    {id: '1234'},
-                    {id: '123'}
-                ];
-            });
-
-
-            layout.getFilters(modName, defaultName);
-            expect(layout.filters.models.length).toEqual(2);
-            expect(stubs.loadPredefinedFilter.getCall(0).args).toEqual([modName]);
-            expect(stubs.selectFilter.getCall(0).args).toEqual([defaultName]);
-        });
-        it('should sort filters alphabetically per categories with user filters on top', function(){
-            sinon.collection.stub(app.lang, 'get', function(key) {
-                var dictionnary = {
-                    'LBL_MODULE_NAME': 'Leads',
-                    'LBL_ASSIGNED_TO_ME': 'My {0}',
-                    'LBL_FAVORITES': 'My Favorites'
-                };
-                return dictionnary[key];
-            });
-            layout.layout.currentModule = 'Accounts';
-
-            layout.filters.add({id: 'random_id_1', name: 'Best Filter', editable: true});
-            layout.filters.add({id: 'assigned_to_me', name: 'LBL_ASSIGNED_TO_ME', editable: false});
-
-            // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(['random_id_1', 'assigned_to_me']);
-
-            layout.filters.add({id: 'random_id_2', name: 'First Filter', editable: true});
-
-            // Sort results: `My Favorites`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(["random_id_1", "random_id_2", "assigned_to_me"]);
-
-            layout.filters.add({id: 'favorites', name: 'LBL_FAVORITES', editable: false});
-
-            // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(["random_id_1", "random_id_2", "favorites", "assigned_to_me"]);
-        });
-
         it('should get filters from the server', function() {
             var modName = 'TestModule', defaultName = 'testDefault';
-            var stubs = {
-                loadPredefinedFilters: sinon.collection.stub(layout, 'loadPredefinedFilters'),
-                selectFilter: sinon.collection.stub(layout, 'selectFilter')
-            };
-            sinon.collection.stub(layout.filters, 'fetch', function(options) {
-                options.success();
-            });
-            var baseController = app.view._getController({type: 'layout', name: 'filter'});
-
+            layout.filters = app.data.createBeanCollection('Filters');
+            layout.filters.setModuleName(moduleName);
+            layout.filters.load();
+            sinon.collection.stub(layout, 'selectFilter');
             layout.getFilters(modName, defaultName);
-            expect(baseController.loadedModules[modName]).toBeTruthy();
-            expect(stubs.loadPredefinedFilters.getCall(0).args).toEqual([modName]);
-            expect(stubs.selectFilter.getCall(0).args).toEqual([defaultName]);
-        });
-
-        describe('loadPredefinedFilters', function() {
-
-            beforeEach(function() {
-                sinon.collection.stub(layout, 'getModuleFilterMeta').returns({
-                    'basic': {
-                        'meta': {
-                            'default_filter': 'test2',
-                            'filters': [
-                                {'filter_definition': {'name': {'$starts': 'A'}}, 'id': 'test1'},
-                                {'filter_definition': {'name': {'$starts': 'B'}}, 'id': 'test2'}
-                            ]
-                        }
-                    },
-                    'cases': {
-                        'meta': {
-                            'default_filter': 'test3',
-                            'filters': [
-                                {'filter_definition': {'name': {'$starts': 'C'}}, 'id': 'test3'},
-                                {'filter_definition': {'name': {'$starts': ''}}, 'id': 'test4', is_template: true}
-                            ]
-                        }
-                    }
-                });
-            });
-
-            it('should load filters from different templates', function() {
-                layout.loadPredefinedFilters('Cases');
-                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
-                expect(layout.filters.length).toEqual(3);
-                expect(layout.filters.get('test4')).toBeUndefined();
-            });
-
-            it('should only load a template filter when it is set as the initial filter', function() {
-                layout.context.set('filterOptions', { initial_filter: 'test4' });
-                layout.loadPredefinedFilters('Cases');
-                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
-                expect(layout.filters.length).toEqual(4);
-                expect(layout.filters.get('test4')).toBeDefined();
-            });
-
-            it('should create a $relate filter when it is set as the initial filter', function() {
-                layout.context.set('filterOptions', {
-                    initial_filter: '$relate',
-                    filter_populate: {
-                        account_id: '1234-5678'
-                    }
-                });
-                layout.loadPredefinedFilters('Cases');
-                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
-                expect(layout.filters.length).toEqual(4);
-                expect(layout.filters.get('$relate')).toBeDefined();
-                expect(layout.filters.get('$relate').get('editable')).toEqual(true);
-                expect(layout.filters.get('$relate').get('is_template')).toEqual(true);
-            });
+            expect(layout.selectFilter.getCall(0).args).toEqual([defaultName]);
         });
 
         describe('selectFilter', function() {
             var stubs;
 
             beforeEach(function() {
-                layout.filters.add([
+                layout.filters = app.data.createBeanCollection('Filters');
+                layout.filters.setModuleName(moduleName);
+                layout.filters.load();
+                layout.filters.collection.add([
                     {
                         id: 'favorites',
                         filter_definition: [
@@ -869,7 +776,7 @@ describe('Base.Layout.Filter', function() {
                         ]
                     }
                 ]);
-                layout.filters.defaultFilterFromMeta = 'owner';
+                layout.filters.collection.defaultFilterFromMeta = 'owner';
                 stubs = {
                     setLastFilter: sinon.collection.stub(layout, 'setLastFilter'),
                     trigger: sinon.collection.stub(layout, 'trigger')
@@ -899,7 +806,7 @@ describe('Base.Layout.Filter', function() {
         describe('canCreateFilter', function() {
             var hasAccess, metadata;
             beforeEach(function() {
-                var ctxt = new Backbone.Model({collection: {}, module: 'Accounts'});
+                var ctxt = new Backbone.Model({collection: {}, module: moduleName});
                 sinon.collection.stub(layout, 'getRelevantContextList', function() {
                     return [ctxt];
                 });
@@ -951,33 +858,21 @@ describe('Base.Layout.Filter', function() {
             });
         });
 
-        it('should get module filter meta', function () {
-            var result = {'test': 'test'};
-            sinon.collection.stub(app.metadata, 'getModule', function () {
-                return {
-                    filters: result
-                };
-            });
-
-            var meta = layout.getModuleFilterMeta('Accounts');
-            expect(meta).toEqual(result);
-        });
         //See SP-1820. We should initialize filter state if and only if all the filter components are already rendered.
         it('should not init filter state on render', function () {
             var initStub = sinon.collection.stub(layout, 'initializeFilterState');
             layout._render();
             expect(initStub).not.toHaveBeenCalled();
         });
-        it('should clear filters on unbind', function () {
-            var oFilters = layout.filters;
-            layout.filters = new Backbone.Collection();
-            var spy = sinon.collection.spy(layout.filters, 'off');
+
+        it('should clear filters on unbind', function() {
+            layout.filters = app.data.createBeanCollection('Filters');
+            var offSpy = sinon.collection.spy(layout.filters, 'dispose');
 
             layout.unbind();
+
             expect(layout.filters).toEqual(null);
-            expect(spy).toHaveBeenCalled();
-            // restore filters that we destroyed
-            layout.filters = oFilters;
+            expect(offSpy).toHaveBeenCalled();
         });
 
         describe('last selected filter', function() {
@@ -1082,52 +977,6 @@ describe('Base.Layout.Filter', function() {
                 layout.context.get('filterOptions').stickiness = false;
                 layout.clearFilterEditState();
                 expect(stubCache).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('caching filter collection of a module', function() {
-
-            var beforeModule,
-                _expectedKey = function(module) {
-                    return module + ':filter:saved-filters';
-                };
-
-            describe('getFilterCollection', function() {
-
-                it('should get filter collection from cache', function() {
-                    beforeModule = layout.module;
-                    var getStub = sinon.collection.stub(app.user.lastState, 'get');
-
-                    layout.getFilterCollection('TestModule');
-                    expect(getStub).toHaveBeenCalled();
-                    expect(getStub.firstCall.args[0]).toEqual(_expectedKey('TestModule'));
-
-                    layout.getFilterCollection('TestAnother');
-                    expect(getStub.secondCall.args[0]).toEqual(_expectedKey('TestAnother'));
-
-                    expect(layout.module).toEqual(beforeModule);
-                });
-            });
-
-            describe('saveFilterCollection', function() {
-
-                it('should get filter collection from cache', function() {
-                    beforeModule = layout.module;
-                    var removeStub = sinon.collection.stub(app.user.lastState, 'remove');
-                    var setStub = sinon.collection.stub(app.user.lastState, 'set');
-
-                    layout.saveFilterCollection('TestModule');
-                    expect(removeStub).toHaveBeenCalled();
-                    expect(removeStub.firstCall.args[0]).toEqual('Accounts:filter:saved-TestModule');
-                    expect(setStub).toHaveBeenCalled();
-                    expect(setStub.firstCall.args[0]).toEqual(_expectedKey('TestModule'));
-
-                    layout.saveFilterCollection('TestAnother');
-                    expect(removeStub.secondCall.args[0]).toEqual('Accounts:filter:saved-TestAnother');
-                    expect(setStub.secondCall.args[0]).toEqual(_expectedKey('TestAnother'));
-
-                    expect(layout.module).toEqual(beforeModule);
-                });
             });
         });
 
