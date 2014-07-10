@@ -93,6 +93,11 @@ class ForecastsDefaults
             'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
             // the starting point for each fiscal year, this is also used as the starting point to dynamically build the timeperiods
             'timeperiod_start_date' => date("Y") . '-01-01',
+            // if timeperiod_start_date is anything other than 01/01/year, the "Fiscal Year" will technically
+            // span two years e.g. startDate: 06/01/2013 will span 2013 and 2014. This setting saves if we're calling
+            // the Fiscal Year by the Current year (2013) or by the Next year (2014) for labeling purposes
+            // options: null, 'current_year', 'next_year'
+            'timeperiod_fiscal_year' => null,
             // number of timeperiods forward from the current that are displayed
             'timeperiod_shown_forward' => '2',
             // number of timeperiods in the past from the current that are displayed

@@ -6076,6 +6076,11 @@ $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] =
     'Opportunities' => 'Opportunities',
 );
 
+$app_list_strings['forecast_fiscal_year_options'] = array(
+    'current_year' => '{{year}}',
+    'next_year' => '{{year}}'
+);
+
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,
     'no' => 'No',

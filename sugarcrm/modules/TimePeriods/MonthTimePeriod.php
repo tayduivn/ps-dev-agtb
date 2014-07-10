@@ -62,8 +62,14 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
     {
         global $sugar_config;
         $timedate = TimeDate::getInstance();
-        $start = $timedate->fromDbDate($this->start_date)->format('F Y');
-        return string_format($this->name_template, array($start));
+
+        $start = $timedate->fromDbDate($this->start_date);
+        if(isset($this->currentSettings['timeperiod_fiscal_year']) &&
+            $this->currentSettings['timeperiod_fiscal_year'] == 'next_year') {
+            $start->modify('+1 year');
+        }
+
+        return string_format($this->name_template, array($start->format('F Y')));
     }
 
 

@@ -18,17 +18,28 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
         intervalField,
         _renderFieldStub,
         testIntervalMethodStub,
+        testShowFWBWMethodStub,
         testValue,
         testIntervalValue,
-        testLeafIntervalValue;
+        testLeafIntervalValue,
+        configStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigTimeperiods", "forecastsConfigTimeperiods", "js", function(d) { return eval(d); });
-        _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
+
+        configStub = sinon.collection.stub(app.metadata, 'getModule', function() {
+            return {
+                is_setup: 1
+            }
+        });
+
+        view = SugarTest.createView('base', 'Forecasts', 'forecastsConfigTimeperiods', null, null, true, null, true);
+
+        _renderFieldStub = sinon.collection.stub(view, '_super');
     });
 
     afterEach(function() {
+        configStub.restore();
         _renderFieldStub.restore();
         view = null;
         app = null;
@@ -39,6 +50,11 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             testShowFWBWMethodStub = sinon.stub(view, "_setUpTimeperiodShowField", function() {return field;});
             field = {
+                options: {
+                    def: {
+
+                    }
+                }
             };
             view.model = {
                 get: function(key) {
@@ -58,14 +74,14 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
         it("should set up timeperiod_shown_forward field", function() {
             field.name = "timeperiod_shown_forward";
             view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith('_renderField', [field]);
             expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
         });
 
         it("should set up timeperiod_shown_backward field", function() {
             field.name = "timeperiod_shown_backward";
             view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith('_renderField', [field]);
             expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
         });
 
@@ -73,7 +89,7 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
         it("should set up day field", function() {
             field.name = "timeperiod_interval";
             view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith('_renderField', [field]);
             expect(testIntervalMethodStub).toHaveBeenCalledWith(field);
         });
         //END SUGARCRM flav=pro ONLY
@@ -81,7 +97,7 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
         it("should not set up non-date selecting fields", function() {
             field.name = "timeperiod_config_other";
             view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith('_renderField', [field]);
             //BEGIN SUGARCRM flav=pro ONLY
                 expect(testIntervalMethodStub).not.toHaveBeenCalled();
             //END SUGARCRM flav=pro ONLY
@@ -127,7 +143,7 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
 
         //BEGIN SUGARCRM flav=pro ONLY
         it("should check that the method to select the interval and default the leaf was called", function() {
-            var testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
+            testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
             intervalField._updateIntervals({});
             expect(testIntervalMethodStub).toHaveBeenCalled();
         });

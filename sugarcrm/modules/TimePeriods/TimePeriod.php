@@ -504,6 +504,8 @@ class TimePeriod extends SugarBean
      */
     public function rebuildForecastingTimePeriods($priorSettings, $currentSettings)
     {
+        $this->currentSettings = $currentSettings;
+
         $timedate = TimeDate::getInstance();
         $currentDate = $timedate->getNow();
 
@@ -569,6 +571,8 @@ class TimePeriod extends SugarBean
             $targetStartDate->modify($this->previous_date_modifier);
         }
 
+        $this->setStartDate($targetStartDate->asDbDate(false));
+
         //Set the time period parent and leaf types according to the configuration settings
         $this->type = $currentSettings['timeperiod_interval']; // TimePeriod::Annual by default
         $this->leaf_period_type = $currentSettings['timeperiod_leaf_interval']; // TimePeriod::Quarter by default
@@ -586,7 +590,9 @@ class TimePeriod extends SugarBean
             'timeperiod_shown_forward'
         );
 
-        //If there were no existing TimePeriods we go back one year and create an extra set (for the current TimePeriod set)
+        //If there were no existing TimePeriods we go back one year
+        // and create an extra set (for the current TimePeriod set)
+        // setting ->currentSettings here will break tests
         $latestTimeperiod = TimePeriod::getLatest($this->type);
 
         if (empty($latestTimeperiod)) {
@@ -730,6 +736,7 @@ class TimePeriod extends SugarBean
                 $currentParentTimePeriodInstance->previous_date_modifier
             )->asDbDate()
         );
+
         $currentParentTimePeriodInstance->name = $currentParentTimePeriodInstance->getTimePeriodName(1);
         $currentParentTimePeriodInstance->save();
         $created[] = $currentParentTimePeriodInstance;
@@ -806,6 +813,7 @@ class TimePeriod extends SugarBean
                 $earliestTimePeriod = TimePeriod::getByType($this->type);
                 $earliestTimePeriod->setStartDate($this->start_date);
             }
+            $earliestTimePeriod->currentSettings = $this->currentSettings;
             $earliestTimePeriod->start_date = $timedate->fromDbDate($earliestTimePeriod->start_date)->modify(
                 $earliestTimePeriod->previous_date_modifier
             )->asDbDate(false);
@@ -818,6 +826,7 @@ class TimePeriod extends SugarBean
                 $latestTimePeriod = TimePeriod::getByType($this->type);
                 $latestTimePeriod->setStartDate($this->start_date);
             }
+            $latestTimePeriod->currentSettings = $this->currentSettings;
             $latestTimePeriod->start_date = $timedate->fromDbDate($latestTimePeriod->start_date)->modify(
                 $latestTimePeriod->next_date_modifier
             )->asDbDate(false);
@@ -843,6 +852,7 @@ class TimePeriod extends SugarBean
         for ($i = 0; $i < $timePeriods; $i++) {
             //Create the parent TimePeriod instance
             $timePeriod = TimePeriod::getByType($this->type);
+            $timePeriod->currentSettings = $this->currentSettings;
             $timePeriod->setStartDate($startDate->asDbDate(false));
             $startDateDay = $timedate->fromDbDate($timePeriod->start_date)->format('j');
 
@@ -861,6 +871,7 @@ class TimePeriod extends SugarBean
 
             for ($x = 1; $x <= $this->leaf_periods; $x++) {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
+                $leafPeriod->currentSettings = $this->currentSettings;
                 $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->setStartDate($leafStartDate);
                 $leafPeriod->name = $leafPeriod->getTimePeriodName($x, $timePeriod);

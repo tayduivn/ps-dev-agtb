@@ -63,12 +63,12 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         $now = $timedate->getNow(false);
         $year = $now->format('Y');
         return array(
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 1, 1, 12),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 2, 2, 20),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 1, 1, 12),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 1, 1, 9),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 2, 2, 15),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 2, 2, 15),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 12),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 20),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 1, 1, 12),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 9),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 15),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 2, 2, 15),
         );
     }
 
@@ -80,12 +80,13 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
      * @group timeperiods
      * @dataProvider timePeriodFilterWithTimePeriodsProvider
      */
-    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $shownForward, $shownBackward, $expectedLeaves) {
+    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $fiscalYear, $shownForward, $shownBackward, $expectedLeaves) {
 
         $forecastConfigSettings = array (
             'timeperiod_interval' => $parentType,
             'timeperiod_leaf_interval' => $leafType,
             'timeperiod_start_date' => $startDate,
+            'timeperiod_fiscal_year' => $fiscalYear,
             'timeperiod_shown_forward' => $shownForward,
             'timeperiod_shown_backward' => $shownBackward
         );
