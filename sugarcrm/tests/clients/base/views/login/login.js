@@ -5,14 +5,18 @@ describe("Login View", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.addViewDefinition('login', {
-            "panels": [
+            'panels': [
                 {
-                    "fields": [
+                    'fields': [
                         {
-                            "name": "username"
+                            'name': 'username',
+                            'type': 'text',
+                            'required': true
                         },
                         {
-                            "name": "password"
+                            'name': 'password',
+                            'type': 'password',
+                            'required': true
                         }
                     ]
                 }
@@ -24,6 +28,7 @@ describe("Login View", function() {
     });
 
     afterEach(function() {
+        view.dispose();
         app.cache.cutAll();
         app.view.reset();
         sinon.collection.restore();
@@ -177,6 +182,15 @@ describe("Login View", function() {
         });
     });
 
+    describe('fields patching', function() {
+        //FIXME: Enforce with `required` => false in metadata once it is implemented (SC-3106)
+        it('should enforce that `username` and `password` fields are required', function() {
+            _.each(view.meta.panels[0].fields, function(field) {
+                expect(field.required).toEqual(true);
+            });
+        });
+    });
+
     describe('logging in', function() {
         //FIXME: Login fields should trigger model change (SC-3106)
         it('should set the username and password in the model', function() {
@@ -191,6 +205,7 @@ describe("Login View", function() {
                         return 'user';
                     }
                 });
+            sinon.collection.stub(view.model, 'doValidate');
 
             view.login();
 
@@ -198,12 +213,27 @@ describe("Login View", function() {
             expect(view.model.get('username')).toEqual('user');
         });
 
-        it('should validate login data', function() {
-            sinon.collection.stub(view.model, 'doValidate');
+        it('should pass exact username and password to the API', function() {
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
+                callback(true);
+            });
+            //FIXME: Use field values instead (SC-3106)
+            sinon.collection.stub(view, '$')
+                .withArgs('input[name=password]').returns({
+                    val: function() {
+                        return 'pass';
+                    }
+                })
+                .withArgs('input[name=username]').returns({
+                    val: function() {
+                        return 'user';
+                    }
+                });
+            sinon.collection.stub(app, 'login');
 
             view.login();
 
-            expect(view.model.doValidate).toHaveBeenCalled();
+            expect(app.login).toHaveBeenCalledWith({password: 'pass', username: 'user'});
         });
 
         describe('successful login', function() {
@@ -234,14 +264,13 @@ describe("Login View", function() {
             });
 
             it('should handle post login events once successfully logged in', function() {
-                var postLoginStub = sinon.collection.stub(view, 'postLogin');
-
+                sinon.collection.stub(view, 'postLogin');
+                sinon.collection.stub(_, 'defer', function(func) {
+                    return func.apply(this);
+                });
                 view.login();
                 app.events.trigger('app:sync:complete');
-
-                _.defer(function() {
-                    expect(postLoginStub).toHaveBeenCalled();
-                }, 0);
+                expect(view.postLogin).toHaveBeenCalled();
             });
         });
 
