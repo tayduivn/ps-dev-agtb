@@ -145,8 +145,7 @@
     display: inline-block;
     position: relative;
     padding-left: 15px;
-    min-height: 43px;
-    margin-bottom: 7px;
+    min-height: 0;
     height: 100%;
     &.vis_action_hidden {
       display: none;
@@ -154,10 +153,11 @@
     .record-label {
       font-size: @fontSizeSmall;
       color: lighten(@gray, 12%);
-      padding-bottom: 2px;
     }
     .normal > span {
       display: block;
+      min-height: 28px;
+      margin: 2px 0 7px;
     }
     .normal > span.detail {
       a,
@@ -335,6 +335,9 @@
       }
       .edit {
         position: static;
+      }
+      .select2-container .select2-choice {
+        padding-left: 6px;
       }
     }
 
