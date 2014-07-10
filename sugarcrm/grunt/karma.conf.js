@@ -25,7 +25,12 @@ module.exports = function(config) {
         ],
         proxies: {
             '/clients': '/base/clients',
+            // FIXME we need a better way to load fixtures that is stable
+            // it should be:
+            // '/tests': '/base/tests',
+            // so that we can provide all test requests in the correct /base/ path
             '/fixtures': '/base/tests/fixtures',
+            '/tests/modules': '/base/tests/modules',
             '/include': '/base/include',
             '/modules': '/base/modules'
         },

@@ -313,7 +313,7 @@
     _render: function() {
         this._super('_render');
 
-        if (this.action !== 'edit' && this.action !== 'massupdate') {
+        if (this.tplName !== 'edit' && this.tplName !== 'massupdate') {
             return;
         }
 

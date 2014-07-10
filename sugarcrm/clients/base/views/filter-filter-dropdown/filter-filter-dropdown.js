@@ -65,11 +65,13 @@
     filterDropdownEnabled: true,
 
     /**
-     * @override
-     * @private
+     * @inheritDoc
      */
     _renderHtml: function() {
-        app.view.View.prototype._renderHtml.call(this);
+        if (!this.layout.filters) {
+            return;
+        }
+        this._super('_renderHtml');
 
         this.filterList = this.getFilterList();
 
@@ -85,16 +87,16 @@
         if (this.layout.canCreateFilter()) {
             filters.push({id: "create", text: app.lang.get(this.labelCreateNewFilter)});
         }
-        if (this.layout.filters.get('all_records') && this.labelAllRecordsFormatted) {
-            this.layout.filters.get('all_records').set('name',  this.labelAllRecordsFormatted);
-            this.layout.filters.sort();
+        if (this.layout.filters.collection.get('all_records') && this.labelAllRecordsFormatted) {
+            this.layout.filters.collection.get('all_records').set('name',  this.labelAllRecordsFormatted);
+            this.layout.filters.collection.sort();
         }
         // This flag is used to determine when we have to add the border top (to separate categories)
         var firstNonEditable = false;
-        this.layout.filters.each(function(model) {
+        this.layout.filters.collection.each(function(model) {
             var opts = {
                 id: model.id,
-                text: this.layout._getTranslatedFilterName(model)
+                text: this.layout.filters.collection._getTranslatedFilterName(model)
             };
             if (model.get("editable") === false && !firstNonEditable) {
                 opts.firstNonUserFilter = true;
@@ -203,7 +205,7 @@
             data = {id: "create", text: app.lang.get(this.labelCreateNewFilter)};
 
         } else {
-            model = this.layout.filters.get(val);
+            model = this.layout.filters.collection.get(val);
 
             //Fallback to `all_records` filter if not able to retrieve selected filter
             if (!model) {
@@ -212,7 +214,7 @@
             } else if (val === "all_records") {
                 data = this.formatAllRecordsFilter(null, model);
             } else {
-                data = {id: model.id, text: this.layout._getTranslatedFilterName(model)};
+                data = {id: model.id, text: this.layout.filters.collection._getTranslatedFilterName(model)};
             }
         }
 
@@ -295,7 +297,7 @@
         if (id === "create" || id === 'all_records') {
             return true;
         } else {
-            return !this.layout.filters.get(id) || this.layout.filters.get(id).get('editable') !== false;
+            return !this.layout.filters.collection.get(id) || this.layout.filters.collection.get(id).get('editable') !== false;
         }
     },
 
@@ -332,7 +334,7 @@
             item.text = app.lang.get(this.labelAllRecords);
             this.toggleFilterCursor(false);
         } else if (model) {
-            item.text = this.layout._getTranslatedFilterName(model);
+            item.text = this.layout.filters.collection._getTranslatedFilterName(model);
         }
         return item;
     },
@@ -349,7 +351,7 @@
             // the filter form in the state he left it.
             this.layout.trigger("filter:select:filter", 'create');
         } else {
-            filterModel = this.layout.filters.get(filterId);
+            filterModel = this.layout.filters.collection.get(filterId);
         }
 
         if (filterModel && filterModel.get("editable") !== false) {
@@ -374,10 +376,10 @@
         evt.stopPropagation();
         this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
         var filterId;
-        if (this.context.get('currentFilterId') === this.layout.filters.defaultFilterFromMeta) {
+        if (this.context.get('currentFilterId') === this.layout.filters.collection.defaultFilterFromMeta) {
             filterId = 'all_records';
         } else {
-            filterId = this.layout.filters.defaultFilterFromMeta;
+            filterId = this.layout.filters.collection.defaultFilterFromMeta;
         }
         this.layout.trigger('filter:select:filter', filterId);
     },

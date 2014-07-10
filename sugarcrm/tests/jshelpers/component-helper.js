@@ -15,7 +15,15 @@
     };
 
     test.addComponent = function(client, type, name, data, module) {
-        app.view.declareComponent(type, name, module, data, true, client);
+        if (type === 'data') {
+            if (name === 'model') {
+                app.data.declareModelClass(module, null, client, data);
+            } else {
+                app.data.declareCollectionClass(module, client, data);
+            }
+        } else {
+            app.view.declareComponent(type, name, module, data, true, client);
+        }
     };
 
     test.loadPlugin = function(name, subdir) {
@@ -159,6 +167,19 @@
 
         SugarTest.components.push(view);
         return view;
+    };
+
+    /**
+     * Helper that loads and declares a custom Bean and a custom BeanCollection.
+     *
+     * @param {String} client The platform.
+     * @param {String} module The custom Bean module.
+     */
+    test.declareData = function(client, module) {
+        test.loadComponent(client, 'data', 'model', module);
+        test.loadComponent(client, 'data', 'collection', module);
+
+        SugarTest.datas.push(module);
     };
 
     test.createLayout = function(client, module, layoutName, meta, context, loadFromModule, params) {

@@ -121,6 +121,9 @@ array (
         6 =>
         array (
             0 => array(
+                'name' => 'header_logo',
+            ),
+            1 => array(
                 'name' => 'footer_text',
             ),
         ),

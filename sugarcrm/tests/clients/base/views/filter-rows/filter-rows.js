@@ -358,48 +358,6 @@ describe('Base.View.FilterRows', function() {
 
             expect(_select2Obj.select2.firstCall.args).toEqual(['val', '$favorite']);
         });
-
-        using('normal field, relate field', [
-            {
-                filter_populate: {
-                    name: 'Sugar'
-                },
-                filterDef: {
-                    'name': ''
-                },
-                expected: {
-                    field: 'name',
-                    operator: '$equals',
-                    value: 'Sugar'
-                }
-            },
-            {
-                filter_populate: {
-                    account_id: '1234-5678'
-                },
-                filterDef: {
-                    'account_id': ''
-                },
-                expected: {
-                    field: 'account_name',
-                    operator: '$equals',
-                    value: '1234-5678'
-                }
-            }
-        ], function(option) {
-
-            it('should populate the template with values passed in options', function() {
-                view.context.editingFilter.set('is_template', true);
-                view.context.set('filterOptions', {
-                    filter_populate: option.filter_populate
-                });
-                view.populateRow(option.filterDef);
-
-                expect(_select2Obj.select2.firstCall.args).toEqual(['val', option.expected.field]);
-                expect(_select2Obj.select2.secondCall.args).toEqual(['val', option.expected.operator]);
-                expect(_rowObj.data.firstCall.args).toEqual(['value', option.expected.value]);
-            });
-        });
     });
 
     describe('handleFieldSelected', function() {
@@ -510,6 +468,7 @@ describe('Base.View.FilterRows', function() {
                     readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
+                expect($row.data('valueField').action).toEqual('detail');
             });
             it('should convert a boolean field into an enum field', function() {
                 sinon.collection.stub($.fn, 'select2').returns('priority'); //return `priority` as field
@@ -589,6 +548,9 @@ describe('Base.View.FilterRows', function() {
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(_.size($valueField.find('input'))).toEqual(2);
+                _.each($row.data('valueField'), function(data) {
+                    expect(data.action).toEqual('detail');
+                });
             });
             describe('teamset and relate field', function() {
                 var fetchStub;
