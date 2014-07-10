@@ -19,21 +19,13 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use pack_web.php name.zip");
+    die("Use pack.php name.zip");
 }
 
 $name = $argv[1];
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(
-    // UW
-    "UpgradeWizard.php",
-    "modules/UpgradeWizard/UpgradeDriver.php",
-    "modules/UpgradeWizard/WebUpgrader.php",
-    "modules/UpgradeWizard/upgrade_screen.php",
-    "include/javascript/jquery/jquery-min.js",
-    "sidecar/lib/jquery/jquery.iframe.transport.js",
-
     // misc
     'include/SugarSystemInfo/SugarSystemInfo.php',
     'include/SugarHeartbeat/SugarHeartbeatClient.php',
@@ -57,19 +49,18 @@ $files=array(
     'modules/HealthCheck/HealthCheck.php',
     'modules/HealthCheck/HealthCheckClient.php',
     'modules/HealthCheck/vardefs.php',
-
 );
 
 $manifest = array(
     'acceptable_sugar_versions' =>
-    array (
-    'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
-    ),
+        array (
+            'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
+        ),
     'author' => 'SugarCRM, Inc.',
-    'description' => 'SugarCRM Upgrader 2.0',
+    'description' => 'Health Check',
     'icon' => '',
     'is_uninstallable' => 'true',
-    'name' => 'SugarCRM Upgrader 2.0',
+    'name' => 'Health Check',
     'published_date' => date("Y-m-d H:i:s"),
     'type' => 'module',
 );
@@ -99,9 +90,6 @@ $installdefs['beans'] = array(
 );
 
 // administration menu entry
-$installdefs['copy'][] = array("from" => "<basepath>/upgrader2.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/upgrader2.php");
-$zip->addFromString("upgrader2.php", "<?php\n\$admin_group_header[2][3]['Administration']['upgrade_wizard']= array('Upgrade','LBL_UPGRADE_WIZARD_TITLE','LBL_UPGRADE_WIZARD','./UpgradeWizard.php');");
-
 $installdefs['copy'][] = array("from" => "<basepath>/healthcheck.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/healthcheck.php");
 $zip->addFromString("healthcheck.php", "<?php\n\$admin_group_header[2][3]['Administration']['health_check']= array('HealthCheck','LBL_HEALTH_CHECK_TITLE','LBL_HEALTH_CHECK','./index.php?module=HealthCheck');");
 

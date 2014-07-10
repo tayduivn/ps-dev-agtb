@@ -105,7 +105,11 @@
             <a class="btn btn-invisible" href="index.php">Cancel</a>
             <a class="btn btn-invisible send-logs" href="javascript:void(0);">Send Log to Sugar</a>
             <a class="btn btn-invisible" href="index.php?module=HealthCheck&action=export">Export Log</a>
-            <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm" name="next_button">Confirm</a>
+              {if isset($smarty.get.referrer)}
+                <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm" name="next_button">Confirm</a>
+              {else}
+                <a class="btn btn-primary disabled" href="index.php" name="next_button">Done</a>
+              {/if}
           </span>
         </div>
     </div>
