@@ -448,14 +448,40 @@ class User extends Person {
     */
 	public static function getLicensedUsersWhere()
 	{
-		//BEGIN SUGARCRM dep=od ONLY
-		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
-		//END SUGARCRM dep=od ONLY
 		//BEGIN SUGARCRM dep=os ONLY
-		return "deleted=0 AND status='Active' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0  AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
+        $db = DBManagerFactory::getInstance();
+        $where = sprintf(
+            " deleted != 1 AND user_name IS NOT NULL AND is_group != 1 AND portal_only != 1 AND status = %s AND %s > 0 AND %s",
+            $db->quoted('Active'),
+            $db->convert('user_name', 'length'),
+            self::getSystemUsersWhere()
+        );
+        return $where;
 		//END SUGARCRM dep=os ONLY
 	    return "1<>1";
 	}
+
+    /**
+     * Get WHERE clause for system users
+     * @param string $comp SQL comparison operator
+     * @param string $logic SQL logical operator
+     * @return string
+     */
+    public static function getSystemUsersWhere($comp = '!=', $logic = 'AND')
+    {
+        $db = DBManagerFactory::getInstance();
+        $users = array('SugarCRMSupport', 'SugarCRMUpgradeUser');
+        $where = ' 1=1 ';
+        foreach ($users as $user) {
+            $where .= sprintf(
+                " %s user_name %s %s ",
+                $logic,
+                $comp,
+                $db->quoted($user)
+            );
+        }
+        return $where;
+    }
 
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
@@ -2409,5 +2435,25 @@ EOQ;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Updates last_login field with current timestamp.
+     * Executes User::save internally.
+     *
+     * @return void
+     */
+    public function updateLastLogin()
+    {
+        //Lets make sure SugarBean::save will not update date_modified field.
+        //Otherwise RestService will throw SugarApiExceptionInvalidHash on every request
+        //@see MetaDataManager::hasUserMetadataChanged
+        $old = $this->update_date_modified;
+        $this->update_date_modified = false;
+
+        $this->last_login = TimeDate::getInstance()->nowDb();
+        $this->save();
+
+        $this->update_date_modified = $old;
     }
 }

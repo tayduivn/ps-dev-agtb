@@ -175,6 +175,7 @@ $beanList['KBContents'] = 'KBContent';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
 $beanList['ProjectResources'] = 'ProjectResource';
+$beanList['System'] = 'System';
 //END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -336,7 +337,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
     'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes', 'ForecastSchedule',
-    'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
+    'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'

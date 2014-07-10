@@ -237,6 +237,13 @@ $dictionary['User'] = array(
             ),
             'readonly' => true,
         ),
+        'last_login' => array(
+            'name' => 'last_login',
+            'vname' => 'LBL_LAST_LOGIN',
+            'type' => 'datetime',
+            'required' => false,
+            'readonly' => true,
+        ),
         'modified_user_id' => array(
             'name' => 'modified_user_id',
             'rname' => 'user_name',
@@ -937,6 +944,11 @@ $dictionary['User'] = array(
 			'type' => 'index',
 			'fields' => array('reports_to_id', 'id')
 		),
+        array(
+            'name' => 'idx_last_login',
+            'type' => 'index',
+            'fields' => array('last_login')
+        ),
      //BEGIN SUGARCRM flav=pro ONLY
 		array(
 			'name' => 'idx_users_tmst_id',
