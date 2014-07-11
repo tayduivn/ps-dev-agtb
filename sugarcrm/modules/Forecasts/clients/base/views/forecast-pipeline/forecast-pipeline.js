@@ -81,8 +81,9 @@
             .tooltips(true)
             .margin({top: 0})
             .tooltipContent(function(key, x, y, e, graph) {
+                var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
                 return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + y + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             })
             .colorData('class', {step: 2})
@@ -97,6 +98,7 @@
                 noData: app.lang.getAppString('LBL_CHART_NO_DATA')
             });
     },
+
 
     /**
      * Initialize plugins.
