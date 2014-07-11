@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -49,6 +48,33 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
+
+    public function testConvertToQuoteLineItemsSetsCorrectDiscountAmount()
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli->discount_amount = '25.00';
+        $rli->quantity = '50';
+        $rli->discount_price = '1.00';
+        $product = $rli->convertToQuotedLineItem();
+
+        $this->assertEquals('0.50', $product->discount_amount);
+    }
+
+    public function testConvertToQuoteLineItemsSetCorrectDiscountAmountWhenPercent()
+    {
+         /* @var $rli RevenueLineItem */
+        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli->discount_amount = '25.00';
+        $rli->quantity = '50';
+        $rli->discount_price = '1.00';
+        $rli->discount_select = 1;
+        $rli->deal_calc = 0.25; // (discount_amount/100)*discount_price
+        $product = $rli->convertToQuotedLineItem();
+
+        $this->assertEquals('25.00', $product->discount_amount);
+    }
+
 
 }
 
