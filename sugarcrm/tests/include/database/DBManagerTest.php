@@ -505,11 +505,19 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'int',
                     ),
         );
-        $index = array(
-			'name'			=> 'test_index',
-			'type'			=> 'index',
-			'fields'		=> array('foo', 'bar', 'bazz'),
-		);
+        $primaryKey = $tableName . '_pk';
+        $indices = array(
+            array(
+                'name' => $primaryKey,
+                'type' => 'primary',
+                'fields' => array('foo'),
+            ),
+            array(
+                'name' => 'test_index',
+                'type' => 'index',
+                'fields' => array('foo', 'bar', 'bazz'),
+            ),
+        );
         if($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
@@ -519,15 +527,18 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'int',
         );
 
-        $repair = $this->_db->repairTableParams($tableName, $params, array($index), false);
+        $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
         $this->assertRegExp('#MISSING IN DATABASE.*bazz#i', $repair);
         $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $repair = $this->_db->repairTableParams($tableName, $params, array($index), true);
+        $this->assertRegExp('#MISSING INDEX IN DATABASE.*' . $primaryKey . '#i', $repair);
+        $this->_db->repairTableParams($tableName, $params, $indices, true);
 
         $idx = $this->_db->get_indices($tableName);
         $this->assertArrayHasKey('test_index', $idx);
         $this->assertContains('foo', $idx['test_index']['fields']);
         $this->assertContains('bazz', $idx['test_index']['fields']);
+        $this->assertArrayHasKey('primary', $idx);
+        $this->assertContains('foo', $idx['primary']['fields']);
 
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayHasKey('bazz', $cols);
