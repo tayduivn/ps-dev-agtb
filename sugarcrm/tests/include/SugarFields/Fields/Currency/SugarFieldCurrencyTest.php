@@ -107,6 +107,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         // show base value in user preferred currency
         $current_user->setPreference('currency_show_preferred', true);
         $current_user->setPreference('currency', self::$currency3->id);
+        $parentFieldArray['BASE_RATE'] = '1.000000';
         $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
         $this->assertEquals(self::$currency3->symbol . '4.44', $value);
 
