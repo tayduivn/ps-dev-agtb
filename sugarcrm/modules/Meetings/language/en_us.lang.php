@@ -108,8 +108,11 @@ $mod_strings = array (
 	'LBL_LIST_JOIN_MEETING' => 'Join Meeting',
 	'LBL_JOIN_EXT_MEETING' => 'Join Meeting',
 	'LBL_HOST_EXT_MEETING' => 'Start Meeting',
+    'LBL_JOIN_MEETING' => 'Join {{meetingType}}',
+    'LBL_START_MEETING' => 'Start {{meetingType}}',
     'LBL_ACCEPT_STATUS' => 'Accept Status',
     'LBL_ACCEPT_LINK' => 'Accept Link',
+    'LBL_ERROR_LAUNCH_MEETING_GENERAL' => 'There was an error launching this meeting. Please contact your Administrator.',
     // You are not invited to the meeting messages
     'LBL_EXTNOT_HEADER' => 'Error: Not Invited',
     'LBL_EXTNOT_MAIN' => 'You are not able to join this Meeting because you are not an Invitee.',

@@ -18,6 +18,13 @@ $viewdefs['Meetings']['base']['layout']['subpanels'] = array (
                 'link' => 'notes',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_USERS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'users',
+            ),
+        ),
     ),
     'type' => 'subpanels',
     'span' => 12,

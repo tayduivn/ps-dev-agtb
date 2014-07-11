@@ -47,6 +47,17 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
                 'acl_action' => 'view',
             ),
             array(
+                'type' => 'launchbutton',
+                'name' => 'host_button',
+                'host' => true,
+                'acl_action' => 'view',
+            ),
+            array(
+                'type' => 'launchbutton',
+                'name' => 'join_button',
+                'acl_action' => 'view',
+            ),
+            array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
                 'icon' => 'icon-pencil',
