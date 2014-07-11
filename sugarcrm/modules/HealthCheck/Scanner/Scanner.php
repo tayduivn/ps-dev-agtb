@@ -1596,6 +1596,10 @@ ENDP;
         }
     }
 
+    /**
+     * @var array List of fields that can use html function in vardefs.
+     * These fields are allowed to use in stock and non-stock modules.
+     */
     protected $templateFields = array(
         "email1" => true,
         "email2" => true,
@@ -1635,6 +1639,12 @@ ENDP;
         }
         $status = array();
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
+
+        // get names of 'stock' fields, that are defined in original vardefs.php
+        $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
+        $stockFields = array_keys($stockFields[$seed->object_name]['fields']);
+
+
         foreach($fieldDefs as $key => $value) {
             if(!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
                 continue;
@@ -1642,6 +1652,18 @@ ENDP;
             if(empty($value['name']) || $key != $value['name']) {
                 $this->updateStatus("badVardefsKey" . $custom, $key, $value['name']);
                 continue;
+            }
+
+
+            // Check "name" field type, @see CRYS-130
+            if ($key == 'name' && $value['type'] != 'name') {
+
+                // Assume those types are valid, cause they used in stock modules
+                $validNameTypes = array('id', 'fullname', 'varchar');
+                if (!in_array($value['type'], $validNameTypes)) {
+                    $this->updateStatus('badVardefsName' . $custom, $value['type'], $module);
+                    continue;
+                }
             }
 
             if($key == 'team_name') {
@@ -1652,10 +1674,12 @@ ENDP;
                 continue;
             }
 
-            if(!empty($value['function']['returns']) && $value['function']['returns'] == 'html'
-                    && (!$stock || substr($key, -2) == '_c') && !isset($this->templateFields[$key])) {
-                // found html functional field in custom code
-                $this->updateStatus("vardefHtmlFunction" . $custom, $key);
+            if (!empty($value['function']['returns']) &&    // there is function in vardefs
+                $value['function']['returns'] == 'html' &&  // that returns html
+                !isset($this->templateFields[$key]) &&      // and field isn't in white-list
+                (!$stock || !in_array($key, $stockFields))  // and it is non-stock module or it is stock module but field is non-stock
+            ) {
+                $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $key);
             }
 
             if(!empty($value['type'])) {

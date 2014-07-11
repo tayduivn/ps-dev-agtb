@@ -39,6 +39,8 @@ $mod_strings = array(
     'LBL_SCAN_308_LOG' => 'Vardef HTML function in %s',
     'LBL_SCAN_309_LOG' => 'Bad md5 for %s',
     'LBL_SCAN_310_LOG' => 'Unknown file %s/%s',
+    'LBL_SCAN_311_LOG' => 'Vardef HTML function %s in $module module for field %s',
+    'LBL_SCAN_312_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
 
     'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor/:\r\n%s',
     'LBL_SCAN_402_LOG' => 'Bad module %s - not in beanList and not in filesystem',
@@ -70,6 +72,8 @@ $mod_strings = array(
     'LBL_SCAN_428_LOG' => 'Found "print_r" in %s on line %s',
     'LBL_SCAN_429_LOG' => 'Found "var_dump" in %s on line %s',
     'LBL_SCAN_430_LOG' => 'Found output buffering (%s) in %s on line %s',
+    'LBL_SCAN_431_LOG' => 'Vardef HTML function %s in $module module for field %s',
+    'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',

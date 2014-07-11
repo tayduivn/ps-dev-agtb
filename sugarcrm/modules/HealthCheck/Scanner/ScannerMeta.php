@@ -123,6 +123,14 @@ class ScannerMeta
             'report' => 'unknownFile',
             'bucket' => self::STUDIO_MB_BWC,
         ),
+        311 => array(
+            'report' => 'vardefHtmlFunctionName',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
+        312 => array(
+            'report' => 'badVardefsName',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
 
         // BUCKET E
         401 => array(
@@ -244,6 +252,14 @@ class ScannerMeta
         430 => array(
             'report' => 'foundOutputBufferingCustom',
             'bucket' => self::CUSTOM,
+        ),
+        431 => array(
+            'report' => 'vardefHtmlFunctionNameCustom',
+            'bucket' => self::CUSTOM
+        ),
+        432 => array(
+            'report' => 'badVardefsNameCustom',
+            'bucket' => self::CUSTOM
         ),
 
         // BUCKET F

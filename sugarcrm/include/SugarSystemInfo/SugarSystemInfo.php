@@ -32,7 +32,7 @@ class SugarSystemInfo
     protected $db;
 
     /**
-     * @var Administration
+     * @var array
      */
     protected $settings;
 
@@ -376,14 +376,12 @@ class SugarSystemInfo
      */
     protected function getSettings()
     {
-        $bean = new Administration();
-        $settings = $bean->retrieveSettings()->settings;
-
-        return $settings;
+        return BeanFactory::getBean('Administration')->retrieveSettings()->settings;
     }
 
     /**
      * Returns where clause
+     * This is a copy-paste from User::getSystemUsersWhere because that method is not available in 6.5
      *
      * @return string
      */
