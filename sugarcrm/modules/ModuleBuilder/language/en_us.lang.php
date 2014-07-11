@@ -781,7 +781,7 @@ $mod_strings = array(
         . "\\n\\nThe field will no longer be available to use in Reports; this change will be in effect after logging out and logging back in to the application. Any reports containing the field will need to be updated in order to be able to be run."
 //END SUGARCRM flav=pro only
         . "\\n\\nDo you wish to continue?",
-'LBL_CONFIRM_RELATIONSHIP_DELETE'=>'Are you sure you wish to delete this relationship?',
+'LBL_CONFIRM_RELATIONSHIP_DELETE'=>'Are you sure you wish to delete this relationship?<br>Note: This operation may not complete for several minutes.',
 'LBL_CONFIRM_RELATIONSHIP_DEPLOY'=>'This will make this relationship permanent. Are you sure you wish to deploy this relationship?',
 'LBL_CONFIRM_DONT_SAVE' => 'Changes have been made since you last saved, would you like to save?',
 'LBL_CONFIRM_DONT_SAVE_TITLE' => 'Save Changes?',
