@@ -261,7 +261,8 @@ describe('Base.View.FilterRows', function() {
             expected: true
         },{
             filter: $('<div>').data({ name: 'abc', operator: '$between', value: ['11', 22]}),
-            expected: false
+            // FIXME: This is a temporary fix because some fields do not set a true number (see SC-3138).
+            expected: true
         }], function(value) {
             it('should validate a filter correctly', function() {
                 expect(view.validateRows(value.filter)).toBe(value.expected);
