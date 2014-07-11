@@ -162,6 +162,9 @@
             $.ajax('index.php?module=HealthCheck&action=scan', {
                 dataType: 'json',
                 success: function (data) {
+                    if(data.length == 0) {
+                        data = [{ flag: 1, log: "Your instance is ready for upgrade!", report: "Success" }];
+                    }
                     data = data.sort(_sortByBucket);
                     $("#healthcheck").html("");
                     for (var i = 0; i < data.length; i++) {
