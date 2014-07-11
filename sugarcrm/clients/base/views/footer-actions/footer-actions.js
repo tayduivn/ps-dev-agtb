@@ -119,9 +119,9 @@
             app.utils.doWhen(function() {
                 var layout = app.controller.layout;
                 if (!_.isUndefined(layout)) {
-                    if (layout.module == 'Home') {
-                        // if the layout exists and it's the `Home` Module, just enable the button as
-                        // a url redirect is what is used here.
+                    if (layout.module == 'Home' || layout.name === 'bwc') {
+                        // if the layout exists and it's the `Home` Module or `bw`, just enable the button as
+                        // a url redirect is what is used for the help here.
                         return true;
                     } else {
                         var sidebar = layout.getComponent('sidebar');
