@@ -117,7 +117,7 @@ class ViewResetmodule extends SugarView
         $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
         $customFields = array();
         foreach($seed->field_defs as $def) {
-            if(isset($def['source']) && $def['source'] == 'custom_fields') {
+            if (isset($def['custom_module']) && $def['custom_module'] === $moduleName) {
                $field = $df->getFieldWidget($moduleName, $def['name']);
                $field->delete ( $df ) ;
 
