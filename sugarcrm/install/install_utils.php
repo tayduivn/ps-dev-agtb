@@ -905,6 +905,8 @@ RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
+RedirectMatch 403 {$ignoreCase}/+composer\.(json|lock)
+RedirectMatch 403 {$ignoreCase}/+vendor/composer/
 
 # Fix mimetype for logo.svg (SP-1395)
 AddType     image/svg+xml     .svg
