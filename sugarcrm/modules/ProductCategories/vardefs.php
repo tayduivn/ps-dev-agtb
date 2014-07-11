@@ -167,7 +167,16 @@ $dictionary['ProductCategory'] = array(
             'vname' => 'LBL_PARENT_NAME',
             'type' => 'id',
             'comment' => 'Parent category of this item; used for multi-tiered categorization',
-            'reportable' => true
+            'reportable' => false
+        ),
+        'parent_category' => array(
+            'name' => 'parent_category',
+            'type' => 'link',
+            'relationship' => 'member_categories',
+            'module' => 'ProductCategories',
+            'bean_name' => 'ProductCategory',
+            'source' => 'non-db',
+            'vname' => 'LBL_PARENT_CATEGORY',
         ),
         'categories' =>
         array(
