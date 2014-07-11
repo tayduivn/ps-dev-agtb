@@ -2739,21 +2739,18 @@ protected function checkQuery($sql, $object_name = false)
         $default = '';
 
         // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
-        if (!empty($fieldDef['no_default']))
-        {
+        if (!empty($fieldDef['no_default'])) {
             // nothing to do
-        }
-        elseif (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
-        {
+        } elseif ($type == 'bool') {
+            if (isset($fieldDef['default'])) {
+                $default = " DEFAULT " . (int)$fieldDef['default'];
+            }
+        } elseif (isset($fieldDef['default'])) {
             if (is_numeric($fieldDef['default'])) {
                 $default = " DEFAULT " . $fieldDef['default'];
             } else {
                 $default = " DEFAULT " . $this->quoted($fieldDef['default']);
             }
-        }
-        elseif (!isset($default) && $type == 'bool')
-        {
-            $default = " DEFAULT 0 ";
         }
 
 		$auto_increment = '';
