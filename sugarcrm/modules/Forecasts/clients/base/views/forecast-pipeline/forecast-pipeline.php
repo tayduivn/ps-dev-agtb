@@ -58,7 +58,6 @@ $viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
             'name' => 'selectedTimePeriod',
             'label' => 'TimePeriod',
             'type' => 'timeperiod',
-            'dropdown_class' => 'topline-timeperiod-dropdown',
         ),
     )
 );
