@@ -166,6 +166,9 @@ class SugarFieldCurrency extends SugarFieldFloat
         if ($formattedField === '' || $formattedField === null) {
             return null;
         }
+        if (is_array($formattedField)) {
+            $formattedField = array_shift($formattedField);
+        }
         return (string)unformat_number($formattedField);
     }
 
