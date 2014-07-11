@@ -72,7 +72,7 @@ class SugarAutoLoader
      * @var array nsPrefix => directory
      */
     public static $namespaceMap = array(
-        'Elastica\\' => 'vendor/Elastica',
+        'Elastica\\' => 'vendor/ruflin/elastica/lib/Elastica',
     );
 
 	/**
