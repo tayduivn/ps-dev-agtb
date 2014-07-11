@@ -42,11 +42,14 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'link' => true,
                 ),
                 array(
-                    'label' => 'LBL_DATE_MODIFIED',
+                    'name' => 'date_modified',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'date_modified',
-                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'date_entered',
+                    'enabled' => true,
+                    'default' => true,
                 ),
             ),
         ),
