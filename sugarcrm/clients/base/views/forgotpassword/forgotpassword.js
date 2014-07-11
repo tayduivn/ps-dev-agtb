@@ -101,7 +101,7 @@
                     (self.$('input[name="first_name"]').val() || self.model.get('first_name'))) return;
 
                 app.$contentEl.hide();
-                app.alert.show('forgotPassword', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
+                app.alert.show('forgotPassword', {level: 'process', title: app.lang.get('LBL_LOADING'), autoClose: false});
 
                 var emails = self.model.get('email');
                 var params = {

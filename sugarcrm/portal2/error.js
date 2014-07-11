@@ -23,7 +23,7 @@
         app.alert.show(key, {
             level: 'error',
             title: app.lang.get(title),
-            messages: app.lang.getAppString(msg)
+            messages: app.lang.get(msg)
         });
     }
     

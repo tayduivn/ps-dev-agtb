@@ -219,7 +219,7 @@
         //disable the save button to prevent double click
         this.context.trigger('lead:convert-save:toggle', false);
 
-        app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_SAVING')});
+        app.alert.show('processing_convert', {level: 'process', title: app.lang.get('LBL_SAVING')});
 
         convertModel = new Backbone.Model(_.extend({}, {'modules' : this.associatedModels}));
         myURL = app.api.buildURL('Leads', 'convert', {id: this.context.get('leadsModel').id});

@@ -132,7 +132,7 @@
             },
             showAlerts: {
                 'success': {
-                    title: app.lang.getAppString('LBL_SUCCESS'),
+                    title: app.lang.get('LBL_SUCCESS'),
                     messages: message
                 }
             }
@@ -165,7 +165,7 @@
             },
             showAlerts: {
                 'success': {
-                    title: app.lang.getAppString('LBL_SUCCESS'),
+                    title: app.lang.get('LBL_SUCCESS'),
                     messages: message
                 }
             }

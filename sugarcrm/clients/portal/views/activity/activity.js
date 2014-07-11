@@ -221,7 +221,7 @@
      */
     showMoreRecords: function(event) {
         var self = this, options;
-        app.alert.show('show_more_records', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        app.alert.show('show_more_records', {level: 'process', title: app.lang.get('LBL_LOADING')});
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};

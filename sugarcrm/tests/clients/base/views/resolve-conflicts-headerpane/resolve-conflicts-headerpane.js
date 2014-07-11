@@ -11,7 +11,7 @@
 describe('Resolve Conflicts Headerpane View', function() {
     var view, app,
         moduleName = 'Accounts',
-        getAppStringStub,
+        appLangGetStub,
         context;
 
     beforeEach(function() {
@@ -19,7 +19,7 @@ describe('Resolve Conflicts Headerpane View', function() {
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
-        getAppStringStub = sinon.stub(app.lang, 'getAppString', function() {
+        appLangGetStub = sinon.stub(app.lang, 'get', function() {
             return 'foo {{name}}'
         });
 
@@ -34,7 +34,7 @@ describe('Resolve Conflicts Headerpane View', function() {
     });
 
     afterEach(function() {
-        getAppStringStub.restore();
+        appLangGetStub.restore();
         view.dispose();
 
         SugarTest.testMetadata.dispose();

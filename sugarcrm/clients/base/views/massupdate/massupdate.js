@@ -580,8 +580,8 @@
                 error: function() {
                     app.alert.show('error_while_mass_update', {
                         level:'error',
-                        title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-                        messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                        title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                        messages: app.lang.get('ERR_HTTP_500_TEXT')
                     });
                 },
                 success: function(data, response, options) {
@@ -592,7 +592,7 @@
                         //TODO: Need trigger for fetching new record list
                         self.layout.context.reloadData({showAlerts: false});
                     } else if (options.status === 'queued') {
-                        app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                        app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.get('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                     }
                     self._modelsToDelete = null;
                     if (redirect) {
@@ -634,7 +634,7 @@
         var massExport = this.context.get("mass_collection");
 
         if (massExport) {
-            app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+            app.alert.show('massexport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
 
             app.api.exportRecords({
                     module: this.module,
@@ -666,14 +666,14 @@
         this.once('massupdate:validation:complete', function(validate) {
             var errors = validate.errors,
                 emptyValues = validate.emptyValues,
-                confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES'),
+                confirmMessage = app.lang.get('LBL_MASS_UPDATE_EMPTY_VALUES'),
                 attributes = validate.attributes || this.getAttributes();
 
             this.$(".fieldPlaceHolder .error").removeClass("error");
             this.$(".fieldPlaceHolder .help-block").hide();
 
             if (_.isEmpty(errors)) {
-                confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
+                confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.get('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
                 if (massUpdate) {
                     var fetchMassupdate = _.bind(function() {
                         var successMessages = this.buildSaveSuccessMessages(massUpdate);
@@ -684,8 +684,8 @@
                             error: function() {
                                 app.alert.show('error_while_mass_update', {
                                     level: 'error',
-                                    title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-                                    messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                                    title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                                    messages: app.lang.get('ERR_HTTP_500_TEXT')
                                 });
                             },
                             success: function(data, response, options) {
@@ -740,8 +740,8 @@
      */
     buildSaveSuccessMessages: function(massUpdateModel) {
         return {
-            done: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'),
-            queued: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED')
+            done: app.lang.get('LBL_MASS_UPDATE_SUCCESS'),
+            queued: app.lang.get('LBL_MASS_UPDATE_JOB_QUEUED')
         };
     },
 

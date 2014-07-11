@@ -257,7 +257,7 @@
 
         app.alert.show('totalrecord', {
             level: 'process',
-            title: app.lang.getAppString('LBL_LOADING'),
+            title: app.lang.get('LBL_LOADING'),
             autoClose: false
         });
 

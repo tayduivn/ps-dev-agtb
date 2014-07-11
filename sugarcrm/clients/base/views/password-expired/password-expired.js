@@ -37,7 +37,7 @@
      */
     _render: function() {
         var self = this;
-        var message = app.lang.getAppString('LBL_PASSWORD_EXPIRATION_LOGIN');
+        var message = app.lang.get('LBL_PASSWORD_EXPIRATION_LOGIN');
 
         //Hack: Gets rid of leftover loading...
         app.alert.dismissAll();
