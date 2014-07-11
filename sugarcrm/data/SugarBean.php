@@ -7130,6 +7130,7 @@ class SugarBean
         $filtered_fields = array();
         $jtcount = 0;
         $fields_array = array();
+        $fields_to_exclude = array();
 
         //include fields_array file if it exists
         $file = SugarAutoLoader::existingCustomOne("modules/{$this->module_name}/field_arrays.php");
@@ -7169,6 +7170,45 @@ class SugarBean
             //process fields of type related
             if ($this->is_relate_field($field)) {
 
+                //check to see if the related field name is part of the passed in 'where' statement
+                if (!empty($where) && strpos($where,"$field ") !== false) {
+
+                    //initialize fields to exclude array element if not set
+                    $module_name_lower = strtolower($this->module_dir);
+                    if(empty($fields_to_exclude[$module_name_lower])) {
+                        $fields_to_exclude[$module_name_lower] = array();
+                    }
+
+                    //add field to filtered array, this will add the join and allow query to execute
+                    $filtered_fields[$field] = $data;
+
+                    //add related field to exclusion array.  This will be used to filter out the
+                    //field from the export results in export_utils.php  get_field_order_mapping()
+                    $fields_to_exclude[$module_name_lower][] = $field;
+
+                    //remove fields that create_list_query will add for list view
+                    $fields_to_exclude[$module_name_lower][] = $field.'_mod';
+                    $fields_to_exclude[$module_name_lower][] = $field.'_owner';
+
+                    //if field data has an id_name, then filter out the id field as well
+                    if(!empty($data['id_name'])) {
+                        $fields_to_exclude[$module_name_lower][] = $data['id_name'];
+                    }
+
+                    //if field rname is of type 'name', then add related 'salutation' to exclusion array
+                    if($data['rname'] == 'name') {
+                        $fields_to_exclude[$module_name_lower][] = 'rel_'.$field.'_salutation';
+                    }
+
+                    //if field data has concat fields, then add 'salutation' to exclusion array
+                    if(!empty($data['db_concat_fields'])) {
+                        foreach($data['db_concat_fields'] as $concat) {
+                            $fields_to_exclude[$module_name_lower][] = 'rel_'.$field.'_'.$concat;
+                        }
+                    }
+                    continue;
+                }
+
                 //unlike regular table fields, fields of type relate including custom relate fields are NOT exported by default.
                 //skip if export flag has not been explicitly to true
                 if (empty($data['exportable']) || $data['exportable'] !== true) {
@@ -7189,6 +7229,8 @@ class SugarBean
             $filtered_fields[$field] = $data;
         }
 
+        //add the excluded fields to sugarbean.  This will be used later by getExportContentFromResult() to exclude fields from export
+        $this->fields_to_exclude = $fields_to_exclude;
 
         //retrieve the sql query as an array for easier manipulation
         //note, we do nothing for email1 field in this method, it is already handled by create_new_list_query

@@ -56,6 +56,7 @@ function export($type, $records = null, $members = false, $sample=false) {
     global $mod_strings;
     global $current_language;
     $sampleRecordNum = 5;
+    $fields_to_exclude = array();
 
     //Array of fields that should not be exported, and are only used for logic
     $remove_from_members = array("ea_deleted", "ear_deleted", "primary_address");
@@ -113,6 +114,9 @@ function export($type, $records = null, $members = false, $sample=false) {
             $where = substr(trim($where), 5, strlen($where));
         }
 
+        //get the export query.  Note that $focus->fields_to_exclude is a temporary variable and is modified within create_export_query()
+        //$focus->fields_to_exclude will be used later by getExportContentFromResult() to exclude fields from export
+        $focus->fields_to_exclude = array();
         $query = $focus->create_export_query('', $where);
     }
 
@@ -387,7 +391,7 @@ function getExportContentFromResult(
     $is_id_exported = in_array('id', $fields_array);
 
     //set up the order on the header row
-    $fields_array = get_field_order_mapping($focus->module_dir, $fields_array);
+    $fields_array = get_field_order_mapping($focus->module_dir, $fields_array, true, $focus->fields_to_exclude);
 
     //set up labels to be used for the header row
     $field_labels = array();
@@ -467,6 +471,10 @@ function getExportContentFromResult(
 
             foreach ($val as $key => $value)
             {
+                //if key is not part of field map, then continue
+                if(!isset($fields_array[$key])) {
+                    continue;
+                }
                 //getting content values depending on their types
                 $fieldNameMapKey = $fields_array[$key];
 
@@ -985,10 +993,17 @@ function getSearchForm($bean, $module)
 
  }
 
-//call this function to return the desired order to display columns for export in.
-//if you pass in an array, it will reorder the array and send back to you.  It expects the array
-//to have the db names as key values, or as labels
-function get_field_order_mapping($name='', $reorderArr = '', $exclude = true){
+ /**
+   * call this function to return the desired order to display columns for export in.
+   * if you pass in an array, it will reorder the array and send back to you.  It expects the array
+   * to have the db names as key values, or as labels
+   * @param string name the bean-type to export
+   * @param array reorderArr array containing desired order of field columns for export
+   * @param boolean exclude whether or not to exclude defined fields from export, defaults to true
+   * @param array passed_fields_to_exclude fields to be added to the default $fields_to_exclude array
+   * @return array of fields to be used for export
+ */
+  function get_field_order_mapping($name='', $reorderArr = '', $exclude = true, $passed_fields_to_exclude = array()) {
 
     //define the ordering of fields, note that the key value is what is important, and should be the db field name
     $field_order_array = array();
@@ -1018,6 +1033,13 @@ function get_field_order_mapping($name='', $reorderArr = '', $exclude = true){
     $field_to_exclude['forecastmanagerworksheet'] = array('version'=>'version', 'label'=>'label');
     //END SUGARCRM flav=pro ONLY
 
+    //combine any passed in passed in fields to exclude from export
+    if(!empty($passed_fields_to_exclude[strtolower($name)])){
+        foreach($passed_fields_to_exclude[strtolower($name)] as $passed_in_field) {
+            $fields_to_exclude[strtolower($name)][] = $passed_in_field;
+        }
+    }
+      
     if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
 
         //make sure reorderArr has values as keys, if not then iterate through and assign the value as the key
