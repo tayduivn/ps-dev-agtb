@@ -173,6 +173,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Emails/clients/base/views/panel-top/panel-top.js',
             // NOMAD-1799
             'modules/Meetings/clients/mobile/api/MobileMeetingsApi.php',
+            // BR-1574 Move Elastica library to composer (new path vendor/ruflin/elastica)
+            'vendor/Elastica/',
         );
 
         // must be upgrading from between 710 to 722
