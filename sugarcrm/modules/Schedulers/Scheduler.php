@@ -939,6 +939,19 @@ class Scheduler extends SugarBean {
         $sched15->modified_user_id   = '1';
         $sched15->catch_up           = '1';
         $sched15->save();
+
+        // Sugar heartbeat
+        $sched16 = BeanFactory::getBean('Schedulers');
+        $sched16->name               = $mod_strings['LBL_OOTB_HEARTBEAT'];
+        $sched16->job                = 'class::SugarJobHeartbeat';
+        $sched16->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched16->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched16->job_interval       = '0::4::*::*::*';
+        $sched16->status             = 'Active';
+        $sched16->created_by         = '1';
+        $sched16->modified_user_id   = '1';
+        $sched16->catch_up           = '0';
+        $sched16->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS

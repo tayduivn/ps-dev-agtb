@@ -33,6 +33,7 @@ $mod_strings = array (
 'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
 'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 'LBL_OOTB_CREATE_NEXT_TIMEPERIOD' => 'Create Future TimePeriods',
+'LBL_OOTB_HEARTBEAT' => 'Sugar Heartbeat',
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',
@@ -145,6 +146,7 @@ $mod_strings = array (
 'LBL_PROCESSQUEUE' => 'Run Report Generation Scheduled Tasks',
 'LBL_UPDATETRACKERSESSIONS' => 'Update Tracker Session Tables',
 'LBL_SUGARJOBCREATENEXTTIMEPERIOD' => 'Create Future TimePeriods',
+'LBL_SUGARJOBHEARTBEAT' => 'Sugar Heartbeat',
 //END SUGARCRM flav=pro ONLY
 'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY

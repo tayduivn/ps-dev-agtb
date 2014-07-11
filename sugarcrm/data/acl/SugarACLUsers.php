@@ -41,6 +41,7 @@ class SugarACLUsers extends SugarACLStrategy
             'pwd_last_changed' => true,
             'user_hash' => true,
             'password' => true,
+            'last_login' => true
         );
 
     public $view_checks = array(
