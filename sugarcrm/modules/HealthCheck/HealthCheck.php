@@ -35,7 +35,7 @@ class HealthCheck extends Basic
 
         // log file setup
         $cacheDir = sugar_cached(self::CACHE_DIR);
-        SugarAutoLoader::ensureDir($cacheDir);
+        sugar_mkdir($cacheDir);
         $hc->logfile = 'healthcheck-' . time() . '.log';
         $scanner->setLogFile($cacheDir . "/" .$hc->logfile);
 

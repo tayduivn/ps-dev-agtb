@@ -10,7 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'vendor/nusoap/nusoap.php';
+//BWC: nusoap library has been moved to vendor directory in 7+
+if(file_exists('vendor/nusoap/nusoap.php')) {
+    require_once 'vendor/nusoap/nusoap.php';
+} else if(file_exists("include/nusoap/nusoap.php")) {
+    require_once "include/nusoap/nusoap.php";
+}
 
 /**
  * Class SugarHeartbeatClient

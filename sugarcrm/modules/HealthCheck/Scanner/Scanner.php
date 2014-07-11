@@ -135,6 +135,28 @@ class Scanner
     protected $logMeta = array();
 
     /**
+     * Health Check module properties
+     *
+     * @var array
+     */
+    protected $healthCheckModule = array(
+        'bean' => 'HealthCheck',
+        'file' => 'modules/HealthCheck/HealthCheck.php',
+        'md5'  => './modules/HealthCheck/HealthCheck.php'
+    );
+
+
+    /**
+     * Ignored files
+     *
+     * @var array
+     */
+    protected $ignoredFiles = array(
+        'custom/Extension/modules/Administration/Ext/Administration/upgrader2.php',
+        'custom/Extension/modules/Administration/Ext/Administration/healthcheck.php'
+    );
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -1166,7 +1188,20 @@ class Scanner
         $this->beanFiles = $beanFiles;
         $this->objectList = $objectList;
 
+        $this->setupHealthCheckModule();
+
         return array_map(function ($m) { return substr($m, 8); /* cut off modules/ */ }, glob("modules/*", GLOB_ONLYDIR));
+    }
+
+
+    /**
+     * Make scanner ignore health check module
+     */
+    public function setupHealthCheckModule()
+    {
+        $this->beanList['HealthCheck'] = $this->healthCheckModule['bean'];
+        $this->beanFiles['HealthCheck'] = $this->healthCheckModule['file'];
+        $this->md5_files[$this->healthCheckModule['md5']] = md5('HealthCheck');
     }
 
     /**
@@ -1277,10 +1312,15 @@ class Scanner
                 $data[] = $path . $filename;
             }
         }
+
+        $data = array_filter($data, function($item) {
+                return !in_array($item, $this->ignoredFiles);
+        });
+
         return $data;
     }
 
-    /**
+    /**`
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
      * @param array &$hook_files

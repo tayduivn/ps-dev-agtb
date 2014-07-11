@@ -31,7 +31,7 @@ $files=array(
     "modules/UpgradeWizard/UpgradeDriver.php",
     "modules/UpgradeWizard/WebUpgrader.php",
     "modules/UpgradeWizard/upgrade_screen.php",
-    "include/javascript/jquery/jquery-min.js",
+    //"include/javascript/jquery/jquery-min.js",
     "sidecar/lib/jquery/jquery.iframe.transport.js",
 
     // misc
@@ -105,7 +105,7 @@ $zip->addFromString("upgrader2.php", "<?php\n\$admin_group_header[2][3]['Adminis
 $installdefs['copy'][] = array("from" => "<basepath>/healthcheck.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/healthcheck.php");
 $zip->addFromString("healthcheck.php", "<?php\n\$admin_group_header[2][3]['Administration']['health_check']= array('HealthCheck','LBL_HEALTH_CHECK_TITLE','LBL_HEALTH_CHECK','./index.php?module=HealthCheck');");
 
-$installdefs['copy'][] = array("from" => "<basepath>/en_us.HealthCheck.php", "to" => "custom/Extension/application/Ext/Language/Administration/en_us.HealthCheck.php");
+$installdefs['copy'][] = array("from" => "<basepath>/en_us.HealthCheck.php", "to" => "custom/Extension/application/Ext/Language/en_us.HealthCheck.php");
 $zip->addFromString("en_us.HealthCheck.php", "<?php\n\$app_strings['LBL_HEALTH_CHECK_TITLE'] = 'Health Check';\$app_strings['LBL_HEALTH_CHECK'] = 'A tool that checks if the system is upgradable.';");
 
 $cont = sprintf("<?php\n\$manifest = %s;\n\$installdefs = %s;\n", var_export($manifest, true), var_export($installdefs, true));

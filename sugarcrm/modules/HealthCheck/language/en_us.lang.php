@@ -27,7 +27,7 @@ $mod_strings = array(
     'LBL_SCAN_104_LOG' => '%s has custom layoutdefs',
     'LBL_SCAN_105_LOG' => '%s has custom viewdefs',
 
-    'LBL_SCAN_201_LOG' => '% is not a stock module',
+    'LBL_SCAN_201_LOG' => '%s is not a stock module',
 
     'LBL_SCAN_301_LOG' => '%s to be run as BWC',
     'LBL_SCAN_302_LOG' => 'Unknown file views present - %s is not MB module',
