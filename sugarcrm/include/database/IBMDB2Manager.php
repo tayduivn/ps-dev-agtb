@@ -1345,8 +1345,11 @@ EOQ;
 	public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array())
 	{
 		$condition = array();
+        //Symbol for optional term search. Depends on version of database. Can be '%' or '?'.
+        //http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.ts.doc/doc/r0052651.html
+        $symbol = version_compare($this->version(), '10', '<') ? '?' : '%';
 		foreach($terms as $term) {
-			$condition[] = "?".$this->quoteTerm($term);
+            $condition[] = $symbol . $this->quoteTerm($term);
 		}
 		foreach($must_terms as $term) {
 			$condition[] = "+".$this->quoteTerm($term);
