@@ -262,6 +262,8 @@ class Meeting extends SugarBean {
                 $this->id = create_guid();
                 $this->new_with_id = true;
             }
+            // formatting fix required because our schedule meeting APIs expect data in a specific format
+            $this->fixUpFormatting();
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
@@ -597,15 +599,17 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
-		$typekey = strtolower($meeting->type);
-		if(isset($meeting->type)) {
-		    if(!empty($app_list_strings['eapm_list'][$typekey])) {
-    		    $typestring = $app_list_strings['eapm_list'][$typekey];
-	    	} else {
-		        $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
-		    }
-		}
-		$xtpl->assign("MEETING_TYPE", isset($meeting->type)? $typestring:"");
+        $typekey = strtolower($meeting->type);
+        if (isset($meeting->type)) {
+            if (!empty($app_list_strings['eapm_list'][$meeting->type])) {
+                $typestring = $app_list_strings['eapm_list'][$meeting->type];
+            } elseif (!empty($app_list_strings['eapm_list'][$typekey])) {
+                $typestring = $app_list_strings['eapm_list'][$typekey];
+            } else {
+                $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
+            }
+        }
+        $xtpl->assign("MEETING_TYPE", isset($meeting->type) ? $typestring : "");
 		$startdate = $timedate->fromDb($meeting->date_start);
 		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
 		$enddate = $timedate->fromDb($meeting->date_end);
