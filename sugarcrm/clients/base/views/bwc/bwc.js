@@ -14,7 +14,10 @@
  * @extends View.View
  */
 ({
+    tagName: 'iframe',
     className: 'bwc-frame',
+    // TODO check if we need to support multiple bwc views
+    id: 'bwc-frame',
     // Precompiled regex (note-regex literal causes errors but RegExp doesn't)
     moduleRegex: new RegExp('module=([^&]*)'),
     idRegex: new RegExp('record=([^&]*)'),
@@ -36,6 +39,7 @@
             app.router.navigate('#Home', {trigger: true});
             return;
         }
+        this.$el.attr('src', app.utils.addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
 
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
@@ -47,7 +51,7 @@
      * Inspect changes on current HTML input elements with initial values.
      */
     hasUnsavedChanges: function() {
-        var bwcWindow = this.$('iframe').get(0).contentWindow;
+        var bwcWindow = this.$el.get(0).contentWindow;
         //if bwcModel is empty, then it should return false (since it's not in enabled actions)
         // or we couldnt find a edit view to compare or the view doesn't want to be compared
         if (_.isEmpty(this.bwcModel.attributes) || _.isUndefined(bwcWindow.EditView) || $(bwcWindow.EditView).data('disablebwchaschanged')) {
@@ -112,7 +116,6 @@
     _renderHtml: function() {
         var self = this;
 
-        this.url = app.utils.addIframeMark(this.context.get('url') || 'index.php?module=' + this.module + '&action=index');
         app.view.View.prototype._renderHtml.call(this);
 
         this.$el.load(function() {
@@ -251,7 +254,7 @@
                 return;
             }
             // Reload the BWC to update subpanels.
-            self.$('iframe').get(0).contentWindow.location.reload(true);
+            self.$el.get(0).contentWindow.location.reload(true);
         });
     },
 
@@ -275,7 +278,7 @@
         }, function(model) {
             if (model) {
                 // Reload the BWC to update subpanels.
-                self.$('iframe').get(0).contentWindow.location.reload(true);
+                self.$el.get(0).contentWindow.location.reload(true);
             }
         });
     },
@@ -296,7 +299,7 @@
      * Revert model attributes with the current form elements.
      */
     revertBwcModel: function() {
-        var bwcWindow = this.$('iframe').get(0).contentWindow;
+        var bwcWindow = this.$el.get(0).contentWindow;
         var newAttributes = this.serializeObject(bwcWindow.EditView);
         this.resetBwcModel(newAttributes);
     },
