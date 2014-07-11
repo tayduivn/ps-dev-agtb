@@ -1059,7 +1059,7 @@ class Email extends SugarBean {
                  }
 			}
 
-			parent::save($check_notify);
+			$parentSaveResult = parent::save($check_notify);
 
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
                 if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
@@ -1077,6 +1077,8 @@ class Email extends SugarBean {
                     $this->$rel->add($this->parent_id);
                 }
 			}
+
+            return $parentSaveResult;
 		}
 		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
