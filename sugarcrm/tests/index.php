@@ -41,6 +41,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Pagination.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/EmailClientLaunch.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Chart.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkField.js"></script>
     <!-- FIXME remove this on SC-3047 -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js"></script>
 

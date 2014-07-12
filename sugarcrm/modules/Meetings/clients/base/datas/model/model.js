@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,16 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Meetings']['base']['layout']['subpanels'] = array (
-    'components' => array (
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'notes',
-            ),
-        ),
-    ),
-    'type' => 'subpanels',
-    'span' => 12,
-);
+/**
+ * @class Model.Datas.Base.MeetingsModel
+ * @alias SUGAR.App.model.datas.BaseMeetingsModel
+ * @extends Model.Bean
+ */
+({
+    plugins: ['LinkField']
+})

@@ -39,7 +39,7 @@ class MeetingsApiHelper extends SugarBeanApiHelper
         $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
         // add current userInvitees to this list as well so they don't get removed
-        $q = 'SELECT mu.user_id FROM meetings_users mu WHERE mu.meeting_id = \''.$bean->id.'\'';
+        $q = 'SELECT mu.user_id FROM meetings_users mu WHERE mu.meeting_id = \''.$bean->id.'\' AND deleted=0';
         $r = $db->query($q);
         while($user = $db->fetchByAssoc($r)) {
             if(!in_array($user['user_id'], $userInvitees)) {

@@ -196,6 +196,17 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'password',
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'invitees',
+                    'type' => 'participants',
+                    'label' => 'LBL_INVITEES',
+                    'span' => 12,
+                    'module_list' => array(
+                        'Users',
+                        'Contacts',
+                        'Leads',
+                    ),
+                ),
                 'assigned_user_name',
                 'team_name',
             ),
