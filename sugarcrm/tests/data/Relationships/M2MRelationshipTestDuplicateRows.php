@@ -20,7 +20,6 @@ class M2MRelationshipTestDuplicateRows extends Sugar_PHPUnit_Framework_TestCase
 
             $this->origDB = $GLOBALS['db'];
             $this->db = new SugarTestDatabaseMock();
-            $this->db->setUp();
             $GLOBALS['db'] = $this->db;
             $this->def = array(
                 'name' => "accounts_contacts",
@@ -43,7 +42,6 @@ class M2MRelationshipTestDuplicateRows extends Sugar_PHPUnit_Framework_TestCase
 
         public function tearDown()
         {
-            $this->db->tearDown();
             $GLOBALS['db'] = $this->origDB;
         }
 
@@ -52,12 +50,7 @@ class M2MRelationshipTestDuplicateRows extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testM2MDupeRowCheck($row, $accId, $conId, $expected)
     {
-        $this->db->queries = array(
-            "searchForExisting" => array(
-                'match' => "/SELECT.*FROM.*accounts_contacts/i",
-                'rows' => array($row)
-            )
-        );
+        $this->db->addQuerySpy('searchForExisting', '/SELECT.*FROM.*accounts_contacts/i', array($row));
 
         $m2mRelationship = new TestDuplicateM2MRel($this->def);
         $account = BeanFactory::getBean("Accounts");
