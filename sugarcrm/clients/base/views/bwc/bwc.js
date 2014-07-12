@@ -39,7 +39,7 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
-        app.routing.before('route', this.unbindDom, this, true);
+        app.routing.before('route', this.beforeRoute, null, this);
     },
 
     /**
@@ -352,6 +352,14 @@
     /**
      * Rewrites old link element to the new sidecar router.
      *
+     * This adds an event to all the links that are converted and don't open in
+     * a new tab/window. Therefore it is imperative that you take memory leaks
+     * precautions. See {@link #unbindDom} for more information.
+     *
+     * The reason why we don't use an `onclick="..."` attribute, is simply due
+     * to requirements of tracking the event and stop propagation, which would
+     * be extremely difficult to support cross browser.
+     *
      * @param {HTMLElement} The link `<a>` to rewrite into a sidecar url.
      */
     convertToSidecarLink: function(elem) {
@@ -482,10 +490,37 @@
     },
 
     /**
+     * Before routing event handling on BWC views.
+     *
+     * This will track all url changes during the BWC redirect process. It
+     * calls {@link #unbindDom} on all route changes, unless the new url
+     * requested is the same as the previous one with only the `bwcFrame=1`
+     * difference in the URL.
+     * When the latter happens, it just means that we are cleaning up the link,
+     * but there is no actual reload of the iFrame, so we can't remove the
+     * events.
+     *
+     * @param {Object} route Route object being passed from
+     *   {@link Core.Routing#beforeRoute}.
+     */
+    beforeRoute: function(route) {
+        var args = route.args;
+
+        var prevUrl = app.bwc.lastUrl;
+        app.bwc.lastUrl = args && args[0] || '';
+
+        if (args && app.utils.addIframeMark(args[0]) === prevUrl) {
+            return;
+        }
+
+        this.unbindDom();
+    },
+
+    /**
      * {@inheritDoc}
      */
     _dispose: function() {
-        app.routing.offBefore('route', this.unbindDom, this, true);
+        app.routing.offBefore('route', this.beforeRoute, this);
         if (this.bwcModel) {
             this.bwcModel.off();
             this.bwcModel = null;
