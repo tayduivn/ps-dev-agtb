@@ -39,6 +39,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         ApiHelper::$moduleHelpers = array();
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 
