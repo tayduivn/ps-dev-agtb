@@ -25,15 +25,7 @@ class RevenueLineItemMakeVisibleTest extends UpgradeTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->db = new SugarTestDatabaseMock();
-        $this->db->setUp();
-    }
-
-    public function tearDown()
-    {
-        $this->db->tearDown();
-        parent::tearDown();
+        $this->db = SugarTestHelper::setUp('mock_db');
     }
 
     public function dataProviderUpgradeMakeRLIVisible()
@@ -52,18 +44,17 @@ class RevenueLineItemMakeVisibleTest extends UpgradeTestCase
      */
     public function testUpgradeMakeRLIVisible($from_version, $to_version, $from_flavor, $to_flavor, $query_run_count)
     {
-        $this->db->queries['select_setting'] = array(
-            'match' => '/SELECT value FROM config/',
-            'rows' => array(
+        $this->db->addQuerySpy(
+            'select_setting',
+            '/SELECT value FROM config/',
+            array(
                 array(
                     'value' => base64_encode(serialize(array('Accounts')))
                 )
             )
         );
 
-        $this->db->queries['update_setting'] = array(
-            'match' => '/UPDATE config/'
-        );
+        $this->db->addQuerySpy('update_setting', '/UPDATE config/');
 
         $this->upgrader->from_version = $from_version;
         $this->upgrader->to_version = $to_version;
@@ -75,11 +66,11 @@ class RevenueLineItemMakeVisibleTest extends UpgradeTestCase
         $upgradeTask->run();
 
         if ($query_run_count > 0) {
-            $this->assertEquals($query_run_count, $this->db->queries['select_setting']['runCount']);
-            $this->assertEquals($query_run_count, $this->db->queries['update_setting']['runCount']);
+            $this->assertEquals($query_run_count, $this->db->getQuerySpyRunCount('select_setting'));
+            $this->assertEquals($query_run_count, $this->db->getQuerySpyRunCount('update_setting'));
         } else {
-            $this->assertFalse(isset($this->db->queries['select_setting']['runCount']));
-            $this->assertFalse(isset($this->db->queries['update_setting']['runCount']));
+            $this->assertFalse($this->db->getQuerySpyRunCount('select_setting'));
+            $this->assertFalse($this->db->getQuerySpyRunCount('update_setting'));
         }
     }
 }

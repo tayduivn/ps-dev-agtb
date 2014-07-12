@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,38 +13,26 @@
 require_once 'tests/SugarTestDatabaseMock.php';
 require_once 'modules/ForecastWorksheets/ForecastWorksheetsApiHelper.php';
 
-class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     /**
      * @var SugarTestDatabaseMock
      */
     protected $db;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        parent::setUpBeforeClass();
+        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-    }
-
-    public function setUp()
-    {
-        $this->db = new SugarTestDatabaseMock();
-        $this->db->setUp();
-        parent::setUp();
+        $this->db = SugarTestHelper::setUp('mock_db');
     }
 
     public function tearDown()
     {
-        $this->db->tearDown();
+        SugarTestHelper::tearDown();
         parent::tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
     }
 
     public function dataProviderFormatForApiSetsParentDeleted()
@@ -67,15 +54,16 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $product_name = 'My Test Product';
         $product_id = 'my_test_id';
         if ($parent_deleted === 0) {
-            $this->db->queries['forecast_parent_query'] = array(
-                'match' => '/products.deleted = 0 AND products.id = \'' . $product_id . '\'/',
-                'rows' => array(
+            $this->db->addQuerySpy(
+                'product_delete',
+                '/products.deleted = 0 AND products.id = \'' . $product_id . '\'/',
+                array(
                     array(
                         'id' => $product_id,
                         'name' => $product_name,
                         'deleted' => $parent_deleted
                     ),
-                ),
+                )
             );
         }
 
@@ -83,10 +71,14 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
         $forecast_worksheet->parent_type = 'Products';
         $forecast_worksheet->parent_id = $product_id;
+        $forecast_worksheet->name = 'Test Product';
 
         $api_helper = new ForecastWorksheetsApiHelper(SugarTestRestUtilities::getRestServiceMock());
         $bean = $api_helper->formatForApi($forecast_worksheet);
 
         $this->assertEquals($parent_deleted, $bean['parent_deleted']);
+
+        unset($api_helper);
+        unset($forecast_worksheet);
     }
 }

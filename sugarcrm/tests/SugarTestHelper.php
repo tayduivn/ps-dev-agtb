@@ -733,6 +733,28 @@ class SugarTestHelper
     }
 
     /**
+     * Setup the mock db helper,
+     *
+     * @return SugarTestDatabaseMock
+     */
+    protected static function setUp_mock_db()
+    {
+        self::$systemVars['db'] = DBManagerFactory::$instances;
+        self::$registeredVars['mock_db'] = new SugarTestDatabaseMock();
+
+        return self::$registeredVars['mock_db'];
+    }
+
+    protected static function tearDown_mock_db()
+    {
+        $db = DBManagerFactory::getInstance();
+        if ($db instanceof SugarTestDatabaseMock) {
+            DBManagerFactory::$instances = self::$systemVars['db'];
+            unset(self::$systemVars['db'], $db);
+        }
+    }
+
+    /**
      * Registration of $app_list_strings in global scope
      *
      * @static

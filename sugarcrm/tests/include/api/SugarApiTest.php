@@ -26,21 +26,20 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
-        self::$db = new SugarTestDatabaseMock();
-        self::$db->setUp();
+        self::$db = SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
-        self::$db->tearDown();
-        SugarTestHelper::tearDown();
         ApiHelper::$moduleHelpers = array();
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
+        parent::tearDownAfterClass();
     }
 
     public function setUp() {

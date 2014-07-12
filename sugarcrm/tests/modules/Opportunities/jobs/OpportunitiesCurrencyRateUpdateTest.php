@@ -17,14 +17,16 @@ require_once 'modules/Opportunities/jobs/OpportunitiesCurrencyRateUpdate.php';
 
 class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var SugarTestDatabaseMock
+     */
     private $db;
     private $mock;
 
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
-        $this->db = new SugarTestDatabaseMock();
-        $this->db->setUp();
+        $this->db = SugarTestHelper::setUp('mock_db');
         $this->setupMockClass();
         parent::setUp();
     }
@@ -33,7 +35,6 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
     {
         SugarTestHelper::tearDown();
         $this->tearDownMockClass();
-        $this->db->tearDown();
         parent::tearDown();
     }
 
@@ -64,21 +65,24 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
     public function testDoCustomUpdateRate()
     {
         // setup the query strings we are expecting and what they should return
-        $this->db->queries['get_rate'] = array(
-            'match' => "/SELECT conversion_rate FROM currencies WHERE id = 'abc'/",
-            'rows' => array(array('1.234')),
+        $this->db->addQuerySpy(
+            'get_rate',
+            "/SELECT conversion_rate FROM currencies WHERE id = 'abc'/",
+            array(array('1.234'))
         );
-        $this->db->queries['rate_update'] = array(
-            'match' => "/UPDATE mytable SET mycolumn = '1\.234'/",
-            'rows' => array(array(1)),
+
+        $this->db->addQuerySpy(
+            'rate_update',
+            "/UPDATE mytable SET mycolumn = '1\.234'/",
+            array(array(1))
         );
 
         // run our tests with mockup data
         $result = $this->mock->doCustomUpdateRate('mytable', 'mycolumn', 'abc');
         // make sure we get the expected result and the expected run counts
         $this->assertEquals(true, $result);
-        $this->assertEquals(1, $this->db->queries['get_rate']['runCount']);
-        $this->assertEquals(1, $this->db->queries['rate_update']['runCount']);
+        $this->assertEquals(1, $this->db->getQuerySpyRunCount('get_rate'));
+        $this->assertEquals(1, $this->db->getQuerySpyRunCount('rate_update'));
     }
 
     /**
@@ -87,16 +91,16 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
     public function testDoCustomUpdateUsDollarRate()
     {
         // setup the query strings we are expecting and what they should return
-        $this->db->queries['rate_update'] = array(
-            'match' => "/UPDATE mytable SET amount_usdollar = 1\.234 \/ base_rate/",
-            'rows' => array(array(1)),
+        $this->db->addQuerySpy(
+            'rate_update',
+            "/UPDATE mytable SET amount_usdollar = 1\.234 \/ base_rate/",
+            array(array(1))
         );
 
         // run our tests with mockup data
         $result = $this->mock->doCustomUpdateUsDollarRate('mytable', 'amount_usdollar', '1.234', 'abc');
         // make sure we get the expected result and the expected run counts
         $this->assertEquals(true, $result);
-        $this->assertEquals(1, $this->db->queries['rate_update']['runCount']);
+        $this->assertEquals(1, $this->db->getQuerySpyRunCount('rate_update'));
     }
-
 }
