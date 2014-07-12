@@ -1507,13 +1507,13 @@ class nusoap_fault extends nusoap_base {
 		}
 		$return_msg =
 			'<?xml version="1.0" encoding="'.$this->soap_defencoding.'"?>'.
-			'<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"'.$ns_string.">\n".
+			'<SOAP-ENV:Envelope'.$ns_string.">\n".
 				'<SOAP-ENV:Body>'.
 				'<SOAP-ENV:Fault>'.
-					$this->serialize_val($this->faultcode, 'faultcode').
+					$this->serialize_val($this->faultcode, 'faultcode', false, false, false, false, 'literal').
 					$this->serialize_val($this->faultstring, 'faultstring').
-					$this->serialize_val($this->faultactor, 'faultactor').
-					$this->serialize_val($this->faultdetail, 'detail').
+					$this->serialize_val($this->faultactor, 'faultactor', false, false, false, false, 'literal').
+					$this->serialize_val($this->faultdetail, 'detail', false, false, false, false, 'literal').
 				'</SOAP-ENV:Fault>'.
 				'</SOAP-ENV:Body>'.
 			'</SOAP-ENV:Envelope>';
