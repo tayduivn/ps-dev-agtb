@@ -338,9 +338,6 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $hook->afterRelationshipDelete($worksheet, 'after_relationship_delete', array('link' => 'test'));
 
         $this->assertEquals(1, $dbMock->getQuerySpyRunCount('name_query'));
-
-        $dbMock->restoreDBManager();
-        unset($dbMock);
     }
 }
 

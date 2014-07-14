@@ -22,13 +22,6 @@ require_once 'include/database/DBManagerFactory.php';
 class SugarTestDatabaseMock extends DBManager
 {
     /**
-     * Keep track of any instances that were registered before the mock is setUp();
-     *
-     * @var array
-     */
-    private $oldInstances = array();
-
-    /**
      * The registered query spies
      *
      * @var array
@@ -41,39 +34,6 @@ class SugarTestDatabaseMock extends DBManager
      * @var array
      */
     public $rows = array();
-
-    /**
-     * Setup Method
-     *
-     * This is called when the class is created.
-     */
-    public function __construct()
-    {
-        $this->oldInstances = DBManagerFactory::$instances;
-        DBManagerFactory::$instances = array('' => $this);
-    }
-
-    /**
-     * Clean up Method
-     *
-     * This is called when the object is destroyed
-     */
-    public function __destruct()
-    {
-        $this->query_spies = array();
-    }
-
-    /**
-     * Utility Method to Restore the DBManager
-     *
-     * This puts back the instances of the connected DB's to what it was before this SugarTestDatabaseMock was
-     * initialized
-     */
-    public function restoreDBManager()
-    {
-        DBManagerFactory::$instances = $this->oldInstances;
-    }
-
 
     /**
      * Add a Query Spy

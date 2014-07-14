@@ -99,13 +99,14 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRollupQuota()
     {
-        $db = new SugarTestDatabaseMock();
+        SugarTestHelper::setUp('mock_db');
 
         $test_tp_id = create_guid();
 
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
 
+        $db = DBManagerFactory::getInstance();
         $db->addQuerySpy(
             'quota_select',
             '/quotas.timeperiod_id = \'' . $test_tp_id . '\'/',
@@ -125,8 +126,5 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             $quota->getRollupQuota($test_tp_id, 'test_user_id')
         );
-
-        $db->restoreDBManager();
-        unset($db);
     }
 }

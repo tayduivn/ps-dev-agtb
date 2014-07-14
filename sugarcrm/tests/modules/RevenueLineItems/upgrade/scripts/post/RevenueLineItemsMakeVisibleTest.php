@@ -28,6 +28,12 @@ class RevenueLineItemMakeVisibleTest extends UpgradeTestCase
         $this->db = SugarTestHelper::setUp('mock_db');
     }
 
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+    }
+
     public function dataProviderUpgradeMakeRLIVisible()
     {
         return array(
