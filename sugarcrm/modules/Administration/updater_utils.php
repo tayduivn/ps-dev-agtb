@@ -13,10 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
 * $Id: updater_utils.php 54741 2010-02-23 19:49:41Z rob $
 ********************************************************************************/
-require_once('include/utils/encryption_utils.php');
-
+require_once 'include/utils/encryption_utils.php';
 require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
-require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
 
 /**
  * Proxy to SugarSystemInfo::getInstance()->getInfo()
@@ -65,7 +63,9 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	if(!$response_data){
 
         $systemInfo = SugarSystemInfo::getInstance();
-        $sclient = new SugarHeartbeatClient();
+        SugarAutoLoader::requireWithCustom('include/SugarHeartbeat/SugarHeartbeatClient.php', true);
+        $sclientClass = SugarAutoLoader::customClass('SugarHeartbeatClient');
+        $sclient = new $sclientClass();
 
         if($from_install){
     		$info = $systemInfo->getBaseInfo();
