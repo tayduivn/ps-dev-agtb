@@ -15,7 +15,7 @@
  */
 class SugarUpgradeProjectShowModule extends UpgradeScript
 {
-    public $order = 6999;
+    public $order = 6998;
     public $type = self::UPGRADE_CORE;
 
     public function run()
