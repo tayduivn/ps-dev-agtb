@@ -499,6 +499,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
+                    'isnull' => false,
+                    'required' => true,
                     ),
                 'bar' => array (
                     'name' => 'bar',
@@ -534,6 +536,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->repairTableParams($tableName, $params, $indices, true);
 
         $idx = $this->_db->get_indices($tableName);
+        foreach ($idx as $index) {
+            if ($index['type'] == 'primary') {
+                $idx['primary'] = $index;
+                break;
+            }
+        }
         $this->assertArrayHasKey('test_index', $idx);
         $this->assertContains('foo', $idx['test_index']['fields']);
         $this->assertContains('bazz', $idx['test_index']['fields']);
