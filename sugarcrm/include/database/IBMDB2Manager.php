@@ -1112,21 +1112,6 @@ EOQ;
 								break;
 		}
 
-        // IBM DB2 requires default value for NOT NULL fields
-        if (!empty($fieldDef['required']) && !isset($fieldDef['default'])) {
-            switch ($fieldDef['type']) {
-                case 'integer'  :
-                case 'smallint' :
-                case 'bigint'   :
-                case 'double'   :
-                case 'decimal'  :
-                    $fieldDef['default'] = 0;
-                    break;
-                default :
-                    $fieldDef['default'] = '';
-            }
-        }
-
         if(empty($fieldDef['isnull'])) $fieldDef['isnull'] = 'false';
 //
 //        if ($fieldDef['type'] == 'int')
