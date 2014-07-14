@@ -108,7 +108,9 @@
 
         //jsTree control for selecting root node
         var $jsTree = this.$('div[data-control="org-jstree"]');
-        this.jsTree = $jsTree.jstree({
+
+        if (!this.jsTree) {
+            this.jsTree = $jsTree.jstree({
                 // generating tree from json data
                 'json_data': {
                     'data': this.chartCollection
@@ -122,26 +124,24 @@
                     // when the tree re-renders, initially select the root node
                     'initially_select': ['jstree_node_' + app.user.get('user_name')]
                 }
-            })
-            .on('loaded.jstree', function(e) {
-                // do stuff when tree is loaded
-                self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
-                self.$('div[data-control="org-jstree"] > ul').addClass('list');
-                self.$('div[data-control="org-jstree"] > ul > li > a').addClass('jstree-clicked');
-            })
-            .on('click.jstree', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-            })
-            .on('select_node.jstree', function(event, data) {
-                var jsData = data.inst.get_json();
+            }).on('loaded.jstree', function(e) {
+                    // do stuff when tree is loaded
+                    self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
+                    self.$('div[data-control="org-jstree"] > ul').addClass('list');
+                    self.$('div[data-control="org-jstree"] > ul > li > a').addClass('jstree-clicked');
+            }).on('click.jstree', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+            }).on('select_node.jstree', function(event, data) {
+                    var jsData = data.inst.get_json();
 
-                self.chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
-                self.forceRepaint();
-                self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
-                data.inst.toggle_node(data.rslt.obj);
+                    self.chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
+                    self.forceRepaint();
+                    self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
+                    data.inst.toggle_node(data.rslt.obj);
             });
-        app.accessibility.run($jsTree, 'click');
+            app.accessibility.run(this.jsTree, 'click');
+        }
 
         d3.select('svg#' + this.cid)
             .datum(this.chartCollection[0])
