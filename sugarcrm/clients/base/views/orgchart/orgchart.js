@@ -106,10 +106,10 @@
             }
         });
 
-        //jsTree control for selecting root node
-        var $jsTree = this.$('div[data-control="org-jstree"]');
-
         if (!this.jsTree) {
+            //jsTree control for selecting root node
+            var $jsTree = this.$('div[data-control="org-jstree"]');
+
             this.jsTree = $jsTree.jstree({
                 // generating tree from json data
                 'json_data': {
