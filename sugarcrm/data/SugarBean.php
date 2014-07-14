@@ -4149,10 +4149,6 @@ class SugarBean
                 foreach($filter as $field)
                 {
                     $field = strtolower($field);
-                    //remove out id field so we don't duplicate it
-                    if ( $field == 'id' && !empty($filter) ) {
-                        continue;
-                    }
                     if(isset($this->field_defs[$field]))
                     {
                         $fields[$field]= $this->field_defs[$field];
@@ -4163,7 +4159,11 @@ class SugarBean
                     }
                 }
             }else{
-                $fields = 	$filter;
+                $fields = $filter;
+            }
+            //remove out id field so we don't duplicate it
+            if (isset($fields['id'])) {
+                unset($fields['id']);
             }
             /* add mandatory fields */
             foreach($this->field_defs as $field=>$value) {
