@@ -249,7 +249,7 @@ $dictionary['RevenueLineItem'] = array(
             'reportable' => false,
             'type' => 'decimal',
             'precision' => 2,
-            'len' => '27,2'
+            'len' => '26,2'
         ),
         'discount_amount_usdollar' => array(
             'name' => 'discount_amount_usdollar',
