@@ -248,7 +248,7 @@
         }
 
         this.model.on('change:' + this.name, function(model, value) {
-            if (this.action !== 'edit') {
+            if (this.action !== 'edit' && this.action !== 'massupdate') {
                 this.render();
                 return;
             }
@@ -287,7 +287,7 @@
             value.parseZone();
         }
 
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.action === 'massupdate') {
             value = {
                 'date': value.format(app.date.convertFormat(this.getUserDateFormat())),
                 'time': value.format(app.date.convertFormat(this.getUserTimeFormat()))
@@ -365,7 +365,7 @@
     _render: function() {
         this._super('_render');
 
-        if (this.action !== 'edit') {
+        if (this.action !== 'edit' && this.action !== 'massupdate') {
             return;
         }
 
