@@ -1,14 +1,14 @@
 <?php
- /*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
+/*
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
@@ -104,10 +104,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setTestLanguageSettings()
     {
-        $GLOBALS['sugar_config']['languages'] = array (
+        $GLOBALS['sugar_config']['languages'] = array(
             'br_test' => 'Test Language',
             'br_mine' => 'My Language',
-            'snazzy'  => 'Snazzy Language',
+            'snazzy' => 'Snazzy Language',
             'whiskey' => 'Whiskey Language',
             'awesome' => 'Awesome Sauce',
             'br_ikea' => 'Ikead an idea',
@@ -170,7 +170,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $mm = MetaDataManager::getManager();
         $test = $mm->normalizeMetadata($data);
         $this->assertEquals($test, $data, "Base data was manipulated and it should not have been");
-        
+
         $mm = MetaDataManager::getManager('mobile');
         $test = $mm->normalizeMetadata($data);
         $this->assertNotEquals($test, $data, "Mobile metadata was not manipulated and it should have been");
@@ -179,25 +179,67 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($test['modules']['Accounts']['layouts']);
     }
 
-    public function testGetAppListStrings() {
+    public function testGetAppListStrings()
+    {
         $mm = MetaDataManager::getManager();
         $normalList = $mm->getAppListStrings('en_us');
         $tupleList = $mm->getAppListStrings('en_us', true);
 
         //Would be nice to mock the app_list_strings, but this currently isn't possible with return_app_list_strings_language
-        $this->assertEquals($normalList['checkbox_dom'], array(
+        $this->assertEquals(
+            $normalList['checkbox_dom'],
+            array(
                 '' => '',
                 '1' => 'Yes',
                 '2' => 'No',
             )
         );
 
-        $this->assertEquals($tupleList['checkbox_dom'], array(
+        $this->assertEquals(
+            $tupleList['checkbox_dom'],
+            array(
                 array('', ''),
                 array('1', 'Yes'),
                 array('2', 'No'),
             )
         );
+    }
+
+    public function getLanguageDataProvider()
+    {
+        return array(
+            array(
+                array(
+                    'lang' => 'en_us',
+                    'ordered' => true
+                )
+            ),
+            array(
+                array(
+                    'lang' => 'en_us',
+                    'ordered' => false
+                )
+            )
+        );
+    }
+
+    /**
+     * @group BR-1730
+     * @group unit
+     * @dataProvider getLanguageDataProvider
+     */
+    public function testGetLanguage($params)
+    {
+        $manager = $this->getMockBuilder('MetadataManager')
+            ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+
+        $manager->expects($this->once())->method('getAppListStrings')
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
+
+        $manager->expects($this->exactly(3))->method('getLangUrl')
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue(md5(time())));
+
+        $manager->getLanguage($params);
     }
 }
 
