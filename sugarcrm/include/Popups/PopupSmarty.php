@@ -409,41 +409,8 @@ class PopupSmarty extends ListViewSmarty{
 			);
 		}
 
-		foreach($this->displayColumns as $columnName => $def)
-		{
-			$seedName =  strtolower($columnName);
-
-			if(empty($this->displayColumns[$columnName]['type'])){
-				if(!empty($this->lvd->seed->field_defs[$seedName]['type'])){
-					$seedDef = $this->lvd->seed->field_defs[$seedName];
-		            $this->displayColumns[$columnName]['type'] = (!empty($seedDef['custom_type']))?$seedDef['custom_type']:$seedDef['type'];
-		        }else{
-		        	$this->displayColumns[$columnName]['type'] = '';
-		        }
-			}//fi empty(...)
-
-			if(!empty($this->lvd->seed->field_defs[$seedName]['options'])){
-					$this->displayColumns[$columnName]['options'] = $this->lvd->seed->field_defs[$seedName]['options'];
-			}
-
-	        //C.L. Fix for 11177
-	        if($this->displayColumns[$columnName]['type'] == 'html') {
-	            $cField = $this->seed->custom_fields;
-	               if(isset($cField) && isset($cField->bean->$seedName)) {
-	                 	$seedName2 = strtoupper($columnName);
-	                 	$htmlDisplay = html_entity_decode($cField->bean->$seedName);
-	                 	$count = 0;
-	                 	while($count < count($data['data'])) {
-	                 		$data['data'][$count][$seedName2] = &$htmlDisplay;
-	                 	    $count++;
-	                 	}
-	            	}
-	        }//fi == 'html'
-
-			if (!empty($this->lvd->seed->field_defs[$seedName]['sort_on'])) {
-		    	$this->displayColumns[$columnName]['orderBy'] = $this->lvd->seed->field_defs[$seedName]['sort_on'];
-		    }
-		}
+        $this->fillDisplayColumnsWithVardefs();
+        $data = $this->setupHTMLFields($data);
 
 		$this->process($file, $data, $this->seed->object_name);
 	}
