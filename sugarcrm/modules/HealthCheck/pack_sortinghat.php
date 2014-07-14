@@ -30,7 +30,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use pack.php healthcheck.zip\n");
+    die("Use $argv[0] healthcheck.zip\n");
 }
 
 $zipFile = $argv[1];
@@ -47,7 +47,7 @@ $zip->open($zipFile, ZipArchive::OVERWRITE);
 
 $baseDir = 'HealthCheck';
 foreach ($files as $file) {
-    $zip->addFile($file, "{$baseDir}/{$file}");
+    $zip->addFile($file, $file);
 }
 $zip->close();
 

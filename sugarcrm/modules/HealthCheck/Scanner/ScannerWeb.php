@@ -18,7 +18,7 @@ require_once 'modules/HealthCheck/Scanner/Scanner.php';
  * HealthCheck Scanner Web support
  *
  */
-class ScannerWeb extends Scanner
+class HealthCheckScannerWeb extends HealthCheckScanner
 {
     /**
      *

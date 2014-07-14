@@ -20,7 +20,7 @@ require_once 'modules/HealthCheck/HealthCheckClient.php';
  * HealthCheck Controller
  *
  */
-class HealthcheckController extends SugarController
+class HealthCheckController extends SugarController
 {
     /**
      *
@@ -65,6 +65,13 @@ class HealthcheckController extends SugarController
         }
     }
 
+    /**
+     * Notifies heartbeat server about the fact that heath check has been run.
+     * Sends the licence key, the bucket and and the flag
+     *
+     * @param $hc
+     * @return bool
+     */
     protected function pingHeartbeat($hc)
     {
         $client = new SugarHeartbeatClient();
@@ -159,11 +166,11 @@ class HealthcheckController extends SugarController
 
     /**
      *
-     * @return ScannerWeb
+     * @return HealthCheckScannerWeb
      */
     protected function getWebScanner()
     {
         require_once 'modules/HealthCheck/Scanner/ScannerWeb.php';
-        return new ScannerWeb();
+        return new HealthCheckScannerWeb();
     }
 }

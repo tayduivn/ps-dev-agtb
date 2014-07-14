@@ -17,7 +17,7 @@ require_once __DIR__ . '/Scanner.php';
  * HealthCheck Scanner CLI support
  *
  */
-class ScannerCli extends Scanner
+class HealthCheckScannerCli extends HealthCheckScanner
 {
     /**
      *
@@ -25,7 +25,7 @@ class ScannerCli extends Scanner
      */
     public function parseCliArgs($argv)
     {
-        for ($i=0; $i < (count($argv) - 1); $i++) {
+        for ($i = 1; $i < (count($argv) - 1); $i++) {
 
             // logfile name
             if ($argv[$i] == '-l') {
@@ -41,6 +41,18 @@ class ScannerCli extends Scanner
             // verbose level 2 (curently not used)
             if ($argv[$i] == '-vv') {
                 $this->verbose = 2;
+            }
+
+            // max field count
+            if ($argv[$i] == '-m') {
+                $i++;
+                $this->fieldCountMax = $argv[$i];
+            }
+
+            // warn field count
+            if ($argv[$i] == '-w') {
+                $i++;
+                $this->fieldCountWarn = $argv[$i];
             }
         }
 
@@ -81,7 +93,7 @@ class ScannerCli extends Scanner
  */
 
 if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php ScannerCli.php [-l logfile] [-v] /path/to/instance\n");
+    die("Use php ScannerCli.php [-m maxfieldstoerror] [-w count maxfieldstowarn] [-l logfile] [-v] /path/to/instance\n");
 }
 
 $sapi_type = php_sapi_name();
@@ -89,7 +101,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is a command-line only script");
 }
 
-$scanner = new ScannerCli();
+$scanner = new HealthCheckScannerCli();
 $scanner->parseCliArgs($argv);
 $scanner->scan();
 

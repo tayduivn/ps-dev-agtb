@@ -467,9 +467,8 @@ eoq2;
         $line = strtolower($line);
         if (in_array($line, array('yes', 'y'))) {
             return true;
-        } else if (in_array($line, array('no', 'n'))) {
-            return false;
         }
+
         return false;
     }
 
@@ -495,7 +494,7 @@ eoq2;
                 return true;
             } else {
                 $this->dumpHealthCheckMeta($scanner, true);
-                if ($this->confirmDialog("Are you agree with the changes above?")) {
+                if ($this->confirmDialog("Are you sure you want to continue?")) {
                     $this->log('User interactively confirmed yellow flag(s) - proceeding');
                     return true;
                 } else {
@@ -513,7 +512,7 @@ eoq2;
      * @param Scanner $scanner
      * @param boolean $stdOut
      */
-    protected function dumpHealthCheckMeta(Scanner $scanner, $stdOut = false)
+    protected function dumpHealthCheckMeta(HealthCheckScanner $scanner, $stdOut = false)
     {
         $this->logHealthCheck('*** START HEALTHCHECK ISSUES ***', $stdOut);
         foreach ($scanner->getLogMeta() as $key => $entry) {
@@ -525,7 +524,7 @@ eoq2;
                 $this->logHealthCheck("  {$entry['kb']}", $stdOut);
             }
         }
-        $this->logHealthCheck('*** STOP HEALTHCHECK ISSUES ***', $stdOut);
+        $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
     }
 
     /**

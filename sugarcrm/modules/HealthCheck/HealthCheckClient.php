@@ -13,9 +13,9 @@
 /**
  * Class HealthCheckClient
  */
-class HealthCheckClient
+class HealthCheckClient extends SugarHttpClient
 {
-    const SERVER_URL = "https://updates.sugarcrm.com/sortinghat.php";
+    const ENDPOINT = "https://updates.sugarcrm.com/sortinghat.php";
 
     /**
      * @param $key
@@ -24,25 +24,10 @@ class HealthCheckClient
      */
     public function send($key, $logFilePath)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, self::SERVER_URL);
-        curl_setopt($ch, CURLOPT_POST, true);
-
-        $fields = array(
-            'key' => $key,
-            "log" => "@$logFilePath",
-        );
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-        $response = curl_exec($ch);
-
-        $GLOBALS['log']->fatal(__CLASS__ . $response);
-        $GLOBALS['log']->fatal(__CLASS__ . curl_error($ch));
-
-        curl_close($ch);
+        $response = $this->callRest(self::ENDPOINT, array(
+                'key' => $key,
+                "log" => "@$logFilePath",
+        ));
 
         return strpos($response, "Saved:") !== false;
     }

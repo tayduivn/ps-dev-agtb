@@ -49,7 +49,7 @@
                 <span></span>
             </div>
             <div class="progress-section span5 pull-right">
-                <span><img src="modules/HealthCheck/static/company_logo.png" alt="SugarCRM" class="logo"></span>
+                <span><img src="themes/default/images/company_logo.png" alt="SugarCRM" class="logo"></span>
 
                 <div class="progress progress-success">
                     <div class="bar" style="width: 33%;"></div>
@@ -88,7 +88,7 @@
                 <span>Review health check results</span>
             </div>
             <div class="progress-section span5 pull-right">
-                <span><img src="modules/HealthCheck/static/company_logo.png" alt="SugarCRM" class="logo"></span>
+                <span><img src="themes/default/images/company_logo.png" alt="SugarCRM" class="logo"></span>
 
                 <div class="progress progress-success">
                     <div class="bar" style="width: 66%;"></div>

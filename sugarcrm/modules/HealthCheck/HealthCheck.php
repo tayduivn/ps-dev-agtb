@@ -29,43 +29,44 @@ class HealthCheck extends Basic
      * @param Scanner $scanner
      * @return HealthCheck
      */
-    public function run(Scanner $scanner)
+    public function run(HealthCheckScanner $scanner)
     {
-        $hc = BeanFactory::getBean('HealthCheck');
 
         // log file setup
         $cacheDir = sugar_cached(self::CACHE_DIR);
         sugar_mkdir($cacheDir);
-        $hc->logfile = 'healthcheck-' . time() . '.log';
-        $scanner->setLogFile($cacheDir . "/" .$hc->logfile);
+        $this->logfile = 'healthcheck-' . time() . '.log';
+        $scanner->setLogFile($cacheDir . "/" .$this->logfile);
 
         try {
             $logMeta = $scanner->scan();
-            $hc->logmeta = json_encode($logMeta);
-            $hc->bucket = $scanner->getStatus();
-            $hc->flag = $scanner->getFlag();
+            $this->logmeta = json_encode($logMeta);
+            $this->bucket = $scanner->getStatus();
+            $this->flag = $scanner->getFlag();
 
         } catch (Exception $e) {
             $GLOBALS['log']->fatal("Error executing Health Check: " . $e->getMessage());
-            $hc->error = $e->getMessage();
+            $this->error = $e->getMessage();
         }
 
-        $hc->save();
-        return $hc;
+        $this->save();
+        return $this;
     }
 
     /**
      *
-     * Get most recent healtcheck run
-     * @return HealthCheck
+     * Get the most recent healtcheck run
+     *
+     * @return HealthCheck|null
      */
     public function getLastRun()
     {
         $sql = "SELECT id FROM healthcheck WHERE deleted = 0 ORDER BY date_entered DESC";
-        $id = DBManagerFactory::getInstance()->getOne($sql, false, 'Error fetching most recent healtcheck record');
+        $id = $this->db->getOne($sql, false, 'Error fetching most recent healtcheck record');
         if ($id) {
-            return BeanFactory::getBean('HealthCheck', $id);
+            return $this->retrieve($id);
         }
+        return null;
     }
 
     /**

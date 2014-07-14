@@ -1672,7 +1672,7 @@ abstract class UpgradeDriver
     {
         if ($this->isHealthCheckInstalled()) {
             require_once $this->context['health_check_path'] . '/Scanner/Scanner.php';
-            $scanner = new Scanner();
+            $scanner = new HealthCheckScanner();
             $scanner->setVerboseLevel(0);
             $scanner->setLogFilePointer($this->fp);
             $scanner->setInstanceDir($this->context['source_dir']);

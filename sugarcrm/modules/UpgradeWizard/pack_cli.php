@@ -17,7 +17,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if(empty($argv[1])) {
-    die("Use pack_cli.php name.zip");
+    die("Use $argv[0] name.zip");
 }
 
 $name = $argv[1];

@@ -18,14 +18,18 @@ require_once __DIR__ . '/ScannerMeta.php';
  * HealthCheck Scanner
  *
  */
-class Scanner
+class HealthCheckScanner
 {
     // failure status
     const FAIL = 99;
 
+    const DEFAULT_FIELD_COUNT_MAX = 100;
+
+    const DEFAULT_FIELD_COUNT_WARN = 50;
+
     /**
      *
-     * @var ScannerMeta
+     * @var HealthCheckScannerMeta
      */
     protected $meta;
 
@@ -100,26 +104,26 @@ class Scanner
      *
      * @var integer Number of fields on detail/editview to trigger class E
      */
-    protected $fieldCountMax = 100;
+    protected $fieldCountMax = self::DEFAULT_FIELD_COUNT_MAX;
 
     /**
      *
      * @var integer Number of fields on detail/editview to trigger a warning
      */
-    protected $fieldCountWarn = 50;
+    protected $fieldCountWarn = self::DEFAULT_FIELD_COUNT_WARN;
 
     /**
      *
      * Instance status (bucket)
      * @var string
      */
-    protected $status = ScannerMeta::VANILLA;
+    protected $status = HealthCheckScannerMeta::VANILLA;
 
     /**
      *
      * @var int
      */
-    protected $flag = ScannerMeta::FLAG_GREEN;
+    protected $flag = HealthCheckScannerMeta::FLAG_GREEN;
 
     /**
      *
@@ -132,6 +136,11 @@ class Scanner
      */
     protected $fp;
 
+    /**
+     * metadata log
+     *
+     * @var array
+     */
     protected $logMeta = array();
 
     /**
@@ -163,7 +172,7 @@ class Scanner
      */
     public function __construct()
     {
-        $this->meta = ScannerMeta::get();
+        $this->meta = HealthCheckScannerMeta::getInstance();
         $this->logfile = "healthcheck-" . time() . ".log";
     }
 
@@ -228,21 +237,15 @@ class Scanner
      */
     public function updateStatus()
     {
-        // FIXME: original sortinghat supports array of reasons ?
-        // see http://goo.gl/EzQPjY
         $params = func_get_args();
 
         $id = array_shift($params);
 
-        if (is_int($id)) {
-            $scanMeta = $this->meta->getMeta($id, $params);
-        } else {
-            $scanMeta = $this->meta->getMetaFromReportId($id, $params);
-        }
+        $scanMeta = $this->meta->getMetaFromReportId($id, $params);
 
         // load default failure if no metadata can be found for given $id
         if ($scanMeta === false) {
-            $scanMeta = $this->meta->getMeta(999);
+            $scanMeta = $this->meta->getMetaFromReportId('unknownFailure');
         }
 
         $status = $scanMeta['bucket'];
@@ -265,7 +268,7 @@ class Scanner
          * Every scan code can have a separate flag apart from the actual
          * bucket. This has only meaning for the health check module.
          *
-         * @see ScannerMeta::$defaultFlagMap
+         * @see HealthCheckScannerMeta::$defaultFlagMap
          */
         if ($scanMeta['flag'] > $this->flag) {
             $this->flag = $scanMeta['flag'];
@@ -317,7 +320,7 @@ class Scanner
      */
     public function isFlagGreen()
     {
-        return $this->flag == ScannerMeta::FLAG_GREEN;
+        return $this->flag == HealthCheckScannerMeta::FLAG_GREEN;
     }
 
     /**
@@ -327,7 +330,7 @@ class Scanner
      */
     public function isFlagYellow()
     {
-        return $this->flag == ScannerMeta::FLAG_YELLOW;
+        return $this->flag == HealthCheckScannerMeta::FLAG_YELLOW;
     }
 
     /**
@@ -337,7 +340,7 @@ class Scanner
      */
     public function isFlagRed()
     {
-        return $this->flag == ScannerMeta::FLAG_RED;
+        return $this->flag == HealthCheckScannerMeta::FLAG_RED;
     }
 
     /**
@@ -348,6 +351,26 @@ class Scanner
     public function setVerboseLevel($level)
     {
         $this->verbose = $level;
+    }
+
+    /**
+     * Setter field count max
+     *
+     * @param $value
+     */
+    public function setFieldCountMax($value)
+    {
+        $this->fieldCountMax = (int)$value;
+    }
+
+    /**
+     * Setter field count warn
+     *
+     * @param $value
+     */
+    public function setFieldCountWarn($value)
+    {
+        $this->fieldCountWarn = (int)$value;
     }
 
     /**
@@ -455,7 +478,7 @@ class Scanner
 //         foreach($app_list['moduleList'] as $module => $name) {
 //             if(empty($this->beanList[$module]) && !file_exists("modules/$module")) {
 //                 $this->log("Bad module $module - not in beanList and not in filesystem");
-//                 $this->updateStatus(ScannerMeta::CUSTOM);
+//                 $this->updateStatus(HealthCheckScannerMeta::CUSTOM);
 //             }
 //         }
 
@@ -474,7 +497,7 @@ class Scanner
         foreach($hook_files as $hookname => $hooks) {
             foreach($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], ScannerMeta::CUSTOM);
+                $this->checkFileForOutput($hook_data[2], HealthCheckScannerMeta::CUSTOM);
             }
         }
         // TODO: custom dashlets
@@ -686,7 +709,7 @@ class Scanner
         // check for output in logic hooks
         // if there is some, we'd need to put it to custom
         // since upgrader does not handle it, we have to manually BWC the module
-        $this->checkHooks($module, ScannerMeta::CUSTOM);
+        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM);
     }
 
     /**
@@ -731,7 +754,7 @@ class Scanner
 
         // check vardefs for HTML and bad names
         if(!$bwc && $objectName) {
-            $this->checkVardefs($module, $objectName, true, ScannerMeta::CUSTOM);
+            $this->checkVardefs($module, $objectName, true, HealthCheckScannerMeta::CUSTOM);
         }
 
         // Check for extension files
@@ -740,7 +763,7 @@ class Scanner
             $this->updateStatus("hasExtensions", $module, var_export($extfiles, true));
         }
         foreach($extfiles as $phpfile) {
-            $this->checkFileForOutput($phpfile, $bwc?ScannerMeta::CUSTOM:ScannerMeta::MANUAL);
+            $this->checkFileForOutput($phpfile, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
         }
 
         // Check custom vardefs
@@ -837,7 +860,7 @@ class Scanner
         }
 
         // check logic hooks for module
-        $this->checkHooks($module, $bwc?ScannerMeta::CUSTOM:ScannerMeta::MANUAL);
+        $this->checkHooks($module, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
 
     }
 
@@ -1161,7 +1184,7 @@ class Scanner
      * @param string $module
      * @param bool $bwc
      */
-    protected function checkHooks($module, $status = ScannerMeta::MANUAL)
+    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL)
     {
         $this->log("Checking hooks for $module");
         $hook_files = array();
@@ -1270,7 +1293,7 @@ class Scanner
         if($this->exit_status == self::FAIL) {
             return self::FAIL;
         }
-        return ord($this->status)-ord(ScannerMeta::VANILLA);
+        return ord($this->status)-ord(HealthCheckScannerMeta::VANILLA);
     }
 
     /**
@@ -1308,14 +1331,10 @@ class Scanner
                 $data = array_merge($data, $this->getPhpFiles($path . $filename . "/"));
             } elseif ($extension != 'php') {
                 continue;
-            } else {
+            } elseif(!in_array($path . $filename, $this->ignoredFiles)) {
                 $data[] = $path . $filename;
             }
         }
-
-        $data = array_filter($data, function($item) {
-                return !in_array($item, $this->ignoredFiles);
-        });
 
         return $data;
     }
@@ -1408,7 +1427,7 @@ ENDP;
                 } else {
                     continue;
                 }
-                if($status == ScannerMeta::CUSTOM) {
+                if($status == HealthCheckScannerMeta::CUSTOM) {
                     $args[0] = $args[0] . 'Custom';
                 }
                 call_user_func_array(array($this, 'updateStatus'), $args);
@@ -1451,7 +1470,7 @@ ENDP;
         }
 
         // bad vardefs means no conversion to Sugar 7
-        $this->checkVardefs($module_name, $bean, false, ScannerMeta::STUDIO_MB_BWC);
+        $this->checkVardefs($module_name, $bean, false, HealthCheckScannerMeta::STUDIO_MB_BWC);
 
         $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients", "workflow");
         $mbFiles[] = basename($this->beanFiles[$bean]);
@@ -1525,7 +1544,7 @@ ENDP;
             if(isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if(!empty($extfiles)) {
-                    $this->updateStatus(ScannerMeta::STUDIO_MB_BWC, "Extension dir $extdir detected - $module_name is not MB module");
+                    $this->updateStatus("extensionDirDetected", $extdir, $module_name);
                     return false;
                 }
             }
@@ -1615,10 +1634,10 @@ ENDP;
      * @param bool $stock Is this a stock module?
      * @return boolean|array true if vardefs OK, list of reasons if module needs to be BWCed
      */
-    protected function checkVardefs($module, $object, $stock = false, $status)
+    protected function checkVardefs($module, $object, $stock = false, $status = HealthCheckScannerMeta::STUDIO_MB_BWC)
     {
         $custom = '';
-        if($status == ScannerMeta::CUSTOM) {
+        if($status == HealthCheckScannerMeta::CUSTOM) {
             $custom = 'Custom';
         }
 

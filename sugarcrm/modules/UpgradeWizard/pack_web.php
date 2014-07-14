@@ -19,7 +19,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use pack_web.php name.zip");
+    die("Use $argv[0] name.zip");
 }
 
 $name = $argv[1];
@@ -43,13 +43,12 @@ $files=array(
     'modules/HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/Scanner/ScannerWeb.php',
     'modules/HealthCheck/Scanner/ScannerCli.php',
-    'modules/HealthCheck/static/company_logo.png',
     'modules/HealthCheck/static/css.css',
-    'modules/HealthCheck/static/fontawesome-webfont.eot',
-    'modules/HealthCheck/static/fontawesome-webfont.svg',
-    'modules/HealthCheck/static/fontawesome-webfont.ttf',
-    'modules/HealthCheck/static/fontawesome-webfont.woff',
-    'modules/HealthCheck/static/FontAwesome.otf',
+    'styleguide/assets/fonts/fontawesome-webfont.eot',
+    'styleguide/assets/fonts/fontawesome-webfont.svg',
+    'styleguide/assets/fonts/fontawesome-webfont.ttf',
+    'styleguide/assets/fonts/fontawesome-webfont.woff',
+    'styleguide/assets/fonts/FontAwesome.otf',
     'modules/HealthCheck/tpls/index.tpl',
     'modules/HealthCheck/views/view.index.php',
     'modules/HealthCheck/controller.php',
@@ -62,7 +61,7 @@ $files=array(
 $manifest = array(
     'acceptable_sugar_versions' =>
     array (
-    'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
+    'regex_matches' => array('6\.[5-7]\.*','7\.\d+\.*')
     ),
     'author' => 'SugarCRM, Inc.',
     'description' => 'SugarCRM Upgrader 2.0',

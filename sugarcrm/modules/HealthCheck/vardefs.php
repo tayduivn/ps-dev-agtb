@@ -23,7 +23,7 @@ $dictionary['HealthCheck'] = array(
         'bucket' => array(
             'name' => 'bucket',
             'vname' => 'LBL_BUCKET',
-            'type' => 'varchar',
+            'type' => 'char',
             'len' => 1,
         ),
         'flag' => array(

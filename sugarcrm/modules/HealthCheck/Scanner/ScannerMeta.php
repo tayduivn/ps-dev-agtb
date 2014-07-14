@@ -16,11 +16,14 @@
  * HealthCheck Scanner Metadata
  *
  */
-class ScannerMeta
+class HealthCheckScannerMeta
 {
     const FLAG_GREEN = 1;
     const FLAG_YELLOW = 2;
     const FLAG_RED = 3;
+
+    // default translation locale
+    const DEFAULT_LOCALE = 'en_us';
 
     // plain vanilla sugar
     const VANILLA = 'A';
@@ -129,6 +132,10 @@ class ScannerMeta
         ),
         312 => array(
             'report' => 'badVardefsName',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
+        313 => array(
+            'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
         ),
 
@@ -349,7 +356,7 @@ class ScannerMeta
         self::STUDIO => self::FLAG_YELLOW,
         self::STUDIO_MB => self::FLAG_YELLOW,
         self::STUDIO_MB_BWC => self::FLAG_YELLOW,
-        self::CUSTOM => self::FLAG_YELLOW,
+        self::CUSTOM => self::FLAG_RED,
         self::MANUAL => self::FLAG_RED,
         self::UPGRADED => self::FLAG_GREEN,
     );
@@ -362,24 +369,32 @@ class ScannerMeta
 
     /**
      *
-     * @var ScannerMeta
+     * @var HealthCheckScannerMeta
      */
     protected static $instance;
 
     /**
-     *
+     * @var string
+     */
+    protected $locale = self::DEFAULT_LOCALE;
+
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
+        $this->setupLocale();
         $this->loadModStrings();
         $this->createMetaByReportId();
     }
 
     /**
+     * Returns HealthCheckScannerMeta instance
      *
-     * @return ScannerMeta
+     * @return HealthCheckScannerMeta
      */
-    public static function get()
+    public static function getInstance()
     {
         if (empty(self::$instance)) {
             self::$instance = new self();
@@ -388,7 +403,7 @@ class ScannerMeta
     }
 
     /**
-     *
+     * remaps $meta array to $meta['report'] => $meta['id']
      */
     protected function createMetaByReportId()
     {
@@ -454,8 +469,10 @@ class ScannerMeta
     }
 
     /**
+     * Returns meta by report id
      *
-     * @param unknown $reportId
+     * @param string $reportId
+     * @param array $params
      * @return array|boolean
      */
     public function getMetaFromReportId($reportId, $params = array())
@@ -467,16 +484,18 @@ class ScannerMeta
     }
 
     /**
+     * Translates $label
      *
      * @param string $label
+     * @param array $params
      * @return string
      */
     protected function getModString($label, $params = array())
     {
         if (!empty($this->modStrings[$label])) {
-            $label = $this->modStrings[$label];
+            $label = vsprintf($this->modStrings[$label], $params);
         }
-        return vsprintf($label, $params);
+        return $label;
     }
 
     /**
@@ -484,11 +503,25 @@ class ScannerMeta
      */
     protected function loadModStrings()
     {
-        if (is_callable('return_module_language') && isset($GLOBALS['current_language'])) {
-            $this->modStrings = return_module_language($GLOBALS['current_language'], 'HealthCheck');
+        if (is_callable('return_module_language')) {
+            $this->modStrings = return_module_language($this->locale, 'HealthCheck');
         } else {
-            include __DIR__ . '/../language/en_us.lang.php';
+
+            include __DIR__ . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
             $this->modStrings = $mod_strings;
         }
+    }
+
+    protected function setupLocale()
+    {
+        if(isset($GLOBALS['current_language'])) {
+            $this->locale = $GLOBALS['current_language'];
+        } else {
+            $lang = explode(getenv("LANG"), '.');
+            if($lang) {
+                $this->locale = $lang[0];
+            }
+        }
+
     }
 }
