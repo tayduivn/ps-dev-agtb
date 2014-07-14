@@ -138,11 +138,11 @@ class TwitterApi extends ConnectorApi
         $this->validateHash($args);
         $extApi = $this->getEAPM();
         if (is_array($extApi) && isset($extApi['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extApi['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 0, $extApi['error']);
         }
 
         if ($extApi === false) {
-            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 0, $GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA']);
         }
 
         $result = $extApi->getCurrentUserInfo();
@@ -151,7 +151,7 @@ class TwitterApi extends ConnectorApi
             foreach($result['errors'] as $errorKey => $error) {
                 $errorString .= $error['code'].str_replace(' ', '_', $error['message']);
             }
-            throw new SugarApiExceptionRequestMethodFailure('errors_from_twitter: '.$errorString, $args);
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 0, json_encode(array('status'=>$errorString)));
         }
         return $result;
     }
