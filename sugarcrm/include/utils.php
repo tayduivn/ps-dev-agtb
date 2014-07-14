@@ -240,7 +240,6 @@ function make_sugar_config(&$sugar_config)
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
             'mass_delete_chunk_size' => 20,
             'mass_link_chunk_size' => 20,
         ),
@@ -472,7 +471,6 @@ function get_sugar_config_defaults()
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
             'mass_delete_chunk_size' => 20,
             'mass_link_chunk_size' => 20,
         ),
