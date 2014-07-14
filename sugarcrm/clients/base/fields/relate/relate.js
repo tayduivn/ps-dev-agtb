@@ -351,6 +351,11 @@
         values[this.def.name] = model[this.getRelatedModuleField()] || model.value;
         this.model.set(values, {silent: silent});
 
+        // unset values of related bean fields in order to make the model load
+        // the values corresponding to the currently selected bean
+        // TODO: move this to SidecarExpressionContext
+        this.model.unset(this.def.link);
+
         var newData = {},
             self = this;
         _.each(this.def.populate_list, function(target, source) {
