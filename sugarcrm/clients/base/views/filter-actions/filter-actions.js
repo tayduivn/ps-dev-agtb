@@ -173,6 +173,14 @@
     /**
      * Handler for canceling form editing.
      *
+     * First, it will revert model attributes (back to synced attributes), and
+     * remove the current edit state.
+     * Second,
+     * - if the filter has changed, the collection is refreshed.
+     * - if we were creating a new filter, the cached selected filter id is
+     * cleared (so that we will get back to the default filter), otherwise we
+     * just close the form.
+     *
      * @triggers filter:apply to apply the previous filter definition.
      * @triggers filter:select:filter to switch back to the default filter.
      * @triggers filter:create:close to close the filter creation form.
@@ -183,6 +191,8 @@
             id = filter.get('id'),
             changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
             filter.revertAttributes();
+
+        filterLayout.clearFilterEditState();
 
         //Apply the previous filter definition if something has changed meanwhile
         if (changedAttributes && changedAttributes.filter_definition) {

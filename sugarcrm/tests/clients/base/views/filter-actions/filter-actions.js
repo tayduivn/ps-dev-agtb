@@ -106,6 +106,7 @@ describe('Base.View.FilterActions', function() {
 
         beforeEach(function() {
             component = {
+                clearFilterEditState: $.noop,
                 clearLastFilter: $.noop,
                 trigger: $.noop
             };

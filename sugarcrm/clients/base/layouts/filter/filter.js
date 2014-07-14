@@ -356,12 +356,11 @@
         var filter, editState = this.retrieveFilterEditState();
         // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
         // the filter form in the state he left it.
+        filter = this.filters.collection.get(id) || app.data.createBean('Filters', {module_name: this.moduleName});
         if (editState && (editState.id === id || (id==='create' && !editState.id))) {
-            filter = app.data.createBean('Filters');
             filter.set(editState);
         } else {
             editState = false;
-            filter = this.filters.collection.get(id) || app.data.createBean('Filters', {module_name: this.moduleName});
         }
 
         this.context.set('currentFilterId', filter.get('id'));
