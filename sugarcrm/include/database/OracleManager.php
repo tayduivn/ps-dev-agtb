@@ -1225,9 +1225,21 @@ EOQ;
      */
     public function get_columns($tablename)
     {
+        $columns = array(
+            'column_name',
+            'data_type',
+            'data_precision',
+            'data_scale',
+            'char_length',
+            'data_default',
+            'nullable'
+        );
+        $query = "SELECT "
+            . implode(',', $columns)
+            . " FROM user_tab_columns "
+            . " WHERE TABLE_NAME = {$this->quoted(strtoupper($tablename))}";
         //find all unique indexes and primary keys.
-        $result = $this->query(
-            "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
+        $result = $this->query($query);
 
         $columns = array();
         while (($row=$this->fetchByAssoc($result)) !=null) {

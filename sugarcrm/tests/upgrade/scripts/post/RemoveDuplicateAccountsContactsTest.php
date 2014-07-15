@@ -60,11 +60,14 @@ class RemoveDuplicateAccountsContactsTest extends Sugar_PHPUnit_Framework_TestCa
         $account_id = self::$account_id;
         $db = $this->db;
         $upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $values = implode(",", $startingRows);
-        $query = "INSERT into accounts_contacts (id, contact_id, account_id, date_modified, primary_account, deleted)"
-            . "VALUES $values";
+        foreach ($startingRows as $row) {
+            $query = "INSERT into accounts_contacts
+            (id, contact_id, account_id, date_modified, primary_account, deleted)
+            VALUES $row";
+            $db->query($query);
+        }
 
-        $db->query($query);
+
 
         $script = new SugarUpgradeRemoveDuplicateAccountsContacts($upgradeDriver);
         $script->from_version = "7.1.5";
@@ -75,8 +78,10 @@ class RemoveDuplicateAccountsContactsTest extends Sugar_PHPUnit_Framework_TestCa
         $count = $this->db->getOne("SELECT count(*) as c FROM accounts_contacts "
                                  . "WHERE contact_id = '{$contact_id}' OR account_id = '{$account_id}'");
 
-        $results = $db->query("SELECT * FROM accounts_contacts "
-                . "WHERE contact_id = '{$contact_id}' OR account_id = '{$account_id}'"
+
+        $results = $db->query(
+            "SELECT * FROM accounts_contacts "
+            . "WHERE contact_id = '{$contact_id}' OR account_id = '{$account_id}' ORDER BY id"
         );
 
         $this->assertEquals(count($expectedRows), $count, "Incorrect number of rows returned");
