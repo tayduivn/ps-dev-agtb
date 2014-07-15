@@ -17,3 +17,4 @@
 {{#if def.text}}
     {{str def.text this.module}}</label>
 {{/if}}
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
