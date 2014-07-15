@@ -15,20 +15,17 @@ require_once('include/database/IBMDB2Manager.php');
 
 class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    /** @var IBMDB2Manager */
-    protected $_db = null;
-
     static public function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('app_strings');
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     static public function tearDownAfterClass()
     {
-        SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
     }
 
     public function setUp()
@@ -69,73 +66,5 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvert(array $parameters, $result)
     {
         $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
-    }
-
-    /**
-     * Test asserts that massageField generates correct default value for field if it's needed
-     *
-     * @dataProvider providerForMassageFieldDefDefault
-     */
-    public function testMassageFieldDefDefault(array $defs, $expected)
-    {
-        $this->_db->massageFieldDef($defs, 'table');
-        if (isset($expected)) {
-            $this->assertArrayHasKey('default', $defs, 'Default value is not present');
-            $this->assertEquals($expected, $defs['default'], 'Default value is incorrect');
-        } else {
-            $this->assertArrayNotHasKey('default', $defs, 'Default value is incorrect');
-        }
-    }
-
-    static public function providerForMassageFieldDefDefault()
-    {
-        return array(
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'int',
-                ),
-                null,
-            ),
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'int',
-                    'default' => 5,
-                ),
-                5,
-            ),
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'int',
-                    'required' => true,
-                ),
-                0,
-            ),
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'varchar',
-                ),
-                null,
-            ),
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'varchar',
-                    'default' => 'string',
-                ),
-                'string',
-            ),
-            array(
-                array(
-                    'name' => 'test',
-                    'type' => 'varchar',
-                    'required' => true,
-                ),
-                '',
-            ),
-        );
     }
 }
