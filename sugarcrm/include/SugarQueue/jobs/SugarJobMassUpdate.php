@@ -33,7 +33,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
     /**
      * @var int number of records to be updated/deleted at one time
      */
-    protected $chunkSize = 1000;
+    protected $chunkSize = 500;
 
     /**
      * constructor

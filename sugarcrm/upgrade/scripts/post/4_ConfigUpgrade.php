@@ -34,10 +34,6 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
         }
 
         $defaults = array(
-            'mass_actions' => array(
-                'mass_delete_chunk_size' => 20,
-                'mass_link_chunk_size' => 20,
-            ),
             'merge_duplicates' => array(
                 'merge_relate_fetch_concurrency' => 2,
                 'merge_relate_fetch_timeout' => 90000,
@@ -88,11 +84,26 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
             }
         }
 
-        if (!empty($this->upgrader->config['mass_actions']) &&
-            !empty($this->upgrader->config['mass_actions']['mass_update_chunk_size']) &&
-            $this->upgrader->config['mass_actions']['mass_update_chunk_size'] == '20'
-        ) {
-            unset($this->upgrader->config['mass_actions']['mass_update_chunk_size']);
+        if (!empty($this->upgrader->config['mass_actions'])) {
+            // Remove `mass_update_chunk_size` if it is same as default setting.
+            if (!empty($this->upgrader->config['mass_actions']['mass_update_chunk_size']) &&
+                $this->upgrader->config['mass_actions']['mass_update_chunk_size'] == '20'
+            ) {
+                unset($this->upgrader->config['mass_actions']['mass_update_chunk_size']);
+            }
+            // Remove `mass_delete_chunk_size` if it is same as default setting.
+            if (!empty($this->upgrader->config['mass_actions']['mass_delete_chunk_size']) &&
+                $this->upgrader->config['mass_actions']['mass_delete_chunk_size'] == '20'
+            ) {
+                unset($this->upgrader->config['mass_actions']['mass_delete_chunk_size']);
+            }
+            // Remove `mass_link_chunk_size` if it is same as default setting.
+            if (!empty($this->upgrader->config['mass_actions']['mass_link_chunk_size']) &&
+                $this->upgrader->config['mass_actions']['mass_link_chunk_size'] == '20'
+            ) {
+                unset($this->upgrader->config['mass_actions']['mass_link_chunk_size']);
+            }
         }
+
     }
 }
