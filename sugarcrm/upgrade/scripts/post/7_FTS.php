@@ -1,5 +1,7 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -20,10 +22,16 @@ class SugarUpgradeFTS extends UpgradeScript
 
     public function run()
     {
-        if(!($this->from_flavor == 'ce' && $this->toFlavor('pro'))) return;
-
-        if($this->db->supports('fulltext') && $this->db->full_text_indexing_installed()) {
+        if ($this->from_flavor == 'ce' && $this->toFlavor('pro')
+            && $this->db->supports('fulltext') && $this->db->full_text_indexing_installed()
+        ) {
             $this->db->full_text_indexing_setup();
         }
+
+        //Always perform a clean re-index for the FTS after every upgrade
+        require_once 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
+        $indexer = new SugarSearchEngineFullIndexer();
+        $indexer->initiateFTSIndexer();
+        $this->log("FTS Indexer initiated.");
     }
 }
