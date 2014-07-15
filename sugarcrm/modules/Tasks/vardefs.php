@@ -151,6 +151,7 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CONTACT_PHONE',
             'studio' => array('listview' => true),
+            'readonly' => true,
         ),
         'contact_email' => array(
             'name' => 'contact_email',
