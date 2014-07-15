@@ -352,8 +352,7 @@ class SugarSystemInfo
      */
     public function getLicenseKey()
     {
-        $license = $this->getSettings();
-        return $license->settings['license_key'];
+        return $this->settings['license_key'];
     }
 
     /**

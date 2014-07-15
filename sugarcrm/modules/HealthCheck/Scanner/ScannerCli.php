@@ -43,21 +43,30 @@ class HealthCheckScannerCli extends HealthCheckScanner
                 $this->verbose = 2;
             }
 
-            // max field count
-            if ($argv[$i] == '-m') {
-                $i++;
-                $this->fieldCountMax = $argv[$i];
-            }
+            // instance directory
+            $this->instance = $argv[count($argv) - 1];
 
-            // warn field count
-            if ($argv[$i] == '-w') {
-                $i++;
-                $this->fieldCountWarn = $argv[$i];
+            // generic properties
+            if ($argv[$i] == '-d') {
+                while (strpos($argv[++$i], '=')) {
+                    list($property, $value) = $this->parsePropertyValuePair($argv[$i]);
+                    if (property_exists($this, $property)) {
+                        $this->$property = $value;
+                    }
+                }
             }
         }
+    }
 
-        // instance directory
-        $this->instance = $argv[count($argv)-1];
+    /**
+     * Consumes key=value string and returns key => value hash
+     *
+     * @param $string
+     * @return array
+     */
+    protected function parsePropertyValuePair($string)
+    {
+        return array_map('trim', explode('=', $string));
     }
 
     /**
@@ -93,7 +102,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
  */
 
 if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php ScannerCli.php [-m maxfieldstoerror] [-w count maxfieldstowarn] [-l logfile] [-v] /path/to/instance\n");
+    die("Use php ScannerCli.php [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
 }
 
 $sapi_type = php_sapi_name();
