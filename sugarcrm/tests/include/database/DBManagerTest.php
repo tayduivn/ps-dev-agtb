@@ -2542,4 +2542,58 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
     }
+
+    public function lengthTestProvider()
+    {
+        return array(
+            array(
+                array('len' => '5'),
+                array('len' => '4', 'precision' => '2'),
+                "7,2"
+            ),
+            array(
+                array('len' => '4'),
+                array('len' => '12', 'precision' => '2'),
+                "12,2"
+            ),
+            array(
+                array('type' => 'decimal', 'len' => '10', 'precision' => '6'),
+                array('len' => '12', 'precision' => '2'),
+                "12,6"
+            ),
+            array(
+                array('type' => 'decimal', 'len' => '12', 'precision' => '6'),
+                array('len' => '14', 'precision' => '6'),
+                "14,6"
+            ),
+        );
+    }
+
+    /**
+     * @ticket BR-1787
+     * @group unit
+     * @dataProvider lengthTestProvider
+     */
+    public function testChangeFieldLength($dbcol, $vardefcol, $result)
+    {
+        $DBManagerClass = get_class($this->_db);
+        $db_columns = array(
+            "id" => array("name" => "id", 'type' => 'char', 'len' => '36'),
+            "quantity" => array("name" => "quantity", 'type' => 'int', 'len' => '5'),
+        );
+        $db_columns['quantity'] = array_merge($db_columns['quantity'], $dbcol);
+
+        $vardefs = array(
+            "id" => array("name" => "id", 'type' => 'id', 'len' => '36'),
+            "quantity" => array("name" => "quantity", 'type' => 'decimal', 'len' => '4', 'precision' => '2'),
+        );
+        $vardefs['quantity'] = array_merge($vardefs['quantity'], $vardefcol);
+
+        $dbmock = $this->getMock($DBManagerClass, array('get_columns'));
+        $dbmock->expects($this->any())
+               ->method('get_columns')
+               ->will($this->returnValue($db_columns));
+        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
+        $this->assertContains("quantity decimal($result)", $sql, "Bad length change");
+    }
 }
