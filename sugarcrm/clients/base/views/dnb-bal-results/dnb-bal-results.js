@@ -33,6 +33,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.initDashlet();
         app.events.on('dnbbal:invoke', this.invokeBAL, this);
         var originalMeta = app.metadata.getView('','dnb-bal-results');
         if (originalMeta.import_enabled_modules) {
