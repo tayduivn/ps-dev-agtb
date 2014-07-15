@@ -18,6 +18,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setup()
     {
+        SugarTestHelper::setup('beanFiles');
+        SugarTestHelper::setup('beanList');
+        SugarTestHelper::setup('current_user', array(true, true));
+
         // Backup current language settings so manipulation can be tested
         $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
         if (isset($GLOBALS['sugar_config']['disabled_languages'])) {
@@ -25,8 +29,6 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->setTestLanguageSettings();
-
-        SugarTestHelper::setup('current_user', array(true, true));
         $this->mm = MetaDataManager::getManager();
     }
 
@@ -39,6 +41,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         MetaDataFiles::clearModuleClientCache();
+        SugarTestHelper::tearDown();
     }
 
     public function testGetAllLanguages()
@@ -236,8 +239,11 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $manager->expects($this->once())->method('getAppListStrings')
             ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
 
+        $fileName = md5(microtime());
+        SugarAutoLoader::delFromMap($fileName, false);
+
         $manager->expects($this->exactly(3))->method('getLangUrl')
-            ->with($params['lang'], $params['ordered'])->will($this->returnValue(md5(time())));
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue($fileName));
 
         $manager->getLanguage($params);
     }
