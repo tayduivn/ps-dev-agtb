@@ -92,7 +92,6 @@ class HealthCheckScanner
 
     /**
      *
-     * FIXME: This needs to move to config file/class ???
      * @var array List of unsupported modules.
      */
     protected $unsupportedModules = array(

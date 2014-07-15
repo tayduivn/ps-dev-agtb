@@ -53,7 +53,7 @@ $files=array(
 $manifest = array(
     'acceptable_sugar_versions' =>
         array (
-            'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
+            'regex_matches' => array('6\.[5-7]\.*','7\.\d\.*')
         ),
     'author' => 'SugarCRM, Inc.',
     'description' => 'Health Check is a tool that verifies if the instance can be upgraded to version 7.*',
