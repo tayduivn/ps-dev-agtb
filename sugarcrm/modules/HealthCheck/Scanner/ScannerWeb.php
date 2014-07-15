@@ -20,44 +20,4 @@ require_once 'modules/HealthCheck/Scanner/Scanner.php';
  */
 class HealthCheckScannerWeb extends HealthCheckScanner
 {
-    /**
-     *
-     * @var User
-     */
-    protected $currentUserBackup;
-
-    /**
-     *
-     * Add additional init/cleanup because we run Healthcheck
-     * inline with sugar code directly.
-     *
-     * @see Scanner::scan
-     * @return array|void
-     */
-    public function scan() {
-        $this->initWeb();
-        $result = parent::scan();
-        $this->cleanupWeb();
-        return $result;
-    }
-
-    /**
-     * Initialize before running scanner
-     */
-    protected function initWeb()
-    {
-        if (isset($GLOBALS['current_user'])) {
-            $this->currentUserBackup = $GLOBALS['current_user'];
-        }
-    }
-
-    /**
-     * Cleanup after running scanner
-     */
-    protected function cleanupWeb()
-    {
-        if (!empty($this->currentUserBackup)) {
-            $GLOBALS['current_user'] = $this->currentUserBackup;
-        }
-    }
 }

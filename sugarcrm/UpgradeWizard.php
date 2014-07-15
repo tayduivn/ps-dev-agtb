@@ -26,10 +26,6 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
 require_once "{$files_dir}WebUpgrader.php";
 $upg = new WebUpgrader(dirname(__FILE__));
 $upg->init();
-if(!$upg->doHealthcheck()) {
-    header("Location: index.php?module=HealthCheck&referrer=UpgradeWizard");
-    exit;
-}
 if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $token = $upg->startUpgrade();
     if(!$token) {
@@ -39,6 +35,10 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
             $errmsg = $upg->error;
         }
         die($errmsg);
+    }
+    if(!$upg->doHealthcheck()) {
+        header("Location: index.php?module=HealthCheck&referrer=UpgradeWizard");
+        exit;
     }
 	$upg->displayUpgradePage();
 	exit(0);

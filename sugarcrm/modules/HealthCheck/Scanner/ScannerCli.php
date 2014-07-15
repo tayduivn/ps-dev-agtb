@@ -93,6 +93,33 @@ class HealthCheckScannerCli extends HealthCheckScanner
             echo $fmsg;
         }
     }
+
+    /**
+     * @see HealthCheckScanner::init
+     *
+     * @return bool
+     */
+    protected function init()
+    {
+        if(!is_dir($this->instance)) {
+            return $this->fail("{$this->instance} is not a directory");
+        }
+        $this->log("Initializing the environment");
+        chdir($this->instance);
+        if(!file_exists("include/entryPoint.php")) {
+            return $this->fail("{$this->instance} is not a Sugar instance");
+        }
+        define('ENTRY_POINT_TYPE', 'api');
+        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
+               $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
+               $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check;
+        if(!defined('sugarEntry'))define('sugarEntry', true);
+        require_once('include/entryPoint.php');
+
+        $GLOBALS['current_user'] = new BlackHole();
+
+        return parent::init();
+    }
 }
 
 /**
