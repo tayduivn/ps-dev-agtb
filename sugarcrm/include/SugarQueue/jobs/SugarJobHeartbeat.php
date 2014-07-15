@@ -12,8 +12,6 @@
 
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
 require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
-require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
-
 
 /**
  * SugarJobHeartbeat
@@ -69,7 +67,7 @@ class SugarJobHeartbeat implements RunnableSchedulerJob
     protected function sendHeartbeat($info)
     {
         $license = Administration::getSettings('license');
-        $client = new SugarHeartbeatClient();
+        $client = $this->getClient();
         $client->sugarHome($license->settings['license_key'], $info);
         return !$client->getError();
     }
@@ -82,5 +80,17 @@ class SugarJobHeartbeat implements RunnableSchedulerJob
     protected function getSystemInfo()
     {
         return SugarSystemInfo::getInstance();
+    }
+
+    /**
+     * Get SugarHeartbeatClient object
+     *
+     * @return SugarHeartbeatClient
+     */
+    protected function getClient()
+    {
+        SugarAutoLoader::requireWithCustom('include/SugarHeartbeat/SugarHeartbeatClient.php', true);
+        $clientClass = SugarAutoLoader::customClass('SugarHeartbeatClient');
+        return new $clientClass();
     }
 }
