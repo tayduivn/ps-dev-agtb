@@ -26,7 +26,11 @@
     </div>
     <div class="hr hide"></div>
     <div class="span4 commit-date">
-        {{#if this.commit_date}}{{timeago commit_date "LBL_COMMITTED_TIME_RELATIVE"}}&nbsp;<i id="show_hide_history_log"
-                                                                                              class="icon-caret-down icon-sm"></i>{{/if}}
+        {{#if this.commit_date}}
+            <span class="relativetime">
+                {{str 'LBL_LAST_COMMIT'}}{{relativeTime commit_date class='date'}}
+                &nbsp;<i id="show_hide_history_log" class="icon-caret-down icon-sm"></i>
+            </span>
+        {{/if}}
     </div>
 </div>

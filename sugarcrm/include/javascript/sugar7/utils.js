@@ -128,17 +128,18 @@
                     lang_string_key = '',
                     final_args = [],
                     labels = [],
+                    config = app.metadata.getModule('Forecasts', 'config'),
                     likely_args = {
                         changed: likely_difference != 0,
-                        show: app.metadata.getModule('Forecasts', 'config').show_worksheet_likely
+                        show: config.show_worksheet_likely
                     },
                     best_args = {
                         changed: best_difference != 0,
-                        show: app.metadata.getModule('Forecasts', 'config').show_worksheet_best
+                        show: config.show_worksheet_best
                     },
                     worst_args = {
                         changed: worst_difference != 0,
-                        show: app.metadata.getModule('Forecasts', 'config').show_worksheet_worst
+                        show: config.show_worksheet_worst
                     };
 
                 // increment num_shown for each variable that is true
@@ -151,7 +152,13 @@
 
                 if(worst_args.changed && worst_args.show) {
                     final_args.push(
-                        this.gatherLangArgsByParams(worst_direction, worst_arrow, worst_difference, newestModel, 'worst_case')
+                        this.gatherLangArgsByParams(
+                            worst_direction,
+                            worst_arrow,
+                            worst_difference,
+                            newestModel,
+                            'worst_case'
+                        )
                     );
                 } else if(worst_args.show) {
                     // push an empty array for args
@@ -161,7 +168,13 @@
                 //determine what changed and add parts to the array for displaying the changes
                 if(likely_args.changed && likely_args.show) {
                     final_args.push(
-                        this.gatherLangArgsByParams(likely_direction, likely_arrow, likely_difference, newestModel, 'likely_case')
+                        this.gatherLangArgsByParams(
+                            likely_direction,
+                            likely_arrow,
+                            likely_difference,
+                            newestModel,
+                            'likely_case'
+                        )
                     );
                 } else if(likely_args.show) {
                     // push an empty array for args
@@ -170,7 +183,13 @@
 
                 if(best_args.changed && best_args.show) {
                     final_args.push(
-                        this.gatherLangArgsByParams(best_direction, best_arrow, best_difference, newestModel, 'best_case')
+                        this.gatherLangArgsByParams(
+                            best_direction,
+                            best_arrow,
+                            best_difference,
+                            newestModel,
+                            'best_case'
+                        )
                     );
                 } else if(best_args.show) {
                     // push an empty array for args
@@ -191,7 +210,8 @@
             },
 
             /**
-             * Returns an array of three args for the html for the arrow, the difference (amount changed), and the new value
+             * Returns an array of three args for the html for the arrow,
+             * the difference (amount changed), and the new value
              *
              * @param dir {String} direction of the arrow, LBL_UP/LBL_DOWN
              * @param arrow {String} HTML for the arrow string
@@ -229,10 +249,9 @@
                 /**
                  * Three cases exist when a row is showing commitLog icon:
                  *
-                 * Manager  - showOpps=1 - isManager=1 => Manager's Opportunities row - forecast_type = 'Direct'
-                 * Manager  - showOpps=0 - isManager=1 => Manager has another manager in their ManagerWorksheet - forecast_type = 'Rollup'
-                 * Rep      - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
-                 *
+                 * Manager - showOpps=1 - isManager=1 => Mgr's Opportunities row - forecast_type = 'Direct'
+                 * Manager - showOpps=0 - isManager=1 => Mgr has another mgr in their MgrWkst - forecast_type = 'Rollup'
+                 * Rep     - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
                  */
                 return (!showOpps && isManager) ? 'Rollup' : 'Direct';
             },
@@ -301,7 +320,9 @@
                 // because of the SETUP or UPDATED label which has no args
                 if((argsArray.length + 1) != labels.length) {
                     // SOMETHING CRAAAAZY HAPPENED!
-                    app.logger.error('ForecastsUtils.parseArgsAndLabels() :: argsArray and labels params are not the same length ');
+                    var msg = 'ForecastsUtils.parseArgsAndLabels() :: '
+                            + 'argsArray and labels params are not the same length';
+                    app.logger.error(msg);
                     return null;
                 }
 
@@ -424,19 +445,23 @@
              */
             getColumnVisFromKeyMap: function(key, viewName) {
                 var moduleMap = {
-                    'forecastsWorksheet': 'rep',
-                    'forecastsWorksheetTotals': 'rep',
-                    'forecastsWorksheetManager': 'mgr',
-                    'forecastsWorksheetManagerTotals': 'mgr'
-                };
+                        'forecastsWorksheet': 'rep',
+                        'forecastsWorksheetTotals': 'rep',
+                        'forecastsWorksheetManager': 'mgr',
+                        'forecastsWorksheetManagerTotals': 'mgr'
+                    },
+                    whichKeyMap,
+                    keyMap,
+                    returnValue;
 
                 // which key map to use from the moduleMap
-                var whichKeyMap = moduleMap[viewName];
+                whichKeyMap = moduleMap[viewName];
 
                 // get the proper keymap
-                var keyMap = (whichKeyMap === 'rep') ? this._tableColumnsConfigKeyMapRep : this._tableColumnsConfigKeyMapManager;
+                keyMap = (whichKeyMap === 'rep') ? this._tableColumnsConfigKeyMapRep
+                                                 : this._tableColumnsConfigKeyMapManager;
 
-                var returnValue = app.metadata.getModule('Forecasts', 'config')[keyMap[key]];
+                returnValue = app.metadata.getModule('Forecasts', 'config')[keyMap[key]];
                 // If we've been passed a value that doesn't exist in the keymaps
                 if(!_.isUndefined(returnValue)) {
                     // convert it to boolean
@@ -455,7 +480,6 @@
              * @param context
              */
             getSelectedUsersReportees: function(selectedUser, context) {
-
                 if(selectedUser.is_manager) {
                     // make sure the reportee's array is there
                     if(_.isUndefined(selectedUser.reportees)) {

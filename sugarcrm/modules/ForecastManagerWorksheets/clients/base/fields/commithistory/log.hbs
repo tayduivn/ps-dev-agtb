@@ -11,4 +11,6 @@
  */
 --}}
 {{{commit}}}<br />
-{{timeago commit_date "LBL_COMMITTED_TIME_RELATIVE"}}
+<span class="relativetime">
+    {{str 'LBL_LAST_COMMIT'}}{{relativeTime commit_date class='date'}}
+</span>
