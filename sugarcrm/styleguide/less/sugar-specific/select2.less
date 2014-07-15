@@ -10,12 +10,17 @@
     top: 10px;
     right: 9px;
     color: @grayLight;
+    z-index: 1;
   }
-  input {
+  input[type="text"] {
     border: @inputBorder !important;
+    position: relative;
     &:focus {
       .box-shadow(none);
       border: 1px solid @linkColor !important;
+    }
+    &.select2-active {
+      z-index: 2;
     }
   }
 }
