@@ -253,6 +253,9 @@
 
     showComponent: function (name) {
         this._super('showComponent', [name]);
+        if (this.currentToggle === this.TOGGLE_CREATE) {
+            this.createViewRendered = true;
+        }
         this.handleShowComponent();
     },
 
