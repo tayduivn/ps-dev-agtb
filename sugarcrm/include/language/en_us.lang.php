@@ -3835,6 +3835,7 @@ $app_strings = array (
     'LBL_DNB_BAL_JOBCD_PH' => 'Select Job Function',
     'LBL_DNB_BAL_ORG_NAME' => 'Organization Name',
     'LBL_DNB_BAL_IMPORT_AS' => 'Import As:',
+    'LBL_DNB_BAL_ORG_NAME' => 'Company Name',
 
     /*Tool tips for BAL*/
     'LBL_TT_DNB_BAL_MILLIONS' => 'in $USD Millions',
@@ -3851,6 +3852,7 @@ $app_strings = array (
     'LBL_TT_DNB_BAL_MILLIONS_EX' => 'In $USD Millions. Example: 100 or 4.3',
     'LBL_TT_DNB_BAL_NET_INCOME_GROWTH' => 'Percentage (%)',
     'LBL_TT_DNB_BAL_IPO_PRICE_RANGE' => 'In $USD. Example: IPO Price Range 2.00 to 2.50',
+    'LBL_TT_DNB_BAL_ORG_NAME' => 'Enter Company Name',
 
     /* D&B BAL Validation Messages */
     'ERR_DNB_BAL_COMPARISON' => 'Error. Lower limit must be less than upper limit',
