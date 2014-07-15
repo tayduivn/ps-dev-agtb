@@ -95,10 +95,12 @@
             this.getFilterOptions(true);
         }, this);
 
-        this.filters = app.data.createBeanCollection('Filters');
-        this.filters.setModuleName(this.getSearchModule());
-        this.filters.setFilterOptions(this.getFilterOptions());
-        this.filters.load();
+        if (app.metadata.getModule('Filters')) {
+            this.filters = app.data.createBeanCollection('Filters');
+            this.filters.setModuleName(this.getSearchModule());
+            this.filters.setFilterOptions(this.getFilterOptions());
+            this.filters.load();
+        }
     },
 
     /**
@@ -558,6 +560,9 @@
      * @return {Array} The filter definition.
      */
     buildFilterDefinition: function(searchTerm) {
+        if (!app.metadata.getModule('Filters')) {
+            return [];
+        }
         var filterBeanClass = app.data.getBeanClass('Filters').prototype,
             filterOptions = this.getFilterOptions() || {},
             filter = this.filters.collection.get(filterOptions.initial_filter),
