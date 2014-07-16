@@ -47,7 +47,8 @@ class SugarBeanApiHelper
         $action = (!empty($options['action']) && $options['action'] == 'list') ? 'list' : 'view';
 
         $data = array();
-        if ($bean->ACLAccess($action) && empty($bean->deleted)) {
+        $hasAccess = empty($bean->deleted) && $bean->ACLAccess($action);
+        if ($hasAccess) {
             foreach ($bean->field_defs as $fieldName => $properties) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
@@ -90,10 +91,6 @@ class SugarBeanApiHelper
                 }
             }
             //END SUGARCRM flav=pro ONLY
-
-            // set ACL
-            // if not an admin and the hashes differ, send back bean specific acl's
-            $data['_acl'] = $this->getBeanAcl($bean, $fieldList);
         } else {
             if (isset($bean->id)) {
                 $data['id'] = $bean->id;
@@ -113,6 +110,13 @@ class SugarBeanApiHelper
                     $data['assigned_user_id'] = $bean->assigned_user_id;
                 }
             }
+        }
+
+        // in some cases the ACL data should be displayed, even when the used doesn't have access to the bean
+        // (e.g. after bean is assigned to a different user and thus is no more accessible)
+        if ($hasAccess || !empty($options['display_acl'])) {
+            // if not an admin and the hashes differ, send back bean specific acl's
+            $data['_acl'] = $this->getBeanAcl($bean, $fieldList);
         }
 
         return $data;
