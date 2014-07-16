@@ -34,8 +34,9 @@ class SugarUpgradeRemoveDuplicateAccountsContacts extends UpgradeScript
             //Create a temp_table to hold the non-dupe entries.
             $columns = $this->db->get_columns('accounts_contacts');
             $indices = $this->db->get_indices('accounts_contacts');
+            $cols = implode(',', array_keys($columns));
             $createTempTableQuery = $this->db->createTableSQLParams('accounts_contacts_tmp', $columns, $indices);
-            $copyDataQuery = "INSERT INTO accounts_contacts_tmp (SELECT * FROM accounts_contacts)";
+            $copyDataQuery = "INSERT INTO accounts_contacts_tmp ({$cols}) (SELECT {$cols} FROM accounts_contacts)";
             $deDupeQuery = "select t1.id FROM accounts_contacts t1, accounts_contacts t2 "
                 . "WHERE t1.id > t2.id AND t1.contact_id = t2.contact_id AND t1.account_id = t2.account_id "
                 . "AND t1.deleted = t2.deleted AND t1.primary_account = t2.primary_account";
