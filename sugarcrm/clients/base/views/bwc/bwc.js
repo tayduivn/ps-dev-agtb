@@ -29,6 +29,27 @@
         'editview', 'config'
     ],
 
+    /**
+     * The URL to a BWC view to be used in the iFrame element (template).
+     *
+     * See {@link #_renderHtml} on how this is created and then kept in sync
+     * with the iFrame.
+     *
+     * @property {string}
+     */
+    url: '',
+
+    /**
+     * Sets the current URL of this view to point to a bwc link.
+     *
+     * See {@link #_setCurrentUrl} on how this is kept in sync with the current
+     * view url and window hash.
+     *
+     * @property {string}
+     * @private
+     */
+    _currentUrl: '',
+
     initialize: function(options) {
         // If (for some reason) we're trying to directly access old Home/Dashboards, for redirect to sidecar #Home
         var url = options.context.get('url');
@@ -119,8 +140,8 @@
 
         this.$('iframe').load(function() {
             //In order to update current location once bwc link is clicked.
-            var url = '#bwc/index.php' + this.contentWindow.location.search;
-            self._setCurrentUrl(url);
+            this.url = 'index.php' + this.contentWindow.location.search;
+            self._setCurrentUrl();
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback
@@ -285,15 +306,16 @@
     },
 
     /**
-     * Update current window location once bwc link is clicked.
+     * Update current window location based on the {@link #url} property.
      *
-     * @param {String} url current hash path.
+     * Confirms that the sidecar hash is always matching the url in the iFrame
+     * prefixed by`#bwc/` hash (for proper routing handling).
+     *
      * @private
      */
-    _setCurrentUrl: function(url) {
-    	url = app.utils.rmIframeMark(url);
-        this._currentUrl = url;
-        window.parent.location.hash = url;
+    _setCurrentUrl: function() {
+        this._currentUrl = app.utils.rmIframeMark('#bwc/' + this.url);
+        window.parent.location.hash = this._currentUrl;
     },
 
     /**
@@ -390,6 +412,8 @@
             return;
         }
 
+        app.logger.debug('Bind event in BWC view');
+
         elem.on('click.bwc.sugarcrm', function(e) {
             if (e.button !== 0 || e.ctrlKey || e.metaKey) {
                 return;
@@ -399,6 +423,23 @@
             return false;
         });
         app.accessibility.run(elem, 'click');
+    },
+
+    /**
+     * Allow BWC modules to rewrite their links when using their own ajax
+     * calls.
+     *
+     * *ATTENTION:* This method might cause memory leaks if not used properly.
+     * Make sure that {@link #unbindDom} is being used and cleaning up any
+     * events that this view is creating (use {@link Utils.Logger.levels}
+     * `debug` level to track all the events being created and check if the
+     * ones being cleared by {@link #unbindDom} match.
+     */
+    rewriteLinks: function() {
+        app.logger.warn('Possible memory leak on BWC code');
+        var frame = this.$('iframe').get(0).contentWindow;
+        this._rewriteLinksForSidecar(frame);
+        this._rewriteNewWindowLinks(frame);
     },
 
     /**
@@ -416,7 +457,7 @@
      * This method is private because it binds data and might cause memory
      * leaks. Please use this with caution and with {@link #unbindDom}.
      *
-     * @param {Window} frame the contentWindow of the frame to rewrite links on.
+     * @param {Window} frame The `contentWindow` of the frame to rewrite links.
      * @private
      */
     _rewriteLinksForSidecar: function(frame) {
@@ -428,14 +469,14 @@
     },
 
     /**
-     * Rewrite new window links (target=_blank) on the frame given to the new
+     * Rewrite new window links (`target=_blank`) on the frame given to the new
      * sidecar with bwc url.
      *
-     * This will match all "target=_blank" links that aren't already pointing to
-     * sidecar already and make them sidecar bwc compatible. This will assume
-     * that all links to sidecar modules are already rewritten.
+     * This will match all `"target=_blank"` links that aren't already pointing
+     * to sidecar already and make them sidecar bwc compatible. This will
+     * assume that all links to sidecar modules are already rewritten.
      *
-     * @param {Window} frame the contentWindow of the frame to rewrite links on.
+     * @param {Window} frame The `contentWindow` of the frame to rewrite links.
      * @private
      */
     _rewriteNewWindowLinks: function(frame) {
@@ -486,6 +527,17 @@
         if (!bwcWindow || bwcWindow.$ === undefined) {
             return;
         }
+
+        // FIXME we need to provide a better way to do this
+        if (app.config && app.config.logLevel === 'DEBUG') {
+
+            var registed = _.reduce($('a', bwcWindow.document), function(memo, el) {
+                var events = $._data(el, 'events');
+                return memo + _.where(_.flatten(events), {namespace: 'bwc.sugarcrm'}).length;
+            }, 0);
+            app.logger.debug('Clear ' + registed + ' event(s) in `bwc.sugarcrm`.');
+        }
+
         $('a', bwcWindow.document).off('.bwc.sugarcrm');
     },
 
@@ -500,16 +552,21 @@
      * but there is no actual reload of the iFrame, so we can't remove the
      * events.
      *
+     * The {@link #_setCurrentUrl} method is setting the {@link #_currentUrl}
+     * as the one set in the parent window as hash. This means that there is no
+     * real reload of the view, just hash update to keep it in sync.
+     *
+     * The custom route `route: "bwc/*url"` is ignoring the reload of the view
+     * based on the same logic used here.
+     *
      * @param {Object} route Route object being passed from
      *   {@link Core.Routing#beforeRoute}.
      */
     beforeRoute: function(route) {
-        var args = route.args;
+        var bwcUrl = route && route.args && route.args[0];
 
-        var prevUrl = app.bwc.lastUrl;
-        app.bwc.lastUrl = args && args[0] || '';
-
-        if (args && app.utils.addIframeMark(args[0]) === prevUrl) {
+        if (bwcUrl && this._currentUrl.replace('#bwc/', '') === bwcUrl) {
+            // update hash link only
             return;
         }
 

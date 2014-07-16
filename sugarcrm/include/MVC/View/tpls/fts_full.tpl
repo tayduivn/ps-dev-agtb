@@ -191,10 +191,8 @@ width:70%;
             }
             var q = $("#ftsSearchField").val();
 
-            if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
-                // clear any potential binds in BWC view
-                window.parent.SUGAR.App.view.createView({name: 'bwc'}).unbindDom();
-            }
+            // this view shouldn't be supported outside of a BWC frame.
+            window.parent.SUGAR.App.controller.layout.getComponent('bwc').unbindDom();
 
             $.ajax({
                 type: "POST",
@@ -223,10 +221,7 @@ width:70%;
                         SUGAR.FTS.addModuleFilterHandlers();
                     }
                     SUGAR.FTS.toogleShowMore();
-                    if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
-                        // FIXME: we shouldn't be calling a private method, specially one that can cause memory leaks
-                        window.parent.SUGAR.App.view.createView({name: 'bwc'})._rewriteLinksForSidecar(window);
-                    }
+                    window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
                 },
                 failure: function(o)
                 {
@@ -294,6 +289,7 @@ width:70%;
         },
         loadMore: function()
         {
+            debugger;
             SUGAR.FTS.currentOffset += SUGAR.FTS.limit;
             SUGAR.FTS.search(true);
         }

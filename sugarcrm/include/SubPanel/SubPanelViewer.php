@@ -61,10 +61,9 @@ echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;
 $subpanel_object->display();
 //Rewrite links to use sidecar routes on update of Subpanel
 echo("<script>
-if (window.parent && window.parent.SUGAR && window.parent.SUGAR.App.view) {
-    // FIXME: not only we are calling a private method, we are triggering memory leaks
-    window.parent.SUGAR.App.view.views.BaseBwcView.prototype._rewriteLinksForSidecar(window);
-}</script>");
+// this view shouldn't be supported outside of a BWC frame.
+window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
+</script>");
 
 if(empty($_REQUEST['inline']))
 {
