@@ -27,13 +27,13 @@ describe('Base.Field.Date', function() {
         var field;
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'date', 'date', 'edit');
-
             sinon.collection.spy(app, 'date');
             sinon.collection.spy(app.date.fn, 'formatUser');
 
             sinon.collection.stub(app.user, 'getPreference')
                 .withArgs('datepref').returns('d/m/Y');
+
+            field = SugarTest.createField('base', 'date', 'date', 'edit');
         });
 
         afterEach(function() {
@@ -56,14 +56,14 @@ describe('Base.Field.Date', function() {
         var field;
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'date', 'date', 'edit');
-
             sinon.collection.spy(app, 'date');
             sinon.collection.spy(app.date, 'convertFormat');
             sinon.collection.spy(app.date.fn, 'formatServer');
 
             sinon.collection.stub(app.user, 'getPreference')
                 .withArgs('datepref').returns('d/m/Y');
+
+            field = SugarTest.createField('base', 'date', 'date', 'edit');
         });
 
         afterEach(function() {
@@ -146,10 +146,10 @@ describe('Base.Field.Date', function() {
                 SugarTest.loadHandlebarsTemplate('date', 'field', 'base', 'edit');
                 SugarTest.testMetadata.set();
 
-                field = SugarTest.createField('base', 'date', 'date', 'edit');
-
                 sinon.collection.stub(app.user, 'getPreference')
                     .withArgs('datepref').returns('d/m/Y');
+
+                field = SugarTest.createField('base', 'date', 'date', 'edit');
             });
 
             afterEach(function() {
@@ -205,10 +205,10 @@ describe('Base.Field.Date', function() {
                 SugarTest.loadHandlebarsTemplate('date', 'field', 'base', 'edit');
                 SugarTest.testMetadata.set();
 
-                field = SugarTest.createField('base', 'date', 'date', 'edit');
-
                 sinon.collection.stub(app.user, 'getPreference')
                     .withArgs('datepref').returns('d/m/Y');
+
+                field = SugarTest.createField('base', 'date', 'date', 'edit');
             });
 
             afterEach(function() {

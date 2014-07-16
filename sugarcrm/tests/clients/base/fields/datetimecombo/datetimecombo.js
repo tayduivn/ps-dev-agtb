@@ -82,8 +82,6 @@ describe('Base.Field.DateTimeCombo', function() {
         var field;
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
-
             sinon.collection.spy(app, 'date');
             sinon.collection.spy(app.date, 'convertFormat');
             sinon.collection.spy(app.date.fn, 'format');
@@ -91,6 +89,8 @@ describe('Base.Field.DateTimeCombo', function() {
             sinon.collection.stub(app.user, 'getPreference')
                 .withArgs('datepref').returns('d/m/Y')
                 .withArgs('timepref').returns('h:ia');
+
+            field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
         });
 
         afterEach(function() {
@@ -173,11 +173,11 @@ describe('Base.Field.DateTimeCombo', function() {
                 SugarTest.loadHandlebarsTemplate('datetimecombo', 'field', 'base', 'edit');
                 SugarTest.testMetadata.set();
 
-                field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
-
                 sinon.collection.stub(app.user, 'getPreference')
                     .withArgs('datepref').returns('d/m/Y')
                     .withArgs('timepref').returns('h:ia');
+
+                field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
             });
 
             afterEach(function() {
