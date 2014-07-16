@@ -52,6 +52,7 @@
                 //SP-1654: Prevents quickcreate from incorrectly considering model changed
                 this.model.set(this.def.type_name, domParentTypeVal, {silent: true});
                 this.model.setDefaultAttribute(this.def.type_name, domParentTypeVal);
+                this._createFiltersCollection();
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
@@ -125,6 +126,8 @@
             // FIXME we shouldn't make this assumption and this method should
             // receive a true Backbone.Model or Data.Bean
             module = model.module || model._module;
+
+        this._createFiltersCollection();
 
         if (app.acl.hasAccess(this.action, module, this.model.get('assigned_user_id'), this.name)) {
             if (module) {

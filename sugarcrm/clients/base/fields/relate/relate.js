@@ -95,6 +95,15 @@
             this.getFilterOptions(true);
         }, this);
 
+        this._createFiltersCollection();
+    },
+
+    /**
+     * Creates a Filters BeanCollection to easily apply filters.
+     *
+     * @protected
+     */
+    _createFiltersCollection: function() {
         if (app.metadata.getModule('Filters')) {
             this.filters = app.data.createBeanCollection('Filters');
             this.filters.setModuleName(this.getSearchModule());
@@ -560,7 +569,7 @@
      * @return {Array} The filter definition.
      */
     buildFilterDefinition: function(searchTerm) {
-        if (!app.metadata.getModule('Filters')) {
+        if (!app.metadata.getModule('Filters') || !this.filters) {
             return [];
         }
         var filterBeanClass = app.data.getBeanClass('Filters').prototype,
