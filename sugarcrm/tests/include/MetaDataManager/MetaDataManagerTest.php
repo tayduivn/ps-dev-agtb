@@ -130,7 +130,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'analytics' => array(
                 'enabled' => true,
-            )
+            ),
         );
 
         $expectedConfigs = array(
@@ -141,7 +141,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'analytics' => array(
                 'enabled' => true,
-            )
+            ),
+            'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
         );
 
         $manager = $this->getMock('MetadataManagerMock', array('getSugarConfig'));
