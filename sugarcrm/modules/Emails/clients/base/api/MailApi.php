@@ -275,7 +275,9 @@ class MailApi extends ModuleApi
      */
     public function findRecipients($api, $args)
     {
-        ini_set("max_execution_time", 300);
+        if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
+            ini_set('max_execution_time', 300);
+        }
         $term = (isset($args["q"])) ? trim($args["q"]) : "";
         $offset = 0;
         $limit = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
