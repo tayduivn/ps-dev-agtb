@@ -28,7 +28,7 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestTrackerUtility::setup();
         $bean = new Account();
-        $user = SugarTestUserUtilities::createAnonymousUser(false, true);
+        $user = SugarTestUserUtilities::createAnonymousUser(true, true);
         $user->updateLastLogin();
         SugarTestTrackerUtility::insertTrackerEntry($bean, 'editview');
         $this->sysInfo = SugarSystemInfo::getInstance();

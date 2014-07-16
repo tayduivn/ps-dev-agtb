@@ -423,23 +423,12 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateLastLogin()
     {
-        /** @var User|PHPUnit_Framework_MockObject_MockObject $user */
-        $user = $this->getMockBuilder('User')
-            ->setMethods(array('save'))
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $user->expects($this->once())->method('save');
-
-        $user->date_modified = '2013-11-11';
 
         $now = TimeDate::getInstance()->nowDb();
 
-        $user->updateLastLogin();
+        $last_login = $this->_user->updateLastLogin();
 
-        $this->assertEquals($now, $user->last_login);
-
-        $this->assertEquals('2013-11-11', $user->date_modified);
+        $this->assertEquals($now, $last_login);
     }
 
     public function isAdminOrDeveloperForModuleProvider()
