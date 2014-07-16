@@ -83,27 +83,5 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
                 $this->upgrader->config[$key] = $values;
             }
         }
-
-        if (!empty($this->upgrader->config['mass_actions'])) {
-            // Remove `mass_update_chunk_size` if it is same as default setting.
-            if (!empty($this->upgrader->config['mass_actions']['mass_update_chunk_size']) &&
-                $this->upgrader->config['mass_actions']['mass_update_chunk_size'] == '20'
-            ) {
-                unset($this->upgrader->config['mass_actions']['mass_update_chunk_size']);
-            }
-            // Remove `mass_delete_chunk_size` if it is same as default setting.
-            if (!empty($this->upgrader->config['mass_actions']['mass_delete_chunk_size']) &&
-                $this->upgrader->config['mass_actions']['mass_delete_chunk_size'] == '20'
-            ) {
-                unset($this->upgrader->config['mass_actions']['mass_delete_chunk_size']);
-            }
-            // Remove `mass_link_chunk_size` if it is same as default setting.
-            if (!empty($this->upgrader->config['mass_actions']['mass_link_chunk_size']) &&
-                $this->upgrader->config['mass_actions']['mass_link_chunk_size'] == '20'
-            ) {
-                unset($this->upgrader->config['mass_actions']['mass_link_chunk_size']);
-            }
-        }
-
     }
 }

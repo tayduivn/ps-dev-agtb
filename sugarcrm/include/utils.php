@@ -240,10 +240,6 @@ function make_sugar_config(&$sugar_config)
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            // You can override chunk sizes of mass actions here :
-            // - `mass_delete_chunk_size`.
-            // - `mass_link_chunk_size`.
-            // - `mass_update_chunk_size`.
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -473,10 +469,6 @@ function get_sugar_config_defaults()
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            // You can override chunk sizes of mass actions here :
-            // - `mass_delete_chunk_size`.
-            // - `mass_link_chunk_size`.
-            // - `mass_update_chunk_size`.
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
