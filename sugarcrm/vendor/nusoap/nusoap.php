@@ -3,6 +3,12 @@
 /*
 Modification information for LGPL compliance
 
+commit 5f3c903c0f801464e8cceb36f83b248edee3f963
+Author: Sergey Morozov <smorozov@sugarcrm.com>
+Date:   Sat Jul 12 13:34:44 2014 +0300
+
+    [BR-1775] (SI 69805) AGFA-265: Soap fault invalid schema
+
 commit 76702f8945b5e4076d406d8e3388c23d7959a2e3
 Author: Stanislav Malyshev <smalyshev@gmail.com>
 Date:   Mon Nov 26 15:35:58 2012 -0800
