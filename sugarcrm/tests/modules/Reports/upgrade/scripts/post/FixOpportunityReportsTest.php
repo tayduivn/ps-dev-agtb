@@ -25,13 +25,6 @@ class FixOpportunityReportsTest extends UpgradeTestCase
         parent::setUp();
 
         $this->db = new SugarTestDatabaseMock();
-        $this->db->setUp();
-    }
-
-    public function tearDown()
-    {
-        $this->db->tearDown();
-        parent::tearDown();
     }
 
     public function dataProviderRun()
@@ -56,9 +49,10 @@ class FixOpportunityReportsTest extends UpgradeTestCase
      */
     public function testRun($id, $name, $content, $validHash)
     {
-        $this->db->queries['select_saved_reports'] = array(
-            'match' => '/from saved_reports where module = \'Opportunities\'/',
-            'rows' => array(
+        $this->db->addQuerySpy(
+            'select_saved_reports',
+            '/from saved_reports where module = \'Opportunities\'/',
+            array(
                 array(
                     'id' => $id,
                     'name' => $name,
@@ -67,9 +61,7 @@ class FixOpportunityReportsTest extends UpgradeTestCase
             )
         );
 
-        $this->db->queries['update_saved_reports'] = array(
-            'match' => '/UPDATE saved_reports/'
-        );
+        $this->db->addQuerySpy('update_saved_reports', '/UPDATE saved_reports/');
 
         $this->upgrader->db = $this->db;
 

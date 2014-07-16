@@ -15,9 +15,10 @@
  */
 ({
     events: {
-        'click #languageList .dropdown-menu a' : 'setLanguage'
+        'click [data-action=languageList] .dropdown-menu a' : 'setLanguage'
     },
     tagName: "span",
+    plugins: ['Dropdown'],
     /**
      * @override
      * @param {Object} options
@@ -56,11 +57,11 @@
         });
     },
     adjustMenuHeight: function(){
-        if (this.$('#languageList').length === 0) {
+        if (this.$('[data-action=languageList]').length === 0) {
             return;
         }
-        var linkButton = this.$('#languageList'),
-            dropupMenu = this.$('#languageList .dropdown-menu.bottom-up'),
+        var linkButton = this.$('[data-action=languageList]'),
+            dropupMenu = this.$('[data-action=languageList] .dropdown-menu.bottom-up'),
             linkBottomPosition = parseInt($('footer').height() - linkButton.height() - linkButton.position().top, 10),
             dropupOffset = parseInt(dropupMenu.css('bottom'), 10),
             borderTop = parseInt(dropupMenu.css('border-top-width'), 10),

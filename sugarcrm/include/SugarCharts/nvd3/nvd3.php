@@ -16,7 +16,7 @@ class nvd3 extends JsChart
 {
 
     var $supports_image_export = true;
-    var $print_html_legend_pdf = true;
+    var $print_html_legend_pdf = false;
 
     function __construct()
     {

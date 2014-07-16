@@ -90,13 +90,18 @@ function get_xtpl_edit(){
         return $this->get_xtpl_edit();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function get_field_def()
+    {
+        $def = parent::get_field_def();
 
+        // The default value is stored in database as string,
+        // however from domain standpoint it has to be boolean
+        // @see Data.Validation#requiredValidator()
+        $def['default'] = isTruthy($def['default']);
 
-
-
-
-
+        return $def;
+    }
 }
-
-
-?>

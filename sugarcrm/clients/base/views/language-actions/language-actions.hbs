@@ -12,13 +12,15 @@
 --}}
 
 {{#unless isAuthenticated}}
-<span class="dropdown" id="languageList">
-        <a href="javascript:void(0)" title="{{str "LBL_LANGUAGE"}}" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-globe"></i>
-            {{str "LBL_LANGUAGE"}}</a>
-        <ul class="dropdown-menu bottom-up">
-            {{#each languageList}}
-            <li><a data-lang-key="{{key}}" href="javascript:void(0)">{{#eq ../currentLang key}}<strong>{{value}}</strong>{{else}}{{value}}{{/eq}}</a></li>
-            {{/each}}
-        </ul>
+<span class="dropdown" data-action="languageList" id="languageList">
+        <button title="{{str "LBL_LANGUAGE"}}" aria-label="{{str "LBL_LANGUAGE"}}" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" role="button"><i class="icon-globe"></i><span class="action-label">
+            {{str "LBL_LANGUAGE"}}</span></button>
+        <div class="dropdown-menu bottom-up">
+            <ul role="menu">
+                {{#each languageList}}
+                <li><a data-lang-key="{{key}}" href="javascript:void(0)" tabindex="-1">{{#eq ../currentLang key}}<strong>{{value}}</strong>{{else}}{{value}}{{/eq}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
 </span>
 {{/unless}}

@@ -153,15 +153,12 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     	Relationship::delete_cache();
         $mi->rebuild_tabledictionary();
 
-        // Clear all metadata caches and prime just the base app caches
-        MetaDataManager::clearAPICache(true, true);
-        MetaDataManager::setupMetadata();
 
         $MBmodStrings = $GLOBALS [ 'mod_strings' ];
         $GLOBALS['reload_vardefs'] = true;
         $GLOBALS [ 'mod_strings' ] = return_module_language ( '', 'Administration' ) ;
         $rac = new RepairAndClear ( ) ;
-        $rac->repairAndClearAll ( array ( 'clearAll', 'rebuildExtensions',  ), array ( $GLOBALS [ 'mod_strings' ] [ 'LBL_ALL_MODULES' ] ), true, false ) ;
+        $rac->repairAndClearAll ( array ( 'clearAll', 'rebuildExtensions',  ), array ( $GLOBALS [ 'mod_strings' ] [ 'LBL_ALL_MODULES' ] ), true, false, '' ) ;
         $GLOBALS [ 'mod_strings' ] = $MBmodStrings;
 
         //Bug 41070, supercedes the previous 40941 fix in this section

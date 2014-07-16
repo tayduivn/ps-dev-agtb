@@ -51,6 +51,7 @@ $job_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     //Add class to build additional TimePeriods as necessary
     16 => 'class::SugarJobCreateNextTimePeriod',
+    17 => 'class::SugarJobHeartbeat',
     //END SUGARCRM flav=pro ONLY
     20 => 'cleanOldRecordLists',
 	//BEGIN SUGARCRM flav=int ONLY

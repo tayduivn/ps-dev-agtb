@@ -321,7 +321,8 @@
 
             switch (data.operator) {
                 case '$between':
-                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                    // FIXME: the fields should set a true number (see SC-3138).
+                    return !(_.isNaN(parseFloat(data.value[0])) || _.isNaN(parseFloat(data.value[1])));
                 case '$dateBetween':
                     return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
                 default:

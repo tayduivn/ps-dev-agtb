@@ -101,7 +101,14 @@ nv.models.treemapChart = function() {
       var wrap = container.selectAll('g.nv-wrap.nv-treemapWithLegend').data(data);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-treemapWithLegend').append('g');
       var g = wrap.select('g');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-treemapWrap');
 
       //------------------------------------------------------------

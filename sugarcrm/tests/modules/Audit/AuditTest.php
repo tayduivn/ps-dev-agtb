@@ -17,8 +17,11 @@ require_once 'modules/Audit/Audit.php';
 class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    protected $bean =null;
+    protected $bean = null;
 
+    /**
+     * @var SugarTestDatabaseMock
+     */
     public static $db;
 
     public static function setUpBeforeClass()
@@ -26,14 +29,12 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-        self::$db = new SugarTestDatabaseMock();
-        self::$db->setUp();
+        self::$db = SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
-        self::$db->tearDown();
         SugarTestHelper::tearDown();
     }
 
@@ -52,7 +53,6 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unset($this->bean);
-        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
@@ -61,19 +61,20 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         global $timedate;
         $auditTable = $this->bean->get_audit_table_name();
         $dateCreated = date('Y-m-d H:i:s');
-        self::$db->queries['auditQuery'] =  array(
-                                    'match' => '/' . $auditTable . '/',
-                                    'rows' => array(
-                                                    array(
-                                                        'field_name' => 'name',
-                                                        'date_created' => $dateCreated,
-                                                        'before_value_string' => 'Test',
-                                                        'after_value_string' => 'Awesome',
-                                                        'before_value_text' => '',
-                                                        'after_value_text' => '',
-                                                        ),
-                                                    ),
-                                    );
+        self::$db->addQuerySpy(
+            'auditQuery',
+            '/' . $auditTable . '/',
+            array(
+                array(
+                    'field_name' => 'name',
+                    'date_created' => $dateCreated,
+                    'before_value_string' => 'Test',
+                    'after_value_string' => 'Awesome',
+                    'before_value_text' => '',
+                    'after_value_text' => '',
+                ),
+            )
+        );
         $audit = BeanFactory::getBean('Audit');
         $data = $audit->getAuditLog($this->bean);
         $dateCreated = $timedate->fromDbType($dateCreated, "datetime");
@@ -95,9 +96,10 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         global $timedate;
         $auditTable = $this->bean->get_audit_table_name();
         $dateCreated = date('Y-m-d H:i:s');
-        self::$db->queries['auditQuery'] =  array(
-            'match' => '/' . $auditTable . '/',
-            'rows' => array(
+        self::$db->addQuerySpy(
+            'auditQuery',
+            '/' . $auditTable . '/',
+            array(
                 array(
                     'field_name' => 'assigned_user_id',
                     'date_created' => $dateCreated,
@@ -106,23 +108,26 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
                     'before_value_text' => '',
                     'after_value_text' => '',
                 ),
-            ),
+            )
         );
-        self::$db->queries['translateQuery'] = array(
-            'match' => '/012345678/',
-            'rows' => array(
+
+        self::$db->addQuerySpy(
+            'translateQuery',
+            '/012345678/',
+            array(
                 array(
                     'user_name' => 'Jim'
                 ),
-            ),
+            )
         );
-        self::$db->queries['translateQuery2'] = array(
-            'match' => '/876543210/',
-            'rows' => array(
+        self::$db->addQuerySpy(
+            'translateQuery2',
+            '/876543210/',
+            array(
                 array(
                     'user_name' => 'Sally'
                 ),
-            ),
+            )
         );
         $audit = BeanFactory::getBean('Audit');
         $data = $audit->getAuditLog($this->bean);

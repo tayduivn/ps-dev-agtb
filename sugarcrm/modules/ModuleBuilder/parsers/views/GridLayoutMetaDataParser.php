@@ -798,7 +798,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                         {
                             $fieldname = $col [ 'field' ] ;
                         } else {
-                            $GLOBALS['log']->error("Could not find a valid field in $col");
+                            $GLOBALS['log']->error("Could not find a valid field in " . var_export($col, true));
                             continue;
                         }
                     } else

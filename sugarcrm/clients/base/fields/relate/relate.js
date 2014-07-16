@@ -102,6 +102,20 @@
     },
 
     /**
+     * Creates a Filters BeanCollection to easily apply filters.
+     *
+     * @protected
+     */
+    _createFiltersCollection: function() {
+        if (app.metadata.getModule('Filters')) {
+            this.filters = app.data.createBeanCollection('Filters');
+            this.filters.setModuleName(this.getSearchModule());
+            this.filters.setFilterOptions(this.getFilterOptions());
+            this.filters.load();
+        }
+    },
+
+    /**
      * Bind the additional keydown handler on select2
      * search element (affected by version 3.4.3).
      *
@@ -350,6 +364,11 @@
         values[this.def.id_name] = model.id;
         values[this.def.name] = model[this.getRelatedModuleField()] || model.value;
         this.model.set(values, {silent: silent});
+
+        // unset values of related bean fields in order to make the model load
+        // the values corresponding to the currently selected bean
+        // TODO: move this to SidecarExpressionContext
+        this.model.unset(this.def.link);
 
         var newData = {},
             self = this;

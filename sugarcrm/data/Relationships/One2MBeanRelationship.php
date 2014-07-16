@@ -121,8 +121,11 @@ class One2MBeanRelationship extends One2MRelationship
     {
         $rhsID = $this->def['rhs_key'];
 
-        //If this relationship has already been removed, we can just return
-        if ($rhs->$rhsID != $lhs->id) {
+        // If this relationship has already been removed, we can just return.
+        // Check both current value of related ID field and the one from fetched row.
+        // The latter is valid in case, if relation was removed by changing bean's related ID field to another value.
+        // We still need to track this and call logic hooks.
+        if ($rhs->$rhsID != $lhs->id && isset($rhs->fetched_row[$rhsID]) && $rhs->fetched_row[$rhsID] != $lhs->id) {
             return false;
         }
 

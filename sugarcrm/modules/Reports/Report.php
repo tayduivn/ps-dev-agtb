@@ -120,6 +120,21 @@ class Report
      */
     protected $currency_join = array();
 
+    /**
+     * @var DBManager
+     */
+    public $db;
+
+    /**
+     * @var array
+     */
+    protected $group_by_arr = array();
+
+    /**
+     * @var array
+     */
+    protected $group_order_by_arr = array();
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -1751,11 +1766,12 @@ return str_replace(' > ','_',
             $db = DBManagerFactory::getInstance();
             $field_type = $db->getFieldType($this->focus->field_name_map[$field_data[1]]);
 
-            if(!in_array($field_type, array('currency','double','float','decimal','int','date','datetime')))
-            {
-                // add IFNULL to the field and then re-add alias back
-                return $this->db->convert($field_name, "IFNULL", array("''")) . " " . substr($field, $has_space + 1) . "\n";
-            }
+            // add IFNULL to the field and then re-add alias back
+            return $this->db->convert(
+                $field_name,
+                'IFNULL',
+                array($db->emptyValue($field_type))
+            ) . ' ' . substr($field, $has_space + 1) . "\n";
         }
         return $field;
     }

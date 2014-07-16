@@ -137,13 +137,7 @@
         // Try to retrieve cached filters.
         prototype._cache = prototype._cache || {};
         if (prototype._cache[module]) {
-            this.collection = this._createCachedCollection();
-            if (this._filterOptions.initial_filter) {
-                this.collection._setInitialFilter();
-            }
-            if (_.isFunction(options.success)) {
-                options.success(this.collection);
-            }
+            this._onSuccessCallback(options.success);
             return;
         }
 
@@ -151,6 +145,13 @@
 
         // No cache found, retrieve filters.
         this._loadPredefinedFilters();
+
+        if (!app.acl.hasAccess('list', module)) {
+            app.logger.debug('No "list" access to ' + module + ' so skipping fetch.');
+            this._onSuccessCallback(options.success);
+            return;
+        }
+
         prototype.fetch.call(this, {
             showAlerts: false,
             filter: [
@@ -159,14 +160,7 @@
             ],
             success: _.bind(function(models) {
                 this._cacheFilters(models);
-                this.collection = this._createCachedCollection();
-                if (this._filterOptions.initial_filter) {
-                    this.collection._setInitialFilter();
-                }
-
-                if (_.isFunction(options.success)) {
-                    options.success(this.collection);
-                }
+                this._onSuccessCallback(options.success);
             }, this),
             error: function() {
                 if (_.isFunction(options.error)) {
@@ -352,6 +346,25 @@
                 cache.defaultFilterFromMeta = template.meta.default_filter;
             }
         }, this);
+    },
+
+    /**
+     * Success callback applied once filters are retrieved in order to prepare
+     * the bean collection.
+     *
+     * @param {Function} [callback] Custom success callback. The collection is
+     *   readily available as the first argument to this callback function.
+     * @private
+     */
+    _onSuccessCallback: function(callback) {
+        this.collection = this._createCachedCollection();
+        if (this._filterOptions.initial_filter) {
+            this.collection._setInitialFilter();
+        }
+
+        if (_.isFunction(callback)) {
+            callback(this.collection);
+        }
     },
 
     /**

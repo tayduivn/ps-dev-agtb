@@ -982,6 +982,10 @@ abstract class UpgradeDriver
         	return sprintf($this->mod_strings['ERROR_PACKAGE_TYPE'], $manifest['type']);
         }
 
+        if(version_compare($manifest['version'], '7.0', '<')) {
+            return sprintf("Can not upgrade to version %s with 7.x upgrader", $manifest['version']);
+        }
+
         if(isset($manifest['acceptable_sugar_versions'])) {
         	$version_ok = false;
         	$matches_empty = true;

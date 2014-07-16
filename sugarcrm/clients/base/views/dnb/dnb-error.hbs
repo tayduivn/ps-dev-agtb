@@ -12,17 +12,11 @@
 --}}
 <br/>
 <div class="error-display" align="center">
-    {{#eq errmsg 'LBL_DNB_NOT_CONFIGURED'}}
-        <a class="connect-twitter" href="index.php#bwc/index.php?module=Connectors&action=ModifyProperties">
-    {{/eq}}
-    {{#match errmsg 'ERROR_CURL_*'}}
-        <a class="connect-twitter" href="index.php#bwc/index.php?module=Configurator&action=EditView">
-    {{/match}}
-        <em>{{str errmsg}}</em>
-    {{#eq errmsg 'LBL_DNB_NOT_CONFIGURED'}}
+    {{#if dnbError.errorLink}}
+        <a class="connect-twitter" href="{{dnbError.errorLink}}">
+            <em>{{str dnbError.errMsg}}</em>
         </a>
-    {{/eq}}
-    {{#match errmsg 'ERROR_CURL_*'}}
-        </a>
-    {{/match}}
+    {{else}}
+        <em>{{str dnbError.errMsg}}</em>
+    {{/if}}
 </div>

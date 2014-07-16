@@ -14,13 +14,12 @@
  * @extends View.View
  */
 ({
-    // TODO remove the id links in footer and replace to data-attributes (SC-2580)
     events: {
-        'click #shortcuts': 'shortcuts',
-        'click #tour': 'showTutorialClick',
-        'click #feedback': 'feedback',
-        'click #support': 'support',
-        'click #help': 'help'
+        'click [data-action=shortcuts]': 'shortcuts',
+        'click [data-action=tour]': 'showTutorialClick',
+        'click [data-action=feedback]': 'feedback',
+        'click [data-action=support]': 'support',
+        'click [data-action=help]': 'help'
     },
     tagName: 'span',
     layoutName: '',
@@ -61,14 +60,14 @@
         this.routeParams = {'route': route, 'params': params};
     },
     enableTourButton: function() {
-        this.$('#tour').removeClass('disabled');
-        this.events['click #tour'] = 'showTutorialClick';
+        this.$('[data-action=tour]').removeClass('disabled');
+        this.events['click [data-action=tour]'] = 'showTutorialClick';
         this.undelegateEvents();
         this.delegateEvents();
     },
     disableTourButton: function() {
-        this.$('#tour').addClass('disabled');
-        delete this.events['click #tour'];
+        this.$('[data-action=tour]').addClass('disabled');
+        delete this.events['click [data-action=tour]'];
         this.undelegateEvents();
         this.delegateEvents();
     },
@@ -119,9 +118,9 @@
             app.utils.doWhen(function() {
                 var layout = app.controller.layout;
                 if (!_.isUndefined(layout)) {
-                    if (layout.module == 'Home') {
-                        // if the layout exists and it's the `Home` Module, just enable the button as
-                        // a url redirect is what is used here.
+                    if (layout.module == 'Home' || layout.name === 'bwc') {
+                        // if the layout exists and it's the `Home` Module or `bw`, just enable the button as
+                        // a url redirect is what is used for the help here.
                         return true;
                     } else {
                         var sidebar = layout.getComponent('sidebar');
@@ -193,7 +192,7 @@
     disableHelpButton: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
 
-        var button = this.$('#help');
+        var button = this.$('[data-action=help]');
         if (button) {
             button.toggleClass('disabled', disable);
         }
@@ -213,7 +212,7 @@
      */
     toggleHelpButton: function(active, button) {
         if (_.isUndefined(button)) {
-            button = this.$('#help');
+            button = this.$('[data-action=help]');
         }
 
         if (button) {

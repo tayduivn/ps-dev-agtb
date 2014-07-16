@@ -45,6 +45,7 @@ describe("enum field", function() {
         model = null;
         field = null;
         stub_appListStrings.restore();
+        SugarTest.testMetadata.dispose();
     });
 
     it("should format a labeled select and have option selected on edit template", function() {
@@ -316,5 +317,51 @@ describe("enum field", function() {
                     expect(field._keysOrder).not.toEqual({});
                 });
             });
+    });
+
+    describe('massupdate', function() {
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'massupdate');
+            SugarTest.testMetadata.set();
+        });
+
+        describe('render', function() {
+            it('should render with the appendValues checkbox only if it is multiselect', function() {
+                field = SugarTest.createField('base', fieldName, 'enum', 'massupdate',
+                    {isMultiSelect: false, options: 'bugs_type_dom'});
+                field.render();
+
+                expect(field.$(field.appendValueTag)).not.toExist();
+
+                field.dispose();
+                field = SugarTest.createField('base', fieldName, 'enum', 'massupdate',
+                    {isMultiSelect: true, options: 'bugs_type_dom'});
+                field.render();
+
+                expect(field.$(field.appendValueTag)).toExist();
+            });
+        });
+
+        describe('bindDomChange', function() {
+            it('should update the model on append_value checkbox change when enum is multiselect', function() {
+                field = SugarTest.createField('base', fieldName, 'enum', 'massupdate',
+                    {isMultiSelect: true, options: 'bugs_type_dom'});
+                field.render();
+
+                expect(field.appendValue).toBeUndefined();
+                expect(field.model.get(fieldName + '_replace')).toBeUndefined();
+
+                field.$(field.appendValueTag).prop('checked', true).trigger('change');
+
+                expect(field.appendValue).toBeTruthy();
+                expect(field.model.get(fieldName + '_replace')).toBe('1');
+
+                field.$(field.appendValueTag).prop('checked', false).trigger('change');
+
+                expect(field.appendValue).toBeFalsy();
+                expect(field.model.get(fieldName + '_replace')).toBe('0');
+            });
+        });
     });
 });

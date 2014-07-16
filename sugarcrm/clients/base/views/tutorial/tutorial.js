@@ -71,7 +71,7 @@
      * shows tooltip on tour button
      */
     showTooltip: function() {
-        $('#tour')
+        $('[data-action=tour]')
             .tooltip({
                 container: 'body',
                 trigger: 'manual'
@@ -85,9 +85,9 @@
      */
     removeTooltip: function(delayTime) {
         if (!delayTime) {
-            $('#tour').tooltip('hide');
+            $('[data-action=tour]').tooltip('hide');
         } else {
-            _.delay(function() { $('#tour').tooltip('hide'); }, delayTime);
+            _.delay(function() { $('[data-action=tour]').tooltip('hide'); }, delayTime);
         }
     }
 })
