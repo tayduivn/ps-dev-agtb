@@ -187,7 +187,14 @@ for ($i = 0; $i < $product_count; $i++) {
                     if (isset($_POST[$j]) && is_array($_POST[$j]) && isset($_POST[$j][$i])) {
                         $value = $_POST[$j][$i];
                         if (isset($product->field_defs[$field]['type'])) {
-                            $sugarField = SugarFieldHandler::getSugarField($product->field_defs[$field]['type']);
+                            // figure out the type that we need
+                            $def = $product->field_defs[$field];
+                            // get the correct type in the following order
+                            //  custom_type -> dbType -> type
+                            // from the vardefs
+                            $type = !empty($def['custom_type']) ? $def['custom_type'] :
+                                !empty($def['dbType']) ? $def['dbType'] : $def['type'];
+                            $sugarField = SugarFieldHandler::getSugarField($type);
                             $sugarField->save($product, array($field => $value), $field, $product->field_defs[$field]);
                         } else {
                             $product->$field = $value;

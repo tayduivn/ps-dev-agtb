@@ -24,5 +24,4 @@ $viewdefs['portal']['layout']['footer'] = array(
             'view' => 'footer-actions'
         )
     ),
-
 );

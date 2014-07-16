@@ -19,6 +19,13 @@
     plugins: ['EllipsisInline'],
 
     /**
+     * HTML tag of the append value checkbox.
+     *
+     * @property {String}
+     */
+    appendValueTag: 'input[name=append_value]',
+
+    /**
      * Whether the value of this enum should be defaulted to the first item when model attribute is undefined
      * Set to false to prevent this defaulting
      */
@@ -524,17 +531,28 @@
 
     /**
      * Override to remove default DOM change listener, we use Select2 events instead
+     * Binds append value checkbox change for massupdate.
+     *
      * @override
      */
     bindDomChange: function() {
+        var $el = this.$(this.appendValueTag);
+        if ($el.length) {
+            $el.on('change', _.bind(function() {
+                this.appendValue = $el.prop('checked');
+                //FIXME: Should use true booleans (SC-2828)
+                this.model.set(this.name + '_replace', this.appendValue ? '1' : '0');
+            }, this));
+        }
     },
 
     /**
      * @override
      */
     unbindDom: function() {
+        this.$(this.appendValueTag).off();
         this.$(this.fieldTag).select2('destroy');
-        app.view.Field.prototype.unbindDom.call(this);
+        this._super('unbindDom');
     },
 
     /**

@@ -45,6 +45,9 @@ class SourceTest
         if ($this->id == 'ValidTestingEnabledAuth' || $this->id == 'ValidTestingEnabledUnAuth') {
             return true;
         }
+        if ($this->id == 'ThrowsErrors') {
+            throw new Exception('this connector has problems');
+        }
         return false;
     }
 
@@ -71,7 +74,9 @@ class ConnectorManagerTest extends ConnectorManager
             'InvalidTestFails' =>
                 array('id' => 'InvalidTestFails'),
             'InvalidNoSource' =>
-                array('id' => 'InvalidNoSource')
+                array('id' => 'InvalidNoSource'),
+            'ThrowsErrors' =>
+                array('id' => 'ThrowsErrors'),
         );
     }
     public function getEAPMForConnector($connector)
@@ -149,6 +154,14 @@ class ConnectorsValidTest extends Sugar_PHPUnit_Framework_OutputTestCase
                 array(
                     'id' => 'InvalidNoSource',
                     'testing_enabled' => false,
+                    'test_passed' => false,
+                    'eapm_bean' => false,
+                    'field_mapping' => array()
+                ),
+            'ThrowsErrors' =>
+                array(
+                    'id' => 'ThrowsErrors',
+                    'testing_enabled' => true,
                     'test_passed' => false,
                     'eapm_bean' => false,
                     'field_mapping' => array()

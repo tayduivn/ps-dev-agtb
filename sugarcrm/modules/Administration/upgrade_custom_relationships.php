@@ -78,7 +78,8 @@ function upgrade_custom_relationships($modules = array())
 						$fields = $bean->getFieldDefinitions();
 
 						foreach ($layout_defs[$module]["subpanel_setup"] as $key => $subDef) {
-							if ($layout_defs[$module]["subpanel_setup"][$key]['get_subpanel_data'] == $relName &&
+							if (isset($layout_defs[$module]["subpanel_setup"][$key]['get_subpanel_data']) &&
+								$layout_defs[$module]["subpanel_setup"][$key]['get_subpanel_data'] == $relName &&
 								isset($fields[$relName]) &&
 								$fields[$relName]['type'] != 'link'
 							) {

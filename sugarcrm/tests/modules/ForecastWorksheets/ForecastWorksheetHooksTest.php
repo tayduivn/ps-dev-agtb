@@ -290,8 +290,10 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $hook = new MockForecastWorksheetHooks();
 
-        $dbMock = new SugarTestDatabaseMock();
-        $dbMock->setUp();
+        /**
+         * @var $dbMock SugarTestDatabaseMock
+         */
+        $dbMock = SugarTestHelper::setUp('mock_db');
 
         $worksheet = $this->getMock('ForecastWorksheet', array('save', 'load_relationship', 'getFieldDefinition'));
         $worksheet->db = $dbMock;
@@ -327,17 +329,15 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         $worksheet->test = $linkMock;
 
-        $dbMock->queries['name_query'] = array(
-            'match' => '/test_name/',
-            'rows' => array()
+        $dbMock->addQuerySpy(
+            'name_query',
+            '/test_name/'
         );
         /* @var $hook ForecastWorksheetHooks */
         /* @var $worksheet ForecastWorksheet */
         $hook->afterRelationshipDelete($worksheet, 'after_relationship_delete', array('link' => 'test'));
 
-        $this->assertEquals(1, $dbMock->queries['name_query']['runCount']);
-
-        $dbMock->tearDown();
+        $this->assertEquals(1, $dbMock->getQuerySpyRunCount('name_query'));
     }
 }
 

@@ -583,7 +583,13 @@
                 enabled: true,
                 label: 'LBL_PREVIEW'
             },
-            isBwcEnabled = app.metadata.getModule(this.model.get('display_parent_type')).isBwcEnabled;
+            // assume modules without metadata are BWC by default
+            isBwcEnabled = true,
+            moduleMetadata = app.metadata.getModule(this.model.get('display_parent_type'));
+
+        if (moduleMetadata && _.has(moduleMetadata, 'isBwcEnabled')) {
+            isBwcEnabled = moduleMetadata.isBwcEnabled;
+        }
 
         if (isBwcEnabled) {
             preview.enabled = false;

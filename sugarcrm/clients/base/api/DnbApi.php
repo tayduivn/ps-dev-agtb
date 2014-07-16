@@ -84,7 +84,7 @@ class DnbApi extends SugarApi
         //invoke dnb api based on query type and query parameter
         $extDnbApi = $this->getEAPM();
         if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $extDnbApi['error']);
         }
         if ($extDnbApi === false) {
            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
@@ -119,7 +119,7 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbNews($queryParam);
         }
         if (is_array($result) && isset($result['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
         }
         return $result;
     }
@@ -137,7 +137,7 @@ class DnbApi extends SugarApi
         //invoke dnb api based on query type and query data
         $extDnbApi = $this->getEAPM();
         if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $extDnbApi['error']);
         }
         $queryType = $args['qtype'];
         $queryData = $args['qdata']; //data posted 
@@ -160,7 +160,7 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dupeCheck($queryData);
         }
         if (is_array($result) && isset($result['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
         }
         return $result;
     }
@@ -177,12 +177,12 @@ class DnbApi extends SugarApi
         //invoke dnb api based on query type and query data
         $extDnbApi = $this->getEAPM();
         if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $extDnbApi['error']);
         }
         $queryData = $args['qdata']; //data posted
         $result = $extDnbApi->dnbBALAccounts($queryData);
         if (is_array($result) && isset($result['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
         }
         return $result;
     }
@@ -199,12 +199,12 @@ class DnbApi extends SugarApi
         //invoke dnb api based on query type and query data
         $extDnbApi = $this->getEAPM();
         if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $extDnbApi['error']);
         }
         $queryData = $args['qdata']; //data posted
         $result = $extDnbApi->dnbBALContacts($queryData);
         if (is_array($result) && isset($result['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
         }
         return $result;
     }

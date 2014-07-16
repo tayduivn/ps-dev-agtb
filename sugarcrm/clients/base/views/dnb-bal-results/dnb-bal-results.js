@@ -11,6 +11,8 @@
 ({
     extendsFrom: 'DnbView',
 
+    plugins: ['Connector'],
+
     events: {
         'click .importContacts': 'importContacts',
         'click .backToContactsList': 'backToContactsList',
@@ -31,6 +33,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.initDashlet();
         app.events.on('dnbbal:invoke', this.invokeBAL, this);
         var originalMeta = app.metadata.getView('','dnb-bal-results');
         if (originalMeta.import_enabled_modules) {
@@ -50,15 +53,46 @@
     },
 
     loadData: function(options) {
-        if (this.disposed) {
-            return;
-        }
+        this.checkConnector('ext_rest_dnb',
+            _.bind(this.loadDataWithValidConnector, this),
+            _.bind(this.handleLoadError, this),
+            ['test_passed']);
+    },
+
+    /**
+     * Success callback to be run when Connector has been verified and validated
+     */
+    loadDataWithValidConnector: function() {
         this.template = app.template.get(this.name + '.dnb-bal-hint');
         this.render();
+        this.dnbError = null;
         //placed here instead of initialize
         //so that pagination params are reset when
         //reset is clicked on dnb-bal-params view
         this.initPaginationParams();
+    },
+
+    /**
+     * Failure callback to be run if Connector verification fails
+     * @param {object} connector that failed
+     */
+    handleLoadError: function(connector) {
+        //checks if the current user has admin access
+        var showAdmin = app.acl.hasAccess('admin', 'Administration');
+        if (showAdmin) {
+            this.dnbError = {
+                'errMsg': 'LBL_DNB_NOT_CONFIGURED',
+                'errorLink': this.commonConst.connectorSettingsURL,
+                'label': 'LBL_DNB_BAL'
+            };
+        } else {
+            this.dnbError = {
+                'errMsg': 'LBL_DNB_CONNECTOR_ERR',
+                'label': 'LBL_DNB_BAL'
+            };
+        }
+        this.template = app.template.get('dnb.dnb-sidepane-error');
+        this.render();
     },
 
     /**

@@ -13,131 +13,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
 * $Id: updater_utils.php 54741 2010-02-23 19:49:41Z rob $
 ********************************************************************************/
-require_once('include/utils/encryption_utils.php');
+require_once 'include/utils/encryption_utils.php';
+require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
 
-function getSystemInfo($send_usage_info=true){
-	global $sugar_config;
-	global $db, $timedate;
-	$info=array();
-	$info = getBaseSystemInfo($send_usage_info);
-    if($send_usage_info){
-		$info['application_key']=$sugar_config['unique_key'];
-		$info['php_version']=phpversion();
-		if(isset($_SERVER['SERVER_SOFTWARE'])) {
-			$info['server_software'] = $_SERVER['SERVER_SOFTWARE'];
-		} // if
-
-		//get user count.
-                $query = "SELECT count(id) as total from users WHERE " . User::getLicensedUsersWhere();
-                $result = $db->getOne($query, false, 'fetching active users count');
-                if ($result !== false) {
-                    $info['users'] = $result;
-                }
-
-	    $administration = Administration::getSettings('system');
-		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';
-
-
-		$result=$db->getOne("select count(id) count from users where status='Active' and deleted=0 and is_admin='1'", false, 'fetching admin count');
-		if($result !== false) {
-			$info['admin_users'] = $result;
-		}
-
-
-		$result=$db->getOne("select count(id) count from users", false, 'fetching all users count');
-		if($result !== false) {
-			$info['registered_users'] = $result;
-		}
-
-		$lastMonth = $db->convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
-		if( !$send_usage_info) {
-			$info['users_active_30_days'] = -1;
-		} else {
-			$info['users_active_30_days'] = $db->getOne("SELECT count( DISTINCT users.id ) user_count FROM tracker, users WHERE users.id = tracker.user_id AND  tracker.date_modified >= $lastMonth", false, 'fetching last 30 users count');
-		}
-
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if (file_exists('modules/Administration/System.php')) {
-	            require_once('modules/Administration/System.php');
-	            $system = new System();
-	            $info['oc_active_30_days'] = $system->getClientsActiveInLast30Days();
-	            $info['oc_active'] = $system->getEnabledOfflineClients($system->create_new_list_query("",'system_id != 1'));
-	            $info['oc_all'] = $system->getOfflineClientCount();
-	            $info['oc_br_all'] = $system->getTotalInstallMethods('bitrock');
-	            $info['oc_br_active_30_days'] = $system->getClientsActiveInLast30Days("install_method = 'bitrock'");
-	            $info['oc_br_active'] = $system->getEnabledOfflineClients($system->create_new_list_query("",'system_id != 1 AND install_method = \'bitrock\''));
-            }
-            //END SUGARCRM flav=pro ONLY
-
-
-		if(!$send_usage_info){
-			$info['latest_tracker_id'] = -1;
-		}else{
-			$id=$db->getOne("select id from tracker order by date_modified desc", false, 'fetching most recent tracker entry');
-			if ( $id !== false )
-			    $info['latest_tracker_id'] = $id;
-		}
-
-		$info['db_type']=$sugar_config['dbconfig']['db_type'];
-		$info['db_version']=$db->version();
-	}
-	if(file_exists('distro.php')){
-		include('distro.php');
-		if(!empty($distro_name))$info['distro_name'] = $distro_name;
-	}
-	//BEGIN SUGARCRM flav=pro ONLY
-	$result = $db->getOne("SELECT count(*) as record_count FROM session_history WHERE is_violation =1 AND date_entered >= $lastMonth");
-	if($result){
-		$info['license_portal_ex'] = $result;
-	}
-	$result = $db->getOne("SELECT MAX(num_active_sessions) as record_max FROM session_history WHERE date_entered >= $lastMonth");
-	$info['license_portal_max'] = 0;
-	if($result !== false) {
-		$info['license_portal_max'] = $result;
-	}
-	//END SUGARCRM flav=pro ONLY
-	$info['os'] = php_uname('s');
-	$info['os_version'] = php_uname('r');
-	$info['timezone_u'] = $GLOBALS['current_user']->getPreference('timezone');
-	$info['timezone'] = date('e');
-	if($info['timezone'] == 'e'){
-		$info['timezone'] = date('T');
-	}
-	return $info;
-
+/**
+ * Proxy to SugarSystemInfo::getInstance()->getInfo()
+ * Exists for BWC
+ *
+ * @param bool $send_usage_info
+ * @return array
+ */
+function getSystemInfo($send_usage_info = true)
+{
+    return SugarSystemInfo::getInstance()->getInfo();
 }
 
-function getBaseSystemInfo($send_usage_info=true){
-    include('sugar_version.php');
-    $info=array();
-
-    if($send_usage_info){
-        $info['sugar_db_version']=$sugar_db_version;
-    }
-    $info['sugar_version']=$sugar_version;
-    $info['sugar_flavor']=$sugar_flavor;
-    $info['auth_level'] = 0;
-
-	  //BEGIN SUGARCRM lic=sub ONLY
-
-    global $license;
-    if (!empty($license->settings))  {
-        $info['license_users']=$license->settings['license_users'];
-        $info['license_expire_date']=$license->settings['license_expire_date'];
-        $info['license_key']=$license->settings['license_key'];
-        $info['license_num_lic_oc']=$license->settings['license_num_lic_oc'];
-        $info['license_num_portal_users'] = (!empty($license->settings['license_num_portal_users']) ? $license->settings['license_num_portal_users'] : '');
-    }
-    $info['license_portal_ex'] = 0;
-    $info['license_portal_max'] = 0;
-
-	  //END SUGARCRM lic=sub ONLY
-
-
-    return $info;
-
-
+/**
+ * Proxy to SugarSystemInfo::getInstance()->getInfo()
+ * Exists for BWC
+ *
+ * @param bool $send_usage_info
+ * @return array
+ */
+function getBaseSystemInfo($send_usage_info = true)
+{
+    return SugarSystemInfo::getInstance()->getBaseInfo();
 }
 
 function check_now($send_usage_info=true, $get_request_data=false, $response_data = false, $from_install=false ) {
@@ -162,30 +62,17 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
 	if(!$response_data){
 
+        $systemInfo = SugarSystemInfo::getInstance();
+        SugarAutoLoader::requireWithCustom('include/SugarHeartbeat/SugarHeartbeatClient.php', true);
+        $sclientClass = SugarAutoLoader::customClass('SugarHeartbeatClient');
+        $sclient = new $sclientClass();
+
         if($from_install){
-    		$info = getBaseSystemInfo(false);
+    		$info = $systemInfo->getBaseInfo();
 
         }else{
-            $info = getSystemInfo($send_usage_info);
+            $info = $systemInfo->getInfo();
         }
-
-		require_once('vendor/nusoap//nusoap.php');
-
-		$GLOBALS['log']->debug('USING HTTPS TO CONNECT TO HEARTBEAT');
-		$sclient = new nusoapclient('https://updates.sugarcrm.com/heartbeat/soap.php', false, false, false, false, false, 15, 15);
-		$ping = $sclient->call('sugarPing', array());
-		if(empty($ping) || $sclient->getError()){
-			$sclient = '';
-		}
-
-		if(empty($sclient)){
-			$GLOBALS['log']->debug('USING HTTP TO CONNECT TO HEARTBEAT');
-			$sclient = new nusoapclient('http://updates.sugarcrm.com/heartbeat/soap.php', false, false, false, false, false, 15, 15);
-		}
-
-
-
-
 
 		  //BEGIN SUGARCRM lic=sub ONLY
 
@@ -215,7 +102,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 			$request_data = array('key'=>$key, 'data'=>$encoded);
 			return serialize($request_data);
 		}
-		$encodedResult = $sclient->call('sugarHome', array('key'=>$key, 'data'=>$encoded));
+		$encodedResult = $sclient->sugarHome($key, $info);
 
 	}else{
 		$encodedResult = 	$response_data['data'];

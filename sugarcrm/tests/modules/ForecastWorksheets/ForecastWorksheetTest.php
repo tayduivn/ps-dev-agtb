@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -21,12 +20,13 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $db;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        parent::setUpBeforeClass();
+
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        $this->db = SugarTestHelper::setUp('mock_db');
 
         SugarTestForecastUtilities::setUpForecastConfig();
         // this is needed to preload vardefs & ACLs so DB mocking won't mess with them
@@ -34,33 +34,21 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::getBean('Accounts');
     }
 
-    public function setUp()
-    {
-        $this->db = new SugarTestDatabaseMock();
-        $this->db->setUp();
-    }
-
     public function tearDown()
     {
-        $this->db->tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        SugarTestForecastUtilities::tearDownForecastConfig();
-        parent::tearDownAfterClass();
         SugarTestHelper::tearDown();
     }
 
     public function testGetRelatedNameReturnsEmpty()
     {
-        $this->db->queries['accountQuery'] = array(
-            'match' => '/my_test_id/',
-            'rows' => array(
+        $this->db->addQuerySpy(
+            'accountQuery',
+            '/my_test_id/',
+            array(
                 array(
                     'name' => 'My Test Account'
                 ),
-            ),
+            )
         );
 
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
@@ -76,13 +64,14 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $acc_name = 'My Test Account';
         $acc_id = 'my_test_id';
-        $this->db->queries['accountQuery'] = array(
-            'match' => '/' . $acc_id . '/',
-            'rows' => array(
+        $this->db->addQuerySpy(
+            'accountQuery',
+            '/' . $acc_id . '/',
+            array(
                 array(
                     'name' => $acc_name
                 ),
-            ),
+            )
         );
 
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');

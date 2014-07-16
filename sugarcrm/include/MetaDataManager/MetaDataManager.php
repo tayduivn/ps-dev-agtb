@@ -2676,11 +2676,11 @@ class MetaDataManager
         $filePath = $this->getLangUrl($language, $ordered);
         if (SugarAutoLoader::fileExists($filePath)) {
             // Get the contents of the file so that we can get the hash
-            $v1data = file_get_contents($filePath);
+            $data = file_get_contents($filePath);
 
             // Decode the json and get the hash. The hash should be there but
             // check for it just in case something went wrong somewhere.
-            $array = json_decode($v1data, true);
+            $array = json_decode($data, true);
             $hash = isset($array['_hash']) ? $array['_hash'] : '';
 
             // Cleanup
@@ -2688,11 +2688,11 @@ class MetaDataManager
 
             // Return the same thing as would be returned if we had to build the
             // file for the first time
-            return array('hash' => $hash, 'data' => $v1data);
+            return array('hash' => $hash, 'data' => $data);
         }
 
         $stringData = array();
-        $stringData['app_list_strings'] = $this->getAppListStrings($language);
+        $stringData['app_list_strings'] = $this->getAppListStrings($language, $ordered);
         $stringData['app_strings'] = $this->getAppStrings($language);
         if ($this->public) {
             // Exception for the AppListStrings.
@@ -2712,19 +2712,10 @@ class MetaDataManager
             $stringData['mod_strings'] = $modStrings;
         }
         $stringData['_hash'] = $this->hashChunk($stringData);
-        $v1data = json_encode($stringData);
-        sugar_file_put_contents_atomic($filePath, $v1data);
+        $data = json_encode($stringData);
+        sugar_file_put_contents_atomic($filePath, $data);
 
-        //Now build v2 of the file that uses tuples for list strings to preverse order for numeric keyed arrays
-        $stringData['app_list_strings'] = $this->getAppListStrings($language, true);
-        $orderedData = json_encode($stringData);
-        $filePath = $this->getLangUrl($language, true);
-        sugar_file_put_contents_atomic($filePath, $orderedData);
-
-        if ($ordered) {
-            return array("hash" => $stringData['_hash'], "data" => $orderedData);
-        }
-        return array("hash" => $stringData['_hash'], "data" => $v1data);
+        return array("hash" => $stringData['_hash'], "data" => $data);
     }
 
     /**

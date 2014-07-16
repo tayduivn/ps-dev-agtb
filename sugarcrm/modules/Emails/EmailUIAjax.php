@@ -13,7 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 //increate timeout for phpo script execution
-  ini_set('max_execution_time',300);
+  if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
+      ini_set('max_execution_time', 300);
+  }
   //ajaxInit();
 
 

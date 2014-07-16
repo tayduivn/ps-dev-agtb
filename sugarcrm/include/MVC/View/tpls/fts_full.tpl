@@ -191,6 +191,11 @@ width:70%;
             }
             var q = $("#ftsSearchField").val();
 
+            if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
+                // clear any potential binds in BWC view
+                window.parent.SUGAR.App.view.createView({name: 'bwc'}).unbindDom();
+            }
+
             $.ajax({
                 type: "POST",
                 url: "index.php",
@@ -219,6 +224,7 @@ width:70%;
                     }
                     SUGAR.FTS.toogleShowMore();
                     if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
+                        // FIXME: we shouldn't be calling a private method, specially one that can cause memory leaks
                         window.parent.SUGAR.App.view.createView({name: 'bwc'})._rewriteLinksForSidecar(window);
                     }
                 },

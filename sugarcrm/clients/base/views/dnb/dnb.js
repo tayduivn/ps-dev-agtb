@@ -24,7 +24,9 @@
     commonConst: {
         'sic_code': 3599,
         'hoovers_ind_code': 25838,
-        'sic_to_hic': 3599
+        'sic_to_hic': 3599,
+        'connectorSettingsURL': 'index.php#bwc/index.php?module=Connectors&action=ModifyProperties',
+        'systemSettingsURL': 'index.php#bwc/index.php?module=Configurator&action=EditView'
     },
 
     //mapping of sugar column names to dnb api response
@@ -518,6 +520,13 @@
         'srchCount': 'FindContactResponse.FindContactResponseDetail.CandidateMatchedQuantity',
         'orgName': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$'
     },
+    
+    //dashlets that occupy the full sidepane
+    //account create and build a list for now
+    sidePaneDashlets: {
+        'dnb-account-create': 'LBL_DNB_ACC_CRT',
+        'dnb-bal-results': 'LBL_DNB_BAL'
+    },
 
     contactsListDD: {
         'jobTitle' : {
@@ -690,18 +699,32 @@
         if (this.disposed) {
             return;
         }
-        var resultData = { 'product': null, 'errmsg': null };
-        app.logger.error('xhr code is:' + xhr.code);
-        var errorCode = xhr.code;
+        this.dnbError = {};
+        var errorCode, errorMessage, errorLink;
         if (xhr.code) {
-            resultData = { 'errmsg': this.commonErrorMap[errorCode] };
+            errorCode = xhr.code;
+            app.logger.error('D&B API Error :' + app.lang.get(this.commonErrorMap[errorCode]));
+            errorMessage = this.commonErrorMap[errorCode];
+            if (errorCode === 'ERROR_DNB_CONFIG') {
+                errorLink = this.commonConst.connectorSettingsURL;
+            } else if (errorCode.indexOf('ERROR_CURL_') !== -1) {
+                errorLink = this.commonConst.systemSettingsURL;
+            }
+        } else {
+            errorMessage = this.commonErrorMap['ERROR_DNB_UNKNOWN'];
         }
-        if (this.name === 'dnb-account-create') {
-            this.template = app.template.get('dnb.dnb-acct-create-error');
+        this.dnbError.errMsg = errorMessage;
+        if (!_.isUndefined(errorLink)) {
+            this.dnbError.errorLink = errorLink;
+        }
+        var dashletLabel = this.sidePaneDashlets[this.name];
+        //to handle dashlets that occupy the entire sidePane
+        if (!_.isUndefined(dashletLabel)) {
+            this.template = app.template.get('dnb.dnb-sidepane-error');
+            this.dnbError.label = dashletLabel;
         } else {
             this.template = app.template.get('dnb.dnb-error');
         }
-        _.extend(this, resultData);
         this.render();
         this.$('div#error-display').show();
         this.$('.showLessData').hide();
@@ -1310,7 +1333,7 @@
     /**
      * Checks the Sugar data base for duplicate duns or contacts
      * @param {Object} dupeCheckParams
-     * @params {Function} callBack
+     * @param {Function} callBack
      * dupeCheckParams must have the following keys
      * 1.type Possible values are duns,contacts
      * 2.apiResponse
@@ -1322,102 +1345,6 @@
         app.api.call('create', dupeCheckURL, {'qdata': dupeCheckParams}, {
             success: function(data) {
                 callBack.call(self, {'product': data});
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
-     * Build a list of accounts
-     * @param {Object} balParams
-     * @param {Function} callBack (function used to render api response)
-     */
-    baseAccountsBAL: function(balParams, callBack) {
-        var balRslt = {'product': null, 'errmsg': null};
-        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
-        var self = this;
-        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
-                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    balRslt.product = data;
-                } else {
-                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                callBack.call(self, balRslt);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
-     * Build a list of accounts
-     * @param {Object} balParams
-     * @param {Function} callBack (function used to render api response)
-     */
-    baseAccountsBAL: function(balParams, callBack) {
-        var balRslt = {'product': null, 'errmsg': null};
-        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
-        var self = this;
-        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
-                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    balRslt.product = data;
-                } else {
-                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                callBack.call(self, balRslt);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
-     * Build a list of accounts
-     * @param {Object} balParams
-     * @param {Function} callBack (function used to render api response)
-     */
-    baseAccountsBAL: function(balParams, callBack) {
-        var balRslt = {'product': null, 'errmsg': null};
-        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
-        var self = this;
-        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
-                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    balRslt.product = data;
-                } else {
-                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                callBack.call(self, balRslt);
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
-     * Build a list of accounts
-     * @param {Object} balParams
-     * @param {Function} callBack (function used to render api response)
-     */
-    baseAccountsBAL: function(balParams, callBack) {
-        var balRslt = {'product': null, 'errmsg': null};
-        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
-        var self = this;
-        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
-            success: function(data) {
-                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
-                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
-                if (responseCode && responseCode === self.responseCodes.success) {
-                    balRslt.product = data;
-                } else {
-                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                callBack.call(self, balRslt);
             },
             error: _.bind(self.checkAndProcessError, self)
         });

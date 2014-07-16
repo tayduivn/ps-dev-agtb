@@ -47,6 +47,20 @@ describe('Base.Field.Parent', function() {
         field.dispose();
     });
 
+    it('should not set value when id is undefined', function() {
+        var expected_module = 'Accounts';
+
+        field.model.removeDefaultAttribute = sinon.collection.stub();
+        field.model.clear();
+        field.setValue({id: undefined, value: undefined, module: expected_module});
+        var actual_id = field.model.get('parent_id'),
+            actual_name = field.model.get('parent_name'),
+            actual_module = field.model.get('parent_type');
+        expect(actual_id).toBeUndefined();
+        expect(actual_name).toBeUndefined();
+        expect(actual_module).toEqual(expected_module);
+    });
+
     it("should set value correctly", function() {
         var expected_id = '0987',
             expected_name = 'blahblah',

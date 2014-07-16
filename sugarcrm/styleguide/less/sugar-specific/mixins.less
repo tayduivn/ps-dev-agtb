@@ -199,10 +199,14 @@
 }
 
 .tab-focus-light() {
-    // Default
-    outline: 1px dotted @white;
-    // Webkit
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px;
+  // Default
+  outline-offset: -2px;
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: @grayLight;
+  // Firefox
+  outline-color: -moz-mac-focusring;
+  // Webkit
+  outline-color: -webkit-focus-ring-color;
 }
 

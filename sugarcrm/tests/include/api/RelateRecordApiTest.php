@@ -34,6 +34,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['ACL']);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestProspectListsUtilities::removeAllCreatedProspectLists();
+        SugarTestCallUtilities::removeAllCreatedCalls();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }
 
@@ -246,4 +248,32 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(1, $fields);
     }
 
+    public function testDeleteRelatedLink()
+    {
+        $call = SugarTestCallUtilities::createCall();
+        $contact = SugarTestContactUtilities::createContact();
+
+        $this->assertTrue($call->load_relationship('contacts'), 'Relationship is not loaded');
+        $call->contacts->add($contact);
+
+        $call = BeanFactory::retrieveBean('Calls', $call->id, array('use_cache' => false));
+        $this->assertEquals($contact->id, $call->contact_id, 'Contact is not linked to call');
+
+        // unregister bean in order to make sure API won't take it from cache
+        // where the call is stored w/o linked contact
+        BeanFactory::unregisterBean('Calls', $call->id);
+
+        $api = new RelateRecordApi();
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $response = $api->deleteRelatedLink($service, array(
+            'module' => 'Calls',
+            'record' => $call->id,
+            'link_name' => 'contacts',
+            'remote_id' => $contact->id,
+        ));
+
+        $this->assertArrayHasKey('record', $response);
+        $this->assertEquals($call->id, $response['record']['id'], 'Call is not returned by API');
+        $this->assertEmpty($response['record']['contact_id'], 'Contact is not unlinked from call');
+    }
 }
