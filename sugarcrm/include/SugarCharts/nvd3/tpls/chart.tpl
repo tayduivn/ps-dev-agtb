@@ -26,6 +26,7 @@
 			{if $height > 480}
 				chartConfig["scroll"] = true;
 			{/if}
+			chartConfig["ReportModule"] = true;
 			loadCustomChartForReports = function(){ldelim}
 				loadSugarChart('{$chartId}', '{$filename}', css, chartConfig);
 			{rdelim};
@@ -45,10 +46,10 @@
 </script>
 <div class="chartContainer">
 	<div id="sb{$chartId}" class="scrollBars">
-    	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: {$width}; height: {$height}px;">
-    	</div>
+    	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: 100%; height: {$height}px;"></div>
     </div>
-	<div id="legend{$chartId}" class="legend"></div>
+    <div id="d3_{$chartId}_print" class="nv-chart nv-chart-print nv-{$config.chartType}" style="width: 720px; height: 480px;"></div>
+    <canvas id="canvas_{$chartId}" width="720" height="480" class="nv-image-canvas"></canvas>
 </div>
 <div class="clear"></div>
 {else}
