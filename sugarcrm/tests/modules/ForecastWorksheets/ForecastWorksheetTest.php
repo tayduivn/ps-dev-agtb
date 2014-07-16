@@ -26,17 +26,19 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $this->db = SugarTestHelper::setUp('mock_db');
 
         SugarTestForecastUtilities::setUpForecastConfig();
         // this is needed to preload vardefs & ACLs so DB mocking won't mess with them
         BeanFactory::getBean('ForecastWorksheets');
         BeanFactory::getBean('Accounts');
+
+        $this->db = SugarTestHelper::setUp('mock_db');
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        SugarTestForecastUtilities::tearDownForecastConfig();
     }
 
     public function testGetRelatedNameReturnsEmpty()
