@@ -266,7 +266,12 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $tp = SugarTestTimePeriodUtilities::createTimePeriod();
 
+        $acc = SugarTestAccountUtilities::createAccount();
+        $opp = SugarTestOpportunityUtilities::createOpportunity(null, $acc);
+
         $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->opportunity_id = $opp->id;
+        $rli->account_id = $acc->id;
         $rli->assigned_user_id = $GLOBALS['current_user']->id;
         $rli->date_closed = $tp->start_date;
         $rli->save();
@@ -279,6 +284,10 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
                 $tp->id,
             ));
         $this->assertTrue($actual);
+
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     /**
@@ -291,6 +300,10 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $user->save();
 
         $bean = new ForecastWorksheet();
+        $bean->assigned_user_id = $GLOBALS['current_user']->id;
+        $bean->save();
+
+        SugarTestWorksheetUtilities::setCreatedWorksheet(array($bean->id));
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'reassignForecast', array(
                 $GLOBALS['current_user']->id,
