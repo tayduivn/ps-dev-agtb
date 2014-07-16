@@ -2445,15 +2445,11 @@ EOQ;
      */
     public function updateLastLogin()
     {
-        //Lets make sure SugarBean::save will not update date_modified field.
-        //Otherwise RestService will throw SugarApiExceptionInvalidHash on every request
-        //@see MetaDataManager::hasUserMetadataChanged
-        $old = $this->update_date_modified;
-        $this->update_date_modified = false;
-
-        $this->last_login = TimeDate::getInstance()->nowDb();
-        $this->save();
-
-        $this->update_date_modified = $old;
+		// need to call a direct db query
+		// if we do not the email address is removed
+		$db = DBManagerFactory::getInstance();
+		$this->last_login = TimeDate::getInstance()->nowDb();
+		$db->query("UPDATE users SET last_login = '{$this->last_login}' WHERE id = '{$this->id}'");
+		return $this->last_login;
     }
 }
