@@ -44,7 +44,8 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
 
         $layout = $tiles->getTabs();
 
-        $this->assertEquals($customSubpanelOrder, $layout, 'SubPanel returned is not correct');
+        // History was ommitted so check the resulting array is the data-set plus history (which was automatically added).
+        $this->assertEquals(array_merge($customSubpanelOrder, array('history')), $layout, 'SubPanel returned is not correct');
     }
 
     public static function dataProviderCustomSubpanelOrder()
@@ -55,15 +56,13 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
                     0 => 'contacts',
                     1 => 'users',
                     2 => 'leads',
-                    3 => 'history',
                 ),
             ),
             array(
                 array(
                     0 => 'users',
-                    1 => 'history',
-                    2 => 'leads',
-                    3 => 'contacts',
+                    1 => 'leads',
+                    2 => 'contacts',
                 ),
             ),
         );

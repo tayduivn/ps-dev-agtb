@@ -49,15 +49,31 @@ class SubPanelTiles
      */
     function getTabs()
     {
-        // if the user has a custom subpanel layout, just return it
+        // Check if the user has a custom subpanel layout.
         global $current_user;
-        $userCustomLayout = $current_user->getPreference('subpanelLayout', $this->module);
-        if (!empty($userCustomLayout)) {
-            return $userCustomLayout;
+        $user_layout = $current_user->getPreference('subpanelLayout', $this->module);
+
+        // Fetch the global subpanel layout.
+        $layout = $this->subpanel_definitions->get_available_tabs();
+
+        // If the user has a custom subpanel layout, merge the global layout onto the
+        // end then pull out the unique values to ensure the users defined subpanel
+        // layout is taken into account first and any others are appended to the end.
+        if (!empty($user_layout)) {
+            $hidden_panels = SubPanelDefinitions::get_hidden_subpanels();
+
+            // Check if any of the panels the user has saved in their layout
+            // preference are now hidden. If they are, remove them from the list.
+            foreach ($user_layout as $key => $value) {
+                if (in_array($value, $hidden_panels)) {
+                    unset($user_layout[$key]);
+                }
+            }
+
+            $layout = array_values(array_unique(array_merge($user_layout, $layout)));
         }
 
-        //get all the "tabs" - this actually means all the subpanels available for display within a tab
-	    return $this->subpanel_definitions->get_available_tabs();
+        return $layout;
 	}
 	function display($showContainer = true)
 	{
