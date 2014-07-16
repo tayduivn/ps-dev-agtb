@@ -15,7 +15,7 @@ class ConstantExpression extends NumericExpression {
 	 * Returns itself when evaluating.
 	 */
 	function evaluate() {
-		return $this->getParameters();
+		return floatval($this->getParameters());
 	}
 	
 	/**

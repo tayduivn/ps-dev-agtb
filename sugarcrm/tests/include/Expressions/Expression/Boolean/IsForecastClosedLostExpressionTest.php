@@ -61,6 +61,6 @@ class IsForecastClosedLostExpressionTest extends Sugar_PHPUnit_Framework_TestCas
         $expr = 'isForecastClosedLost($sales_stage)';
         $result = Parser::evaluate($expr, $rli)->evaluate();
 
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, strtolower($result));
     }
 }
