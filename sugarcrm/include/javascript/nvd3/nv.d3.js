@@ -1630,13 +1630,9 @@ nv.models.legend = function () {
 
       function displayMenu() {
         back
-          .transition()
-          .duration(200)
           .style('opacity', legendOpen * 0.9)
           .style('display', legendOpen ? 'inline' : 'none');
         g
-          .transition()
-          .duration(200)
           .style('opacity', legendOpen)
           .style('display', legendOpen ? 'inline' : 'none');
         link
@@ -2739,7 +2735,14 @@ nv.models.bubbleChart = function () {
         var wrap = container.selectAll('g.nv-wrap.nv-bubbleChart').data([filteredData]),
             gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubbleChart').append('g'),
             g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+        gEnter.append('rect').attr('class', 'nv-background')
+          .attr('x', -margin.left)
+          .attr('y', -margin.top)
+          .attr('width', availableWidth + margin.left + margin.right)
+          .attr('height', availableHeight + margin.top + margin.bottom)
+          .attr('fill', '#FFF');
+          
         gEnter.append('g').attr('class', 'nv-titleWrap');
         var titleWrap = g.select('.nv-titleWrap');
         gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -3763,7 +3766,14 @@ nv.models.funnelChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-funnelChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
@@ -4654,7 +4664,14 @@ nv.models.gaugeChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-gaugeChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-gaugeChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-gaugeWrap');
@@ -5368,7 +5385,14 @@ nv.models.lineChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-lineChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-lineChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -7141,6 +7165,13 @@ nv.models.multiBarChart = function () {
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
 
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -7726,6 +7757,13 @@ nv.models.multiBarHorizontalChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarHorizontalChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarHorizontalChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
+
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
 
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
@@ -8419,7 +8457,14 @@ nv.models.paretoChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarWithLegend').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -9652,7 +9697,14 @@ nv.models.pieChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-pieWrap');
@@ -10954,7 +11006,14 @@ nv.models.stackedAreaChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-stackedAreaChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-stackedAreaChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -11919,7 +11978,14 @@ nv.models.treemapChart = function() {
       var wrap = container.selectAll('g.nv-wrap.nv-treemapWithLegend').data(data);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-treemapWithLegend').append('g');
       var g = wrap.select('g');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-treemapWrap');
 
       //------------------------------------------------------------

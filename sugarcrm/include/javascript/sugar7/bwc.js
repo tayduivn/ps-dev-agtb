@@ -26,17 +26,7 @@
          * The OAuth token is passed and we do automatic in bwc mode by
          * getting a cookie with the PHPSESSIONID.
          */
-
-        /**
-         * Tracks last url used during routing process of internal BWC requests.
-         *
-         * See {@link View.Views.Base.BwcView#beforeRoute} for more information
-         * on how this is used.
-         *
-         * @property {String}
-         */
-        lastUrl: '',
-
+        
         /**
          * Logs into sugar in BWC mode. Allows for use of current OAuth token as
          * a session id for backward compatible modules.
