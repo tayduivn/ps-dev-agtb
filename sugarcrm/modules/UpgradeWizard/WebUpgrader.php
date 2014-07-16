@@ -261,10 +261,10 @@ class WebUpgrader extends UpgradeDriver
      *
      * @see UpgradeDriver::doHealthcheck()
      */
-    public function doHealthcheck()
+    protected function doHealthcheck()
     {
         if (!isset($_REQUEST['confirm_id'])) {
-            $this->log("No previous health check id set in session");
+            $this->log("No previous health check id set in request");
             return false;
         }
 

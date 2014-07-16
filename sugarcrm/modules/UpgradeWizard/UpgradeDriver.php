@@ -1525,7 +1525,7 @@ abstract class UpgradeDriver
             $this->saveState();
             switch($stage) {
                 case "healthcheck":
-                    if (!$this->doHealthcheck()) {
+                    if (!$this->healthcheck()) {
                         return false;
                     }
                     break;
@@ -1679,6 +1679,20 @@ abstract class UpgradeDriver
             return $scanner;
         }
         return false;
+    }
+
+    /**
+     * Runs healthcheck for instances with versions lower than 7.0.0
+     *
+     * @return bool
+     */
+    public function healthcheck()
+    {
+        list($version,) = $this->loadVersion();
+        if (version_compare($version, '7.0', '<')) {
+            return $this->doHealthcheck();
+        }
+        return true;
     }
 
     /**

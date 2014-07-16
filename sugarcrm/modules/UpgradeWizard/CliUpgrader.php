@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'UpgradeDriver.php';
+require_once __DIR__ . '/UpgradeDriver.php';
 
 /**
  * Command-line upgrader
@@ -542,7 +542,7 @@ eoq2;
     }
 }
 
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+if(empty($argv)) return;
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {

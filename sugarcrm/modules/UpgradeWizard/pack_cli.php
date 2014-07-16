@@ -17,7 +17,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if(empty($argv[1])) {
-    die("Use $argv[0] name.zip");
+    die("Use $argv[0] name.phar\n");
 }
 
 $name = $argv[1];
@@ -31,12 +31,18 @@ $files=array(
     'modules/HealthCheck/language/en_us.lang.php',
 );
 
-$zip = new ZipArchive();
-$zip->open($name, ZipArchive::CREATE);
+$phar = new Phar($argv[1]);
 
-foreach($files as $file) {
-    $zip->addFile($file);
+foreach ($files as $file) {
+    $phar->addFile($file, $file);
 }
 
-$zip->close();
+$stub = <<<'STUB'
+<?php
+Phar::mapPhar();
+set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
+require_once "modules/UpgradeWizard/CliUpgrader.php"; __HALT_COMPILER();
+STUB;
+$phar->setStub($stub);
+
 exit(0);

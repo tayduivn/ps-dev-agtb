@@ -30,7 +30,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use $argv[0] healthcheck.zip\n");
+    die("Use $argv[0] healthcheck.phar\n");
 }
 
 $zipFile = $argv[1];
@@ -42,13 +42,18 @@ $files = array(
     'language/en_us.lang.php',
 );
 
-$zip = new ZipArchive();
-$zip->open($zipFile, ZipArchive::OVERWRITE);
+$phar = new Phar($argv[1]);
 
-$baseDir = 'HealthCheck';
 foreach ($files as $file) {
-    $zip->addFile($file, $file);
+    $phar->addFile($file, $file);
 }
-$zip->close();
+
+$stub = <<<'STUB'
+<?php 
+Phar::mapPhar();
+set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
+require_once "Scanner/ScannerCli.php"; __HALT_COMPILER();
+STUB;
+$phar->setStub($stub);
 
 exit(0);

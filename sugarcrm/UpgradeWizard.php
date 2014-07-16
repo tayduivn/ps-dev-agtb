@@ -36,7 +36,7 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
         }
         die($errmsg);
     }
-    if(!$upg->doHealthcheck()) {
+    if(!$upg->healthcheck()) {
         header("Location: index.php?module=HealthCheck&referrer=UpgradeWizard");
         exit;
     }

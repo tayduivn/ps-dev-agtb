@@ -43,9 +43,6 @@ class HealthCheckScannerCli extends HealthCheckScanner
                 $this->verbose = 2;
             }
 
-            // instance directory
-            $this->instance = $argv[count($argv) - 1];
-
             // generic properties
             if ($argv[$i] == '-d') {
                 while (strpos($argv[++$i], '=')) {
@@ -56,6 +53,9 @@ class HealthCheckScannerCli extends HealthCheckScanner
                 }
             }
         }
+
+        // instance directory
+        $this->instance = $argv[count($argv) - 1];
     }
 
     /**
