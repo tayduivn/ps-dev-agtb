@@ -62,7 +62,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 
     public function tearDown() {
-        $GLOBALS['current_user']->is_admin = 1;        
+        $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated
         foreach($this->accounts AS $account) {
             $account->mark_deleted($account->id);
@@ -82,7 +82,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
-        parent::tearDown();        
+        parent::tearDown();
     }
 
     // test set favorite
@@ -331,6 +331,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $test = 'AND team_memberships.deleted=0 group by tst.team_set_id) contacts_tf on contacts_tf.team_set_id  = contacts.team_set_id';
         $this->assertContains($test, $q->compileSql(), "Should have team security join applied");
     }
+
 }
 
 class RelateApiServiceMockUp extends RestService
