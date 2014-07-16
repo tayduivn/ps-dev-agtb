@@ -105,7 +105,6 @@
 $(document).ready(function(){
 	SUGAR.themes.actionMenu();
     if (window.parent && window.parent.SUGAR && window.parent.SUGAR.App.view) {
-        // FIXME: we shouldn't be calling a private method, specially one that can cause memory leaks
         window.parent.SUGAR.App.view.views.BaseBwcView.prototype._rewriteLinksForSidecar(window);
     }
 });
