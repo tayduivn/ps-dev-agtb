@@ -14,8 +14,11 @@ var os = require('os');
 module.exports = function(grunt) {
     grunt.loadTasks('grunt/tasks');
     grunt.loadNpmTasks('grunt-jsduck');
+    grunt.loadNpmTasks('grunt-shell');
+    grunt.registerTask('checkLicense', ['shell:checkLicense']);
 
-    var path = grunt.option('path');
+    var path = grunt.option('path'),
+        file = grunt.option('file');
     path = path && path.replace(/\/+$/, '') + '/' || os.tmpdir();
 
     grunt.initConfig({
@@ -95,6 +98,29 @@ module.exports = function(grunt) {
                     'head-html': '<link rel="stylesheet" href="../styleguide/assets/css/jsduck.css" type="text/css">',
                     'builtin-classes': true,
                     'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib']
+                }
+            }
+        },
+        shell: {
+            checkLicense: {
+                command: function() {
+                    if (!file) {
+                        file = 'grunt/assets/licenseHeader';
+                    }
+
+                    //prepare the pattern
+                    var pattern = grunt.file.read(file);
+                    pattern = pattern.trim();
+                    pattern = pattern.replace(/\*/g, '\\*');
+                    pattern = pattern.replace(/\n/g, '\\s');
+                    pattern = pattern.replace(/\(/g, '\\(');
+                    pattern = pattern.replace(/\)/g, '\\)');
+
+                    //assemble the command
+                    return 'pcregrep -L -r -M ' +
+                        '--exclude="(.+)\.(json|gif|png|min\.(.+))" ' +
+                        '--exclude-dir="node_modules|vendor" ' +
+                        '"^' + pattern + '$" .';
                 }
             }
         }
