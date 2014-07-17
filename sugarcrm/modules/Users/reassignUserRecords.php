@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+Activity::disable();
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -542,7 +543,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 		}
 		echo "</td></tr></table>\n";
 	}
-
+	Activity::enable();
 	echo "<BR><input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_RETURN']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
 
 /////////////////// END STEP 3 - Execute reassignment ///////////////////////
