@@ -217,26 +217,12 @@ class RelateRecordApi extends ModuleApi {
 
     function createRelatedLink($api, $args) {
         $api->action = 'save';
-        $primaryBean = $this->loadBean($api, $args);
-
-        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
-
-        $relatedBean->retrieve($args['remote_id']);
-        if ( empty($relatedBean->id) ) {
-            // Retrieve failed, probably doesn't have permissions
-            throw new SugarApiExceptionNotFound('Could not find the related bean');
-        }
-
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
-        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
-        //Clean up any hanging related records.
-        SugarRelationship::resaveRelatedBeans();
-
-        // This forces a re-retrieval of the bean from the database
-        BeanFactory::unregisterBean($relatedBean);
-
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
+        $args['ids'] = array($args['remote_id']);
+        $return = $this->createRelatedLinks($api, $args);
+        return array(
+            'record' => $return['record'],
+            'related_record' => $return['related_records'][0],
+        );
     }
 
     /**
