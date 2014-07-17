@@ -101,7 +101,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            o.lead_source, 
                            o.campaign_id, 
                            o.id, 
-                           o.opportunity_type 
+                           o.opportunity_type
                    FROM products p  
                    INNER JOIN quotes q  
                    ON q.id = p.quote_id 
@@ -141,7 +141,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.vendor_part_num, 
                            p.date_purchased, 
                            p.cost_price,
-                           IF(p.discount_price IS NULL, IF(p.likely_case IS NULL, o.amount, p.likely_case), p.discount_price) as discount_price
+                           IF(p.discount_price IS NULL, IF(p.likely_case IS NULL, o.amount, p.likely_case), p.discount_price) as discount_price,
                            p.discount_amount, 
                            null as discount_rate_percent, 
                            p.discount_amount_usdollar, 
@@ -284,20 +284,26 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
      */
     protected function insertRows($results)
     {
-        $insertSQL = 'INSERT INTO revenue_line_items VALUES';
+        $insertSQL = 'INSERT INTO revenue_line_items ';
         $productToRliMapping = array();
 
         /* @var $rli RevenueLineItem */
         $rli = BeanFactory::getBean('RevenueLineItems');
 
+        $columns = null;
+
         while ($row = $this->db->fetchByAssoc($results)) {
+            if (is_null($columns)) {
+                // get the column names
+                $columns = join(',', array_keys($row));
+            }
             $productToRliMapping[$row['id']] = create_guid();
             $row['id'] = $productToRliMapping[$row['id']];
             foreach ($row as $key => $value) {
                 $row[$key] = $this->db->massageValue($value, $rli->getFieldDefinition($key));
             }
 
-            $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
+            $this->db->query($insertSQL . $columns . ' VALUES (' . join(',', $row) . ');');
         }
 
         $this->relateProductToRevenueLineItem($productToRliMapping);
