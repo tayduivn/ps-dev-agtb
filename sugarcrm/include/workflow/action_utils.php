@@ -230,6 +230,7 @@ function process_action_new($focus, $action_array){
     $target_module->not_use_rel_in_req = true;
     $target_module->new_rel_relname = $seed_object->rel_name;
     $target_module->new_rel_id = $focus->id;
+    $target_module->assigned_user_id = $focus->assigned_user_id;
 	$target_module->save($check_notify);
 
 //end function_action_new
