@@ -157,7 +157,7 @@ $mod_strings = array (
     //document list view (for portal)
 	'LBL_LIST_MOST_VIEWED' => 'Most Viewed Articles',
 	'LBL_LIST_MOST_RECENT' => 'Most Recent Articles',
-    
+    'LBL_LIST_APPROVED_BY' => 'Approved By',
 	//document search form.
 	'LBL_SF_DOCUMENT' => 'Document Name:',
 	'LBL_SF_CATEGORY' => 'Category:',
@@ -252,6 +252,8 @@ $mod_strings = array (
     //'LNK_DOCUMENT_CAT'=>'Document Categories',
     'LBL_KEYWORDS' => 'Keywords:',
     'LBL_CASES' =>'Cases',
+    'LBL_CASE_ID' => 'Case ID',
+    'LBL_CASE'    => 'Case:',
     'LBL_EMAILS' =>'Emails',
     
    //Admin screen messages
