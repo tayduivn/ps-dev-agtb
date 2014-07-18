@@ -219,6 +219,12 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 continue;
             }
 
+            // Ignore defs which contain only overrides, see BR-1597
+            if (count(self::$supanelData[$this->module][$key]) == 1 && !empty(self::$supanelData[$this->module][$key]['override_subpanel_name'])) {
+                unset($convertSubpanelDefs[$key]);
+                continue;
+            }
+
             // Skip subpanels that have links to non-existing modules
             if (!empty($def['module']) && !in_array($def['module'], $GLOBALS['moduleList'])) {
                 unset($convertSubpanelDefs[$key]);
