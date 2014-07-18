@@ -73,8 +73,9 @@ class SugarUpgradeCustomRecordViewHistorySummaryButton extends UpgradeScript
                 // loop though to find the button
                 $place_button = true;
                 foreach ($button['buttons'] as $sub_key => $sub_button) {
-                    if ($sub_button['name'] == 'historical_summary_button') {
+                    if (isset($sub_button['name']) && $sub_button['name'] == 'historical_summary_button') {
                         $place_button = false;
+                        break;
                     }
                 }
 
