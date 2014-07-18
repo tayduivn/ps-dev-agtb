@@ -83,7 +83,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'date_entered',
                     'label' => 'LBL_LIST_DATE_ENTERED',
-                    'type' => 'date',
+                    'type' => 'datetimecombo',
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
@@ -91,7 +91,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'date_modified',
                     'label' => 'LBL_DATE_MODIFIED',
-                    'type' => 'date',
+                    'type' => 'datetimecombo',
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
