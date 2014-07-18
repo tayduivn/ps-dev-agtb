@@ -1,5 +1,5 @@
 
-<link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=1"/>
+<link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=3"/>
 <script src='include/javascript/jquery/jquery-min.js?v=1'></script>
 
 <div class="upgrade">
@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-    <div class="modal" data-step="1">
+    <div class="modal" data-step="1" >
         <div class="modal-header modal-header-upgrade row-fluid">
             <span class="step-circle">
                 <span>1</span>
@@ -52,7 +52,7 @@
                 <span><img src="themes/default/images/company_logo.png" alt="SugarCRM" class="logo"></span>
 
                 <div class="progress progress-success">
-                    <div class="bar" style="width: 33%;"></div>
+                    <div class="bar in-progress" style="width: 33%;"></div>
                 </div>
             </div>
         </div>
@@ -91,13 +91,13 @@
                 <span><img src="themes/default/images/company_logo.png" alt="SugarCRM" class="logo"></span>
 
                 <div class="progress progress-success">
-                    <div class="bar" style="width: 66%;"></div>
+                    <div class="bar in-progress" style="width: 66%;"></div>
                 </div>
             </div>
         </div>
         <div class="modal-body record">
             <div class="row-fluid" id="healthcheck">
-                <img style="display: block; margin: 20px auto" src="themes/default/images/loading.gif" alt="Loading...">
+                <h1><i class="icon-cog icon-spin color_yellow"></i>Performing health check. Please wait...</h1>
             </div>
         </div>
         <div class="modal-footer">
@@ -108,57 +108,18 @@
               {if isset($smarty.get.referrer)}
                 <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm" name="next_button">Confirm</a>
               {else}
-                <a class="btn btn-primary disabled" href="index.php" name="next_button">Done</a>
+                <a class="btn btn-primary disabled" href="index.php?module=Administration&action=index" name="next_button">Back to Admin Page</a>
               {/if}
           </span>
         </div>
     </div>
 </div>
-
-{literal}
-<style>
-    [data-step="2"], [data-step="3"] {
-        display: none;
-    }
-
-    #alerts .alert {
-        display: none;
-    }
-</style>
-{/literal}
-
 {literal}
 <script>
     (function () {
-        var currentStep = 1,
-            maxSteps = 2,
-            hashStep = parseInt(window.location.hash),
-            nodes = document.querySelectorAll('[data-step] a[name="next_button"]');
-
-        if (hashStep > currentStep) {
-            currentStep = hashStep;
-        }
-
-        for (var i = 0; i < nodes.length; i++) {
-            nodes[i].addEventListener('click', showNextStep, false);
-        }
-
-        document.querySelector('[data-step="1"] a[name="next_button"]').addEventListener('click', doHealthCheck, false);
-
-        document.querySelector('.send-logs').addEventListener('click', sendLogs, false);
-
-        function showNextStep() {
-            var nextStep = currentStep + 1;
-            if (nextStep <= maxSteps) {
-                document.querySelector('[data-step="' + currentStep + '"]').style.display = 'none';
-                document.querySelector('[data-step="' + nextStep + '"]').style.display = 'block';
-                currentStep = nextStep;
-            }
-            return false;
-        }
 
         function doHealthCheck() {
-            var flagToIcon = [,'icon-check color_green', 'icon-gear color_yellow', 'icon-exclamation-sign color_red'];
+            var flagToIcon = [,'icon-ok-sign color_green', 'icon-ellipsis-horizontal color_yellow', 'icon-exclamation-sign color_red'];
             $.ajax('index.php?module=HealthCheck&action=scan', {
                 dataType: 'json',
                 success: function (data) {
@@ -209,6 +170,29 @@
             });
         }
 
+
+        function showNextStep() {
+            var nextStep = currentStep + 1;
+            if (nextStep <= maxSteps) {
+                $('[data-step="' + currentStep + '"]').hide();
+                $('[data-step="' + nextStep + '"]').show();
+                currentStep = nextStep;
+            }
+            return false;
+        }
+
+        var currentStep = 0,
+                maxSteps = 2,
+                hashStep = parseInt(window.location.hash);
+
+        if (hashStep > currentStep) {
+            currentStep = hashStep - 1;
+        }
+
+        $('[data-step="1"] a[name="next_button"]').on('click', showNextStep).on('click', doHealthCheck);
+        $('.send-logs').on('click', sendLogs);
+
+        showNextStep();
     })();
 </script>
 {/literal}

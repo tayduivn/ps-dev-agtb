@@ -165,30 +165,32 @@ class WebUpgrader extends UpgradeDriver
             }
         }
         $res = $this->runStep($action);
-        if ($res !== false && $action == 'unpack') {
-            $manifest = $this->getManifest();
-            if (empty($manifest)) {
-                return false;
-            }
-            if (!empty($manifest['copy_files']['from_dir'])) {
-                $new_source_dir = $this->context['extract_dir'] . "/" . $manifest['copy_files']['from_dir'];
-            } else {
-                $this->error("No from_dir in manifest", true);
-                return false;
-            }
-            if (is_file("$new_source_dir/LICENSE")) {
-                $this->license = file_get_contents("$new_source_dir/LICENSE");
-            } elseif (is_file("$new_source_dir/LICENSE.txt")) {
-                $this->license = file_get_contents("$new_source_dir/LICENSE.txt");
-            } elseif (is_file($this->context['source_dir'] . "/LICENSE.txt")) {
-                $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE.txt");
-            } elseif (is_file($this->context['source_dir'] . "/LICENSE")) {
-                $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE");
-            }
-            if (is_file($this->context['extract_dir'] . "/README")) {
-                $this->readme = file_get_contents($this->context['extract_dir'] . "/README");
-            } elseif (is_file($this->context['extract_dir'] . "/README.txt")) {
-                $this->readme = file_get_contents($this->context['extract_dir'] . "/README.txt");
+        if ($res !== false) {
+            if ($action == 'unpack') {
+                $manifest = $this->getManifest();
+                if (empty($manifest)) {
+                    return false;
+                }
+                if (!empty($manifest['copy_files']['from_dir'])) {
+                    $new_source_dir = $this->context['extract_dir'] . "/" . $manifest['copy_files']['from_dir'];
+                } else {
+                    $this->error("No from_dir in manifest", true);
+                    return false;
+                }
+                if (is_file("$new_source_dir/LICENSE")) {
+                    $this->license = file_get_contents("$new_source_dir/LICENSE");
+                } elseif (is_file("$new_source_dir/LICENSE.txt")) {
+                    $this->license = file_get_contents("$new_source_dir/LICENSE.txt");
+                } elseif (is_file($this->context['source_dir'] . "/LICENSE.txt")) {
+                    $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE.txt");
+                } elseif (is_file($this->context['source_dir'] . "/LICENSE")) {
+                    $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE");
+                }
+                if (is_file($this->context['extract_dir'] . "/README")) {
+                    $this->readme = file_get_contents($this->context['extract_dir'] . "/README");
+                } elseif (is_file($this->context['extract_dir'] . "/README.txt")) {
+                    $this->readme = file_get_contents($this->context['extract_dir'] . "/README.txt");
+                }
             }
             return $res;
         }
