@@ -862,6 +862,16 @@ describe("Record View", function () {
         expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
     });
 
+    it('should return not return the fields from the metadata for getFieldNames', function () {
+        expect(_.isEmpty(view.meta.panels[0].fields)).toBeFalsy();
+        var fields = view.getFieldNames()
+        expect(_.isEmpty(fields)).toBeTruthy();
+    });
+
+    it('should set a data view on the context', function () {
+        expect(view.context.get("dataView")).toBe("record");
+    });
+
 
     describe("Warning delete", function() {
         var sinonSandbox, alertShowStub, routerStub;

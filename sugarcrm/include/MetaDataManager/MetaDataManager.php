@@ -3208,4 +3208,79 @@ class MetaDataManager
     {
         return $data;
     }
+
+    /**
+     *
+     * This method collects view data for given module and view
+     *
+     * @param string $moduleName The name of the module
+     * @param string $view       The view name
+     * @return array
+     */
+    public function getModuleView($moduleName, $view)
+    {
+        $views = $this->getModuleViews($moduleName);
+        if (isset($views[$view])) {
+            return $views[$view];
+        }
+        return array();
+    }
+
+    /**
+     *
+     * Return flat list of fields defined for a given module and view
+     *
+     * @param string $moduleName The name of the module
+     * @param string $view       The view name
+     * @return array
+     */
+    public function getModuleViewFields($moduleName, $view)
+    {
+        $viewData = $this->getModuleView($moduleName, $view);
+        if (!isset($viewData['meta']) || !isset($viewData['meta']['panels'])) {
+            return array();
+        }
+
+        // flatten fields
+        $fields = array();
+
+        foreach ($viewData['meta']['panels'] as $panel) {
+            if (isset($panel['fields']) && is_array($panel['fields'])) {
+                $fields = array_merge($fields, $this->getFieldNames($panel['fields']));
+                foreach ($panel['fields'] as $field) {
+                    if (is_array($field)) {
+                        if (isset($field['fields']) && is_array($field['fields'])) {
+                            $fields = array_merge($fields, $this->getFieldNames($field['fields']));
+                        }
+                        if (isset($field['related_fields']) && is_array($field['related_fields'])) {
+                            $fields = array_merge($fields, $this->getFieldNames($field['related_fields']));
+                        }
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     *
+     * Return list of fields from view def field set
+     *
+     * @param array $fieldSet
+     * @return array
+     */
+    protected function getFieldNames(array $fieldSet)
+    {
+        $fields = array();
+        foreach ($fieldSet as $field) {
+            if (is_array($field) && isset($field['name'])) {
+                $fields[] = $field['name'];
+            } elseif (is_string($field)) {
+                // direct field name
+                $fields[] = $field;
+            }
+        }
+        return $fields;
+    }
 }

@@ -80,6 +80,16 @@ describe('Base.View.RecordList', function() {
             nofavoriteview.dispose();
         });
 
+        it('should return not return the fields from the metadata for getFieldNames', function () {
+            expect(view.meta.panels[0].fields.length).toBeGreaterThan(1);
+            var fields = view.getFieldNames();
+            expect(fields.length).toBe(1);
+        });
+
+        it('should set a data view on the context', function () {
+            expect(view.context.get("dataView")).toBe("list");
+        });
+
         it('should have added row actions', function() {
             view.render();
             expect(view.leftColumns[0].fields[2]).toEqual({

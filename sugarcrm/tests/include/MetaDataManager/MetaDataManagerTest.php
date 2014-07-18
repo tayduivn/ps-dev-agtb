@@ -248,6 +248,153 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $manager->getLanguage($params);
     }
+
+    /**
+     * @dataProvider providerTestGetModuleView
+     * @covers MetaDataManager::getModuleView
+     * @group unit
+     */
+    public function testGetModuleView($module, $view, $metadata, $expected)
+    {
+        $mm = $this->getMockBuilder('MetaDataManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getModuleViews'))
+            ->getMock();
+
+        $mm->expects($this->once())
+            ->method('getModuleViews')
+            ->with($this->equalTo($module))
+            ->will($this->returnValue($metadata));
+
+        $this->assertEquals($expected, $mm->getModuleView($module, $view));
+    }
+
+    public function providerTestGetModuleView()
+    {
+        return array(
+            // existing view
+            array(
+                'Accounts',
+                'record',
+                array('record' => array('foo', 'bar')),
+                array('foo', 'bar'),
+            ),
+            // non-existing view
+            array(
+                'Accounts',
+                'blaat',
+                array('record' => array('foo', 'bar')),
+                array(),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider providerTestGetModuleViewFields
+     * @covers MetaDataManager::getModuleViewFields
+     * @covers MetaDataManager::getFieldNames
+     * @group unit
+     */
+    public function testGetModuleViewFields($module, $view, $viewData, $fields)
+    {
+        $mm = $this->getMockBuilder('MetaDataManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getModuleView'))
+            ->getMock();
+
+        $mm->expects($this->once())
+            ->method('getModuleView')
+            ->with($this->equalTo($module), $this->equalTo($view))
+            ->will($this->returnValue($viewData));
+
+        $this->assertEquals($fields, $mm->getModuleViewFields($module, $view));
+    }
+
+    public function providerTestGetModuleViewFields()
+    {
+        return array(
+            // empty view data
+            array(
+                'Contacts',
+                'record',
+                array(),
+                array(),
+            ),
+            // real view data
+            array(
+                'Contacts',
+                'record',
+                array(
+                    'meta' => array(
+                        'panels' => array(
+                            array(
+                                'fields' => array(
+
+                                    // string based field def
+                                    'first_name',
+
+                                    // array based field def
+                                    array(
+                                        'name' => 'last_name',
+                                    ),
+
+                                    // array based invalid field
+                                    array(
+                                        'span',
+                                    ),
+
+                                    // non-string/array invalid field
+                                    69,
+
+                                    // nested field set
+                                    array(
+                                        'name' => 'primary_address',
+                                        'fields' => array(
+                                            'street',
+                                            array(
+                                                'name' => 'country',
+                                            ),
+                                        ),
+                                    ),
+
+                                    // anonymous nested field set
+                                    array(
+                                        'fields' => array(
+                                            'foo',
+                                            array(
+                                                'name' => 'bar',
+                                            ),
+                                        ),
+                                    ),
+
+                                    // related field set
+                                    array(
+                                        'related_fields' => array(
+                                            array(
+                                                'name' => 'good',
+                                            ),
+                                            'karma',
+                                        )
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'first_name',
+                    'last_name',
+                    'primary_address',
+                    'street',
+                    'country',
+                    'foo',
+                    'bar',
+                    'good',
+                    'karma',
+                ),
+            ),
+        );
+    }
 }
 
 class MetadataManagerMock extends MetadataManager

@@ -77,6 +77,8 @@
 
         this.context.on('change:record_label', this.setLabel, this);
         this.context.set('viewed', true);
+        //Set the context to load the field list from the record metadata.
+        this.context.set('dataView', 'record');
         this.model.on('duplicate:before', this.setupDuplicateFields, this);
         this.on('editable:keydown', this.handleKeyDown, this);
         this.on('editable:mousedown', this.handleMouseDown, this);
@@ -367,7 +369,6 @@
     },
 
     initButtons: function() {
-
         if (this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
                 this.registerFieldAsButton(button.name);
@@ -1145,7 +1146,8 @@
      * so my_favorite is part of the field list and is fetched
      */
     getFieldNames: function(module) {
-        var fields = app.view.View.prototype.getFieldNames.call(this, module);
+        //Start with an empty set of fields since the view name in the request will load all fields from the metadata.
+        var fields = [ ];
         var favorite = _.find(this.meta.panels, function(panel) {
              return _.find(panel.fields, function(field) {
                  return field.type === 'favorite';
