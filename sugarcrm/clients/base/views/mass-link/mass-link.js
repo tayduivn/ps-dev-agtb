@@ -104,8 +104,8 @@
 
         progressView.initCollection(massLink);
         massLink.link({
-            success: _.bind(function() {
-                this.layout.trigger('list:masslink:complete');
+            success: _.bind(function(model, data, response) {
+                this.layout.trigger('list:masslink:complete', model, data, response);
             }, this)
         });
     }

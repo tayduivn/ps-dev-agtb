@@ -333,6 +333,9 @@ class RelateRecordApi extends ModuleApi {
         }
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
+        
+        //Clean up any hanging related records.
+        SugarRelationship::resaveRelatedBeans();
 
         // Get fresh copies of primary and related beans so that the newly deleted relationship
         // shows as deleted. See BR-1055, BR-1630
