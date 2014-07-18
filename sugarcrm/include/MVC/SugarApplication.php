@@ -643,7 +643,7 @@ EOF;
             'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
             'SupportPortal',
             'LogView',
-            "SugarpdfSettings", "saveftsmodules"
+            "SugarpdfSettings", "saveftsmodules", 'SaveSequence'
         );
 
     /**
