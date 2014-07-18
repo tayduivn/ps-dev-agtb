@@ -467,6 +467,9 @@ function getOrderedFieldDefArray(field_defs,show_id_field) {
 
 function addFilterQualify(cell, filter, row) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
+	if (!filter_row.column_select.options[filter_row.column_select.selectedIndex]){
+		return;
+	}
 	var field_key = filter_row.column_select.options[filter_row.column_select.selectedIndex].value;
 	var selectedLabel = '';
 	var field = new Object();
@@ -538,6 +541,9 @@ function refreshFilterInput(filter,index) {
 }
 function addFilterInput(cell,filter) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
+	if (!filter_row.qualify_select || !filter_row.qualify_select.options[filter_row.qualify_select.selectedIndex]) {
+		return;
+	}
 	var qualifier_name = filter_row.qualify_select.options[filter_row.qualify_select.selectedIndex].value;
 	var module_select = filter_row.module_select;
 	var table_key = module_select.options[module_select.selectedIndex].value;

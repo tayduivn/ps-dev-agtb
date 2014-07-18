@@ -264,28 +264,29 @@ SUGAR.reports = function() {
 
 		loadFilters:function(filters, parentId) {
 			var operator = filters.operator;
-			panels = SUGAR.FiltersWidget.getPanels(); 
+			panels = SUGAR.FiltersWidget.getPanels();
 			if (panels.length > 0) {
 				SUGAR.FiltersWidget.addGroupToPanel(parentId + "_body_div", parentId, operator);
 			}
 			else {
 				SUGAR.FiltersWidget.addGroupToPanel('filter_designer_div', SUGAR.language.get('Reports','LBL_FILTER'), operator);
 			}
-			if (document.getElementById('inlineFiltersHelpTable')) 
+			if (document.getElementById('inlineFiltersHelpTable'))
 				document.getElementById(SUGAR.language.get('Reports','LBL_FILTER') + ".1_body_div").innerHTML = "";
-		
+
 			panelId = String(panels[panels.length - 1].id);
 			var id = String(panelId);
-			var i = 0;
-			while (filters[i]) {
+			for (var i in filters) {
+				if (!_.isObject(filters[i])) {
+					continue;
+				}
 				current_filter = filters[i];
 				if (current_filter.operator) {
-					SUGAR.reports.loadFilters(current_filter, id);	
+					SUGAR.reports.loadFilters(current_filter, id);
 				}
 				else {
 					SUGAR.reports.addFilterOnLoad(current_filter, id + "_table");
 				}
-				i++;
 			}
 		},
 

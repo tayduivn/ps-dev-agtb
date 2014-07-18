@@ -114,6 +114,12 @@ class Report
     var $invalid_fields = array();
 
     /**
+     * List of relationships/links that are no longer valid/deleted
+     * @var array
+     */
+    public $invalid_links = array();
+
+    /**
      * Array, which reflects whether or not to consider the currency in the query.
      *
      * @var array
@@ -451,26 +457,20 @@ class Report
     {
         $validTableKeys = array();
         // Collecting table_keys from display_columns
-        foreach ($this->report_def['display_columns'] as $column)
-        {
-            if (in_array($column['table_key'], $validTableKeys) == false)
-            {
+        foreach ($this->report_def['display_columns'] as $column) {
+            if (in_array($column['table_key'], $validTableKeys) == false) {
                 $validTableKeys[] = $column['table_key'];
             }
         }
         // Collecting table_keys from summary_columns
-        foreach ($this->report_def['summary_columns'] as $column)
-        {
-            if (in_array($column['table_key'], $validTableKeys) == false)
-            {
+        foreach ($this->report_def['summary_columns'] as $column) {
+            if (in_array($column['table_key'], $validTableKeys) == false) {
                 $validTableKeys[] = $column['table_key'];
             }
         }
         // Collecting table_keys from group_defs
-        foreach ($this->report_def['group_defs'] as $column)
-        {
-            if (in_array($column['table_key'], $validTableKeys) == false)
-            {
+        foreach ($this->report_def['group_defs'] as $column) {
+            if (in_array($column['table_key'], $validTableKeys) == false) {
                 $validTableKeys[] = $column['table_key'];
             }
         }
@@ -478,17 +478,13 @@ class Report
         $filters_def = array();
         $recursiveArrayIterator = new RecursiveArrayIterator($this->report_def['filters_def']);
         $recursiveIteratorIterator = new RecursiveIteratorIterator($recursiveArrayIterator, RecursiveIteratorIterator::SELF_FIRST);
-        foreach($recursiveIteratorIterator as $k => $v)
-        {
-            if (is_array($v) && !empty($v['table_key']))
-            {
+        foreach ($recursiveIteratorIterator as $k => $v) {
+            if (is_array($v) && !empty($v['table_key'])) {
                 $filters_def[] = $v;
             }
         }
-        foreach ($filters_def as $column)
-        {
-            if (in_array($column['table_key'], $validTableKeys) == false)
-            {
+        foreach ($filters_def as $column) {
+            if (in_array($column['table_key'], $validTableKeys) == false) {
                 $validTableKeys[] = $column['table_key'];
             }
         }
@@ -497,13 +493,10 @@ class Report
         $requiredTableKeys = array(
             'self' => $this->module
         );
-        foreach ($this->report_def['full_table_list'] as $k => $v)
-        {
-            if (in_array($k, $validTableKeys) == true)
-            {
+        foreach ($this->report_def['full_table_list'] as $k => $v) {
+            if (in_array($k, $validTableKeys) == true) {
                 $offset = -1;
-                while (($offset = strpos($k, ':', $offset + 1)) !== false)
-                {
+                while (($offset = strpos($k, ':', $offset + 1)) !== false) {
                     $requiredTableKeys[substr($k, 0, $offset)] = $k;
                 }
                 $requiredTableKeys[$k] = $k;
@@ -511,14 +504,11 @@ class Report
         }
 
         // Removing incorrect dependencies
-        foreach ($this->report_def['full_table_list'] as $k => $v)
-        {
-            if (in_array($k, $validTableKeys) == true)
-            {
+        foreach ($this->report_def['full_table_list'] as $k => $v) {
+            if (in_array($k, $validTableKeys) == true) {
                 continue;
             }
-            if (!empty($requiredTableKeys[$k]))
-            {
+            if (!empty($requiredTableKeys[$k])) {
                 continue;
             }
             unset($this->report_def['full_table_list'][$k]);
@@ -911,9 +901,75 @@ class Report
             }
         }
 
-        $this->invalid_fields = array_unique($this->invalid_fields);
+        $this->invalid_links = $this->getInvalidTableDefs();
+
+        $this->invalid_fields = array_unique(array_merge($this->invalid_fields, $this->invalid_links));
 
         return 0 == count($this->invalid_fields);
+    }
+
+    /**
+     * Removes filter entries that are using invalid links
+     */
+    public function removeInvalidFilters()
+    {
+        $entries = array_keys($this->getInvalidTableDefs());
+        if (!empty($entries)) {
+            foreach ($entries as $k) {
+                unset($this->report_def['full_table_list'][$k]);
+            }
+            foreach ($this->report_def['display_columns'] as $i => $v) {
+                if (!empty($v['table_key']) && in_array($v['table_key'], $entries)) {
+                    unset($this->report_def['display_columns'][$i]);
+                }
+            }
+            foreach ($this->report_def['filters_def'] as $fId => $group) {
+                foreach ($group as $k => $v) {
+                    if (!empty($v['table_key']) && in_array($v['table_key'], $entries)) {
+                        unset($this->report_def['filters_def'][$fId][$k]);
+                    }
+                }
+            }
+            $this->report_def_str = getJSONobj()->encode($this->report_def);
+        }
+    }
+
+    /**
+     * Retrieves a list table joins that are using invalid links
+     */
+    public function getInvalidTableDefs()
+    {
+        $ret = array();
+        if (!empty($this->report_def['full_table_list'])) {
+            foreach ($this->report_def['full_table_list'] as $k => $v) {
+                if (!empty($v['link_def']['name'])) {
+                    $relModule = $v['parent'] == 'self' ? $this->module : $v['parent'];
+                    $bean = BeanFactory::getBean($relModule);
+                    if (!empty($bean) && empty($bean->field_defs[$v['link_def']['name']])) {
+                        //Invalid link found
+                        $ret[$k] = $v['name'];
+                        continue;
+                    }
+                }
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Verifies the report definition and displays an error if any issues are found.
+     */
+    public function validateBeforeDisplay()
+    {
+        global $current_language;
+        if (!$this->is_definition_valid()) {
+            $mod_strings = return_module_language($current_language, "Reports");
+            $this->handleException($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'
+                    . implode(array_merge($this->invalid_links, $this->invalid_fields), ",")
+                    . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']
+            );
+        }
     }
 
     /**
@@ -1235,15 +1291,10 @@ class Report
 
     function getRelatedAliasName($linked_field)
     {
-        /* return str_replace('link_','l',
-        str_replace('self_','',$linked_field));
-return str_replace(' > ','_',
-        str_replace('self_','',$linked_field));
-        */
-
-        return $this->alias_lookup[$linked_field];
-        //return $linked_field;
-
+        if (!empty($this->alias_lookup[$linked_field])) {
+            return $this->alias_lookup[$linked_field];
+        }
+        return $linked_field;
     }
 
     function getRelatedLinkAliasName($linked_field)
