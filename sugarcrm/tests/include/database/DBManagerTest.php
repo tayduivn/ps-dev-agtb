@@ -2366,12 +2366,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // CE is failing on CI because of forecast_tree check
         $this->markTestSkipped("This test needs to be modified to use a different table name because forecasts_tree breaks CE builds");
         //END SUGARCRM flav=com ONLY
-        
+
         if ( !$this->_db->supports('recursive_query') )
         {
             $this->markTestSkipped('DBManager does not support recursive query');
         }
-        
+
         $this->_db->preInstall();
 
         // Setup test data
@@ -2565,6 +2565,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 array('type' => 'decimal', 'len' => '12', 'precision' => '6'),
                 array('len' => '14', 'precision' => '6'),
                 "14,6"
+            ),
+            array(
+                array('len' => '4,2', 'precision' => '2', 'type' => 'decimal'),
+                array('len' => '26,2', 'precision' => '2'),
+                "26,2"
             ),
         );
     }

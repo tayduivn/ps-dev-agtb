@@ -1211,10 +1211,14 @@ protected function checkQuery($sql, $object_name = false)
 			if ($key == 'len' && empty($fielddef2[$key]))
 				continue;
             // if the length in db is greather than the vardef, ignore it
-            if ($key == 'len' && ($fielddef1[$key] >= $fielddef2[$key])) {
-                continue;
+            if ($key == 'len') {
+                list($dblen, $dbprec) = $this->parseLenPrecision($fielddef1);
+                list($vlen, $vprec) = $this->parseLenPrecision($fielddef2);
+                if ($dblen >= $vlen && ((is_null($dbprec) && is_null($vprec)) || $dbprec >= $vprec)) {
+                    continue;
+                }
             }
-			return false;
+            return false;
 		}
 
 		return true;
