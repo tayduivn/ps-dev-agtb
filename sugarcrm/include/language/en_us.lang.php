@@ -5152,6 +5152,12 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CONFIG_BLOCKED_DESC_USER_ACCESS' => 'User does not have access to {{module}}',
     'LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS' => 'User does not have access to configure {{module}} settings',
     'LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS' => 'Database settings for {{module}} need to be fixed',
+
+    // duration field
+    'LBL_START_AND_END_DATE' => '{{start}} - {{end}} ({{duration}})',
+    'LBL_START_AND_END_DATE_SAME_DAY' => '{{date}} {{start}} - {{end}} ({{duration}})',
+    'LBL_START_AND_END_DATE_TO' => 'to',
+    'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
 );
 
 $app_list_strings['interactions_options'] = array (

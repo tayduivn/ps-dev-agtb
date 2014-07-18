@@ -153,13 +153,21 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'date_start',
-                'repeat_type',
                 array(
-                    'name' => 'date_end',
-                    'required' => true,
+                    'name' => 'duration',
+                    'type' => 'duration',
+                    'dismiss_label' => true,
+                    'detail_view_label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
+                    'fields' => array(
+                        'date_start',
+                        'date_end',
+                    ),
+                    'span' => 9,
                 ),
-                array(),
+                array(
+                    'name' => 'repeat_type',
+                    'span' => 3,
+                ),
                 'location',
                 array(
                     'name' => 'reminders',

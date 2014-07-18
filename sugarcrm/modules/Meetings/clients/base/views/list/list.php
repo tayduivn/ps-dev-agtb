@@ -28,6 +28,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'link' => false,
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'parent_name',

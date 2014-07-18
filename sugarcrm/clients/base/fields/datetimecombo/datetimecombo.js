@@ -260,6 +260,10 @@
         }
 
         this.model.on('change:' + this.name, function(model, value) {
+            if (this.disposed) {
+                return;
+            }
+            
             if (this.action !== 'edit' && this.action !== 'massupdate') {
                 this.render();
                 return;
