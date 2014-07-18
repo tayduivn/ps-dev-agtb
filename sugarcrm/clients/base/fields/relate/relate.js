@@ -104,9 +104,10 @@
      * @protected
      */
     _createFiltersCollection: function() {
-        if (app.metadata.getModule('Filters')) {
+        var searchModule = this.getSearchModule();
+        if (app.metadata.getModule('Filters') && searchModule) {
             this.filters = app.data.createBeanCollection('Filters');
-            this.filters.setModuleName(this.getSearchModule());
+            this.filters.setModuleName(searchModule);
             this.filters.setFilterOptions(this.getFilterOptions());
             this.filters.load();
         }
@@ -159,7 +160,7 @@
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
-            return;
+            return this;
         }
 
         var result = this._super('_render');
