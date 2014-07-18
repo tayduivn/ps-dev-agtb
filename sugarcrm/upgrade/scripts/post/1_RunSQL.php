@@ -50,6 +50,7 @@ class SugarUpgradeRunSQL extends UpgradeScript
         $contents = file($sqlScript);
         $anyScriptChanges = $contents;
         $resumeAfterFound = false;
+        $completeLine = '';
         foreach($contents as $line) {
             if (strpos($line, '--') === false) {
                $completeLine .= " " . trim($line);
