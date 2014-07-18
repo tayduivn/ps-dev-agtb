@@ -67,7 +67,7 @@ class Latin{
 	   					$langConfig[$lang] = (!empty($sugar_config['languages'][$lang]))?$sugar_config['languages'][$lang]:$lang;
 
 					}
-					$license = $this->rome->config['license'][$flav];
+					$license = '/*' . PHP_EOL . ' * ' . str_replace(PHP_EOL, PHP_EOL . ' * ', trim(file_get_contents('../../sugarcrm/LICENSE'))) . PHP_EOL . ' */' . PHP_EOL;
 					file_put_contents($this->rome->buildPath . '/' . $flav . '/sugarcrm/install/lang.config.php', '<?php' . "\n$license\n" . '$config["languages"]=' . var_export($langConfig, true)  . ';');
 
     			}

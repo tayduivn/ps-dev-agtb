@@ -105,7 +105,6 @@ public function setRegions($regions, $replace=false){
                     $this->config['builds'][$reg_build] = $this->config['builds'][$build];
                     unset($this->config['builds'][$reg_build]['reg']);
                     $this->config['builds'][$reg_build]['reg'][] = $reg;
-                    $this->config['license'][$reg_build] = $this->config['license'][$build];
 
                 }
         }
@@ -126,7 +125,6 @@ public function setDeployments($deployments, $replace=false){
                     $this->config['builds'][$dep_build] = $this->config['builds'][$build];
                     unset($this->config['builds'][$dep_build]['dep']);
                     $this->config['builds'][$dep_build]['dep'][] = $dep;
-                    $this->config['license'][$dep_build] = $this->config['license'][$build];
                 }
         }
 		if($replace){
@@ -165,13 +163,10 @@ protected function clearOutput(){
 }
 
 /**
- * Adds a line to all the active builds. It also handles scanning for the license tag by buffering comments
- *
- *
+ * Adds a line to all the active builds.
  */
 
 protected function addToOutput($line){
-        static $is_lic = -1;
         $emp = empty($this->commentBuffer);
         $ps = ($emp)?strpos(trim($line), '/*'):false;
         if($ps !== 0){
@@ -182,7 +177,6 @@ protected function addToOutput($line){
         $comment = '';
         $tailout = '';
         $flushComment = false;
-        $replaceComment = false;
 
         //remove '$Id:', '@version','$Log:','$Header:'
        	foreach ($this->config['replace'] as $id){
@@ -205,21 +199,11 @@ protected function addToOutput($line){
                 	$comment = substr($line, $ps );
             	}else $output = $line;
             }
-            if($is_lic === -1){
-                //check if it's a license
-                foreach($this->config['license']['search'] as $licenseComment){
-                	$i = strpos($line, $licenseComment);
-                	if($i !== false)break;
-                }
-                
-                if($i !== false)$is_lic = true;
-            }
             if($pe !== false && !$emp){
                     //ending a comment
                     //flush the comment
                     $flushComment = true;
                     $comment .= substr($line, 0, $pe + 2);
-                    if($is_lic !== -1)$replaceComment  = true;
                     $tailout .= substr($line, $pe + 2);
                     
             }
@@ -233,18 +217,13 @@ protected function addToOutput($line){
 
         foreach($this->active as $build=>$active){
         		if($flushComment && !empty($this->commentBuffer[$build])){
-        			if($replaceComment){
-        				//print_r($build);
-                    	$this->output[$build] .= $this->config['license'][$build];
-                    }else{
-                        $this->output[$build] .= $this->commentBuffer[$build];
-                    }
+        			$this->output[$build] .= $this->commentBuffer[$build];
         		}
                 if($active){
                     $this->output[$build] .= $output;
                     if(!empty($comment)){
                         if($flushComment){
-                           if(!$replaceComment)$this->output[$build] .= $comment;
+                            $this->output[$build] .= $comment;
                             $this->output[$build] .= $tailout;
                         }
 
@@ -260,7 +239,6 @@ protected function addToOutput($line){
         }
         if($flushComment){
              $this->commentBuffer = array();
-             $is_lic = -1;
         }
 }
 
@@ -376,53 +354,6 @@ protected function changeActive($results){
         $lower[$val] = strtolower(trim($val));
         return $lower[$val];
 }
-
-
-
-/*
-protected function parseComment($line){
-        //echo $line;
-        $results = array();
-        $cur = '';
-        $token = '';
-        $newToken = false;
-        preg_match('/\/\/\s*(BEGIN|END|FILE|ELSE)\s*SUGARCRM\s*(.*) ONLY/i', $line, $match);
-        if(empty($match[2]))return $results;
-        $results['state'] = strtolower($match[1]);
-        for($i = 0; $i < strlen($match[2]); $i++){
-                $el = $match[2][$i];
-                switch($el){
-                        case '=':
-                                $cur = strtolower(trim($token));
-                                $token = '';
-                                break;
-                        case ',';
-                            if(!empty($token) && !empty($cur)){
-                                    $results['tags'][$cur][] = $this->getLower($token);
-                                    $token = '';
-                                }
-                                break;
-                        case ' ';
-                                $newToken = true;
-                                break;
-                        default:
-                                if($newToken && !empty($token)){
-                                   $results['tags'][$cur][] = $this->getLower($token);
-                                    $token = '';
-                                }
-                                 $newToken = false;
-                                $token .= $el;
-                }
-        }
-        if(!empty($token)){
-
-            $results['tags'][$cur][] = $this->getLower($token);
-        }
-        //print_r($results);
-        return $results;
-
-}
-*/
 
 protected function parseComment($line){
         //echo $line;
