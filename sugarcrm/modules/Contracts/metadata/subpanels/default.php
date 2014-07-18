@@ -55,8 +55,8 @@ $subpanel_layout = array(
 			'vname' => 'LBL_LIST_STATUS',
 			'width' => '10%',
 		),
-		'total_contract_value'=>array (
-			'name'=>'total_contract_value',		
+		'total_contract_value_usdollar'=>array (
+			'name'=>'total_contract_value_usdollar',
 			'vname' => 'LBL_LIST_CONTRACT_VALUE',
 			'width' => '15%',
 		),
