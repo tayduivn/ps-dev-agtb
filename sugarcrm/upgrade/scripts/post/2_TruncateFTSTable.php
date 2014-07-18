@@ -43,9 +43,11 @@ class SugarUpgradeTruncateFTSTable extends UpgradeScript
         $this->log('Clearing the fts_queue so we can add a primary key');
 
         foreach ($queries as $description => $q) {
+            $this->db->commit();
             if (!$this->db->query($q)) {
                 return $this->error('TruncateFTSTable failed on step ' . $description);
             }
         }
+        $this->db->commit();
     }
 }
