@@ -117,13 +117,18 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('prepopulate', function() {
-        var populateRelatedStub, modelSetStub, flag;
+        var populateRelatedStub, modelSetStub, populateForModulesStub, flag;
 
         beforeEach(function() {
             flag = false;
             populateRelatedStub = sandbox.stub(view, 'populateRelated', function() {
                 flag = true;
             });
+
+            populateForModulesStub = sandbox.stub(view, '_populateForModules', function() {
+                flag = true;
+            });
+
             modelSetStub = sandbox.stub(view.model, 'set', function() {
                 flag = true;
             });
@@ -158,6 +163,7 @@ describe("Emails.Views.Compose", function() {
 
             runs(function() {
                 expect(populateRelatedStub.callCount).toBe(1);
+                expect(populateForModulesStub.callCount).toBe(1);
             });
         });
 
@@ -230,6 +236,77 @@ describe("Emails.Views.Compose", function() {
             view.populateRelated(relatedModel);
             expect(parentId).toBeUndefined();
             expect(parentValue).toBeUndefined();
+        });
+    });
+
+    describe("populateForCases", function () {
+        var flag,
+            relatedModel,
+            fetchedModel,
+            inputValues,
+            sandbox = sinon.sandbox.create(),
+            configStub,
+            caseSubjectMacro = '[CASE:%1]';
+
+
+        beforeEach(function () {
+            flag = false;
+            configStub = sandbox.stub(app.metadata, 'getConfig', function() {
+                return {
+                    'inboundEmailCaseSubjectMacro': caseSubjectMacro,
+                }
+            });
+
+            inputValues = {
+                id: '123',
+                case_number: '100',
+                name: 'My Case'
+            };
+
+            relatedModel = app.data.createBean('Cases', inputValues);
+            sandbox.stub(relatedModel, 'fetch', function (params) {
+                params.success(relatedModel);
+            });
+        });
+
+        afterEach(function() {
+            configStub.restore();
+        });
+
+        it("should populate only the subject and when cases does not have any related contacts", function () {
+            var tmpModel = new Backbone.Model(),
+                relatedCollectionStub;
+
+            relatedModel.getRelatedCollection = function () {
+                return tmpModel;
+            };
+
+            relatedCollectionStub = sandbox.stub(tmpModel, 'fetch', function () {
+                flag = true;
+            });
+
+            runs(function () {
+                view._populateForCases(relatedModel);
+            });
+
+            waitsFor(function () {
+                return flag;
+            }, 'fetch() should have been called but timeout expired', 1000);
+
+            runs(function () {
+                expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+                expect(relatedCollectionStub.callCount).toBe(1);
+            });
+        });
+
+        it("should populate both the subject and 'to' field when cases has related contacts", function () {
+            var contact = app.data.createBean('Contacts'),
+                toAddresses = [{bean: contact}];
+
+            view.model.set('to_addresses', toAddresses);
+            view._populateForCases(relatedModel);
+            expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+            expect(view.model.get('to_addresses')).toEqual(toAddresses);
         });
     });
 

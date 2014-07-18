@@ -1725,6 +1725,11 @@ class MetaDataManager
             $configs['analytics'] = array('enabled' => false);
         }
 
+        $caseBean = BeanFactory::getBean('Cases');
+        if(!empty($caseBean)) {
+            $configs['inboundEmailCaseSubjectMacro'] = $caseBean->getEmailSubjectMacro();
+        }
+
         return $configs;
     }
 
