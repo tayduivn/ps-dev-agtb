@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+Activity::disable();
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -303,13 +304,12 @@ else if(!isset($_GET['execute'])){
 
     foreach($_POST['modules'] as $module){
 		if(!array_key_exists($module, $beanListFlip)){
-			//echo "$module not found as key in \$beanListFlip. Skipping $module.<BR>";
 			continue;
 		}
-        $p_module = $beanListFlip[$module];
+
         $object = BeanFactory::getBean($module);
+
         if(empty($object->table_name)){
-//			echo "<h5>Could not find the database table for $p_module.</h5>";
 			continue;
 		}
 
@@ -481,7 +481,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
                 if(empty($row['id'])){
 					continue;
 				}
-				$bean = BeanFactory::getBean($p_module, $row['id']);
+				$bean = BeanFactory::getBean($module, $row['id']);
 
 				// So that we don't create new blank records.
 				if(empty($bean->id)){
@@ -498,18 +498,17 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 					$bean->team_set_id = $toteamsetid;
 				}
 				//END SUGARCRM flav=pro ONLY
-
+                $linkname = "record with id {$bean->id}";
+                if(!empty($bean->name)){
+                    $linkname = $bean->name;
+                }
+                else if(!empty($bean->last_name)){
+                    $linkname = $locale->formatName($bean);
+                }
+                else if(!empty($bean->document_name)){
+                    $linkname = $bean->document_name;
+                }
 				if($bean->save()){
-					$linkname = "record with id {$bean->id}";
-					if(!empty($bean->name)){
-						$linkname = $bean->name;
-					}
-					else if(!empty($bean->last_name)){
-                        $linkname = $locale->formatName($bean);
-					}
-					else if(!empty($bean->document_name)){
-						$linkname = $bean->document_name;
-					}
 					$successstr = "{$mod_strings_users['LBL_REASS_SUCCESS_ASSIGN']} {$bean->object_name} \"<i><a href=\"index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}\">$linkname</a></i>\" {$mod_strings_users['LBL_REASS_FROM']} $fromusername {$mod_strings_users['LBL_REASS_TO']} $tousername";
 					//BEGIN SUGARCRM flav=pro ONLY
 					$successstr .= ($toteam != '0' ? ", {$mod_strings_users['LBL_REASS_TEAM_SET_TO']} $toteamname." : ".");
@@ -544,7 +543,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 		}
 		echo "</td></tr></table>\n";
 	}
-
+	Activity::enable();
 	echo "<BR><input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_RETURN']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
 
 /////////////////// END STEP 3 - Execute reassignment ///////////////////////

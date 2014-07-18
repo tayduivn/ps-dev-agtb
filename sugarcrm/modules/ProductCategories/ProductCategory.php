@@ -645,7 +645,7 @@ class ProductCategory extends SugarBean
      */
     public function save($check_notify = false)
     {
-        parent::save($check_notify);
+        $parentSaveResult = parent::save($check_notify);
 
         // check if this product category already stores in forecast_tree table
         $isUpdate = false;
@@ -653,6 +653,8 @@ class ProductCategory extends SugarBean
         if ($id == $this->id) {
             $isUpdate = true;
         }
+
+        return $parentSaveResult;
     }
 
     /**
