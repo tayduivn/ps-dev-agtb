@@ -243,6 +243,7 @@ $dictionary['User'] = array(
             'type' => 'datetime',
             'required' => false,
             'readonly' => true,
+            'massupdate' => false,
         ),
         'modified_user_id' => array(
             'name' => 'modified_user_id',
