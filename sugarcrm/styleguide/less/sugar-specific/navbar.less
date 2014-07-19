@@ -122,12 +122,18 @@
           background: none;
         }
       }
-      /*This is all buttons in the mega menu*/
-      &> .btn:focus {
+
+      /*This is all buttons not in the mega menu*/
+      &:not(.open) {
+        &> .btn:focus, .btn.module-name:focus {
           .tab-focus-light();
-      }
-      &> .btn.module-name:focus {
+        }
+        &> .btn.module-name:focus {
           outline-offset: 3px;
+        }
+        &> .btn:active, .btn:active:focus {
+          outline-width: 0px;
+        }
       }
 
       &.open {
