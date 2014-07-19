@@ -75,7 +75,7 @@
         }
         this.toggledModels = {};
 
-        this.context._recordListFields = this.getFieldNames();
+        this.context._recordListFields = this.getFieldNames(null, true);
 
         this._currentUrl = Backbone.history.getFragment();
 
@@ -536,9 +536,9 @@
      * Adds the favorite field to app.view.View.getFieldNames() if meta.favorites is true
      * so my_favorite is part of the field list and is fetched
      */
-    getFieldNames: function(module) {
+    getFieldNames: function(module, onlyDataFields) {
         //Start with an empty set of fields since the view name in the request will load all fields from the metadata.
-        var fields = [ ];
+        var fields = onlyDataFields ? [ ] : this._super('getFieldNames', arguments);
         if (this.meta.favorite) {
             fields = _.union(fields, ['my_favorite']);
         }

@@ -1145,19 +1145,19 @@
      * Adds the favorite field to app.view.View.getFieldNames() if `favorite` field is within a panel
      * so my_favorite is part of the field list and is fetched
      */
-    getFieldNames: function(module) {
+    getFieldNames: function(module, onlyDataFields) {
         //Start with an empty set of fields since the view name in the request will load all fields from the metadata.
-        var fields = [ ];
-        var favorite = _.find(this.meta.panels, function(panel) {
-             return _.find(panel.fields, function(field) {
-                 return field.type === 'favorite';
-             });
-        });
-        var follow = _.find(this.meta.panels, function(panel) {
-             return _.find(panel.fields, function(field) {
-                 return field.type === 'follow';
-             });
-        });
+        var fields = onlyDataFields ? [ ] : this._super('getFieldNames', arguments),
+            favorite = _.find(this.meta.panels, function(panel) {
+                return _.find(panel.fields, function(field) {
+                    return field.type === 'favorite';
+                });
+            }),
+            follow = _.find(this.meta.panels, function(panel) {
+                return _.find(panel.fields, function(field) {
+                    return field.type === 'follow';
+                });
+            });
         if (favorite) {
             fields = _.union(fields, ['my_favorite']);
         }

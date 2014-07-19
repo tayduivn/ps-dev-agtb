@@ -54,7 +54,7 @@ describe('Base.View.RecordList', function() {
     describe('adding actions to list view', function() {
 
         it('should return my_favorite field when calling getFieldNames', function() {
-            var fields = view.getFieldNames();
+            var fields = view.getFieldNames(null, true);
             expect(_.contains(fields, 'my_favorite')).toBeTruthy();
         });
 
@@ -82,7 +82,7 @@ describe('Base.View.RecordList', function() {
 
         it('should return not return the fields from the metadata for getFieldNames', function () {
             expect(view.meta.panels[0].fields.length).toBeGreaterThan(1);
-            var fields = view.getFieldNames();
+            var fields = view.getFieldNames(null, true);
             expect(fields.length).toBe(1);
         });
 
