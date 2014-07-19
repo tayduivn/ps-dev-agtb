@@ -790,6 +790,7 @@
         if(!hasError) {
             return;
         }
+
         var tabLink,
             fieldTab   = field.$el.closest('.tab-pane'),
             fieldPanel = field.$el.closest('.record-panel-content');
@@ -811,12 +812,9 @@
                 var fieldPanelArrow = fieldPanel.prev().find('i');
                 fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
-        } else if (field.$el.is(':hidden')) {
-            this.$('.more[data-moreless]').trigger('click');
-            app.user.lastState.set(this.SHOW_MORE_KEY, this.$('.less[data-moreless]'));
         }
-        else if(field.$el.closest('.panel_hidden.hide')) {
-            this.toggleMoreLess(this.MORE_LESS_STATUS.MORE);
+        else if(field.$el.closest('.panel_hidden.hide').length > 0) {
+            this.toggleMoreLess(this.MORE_LESS_STATUS.MORE, true);
         }
     },
 
