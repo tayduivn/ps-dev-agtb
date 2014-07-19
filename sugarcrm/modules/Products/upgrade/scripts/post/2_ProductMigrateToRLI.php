@@ -100,8 +100,8 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            o.probability, 
                            o.lead_source, 
                            o.campaign_id, 
-                           o.id, 
-                           o.opportunity_type
+                           o.id as opportunity_id,
+                           o.opportunity_type as product_type
                    FROM products p  
                    INNER JOIN quotes q  
                    ON q.id = p.quote_id 
@@ -184,7 +184,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            o.lead_source, 
                            o.campaign_id, 
                            p.opportunity_id, 
-                           o.opportunity_type 
+                           o.opportunity_type as product_type
                    FROM products p 
                    INNER JOIN opportunities o 
                    on o.id = p.opportunity_id 
@@ -261,7 +261,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            o.lead_source, 
                            o.campaign_id, 
                            qo.opportunity_id, 
-                           o.opportunity_type 
+                           o.opportunity_type as product_type
                    FROM products p  
                    INNER JOIN quotes q  
                    ON q.id = p.quote_id 
