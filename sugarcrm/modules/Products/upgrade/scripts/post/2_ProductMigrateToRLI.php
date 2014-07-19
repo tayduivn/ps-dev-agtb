@@ -303,7 +303,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                 $row[$key] = $this->db->massageValue($value, $rli->getFieldDefinition($key));
             }
 
-            $this->db->query($insertSQL . $columns . ' VALUES (' . join(',', $row) . ');');
+            $this->db->query($insertSQL . '(' . $columns . ') VALUES (' . join(',', $row) . ');');
         }
 
         $this->relateProductToRevenueLineItem($productToRliMapping);
