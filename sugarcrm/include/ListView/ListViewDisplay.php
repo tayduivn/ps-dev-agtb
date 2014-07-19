@@ -600,7 +600,7 @@ EOF;
                 }
             }
 
-            if (!empty($seedDef['sort_on'])) {
+            if (!empty($seedDef['sort_on']) && !is_array($seedDef['sort_on'])) {
                 $this->displayColumns[$columnName]['orderBy'] = $seedDef['sort_on'];
             }
 
