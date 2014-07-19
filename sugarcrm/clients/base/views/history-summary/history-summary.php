@@ -67,7 +67,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'to_addrs',
                     'type' => 'email',
-                    'label' => 'LBL_EMAIL_TO',
+                    'label' => 'LBL_HISTORICAL_SUMMARY_EMAIL_TO',
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -75,7 +75,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'from_addr',
                     'type' => 'email',
-                    'label' => 'LBL_EMAIL_FROM',
+                    'label' => 'LBL_HISTORICAL_SUMMARY_EMAIL_FROM',
                     'enabled' => true,
                     'default' => true,
                 ),
