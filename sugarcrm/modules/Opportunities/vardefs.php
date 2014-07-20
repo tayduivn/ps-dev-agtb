@@ -318,7 +318,6 @@ $dictionary['Opportunity'] = array(
             'len' => '255',
             'readonly' => true,
             'duplicate_merge' => 'disabled',
-            'workflow' => false,
             //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
             'reportable' => false,
