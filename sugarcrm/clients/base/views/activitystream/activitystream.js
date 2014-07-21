@@ -573,9 +573,12 @@
     },
 
     /**
-     * Determine the status and label for the preview button
+     * Determines the status and label for the preview button.
      *
-     * @returns {object} preview object
+     * @return {Object}
+     * @return {Boolean} return.enabled Whether the preview is enabled.
+     * @return {String} return.label The label to display in the preview button
+     *   tooltip.
      */
     getPreviewData: function () {
         var parentModel,
@@ -583,12 +586,18 @@
                 enabled: true,
                 label: 'LBL_PREVIEW'
             },
-            // assume modules without metadata are BWC by default
-            isBwcEnabled = true,
-            moduleMetadata = app.metadata.getModule(this.model.get('display_parent_type'));
+            isBwcEnabled,
+            module = this.model.get('display_parent_type');
 
-        if (moduleMetadata && _.has(moduleMetadata, 'isBwcEnabled')) {
-            isBwcEnabled = moduleMetadata.isBwcEnabled;
+        if (module) {
+            // assume modules without metadata are BWC by default.
+            isBwcEnabled = true;
+            var moduleMetadata = app.metadata.getModule(module);
+            if (moduleMetadata && _.has(moduleMetadata, 'isBwcEnabled')) {
+                isBwcEnabled = moduleMetadata.isBwcEnabled;
+            }
+        } else {
+            isBwcEnabled = false;
         }
 
         if (isBwcEnabled) {
