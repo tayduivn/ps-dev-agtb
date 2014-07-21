@@ -852,19 +852,19 @@ describe("Record View", function () {
     });
 
     it('should not return my_favorite field when calling getFieldNames', function () {
-        var fields = view.getFieldNames();
+        var fields = view.getFieldNames(null, true);
         expect(_.indexOf(fields, 'my_favorite')).toEqual(-1);
     });
 
     it('should return my_favorite field when calling getFieldNames', function () {
         view.meta.panels[0].fields.push({name: 'favorite', type: 'favorite'});
-        var fields = view.getFieldNames();
+        var fields = view.getFieldNames(null, true);
         expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
     });
 
     it('should return not return the fields from the metadata for getFieldNames', function () {
         expect(_.isEmpty(view.meta.panels[0].fields)).toBeFalsy();
-        var fields = view.getFieldNames()
+        var fields = view.getFieldNames(null, true)
         expect(_.isEmpty(fields)).toBeTruthy();
     });
 

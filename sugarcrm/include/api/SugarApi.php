@@ -381,11 +381,17 @@ abstract class SugarApi {
                 if (!empty($fieldDefs[$field]) && isset($fieldDefs[$field]['type'])) {
                     switch ($fieldDefs[$field]['type']) {
                         case 'relate':
-                            $fields[] = $fieldDefs[$field]['id_name'];
+                            if (!empty($fieldDefs[$field]['id_name'])) {
+                                $fields[] = $fieldDefs[$field]['id_name'];
+                            }
                             break;
                         case 'parent':
-                            $fields[] = $fieldDefs[$field]['id_name'];
-                            $fields[] = $fieldDefs[$field]['type_name'];
+                            if (!empty($fieldDefs[$field]['id_name'])) {
+                                $fields[] = $fieldDefs[$field]['id_name'];
+                            }
+                            if (!empty($fieldDefs[$field]['type_name'])) {
+                                $fields[] = $fieldDefs[$field]['type_name'];
+                            }
                             break;
                     }
                 }
