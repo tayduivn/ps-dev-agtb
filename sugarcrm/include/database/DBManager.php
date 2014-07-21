@@ -904,6 +904,22 @@ protected function checkQuery($sql, $object_name = false)
     }
 
     /**
+     * Parse length & precision into 2 numbers
+     * @param array $def Vardef-like data
+     * @return array(length, precision)
+     */
+    protected function parseLenPrecision($def)
+    {
+        if (strpos($def['len'], ",") !== false) {
+            return explode(",", $def['len']);
+        }
+        if (isset($def['precision'])) {
+            return array($def['len'], $def['precision']);
+        }
+        return array($def['len'], null);
+    }
+
+    /**
      * Supplies the SQL commands that repair a table structure
      *
      * @param  string $tableName
@@ -992,6 +1008,34 @@ protected function checkQuery($sql, $object_name = false)
                 {
                     $ignorerequired = true;
                 }
+
+                // BR-1787: we can not decrease the length of the column
+                if (!empty($value['len']) && !empty($compareFieldDefs[$name]['len'])) {
+                    list($dblen, $dbprec) = $this->parseLenPrecision($compareFieldDefs[$name]);
+                    list($vlen, $vprec) = $this->parseLenPrecision($value);
+
+                    if (isset($dbprec)) {
+                        // already have precision - match both separately
+                        if ($vprec < $dbprec) {
+                            $vprec = $dbprec;
+                        }
+                    } else {
+                        // did not have precision - length-precision should be no less than old length
+                        if (isset($vprec)) {
+                            $dblen += $vprec;
+                        }
+                    }
+                    if ($vlen < $dblen) {
+                        $vlen = $dblen;
+                    }
+                    if (isset($vprec)) {
+                        $value['precision'] = $vprec;
+                        $value['len'] = "$vlen,$vprec";
+                    } else {
+                        $value['len'] = $vlen;
+                    }
+                }
+
                 $altersql = $this->alterColumnSQL($tableName, $value, $ignorerequired);
                 if(is_array($altersql)) {
                     $altersql = join("\n", $altersql);
@@ -1167,10 +1211,14 @@ protected function checkQuery($sql, $object_name = false)
 			if ($key == 'len' && empty($fielddef2[$key]))
 				continue;
             // if the length in db is greather than the vardef, ignore it
-            if ($key == 'len' && ($fielddef1[$key] >= $fielddef2[$key])) {
-                continue;
+            if ($key == 'len') {
+                list($dblen, $dbprec) = $this->parseLenPrecision($fielddef1);
+                list($vlen, $vprec) = $this->parseLenPrecision($fielddef2);
+                if ($dblen >= $vlen && ((is_null($dbprec) && is_null($vprec)) || $dbprec >= $vprec)) {
+                    continue;
+                }
             }
-			return false;
+            return false;
 		}
 
 		return true;
