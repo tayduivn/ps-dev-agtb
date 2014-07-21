@@ -18,25 +18,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 abstract class SugarVisibility
 {
     /**
-     * Parent bean
+     * Bean context
      * @var SugarBean
      */
     protected $bean;
-    protected $module_dir;
+
+    /**
+     * Strategy params
+     * @var mixed
+     */
+    protected $params;
+
+    /**
+     * @var LoggerManager
+     */
+    protected $log;
 
     /**
      * Options for this run
-     * @var array|null
+     * @var array
      */
-    protected $options;
+    protected $options = array();
 
     /**
      * @param SugarBean $bean
+     * @param mixed $params Strategy params
      */
-    public function __construct($bean)
+    public function __construct(SugarBean $bean, $params = null)
     {
         $this->bean = $bean;
-        $this->module_dir = $this->bean->module_dir;
+        $this->params = $params;
+        $this->log = LoggerManager::getLogger();
     }
 
     /**
@@ -60,9 +72,9 @@ abstract class SugarVisibility
     }
 
    /**
-     * Add visibility clauses to the FROM part of the query
-     * @param string $query
-     * @return string
+     * Add visibility clauses to the FROM part of SugarQuery
+     * @param SugarQuery $query
+     * @return SugarQuery
      */
     public function addVisibilityFromQuery(SugarQuery $query)
     {
@@ -70,9 +82,9 @@ abstract class SugarVisibility
     }
 
     /**
-     * Add visibility clauses to the WHERE part of the query
-     * @param string $query
-     * @return string
+     * Add visibility clauses to the WHERE part of SugarQuery
+     * @param SugarQuery $query
+     * @return SugarQuery
      */
     public function addVisibilityWhereQuery(SugarQuery $query)
     {
@@ -81,14 +93,14 @@ abstract class SugarVisibility
 
 
     /**
-     * Get visibility options
+     * Get visibility option
      * @param string $name
      * @param mixed $default Default value if option not set
      * @return mixed
      */
     public function getOption($name, $default = null)
     {
-        if(isset($this->options[$name])) {
+        if (isset($this->options[$name])) {
             return $this->options[$name];
         }
         return $default;
@@ -99,25 +111,32 @@ abstract class SugarVisibility
      * @param array $options
      * @return SugarVisibility
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->options = $options;
         return $this;
     }
 
-    /** Override to implement visibility related attribute updates before the bean is indexed
-     * @param string $engine search engine name
-     * @return array
-     * Called before the bean is indexed so that any calculated attributes can updated.
-     * Since the team security id is updated directly, there is no need to implement anything custom
+    /**
+     * Called before the bean is indexed so that any calculated attributes can
+     * updated. Override to implement visibility related attribute updates
+     * before the bean is indexed.
+     * @return void
      */
     public function beforeSseIndexing()
     {
     }
 
-    public function addSseVisibilityFilter($engine, $filter)
+    /**
+     * Apply visibility filters for SugarSearchEngine
+     * @param SugarSearchEngineInterface $engine Sugar search engine objects
+     * @param mixed $filter
+     * @return mixed
+     *
+     * FIXME: $filter is tightly coupled to Elasticsearch
+     */
+    public function addSseVisibilityFilter(SugarSearchEngineInterface $engine, $filter)
     {
-    	return $filter;
+        return $filter;
     }
-
 }

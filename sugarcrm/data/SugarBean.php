@@ -639,7 +639,7 @@ class SugarBean
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityFrom(&$query, $options = null)
+    public function addVisibilityFrom(&$query, $options = array())
     {
         return $this->loadVisibility()->addVisibilityFrom($query, $options);
     }
@@ -648,7 +648,7 @@ class SugarBean
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityWhere(&$query, $options = null)
+    public function addVisibilityWhere(&$query, $options = array())
     {
         return $this->loadVisibility()->addVisibilityWhere($query, $options);
     }
@@ -658,7 +658,7 @@ class SugarBean
      * @param array $options
      * @return SugarQuery
      */
-    public function addVisibilityQuery($query, $options = null)
+    public function addVisibilityQuery($query, $options = array())
     {
         $query = $this->loadVisibility()->addVisibilityFromQuery($query, $options);
         $query = $this->loadVisibility()->addVisibilityWhereQuery($query, $options);

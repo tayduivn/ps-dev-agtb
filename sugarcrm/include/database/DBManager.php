@@ -231,6 +231,26 @@ abstract class DBManager
 	protected $options = array();
 
     /**
+     * Default performance profile
+     * @var array
+     */
+    protected $defaultPerfProfile = array();
+
+    /**
+     * Getter default performance profile
+     * @param string $name Profile name
+     * @return array
+     */
+    public function getDefaultPerfProfile($name)
+    {
+        if (isset($this->defaultPerfProfile[$name])) {
+            return $this->defaultPerfProfile[$name];
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Do we encode HTML?
 	 * @return bool $encode
 	 */
@@ -426,14 +446,15 @@ abstract class DBManager
 	    return $part;
 	}
 
-	/**
-	 * addDistinctClause
-	 * This method takes a SQL statement and checks if the disable_count_query setting is enabled
-	 * before altering it.  The alteration modifies the way the team security queries are made by
-	 * changing it from a subselect to a distinct clause; hence the name of the method.
-	 *
-	 * @param string $sql value of SQL statement to alter
-	 */
+    /**
+     * addDistinctClause
+     * This method takes a SQL statement and checks if the disable_count_query setting is enabled
+     * before altering it.  The alteration modifies the way the team security queries are made by
+     * changing it from a subselect to a distinct clause; hence the name of the method.
+     *
+     * @param string $sql value of SQL statement to alter
+     * @deprecated
+     */
 	protected function addDistinctClause(&$sql)
 	{
 	    preg_match('|^\W*(\w+)|i', $sql, $firstword);
