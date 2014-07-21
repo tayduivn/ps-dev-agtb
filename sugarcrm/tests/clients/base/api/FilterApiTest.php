@@ -837,6 +837,26 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * When we need $dateRange filter then $dateRange method should receive bean as parameter
+     */
+    public function testAddFiltersDateRange()
+    {
+        $bean = new Account();
+        $q = new SugarQuery();
+        $q->from($bean);
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        $where = $this->getMock('SugarQuery_Builder_Where', array('dateRange'), array($q));
+        $where->expects($this->once())->method('dateRange')->with($this->equalTo('date_entered'), $this->equalTo(''), $this->equalTo($bean));
+        FilterApiMock::addFilters(array(
+            array(
+                'date_entered' => array(
+                    '$dateRange' => '',
+                ),
+            ),
+        ), $where, $q);
+    }
 }
 
 class FilterApiMock extends FilterApi
@@ -844,5 +864,10 @@ class FilterApiMock extends FilterApi
     public function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
     {
         return parent::parseArguments($api, $args, $seed);
+    }
+
+    public static function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q)
+    {
+        parent::addFilters($filterDefs, $where, $q);
     }
 }

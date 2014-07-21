@@ -708,7 +708,7 @@ class FilterApi extends SugarApi
                                 $where->gte($field, $value);
                                 break;
                             case '$dateRange':
-                                $where->dateRange($field, $value);
+                                $where->dateRange($field, $value, $fieldInfo['bean']);
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: " . $op);
