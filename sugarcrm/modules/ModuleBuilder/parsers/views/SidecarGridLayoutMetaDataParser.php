@@ -652,7 +652,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         if ($field === $fieldName) {
                             $panel[$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
                             $result = true;
-                            break 2;
                         }
                     }
                 }
