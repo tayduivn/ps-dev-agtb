@@ -928,7 +928,7 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @return string
      */
-    private function repairTableColumns($tableName, $fielddefs, $execute)
+    protected function repairTableColumns($tableName, $fielddefs, $execute)
     {
         $compareFieldDefs = $this->get_columns($tableName);
         $sql = "/*COLUMNS*/\n";

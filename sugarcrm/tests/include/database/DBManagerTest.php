@@ -2545,7 +2545,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function lengthTestProvider()
     {
-        return array(
+        $data = array(
             array(
                 array('len' => '5'),
                 array('len' => '4', 'precision' => '2'),
@@ -2572,6 +2572,15 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 "26,2"
             ),
         );
+
+        $result = array();
+        foreach (array('MysqlManager', 'MysqliManager', 'SqlsrvManager', 'IBMDB2Manager') as $driver) {
+            foreach ($data as $item) {
+                $item[] = $driver;
+                $result[] = $item;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2579,8 +2588,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group unit
      * @dataProvider lengthTestProvider
      */
-    public function testChangeFieldLength($dbcol, $vardefcol, $result)
+    public function testChangeFieldLength($dbcol, $vardefcol, $result, $driver)
     {
+        DBManagerFactory::getDbDrivers(); // load the drivers
         $DBManagerClass = get_class($this->_db);
         $db_columns = array(
             "id" => array("name" => "id", 'type' => 'char', 'len' => '36'),
@@ -2594,11 +2604,26 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $vardefs['quantity'] = array_merge($vardefs['quantity'], $vardefcol);
 
-        $dbmock = $this->getMock($DBManagerClass, array('get_columns'));
+        // Oracle currently forces decimals to be 20,2 - can't test here
+        $dbmock = $this->getMock($driver, array('get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'));
+        if (!($dbmock instanceof DBManager)) {
+                // Failed to instantiate the driver, skip it
+                $this->markTestSkipped("Could not load driver for $driver");
+        }
         $dbmock->expects($this->any())
                ->method('get_columns')
                ->will($this->returnValue($db_columns));
+        $dbmock->expects($this->any())
+            ->method('get_field_default_constraint_name')
+            ->will($this->returnValue(array()));
+        $dbmock->expects($this->any())
+            ->method('get_indices')
+            ->will($this->returnValue(array()));
+        $dbmock->expects($this->any())
+            ->method('checkIdentity')
+            ->will($this->returnValue(false));
+
         $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
-        $this->assertContains("quantity decimal($result)", $sql, "Bad length change");
+        $this->assertRegExp("#quantity.*?decimal\\($result\\)#i", $sql, "Bad length change for $driver");
     }
 }
