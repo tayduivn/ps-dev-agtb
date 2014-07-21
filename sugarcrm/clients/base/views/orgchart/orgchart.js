@@ -148,6 +148,10 @@
             .transition().duration(700)
             .call(this.chart);
 
+        this.$('img').error(function() {
+            $(this).attr('src', 'include/images/user.svg');
+        });
+
         this.forceRepaint();
 
         this.$('.nv-expcoll').on('click', function(e) {
@@ -165,6 +169,10 @@
     forceRepaint: function() {
         self.$('.rep-avatar').on('load', function() {
             $(this).removeClass('loaded').addClass('loaded');
+        });
+
+        self.$('img').error(function() {
+            $(this).attr('src', 'include/images/user.svg');
         });
     },
 
@@ -217,11 +225,16 @@
             }
 
             entry.metadata.url = self._buildUserUrl(entry.metadata.id);
-            entry.metadata.img = app.api.buildFileURL({
-                module: 'Employees',
-                id: entry.metadata.id,
-                field: 'picture'
-            });
+
+            if (!entry.metadata.picture || entry.metadata.picture === '') {
+                entry.metadata.img = 'include/images/user.svg';
+            } else {
+                entry.metadata.img = app.api.buildFileURL({
+                    module: 'Employees',
+                    id: entry.metadata.id,
+                    field: 'picture'
+                });
+            }
 
             if (!entry.children) {
                 return;

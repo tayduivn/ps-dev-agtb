@@ -149,6 +149,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                 'full_name' => $fullName,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
+                'picture' => $user->picture,
                 'reports_to_id' => $user->reports_to_id,
                 'reports_to_name' => $user->reports_to_name,
                 'title' => $user->title,
