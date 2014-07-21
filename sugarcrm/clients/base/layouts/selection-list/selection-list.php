@@ -26,6 +26,9 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                         'type' => 'filterpanel',
                                         'span' => 12,
                                         'availableToggles' => array(),
+                                        'filter_options' => array(
+                                            'stickiness' => false,
+                                        ),
                                         'components' => array(
                                             array(
                                                 'layout' => array(

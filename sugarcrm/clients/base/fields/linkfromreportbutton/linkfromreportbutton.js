@@ -23,22 +23,28 @@
     },
 
     /**
-     * Event handler for the select button that opens a link selection dialog in a drawer for linking
-     * an existing record
-     * @override
+     * Event handler for the select button that opens a
+     * {@link View.Layouts.Base.SelectionListLayout} in  a drawer for linking
+     * an existing record.
      */
     openSelectDrawer: function() {
         if (this.isDisabled()) {
             return;
         }
 
-        var filterOptions = new app.utils.FilterOptions().config(this.def).format();
+        var filteredModule = 'Reports',
+            filterOptions = new app.utils.FilterOptions().config(this.def);
+
+        var thisContextModule = this.context.get('module');
+        if (thisContextModule !== filteredModule) {
+            filterOptions.setLangModules([thisContextModule, filteredModule, 'Filters']);
+        }
 
         app.drawer.open({
             layout: 'selection-list',
             context: {
                 module: 'Reports',
-                filterOptions: filterOptions,
+                filterOptions: filterOptions.format(),
                 parent: this.context
             }
         }, _.bind(this.selectDrawerCallback, this));

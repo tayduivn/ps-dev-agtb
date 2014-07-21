@@ -13,8 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	//returns a list of components that are not of expected version
 	function get_invalid_versions(){
 		$invalid = array();
-		
-		require_once('modules/Versions/ExpectedVersions.php');
+        $expect_versions = array();
+        require('modules/Versions/ExpectedVersions.php');
 		
 		foreach($expect_versions as $expect){
 			$version = BeanFactory::getBean('Versions');

@@ -27,7 +27,15 @@ class EqualExpression extends BooleanExpression
 
         $a = $params[0]->evaluate();
         $b = $params[1]->evaluate();
+        $hasBool = $a instanceof BooleanConstantExpression || $b instanceof BooleanConstantExpression;
 
+        if ($hasBool) {
+            if (($this->isTruthy($a) && $this->isTruthy($b)) || (!$this->isTruthy($a) && !$this->isTruthy($b))) {
+                return AbstractExpression::$TRUE;
+            } else {
+                return AbstractExpression::$FALSE;
+            }
+        }
         if ($a == $b) {
             return AbstractExpression::$TRUE;
         }
@@ -84,5 +92,21 @@ EOQ;
      */
     function toString()
     {
+    }
+
+    /**
+     * Internal function to determine if a value is either a True boolean constant or a value that SugarLogic considers "truthy"
+     * @param $val
+     *
+     * @return bool
+     */
+    protected function isTruthy($val) {
+        if ($val instanceof BooleanConstantExpression) {
+            return $val == AbstractExpression::$TRUE;
+        }
+        if (is_string($val)) {
+            return strtolower($val) !== 'false' && strtolower($val) !== '';
+        }
+        return !empty($val);
     }
 }

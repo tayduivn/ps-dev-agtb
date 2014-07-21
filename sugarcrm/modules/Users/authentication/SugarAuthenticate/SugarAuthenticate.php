@@ -119,6 +119,7 @@ class SugarAuthenticate{
 				$usr->setPreference('loginfailed','0');
 				$usr->savePreferencesToDB();
 			}
+            $this->updateUserLastLogin($usr);
 			return $this->postLoginAuthenticate();
 
 		}
@@ -402,5 +403,15 @@ class SugarAuthenticate{
             header("Location: ".$GLOBALS['app']->getLoginRedirect());
             sugar_cleanup(true);
         }
+    }
+
+    /**
+     * Updates user's last_login field with current datetime
+     *
+     * @param User $user
+     */
+    protected function updateUserLastLogin(User $user)
+    {
+        $user->updateLastLogin();
     }
 }

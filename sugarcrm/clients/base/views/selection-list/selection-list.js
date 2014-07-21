@@ -127,11 +127,27 @@
      * Close drawer and then refresh record page with new links
      * @private
      */
-    _closeDrawer: function() {
+    _closeDrawer: function(model, data, response) {
         app.drawer.close();
+
         var context = this.options.context.get('recContext'),
             view = this.options.context.get('recView'),
             collectionOptions = context.get('collectionOptions') || {};
+
+        if (context.has('parentModel')) {
+            var parentModel = context.get('parentModel'),
+                syncedAttributes = parentModel.getSyncedAttributes(),
+                updatedAttributes = _.reduce(data.record, function(memo, val, key) {
+                    if (!_.isEqual(syncedAttributes[key], val)) {
+                        memo[key] = val;
+                    }
+                    return memo;
+                }, {});
+            parentModel.set(updatedAttributes);
+            //Once parent model is reset, reset internal synced attributes as well
+            parentModel.setSyncedAttributes(data.record);
+        }
+
         context.get('collection').resetPagination();
         context.resetLoadFlag();
         context.set('skipFetch', false);
@@ -208,7 +224,7 @@
         this._super('addActions');
         if (this.meta.showPreview !== false) {
             this.rightColumns.push({
-                type: 'rowaction',
+                type: 'preview-button',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
                 event: 'list:preview:fire',

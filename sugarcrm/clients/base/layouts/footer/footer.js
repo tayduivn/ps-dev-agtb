@@ -14,6 +14,9 @@
  * @extends View.Layout
  */
 ({
+    events: {
+        'click [data-action=home]': 'home'
+    },
     /**
      * Places all components within this layout inside btn-toolbar div
      * @param component
@@ -35,5 +38,11 @@
             this._placeComponent(component);
         }, this);
         app.view.Layout.prototype._render.call(this);
+    },
+
+    home: function() {
+        app.router.navigate('#Home', {
+            trigger: true
+        });
     }
 })

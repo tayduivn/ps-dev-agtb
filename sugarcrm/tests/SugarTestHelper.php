@@ -735,6 +735,28 @@ class SugarTestHelper
     }
 
     /**
+     * Setup the mock db helper,
+     *
+     * @return SugarTestDatabaseMock
+     */
+    protected static function setUp_mock_db()
+    {
+        $mock = new SugarTestDatabaseMock();
+
+        self::$systemVars['db'] = DBManagerFactory::$instances;
+        self::$registeredVars['mock_db'] = $mock;
+        DBManagerFactory::$instances = array('' => $mock);
+
+        return $mock;
+    }
+
+    protected static function tearDown_mock_db()
+    {
+        DBManagerFactory::$instances = self::$systemVars['db'];
+        unset(self::$systemVars['db'], self::$registeredVars['mock_db']);
+    }
+
+    /**
      * Registration of $app_list_strings in global scope
      *
      * @static
@@ -949,6 +971,10 @@ class SugarTestHelper
                 if (substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @SugarAutoLoader::unlink($filename, false);
+                    if(file_exists($filename)) {
+                        // still have it in map if it exists in template
+                        SugarAutoLoader::addToMap($filename, false);
+                    }
                     continue;
                 }
             }

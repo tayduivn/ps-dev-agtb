@@ -54,6 +54,8 @@
         //initializing the data dictionary for cleanse match
         this.cleanseMatchDD = this.searchDD;
         this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };
+        //listen on expand all button click on the dashboard
+        this.layout.layout.context.on('dashboard:collapse:fire', this.loadImportEnrich, this);
     },
 
     /**
@@ -268,7 +270,7 @@
                     this.dnbProduct.product = null;
                     this.dnbProduct.errmsg = app.lang.get('LBL_DNB_UPTODATE_MSG');
                 } else {
-                    this.toggleImportBtn(true, 'dnb_import');
+                    this.toggleImportBtn('dnb_import', true);
                 }
             }
         } else if (companyDetails.errmsg) {

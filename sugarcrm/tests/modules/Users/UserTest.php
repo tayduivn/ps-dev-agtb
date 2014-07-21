@@ -418,6 +418,19 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $user->$testMethod($module));
     }
 
+    /**
+     * @group BR-1721
+     */
+    public function testUpdateLastLogin()
+    {
+
+        $now = TimeDate::getInstance()->nowDb();
+
+        $last_login = $this->_user->updateLastLogin();
+
+        $this->assertEquals($now, $last_login);
+    }
+
     public function isAdminOrDeveloperForModuleProvider()
     {
         return array(

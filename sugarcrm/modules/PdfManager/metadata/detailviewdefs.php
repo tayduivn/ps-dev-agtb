@@ -91,7 +91,8 @@ array (
         ),
         5 =>
         array (
-            0 => 'footer_text',
+            0 => 'header_logo',
+            1 => 'footer_text',
         ),
       ),
       'lbl_editview_panel1' =>

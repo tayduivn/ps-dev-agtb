@@ -20,6 +20,9 @@ class iCalParserTest extends Sugar_PHPUnit_Framework_TestCase
     static protected $e;
 
     static public function setUpBeforeClass() {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user', array(true, true));
         $meeting = SugarTestMeetingUtilities::createMeeting();
 
         // email with description that contains meeting id
@@ -33,6 +36,7 @@ class iCalParserTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestEmailUtilities::removeAllCreatedEmails();
         // delete it in case it's created, outlook_id is from Bug53942Test.ics
         $GLOBALS['db']->query('delete from meetings where outlook_id='."'".'73fc8eef-bacc-4d7b-94eb-af2080437132'."'");
+        parent::tearDownAfterClass();
     }
 
     protected function getEmailCount() {

@@ -74,19 +74,13 @@
         if (!moduleMeta) {
             return;
         }
-        this.fieldList = this.getFilterableFields(moduleName);
-
+        this.fieldList = app.data.getBeanClass('Filters').prototype.getFilterableFields(moduleName);
         this.filterFields = {};
         this.moduleName = moduleName;
 
+        // Translate text for the field list dropdown.
         _.each(this.fieldList, function(value, key) {
-            var text = app.lang.get(value.vname, moduleName);
-            // Check if we support this field type.
-            var type = this.fieldTypeMap[value.type] || value.type;
-            //Predefined filters don't have operators defined
-            if ((this.filterOperatorMap[type] || value.predefined_filter === true) && !_.isUndefined(text)) {
-                this.filterFields[key] = text;
-            }
+            this.filterFields[key] = app.lang.get(value.vname, moduleName);
         }, this);
     },
 
@@ -100,8 +94,7 @@
         var template = filterModel.get('filter_template') || filterModel.get('filter_definition');
         if (_.isEmpty(template)) {
             this.render();
-            var $row = this.addRow(),
-                field = $row.data('nameField');
+            this.addRow();
         } else {
             this.populateFilter();
         }
@@ -328,7 +321,8 @@
 
             switch (data.operator) {
                 case '$between':
-                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                    // FIXME: the fields should set a true number (see SC-3138).
+                    return !(_.isNaN(parseFloat(data.value[0])) || _.isNaN(parseFloat(data.value[1])));
                 case '$dateBetween':
                     return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
                 default:
@@ -344,12 +338,17 @@
      */
     populateFilter: function() {
         var name = this.context.editingFilter.get('name'),
+            filterOptions = this.context.get('filterOptions') || {},
+            populate = this.context.editingFilter.get('is_template') && filterOptions.filter_populate,
             filterDef = this.context.editingFilter.get('filter_template') ||
                 this.context.editingFilter.get('filter_definition');
 
         this.render();
         this.layout.trigger('filter:set:name', name);
 
+        if (populate) {
+            filterDef = app.data.getBeanClass('Filters').prototype.populateFilterDefinition(filterDef, populate);
+        }
         _.each(filterDef, function(row) {
             this.populateRow(row);
         }, this);
@@ -370,9 +369,7 @@
     populateRow: function(rowObj) {
         var $row = this.addRow(),
             moduleMeta = app.metadata.getModule(this.layout.currentModule),
-            fieldMeta = moduleMeta.fields,
-            filterOptions = this.context.get('filterOptions') || {},
-            populate = this.context.editingFilter.get('is_template') && filterOptions.filter_populate;
+            fieldMeta = moduleMeta.fields;
 
         _.each(rowObj, function(value, key) {
             var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
@@ -395,7 +392,6 @@
                 return;
             }
 
-            var idKey;
             if (!this.fieldList[key]) {
                 //Make sure we use name for relate fields
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
@@ -404,10 +400,8 @@
                     $row.remove();
                     return;
                 }
-                idKey = key;
                 key = relate.name;
             }
-            idKey = idKey || key;
 
             $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
 
@@ -415,10 +409,6 @@
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {
-                if (_.isEmpty(value) && populate && filterOptions.filter_populate[idKey]) {
-                    value = filterOptions.filter_populate[idKey];
-                }
-
                 $row.data('value', value);
                 $row.find('[data-filter=operator] input[type=hidden]')
                     .select2('val', operator === '$dateRange' ? value : operator)
@@ -603,6 +593,7 @@
 
             data['valueField'] = minmax;
             _.each(minmax, function(field) {
+                field.action = 'detail';
                 var fieldContainer = $(field.getPlaceholder().string);
                 $fieldValue.append(fieldContainer);
                 this.listenTo(field, 'render', function() {
@@ -620,6 +611,7 @@
             // Render the value field
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
+            field.action = 'detail';
             $fieldValue.append(fieldContainer);
             data['valueField'] = field;
 

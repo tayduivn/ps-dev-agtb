@@ -29,20 +29,20 @@ abstract class AbstractExpression
 	public static $GENERIC_TYPE  = "generic";
 
 	// booleans
-	public static $TRUE  = "true";
-	public static $FALSE = "false";
+    public static $TRUE;
+	public static $FALSE;
 
 	// type to class map
-	public static $TYPE_MAP		 = array(
-											"number" 	=> "NumericExpression",
-											"string" 	=> "StringExpression",
-											"date" 		=> "DateExpression",
-											"time" 		=> "TimeExpression",
-											"boolean" 	=> "BooleanExpression",
-											"enum" 		=> "EnumExpression",
-                                            "relate"	=> "RelateExpression",
-											"generic" 	=> "AbstractExpression",
-										);
+    public static $TYPE_MAP = array(
+        "number" => "NumericExpression",
+        "string" => "StringExpression",
+        "date" => "DateExpression",
+        "time" => "TimeExpression",
+        "boolean" => "BooleanExpression",
+        "enum" => "EnumExpression",
+        "relate" => "RelateExpression",
+        "generic" => "AbstractExpression",
+    );
 
 	// instance variables
 	var $params;
@@ -51,6 +51,7 @@ abstract class AbstractExpression
 	 * Constructs an Expression object given the parameters.
 	 */
 	function AbstractExpression($params=null) {
+        self::initBoolConstants();
 		// if the array contains only one value, then set params equal to that value
 		if ($this->getParamCount() == 1 && is_array($params) && sizeof($params) == 1) {
 			$this->params = $params[0];
@@ -231,4 +232,37 @@ abstract class AbstractExpression
 	static function getParamCount() {
 		return AbstractExpression::$INFINITY;
 	}
+
+    /**
+     * Initialize function for the TRUE/FALSE constants. Should only be called by the abstract class constructor
+     */
+    protected static function initBoolConstants()
+    {
+        if (empty(self::$TRUE)) {
+            self::$TRUE = new BooleanConstantExpression(true);
+        }
+        if (empty(self::$FALSE)) {
+            self::$FALSE = new BooleanConstantExpression(false);
+        }
+    }
+}
+
+/**
+ * Internal SugarLogic class to define boolean constant values to prevent false positives/negatives when comparing to string/numeric values
+ */
+class BooleanConstantExpression {
+    protected $value;
+
+    public function __construct($value) {
+        $this->value = !empty($value);
+    }
+
+    public function __toString() {
+        if ($this->value) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
+
 }

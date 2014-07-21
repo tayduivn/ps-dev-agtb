@@ -265,9 +265,10 @@ $dictionary['Product'] = array(
         'discount_amount' =>  array(
             'name' => 'discount_amount',
             'vname' => 'LBL_DISCOUNT_AMOUNT',
-            'dbtype' => 'decimal',
+            'dbType' => 'currency',
             'type' => 'discount',
             'len' => '26,6',
+            'precision' => '6',
             'comment' => 'Discounted amount',
             'related_fields' => array(
                 'currency_id',
@@ -284,7 +285,7 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'type' => 'decimal',
             'precision' => 2,
-            'len' => '4,2'
+            'len' => '26,2'
         ),
         'discount_amount_usdollar' =>  array(
             'name' => 'discount_amount_usdollar',

@@ -91,7 +91,7 @@
             this._currencyField = null;
         }
         app.view.Field.prototype._render.call(this);
-        if (this.hideCurrencyDropdown === false && this.action === 'edit') {
+        if (this.hideCurrencyDropdown === false && this.tplName === 'edit') {
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width', '8px');
             this.getCurrencyField().render();
@@ -306,7 +306,7 @@
         this._currencyField = app.view.createField({
             def: currencyDef,
             view: this.view,
-            viewName: this.action,
+            viewName: this.tplName,
             model: this.model
         });
         this._currencyField.defaultOnUndefined = false;

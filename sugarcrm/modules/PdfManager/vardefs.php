@@ -253,6 +253,23 @@ $dictionary['PdfManager'] = array(
             'len' => '255',
             'size' => '20',
         ),
+        'header_logo' =>
+        array(
+            'name' => 'header_logo',
+            'vname' => 'LBL_HEADER_LOGO_FILE',
+            'type' => 'file',
+            'dbType' => 'varchar',
+            'len' => 255,
+            'comment' => 'PDF header logo',
+            'help' => 'PDF header logo',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => false,
+            'reportable' => false,
+            'unified_search' => false,
+            'merge_filter' => 'disabled',
+            'importable' => false,
+        ),
         'footer_text' =>
         array (
             'required' => false,

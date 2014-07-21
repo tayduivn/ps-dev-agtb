@@ -27,6 +27,13 @@
     },
 
     /**
+     * The collection of filters.
+     *
+     * @property {Data.BeanCollection}
+     */
+    filters: null,
+
+    /**
      * @override
      * @param {Object} opts
      */
@@ -38,14 +45,6 @@
         this.layoutType = app.utils.deepCopy(this.options.meta.layoutType) || this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
 
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
-        this.filters = app.data.createBeanCollection('Filters');
-        this.filters.comparator = _.bind(this.filterCollectionSorting, this);
-
-        this.emptyFilter = app.data.createBean('Filters', {
-            name: '',
-            filter_definition: [],
-            editable: true
-        });
 
         // Can't use getRelevantContextList here, because the context may not
         // have all the children we need.
@@ -139,10 +138,9 @@
      * @param model
      */
     removeFilter: function(model) {
-        this.filters.remove(model);
+        this.filters.collection.remove(model);
         this.context.set('currentFilterId', null);
         this.clearLastFilter(this.layout.currentModule, this.layoutType);
-        this.saveFilterCollection(this.layout.currentModule);
         this.layout.trigger('filter:reinitialize');
     },
 
@@ -245,63 +243,51 @@
     },
 
     /**
-     * Get the filters of one module from the cache.
+     * Removes deprecated cache entries of one module.
      *
-     * @param {String} module The module name.
-     * @return {String} The BeanCollection at the JSON format.
-     */
-    getFilterCollection: function(module) {
-        var layoutModule = this.module;
-        this.module = module;
-        var filters = app.user.lastState.get(app.user.lastState.key('saved-filters', this));
-        this.module = layoutModule;
-        return filters;
-    },
-
-    /**
-     * Save the filters of one module to the cache.
-     *
-     * Previously, the filters were stored in the local storage with a key
-     * looking like this:
-     * ```
-     * this.module + ':filter:saved-' + this.layout.currentModule
-     * ```
-     * where `this.module` is the main context module, and `currentModule` is
-     * the filtered module.
-     *
-     * As a consequence, the collection of filters of the filtered module,
-     * saying `Accounts`, was stored multiple times like that:
-     * ```
-     * Home:filter:saved-Accounts
-     * Accounts:filter:saved-Accounts
-     * Contacts:filter:saved-Accounts
-     * ```
-     * And all the copies were not in sync.
-     *
-     * To fix this before a major refactor where `this.module` would be the
-     * filtered module, we need to fake it. We also need to clean old entries in
+     * The {@link Data.Base.FiltersBeanCollection} is now responsible for
+     * storing the list of filters in memory. This list is no longer saved to
      * the local storage.
      *
+     * First version, the list was stored with a key looking like this:
+     *
+     *     this.module + ':filter:saved-' + this.layout.currentModule
+     *
+     * Second version, the list was stored with a key looking like this:
+     *
+     *     module + ':filter:saved-filters
+     *
+     * Examples of keys we need to remove:
+     *
+     *     Home:filter:saved-Accounts
+     *     Accounts:filter:saved-Accounts
+     *     Contacts:filter:saved-Accounts
+     *     Accounts:filter:saved-filters
+     *     Contacts:filter:saved-filters
+     *
      * @param {String} module The module name.
      */
-    saveFilterCollection: function(module) {
+    removeDeprecatedCache: function(module) {
         app.user.lastState.remove(app.user.lastState.key('saved-' + module, this));
 
         var layoutModule = this.module;
         this.module = module;
-        app.user.lastState.set(app.user.lastState.key('saved-filters', this), this.filters.toJSON());
+        // The filter collection used to be cached. It's now only saved in
+        // memory so we need to remove the potential existing cache entry.
+        app.user.lastState.remove(app.user.lastState.key('saved-filters', this));
         this.module = layoutModule;
     },
 
     /**
-     * Handle filter addition or update.
+     * Handles filter addition or update.
      *
-     * @param {Data.Bean} model The filter model that is created or updated.
+     * @param {Data.Base.FiltersBean} model The filter model that is created or
+     *   updated.
      */
     addFilter: function(model) {
         var id = model.get('id');
-        this.filters.add(model, { merge: true });
-        this.saveFilterCollection(this.layout.currentModule);
+        this.filters.collection.add(model, {merge: true});
+        this.filters.collection.trigger('cache:update', model);
         this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         this.context.set('currentFilterId', id);
         this.clearFilterEditState();
@@ -370,15 +356,16 @@
         var filter, editState = this.retrieveFilterEditState();
         // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
         // the filter form in the state he left it.
+        filter = this.filters.collection.get(id) || app.data.createBean('Filters', {module_name: this.moduleName});
         if (editState && (editState.id === id || (id==='create' && !editState.id))) {
-            filter = app.data.createBean('Filters');
             filter.set(editState);
         } else {
             editState = false;
-            filter = this.filters.get(id) || this.emptyFilter.clone();
         }
 
         this.context.set('currentFilterId', filter.get('id'));
+
+        var editable = filter.get('editable') !== false;
 
         // If the user selects a filter that has an incomplete filter
         // definition (i.e. filter definition != filter_template), open the
@@ -393,8 +380,8 @@
 
         var modelHasChanged = !_.isEmpty(filter.changedAttributes(filter.getSyncedAttributes()));
 
-        if (isIncompleteFilter || isTemplateFilter ||
-            editState || id === 'create' || modelHasChanged
+        if (editable &&
+            (isIncompleteFilter || isTemplateFilter || editState || id === 'create' || modelHasChanged)
         ) {
             this.layout.trigger('filter:set:name', '');
             this.trigger('filter:create:open', filter);
@@ -634,94 +621,40 @@
     },
 
     /**
-     * Retrieve the appropriate list of filters from cache if found, otherwise
+     * Retrieves the appropriate list of filters from cache if found, otherwise
      * from the server.
      *
      * @param {String} moduleName The module name.
-     * @param {String} defaultId The filter `id` to select once loaded.
+     * @param {String} [defaultId] The filter `id` to select once loaded.
      */
     getFilters: function(moduleName, defaultId) {
         if (moduleName === 'all_modules') {
             this.selectFilter('all_records');
             return;
         }
-        var filterLayout = app.view._getController({type: 'layout', name: 'filter'}),
-            cachedFilters = this.getFilterCollection(moduleName);
-
-        if (filterLayout.loadedModules[moduleName] && !_.isUndefined(cachedFilters)) {
-            this.filters.reset();
-            _.each(cachedFilters, function(filter) {
-                this.filters.add(app.data.createBean('Filters', filter));
-            }, this);
-            this.loadPredefinedFilters(moduleName);
-            defaultId = defaultId || this.filters.defaultFilterFromMeta;
-            this.selectFilter(defaultId);
-
-        } else {
-            this.filters.fetch({
-                //Don't show alerts for this request
-                showAlerts: false,
-                filter: [
-                    {'created_by': app.user.id},
-                    {'module_name': moduleName}
-                ],
-                success: _.bind(function() {
-                    if (this.disposed) return;
-
-                    filterLayout.loadedModules[moduleName] = true;
-                    this.saveFilterCollection(moduleName);
-                    this.loadPredefinedFilters(moduleName);
-                    defaultId = defaultId || this.filters.defaultFilterFromMeta;
-                    this.selectFilter(defaultId);
-                }, this)
-            });
-        }
-    },
-
-    /**
-     * Loads predefined filters from metadata and determines the default filter.
-     *
-     * Template predefined filters are skipped unless they are assigned as the
-     * initial filter.
-     * The default filter will be the last `default_filter` property found
-     * in the filters metadata.
-     *
-     * @param {String} moduleName The name of the filtered module.
-     */
-    loadPredefinedFilters: function(moduleName) {
         var filterOptions = this.context.get('filterOptions') || {};
 
-        this.filters.defaultFilterFromMeta = null;
-
-        _.each(this.getModuleFilterMeta(moduleName), function(value) {
-            if (!value || !value.meta) {
-                return;
-            }
-            if (_.isArray(value.meta.filters)) {
-                this.filters.add(
-                    // Skip specific template predefined filters.
-                    _.reject(value.meta.filters, function(filter) {
-                        return filter.is_template && filterOptions.initial_filter !== filter.id;
-                    })
-                );
-            }
-            if (value.meta.default_filter) {
-                this.filters.defaultFilterFromMeta = value.meta.default_filter;
-            }
-        }, this);
-
-        if (filterOptions.initial_filter === '$relate') {
-            var filterDef = {};
-            _.each(filterOptions.filter_populate, function(value, key) {
-                filterDef[key] = '';
-            });
-            this.filters.add(this.emptyFilter.clone().set({
-                'id': '$relate',
-                'editable': true,
-                'is_template': true,
-                'filter_definition': [filterDef]
-            }));
+        if (this.filters) {
+            this.filters.dispose();
         }
+
+        // Remove deprecated cache entries.
+        this.removeDeprecatedCache(moduleName);
+
+        this.filters = app.data.createBeanCollection('Filters');
+        this.filters.setModuleName(moduleName);
+        this.filters.setFilterOptions(filterOptions);
+
+        this.filters.load({
+            success: _.bind(function() {
+                if (this.disposed) {
+                    return;
+                }
+                defaultId = defaultId || this.filters.collection.defaultFilterFromMeta;
+                this.selectFilter(defaultId);
+
+            }, this)
+        });
     },
 
     /**
@@ -737,8 +670,8 @@
             selectedFilterId = filterId;
 
         if (selectedFilterId !== 'create') {
-            possibleFilters = [selectedFilterId, this.filters.defaultFilterFromMeta, 'all_records'];
-            possibleFilters = _.filter(possibleFilters, this.filters.get, this.filters);
+            possibleFilters = [selectedFilterId, this.filters.collection.defaultFilterFromMeta, 'all_records'];
+            possibleFilters = _.filter(possibleFilters, this.filters.collection.get, this.filters.collection);
             selectedFilterId = _.first(possibleFilters);
         }
         this.trigger('filter:render:filter');
@@ -781,17 +714,6 @@
     },
 
     /**
-     * Gets filters metadata from the module metadata.
-     *
-     * @param {String} moduleName The name of the filtered module.
-     * @return {Object} The filters metadata for this module.
-     */
-    getModuleFilterMeta: function(moduleName) {
-        var module = app.metadata.getModule(moduleName) || {};
-        return module.filters || {};
-    },
-
-    /**
      * Append or remove an icon to the quicksearch input so the user can clear the search easily
      * @param {Boolean} addIt TRUE if you want to add it, FALSO to remove
      */
@@ -801,57 +723,6 @@
         } else if (!addIt) {
             this.$('.add-on.icon-remove').remove();
         }
-    },
-
-    /**
-     * "sort" comparator functions take two models, and return -1 if the first model should come before the second,
-     * 0 if they are of the same rank and 1 if the first model should come after.
-     *
-     * @param {Bean} model1
-     * @param {Bean} model2
-     */
-    filterCollectionSorting: function(model1, model2) {
-        if (model1.get('editable') === false && model2.get('editable') !== false) {
-            return +1;
-        }
-        if (model1.get('editable') !== false && model2.get('editable') === false) {
-            return -1;
-        }
-        if (this._getTranslatedFilterName(model1).toLowerCase() < this._getTranslatedFilterName(model2).toLowerCase()) {
-            return -1;
-        }
-        return +1;
-    },
-
-    /**
-     * Gets (translated) name of a filter.
-     *
-     * If the model is not editable or is a template, the filter name must be
-     * defined as a label that is internationalized.
-     * We allow injecting the translated module name into filter names.
-     *
-     * @param {Data.Bean} model The filter model.
-     * @return {String} The (translated) filter name.
-     * @private
-     */
-    _getTranslatedFilterName: function(model) {
-        var filterOptions = this.context.get('filterOptions') || {},
-            name = model.get('name');
-
-        if (model.id === filterOptions.initial_filter && filterOptions.initial_filter_label) {
-            name = filterOptions.initial_filter_label;
-        }
-        if (model.get('editable') === false || model.get('is_template')) {
-            var fallbackLangModules = [this.layout.currentModule, 'Filters'];
-            var parentContextModule = this.context.parent && this.context.parent.get('module');
-            if (parentContextModule && parentContextModule !== this.layout.currentModule) {
-                fallbackLangModules.unshift(parentContextModule);
-            }
-            var moduleName = app.lang.get('LBL_MODULE_NAME', this.layout.currentModule);
-            var text = app.lang.get(name, fallbackLangModules) || '';
-            return app.utils.formatString(text, [moduleName]);
-        }
-        return model.get('name') || '';
     },
 
     /**
@@ -868,7 +739,9 @@
      * @override
      */
     unbind: function() {
-        this.filters.off();
+        if (this.filters) {
+            this.filters.dispose();
+        }
         this.filters = null;
         app.view.Layout.prototype.unbind.call(this);
     }

@@ -26,21 +26,21 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
-        self::$db = new SugarTestDatabaseMock();
-        self::$db->setUp();
+        self::$db = SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
-        self::$db->tearDown();
-        SugarTestHelper::tearDown();
         ApiHelper::$moduleHelpers = array();
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
+        SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     public function setUp() {
@@ -227,6 +227,180 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @dataProvider providerTestGetFieldsFromArgs
+     * @covers SugarApi::getFieldsFromArgs
+     * @group unit
+     */
+    public function testGetFieldsFromArgs($module, $fieldDefs, $fieldList, $args, $view, $expected)
+    {
+        if ($module) {
+            $seed = $this->getMockBuilder('SugarBean')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $seed->module_name = $module;
+            $seed->field_defs = $fieldDefs;
+        } else {
+            $seed = null;
+        }
+
+        $service = new SugarApiTestServiceMock();
+
+        $sugarApi = $this->getMockBuilder('SugarApiMock')
+            ->setMethods(array('getMetaDataManager'))
+            ->getMock();
+
+        $mm = $this->getMockBuilder('MetaDataManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
+
+        $mm->expects($this->any())
+            ->method('getModuleViewFields')
+            ->will($this->returnValue($fieldList));
+
+        $sugarApi->expects($this->any())
+            ->method('getMetaDataManager')
+            ->will($this->returnValue($mm));
+
+        $this->assertEquals(
+            $expected,
+            $sugarApi->getFieldsFromArgs($service, $args, $seed, $view)
+        );
+    }
+
+    public function providerTestGetFieldsFromArgs()
+    {
+        return array(
+
+            // fields argument only
+            array(
+                'Accounts',
+                array(), // field defs
+                array(), // view def
+                array(   // arguments
+                    'fields' => 'name,website',
+                ),
+                'view',  // view
+                array(   // expected
+                    'name',
+                    'website',
+                ),
+            ),
+
+            // view argument only
+            array(
+                'Accounts',
+                array(), // field defs
+                array( // view def
+                    'name',
+                    'website',
+                ),
+                array( // arguments
+                    'xxx' => 'record',
+                ),
+                'xxx', // view
+                array( // expected
+                    'name',
+                    'website',
+                ),
+            ),
+
+            // fields/view argument merge
+            array(
+                'Accounts',
+                array(), // field defs
+                array( // view def
+                    'phone',
+                    'fax',
+                ),
+                array( // arguments
+                    'fields' => 'name,website',
+                    'view' => 'record',
+                ),
+                'view', // view
+                array(  // expected
+                    'name',
+                    'website',
+                    'phone',
+                    'fax',
+                ),
+            ),
+
+            // nothing ...
+            array(
+                'Accounts',
+                array(), // field defs
+                array(), // view def
+                array(), // arguments
+                null,    // view
+                array(), // expected
+            ),
+
+            // fields/view with invalid module
+            array(
+                null,
+                array(), // field defs
+                array( // view def
+                    'bogus',
+                ),
+                array(   // arguments
+                    'fields' => 'name,website',
+                    'view' => 'record',
+                ),
+                'view', // view
+                array(  // expected
+                    'name',
+                    'website',
+                ),
+            ),
+
+            // relate and parent field
+            array(
+                'Accounts',
+                array(  // field defs
+                    'case_name' => array(
+                        'name' => 'case_name',
+                        'type' => 'relate',
+                        'id_name' => 'case_id',
+                    ),
+                    'parent_name' => array(
+                        'name' => 'parent_name',
+                        'type' => 'parent',
+                        'id_name' => 'parent_id',
+                        'type_name' => 'parent_type',
+                    ),
+                    'website' => array(
+                        'name' => 'website',
+                        'type' => 'varchar',
+                    ),
+                ),
+                array(  // view def
+                    'name',
+                    'case_name',
+                    'parent_name',
+                    'website',
+                ),
+                array(  // arguments
+                    'view' => 'record',
+                    'fields' => 'phone,fax',
+                ),
+                'view', // view
+                array(  // expected
+                    'phone',
+                    'fax',
+                    'name',
+                    'case_name',
+                    'parent_name',
+                    'website',
+                    'case_id',
+                    'parent_id',
+                    'parent_type',
+                ),
+            ),
+        );
+    }
 }
 
 
@@ -243,6 +417,11 @@ class SugarApiMock extends SugarApi
     public function callLoadBean(ServiceBase $api, $args)
     {
         return parent::loadBean($api, $args);
+    }
+
+    public function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
+    {
+        return parent::getFieldsFromArgs($api, $args, $bean, $viewName);
     }
 }
 

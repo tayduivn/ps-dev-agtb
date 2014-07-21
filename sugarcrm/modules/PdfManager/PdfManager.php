@@ -13,6 +13,7 @@
 //FILE SUGARCRM flav=pro ONLY
 
 require_once 'modules/PdfManager/PdfManagerHelper.php';
+require_once 'include/upload_file.php';
 
 class PdfManager extends Basic
 {
@@ -67,5 +68,31 @@ class PdfManager extends Basic
         $the_array['BASE_MODULE'] = PdfManagerHelper::getModuleName($this->base_module);
 
         return  $the_array;
+    }
+
+    public function deleteAttachment($isduplicate = "false")
+    {
+        if ($this->ACLAccess('edit')) {
+            if ($isduplicate == "true") {
+                return true;
+            }
+            $removeFile = "upload://{$this->id}";
+        }
+
+        if (file_exists($removeFile)) {
+            if (!unlink($removeFile)) {
+                $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
+            } else {
+                $this->header_logo = '';
+                $this->save();
+                return true;
+            }
+        } else {
+            $this->header_logo = '';
+            $this->save();
+            return true;
+        }
+
+        return false;
     }
 }

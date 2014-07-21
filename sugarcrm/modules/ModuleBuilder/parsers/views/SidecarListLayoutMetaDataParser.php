@@ -167,6 +167,13 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                         $field = self::_trimFieldDefs($this->_fielddefs[$field]);
                     }
                     if (isset($field['name']) && !$this->panelHasField($field['name']) || (isset($field['enabled']) && $field['enabled'] == false)) {
+                        if (!isset($field['label']) && !isset($field['vname'])) {
+                            if (isset($this->_fielddefs[$field['name']]['label'])) {
+                                $field['label'] = $this->_fielddefs[$field['name']]['label'];
+                            } else {
+                                $field['label'] = $this->_fielddefs[$field['name']]['vname'];
+                            }
+                        }                        
                         $availableFields[$field['name']] = $field;
                     }
                 }

@@ -716,4 +716,133 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * Test select fields options set by parseArguments
+     * @covers FilterApi::parseArguments
+     * @group unit
+     */
+    public function testParseArgumentsSelectFields()
+    {
+        $filter = $this->getMockBuilder('FilterApiMock')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFieldsFromArgs'))
+            ->getMock();
+
+        $filter->expects($this->once())
+            ->method('getFieldsFromArgs')
+            ->will($this->returnValue(array()));
+
+        $service = $this->getMockBuilder('ServiceBase')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $filter->parseArguments($service, array());
+    }
+
+    /**
+     * Integration test returned fields based on fields list and/or view parameter
+     * @dataProvider providerTestFilterReturnedField
+     */
+    public function testFilterReturnedFields($args, $expected, $suppressed)
+    {
+        $reply = $this->filterApi->filterList($this->serviceMock, $args);
+
+        $this->assertArrayHasKey('records', $reply, "Invalid reply");
+        $this->assertArrayHasKey(0, $reply['records'], "No records found");
+
+        foreach ($expected as $field) {
+            $this->assertArrayHasKey(
+                $field,
+                $reply['records'][0],
+                "Expected field $field not present"
+            );
+        }
+
+        foreach ($suppressed as $field) {
+            $this->assertArrayNotHasKey(
+                $field,
+                $reply['records'][0],
+                "Field $field should not be present"
+            );
+        }
+    }
+
+    public function providerTestFilterReturnedField()
+    {
+        return array(
+
+            // only fields specified
+            array(
+                array(
+                    'module' => 'Accounts',
+                    'fields' => 'name,billing_address_street',
+                ),
+                array(
+                    'name',
+                    'billing_address_street',
+                ),
+                array(
+                    'billing_address_country',
+                    'website',
+                ),
+            ),
+
+            // only view specified
+            array(
+                array(
+                    'module' => 'Accounts',
+                    'view' => 'list',
+                ),
+                array(
+                    'name',
+                    'billing_address_country',
+                ),
+                array(
+                    'billing_address_street',
+                    'website',
+                ),
+            ),
+
+            // both fields and view
+            array(
+                array(
+                    'module' => 'Accounts',
+                    'fields' => 'name,billing_address_street',
+                    'view' => 'list',
+                ),
+                array(
+                    'name',
+                    'billing_address_street',
+                    'billing_address_country',
+                ),
+                array(
+                    'website',
+                ),
+            ),
+
+            // nothing specified, returns every field
+            array(
+                array(
+                    'module' => 'Accounts',
+                ),
+                array(
+                    'name',
+                    'billing_address_street',
+                    'billing_address_country',
+                    'website',
+                ),
+                array(
+                ),
+            ),
+        );
+    }
+}
+
+class FilterApiMock extends FilterApi
+{
+    public function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
+    {
+        return parent::parseArguments($api, $args, $seed);
+    }
 }

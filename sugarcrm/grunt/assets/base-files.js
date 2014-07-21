@@ -13,6 +13,7 @@
     {pattern: 'clients/**/*.hbs', included: false, served: true, watched: false},
     {pattern: 'modules/**/clients/**/*.hbs', included: false, served: true, watched: false},
     {pattern: 'tests/fixtures/*.json', included: false, served: true, watched: false},
+    {pattern: 'tests/modules/**/fixtures/*.json', included: false, served: true, watched: false},
 
     'sidecar/lib/backbone/underscore.js',
     'sidecar/lib/jquery/jquery.min.js',

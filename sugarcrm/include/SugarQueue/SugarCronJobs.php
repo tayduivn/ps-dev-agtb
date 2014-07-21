@@ -224,7 +224,9 @@ class SugarCronJobs
         }
         // run jobs
         $cutoff = time()+$this->max_runtime;
-        set_time_limit(2*$this->max_runtime); // allow some space for normal exit
+        if ($this->enforceHardLimit) {
+            set_time_limit(2*$this->max_runtime); // allow some space for normal exit
+        }
         register_shutdown_function(array($this, "unexpectedExit"));
         $myid = $this->getMyId();
         for($count=0;$count<$this->max_jobs;$count++) {

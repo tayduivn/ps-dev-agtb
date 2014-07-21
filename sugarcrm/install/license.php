@@ -25,7 +25,7 @@ if(!isset($_SESSION['license_submitted']) || !$_SESSION['license_submitted']){
 $checked = (isset($_SESSION['setup_license_accept']) && !empty($_SESSION['setup_license_accept'])) ? 'checked="on"' : '';
 
 require_once("install/install_utils.php");
-$license_file = getLicenseContents("LICENSE.txt");
+$license_file = getLicenseContents("LICENSE");
 $langHeader = get_language_header();
 $versionToken = getVersionedPath(null);
 $out =<<<EOQ

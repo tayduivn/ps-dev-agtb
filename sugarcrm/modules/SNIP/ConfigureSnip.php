@@ -97,6 +97,6 @@ $sugar_smarty->assign('EXTRA_ERROR',$extra_error);
 $sugar_smarty->assign('SNIP_EMAIL',$snip->getSnipEmail());
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
-$sugar_smarty->assign('LICENSE',nl2br(trim(getLicenseContents("LICENSE.txt"))));
+$sugar_smarty->assign('LICENSE',nl2br(trim(getLicenseContents("LICENSE"))));
 
 echo $sugar_smarty->fetch('modules/SNIP/ConfigureSnip.tpl');

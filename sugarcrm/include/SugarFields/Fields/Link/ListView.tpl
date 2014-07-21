@@ -11,7 +11,7 @@
  */
 *}
 {capture name=getLink assign=link}{sugar_fetch object=$parentFieldArray key=$col}{/capture}
-{if $vardef.gen && ($vardef.default || $link)}
+{if $vardef.gen && $vardef.default}
     {capture name=getDefault assign=default}{if is_string($vardef.default)}{$vardef.default}{else}{$link}{/if}{/capture}
     {sugar_replace_vars subject=$default use_curly=true assign='link' fields=$parentFieldArray}
 {/if}

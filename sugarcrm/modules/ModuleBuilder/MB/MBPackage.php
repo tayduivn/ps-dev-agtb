@@ -275,8 +275,8 @@ function buildInstall($path){
         }
         if(file_exists('modules/ModuleBuilder/MB/LICENSE.txt')){
             copy('modules/ModuleBuilder/MB/LICENSE.txt', $this->getBuildDir() . '/LICENSE.txt');
-        }else if(file_exists('LICENSE.txt')){
-            copy('LICENSE.txt', $this->getBuildDir() . '/LICENSE.txt');
+        }else if(file_exists('LICENSE')){
+            copy('LICENSE', $this->getBuildDir() . '/LICENSE');
         }
         $package_dir = $this->getPackageDir();
         $date = date('Y_m_d_His');
@@ -635,8 +635,8 @@ function buildInstall($path){
         if(file_exists('modules/ModuleBuilder/MB/LICENSE.txt')){
             copy('modules/ModuleBuilder/MB/LICENSE.txt', $path . '/LICENSE.txt');
         }
-        else if(file_exists('LICENSE.txt')){
-            copy('LICENSE.txt', $path . '/LICENSE.txt');
+        else if(file_exists('LICENSE')){
+            copy('LICENSE', $path . '/LICENSE');
         }
         require_once('include/utils/zip_utils.php');
         $date = date('Y_m_d_His');
@@ -983,8 +983,8 @@ function buildInstall($path){
                 if(file_exists('modules/ModuleBuilder/MB/LICENSE.txt')){
                     copy('modules/ModuleBuilder/MB/LICENSE.txt', $tmppath . '/LICENSE.txt');
                 }
-                else if(file_exists('LICENSE.txt')){
-                    copy('LICENSE.txt', $tmppath . '/LICENSE.txt');
+                else if(file_exists('LICENSE')){
+                    copy('LICENSE', $tmppath . '/LICENSE');
                 }
                 $readme_contents = $this->readme;
                 $readmefp = sugar_fopen($tmppath.'/README.txt','w');

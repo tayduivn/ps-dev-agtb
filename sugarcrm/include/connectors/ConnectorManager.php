@@ -57,8 +57,13 @@ class ConnectorManager
             if (isset($source)) {
                 if ($source->hasTestingEnabled()) {
                     $connectorInfo['testing_enabled'] = true;
-                    if ($source->test()) {
-                        $connectorInfo['test_passed'] = true;
+                    try {
+                        $testpassed = $source->test();
+                    } catch (exception $e) {
+                        $GLOBALS['log']->error($name.' testing enabled but test throwing php errors');
+                    }
+                    if (isset($testpassed)) {
+                        $connectorInfo['test_passed'] = $testpassed;
                     }
                 }
             }

@@ -448,14 +448,40 @@ class User extends Person {
     */
 	public static function getLicensedUsersWhere()
 	{
-		//BEGIN SUGARCRM dep=od ONLY
-		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
-		//END SUGARCRM dep=od ONLY
 		//BEGIN SUGARCRM dep=os ONLY
-		return "deleted=0 AND status='Active' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0  AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
+        $db = DBManagerFactory::getInstance();
+        $where = sprintf(
+            " deleted != 1 AND user_name IS NOT NULL AND is_group != 1 AND portal_only != 1 AND status = %s AND %s > 0 AND %s",
+            $db->quoted('Active'),
+            $db->convert('user_name', 'length'),
+            self::getSystemUsersWhere()
+        );
+        return $where;
 		//END SUGARCRM dep=os ONLY
 	    return "1<>1";
 	}
+
+    /**
+     * Get WHERE clause for system users
+     * @param string $comp SQL comparison operator
+     * @param string $logic SQL logical operator
+     * @return string
+     */
+    public static function getSystemUsersWhere($comp = '!=', $logic = 'AND')
+    {
+        $db = DBManagerFactory::getInstance();
+        $users = array('SugarCRMSupport', 'SugarCRMUpgradeUser');
+        $where = ' 1=1 ';
+        foreach ($users as $user) {
+            $where .= sprintf(
+                " %s user_name %s %s ",
+                $logic,
+                $comp,
+                $db->quoted($user)
+            );
+        }
+        return $where;
+    }
 
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
@@ -538,6 +564,9 @@ class User extends Person {
 
 		//END SUGARCRM flav=pro ONLY
 
+        // track the current reports to id to be able to use it if it has changed
+        $old_reports_to_id = isset($this->fetched_row['reports_to_id']) ? $this->fetched_row['reports_to_id'] : '';
+
 		parent::save($check_notify);
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -563,6 +592,11 @@ class User extends Person {
             }
 		}
 		//END SUGARCRM flav=pro ONLY
+
+        // If reports to has changed, call update team memberships to correct the membership tree
+        if ($old_reports_to_id != $this->reports_to_id) {
+            $this->update_team_memberships($old_reports_to_id);
+        }
 
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
@@ -2409,5 +2443,21 @@ EOQ;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Updates last_login field with current timestamp.
+     * Executes User::save internally.
+     *
+     * @return void
+     */
+    public function updateLastLogin()
+    {
+		// need to call a direct db query
+		// if we do not the email address is removed
+		$db = DBManagerFactory::getInstance();
+		$this->last_login = TimeDate::getInstance()->nowDb();
+		$db->query("UPDATE users SET last_login = '{$this->last_login}' WHERE id = '{$this->id}'");
+		return $this->last_login;
     }
 }

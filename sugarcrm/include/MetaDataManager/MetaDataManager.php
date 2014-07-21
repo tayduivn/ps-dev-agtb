@@ -1725,6 +1725,11 @@ class MetaDataManager
             $configs['analytics'] = array('enabled' => false);
         }
 
+        $caseBean = BeanFactory::getBean('Cases');
+        if(!empty($caseBean)) {
+            $configs['inboundEmailCaseSubjectMacro'] = $caseBean->getEmailSubjectMacro();
+        }
+
         return $configs;
     }
 
@@ -2676,11 +2681,11 @@ class MetaDataManager
         $filePath = $this->getLangUrl($language, $ordered);
         if (SugarAutoLoader::fileExists($filePath)) {
             // Get the contents of the file so that we can get the hash
-            $v1data = file_get_contents($filePath);
+            $data = file_get_contents($filePath);
 
             // Decode the json and get the hash. The hash should be there but
             // check for it just in case something went wrong somewhere.
-            $array = json_decode($v1data, true);
+            $array = json_decode($data, true);
             $hash = isset($array['_hash']) ? $array['_hash'] : '';
 
             // Cleanup
@@ -2688,11 +2693,11 @@ class MetaDataManager
 
             // Return the same thing as would be returned if we had to build the
             // file for the first time
-            return array('hash' => $hash, 'data' => $v1data);
+            return array('hash' => $hash, 'data' => $data);
         }
 
         $stringData = array();
-        $stringData['app_list_strings'] = $this->getAppListStrings($language);
+        $stringData['app_list_strings'] = $this->getAppListStrings($language, $ordered);
         $stringData['app_strings'] = $this->getAppStrings($language);
         if ($this->public) {
             // Exception for the AppListStrings.
@@ -2712,19 +2717,10 @@ class MetaDataManager
             $stringData['mod_strings'] = $modStrings;
         }
         $stringData['_hash'] = $this->hashChunk($stringData);
-        $v1data = json_encode($stringData);
-        sugar_file_put_contents_atomic($filePath, $v1data);
+        $data = json_encode($stringData);
+        sugar_file_put_contents_atomic($filePath, $data);
 
-        //Now build v2 of the file that uses tuples for list strings to preverse order for numeric keyed arrays
-        $stringData['app_list_strings'] = $this->getAppListStrings($language, true);
-        $orderedData = json_encode($stringData);
-        $filePath = $this->getLangUrl($language, true);
-        sugar_file_put_contents_atomic($filePath, $orderedData);
-
-        if ($ordered) {
-            return array("hash" => $stringData['_hash'], "data" => $orderedData);
-        }
-        return array("hash" => $stringData['_hash'], "data" => $v1data);
+        return array("hash" => $stringData['_hash'], "data" => $data);
     }
 
     /**
@@ -3211,5 +3207,80 @@ class MetaDataManager
     public function normalizeMetadata($data)
     {
         return $data;
+    }
+
+    /**
+     *
+     * This method collects view data for given module and view
+     *
+     * @param string $moduleName The name of the module
+     * @param string $view       The view name
+     * @return array
+     */
+    public function getModuleView($moduleName, $view)
+    {
+        $views = $this->getModuleViews($moduleName);
+        if (isset($views[$view])) {
+            return $views[$view];
+        }
+        return array();
+    }
+
+    /**
+     *
+     * Return flat list of fields defined for a given module and view
+     *
+     * @param string $moduleName The name of the module
+     * @param string $view       The view name
+     * @return array
+     */
+    public function getModuleViewFields($moduleName, $view)
+    {
+        $viewData = $this->getModuleView($moduleName, $view);
+        if (!isset($viewData['meta']) || !isset($viewData['meta']['panels'])) {
+            return array();
+        }
+
+        // flatten fields
+        $fields = array();
+
+        foreach ($viewData['meta']['panels'] as $panel) {
+            if (isset($panel['fields']) && is_array($panel['fields'])) {
+                $fields = array_merge($fields, $this->getFieldNames($panel['fields']));
+                foreach ($panel['fields'] as $field) {
+                    if (is_array($field)) {
+                        if (isset($field['fields']) && is_array($field['fields'])) {
+                            $fields = array_merge($fields, $this->getFieldNames($field['fields']));
+                        }
+                        if (isset($field['related_fields']) && is_array($field['related_fields'])) {
+                            $fields = array_merge($fields, $this->getFieldNames($field['related_fields']));
+                        }
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     *
+     * Return list of fields from view def field set
+     *
+     * @param array $fieldSet
+     * @return array
+     */
+    protected function getFieldNames(array $fieldSet)
+    {
+        $fields = array();
+        foreach ($fieldSet as $field) {
+            if (is_array($field) && isset($field['name'])) {
+                $fields[] = $field['name'];
+            } elseif (is_string($field)) {
+                // direct field name
+                $fields[] = $field;
+            }
+        }
+        return $fields;
     }
 }

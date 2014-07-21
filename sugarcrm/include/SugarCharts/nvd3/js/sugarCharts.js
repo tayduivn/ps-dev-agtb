@@ -94,22 +94,42 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                     // get chartId from params or use the default for sugar
                     d3ChartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
 
-                    // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
-                    // only so we can custom format the Y-Axis values
-                    d3.select('#' + d3ChartId).html('');
-                    d3.select('#' + d3ChartId)
-                        .append('svg')
-                        .datum(json)
-                        .transition().duration(500)
-                        .call(paretoChart)
-                        .selectAll('.nv-y.nv-axis text')
-                        .text(function(d) {
-                            return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
-                        });
+                    var completeCallback = function() {
+                        SUGAR.charts.renderChart(chartId);
+                        d3.select('#' + d3ChartId)
+                            .selectAll('.nv-y.nv-axis text')
+                            .text(function(d) {
+                                return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
+                            });
+                    };
 
                     that.chartObject = paretoChart;
 
                     SUGAR.charts.setChartObject(paretoChart);
+                    SUGAR.charts.setChartData(json);
+
+                    if (chartConfig['ReportModule']) {
+                        paretoChart.legend
+                            .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(paretoChart, chartId, data);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType'], completeCallback);
+                        }
+                    } else {
+                        // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
+                        // only so we can custom format the Y-Axis values
+                        d3.select('#' + d3ChartId)
+                            .append('svg')
+                            .datum(json)
+                            .transition().duration(500)
+                            .call(paretoChart)
+                            .selectAll('.nv-y.nv-axis text')
+                            .text(function(d) {
+                                return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
+                            });
+                    }
                 }
                 SUGAR.charts.callback(callback);
             });
@@ -163,18 +183,25 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                             .axisLabel(params.y_axis_label);
                     }
 
-                    d3.select('#' + d3ChartId).html('');
-                    d3.select('#' + d3ChartId)
-                        .append('svg')
-                        .datum(json)
-                        .transition().duration(500)
-                        .call(barChart);
-
                     that.chartObject = barChart;
 
                     SUGAR.charts.setChartObject(barChart);
-                }
+                    SUGAR.charts.setChartData(json);
 
+                    if (chartConfig['ReportModule']) {
+                        barChart.legend
+                            .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(barChart, chartId, data);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                        }
+                    } else {
+                        SUGAR.charts.renderChart(chartId);
+                    }
+
+                }
                 SUGAR.charts.callback(callback);
             });
             break;
@@ -224,16 +251,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .axisLabel(params.show_x_label)
                         .tickFormat(function(d, i) { return xLabels[d]; });
 
-                    d3.select('#' + d3ChartId).html('');
-                    d3.select('#' + d3ChartId)
-                        .append('svg')
-                        .datum(json)
-                        .transition().duration(500)
-                        .call(lineChart);
-
                     that.chartObject = lineChart;
 
                     SUGAR.charts.setChartObject(lineChart);
+                    SUGAR.charts.setChartData(json);
+
+                    if (chartConfig['ReportModule']) {
+                        lineChart.legend
+                            .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(lineChart, chartId, data);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                        }
+                    } else {
+                        SUGAR.charts.renderChart(chartId);
+                    }
                 }
                 SUGAR.charts.callback(callback);
             });
@@ -259,16 +293,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
-                    d3.select('#' + d3ChartId).html('');
-                    d3.select('#' + d3ChartId)
-                        .append('svg')
-                        .datum(json)
-                        .transition().duration(500)
-                        .call(pieChart);
-
                     that.chartObject = pieChart;
 
                     SUGAR.charts.setChartObject(pieChart);
+                    SUGAR.charts.setChartData(json);
+
+                    if (chartConfig['ReportModule']) {
+                        pieChart.legend
+                            .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(pieChart, chartId, data);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                        }
+                    } else {
+                        SUGAR.charts.renderChart(chartId);
+                    }
                 }
                 SUGAR.charts.callback(callback);
             });
@@ -300,16 +341,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
 
-                    d3.select('#' + d3ChartId).html('');
-                    d3.select('#' + d3ChartId)
-                        .append('svg')
-                        .datum(json)
-                        .transition().duration(500)
-                        .call(funnelChart);
-
                     that.chartObject = funnelChart;
 
                     SUGAR.charts.setChartObject(funnelChart);
+                    SUGAR.charts.setChartData(json);
+
+                    if (chartConfig['ReportModule']) {
+                        funnelChart.legend
+                            .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                        }
+                    } else {
+                        SUGAR.charts.renderChart(chartId);
+                    }
                 }
                 SUGAR.charts.callback(callback);
             });
@@ -407,21 +455,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
             break;
     }
 }
-/*
-function updateChart(jsonFilename, chart, params) {
-    params = params ? params : {};
-    SUGAR.charts.get(jsonFilename, params, function(data) {
-        if(SUGAR.charts.isDataEmpty(data)){
-            chart.busy = false;
-            chart.updateJSON(data);
-        }
-    });
-}
-*/
+
 function swapChart(chartId, jsonFilename, css, chartConfig) {
-    $('#' + chartId).empty();
-    $('#legend' + chartId).empty();
-    $('#tiptip_holder').empty();
+    $('#d3_' + chartId).empty();
     var chart = new loadSugarChart(chartId, jsonFilename, css, chartConfig);
     return chart;
 }
@@ -437,6 +473,8 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
     SUGAR.charts = {
 
         chart: null,
+        json: [],
+
         /**
          * Execute callback function if specified
          *
@@ -449,8 +487,21 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             }
         },
 
-        setChartObject: function(chart) {
-            this.chart = chart;
+        setChartObject: function(d3) {
+            this.chart = d3;
+        },
+
+        setChartData: function(data) {
+            this.json = data;
+        },
+
+        renderChart: function(id) {
+            $('#d3_' + id).empty();
+            d3.select('#d3_' + id)
+                .append('svg')
+                .datum(this.json)
+                .transition().duration(500)
+                .call(this.chart);
         },
 
         /**
@@ -725,9 +776,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
         trackWindowResize: function(chart, chartId, json) {
             var timeout,
                 delay = 500,
-                origWindowWidth = document.documentElement.scrollWidth,
-                container = document.getElementById(chartId),
-                widget = document.getElementById(chartId + '-canvaswidget');
+                origWindowWidth = document.documentElement.scrollWidth;
 
             // refresh graph on window resize
             $(window).resize(function() {
@@ -739,27 +788,10 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     var newWindowWidth = document.documentElement.scrollWidth;
 
                     // if window width has changed during resize
-                    if (newWindowWidth != origWindowWidth) {
-                        // hide widget in order to let it's container have
-                        // width corresponding to current window size,
-                        // not it's contents
-                        widget.style.display = 'none';
-
-                        // add one more timeout in order to let all widgets
-                        // on the page hide
-                        setTimeout(function() {
-                            // measure container width
-                            var width = container.offsetWidth;
-                            var chartWidth = width - 20;
-                            $('#legend' + chartId).width(chartWidth);
-
-                            // display widget before resize, otherwise
-                            // it will be rendered incorrectly in IE
-                            widget.style.display = '';
-
-                            chart.resizeGraph(json, width);
-                            origWindowWidth = newWindowWidth;
-                        }, 0);
+                    if (newWindowWidth !== origWindowWidth) {
+                        // measure container width
+                        chart.update();
+                        origWindowWidth = newWindowWidth;
                     }
                 }, delay);
             });
@@ -786,39 +818,64 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             });
         },
 
+        saveImageFile: function(id, jsonfilename, imageExt, saveTo, complete) {
+            var self = this;
+            var d3ChartId = '#d3_' + id + '_print' || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165_print';
+            var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
 
-        saveImageFile: function(id, jsonfilename, imageExt, saveTo) {
+            var completeCallback = complete || function() {
+                self.renderChart(id);
+            };
+
+            d3.select(d3ChartId + ' svg').remove();
+
+            d3.select(d3ChartId)
+                .append('svg')
+                .datum(this.json)
+                .transition().duration(0)
+                .call(this.chart);
+
             var parts = jsonfilename.split('/'),
                 filename = parts[parts.length - 1].replace('.js', '.' + imageExt),
-                oCanvas = document.getElementById(id),
-                strDataURI,
-                url;
+                oCanvas = document.getElementById(canvasChartId),
+                d3ChartContainer = $(d3ChartId + ' svg'),
+                DOMURL = window.URL || window.webkitURL || window,
+                saveToUrl = saveTo || 'index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1';
 
-            if (oCanvas) {
-                if (imageExt === 'jpg') {
-                    strDataURI = oCanvas.toDataURL('image/jpeg');
-                } else {
-                    strDataURI = oCanvas.toDataURL('image/png');
-                }
-
-                if (!saveTo) {
-                    url = 'index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1';
-                } else {
-                    url = saveTo;
-                }
-
-                jQuery.post(url, {imageStr: strDataURI, filename: filename})
-                    .success(function() { return; })
-                    .error(function() { return; });
+            if (!oCanvas) {
+                return;
             }
-        },
 
-        saveImageTest: function(id, jsonfilename, imageExt, saveTo) {
-            if (typeof FlashCanvas != 'undefined') {
-                setTimeout(function() {SUGAR.charts.saveImageFile(id, jsonfilename, imageExt, saveTo);}, 10000);
-            } else {
-                SUGAR.charts.saveImageFile(id, jsonfilename, imageExt, saveTo);
-            }
+            $.ajax({
+                url: 'styleguide/assets/css/nvd3_print.css',
+                dataType: 'text',
+                success: function(css) {
+                    var ctx = oCanvas.getContext('2d'),
+                        img = new Image(),
+                        dom = d3ChartContainer.html(),
+                        data = '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">' +
+                               '<style type="text/css"><![CDATA[' + css + ']]></style>' + dom + '</svg>',
+                        svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'}),
+                        url = DOMURL.createObjectURL(svg);
+
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0);
+
+                        var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
+
+                        jQuery.post(saveToUrl, {imageStr: uri, filename: filename})
+                            .success(function() { })
+                            .error(function() { });
+
+                        ctx.clearRect(0, 0, 720, 480);
+
+                        DOMURL.revokeObjectURL(url);
+                    };
+
+                    img.src = url;
+                },
+                complete: completeCallback
+            });
         }
     };
 })(jQuery);

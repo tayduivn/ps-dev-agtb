@@ -217,26 +217,12 @@ class RelateRecordApi extends ModuleApi {
 
     function createRelatedLink($api, $args) {
         $api->action = 'save';
-        $primaryBean = $this->loadBean($api, $args);
-
-        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
-
-        $relatedBean->retrieve($args['remote_id']);
-        if ( empty($relatedBean->id) ) {
-            // Retrieve failed, probably doesn't have permissions
-            throw new SugarApiExceptionNotFound('Could not find the related bean');
-        }
-
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
-        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
-        //Clean up any hanging related records.
-        SugarRelationship::resaveRelatedBeans();
-
-        // This forces a re-retrieval of the bean from the database
-        BeanFactory::unregisterBean($relatedBean);
-
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
+        $args['ids'] = array($args['remote_id']);
+        $return = $this->createRelatedLinks($api, $args);
+        return array(
+            'record' => $return['record'],
+            'related_record' => $return['related_records'][0],
+        );
     }
 
     /**
@@ -347,9 +333,13 @@ class RelateRecordApi extends ModuleApi {
         }
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
+        
+        //Clean up any hanging related records.
+        SugarRelationship::resaveRelatedBeans();
 
-        // Get a fresh copy of the related bean so that the newly deleted relationship
-        // shows as deleted. See BR-1055
+        // Get fresh copies of primary and related beans so that the newly deleted relationship
+        // shows as deleted. See BR-1055, BR-1630
+        $primaryBean = BeanFactory::getBean($primaryBean->module_name, $primaryBean->id, array('use_cache' => false));
         $relatedBean = BeanFactory::getBean($relatedBean->module_name, $relatedBean->id, array('use_cache' => false));
 
         //Because the relationship is now deleted, we need to pass the $relatedBean data into formatNearAndFarRecords

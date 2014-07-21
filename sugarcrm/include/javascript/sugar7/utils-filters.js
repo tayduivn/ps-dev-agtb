@@ -76,6 +76,19 @@
                 },
 
                 /**
+                 * Sets the list of modules from which to look up the initial
+                 * filter label string.
+                 *
+                 * @param {String[]} modules The list of modules.
+                 */
+                setLangModules: function(modules) {
+                    if (!_.isArray(modules)) {
+                        return;
+                    }
+                    this.set('initial_filter_lang_modules', modules);
+                },
+
+                /**
                  * Sets filter name based on values of populate fields.
                  *
                  * @chainable
@@ -140,7 +153,6 @@
                     }
                     return this.toJSON();
                 }
-
             })
         });
     });

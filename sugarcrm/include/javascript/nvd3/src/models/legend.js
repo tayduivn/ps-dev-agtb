@@ -443,13 +443,9 @@ nv.models.legend = function () {
 
       function displayMenu() {
         back
-          .transition()
-          .duration(200)
           .style('opacity', legendOpen * 0.9)
           .style('display', legendOpen ? 'inline' : 'none');
         g
-          .transition()
-          .duration(200)
           .style('opacity', legendOpen)
           .style('display', legendOpen ? 'inline' : 'none');
         link

@@ -1,14 +1,14 @@
 <?php
- /*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
+/*
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
@@ -18,6 +18,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setup()
     {
+        SugarTestHelper::setup('beanFiles');
+        SugarTestHelper::setup('beanList');
+        SugarTestHelper::setup('current_user', array(true, true));
+
         // Backup current language settings so manipulation can be tested
         $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
         if (isset($GLOBALS['sugar_config']['disabled_languages'])) {
@@ -25,8 +29,6 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->setTestLanguageSettings();
-
-        SugarTestHelper::setup('current_user', array(true, true));
         $this->mm = MetaDataManager::getManager();
     }
 
@@ -39,6 +41,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         MetaDataFiles::clearModuleClientCache();
+        SugarTestHelper::tearDown();
     }
 
     public function testGetAllLanguages()
@@ -104,10 +107,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setTestLanguageSettings()
     {
-        $GLOBALS['sugar_config']['languages'] = array (
+        $GLOBALS['sugar_config']['languages'] = array(
             'br_test' => 'Test Language',
             'br_mine' => 'My Language',
-            'snazzy'  => 'Snazzy Language',
+            'snazzy' => 'Snazzy Language',
             'whiskey' => 'Whiskey Language',
             'awesome' => 'Awesome Sauce',
             'br_ikea' => 'Ikead an idea',
@@ -127,7 +130,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'analytics' => array(
                 'enabled' => true,
-            )
+            ),
         );
 
         $expectedConfigs = array(
@@ -138,7 +141,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'analytics' => array(
                 'enabled' => true,
-            )
+            ),
+            'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
         );
 
         $manager = $this->getMock('MetadataManagerMock', array('getSugarConfig'));
@@ -170,7 +174,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $mm = MetaDataManager::getManager();
         $test = $mm->normalizeMetadata($data);
         $this->assertEquals($test, $data, "Base data was manipulated and it should not have been");
-        
+
         $mm = MetaDataManager::getManager('mobile');
         $test = $mm->normalizeMetadata($data);
         $this->assertNotEquals($test, $data, "Mobile metadata was not manipulated and it should have been");
@@ -179,24 +183,216 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($test['modules']['Accounts']['layouts']);
     }
 
-    public function testGetAppListStrings() {
+    public function testGetAppListStrings()
+    {
         $mm = MetaDataManager::getManager();
         $normalList = $mm->getAppListStrings('en_us');
         $tupleList = $mm->getAppListStrings('en_us', true);
 
         //Would be nice to mock the app_list_strings, but this currently isn't possible with return_app_list_strings_language
-        $this->assertEquals($normalList['checkbox_dom'], array(
+        $this->assertEquals(
+            $normalList['checkbox_dom'],
+            array(
                 '' => '',
                 '1' => 'Yes',
                 '2' => 'No',
             )
         );
 
-        $this->assertEquals($tupleList['checkbox_dom'], array(
+        $this->assertEquals(
+            $tupleList['checkbox_dom'],
+            array(
                 array('', ''),
                 array('1', 'Yes'),
                 array('2', 'No'),
             )
+        );
+    }
+
+    public function getLanguageDataProvider()
+    {
+        return array(
+            array(
+                array(
+                    'lang' => 'en_us',
+                    'ordered' => true
+                )
+            ),
+            array(
+                array(
+                    'lang' => 'en_us',
+                    'ordered' => false
+                )
+            )
+        );
+    }
+
+    /**
+     * @group BR-1730
+     * @group unit
+     * @dataProvider getLanguageDataProvider
+     */
+    public function testGetLanguage($params)
+    {
+        $manager = $this->getMockBuilder('MetadataManager')
+            ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+
+        $manager->expects($this->once())->method('getAppListStrings')
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
+
+        $fileName = md5(microtime());
+        SugarAutoLoader::delFromMap($fileName, false);
+
+        $manager->expects($this->exactly(3))->method('getLangUrl')
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue($fileName));
+
+        $manager->getLanguage($params);
+    }
+
+    /**
+     * @dataProvider providerTestGetModuleView
+     * @covers MetaDataManager::getModuleView
+     * @group unit
+     */
+    public function testGetModuleView($module, $view, $metadata, $expected)
+    {
+        $mm = $this->getMockBuilder('MetaDataManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getModuleViews'))
+            ->getMock();
+
+        $mm->expects($this->once())
+            ->method('getModuleViews')
+            ->with($this->equalTo($module))
+            ->will($this->returnValue($metadata));
+
+        $this->assertEquals($expected, $mm->getModuleView($module, $view));
+    }
+
+    public function providerTestGetModuleView()
+    {
+        return array(
+            // existing view
+            array(
+                'Accounts',
+                'record',
+                array('record' => array('foo', 'bar')),
+                array('foo', 'bar'),
+            ),
+            // non-existing view
+            array(
+                'Accounts',
+                'blaat',
+                array('record' => array('foo', 'bar')),
+                array(),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider providerTestGetModuleViewFields
+     * @covers MetaDataManager::getModuleViewFields
+     * @covers MetaDataManager::getFieldNames
+     * @group unit
+     */
+    public function testGetModuleViewFields($module, $view, $viewData, $fields)
+    {
+        $mm = $this->getMockBuilder('MetaDataManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getModuleView'))
+            ->getMock();
+
+        $mm->expects($this->once())
+            ->method('getModuleView')
+            ->with($this->equalTo($module), $this->equalTo($view))
+            ->will($this->returnValue($viewData));
+
+        $this->assertEquals($fields, $mm->getModuleViewFields($module, $view));
+    }
+
+    public function providerTestGetModuleViewFields()
+    {
+        return array(
+            // empty view data
+            array(
+                'Contacts',
+                'record',
+                array(),
+                array(),
+            ),
+            // real view data
+            array(
+                'Contacts',
+                'record',
+                array(
+                    'meta' => array(
+                        'panels' => array(
+                            array(
+                                'fields' => array(
+
+                                    // string based field def
+                                    'first_name',
+
+                                    // array based field def
+                                    array(
+                                        'name' => 'last_name',
+                                    ),
+
+                                    // array based invalid field
+                                    array(
+                                        'span',
+                                    ),
+
+                                    // non-string/array invalid field
+                                    69,
+
+                                    // nested field set
+                                    array(
+                                        'name' => 'primary_address',
+                                        'fields' => array(
+                                            'street',
+                                            array(
+                                                'name' => 'country',
+                                            ),
+                                        ),
+                                    ),
+
+                                    // anonymous nested field set
+                                    array(
+                                        'fields' => array(
+                                            'foo',
+                                            array(
+                                                'name' => 'bar',
+                                            ),
+                                        ),
+                                    ),
+
+                                    // related field set
+                                    array(
+                                        'related_fields' => array(
+                                            array(
+                                                'name' => 'good',
+                                            ),
+                                            'karma',
+                                        )
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'first_name',
+                    'last_name',
+                    'primary_address',
+                    'street',
+                    'country',
+                    'foo',
+                    'bar',
+                    'good',
+                    'karma',
+                ),
+            ),
         );
     }
 }

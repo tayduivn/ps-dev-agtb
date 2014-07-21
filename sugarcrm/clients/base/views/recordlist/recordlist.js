@@ -58,6 +58,8 @@
         });
 
         this.on('render', this._setRowFields, this);
+        //Set the context to load the field list from the record metadata.
+        this.context.set('dataView', 'list');
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
@@ -535,7 +537,8 @@
      * so my_favorite is part of the field list and is fetched
      */
     getFieldNames: function(module) {
-        var fields = app.view.View.prototype.getFieldNames.call(this, module);
+        //Start with an empty set of fields since the view name in the request will load all fields from the metadata.
+        var fields = [ ];
         if (this.meta.favorite) {
             fields = _.union(fields, ['my_favorite']);
         }

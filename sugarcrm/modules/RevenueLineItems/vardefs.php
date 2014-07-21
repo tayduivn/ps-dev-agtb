@@ -249,7 +249,7 @@ $dictionary['RevenueLineItem'] = array(
             'reportable' => false,
             'type' => 'decimal',
             'precision' => 2,
-            'len' => '27,2'
+            'len' => '26,2'
         ),
         'discount_amount_usdollar' => array(
             'name' => 'discount_amount_usdollar',
@@ -280,10 +280,16 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
+            'calculated' => true,
+            'enforced' => true,
+            'formula' => 'ifElse($discount_select,currencyMultiply(currencyDivide($discount_amount,100),$discount_price), $discount_amount)',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'discount_select',
+                'discount_amount',
+                'discount_price',
             )
         ),
         'deal_calc_usdollar' => array(

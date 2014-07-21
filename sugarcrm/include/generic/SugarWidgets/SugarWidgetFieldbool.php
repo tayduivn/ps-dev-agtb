@@ -27,6 +27,27 @@ class SugarWidgetFieldBool extends SugarWidgetReportField
 		}
  }
 
+    /**
+     * Compose GROUP BY expression for boolean field
+     *
+     * @param array $layout_def
+     * @return string
+     */
+    public function queryGroupBy($layout_def)
+    {
+        $db = $this->reporter->db;
+
+        // explicitly cast NULL to empty value which depends on field type for proper grouping
+        $alias = parent::queryGroupBy($layout_def);
+        $alias = $db->convert(
+            $alias,
+            'IFNULL',
+            array($db->emptyValue($layout_def['type']))
+        );
+
+        return $alias;
+    }
+
     function displayListPlain($layout_def)
     {
         $value = $this->_get_list_value($layout_def);

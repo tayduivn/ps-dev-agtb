@@ -128,23 +128,28 @@
         }
 
         if (model) {
-            // Get the corresponding detail view meta for said module.
-            // this.meta needs to be set before this.getFieldNames is executed.
-            this.meta = _.extend({}, app.metadata.getView(model.module, 'record'), app.metadata.getView(model.module, 'preview'));
-            this.meta = this._previewifyMetadata(this.meta);
-        }
+            // Use preview view if available, otherwise fallback to record view
+            var viewName = 'preview',
+                previewMeta = app.metadata.getView(model.module, 'preview'),
+                recordMeta = app.metadata.getView(model.module, 'record');
+            if (_.isEmpty(previewMeta) || _.isEmpty(previewMeta.panels)) {
+                viewName = 'record';
+            }
+            this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
 
-        if (fetch) {
-            model.fetch({
-                //Show alerts for this request
-                showAlerts: true,
-                success: function(model) {
-                    self.renderPreview(model, collection);
-                },
-                fields: this.getFieldNames(model.module)
-            });
-        } else {
-            this.renderPreview(model, collection);
+            if (fetch) {
+                model.fetch({
+                    //Show alerts for this request
+                    showAlerts: true,
+                    success: function(model) {
+                        self.renderPreview(model, collection);
+                    },
+                    //The view parameter is used at the server end to construct field list
+                    view: viewName
+                });
+            } else {
+                this.renderPreview(model, collection);
+            }
         }
 
         this.previewId = previewId;

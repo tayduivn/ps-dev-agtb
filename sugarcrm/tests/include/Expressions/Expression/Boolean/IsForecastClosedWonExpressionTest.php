@@ -61,6 +61,6 @@ class IsForecastClosedWonExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         $expr = 'isForecastClosedWon($sales_stage)';
         $result = Parser::evaluate($expr, $rli)->evaluate();
 
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, strtolower($result));
     }
 }
