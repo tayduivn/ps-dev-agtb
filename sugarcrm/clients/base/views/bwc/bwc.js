@@ -528,17 +528,20 @@
             return;
         }
 
+        this.confirmMemLeak(bwcWindow.document);
+        $('a', bwcWindow.document).off('.bwc.sugarcrm');
+    },
+
+    confirmMemLeak: function(target) {
         // FIXME we need to provide a better way to do this
         if (app.config && app.config.logLevel === 'DEBUG') {
 
-            var registed = _.reduce($('a', bwcWindow.document), function(memo, el) {
+            var registered = _.reduce($('a', target), function(memo, el) {
                 var events = $._data(el, 'events');
                 return memo + _.where(_.flatten(events), {namespace: 'bwc.sugarcrm'}).length;
             }, 0);
-            app.logger.debug('Clear ' + registed + ' event(s) in `bwc.sugarcrm`.');
+            app.logger.debug('Clear ' + registered + ' event(s) in `bwc.sugarcrm`.');
         }
-
-        $('a', bwcWindow.document).off('.bwc.sugarcrm');
     },
 
     /**
