@@ -453,6 +453,12 @@ class ModuleScanner{
 		$file = strtolower($file);
 		$pi = pathinfo($file);
 
+        // because of SC-3079, LICENSE doesn't have an extension any more, so if the base name is LICENSE
+        // let it pass
+        if ($pi['basename'] === 'license') {
+            return true;
+        }
+
 		//make sure they don't override the files.md5
 		if(empty($pi['extension']) || $pi['basename'] == 'files.md5') {
 		    return false;
