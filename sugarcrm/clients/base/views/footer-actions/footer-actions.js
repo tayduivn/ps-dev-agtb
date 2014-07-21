@@ -125,12 +125,12 @@
                     } else {
                         var sidebar = layout.getComponent('sidebar');
                         if (sidebar) {
-                           var dashboard = sidebar.getComponent('dashboard-pane');
-                           if (dashboard) {
-                               // return true if we have dashlets or if we are on the list
-                               return (dashboard.$('.dashlets').length > 0 ||
-                                        dashboard.$('.container-fluid').length == 1);
-                           }
+                            var dashboard = sidebar.getComponent('dashboard-pane');
+                            if (dashboard) {
+                                // return true if we have dashlets or if we are on the list
+                                return (dashboard.$('.dashlets').length > 0 ||
+                                dashboard.$('.container-fluid').length == 1);
+                            }
                         }
                     }
                 }
@@ -167,7 +167,7 @@
      * @param {Object} event        The Click Event
      */
     help: function(event) {
-        if(this.layoutName === 'bwc') {
+        if (this.layoutName === 'bwc' || this.layoutName === 'about') {
             this.bwcHelpClicked();
         } else {
             var button = $(event.currentTarget),
