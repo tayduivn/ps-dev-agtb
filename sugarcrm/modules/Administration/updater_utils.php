@@ -125,7 +125,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
 	}
     if (!isset($resultData['validation'])) {
-        $resultData['validation'] = 'invalid validation key';
+        $resultData['validation'] = 'invalid';
     }
 	if($response_data || !$sclient->getError() )
 	{
