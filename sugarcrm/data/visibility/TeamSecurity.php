@@ -30,7 +30,7 @@ class TeamSecurity extends SugarVisibility
     const TEAMSET_PREFETCH_MAX = 500;
 
     /**
-     * Get team security join as a IN() condition
+     * Get team security `join` as a `IN()` condition.
      * @param string $current_user_id
      * @return string
      */
@@ -115,7 +115,7 @@ class TeamSecurity extends SugarVisibility
     }
 
     /**
-     * @see SugarVisibility::addVisibilityFrom()
+     * {@inheritdoc}
      */
     public function addVisibilityFrom(&$query)
     {
@@ -128,7 +128,7 @@ class TeamSecurity extends SugarVisibility
     }
 
     /**
-     * @see SugarVisibility::addVisibilityWhere()
+     * {@inheritdoc}
      */
     public function addVisibilityWhere(&$query)
     {
@@ -142,12 +142,11 @@ class TeamSecurity extends SugarVisibility
     /**
      * Add visibility query
      * @param string $query
-     * @return mixed
      */
     protected function addVisibility(&$query)
     {
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+        if (isset($_SESSION['type']) && $_SESSION['type'] === 'support_portal') {
             return;
         }
 
@@ -170,7 +169,7 @@ class TeamSecurity extends SugarVisibility
    }
 
     /**
-     * @see SugarVisibility::addVisibilityFromQuery()
+     * {@inheritdoc}
      */
     public function addVisibilityFromQuery(SugarQuery $sugarQuery, array $options = array())
     {
@@ -203,7 +202,7 @@ class TeamSecurity extends SugarVisibility
     }
 
     /**
-     * @see SugarVisibility::addVisibilityWhereQuery()
+     * {@inheritdoc}
      */
     public function addVisibilityWhereQuery(SugarQuery $sugarQuery, array $options = array())
     {
@@ -219,7 +218,10 @@ class TeamSecurity extends SugarVisibility
     }
 
     /**
-     * Verifies if team security needs to be applied
+     * Verifies if team security needs to be applied. Note that if the
+     * $current_user is not set we still apply team security. This does
+     * not make any sense by itself as the result will always be negative
+     * (no access).
      * @return bool True if team security needs to be applied
      */
     protected function isTeamSecurityApplicable()
@@ -233,13 +235,11 @@ class TeamSecurity extends SugarVisibility
             return false;
         }
 
-        // Note that if the $current_user is not set we still apply team security
-        // This does not make any sense by itself as the result will always be negative (no access)
         return true;
     }
 
     /**
-     * @see SugarVisibility::addSseVisibilityFilter()
+     * {@inheritdoc}
      */
     public function addSseVisibilityFilter(SugarSearchEngineInterface $engine, $filter)
     {
@@ -252,37 +252,32 @@ class TeamSecurity extends SugarVisibility
     }
 
     /**
-     * Override for performance tuning per module using $sugar_config
-     * @see SugarVisibility::setOptions()
+     * Override for performance tuning per module using `$sugar_config`.
+     * {@inheritdoc}
      */
-    public function setOptions(array $options)
+    public function setOptions($options)
     {
         parent::setOptions($options);
 
         // Ability to skip perf profile - use with caution
         if (!$this->getOption('skip_perf_profile')) {
-            $this->options = $this->getTuningOptions($this->options);
+            $options = empty($this->options) ? array() : $this->options;
+            $this->options = $this->getTuningOptions($options);
         }
 
         return $this;
     }
 
     /**
+     * BETA functionality - use at your own risk
+     *
      * Get performance tuning options from $sugar_config. If non
      * available fallback to default tuning options using DBAL.
+     * @param array $options
      * @return array
      */
     protected function getTuningOptions(array $options)
     {
-        /*
-         * TODO: It might make sense to refactor the current hard coded
-         * $options being passed into just passing a context. For example
-         * context_from_reports, context_from_filterapi, ... Based on this
-         * context we can add defaults and logic to be able to override
-         * so adminsitrator have a better leverage tuning TeamSecurity
-         * without making code changes.
-         */
-
         // module specific config
         $configKey = sprintf(self::CONFIG_PERF_KEY, $this->bean->module_dir);
         $tune = SugarConfig::getInstance()->get($configKey, array());

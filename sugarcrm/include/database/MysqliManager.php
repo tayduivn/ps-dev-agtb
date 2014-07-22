@@ -117,9 +117,6 @@ class MysqliManager extends MysqlManager
         }
         static $queryMD5 = array();
 
-        // Deprecating rewrites of TeamSecurity in DBAL - using perfProfile from now on
-        //$this->addDistinctClause($sql);
-
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();

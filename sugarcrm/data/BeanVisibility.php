@@ -73,10 +73,10 @@ class BeanVisibility
     /**
      * Add visibility clauses to the FROM part of the query
      * @param string $query
-     * @param array $options
+     * @param array|null $options
      * @return string Modified query
      */
-    public function addVisibilityFrom(&$query, array $options = array())
+    public function addVisibilityFrom(&$query, $options = array())
     {
         foreach ($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityFrom($query);
@@ -87,10 +87,10 @@ class BeanVisibility
     /**
      * Add visibility clauses to the WHERE part of the query
      * @param string $query
-     * @param array $options
+     * @param array|null $options
      * @return string Modified query
      */
-    public function addVisibilityWhere(&$query, array $options = array())
+    public function addVisibilityWhere(&$query, $options = array())
     {
         foreach($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityWhere($query);
@@ -101,10 +101,10 @@ class BeanVisibility
     /**
      * Add visibility clauses to the FROM part of SugarQuery
      * @param SugarQuery $query
-     * @param array $options
-     * @return SugarQuery Mofidied SugarQuery
+     * @param array|null $options
+     * @return SugarQuery Modified SugarQuery
      */
-    public function addVisibilityFromQuery(SugarQuery $query, array $options = array())
+    public function addVisibilityFromQuery(SugarQuery $query, $options = array())
     {
         foreach($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityFromQuery($query);
@@ -115,10 +115,10 @@ class BeanVisibility
     /**
      * Add visibility clauses to the WHERE part of SugarQuery
      * @param SugarQuery $query
-     * @param array $options
-     * @return SugarQuery Mofidied SugarQuery
+     * @param array|null $options
+     * @return SugarQuery Modified SugarQuery
      */
-    public function addVisibilityWhereQuery(SugarQuery $query, array $options = array())
+    public function addVisibilityWhereQuery(SugarQuery $query, $options = array())
     {
         foreach($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityWhereQuery($query);

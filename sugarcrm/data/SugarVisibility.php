@@ -36,9 +36,9 @@ abstract class SugarVisibility
 
     /**
      * Options for this run
-     * @var array
+     * @var array|null
      */
-    protected $options = array();
+    protected $options;
 
     /**
      * @param SugarBean $bean
@@ -71,7 +71,7 @@ abstract class SugarVisibility
         return $query;
     }
 
-   /**
+    /**
      * Add visibility clauses to the FROM part of SugarQuery
      * @param SugarQuery $query
      * @return SugarQuery
@@ -108,10 +108,10 @@ abstract class SugarVisibility
 
     /**
      * Set visibility options
-     * @param array $options
+     * @param array|null $options
      * @return SugarVisibility
      */
-    public function setOptions(array $options)
+    public function setOptions($options)
     {
         $this->options = $options;
         return $this;
