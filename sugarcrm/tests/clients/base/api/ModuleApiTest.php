@@ -45,6 +45,12 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
+    protected function tearDown()
+    {
+        SugarACL::resetACLs();
+        parent::tearDown();
+    }
+
     public static function tearDownAfterClass()
     {
         // delete the bunch of accounts crated
@@ -54,7 +60,6 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
 
-        SugarACL::resetACLs();
         SugarTestHelper::tearDown();
     }
 
@@ -305,7 +310,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testViewNoneCreate()
     {
         // setup ACL
-        $rejectacl = $this->getMock('SugarACLStatic');
+        $rejectacl = $this->getMock('SugarACLStatic', array('checkAccess'));
         $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnCallback(function($module, $view, $context) {
                 if($module == 'Accounts' && $view == 'view') {
                     return false;
@@ -320,6 +325,41 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey("id", $result);
         $this->assertArrayNotHasKey("name", $result);
+    }
+
+    public function testGetLoadedAndFormattedBean()
+    {
+        $account = $this->getMockBuilder('Account')
+            ->setMethods(array('ACLAccess'))
+            ->getMock();
+        $account->expects($this->any())
+            ->method('ACLAccess')
+            ->will($this->returnValue(false));
+        $account->id = $this->accounts[0]->id;
+        $account->date_modified = $this->accounts[0]->date_modified;
+
+        $api = $this->getMockBuilder('ModuleApi')
+            ->setMethods(array('loadBean'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('loadBean')
+            ->will($this->returnValue($account));
+
+        $data = SugarTestReflection::callProtectedMethod(
+            $api,
+            'getLoadedAndFormattedBean',
+            array($this->serviceMock, array(
+                'module' => 'Accounts',
+                'record' => $this->accounts[0]->id,
+            ))
+        );
+
+        $this->assertInternalType('array', $data);
+        $this->assertArrayHasKey('id', $data, 'API response does not contain ID');
+        $this->assertEquals($data['id'], $account->id, 'API has returned wrong ID');
+        $this->assertArrayHasKey('date_modified', $data, 'API response does not contain last modification date');
+        $this->assertArrayHasKey('_acl', $data, 'API response does not contain ACL data');
+        $this->assertArrayNotHasKey('name', $data, 'API response contains should not contain "name" field');
     }
 }
 
