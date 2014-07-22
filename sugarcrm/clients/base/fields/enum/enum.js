@@ -442,9 +442,13 @@
         if (_.isEmpty(this._keysOrder)) {
             return results;
         }
-        sortedResults = _.sortBy(results, function(item) {
-            return this._keysOrder[item.id];
-        }, this);
+        sortedResults = results;
+        // show visibility order if it is a dependency field where visibility_grid is defined
+        if (!this.def.visibility_grid) {
+            sortedResults = _.sortBy(results, function(item) {
+                return this._keysOrder[item.id];
+            }, this);
+        }
         return sortedResults;
     },
 
