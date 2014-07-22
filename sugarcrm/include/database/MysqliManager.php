@@ -79,7 +79,6 @@ class MysqliManager extends MysqlManager
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
 
-
     /**
      * Create DB Driver
      */
@@ -117,7 +116,6 @@ class MysqliManager extends MysqlManager
             return $this->queryArray($sql, $dieOnError, $msg, $suppress);    //queryArray does not support any return sets
         }
         static $queryMD5 = array();
-        $this->addDistinctClause($sql);
 
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
@@ -146,6 +144,10 @@ class MysqliManager extends MysqlManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
+        // slow query logging
+        if ($this->dump_slow_queries($sql)) {
+            $this->track_slow_queries($sql);
+        }
 
         // This is some heavy duty debugging, leave commented out unless you need this:
         /*
