@@ -19,6 +19,9 @@
         if (!app.acl.hasAccessToModel('edit', this.model)) {
             this.context.set('requiredFilter', 'records-noedit');
         }
+
+        // setup dataView to load correct viewdefs from subpanel-for-localizations.php
+        this.context.set('dataView', 'subpanel-for-localizations');
     },
 
     parseFieldMetadata: function(options) {

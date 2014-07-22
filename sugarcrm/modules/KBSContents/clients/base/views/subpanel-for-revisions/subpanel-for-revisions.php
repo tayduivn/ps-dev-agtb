@@ -12,7 +12,6 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 $viewdefs['KBSContents']['base']['view']['subpanel-for-revisions'] = array(
-    'type' => 'subpanel-list',
     'rowactions' => array(
         'actions' => array(
             array(
