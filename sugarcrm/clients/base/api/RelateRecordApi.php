@@ -199,13 +199,12 @@ class RelateRecordApi extends ModuleApi {
             $relatedBean->new_with_id = true;
         }
 
+        // Set rel data for $relatedBean->save() to create the link
+        $relatedBean->not_use_rel_in_req = true;
+        $relatedBean->new_rel_id = $primaryBean->id;
+        $relatedBean->new_rel_relname = $primaryBean->$linkName->getLinkForOtherSide();
+
         $id = $this->updateBean($relatedBean, $api, $args);
-
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
-        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
-        //Clean up any hanging related records.
-        SugarRelationship::resaveRelatedBeans();
 
         $args['remote_id'] = $relatedBean->id;
 
