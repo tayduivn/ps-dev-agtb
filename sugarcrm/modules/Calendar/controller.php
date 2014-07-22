@@ -131,7 +131,9 @@ class CalendarController extends SugarController
         }
 
         if (!empty($_REQUEST['calendar_style']) && $_REQUEST['calendar_style'] == "basic") {
-            $_REQUEST['date_start'] = $_REQUEST['datetime'];
+            list($tmp, $time) = explode(" ", $this->currentBean->$dateField);
+            list($date, $tmp) = explode(" ", $_REQUEST['datetime']);
+            $_REQUEST['datetime'] = $date . " " . $time;
         }
         $_POST[$dateField] = $_REQUEST['datetime'];
 
