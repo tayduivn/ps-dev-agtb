@@ -13,6 +13,6 @@
 <textarea disabled="disabled" rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}"{{#if def.placeholder}}
           placeholder="{{str def.placeholder module}}"{{/if}}
           class="input-xlarge wide tleft"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
-    {{#if value.long}}{{value.long}}{{else}}{{value}}{{/if}}
+    {{value.long}}
 </textarea>
 {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

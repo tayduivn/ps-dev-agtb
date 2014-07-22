@@ -45,7 +45,7 @@ describe('Base.Field.TextArea', function() {
             {
                 action: 'list',
                 parent: null,
-                longExists: false
+                longExists: true
             },
             {
                 action: 'edit',
@@ -60,7 +60,7 @@ describe('Base.Field.TextArea', function() {
             {
                 action: 'disabled',
                 parent: {},
-                longExists: false
+                longExists: true
             },
             {
                 action: 'disabled',
@@ -73,7 +73,7 @@ describe('Base.Field.TextArea', function() {
                 longExists: true
             }
         ], function(value) {
-            it('should only set a `long` value if in detail mode', function() {
+            it('should set a `long` value for all modes except edit', function() {
                 field.parent = value.parent;
                 // FIXME will be moved back to action once SC-2608 is done
                 field.tplName = value.action;
