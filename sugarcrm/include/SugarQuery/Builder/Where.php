@@ -385,14 +385,35 @@ abstract class SugarQuery_Builder_Where
     public function dateRange($field, $value, $bean = false)
     {
         //Gets us an array with "from/to" dates, each set to very beginning or end of day as appropriate
-        $dates = TimeDate::getInstance()->parseDateRange($value, null, true);
+        $timeDate = $this->timeDateInstance();
+        $dates = $timeDate->parseDateRange($value, null, true);
         if (is_array($dates)) {
             $where = $this->queryAnd();
+            $type = '';
+            if ($bean && $bean instanceof SugarBean) {
+                $type = $bean->getFieldDefinition($field);
+                $type = !empty($type['type']) ? $type['type'] : '';
+            }
             //We don't want `asDb` to set timezone since we've already set up our "from/to" dates
-            $where->lte($field, TimeDate::getInstance()->asDb($dates[1], false), $bean);
-            $where->gte($field, TimeDate::getInstance()->asDb($dates[0], false), $bean);
+            if (!$type) {
+                $where->lte($field, $timeDate->asDb($dates[1], false), $bean);
+                $where->gte($field, $timeDate->asDb($dates[0], false), $bean);
+            } else {
+                $where->lte($field, $timeDate->asDbType($dates[1], $type, false), $bean);
+                $where->gte($field, $timeDate->asDbType($dates[0], $type, false), $bean);
+            }
         }
         return $this;
+    }
+
+    /**
+     * We need to mock TimeDate object for tests
+     *
+     * @return TimeDate
+     */
+    protected function timeDateInstance()
+    {
+        return TimeDate::getInstance();
     }
 
     /**
