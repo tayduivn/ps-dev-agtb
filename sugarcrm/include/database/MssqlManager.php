@@ -1319,7 +1319,7 @@ class MssqlManager extends DBManager
      * @param string $tableName Name of table.
      * @return array Array if identity found Or false if not found.
      */
-    private function checkIdentity($tableName)
+    protected function checkIdentity($tableName)
     {
         $sql = "SELECT
                     c.name AS column_name,
@@ -1797,7 +1797,7 @@ EOSQL;
      * @param  string $column
      * @return string
      */
-	private function get_field_default_constraint_name($table, $column = null)
+	protected function get_field_default_constraint_name($table, $column = null)
     {
         $query = <<<EOQ
 select s.name, o.name, c.name dtrt, d.name ctrt
