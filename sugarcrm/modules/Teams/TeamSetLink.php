@@ -140,7 +140,7 @@ class TeamSetLink extends Link {
 					}else if(isset($this->_bean->created_by)){
 						$assigned_user_id = $this->_bean->created_by;
 					}
-					if(!is_null($assigned_user_id) && !$this->_teamSet->isUserAMember($assigned_user_id, '', $this->_teamList)){
+					if(!empty($assigned_user_id) && !$this->_teamSet->isUserAMember($assigned_user_id, '', $this->_teamList)){
 						$privateTeamId = User::staticGetPrivateTeamID($assigned_user_id);
 						if(!empty($privateTeamId)){
 							$this->_teamList[] = $privateTeamId;
