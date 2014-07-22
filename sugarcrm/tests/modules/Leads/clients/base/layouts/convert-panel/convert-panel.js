@@ -302,6 +302,52 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         getModuleStub.restore();
     });
 
+
+    it("should not populate create model with lead fields when user does not have edit access to field", function() {
+        var leadModel = new Backbone.Model({
+                north:'Lead Value for NORTH',
+                south:'Lead Value for SOUTH',
+                east:'Lead Value for EAST',
+                birthdate: '01/01/2010',
+                _module:'Leads'
+            }),
+            createModel = new Backbone.Model({
+                north:'Contact Value for NORTH',
+                west:'Contact Value for WEST',
+                east:'Contact Value for EAST',
+                birthdate:'01/01/1975'
+            }),
+            hasAccessToModel = sinon.collection.stub(app.acl, 'hasAccessToModel', function (action, model, field) {
+                flag = true;
+                if (action === 'edit' && field === 'birthdate') {
+                    flag = false;
+                }
+                return flag;
+            });
+
+        leadModel.setDefaultAttribute = sinon.stub();
+        createModel.setDefaultAttribute = sinon.stub();
+
+        layout.createView.model = createModel;
+        layout.meta.duplicateCheckOnStart = false;
+
+        var getModuleStub = sinon.stub(app.metadata, 'getModule');
+        getModuleStub.withArgs('Leads', 'fields').returns(
+            { north:'north', south:'south', east:'east', birthdate:'birthdate'}
+        );
+        getModuleStub.withArgs('Contacts', 'fields').returns(
+            { north:'north', west:'west', east:'east', birthdate:'birthdate' }
+        );
+
+        layout.handlePopulateRecords(leadModel);
+        expect(createModel.get('north')).toEqual('Lead Value for NORTH');
+        expect(createModel.get('south')).toBeUndefined();
+        expect(createModel.get('west')).toEqual('Contact Value for WEST');
+        expect(createModel.get('birthdate')).toEqual('01/01/1975');
+        getModuleStub.restore();
+        hasAccessToModel.restore();
+    });
+
     it("should trigger dupe check when panel is enabled and not already complete", function() {
         layout.currentState.complete = false;
         layout.handleEnablePanel(true);
