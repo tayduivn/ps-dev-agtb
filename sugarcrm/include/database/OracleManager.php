@@ -887,23 +887,6 @@ class OracleManager extends DBManager
 					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
 	}
 
-    /**
-     * Compares two vardefs
-     *
-     * @param  array  $fielddef1 This is from the database
-     * @param  array  $fielddef2 This is from the vardef
-     * @param bool $ignoreName Ignore name-only differences?
-     * @return bool   true if they match, false if they don't
-     */
-	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
-	{
-        if(!empty($fielddef2['len']) && !empty($fielddef1['len']) && $fielddef1['len'] > $fielddef2['len']) {
-            // if DB has bigger length than vardef, it's OK
-            $fielddef2['len'] = $fielddef1['len'];
-        }
-        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
-	}
-
 	/**
 	 * Split column type into components
 	 * type proper, length and scale
@@ -1802,11 +1785,11 @@ EOQ;
             }
             $whereClause .= ' ';  // make sure there is a trailing blank
 		}
-		
+
         return "SELECT $fields FROM $tablename $startWith $whereClause $connectBy $whereClause";
     }
 
-  
+
     /*
      * Returns a DB specific FROM clause which can be used to select against functions.
      * Note that depending on the database that this may also be an empty string.

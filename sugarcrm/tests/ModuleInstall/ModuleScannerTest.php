@@ -182,6 +182,14 @@ EOQ;
         }
     }
 
+    public function testValidLicenseFileMissingExtension()
+    {
+        $ms = new ModuleScanner();
+        $valid = $ms->isValidExtension('LICENSE');
+
+        $this->assertTrue($valid);
+    }
+
     public function testConfigChecks()
     {
             $isconfig = array(

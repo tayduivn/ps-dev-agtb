@@ -60,12 +60,11 @@ class SubPanelTiles
         // end then pull out the unique values to ensure the users defined subpanel
         // layout is taken into account first and any others are appended to the end.
         if (!empty($user_layout)) {
-            $hidden_panels = SubPanelDefinitions::get_hidden_subpanels();
 
             // Check if any of the panels the user has saved in their layout
             // preference are now hidden. If they are, remove them from the list.
             foreach ($user_layout as $key => $value) {
-                if (in_array($value, $hidden_panels)) {
+                if (!in_array($value, $layout)) {
                     unset($user_layout[$key]);
                 }
             }
