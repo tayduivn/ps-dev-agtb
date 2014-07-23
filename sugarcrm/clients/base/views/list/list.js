@@ -55,14 +55,21 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.attachEvents();
-
         this.orderByLastStateKey = app.user.lastState.key('order-by', this);
+        //If the last user state is no longer valid, ignore it.
+        var lastStateOrderBy = app.user.lastState.get(this.orderByLastStateKey) || {},
+            lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
+        if (_.isEmpty(lastOrderedFieldMeta) || !app.utils.isSortable(options.module, lastOrderedFieldMeta)) {
+            lastStateOrderBy = {};
+        }
+
         this.orderBy = _.extend({
                 field : '',
                 direction : 'desc'
             },
             listViewMeta.orderBy,
-            app.user.lastState.get(this.orderByLastStateKey) || {});
+            lastStateOrderBy
+        );
 
         if(this.collection) {
             this.collection.orderBy = this.orderBy;
