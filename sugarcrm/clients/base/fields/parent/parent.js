@@ -129,7 +129,7 @@
 
         this._createFiltersCollection();
 
-        if (app.acl.hasAccess(this.action, module, this.model.get('assigned_user_id'), this.name)) {
+        if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
             if (module) {
                 this.model.set('parent_type', module, {silent: silent});
                 this.model.removeDefaultAttribute('parent_type');
