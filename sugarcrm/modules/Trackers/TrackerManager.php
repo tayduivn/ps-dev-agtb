@@ -81,6 +81,15 @@ static function getInstance($skip_setup = false){
     return self::$instance;
 }
 
+    /**
+     * Singleton method to reset static instance of TrackerManager. May be used in unit tests in order
+     * to make sure that current instance configuration is up to date.
+     */
+    public static function resetInstance()
+    {
+        self::$instance = null;
+    }
+
 /**
  * getMonitor
  * This method returns a Monitor instance based on the monitor name.

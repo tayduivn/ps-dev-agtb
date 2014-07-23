@@ -21,7 +21,6 @@ class HomeViewList extends ViewList{
  	function display(){
  		global $mod_strings, $export_module, $current_language, $theme, $current_user, $dashletData, $sugar_flavor;
          $this->processMaxPostErrors();
- 		include('modules/Home/index.php');
  	}
 
     function processMaxPostErrors() {
