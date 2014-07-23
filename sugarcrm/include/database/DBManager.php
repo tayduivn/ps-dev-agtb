@@ -873,8 +873,8 @@ protected function checkQuery($sql, $object_name = false)
 				/* required + is_null=false => not null */
 			return false;
 		}
-		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id')
-					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id')
+		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
+					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
 					&& (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
 		) {
 			return true;

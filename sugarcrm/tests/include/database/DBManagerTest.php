@@ -2626,4 +2626,49 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
         $this->assertRegExp("#quantity.*?decimal\\($result\\)#i", $sql, "Bad length change for $driver");
     }
+
+    /**
+     * Data provider for testIsNullable()
+     */
+    public function testIsNullableData()
+    {
+        return array(
+            array(
+                array (
+                    'name' => 'id',
+                    'vname' => 'LBL_TAG_NAME',
+                    'type' => 'id',
+                    'len' => '36',
+                    'required'=>true,
+                    'reportable'=>false,
+                ), false),
+            array(
+                array (
+                    'name' => 'parent_tag_id',
+                    'vname' => 'LBL_PARENT_TAG_ID',
+                    'type' => 'id',
+                    'len' => '36',
+                    'required'=>false,
+                    'reportable'=>false,
+                ), true),
+            array(
+                array (
+                    'name' => 'any_id',
+                    'vname' => 'LBL_ANY_ID',
+                    'dbType' => 'id',
+                    'len' => '36',
+                    'required'=>false,
+                    'reportable'=>false,
+                ), true)
+        );
+    }
+
+    /**
+     * @ticket PAT-579
+     * @dataProvider testIsNullableData
+     */
+    public function testIsNullable($vardef, $isNullable)
+    {
+        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', array($vardef)));
+    }
 }
