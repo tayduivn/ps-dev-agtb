@@ -69,8 +69,26 @@ class SugarSystemInfo
             $this->getSystemNameInfo(),
             $this->getLatestTrackerIdInfo(),
             $this->getClientInfo(),
-            $this->getLicensePortalInfo()
+            $this->getLicensePortalInfo(),
+            $this->getDistroInfo()
         );
+        return $info;
+    }
+
+    /**
+     * Returns distro info dictionary
+     *
+     * @return array
+     */
+    public function getDistroInfo()
+    {
+        $info = array();
+        if (file_exists('distro.php')) {
+            include('distro.php');
+            if (!empty($distro_name)) {
+                $info['distro_name'] = $distro_name;
+            }
+        }
         return $info;
     }
 
