@@ -245,11 +245,15 @@ class ViewModulefield extends SugarView
 	        }
 		}
 
-        if((!empty($vardef['studio']) && is_array($vardef['studio']) && !empty($vardef['studio']['no_duplicate']) && $vardef['studio']['no_duplicate'] == true)
-           || (strcmp($field_name, "name") == 0) || (isset($vardef['type']) && $vardef['type'] == 'name')) // bug #35767, do not allow cloning of name field
-            {
-               $fv->ss->assign('no_duplicate', true);
-            }
+        if (!empty($vardef['studio']['no_duplicate'])
+            || $field_name === 'name'
+            || $field_name === 'parent_type'
+            || $field_name === 'parent_id'
+            || $field_name === 'parent_name'
+            // bug #35767, do not allow cloning of name field
+            || (isset($vardef['type']) && $vardef['type'] === 'name')) {
+            $fv->ss->assign('no_duplicate', true);
+        }
 
         $fv->ss->assign('action',$action);
         $fv->ss->assign('isClone', ($isClone ? 1 : 0));
