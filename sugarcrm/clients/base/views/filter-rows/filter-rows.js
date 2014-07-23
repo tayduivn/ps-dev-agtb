@@ -869,7 +869,7 @@
                 if (data[val.field]) {
                     //For in between filter we have an array of fields so we need to cover all cases
                     var fields = _.isArray(data[val.field]) ? data[val.field] : [data[val.field]];
-                    data[val.value] = "";
+                    data[val.value] = '';
                     _.each(fields, function(field) {
                         model = field.model;
                         if (val.field === "valueField" && model) {
@@ -879,6 +879,10 @@
                         field.dispose();
                         field = null;
                     }, this);
+                    return;
+                }
+                if (data.isDateRange && val.value === 'value') {
+                    data.value = '';
                 }
             }, this);
         }

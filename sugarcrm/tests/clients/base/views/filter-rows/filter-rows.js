@@ -588,27 +588,64 @@ describe('Base.View.FilterRows', function() {
                 });
             });
             describe('date type fields', function() {
-                it('should not create a value field for specific date operators', function() {
+
+                it('should create a value field when the operator is not a date range', function() {
+                    var rowData = $row.data();
                     sinon.collection.stub($.fn, 'select2').returns('date_created'); //return `date_created` as field
                     var buildFilterDefStub = sinon.collection.stub(view, 'buildFilterDef');
+
+                    // Set a date range
                     $filterField.val('date_created');
+                    rowData.value = 'next_30_days';
                     $operatorField.val('next_30_days');
                     view.handleOperatorSelected({currentTarget: $operatorField});
+
+                    rowData = $row.data();
+                    expect(rowData.operator).toEqual('next_30_days');
+                    expect(rowData.value).toEqual('next_30_days');
                     expect(createFieldSpy).not.toHaveBeenCalled();
+                    expect(rowData.valueField).toBeUndefined();
                     expect(_.isEmpty($valueField.html())).toBeTruthy();
+                    expect(buildFilterDefStub).toHaveBeenCalled();
+                    buildFilterDefStub.reset();
+
+                    // Change the operator
+                    $operatorField.val('$equals');
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+
+                    rowData = $row.data();
+                    expect(rowData.operator).toEqual('$equals');
+                    expect(rowData.value).toEqual('');
+                    expect(createFieldSpy).toHaveBeenCalled();
+                    expect(rowData.valueField).toBeDefined();
+                    expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(buildFilterDefStub).toHaveBeenCalled();
                 });
             });
         });
 
         it('should dispose previous value field', function() {
-            var disposeStub = sinon.collection.stub(view, '_disposeRowFields');
+            var rowData = $row.data();
             sinon.collection.stub($.fn, 'select2').returns('case_number'); //return `case_number` as field
+
+            // Set a row
+            rowData.value = '50';
+            $operatorField.val('$lte');
             view.handleOperatorSelected({currentTarget: $operatorField});
-            expect(disposeStub).toHaveBeenCalled();
-            expect(disposeStub.lastCall.args[1]).toEqual([
-                {'field': 'valueField', 'value': 'value'}
-            ]);
+            rowData = $row.data();
+            expect(rowData.operator).toEqual('$lte');
+            expect(rowData.valueField).toBeDefined();
+            var disposeSpy = sinon.collection.spy(rowData.valueField, 'dispose');
+            expect(rowData.value).toEqual('50');
+
+            // Change the operator
+            $operatorField.val('$gte');
+            view.handleOperatorSelected({currentTarget: $operatorField});
+            expect(disposeSpy).toHaveBeenCalled();
+            rowData = $row.data();
+            expect(rowData.operator).toEqual('$gte');
+            expect(rowData.valueField).toBeDefined();
+            expect(rowData.value).toEqual('');
         });
 
         it('should set data attributes', function() {
