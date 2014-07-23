@@ -3308,7 +3308,10 @@ class SugarBean
             count($sqlRows),
             count($beans)
         );
-        $GLOBALS['log']->fatal($msg);
+
+        // Set the log level to something notable, but not fatal since this isn't
+        // a fatal type situation
+        $GLOBALS['log']->warn($msg);
 
         // detailed logging
         $counts = array();
