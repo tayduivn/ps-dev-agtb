@@ -59,10 +59,10 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.date_purchased, 
                            p.cost_price, 
                            p.discount_price, 
-                           p.discount_amount, 
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
                            null as discount_rate_percent,
-                           p.discount_amount_usdollar, 
-                           p.discount_select, 
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.discount_price/p.discount_usdollar) as discount_amount_usdollar,
+                           0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
                            p.list_price, 
@@ -111,9 +111,10 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    ON o.id = qo.opportunity_id";
 
             $results = $this->db->query($sql);
+            $count = $this->db->getAffectedRowCount($results);
             $this->insertRows($results);
 
-            $this->log('Done migrating 6.5 Products assigned to Quotes that have Opportunities.');
+            $this->log('Done migrating ' . $count . ' 6.5 Products assigned to Quotes that have Opportunities.');
         }
 
         //Now we need to do some migration on the 6.7 data, which is a bit more like what we need in 7.
@@ -132,20 +133,20 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.team_set_id, 
                            p.product_template_id, 
                            p.account_id, 
-                           (IF(p.discount_price IS NULL, IF(p.likely_case IS NULL, o.amount, p.likely_case), p.discount_price) * p.quantity) as total_amount,
+                           (IF(p.discount_price IS NULL or p.discount_price = '0.000000', IF(p.likely_case IS NULL, o.amount, p.likely_case)/p.quantity, p.discount_price) * p.quantity) as total_amount,
                            p.type_id, 
                            p.quote_id, 
                            p.manufacturer_id, 
                            p.category_id, 
                            p.mft_part_num, 
                            p.vendor_part_num, 
-                           p.date_purchased, 
+                           p.date_purchased,
                            p.cost_price,
-                           IF(p.discount_price IS NULL, IF(p.likely_case IS NULL, o.amount, p.likely_case), p.discount_price) as discount_price,
-                           p.discount_amount, 
-                           null as discount_rate_percent, 
-                           p.discount_amount_usdollar, 
-                           p.discount_select, 
+                           IF(p.discount_price IS NULL or p.discount_price = '0.000000', IF(p.likely_case IS NULL, o.amount, p.likely_case)/p.quantity, p.discount_price) as discount_price,
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
+                           null as discount_rate_percent,
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.cost_price/p.cost_usdollar) as discount_amount_usdollar,
+                           0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
                            p.list_price, 
@@ -153,7 +154,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.discount_usdollar, 
                            p.list_usdollar, 
                            p.currency_id, 
-                           p.base_rate, 
+                           (p.cost_price/p.cost_usdollar) as base_rate,
                            p.status, 
                            p.tax_class, 
                            p.website, 
@@ -191,9 +192,10 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    WHERE p.opportunity_id IS NOT NULL 
                    AND (p.quote_id IS NULL OR p.quote_id = '')";
             $results = $this->db->query($sql);
+            $count = $this->db->getAffectedRowCount($results);
             $this->insertRows($results);
 
-            $this->log('Done migrating 6.7 Products with Opportunities and without Quotes.');
+            $this->log('Done migrating ' . $count . ' 6.7 Products with Opportunities and without Quotes.');
 
             $this->log('Migrating 6.7 Products assigned to Quotes that have Opportunities.');
             $sql = "SELECT p.id,
@@ -218,11 +220,11 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.vendor_part_num, 
                            p.date_purchased, 
                            p.cost_price, 
-                           p.discount_price, 
-                           p.discount_amount, 
-                           null as discount_rate_percent, 
-                           p.discount_amount_usdollar, 
-                           p.discount_select, 
+                           p.discount_price,
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
+                           null as discount_rate_percent,
+                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.discount_price/p.discount_usdollar) as discount_amount_usdollar,
+                           0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
                            p.list_price, 
@@ -230,7 +232,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.discount_usdollar, 
                            p.list_usdollar, 
                            p.currency_id, 
-                           p.base_rate, 
+                           (p.discount_price/p.discount_usdollar) as base_rate,
                            p.status, 
                            p.tax_class, 
                            p.website, 
@@ -249,9 +251,9 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.book_value, 
                            p.book_value_usdollar, 
                            p.book_value_date, 
-                           IF(p.best_case IS NULL, (p.discount_price * p.quantity), p.best_case) as best_case,
-                           IF(p.likely_case IS NULL, (p.discount_price * p.quantity), p.likely_case) as likely_case,
-                           IF(p.worst_case IS NULL, (p.discount_price * p.quantity), p.worst_case) as worst_case,
+                           IF(p.best_case IS NULL OR p.best_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.best_case) as best_case,
+                           IF(p.likely_case IS NULL OR p.likely_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.likely_case) as likely_case,
+                           IF(p.worst_case IS NULL OR p.worst_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.worst_case) as worst_case,
                            o.date_closed, 
                            o.date_closed_timestamp, 
                            o.next_step, 
@@ -270,8 +272,9 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    INNER JOIN opportunities o 
                    ON o.id = qo.opportunity_id";
             $results = $this->db->query($sql);
+            $count = $this->db->getAffectedRowCount($results);
             $this->insertRows($results);
-            $this->log('Done migrating 6.7 Products assigned to Quotes that have Opportunities.');
+            $this->log('Done migrating ' . $count . ' 6.7 Products assigned to Quotes that have Opportunities.');
         }
 
         $this->log('Done migrating Products to Revenue Line Items.');
