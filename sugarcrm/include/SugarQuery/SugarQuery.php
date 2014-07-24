@@ -720,7 +720,7 @@ class SugarQuery
         $bean = !empty($options['relatedJoin']) ? $this->join[$options['relatedJoin']]->bean : $this->from;
 
         if (is_array($bean)) {
-            list($bean, $alias) = $bean;
+            $bean = reset($bean);
         }
 
         $bean->load_relationship($join);
