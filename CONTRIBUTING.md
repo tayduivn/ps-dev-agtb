@@ -35,13 +35,6 @@ Before working with SugarCRM, setup your environment with the following software
 * PHP version 5.3.3+;
 * Composer.
 
-#### Installing Composer
-
-```bash
-$ curl -sS https://getcomposer.org/installer | php
-$ mv composer.phar /usr/local/bin/composer
-```
-
 #### Configure Git
 
 Set up your user information with your real name and a working email address:
@@ -72,6 +65,14 @@ $ git config --global user.email you@example.com
 > ```
 >
 > Replace `--global` by `--local` if you want to set it only for the active repository.
+
+#### Installing Composer
+
+Composer is a tool for dependency management in PHP. It allows you to declare the dependent libraries your project needs and it will install them in your project for you.
+
+SugarCRM requires composer to manage its dev dependencies and provide better support on versioning across external libraries, while allowing easier maintenance when keeping those libraries up to date.
+
+To install composer, please follow the official information provided in the [composer page][Composer install]. It has all the information available to install composer in your system.
 
 #### Get the SugarCRM Source Code
 
@@ -335,3 +336,5 @@ Check the code coverage by opening the generated `cov/index.html` page in a brow
 [GitHub Doc Ignoring Files]: https://help.github.com/articles/ignoring-files
 [GitHub using pull requests]: https://help.github.com/articles/using-pull-requests
 [GitHub interactive rebase]: https://help.github.com/articles/interactive-rebase
+
+[Composer install]: https://getcomposer.org/doc/00-intro.md
