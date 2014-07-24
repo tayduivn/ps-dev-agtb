@@ -638,6 +638,8 @@ class SugarBean
     /**
      * Add visibility clauses to the query
      * @param string $query
+     * @param null|array $options
+     * @return string
      */
     public function addVisibilityFrom(&$query, $options = null)
     {
@@ -647,15 +649,18 @@ class SugarBean
     /**
      * Add visibility clauses to the query
      * @param string $query
+     * @param null|array $options
+     * @return string
      */
     public function addVisibilityWhere(&$query, $options = null)
     {
         return $this->loadVisibility()->addVisibilityWhere($query, $options);
     }
+
     /**
      * Add visibility to a SugarQuery Object
      * @param SugarQuery $query
-     * @param array $options
+     * @param null|array $options
      * @return SugarQuery
      */
     public function addVisibilityQuery($query, $options = null)
@@ -3303,7 +3308,10 @@ class SugarBean
             count($sqlRows),
             count($beans)
         );
-        $GLOBALS['log']->fatal($msg);
+
+        // Set the log level to something notable, but not fatal since this isn't
+        // a fatal type situation
+        $GLOBALS['log']->warn($msg);
 
         // detailed logging
         $counts = array();

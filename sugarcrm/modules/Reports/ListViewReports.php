@@ -52,6 +52,7 @@ class ListViewReports extends ListViewSmarty {
             }
         }
 
+        $this->ss->assign('act', 'ReportsWizard');
         return parent::display();
     }
     

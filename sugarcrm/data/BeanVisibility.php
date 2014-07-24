@@ -25,6 +25,7 @@ class BeanVisibility
      * @var array
      */
     protected $strategies = array();
+
     /**
      * Parent bean
      * @var SugarBean
@@ -41,11 +42,13 @@ class BeanVisibility
      * @param SugarBean $bean
      * @param array $metadata
      */
-    public function __construct($bean, $metadata)
+    public function __construct(SugarBean $bean, array $metadata)
     {
         $this->bean = $bean;
-        foreach($metadata as $visclass => $data) {
-            if($data === false) continue;
+        foreach ($metadata as $visclass => $data) {
+            if ($data === false) {
+                continue;
+            }
             $this->addStrategy($visclass, $data);
         }
     }
@@ -59,8 +62,8 @@ class BeanVisibility
     {
         $this->strategies[] = new $strategy($this->bean, $data);
         /*
-         *  because PHP will allow $strategy to be an object and instantiate a new version of 
-         *  itself in the above line we need to check if it is an object before we save it to the 
+         *  because PHP will allow $strategy to be an object and instantiate a new version of
+         *  itself in the above line we need to check if it is an object before we save it to the
          *  loadedStrategies array
          */
         $strategyName = is_object($strategy) ? get_class($strategy) : $strategy;
@@ -70,12 +73,12 @@ class BeanVisibility
     /**
      * Add visibility clauses to the FROM part of the query
      * @param string $query
-     * @param array $options
+     * @param array|null $options
      * @return string Modified query
      */
     public function addVisibilityFrom(&$query, $options = array())
     {
-        foreach($this->strategies as $strategy) {
+        foreach ($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityFrom($query);
         }
         return $query;
@@ -84,7 +87,7 @@ class BeanVisibility
     /**
      * Add visibility clauses to the WHERE part of the query
      * @param string $query
-     * @param array $options
+     * @param array|null $options
      * @return string Modified query
      */
     public function addVisibilityWhere(&$query, $options = array())
@@ -95,19 +98,34 @@ class BeanVisibility
         return $query;
     }
 
-    public function addVisibilityFromQuery(SugarQuery $query, $options = array()) {
+    /**
+     * Add visibility clauses to the FROM part of SugarQuery
+     * @param SugarQuery $query
+     * @param array|null $options
+     * @return SugarQuery Modified SugarQuery
+     */
+    public function addVisibilityFromQuery(SugarQuery $query, $options = array())
+    {
         foreach($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityFromQuery($query);
         }
         return $query;
     }
 
-    public function addVisibilityWhereQuery(SugarQuery $query, $options = array()) {
+    /**
+     * Add visibility clauses to the WHERE part of SugarQuery
+     * @param SugarQuery $query
+     * @param array|null $options
+     * @return SugarQuery Modified SugarQuery
+     */
+    public function addVisibilityWhereQuery(SugarQuery $query, $options = array())
+    {
         foreach($this->strategies as $strategy) {
             $strategy->setOptions($options)->addVisibilityWhereQuery($query);
         }
         return $query;
     }
+
     /**
      * Check if the Strategy has been loaded
      * @param string $name
@@ -121,26 +139,29 @@ class BeanVisibility
     /**
      * Called before the bean is indexed so that any calculated attributes can updated.
      * Propagates to all registered strategies.
+     * @return void
      */
     public function beforeSseIndexing()
     {
-    	foreach($this->strategies as $strategy) {
-    		$strategy->beforeSseIndexing();
-    	}
+        foreach ($this->strategies as $strategy) {
+            $strategy->beforeSseIndexing();
+        }
     }
 
     /**
-     * Get SugarSearchEngine visibility filter
-     * @param string $engine search engine name
+     * Apply SugarSearchEngine visibility filters.
+     * @param SugarSearchEngineInterface $engine Sugar search engine object
+     * @param mixed $filter Current filter used as base
      * @return mixed
-     */        
-    public function addSseVisibilityFilter($engine, $filter)
+     *
+     * FIXME: $filter is tightly coupled to Elasticsearch
+     */
+    public function addSseVisibilityFilter(SugarSearchEngineInterface $engine, $filter)
     {
-    	foreach($this->strategies as $strategy) {
-    		$filter = $strategy->addSseVisibilityFilter($engine, $filter);
-    	}
-    	return $filter;
-    } 
-
+        foreach ($this->strategies as $strategy) {
+            $filter = $strategy->addSseVisibilityFilter($engine, $filter);
+        }
+        return $filter;
+    }
 }
 

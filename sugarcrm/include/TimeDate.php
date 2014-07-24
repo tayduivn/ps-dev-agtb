@@ -528,13 +528,19 @@ class TimeDate
      * Format date as DB-formatted field type
      * @param DateTime $date
      * @param string $type Field type - date, time, datetime[combo]
+     * @param boolean $setGMT Set timezone to GMT (defaults to null, will not be passed to any method)
      * @return string Formatted date
      */
-    public function asDbType(DateTime $date, $type)
+    public function asDbType(DateTime $date, $type, $setGMT = null)
     {
+        $args = array($date);
+        // because asDbDate and asDb have different default value for $setGMT (true and false) we have to use NULL as default value for this method
+        if (!is_null($setGMT)) {
+            $args[] = $setGMT;
+        }
         switch($type) {
             case "date":
-                return $this->asDbDate($date);
+                return call_user_func_array(array($this, 'asDbDate'), $args);
                 break;
             case 'time':
                 return $this->asDbtime($date);
@@ -542,7 +548,7 @@ class TimeDate
             case 'datetime':
             case 'datetimecombo':
             default:
-                return $this->asDb($date);
+                return call_user_func_array(array($this, 'asDb'), $args);
         }
     }
 

@@ -792,6 +792,7 @@
         if(!hasError) {
             return;
         }
+
         var tabLink,
             fieldTab   = field.$el.closest('.tab-pane'),
             fieldPanel = field.$el.closest('.record-panel-content');
@@ -814,8 +815,8 @@
                 fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
         }
-        else if(field.$el.closest('.panel_hidden.hide')) {
-            this.toggleMoreLess(this.MORE_LESS_STATUS.MORE);
+        else if(field.$el.closest('.panel_hidden.hide').length > 0) {
+            this.toggleMoreLess(this.MORE_LESS_STATUS.MORE, true);
         }
     },
 

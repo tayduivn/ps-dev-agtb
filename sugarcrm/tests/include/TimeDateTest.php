@@ -1019,4 +1019,47 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('format');
         $this->time_date->asDb($dateMock, false);
     }
+
+    /**
+     * asDbType should process correct params to asDb, asDbDate and asDbtime
+     *
+     * @param string $type any type
+     * @param int $value offset in secods
+     * @param bool $GMT flag of GMT offset
+     * @param string $method name of expected method
+     * @dataProvider getDataForTestAsDbType
+     */
+    public function testAsDbType($type, $value, $GMT, $method)
+    {
+        $value = new DateTime('+' . $value . ' seconds');
+        /** @var TimeDate $timeDate */
+        $timeDate = $this->getMock('TimeDate', array($method));
+        if (isset($GMT)) {
+            $timeDate->expects($this->once())->method($method)->with($this->equalTo($value), $this->equalTo($GMT));
+        } else {
+            $timeDate->expects($this->once())->method($method)->with($this->equalTo($value));
+        }
+
+        $timeDate->asDbType($value, $type, $GMT);
+    }
+
+    /**
+     * Data provider for testAsDbType
+     * @return array
+     */
+    public static function getDataForTestAsDbType()
+    {
+        return array(
+            array('date', 1, false, 'asDbDate'),
+            array('time', 2, null, 'asDbtime'),
+            array('datetime', 3, false, 'asDb'),
+            array('datetimecombo', 4, false, 'asDb'),
+            array('other', 5, false, 'asDb'),
+
+            array('date', 6, true, 'asDbDate'),
+            array('datetime', 7, true, 'asDb'),
+            array('datetimecombo', 8, true, 'asDb'),
+            array('other', 9, true, 'asDb'),
+        );
+    }
 }

@@ -55,6 +55,16 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('sugar_flavor', $this->sysInfo->getInfo());
     }
 
+    public function testGetDistroInfo()
+    {
+        $distro_name = time();
+        file_put_contents('distro.php', "<?php \$distro_name = '$distro_name';");
+        $info = $this->sysInfo->getDistroInfo();
+        $this->assertArrayHasKey('distro_name', $info);
+        $this->assertEquals($distro_name, $info['distro_name']);
+        @unlink('distro.php');
+    }
+
     public function testGetBaseInfo()
     {
         $this->assertArrayHasKey('auth_level', $this->sysInfo->getBaseInfo());
