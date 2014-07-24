@@ -22,7 +22,7 @@ function preprocess($type = NULL, $reporter){
 
 function process($pdf, $reportname, $stream){
     global $current_user;
-
+    create_cache_directory('pdf');
     $pdf->process();
     @ob_clean();
     $filenamestamp = '';
@@ -40,7 +40,6 @@ function process($pdf, $reportname, $stream){
         $pdf->Output($filename,'D');
     }else{
         // try to create the dir in case it doesn't exist for some reason
-        create_cache_directory('pdf');
         $cachefile = sugar_cached('pdf/').$filename;
         $fp = sugar_fopen($cachefile, 'w');
         fwrite($fp, $pdf->Output('','S'));

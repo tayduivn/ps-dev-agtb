@@ -23,7 +23,7 @@ class SugarUpgradeProjectTaskInModuleList extends UpgradeScript
         $path = 'custom/Extension/application/Ext';
         $file_name = 'project_unhide.php';
         if (version_compare($this->to_version, '7.2.2.0', '=') &&
-            !SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
+            SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
 
             $file_contents = '
 <?php

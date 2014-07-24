@@ -238,6 +238,26 @@ abstract class DBManager
 	protected $options = array();
 
     /**
+     * Default performance profile
+     * @var array
+     */
+    protected $defaultPerfProfile = array();
+
+    /**
+     * Getter default performance profile
+     * @param string $name Profile name
+     * @return array
+     */
+    public function getDefaultPerfProfile($name)
+    {
+        if (isset($this->defaultPerfProfile[$name])) {
+            return $this->defaultPerfProfile[$name];
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Do we encode HTML?
 	 * @return bool $encode
 	 */
@@ -433,14 +453,15 @@ abstract class DBManager
 	    return $part;
 	}
 
-	/**
-	 * addDistinctClause
-	 * This method takes a SQL statement and checks if the disable_count_query setting is enabled
-	 * before altering it.  The alteration modifies the way the team security queries are made by
-	 * changing it from a subselect to a distinct clause; hence the name of the method.
-	 *
-	 * @param string $sql value of SQL statement to alter
-	 */
+    /**
+     * addDistinctClause
+     * This method takes a SQL statement and checks if the disable_count_query setting is enabled
+     * before altering it.  The alteration modifies the way the team security queries are made by
+     * changing it from a subselect to a distinct clause; hence the name of the method.
+     *
+     * @param string $sql value of SQL statement to alter
+     * @deprecated
+     */
 	protected function addDistinctClause(&$sql)
 	{
 	    preg_match('|^\W*(\w+)|i', $sql, $firstword);
@@ -916,8 +937,8 @@ protected function checkQuery($sql, $object_name = false)
 				/* required + is_null=false => not null */
 			return false;
 		}
-		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id')
-					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id')
+		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
+					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
 					&& (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
 		) {
 			return true;
@@ -968,6 +989,22 @@ protected function checkQuery($sql, $object_name = false)
     }
 
     /**
+     * Parse length & precision into 2 numbers
+     * @param array $def Vardef-like data
+     * @return array(length, precision)
+     */
+    protected function parseLenPrecision($def)
+    {
+        if (strpos($def['len'], ",") !== false) {
+            return explode(",", $def['len']);
+        }
+        if (isset($def['precision'])) {
+            return array($def['len'], $def['precision']);
+        }
+        return array($def['len'], null);
+    }
+
+    /**
      * Supplies the SQL commands that repair a table structure
      *
      * @param  string $tableName
@@ -976,7 +1013,7 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @return string
      */
-    private function repairTableColumns($tableName, $fielddefs, $execute)
+    protected function repairTableColumns($tableName, $fielddefs, $execute)
     {
         $compareFieldDefs = $this->get_columns($tableName);
         $sql = "/*COLUMNS*/\n";
@@ -1056,6 +1093,34 @@ protected function checkQuery($sql, $object_name = false)
                 {
                     $ignorerequired = true;
                 }
+
+                // BR-1787: we can not decrease the length of the column
+                if (!empty($value['len']) && !empty($compareFieldDefs[$name]['len'])) {
+                    list($dblen, $dbprec) = $this->parseLenPrecision($compareFieldDefs[$name]);
+                    list($vlen, $vprec) = $this->parseLenPrecision($value);
+
+                    if (isset($dbprec)) {
+                        // already have precision - match both separately
+                        if ($vprec < $dbprec) {
+                            $vprec = $dbprec;
+                        }
+                    } else {
+                        // did not have precision - length-precision should be no less than old length
+                        if (isset($vprec)) {
+                            $dblen += $vprec;
+                        }
+                    }
+                    if ($vlen < $dblen) {
+                        $vlen = $dblen;
+                    }
+                    if (isset($vprec)) {
+                        $value['precision'] = $vprec;
+                        $value['len'] = "$vlen,$vprec";
+                    } else {
+                        $value['len'] = $vlen;
+                    }
+                }
+
                 $altersql = $this->alterColumnSQL($tableName, $value, $ignorerequired);
                 if(is_array($altersql)) {
                     $altersql = join("\n", $altersql);
@@ -1231,10 +1296,14 @@ protected function checkQuery($sql, $object_name = false)
 			if ($key == 'len' && empty($fielddef2[$key]))
 				continue;
             // if the length in db is greather than the vardef, ignore it
-            if ($key == 'len' && ($fielddef1[$key] >= $fielddef2[$key])) {
-                continue;
+            if ($key == 'len') {
+                list($dblen, $dbprec) = $this->parseLenPrecision($fielddef1);
+                list($vlen, $vprec) = $this->parseLenPrecision($fielddef2);
+                if ($dblen >= $vlen && ((is_null($dbprec) && is_null($vprec)) || $dbprec >= $vprec)) {
+                    continue;
+                }
             }
-			return false;
+            return false;
 		}
 
 		return true;

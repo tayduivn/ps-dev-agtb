@@ -502,7 +502,7 @@ class Email extends SugarBean {
 	        $this->name = EmailTemplate::parse_template($this->name, $object_arr);
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
-
+            
             if ($this->type != 'draft' && $this->status != 'draft' &&
                 $this->type != 'archived' && $this->status != 'archived'
             ) {
@@ -1059,7 +1059,7 @@ class Email extends SugarBean {
                  }
 			}
 
-			parent::save($check_notify);
+			$parentSaveResult = parent::save($check_notify);
 
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
                 if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
@@ -1077,6 +1077,8 @@ class Email extends SugarBean {
                     $this->$rel->add($this->parent_id);
                 }
 			}
+
+            return $parentSaveResult;
 		}
 		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
@@ -3143,27 +3145,4 @@ eoq;
         $dbSearchDateTime = $timedate->asDb($sugarDateTime);
         return $dbSearchDateTime;
     }
-
-
-    /**
-     * Get query fetching all objects that have same email address as current email object,
-     * excluding those that are connected to this email explicitly by direct relation
-     * @param array $module_dir 'module' has required module dir name
-     * @return array
-     */
-    public function get_beans_by_email_addr($module_dir)
-    {
-        $module_dir = $module_dir['module'];
-        $module = BeanFactory::getBean($module_dir);
-        $return_array['select'] = "SELECT DISTINCT {$module->table_name}.id ";
-        $return_array['from'] = "FROM {$module->table_name} ";
-        $return_array['join'] = " JOIN emails_email_addr_rel eear ON eear.email_id = '$this->id' AND eear.deleted=0
-    		    	JOIN email_addr_bean_rel eabr ON eabr.email_address_id=eear.email_address_id AND eabr.bean_id = {$module->table_name}.id AND eabr.bean_module = '$module_dir' AND eabr.deleted=0
-    				LEFT JOIN emails_beans direct_link ON direct_link.bean_id = '{$this->id}' AND direct_link.email_id = {$module->table_name}.id
-    ";
-        // exclude directly linked emails
-        $return_array['where']="WHERE direct_link.bean_id IS NULL";
-        $return_array['join_tables'][0] = '';
-        return $return_array;
-    } // fn
 } // end class def

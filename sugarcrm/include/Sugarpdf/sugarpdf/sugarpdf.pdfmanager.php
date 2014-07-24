@@ -118,6 +118,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             foreach ($product_bundle_list as $ordered_bundle) {
 
                 $bundleFields = PdfManagerHelper::parseBeanFields($ordered_bundle, true);
+                $bundleFields['products'] = array();
                 $product_bundle_line_items = $ordered_bundle->get_product_bundle_line_items();
                 foreach ($product_bundle_line_items as $product_bundle_line_item) {
 

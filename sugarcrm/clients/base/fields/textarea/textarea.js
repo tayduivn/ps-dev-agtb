@@ -128,10 +128,10 @@
      * @return {String|Object} The value set on the textarea field.
      */
     format: function(value) {
-        //Format for the detail template if the action is detail, or if the current action is disabled but the parent
-        //action is detail (for use with copy fields that are disabled, but show up on the detail view)
-        if ((this.tplName === 'detail') ||
-            (this.tplName === 'disabled' && (!this.parent || this.parent.action === 'detail'))) {
+        // If the tplName is 'edit' then value needs to be a string. Otherwise 
+        // send back the object containing `value.long` and, if necessary,
+        // `value.short`.
+        if (this.tplName !== 'edit') {
             var max = this._settings.max_display_chars;
             value = {long: value};
 
@@ -139,6 +139,7 @@
                 value.short = value.long.substr(0, max).trim();
             }
         }
+
         return value;
     },
 

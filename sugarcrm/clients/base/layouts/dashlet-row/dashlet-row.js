@@ -155,12 +155,12 @@
     },
 
     /**
-     * Remove a row.
+     * Displays a confirmation alert when removing a row.
      *
-     * @param {Event} evt Mouse event.
+     * @param {Event} evt The `click` event.
      */
     removeClicked: function(evt) {
-        var cell = $(evt.currentTarget).closest('.row-fluid');
+        var cell = $(evt.currentTarget).closest('.row-fluid'),
             index = (cell.data('index')()).split('').pop();
         if (!cell.find('[data-dashlet]').length) {
             this.removeRow(index);
@@ -176,9 +176,9 @@
     },
 
     /**
-     * Removes a row based on the index passed in
+     * Removes a row.
      *
-     * @param {Number} index the index of the row to remove
+     * @param {Number} index The index of the row to remove.
      */
     removeRow: function(index) {
         var metadata = this.model.get("metadata"),
@@ -190,8 +190,13 @@
         component.rows.splice(index, 1);
         this._components[index].dispose();
         this._components.splice(index, 1);
-        _.each(this._components, function(component, index){
+        _.each(this._components, function(component, index) {
+            // Update each row,
             component.index = this.index + '' + index;
+            // And each cell of each row.
+            _.each(component._components, function(cell, cellIndex) {
+                cell.index = component.index + '' + cellIndex;
+            });
         }, this);
 
         this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});

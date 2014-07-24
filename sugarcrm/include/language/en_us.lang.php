@@ -2320,7 +2320,6 @@ $app_strings = array (
     'LBL_EMAIL_SPACER_MAIL_SERVER'          => '[ Remote Folders ]',
     'LBL_EMAIL_SPACER_LOCAL_FOLDER'         => '[ Sugar Folders ]',
     'LBL_EMAIL_SUBJECT'                     => 'Subject',
-    'LBL_EMAIL_TO'                        => 'To',
     'LBL_EMAIL_SUCCESS'                     => 'Success',
     'LBL_EMAIL_SUGAR_FOLDER'                => 'SugarFolder',
     'LBL_EMAIL_TEAMS'                       => 'Assign to Teams',
@@ -2970,12 +2969,6 @@ $app_strings = array (
     'LBL_SUBJECT' => 'Subject',
 
     'LBL_INBOUNDEMAIL_ID' => 'Inbound Email ID',
-
-    /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
-
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2014 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
-
-
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
@@ -5004,8 +4997,8 @@ $app_strings = array (
     'LBL_MORE_HISTORY' => 'More history...',
     'LBL_RELATED_CONTACT' => 'Related Contact',
     'LBL_MODULE_TYPE' => 'Type',
-    'LBL_EMAIL_TO' => 'Email To',
-    'LBL_EMAIL_FROM' => 'Email From',
+    'LBL_HISTORICAL_SUMMARY_EMAIL_TO' => 'Email To',
+    'LBL_HISTORICAL_SUMMARY_EMAIL_FROM' => 'Email From',
     'LBL_PREVIEW_BWC_TOOLTIP' => 'Legacy modules cannot be previewed',
 
     //SFA

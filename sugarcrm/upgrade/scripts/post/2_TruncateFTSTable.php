@@ -1,5 +1,7 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -20,12 +22,32 @@ class SugarUpgradeTruncateFTSTable extends UpgradeScript
 
     public function run()
     {
-        global $dictionary;
-        if(empty($dictionary['fts_queue']) ||  version_compare($this->from_version, '7.2.2', '>=')) {
+        if (!$this->db->tableExists("fts_queue") || version_compare($this->from_version, '7.2.2', '>=')) {
             return;
         }
+
+        //Remove any existing temp table
+        if ($this->db->tableExists("fts_queue_tmp")) {
+            $this->db->query($this->db->dropTableNameSQL("fts_queue_tmp"));
+        }
+
+        $columns = $this->db->get_columns('fts_queue');
+        $indices = $this->db->get_indices('fts_queue');
+        $cols = implode(',', array_keys($columns));
+        $queries = array(
+            "Create Temp Table" => $this->db->createTableSQLParams('fts_queue_tmp', $columns, $indices),
+            "Copy Data to Temp" => "INSERT INTO fts_queue_tmp ({$cols}) (SELECT {$cols} FROM fts_queue WHERE processed = 0)",
+            "Truncate Table" => $this->db->truncateTableSQL("fts_queue"),
+        );
+
         $this->log('Clearing the fts_queue so we can add a primary key');
 
-        $this->db->query($this->db->truncateTableSQL("fts_queue"));
+        foreach ($queries as $description => $q) {
+            $this->db->commit();
+            if (!$this->db->query($q)) {
+                return $this->error('TruncateFTSTable failed on step ' . $description);
+            }
+        }
+        $this->db->commit();
     }
 }

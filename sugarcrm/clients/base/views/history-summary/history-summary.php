@@ -67,7 +67,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'to_addrs',
                     'type' => 'email',
-                    'label' => 'LBL_EMAIL_TO',
+                    'label' => 'LBL_HISTORICAL_SUMMARY_EMAIL_TO',
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -75,7 +75,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'from_addr',
                     'type' => 'email',
-                    'label' => 'LBL_EMAIL_FROM',
+                    'label' => 'LBL_HISTORICAL_SUMMARY_EMAIL_FROM',
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -83,7 +83,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'date_entered',
                     'label' => 'LBL_LIST_DATE_ENTERED',
-                    'type' => 'date',
+                    'type' => 'datetimecombo',
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
@@ -91,7 +91,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'date_modified',
                     'label' => 'LBL_DATE_MODIFIED',
-                    'type' => 'date',
+                    'type' => 'datetimecombo',
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,

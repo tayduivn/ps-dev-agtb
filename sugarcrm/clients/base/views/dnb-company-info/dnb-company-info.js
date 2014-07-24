@@ -270,7 +270,7 @@
                     this.dnbProduct.product = null;
                     this.dnbProduct.errmsg = app.lang.get('LBL_DNB_UPTODATE_MSG');
                 } else {
-                    this.toggleImportBtn(true, 'dnb_import');
+                    this.toggleImportBtn('dnb_import', true);
                 }
             }
         } else if (companyDetails.errmsg) {

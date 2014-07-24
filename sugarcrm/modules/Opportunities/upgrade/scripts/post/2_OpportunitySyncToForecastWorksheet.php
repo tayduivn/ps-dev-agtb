@@ -76,14 +76,16 @@ class SugarUpgradeOpportunitySyncToForecastWorksheet extends UpgradeScript
                 case 'account_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT a.name FROM accounts a INNER JOIN accounts_opportunities ac on
-                        ac.account_id = a.id WHERE ac.opportunity_id = fw.parent_id and fw.parent_type = 'Opportunities')",
+                        ac.account_id = a.id and ac.deleted = 0 WHERE
+                        ac.opportunity_id = fw.parent_id and fw.parent_type = 'Opportunities')",
                         $field
                     );
                     break;
                 case 'account_id':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT a.id FROM accounts a INNER JOIN accounts_opportunities ac on
-                        ac.account_id = a.id WHERE ac.opportunity_id = fw.parent_id and fw.parent_type = 'Opportunities')",
+                        ac.account_id = a.id and ac.deleted = 0 WHERE
+                        ac.opportunity_id = fw.parent_id and fw.parent_type = 'Opportunities')",
                         $field
                     );
                     break;

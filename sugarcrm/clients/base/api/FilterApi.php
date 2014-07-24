@@ -205,9 +205,8 @@ class FilterApi extends SugarApi
             $options['module'] = $seed->module_name;
         }
 
-
         //Set the list of fields to be used in the select.
-        $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
+        $options['select'] = $this->getFieldsFromArgs($api, $args, $seed);
 
         //Force id and date_modified into the select
         $options['select'] = array_unique(
@@ -241,6 +240,13 @@ class FilterApi extends SugarApi
         }
 
         $options = $this->parseArguments($api, $args, $seed);
+
+        // In case the view parameter is set, reflect those fields in the
+        // fields argument as well so formatBean only takes those fields
+        // into account instead of every bean property.
+        if (!empty($args['view'])) {
+            $args['fields'] = $options['select'];
+        }
 
         $q = self::getQueryObject($seed, $options);
 
@@ -702,7 +708,7 @@ class FilterApi extends SugarApi
                                 $where->gte($field, $value);
                                 break;
                             case '$dateRange':
-                                $where->dateRange($field, $value);
+                                $where->dateRange($field, $value, $fieldInfo['bean']);
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: " . $op);

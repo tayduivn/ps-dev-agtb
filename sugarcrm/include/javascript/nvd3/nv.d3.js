@@ -850,7 +850,9 @@ nv.models.axis = function() {
         if (showMaxMin) {
           maxmin = {
             data: [scale.domain()[0], scale.domain()[scale.domain().length - 1]],
-            translate: function(d, i) { return 'translate(' + (scale(d) + (isOrdinal ? scale.rangeBand() / 2 : 0)) + ',0)'; },
+            translate: function(d, i) {
+              return 'translate(' + (scale(d) + (isOrdinal ? scale.rangeBand() / 2 : (d > 0 ? -8 : +4))) + ',0)';
+            },
             dy: '.71em',
             x: 0,
             y: axis.tickPadding(),
@@ -1007,15 +1009,19 @@ nv.models.axis = function() {
                   }
                 }
               });
-        // g.selectAll('g') // the g's wrapping each tick
-        //     .each(function(d,i) {
-        //       if (scale(d) < maxMinRange[0] || scale(d) > maxMinRange[1]) {
-        //         if (d > 1e-10 || d < -1e-10) // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
-        //           d3.select(this).remove();
-        //         else
-        //           d3.select(this).select('text').remove(); // Don't remove the ZERO line!!
-        //       }
-        //     });
+
+        //check if max and min overlap other values, if so, hide the values that overlap
+        g.selectAll('g.tick') // the g's wrapping each tick
+            .each(function(d, i) {
+              d3.select(this).select('text').style('opacity', 1);
+              if (scale(d) < maxMinRange[0] || scale(d) > maxMinRange[1]) {
+                if (d < 1e-10 && d > -1e-10) {// accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
+                  d3.select(this).select('text').style('opacity', 0);
+                  d3.select(this).select('line').style('opacity', 0);
+                }
+                d3.select(this).select('text').style('opacity', 0); // Don't remove the ZERO line!!
+              }
+            });
       }
 
 

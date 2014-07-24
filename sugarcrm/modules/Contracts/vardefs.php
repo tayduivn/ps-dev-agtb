@@ -169,6 +169,7 @@ $dictionary['Contract'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'convertToBase' => true,
         ),
         'total_contract_value_usdollar' => array(
             'name' => 'total_contract_value_usdollar',

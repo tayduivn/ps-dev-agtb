@@ -125,8 +125,7 @@
 
                 if (model && model.module) {
                     relatedModel = app.data.createBean(model.module);
-                    relatedModel.copy(model);
-                    relatedModel.set('id', model.id);
+                    relatedModel.set(app.utils.deepCopy(model.attributes));
                 }
 
                 return relatedModel;

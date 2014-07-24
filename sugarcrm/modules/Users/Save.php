@@ -94,8 +94,6 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
        $teamSetField->save($focus, $_POST, 'team_name', '');
     }
 
-    // track the current reports to id to be able to use it if it has changed
-    $old_reports_to_id = $focus->reports_to_id;
     //END SUGARCRM flav=pro ONLY
     $portal=array("user_name","last_name","status","portal_only");
     $group=array("user_name","last_name","status","is_group");
@@ -411,13 +409,6 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             $new_pwd='2';
             require_once 'modules/Users/GeneratePassword.php';
         }
-
-//BEGIN SUGARCRM flav=pro ONLY
-        // If reports to has changed, call update team memberships to correct the membership tree
-        if ($old_reports_to_id != $focus->reports_to_id) {
-            $focus->update_team_memberships($old_reports_to_id);
-        }
-//END SUGARCRM flav=pro ONLY
     }
 
 

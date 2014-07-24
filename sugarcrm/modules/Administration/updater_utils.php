@@ -110,10 +110,10 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
 	}
 
-	if($response_data || !$sclient->getError()){
+    if ($response_data || !$sclient->getError()) {
 		$serializedResultData = sugarDecode($key,$encodedResult);
 		$resultData = unserialize($serializedResultData);
-		if($response_data && empty($resultData))
+        if($response_data && empty($resultData))
 		{
 			$resultData = array();
 			$resultData['validation'] = 'invalid validation key';
@@ -124,7 +124,9 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 		$resultData['versions'] = array();
 
 	}
-
+    if (!isset($resultData['validation'])) {
+        $resultData['validation'] = 'invalid';
+    }
 	if($response_data || !$sclient->getError() )
 	{
 	 //BEGIN SUGARCRM lic=sub ONLY

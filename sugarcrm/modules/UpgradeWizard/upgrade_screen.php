@@ -804,7 +804,7 @@ a:hover {
   <section class="semantic-content" id="modal-text" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
     <div class="modal-inner">
         <header id="modal-label"><h1>SugarCRM License Agreement</h1></header>
-        <div class="modal-content"><h2>Please read and accept this license</h2><p id="licenseText">LICENSE.txt</p></div>
+        <div class="modal-content"><h2>Please read and accept this license</h2><p id="licenseText">LICENSE</p></div>
         <footer><a href="#accepted" class="left-pedal" data-close="Close" data-dismiss="modal">Accept</a><a href="#!" class="right-pedal" data-close="Close" data-dismiss="modal">Cancel</a></footer>
     </div>
     <a href="#!" class="modal-close" title="Close this modal" data-close="Close" data-dismiss="modal">×</a>
