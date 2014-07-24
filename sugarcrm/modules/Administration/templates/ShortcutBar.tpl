@@ -129,11 +129,12 @@
                 }
                 SUGAR.saveCallBack = function(o) {
                     ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE'));
-                    if (o.responseText == "true") {
+                    var response = YAHOO.lang.trim(o.responseText);
+                    if (response === "true") {
                         parent.window.location.reload();
                     }
                     else {
-                        YAHOO.SUGAR.MessageBox.show({msg: o.responseText});
+                        YAHOO.SUGAR.MessageBox.show({msg: response});
                     }
                 }
             })();

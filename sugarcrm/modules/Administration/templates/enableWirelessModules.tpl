@@ -153,13 +153,13 @@
 	SUGAR.saveCallBack = function(o)
 	{
 	   ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE'));
-	   if (o.responseText == "true")
-	   {
+        var response = YAHOO.lang.trim(o.responseText);
+        if (response === "true") {
 	       window.location.assign('index.php?module=Administration&action=index');
 	   } 
 	   else 
 	   {
-	       YAHOO.SUGAR.MessageBox.show({msg:o.responseText});
+           YAHOO.SUGAR.MessageBox.show({msg: response});
 	   }
 	}	
 })();
