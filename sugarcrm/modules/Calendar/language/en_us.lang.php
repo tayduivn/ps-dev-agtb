@@ -12,7 +12,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
  
 $mod_strings = array (
-
 	'LBL_MODULE_NAME' => 'Calendar',
 	'LBL_MODULE_NAME_SINGULAR' => 'Calendar',
 	'LBL_MODULE_TITLE' => 'Calendar',
@@ -66,12 +65,15 @@ $mod_strings = array (
 	'LBL_NO' => 'No',
 	'LBL_SETTINGS' => 'Settings',
 	'LBL_CREATE_NEW_RECORD' => 'Create Activity',
+    'LBL_CREATE_NEW_CALL' => 'Create Call',
+    'LBL_CREATING_NEW_ACTIVITY' => 'You are creating a new meeting. Did you want to <a href="javascript:void(0);" data-action="create-task">Create a task</a> or <a href="javascript:void(0);" data-action="schedule-call">Schedule a call</a>',
 	'LBL_LOADING' => 'Loading ......',
 	'LBL_SAVING' => 'Saving ......',
 	'LBL_SENDING_INVITES' => 'Saving & Sending Invites .....',
 	'LBL_CONFIRM_REMOVE' => 'Are you sure you want to remove the record?',
 	'LBL_CONFIRM_REMOVE_ALL_RECURRING' => 'Are you sure you want to remove all recurring records?',
 	'LBL_EDIT_RECORD' => 'Edit Activity',
+    'LBL_EDIT_CALL' => 'Edit Call',
 	'LBL_ERROR_SAVING' => 'Error while saving',
     'LBL_NO_ACCESS' => 'You do not have access',
 	'LBL_ERROR_LOADING' => 'Error while loading',
@@ -187,4 +189,3 @@ $mod_list_strings = array(
 			"December",
 		),
 );
-?>
