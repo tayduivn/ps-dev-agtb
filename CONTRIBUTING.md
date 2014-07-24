@@ -33,7 +33,7 @@ Before working with SugarCRM, setup your environment with the following software
 
 * Git;
 * PHP version 5.3.3+;
-* Composer;
+* Composer.
 
 #### Installing Composer
 
