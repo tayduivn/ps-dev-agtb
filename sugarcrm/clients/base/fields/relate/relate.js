@@ -366,10 +366,19 @@
         values[this.def.name] = model[this.getRelatedModuleField()] || model.value;
         this.model.set(values, {silent: silent});
 
-        // unset values of related bean fields in order to make the model load
-        // the values corresponding to the currently selected bean
         // TODO: move this to SidecarExpressionContext
-        this.model.unset(this.def.link);
+        // check if link field is currently populated
+        if (this.model.get(this.def.link)) {
+            // unset values of related bean fields in order to make the model load
+            // the values corresponding to the currently selected bean
+            this.model.unset(this.def.link);
+        } else {
+            // unsetting what is not set won't trigger "change" event,
+            // we need to trigger it manually in order to notify subscribers
+            // that another related bean has been chosen.
+            // the actual data will then come asynchronously
+            this.model.trigger("change:" + this.def.link);
+        }
 
         var newData = {},
             self = this;
