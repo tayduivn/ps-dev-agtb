@@ -180,4 +180,31 @@ $mod_strings = array (
     //record save
     'LBL_RECORD_SAVED_SUCCESS' => 'You scheduled the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a> for {{calendarTime date_start}}.',
     'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You scheduled the {{moduleSingularLower}} for {{calendarTime date_start}}, but you do not have permission to access it.',
+    // Help Text
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of {{meetings_singular_module}} records logged by users in your organization. {{plural_module_name}} may be in a status of "Planned", "Held", or "Not Held". From this {{plural_module_name}} list view, you can click the close action button on any planned {{meetings_singular_module}}\'s row actions in order to mark it as held. Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees. There are various ways you can create {{meetings_module}} in Sugar such as via the {{plural_module_name}} module, {{calendar_module}} module, importing {{meetings_module}}, etc. Users can also schedule {{meetings_module}} via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. {{contacts_module}}, {{accounts_module}}, {{leads_module}}, etc.), which automatically creates a relationship between both records. Once the {{meetings_singular_module}} record is created, you can view and edit information pertaining to the {{meetings_singular_module}} via the {{module_name}} detail view.',
+
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of {{meetings_singular_module}} records logged by users in your organization. {{plural_module_name}} may be in a status of "Planned", "Held", or "Not Held". Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the activity stream by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of {{meetings_module}} records logged by users in your organization. {{plural_module_name}} may be in a status of "Planned", "Held", or "Not Held". Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees.
+
+To create a {{meetings_singular_module}}:
+1. Provide values for the fields as desired.
+    - Fields marked "Required" must be completed prior to saving.
+    - Click "Show More" to expose additional fields if necessary.
+2. Add invitees to the {{meetings_singular_module}}.
+    - Click "Select an Attendee" to add an existing user, contact, or lead to the {{meetings_singular_module}}.
+    - Click the plus icon to the right of "Select an Attendee" to create a {{meetings_singular_module}} attendee as a new Sugar record.
+3. Click "Save" to finalize the new record and return to the previous page.
+    - Choose "Save and view" to open the new meeting in record view.
+    - Choose "Save and create new" to immediately create another new {{meetings_singular_module}}.',
 );
+
