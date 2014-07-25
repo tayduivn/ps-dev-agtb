@@ -133,7 +133,7 @@ $viewdefs['KBSContentTemplates']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'body',
+                    'name' => 'body_set',
                     'type' => 'fieldset',
                     'label' => 'LBL_TEXT_BODY',
                     'span' => 12,
