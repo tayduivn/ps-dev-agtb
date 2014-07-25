@@ -132,22 +132,16 @@ describe('modules.kbscontents.clients.base.fields.attachments', function() {
         expect(field.getFileNode().length).toEqual(1);
     });
 
-    it('should be able upload file to server', function() {
-        var uploadFileStub = sandbox.stub(model, 'uploadFile', function() {
-            return {
-                fetch: function(name, el, callbacks) {
-                    if (callbacks && callbacks.success)
-                        callbacks.success({});
-                }
-            }
-        });
-
-        field = SugarTest.createField('base', fieldName, fieldType, 'edit', 
+    it('should add the event handlers to upload a file', function() {
+        field = SugarTest.createField('base', fieldName, fieldType, 'edit',
             fieldDef, module, model, null, true
         );
         field.render();
-        field.getFileNode().change();
-        expect(uploadFileStub).toHaveBeenCalled();
+
+        var event = 'change ' + field.getFileNode().selector;
+
+        expect(field.events[event]).toBeDefined();
+        expect(field.events[event]).toEqual('uploadFile');
     });
 
     it('should be able to download file from server', function() {

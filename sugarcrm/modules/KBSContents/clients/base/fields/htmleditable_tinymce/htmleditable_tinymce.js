@@ -29,6 +29,8 @@
         config.content_css = content_css;
         config.body_class = 'kbdocument-body';
 
+        config.file_browser_callback = _.bind(this.tinyMCEFileBrowseCallback, this);
+
         return config;
     }
 })

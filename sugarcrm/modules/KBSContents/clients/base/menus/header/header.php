@@ -53,7 +53,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => "#KBSContentTemplates",
         'label' => 'LNK_LIST_KBSCONTENT_TEMPLATES',
-        'acl_action' => 'admin',
+        'acl_action' => 'list',
         'acl_module' => 'KBSContentTemplates',
         'icon' => 'icon-reorder',
     ),

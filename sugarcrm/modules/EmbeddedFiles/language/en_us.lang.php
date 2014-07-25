@@ -1,4 +1,4 @@
-{{!
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,13 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-}}
-<span class="select2-choice-type" data-id={{id}}>
-    <a class="ellipsis_inline kb-attachment-link"
-       data-placement="bottom"
-       title="{{name}}"
-       href="{{url}}"
-       data-url="{{url}}"
-       data-action="download">{{name}}
-    </a>
-</span>
+
+$mod_strings = array(
+    'LBL_MODULE_NAME' => 'Embedded Files',
+    'LBL_MODULE_NAME_SINGULAR' => 'Embedded File',
+    'LBL_MODULE_TITLE' => 'Embedded File',
+    'LNK_NEW_EMBEDDED_FILE' => 'Create Embedded File',
+    'LNK_LIST_EMBEDDED_FILE' => 'View Embedded Files',
+    'LBL_LIST_FILENAME' => 'File Name',
+    'LBL_FILENAME' => 'File Name',
+    'LBL_UPLOAD_ONLY_IMAGE' => 'The selected file should be an image.',
+);

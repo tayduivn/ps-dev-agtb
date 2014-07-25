@@ -30,10 +30,12 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
         $bean->load_relationship('attachments');
         $result['attachment_list'] = array();
         foreach ($bean->attachments->getBeans() as $attachment) {
+            $mimeType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), 'upload://'. $attachment->id);
             $attach = array(
                 'id' => $attachment->id,
                 'filename' => $attachment->filename,
                 'name' => $attachment->filename,
+                'isImage' => strpos($mimeType, 'image') !== false,
             );
             array_push($result['attachment_list'], $attach);
         }
@@ -83,16 +85,19 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
                 }
                 if (!$found) {
                     //@TODO: Add mime-type detection
-                    $attachment = BeanFactory::getBean('Notes');
-                    $attachment->new_with_id = true;
-                    $attachment->portal_flag = true;
-                    $attachment->id = create_guid();
-                    sugar_rename(
-                        UploadFile::get_file_path('', $info['id'], true),
-                        UploadFile::get_file_path('', $attachment->id, true)
-                    );
-                    $attachment->filename = $info['name'];
-                    $attachment->name = $info['name'];
+                    $attachment = BeanFactory::getBean('Notes', $info['id']);
+                    if (!$attachment) {
+                        $attachment = BeanFactory::getBean('Notes');
+                        $attachment->new_with_id = true;
+                        $attachment->portal_flag = true;
+                        $attachment->id = create_guid();
+                        sugar_rename(
+                            UploadFile::get_file_path('', $info['id'], true),
+                            UploadFile::get_file_path('', $attachment->id, true)
+                        );
+                        $attachment->filename = $info['name'];
+                        $attachment->name = $info['name'];
+                    }
                     $bean->attachments->add($attachment);
                 }
             }

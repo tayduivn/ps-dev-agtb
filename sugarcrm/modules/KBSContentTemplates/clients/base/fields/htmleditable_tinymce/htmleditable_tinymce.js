@@ -1,4 +1,3 @@
-{{!
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,13 +8,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-}}
-<span class="select2-choice-type" data-id={{id}}>
-    <a class="ellipsis_inline kb-attachment-link"
-       data-placement="bottom"
-       title="{{name}}"
-       href="{{url}}"
-       data-url="{{url}}"
-       data-action="download">{{name}}
-    </a>
-</span>
+({
+    extendsFrom: 'Htmleditable_tinymceField',
+
+    /**
+     * {@inheritDoc}
+     * Apply select image behaviour to editor.
+     */
+    getTinyMCEConfig: function() {
+        var config = this._super('getTinyMCEConfig');
+
+        config.file_browser_callback = _.bind(this.tinyMCEFileBrowseCallback, this);
+
+        return config;
+    }
+})

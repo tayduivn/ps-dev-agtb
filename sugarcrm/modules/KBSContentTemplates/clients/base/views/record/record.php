@@ -134,28 +134,44 @@ $viewdefs['KBSContentTemplates']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'body',
-                    'type' => 'htmleditable_tinymce',
+                    'type' => 'fieldset',
+                    'label' => 'LBL_TEXT_BODY',
                     'span' => 12,
-                    'dismiss_label' => false,
-                    'fieldSelector' => 'body',
-                    'tinyConfig' => array(
-                        'height' => '300',
-                        'width' => '100%',
-                        'plugins' => 'style,paste,inlinepopups',
-                        'forced_root_block' => false,
-                        'theme_advanced_buttons1' => 'code,separator,bold,italic,underline,strikethrough,separator,' .
-                            'bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,' .
-                            'forecolor,backcolor,separator,cleanup,removeformat',
-                        'theme_advanced_buttons2' => 'fontsizeselect, formatselect, styleselect',
-                        'theme_advanced_resizing' => false,
-                        'theme_advanced_blockformats' => 'h1,h2,h3,h4,h5,h6,code,p,div',
-                        'theme_advanced_font_sizes' => 'Normal=.fontSizeNormal,Header=.fontSizeHeader,' .
-                            'Large=.fontSizeLarge,Medium=.fontSizeMedium,Small=.fontSizeSmall,Mini=.fontSizeMini',
-                        'style_formats' => array(
-                            array(
-                                'title' => 'Bold text',
-                                'inline' => 'b',
-                            )
+                    'fields' => array(
+                        array(
+                            'name' => 'body',
+                            'type' => 'htmleditable_tinymce',
+                            'span' => 12,
+                            'dismiss_label' => false,
+                            'fieldSelector' => 'body',
+                            'tinyConfig' => array(
+                                'height' => '300',
+                                'width' => '100%',
+                                'plugins' => 'style,paste,inlinepopups,advimage,advlink',
+                                'forced_root_block' => false,
+                                'theme_advanced_buttons1' => 'code,separator,bold,italic,underline,strikethrough,' .
+                                    'separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,' .
+                                    'justifyfull,separator,forecolor,backcolor,separator,cleanup,removeformat, ' .
+                                    'separator,image,link',
+                                'theme_advanced_buttons2' => 'fontsizeselect, formatselect, styleselect',
+                                'theme_advanced_resizing' => false,
+                                'theme_advanced_blockformats' => 'h1,h2,h3,h4,h5,h6,code,p,div',
+                                'theme_advanced_font_sizes' => 'Normal=.fontSizeNormal,Header=.fontSizeHeader,' .
+                                    'Large=.fontSizeLarge,Medium=.fontSizeMedium,Small=.fontSizeSmall,' .
+                                    'Mini=.fontSizeMini',
+                                'style_formats' => array(
+                                    array(
+                                        'title' => 'Bold text',
+                                        'inline' => 'b',
+                                    )
+                                ),
+                            ),
+                        ),
+                        array(
+                            'name' => 'filename',
+                            'type' => 'file',
+                            'css_class' => 'hidden',
+                            'comment' => 'Used for uploading embedded files',
                         ),
                     ),
                 ),
