@@ -395,6 +395,59 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @param array $input
+     * @param array $expected
+     *
+     * @dataProvider removeDisabledFieldsProvider
+     */
+    public function testRemoveDisabledFields($input, $expected)
+    {
+        $mm = new MetaDataManager();
+        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', array($input));
+        $this->assertSame($actual, $expected);
+    }
+
+    public static function removeDisabledFieldsProvider()
+    {
+        return array(
+            array(
+                array(
+                    'some-arbitrary-structure' => array(
+                        'fields' => array(
+                            array(
+                                'name' => 'f1',
+                                'enabled' => true,
+                            ),
+                            array(
+                                'name' => 'f2',
+                                'enabled' => false,
+                            ),
+                            array(
+                                'name' => 'f3',
+                            ),
+                            'f4',
+                        ),
+                    ),
+                ),
+                array(
+                    'some-arbitrary-structure' => array(
+                        'fields' => array(
+                            array(
+                                'name' => 'f1',
+                                'enabled' => true,
+                            ),
+                            array(
+                                'name' => 'f3',
+                            ),
+                            'f4',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
 }
 
 class MetadataManagerMock extends MetadataManager
