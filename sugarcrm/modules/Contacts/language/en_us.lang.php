@@ -47,7 +47,6 @@ $mod_strings = array (
     'LBL_BIRTHDATE' => 'Birthdate:',
     'LBL_BUSINESSCARD' => 'Business Card',
     'LBL_CITY' => 'City:',
-    'LBL_CAMPAIGN_ID' => 'Campaign ID',
     'LBL_CONTACT_INFORMATION' => 'Overview',
     'LBL_CONTACT_NAME' => 'Contact Name:',
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Contact-Opportunity:',

@@ -39,7 +39,6 @@ $mod_strings = array (
   'db_email1' => 'LBL_LIST_EMAIL_ADDRESS',
   'db_email2' => 'LBL_LIST_OTHER_EMAIL_ADDRESS',
 //END DON'T CONVERT
-  'LBL_CAMPAIGN_ID' => 'Campaign ID',
   'LBL_EXISTING_PROSPECT' => 'Used an existing contact',
   'LBL_CREATED_PROSPECT' => 'Created a new contact',
   'LBL_EXISTING_ACCOUNT' => 'Used an existing account',

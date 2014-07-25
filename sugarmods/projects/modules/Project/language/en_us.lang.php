@@ -49,7 +49,6 @@ $mod_strings = array (
     'LBL_PDF_PROJECT_NAME' => 'Project Name:',
 	'LBL_DESCRIPTION' => 'Description:',
 	'LBL_DELETED' => 'Deleted:',
-    'LBL_DATE' => 'Date:',
 	'LBL_DATE_START' => 'Start Date:',
 	'LBL_DATE_END' => 'End Date:',
 	'LBL_PRIORITY' => 'Priority:',
@@ -110,8 +109,6 @@ $mod_strings = array (
 	//END SUGARCRM flav=pro ONLY 
 	
 	'LBL_RESOURCES_SUBPANEL_TITLE' => 'Resources',
-	'LBL_RESOURCE_NAME' => 'Resource Name',
-	'LBL_RESOURCE_TYPE' => 'Resource Type',
 
     'LBL_TASK_ID' => 'ID',
     'LBL_TASK_NAME' => 'Task Name',
