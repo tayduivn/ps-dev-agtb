@@ -75,9 +75,12 @@ class KBSContentsApi extends SugarListApi
 
         // Exclude the target record.
         $mainFilter = new \Elastica\Filter\Bool();
-        $termFilter = new \Elastica\Filter\Term();
-        $termFilter->setTerm('_id', $targetBean->id);
-        $mainFilter->addMustNot($termFilter);
+        $currentIdFilter = new \Elastica\Filter\Term();
+        $currentIdFilter->setTerm('_id', $targetBean->id);
+        $mainFilter->addMustNot($currentIdFilter);
+        $activeRevFilter = new \Elastica\Filter\Term();
+        $activeRevFilter->setTerm('active_rev', 1);
+        $mainFilter->addMust($activeRevFilter);
 
         $query = new \Elastica\Query($boolQuery);
         $query->setFilter($mainFilter);
