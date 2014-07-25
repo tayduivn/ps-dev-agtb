@@ -200,14 +200,22 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             app.metadata.getModule('Forecasts', 'config').show_worksheet_best = 0;
             app.metadata.getModule('Forecasts', 'config').show_worksheet_worst = 0;
         });
+
         afterEach(function() {
             app.metadata.getModule('Forecasts', 'config').show_worksheet_best = 1;
             app.metadata.getModule('Forecasts', 'config').show_worksheet_worst = 1;
         });
+
         it("length of visible fields should equal 4", function() {
             fields = view.parseFields();
             expect(fields.visible.length).toEqual(4);
-        })
+        });
+
+        it("should return _byId as an Object not an Array", function() {
+            fields = view.parseFields();
+            var isObject = (!_.isArray(fields._byId));
+            expect(isObject).toBeTruthy()
+        });
     });
 
     describe("checkForDraftRows", function() {

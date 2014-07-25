@@ -138,6 +138,9 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
                 // Already in custom view - we're done
                 continue;
             }
+            if ($this->checkComboFields($field, $data, $custom_fields)) {
+                continue;
+            }
             $this->addField($custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'], $data['pindex'], $data['pname'], $data['data']);
             $needSave = true;
         }
@@ -207,4 +210,48 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
         $panels[$pindex]['fields'][] = $field;
     }
 
+    /**
+     * Check for dupes between field-to-merge and custom fields, while handling fieldset-type fields
+     * @param $field field-to-merge's name
+     * @param $data field-to-merge's field data
+     * @param $old_fields all old fields
+     * @return bool true if dupe is found
+     */
+    protected function checkComboFields($field, $data, $old_fields) {
+        $needle_list = array();
+        // If field to check is of type 'fieldset',
+        // add each field in the fieldset to the list of fields to check
+        // else, only check the field
+        if (isset($data['data']['type']) && $data['data']['type'] === 'fieldset') {
+            // Populate search array
+            foreach($data['data']['fields'] as $set_field) {
+                if (is_array($set_field) && !empty($set_field['name'])) {
+                    $needle_list[] = $set_field['name'];
+                } else if (is_string($set_field)) {
+                    $needle_list[] = $set_field;
+                }
+            }
+        } else {
+            $needle_list[] = $field;
+        }
+
+        // Check if field exists in our needle list.
+        // If field is a fieldset, check each field within the fieldset
+        foreach($old_fields as $fname => $fdata) {
+            // If this old field is a fieldset
+            if (isset($fdata['data']['type']) && $fdata['data']['type'] === 'fieldset') {
+                foreach($fdata['data']['fields'] as $set_field) {
+                    if (is_array($set_field) && !empty($set_field['name']) && in_array($set_field['name'], $needle_list)) {
+                        return true;
+                    } else if (is_string($set_field) && in_array($set_field, $needle_list)) {
+                        return true;
+                    }
+                }
+            } else if (in_array($fname, $needle_list)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

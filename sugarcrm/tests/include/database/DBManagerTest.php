@@ -2543,6 +2543,135 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
     }
 
+    public function lengthTestProvider()
+    {
+        $data = array(
+            array(
+                array('len' => '5'),
+                array('len' => '4', 'precision' => '2'),
+                "7,2"
+            ),
+            array(
+                array('len' => '4'),
+                array('len' => '12', 'precision' => '2'),
+                "12,2"
+            ),
+            array(
+                array('type' => 'decimal', 'len' => '10', 'precision' => '6'),
+                array('len' => '12', 'precision' => '2'),
+                "12,6"
+            ),
+            array(
+                array('type' => 'decimal', 'len' => '12', 'precision' => '6'),
+                array('len' => '14', 'precision' => '6'),
+                "14,6"
+            ),
+            array(
+                array('len' => '4,2', 'precision' => '2', 'type' => 'decimal'),
+                array('len' => '26,2', 'precision' => '2'),
+                "26,2"
+            ),
+        );
+
+        $result = array();
+        foreach (array('MysqlManager', 'MysqliManager', 'SqlsrvManager', 'IBMDB2Manager') as $driver) {
+            foreach ($data as $item) {
+                $item[] = $driver;
+                $result[] = $item;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @ticket BR-1787
+     * @group unit
+     * @dataProvider lengthTestProvider
+     */
+    public function testChangeFieldLength($dbcol, $vardefcol, $result, $driver)
+    {
+        DBManagerFactory::getDbDrivers(); // load the drivers
+        $DBManagerClass = get_class($this->_db);
+        $db_columns = array(
+            "id" => array("name" => "id", 'type' => 'char', 'len' => '36'),
+            "quantity" => array("name" => "quantity", 'type' => 'int', 'len' => '5'),
+        );
+        $db_columns['quantity'] = array_merge($db_columns['quantity'], $dbcol);
+
+        $vardefs = array(
+            "id" => array("name" => "id", 'type' => 'id', 'len' => '36'),
+            "quantity" => array("name" => "quantity", 'type' => 'decimal', 'len' => '4', 'precision' => '2'),
+        );
+        $vardefs['quantity'] = array_merge($vardefs['quantity'], $vardefcol);
+
+        // Oracle currently forces decimals to be 20,2 - can't test here
+        $dbmock = $this->getMock($driver, array('get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'));
+        if (!($dbmock instanceof DBManager)) {
+                // Failed to instantiate the driver, skip it
+                $this->markTestSkipped("Could not load driver for $driver");
+        }
+        $dbmock->expects($this->any())
+               ->method('get_columns')
+               ->will($this->returnValue($db_columns));
+        $dbmock->expects($this->any())
+            ->method('get_field_default_constraint_name')
+            ->will($this->returnValue(array()));
+        $dbmock->expects($this->any())
+            ->method('get_indices')
+            ->will($this->returnValue(array()));
+        $dbmock->expects($this->any())
+            ->method('checkIdentity')
+            ->will($this->returnValue(false));
+
+        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
+        $this->assertRegExp("#quantity.*?decimal\\($result\\)#i", $sql, "Bad length change for $driver");
+    }
+
+    /**
+     * Data provider for testIsNullable()
+     */
+    public function testIsNullableData()
+    {
+        return array(
+            array(
+                array (
+                    'name' => 'id',
+                    'vname' => 'LBL_TAG_NAME',
+                    'type' => 'id',
+                    'len' => '36',
+                    'required'=>true,
+                    'reportable'=>false,
+                ), false),
+            array(
+                array (
+                    'name' => 'parent_tag_id',
+                    'vname' => 'LBL_PARENT_TAG_ID',
+                    'type' => 'id',
+                    'len' => '36',
+                    'required'=>false,
+                    'reportable'=>false,
+                ), true),
+            array(
+                array (
+                    'name' => 'any_id',
+                    'vname' => 'LBL_ANY_ID',
+                    'dbType' => 'id',
+                    'len' => '36',
+                    'required'=>false,
+                    'reportable'=>false,
+                ), true)
+        );
+    }
+
+    /**
+     * @ticket PAT-579
+     * @dataProvider testIsNullableData
+     */
+    public function testIsNullable($vardef, $isNullable)
+    {
+        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', array($vardef)));
+    }
+
     /*
      *    Prepared Statement Unit Tests
      *

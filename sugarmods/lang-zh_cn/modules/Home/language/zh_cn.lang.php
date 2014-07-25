@@ -166,7 +166,6 @@ $mod_strings = array (
 //ABOUT page
   'LBL_VERSION' => '版本',
   'LBL_BUILD' => '创建',
-  'LBL_VIEWLICENSE_COM' => '<P>这段程序是免费软件; 您可以重新分配和/或修改条款下的GNU通用公共许可证版本3 <a href="LICENSE.txt" target="_blank" class="body">  </a> 作为出版自由软体基金会包括附加许可所列的源代码头.</P>',
   'LBL_ADD_TERM_COM' => '<P>互动的用户界面在修改这个程序源和目标代码版本必须显示适当的法律通告, a按照条例第5条的GNU通用公共许可证的第3版。按照第七条第（二）的GNU通用公共许可证，第3版, 这些适当的法律告示必须保留展示的"动力SugarCRM公司"; 徽标。如果显示器的标志，是不是合理可行的技术原因，制定适当的法律告示必须展示话： "供电所的SugarCRM ".</P>',
   'LBL_SUGAR_COMMUNITY_EDITION' => 'Sugar版本一致性',
   'LBL_SUGAR_PROFESSIONAL' => "Sugar 专业版",

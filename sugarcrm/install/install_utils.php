@@ -1982,7 +1982,7 @@ function langPackUnpack($unpack_type, $full_file)
     }
     $manifest_file = extractManifest($full_file, $base_tmp_upgrade_dir);
     if($unpack_type == 'module')
-        $license_file = extractFile($full_file, 'LICENSE.txt', $base_tmp_upgrade_dir);
+        $license_file = extractFile($full_file, 'LICENSE', $base_tmp_upgrade_dir);
 
     if(is_file($manifest_file)) {
 

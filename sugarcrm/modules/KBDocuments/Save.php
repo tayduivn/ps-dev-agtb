@@ -35,6 +35,11 @@ $KBDocument = populateFromPost('', $KBDocument);
 //set check_notify flag
 $check_notify = false;
 
+if (!empty($KBDocument->case_id)) {
+    $KBDocument->parent_id = $KBDocument->case_id;
+    $KBDocument->parent_type = "Cases";
+}
+
 //BEGIN SUGARCRM flav=ent ONLY
 if (!isset($_POST['is_external'])) $KBDocument->is_external_article = 0;
 else $KBDocument->is_external_article = 1;

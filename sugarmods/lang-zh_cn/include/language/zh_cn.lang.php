@@ -2461,14 +2461,7 @@ $app_strings = array (
 	'LBL_STATUS_UPDATED' => '对于这个事件，您的状态已更新！',
 	'LBL_STATUS' => '状态:',
 	'LBL_SUBJECT' => '主题',
-
-
-
-
-
-  // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
-  'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> 保留所有权利.',
-
+    
 	'LBL_SYNC' => '同步',
 	'LBL_SYNC' => '同步',
   'LBL_TABGROUP_ALL' => '所有',

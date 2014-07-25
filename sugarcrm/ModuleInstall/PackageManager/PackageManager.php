@@ -435,7 +435,7 @@ class PackageManager{
         $manifest_file = $this->extractManifest( $base_filename,$base_tmp_upgrade_dir);
          $GLOBALS['log']->debug("Manifest: ".$manifest_file);
         if($view == 'module')
-            $license_file = $this->extractFile($base_filename, 'LICENSE.txt', $base_tmp_upgrade_dir);
+            $license_file = $this->extractFile($base_filename, 'LICENSE', $base_tmp_upgrade_dir);
         if(is_file($manifest_file)){
             $GLOBALS['log']->debug("VALIDATING MANIFEST". $manifest_file);
             require_once( $manifest_file );
@@ -717,7 +717,7 @@ class PackageManager{
         global $sugar_config;
         $base_upgrade_dir       = $this->upload_dir.'/upgrades';
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
-        $license_file = $this->extractFile($file, 'LICENSE.txt', $base_tmp_upgrade_dir);
+        $license_file = $this->extractFile($file, 'LICENSE', $base_tmp_upgrade_dir);
         if(is_file($license_file)){
             $contents = file_get_contents($license_file);
             return $contents;

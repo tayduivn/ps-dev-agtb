@@ -51,6 +51,14 @@ $viewdefs['Contracts']['base']['view']['subpanel-list'] = array(
                 array(
                     'name' => 'total_contract_value',
                     'label' => 'LBL_LIST_CONTRACT_VALUE',
+                    'related_fields' => array(
+                        'total_contract_value',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                    'width' => 10,
                     'enabled' => true,
                     'default' => true,
                 ),

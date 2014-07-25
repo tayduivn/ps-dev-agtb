@@ -34,21 +34,12 @@ class SugarFieldCurrency extends SugarFieldFloat
             if ($current_user->getPreference('currency_show_preferred')) {
                 // display base amount in user preferred currency
                 $userCurrency = SugarCurrency::getUserLocaleCurrency();
-                if ($currencyId !== $userCurrency->id) {
-                    // currencies differ, convert the amount
-                    $currencyId = $userCurrency->id;
-                    $currencySymbol = $userCurrency->symbol;
-                    $amount = SugarCurrency::convertWithRate($amount, 1.0, $userCurrency->conversion_rate);
+                $currencyId = $userCurrency->id;
+                $currencySymbol = $userCurrency->symbol;
+                if (!empty($parentFieldArray['BASE_RATE']) && $parentFieldArray['BASE_RATE'] <> 1) {
+                    $amount = SugarCurrency::convertWithRate($amount, 1.0, $parentFieldArray['BASE_RATE']);
                 } else {
-                    // transactional and preferred currency type are the same,
-                    // convert value back to transactional amount
-                    if (!empty($parentFieldArray['BASE_RATE']) && $parentFieldArray['BASE_RATE'] <> 1) {
-                        $amount = SugarCurrency::convertWithRate($amount, 1.0, $parentFieldArray['BASE_RATE']);
-                    } else {
-                        // no base rate found, fall back to base
-                        $currencyId = $baseCurrency->id;
-                        $currencySymbol = $baseCurrency->symbol;
-                    }
+                    $amount = SugarCurrency::convertWithRate($amount, 1.0, $userCurrency->conversion_rate);
                 }
             } else {
                 // display in base currency

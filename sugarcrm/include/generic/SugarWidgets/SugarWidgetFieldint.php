@@ -19,7 +19,7 @@ class SugarWidgetFieldInt extends SugarWidgetReportField
         $rawField = parent::displayList($layout_def);
         $vardef = $this->reporter->all_fields[$layout_def['column_key']];
 
-        if (!empty($vardef['disable_num_format'])) {
+        if ($layout_def['type'] !== 'int' || !empty($vardef['disable_num_format'])) {
             return $rawField;
         }
         if ($rawField === '' || $rawField === null) {

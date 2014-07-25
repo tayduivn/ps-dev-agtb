@@ -59,6 +59,9 @@ class RemoveDuplicateAccountsContactsTest extends Sugar_PHPUnit_Framework_TestCa
         $contact_id = self::$contact_id;
         $account_id = self::$account_id;
         $db = $this->db;
+        if ($db instanceof OracleManager) {
+            $this->markTestSkipped();
+        }
         $upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
         foreach ($startingRows as $row) {
             $query = "INSERT into accounts_contacts

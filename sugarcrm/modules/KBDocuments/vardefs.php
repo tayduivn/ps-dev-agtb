@@ -146,22 +146,6 @@ $dictionary['KBDocument'] = array(
     'reportable'=>true,
     'dbType' => 'id'
   ),
-  'modified_user_name' =>
-  array (
-     'name' => 'modified_user_name',
-     'rname' => 'id',
-     'id_name' => 'user_id',
-     'vname' => 'LBL_MODIFIED_USER',
-     'join_name'=>'users',
-     'type' => 'relate',
-     'link' => 'users',
-     'table' => 'users',
-     'isnull' => 'true',
-     'module' => 'Users',
-     'dbType' => 'varchar',
-     'len' => '255',
-     'source' => 'non-db'
-  ),
   'created_by' =>
   array (
     'name' => 'created_by',
@@ -230,6 +214,13 @@ $dictionary['KBDocument'] = array(
     'default' => 'off',
     'reportable'=>false,
     'audited'=>true,
+  ),
+  'case_kbdocuments' => array (
+    'name' => 'case_kbdocuments',
+    'type' => 'link',
+    'relationship' => 'kbdocument_revisions',
+    'source' => 'non-db',
+    'vname' => 'LBL_CASES',
   ),
   'cases' => array (
     'name' => 'cases',
@@ -503,6 +494,33 @@ $dictionary['KBDocument'] = array(
     'vname'=>'LBL_PARENT_TYPE',
     'reportable'=>false,
   ),
+    'case_id' => array(
+        'name'            => 'case_id',
+        'vname'           => 'LBL_CASE_ID',
+        'rname'           => 'id',
+        'id_name'         => 'case_id',
+        'type'            => 'id',
+        'table'           => 'cases',
+        'isnull'          => 'true',
+        'module'          => 'Cases',
+        'massupdate'      => false,
+        'duplicate_merge' => 'disabled',
+    ),
+
+    'case_name' => array(
+        'name'            => 'case_name',
+        'rname'           => 'name',
+        'vname'           => 'LBL_CASE',
+        'type'            => 'relate',
+        'link'            => 'case_kbdocuments',
+        'isnull'          => 'true',
+        'reportable'      => false,
+        'source'          => 'non-db',
+        'table'           => 'cases',
+        'id_name'         => 'case_id',
+        'module'          => 'Cases',
+        'duplicate_merge' => 'disabled',
+),
 ),
     'indices' => array(
         array('name' => 'kbdocumentspk', 'type' => 'primary', 'fields' => array('id')),

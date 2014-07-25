@@ -37,12 +37,14 @@ abstract class SugarApi {
      * @param $options array Formatting options
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      */
-    protected function formatBean(ServiceBase $api, $args, SugarBean $bean, array $options = array())
-    {
-        if ( !empty($args['fields']) && !is_array($args['fields']) ) {
-            $args['fields'] = explode(',',$args['fields']);
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean, array $options = array()) {
+
+        if ((empty($args['fields']) && !empty($args['view'])) ||
+            (!empty($args['fields']) && !is_array($args['fields']))
+        ) {
+            $args['fields'] = $this->getFieldsFromArgs($api, $args, $bean);
         }
-        
+
         if (!empty($args['fields'])) {
             $fieldList = $args['fields'];
 
@@ -343,5 +345,72 @@ abstract class SugarApi {
     public function getTrackerManager()
     {
         return TrackerManager::getInstance();
+    }
+
+    /**
+     *
+     * Determine field list from arguments base both "fields" and "view" parameter.
+     * The final result is a merger of both.
+     *
+     * @param ServiceBase $api      The API request object
+     * @param array       $args     The arguments passed in from the API
+     * @param SugarBean   $bean     Bean context
+     * @param string      $viewName The argument used to determine the view name, defaults to view
+     * @return array
+     */
+    protected function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
+    {
+        $fields = array();
+
+        // Try to get the fields list if explicitly defined.
+        if (!empty($args['fields'])) {
+            $fields = explode(",", $args['fields']);
+        }
+
+        // When a view name is specified and a seed is available, also include those fields
+        if (!empty($viewName) && !empty($args[$viewName]) && !empty($bean)) {
+            $fields = array_unique(
+                array_merge(
+                    $fields,
+                    $this->getMetaDataManager($api->platform)
+                         ->getModuleViewFields($bean->module_name, $args[$viewName])
+                )
+            );
+
+            // add dependant field for relates
+            $fieldDefs = $bean->field_defs;
+            foreach ($fields as $field) {
+                if (!empty($fieldDefs[$field]) && isset($fieldDefs[$field]['type'])) {
+                    switch ($fieldDefs[$field]['type']) {
+                        case 'relate':
+                            if (!empty($fieldDefs[$field]['id_name'])) {
+                                $fields[] = $fieldDefs[$field]['id_name'];
+                            }
+                            break;
+                        case 'parent':
+                            if (!empty($fieldDefs[$field]['id_name'])) {
+                                $fields[] = $fieldDefs[$field]['id_name'];
+                            }
+                            if (!empty($fieldDefs[$field]['type_name'])) {
+                                $fields[] = $fieldDefs[$field]['type_name'];
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Gets a MetaDataManager object
+     * @param string $platform The platform to get the manager for
+     * @param boolean $public Flag to describe visibility for metadata
+     * @return MetaDataManager
+     */
+    protected function getMetaDataManager($platform = '', $public = false)
+    {
+        return MetaDataManager::getManager($platform, $public);
     }
 }

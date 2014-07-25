@@ -10,8 +10,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require('service/core/SugarSoapService.php');
-require('vendor/nusoap//nusoap.php');
+require_once 'service/core/SugarSoapService.php';
+require_once 'vendor/nusoap/nusoap.php';
 
 /**
  * This is an abstract class for the soap implementation for using NUSOAP. This class is responsible for making
@@ -140,8 +140,14 @@ abstract class NusoapSoap extends SugarSoapService{
 	 */
 	public function error($errorObject){
 		$GLOBALS['log']->info('Begin: NusoapSoap->error');
-		$this->server->fault($errorObject->getFaultCode(), $errorObject->getName(), '', $errorObject->getDescription());
-		$GLOBALS['log']->info('Begin: NusoapSoap->error');
+
+        // report all failures as caused by client since we don't have the needed attribute
+        // in existing error definitions
+        $this->server->fault('SOAP-ENV:Client', $errorObject->getName(), '', array(
+            'code' => $errorObject->getFaultCode(),
+            'message' => $errorObject->getDescription(),
+        ));
+        $GLOBALS['log']->info('End: NusoapSoap->error');
 	} // fn
 
 } // clazz

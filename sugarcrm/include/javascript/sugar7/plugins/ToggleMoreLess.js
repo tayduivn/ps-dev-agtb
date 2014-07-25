@@ -94,15 +94,18 @@
              * Toggle visibility on buttons and hidden panel.
              *
              * @param {String} moreLess Enum value for status [more, less].
+             * @param {Boolean} skipSetState skip setting state.
              */
-            toggleMoreLess: function(moreLess) {
+            toggleMoreLess: function(moreLess, skipSetState) {
                 this._setVisibility(moreLess);
                 this.$('[data-moreless=more]').toggleClass('hide', this.hideMoreButton);
                 this.$('[data-moreless=less]').toggleClass('hide', this.hideLessButton);
                 var target = this.$('[data-moreless=' + moreLess + ']').data('target') ||
                     '.panel-hidden';
                 this.$(target).toggleClass('hide', this.hidePanel);
-                app.user.lastState.set(this.SHOW_MORE_KEY, moreLess);
+                if (!skipSetState) {
+                    app.user.lastState.set(this.SHOW_MORE_KEY, moreLess);
+                }
                 this.trigger('more-less:toggled', moreLess);
             },
 

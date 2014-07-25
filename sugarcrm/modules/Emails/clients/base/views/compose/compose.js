@@ -90,15 +90,16 @@
 
     /**
      * Prepopulate fields on the email compose screen that are passed in on the context when opening this view
-     *
+     * TODO: Refactor once we have custom module specific models
      * @param values
      */
-    prepopulate: function(values) {
+    prepopulate: function (values) {
         var self = this;
-        _.defer(function() {
-            _.each(values, function(value, fieldName) {
+        _.defer(function () {
+            _.each(values, function (value, fieldName) {
                 switch (fieldName) {
                     case 'related':
+                        self._populateForModules(value);
                         self.populateRelated(value);
                         break;
                     default:
@@ -106,6 +107,49 @@
                 }
             });
         });
+    },
+
+    /**
+     * Populates email compose with module specific data.
+     * TODO: Refactor once we have custom module specific models
+     * @param relatedModel
+     */
+    _populateForModules: function(relatedModel) {
+        if (relatedModel.module === 'Cases') {
+            this._populateForCases(relatedModel);
+        }
+    },
+
+
+    /**
+     * Populates email compose with cases specific data.
+     * TODO: Refactor once we have custom module specific models
+     * @param relatedModel
+     */
+    _populateForCases: function(relatedModel) {
+        var config = app.metadata.getConfig(),
+            keyMacro = '%1',
+            caseMacro = config.inboundEmailCaseSubjectMacro,
+            subject = caseMacro + ' ' + relatedModel.get('name');
+
+        subject = subject.replace(keyMacro, relatedModel.get('case_number'));
+        this.model.set('subject', subject);
+        if (!this.isFieldPopulated('to_addresses')) {
+            // no addresses, attempt to populate from contacts relationship
+            var contacts = relatedModel.getRelatedCollection("contacts");
+
+            contacts.fetch({
+                relate: true,
+                success: _.bind(function(data) {
+                    var toAddresses = _.map(data.models, function(model) {
+                        return {bean: model};
+                    }, this);
+
+                    this.model.set('to_addresses', toAddresses);
+                }, this),
+                fields: ['id', 'full_name', 'email']
+            });
+        }
     },
 
     /**

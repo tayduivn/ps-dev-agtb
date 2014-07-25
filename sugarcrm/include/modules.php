@@ -588,6 +588,7 @@ $bwcModules = array(
     'ModuleBuilder',
     'MySettings',
     'OAuthKeys',
+    'OAuthTokens',
     'OptimisticLock',
     'OutboundEmailConfiguration',
     'PdfManager',

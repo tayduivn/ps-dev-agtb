@@ -25,7 +25,7 @@ $error_defs = array(
 'no_records'=>array('number'=>51 , 'name'=>'No Records', 'description'=>'No records were found.'),
 'cannot_add_client'=>array('number'=>52 , 'name'=>'Cannot Add Offline Client', 'description'=>'Unable to add Offline Client.'),
 'client_deactivated'=>array('number'=>53 , 'name'=>'Client Deactivated', 'description'=>'Your Offline Client instance has been deactivated.  Please contact your Administrator in order to resolve.'),
-'sessions_exceeded'=>array('number'=>60 , 'name'=>'Number of sessions exceeded.'),
+'sessions_exceeded' => array('number'=>60 , 'name' => 'Number of sessions exceeded.', 'description' => ''),
 'upgrade_client'=>array('number'=>61 , 'name'=>'Upgrade Client', 'description'=>'Please contact your Administrator in order to upgrade your Offline Client'),
 'no_admin' => array('number' => 70, 'name' => 'Admin credentials are required', 'description' => 'The logged-in user is not an administrator'),
 'custom_field_type_not_supported' => array('number' => 80, 'name' => 'Custom field type not supported', 'description' => 'The custom field type you supplied is not currently supported'),
@@ -38,5 +38,3 @@ $error_defs = array(
 'lockout_reached'     => array('number'=>1009, 'name'=> 'Password Expired', 'description'=>'You have been locked out of the Sugar application and cannot log in using existing password. Please contact your Administrator.'),
 'ldap_error' => array('number'=>1012, 'name'=> 'LDAP Authentication Failed', 'description'=>'LDAP Authentication failed but supplied password was already encrypted.'),
 );
-
-?>

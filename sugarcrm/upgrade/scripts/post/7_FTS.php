@@ -28,10 +28,25 @@ class SugarUpgradeFTS extends UpgradeScript
             $this->db->full_text_indexing_setup();
         }
 
-        //Always perform a clean re-index for the FTS after every upgrade
-        require_once 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
-        $indexer = new SugarSearchEngineFullIndexer();
-        $indexer->initiateFTSIndexer();
-        $this->log("FTS Indexer initiated.");
+        //Check if the fts_queue_tmp table exists and clone the data back into the fts_queue table.
+        if (version_compare($this->from_version, '7.2.2', '>=') || !$this->db->tableExists("fts_queue_tmp")) {
+            return;
+        }
+        $queries = array(
+            "Clone Data from Temp" => "INSERT INTO fts_queue (bean_id, bean_module, date_modified, processed, id, date_created) "
+                . "(SELECT bean_id, bean_module, date_modified, processed, "
+                . $this->db->getGuidSQL() . ", " . $this->db->now() . " FROM fts_queue_tmp)",
+            "Remove Temp Table" => $this->db->dropTableNameSQL("fts_queue_tmp"),
+        );
+
+        $this->log('Clearing the fts_queue so we can add a primary key');
+
+        foreach ($queries as $description => $q) {
+            $this->db->commit();
+            if (!$this->db->query($q)) {
+                return $this->error('UpgradeFTS failed on step ' . $description);
+            }
+        }
+        $this->db->commit();
     }
 }

@@ -953,9 +953,19 @@
     parseFields: function() {
         var catalog = this._super("parseFields");
         _.each(catalog, function(group, i) {
-            catalog[i] = _.filter(group, function(fieldMeta) {
-                return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
-            });
+            if (_.isArray(group)) {
+                catalog[i] = _.filter(group, function(fieldMeta) {
+                    return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
+                });
+            } else {
+                // _byId is an Object and _.filter returns data in Array form
+                // so just go through _byId this way
+                _.each(group, function(fieldMeta) {
+                    if (!app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager')) {
+                        delete group[fieldMeta.name];
+                    }
+                });
+            }
         });
         return catalog;
     },

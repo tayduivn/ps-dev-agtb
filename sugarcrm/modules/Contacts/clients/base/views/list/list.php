@@ -68,14 +68,6 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'default' => true,
                     'readonly' => true,
                 ),
-                array(
-                    'name' => 'report_to_name',
-                    'filter_relate' => array(
-                        'account_id' => 'account_id',
-                    ),
-                    'enabled' => true,
-                    'default' => false,
-                ),
             ),
         ),
     ),

@@ -40,6 +40,9 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $account = BeanFactory::newBean('Accounts');
         $account->name = "ModulaApiTest setUp Account";
         $account->assigned_user_id = $GLOBALS['current_user']->id;
+        $account->billing_address_city = 'Cupertino';
+        $account->billing_address_country = 'USA';
+        $account->googleplus = 'info@sugarcrm.com';
         $account->save();
         $this->accounts[] = $account;
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -325,6 +328,99 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey("id", $result);
         $this->assertArrayNotHasKey("name", $result);
+
+        // cleanup ACL mock
+        SugarACL::resetACLs('Accounts');
+    }
+
+    /**
+     * Integration test returned fields based on fields list and/or view parameter
+     * @dataProvider providerTestModuleReturnedField
+     */
+    public function testModuleReturnedFields($args, $expected, $suppressed)
+    {
+        $args['module'] = 'Accounts';
+        $args['record'] = $this->accounts[0]->id;
+
+        $reply = $this->moduleApi->retrieveRecord($this->serviceMock, $args);
+
+        foreach ($expected as $field) {
+            $this->assertArrayHasKey(
+                $field,
+                $reply,
+                "Expected field $field not present"
+            );
+        }
+
+        foreach ($suppressed as $field) {
+            $this->assertArrayNotHasKey(
+                $field,
+                $reply,
+                "Field $field should not be present"
+            );
+        }
+    }
+
+    public function providerTestModuleReturnedField()
+    {
+        return array(
+
+            // field list only
+            array(
+                array(
+                    'fields' => 'name,billing_address_country',
+                ),
+                array(
+                    'name',
+                    'billing_address_country',
+                ),
+                array(
+                    'googleplus',
+                ),
+            ),
+
+            // view only
+            array(
+                array(
+                    'view' => 'record',
+                ),
+                array(
+                    'name',
+                    'billing_address_country',
+                ),
+                array(
+                    'googleplus',
+                ),
+            ),
+
+            // field list and view combined
+            array(
+                array(
+                    'fields' => 'name,billing_address_country',
+                    'view' => 'record',
+                ),
+                array(
+                    'name',
+                    'billing_address_country',
+                    'billing_address_city',
+                ),
+                array(
+                    'googleplus',
+                ),
+            ),
+
+            // nothing specified - expecting all fields
+            array(
+                array(),
+                array(
+                    'name',
+                    'billing_address_country',
+                    'billing_address_city',
+                    'googleplus',
+                ),
+                array(),
+            ),
+        );
     }
 
     public function testGetLoadedAndFormattedBean()
