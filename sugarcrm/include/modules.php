@@ -680,6 +680,10 @@ $beanList['KBSContentTemplates'] = 'KBSContentTemplate';
 $beanFiles['KBSContentTemplate'] = 'modules/KBSContentTemplates/KBSContentTemplate.php';
 $moduleList[] = 'KBSContentTemplates';
 
+$beanList['EmbeddedFiles'] = 'EmbeddedFile';
+$beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
+$moduleList[] = 'EmbeddedFiles';
+
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

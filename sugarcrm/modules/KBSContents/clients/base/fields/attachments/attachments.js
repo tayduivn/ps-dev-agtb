@@ -84,9 +84,8 @@
      */
     format: function (value) {
         return _.map(value, function (item) {
-            var isImage = false,
-                forceDownload = !isImage,
-                mimeType = isImage ? 'image' : 'application/octet-stream',
+            var forceDownload = !item.isImage,
+                mimeType = item.isImage ? 'image' : 'application/octet-stream',
                 urlOpts = {
                     module: this.def.module,
                     id: item.id,
@@ -145,7 +144,7 @@
         if (this.model.has(this.name)) {
             attachments = this.model.get(this.name);
         }
-        this.$node.select2('data', attachments);
+        this.$node.select2('data', this.format(attachments));
     },
 
     /**
@@ -161,7 +160,13 @@
         this.$node.on('change',
             function (evt) {
                 if (!_.isEmpty(evt.removed)) {
-                    self.model.set(self.name, _.without(self.model.get(self.name), evt.removed));
+                    self.model.set(
+                        self.name,
+                        _.filter(
+                            self.model.get(self.name),
+                            function(file) {return (file.id != evt.removed.id);}
+                        )
+                    );
                     /**
                      * Deletes relate attachment from server.
                      */
@@ -203,26 +208,34 @@
     /**
      * Upload file to server.
      */
-    uploadFile: function () {
+    uploadFile: function() {
         var self = this,
-            $input = this.getFileNode();
-        this.model.uploadFile(
-            self.name,
-            $input,
-            {
-                field: self.name,
-                //Callbacks
-                success: function (rsp) {
-                    var att = {};
-                    att.id = rsp.record.id;
-                    att.name = rsp[self.name].guid;
-                    self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
-                    $input.val('');
-                    self.render();
-                }
-            },
-            {temp: true}  //for File API to understand we upload a temporary file
-        );
+            $input = this.getFileNode(),
+            note = app.data.createBean('Notes'),
+            fieldName = 'filename';
+
+        note.save({name: $input[0].files[0].name}, {
+            success: function(model) {
+                // FileApi uses one name for file key and defs.
+                var $cloneInput = _.clone($input);
+                $cloneInput.attr('name', fieldName);
+                model.uploadFile(
+                    fieldName,
+                    $input,
+                    {
+                        success: function(rsp) {
+                            var att = {};
+                            att.id = rsp.record.id;
+                            att.isImage = (rsp[fieldName]['content-type'].indexOf('image') !== -1);
+                            att.name = rsp[fieldName].name;
+                            self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
+                            $input.val('');
+                            self.render();
+                        }
+                    }
+                );
+            }
+        });
     },
 
     /**
@@ -235,29 +248,37 @@
         event.preventDefault();
         var self = this,
             data = new FormData(),
-            url = app.api.buildFileURL({
-                module: this.module,
-                id: 'temp',
-                field: this.name
-            }, {htmlJsonFormat: false});
-
-        data.append('OAuth-Token', app.api.getOAuthToken());
+            fieldName = 'filename';
 
         _.each(event.dataTransfer.files, function(file) {
             data.append(this.name, file);
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: data,
-                dataType: 'json',
-                processData: false,
-                contentType: false,
-                success: function(rsp) {
-                    var att = {};
-                    att.id = rsp.record.id;
-                    att.name = rsp[self.name].guid;
-                    self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
-                    self.render();
+
+            var note = app.data.createBean('Notes');
+            note.save({name: file.name}, {
+                success: function(model) {
+                    var url = app.api.buildFileURL({
+                        module: model.module,
+                        id: model.id,
+                        field: 'filename'
+                    }, {htmlJsonFormat: false});
+                    data.append('filename', file);
+                    data.append('OAuth-Token', app.api.getOAuthToken());
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function(rsp) {
+                            var att = {};
+                            att.id = rsp.record.id;
+                            att.isImage = (rsp[fieldName]['content-type'].indexOf('image') !== -1);
+                            att.name = rsp[fieldName].name;
+                            self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
+                            self.render();
+                        }
+                    });
                 }
             });
         }, this);

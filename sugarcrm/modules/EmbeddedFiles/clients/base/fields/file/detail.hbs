@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 }}
-<span class="select2-choice-type" data-id={{id}}>
-    <a class="ellipsis_inline kb-attachment-link"
-       data-placement="bottom"
-       title="{{name}}"
-       href="{{url}}"
-       data-url="{{url}}"
-       data-action="download">{{name}}
-    </a>
-</span>
+{{#each value}}
+    {{#eq mimeType 'image'}}
+        <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}"
+           data-url="{{url}}" target="_blank">{{name}}</a>
+    {{/eq}}
+    {{#notEq mimeType 'image'}}
+        <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}"
+           data-url="{{url}}" data-action="download">{{name}}</a>
+    {{/notEq}}
+{{/each}}

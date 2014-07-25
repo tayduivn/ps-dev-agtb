@@ -67,7 +67,7 @@ describe("htmleditable_tinymce", function() {
             });
 
             expect(tinymceSpy.calledOnce).toBeTruthy();
-            expect(configSpy.called).toBeFalsy();
+            expect(configSpy.called).toBeTruthy();
 
             tinymceSpy.restore();
             configSpy.restore();

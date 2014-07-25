@@ -11474,6 +11474,8 @@ $app_list_strings['moduleList']['KBSArticles'] = 'Knowledge Base Article';
 $app_list_strings['moduleListSingular']['KBSArticles'] = 'Knowledge Base Article';
 $app_list_strings['moduleList']['KBSContentTemplates'] = 'Knowledge Base Template';
 $app_list_strings['moduleListSingular']['KBSContentTemplates'] = 'Knowledge Base Template';
+$app_list_strings['moduleList']['EmbeddedFiles'] = 'Embedded Files';
+$app_list_strings['moduleListSingular']['EmbeddedFiles'] = 'Embedded File';
 
 $app_list_strings['dnb_job_codes'] = array(
     '' => '',

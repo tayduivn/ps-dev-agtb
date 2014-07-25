@@ -554,7 +554,7 @@
      */
     applyRequiredFilters: function(filterDef, context) {
         var specialField = /^\$/,
-            meta = App.metadata.getModule(context.get('module')),
+            meta = app.metadata.getModule(context.get('module')),
             filtersMeta = meta.filters || null,
             filtersMetaSection = context.get('layout') || context.get('link');
 

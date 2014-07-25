@@ -281,6 +281,9 @@ describe('Base.Layout.Filter', function() {
             var ctxt, lastEditState, model;
             var stubCache, triggerStub, layoutTriggerStub, retrieveFilterEditStateStub;
             beforeEach(function() {
+                SugarTest.testMetadata.init();
+                SugarTest.testMetadata.set();
+
                 ctxt = new Backbone.Model({collection: {
                     resetPagination:function(){},
                     reset: function(){}
@@ -304,6 +307,9 @@ describe('Base.Layout.Filter', function() {
                 layout.filters.setModuleName(moduleName);
                 layout.filters.load();
                 layout.filters.collection.add(model);
+            });
+            afterEach(function() {
+                SugarTest.testMetadata.dispose();
             });
 
             it('should save last filter into cache', function() {
