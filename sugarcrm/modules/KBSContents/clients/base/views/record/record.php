@@ -94,7 +94,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => $module,
+                    'acl_module' => 'KBSContents',
                     'acl_action' => 'create',
                 ),
                 array(
@@ -171,7 +171,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'kbdocument_body',
+                    'name' => 'kbdocument_body_set',
                     'type' => 'fieldset',
                     'label' => 'LBL_TEXT_BODY',
                     'span' => 12,
