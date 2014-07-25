@@ -587,7 +587,7 @@ public function build($path, $skipBuilds=array()){
      */
     protected function isLink($link) {
         $path = $this->cleanPath($link);
-        return is_link($link) && empty($this->config['excludeFileTypes'][substr($next, -4)]) && empty($this->config['excludeFiles'][$path]);
+        return is_link($link) && empty($this->config['excludeFileTypes'][substr($link, -4)]) && empty($this->config['excludeFiles'][$path]);
     }
 
 protected function isFile($next){
