@@ -37,7 +37,7 @@ abstract class SugarApi {
      * @param $options array Formatting options
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      */
-    protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean, array $options = array()) {
 
         if ((empty($args['fields']) && !empty($args['view'])) ||
             (!empty($args['fields']) && !is_array($args['fields']))
