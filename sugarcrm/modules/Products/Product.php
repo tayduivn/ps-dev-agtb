@@ -543,28 +543,21 @@ class Product extends SugarBean
             }
         }
 
-        if (!empty($this->discount_select)) {
-            // we have a percentage discount, use the deal_calc field to calculated the discount_amount field
-            $rli->discount_amount = SugarMath::init($this->deal_calc)->mul($rli->quantity)->result();
-        } else {
-            // no percentage, so just calculate it
-            $rli->discount_amount = SugarMath::init($rli->discount_amount)->mul($rli->quantity)->result();
+        if ($this->discount_select == 1) {
+            // we have a percentage discount, but we don't allow the use of percentages on
+            // the RevenueLineItem module yet, so we need to set discount_select to 0
+            // and calculate out the correct discount_amount.
+            $rli->discount_select = 0;
+            $rli->discount_amount = SugarMath::init()->
+                exp('(?*?)*(?/100)', array($this->discount_price, $this->quantity, $this->discount_amount))->
+                result();
         }
 
-        
+
         // since we don't have a likely_case on products,
         if ($rli->likely_case == '0.00') {
             //undo bad math from quotes.
-            $rli->likely_case = SugarMath::init()
-                                ->exp(
-                                    '(?+?)-?',
-                                    array(
-                                        $this->total_amount,
-                                        $this->discount_amount,
-                                        $rli->discount_amount
-                                    )
-                                )
-                                ->result();
+            $rli->likely_case = $this->total_amount;
         }
 
         $this->revenuelineitem_id = $rli->id;

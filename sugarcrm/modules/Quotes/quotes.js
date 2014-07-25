@@ -96,8 +96,16 @@ function QuotesEditManager(Y) {
     this.discount_calculated = function(doc, count) {
         var discountAmount;
         if (doc.getElementById('checkbox_select_' + count).checked == true) {
+            var _discountPrice = doc.getElementById('discount_price_' + count).value,
+                _discountAmount = doc.getElementById('discount_amount_' + count).value,
+                _quantity = doc.getElementById('quantity_' + count).value;
+
             doc.getElementById('discount_select_' + count).value = true;
-            discountAmount = unformatNumber(doc.getElementById('discount_amount_' + count).value, num_grp_sep, dec_sep) / 100 * unformatNumber(doc.getElementById('discount_price_' + count).value, num_grp_sep, dec_sep);
+
+            _quantity = unformatNumber(_quantity, num_grp_sep, dec_sep);
+            _discountPrice = unformatNumber(_discountPrice, num_grp_sep, dec_sep);
+            _discountAmount = unformatNumber(_discountAmount, num_grp_sep, dec_sep);
+             discountAmount = (_quantity * _discountPrice) * (_discountAmount / 100);
         }
         else {
             doc.getElementById('discount_select_' + count).value = false;
@@ -701,7 +709,7 @@ function QuotesEditManager(Y) {
         tdEl.appendChild(document.createTextNode(this.list_discount_string));
         rowEl.appendChild(tdEl);
         var tdEl = this.blankDataLabel.cloneNode(false);
-        tdEl.width = 75;
+        tdEl.width = 90;
         tdEl.appendChild(document.createTextNode(this.list_deal_tot));
         rowEl.appendChild(tdEl);
     };
@@ -1457,8 +1465,7 @@ function QuotesEditManager(Y) {
         for (var i = 0; i < rows.length; i++) {
             if (formula_type == 'discount_amount') {
                 formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 " +
-                    "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) " +
-                    "* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                    "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * 1.0";
                 if (i != 0) {
 
                     var chckd = null;
@@ -1477,13 +1484,12 @@ function QuotesEditManager(Y) {
                     }
 
                     if (chckd) {
-                        formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 " +
-                            "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) " +
-                            "* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                        formula = "(unformatNumber('_var_quantity_', num_grp_sep, dec_sep) " +
+                            "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep)) " +
+                            "* (unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100)";
                     }
                     else {
-                        formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) " +
-                            "* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                        formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep)";
                     }
                 }
                 var variables = formula.match(/(_var_[a-zA-Z\_]+)+/g);
@@ -1498,7 +1504,7 @@ function QuotesEditManager(Y) {
                 }
                 var taxable = SUGAR.language.get('app_list_strings', 'tax_class_dom');
                 taxable = taxable['Taxable'];
-                var formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                var formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * 1.0";
                 if (i != 0) {
                     var chckd = null;
                     var ckId = 'checkbox_select_' + table_array[table_id][i];
@@ -1516,10 +1522,12 @@ function QuotesEditManager(Y) {
                     }
 
                     if (chckd) {
-                        formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                        formula = "(unformatNumber('_var_quantity_', num_grp_sep, dec_sep) " +
+                            "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep)) " +
+                            "* (unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100)";
                     }
                     else {
-                        formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+                        formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) * 1.0";
                     }
                 }
                 formula = "(unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0 - " + formula_discount + ") * " + taxrate + " * 1.0 * (('_var_tax_class_' == " + "'" + taxable + "') || ('_var_tax_class_' == " + "'Taxable'))";

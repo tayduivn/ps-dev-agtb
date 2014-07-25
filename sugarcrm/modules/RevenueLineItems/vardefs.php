@@ -272,6 +272,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'bool',
             'reportable' => false,
             'importable' => false,
+            'studio' => false,
         ),
         'deal_calc' => array(
             'name' => 'deal_calc',
