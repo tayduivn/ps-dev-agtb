@@ -1501,6 +1501,11 @@ $app_list_strings = array (
         'Yearly' => 'year(s)',
     ),
 
+    'repeat_interval_number' => array(
+       '', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15',
+       '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'
+    ),
+
     'duration_dom' => array(
     	'' => 'None',
     	'900' => '15 minutes',
@@ -5158,6 +5163,11 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_SAME_DAY' => '{{date}} {{start}} - {{end}} ({{duration}})',
     'LBL_START_AND_END_DATE_TO' => 'to',
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
+
+    'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
+    'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
+    'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
+    'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
 );
 
 $app_list_strings['interactions_options'] = array (
