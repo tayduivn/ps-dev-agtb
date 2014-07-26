@@ -76,6 +76,15 @@ class Sugarpdf extends TCPDF
     }
 
     /**
+     * This function will log the error message, and then exit
+     * @param string $msg Error message
+     */
+    public function Error($msg) {
+        $GLOBALS['log']->fatal('TCPDF ERROR: ' . $msg);
+        return parent::Error($msg);
+    }
+
+    /**
      * This method will be called from the controller and is not meant to be overridden.
      */
     function process(){
