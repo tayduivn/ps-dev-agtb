@@ -14,12 +14,8 @@ form[name="signupView"] {
   }
 }
 
-//changes below have not been modified from first styleguide commit;
-//however, bootstrap has changed from these values
-//preserved for now until effect can be accepted
-
 legend {
-  border-bottom: 1px solid #eee;
+  border-bottom: @borderWidget;
 }
 
 label {
@@ -27,7 +23,7 @@ label {
 }
 
 .form-actions {
-  border-top: 1px solid #ddd;
+  border-top: @borderWidget;
 }
 
 // Reset the file input to browser defaults
@@ -64,7 +60,6 @@ input[type="image"] {
   height: auto;
   padding: 0;
   margin: 3px 0;
-  *margin-top: 0; /* IE7 */
   line-height: normal;
   cursor: pointer;
   background-color: transparent;
@@ -94,11 +89,24 @@ input[type="image"] {
 }
 
 // Focus for select, file, radio, and checkbox
-select:focus,
-input[type="file"]:focus,
-input[type="radio"]:focus,
-input[type="checkbox"]:focus {
-  .box-shadow(none); // override for file inputs
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+  border-color: @linkColor !important;
+  .box-shadow(none);
 }
 
 // Hidden inputs
@@ -108,10 +116,10 @@ input[type="hidden"] {
 
 // Placeholder text gets special styles; can't be bundled together though for some reason
 //.placeholder(@grayLight);
-::-webkit-input-placeholder { color:@grayLight; font-weight: normal; }
-::-moz-placeholder { color:@grayLight; font-weight: normal; } /* firefox 19+ */
-:-ms-input-placeholder { color:@grayLight; font-weight: normal; } /* ie */
-input:-moz-placeholder { color:@grayLight; font-weight: normal; }
+::-webkit-input-placeholder { color: @grayLight; font-weight: normal; }
+::-moz-placeholder { color: @grayLight; font-weight: normal; } /* firefox 19+ */
+:-ms-input-placeholder { color: @grayLight; font-weight: normal; } /* ie */
+input:-moz-placeholder { color: @grayLight; font-weight: normal; }
 
 input[disabled],
 select[disabled],
@@ -120,7 +128,7 @@ input[readonly],
 select[readonly],
 textarea[readonly] {
   cursor: not-allowed;
-  border: 1px solid @inputBorder;
+  border: @inputBorder;
   color: @placeholderText;
 }
 
@@ -174,9 +182,8 @@ input[type=radio] {
   td > .active:hover {
     color: @white;
     background-color: @gray;
-    border-color: darken(@gray,10%);
-    @shadow: inset 0 1px 1px rgba(0,0,0,.5);
-    .box-shadow(@shadow);
+    border-color: @gray;
+    .box-shadow(@shadowWidget);
   }
   table th:first-child, table td:first-child {
     padding-left: 5px;
@@ -250,7 +257,7 @@ input[type=radio] {
     margin-left: -24px;
     font-size: @baseFontSize;
     li {
-      color: lighten(@gray, 20%);
+      color: @gray;
     }
   }
   &.error {
@@ -265,6 +272,8 @@ input[type=radio] {
     .ui-timepicker-list {
       margin-left: -46px;
     }
+    textarea,
+    input[type="password"],
     input[type="text"] {
       .placeholder(@errorText);
     }
@@ -293,8 +302,10 @@ input[type=radio] {
 }
 
 .control-group {
-  /*this clear both is preventing two column. Needed for forms.html only. Remove*/
-  clear: both;
+  margin-bottom: 4px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
   .btn-toolbar {
     margin: 0 0 0 5px !important;
     display: inline;
@@ -438,8 +449,7 @@ input[type=radio] {
     }
   }
 
-  //this is not working since p.help-block after last control-group div
-  .control-group:last-child {
+  .control-group:last-of-type {
     margin-bottom: 0;
   }
 
@@ -452,21 +462,21 @@ input[type=radio] {
 
   .card2 .control-group:first-child .control-label-background ,
   .card2 .control-group .control-label.begin-fieldgroup .control-label-background {
-    .border-radius(3px 3px 0 0);
-    border-top: 1px solid lighten(@grayLight,14%);
+    .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+    border-top: @borderWidget;
   }
-  .card2 .control-group:last-child .control-label-background,
+  .card2 .control-group::last-of-type .control-label-background,
   .card2 .control-group .control-label.end-fieldgroup .control-label-background {
     padding-bottom: 5px;
-    .border-radius(0 0 3px 3px);
-    border-bottom: 1px solid lighten(@grayLight,14%);
+    .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+    border-bottom: @borderWidget;
     height: auto;
   }
   .card2 .control-group.single .control-label .control-label-background {
     height: 0;
-    .border-radius(3px);
-    border-top: 1px solid lighten(@grayLight,14%);
-    border-bottom: 1px solid lighten(@grayLight,14%);
+    .border-radius(@baseBorderRadius);
+    border-top: @borderWidget;
+    border-bottom: @borderWidget;
   }
 
   div.control-label {
@@ -476,13 +486,12 @@ input[type=radio] {
       position: absolute;
       padding: 4px 0 12px;
       text-align: right;
-      border-left: 1px solid lighten(@grayLight,14%);
-      border-right: 1px solid lighten(@grayLight,14%);
-      /*background-color: @tableBackgroundAccent;*/
-      background-color: #f7f7f7;
+      border-left: @borderWidget;
+      border-right: @borderWidget;
+      background-color: @grayLighter;
     }
     label {
-      color: lighten(@gray,20%);
+      color: @gray;
       font-size: @fontSizeSmall;
       margin-bottom: 0;
     }
@@ -533,5 +542,5 @@ input[type="color"],
 
 
 input.required {
-  border: 1px solid lighten(@gray, 25%);
+  border: 1px solid @grayLight;
 }

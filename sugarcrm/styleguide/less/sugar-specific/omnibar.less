@@ -3,27 +3,28 @@
 
 .omnibar {
   padding: 10px;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
+  border-bottom: @borderWidget;
   position: relative;
   z-index: 1;
   .inputwrapper {
     position: relative;
-    margin-left: 52px;
+    margin-left: 0;
   }
   .sayit  {
-    padding: 6px 8px;
-    border: dashed 1px @grayLight;
-    min-height: 20px;
-    color: @gray;
+    padding: 10px 68px 10px 10px;
+    border: dashed 1px darken(@grayLighter, 10%);
+    color: @grayLight;
+    font-size: @baseFontSize;
+    min-height: 18px;
     &:focus {
-      border-style: solid;
+      border: @borderWidget;
+      color: @gray;
     }
   }
   .inputactions {
-    background: @grayLighter;
-    height: 30px;
-    padding: 8px;
-    .border-radius(0 0 3px 3px);
+    position: absolute;
+    top: 6px;
+    right: 6px;
   }
   .clearfix();
 }

@@ -43,7 +43,7 @@
 			}
             time {
               font-size: @fontSizeSmall;
-              color: lighten(@gray,25%);
+              color: @grayLight;
               text-align: right;
               padding-right: 14px;
               white-space: normal;
@@ -68,14 +68,14 @@
 }
 
 ul.notification-list {
-  border-top: 2px solid @tableBorder;
+  border-top: 2px solid @tableBorderColor;
   margin: 0;
   li {
 	list-style: none;
 	line-height: 34px;
 	padding: 0 16px;
 	&:not(:last-child) {
-	  border-bottom: 1px solid @tableBorder;
+	  border-bottom: @tableBorder;
 	}
 	.ellipsis_inline {
 	  display: inline-block !important;

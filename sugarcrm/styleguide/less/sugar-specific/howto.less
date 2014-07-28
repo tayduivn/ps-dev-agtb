@@ -2,16 +2,17 @@
   ----------------*/
 
 .howto {
-  border: 2px solid @grayLight;
-  .border-radius(5px);
-  .box-shadow(0 0 10px 1px @grayLight);
-  background-color: @infoBackground;
+  border: @borderWidget;
+  .border-radius(@baseBorderRadius);
+  background-color: @white;
+  padding: 10px;
+  .box-shadow(@shadowWidget);
   h3 {
-    color: lighten(@gray,15%);
-    padding: 6px 12px;
-  }
-  p {
-    margin: 12px;
-    color: @gray;
+    font-size: @fontSizeLarge;
+    padding: 0px 10px 10px 10px;
+    margin: 0 -10px 10px -10px;
+    line-height: @baseLineHeight;
+    border-bottom: 1px solid darken(@grayLighter,10%);
+    font-weight: normal;
   }
 }

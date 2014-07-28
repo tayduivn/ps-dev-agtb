@@ -115,12 +115,12 @@
         };
         this.chartCollection.data.push({
             key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
-            class: 'nv-fill-green',
+            classes: 'nv-fill-green',
             value: countClosedCases
         });
         this.chartCollection.data.push({
             key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
-            class: 'nv-fill-red',
+            classes: 'nv-fill-red',
             value: countOpenCases
         });
 

@@ -4,7 +4,9 @@
 .dropdown-menu {
   top: 34px;
   padding: 0;
-  .border-radius(4px);
+  border: @borderWidget;
+  .box-shadow(@shadowWidget);
+  .border-radius(@baseBorderRadius);
   .rtlLeft(@direction,auto);
   .rtlRight(@direction,-4px);
   &.left {
@@ -23,7 +25,7 @@
   h4.title {
     margin-top: -5px;
     padding: 5px 10px;
-    text-shadow: 0 -1px 1px rgba(0,0,0,0.8);
+    text-shadow: none;
     font-size: @baseFontSize;
     color: @white !important;
     #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
@@ -77,11 +79,11 @@
   a.disabled,
   a.disabled:hover {
     color: @grayLight;
+    background-color: @grayLighter;
   }
   // Nuke hover effects
   a.disabled:hover {
     text-decoration: none;
-    background-color: transparent;
     background-image: none; // Remove CSS gradient
     cursor: default;
     color: @grayLight;
@@ -110,7 +112,7 @@
     //this causes sharp corners on dropdown-menu
     //fixed by setting border radius on li > a
     background: @dropdownLinkBackgroundHover;
-    //background-color: transparent;
+    filter: none;
   }
 
   label.radio {
@@ -130,7 +132,7 @@
   li.divider {
     margin: 0;
     padding: 0;
-    border-bottom: 1px solid lighten(@grayLight,10%);
+    border-bottom: @borderWidget;
     height: 0;
   }
 
@@ -195,14 +197,14 @@
   padding-right: 0;
   padding-top: 3px;
   a {
-    border-bottom: 1px solid darken(@grayLighter, 10%);
+    border-bottom: @borderWidget;
     color: @gray;
   }
   li:first-child a {
     .border-radius(0);
   }
   li:last-child a {
-    border-bottom: 1px solid darken(@grayLight, 10%);
+    border-bottom: @borderWidget;
     .border-radius(0);
   }
   li > a {
