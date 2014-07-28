@@ -382,7 +382,6 @@ VardefManager::createVardef(
         'team_security',
         //END SUGARCRM flav=pro ONLY
         'issue',
-        'taggable',
     )
 );
 
