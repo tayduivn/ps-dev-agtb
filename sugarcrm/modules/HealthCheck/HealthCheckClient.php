@@ -17,7 +17,7 @@ require_once 'include/SugarHttpClient.php';
  */
 class HealthCheckClient extends SugarHttpClient
 {
-    const ENDPOINT = "https://updates.sugarcrm.com/sortinghat.php";
+    const DEFAULT_ENDPOINT = "https://updates.sugarcrm.com/sortinghat.php";
 
     /**
      * @param $key
@@ -26,11 +26,23 @@ class HealthCheckClient extends SugarHttpClient
      */
     public function send($key, $logFilePath)
     {
-        $response = $this->callRest(self::ENDPOINT, array(
+        $response = $this->callRest($this->getEndpoint(), array(
                 'key' => $key,
                 "log" => "@$logFilePath",
         ));
 
         return strpos($response, "Saved:") !== false;
+    }
+
+    /**
+     * Returns endpoint
+     * reads $sugar_config['healthcheck']['endpoint']
+     * default is HealthCheckClient::DEFAULT_ENDPOINT
+     *
+     * @return string
+     */
+    protected function getEndpoint()
+    {
+        return SugarConfig::getInstance()->get('healthcheck.endpoint', self::DEFAULT_ENDPOINT);
     }
 }
