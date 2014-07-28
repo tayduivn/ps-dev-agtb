@@ -881,7 +881,7 @@ class OracleManager extends DBManager
     {
         $type = strtolower($type);
         $ctype = $this->getColumnType($type);
-        return ($type == 'clob' ||  $type == 'clob' || $type == 'blob' || $ctype == 'blob');
+        return $type == 'clob' || $ctype == 'clob' || $type == 'blob' || $ctype == 'blob';
     }
 
     /**
