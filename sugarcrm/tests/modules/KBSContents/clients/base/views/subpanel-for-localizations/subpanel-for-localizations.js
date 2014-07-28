@@ -60,7 +60,7 @@ describe('KBSContents.Base.Views.SubpanelForLocalizations', function() {
                 return true;
             });
             view.initialize({});
-            expect(contextSetStub).not.toHaveBeenCalled();
+            expect(contextSetStub).not.toHaveBeenCalledWith('requiredFilter', 'records-noedit');
         });
     });
 
