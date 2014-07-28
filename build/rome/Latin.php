@@ -1,94 +1,102 @@
 <?php
 
-class Latin{
+class Latin
+{
 
-	function __construct($rome, $translationPath, $baseDir, $ver){
-		$this->translationPath = $translationPath;
-		$this->rome = $rome;
-		$this->baseDir = realpath($baseDir);
-		$this->ver = $ver;
-		if(empty($this->startPath))$this->startPath = $this->baseDir;
-
-	}
-
-	function updateGit(){
-		$this->cwd = getcwd();
-		 if(!file_exists($this->translationPath)){
-                        chdir(dirname($this->translationPath));
-                        passthru("git clone git@github.com:sugarcrm/translations");
-         }
-        chdir(realpath($this->cwd ."/". $this->translationPath));
-		
-		passthru("git checkout master");
-		passthru("git fetch -a");
-		passthru("git reset --hard");
-
-        $translationBranch = "master";
-
-        if (version_compare($this->ver, "7.6.0", ">=")) {
-            $translationBranch = "7_b";     // 7_b is the translation branch for all versions >= 7.6
+    public function __construct($rome, $translationPath, $baseDir, $ver, $no_latin_scm)
+    {
+        $this->translationPath = $translationPath;
+        $this->rome = $rome;
+        $this->baseDir = realpath($baseDir);
+        $this->ver = $ver;
+        $this->no_latin_scm = $no_latin_scm;
+        if (empty($this->startPath)) {
+            $this->startPath = $this->baseDir;
         }
-        else if (version_compare($this->ver, "7.0.0", ">")) {
-            $translationBranch = "7_0";     // 7_0 is the translation branch for all versions > 7.0 and <= 7.5
+    }
+
+    private function updateGit()
+    {
+        if (!file_exists($this->translationPath)) {
+            chdir(dirname($this->translationPath));
+            passthru("git clone git@github.com:sugarcrm/translations");
+        }
+        chdir(realpath($this->cwd . "/" . $this->translationPath));
+        
+        passthru("git checkout master");
+        passthru("git fetch -a");
+        passthru("git reset --hard");
+        if (preg_match("/(\d+).(\d+).(\d+)(.*)/", $this->ver, $matchesVer)) {
+            $translationBranch = $matchesVer[1] . "_0";
+            exec("git branch -r", $remoteBranches);
+
+            if (preg_grep("/$translationBranch/", $remoteBranches)) {
+                passthru("git checkout origin/" . $translationBranch);
+            } else {
+                passthru("git checkout origin/" . "master");
+            }
+        } else {
+            passthru("git checkout master");
+            passthru("git pull origin master");
+        }
+    }
+
+    private function copyFiles($path)
+    {
+        require($this->cwd . "/" . $this->translationPath . '/config_override.php');
+        $langConfig = array();
+        $dir = new DirectoryIterator($path);
+        foreach ($dir as $fileInfo) {
+            if ($fileInfo->isDot()) {
+                continue;
+            }
+            if ($fileInfo->isDir()) {
+                $this->copyFiles($fileInfo->getPathname());
+            } else {
+                foreach ($this->rome->config['builds'] as $flav => $build) {
+
+                    if (empty($build['languages'])) {
+                        continue;
+                    }
+                    foreach ($build['languages'] as $lang) {
+                        if (strpos($fileInfo->getFilename(), $lang . '.') !== false) {
+                            $path = $fileInfo->getPathname();
+                            $path = realpath($path);
+                            $path = str_replace($this->baseDir . '/', '', $path);
+                            $this->rome->setOnlyBuild($flav);
+                            $this->rome->setStartPath($this->startPath);
+                            $lpath = str_replace("$lang.", 'en_us.', $this->rome->cleanPath("{$this->baseDir}/$path"));
+                            $en_usPath = "{$this->rome->buildPath}/$flav/$lpath";
+                            if (file_exists($en_usPath)) {
+                                $this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
+                            }
+                        }
+                        if (!empty($sugar_config['languages'][$lang])) {
+                            $langConfig[$lang] = $sugar_config['languages'][$lang];
+                        } else {
+                            $langConfig[$lang] = $lang;
+                        }
+                    }
+                    $lic_cont = trim(file_get_contents($this->baseDir . '/sugarcrm/LICENSE'));
+                    $subbed_lic = str_replace(PHP_EOL, PHP_EOL . ' * ', $lic_cont);
+                    $license = '/*' . PHP_EOL . ' * ' . $subbed_lic . PHP_EOL . ' */' . PHP_EOL;
+                    $lang_config_path = "{$this->rome->buildPath}/$flav/sugarcrm/install/lang.config.php";
+                    $config_vars = var_export($langConfig, true);
+                    file_put_contents($lang_config_path, "<?php\n$license\n" . '$config["languages"]=' . "$config_vars;");
+                }
+            }
+        }
+    }
+
+    public function copyTranslations()
+    {
+        $this->cwd = getcwd();
+        if ($this->no_latin_scm == false) {
+            $this->updateGit();
         }
 
-        exec("git branch -r", $remoteBranches);
-        if (preg_grep("/$translationBranch/", $remoteBranches)) {
-            passthru("git checkout $translationBranch");
-            passthru("git pull origin $translationBranch");
-        }
-	}
-
-	function copyFiles($path){
-		require($this->cwd ."/". $this->translationPath . '/config_override.php');
-		$langConfig = array();
-		$dir = new DirectoryIterator($path);
-		foreach ($dir as $fileInfo) {
-    		if($fileInfo->isDot()) continue;
-    		if($fileInfo->isDir()){
-    			 $this->copyFiles($fileInfo->getPathname());
-    		}else{
-    			foreach($this->rome->config['builds'] as $flav=>$build){
-
-					if(empty($build['languages']))continue;
-					foreach($build['languages'] as $lang){
-	   					if(strpos($fileInfo->getFilename(), $lang. '.') !== false){
-    						$path = $fileInfo->getPathname();
-    						$path = realpath($path);
-    						$path = str_replace($this->baseDir . '/','', $path);
-    						$this->rome->setOnlyBuild($flav);
-    						$this->rome->setStartPath($this->startPath);
-    						$en_usPath =$this->rome->buildPath . '/' . $flav . '/'. str_replace($lang . '.', 'en_us.',$this->rome->cleanPath($this->baseDir . '/' . $path));
-    						if(file_exists($en_usPath)){
-    							$this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
-
-    						}
-	   					}
-	   					$langConfig[$lang] = (!empty($sugar_config['languages'][$lang]))?$sugar_config['languages'][$lang]:$lang;
-
-					}
-					$license = '/*' . PHP_EOL . ' * ' . str_replace(PHP_EOL, PHP_EOL . ' * ', trim(file_get_contents($this->baseDir . '/sugarcrm/LICENSE'))) . PHP_EOL . ' */' . PHP_EOL;
-
-					file_put_contents($this->rome->buildPath . '/' . $flav . '/sugarcrm/install/lang.config.php', '<?php' . "\n$license\n" . '$config["languages"]=' . var_export($langConfig, true)  . ';');
-
-    			}
-    		}
-		}
-
-	}
-
-	function copyTranslations(){
-		$this->updateGit();
-
-		$tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
-		$this->copyFiles($tmp_path);
-		chdir($this->cwd);
-	}
-
-
+        $tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
+        $this->copyFiles($tmp_path);
+        chdir($this->cwd);
+    }
 }
-
-
-
-
-?>
