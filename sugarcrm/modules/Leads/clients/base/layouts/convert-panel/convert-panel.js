@@ -443,7 +443,8 @@
         var targetFields = app.metadata.getModule(this.meta.module, 'fields');
 
         _.each(model.attributes, function(fieldValue, fieldName) {
-            if (!_.isUndefined(sourceFields[fieldName]) &&
+            if (app.acl.hasAccessToModel("edit", this.createView.model, fieldName) &&
+                !_.isUndefined(sourceFields[fieldName]) &&
                 !_.isUndefined(targetFields[fieldName]) &&
                 sourceFields[fieldName].type === targetFields[fieldName].type &&
                 (_.isUndefined(sourceFields[fieldName]['duplicate_on_record_copy']) ||
