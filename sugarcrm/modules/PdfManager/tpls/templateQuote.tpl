@@ -83,7 +83,11 @@
 <td align="right" width="70%">{literal}{$product.list_price}{/literal}</td>
 <td align="right" width="70%">{literal}{$product.discount_price}{/literal}</td>
 <td align="right" width="70%">{literal}{$product.ext_price}{/literal}</td>
-<td align="right" width="70%">{literal}{$product.discount_amount}{/literal}</td>
+<td align="right" width="70%">{literal}{if $product.discount_select}
+			         {sugar_number_format var=$product.discount_amount}%
+			     {else}
+			        {sugar_currency_format var=$product.discount_amount currency_id=$product.currency_id}
+			     {/if}{/literal}</td>
 </tr>
 <!--END_PRODUCT_LOOP--></tbody>
 </table>
