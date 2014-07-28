@@ -123,7 +123,7 @@
         font-size: 12px;
         font-weight: normal;
         text-decoration: none;
-        color: fade(@white, 50%);
+        color: fade(@white, 70%);
         background: none;
         line-height: 12px;
         position: static;
@@ -137,11 +137,11 @@
         content: "\f057";
       }
       &.select2-locked {
-        padding: 0 !important;
+        padding: 1px 4px !important;
+        background: @grayLighter;
+        border: 1px solid @gray;
         div {
-          padding-right: 6px;
           color: @gray;
-          background: @grayLighter;
         }
       }
     }
@@ -151,11 +151,25 @@
         padding: 2px 28px 2px 6px;
       }
     }
+    //forecasts
     &.search-filter .select2-search-choice {
       margin: 0 0 4px 4px;
+      background: none;
+      padding: 0;
+      position: relative;
       a.select2-search-choice-close {
-        top: 6px;
+        top: 2px;
+        position: absolute;
         right: 4px;
+        left: auto;
+        &::before {
+          line-height: 14px;
+          height: 14px;
+          vertical-align: top;
+          display: inline-block;
+          margin-top: 3px;
+          font-size: 14px;
+        }
       }
       div {
         background: none;

@@ -35,7 +35,7 @@
   .choice-related,
   .choice-filter {
     .border-radius(0 10px 10px 0);
-    padding: 4px 6px 4px 4px;
+    padding: 4px;
     display: inline-block;
     height: 12px;
     white-space: nowrap;
@@ -43,20 +43,20 @@
     margin-left: -6px;
     font-size: @fontSizeSmall;
     font-weight: bold;
-    line-height: 14px;
+    line-height: 13px;
     vertical-align: top;
     .choice-filter-label {
       vertical-align: top;
     }
     .choice-filter-close {
       margin-left: 2px;
-      margin-right: -2px;
+      margin-right: 0;
       font-size: 14px;
       vertical-align: top;
       i {
         color: fade(@white, 70%);
         line-height: 12px;
-        vertical-align: middle;
+        vertical-align: top;
         &:hover {
           color: @white;
           cursor: pointer;
@@ -120,7 +120,7 @@
         padding: 4px 4px 4px 6px;
         margin-right: 5px;
         margin-top: 3px;
-        line-height: 12px;
+        line-height: 13px;
         height: 12px;
         background: @grayLighter;
         i[class^="icon-"] {
