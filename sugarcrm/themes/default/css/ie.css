@@ -20,6 +20,10 @@
 	display: table;
 }
 
+.dataTable {
+    table-layout: fixed;
+}
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;
