@@ -882,8 +882,12 @@ class SugarTestHelper
 
         self::$customFields[] = array($dynamicField, $field);
 
+        $mi = new ModuleInstaller();
+        $mi->silent = true;
+        $mi->rebuild_extensions();
+
         $objectName = BeanFactory::getObjectName($module);
-        VardefManager::clearVardef($module, $objectName);
+        VardefManager::loadVardef($module, $objectName, true);
 
         $GLOBALS['reload_vardefs'] = true;
     }
@@ -900,9 +904,17 @@ class SugarTestHelper
         foreach (self::$customFields as $data) {
             list($dynamicField, $field) = $data;
             $dynamicField->deleteField($field);
+
+            $module = $dynamicField->module;
+            $objectName = BeanFactory::getObjectName($module);
+            VardefManager::loadVardef($module, $objectName, true);
         }
 
         self::$customFields = array();
+
+        $mi = new ModuleInstaller();
+        $mi->silent = true;
+        $mi->rebuild_extensions();
     }
 
     const NOFILE_DATA = '__NO_FILE__';
