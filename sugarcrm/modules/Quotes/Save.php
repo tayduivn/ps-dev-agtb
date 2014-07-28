@@ -101,28 +101,22 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
         $pb->id = $total_keys[$k];
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $pb->team_id = $focus->team_id;
     $pb->team_set_id = $focus->team_set_id;
-    //END SUGARCRM flav=pro ONLY
-
-    $pb->tax = (string)unformat_number($_REQUEST['tax'][$total_keys[$k]]);
     $pb->shipping = (string)unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
-    $pb->subtotal = (string)unformat_number($_REQUEST['subtotal'][$total_keys[$k]]);
-    $pb->deal_tot = (string)unformat_number($_REQUEST['deal_tot'][$total_keys[$k]]);
-    $pb->new_sub = (string)unformat_number($_REQUEST['new_sub'][$total_keys[$k]]);
-    $pb->total = (string)unformat_number($_REQUEST['total'][$total_keys[$k]]);
     $pb->currency_id = $focus->currency_id;
+    $pb->taxrate_id = $focus->taxrate_id;
     $pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
     $pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
 
     // Bug 54931. Grand Total for custom groups too.
-    $focus->tax = SugarMath::init($focus->tax, 6)->add($pb->tax)->result();
+    /*$focus->tax = SugarMath::init($focus->tax, 6)->add($pb->tax)->result();
     $focus->shipping = SugarMath::init($focus->shipping, 6)->add($pb->shipping)->result();
     $focus->subtotal = SugarMath::init($focus->subtotal, 6)->add($pb->subtotal)->result();
     $focus->deal_tot = SugarMath::init($focus->deal_tot, 6)->add($pb->deal_tot)->result();
     $focus->new_sub = SugarMath::init($focus->new_sub, 6)->add($pb->new_sub)->result();
     $focus->total = SugarMath::init($focus->total, 6)->add($pb->total)->result();
+    */
 
     $product_bundels[$total_keys[$k]] = $pb->save();
     if (substr_count($total_keys[$k], 'group_') > 0) {
@@ -148,6 +142,7 @@ if (isset($_POST['delete_table'])) {
 //Fix bug 25509
 $focus->process_save_dates = true;
 
+/* @var $pb ProductBundle */
 $pb = BeanFactory::getBean('ProductBundles');
 for ($i = 0; $i < $product_count; $i++) {
 
@@ -201,6 +196,7 @@ for ($i = 0; $i < $product_count; $i++) {
                         }
                     }
                 }
+
                 $product->currency_id = $focus->currency_id;
 
                 //BEGIN SUGARCRM flav=pro ONLY
@@ -245,6 +241,17 @@ if (isset($GLOBALS['check_notify'])) {
 } else {
     $check_notify = false;
 }
+
+// we need to resave all the product bundles, so sugarlogic works.
+foreach ($product_bundels as $bundle_key) {
+    $pb = BeanFactory::getBean('ProductBundles', $bundle_key);
+    // if the products link is already load, we need to usnet it so we get the fresh values from the db.
+    if (isset($pb->products)) {
+        unset($pb->products);
+    }
+    $pb->save();
+}
+
 $focus->save($check_notify);
 
 $return_id = $focus->id;

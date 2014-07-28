@@ -197,6 +197,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "subtotal")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'subtotal_usdollar' => array(
             'name' => 'subtotal_usdollar',
@@ -233,6 +236,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "shipping")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'shipping_usdollar' => array(
             'name' => 'shipping_usdollar',
@@ -275,6 +281,9 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,2',
+            'formula' => 'rollupCurrencySum($product_bundles, "deal_tot")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'deal_tot_usdollar' => array(
             'name' => 'deal_tot_usdollar',
@@ -305,6 +314,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "new_sub")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'new_sub_usdollar' => array(
             'name' => 'new_sub_usdollar',
@@ -339,6 +351,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "tax")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'tax_usdollar' => array(
             'name' => 'tax_usdollar',
@@ -371,6 +386,9 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            'formula' => 'rollupCurrencySum($product_bundles, "total")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'total_usdollar' => array(
             'name' => 'total_usdollar',

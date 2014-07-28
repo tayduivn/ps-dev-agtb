@@ -109,6 +109,14 @@ $dictionary['TaxRate'] = array(
     'importable' => 'required',
     'required' => true,
   ),
+      'product_bundles' => array(
+          'name' => 'product_bundles',
+          'type' => 'link',
+          'relationship' => 'product_bundle_taxrate',
+          'module' => 'ProductBundles',
+          'bean_name' => 'ProductBundle',
+          'source' => 'non-db'
+      )
 ),
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Quotes', 'allowUserRead' => true)),
 'indices' => array (
