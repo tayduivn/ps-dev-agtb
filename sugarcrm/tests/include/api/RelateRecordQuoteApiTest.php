@@ -76,16 +76,20 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    private function fillAddressForContact($address = 'primary')
+    private function fillAddressForContact($address = 'primary', $bean = null)
     {
+        if (is_null($bean)) {
+            $bean = $this->_contact;
+        }
+
         $address = in_array($address, array('primary', 'alt')) ? $address : 'primary';
         $time = time();
         foreach ( $this->_address_fields as $_field )
         {
             $_field = $address.'_'.$_field;
-            $this->_contact->$_field = $_field.$time;
+            $bean->$_field = $_field.$time;
         }
-        $this->_contact->save(false);
+        $bean->save(false);
     }
 
     private function createAccountForContact()
@@ -267,6 +271,7 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateRelatedQuoteToContactWithAccount()
     {
         $this->createAccountForContact();
+        $this->fillAddressForContact('primary', $this->_account);
         $this->fillAddressForContact();
 
         $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
@@ -289,12 +294,13 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
         $address_types = array('shipping', 'billing');
         foreach ( $address_types as $_type )
         {
+            $bean = ($_type === 'billing') ? $this->_account : $this->_contact;
             foreach ( $this->_address_fields as $_field )
             {
                 $_field_to_check = 'primary_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
-                $this->assertEquals($this->_contact->$_field_to_check, $result['related_record'][$_field]);
+                $this->assertEquals($bean->$_field_to_check, $result['related_record'][$_field]);
             }
         }
     }
