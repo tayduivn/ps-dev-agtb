@@ -148,6 +148,8 @@ class KBSContent extends SugarBean {
             $this->active_rev = (int) empty($this->kbsarticle_id);
         }
 
+        $this->checkActivRev();
+
         return parent::save($check_notify);
     }
 
@@ -183,6 +185,46 @@ class KBSContent extends SugarBean {
     }
 
     /**
+     * Checks if current article was published.
+     * @return bool
+     */
+    protected function isPublished()
+    {
+        $published = array('published-in', 'published-ex', 'published');
+        if(empty($this->id) || !empty($this->new_with_id)) {
+            return in_array($this->status, $published);
+        } else {
+            $dataChanges = $this->db->getDataChanges($this);
+            if (!isset($dataChanges['status'])) {
+                return false;
+            }
+            return in_array($dataChanges['status']['after'], $published) &&
+            !in_array($dataChanges['status']['before'], $published);
+        }
+    }
+
+    /**
+     * Check is current document active revision or not.
+     * Marks all previous revisions as non-active.
+     * Marks all previous published revisions as expired.
+     * @param SugarBean $bean
+     */
+    protected function checkActivRev($bean = null)
+    {
+        $bean = ($bean === null) ? $this : $bean;
+        if (empty($bean->kbsarticle_id)) {
+            $bean->active_rev = 1;
+        } elseif ($bean->isPublished()) {
+            $bean->resetActivRev();
+            $bean->active_rev = 1;
+            $bean->expirePublished();
+            if (empty($bean->active_date)) {
+                $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+            }
+        }
+    }
+
+    /**
      * Reset active revision status for all revisions in article.
      * @param SugarBean $bean
      */
@@ -194,6 +236,26 @@ class KBSContent extends SugarBean {
                     WHERE
                       kbsdocument_id = {$bean->db->quoted($bean->kbsdocument_id)} AND
                       kbsarticle_id = {$bean->db->quoted($bean->kbsarticle_id)}
+                ";
+        $bean->db->query($query);
+    }
+
+    /**
+     * Expire all published articles.
+     * @param SugarBean $bean
+     */
+    protected function expirePublished($bean = null)
+    {
+        $bean = ($bean === null) ? $this : $bean;
+        $expDate = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
+        $publishStatuses = implode("', '", array('published-in', 'published-ex', 'published'));
+        $query = "UPDATE {$bean->table_name}
+                    SET exp_date = {$expDate}, status = {$bean->db->quoted("expired")}
+                    WHERE
+                      kbsdocument_id = {$bean->db->quoted($bean->kbsdocument_id)} AND
+                      kbsarticle_id = {$bean->db->quoted($bean->kbsarticle_id)} AND
+                      id != {$bean->db->quoted($bean->id)} AND
+                      status IN ('{$publishStatuses}')
                 ";
         $bean->db->query($query);
     }
