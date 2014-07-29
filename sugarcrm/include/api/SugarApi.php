@@ -395,6 +395,16 @@ abstract class SugarApi {
                                 $fields[] = $fieldDefs[$field]['type_name'];
                             }
                             break;
+                        case 'url':
+                            if (!empty($fieldDefs[$field]['default'])) {
+                                preg_match_all('/{([^{}]+)}/', $fieldDefs[$field]['default'], $matches);
+                                foreach ($matches[1] as $match) {
+                                    if (!empty($match) && !empty($fieldDefs[$match])) {
+                                        $fields[] = $match;
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
             }

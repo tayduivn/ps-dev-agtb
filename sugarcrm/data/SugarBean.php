@@ -3390,6 +3390,26 @@ class SugarBean
                 }
             }
 
+            if ($this->createLocaleFormattedName == true && $field_value['type'] == 'fullname' && empty($this->$field)) {
+                $bean = BeanFactory::getBean($this->module_name);
+                if ($bean) {
+                    $rname = isset($field_value['rname']) ? $field_value['rname'] : 'name';
+                    if (isset($this->field_defs[$rname])) {
+                        $rname_field_def = $this->field_defs[$rname];
+                        if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
+                            $data = array();
+                            $name_format_fields = $locale->getNameFormatFields($this->module_name);
+                            foreach ($name_format_fields as $name_field) {
+                                if (isset($row[$name_field])) {
+                                    $data[$name_field] = $row[$name_field];
+                                }
+                            }
+                            $this->$field = $locale->formatName($bean, $data);
+                        }
+                    }
+                }
+            }
+
             if (isset($field_value['type']) && $field_value['type'] === 'encrypt') {
                 $this->preprocess_encrypt_before_get($field);
             }
