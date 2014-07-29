@@ -51,6 +51,34 @@ class QuotesApiHelper extends SugarBeanApiHelper
             in_array($submittedData['module'], $valid_relate_modules) &&
             isset($submittedData['record'])) {
             $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $bean);
+        } else {
+            // we are not on a related record, so lets check the field and fill in the data correctly
+            $hasBillingAccountId = (isset($bean->billing_account_id) && !empty($bean->billing_account_id));
+            $hasShippingAccountId = (isset($bean->shipping_account_id) && !empty($bean->shipping_account_id));
+            $hasBillingContactId = (isset($bean->billing_contact_id) && !empty($bean->billing_contact_id));
+            $hasShippingContactId = (isset($bean->shipping_contact_id) && !empty($bean->shipping_contact_id));
+
+            if ($hasBillingAccountId) {
+                $account = BeanFactory::getBean('Accounts', $bean->billing_account_id);
+                $this->processBeanAddressFields($account, $bean, 'billing', 'billing', 'shipping');
+            } else if (!$hasBillingAccountId && $hasBillingContactId) {
+                $contact = BeanFactory::getBean('Contacts', $bean->billing_contact_id);
+                $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+            }
+
+            if (!$hasShippingAccountId && !$hasShippingContactId && $hasBillingAccountId) {
+                // we don't have a id set for the shipping account or contact, pull the account from the billing
+                $bean->shipping_account_id = $bean->billing_account_id;
+                $hasShippingAccountId = true;
+            }
+
+            if ($hasShippingAccountId && !$hasShippingContactId) {
+                $account = BeanFactory::getBean('Accounts', $bean->shipping_account_id);
+                $this->processBeanAddressFields($account, $bean, 'shipping', 'shipping', 'billing');
+            } else if ($hasShippingContactId) {
+                $contact = BeanFactory::getBean('Contacts', $bean->shipping_contact_id);
+                $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+            }
         }
 
         return true;
