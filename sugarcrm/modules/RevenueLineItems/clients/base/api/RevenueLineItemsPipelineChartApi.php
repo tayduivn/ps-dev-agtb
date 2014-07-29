@@ -134,7 +134,7 @@ class RevenueLineItemsPipelineChartApi extends SugarApi
             }
 
             // convert to the base currency
-            $base_amount = SugarCurrency::convertAmountToBase($row['likely_case'], $row['base_rate']);
+            $base_amount = SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate']);
 
             // add the new value into what was already there
             $data[$row['sales_stage']]['total'] = SugarMath::init($data[$row['sales_stage']]['total'], 0)->add(
