@@ -351,4 +351,35 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
+
+    public function testCreateRelatedQuoteToAccount()
+    {
+        $this->_account = SugarTestAccountUtilities::createAccount();
+        $this->fillAddressForAccount();
+        $this->fillAddressForAccount('shipping');
+        $this->_args = array(
+            "module" => "Accounts",
+            "record" => $this->_account->id,
+            "link_name" => "quotes",
+            "name" => $this->_quoteName,
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
+        );
+
+        $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
+
+        // contact has account and billing address should be populated
+        // shipping and billing address are populated from primary address of contact
+        $address_types = array('shipping', 'billing');
+        foreach ( $address_types as $_type )
+        {
+            foreach ( $this->_address_fields as $_field )
+            {
+                $_field_to_check =  $_type.'_'.$_field;
+                $_field = $_type.'_'.$_field;
+                $this->assertArrayHasKey($_field, $result['related_record']);
+                $this->assertEquals($this->_account->$_field_to_check, $result['related_record'][$_field]);
+            }
+        }
+    }
 }

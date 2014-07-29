@@ -44,8 +44,12 @@ class QuotesApiHelper extends SugarBeanApiHelper
     {
         parent::populateFromApi($bean, $submittedData, $options);
 
+        // valid relate modules
+        $valid_relate_modules = array('Contacts', 'Accounts');
         // Bug #57888 : REST API: Create related quote must populate billing/shipping contact and account
-        if (isset($submittedData['module']) && $submittedData['module'] == 'Contacts' && isset($submittedData['record'])) {
+        if (isset($submittedData['module']) &&
+            in_array($submittedData['module'], $valid_relate_modules) &&
+            isset($submittedData['record'])) {
             $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $bean);
         }
 
@@ -62,17 +66,26 @@ class QuotesApiHelper extends SugarBeanApiHelper
     protected function setAddressFromBean($fromModule, $fromId, SugarBean $bean)
     {
         $fromBean = BeanFactory::getBean($fromModule, $fromId);
-        $bean->shipping_contact_id = $fromId;
-        $bean->billing_contact_id = $fromId;
+        if ($fromModule == 'Contacts') {
+            $bean->shipping_contact_id = $fromId;
+            $bean->billing_contact_id = $fromId;
+            $type_key = 'primary';
+            $alt_type_key = 'alt';
+        } elseif ($fromModule == 'Accounts') {
+            $bean->billing_account_id = $fromId;
+            $bean->shipping_account_id = $fromId;
+            $type_key = 'shipping';
+            $alt_type_key = 'billing';
+        }
 
         // set the shipping address first
-        $type_key = ($fromModule == 'Accounts') ? 'shipping' : 'primary';
-        $alt_type_key = ($fromModule == 'Accounts') ? 'billing' : 'alt';
         $this->processBeanAddressFields($fromBean, $bean, 'shipping', $type_key, $alt_type_key);
 
-        // change the type key for the billing address
-        $type_key = ($fromModule == 'Accounts') ? 'billing' : 'primary';
-        $alt_type_key = ($fromModule == 'Accounts') ? 'shipping' : 'alt';
+        // change the type key for the billing address, when we are pulling from Accounts
+        if ($fromModule == 'Accounts') {
+            $type_key = 'billing';
+            $alt_type_key = 'shipping';
+        }
 
         // if the initial bean has an account set on it, we need to to set the billing address
         // to the account address fields vs the contact address fields.
@@ -111,7 +124,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
                 $bean->$beanField,
                 $fromBean,
                 $type . "_address_" . $field,
-                $alt_type  . "_address_" . $field
+                $alt_type . "_address_" . $field
             );
         }
     }
