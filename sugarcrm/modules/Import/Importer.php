@@ -794,6 +794,11 @@ class Importer
     {
         global $timedate, $current_user;
 
+        // If the field we're examining is a relate, don't return a default value.
+        if ($fieldDef['type'] == 'relate') {
+            return '';
+        }
+
         if ( is_array($fieldValue) )
             $defaultRowValue = encodeMultienumValue($fieldValue);
         else
