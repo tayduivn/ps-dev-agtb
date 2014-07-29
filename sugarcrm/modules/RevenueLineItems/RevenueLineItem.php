@@ -407,11 +407,6 @@ class RevenueLineItem extends SugarBean
             $product->discount_price = $this->likely_case;
         }
 
-        if (empty($this->discount_select) && !empty($product->discount_amount)) {
-            // no percentage, so just calculate it
-            $product->discount_amount = SugarMath::init($product->discount_amount)->div($product->quantity)->result();
-        }
-
         return $product;
     }
 
