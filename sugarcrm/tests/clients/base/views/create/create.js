@@ -1,4 +1,4 @@
-describe("Create View", function() {
+describe('Base.View.Create', function() {
     var app,
         moduleName = 'Contacts',
         viewName = 'create',
