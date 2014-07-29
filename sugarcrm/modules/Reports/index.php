@@ -173,7 +173,7 @@ function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $has
 				return $hasAccess;
 			} // if
 		}
-		else {
+		else if(!empty($full_table_list[$current_filter['table_key']]['module'])){
 			$col_module = $full_table_list[$current_filter['table_key']]['module'];
 
             if (
