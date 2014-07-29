@@ -16,6 +16,13 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
     public $type = self::UPGRADE_DB;
 
     /**
+     * The Opportunities that have already been processed, they shouldn't be processed again.
+     *
+     * @var array
+     */
+    protected $processed_opportunities = array();
+
+    /**
      * Run the Upgrade Task
      *
      * The reason we need to do before task 2100 (where the Repair and Rebuild happens
@@ -192,8 +199,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    WHERE p.opportunity_id IS NOT NULL 
                    AND (p.quote_id IS NULL OR p.quote_id = '')";
             $results = $this->db->query($sql);
-            $count = $this->db->getAffectedRowCount($results);
-            $this->insertRows($results);
+            $count = $this->insertRows($results);
 
             $this->log('Done migrating ' . $count . ' 6.7 Products with Opportunities and without Quotes.');
 
@@ -272,8 +278,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    INNER JOIN opportunities o 
                    ON o.id = qo.opportunity_id";
             $results = $this->db->query($sql);
-            $count = $this->db->getAffectedRowCount($results);
-            $this->insertRows($results);
+            $count = $this->insertRows($results);
             $this->log('Done migrating ' . $count . ' 6.7 Products assigned to Quotes that have Opportunities.');
         }
 
@@ -284,6 +289,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
      * Process all the results and insert them back into the db
      *
      * @param resource $results
+     * @return integer The Number of rows inserted into the revenue_line_items table
      */
     protected function insertRows($results)
     {
@@ -295,7 +301,18 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
 
         $columns = null;
 
+        // how many rows did we process, this is returned from this method
+        $processed = 0;
+
         while ($row = $this->db->fetchByAssoc($results)) {
+
+            if (in_array($row['opportunity_id'], $this->processed_opportunities)) {
+                $this->log('Skipping Product: ' . $row['name'] . ' with opportunity_id: ' . $row['opportunity_id']);
+                continue;
+            }
+            $this->processed_opportunities[] = $row['opportunity_id'];
+            $processed++;
+
             if (is_null($columns)) {
                 // get the column names
                 $columns = join(',', array_keys($row));
@@ -310,6 +327,8 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
         }
 
         $this->relateProductToRevenueLineItem($productToRliMapping);
+
+        return $processed;
     }
 
     /**

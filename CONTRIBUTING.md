@@ -33,7 +33,7 @@ Before working with SugarCRM, setup your environment with the following software
 
 * Git;
 * PHP version 5.3.3+;
-* PHPUnit 3.6.4+.
+* Composer.
 
 #### Configure Git
 
@@ -65,6 +65,14 @@ $ git config --global user.email you@example.com
 > ```
 >
 > Replace `--global` by `--local` if you want to set it only for the active repository.
+
+#### Installing Composer
+
+Composer is a tool for dependency management in PHP. It allows you to declare the dependent libraries your project needs and it will install them in your project for you.
+
+SugarCRM requires composer to manage its dev dependencies and provide better support on versioning across external libraries, while allowing easier maintenance when keeping those libraries up to date.
+
+To install composer, please follow the official information provided in the [composer page][Composer install]. It has all the information available to install composer in your system.
 
 #### Get the SugarCRM Source Code
 
@@ -294,7 +302,7 @@ To run the SugarCRM test suite, install the several flavors of Sugar (CE, PRO, E
 Then, run the test suite from the `tests` root directory of the installed instance with the following command:
 
 ```bash
-$ phpunit
+$ php ../vendor/bin/phpunit
 ```
 
 The output should display `OK`. If not, you need to figure out what's going on and if the tests are broken because of your modifications.
@@ -302,7 +310,7 @@ The output should display `OK`. If not, you need to figure out what's going on a
 > If you want to test a single component type its path after the `phpunit` command, e.g.:
 >
 > ```bash
-> $ phpunit include/SugarOAuth2StorageTest.php
+> $ php ../vendor/bin/phpunit include/SugarOAuth2StorageTest.php
 > ```
 >
 > Run the test suite before applying your modifications to check that they run fine on your configuration.
@@ -312,7 +320,7 @@ The output should display `OK`. If not, you need to figure out what's going on a
 If you add a new feature, you also need to check the code coverage by using the `coverage-html` option:
 
 ```bash
-$ phpunit --coverage-html=cov/
+$ php ../vendor/bin/phpunit --coverage-html=cov/
 ```
 
 Check the code coverage by opening the generated `cov/index.html` page in a browser.
@@ -328,3 +336,5 @@ Check the code coverage by opening the generated `cov/index.html` page in a brow
 [GitHub Doc Ignoring Files]: https://help.github.com/articles/ignoring-files
 [GitHub using pull requests]: https://help.github.com/articles/using-pull-requests
 [GitHub interactive rebase]: https://help.github.com/articles/interactive-rebase
+
+[Composer install]: https://getcomposer.org/doc/00-intro.md

@@ -19,6 +19,8 @@ class Rome {
     //LANGUAGE BUILDS (never reset)
     protected  $onlyBuild = array();
 
+    protected $symlinks = array();
+
 /**
  * Construct that loads the config file
  * @return unknown_type
@@ -390,6 +392,9 @@ protected function getTags(){
 public function buildFile ($path, $startPath, $skipBuilds = array() ){
     if(!$this->isFile($path)) {
         $this->quickCopy($path, $skipBuilds);
+    } elseif ($this->isLink($path)) {
+        $linkTarget = readlink($path);
+        $this->saveSymlink($path, $linkTarget, $skipBuilds);
     } else {
 	    $this->file = $path;
 	    if(!empty($startPath))$this->startPath = $startPath ;
@@ -434,6 +439,49 @@ public function cleanPath($path){
         }
 }
 
+    /**
+     * Save a symlink to be written out after the build has completed
+     *
+     * @param string $path      Path of the symlink
+     * @param string $link      Target of the symlink
+     * @param array $skipBuilds What Builds to skip
+     */
+    protected function saveSymlink($path, $link, $skipBuilds = array())
+    {
+        $path = $this->cleanPath($path);
+        $blackListPath = strpos($path, '/') == 0 ? substr($path, 1) : $path;
+
+        foreach ($this->output as $f => $o) {
+            if (!empty($this->onlyBuild) && empty($this->onlyBuild[$f])) {
+                continue;
+            }
+
+            if (!empty($this->config['blackList'][$f][$blackListPath])) {
+                continue;
+            }
+
+            if (!empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f]) ||
+                (!empty($this->onlyOutput) && empty($this->onlyOutput[$f]))) {
+                continue;
+            }
+            $this->makeDirs(dirname($path), $f);
+
+            // lets save this for the end to make sure all the files are written
+            $this->symlinks[$this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path] = $link;
+        }
+    }
+
+    /**
+     * This is called right after the build has completed to restore any symlinks found in the source dir.
+     *
+     */
+    protected function writeSymlinks()
+    {
+        foreach ($this->symlinks as $path => $link) {
+            symlink($link, $path);
+        }
+        $this->symlinks = array();
+    }
 
 protected function writeFiles($path, $skipBuilds=array()){
 	 //global  $SugarVersion;
@@ -523,9 +571,24 @@ public function build($path, $skipBuilds=array()){
                 }
 	}
 	$d->close();
+
+    // now that the build is done, lets write out any symlinks that were found.
+    $this->writeSymlinks();
+
 	if($path == $this->startPath)echo 'DONE' . "\n";
     return true;
 }
+
+    /**
+     * Do we have a symlink?
+     *
+     * @param string $link      The potential symlink
+     * @return bool
+     */
+    protected function isLink($link) {
+        $path = $this->cleanPath($link);
+        return is_link($link) && empty($this->config['excludeFileTypes'][substr($link, -4)]) && empty($this->config['excludeFiles'][$path]);
+    }
 
 protected function isFile($next){
 	 $path = $this->cleanPath($next);
