@@ -262,7 +262,7 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
-            'formula' => 'divide($discount_amount,$base_rate)',
+            'formula' => 'currencyDivide($discount_amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -310,7 +310,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_calc,$base_rate)',
+            'formula' => 'currencyDivide($deal_calc,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -343,7 +343,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($cost_price,$base_rate)',
+            'formula' => 'currencyDivide($cost_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -364,7 +364,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($discount_price,$base_rate)',
+            'formula' => 'currencyDivide($discount_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -385,7 +385,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($list_price,$base_rate)',
+            'formula' => 'currencyDivide($list_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -553,7 +553,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($book_value,$base_rate)',
+            'formula' => 'currencyDivide($book_value,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),

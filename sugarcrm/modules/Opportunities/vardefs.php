@@ -189,7 +189,7 @@ $dictionary['Opportunity'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($amount,$base_rate)',
+            'formula' => 'currencyDivide($amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),

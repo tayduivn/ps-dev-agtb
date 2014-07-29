@@ -116,7 +116,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($tax,$base_rate)',
+            'formula' => 'currencyDivide($tax,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -148,7 +148,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($total,$base_rate)',
+            'formula' => 'currencyDivide($total,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -168,7 +168,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($subtotal,$base_rate)',
+            'formula' => 'currencyDivide($subtotal,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -188,7 +188,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($shipping,$base_rate)',
+            'formula' => 'currencyDivide($shipping,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -220,7 +220,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_tot,$base_rate)',
+            'formula' => 'currencyDivide($deal_tot,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -252,7 +252,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($new_sub,$base_rate)',
+            'formula' => 'currencyDivide($new_sub,$base_rate)',
             'calculated' => true,
             'enforced' => true,
 
