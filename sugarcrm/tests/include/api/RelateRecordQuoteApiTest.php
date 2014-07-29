@@ -76,20 +76,28 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    private function fillAddressForContact($address = 'primary', $bean = null)
+    private function fillAddressForContact($address = 'primary')
     {
-        if (is_null($bean)) {
-            $bean = $this->_contact;
-        }
-
         $address = in_array($address, array('primary', 'alt')) ? $address : 'primary';
         $time = time();
         foreach ( $this->_address_fields as $_field )
         {
             $_field = $address.'_'.$_field;
-            $bean->$_field = $_field.$time;
+            $this->_contact->$_field = $_field.$time;
         }
-        $bean->save(false);
+        $this->_contact->save(false);
+    }
+
+    private function fillAddressForAccount($address = 'billing')
+    {
+        $address = in_array($address, array('billing', 'shipping')) ? $address : 'billing';
+        $time = time();
+        foreach ($this->_address_fields as $_field)
+        {
+            $_field = $address.'_'.$_field;
+            $this->_account->$_field = $_field.$time;
+        }
+        $this->_account->save(false);
     }
 
     private function createAccountForContact()
@@ -174,6 +182,7 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
         $this->assertRelatedItemExists($result);
+
 
         // billing address is populated when contact has account only
         // shipping address is populated from primary address of contact
@@ -271,7 +280,7 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateRelatedQuoteToContactWithAccount()
     {
         $this->createAccountForContact();
-        $this->fillAddressForContact('primary', $this->_account);
+        $this->fillAddressForAccount();
         $this->fillAddressForContact();
 
         $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
@@ -295,9 +304,10 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ( $address_types as $_type )
         {
             $bean = ($_type === 'billing') ? $this->_account : $this->_contact;
+            $field_type = ($_type === 'billing') ? 'billing' : 'primary';
             foreach ( $this->_address_fields as $_field )
             {
-                $_field_to_check = 'primary_'.$_field;
+                $_field_to_check = $field_type . '_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals($bean->$_field_to_check, $result['related_record'][$_field]);

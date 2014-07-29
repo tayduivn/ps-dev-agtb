@@ -65,7 +65,14 @@ class QuotesApiHelper extends SugarBeanApiHelper
         $bean->shipping_contact_id = $fromId;
         $bean->billing_contact_id = $fromId;
 
-        $this->processBeanAddressFields($fromBean, $bean, 'shipping');
+        // set the shipping address first
+        $type_key = ($fromModule == 'Accounts') ? 'shipping' : 'primary';
+        $alt_type_key = ($fromModule == 'Accounts') ? 'billing' : 'alt';
+        $this->processBeanAddressFields($fromBean, $bean, 'shipping', $type_key, $alt_type_key);
+
+        // change the type key for the billing address
+        $type_key = ($fromModule == 'Accounts') ? 'billing' : 'primary';
+        $alt_type_key = ($fromModule == 'Accounts') ? 'shipping' : 'alt';
 
         // if the initial bean has an account set on it, we need to to set the billing address
         // to the account address fields vs the contact address fields.
@@ -77,9 +84,12 @@ class QuotesApiHelper extends SugarBeanApiHelper
             unset($fromBean);
 
             $fromBean = BeanFactory::getBean('Accounts', $bean->shipping_account_id);
+            $type_key = 'billing';
+            $alt_type_key = 'shipping';
         }
 
-        $this->processBeanAddressFields($fromBean, $bean, 'billing');
+        // set the billing address
+        $this->processBeanAddressFields($fromBean, $bean, 'billing', $type_key, $alt_type_key);
 
     }
 
@@ -88,28 +98,29 @@ class QuotesApiHelper extends SugarBeanApiHelper
      *
      * @param SugarBean $fromBean
      * @param SugarBean|Quote $bean
-     * @param string $type
+     * @param string $bean_type What field type are we setting on the $bean
+     * @param string $type The primary type on the $fromBean
+     * @param string $alt_type The secondary type on the $fromBean
      */
-    protected function processBeanAddressFields($fromBean, $bean, $type)
+    protected function processBeanAddressFields($fromBean, $bean, $bean_type, $type, $alt_type)
     {
         $fields = array('street', 'city', 'state', 'postalcode', 'country');
         foreach ($fields as $field) {
-            $beanField = $type . "_address_" . $field;
+            $beanField = $bean_type . "_address_" . $field;
             $bean->$beanField = $this->getAddressFormContact(
                 $bean->$beanField,
                 $fromBean,
-                "address_$field"
+                $type . "_address_" . $field,
+                $alt_type  . "_address_" . $field
             );
         }
     }
 
-    protected function getAddressFormContact($bean_property, $bean, $property)
+    protected function getAddressFormContact($bean_property, $fromBean, $property, $alt_property)
     {
-        $primary_property = 'primary_' . $property;
-        $alt_property = 'alt_' . $property;
         return !empty($bean_property) ? $bean_property
-            : (isset($bean->$primary_property) ? $bean->$primary_property
-                : (isset($bean->$alt_property) ? $bean->$alt_property
+            : (isset($fromBean->$property) ? $fromBean->$property
+                : (isset($fromBean->$alt_property) ? $fromBean->$alt_property
                     : ''));
     }
 }
