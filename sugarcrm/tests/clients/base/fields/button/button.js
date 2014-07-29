@@ -246,4 +246,35 @@ describe("Base.Field.Button", function() {
         field.hide();
         field.off();
     });
+
+    it('should prevent click when disabled', function() {
+        var called = false,
+            def = {
+                events: {
+                    // In the events hash, Backbone is always checking for
+                    // _.isFunction, and since sinon stubs are objects, we can't
+                    // use one here, so we just use a flag instead.
+                    'click .btn': function() {
+                        called = true;
+                    }
+                }
+            };
+
+        field = SugarTest.createField('base', 'button', 'button', 'edit', def);
+        loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+            this.template = function() {
+                return '<a class="btn" href="javascript:void(0);"></a>'
+            };
+        });
+
+        field.render();
+
+        field.setDisabled(true);
+        field.$('.btn').click();
+        expect(called).toBe(false);
+
+        field.setDisabled(false);
+        field.$('.btn').click();
+        expect(called).toBe(true);
+    });
 });

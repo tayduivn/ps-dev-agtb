@@ -95,8 +95,9 @@
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
         }
 
-        this.model.on("error:validation", function(){
+        this.model.on('error:validation', function() {
             this.alerts.showInvalidModel();
+            this.enableButtons();
         }, this);
 
         // need to reset the default attributes because the plugin may have
@@ -186,6 +187,7 @@
         this.$el.off();
         if(app.drawer){
             app.drawer.close(this.context);
+            this._dismissAllAlerts();
         }
     },
 
@@ -380,15 +382,6 @@
     saveModel: function (success, error) {
         var self = this,
             options;
-        success = _.wrap(success, function (func, model) {
-            app.file.checkFileFieldsAndProcessUpload(self, {
-                    success: function () {
-                        func();
-                    }
-                },
-                {deleteIfFails: true}
-            );
-        });
         options = {
             success: success,
             error: error,
@@ -603,25 +596,6 @@
      */
     enableButtons: function () {
         this.toggleButtons(true);
-    },
-
-    /**
-     * Enable or disable buttons
-     * @param {boolean} enable
-     */
-    toggleButtons: function(enable) {
-        _.each(this.buttons, function(button) {
-            switch (button.type) {
-                case 'button':
-                case 'rowaction':
-                    button.getFieldElement().toggleClass('disabled', !enable);
-                    break;
-                case 'actiondropdown':
-                    button.defaultActionBtn.getFieldElement().toggleClass('disabled', !enable);
-                    button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
-                    break;
-            }
-        });
     },
 
     registerShortcuts: function() {

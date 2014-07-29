@@ -164,10 +164,17 @@ class ModuleApi extends SugarApi {
                     'Record already exists: ' . $args['id'] . ' in module: ' . $args['module']
                 );
             }
-            // Don't create a new id if passed in
-            $bean->new_with_id = true;
+        } else {
+            $args['id'] = create_guid();
         }
 
+        $bean->id = $args['id'];
+        $bean->new_with_id = true;
+
+        // If we uploaded files during the record creation, move them from
+        // the temporary folder to the configured upload folder.
+        // FIXME Moving temporary files will be handled better in BR-2059.
+        $this->moveTemporaryFiles($args, $bean);
         $id = $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
@@ -189,6 +196,11 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'save');
         $api->action = 'save';
+
+        // If we uploaded files during the record update, move them from
+        // the temporary folder to the configured upload folder.
+        // FIXME Moving temporary files will be handled better in BR-2059.
+        $this->moveTemporaryFiles($args, $bean);
         $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
@@ -277,6 +289,70 @@ class ModuleApi extends SugarApi {
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
+    }
+
+    /**
+     * Moves temporary files associated with the bean from the temporary folder
+     * to the upload folder.
+     *
+     * @param array $args The request arguments.
+     * @param SugarBean $bean The bean associated with the file.
+     * @throws SugarApiExceptionInvalidParameter If the file mime types differ
+     *   from $imageFileMimeTypes.
+     */
+    protected function moveTemporaryFiles($args, SugarBean $bean)
+    {
+        require_once 'include/upload_file.php';
+        require_once 'include/SugarFields/SugarFieldHandler.php';
+
+        $fileFields = $bean->getFieldDefinitions('type', array('file', 'image'));
+        $sfh = new SugarFieldHandler();
+        // FIXME This path should be changed with BR-1955.
+        $basepath = UploadStream::path('upload://tmp/');
+        $configDir = SugarConfig::getInstance()->get('upload_dir', 'upload');
+
+        foreach ($fileFields as $fieldName => $def) {
+            if (empty($args[$fieldName . '_guid'])) {
+                continue;
+            }
+            $this->verifyFieldAccess($bean, $fieldName);
+            $filepath = $basepath . $args[$fieldName . '_guid'];
+
+            if (!is_file($filepath)) {
+                continue;
+            }
+
+            if ($def['type'] === 'image') {
+                $filename = $args[$fieldName . '_guid'];
+                $bean->$fieldName = $filename;
+            } else {
+                // FIXME Image verification and mime type updating
+                // should not be duplicated from SugarFieldFile.
+                // SC-3338 is tracking this.
+                require_once 'include/utils/file_utils.php';
+                $filename = $bean->id;
+                $mimeType = get_file_mime_type($filepath, 'application/octet-stream');
+                $sf = $sfh->getSugarField($def['type']);
+                $extension = pathinfo($fieldName, PATHINFO_EXTENSION);
+
+                if (in_array($mimeType, $sf::$imageFileMimeTypes) &&
+                    !verify_image_file($filepath)
+                ) {
+                    throw new SugarApiExceptionInvalidParameter(string_format(
+                        $GLOBALS['app_strings']['LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED'],
+                        array($extension)
+                    ));
+                }
+
+                $bean->file_mime_type = $mimeType;
+                $bean->file_ext = $extension;
+            }
+
+            $destination = rtrim($configDir, '/\\') . '/' . $filename;
+            // FIXME BR-1956 will address having multiple files
+            // associated with a record.
+            rename($filepath, $destination);
+        }
     }
 
     /**

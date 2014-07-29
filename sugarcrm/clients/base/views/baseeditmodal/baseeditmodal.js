@@ -33,10 +33,7 @@
             relate: true,
             fieldsToValidate: this.getFields(this.module),
             success: function() {
-                var view = _.extend({}, self, {model: createModel});
-                app.file.checkFileFieldsAndProcessUpload(view, {
-                    success: function() { self.saveComplete(); }
-                });
+                self.saveComplete();
             },
             error: function() {
                 self.resetButton();

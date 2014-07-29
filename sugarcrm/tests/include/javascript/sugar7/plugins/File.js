@@ -35,17 +35,4 @@ describe('File Plugin', function() {
             expect(_.indexOf(field.plugins, 'File')).not.toEqual(-1);
         });
     });
-
-    it('Should use checkFileFieldsAndProcessUpload method through toggle', function() {
-        _.each(fields, function(field) {
-            var checkFileStub = sinon.stub(SugarTest.app.file, 'checkFileFieldsAndProcessUpload', function() {});
-            field.render();
-            view.toggleField(field);
-
-            expect(checkFileStub).toHaveBeenCalled();
-            checkFileStub.restore();
-        });
-    });
-
-
 });

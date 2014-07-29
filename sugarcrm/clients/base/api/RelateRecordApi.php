@@ -190,12 +190,19 @@ class RelateRecordApi extends ModuleApi {
         
     }
 
-    function createRelatedRecord($api, $args) {
+    /**
+     * Creates a record and relates it to a primary record.
+     *
+     * @param ServiceBase $api The API class of the request.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
+     */
+    public function createRelatedRecord($api, $args) {
         $primaryBean = $this->loadBean($api, $args);
 
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','create');
 
-        if ( isset($args['id']) ) {
+        if (isset($args['id'])) {
             $relatedBean->new_with_id = true;
         }
 
@@ -211,7 +218,11 @@ class RelateRecordApi extends ModuleApi {
         // This forces a re-retrieval of the bean from the database
         BeanFactory::unregisterBean($relatedBean);
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
+        // If we uploaded files during the related record creation, move them
+        // from the temporary folder to the configured upload folder.
+        $this->moveTemporaryFiles($args, $relatedBean);
+
+        return $this->formatNearAndFarRecords($api, $args, $primaryBean);
     }
 
     function createRelatedLink($api, $args) {
