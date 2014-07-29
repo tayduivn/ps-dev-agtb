@@ -603,12 +603,6 @@ class Product extends SugarBean
      */
     protected function calculateDiscountPrice()
     {
-        if (!empty($this->discount_select)) {
-            $this->deal_calc = $this->discount_amount/100*$this->discount_price;
-        } else {
-            $this->deal_calc = $this->discount_amount;
-        }
-        
         if (!empty($this->pricing_formula)
             || !empty($this->cost_price)
             || !empty($this->list_price)
