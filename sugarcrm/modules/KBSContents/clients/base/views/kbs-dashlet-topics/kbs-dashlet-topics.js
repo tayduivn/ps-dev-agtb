@@ -100,8 +100,11 @@
                         'max_num' : -1,
                         'fields' : 'name,topic_id',
                         'order_by' : 'name:asc',
-                        'filter'   : [
-                            {'topic_id' : self.active}
+                        'filter': [
+                            {
+                                'topic_id': self.active,
+                                'active_rev': 1
+                            }
                         ]
                     });
                     app.api.call('read', url, null, {
