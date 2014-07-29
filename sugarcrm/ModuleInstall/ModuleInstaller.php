@@ -1792,10 +1792,10 @@ class ModuleInstaller{
         }
         sugar_cache_reset();
 
-        // put actual metadata into global variable
-        $app_list_strings = return_app_list_strings_language($current_language);
-        // since both were cleared out, we need to set the app_strings as well
+        // since both were cleared out, we need to set the app_strings
         $app_strings = return_application_language($current_language);
+        // put actual metadata into global variable as well
+        $app_list_strings = return_app_list_strings_language($current_language);
     }
 
 	function rebuild_vardefs()
