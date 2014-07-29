@@ -18,8 +18,8 @@ require_once 'include/utils.php';
  */
 class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $_customDir = 'custom/include/language';
-    protected $_customFile = 'en_us.lang.php';
+    protected $customFile = 'custom/include/language/en_us.lang.php';
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -44,13 +44,9 @@ class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
   //'Prospects' => 'Target',
 );
 EOQ;
-        if (!file_exists($this->_customDir)) {
-            mkdir($this->_customDir);
-        }
-        file_put_contents($this->_customDir . '/' . $this->_customFile, $customLangFileContent);
-
-        // add to loader map
-        SugarAutoLoader::addToMap($this->_customDir . '/' . $this->_customFile, true);
+        $dirName = dirname($this->customFile);
+        SugarAutoLoader::ensureDir($dirName);
+        SugarAutoLoader::put($this->customFile, $customLangFileContent);
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
@@ -59,13 +55,8 @@ EOQ;
 
     public function tearDown()
     {
-        // remove the custom language file
-        if (file_exists($this->_customDir . '/' . $this->_customFile)) {
-            unlink($this->_customDir . '/' . $this->_customFile);
-        }
-
         // delete from loader map
-        SugarAutoLoader::delFromMap($this->_customDir . '/' . $this->_customFile, true);
+        SugarAutoLoader::unlink($this->customFile, true);
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];

@@ -19,7 +19,6 @@ require_once 'modules/Users/User.php';
 
 class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static public $db;
     protected $mock;
 
     static public $monitorList;
@@ -31,7 +30,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
-        self::$db = SugarTestHelper::setUp('mock_db');
+        SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
