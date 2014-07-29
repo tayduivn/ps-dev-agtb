@@ -247,7 +247,12 @@
     openPanel: function () {
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
-            this.$(this.accordionBody).collapse('show');
+            // if the panel is already open, do not re-open it, just trigger the event
+            if (this.$(this.accordionBody).hasClass('in')) {
+                this.context.trigger('lead:convert:' + this.meta.module + ':shown');
+            } else {
+                this.$(this.accordionBody).collapse('show');
+            }
         }
     },
 
