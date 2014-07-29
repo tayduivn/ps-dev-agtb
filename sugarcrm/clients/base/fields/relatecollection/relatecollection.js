@@ -27,7 +27,7 @@
 
     fieldTag: 'input.select2',
 
-    select2AllowedActions: ['edit'],
+    select2AllowedTemplates: ['edit'],
 
     /**
      * {@inheritDoc}
@@ -56,7 +56,7 @@
     _render: function() {
         this._super('_render');
 
-        if (_.indexOf(this.select2AllowedActions, this.action) !== -1) {
+        if (_.indexOf(this.select2AllowedTemplates, this.tplName) !== -1) {
             this.initializeSelect2();
         }
         return this;
@@ -233,7 +233,7 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on('change:' + this.name, function() {
-                if (_.indexOf(this.select2AllowedActions, this.action) === -1) {
+                if (_.indexOf(this.select2AllowedTemplates, this.tplName) === -1) {
                     this.render();
                 }
             }, this);
