@@ -1,0 +1,102 @@
+describe('Base.View.FilterModuleDropdownSelectionList', function() {
+    var app, view, layout, server;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'view', 'filter-module-dropdown');
+        SugarTest.loadComponent('base', 'view', 'filter-module-dropdown-selection-list');
+        SugarTest.loadHandlebarsTemplate('filter-module-dropdown', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('filter-module-dropdown', 'view', 'base', 'result-partial');
+        SugarTest.loadHandlebarsTemplate('filter-module-dropdown', 'view', 'base', 'selection-partial');
+        SugarTest.testMetadata.set();
+
+        server = sinon.fakeServer.create();
+        server.respondWith(/\/clients\/base\/layouts\/simple/, [404, {}, '']);
+
+        layout = SugarTest.createLayout('base', 'Contacts', 'simple');
+        view = SugarTest.createView('base', 'Contacts', 'filter-module-dropdown-selection-list', {}, null, null, layout);
+    });
+
+    afterEach(function() {
+        server.restore();
+        view.dispose();
+        layout.dispose();
+        app.cache.cutAll();
+        app.view.reset();
+        SugarTest.testMetadata.dispose();
+    });
+
+    describe('Filter Dropdown', function() {
+        it('Should contain all modules that are specified on filterList', function() {
+            var options = [{
+                id: 'Accounts',
+                text: 'Accounts'
+            }, {
+                id: 'Contacts',
+                text: 'Contacts'
+            }, {
+                id: 'Leads',
+                text: 'Leads'
+            }];
+
+            view.context.set('filterList', options);
+            view.render();
+
+            expect(view.filterNode.data('select2').opts.data).toEqual(options);
+        });
+
+        it('Should only have one option if activity stream is shown', function() {
+            view.layout.showingActivities = true;
+            view.render();
+
+            expect(view.filterNode.data('select2').opts.data).toEqual([{
+                id: 'Activities',
+                text: 'LBL_MODULE_NAME'
+            }]);
+        });
+
+        it('Should set the value to the current module', function() {
+            var options = [{
+                id: 'Accounts',
+                text: 'Accounts'
+            }, {
+                id: 'Contacts',
+                text: 'Contacts'
+            }, {
+                id: 'Leads',
+                text: 'Leads'
+            }];
+
+            view.context.set('filterList', options);
+            view.render();
+
+            expect(view.filterNode.select2('val')).toBe('Contacts');
+        });
+
+        it('Should reload the layout when value has changed', function() {
+            var contextTriggerStub = sinon.stub(),
+                options = [{
+                    id: 'Accounts',
+                    text: 'Accounts'
+                }, {
+                    id: 'Contacts',
+                    text: 'Contacts'
+                }, {
+                    id: 'Leads',
+                    text: 'Leads'
+                }];
+
+            view.context.on('selection-list:reload', contextTriggerStub);
+            view.context.set('filterList', options);
+            view.render();
+
+            view.filterNode.select2('val', 'Accounts');
+            view.filterNode.trigger('change');
+
+            expect(contextTriggerStub.calledOnce).toBe(true);
+
+            view.context.off('selection-list:reload');
+        });
+    });
+});

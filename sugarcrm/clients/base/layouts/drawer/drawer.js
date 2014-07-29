@@ -51,8 +51,7 @@
      * @param {Function} [onClose] Callback method when the drawer closes.
      */
     open: function(layoutDef, onClose) {
-        var layout,
-            parentContext;
+        var layout;
 
         app.shortcuts.saveSession();
         if (!app.triggerBefore('app:view:change')) {
@@ -66,23 +65,8 @@
             this.onCloseCallback.push(onClose);
         }
 
-        if (_.isUndefined(layoutDef.context)) {
-            layoutDef.context = {};
-        }
-
-        if (_.isUndefined(layoutDef.context.forceNew)) {
-            layoutDef.context.forceNew = true;
-        }
-
-        if (!(layoutDef.context instanceof app.Context) && layoutDef.context.parent instanceof app.Context) {
-            parentContext = layoutDef.context.parent;
-            // Remove the `parent` property to not mess up with the context
-            // attributes.
-            delete layoutDef.context.parent;
-        }
-
         //initialize layout definition components
-        this._addComponentsFromDef([layoutDef], parentContext);
+        this._initializeComponentsFromDefinition(layoutDef);
 
         layout = _.last(this._components);
 
@@ -206,7 +190,7 @@
             return;
         }
 
-        this._addComponentsFromDef([layoutDef]);
+        this._initializeComponentsFromDefinition(layoutDef);
 
         drawers = this._getDrawers(true);
         drawers.$next
@@ -283,6 +267,33 @@
 
         $('body').removeClass('noscroll');
         app.$contentEl.removeClass('noscroll');
+    },
+
+    /**
+     * Force to create a new context and create components from the layout definition.
+     * If the parent context is defined, make the new context as a child of the parent context.
+     * @param {Object} layoutDef
+     * @private
+     */
+    _initializeComponentsFromDefinition: function(layoutDef) {
+        var parentContext;
+
+        if (_.isUndefined(layoutDef.context)) {
+            layoutDef.context = {};
+        }
+
+        if (_.isUndefined(layoutDef.context.forceNew)) {
+            layoutDef.context.forceNew = true;
+        }
+
+        if (!(layoutDef.context instanceof app.Context) && layoutDef.context.parent instanceof app.Context) {
+            parentContext = layoutDef.context.parent;
+            // Remove the `parent` property to not mess up with the context
+            // attributes.
+            delete layoutDef.context.parent;
+        }
+
+        this._addComponentsFromDef([layoutDef], parentContext);
     },
 
     /**
