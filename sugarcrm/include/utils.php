@@ -228,13 +228,13 @@ function make_sugar_config(&$sugar_config)
         'jobs' => array(
             'min_retry_interval' => 60, // minimal job retry delay
             'max_retries' => 5, // how many times to retry the job
-            'timeout' => 86400, // how long a job may spend as running before being force-failed
+            'timeout' => 3600, // how long a job may spend as running before being force-failed
             'soft_lifetime' => 7, // how many days until job record will be soft deleted after completion
             'hard_lifetime' => 21, // how many days until job record will be purged from DB
         ),
         "cron" => array(
             'max_cron_jobs' => 25, // max jobs per cron schedule run
-            'max_cron_runtime' => 60, // max runtime for cron jobs
+            'max_cron_runtime' => 1800, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
@@ -462,11 +462,11 @@ function get_sugar_config_defaults()
         'jobs' => array(
             'min_retry_interval' => 30, // 30 seconds minimal job retry
             'max_retries' => 5, // how many times to retry the job
-            'timeout' => 86400, // how long a job may spend as running before being force-failed
+            'timeout' => 3600, // how long a job may spend as running before being force-failed
         ),
         "cron" => array(
             'max_cron_jobs' => 25, // max jobs per cron schedule run
-            'max_cron_runtime' => 30, // max runtime for cron jobs
+            'max_cron_runtime' => 1800, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
@@ -5545,9 +5545,9 @@ function ensureCache($minifyUtils, $rootDir)
 }
 
 /**
- * Ensures that a javascript cache file exists and if it doesn't, will create 
+ * Ensures that a javascript cache file exists and if it doesn't, will create
  * the necessary JS Groupings files into the cache directory for consumption.
- * 
+ *
  * @param array $files The basename of the file to check or an array of names to check
  * @param string $root The directory off which the cache file path lives
  * @param boolean $addPath Adds the path to the cache for this file if true
