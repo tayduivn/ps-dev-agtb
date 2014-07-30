@@ -116,14 +116,14 @@ h4.merge-interface-header {
         background: #E9E9E9;
         text-align: center;
         font-size:11px;
-        text-shadow: -1px -1px 1px #fff;
+        text-shadow: -1px -1px 1px @white;
       }
       span.primary-lbl-placeholder-span {
         border: 0;
         display: block;
         .border-radius(1px);
         margin: -18px 0 5px 0;
-        background: #E9E9E9;
+        background: darken(@grayLighter, 5%);
         min-height: 20px;
       }
       button {
@@ -173,7 +173,7 @@ h4.merge-interface-header {
 					background: none;
 				}
         .controls > label {
-          .calcWidth(~"100% - 30px");
+          .calcWidth(~"100% - 34px");
         }
 			}
 			.merge-edit {
@@ -205,7 +205,8 @@ h4.merge-interface-header {
     width: 98%;
   }
   input[type=radio] {
-    width: 16px
+    width: 16px;
+    margin-right: 6px;
   }
   label input[type=checkbox] {
     margin-top: 0;
@@ -349,7 +350,7 @@ h4.merge-interface-header {
     .rows-div {
       position: relative;
       .merge-row:nth-child(odd) {
-        background-color: #f8f8f8;
+        background-color: lighten(@grayLighter, 1%);
       }
     }
   }
