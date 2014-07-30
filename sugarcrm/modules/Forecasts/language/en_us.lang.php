@@ -351,6 +351,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose fiscal year start date',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters</i>',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months</i>',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_FISCAL_YEAR' => 'The chosen start date spans two years. Please choose which year to use as the Fiscal Year:',
+    'LBL_FISCAL_YEAR' => 'Fiscal Year',
 
     // worksheet layout config
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the Forecast worksheet:',

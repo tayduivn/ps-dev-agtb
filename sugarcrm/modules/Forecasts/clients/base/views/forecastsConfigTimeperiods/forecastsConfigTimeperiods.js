@@ -33,7 +33,18 @@
     /**
      * Local var for if Forecasts config has been set up or not
      */
-    forecastIsSetup: undefined,
+    isForecastSetup: undefined,
+
+    /**
+     * Holds the moment.js date object
+     * @type Moment
+     */
+    tpStartDate: undefined,
+
+    /**
+     * If the Fiscal Year field is displayed, this holds the reference to the field
+     */
+    fiscalYearField: undefined,
 
     /**
      * {@inheritdoc}
@@ -42,8 +53,8 @@
         /**
          * This is needed to make sure that this view is read only when forecasts module has been set up.
          */
-        this.forecastIsSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
-        if(!this.forecastIsSetup) {
+        this.isForecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
+        if(!this.isForecastSetup) {
             _.each(_.first(options.meta.panels).fields, function(field) {
                 if(field.name == 'timeperiod_start_date') {
                     field.click_to_edit = true;
@@ -57,26 +68,106 @@
     },
 
     /**
+     * Checks the timeperiod start date to see if it's 01/01 to know
+     * if we need to display the Fiscal Year field or not
+     */
+    checkFiscalYearField: function() {
+        // moment.js months are zero-based: 0 = January
+        if (this.tpStartDate.month() !== 0 ||
+            (this.tpStartDate.month() === 0 && this.tpStartDate.date() !== 1)) {
+            // if the start date's month isn't Jan,
+            // or it IS Jan but a date other than the 1st, add the field
+            this.addFiscalYearField();
+        } else if(this.fiscalYearField) {
+            this.model.set({
+                timeperiod_fiscal_year: null
+            });
+            this.removeFiscalYearField();
+        }
+    },
+
+    /**
      * {@inheritdoc}
      */
     bindDataChange: function() {
         if(this.model) {
-            this.model.on('change', function(model) {
+            this.model.once('change', function(model) {
                 // on a fresh install with no demo data,
                 // this.model has the values and the param model is undefined
                 if(_.isUndefined(model)) {
                     model = this.model;
                 }
+            }, this);
 
-                if(model.changed['timeperiod_start_date']) {
-                    var tmpD = new Date(new Date(model.changed['timeperiod_start_date']))
-                    tmpD = new Date(tmpD.getTime() + (tmpD.getTimezoneOffset() * 60000));
-
-                    this.titleSelectedValues = app.date.format(tmpD, app.user.getPreference('datepref'));
-                    this.updateTitle();
-                }
+            this.model.on('change:timeperiod_start_date', function(model) {
+                this.tpStartDate = app.date(model.get('timeperiod_start_date'));
+                this.checkFiscalYearField();
+                this.titleSelectedValues = this.tpStartDate.formatUser(true);
+                this.updateTitle();
             }, this);
         }
+    },
+
+    /**
+     * Creates the fiscal-year field and adds it to the DOM
+     */
+    addFiscalYearField: function() {
+        if(!this.fiscalYearField) {
+            // set the value so the fiscal-year field chooses its first option
+            // in the dropdown
+            this.model.set({
+                timeperiod_fiscal_year: 'current_year'
+            });
+
+            var $el = this.$('#timeperiod_start_date_subfield');
+            if ($el) {
+                var fiscalYearFieldMeta = _.find(this.options.meta.panels[0].fields, function(field) {
+                    return field.name == 'timeperiod_fiscal_year';
+                });
+
+                fiscalYearFieldMeta = this.updateFieldMetadata(fiscalYearFieldMeta);
+
+                var fieldSettings = {
+                        view: this,
+                        def: fiscalYearFieldMeta,
+                        viewName: 'edit',
+                        context: this.context,
+                        module: this.module,
+                        model: this.model,
+                        meta: app.metadata.getField('enum')
+                    };
+
+                this.fiscalYearField = app.view.createField(fieldSettings);
+
+                $el.html(this.fiscalYearField.el);
+                this.fiscalYearField.render();
+            }
+        }
+    },
+
+    /**
+     * Takes the default fiscal-year metadata and adds any dynamic values
+     * Done in function form in case this field ever needs to be extended with
+     * more than just 2 years
+     *
+     * @param {Object} fieldMeta The field's metadata
+     * @returns {Object}
+     */
+    updateFieldMetadata: function(fieldMeta) {
+        fieldMeta.startYear = this.tpStartDate.year();
+        return fieldMeta;
+    },
+
+    /**
+     * Disposes the fiscal-year field and removes it from the DOM
+     */
+    removeFiscalYearField: function() {
+        this.model.set({
+            timeperiod_fiscal_year: null
+        });
+        this.fiscalYearField.dispose();
+        this.fiscalYearField = null;
+        this.$('#timeperiod_start_date_subfield').html('')
     },
 
     /**
@@ -90,7 +181,7 @@
             viewName: 'forecastsConfigTimeperiods'
         };
 
-        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
+        this.$('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**
@@ -105,21 +196,37 @@
         field = this._setUpTimeperiodConfigField(field);
 
         // check for all fields, if forecast is setup, set to detail/readonly mode
-        if(this.forecastIsSetup) {
+        if(this.isForecastSetup) {
             field.options.def.view = 'detail';
         } else if(field.name == 'timeperiod_start_date') {
             // if this is the timeperiod_start_date field and Forecasts is not setup
             field.options.def.click_to_edit = true;
         }
 
-        app.view.View.prototype._renderField.call(this, field);
+        this._super('_renderField', [field]);
+
+        if (field.name == 'timeperiod_start_date' && this.isForecastSetup) {
+            var year = this.model.get('timeperiod_start_date').substring(0, 4),
+                str,
+                $el;
+
+            if (this.model.get('timeperiod_fiscal_year') === 'next_year') {
+                year++;
+            }
+
+            str = app.lang.get('LBL_FISCAL_YEAR', 'Forecasts') + ': ' + year;
+            $el = this.$('#timeperiod_start_date_sublabel');
+            if ($el) {
+                $el.html(str);
+            }
+        }
     },
 
     /**
      * {@inheritdoc}
      */
     _render: function() {
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
 
         // add accordion-group class to wrapper $el div
         this.$el.addClass('accordion-group');
