@@ -19,22 +19,25 @@ require_once("modules/Meetings/clients/base/api/MeetingsApi.php");
 class MeetingsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $api,
-        $meetingsApi,
-        $meeting;
+        $meetingsApi;
 
     public function setUp()
     {
         parent::setUp();
-        $this->api = SugarTestRestUtilities::getRestServiceMock();
-        $this->meetingsApi = $this->getMock("MeetingsApi", array("isUserInvitedToMeeting"));
 
+        $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = SugarTestUserUtilities::createAnonymousUser(false, false);
         $this->api->user->id = 'foo';
+        $GLOBALS['current_user'] = $this->api->user;
+
+        $this->meetingsApi = $this->getMock("MeetingsApi", array("isUserInvitedToMeeting"));
     }
 
     public function tearDown()
     {
+        BeanFactory::setBeanClass('Meetings');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }

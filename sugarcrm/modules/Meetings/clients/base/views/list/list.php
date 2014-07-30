@@ -21,6 +21,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'link' => true,
                     'default' => true,
                     'enabled' => true,
+                    'related_fields' => array('repeat_type'),
                 ),
                 array(
                     'name' => 'date_start',

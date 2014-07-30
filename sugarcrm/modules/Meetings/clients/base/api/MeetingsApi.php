@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,24 +10,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/SugarApi.php';
-
-/**
- * Meetings module API
- */
-class MeetingsApi extends SugarApi
+class MeetingsApi extends CalendarEventsApi
 {
     /**
      * {@inheritdoc}
      */
     public function registerApiRest()
     {
-
-        return array(
+        $register = array(
             'getAgenda' => array(
                 'reqType' => 'GET',
-                'path' => array('Meetings','Agenda'),
-                'pathVars' => array('',''),
+                'path' => array('Meetings', 'Agenda'),
+                'pathVars' => array('', ''),
                 'method' => 'getAgenda',
                 'shortHelp' => 'Fetch an agenda for a user',
                 'longHelp' => 'include/api/html/meetings_agenda_get_help',
@@ -36,16 +29,18 @@ class MeetingsApi extends SugarApi
             'external' => array(
                 'reqType' => 'GET',
                 'path' => array('Meetings', '?', 'external'),
-                'pathVars' => array('module','record', 'external'),
+                'pathVars' => array('module', 'record', 'external'),
                 'method' => 'getExternalInfo',
                 'shortHelp' => 'This method retrieves info about launching an external meeting',
                 'longHelp' => 'modules/Meetings/clients/base/api/help/MeetingsApiExternalGet.html',
             ),
         );
 
+        return array_merge(parent::registerApiRest(), $register);
     }
 
-    public function getAgenda($api, $args) {
+    public function getAgenda($api, $args)
+    {
         // Fetch the next 14 days worth of meetings (limited to 20)
         $end_time = new SugarDateTime("+14 days");
         $start_time = new SugarDateTime("-1 hour");
@@ -86,7 +81,8 @@ class MeetingsApi extends SugarApi
      * @param $args
      * @return array
      */
-    public function getExternalInfo($api, $args) {
+    public function getExternalInfo($api, $args)
+    {
         $module = $args['module'];
         $meetingBean = BeanFactory::getBean($module, $args['record']);
 
@@ -116,7 +112,8 @@ class MeetingsApi extends SugarApi
      * @param $meetingBean
      * @return bool
      */
-    protected function isUserInvitedToMeeting($userId, $meetingBean) {
+    protected function isUserInvitedToMeeting($userId, $meetingBean)
+    {
         $query = new SugarQuery();
         $query->select(array('id'));
         $query->from($meetingBean);
