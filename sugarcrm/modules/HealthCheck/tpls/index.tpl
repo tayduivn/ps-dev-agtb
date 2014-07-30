@@ -60,13 +60,13 @@
             <div class="row-fluid">
                 <h1>Upgrading</h1>
 
-                <p>To ensure a succesful upgrade this health check wizard will scan your current SugarCRM
+                <p>To ensure a successful upgrade this health check wizard will scan your current SugarCRM
                 instance and will generate a full report of any incompatible customizations. This report
                 will explain which changes will be performed to your instance during an upgrade. In case
                 of any incompatible issues which cannot be automatically resolved by the upgrade wizard,
                 this health check tool will report what needs to be addressed.</p>
 
-                <p>If not all prerequisits pass, an upgrade to Sugar 7 will not be possible.</p>
+                <p>If not all prerequisites pass, an upgrade to Sugar 7 will not be possible.</p>
 
             </div>
         </div>
