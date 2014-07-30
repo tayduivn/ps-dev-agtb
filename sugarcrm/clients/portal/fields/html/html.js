@@ -22,6 +22,6 @@
      * @returns {String} formatted value
      */
     format: function(value) {
-        return value.replace(/(src=")(?!http:\/\/)(.*?)"/g, '$1' + app.config.siteUrl + '/$2"');
+        return value? value.replace(/(src=")(?!http:\/\/)(.*?)"/g, '$1' + app.config.siteUrl + '/$2"') : value;
     }
 })

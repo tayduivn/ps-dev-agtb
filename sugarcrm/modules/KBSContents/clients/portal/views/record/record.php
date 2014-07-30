@@ -53,6 +53,7 @@ $viewdefs['KBSContents']['portal']['view']['record'] = array(
             'fields' => array(
                 'kbdocument_body' => array(
                     'name' => 'kbdocument_body',
+                    'type' => 'html',
                     'span' => 12,
                 ),
                 'attachment_list' => array(
