@@ -31,6 +31,7 @@ $files=array(
     "modules/UpgradeWizard/UpgradeDriver.php",
     "modules/UpgradeWizard/WebUpgrader.php",
     "modules/UpgradeWizard/upgrade_screen.php",
+    "modules/UpgradeWizard/upgrader_version.json",
     "sidecar/lib/jquery/jquery.iframe.transport.js",
 
     // misc

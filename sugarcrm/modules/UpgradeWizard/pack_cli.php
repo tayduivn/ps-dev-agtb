@@ -26,6 +26,7 @@ chdir(dirname(__FILE__)."/../..");
 $files=array(
     "modules/UpgradeWizard/UpgradeDriver.php",
     "modules/UpgradeWizard/CliUpgrader.php",
+    "modules/UpgradeWizard/upgrader_version.json",
     'modules/HealthCheck/Scanner/Scanner.php',
     'modules/HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/language/en_us.lang.php',
