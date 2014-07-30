@@ -73,11 +73,10 @@ class ProductBundle extends SugarBean
     //deletes related products might want to change this in the future if we allow for sharing of products
     public function mark_deleted($id)
     {
-        $pb = BeanFactory::getBean('ProductBundles');
-        $pb->id = $id;
-        $products = $pb->get_products();
-        foreach ($products as $product) {
-            $product->mark_deleted($product->id);
+        $lineItems = $this->getLineItems();
+        /* @var $item SugarBean */
+        foreach ($lineItems as $item) {
+            $item->mark_deleted($item->id);
         }
         return parent::mark_deleted($id);
     }

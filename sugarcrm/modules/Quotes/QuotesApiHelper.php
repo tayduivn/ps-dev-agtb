@@ -19,30 +19,30 @@ class QuotesApiHelper extends SugarBeanApiHelper
      * Formats the bean so it is ready to be handed back to the API's client. Certain fields will get extra processing
      * to make them easier to work with from the client end.
      *
-     * @param $bean SugarBean|Quote The bean you want formatted
+     * @param $quote SugarBean|Quote The bean you want formatted
      * @param $fieldList array Which fields do you want formatted and returned (leave blank for all fields)
      * @param $options array Currently no options are supported
      * @return array The bean in array format, ready for passing out the API to clients.
      */
-    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
+    public function formatForApi(SugarBean $quote, array $fieldList = array(), array $options = array())
     {
         // call the legacy method here to load all the data that we need
-        $bean->fill_in_additional_detail_fields();
+        $quote->fill_in_additional_detail_fields();
 
-        return parent::formatForApi($bean, $fieldList, $options);
+        return parent::formatForApi($quote, $fieldList, $options);
     }
 
     /**
      * This function sets up shipping and billing address for new Quote.
      *
-     * @param SugarBean|Quote $bean
-     * @param array $submittedData
-     * @param array $options
-     * @return array
+     * @param SugarBean|Quote $quote The current SugarBean that is being worked with
+     * @param array $submittedData The data from the request
+     * @param array $options Any Options that may have been passed in.
+     * @return array|boolean An array of validation errors if any occurred, otherwise `true`.
      */
-    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    public function populateFromApi(SugarBean $quote, array $submittedData, array $options = array())
     {
-        parent::populateFromApi($bean, $submittedData, $options);
+        parent::populateFromApi($quote, $submittedData, $options);
 
         // valid relate modules
         $valid_relate_modules = array('Contacts', 'Accounts');
@@ -51,37 +51,37 @@ class QuotesApiHelper extends SugarBeanApiHelper
             in_array($submittedData['module'], $valid_relate_modules) &&
             isset($submittedData['record'])
         ) {
-            $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $bean);
+            $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $quote);
         } else {
             // we are not on a related record, so lets check the field and fill in the data correctly
-            $hasBillingAccountId = (isset($bean->billing_account_id) && !empty($bean->billing_account_id));
-            $hasShippingAccountId = (isset($bean->shipping_account_id) && !empty($bean->shipping_account_id));
-            $hasBillingContactId = (isset($bean->billing_contact_id) && !empty($bean->billing_contact_id));
-            $hasShippingContactId = (isset($bean->shipping_contact_id) && !empty($bean->shipping_contact_id));
+            $hasBillingAccountId = (isset($quote->billing_account_id) && !empty($quote->billing_account_id));
+            $hasShippingAccountId = (isset($quote->shipping_account_id) && !empty($quote->shipping_account_id));
+            $hasBillingContactId = (isset($quote->billing_contact_id) && !empty($quote->billing_contact_id));
+            $hasShippingContactId = (isset($quote->shipping_contact_id) && !empty($quote->shipping_contact_id));
 
             if ($hasBillingAccountId) {
-                $account = BeanFactory::getBean('Accounts', $bean->billing_account_id);
-                $this->processBeanAddressFields($account, $bean, 'billing', 'billing', 'shipping');
+                $account = BeanFactory::getBean('Accounts', $quote->billing_account_id);
+                $this->processBeanAddressFields($account, $quote, 'billing', 'billing', 'shipping');
             } else {
                 if (!$hasBillingAccountId && $hasBillingContactId) {
-                    $contact = BeanFactory::getBean('Contacts', $bean->billing_contact_id);
-                    $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+                    $contact = BeanFactory::getBean('Contacts', $quote->billing_contact_id);
+                    $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
                 }
             }
 
             if (!$hasShippingAccountId && !$hasShippingContactId && $hasBillingAccountId) {
                 // we don't have a id set for the shipping account or contact, pull the account from the billing
-                $bean->shipping_account_id = $bean->billing_account_id;
+                $quote->shipping_account_id = $quote->billing_account_id;
                 $hasShippingAccountId = true;
             }
 
             if ($hasShippingAccountId && !$hasShippingContactId) {
-                $account = BeanFactory::getBean('Accounts', $bean->shipping_account_id);
-                $this->processBeanAddressFields($account, $bean, 'shipping', 'shipping', 'billing');
+                $account = BeanFactory::getBean('Accounts', $quote->shipping_account_id);
+                $this->processBeanAddressFields($account, $quote, 'shipping', 'shipping', 'billing');
             } else {
                 if ($hasShippingContactId) {
-                    $contact = BeanFactory::getBean('Contacts', $bean->shipping_contact_id);
-                    $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+                    $contact = BeanFactory::getBean('Contacts', $quote->shipping_contact_id);
+                    $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
                 }
             }
         }
@@ -89,7 +89,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
         // lets process the bundles
         if (isset($submittedData['bundles']) && is_array($submittedData['bundles'])) {
             foreach ($submittedData['bundles'] as $bundle) {
-                $this->processBundle($bundle, $bean);
+                $this->processBundle($bundle, $quote);
             }
         }
 
@@ -98,9 +98,9 @@ class QuotesApiHelper extends SugarBeanApiHelper
 
     /**
      * @param $bundle
-     * @param SugarBean|Quote $bean
+     * @param SugarBean|Quote $quote
      */
-    protected function processBundle($bundle, SugarBean $bean)
+    protected function processBundle($bundle, SugarBean $quote)
     {
         if (!isset($bundle['id'])) {
             $bundle['id'] = null;
@@ -111,46 +111,45 @@ class QuotesApiHelper extends SugarBeanApiHelper
 
         if (isset($bundle['deleted']) && $bundle['deleted'] == 1) {
             $pb->mark_deleted($pb->id);
-            $bean->load_relationship('product_bundles');
-            $bean->product_bundles->delete($bean->id, $pb);
         } else {
-            $pb->team_id = $bean->team_id;
-            $pb->team_set_id = $bean->team_set_id;
+            $pb->team_id = $quote->team_id;
+            $pb->team_set_id = $quote->team_set_id;
             $pb->shipping = $bundle['shipping'];
-            $pb->currency_id = $bean->currency_id;
-            $pb->taxrate_id = $bean->taxrate_id;
+            $pb->currency_id = $quote->currency_id;
+            $pb->taxrate_id = $quote->taxrate_id;
             $pb->bundle_stage = $bundle['bundle_stage'];
             $pb->name = $bundle['name'];
 
+            # we gotta save this first as the notes/products look for data from here below.
             $pb->save();
 
             // handle the items on the product bundle
             foreach ($bundle['items'] as $item) {
                 if ($item['module'] == 'ProductBundleNotes') {
-                    $this->handleBundleNoteSave($item, $pb, $bean);
+                    $this->handleBundleNoteSave($item, $pb, $quote);
                 } else {
                     if ($item['module'] == 'Products') {
-                        $this->handleBundleProductSave($item, $pb, $bean);
+                        $this->handleBundleProductSave($item, $pb, $quote);
                     }
                 }
             }
 
             // save the bundle to the quote
-            $bean->load_relationship('product_bundles');
+            $quote->load_relationship('product_bundles');
             if (!isset($bundle['position'])) {
                 $bundle['position'] = isset($bundle['bundle_index']) ?
-                    $bundle['bundle_index'] : count($bean->product_bundles->getBeans());
+                    $bundle['bundle_index'] : count($quote->product_bundles->getBeans());
             }
-            $bean->product_bundles->add($pb, array('bundle_index' => $bundle['position']));
+            $quote->product_bundles->add($pb, array('bundle_index' => $bundle['position']));
         }
     }
 
     /**
      * @param array $product
      * @param SugarBean|ProductBundle $pb
-     * @param SugarBean|Quote $bean
+     * @param SugarBean|Quote $quote
      */
-    protected function handleBundleProductSave(array $product, SugarBean $pb, SugarBean $bean)
+    protected function handleBundleProductSave(array $product, SugarBean $pb, SugarBean $quote)
     {
         if (!isset($product['id'])) {
             $product['id'] = null;
@@ -184,13 +183,13 @@ class QuotesApiHelper extends SugarBeanApiHelper
             }
         }
 
-        $product_bean->currency_id = $bean->currency_id;
-        $product_bean->base_rate = $bean->base_rate;
-        $product_bean->team_id = $bean->team_id;
-        $product_bean->team_set_id = $bean->team_set_id;
-        $product_bean->quote_id = $bean->id;
-        $product_bean->account_id = $bean->billing_account_id;
-        $product_bean->contact_id = $bean->billing_contact_id;
+        $product_bean->currency_id = $quote->currency_id;
+        $product_bean->base_rate = $quote->base_rate;
+        $product_bean->team_id = $quote->team_id;
+        $product_bean->team_set_id = $quote->team_set_id;
+        $product_bean->quote_id = $quote->id;
+        $product_bean->account_id = $quote->billing_account_id;
+        $product_bean->contact_id = $quote->billing_contact_id;
         $product_bean->ignoreQuoteSave = true;
 
         $pb->load_relationship('products');
@@ -207,7 +206,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
     }
 
 
-    protected function handleBundleNoteSave(array $note, SugarBean $pb, SugarBean $bean)
+    protected function handleBundleNoteSave(array $note, SugarBean $pb, SugarBean $quote)
     {
         if (!isset($note['id'])) {
             $note['id'] = null;
@@ -236,90 +235,90 @@ class QuotesApiHelper extends SugarBeanApiHelper
      *
      * @param String $fromModule
      * @param String $fromId
-     * @param SugarBean|Quote $bean
+     * @param SugarBean|Quote $quote
      */
-    protected function setAddressFromBean($fromModule, $fromId, SugarBean $bean)
+    protected function setAddressFromBean($fromModule, $fromId, SugarBean $quote)
     {
         $fromBean = BeanFactory::getBean($fromModule, $fromId);
         if ($fromModule == 'Contacts') {
-            $bean->shipping_contact_id = $fromId;
-            $bean->billing_contact_id = $fromId;
-            $type_key = 'primary';
-            $alt_type_key = 'alt';
+            $quote->shipping_contact_id = $fromId;
+            $quote->billing_contact_id = $fromId;
+            $typeKey = 'primary';
+            $altTypeKey = 'alt';
         } elseif ($fromModule == 'Accounts') {
-            $bean->billing_account_id = $fromId;
-            $bean->shipping_account_id = $fromId;
-            $type_key = 'shipping';
-            $alt_type_key = 'billing';
+            $quote->billing_account_id = $fromId;
+            $quote->shipping_account_id = $fromId;
+            $typeKey = 'shipping';
+            $altTypeKey = 'billing';
         }
 
         // set the shipping address first
-        $this->processBeanAddressFields($fromBean, $bean, 'shipping', $type_key, $alt_type_key);
+        $this->processBeanAddressFields($fromBean, $quote, 'shipping', $typeKey, $altTypeKey);
 
         // change the type key for the billing address, when we are pulling from Accounts
         if ($fromModule == 'Accounts') {
-            $type_key = 'billing';
-            $alt_type_key = 'shipping';
+            $typeKey = 'billing';
+            $altTypeKey = 'shipping';
         }
 
         // if the initial bean has an account set on it, we need to to set the billing address
         // to the account address fields vs the contact address fields.
         // if there is no account_id then it will just set the billing address fields from the contact
         if (!empty($fromBean->account_id)) {
-            $bean->billing_account_id = $fromBean->account_id;
-            $bean->shipping_account_id = $fromBean->account_id;
+            $quote->billing_account_id = $fromBean->account_id;
+            $quote->shipping_account_id = $fromBean->account_id;
 
             unset($fromBean);
 
-            $fromBean = BeanFactory::getBean('Accounts', $bean->shipping_account_id);
-            $type_key = 'billing';
-            $alt_type_key = 'shipping';
+            $fromBean = BeanFactory::getBean('Accounts', $quote->shipping_account_id);
+            $typeKey = 'billing';
+            $altTypeKey = 'shipping';
         }
 
         // set the billing address
-        $this->processBeanAddressFields($fromBean, $bean, 'billing', $type_key, $alt_type_key);
+        $this->processBeanAddressFields($fromBean, $quote, 'billing', $typeKey, $altTypeKey);
 
     }
 
     /**
-     * Utility Method to set the fields on a given $bean from another bean.
+     * Utility Method to set the fields on a given $quote from another bean.
      *
      * @param SugarBean $fromBean
-     * @param SugarBean|Quote $bean
-     * @param string $bean_type What field type are we setting on the $bean
-     * @param string $type The primary type on the $fromBean
-     * @param string $alt_type The secondary type on the $fromBean
+     * @param SugarBean|Quote $quote
+     * @param string $type What field type are we setting on the $quote
+     * @param string $primaryField The primary field on the $fromBean
+     * @param string $altField The secondary field on the $fromBean
      */
-    protected function processBeanAddressFields($fromBean, $bean, $bean_type, $type, $alt_type)
+    protected function processBeanAddressFields($fromBean, $quote, $type, $primaryField, $altField)
     {
         $fields = array('street', 'city', 'state', 'postalcode', 'country');
         foreach ($fields as $field) {
-            $beanField = $bean_type . "_address_" . $field;
-            $bean->$beanField = $this->getAddressFormContact(
-                $bean->$beanField,
+            $quoteField = $type . "_address_" . $field;
+            $quote->$quoteField = $this->getAddressFormContact(
+                $quote->$quoteField,
                 $fromBean,
-                $type . "_address_" . $field,
-                $alt_type . "_address_" . $field
+                $primaryField . "_address_" . $field,
+                $altField . "_address_" . $field
             );
         }
     }
 
     /**
-     * Utility method to pick which string to return, if $bean_property is not empty, just return it,
+     * Utility method to pick which string to return, if $quote_value is not empty, just return it,
      * otherwise check $property and then $alt_property for a value, if they are both empty, this will
      * just return an empty string
      *
-     * @param string $bean_property
-     * @param SugarBean $fromBean
-     * @param string $property
-     * @param string $alt_property
+     * @param string $quote_value The current value on the quote
+     * @param SugarBean $fromBean The SugarBean we are looking at for a value
+     * @param string $primaryField The first field to check
+     * @param string $altField The second field to check
      * @return string
      */
-    protected function getAddressFormContact($bean_property, $fromBean, $property, $alt_property)
+    protected function getAddressFormContact($quote_value, $fromBean, $primaryField, $altField)
     {
-        return !empty($bean_property) ? $bean_property
-            : (isset($fromBean->$property) ? $fromBean->$property
-                : (isset($fromBean->$alt_property) ? $fromBean->$alt_property
+        return !empty($quote_value) ? $quote_value
+            : (isset($fromBean->$primaryField) ? $fromBean->$primaryField
+                : (isset($fromBean->$altField) ? $fromBean->$altField
                     : ''));
     }
 }
