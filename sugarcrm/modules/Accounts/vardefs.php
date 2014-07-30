@@ -224,6 +224,10 @@ $dictionary['Account'] = array(
             'bean_name' => 'Lead',
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
+            'populate_list' => array(
+                'name' => 'account_name',
+                'phone_office' => 'phone_work',
+            )
         ),
         'campaigns' => array(
             'name' => 'campaigns',
@@ -405,7 +409,7 @@ $dictionary['Account'] = array(
             'rhs_module' => 'Leads',
             'rhs_table' => 'leads',
             'rhs_key' => 'account_id',
-            'relationship_type' => 'one-to-many'
+            'relationship_type' => 'one-to-many',
         ),
         'accounts_assigned_user' => array(
             'lhs_module' => 'Users',
