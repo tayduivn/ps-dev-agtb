@@ -72,13 +72,20 @@
         //if the dashlet is not collapsed load data from D&B
         if (!isCollapsed) {
             //check if Hoovers Industry Code is set in context by refresh dashlet
-            if (!_.isUndefined(app.controller.context.get('dnb_temp_hoovers_ind_code'))) {
-                this.getDNBIndustryInfo(app.controller.context.get('dnb_temp_hoovers_ind_code'));
-            } else if (this.model.get('sic_code')) {
-                var sicToHicParams = {'industryType': this.commonConst.sic_to_hic, 'industryCode': this.model.get('sic_code')};
-                this.getDNBIndustryInfoFromSIC(sicToHicParams);
+            if (this.checkFieldExists('sic_code')) {
+                if (!_.isUndefined(app.controller.context.get('dnb_temp_hoovers_ind_code'))) {
+                    this.getDNBIndustryInfo(app.controller.context.get('dnb_temp_hoovers_ind_code'));
+                } else if (this.model.get('sic_code')) {
+                    var sicToHicParams = {'industryType': this.commonConst.sic_to_hic, 'industryCode': this.model.get('sic_code')};
+                    this.getDNBIndustryInfoFromSIC(sicToHicParams);
+                } else {
+                    this.template = app.template.get(this.name + '.dnb-no-sic');
+                    if (!this.disposed) {
+                        this.render();
+                    }
+                }
             } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
+                this.template = app.template.get(this.name + '.dnb-no-sic-field');
                 if (!this.disposed) {
                     this.render();
                 }
@@ -241,4 +248,4 @@
             return null;
         }
     }
-})
+});
