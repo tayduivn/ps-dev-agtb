@@ -191,6 +191,9 @@ width:70%;
             }
             var q = $("#ftsSearchField").val();
 
+            // this view shouldn't be supported outside of a BWC frame.
+            window.parent.SUGAR.App.controller.layout.getComponent('bwc').unbindDom();
+
             $.ajax({
                 type: "POST",
                 url: "index.php",
@@ -218,9 +221,7 @@ width:70%;
                         SUGAR.FTS.addModuleFilterHandlers();
                     }
                     SUGAR.FTS.toogleShowMore();
-                    if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
-                        window.parent.SUGAR.App.view.createView({name: 'bwc'})._rewriteLinksForSidecar(window);
-                    }
+                    window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
                 },
                 failure: function(o)
                 {
@@ -288,6 +289,7 @@ width:70%;
         },
         loadMore: function()
         {
+            debugger;
             SUGAR.FTS.currentOffset += SUGAR.FTS.limit;
             SUGAR.FTS.search(true);
         }

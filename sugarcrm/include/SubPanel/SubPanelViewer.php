@@ -59,11 +59,6 @@ $subpanel_object->setTemplateFile('include/SubPanel/SubPanelDynamic.html');
 echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;
 
 $subpanel_object->display();
-//Rewrite links to use sidecar routes on update of Subpanel
-echo("<script>
-if (window.parent && window.parent.SUGAR && window.parent.SUGAR.App.view) {
-    window.parent.SUGAR.App.view.views.BaseBwcView.prototype._rewriteLinksForSidecar(window);
-}</script>");
 
 if(empty($_REQUEST['inline']))
 {

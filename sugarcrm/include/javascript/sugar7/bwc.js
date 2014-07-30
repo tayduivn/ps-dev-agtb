@@ -26,7 +26,7 @@
          * The OAuth token is passed and we do automatic in bwc mode by
          * getting a cookie with the PHPSESSIONID.
          */
-        
+
         /**
          * Logs into sugar in BWC mode. Allows for use of current OAuth token as
          * a session id for backward compatible modules.
