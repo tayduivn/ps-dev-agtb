@@ -194,6 +194,9 @@ $mod_strings = array (
     'LBL_RESOURCES_SUGAR_INFO' => 'SugarCRM Company Information',
     'LBL_LANGUAGE_PACKS' => 'Language Packs',
     'TPL_LANGUAGE_PACKS_PROVIDED_BY' => 'Provided by {{{link}}}',
+    'LBL_SUGAR_VERSION' => 'version',
+    'LBL_SUGAR_SOURCECODE_DESC' => 'Sales force automation application.',
+    'LBL_THIRD_PARTY_SOFTWARE_TITLE' => 'Third Party Software',
     'LBL_THIRD_PARTY_SOURCECODE' => 'Information about third party code used in this product, including related license terms, is available at',
 
 
