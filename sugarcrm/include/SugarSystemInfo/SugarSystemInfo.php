@@ -134,11 +134,13 @@ class SugarSystemInfo
      */
     public function getActiveUsersXDaysCount($days)
     {
-        $query = sprintf(
-            "SELECT COUNT(id) AS count FROM users WHERE last_login >= %s AND %s",
-            $this->getLastXDays($days),
-            $this->getExcludeSystemUsersWhere()
-        );
+        $info = $this->getAppInfo();
+        if(version_compare($info['sugar_version'], '7.2', '>')) {
+            $query = "SELECT COUNT(id) AS user_count FROM users WHERE last_login >= %s AND %s";
+        } else {
+            $query = "SELECT COUNT(DISTINCT users.id) AS user_count FROM tracker, users WHERE users.id = tracker.user_id AND tracker.date_modified >= %s AND %s";
+        }
+        $query = sprintf($query, $this->getLastXDays($days), $this->getExcludeSystemUsersWhere());
         return $this->db->getOne($query, false, 'fetching last 30 users count');
     }
 
