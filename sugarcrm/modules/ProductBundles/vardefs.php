@@ -369,6 +369,17 @@ $dictionary['ProductBundle'] = array(
             'rel_fields' => array('note_index' => array('type' => 'integer')),
             'vname' => 'LBL_NOTES',
         ),
+        'position' => array(
+            'massupdate' => false,
+            'name' => 'position',
+            'type' => 'integer',
+            'studio' => false,
+            'source' => 'non-db',
+            'vname' => 'LBL_QUOTE_BUNDLE_POSITION',
+            'importable' => false,
+            'link' => 'quotes',
+            'rname_link' => 'bundle_index',
+        ),
     ),
     'indices' => array(
         array('name' => 'procuct_bundlespk', 'type' => 'primary', 'fields' => array('id')),

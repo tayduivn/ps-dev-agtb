@@ -138,7 +138,8 @@ class QuotesApiHelper extends SugarBeanApiHelper
             // save the bundle to the quote
             $bean->load_relationship('product_bundles');
             if (!isset($bundle['position'])) {
-                $bundle['position'] = count($bean->product_bundles->getBeans());
+                $bundle['position'] = isset($bundle['bundle_index']) ?
+                    $bundle['bundle_index'] : count($bean->product_bundles->getBeans());
             }
             $bean->product_bundles->add($pb, array('bundle_index' => $bundle['position']));
         }
@@ -191,14 +192,15 @@ class QuotesApiHelper extends SugarBeanApiHelper
         $product_bean->account_id = $bean->billing_account_id;
         $product_bean->contact_id = $bean->billing_contact_id;
         $product_bean->ignoreQuoteSave = true;
-        $product_bean->save();
 
         $pb->load_relationship('products');
         if ($product['deleted'] === 1) {
-            $pb->products->delete($pb->id, $product_bean);
+            $product_bean->mark_deleted($product_bean->id);
         } else {
-            if (!isset($note['position'])) {
-                $note['position'] = $this->getNextBundleItemPosition($pb);
+            $product_bean->save();
+            if (!isset($product['position'])) {
+                $product['position'] = isset($product['product_index']) ?
+                    $product['product_index'] : count($pb->getLineItems());
             }
             $pb->products->add($product_bean, array('product_index' => $product['position']));
         }
@@ -214,32 +216,20 @@ class QuotesApiHelper extends SugarBeanApiHelper
         $product_bundle_note = BeanFactory::getBean('ProductBundleNotes', $note['id']);
         $product_bundle_note->deleted = $note['deleted'];
         $product_bundle_note->description = $note['description'];
-        $product_bundle_note->save();
+
 
         $pb->load_relationship('product_bundle_notes');
         if ($note['deleted'] === 1) {
-            $pb->product_bundle_notes->delete($pb->id, $product_bundle_note);
+            $product_bundle_note->mark_deleted($product_bundle_note->id);
         } else {
+            $product_bundle_note->save();
             if (!isset($note['position'])) {
-                $note['position'] = $this->getNextBundleItemPosition($pb);
+                $note['position'] = isset($product['note_index']) ?
+                    $product['note_index'] : count($pb->getLineItems());
             }
             $pb->product_bundle_notes->add($product_bundle_note, array('note_index' => $note['position']));
         }
     }
-
-    /**
-     * Return the count for the number of items in the current ProductBundle, by doing this it
-     * allows us to set the position if we are missing it.
-     *
-     * @param SugarBean|ProductBundle $pb
-     * @return int
-     */
-    protected function getNextBundleItemPosition(SugarBean $pb)
-    {
-        $bundle_items = $pb->get_product_bundle_line_items();
-        return count($bundle_items);
-    }
-
 
     /**
      * Handle Setting the Addresses
@@ -314,6 +304,17 @@ class QuotesApiHelper extends SugarBeanApiHelper
         }
     }
 
+    /**
+     * Utility method to pick which string to return, if $bean_property is not empty, just return it,
+     * otherwise check $property and then $alt_property for a value, if they are both empty, this will
+     * just return an empty string
+     *
+     * @param string $bean_property
+     * @param SugarBean $fromBean
+     * @param string $property
+     * @param string $alt_property
+     * @return string
+     */
     protected function getAddressFormContact($bean_property, $fromBean, $property, $alt_property)
     {
         return !empty($bean_property) ? $bean_property

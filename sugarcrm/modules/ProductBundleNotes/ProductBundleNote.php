@@ -69,19 +69,6 @@ class ProductBundleNote extends SugarBean
     public $required_fields = array();
 
     //deletes related products might want to change this in the future if we allow for sharing of products
-    public function mark_deleted($id)
-    {
-        $pb = BeanFactory::getBean('ProductBundleNotes');
-        $pb->id = $id;
-        /*
-                $products = $pb->get_products();
-                foreach($products as $product){
-                    $product->mark_deleted($product->id);
-                }
-        */
-        return parent::mark_deleted($id);
-    }
-
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
@@ -105,6 +92,13 @@ class ProductBundleNote extends SugarBean
         // empty
     }
 
+    /**
+     * @deprecated
+     * @param string $bundle_id
+     * @param string $product_id
+     * @param string $note_id
+     * @param integer $note_index
+     */
     public function set_product_bundle_product_notes_relationship($bundle_id, $product_id, $note_id = '', $note_index)
     {
         if (empty($note_id)) {
@@ -120,18 +114,15 @@ class ProductBundleNote extends SugarBean
         );
     }
 
+    /**
+     * @deprecated
+     * @param string $bundle_id
+     */
     public function clear_product_bundle_product_notes_relationship($bundle_id)
     {
         $query = "DELETE FROM $this->rel_notes WHERE (bundle_id='$bundle_id') AND deleted=0";
 
         $this->db->query($query, true, "Error clearing note to product to product bundle relationship");
-    }
-
-    public function mark_relationships_deleted($id)
-    {
-        //$this->clear_productbundle_product_relationship($id);
-        //$this->clear_productbundle_quote_relationship($id);
-        $this->clear_product_bundle_product_notes_relationship($note_id);
     }
 
     public function fill_in_additional_list_fields()
@@ -166,12 +157,5 @@ class ProductBundleNote extends SugarBean
             $the_where .= $clause;
         }
         return $the_where;
-    }
-
-    public function save($check_notify = false)
-    {
-        $this->id = parent::save($check_notify);
-
-        return $this->id;
     }
 }

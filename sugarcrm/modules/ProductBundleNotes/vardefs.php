@@ -90,6 +90,17 @@ $dictionary['ProductBundleNote'] = array(
             ),
             'vname' => 'LBL_NOTES',
         ),
+        'position' => array(
+            'massupdate' => false,
+            'name' => 'position',
+            'type' => 'integer',
+            'studio' => false,
+            'source' => 'non-db',
+            'vname' => 'LBL_BUNDLE_NOTE_POSITION',
+            'importable' => false,
+            'link' => 'product_bundles',
+            'rname_link' => 'note_index',
+        ),
 
     ),
     'indices' => array(
