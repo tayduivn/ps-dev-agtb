@@ -49,7 +49,8 @@ class QuotesApiHelper extends SugarBeanApiHelper
         // Bug #57888 : REST API: Create related quote must populate billing/shipping contact and account
         if (isset($submittedData['module']) &&
             in_array($submittedData['module'], $valid_relate_modules) &&
-            isset($submittedData['record'])) {
+            isset($submittedData['record'])
+        ) {
             $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $bean);
         } else {
             // we are not on a related record, so lets check the field and fill in the data correctly
@@ -61,9 +62,11 @@ class QuotesApiHelper extends SugarBeanApiHelper
             if ($hasBillingAccountId) {
                 $account = BeanFactory::getBean('Accounts', $bean->billing_account_id);
                 $this->processBeanAddressFields($account, $bean, 'billing', 'billing', 'shipping');
-            } else if (!$hasBillingAccountId && $hasBillingContactId) {
-                $contact = BeanFactory::getBean('Contacts', $bean->billing_contact_id);
-                $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+            } else {
+                if (!$hasBillingAccountId && $hasBillingContactId) {
+                    $contact = BeanFactory::getBean('Contacts', $bean->billing_contact_id);
+                    $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+                }
             }
 
             if (!$hasShippingAccountId && !$hasShippingContactId && $hasBillingAccountId) {
@@ -75,14 +78,168 @@ class QuotesApiHelper extends SugarBeanApiHelper
             if ($hasShippingAccountId && !$hasShippingContactId) {
                 $account = BeanFactory::getBean('Accounts', $bean->shipping_account_id);
                 $this->processBeanAddressFields($account, $bean, 'shipping', 'shipping', 'billing');
-            } else if ($hasShippingContactId) {
-                $contact = BeanFactory::getBean('Contacts', $bean->shipping_contact_id);
-                $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+            } else {
+                if ($hasShippingContactId) {
+                    $contact = BeanFactory::getBean('Contacts', $bean->shipping_contact_id);
+                    $this->processBeanAddressFields($contact, $bean, 'shipping', 'primary', 'alt');
+                }
+            }
+        }
+
+        // lets process the bundles
+        if (isset($submittedData['bundles']) && is_array($submittedData['bundles'])) {
+            foreach ($submittedData['bundles'] as $bundle) {
+                $this->processBundle($bundle, $bean);
             }
         }
 
         return true;
     }
+
+    /**
+     * @param $bundle
+     * @param SugarBean|Quote $bean
+     */
+    protected function processBundle($bundle, SugarBean $bean)
+    {
+        if (!isset($bundle['id'])) {
+            $bundle['id'] = null;
+        }
+        // lets try and get the bundle
+        /* @var $pb ProductBundle */
+        $pb = BeanFactory::getBean('ProductBundles', $bundle['id']);
+
+        if (isset($bundle['deleted']) && $bundle['deleted'] == 1) {
+            $pb->mark_deleted($pb->id);
+            $bean->load_relationship('product_bundles');
+            $bean->product_bundles->delete($bean->id, $pb);
+        } else {
+            $pb->team_id = $bean->team_id;
+            $pb->team_set_id = $bean->team_set_id;
+            $pb->shipping = $bundle['shipping'];
+            $pb->currency_id = $bean->currency_id;
+            $pb->taxrate_id = $bean->taxrate_id;
+            $pb->bundle_stage = $bundle['bundle_stage'];
+            $pb->name = $bundle['name'];
+
+            $pb->save();
+
+            // handle the items on the product bundle
+            foreach ($bundle['items'] as $item) {
+                if ($item['module'] == 'ProductBundleNotes') {
+                    $this->handleBundleNoteSave($item, $pb, $bean);
+                } else {
+                    if ($item['module'] == 'Products') {
+                        $this->handleBundleProductSave($item, $pb, $bean);
+                    }
+                }
+            }
+
+            // save the bundle to the quote
+            $bean->load_relationship('product_bundles');
+            if (!isset($bundle['position'])) {
+                $bundle['position'] = count($bean->product_bundles->getBeans());
+            }
+            $bean->product_bundles->add($pb, array('bundle_index' => $bundle['position']));
+        }
+    }
+
+    /**
+     * @param array $product
+     * @param SugarBean|ProductBundle $pb
+     * @param SugarBean|Quote $bean
+     */
+    protected function handleBundleProductSave(array $product, SugarBean $pb, SugarBean $bean)
+    {
+        if (!isset($product['id'])) {
+            $product['id'] = null;
+        }
+        /* @var $product_bean Product */
+        $product_bean = BeanFactory::getBean('Products', $product['id']);
+
+        foreach ($product_bean->column_fields as $field) {
+            if (isset($product[$field])) {
+                $value = $product[$field];
+                if (isset($product_bean->field_defs[$field]['type'])) {
+                    // figure out the type that we need
+                    $def = $product_bean->field_defs[$field];
+                    // get the correct type in the following order
+                    //  custom_type -> dbType -> type
+                    // from the vardefs
+                    $type = !empty($def['custom_type']) ? $def['custom_type'] :
+                        !empty($def['dbType']) ? $def['dbType'] : $def['type'];
+
+                    /* @var $sugarField SugarFieldBase */
+                    $sugarField = SugarFieldHandler::getSugarField($type);
+                    $sugarField->save(
+                        $product_bean,
+                        array($field => $value),
+                        $field,
+                        $product_bean->field_defs[$field]
+                    );
+                } else {
+                    $product->$field = $value;
+                }
+            }
+        }
+
+        $product_bean->currency_id = $bean->currency_id;
+        $product_bean->base_rate = $bean->base_rate;
+        $product_bean->team_id = $bean->team_id;
+        $product_bean->team_set_id = $bean->team_set_id;
+        $product_bean->quote_id = $bean->id;
+        $product_bean->account_id = $bean->billing_account_id;
+        $product_bean->contact_id = $bean->billing_contact_id;
+        $product_bean->ignoreQuoteSave = true;
+        $product_bean->save();
+
+        $pb->load_relationship('products');
+        if ($product['deleted'] === 1) {
+            $pb->products->delete($pb->id, $product_bean);
+        } else {
+            if (!isset($note['position'])) {
+                $note['position'] = $this->getNextBundleItemPosition($pb);
+            }
+            $pb->products->add($product_bean, array('product_index' => $product['position']));
+        }
+    }
+
+
+    protected function handleBundleNoteSave(array $note, SugarBean $pb, SugarBean $bean)
+    {
+        if (!isset($note['id'])) {
+            $note['id'] = null;
+        }
+        /* @var $product_bundle_note ProductBundleNote */
+        $product_bundle_note = BeanFactory::getBean('ProductBundleNotes', $note['id']);
+        $product_bundle_note->deleted = $note['deleted'];
+        $product_bundle_note->description = $note['description'];
+        $product_bundle_note->save();
+
+        $pb->load_relationship('product_bundle_notes');
+        if ($note['deleted'] === 1) {
+            $pb->product_bundle_notes->delete($pb->id, $product_bundle_note);
+        } else {
+            if (!isset($note['position'])) {
+                $note['position'] = $this->getNextBundleItemPosition($pb);
+            }
+            $pb->product_bundle_notes->add($product_bundle_note, array('note_index' => $note['position']));
+        }
+    }
+
+    /**
+     * Return the count for the number of items in the current ProductBundle, by doing this it
+     * allows us to set the position if we are missing it.
+     *
+     * @param SugarBean|ProductBundle $pb
+     * @return int
+     */
+    protected function getNextBundleItemPosition(SugarBean $pb)
+    {
+        $bundle_items = $pb->get_product_bundle_line_items();
+        return count($bundle_items);
+    }
+
 
     /**
      * Handle Setting the Addresses
