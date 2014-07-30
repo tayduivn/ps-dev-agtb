@@ -205,19 +205,24 @@
 
         this._super('_renderField', [field]);
 
-        if (field.name == 'timeperiod_start_date' && this.isForecastSetup) {
-            var year = this.model.get('timeperiod_start_date').substring(0, 4),
-                str,
-                $el;
+        if (field.name == 'timeperiod_start_date') {
+            if (this.isForecastSetup) {
+                var year = this.model.get('timeperiod_start_date').substring(0, 4),
+                    str,
+                    $el;
 
-            if (this.model.get('timeperiod_fiscal_year') === 'next_year') {
-                year++;
-            }
+                if (this.model.get('timeperiod_fiscal_year') === 'next_year') {
+                    year++;
+                }
 
-            str = app.lang.get('LBL_FISCAL_YEAR', 'Forecasts') + ': ' + year;
-            $el = this.$('#timeperiod_start_date_sublabel');
-            if ($el) {
-                $el.html(str);
+                str = app.lang.get('LBL_FISCAL_YEAR', 'Forecasts') + ': ' + year;
+                $el = this.$('#timeperiod_start_date_sublabel');
+                if ($el) {
+                    $el.html(str);
+                }
+            } else {
+                this.tpStartDate = app.date(this.model.get('timeperiod_start_date'));
+                this.checkFiscalYearField();
             }
         }
     },
