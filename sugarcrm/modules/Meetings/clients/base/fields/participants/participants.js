@@ -16,7 +16,7 @@
 ({
     fieldTag: 'input.select2',
 
-    plugins: ['EllipsisInline', 'Tooltip'],
+    plugins: ['EllipsisInline', 'SearchForMore', 'Tooltip'],
 
     events: {
         'click button[data-action=addRow]': 'addRow',
@@ -129,9 +129,12 @@
      * @private
      */
     _render: function() {
+        var $el;
+
         this._super('_render');
 
-        this.getFieldElement().select2({
+        $el = this.getFieldElement();
+        $el.select2({
             allowClear: false,
             formatInputTooShort: '',
             formatSearching: app.lang.get('LBL_LOADING', this.module),
@@ -139,6 +142,7 @@
             query: _.bind(this.search, this),
             selectOnBlur: false
         });
+        this.addSearchForMoreButton($el);
 
         this.$('[name=newRow]').hide();
 
