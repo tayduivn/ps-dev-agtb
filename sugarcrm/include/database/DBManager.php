@@ -3322,6 +3322,7 @@ protected function checkQuery($sql, $object_name = false)
      * @param array|null $options Array of optional arguments
      *                   field_filter => Array of filter names to be inspected (NULL means all fields)
      *                   for => Who are we getting the changes for, options are audit (default) and activity
+     *                   excludeType => Types of fields to exclude
      * @return array
      */
     public function getDataChanges(SugarBean &$bean, array $options = null)
@@ -3331,7 +3332,11 @@ protected function checkQuery($sql, $object_name = false)
         $fields = $bean->field_defs;
 
         if (!empty($options['for']) && $options['for'] == 'activity') {
-            $fields = $bean->getActivityEnabledFieldDefinitions();
+            $excludeType = array('datetime');
+            if (isset($options['excludeType'])) {
+                $excludeType = $options['excludeType'];
+            }
+            $fields = $bean->getActivityEnabledFieldDefinitions($excludeType);
         } elseif (!empty($options['for']) && $options['for'] == 'audit') {
             $fields = $bean->getAuditEnabledFieldDefinitions();
         }
