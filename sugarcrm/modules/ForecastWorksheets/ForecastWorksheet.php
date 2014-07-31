@@ -426,6 +426,12 @@ class ForecastWorksheet extends SugarBean
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $sq->orderBy('date_modified', 'DESC');
+
+        $link_name = ($type == 'RevenueLineItems') ? 'account_link' : 'accounts';
+        $bean_obj->load_relationship($link_name);
+        $bean_obj->$link_name->buildJoinSugarQuery($sq, array('joinTableAlias' => 'account'));
+        $sq->select(array(array('account.id', 'account_id')));
+
         $beans = $sq->execute();
 
         if (empty($beans)) {
