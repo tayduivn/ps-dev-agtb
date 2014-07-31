@@ -6419,7 +6419,7 @@ nv.models.multiBar = function() {
       valueFormat = d3.format(',.2f'),
       withLine = false,
       vertical = true,
-      baseWidth = 54,
+      baseWidth = 72,
       delay = 200,
       xDomain,
       yDomain,
@@ -6453,6 +6453,8 @@ nv.models.multiBar = function() {
           xVal = vertical ? 'x' : 'y',
           yVal = vertical ? 'y' : 'x',
           valuePadding = 0;
+
+      baseWidth = vertical ? 72 : 48;
 
       if (stacked) {
         data = d3.layout.stack()

@@ -5450,15 +5450,27 @@ input, select, textarea, button
 }
 
 .reportChartContainer {
-    -moz-border-radius:0px 0px 6px 6px;
-    border-radius:0px 0px 6px 6px;
-    -webkit-border-radius:0px 0px 6px 6px;
-    -moz-box-shadow:0 0 10px #CCCCCC;
-    box-shadow:0 0 10px #CCCCCC;
-    -webkit-box-shadow:0 0 10px #CCCCCC;
-    border: 1px solid #AFAFAE;
     margin-bottom: 20px;
-    }
+    height: 482px;
+}
+.reportChartContainer .chartContainer {
+  position: absolute;
+  float: none;
+  margin: 0 auto 20px !important;
+  width: calc(100% - 40px);
+  -moz-calc(100% - 40px);
+  -webkit-calc(100% - 40px);
+  -moz-border-radius:0px 0px 6px 6px;
+  border-radius:0px 0px 6px 6px;
+  -webkit-border-radius:0px 0px 6px 6px;
+  -moz-box-shadow:0 0 10px #CCCCCC;
+  box-shadow:0 0 10px #CCCCCC;
+  -webkit-box-shadow:0 0 10px #CCCCCC;
+  border: 1px solid #AFAFAE;
+}
+.reportChartContainer .scrollBars {
+  border-radius: 8px;
+}
 
 /* for all views */
 .view tr, .view td, .view h4, .view div
