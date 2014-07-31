@@ -362,6 +362,13 @@ class HealthCheckScannerMeta
     );
 
     /**
+     * Default link for "Learn more..."
+     *
+     * @var string
+     */
+    protected $defaultKbUrl = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate/Sugar_Ultimate_7.5/Installation_and_Upgrade_Guide/';
+
+    /**
      *
      * @var array $mod_strings
      */
@@ -444,7 +451,7 @@ class HealthCheckScannerMeta
             $meta['flag'] = $this->getDefaultFlag($meta['bucket']);
         }
         if (!isset($meta['kb'])) {
-            $meta['kb'] = false;
+            $meta['kb'] = $this->defaultKbUrl;
         }
         if (!isset($meta['tickets'])) {
             $meta['tickets'] = array();
