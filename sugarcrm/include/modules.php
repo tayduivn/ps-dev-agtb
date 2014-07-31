@@ -516,6 +516,7 @@ $objectList = array();
 $objectList['Cases'] =  'Case';
 $objectList['Groups'] =  'User';
 $objectList['Users'] =  'User';
+$objectList['ActivityStream/Activities'] = 'Activities';
 //BEGIN SUGARCRM flav=pro ONLY
 $objectList['TrackerSessions'] =  'tracker_sessions';
 $objectList['TrackerPerfs'] =  'tracker_perf';

@@ -765,7 +765,6 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'link',
             'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
             'link_class' => 'ArchivedEmailsBeanLink',
-            'link' => 'contacts',
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
             'module' => 'Emails',
