@@ -207,6 +207,22 @@ describe("enum field", function() {
             expect(field.unformat(original)).toEqual(expected);
         });
 
+        it("should format the model's value into a string array when model is updated", function() {
+            var value = "^1^,^2^",
+                actual,
+                expected = ["1", "2"];
+            field = SugarTest.createField("base", fieldName, "enum", "edit", {isMultiSelect: true});
+            field.items = {
+                '1': 'Foo',
+                '2': 'Bar',
+                '3': 'Baz'
+            };
+            field.render();
+            field.model.set(field.name, value);
+            actual = field.$('input').select2('val');
+            expect(actual).toEqual(expected);
+        });
+
         describe("blank value on multi select", function() {
             it('should transform the empty key on render', function() {
                 field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});

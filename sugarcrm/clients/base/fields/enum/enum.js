@@ -554,7 +554,7 @@
                 if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
                     this.render();
                 } else {
-                    this.$(this.fieldTag).select2('val', this.model.get(this.name));
+                    this.$(this.fieldTag).select2('val', this.format(this.model.get(this.name)));
                 }
             }, this);
         }
