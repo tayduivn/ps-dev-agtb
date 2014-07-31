@@ -163,4 +163,19 @@ class SugarFieldEnum extends SugarFieldBase {
 			return $rawField;
 		}
     }
+
+
+    /*
+     * @see SugarFieldBase::getEmailTemplateValue()
+     */
+    public function getEmailTemplateValue($inputField, $vardef, $context = null) {
+
+        //if function is defined then call the function value and retrieve the input field string
+        if(!empty($vardef['function'])) {
+            return getFunctionValue(NULL, $vardef['function'], $args = array('selectID' => $inputField));
+        }
+        
+        // call format field to return value
+        return $this->formatField($inputField,$vardef);
+    }
 }
