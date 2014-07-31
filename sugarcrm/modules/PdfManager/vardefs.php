@@ -298,7 +298,6 @@ $dictionary['PdfManager'] = array(
     'indices' => array (
         array('name' => 'idx_pdfmanager_name', 'type' => 'index', 'fields' => array('name')),
         array('name' => 'idx_pdfmanager_base_module', 'type' => 'index', 'fields' => array('base_module')),
-        array('name' => 'idx_pdfmanager_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships'=>array (),
     'optimistic_locking'=>true,
