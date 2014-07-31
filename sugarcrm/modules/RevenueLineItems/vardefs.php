@@ -283,7 +283,10 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'deal_calc',
             'calculated' => true,
             'enforced' => true,
-            'formula' => 'ifElse($discount_select,currencyMultiply(currencyDivide($discount_amount,100),$discount_price), $discount_amount)',
+            'formula' => 'ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
             'related_fields' => array(
                 'currency_id',

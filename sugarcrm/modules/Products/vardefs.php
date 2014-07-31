@@ -330,10 +330,18 @@ $dictionary['Product'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
-            'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+            'formula' => 'ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )',
+            'calculated' => true,
+            'enforced' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'discount_price',
+                'quantity',
+                'discount_amount'
             ),
         ),
         'deal_calc_usdollar' =>  array(
