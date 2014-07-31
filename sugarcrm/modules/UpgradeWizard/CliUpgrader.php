@@ -74,14 +74,15 @@ class CliUpgrader extends UpgradeDriver
 
     protected static function usage()
     {
+        global $argv;
         list($version, $build) = static::getVersion();
 $usage =<<<eoq2
 CLI Upgrader v.$version (build $build)
 Usage:
-php CliUpgrader.php -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
+php {$argv[0]} -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
-    php CliUpgrader.php -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.1.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
+    php {$argv[0]} -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.1.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
 
 Arguments:
     -z/--zip upgrade.zip                 : Upgrade package file.
@@ -335,7 +336,7 @@ eoq2;
             $context['php'] = $php_path."php";
         }
         if(empty($context['script'])) {
-            $context['script'] = __FILE__;
+            $context['script'] = $argv[0];
         }
         $context['argv'] = $argv;
         $this->context = $context;

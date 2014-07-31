@@ -129,7 +129,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
  */
 
 if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php ScannerCli.php [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
+    die("Use php {$argv[0]} [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
 }
 
 $sapi_type = php_sapi_name();
