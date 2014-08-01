@@ -84,6 +84,13 @@ class DuplicateCheckApi extends SugarApi
 
     protected function populateFromApi($api, $bean, $args, $options=array())
     {
-        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
+        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
+
+        // remove email_addr_bean_rel records created by SugarFieldEmail::apiSave()
+        if (!empty($bean->emailAddress)) {
+            $bean->emailAddress->deleteLinks($bean->id, $bean->module_dir);
+        }
+
+        return $errors;
     }
 }
