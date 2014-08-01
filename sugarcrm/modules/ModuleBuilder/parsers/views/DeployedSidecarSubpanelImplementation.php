@@ -226,6 +226,9 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             @include $extension;
         }
 
+        $overrideSubpanelName = null;
+        $overrideSubpanelFileName = null;
+
         if(!empty($viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'])) {
             $components = $viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'];
             foreach ($components as $key => $component) {
@@ -244,6 +247,13 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                                        . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
                     $this->overrideArrayKey = $key;
                     return true;
+                }
+                // handle revenuelineitems' subpanel-for-opportunities 
+                if ((!empty($component['context']['link']) && $component['context']['link'] == $this->linkName)) {
+                    $overrideSubpanelName = $component['override_subpanel_list_view'];
+                    $overrideSubpanelFileName = "modules/{$this->_moduleName}/clients/{$client}"
+                        . "/views/{$overrideSubpanelName}/{$overrideSubpanelName}.php";
+                    break;
                 }
             }
         }
@@ -265,6 +275,9 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->loadedSubpanelFileName = 'custom/' . $subpanelFile;
         } elseif (file_exists($subpanelFile)) {
             $this->loadedSubpanelFileName = $subpanelFile;
+        } elseif (!empty($overrideSubpanelName) && file_exists($overrideSubpanelFileName)) {
+            $this->loadedSubpanelFileName = $overrideSubpanelFileName;
+            $this->loadedSubpanelName = $overrideSubpanelName;
         } elseif (file_exists($defaultSubpanelFile)) {
             $this->loadedSubpanelFileName = $defaultSubpanelFile;
             $this->loadedSubpanelName = 'subpanel-list';
