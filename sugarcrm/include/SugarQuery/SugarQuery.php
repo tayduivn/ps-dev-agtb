@@ -390,7 +390,7 @@ class SugarQuery
             $alias .= "_" . $table_name;
         }
 
-        return $alias;
+        return $this->db->getValidDBName($alias, 'alias');
     }
 
     /**
