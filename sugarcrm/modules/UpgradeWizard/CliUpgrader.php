@@ -336,7 +336,8 @@ eoq2;
             $context['php'] = $php_path."php";
         }
         if(empty($context['script'])) {
-            $context['script'] = $argv[0];
+            $pharPath = Phar::running(false);
+            $context['script'] = $pharPath ? $pharPath : __FILE__;
         }
         $context['argv'] = $argv;
         $this->context = $context;
