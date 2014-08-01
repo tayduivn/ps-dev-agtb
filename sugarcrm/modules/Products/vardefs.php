@@ -313,7 +313,7 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'formula' => 'divide($discount_amount,$base_rate)',
+            'formula' => 'currencyDivide($discount_amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -359,7 +359,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_calc,$base_rate)',
+            'formula' => 'currencyDivide($deal_calc,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -391,7 +391,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($cost_price,$base_rate)',
+            'formula' => 'currencyDivide($cost_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -427,7 +427,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($list_price,$base_rate)',
+            'formula' => 'currencyDivide($list_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -592,7 +592,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($book_value,$base_rate)',
+            'formula' => 'currencyDivide($book_value,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
