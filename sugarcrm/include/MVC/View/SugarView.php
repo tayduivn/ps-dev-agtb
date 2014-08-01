@@ -575,7 +575,6 @@ class SugarView
         else
             echo getVersionedScript('cache/Expressions/functions_cache.js');
         //END SUGARCRM flav=pro ONLY
-        echo getVersionedScript('include/javascript/calendar.js');
         echo <<<EOQ
         <script>
             if ( typeof(SUGAR) == 'undefined' ) {SUGAR = {}};
@@ -664,7 +663,6 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
-            echo getVersionedScript('include/javascript/calendar.js');
 
             $version_mark = getVersionedPath(null);
             echo '<script>SUGAR = SUGAR || {}; SUGAR.VERSION_MARK = ' . json_encode($version_mark) . ';</script>';
