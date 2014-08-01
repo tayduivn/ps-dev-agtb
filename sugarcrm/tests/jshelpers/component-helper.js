@@ -174,10 +174,22 @@
      *
      * @param {String} client The platform.
      * @param {String} module The custom Bean module.
+     * @param {Boolean} [loadModel] Set to false to prevent an attempt to load
+     * the model override.
+     * @param {Boolean} [loadCollection] Set to false to prevent an attempt to
+     * load the collection override.
      */
-    test.declareData = function(client, module) {
-        test.loadComponent(client, 'data', 'model', module);
-        test.loadComponent(client, 'data', 'collection', module);
+    test.declareData = function(client, module, loadModel, loadCollection) {
+        loadModel = (loadModel !== false);
+        loadCollection = (loadCollection !== false);
+
+        if (loadModel) {
+            test.loadComponent(client, 'data', 'model', module);
+        }
+
+        if (loadCollection) {
+            test.loadComponent(client, 'data', 'collection', module);
+        }
 
         SugarTest.datas.push(module);
     };

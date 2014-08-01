@@ -45,7 +45,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'detail', module);
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit', module);
         SugarTest.loadComponent('base', 'field', 'participants', module);
-        SugarTest.declareData('base', module);
+        SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
         SugarTest.loadPlugin('LinkField');
         SugarTest.loadPlugin('Tooltip');
