@@ -61,4 +61,10 @@ class Pat746Test_SugarBean extends SugarBean
             'type' => 'fullname',
         ),
     );
+    public $name_format_map = array(
+        'f' => 'first_name',
+        'l' => 'last_name',
+        's' => 'salutation',
+        't' => 'title',
+    );
 }
