@@ -312,6 +312,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
 
         it('should only include an avatar property when the participant has a picture field', function() {
             var hasAvatar;
+            sandbox.stub(field, '_render');
             field.getFieldValue().reset([
                 {_module: 'Contacts', id: '5', name: 'George Walton', picture: '5'},
                 {_module: 'Contacts', id: '6', name: 'Jim Long'}
