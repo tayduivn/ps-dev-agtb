@@ -428,12 +428,25 @@ CIA;
 
 }
 
-function getContractTypesDropDown()
+/*
+ * this function will return the array oof contract types for the contract types dropdown.
+ * if searchID value is provided it will attempt to match and return the label of the matching key in the array
+ * of contract types
+ *
+ * @param string $searchID value of id to search contract type array keys for
+ * @param returns array of contract types or label value of matching searchID if found
+ */
+function getContractTypesDropDown($searchID='')
 {
     static $contractTypes = null;
     if (!$contractTypes) {
         $seedContractTypes = BeanFactory::getBean('ContractTypes');
         $contractTypes = $seedContractTypes->get_contractTypes(true);
+    }
+
+    //if $search_id is a string and a key in the contract type array, then return the contract type value
+    if(!empty($searchID) && is_string($searchID) && !empty($contractTypes[$searchID])) {
+        return $contractTypes[$searchID];
     }
     return $contractTypes;
 }
