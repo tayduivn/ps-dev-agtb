@@ -122,6 +122,8 @@ class HealthCheckScannerCli extends HealthCheckScanner
     }
 }
 
+if(basename($argv[0]) != basename(__FILE__)) return;
+
 /**
  *
  * Standalone CLI HealthCheck runner

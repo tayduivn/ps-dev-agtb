@@ -127,7 +127,8 @@
         (function () {
 
             function doHealthCheck() {
-                var flagToIcon = [, 'icon-ok-sign color_green', 'icon-ellipsis-horizontal color_yellow', 'icon-exclamation-sign color_red'];
+                var flagToIcon = [, 'icon-ok-sign color_green', 'icon-ellipsis-horizontal color_yellow', 'icon-exclamation-sign color_red'],
+                    $healthcheck = $("#healthcheck");
                 $.ajax('index.php?module=HealthCheck&action=scan', {
                     dataType: 'json',
                     success: function (data) {
@@ -137,18 +138,19 @@
                             ];
                         }
                         data = data.sort(_sortByBucket);
-                        $("#healthcheck").html("");
+                        $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
                             var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", item.report, "</h1><p>", item.log];
                             if (data[i].kb) {
                                 html.push("<a href='");
                                 html.push(data[i].kb);
-                                html.push("'>Learn more...</a>");
+                                html.push("'> Learn more...</a>");
                             }
                             html.push("</p>");
-                            $("#healthcheck").append(html.join(""));
+                            $healthcheck.append(html.join(""));
                         }
+                        $healthcheck.parent().scrollTop($healthcheck.height());
                         var flag = data[data.length - 1].flag;
                         _displayAlert(flag);
                         if (flag < 3) {
@@ -158,7 +160,7 @@
                     error: function () {
                         var html = ["<h1><i class='", flagToIcon[parseInt(3)],
                             "'></i> Unexpected error occurred!</h1><p>We've encountered an unexpected error during heath check procedure. Please <a href='mailto:support@sugarcrm.com'>contact support</a>.</p>"];
-                        $("#healthcheck").html(html.join(""));
+                        $healthcheck.html(html.join(""));
                         _displayAlert(3);
                     }
                 });

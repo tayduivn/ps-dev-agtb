@@ -544,7 +544,7 @@ eoq2;
     }
 }
 
-if(empty($argv)) return;
+if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {

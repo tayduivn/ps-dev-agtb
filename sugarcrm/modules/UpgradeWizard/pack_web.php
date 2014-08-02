@@ -102,7 +102,7 @@ $installdefs['copy'][] = array("from" => "<basepath>/upgrader2.php", "to" => "cu
 $zip->addFromString("upgrader2.php", "<?php\n\$admin_group_header[2][3]['Administration']['upgrade_wizard']= array('Upgrade','LBL_UPGRADE_WIZARD_TITLE','LBL_UPGRADE_WIZARD','./UpgradeWizard.php');");
 
 $installdefs['copy'][] = array("from" => "<basepath>/healthcheck.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/healthcheck.php");
-$zip->addFromString("healthcheck.php", "<?php\n\$admin_group_header[2][3]['Administration']['health_check']= array('HealthCheck','LBL_HEALTH_CHECK_TITLE','LBL_HEALTH_CHECK','./index.php?module=HealthCheck');");
+$zip->addFromString("healthcheck.php", "<?php\n\$admin_group_header[2][3]['Administration']['health_check']= array('Repair','LBL_HEALTH_CHECK_TITLE','LBL_HEALTH_CHECK','./index.php?module=HealthCheck');");
 
 $installdefs['copy'][] = array("from" => "<basepath>/en_us.HealthCheck.php", "to" => "custom/Extension/application/Ext/Language/en_us.HealthCheck.php");
 $zip->addFromString("en_us.HealthCheck.php", "<?php\n\$app_strings['LBL_HEALTH_CHECK_TITLE'] = 'Health Check';\$app_strings['LBL_HEALTH_CHECK'] = 'A tool that checks if the system is upgradable.';");

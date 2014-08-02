@@ -28,6 +28,7 @@ $files=array(
     "modules/UpgradeWizard/CliUpgrader.php",
     "modules/UpgradeWizard/upgrader_version.json",
     'modules/HealthCheck/Scanner/Scanner.php',
+    'modules/HealthCheck/Scanner/ScannerCli.php',
     'modules/HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/language/en_us.lang.php',
 );
@@ -42,7 +43,7 @@ $stub = <<<'STUB'
 <?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "modules/UpgradeWizard/CliUpgrader.php"; __HALT_COMPILER();
+require_once "modules/UpgradeWizard/CliUpgrader.php"; CliUpgrader::start(); __HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
 

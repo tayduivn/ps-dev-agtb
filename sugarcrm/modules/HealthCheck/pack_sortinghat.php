@@ -52,7 +52,22 @@ $stub = <<<'STUB'
 <?php 
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "Scanner/ScannerCli.php"; __HALT_COMPILER();
+require_once "Scanner/ScannerCli.php";
+if (empty($argv) || empty($argc) || $argc < 2) {
+    die("Use php {$argv[0]} [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
+}
+
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) != 'cli') {
+    die("This is a command-line only script");
+}
+
+$scanner = new HealthCheckScannerCli();
+$scanner->parseCliArgs($argv);
+$scanner->scan();
+
+exit($scanner->getResultCode());
+__HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
 
