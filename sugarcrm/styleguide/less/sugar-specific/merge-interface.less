@@ -3,7 +3,6 @@
 
 @mergeFieldHeight: 30px;
 h4.merge-interface-header {
-  //margin: 20px -3px 0 20px;
   padding: 11px 0 0 20px;
   .preview {
     padding-top: 0;
@@ -25,6 +24,7 @@ h4.merge-interface-header {
     }
   }
 }
+
 .merge-interface {
 	height:auto;
 	margin: 10px 0 0;
@@ -49,10 +49,33 @@ h4.merge-interface-header {
 	}
 
 	.fluid-div {
-            white-space: nowrap;
-            overflow-y: hidden;
-            height: auto;
-            overflow-x: auto;
+    .calcWidth(~"100% - 150px");
+    display: inline-block;
+    white-space: nowrap;
+    overflow-y: hidden;
+    height: auto;
+    overflow-x: auto;
+    &.num-cols-2 {
+      .col {
+        .calcWidth(~"50% - 23px");
+      }
+    }
+    &.num-cols-3 {
+     .col {
+          .calcWidth(~"33.3% - 20px");
+      }
+    }
+    &.num-cols-4 {
+      .col {
+        .calcWidth(~"25% - 18px");
+
+      }
+    }
+    &.num-cols-5 {
+      .col {
+        .calcWidth(~"20% - 18px");
+      }
+    }
 	}
 
   .input-append.date {
@@ -77,51 +100,53 @@ h4.merge-interface-header {
   }
 
 	.col {
-		width: 130px;
+		min-width: 130px;
 		height: 100%;
 		display: inline-block;
-		margin: 2px 5px 5px 10px;
-		float: left;
+		margin: 2px 0px 5px 10px;
 		.primary-lbl {
-            cursor: move;
-            height: 20px;
-            margin: 0 0 5px 0;
-            span {
-              display: block;
-              margin: 0 0 5px 0;
-              border: 1px solid #ccc;
-              .border-radius(4px);
-              background: #E9E9E9;
-              text-align: center;
-              font-size:11px;
-              text-shadow: -1px -1px 1px @white;
-            }
-            span.primary-lbl-placeholder-span {
-              border: 0;
-              display: block;
-              .border-radius(1px);
-              margin: -18px 0 5px 0;
-              background: #E9E9E9;
-              min-height: 20px;
-            }
-            button {
-              position: relative;
-            }
+      cursor: move;
+      height: 20px;
+      margin: 0 0 5px 0;
+      span {
+        display: block;
+        margin: 0 0 5px 0;
+        border: 1px solid #ccc;
+        .border-radius(4px);
+        background: #E9E9E9;
+        text-align: center;
+        font-size:11px;
+        text-shadow: -1px -1px 1px @white;
+      }
+      span.primary-lbl-placeholder-span {
+        border: 0;
+        display: block;
+        .border-radius(1px);
+        margin: -18px 0 5px 0;
+        background: darken(@grayLighter, 5%);
+        min-height: 20px;
+      }
+      button {
+        position: relative;
+      }
 		}
-        .primary-lbl-placeholder {
-          border: 1px dotted black;
-          .border-radius(4px);
-          &.ui-sortable-disabled {
-            span {
-              background: transparent;
-            }
-          }
-          &.ui-sortable-disabled:before {
-            content: "\f05e";
-            padding-left: 61px;
-            font-family: 'FontAwesome';
-          }
+    &.pull-left {
+      margin-right: 5px;
+    }
+    .primary-lbl-placeholder {
+      border: 1px dotted black;
+      .border-radius(4px);
+      &.ui-sortable-disabled {
+        span {
+          background: transparent;
         }
+      }
+      &.ui-sortable-disabled:before {
+        content: "\f05e";
+        padding-left: 61px;
+        font-family: 'FontAwesome';
+      }
+    }
 		.box {
 			border-radius: 3px;
 		    .box-shadow(0 0 1px #aaaaaa);
@@ -132,10 +157,10 @@ h4.merge-interface-header {
 				display: block;
 			}
 		}
-        button.icon-remove-sign {
-          margin-top: 1px;
-          line-height: 8px;
-        }
+    button.icon-remove-sign {
+      margin-top: 1px;
+      line-height: 8px;
+    }
 	}
 
 	.col.primary-edit-mode { /* PRIMARY */
@@ -147,6 +172,9 @@ h4.merge-interface-header {
 				&.odd {
 					background: none;
 				}
+        .controls > label {
+          .calcWidth(~"100% - 34px");
+        }
 			}
 			.merge-edit {
 				display: block;
@@ -171,13 +199,14 @@ h4.merge-interface-header {
 	}
 
 	input[type=text] {
-		width: 86px;
+		width: 98%;
 	}
   input[type=password] {
-    width: 86px;
+    width: 98%;
   }
   input[type=radio] {
-    width: 16px
+    width: 16px;
+    margin-right: 6px;
   }
   label input[type=checkbox] {
     margin-top: 0;
@@ -203,7 +232,7 @@ h4.merge-interface-header {
 		width: 90%;
 	}
 	.select2-container {
-		width: 100px !important;
+    .calcWidth(~"100% + 10px") !important;
 	}
 	textarea {
 		height: 17px;
@@ -215,9 +244,10 @@ h4.merge-interface-header {
       height: @mergeFieldHeight;
       padding: 2px 0 2px 0;
       margin: 0;
+      position: relative;
     }
     &.control-group .controls>label {
-      width: 120px;
+      width: 100%;
       overflow: hidden;
       margin: 0;
       line-height: (@mergeFieldHeight + 5);
@@ -316,18 +346,15 @@ h4.merge-interface-header {
 }
 
 .record-merge-interface {
-    .merge-interface {
-        .rows-div {
-            position: relative;
-            .row-div-cnt {
-                width: 730px;
-            }
-            .merge-row:nth-child(odd) {
-                background-color: #f8f8f8;
-            }
-        }
+  .merge-interface {
+    .rows-div {
+      position: relative;
+      .merge-row:nth-child(odd) {
+        background-color: lighten(@grayLighter, 1%);
+      }
     }
-    overflow: hidden;
+  }
+  overflow: hidden;
 }
 
 @iterations: 50;
