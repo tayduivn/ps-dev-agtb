@@ -10,7 +10,26 @@
  */
 (function(app) {
     app.events.on('app:init', function() {
-        var LinkField, ModelOverrides;
+        var getLinkUrl, LinkField, ModelOverrides;
+
+        /**
+         * Returns a relative URL to use for fetching related records or
+         * linking or unlinking an existing record to or from another record.
+         *
+         *     @example
+         *     ```
+         *     /v10/Meetings/12345/link/
+         *     ```
+         *
+         * Append the relationship name followed by the ID of related record to
+         * either link or unlink a related record.
+         *
+         * @param {Bean} lhs
+         * @return {string}
+         */
+        getLinkUrl = function(lhs) {
+            return '/v10/' + lhs.module + '/' + lhs.id + '/link/';
+        };
 
         /**
          * @class LinkField
@@ -44,7 +63,6 @@
              * collection; all modules by default
              */
             initialize: function(models, options) {
-                var apiVersion = 'v10';
 
                 options || (options = {});
 
@@ -54,7 +72,6 @@
                 this.fieldName = options.fieldName;
 
                 this.bulkUrl = app.api.buildURL(null, 'bulk');
-                this.linkUrl = '/' + apiVersion + '/' + this.parent.module + '/' + this.parent.id + '/link/';
 
                 // all modules by default
                 this.modules = options.modules || app.metadata.getModuleNames({filter: 'visible'});
@@ -280,16 +297,17 @@
              * @return {SUGAR.HttpRequest} AJAX request
              */
             fetch: function(options) {
-                var error, success, requests;
+                var error, linkUrl, success, requests;
 
                 this.isLoading = true;
                 options || (options = {});
+                linkUrl = getLinkUrl(this.parent);
 
                 //TODO: going to need a custom endpoint to get the free-busy data along with the related beans
                 //... you can pass it in via options.endpoint and follow the same logic as data-manager
                 //... just extend the api to get the extra free-busy data for each person
                 requests = this.modules.map(function(module) {
-                    return {url: this.linkUrl + module.toLowerCase()};
+                    return {url: linkUrl + module.toLowerCase()};
                 }, this);
 
                 success = options.success;
@@ -340,16 +358,17 @@
              * @return {SUGAR.HttpRequest} AJAX request
              */
             sync: function(options) {
-                var complete, error, success, requests;
+                var complete, error, linkUrl, success, requests;
 
                 options || (options = {});
+                linkUrl = getLinkUrl(this.parent);
 
                 requests = this.filter(function(model) {
                     return model.get('delta') !== 0;
                 }).map(function(model) {
                     return {
                         method: (model.get('delta') === 1) ? 'POST' : 'DELETE',
-                        url: this.linkUrl + model.module.toLowerCase() + '/' + model.id
+                        url: linkUrl + model.module.toLowerCase() + '/' + model.id
                     };
                 }, this);
 
