@@ -59,22 +59,19 @@
              * is attached
              * @param {String} options.fieldName The name of the attribute on
              * the parent model where this collection is stored
-             * @param {Array} [options.modules] The modules allowed for this
-             * collection; all modules by default
+             * @param {Array} options.links The link field names included for
+             * this collection
              */
             initialize: function(models, options) {
-
                 options || (options = {});
 
                 app.MixedBeanCollection.prototype.initialize.call(this, models, options);
 
-                this.parent = options.parent;
-                this.fieldName = options.fieldName;
-
                 this.bulkUrl = app.api.buildURL(null, 'bulk');
 
-                // all modules by default
-                this.modules = options.modules || app.metadata.getModuleNames({filter: 'visible'});
+                this.parent = options.parent;
+                this.fieldName = options.fieldName;
+                this.links = app.metadata.getRHSModulesForLinks(this.parent.module, options.links);
             },
 
             /**
@@ -306,9 +303,12 @@
                 //TODO: going to need a custom endpoint to get the free-busy data along with the related beans
                 //... you can pass it in via options.endpoint and follow the same logic as data-manager
                 //... just extend the api to get the extra free-busy data for each person
-                requests = this.modules.map(function(module) {
-                    return {url: linkUrl + module.toLowerCase()};
-                }, this);
+                requests = _.chain(this.links)
+                    .keys()
+                    .map(function(linkName) {
+                        return {url: linkUrl + linkName};
+                    })
+                    .value();
 
                 success = options.success;
                 options.success = _.bind(function(result) {
@@ -358,19 +358,20 @@
              * @return {SUGAR.HttpRequest} AJAX request
              */
             sync: function(options) {
-                var complete, error, linkUrl, success, requests;
+                var complete, error, linksInverted, linkUrl, success, requests;
 
                 options || (options = {});
                 linkUrl = getLinkUrl(this.parent);
 
+                linksInverted = _.invert(this.links);
                 requests = this.filter(function(model) {
                     return model.get('delta') !== 0;
                 }).map(function(model) {
                     return {
                         method: (model.get('delta') === 1) ? 'POST' : 'DELETE',
-                        url: linkUrl + model.module.toLowerCase() + '/' + model.id
+                        url: linkUrl + linksInverted[model.module] + '/' + model.id
                     };
-                }, this);
+                });
 
                 if (requests.length === 0) {
                     return false;
@@ -422,8 +423,8 @@
                 params.q = options.query;
                 params.max_mum = options.limit;
 
-                if (this.modules) {
-                    params.module_list = this.modules.join(',');
+                if (this.links) {
+                    params.module_list = _.values(this.links).join(',');
                 }
 
                 callbacks = {
@@ -704,7 +705,7 @@
                         collection = new LinkField([], {
                             parent: this,
                             fieldName: fieldName,
-                            modules: options.modules || null
+                            links: options.links
                         });
 
                         this.set(fieldName, collection);

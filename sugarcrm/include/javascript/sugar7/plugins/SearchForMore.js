@@ -58,9 +58,11 @@
             searchForMore: function($el) {
                 var layout, module, modules;
 
-                if (!_.isUndefined(this.def.module_list)) {
+                if (!_.isUndefined(this.def.links)) {
                     layout = 'selection-list-module-switch';
-                    modules = this.def.module_list;
+                    modules = _.chain(app.metadata.getRHSModulesForLinks(this.module, this.def.links))
+                        .values()
+                        .value();
                     module = _.first(modules);
                 } else {
                     layout = 'selection-list';
@@ -76,6 +78,7 @@
                     }
                 }, function(model) {
                     if (model) {
+                        model.name || (model.name = model.full_name);
                         $el.data('select2').triggerChange({added: {attributes: model}});
                     }
                 });

@@ -340,6 +340,7 @@
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             $sugar_grp_sugar7_portal2 = array(

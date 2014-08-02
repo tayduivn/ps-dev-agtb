@@ -60,7 +60,7 @@
         this.previewRow = _.debounce(this.previewRow, 200);
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
 
-        this.model.trigger('collection:initialize', this.name, {modules: this.def.module_list});
+        this.model.trigger('collection:initialize', this.name, {links: this.def.links});
 
         if (this.model.isNew()) {
             currentUser = app.data.createBean('Users', {id: app.user.id});

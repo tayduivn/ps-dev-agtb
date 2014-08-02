@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('View.Fields.Base.Meetings.ParticipantsField', function() {
     var app, context, field, fieldDef, fixture, model, module, participants, sandbox;
 
@@ -10,7 +20,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
         {_module: 'Leads', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', delta: 0}
     ];
 
-    fieldDef = {module_list: ['Users', 'Contacts', 'Leads']};
+    fieldDef = {links: ['users', 'contacts', 'leads']};
 
     fixture = {
         _hash: '12345678910',
@@ -63,6 +73,12 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
             if (callbacks.success) {
                 callbacks.success({});
             }
+        });
+        sandbox.stub(app.metadata, 'getRHSModulesForLinks', function(lhsModule, links) {
+            return _.chain(links).reduce(function(modules, link) {
+                modules[link] = link.charAt(0).toUpperCase() + link.substr(1);
+                return modules;
+            }, {}).value();
         });
     });
 

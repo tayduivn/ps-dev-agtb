@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Plugins.SearchForMore', function() {
     var $el, app, appDrawer, appDrawerOpen, context, field, fieldDef, model, module, participants, sandbox;
 
@@ -10,7 +20,7 @@ describe('Plugins.SearchForMore', function() {
         {_module: 'Contacts', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', delta: 0}
     ];
 
-    fieldDef = {module_list: ['Users', 'Contacts', 'Leads']};
+    fieldDef = {links: ['Users', 'Contacts', 'Leads']};
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -32,6 +42,12 @@ describe('Plugins.SearchForMore', function() {
             if (callbacks.success) {
                 callbacks.success({});
             }
+        });
+        sandbox.stub(app.metadata, 'getRHSModulesForLinks', function(lhsModule, links) {
+            return _.chain(links).reduce(function(modules, link) {
+                modules[link] = link.charAt(0).toUpperCase() + link.substr(1);
+                return modules;
+            }, {}).value();
         });
 
         appDrawer = app.drawer;
@@ -121,20 +137,20 @@ describe('Plugins.SearchForMore', function() {
         expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should open the selection-list layout in a drawer when there is no module_list', function() {
+    it('should open the selection-list layout in a drawer when there are no links defined', function() {
         var stub = sandbox.stub(app.drawer, 'open');
-        delete field.def.module_list;
+        delete field.def.links;
         field.searchForMore($el);
         expect(stub.args[0][0].layout).toEqual('selection-list');
         expect(stub.args[0][0].context.module).toEqual(module);
         expect(stub.args[0][0].context.filterList.length).toBe(1);
     });
 
-    it('should open the selection-list-module-switch layout in a drawer when there is a module_list', function() {
+    it('should open the selection-list-module-switch layout in a drawer when there are links defined', function() {
         var stub = sandbox.stub(app.drawer, 'open');
         field.searchForMore($el);
         expect(stub.args[0][0].layout).toEqual('selection-list-module-switch');
-        expect(stub.args[0][0].context.module).toEqual(_.first(field.def.module_list));
-        expect(stub.args[0][0].context.filterList.length).toBe(field.def.module_list.length);
+        expect(stub.args[0][0].context.module).toEqual(_.first(field.def.links));
+        expect(stub.args[0][0].context.filterList.length).toBe(field.def.links.length);
     });
 });

@@ -201,10 +201,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'type' => 'participants',
                     'label' => 'LBL_INVITEES',
                     'span' => 12,
-                    'module_list' => array(
-                        'Users',
-                        'Contacts',
-                        'Leads',
+                    'links' => array(
+                        'users',
+                        'contacts',
+                        'leads',
                     ),
                 ),
                 'assigned_user_name',
