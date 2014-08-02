@@ -40,8 +40,16 @@
      *
      * Initializes the participants collection on the {@link Bean model} and
      * fetches the collection if the model is not new.
+     *
+     * The current user is added to the collection if the model is new. The
+     * delta for this model is set to 0 because the server will automatically
+     * link the current user anyway. Setting the delta to 0 allows
+     * {@link Bean#revertAttributes} and {@link Bean#changedAttributes} to
+     * behave as if this initialization did not dirty the collection.
      */
     initialize: function(options) {
+        var currentUser;
+
         this._super('initialize', [options]);
 
         // translate the placeholder
@@ -54,7 +62,18 @@
 
         this.model.trigger('collection:initialize', this.name, {modules: this.def.module_list});
 
-        if (!this.model.isNew()) {
+        if (this.model.isNew()) {
+            currentUser = app.data.createBean('Users', {id: app.user.id});
+            currentUser.once('sync', function(model) {
+                try {
+                    model.set('delta', 0);
+                    this.getFieldValue().add(model);
+                } catch (e) {
+                    app.logger.warn(e);
+                }
+            }, this);
+            currentUser.fetch();
+        } else {
             try {
                 this.getFieldValue().fetch();
             } catch (e) {

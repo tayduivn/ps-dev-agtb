@@ -81,6 +81,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
 
     describe('accessing the field value', function() {
         beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
                 'invitees',
@@ -109,8 +110,32 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
         });
     });
 
+    describe('when creating a new meeting', function() {
+        it('should add the current user to the collection', function() {
+            var currentUser = app.data.createBean('Users', {_module: 'Users', id: '1', name: 'Jim Brennan'});
+            sandbox.stub(currentUser, 'fetch', function() {
+                this.trigger('sync', this);
+            });
+            sandbox.stub(app.data, 'createBean').returns(currentUser);
+            sandbox.stub(model, 'isNew').returns(true);
+            field = SugarTest.createField(
+                'base',
+                'invitees',
+                'participants',
+                'edit',
+                fieldDef,
+                module,
+                model,
+                context,
+                true
+            );
+            expect(field.getFieldValue().length).toBe(1);
+        });
+    });
+
     describe('when the participants field is in detail mode', function() {
         beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
                 'invitees',
@@ -144,6 +169,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
 
     describe('when the participants field is in edit mode', function() {
         beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
                 'invitees',
@@ -193,9 +219,13 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
         });
 
         it("should disable a participant's delete button when the participant is the current user", function() {
+            var appUserId = app.user.id;
             app.user.id = '1';
             field.render();
             expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
+            if (appUserId) {
+                app.user.id = appUserId;
+            }
         });
 
         it("should disable a participant's delete button when the participant is the assigned user", function() {
@@ -272,6 +302,7 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
 
     describe('formatting the view model for render', function() {
         beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
                 'invitees',
