@@ -148,6 +148,9 @@
     /**
      * Gets filterable fields from the module metadata.
      *
+     * The list of fields comes from the metadata but is also filtered by
+     * user acls (`detail`/`read` action).
+     *
      * @param {String} moduleName The name of the module.
      * @return {Object} The filterable fields.
      * @static
@@ -180,8 +183,9 @@
         _.each(fields, function(value, key) {
             // Check if we support this field type.
             var type = this.fieldTypeMap[value.type] || value.type;
+            var hasAccess = app.acl.hasAccess('detail', moduleName, null, key);
             // Predefined filters don't have operators defined.
-            if ((operatorMap[type] || value.predefined_filter === true)) {
+            if (hasAccess && (operatorMap[type] || value.predefined_filter === true)) {
                 validFields[key] = value;
             }
         }, this);
