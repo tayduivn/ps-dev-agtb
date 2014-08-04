@@ -51,7 +51,6 @@ $mod_strings = array (
     'LBL_ROOT_TAG_CAN_NOT_BE_RENAMED' => 'Root tag can not be renamed',
     'LBL_SOURCE_AND_TARGET_TAGS_ARE_SAME' => 'Source and Target tags are same',
     'LBL_NO_MATHING_TAG_FOUND'=>'No matching tag found',
-    'LBL_TYPE_TAG_NAME_TO_SEARCH' => 'Type the tag name to search',
     'LBL_TAGS_CHILD_TAGS_WITH_ARTICLE_CAN_NOT_BE_DELETED' => 'Tags or children tags with Articles can not be deleted',
     'LBL_FAQ_TAG_CAN_NOT_BE_DELETED' => ' tag and can not be deleted',
     'LBL_TYPE_TAG_NAME_TO_SEARCH' => 'Type tag name to be searched',

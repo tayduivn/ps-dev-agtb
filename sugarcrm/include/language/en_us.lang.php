@@ -1265,14 +1265,6 @@ $app_list_strings = array (
     'Math' => 'Math Calc',
   ),
 
-  'query_calc_oper_dom' =>
-      array (
-    '+' => '(+) Plus',
-    '-' => '(-) Minus',
-    '*' => '(X) Multiplied By',
-    '/' => '(/) Divided By',
-  ),
-
     'query_calc_leftright_type_dom' =>
       array (
     'Field' => 'Field',
@@ -1901,7 +1893,6 @@ $app_strings = array (
     'LBL_MODULE_FILTER' => 'Filter by...',
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
-    'LBL_MOREDETAIL'=>'More Detail',
     'LBL_EDITINLINE'=>'Edit',
     'LBL_VIEWINLINE'=>'View',
     'LBL_INFOINLINE'=>'Info',
@@ -2361,9 +2352,7 @@ $app_strings = array (
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
     'LBL_TEAMS' =>'Teams',
-    'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
-    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
@@ -2377,7 +2366,6 @@ $app_strings = array (
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
-    'LBL_CLOSE_BUTTON_KEY' => 'C',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
@@ -2618,7 +2606,6 @@ $app_strings = array (
     'LBL_FILTER_BETWEEN_TO' => 'To',
     'LBL_FILTER_DATEBETWEEN_FROM' => 'Start date',
     'LBL_FILTER_DATEBETWEEN_TO' => 'End date',
-    'LBL_FOLLOW' => 'Follow',
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
@@ -2780,7 +2767,6 @@ $app_strings = array (
     'LBL_NEW_BUTTON_LABEL' => 'Create',
     'LBL_NEW_BUTTON_TITLE' => 'Create',
     'LBL_NEXT_BUTTON_LABEL' => 'Next',
-    'LBL_NONE' => '--None--',
     'LBL_NOTES'=>'Notes',
     'LBL_OPENALL_BUTTON_KEY' => 'O',
     'LBL_OPENALL_BUTTON_LABEL' => 'Open All',
@@ -2857,7 +2843,6 @@ $app_strings = array (
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
     'LBL_RELATED_RECORDS' => 'Related Records',
-    'LBL_REMOVE' => 'Remove',
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_REQUIRED_SYMBOL' => '*',
     'LBL_REQUIRED_TITLE' => 'Indicates required field',
@@ -2979,7 +2964,6 @@ $app_strings = array (
 
     // LOGIN PAGE STRINGS
     'LBL_LOGIN_BUTTON_KEY' => 'L',
-    'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_LOGIN_BUTTON_TITLE' => 'Log In',
     'LBL_LOGIN_WELCOME_TO' => 'Welcome to',
     'LBL_LOGIN_OPTIONS' => 'Options',
@@ -3175,7 +3159,6 @@ $app_strings = array (
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
     'LBL_CREATE_CONTACT' => 'Create Contact',
-    'LBL_CREATE_CASE' => 'Create Case',
     'LBL_CREATE_NOTE' => 'Create Note',
     'LBL_CREATE_OPPORTUNITY' => 'Create Opportunity',
     'LBL_SCHEDULE_CALL' => 'Log Call',
@@ -3252,7 +3235,6 @@ $app_strings = array (
     'LBL_DASHLET_MINIMIZE' => 'Close',
     'LBL_DASHLET_MAXIMIZE' => 'Open',
     'LBL_DASHLET_CONFIGURE' => 'Configure',
-    'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_TOGGLE' => 'Open/Close',
     'LBL_DASHBOARD_TOGGLE' => 'Open/Close Dashboard',
 
@@ -3288,11 +3270,8 @@ $app_strings = array (
     'LBL_DASHLET_COMPANY_INFO_DESC' => 'Enrich existing account with D&B Data. Requires D&B subscription.',
     'LBL_DASHLET_COMPANY_INFO_LONG_DESC' => 'Keep your account information up-to-date with D&B import and enrich Feature.',
     'LBL_DNB_NAME'=>'Name',
-    'LBL_DNB_DUNS'=>'DUNS',
     'LBL_DNB_ADDRESS'=>'Address',
     'LBL_DNB_URL'=>'URL',
-    'LBL_DNB_PHONE'=>'Phone',
-    'LBL_DNB_LOCATION_TYPE'=>'Location Type',
     'LBL_DNB_FOUNDATION_YEAR'=>'Foundation Year',
     'LBL_DNB_SIC'=>'SIC Code',
     'LBL_DNB_NAICS'=>'NAICS',
@@ -3632,37 +3611,23 @@ $app_strings = array (
     'LBL_DNB_STD_COMPANY_INFO'=>'D&B: Company Information - Standard',
     'LBL_DNB_STD_COMPANY_INFO_DESC'=>'Standard company information From D&B. Requires D&B subscription.',
     'LBL_DNB_DUNS' => 'DUNS',
-    'LBL_DNB_TF_DUNS'=>'Transerfered DUNS Number',
-    'LBL_DNB_TF_DUNS' => 'Transfered DUNSNumber',
+    'LBL_DNB_TF_DUNS' => 'Transfered DUNS Number',
     'LBL_DNB_TOTAL_INQUIRY_COUNT' => 'Total Inquiry Count',
     'LBL_DNB_MARKETABILITY_INDICATOR' => 'Marketability Indicator',
     'LBL_DNB_NON_MARKETABILITY_INDICATOR' => 'NonMarketable Reason Text',
     'LBL_DNB_LAST_UPDATE' => 'Last Update',
     'LBL_DNB_SUMMARY' => 'Summary',
-    'LBL_DNB_SELF_REQUEST_INDICATOR' => 'Self Request Indicator',
     'LBL_DNB_STREET_ADDRESSLINE' => 'Street Addressline',
-    'LBL_DNB_COUNTRY_OFFICIAL_NAME' => 'Country Official Name',
-    'LBL_DNB_TERRITORY_OFFICIAL_NAME' => 'Territory Official Name',
     'LBL_DNB_TERRITORY_ABBREVIATED_NAME' => 'Territory Abbreviated Name',
-    'LBL_DNB_TELECOMMUNICATION_NUMBER' => 'Telecommunication Number',
     'LBL_DNB_FACSIMILE_NUMBER' => 'FacsimileNumber Number',
     'LBL_DNB_INT_DIALLING_CODE' => 'Int Dialling Code',
-    'LBL_DNB_INCORPORATION_YEAR' => 'Incorporation Year',
     'LBL_DNB_ORGANISATION_IDENTIFICATION_NUMBER' => 'Organisation Identification Number',
     'LBL_DNB_ORGANISATION_IDENTIFICATION_START_DATE' => 'Organisation Identification Start Date',
-    'LBL_DNB_STOCK_EXCHANGE_TICKER_NAME' => 'Stock Exchange Ticker Name',
     'LBL_DNB_STOCK_EXCHANGE_COUNTRY_ISO_ALPHA_CODE' => 'Stock Exchange Country ISO Alpha Code',
-    'LBL_DNB_LINE_OF_BUSINESS_DESCRIPTION' => 'Line of Business Description',
     'LBL_DNB_IMPORT_DETAILS_' => 'Import Details ',
-    'LBL_DNB_EXPORT_DETAILS_INDICATOR' => 'Export Details Indicator',
     'LBL_DNB_AGENT_INDICATOR' => 'Agent Indicator',
-    'LBL_DNB_TOTAL_EMPLOYEE_QUANTITY' => 'Total Employee Quantity',
-    'LBL_DNB_CURRENT_PRINCIPAL_FULL_NAME' => 'Current Principal Full Name',
-    'LBL_DNB_UNREACHABLE_INDICATOR' => 'Unreachable Indicator',
     'LBL_DNB_REGISTERED_ADDRESS_INDICATOR' => 'Registered Address Indicator',
-    'LBL_DNB_RESIDENTIAL_ADDRESS_INDICATOR' => 'Residential Address Indicator',
     'LBL_DNB_DNB_CODE_VALUE' => 'DNB Code Value',
-    'LBL_DNB_INDUSTRY_CODE_DESCRIPTION' => 'Industry Code Description',
     'LBL_DNB_FILLING_ORGANISATION_NAME' => 'Filling Organisation Name',
     'LBL_DNB_IMPORT_DETAILS_INDICATOR' => 'Import Details Indicator',
     'LBL_DNB_ASSOCIATE' => 'Associate',
@@ -3929,7 +3894,7 @@ $app_strings = array (
     'ERR_STORE_FILE_MISSING' => 'Error: Unable to find Store implementation file',
 
     'LBL_MONITOR_ID' => 'Monitor Id',
-    'LBL_TEAM_ID' => 'Team id',
+    'LBL_TEAM_ID' => 'Team ID',
     'LBL_SELECT_MODULE' => 'Select a module:',
     'LBL_USER_ID' => 'User Id',
     'LBL_MODULE_NAME' => 'Module Name',
@@ -4034,9 +3999,6 @@ $app_strings = array (
 
     //Elastic
     'ERR_ELASTIC_TEST_FAILED' => 'Failed to connect to Elastic server',
-
-    // fastcgi checks
-    'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
 
     //cma
     'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
@@ -4208,7 +4170,6 @@ $app_strings = array (
     'LBL_SHARE_BUTTON_KEY' => 'r',
     'LBL_SHARE_BUTTON_LABEL' => 'Share',
     'LBL_SHARE_BUTTON_TITLE' => 'Share',
-    'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
@@ -6352,127 +6313,6 @@ $app_list_strings['dnb_countries_iso'] = array(
    "YE" => "Yemen",
    "ZM" => "Zambia",
    "ZW" => "Zimbabwe"
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
 );
 
 $app_list_strings['dnb_bal_gte_lte_btw'] = array(

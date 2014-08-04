@@ -27,14 +27,8 @@ $mod_strings = array (
 	'LNK_KBDOCUMENT_LIST'=> 'View Documents',
 	'LBL_DOC_REV_HEADER' => 'Document Revisions',
 	'LBL_SEARCH_FORM_TITLE'=> 'Document Search',
-	'LBL_KBDOC_TAGS' => 'Article Tags:',
-	'LBL_KBDOC_BODY' => 'Article Body:',
-	'LBL_KBDOC_APPROVED_BY' =>'Approver:',
-	'LBL_KBDOC_ATTACHMENT' =>'Kbdoc_attachment',
-	'LBL_KBDOC_ATTS_TITLE' =>'Download Attachments:',	
 	'LBL_SEND_EMAIL'  => 'Send Email',
 	'LBL_SELECT_TAG_BUTTON_TITLE' => 'Select',
-	'LBL_ATTACHMENTS' => 'Attachments:',
 	'LBL_EMBEDED_IMAGES' => 'Embedded Images:',
 	'LBL_SHOW_MORE' => 'Show More Articles',
 	'LBL_SHOW_ARTICLE_DETAILS' => 'Show More Details',
@@ -43,10 +37,8 @@ $mod_strings = array (
 	'LBL_NOT_AN_ADMIN_USER' => 'Not an admin user',
 	'LBL_NOT_A_VALID_FILE' => 'Not a valid file',
 	
-	//Tag tree related labels    
-    'LBL_SELECT_A_NODE_FROM_TREE' => 'Select a node from tree',
+	//Tag tree related labels
     'LBL_SELECT_A_NODE_FROM_TREE' => 'Create New Tag',
-    'LBL_SEARCH'  =>'Search',
     'LBL_NEW_TAG_NAME' => 'New Tag Name:',
 	
 	//vardef labels	
@@ -97,12 +89,6 @@ $mod_strings = array (
 	'LBL_EXPIRATION_DATE' => 'Expiration Date',
 	'LBL_FILE_EXTENSION'  => 'File Extension',
     'LBL_KBDOC_APPROVER_NAME' => 'Approver Name',
-
-    'LBL_KBDOC_TAGS' => 'Document Tags:',
-	'LBL_KBDOC_BODY' => 'Document Body:',
-	'LBL_KBDOC_APPROVED_BY' =>'Approved By:',
-	'LBL_KBDOC_ATTACHMENT' =>'Kbdoc_attahment',
-	'LBL_KBDOC_ATTS_TITLE' =>'Download Attachments:',
 
     'LBL_KNOWLEDGE_BASE_SEARCH' => 'Knowledge Base',
 	'LBL_KNOWLEDGE_BASE_ADMIN' => 'Knowledge Base Admin',
@@ -272,7 +258,6 @@ $mod_strings = array (
     'LBL_SELECT_ARTICLES_TO_BE_MOVED_TO_OTHER_TAG' => 'Select Articles First ',
     'LBL_SELECT_ARTICLES_TO_APPLY_TAGS' => 'Select Articles To Apply Tags',
     'LBL_SELECT_ARTICLES_TO_DELETE'  => 'Select Articles First ',
-    'LBL_SELECT_TAGS_TO_DELETE'  => 'Select Tags To Delete',
     'LBL_SELECT_A_TAG_FROM_TREE' => 'Select A Tag From Tree',
     'LBL_SELECT_TAGS_FROM_TREE'  => 'Select Tags From Tree',
     'LBL_MOVING_ARTICLES_TO_TAG' =>'Moving articles to tag...',

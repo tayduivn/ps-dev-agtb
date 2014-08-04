@@ -30,7 +30,6 @@ $mod_strings = array (
   'LBL_LIST_SCHEDULED' => 'Schedule Report',
   'LBL_LIST_TYPE' => 'Type',
   'LBL_LIST_MODULE_TITLE' => 'Module',
-  'LBL_DESCRIPTION' => 'Description:',
   'LBL_PARENT_DATASET' => 'Parent Data Set:',
   'LBL_QUERY_NAME' => 'Query Name:',
   'LBL_TYPE' => 'Report Type:',

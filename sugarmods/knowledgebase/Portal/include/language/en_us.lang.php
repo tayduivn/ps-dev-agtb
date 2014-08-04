@@ -111,7 +111,6 @@ $app_list_strings = array (
     'Utilities' => 'Utilities',
     'Other' => 'Other',
   ),
-  'source_default_key' => 'Self Generated',
   'lead_source_dom' =>
   array (
     '' => '',
@@ -1199,10 +1198,8 @@ $app_strings = array (
 	'LBL_OR' => 'OR',
 	'LBL_PERCENTAGE_SYMBOL' => '%',
 	'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
-	'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
 	'LBL_PRODUCTS'=>'Products',
 	'LBL_PROJECT_TASKS'=>'Project Tasks',
-	'LBL_PROJECTS'=>'Projects',
 	'LBL_PROJECTS'=>'Projects',
 	'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
 	'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
@@ -1247,7 +1244,6 @@ $app_strings = array (
 	'LBL_STATUS_UPDATED'=>'Your Status for this event has been updated!',
 	'LBL_STATUS'=>'Status:',
 	'LBL_SUBJECT' => 'Subject',
-	'LBL_SYNC' => 'Sync',
 	'LBL_SYNC' => 'Sync',
 	'LBL_TASKS'=>'Tasks',
 	'LBL_TEAMS_LINK'=>'Team',

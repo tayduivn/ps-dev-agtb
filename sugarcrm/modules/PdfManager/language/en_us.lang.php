@@ -91,7 +91,6 @@ $mod_strings = array (
   'LBL_TPL_LIST_PRICE' => 'List Price',
   'LBL_TPL_UNIT_PRICE' => 'Unit Price',
   'LBL_TPL_EXT_PRICE' => 'Ext. Price',
-  'LBL_TPL_DISCOUNT' => 'Discount',
   'LBL_TPL_SUBTOTAL' => 'Subtotal:',
   'LBL_TPL_DISCOUNT' => 'Discount:',
   'LBL_TPL_DISCOUNTED_SUBTOTAL' => 'Discounted Subtotal:',
