@@ -84,21 +84,15 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
                     }
                 }
                 if (!$found) {
-                    //@TODO: Add mime-type detection
-                    $attachment = BeanFactory::getBean('Notes', $info['id']);
-                    if (!$attachment) {
-                        $attachment = BeanFactory::getBean('Notes');
+                    $note = BeanFactory::getBean('Notes', $info['id']);
+                    if ($note) {
+                        $attachment = clone $note;
                         $attachment->new_with_id = true;
                         $attachment->portal_flag = true;
                         $attachment->id = create_guid();
-                        sugar_rename(
-                            UploadFile::get_file_path('', $info['id'], true),
-                            UploadFile::get_file_path('', $attachment->id, true)
-                        );
-                        $attachment->filename = $info['name'];
-                        $attachment->name = $info['name'];
+                        UploadFile::duplicate_file($note->id, $attachment->id);
+                        $bean->attachments->add($attachment);
                     }
-                    $bean->attachments->add($attachment);
                 }
             }
         }
