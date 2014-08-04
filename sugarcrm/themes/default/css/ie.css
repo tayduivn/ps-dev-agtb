@@ -24,6 +24,12 @@
     table-layout: fixed;
 }
 
+.headerpane .table-cell-wrapper,
+.headerpane span[data-type=name] .table-cell-wrapper {
+    max-width: inherit;
+    width: inherit;
+}
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;
