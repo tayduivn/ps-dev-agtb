@@ -21,6 +21,15 @@
     <p>
         <span class="tagged">{{{str "TPL_COMMENT" "Activities" data}}}</span>
         <br />
-        <date class="date"><a href="#{{buildRoute module="Employees" id=created_by}}">{{created_by_name}}</a> {{timeago date_modified "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
+        <a href="#{{buildRoute module="Employees" id=created_by}}">{{created_by_name}}</a>
+        <date class="date">
+            <span class="relativetime">
+                {{#if useRelativeTime}}
+                    {{relativeTime model.attributes.date_entered class='date' rel='tooltip'}}
+                {{else}}
+                    {{str "LBL_ACTIVITYSTREAM_RELATIVETIME_ON"}}{{formatDate model.attributes.date_entered}}
+                {{/if}}
+            </span>
+        </date>
     </p>
 </li>
