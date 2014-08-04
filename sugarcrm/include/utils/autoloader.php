@@ -19,6 +19,7 @@ class SugarAutoLoader
 {
     const CACHE_FILE = "file_map.php";
     const CLASS_CACHE_FILE = "class_map.php";
+    const COMPOSER_AUTOLOAD = "vendor/autoload.php";
 
     /**
      * Direct class mapping
@@ -72,7 +73,15 @@ class SugarAutoLoader
      * @var array nsPrefix => directory
      */
     public static $namespaceMap = array(
-        'Elastica\\' => 'vendor/Elastica',
+    );
+
+    /**
+     * List of namespaces and directories which are provisioned
+     * using composer. This list is added to the autoloader if
+     * composer autoloader is not enabled.
+     */
+    public static $composerNamespaceMap = array(
+        'Elastica\\' => 'vendor/ruflin/elastica/lib/Elastica',
     );
 
 	/**
@@ -90,42 +99,46 @@ class SugarAutoLoader
         "modules/Mailer/",
 	);
 
-	/**
-	 * Directories to exclude form mapping
-	 * @var array
-	 */
-	public static $exclude = array(
-        "cache/",
-        "custom/history/",
-        ".idea/",
-        "custom/blowfish/",
-        "custom/Extension/",
-        "custom/backup/",
-	    "custom/modulebuilder/",
-        "tests/",
-        "examples/",
+    /**
+     * Directories to exclude form mapping
+     * @var array
+     */
+    public static $exclude = array(
+        'cache/',
+        'custom/history/',
+        '.idea/',
+        'custom/blowfish/',
+        'custom/Extension/',
+        'custom/backup/',
+        'custom/modulebuilder/',
+        'tests/',
+        'examples/',
         'docs/',
         'vendor/log4php/',
         'upload/',
-	    'portal/',
-	    'vendor/HTMLPurifier/',
-	    'vendor/PHPMailer/',
-	    'vendor/reCaptcha/',
-	    'vendor/ytree/',
-	    'vendor/pclzip/',
-	    'vendor/nusoap/',
-	);
+        'portal/',
+        'vendor/HTMLPurifier/',
+        'vendor/PHPMailer/',
+        'vendor/reCaptcha/',
+        'vendor/ytree/',
+        'vendor/pclzip/',
+        'vendor/nusoap/',
+        'vendor/composer/',
+    );
+
 	/**
 	 * Extensions to include in mapping
 	 * @var string
 	 */
     public static $exts = array("php", "tpl", "html", "js", "override", 'gif', 'png', 'jpg', 'tif', 'bmp', 'ico', 'css', 'xml', 'hbs', 'less');
+
     /**
      * File map
      * @var array
      */
     public static $filemap = array();
     public static $memmap = array();
+
     /**
      * Copy of extension map
      * @var array
@@ -135,19 +148,52 @@ class SugarAutoLoader
     /**
      * Initialize the loader
      */
-	static public function init()
-	{
-	    if(!empty($GLOBALS['sugar_config']['autoloader']['exts']) && is_array($GLOBALS['sugar_config']['autoloader']['exts'])) {
-	        self::$exts += $GLOBALS['sugar_config']['autoloader']['exts'];
-	    }
-		if(!empty($GLOBALS['sugar_config']['autoloader']['exclude']) && is_array($GLOBALS['sugar_config']['autoloader']['exclude'])) {
-	        self::$exclude += $GLOBALS['sugar_config']['autoloader']['exclude'];
-	    }
-	    self::loadFileMap();
+    public static function init()
+    {
+        $config = SugarConfig::getInstance();
+
+        // Extensions included from config
+        $exts = $config->get('autoloader.exts');
+        if (is_array($exts)) {
+            self::$exts += $exts;
+        }
+
+        // Excludes from config
+        $exclude = $config->get('autoloader.exclude');
+        if (is_array($exclude)) {
+            self::$exclude += $exclude;
+        }
+
+        /*
+         * Composer autoloader integration:
+         * Use our own autoloader if disabled, otherwise exclude dir.
+         */
+        $useComposer = $config->get('autoloader.composer', false);
+        foreach (self::$composerNamespaceMap as $ns => $dir) {
+            if ($useComposer) {
+                self::$exclude[] = $dir . '/';
+            } else {
+                self::addNamespace($ns, $dir);
+            }
+        }
+
+        self::loadFileMap();
         self::loadClassMap();
-	    spl_autoload_register(array('SugarAutoLoader', 'autoload'));
-	    self::loadExts();
-	}
+
+        // register ourself
+        spl_autoload_register(array('SugarAutoLoader', 'autoload'));
+
+        /*
+         * Register composer autoloader - By default the composer autoloader 
+         * is appended to the autoload stack. If required this behavior can
+         * be changed directly in composer.json (see prepend-autoloader).
+         */
+        if ($useComposer) {
+            self::load(self::COMPOSER_AUTOLOAD);
+        }
+
+        self::loadExts();
+    }
 
 	/**
 	 * Load a class
