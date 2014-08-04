@@ -115,7 +115,7 @@
 
                                     {else}
 
-                  <a class="btn btn-primary disabled" href="index.php?module=Administration&action=index"
+                  <a class="btn btn-primary" href="index.php?module=Administration&action=index"
                      name="next_button">Back to Admin Page</a>
               {/if}
           </span>
