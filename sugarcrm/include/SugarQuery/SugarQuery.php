@@ -406,7 +406,7 @@ class SugarQuery
     {
         //Force a unique join table alias for self referencing relationships and multiple joins against the same table
         $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias(
-            $bean->table_name
+            $link_name
         );
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
@@ -757,7 +757,7 @@ class SugarQuery
      */
     protected function loadBeans($join, $options)
     {
-        $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
+        $alias = (!empty($options['alias'])) ? $options['alias'] : $this->getJoinTableAlias($join);
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
@@ -846,12 +846,11 @@ class SugarQuery
 
     public function getJoinAlias($table_name)
     {
-        if (isset($this->joinTableToKey[$table_name])) {
-            return $this->joinTableToKey[$table_name];
-        } elseif (isset($this->joinLinkToKey[$table_name])) {
+        if (isset($this->joinLinkToKey[$table_name])) {
             return $this->joinLinkToKey[$table_name];
+        } elseif (isset($this->joinTableToKey[$table_name])) {
+            return $this->joinTableToKey[$table_name];
         }
-
         return false;
     }
 
