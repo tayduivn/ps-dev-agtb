@@ -130,6 +130,12 @@
     min-height: 0;
     height: 100%;
     &.vis_action_hidden {
+      &> span,
+      &> div {
+        display: none;
+      }
+    }
+    &.vis_action_hidden:first-of-type:last-of-type {
       display: none;
     }
     .record-label {

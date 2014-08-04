@@ -28,7 +28,7 @@ class SugarCronJobs
      * Max time per cron run
      * @var int
      */
-    public $max_runtime = 60;
+    public $max_runtime = 1800; // 30 minutes
     /**
      * Min time between cron runs
      * @var int
@@ -70,7 +70,7 @@ class SugarCronJobs
      * We may put it to false for testing
      * @var bool
      */
-    public $enforceHardLimit = true;
+    public $enforceHardLimit = false;
 
     public function __construct()
     {

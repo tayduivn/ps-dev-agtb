@@ -28,7 +28,7 @@ class SugarJobQueue
      * Job running timeout - longer than that, job is failed by force
      * @var int
      */
-    public $timeout = 86400; // 24 hours
+    public $timeout = 3600; // 1 hour
 
     /**
      * Table in the DB that stores jobs
