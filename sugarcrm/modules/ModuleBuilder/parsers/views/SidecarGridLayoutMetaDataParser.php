@@ -849,9 +849,14 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // named as the header panel
         $panelIndex = key($panels);
         foreach ($panels as $n => $panel) {
-            if (isset($panel['name']) && $panel['name'] == $this->panelLabels['panel_header']) {
-                $panelIndex = $n;
-                break;
+            if (isset($panel['name'])) {
+                $pname = $panel['name'];
+                // Some defs have a header panel that doesn't have a label. This
+                // accounts for that.
+                if ($pname === 'panel_header' || $pname === $this->panelLabels['panel_header']) {
+                    $panelIndex = $n;
+                    break;
+                }
             }
         }
 
