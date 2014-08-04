@@ -313,27 +313,6 @@ $dictionary['Product'] = array(
                 'discount_select',
             ),
         ),
-        'total_discount' => array(
-            'name' => 'total_discount',
-            'vname' => 'LBL_TOTAL_DISCOUNT',
-            'type' => 'currency',
-            'len' => '26,6',
-            'precision' => '6',
-            'comment' => 'Total Discount Amount In Currency',
-            'related_fields' => array(
-                'currency_id',
-                'base_rate',
-                'discount_select',
-                'discount_amount',
-                'discount_price',
-            ),
-            'formula' => 'ifElse(equal($discount_select, "1"),
-                currencyMultiply(currencyMultiply($discount_price, $quantity), divide($discount_amount, 100)),
-                $discount_amount
-            )',
-            'calculated' => true,
-            'enforced' => true,
-        ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
             'formula' => 'ifElse(isNumeric($discount_price), ifElse(equal($discount_price, 0), 0, multiply(divide($discount_amount, $discount_price), 100)), 0)',

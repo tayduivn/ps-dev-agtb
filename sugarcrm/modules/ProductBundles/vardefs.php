@@ -225,7 +225,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'rollupCurrencySum($products, "total_discount")',
+            'formula' => 'rollupCurrencySum($products, "deal_calc")',
             'calculated' => true,
             'enforced' => true,
         ),
