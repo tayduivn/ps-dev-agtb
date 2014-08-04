@@ -1212,11 +1212,24 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.updateContent(o);
 		},
 		refreshDropDown: function(){
-			ModuleBuilder.callLock = false;
-			document.popup_form.action.value = 'RefreshField';
-			document.popup_form.new_dropdown.value = ModuleBuilder.refreshDD_name;
-			SimpleList.refreshDD_name = '';
-			ModuleBuilder.submitForm("popup_form");
+            var selected = ModuleBuilder.refreshDD_name;
+            ModuleBuilder.asyncRequest(
+                'module=ModuleBuilder&action=refreshDropDown&view_package=' + ModuleBuilder.MBpackage
+                    + '&view_module=' + ModuleBuilder.module,
+                function (xhr) {
+                    var options = JSON.parse(xhr.responseText);
+                    var $dropdown = $("#options").empty();
+                    $.each(options, function(_, option) {
+                        var $option = $("<option/>").val(option).text(option);
+                        if (option == selected) {
+                            $option.prop("selected", true);
+                        }
+                        $dropdown.append($option);
+                    });
+                    ModuleBuilder.tabPanel.get("activeTab").close();
+                    ajaxStatus.hideStatus();
+                }
+            );
 		},
 		dropdownChanged: function(value){
 			var select = document.getElementById('default[]').options;
