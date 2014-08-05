@@ -18,8 +18,11 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
  */
 class CurrencySumRelatedExpression extends NumericExpression
 {
-	/**
-	 * Returns the entire enumeration bare.
+    /**
+     * Finds any related records based on the `link` then takes the `field` and adds all the values up and returns
+     * the sum.
+     *
+	 * @return String
 	 */
 	public function evaluate() {
 		$params = $this->getParameters();
