@@ -28,7 +28,7 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestHelper::tearDown();
     }
 
@@ -63,22 +63,22 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
      * Creates 3 opportunities, setting the name for filtering
      * and setting probabilities to 10, 20, NULL so we can test aggregate functions
      */
-    private static function setUpOpportunities()
+    private static function setUpProducts()
     {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->name = 'Bug 63673 Test Opp 1';
-        $opp->probability = 10;
-        $opp->save();
+        $prod = SugarTestProductUtilities::createProduct();
+        $prod->name = 'Bug 63673 Test Prod 1';
+        $prod->quantity = 10;
+        $prod->save();
 
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->name = 'Bug 63673 Test Opp 2';
-        $opp->probability = 20;
-        $opp->save();
+        $prod = SugarTestProductUtilities::createProduct();
+        $prod->name = 'Bug 63673 Test Prod 2';
+        $prod->quantity = 20;
+        $prod->save();
 
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->name = 'Bug 63673 Test Opp 3';
-        $opp->save();
-        $GLOBALS['db']->query("UPDATE opportunities SET probability = NULL WHERE id = '{$opp->id}'");
+        $prod = SugarTestProductUtilities::createProduct();
+        $prod->name = 'Bug 63673 Test Prod 3';
+        $prod->save();
+        $GLOBALS['db']->query("UPDATE products SET quantity = NULL WHERE id = '{$prod->id}'");
     }
 
     public static function aggregateDataProvider()
@@ -89,21 +89,21 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
                     "display_columns":[
                         {
                             "name":"name",
-                            "label":"Opportunity Name",
+                            "label":"Product Name",
                             "table_key":"self"
                         },
                         {
-                            "name":"probability",
-                            "label":"Probability (%)",
+                            "name":"quantity",
+                            "label":"Quantity",
                             "table_key":"self"
                         }
                     ],
-                    "module":"Opportunities",
+                    "module":"Products",
                     "group_defs":[],
                     "summary_columns":[
                         {
-                            "name":"probability",
-                            "label":"AVG: Probability (%)",
+                            "name":"quantity",
+                            "label":"AVG: Quantity (%)",
                             "field_type":"int",
                             "group_function":"avg",
                             "table_key":"self"
@@ -116,15 +116,15 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
                             "table_key":"self"
                         },
                         {
-                            "name":"probability",
-                            "label":"MAX: Probability (%)",
+                            "name":"quantity",
+                            "label":"MAX: Quantity (%)",
                             "field_type":"int",
                             "group_function":"max",
                             "table_key":"self"
                         },
                         {
-                            "name":"probability",
-                            "label":"SUM: Probability (%)",
+                            "name":"quantity",
+                            "label":"SUM: Quantity (%)",
                             "field_type":"int",
                             "group_function":"sum",
                             "table_key":"self"
@@ -134,15 +134,15 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
                     "chart_type":"none",
                     "do_round":1,
                     "chart_description":"",
-                    "numerical_chart_column":"self:probability:avg",
+                    "numerical_chart_column":"self:quantity:avg",
                     "numerical_chart_column_type":"",
                     "assigned_user_id":"1",
                     "report_type":"summary",
                     "full_table_list":{
                         "self":{
-                            "value":"Opportunities",
-                            "module":"Opportunities",
-                            "label":"Opportunities"
+                            "value":"Products",
+                            "module":"Products",
+                            "label":"Products"
                         }
                     },
                     "filters_def":{
@@ -158,7 +158,7 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
                         }
                     }
                 }',
-                array('Bug63673Test', 'setUpOpportunities'),
+                array('Bug63673Test', 'setUpProducts'),
                 '15',
                 '3',
                 '20',
