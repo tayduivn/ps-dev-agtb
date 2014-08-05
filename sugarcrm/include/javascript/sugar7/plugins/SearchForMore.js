@@ -78,7 +78,6 @@
                     }
                 }, function(model) {
                     if (model) {
-                        model.name || (model.name = model.full_name);
                         $el.data('select2').triggerChange({added: {attributes: model}});
                     }
                 });

@@ -271,6 +271,7 @@
                     accept_status: acceptStatus(participant),
                     deletable: deletable(participant),
                     last: (rows === i++),
+                    name: app.utils.getRecordName(participant),
                     preview: preview(participant)
                 };
 
