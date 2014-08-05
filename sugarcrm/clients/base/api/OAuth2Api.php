@@ -165,7 +165,16 @@ class OAuth2Api extends SugarApi
         $this->killSessionCookie();
         $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
-        return array('success'=>true);
+        $auth = AuthenticationController::getInstance();
+        $res = array('success'=>true);
+        if ($auth->isExternal()) {
+            $logout = $auth->getLogoutUrl();
+            if ($logout) {
+                $res['url'] = $logout;
+            }
+        }
+
+        return $res;
     }
 
     /**
