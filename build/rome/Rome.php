@@ -478,6 +478,9 @@ public function cleanPath($path){
     protected function writeSymlinks()
     {
         foreach ($this->symlinks as $path => $link) {
+            if (is_file($path)) {
+                unlink($path);
+            }
             symlink($link, $path);
         }
         $this->symlinks = array();
