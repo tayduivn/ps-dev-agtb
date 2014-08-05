@@ -128,7 +128,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
             if ($item = $db->fetchRow($res)) {
                 if ($item['processed'] != $rec['processed'] && $item['processed'] != 0) {
                     $query = sprintf(
-                        "UPDATE fts_queue SET processed = %s, date_modified = current timestamp WHERE id = %s",
+                        "UPDATE fts_queue SET processed = %s, date_modified = current_timestamp WHERE id = %s",
                         $db->quoted($rec['processed']),
                         $db->quoted($item['id'])
                     );
