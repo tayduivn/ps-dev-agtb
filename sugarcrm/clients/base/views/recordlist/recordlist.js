@@ -35,6 +35,11 @@
 
     rowFields: {},
 
+    /**
+     * View name that corresponds to the list of fields API should retrieve
+     */
+    dataViewName: 'list',
+
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
@@ -58,8 +63,9 @@
         });
 
         this.on('render', this._setRowFields, this);
+
         //Set the context to load the field list from the record metadata.
-        this.context.set('dataView', 'list');
+        this.context.set('dataView', this.dataViewName);
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);

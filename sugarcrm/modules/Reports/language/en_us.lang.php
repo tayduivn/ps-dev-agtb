@@ -127,7 +127,6 @@ $mod_strings = array (
   'LBL_EMAIL_REPORTS' => 'Email Reports',
   'LBL_ALL_REPORTS' => 'View Reports',
   'LBL_ACTIVITIES_REPORTS' => 'Activities Reports',
-  'LBL_CHART_TYPE' => 'Chart Type',
   'LBL_NO_REPORTS' => 'No results.',
 
   'LBL_SAVED_SEARCH' => 'Saved Search & Layout',
@@ -208,7 +207,6 @@ $mod_strings = array (
   'LBL_PUBLISHED_QUOTE_REPORTS' => 'Published Quote Reports',
 
   //BEGIN SUGARCRM flav=pro ONLY
-  'LBL_PUBLISHED_FORECAST_REPORTS' => 'Published Forecast Reports',
   'LBL_PUBLISHED_QUOTA_REPORTS' => 'Published Quota Reports',
   //END SUGARCRM flav=pro ONLY
 
@@ -250,7 +248,6 @@ $mod_strings = array (
   'LBL_GROUP_BY' => 'Group By',
   'LBL_ADD_COLUMN' => 'Add Column',
   'LBL_GRAND_TOTAL' => 'Grand Total',
-   'LBL_SEARCH_FORM_TITLE' => 'Reports Search',
   'LBL_FORECAST_REPORTS' => 'Forecast Reports',
   'LBL_MY_PROJECT_TASK_REPORTS'=>'My Project Tasks Reports',
   'LBL_PUBLISHED_PROJECT_TASK_REPORTS'=>'Published Project Tasks Reports',
@@ -462,8 +459,6 @@ $mod_strings = array (
     'LBL_SCHEDULE_TYPE'=>'Schedule Type',
   	'LBL_NO_ACCESS' => 'You are not able to access this report due to permissions restrictions.',
     'LBL_NO_EXPORT_ACCESS' => 'Exports Disabled',
-  	'LBL_SELECT_REPORT_TYPE' => 'Select the type of report you would like to create:',
-  	'LBL_SELECT_MODULE'=> 'Select the module that you want to report on:',
   	'LBL_NEXT' =>'Next >',
   	'LBL_PREVIOUS' =>'< Back',
   	'LBL_CANCEL'=>'Cancel',

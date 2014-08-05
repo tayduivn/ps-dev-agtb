@@ -19,6 +19,7 @@ class SugarTestTrackerUtility
     
     public static function setup()
     {
+        $tracker_config = array();
         require('modules/Trackers/config.php');
         foreach($tracker_config as $entry) {
             if(isset($entry['bean'])) {
@@ -31,6 +32,9 @@ class SugarTestTrackerUtility
             self::$_trackerSettings[$row['name']] = $row['value'];
             $GLOBALS['db']->query("DELETE FROM config WHERE category = 'tracker' AND name = '{$row['name']}'");
         }
+
+        // make sure that the next requested TrackerManager instance is properly configured
+        TrackerManager::resetInstance();
     }
     
     public static function restore()

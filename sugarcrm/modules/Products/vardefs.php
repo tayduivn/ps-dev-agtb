@@ -102,7 +102,20 @@ $dictionary['Product'] = array(
         'total_amount' => array(
             'name' => 'total_amount',
             'default' => '0.00',
-            'formula' => 'subtract(multiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
+            'formula' => '
+                ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
+                    currencySubtract(
+                        currencyMultiply(
+                            $discount_price,
+                            $quantity
+                        ),
+                        ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )
+                    ),
+                    ""
+                )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
@@ -110,7 +123,11 @@ $dictionary['Product'] = array(
             'type' => 'currency',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'quantity',
+                'discount_price',
+                'discount_select',
+                'discount_amount'
             ),
         ),
         'contact_name' => array (
@@ -296,7 +313,7 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'formula' => 'divide($discount_amount,$base_rate)',
+            'formula' => 'currencyDivide($discount_amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -313,10 +330,18 @@ $dictionary['Product'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
-            'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+            'formula' => 'ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )',
+            'calculated' => true,
+            'enforced' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'discount_price',
+                'quantity',
+                'discount_amount'
             ),
         ),
         'deal_calc_usdollar' =>  array(
@@ -334,7 +359,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_calc,$base_rate)',
+            'formula' => 'currencyDivide($deal_calc,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -366,7 +391,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($cost_price,$base_rate)',
+            'formula' => 'currencyDivide($cost_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -402,7 +427,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($list_price,$base_rate)',
+            'formula' => 'currencyDivide($list_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -567,7 +592,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($book_value,$base_rate)',
+            'formula' => 'currencyDivide($book_value,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),

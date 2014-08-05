@@ -170,7 +170,7 @@ class ModuleApi extends SugarApi {
 
         $this->processAfterCreateOperations($args, $bean);
 
-        return $this->getLoadedAndFormattedBean($api, $args, $bean);
+        return $this->getLoadedAndFormattedBean($api, $args);
     }
 
     public function updateRecord($api, $args) {
@@ -181,7 +181,7 @@ class ModuleApi extends SugarApi {
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
 
-        return $this->getLoadedAndFormattedBean($api, $args, $bean);
+        return $this->getLoadedAndFormattedBean($api, $args);
     }
 
     public function retrieveRecord($api, $args) {
@@ -267,36 +267,19 @@ class ModuleApi extends SugarApi {
      * 
      * @param ServiceBase $api The service object
      * @param array $args Request arguments
-     * @param SugarBean $bean The bean for this process
      * @return array Array of formatted fields
      */
-    protected function getLoadedAndFormattedBean($api, $args, SugarBean $bean)
+    protected function getLoadedAndFormattedBean($api, $args)
     {
-        $addNoAccessAcl = false;
         // Load the bean fresh to ensure the cache entry from the create process
         // doesn't get in the way of visibility checks
-        try {
-            $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
-        } catch (SugarApiExceptionNotAuthorized $e) {
-            // If there was an exception thrown from the load process then strip
-            // the field list down and return only id and date_modified. This will
-            // happen on new records created with visibility rules that conflict 
-            // with the current user or from edits made to records that do the same
-            // thing.
-            $args['fields'] = 'id,date_modified';
-            $addNoAccessAcl = true;
-        }
+        $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
 
         $api->action = 'view';
-        $data = $this->formatBean($api, $args, $bean);
+        $data = $this->formatBean($api, $args, $bean, array(
+            'display_acl' => true,
+        ));
 
-        if ($addNoAccessAcl) {
-            $data['_acl'] = array(
-                'access' => 'no',
-                'view' => 'no',
-            );
-        }
-        
         return $data;
     }
 

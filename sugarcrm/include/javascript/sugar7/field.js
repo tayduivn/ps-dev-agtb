@@ -221,8 +221,12 @@
                 /**
                  * Fix placeholder on global search on IE and old browsers
                  */
-                if($.fn.placeholder){
-                    this.$("input[placeholder]").placeholder();
+                if ($.fn.placeholder) {
+                    var $input = this.$('input');
+                    _.each($input, function(element) {
+                        var $element = $(element);
+                        $element.attr('placeholder') && $element.placeholder();
+                    });
                 }
             },
 
@@ -313,9 +317,9 @@
                     placeholder;
 
                 el = el || this.$(this.fieldTag).first();
-                placeholder = el.prop('placeholder');
+                placeholder = el.attr('placeholder');
                 placeholder = (placeholder) ? '(' + label + ') ' + placeholder : label;
-                el.prop('placeholder', placeholder.trim()).addClass('required');
+                el.attr('placeholder', placeholder.trim()).addClass('required');
             },
 
             /**

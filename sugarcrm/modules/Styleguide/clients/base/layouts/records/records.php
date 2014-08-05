@@ -39,7 +39,7 @@ $viewdefs['Styleguide']['base']['layout']['records'] = array(
                                             ),
                                             array(
                                                 'name' => 'activitystream',
-                                                'icon' => 'icon-th-list',
+                                                'icon' => 'icon-time',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
                                         ),

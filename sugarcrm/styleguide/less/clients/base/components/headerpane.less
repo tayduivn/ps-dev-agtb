@@ -1,5 +1,5 @@
 .span8 .headerpane {
-  .calcWidth(~"65.957446802% + 1px");
+  .calcWidth(~"65.957446802% - 1px");
   left: 0;
 }
 
@@ -9,7 +9,7 @@
   height: 61px;
   z-index: @zindexHeaderpane;
   background: @grayLighter;
-  border-bottom: 1px solid darken(@grayLighter,10%);
+  border-bottom: @borderWidget;
   .box-sizing(border-box);
   display: table;
   position: fixed;
@@ -37,7 +37,7 @@
       display: table-cell;
       vertical-align: top;
       position: relative;
-      padding: 18px 16px 0 20px;
+      padding: 18px 18px 0 20px;
 
       &.hide {
         display: none;
@@ -104,7 +104,7 @@
 
   .record-label {
     font-size: @fontSizeSmall;
-    color: darken(@grayLight, 5%);
+    color: @grayLight;
     line-height: @fontSizeSmall + 2;
     padding: 0 0 0 7px;
   }
@@ -130,6 +130,10 @@
     }
     .help-block {
       display: none;
+    }
+    .image_rounded img {
+      border: 2px solid rgba(0,0,0,.4);
+      .border-radius(23px);
     }
   }
   span[data-type="name"] .table-cell-wrapper {
@@ -200,12 +204,26 @@
 
   span[data-type="follow"],
   span[data-type="badge"] {
-    padding: 16px 16px 0 0;
+    padding: 18px 16px 0 0;
     .label {
-      font-size: @fontSizeMini;
+      font-size: 0.7em;
+      line-height: 0.7em;
+      padding: 6px 4px 2px;
+      height: 10px;
     }
-    span {
-      font-size: @fontSizeLarge;
+  }
+  span[data-type="badge"] {
+    .label {
+      color: @grayDark;
+      background: transparent;
+      border: 1px solid @gray;
+      font-weight: 500;
+    }
+    .label.label-success {
+      color: @white;
+      background-color: @success;
+      border: 1px solid @success;
+      font-weight: 600;
     }
   }
 

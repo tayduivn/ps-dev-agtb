@@ -137,9 +137,9 @@ body.full-screen {
 }
 
 .nv-brushBackground rect {
-  stroke: #000;
+  stroke: @black;
   stroke-width: .4;
-  fill: #fff;
+  fill: @white;
   fill-opacity: .7;
 }
 
@@ -259,7 +259,7 @@ body.full-screen {
 .nv-discretebar .nv-groups rect {
   stroke-opacity: 1;
   stroke-width: 2px;
-  stroke: #FFF;
+  stroke: @white;
   @transition: fill-opacity 250ms linear;
   .transition(@transition);
 }
@@ -292,12 +292,12 @@ body.full-screen {
 }
 
 .nv-pie .nv-slice text {
-  stroke: #000;
+  stroke: @black;
   stroke-width: 0;
 }
 
 .nv-pie path {
-  stroke: #fff;
+  stroke: @white;
   stroke-width: 3px;
   stroke-opacity: 1;
 }
@@ -373,7 +373,7 @@ body.full-screen {
 /*.nv-lineChart .nv-line .nv-scatter .nv-groups .nv-point {
   fill-opacity: 1;
   stroke-opacity: 1;
-  stroke: #FFF;
+  stroke: @white;
   stroke-width: 3px;
 }*/
 
@@ -483,7 +483,7 @@ body.full-screen {
 
 .nv-odomText {
   font-weight: bold;
-  fill: #000;
+  fill: @black;
 }
 
 .nv-arc-group {
@@ -492,7 +492,7 @@ body.full-screen {
 
 .nv-pointer {
   fill: #888888;
-  stroke: #ffffff;
+  stroke: @white;
 }
 
 
@@ -505,17 +505,18 @@ body.full-screen {
     stroke: none;
   }
   .nv-label-value text {
-    font-size: 14px;
+    font-size: 15px;
     fill: @white;
     stroke: none;
   }
   text.nv-label-group {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
+    fill: @gray;
   }
   .nv-group polygon {
-    stroke: #fff;
-    stroke-width: 3px;
+    stroke: @white;
+    stroke-width: 1px;
     stroke-opacity: 1;
   }
 }
@@ -581,7 +582,7 @@ body.full-screen {
   .nv-multibar .nv-groups rect {
     stroke-opacity: 1;
     stroke-width: 2px;
-    stroke: #FFF;
+    stroke: @white;
     fill-opacity: 0.85;
   }
   .nv-line .nv-groups path {
@@ -591,7 +592,7 @@ body.full-screen {
     stroke-width: 6px;
   }
   .nv-linesWrap2 .nv-scatter .nv-groups circle {
-    stroke: #FFF;
+    stroke: @white;
   }
   .nv-x.nv-axis text,
   .nv-legend text {
@@ -648,7 +649,7 @@ body.full-screen {
     font-weight: normal;
   }
   .nv-grandparent rect {
-    fill: #fff;
+    fill: @white;
   }
 
   .nv-children .nv-parent,
@@ -748,7 +749,7 @@ body.full-screen {
     height: 32px;
     padding: 5px;
     margin: 5px;
-    border: 2px solid #ddd;
+    border: 2px solid darken(@grayLighter, 10%);
     .border-radius(4px);
     background-color: #E9EFEF;
     box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
@@ -796,11 +797,11 @@ body.full-screen {
   }
   .countries path {
     fill: #AAA;
-    stroke: #fff;
+    stroke: @white;
   }
   .states path {
     fill: #CCC;
-    stroke: #fff;
+    stroke: @white;
   }
 }*/
 
@@ -846,12 +847,6 @@ body.full-screen {
   @fill11: lighten(@gray,51%);
   @fill12: lighten(@gray,10%);
   @fill13: lighten(@gray,54%);
-  @fill14: lighten(@gray,15%);
-  @fill15: lighten(@gray,57%);
-  @fill16: lighten(@gray,20%);
-  @fill17: lighten(@gray,60%);
-  @fill18: lighten(@gray,25%);
-  @fill19: lighten(@gray,63%);
 }
 
 .nv-fill00 { fill:@fill00; background-color:@fill00; }
@@ -868,12 +863,6 @@ body.full-screen {
 .nv-fill11 { fill:@fill11; background-color:@fill11; }
 .nv-fill12 { fill:@fill12; background-color:@fill12; }
 .nv-fill13 { fill:@fill13; background-color:@fill13; }
-.nv-fill14 { fill:@fill14; background-color:@fill14; }
-.nv-fill15 { fill:@fill15; background-color:@fill15; }
-.nv-fill16 { fill:@fill16; background-color:@fill16; }
-.nv-fill17 { fill:@fill17; background-color:@fill17; }
-.nv-fill18 { fill:@fill18; background-color:@fill18; }
-.nv-fill19 { fill:@fill19; background-color:@fill19; }
 
 .nv-legend {
   .nv-fill00 { stroke:@fill00; }
@@ -890,12 +879,6 @@ body.full-screen {
   .nv-fill11 { stroke:@fill11; }
   .nv-fill12 { stroke:@fill12; }
   .nv-fill13 { stroke:@fill13; }
-  .nv-fill14 { stroke:@fill14; }
-  .nv-fill15 { stroke:@fill15; }
-  .nv-fill16 { stroke:@fill16; }
-  .nv-fill17 { stroke:@fill17; }
-  .nv-fill18 { stroke:@fill18; }
-  .nv-fill19 { stroke:@fill19; }
 }
 
 .nv-stroke0 { stroke:@stroke0; background-color:@stroke0; }
@@ -908,3 +891,7 @@ body.full-screen {
 .nv-stroke7 { stroke:@stroke7; background-color:@stroke7; }
 .nv-stroke8 { stroke:@stroke8; background-color:@stroke8; }
 .nv-stroke9 { stroke:@stroke9; background-color:@stroke9; }
+.nv-stroke10 { stroke:@stroke10; background-color:@stroke10; }
+.nv-stroke11 { stroke:@stroke11; background-color:@stroke11; }
+.nv-stroke12 { stroke:@stroke12; background-color:@stroke12; }
+.nv-stroke13 { stroke:@stroke13; background-color:@stroke13; }

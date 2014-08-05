@@ -44,7 +44,6 @@
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
-        this.salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
         if (!this.forecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
         }
@@ -81,8 +80,10 @@
             .tooltips(true)
             .margin({top: 0})
             .tooltipContent(function(key, x, y, e, graph) {
-                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + y + '</b></p>' +
+                var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
+                var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + ((salesStageLabels && salesStageLabels[key]) ? salesStageLabels[key] : key) + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             })
             .colorData('class', {step: 2})
@@ -97,6 +98,7 @@
                 noData: app.lang.getAppString('LBL_CHART_NO_DATA')
             });
     },
+
 
     /**
      * Initialize plugins.
@@ -173,10 +175,12 @@
             app.api.call('GET', url, null, {
                 success: _.bind(function(o) {
                     if (o && o.data) {
+                        var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
+
                         // update sales stage labels to translated strings
                         _.each(o.data, function(dataBlock){
-                            if(dataBlock && dataBlock.key && this.salesStageLabels && this.salesStageLabels[dataBlock.key]) {
-                                dataBlock.key = this.salesStageLabels[dataBlock.key];
+                            if(dataBlock && dataBlock.key && salesStageLabels && salesStageLabels[dataBlock.key]) {
+                                dataBlock.key = salesStageLabels[dataBlock.key];
                             }
 
                         });

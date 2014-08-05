@@ -122,10 +122,28 @@ class SugarQuery
      */
     public $customJoined = false;
 
+    /**
+     * Should we use prepared statements?
+     * @var bool
+     */
+    public $usePreparedStatements = false;
+
+    /**
+     * Prepared statement data
+     * @var array
+     */
+    public $data = array();
+
+    protected $dataItems = array();
+    protected $dataSegment;
 
     public function __construct()
     {
         $this->select = new SugarQuery_Builder_Select($this, array());
+        $this->db = DBManagerFactory::getInstance();
+        if(!$this->db->usePreparedStatements) {
+            $this->usePreparedStatements = false;
+        }
     }
 
     /**
@@ -388,7 +406,7 @@ class SugarQuery
     {
         //Force a unique join table alias for self referencing relationships and multiple joins against the same table
         $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias(
-            $bean->table_name
+            $link_name
         );
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
@@ -422,11 +440,15 @@ class SugarQuery
      * Compile this SugarQuery into a standard SQL-92 Query string
      * @return string
      */
-    public function compileSql()
+    public function compileSql(SugarQuery $parent = null)
     {
-        global $db;
         $compiler = new SugarQuery_Compiler();
-        return $compiler->compile($this, $db);
+        $this->data = $this->dataItems = array();
+        $sql = $compiler->compile($this, $this->db);
+        if($parent) {
+            $parent->addData($this->data);
+        }
+        return $sql;
     }
 
     /**
@@ -459,7 +481,26 @@ class SugarQuery
                 return $return;
                 break;
         }
+    }
 
+    /**
+     * Get one value result from the query
+     * @return false|string
+     */
+    public function getOne()
+    {
+       if(empty($this->limit)) {
+           $this->offset(0)->limit(1);
+       }
+       $result = $this->runQuery();
+       if(empty($result)) {
+           return false;
+       }
+       $row = $this->db->fetchByAssoc($result);
+       if(!empty($row)) {
+           return array_shift($row);
+       }
+       return false;
     }
 
     /**
@@ -468,8 +509,12 @@ class SugarQuery
      */
     protected function runQuery()
     {
-        $this->db = DBManagerFactory::getInstance();
-        return $this->db->query($this->compileSql($this));
+        $sql = $this->compileSql();
+        if($this->usePreparedStatements) {
+            return $this->db->preparedQuery($sql, $this->data);
+        } else {
+            return $this->db->query($sql);
+        }
     }
 
 
@@ -712,7 +757,7 @@ class SugarQuery
      */
     protected function loadBeans($join, $options)
     {
-        $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
+        $alias = (!empty($options['alias'])) ? $options['alias'] : $this->getJoinTableAlias($join);
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
@@ -801,12 +846,11 @@ class SugarQuery
 
     public function getJoinAlias($table_name)
     {
-        if (isset($this->joinTableToKey[$table_name])) {
-            return $this->joinTableToKey[$table_name];
-        } elseif (isset($this->joinLinkToKey[$table_name])) {
+        if (isset($this->joinLinkToKey[$table_name])) {
             return $this->joinLinkToKey[$table_name];
+        } elseif (isset($this->joinTableToKey[$table_name])) {
+            return $this->joinTableToKey[$table_name];
         }
-
         return false;
     }
 
@@ -870,4 +914,40 @@ class SugarQuery
             }
         }
     }
+
+    public function startData($segment)
+    {
+        $this->dataSegment = $segment;
+    }
+
+    public function endData()
+    {
+        $this->dataSegment = '';
+    }
+
+    public function addData($item)
+    {
+        if(is_array($item)) {
+            if(isset($this->dataItems[$this->dataSegment])) {
+                $this->dataItems[$this->dataSegment] = array_merge($this->dataItems[$this->dataSegment], $item);
+            } else {
+                $this->dataItems[$this->dataSegment] = $item;
+            }
+        } else {
+            if(isset($this->dataItems[$this->dataSegment])) {
+                $this->dataItems[$this->dataSegment][] = $item;
+            } else {
+                $this->dataItems[$this->dataSegment] = array($item);
+            }
+        }
+    }
+
+    public function getData($segment)
+    {
+        if(!isset($this->dataItems[$segment])) {
+            return array();
+        }
+        return $this->dataItems[$segment];
+    }
+
 }

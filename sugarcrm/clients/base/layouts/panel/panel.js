@@ -14,7 +14,19 @@
  * @extends View.Layout
  */
 ({
-    className: "filtered tabbable tabs-left",
+    /**
+     * @inheritDoc
+     */
+    className: 'filtered tabbable tabs-left',
+
+    /**
+     * @inheritDoc
+     */
+    attributes: function() {
+        return {
+            'data-subpanel-link': this.options.context.get('link')
+        };
+    },
 
     // "Hide/Show" state per panel
     HIDE_SHOW_KEY: 'hide-show',

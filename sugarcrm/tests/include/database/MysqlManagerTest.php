@@ -205,28 +205,28 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $returnArray = array(
             array(
-                array("'1970-01-01'", 'date'), true,
+                array("1970-01-01", 'date'), true,
                 ),
             array(
-                array("'1970-01-01 00:00:00'", 'datetime'), true,
+                array("1970-01-01 00:00:00", 'datetime'), true,
                 ),
             array(
-                array("'0000-00-00 00:00:00'", 'datetime'), true,
+                array("0000-00-00 00:00:00", 'datetime'), true,
                 ),
             array(
-                array("'0000-00-00'", 'date'), true,
+                array("0000-00-00", 'date'), true,
                 ),
             array(
-                array("'2013-01-01'", 'date'), false,
+                array("2013-01-01", 'date'), false,
                 ),
             array(
-                array("'2013-01-01 09:04:32'", 'datetime'), false,
+                array("2013-01-01 09:04:32", 'datetime'), false,
                 ),
             array(
-                array("'00:00:00'", 'time'), true,
+                array("00:00:00", 'time'), true,
                 ),
             array(
-                array("'12:32:30'", 'time'), false,
+                array("12:32:30", 'time'), false,
                 ),
             );
 

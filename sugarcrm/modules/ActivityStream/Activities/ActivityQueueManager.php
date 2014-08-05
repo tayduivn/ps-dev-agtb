@@ -30,7 +30,7 @@ class ActivityQueueManager
         'RevenueLineItems',
         // END SUGARCRM flav=pro && flav!=ent ONLY
     );
-    public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
+    public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails', 'Home');
 
     /**
      * Logic hook arbiter for activity streams.

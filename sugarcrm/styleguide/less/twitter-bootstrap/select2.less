@@ -246,11 +246,11 @@ Version: 3.4.6 Timestamp: Sat Mar 22 22:30:15 EDT 2014
 }
 
 .select2-search input.select2-active {
-  background: #fff url('@{baseUrl}/img/select2-spinner.gif') no-repeat 100%;
-  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
-  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat 100%, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
-  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat 100%, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
-  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat 100%, linear-gradient(top, #fff 85%, #eee 99%);
+  background: #fff url('@{baseUrl}/img/select2-spinner.gif') no-repeat calc(~"100% - 3px");
+  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat calc(~"100% - 3px"), -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat calc(~"100% - 3px"), -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat calc(~"100% - 3px"), -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url('@{baseUrl}/img/select2-spinner.gif') no-repeat calc(~"100% - 3px"), linear-gradient(top, #fff 85%, #eee 99%);
 }
 
 .select2-container-active .select2-choice,
@@ -626,21 +626,4 @@ html[dir="rtl"] .select2-search-choice-close {
   width: 100px;
   height: 100px;
   overflow: scroll;
-}
-
-/* Retina-ize icons */
-
-@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {
-  .select2-search input, 
-  .select2-search-choice-close, 
-  .select2-container .select2-choice abbr, 
-  .select2-container .select2-choice .select2-arrow b {
-    //background-image: url('@{baseUrl}/img/select2x2.png') !important;
-    background-repeat: no-repeat !important;
-    background-size: 60px 40px !important;
-  }
-
-  .select2-search input {
-    background-position: 100% -21px !important;
-  }
 }

@@ -74,14 +74,18 @@ describe('Base.View.Bwc', function() {
                 '<a href="javascript:void(0);"></a>' +
                 '<h1>Title foo</h1>' +
                 '</div>').get(0);
-            sinon.collection.stub(view.$el, 'get', function() {
-                return {
-                    contentWindow: {
-                        EditView: emptyForm
-                    }
-                };
+
+            sinon.collection.stub(view, '$').withArgs('iframe').returns({
+                get: function() {
+                    return {
+                        contentWindow: {
+                            EditView: emptyForm
+                        }
+                    };
+                }
             });
-            var bwcWindow = view.$el.get(0).contentWindow,
+
+            var bwcWindow = view.$('iframe').get(0).contentWindow,
                 attributes = view.serializeObject(bwcWindow.EditView);
             view.resetBwcModel(attributes);
             expect(_.isEmpty(view.bwcModel.attributes)).toBe(true);
@@ -94,15 +98,17 @@ describe('Base.View.Bwc', function() {
                 '<input name="phone_number" value="121-1213-456">' +
                 '</form>').get(0);
             view.resetBwcModel({module: 'Document'});
-            sinon.collection.stub(view.$el, 'get', function() {
-                return {
-                    contentWindow: {
-                        EditView: form
-                    }
-                };
+            sinon.collection.stub(view, '$').withArgs('iframe').returns({
+                get: function() {
+                    return {
+                        contentWindow: {
+                            EditView: form
+                        }
+                    };
+                }
             });
             expect(view.hasUnsavedChanges()).toBe(true);
-            var bwcWindow = view.$el.get(0).contentWindow,
+            var bwcWindow = view.$('iframe').get(0).contentWindow,
                 attributes = view.serializeObject(bwcWindow.EditView);
             //reset to the current changed form
             view.resetBwcModel(attributes);

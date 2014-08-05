@@ -178,14 +178,9 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
             /* @var $product Product */
             $product = $rli->convertToQuotedLineItem();
 
-            $product_total = SugarMath::init()->exp(
-                "?*?",
-                array($product->quantity, $product->likely_case)
-            )->result();
-
-            $total = SugarMath::init($total)->add($product_total)->result();
+            $total = SugarMath::init($total)->add($product->likely_case)->result();
             $total_base = SugarMath::init($total_base)->add(
-                SugarCurrency::convertWithRate($product_total, $product->base_rate)
+                SugarCurrency::convertWithRate($product->likely_case, $product->base_rate)
             )->result();
 
             $product_bundle->set_relationship(

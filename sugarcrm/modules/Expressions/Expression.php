@@ -273,10 +273,6 @@ class Expression extends SugarBean {
 			unset($select_array["Forecasts"]);
 			unset($select_array["Products"]);
 			unset($select_array["Documents"]);
-            global $modInvisList;
-            if (in_array('Project', $modInvisList)) {
-                unset($select_array['project']);
-            }
 			asort($select_array);
 		//end if type is module_list
 		}

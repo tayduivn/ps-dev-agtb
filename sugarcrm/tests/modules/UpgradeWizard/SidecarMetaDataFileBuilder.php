@@ -152,6 +152,13 @@ class SidecarMetaDataFileBuilder
                 'sidecarpath' => 'custom/modules/Cases/clients/base/menus/quickcreate/quickcreate.php',
         ),
 
+        array(
+                'module'      => 'ProductTemplates', 'view' => 'record', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/ProductTemplatesedit.php',
+                'legacypath'  => 'custom/modules/ProductTemplates/metadata/editviewdefs.php',
+                'sidecarpath' => 'custom/modules/ProductTemplates/clients/base/views/record/record.php',
+        ),
+
     );
 
     /**

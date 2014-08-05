@@ -65,6 +65,7 @@
      * Success callback to be run when Connector has been verified and validated
      */
     loadDataWithValidConnector: function() {
+        if (this.disposed) return;
         this.template = app.template.get(this.name + '.dnb-search-hint');
         this.render();
         this.context.on('input:name:keyup', this.dnbSearch, this);
@@ -76,6 +77,7 @@
      * @param {object} connector that failed
      */
     handleLoadError: function(connector) {
+        if (this.disposed) return;
         this.errmsg = 'LBL_DNB_NOT_CONFIGURED';
         this.template = app.template.get(this.name + '.dnb-need-configure');
         this.render();

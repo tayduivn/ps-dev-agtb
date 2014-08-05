@@ -70,6 +70,10 @@
                 }
             ]
         }, {silent: true});
+
+        // FIXME: Enforce action `edit` on portal signup to avoid field render on
+        // `bindDataChange`. This should be fixed when SC-3145.
+        this.action = 'edit';
     },
 
     /**

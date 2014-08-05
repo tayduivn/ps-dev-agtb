@@ -34,9 +34,10 @@ abstract class SugarApi {
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the formatted data is returned
      * @param $args array The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
      * @param $bean SugarBean The fully loaded bean to format
+     * @param $options array Formatting options
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      */
-    protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean, array $options = array()) {
 
         if ((empty($args['fields']) && !empty($args['view'])) ||
             (!empty($args['fields']) && !is_array($args['fields']))
@@ -57,9 +58,10 @@ abstract class SugarApi {
             $fieldList = array();
         }
 
-        $options = array();
-        $options['action'] = $api->action;
-        $options['args'] = $args;
+        $options = array_merge(array(
+            'action' => $api->action,
+            'args' => $args,
+        ), $options);
 
         $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList, $options);
 
@@ -391,6 +393,16 @@ abstract class SugarApi {
                             }
                             if (!empty($fieldDefs[$field]['type_name'])) {
                                 $fields[] = $fieldDefs[$field]['type_name'];
+                            }
+                            break;
+                        case 'url':
+                            if (!empty($fieldDefs[$field]['default'])) {
+                                preg_match_all('/{([^{}]+)}/', $fieldDefs[$field]['default'], $matches);
+                                foreach ($matches[1] as $match) {
+                                    if (!empty($match) && !empty($fieldDefs[$match])) {
+                                        $fields[] = $match;
+                                    }
+                                }
                             }
                             break;
                     }

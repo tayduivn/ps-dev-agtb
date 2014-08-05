@@ -75,11 +75,19 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     {
         $timedate = TimeDate::getInstance();
         $start_date = $this->start_date;
+
         if (!is_null($timeperiod)) {
             $start_date = $timeperiod->start_date;
         }
-        $start_year = $timedate->fromDbDate($start_date)->format('Y');
-        return string_format($this->name_template, array($count, $start_year));
+
+        $start_year = $timedate->fromDbDate($start_date);
+
+        if(isset($this->currentSettings['timeperiod_fiscal_year']) &&
+            $this->currentSettings['timeperiod_fiscal_year'] == 'next_year') {
+            $start_year->modify('+1 year');
+        }
+
+        return string_format($this->name_template, array($count, $start_year->format('Y')));
     }
 
 

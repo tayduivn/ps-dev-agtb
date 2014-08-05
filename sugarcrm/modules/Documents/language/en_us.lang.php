@@ -71,7 +71,6 @@ $mod_strings = array (
     'LBL_FILE_UPLOAD' => 'File:',
 
     'LBL_CATEGORY_VALUE' => 'Category:',
-    'LBL_LIST_CATEGORY' => 'Category',
     'LBL_SUBCATEGORY_VALUE'=> 'Sub Category:',
     'LBL_DOC_STATUS'=> 'Status:',
     'LBL_DOC_STATUS_ID'=> 'Status Id:',

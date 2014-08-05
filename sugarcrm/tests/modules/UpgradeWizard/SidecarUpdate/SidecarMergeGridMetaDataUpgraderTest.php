@@ -250,6 +250,7 @@ $viewdefs['MyFakeModule']['base']['view']['record'] = array(
                 'website',
                 'phone_office',
                 'new_record_field',
+                'date_entered_by',
                 array(
                     'name' => 'billing_address',
                     'type' => 'fieldset',
@@ -319,6 +320,8 @@ EOQ;
         $this->assertArrayHasKey("edit_only", $finalRecordFields);
         //Verify that fields only on the detail view are migrated
         $this->assertArrayHasKey("detail_only", $finalRecordFields);
+        // CRYS-156. Verify that there is no 'date_entered_by' since 'date_entered' is not present on legacy layout.
+        $this->assertArrayNotHasKey("date_entered_by", $finalRecordFields);
     }
 }
 

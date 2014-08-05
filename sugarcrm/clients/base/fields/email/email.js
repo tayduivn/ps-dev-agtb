@@ -158,7 +158,6 @@
      */
     updateExistingAddress: function(evt) {
         if (!evt) return;
-
         var $inputs = this.$('.existingAddress'),
             $input = this.$(evt.currentTarget),
             index = $inputs.index($input),
@@ -176,6 +175,23 @@
                 .remove();
 
             if (primaryRemoved) {
+                // on list views we need to set the current value on the input
+                if (this.view && this.view.action === 'list') {
+                    var addresses = this.model.get(this.name) || [];
+                    var primaryAddress = _.filter(addresses, function(address){
+                        if (address.primary_address) {
+                            return true;
+                        }
+                    });
+                    if(primaryAddress[0] && primaryAddress[0].email_address) {
+                        app.alert.show('list_delete_email_info', {
+                            level: 'info',
+                            autoClose: true,
+                            messages: app.lang.get('LBL_LIST_REMOVE_EMAIL_INFO')
+                        });
+                        $input.val(primaryAddress[0].email_address);
+                    }
+                }
                 this.$('[data-emailproperty=primary_address]')
                     .first()
                     .addClass('active');

@@ -15,12 +15,18 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * The server info object. See {@link Core.MetadataManager#getServerInfo}.
      *
-     * Initializes the view with the serverInfo.
+     * @property {String}
      */
-    initialize: function(opts) {
+    serverInfo: null,
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
         this.serverInfo = app.metadata.getServerInfo();
-        app.view.View.prototype.initialize.call(this, opts);
     }
 })

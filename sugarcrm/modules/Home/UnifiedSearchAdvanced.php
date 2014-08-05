@@ -338,7 +338,7 @@ class UnifiedSearchAdvanced {
 	function buildCache()
 	{
 
-		global $beanList, $beanFiles, $dictionary, $modInvisList;
+		global $beanList, $beanFiles, $dictionary;
 
 		$supported_modules = array();
 
@@ -346,10 +346,6 @@ class UnifiedSearchAdvanced {
 		{
 			if (!isset($beanFiles[$beanName]))
 				continue;
-
-            if (($moduleName == 'ProjectTask' || $moduleName == 'Project') && in_array($moduleName, $modInvisList)) {
-                continue;
-            }
 
 			$beanName = BeanFactory::getObjectName($moduleName);
 			$manager = new VardefManager ( );

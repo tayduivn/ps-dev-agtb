@@ -48,6 +48,15 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'detail'
                 ),
                 array(
+                    'name' => 'timeperiod_fiscal_year',
+                    'type' => 'fiscal-year',
+                    'options' => 'forecast_fiscal_year_options',
+                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_FISCAL_YEAR',
+                    'default' => false,
+                    'enabled' => false,
+                    'view' => 'edit',
+                ),
+                array(
                     'name' => 'timeperiod_shown_forward',
                     'type' => 'enum',
                     'options' => array (

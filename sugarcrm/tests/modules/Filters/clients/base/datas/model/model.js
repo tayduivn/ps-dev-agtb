@@ -89,6 +89,20 @@ describe('Data.Base.FiltersBean', function() {
             var fields = prototype.getFilterableFields(filterModuleName);
             expect(fields.$favorite).toBeDefined();
         });
+
+        it('should validate that the user has access to read this field', function() {
+            varDefs.name = {
+                name: 'name',
+                type: 'varchar',
+                vname: 'LBL_ACCOUNT_NAME',
+                len: 100
+            };
+            filterDefs.name = {};
+
+            sinon.collection.stub(app.acl, 'hasAccess').returns(false);
+            var fields = prototype.getFilterableFields(filterModuleName);
+            expect(fields.name).toBeUndefined();
+        });
     });
 
     describe('populateFilterDefinition', function() {

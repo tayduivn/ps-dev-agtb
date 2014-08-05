@@ -184,6 +184,13 @@ class CurrentUserApi extends SugarApi
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }
 
+        // Address information
+        $user_data['address_street'] = $current_user->address_street;
+        $user_data['address_city'] = $current_user->address_city;
+        $user_data['address_state'] = $current_user->address_state;
+        $user_data['address_country'] = $current_user->address_country;
+        $user_data['address_postalcode'] = $current_user->address_postalcode;
+
         //BEGIN SUGARCRM flav=pro ONLY
         require_once 'modules/Teams/TeamSetManager.php';
 

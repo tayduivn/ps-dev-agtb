@@ -309,6 +309,10 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $mobileMetaContents = '<?php'."\n".'$viewdefs["Accounts"]["mobile"]["view"]["fo"] = array("erma"=>"mobile");';
         SugarAutoLoader::put($this->createdFiles[5],$mobileMetaContents);
 
+        $this->createdFiles[] = 'modules/ActivityStream/Activity/clients/base/datas/model/model.js';
+        $baseModelContents = '({})';
+        SugarAutoLoader::put($this->createdFiles[6],$baseModelContents);
+
         $fileList = MetaDataFiles::getClientFiles(array('mobile','base'),'view','Accounts');
 
         foreach ( $this->createdFiles as $fileName) {
@@ -358,6 +362,9 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('meta',$fileContents['fo'],"Didn't find the metadata for fo. 2");
         $this->assertArrayHasKey('erma',$fileContents['fo']['meta'],"Didn't correctly put erma in the metadata section. 2");
         $this->assertEquals('base',$fileContents['fo']['meta']['erma'],"Did not correctly read in the base metadata");
+
+        $fileList = MetaDataFiles::getClientFiles(array('base'),'data','Activity');
+        $this->assertArrayHasKey($this->createdFiles[6],$fileList,"3 The function getClientFiles should get client submodule files ".$this->createdFiles[6]);
     }
 
 

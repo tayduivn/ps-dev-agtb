@@ -1,26 +1,19 @@
 /* NAVBAR
   ----------------*/
 
-.btn-navbar {
-  @shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
-  .box-shadow(@shadow);
-  .icon-bar {
-    background-color: #f5f5f5;
-    .box-shadow(0 1px 0 rgba(0,0,0,.25));
-  }
-}
-
-/* Tweak navbar brand link to be super sleek
--------------------------------------------------- */
-
 .navbar {
-  color: @gray;
+  .btn.btn-link {
+    color: @grayLighter;
+    &:hover {
+      color: @white;
+    }
+  }
 
   // General layout
   // ==============
   .navbar-inner {
     border: none;
-    @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
+    @shadow: 0 4px 0 @BorderColor;
     .box-shadow(@shadow);
     width: 100%;
     display: table;
@@ -55,11 +48,16 @@
     color: @navbarLinkColorActive;
   }
   .open.dropdown .icon-caret-down {
-    color: @white;
+    color: @navbarLinkColor;
   }
   .dropdown .icon-caret-down {
-    color: @gray;
+    color: fade(@navbarLinkColor, 35%);
   }
+  .navbar-search .btn-group .btn:not(.advanced),
+  .notification-list .btn-group .btn:not(.btn-danger)  {
+    background: darken(@navbarBackground, 5%);
+  }
+
   .megamenu {
     margin: 0;
   }
@@ -70,19 +68,15 @@
 // ======================================
 .megamenu {
   margin: 0;
-
   > .dropdown {
-    border-left: 1px solid #404040;
-    border-right: none;
     padding: 0;
 
     &.active {
-      border-left-color: lighten(@black, 20%);
-      border-right-color: darken(@white, 75%);
       .btn-group:not(.open) {
-        background-color: rgba(0,0,0,0.21);
-        border-left-color: lighten(@black,15%);
-        border-right-color: @black;
+        background-color: darken(@navbarBackground, 10%);
+        .icon-caret-down {
+          color: @white;
+        }
         .btn.btn-invisible.btn-link {
           text-decoration: none;
           color: @navbarLinkColorActive;
@@ -90,6 +84,7 @@
           border-left: 0;
           border-right: 0;
           outline: none;
+          line-height: 28px;
           &:focus {
             .tab-focus-light();
             outline-offset: 3px;
@@ -102,19 +97,18 @@
     .btn-group {
       padding: 8px;
       margin: 0;
-      border-left: 1px solid @black;
-      border-right: none;
 
       /*This is the link text or image*/
       &> .btn.btn-invisible {
         margin: 0;
         padding: 0;
+        font-weight: normal;
         border: none;
         text-shadow: none;
-        color: lighten(@black,80%);
         .box-sizing(content-box);
         &:hover {
           text-decoration: none;
+          background: none;
         }
         &:active {
           .box-shadow(none) !important;
@@ -137,9 +131,7 @@
       }
 
       &.open {
-        .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
-        border-left-color: @black;
-        border-right-color: transparent;
+        background: darken(@navbarBackground, 15%);
         .dropdown-toggle {
           background: none;
           border-left: none;
@@ -159,13 +151,12 @@
       top: 50px;
       left: auto;
       right: auto;
-      border: 1px solid rgba(0,0,0,.2);
-      .border-radius(0 0 2px 2px);
+      .border-radius(0 0 @borderRadiusDefault @borderRadiusDefault);
       max-height: ~"-moz-calc(100% - 100px)";
       max-height: ~"-webkit-calc(100% - 100px)";
       max-height: ~"calc(100% - 100px)";
       margin-top: 0;
-      padding-top: 0px;
+      padding-top: 0;
       overflow-y: auto;
       overflow-x: hidden;
       background: none;
@@ -185,7 +176,7 @@
         border-bottom: none;
       }
       li.divider + li a {
-        border-top: 1px solid @grayLight;
+        border-top: @borderWidget;
       }
       li.hidden {
         display: none;
@@ -198,7 +189,10 @@
         &:hover {
           color: @dropdownLinkColorHover;
           text-decoration: none;
-          background: #e5f1fc;
+          background: @dropdownLinkBackgroundHover;
+          i[class^="icon-"] {
+            color: @dropdownLinkColorHover;
+          }
         }
         i[class^="icon-"] {
           position: relative;
@@ -225,7 +219,7 @@
         .icon-caret-down {
           color: @grayLight;
           text-indent: 0;
-          top: -8px;
+          top: 0;
         }
         &:hover,
         &.open {
@@ -238,12 +232,6 @@
           width: 40px;
           margin-right: -5px;
         }
-      }
-      li button.dropdown-submenu {
-        height: 8px;
-        right: 10px;
-        opacity: 0.6;
-        position: relative;
       }
     }
 
@@ -284,8 +272,9 @@
     .btn-group {
       /*cube*/
       &.home {
-        padding: 8px 10px 8px 16px;
+        padding: 5px 10px 5px 16px;
         &.open {
+          padding: 8px 10px 8px 16px;
           .dropdown-menu {
             left: 0;
             right: auto;
@@ -334,18 +323,16 @@
     padding-right: 6px;
   }
   .dropdown-toggle .avatar {
-    min-width: 28px;
-    @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
-    .box-shadow(@shadow);
+    min-width: 26px;
   }
   .profileactions-profile .avatar {
     position: absolute;
     left: 11px;
   }
   .icon-user {
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
     top: 0;
     font-size: 16px;
   }
@@ -388,7 +375,7 @@
   }
   .active:after {
     border-width: 7px;
-    border-bottom-color: #fff;
+    border-bottom-color: @white;
     top: 12px;
   }
   .active:before {
@@ -399,7 +386,7 @@
 }
 
 .bordered {
-  border-right: @btnBorder 1px solid;
+  border-right: 1px solid @btnBorder;
   margin-right: -10px;
   .tabs-left .nav-tabs > li > a,
   .tabs-left .nav-tabs .on > a,

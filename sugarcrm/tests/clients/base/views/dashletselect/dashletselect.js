@@ -216,4 +216,113 @@ describe('Base.View.Dashletselect', function() {
             expect(actualCollection.length).toBe(2);
         });
     });
+
+    describe('selectDashlet', function() {
+        var metadata;
+        beforeEach(function() {
+            metadata = {
+                'component': 'component',
+                'config': {},
+                'filter': {},
+                'label': 'LBL',
+                'type': 'type'
+            };
+            app.drawer = {
+                'load': $.noop
+            };
+        });
+
+        afterEach(function() {
+            metadata = null;
+        });
+
+        it('should load dashlet configurations in the drawer', function() {
+            var loadSpy = sinon.collection.spy(app.drawer, 'load');
+            view.selectDashlet(metadata);
+
+            expect(loadSpy.calledOnce).toBeTruthy();
+            expect(loadSpy.args[0][0].layout.type).toEqual('dashletconfiguration');
+        });
+    });
+
+    describe('getFields', function() {
+        beforeEach(function() {
+            view.meta = {
+                'panels': [
+                    {
+                        'fields': ['field1', 'field2']
+                    },
+                    {
+                        'fields': ['field3']
+                    },
+                    {
+                        'fields': ['field4', {name: 'field5'}]
+                    }
+                ]
+            };
+        });
+
+        afterEach(function() {
+            view.meta = null;
+        });
+
+        it('should get a flattened list of fields from the metadata', function() {
+            expect(view.getFields()).toEqual(
+                ['field1', 'field2', 'field3', 'field4', {name: 'field5'}]
+            );
+        });
+    });
+
+    describe('loadData', function() {
+        var dashletCollection;
+        beforeEach(function() {
+            dashletCollection = [
+                {
+                    'title': 'Bob',
+                    'description': 'starts with B',
+                    'filter': {}
+                },
+                {
+                    'title': 'Charlie',
+                    'description': 'starts with C',
+                    'filter': {}
+                },
+                {
+                    'title': 'Annie',
+                    'description': 'starts with A',
+                    'filter': {}
+                }
+            ];
+            sinon.collection.stub(view, '_addBaseViews');
+            sinon.collection.stub(view, '_addModuleViews');
+            sinon.collection.stub(view, 'getFilteredList', function() {
+                return dashletCollection;
+            });
+        });
+
+        afterEach(function() {
+            dashletCollection = [];
+        });
+
+        it('should reset `filteredCollection` if `this.collection` is not empty',
+            function() {
+                view.collection.add(dashletCollection);
+                var collectionModels = view.collection.models;
+                view.filteredCollection = [];
+
+                view.loadData();
+
+                expect(view.collection.models).toEqual(collectionModels);
+                expect(view.filteredCollection).toEqual(collectionModels);
+            });
+
+        it('should fetch dashable components and sort the models by `title`', function() {
+            view.loadData();
+
+            expect(view.collection.dataFetched).toBeTruthy();
+            expect(_.map(view.collection.models, function(obj) {
+                return obj.get('title');
+            })).toEqual(['Annie', 'Bob', 'Charlie']);
+        });
+    });
 });

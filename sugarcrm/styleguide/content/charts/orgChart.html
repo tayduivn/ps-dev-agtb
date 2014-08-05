@@ -48,8 +48,11 @@
   nv.addGraph(function() {
 
     var nodeRenderer = function(d) {
-      return '<img src="img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
-    }
+      if (!d.image || d.image === '') {
+        d.image = 'user.svg';
+      }
+      return '<img src="img/' + d.image + '" class="rep-avatar" width="32" height="32"><div class="rep-name">' + d.name + '</div><div class="rep-title">' + d.title + '</div>';
+    };
 
     var chart = nv.models.tree()
           .duration(500)
@@ -58,14 +61,14 @@
           .zoomExtents({'min': 0.25, 'max': 4})
           .horizontal(false);
 
-    d3.json("data/tree_data.json", function(data) {
-      d3.select("#org svg")
+    d3.json('data/tree_data.json', function(data) {
+      d3.select('#org svg')
           .datum(data)
         .transition().duration(700)
           .call(chart);
     });
 
-    nv.utils.windowResize(function(){ chart.resize(); });
+    nv.utils.windowResize(function() { chart.resize(); });
 
     var toggleChart = function(e) {
         //if icon clicked get parent button
@@ -86,7 +89,7 @@
 
             default:
         }
-    }
+    };
 
     $('.toggle-control').on('click', toggleChart);
 

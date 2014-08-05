@@ -94,5 +94,54 @@ class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected_datetime, $GLOBALS['db']->fromConvert($row['date_entered'], 'datetime'), 'Got incorrect date_entered.');
 
     }
+
+    public function providerIdData()
+    {
+        return array(
+            //Valid ids
+            array('12345','12345'),
+            array('12345-6789-1258','12345-6789-1258'),
+            array('aaaBBB12AA122cccD','aaaBBB12AA122cccD'),
+            array('aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'),
+            array('aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'),
+            array('aaa.BBB.12AA122.cccD','aaa.BBB.12AA122.cccD'),
+            //Invalid
+            array('1242','12*'),
+            array('abdcd36','abdcd$'),
+            array('1234-asdf3535353523','1234-asdf####23'),
+            );
+    }
+
+    /**
+     * @ticket PAT-784
+     * @dataProvider providerIdData
+     */
+    public function testConvertID($expected, $dirty)
+    {
+        $c = new Contact();
+        $importer = new PAT784ImporterStub('UNIT TEST', $c);
+        $actual = $importer->convertID($dirty);
+
+        $this->assertEquals(
+            $expected,
+            $actual,
+            "Error converting id during import process $actual , expected: $expected, before conversion: $dirty"
+        );
+    }
 }
-    
+
+/**
+ * Mock importer class
+ *
+ */
+class PAT784ImporterStub extends Importer
+{
+    public function convertID($id)
+    {
+        return $this->_convertId($id);
+    }
+
+    public function getFieldSanitizer()
+    {
+    }
+}

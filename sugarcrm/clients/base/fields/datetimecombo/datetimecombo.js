@@ -24,7 +24,7 @@
     secondaryFieldTag: 'input[data-type=time]',
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Add `FieldDuplicate` plugin to the list of required plugins.
      */
@@ -39,7 +39,7 @@
     },
 
     /**
-     *{@inheritDoc}
+     * @inheritDoc
      *
      * Add `show-timepicker` on click listener.
      */
@@ -74,6 +74,23 @@
 
         this.model.set(this.name, value);
         this.model.setDefaultAttribute(this.name, value);
+
+        return this;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _initPlaceholderAttribute: function() {
+        this._super('_initPlaceholderAttribute');
+
+        var placeholder = this.getTimePlaceHolder(this.getUserTimeFormat());
+
+        this.secondaryFieldPlaceholder = this.def.placeholder && app.lang.get(
+            this.def.placeholder,
+            this.module,
+            {format: placeholder}
+        ) || placeholder;
 
         return this;
     },
@@ -133,21 +150,14 @@
      * @protected
      */
     _setupTimePicker: function() {
-        var $field = this.$(this.secondaryFieldTag),
-            userTimeFormat = this.getUserTimeFormat();
+        var $field = this.$(this.secondaryFieldTag);
 
         $field.timepicker({
-            timeFormat: userTimeFormat,
+            timeFormat: this.getUserTimeFormat(),
             // FIXME: add metadata driven support for the following properties
             scrollDefaultNow: true,
             step: 15
         });
-
-        $field.attr('placeholder', this.getTimePlaceHolder(userTimeFormat));
-
-        if (this.def.required) {
-            this.setRequiredPlaceholder($field);
-        }
     },
 
     /**
@@ -200,7 +210,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Bind time picker `changeTime` event expecting to set the default date if
      * not filled yet, see {@link #handleDateTimeChanges}.
@@ -227,7 +237,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Add extra logic to unbind secondary field tag.
      */
@@ -248,7 +258,7 @@
         }
 
         this.model.on('change:' + this.name, function(model, value) {
-            if (this.action !== 'edit') {
+            if (this.action !== 'edit' && this.action !== 'massupdate') {
                 this.render();
                 return;
             }
@@ -287,7 +297,7 @@
             value.parseZone();
         }
 
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.action === 'massupdate') {
             value = {
                 'date': value.format(app.date.convertFormat(this.getUserDateFormat())),
                 'time': value.format(app.date.convertFormat(this.getUserTimeFormat()))
@@ -360,12 +370,12 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     _render: function() {
         this._super('_render');
 
-        if (this.action !== 'edit') {
+        if (this.action !== 'edit' && this.action !== 'massupdate') {
             return;
         }
 
@@ -373,7 +383,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     _dispose: function() {
         if (this.$(this.secondaryFieldTag).timepicker) {

@@ -204,7 +204,7 @@ nv.models.scatter = function() {
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
           }
 
-          if(vertices.length < 3) {
+          if (vertices.length < 3) {
             // Issue #283 - Adding 2 dummy points to the voronoi b/c voronoi requires min 3 points to work
             vertices.push([x.range()[0] - 20, y.range()[0] - 20, null, null]);
             vertices.push([x.range()[1] + 20, y.range()[1] + 20, null, null]);
@@ -225,7 +225,7 @@ nv.models.scatter = function() {
                 'series': vertices[i][2],
                 'point': vertices[i][3]
               }
-            });
+            }).filter(function(d) { return !!d.series; });
 
           var pointPaths = wrap.select('.nv-point-paths').selectAll('path')
               .data(voronoi);

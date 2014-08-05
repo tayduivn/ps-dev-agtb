@@ -7,14 +7,6 @@
       max-height: 45px;
       overflow-y: auto;
       .border-radius(@baseBorderRadius);
-      &:before {
-        content: attr(data-content-before);
-        float: right;
-        font-size: @baseFontSize;
-        padding: 2px 1px 2px 14px;
-        width: auto;
-        color: transparent;
-      }
     }
     .select2-search-field input {
       padding: 0 6px;
@@ -29,6 +21,7 @@
     right: 0;
     .btn {
       position: relative;
+      right: 0;
     }
   }
 }
@@ -43,24 +36,12 @@
     top: 0;
     right: -36px;
   }
-  .compose-sender-options {
-    .btn {
-      right: 0;
-    }
-  }
   .select2-container {
     .select2-choices {
       max-height: 45px;
       overflow-y: auto;
       .border-radius(@baseBorderRadius);
-      &:before {
-        content: attr(data-content-before);
-        float: right;
-        font-size: @baseFontSize;
-        padding: 2px 1px 2px 14px;
-        width: auto;
-        color: transparent;
-      }
+      .box-shadow(0 0 1px transparent);
     }
     .select2-search-field input {
       padding: 0 6px;
@@ -106,7 +87,7 @@
         position: absolute;
         top: 3px;
         z-index: 2;
-        background-color: #FFF;
+        background-color: @white;
         padding: 2px;
       }
       &[data-type="teamset"] .edit .control-group .controls-three {
@@ -141,12 +122,12 @@
       .border-radius(4px);
     }
   }
+
   .record-cell {
     display: inline-block;
     position: relative;
     padding-left: 15px;
-    min-height: 43px;
-    margin-bottom: 7px;
+    min-height: 0;
     height: 100%;
     &.vis_action_hidden {
       &> span,
@@ -160,10 +141,11 @@
     .record-label {
       font-size: @fontSizeSmall;
       color: lighten(@gray, 12%);
-      padding-bottom: 2px;
     }
     .normal > span {
       display: block;
+      min-height: 28px;
+      margin: 2px 0 7px;
     }
     .normal > span.detail {
       a,
@@ -178,6 +160,10 @@
     .normal > span.edit {
       position: relative;
       z-index: 1;
+    }
+    .detail > span.detail {
+      display: inline-flex;
+      margin-right: 5px;
     }
     .ellipsis_inline {
       display: block !important;
@@ -205,6 +191,10 @@
       .add-on {
         z-index: 1;
       }
+    }
+
+    .edit .control-group {
+      margin-bottom: 9px;
     }
 
     /* Must be same as above margin-top definition */
@@ -360,6 +350,9 @@
       }
       .edit {
         position: static;
+      }
+      .select2-container .select2-choice {
+        padding-left: 6px;
       }
       .help-block {
         margin-top: 28px;
@@ -581,6 +574,7 @@
       .select2-container {
         .select2-choice {
           color: @gray;
+          .box-shadow(0 0 1px transparent);
         }
         &.select2-container-disabled {
           .opacity(35);
@@ -667,6 +661,7 @@
       }
       .edit {
         padding: 0;
+        margin: 0;
         .select2-container {
           margin-top: 0;
         }

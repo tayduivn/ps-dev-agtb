@@ -79,13 +79,6 @@ class RelateApi extends FilterApi {
 
         $options = $this->parseArguments($api, $args, $linkSeed);
 
-        // In case the view parameter is set, reflect those fields in the
-        // fields argument as well so formatBean only takes those fields
-        // into account instead of every bean property.
-        if (!empty($args['view'])) {
-            $args['fields'] = $options['select'];
-        }
-
         // If they don't have fields selected we need to include any link fields
         // for this relationship
         if (empty($args['fields']) && is_array($linkSeed->field_defs)) {
@@ -103,6 +96,14 @@ class RelateApi extends FilterApi {
                 $options['select'][] = $field;
             }
         }
+
+        // In case the view parameter is set, reflect those fields in the
+        // fields argument as well so formatBean only takes those fields
+        // into account instead of every bean property.
+        if (!empty($args['view'])) {
+            $args['fields'] = $options['select'];
+        }
+
 
         $q = self::getQueryObject($linkSeed, $options);
 

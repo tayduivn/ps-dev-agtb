@@ -34,6 +34,8 @@ class SugarTestDatabaseMock extends DBManager
      * @var array
      */
     public $rows = array();
+    // not doing prepareds for now
+    public $usePreparedStatements = false;
 
     /**
      * Add a Query Spy
@@ -138,7 +140,7 @@ class SugarTestDatabaseMock extends DBManager
             }
             return true;
         }
-        
+
     }
 
     /**
@@ -260,4 +262,5 @@ class SugarTestDatabaseMock extends DBManager
     public function installConfig() {}
     public function getFromDummyTable() {}
     public function getGuidSQL() {}
+    public function prepareStatement($sql) { return null; }
 }

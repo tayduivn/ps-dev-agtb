@@ -66,7 +66,14 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function getTimePeriodName($count)
     {
         $timedate = TimeDate::getInstance();
-        return string_format($this->name_template, array($timedate->fromDbDate($this->start_date)->format('Y')));
+        $year = $timedate->fromDbDate($this->start_date);
+
+        if(isset($this->currentSettings['timeperiod_fiscal_year']) &&
+            $this->currentSettings['timeperiod_fiscal_year'] == 'next_year') {
+            $year->modify('+1 year');
+        }
+
+        return string_format($this->name_template, array($year->format('Y')));
     }
 
 

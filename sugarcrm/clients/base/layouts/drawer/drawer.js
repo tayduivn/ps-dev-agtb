@@ -127,8 +127,10 @@
             //close the drawer
             this._animateCloseDrawer(function() {
                 var layout;
-
-                self._components.pop().dispose(); //dispose top-most drawer
+                var topDrawer = self._components.pop();
+                if(topDrawer && topDrawer.dispose) {
+                    topDrawer.dispose(); //dispose top-most drawer
+                }
                 layout = _.last(self._components);
 
                 //scroll both main and sidebar back its original position
@@ -602,7 +604,7 @@
      */
     _scrollBackToOriginal: function(drawerLayout) {
         var scrollPositions = this.scrollTopPositions.pop();
-
+        if (!scrollPositions) return;
         if (drawerLayout) {
             drawerLayout.$('.main-pane').scrollTop(scrollPositions.main);
             drawerLayout.$('.sidebar-content').scrollTop(scrollPositions.side);

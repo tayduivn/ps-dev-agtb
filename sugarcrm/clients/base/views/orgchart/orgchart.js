@@ -48,7 +48,7 @@
         this.nodetemplate = app.template.getView(this.name + '.orgchartnode');
         //TODO: change api to accept id as param or attrib as object to produce
         this.reporteesEndpoint = app.api.buildURL('Forecasts', 'orgtree/' + app.user.get('id'), null, {'level': 2});
-        this.zoomExtents = {'min': 0.25, 'max': 2};
+        this.zoomExtents = {'min': 0.25, 'max': 1.75};
         this.nodeSize = {'width': 124, 'height': 56};
 
         this.chart = nv.models.tree()
@@ -58,6 +58,9 @@
                     return self.nodetemplate(d.metadata);
                 })
                 .zoomExtents(self.zoomExtents)
+                .zoomCallback(function(scale) {
+                    self.moveSlider(scale);
+                })
                 .horizontal(false)
                 .getId(function(d) {
                     return d.metadata.id;
@@ -83,75 +86,93 @@
             return;
         }
 
-        // chart controls
-        this.slider = this.$('.btn-slider .noUiSlider');
-        this.sliderZoomIn = this.$('.btn-slider i[data-control="zoom-in"]');
-        this.sliderZoomOut = this.$('.btn-slider i[data-control="zoom-out"]');
+        if (!this.slider) {
+            // chart controls
+            this.slider = this.$('.btn-slider .noUiSlider');
+            this.sliderZoomIn = this.$('.btn-slider i[data-control="zoom-in"]');
+            this.sliderZoomOut = this.$('.btn-slider i[data-control="zoom-out"]');
 
-        //zoom slider
-        this.slider.noUiSlider('init', {
-            start: 100,
-            knobs: 1,
-            scale: [25, 200],
-            connect: false,
-            step: 25,
-            change: function() {
-                if (!self.chart_loaded) {
-                    return;
+            //zoom slider
+            this.slider.noUiSlider('init', {
+                start: 100,
+                knobs: 1,
+                scale: [this.zoomExtents.min * 100, this.zoomExtents.max * 100],
+                connect: false,
+                step: 25,
+                change: function(moveType) {
+                    var values, scale;
+                    if (!self.chart_loaded) {
+                        return;
+                    }
+
+                    if (moveType === 'slide') {
+                        values = self.slider.noUiSlider('value');
+                        scale = self.chart.zoomLevel(values[0] / 100);
+                    } else {
+                        scale = self.chart.zoomScale();
+                    }
+                    self.sliderZoomIn.toggleClass('disabled', (scale === self.zoomExtents.max));
+                    self.sliderZoomOut.toggleClass('disabled', (scale === self.zoomExtents.min));
                 }
-                var values = self.slider.noUiSlider('value'),
-                    scale = self.chart.zoomLevel(values[0] / 100);
-                self.sliderZoomIn.toggleClass('disabled', (scale === self.zoomExtents.max));
-                self.sliderZoomOut.toggleClass('disabled', (scale === self.zoomExtents.min));
-            }
-        });
+            });
+        }
+        this.moveSlider();
+
+        if (this.jsTree) {
+            this.jsTree.jstree('destroy');
+        }
 
         //jsTree control for selecting root node
-        var $jsTree = this.$('div[data-control="org-jstree"]');
-        this.jsTree = $jsTree.jstree({
-                // generating tree from json data
-                'json_data': {
-                    'data': this.chartCollection
-                },
-                // plugins used for this tree
-                'plugins': ['json_data', 'ui', 'types'],
-                'core': {
-                    'animation': 0
-                },
-                'ui': {
-                    // when the tree re-renders, initially select the root node
-                    'initially_select': ['jstree_node_' + app.user.get('user_name')]
-                }
-            })
-            .on('loaded.jstree', function(e) {
+        this.jsTree = this.$('div[data-control="org-jstree"]').jstree({
+            // generating tree from json data
+            'json_data': {
+                'data': this.chartCollection
+            },
+            // plugins used for this tree
+            'plugins': ['json_data', 'ui', 'types'],
+            'core': {
+                'animation': 0
+            },
+            'ui': {
+                // when the tree re-renders, initially select the root node
+                'initially_select': ['jstree_node_' + app.user.get('user_name')]
+            }
+        }).on('loaded.jstree', function(e) {
                 // do stuff when tree is loaded
                 self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
                 self.$('div[data-control="org-jstree"] > ul').addClass('list');
                 self.$('div[data-control="org-jstree"] > ul > li > a').addClass('jstree-clicked');
-            })
-            .on('click.jstree', function(e) {
+        }).on('click.jstree', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
-            })
-            .on('select_node.jstree', function(event, data) {
+        }).on('select_node.jstree', function(event, data) {
                 var jsData = data.inst.get_json();
 
                 self.chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
                 self.forceRepaint();
+                self.moveSlider();
+
                 self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
                 data.inst.toggle_node(data.rslt.obj);
-            });
-        app.accessibility.run($jsTree, 'click');
+        });
+        app.accessibility.run(this.jsTree, 'click');
 
         d3.select('svg#' + this.cid)
             .datum(this.chartCollection[0])
-            .transition().duration(700)
+            .transition().duration(500)
             .call(this.chart);
+
+        this.chart.reset();
+
+        this.$('img').error(function() {
+            $(this).attr('src', 'include/images/user.svg');
+        });
 
         this.forceRepaint();
 
         this.$('.nv-expcoll').on('click', function(e) {
             self.forceRepaint();
+            self.moveSlider();
         });
 
         this.chart_loaded = _.isFunction(this.chart.resize);
@@ -163,9 +184,24 @@
      * issue with rendering foreignObject in SVG
      */
     forceRepaint: function() {
-        self.$('.rep-avatar').on('load', function() {
+        this.$('.rep-avatar').on('load', function() {
             $(this).removeClass('loaded').addClass('loaded');
         });
+
+        this.$('img').error(function() {
+            $(this).attr('src', 'include/images/user.svg');
+        });
+    },
+
+    /**
+     * Move the slider position
+     * Use whenever the tree changes size
+     */
+    moveSlider: function(scale) {
+        var s = scale || 1;
+        if (this.slider) {
+            this.slider.noUiSlider('move', {to: s * 100});
+        }
     },
 
     /**
@@ -181,6 +217,7 @@
      * orgchart nvd3 model uses resize instead of update.
      */
     chartResize: function() {
+        this.moveSlider();
         this.chart.resize();
     },
 
@@ -217,11 +254,16 @@
             }
 
             entry.metadata.url = self._buildUserUrl(entry.metadata.id);
-            entry.metadata.img = app.api.buildFileURL({
-                module: 'Employees',
-                id: entry.metadata.id,
-                field: 'picture'
-            });
+
+            if (!entry.metadata.picture || entry.metadata.picture === '') {
+                entry.metadata.img = 'include/images/user.svg';
+            } else {
+                entry.metadata.img = app.api.buildFileURL({
+                    module: 'Employees',
+                    id: entry.metadata.id,
+                    field: 'picture'
+                });
+            }
 
             if (!entry.children) {
                 return;
@@ -229,8 +271,9 @@
 
             //For each children found (if any) then call _postProcessTree again.
             _.each(entry.children, function(childEntry) {
+                var newChild;
                 if (entry.metadata.id !== childEntry.metadata.id) {
-                    var newChild = self._postProcessTree(childEntry);
+                    newChild = self._postProcessTree(childEntry);
                     if (!_.isEmpty(newChild)) {
                         adopt.push(newChild[0]);
                     }
@@ -249,17 +292,16 @@
      * @param {e} event The event object that is triggered.
      */
     zoomChart: function(e) {
+        var button, step, scale;
         if (!this.chart_loaded) {
             return;
         }
 
-        var button = $(e.target),
-            scale = this.chart.zoom(button.data('control') === 'zoom-in' ? 0.25 : -0.25);
+        button = $(e.target).data('control');
+        step = 0.25 * (button === 'zoom-in' ? 1 : -1);
+        scale = this.chart.zoomStep(step);
 
-        this.sliderZoomIn.toggleClass('disabled', (scale === this.zoomExtents.max));
-        this.sliderZoomOut.toggleClass('disabled', (scale === this.zoomExtents.min));
-
-        this.slider.noUiSlider('move', {to: scale * 100});
+        this.moveSlider(scale);
     },
 
     /**
@@ -267,12 +309,13 @@
      * @param {e} event The event object that is triggered.
      */
     toggleChart: function(e) {
+        var button;
         if (!this.chart_loaded) {
             return;
         }
 
         //if icon clicked get parent button
-        var button = $(e.currentTarget).hasClass('btn') ? $(e.currentTarget) : $(e.currentTarget).parent('.btn');
+        button = $(e.currentTarget).hasClass('btn') ? $(e.currentTarget) : $(e.currentTarget).parent('.btn');
 
         switch (button.data('control')) {
             case 'orientation':
@@ -286,12 +329,13 @@
                 break;
 
             case 'zoom-to-fit':
-                this.chart.reset();
-                this.slider.noUiSlider('move', {to: 100});
+                this.chart.resize();
                 break;
 
             default:
         }
+
+        this.moveSlider();
     },
 
     /**
@@ -317,7 +361,7 @@
      */
     _dispose: function() {
         if (this.jsTree) {
-            this.jsTree.off();
+            this.jsTree.jstree('destroy');
         }
         if (this.slider) {
             this.slider.off('move');

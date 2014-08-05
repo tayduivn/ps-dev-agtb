@@ -286,12 +286,16 @@
         // a proper selected user
         ctx.once('change:selectedUser', this._onceInitSelectedUser, this);
 
+        // lets see if the user has ranges selected, so lets generate the key from the filters
+        var ranges_key = app.user.lastState.buildKey('worksheet-filter', 'filter', 'ForecastWorksheets'),
+            default_selection = app.user.lastState.get(ranges_key) || data.defaultSelections.ranges;
+
         // set items on the context from the initData payload
         ctx.set({
             // set the value to null since it can be undefined
             currentForecastCommitDate: null,
             selectedTimePeriod: data.defaultSelections.timeperiod_id.id,
-            selectedRanges: data.defaultSelections.ranges,
+            selectedRanges: default_selection,
             selectedTimePeriodStartEnd: this._saveTimePeriodStatEndDates(
                 data.defaultSelections.timeperiod_id.start,
                 data.defaultSelections.timeperiod_id.end,

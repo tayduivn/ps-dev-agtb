@@ -763,6 +763,7 @@ $alert_file_contents = "";
                 $dateTypeFields = array('date', 'datetime', 'datetimecombo');
                 if ($row['trigger_type'] != 'compare_any_time'
                 	&& !($row['trigger_type'] == 'compare_specific'
+                	&& isset($bean->field_defs[$row['target_field']]['type'])
                 	&& in_array($bean->field_defs[$row['target_field']]['type'], $dateTypeFields))
                 ) {
                     $additionalEval[] = "({$eval})";

@@ -20,13 +20,16 @@
   margin-bottom: 0;
   .accordion-heading {
     padding: 0;
-    background-color: @grayLighter;
     height: 48px;
     .accordion-toggle {
       padding: 14px 16px 16px 20px;
+      background: @white;
       color: @gray;
       .resetLink {
         color: @linkColor;
+      }
+      &.collapsed {
+        background: @grayLighter;
       }
       .resetLink:hover {
         text-decoration: underline;
@@ -40,17 +43,19 @@
     background-color: @white;
   }
   .accordion-group {
-    border-bottom: 1px solid #DCDCDC;
+    border-bottom: 1px solid darken(@grayLighter,10%);
   }
   .accordion-inner {
-    padding: 12px 20px;
-    background-color: darken(@grayLighter,1%);
-    .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
+    padding: 10px 0 0;
+    margin: 10px 20px;
+    background-color: @white;
+    border-top: 1px dashed darken(@grayLighter,10%);
+    border-bottom: none;
   }
   fieldset {
-    border: 1px dashed #008000;
-    padding: 8px 12px 0;
-    margin-bottom: 16px;
+    border: 1px dashed darken(@grayLighter,10%);
+    padding: 8px 10px 0;
+    margin-bottom: 10px;
   }
   fieldset.disabled {
     border-color: @grayLight;
@@ -102,14 +107,14 @@
   margin: 0;
   .row-fluid  {
     padding: 10px;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
+    border-bottom: @borderWidgetLight;
     .box-sizing(border-box);
     &:not(:last-child) {
       line-height: 28px;
     }
     &.deficitRow {
       background-color: @white;
-      border-top: 1px solid darken(@grayLighter, 5%);
+      border-top: @borderWidgetLight;
         font-weight: 600;
       &.font-green {
         color: @green;

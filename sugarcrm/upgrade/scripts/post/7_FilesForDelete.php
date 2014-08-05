@@ -173,6 +173,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Emails/clients/base/views/panel-top/panel-top.js',
             // NOMAD-1799
             'modules/Meetings/clients/mobile/api/MobileMeetingsApi.php',
+            // BR-1574 Move Elastica library to composer (new path vendor/ruflin/elastica)
+            'vendor/Elastica/',
         );
 
         // must be upgrading from between 710 to 722
@@ -202,6 +204,11 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/ModuleBuilder/tpls/portalpreview.tpl';
             $files[] = 'modules/ModuleBuilder/views/view.portalpreview.php';
             $files[] = 'LICENSE.txt';
+        }
+
+        if (version_compare($this->from_version, '7.5', '<=')) {
+            $files[] = 'sidecar/lib/jquery/jquery.placeholder.min.js';
+            $files[] = 'modules/Home/clients/base/views/about-source-code/about-source-code.php';
         }
 
         $this->fileToDelete($files);

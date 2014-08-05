@@ -31,7 +31,7 @@
 
   // Typeahead UL
   .typeahead {
-    .border-radius(2px);
+    .border-radius(@baseBorderRadius);
     overflow: hidden;
     right: 0;
     left: 0;
@@ -62,35 +62,16 @@
   // Input field
   .search-query {
     float: right;
-    color: @grayLighter;
+    color: @gray;
     margin-bottom: 0;
-    padding: 4px  54px 4px 9px;
+    padding: 4px 54px 4px 9px;
     min-height: 28px;
     min-width: 220px;
-    border: 1px solid #111;
-    .border-radius(2px 4px 4px 2px);
+    border: 1px solid darken(@navbarBackground, 5%);
+    .border-radius(@baseBorderRadius);
     .box-sizing(border-box);
-    #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
-    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15)");
     .transition(none);
-
-    // Placeholder text gets special styles; can't be bundled together though for some reason
-    .placeholder(@grayDarker);
-
-    // Hover states
-    &:hover {
-      color: @grayDark;
-      background: rgba(255,255,255,.5);
-    }
-    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
-    &:focus,
-    &.focused {
-      color: @grayDark;
-      background: @white;
-      border: 1px solid @gray;
-      text-shadow: 0 1px 0 @white;
-      outline: 0;
-    }
+    .placeholder(@grayLight);
   }
 
   .advanced {
@@ -104,11 +85,10 @@
     }
     .btn-group {
       margin: 0;
-      &.open {
-        .dropdown-toggle {
-          color: transparent;
-          background: none;
-        }
+      > .btn .icon-caret-down {
+        display: inline-block;
+        color: @grayLight;
+        text-shadow: none;
       }
       &:not(.open) {
         .btn {
@@ -122,15 +102,19 @@
         }
       }
       &:hover > .btn .icon-caret-down {
-        color: @grayLight;
+        color: @grayDark;
         text-decoration: none;
+      }
+      &.open > .btn .icon-caret-down,
+      &.open:hover > .btn .icon-caret-down {
+        color: @white;
       }
     }
 
     .dropdown-menu.globalsearch-adv-wrap {
       margin-top: 6px;
       border: 1px solid @dropdownBorder;
-      .border-radius(2px);
+      .border-radius(@baseBorderRadius);
       *border-right-width: 2px;
       *border-bottom-width: 2px;
       .box-shadow(0 5px 10px rgba(0,0,0,.2));
@@ -171,15 +155,9 @@
       box-shadow: none;
       .border-radius(0);
     }
-
-    .icon-caret-down {
-      display: inline-block;
-      color: @grayDarker;
-      text-shadow: none;
-    }
   }
 }
 
 .search-query {
-  .border-radius(4px);
+  .border-radius(@baseBorderRadius);
 }

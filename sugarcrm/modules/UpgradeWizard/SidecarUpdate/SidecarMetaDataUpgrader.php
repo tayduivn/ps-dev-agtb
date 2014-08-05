@@ -418,6 +418,14 @@ class SidecarMetaDataUpgrader
             if(!isModuleBWC($module)) {
                 self::$filesForRemoval[] = "modules/{$module}/metadata/subpaneldefs.php";
             }
+
+            // make sure team_name is not on the layout in case it doesn't exist in the module
+            // (even if defined in template's layout)
+            $sm = StudioModuleFactory::getStudioModule($module);
+            $fields = $sm->getFields();
+            if (is_array($fields) && !isset($fields['team_name'])) {
+                $sm->removeFieldFromLayouts('team_name');
+            }
         }
 
         // Add the rest of the OOTB module wireless metadata files to the stack

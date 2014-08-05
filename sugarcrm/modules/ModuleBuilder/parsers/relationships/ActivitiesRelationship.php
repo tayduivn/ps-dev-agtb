@@ -131,15 +131,12 @@ class ActivitiesRelationship extends OneToManyRelationship
     }
 
     /*
-     * Define what fields to add to which modules layouts
+     * Don't add fields to layouts we will use the flex relate
      * @return array    An array of module => fieldname
      */
     function buildFieldsToLayouts ()
     {
-        if ($this->relationship_only)
-            return array () ;
-
-        return array( $this->rhs_module => $this->relationship_name . "_name" ) ; // this must match the name of the relate field from buildVardefs
+        return array();
     }
 
  	function buildSubpanelDefinitions ()

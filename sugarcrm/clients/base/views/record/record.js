@@ -285,6 +285,12 @@
         var activeTabHref = this.getActiveTab(),
             activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]');
 
+        // Always show first tab if we're on the create view
+        if (this.createMode) {
+            this.$('#recordTab a:first').tab('show');
+            return;
+        }
+
         if (activeTabHref && activeTab) {
             activeTab.tab('show');
         } else if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
@@ -317,6 +323,9 @@
      * @param {Event} event
      */
     setActiveTab: function(event) {
+        if (this.createMode) {
+            return;
+        }
         var tabTarget = this.$(event.currentTarget).attr('href'),
             tabKey = app.user.lastState.key('activeTab', this),
             cidIndex = tabTarget.indexOf(this.cid);
@@ -330,6 +339,9 @@
      * @param {String} state
      */
     savePanelState: function(panelID, state) {
+        if (this.createMode) {
+            return;
+        }
         var panelKey = app.user.lastState.key(panelID+':tabState', this);
         app.user.lastState.set(panelKey, state);
     },
@@ -812,6 +824,9 @@
                 var fieldPanelArrow = fieldPanel.prev().find('i');
                 fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
+        } else if (field.$el.is(':hidden')) {
+            this.$('.more[data-moreless]').trigger('click');
+            app.user.lastState.set(this.SHOW_MORE_KEY, this.$('.less[data-moreless]'));
         }
         else if(field.$el.closest('.panel_hidden.hide').length > 0) {
             this.toggleMoreLess(this.MORE_LESS_STATUS.MORE, true);

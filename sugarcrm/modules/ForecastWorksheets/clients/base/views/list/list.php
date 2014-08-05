@@ -93,7 +93,6 @@ $listDefs = array(
                     'type' => 'int',
                     'default' => true,
                     'enabled' => true,
-                    'click_to_edit' => true,
                     'align' => 'right',
                     'width' => '7%'
                 ),
@@ -189,7 +188,6 @@ $listDefs = array(
                     'enabled' => true,
                     'maxValue' => 100,
                     'minValue' => 0,
-                    'click_to_edit' => true,
                     'align' => 'right',
                     'width' => '7%'
                 ),

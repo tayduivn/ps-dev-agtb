@@ -19,10 +19,14 @@
             isDev = (!_.has(acls, 'developer') || acls.developer == 'yes');
         // if user has access AND is a System Admin OR has a Developer role
         if(hasAccess && (isSysAdmin || isDev)) {
+            if(options && options.context && options.context.has('model')) {
+                // make sure the model being passed to all config views has the latest metadata
+                options.context.get('model').set(app.metadata.getModule('Forecasts', 'config'));
+            }
             // initialize
-            app.view.Layout.prototype.initialize.call(this, options);
+            this._super('initialize', [options]);
             // load the data
-            app.view.Layout.prototype.loadData.call(this);
+            this._super('loadData');
         } else {
             this.codeBlockForecasts('LBL_FORECASTS_NO_ACCESS_TO_CFG_TITLE', 'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG');
         }

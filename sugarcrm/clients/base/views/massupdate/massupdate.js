@@ -904,11 +904,11 @@
         app.shortcuts.register('MassUpdate:Remove', '-', function() {
             this.$('[data-action=remove]').last().click();
         },this);
-        app.shortcuts.register('MassUpdate:Cancel', ['esc', 'ctrl+opt+l'], function() {
-                this.$('a.cancel_button').click();
-            }, this, true);
-        app.shortcuts.register('MassUpdate:Update', ['ctrl+s', 'ctrl+opt+a'], function() {
-                this.$('[name=update_button]:not(.disabled)').click();
+        app.shortcuts.register('MassUpdate:Cancel', ['esc', 'ctrl+alt+l'], function() {
+            this.$('a.cancel_button').click();
+        }, this, true);
+        app.shortcuts.register('MassUpdate:Update', ['ctrl+s', 'ctrl+alt+a'], function() {
+            this.$('[name=update_button]:not(.disabled)').click();
         }, this, true);
     },
     /**

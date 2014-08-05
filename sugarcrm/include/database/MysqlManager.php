@@ -1090,19 +1090,23 @@ class MysqlManager extends DBManager
 		return "ALTER TABLE $tablename CHANGE COLUMN $column ".$this->oneColumnSQLRep($field);
 	}
 
-    public function emptyValue($type)
+	/**
+	 * (non-PHPdoc)
+	 * @see DBManager::emptyValue()
+	 */
+    public function emptyValue($type, $forPrepared = false)
    	{
    		$ctype = $this->getColumnType($type);
    		if($ctype == "datetime") {
-   			return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
+   			return $forPrepared?"1970-01-01 00:00:00":$this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
    		}
    		if($ctype == "date") {
-   			return $this->convert($this->quoted("1970-01-01"), "date");
+   			return $forPrepared?"1970-01-01":$this->convert($this->quoted("1970-01-01"), "date");
    		}
    		if($ctype == "time") {
-   			return $this->convert($this->quoted("00:00:00"), "time");
+   			return $forPrepared?"00:00:00":$this->convert($this->quoted("00:00:00"), "time");
    		}
-   		return parent::emptyValue($type);
+   		return parent::emptyValue($type, $forPrepared);
    	}
 
 	/**
@@ -1497,9 +1501,9 @@ class MysqlManager extends DBManager
 	*/
 	protected function _emptyValue($val, $type)
 	{
-		if($type == 'date' && $val == $this->quoted('0000-00-00')) {
+		if($type == 'date' && ($val == $this->quoted('0000-00-00') || $val == '0000-00-00')) {
 			return true;
-		} elseif($type == 'datetime' && $val == $this->quoted('0000-00-00 00:00:00')) {
+		} elseif($type == 'datetime' && ($val == $this->quoted('0000-00-00 00:00:00') || $val == '0000-00-00 00:00:00')) {
 			return true;
 		}
 

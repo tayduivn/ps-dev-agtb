@@ -25,8 +25,11 @@
         'click': 'triggerHistoryLog'
     },
 
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this.points = [];
         this.data_points = [];
@@ -37,23 +40,19 @@
                 this.points.push(point);
             }
         }, this);
-
-        this.on('render', function() {
-            if (!_.isUndefined(this.commit_date)) {
-                this.$el.find("span.relativetime").timeago({
-                    logger: SUGAR.App.logger,
-                    date: SUGAR.App.date,
-                    lang: SUGAR.App.lang,
-                    template: SUGAR.App.template
-                });
-            }
-        }, this);
     },
+
+    /**
+     * Toggles the commit history log
+     */
     triggerHistoryLog: function() {
-        this.$el.find('i').toggleClass('icon-caret-down icon-caret-up');
+        this.$('i').toggleClass('icon-caret-down icon-caret-up');
         this.context.trigger('forecast:commit_log:trigger');
     },
 
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         this.collection.on('reset', function() {
             // get the first line
@@ -68,10 +67,17 @@
                 this.commit_date = undefined;
             }
 
-            if (!this.disposed) this.render();
+            if (!this.disposed) {
+                this.render();
+            }
         }, this);
     },
 
+    /**
+     * Processes a Forecast collection's models into datapoints
+     * @param {Bean} model
+     * @returns {Array}
+     */
     processDataPoints: function(model) {
         var points = [],
             noAccessTemplate = app.template.getField('base', 'noaccess')(this);

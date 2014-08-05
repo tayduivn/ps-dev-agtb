@@ -261,7 +261,7 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
-        'formula' => 'divide($cost_price,$base_rate)',
+        'formula' => 'currencyDivide($cost_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
 
@@ -282,7 +282,7 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
-        'formula' => 'divide($discount_price,$base_rate)',
+        'formula' => 'currencyDivide($discount_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
 
@@ -303,7 +303,7 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
-        'formula' => 'divide($list_price,$base_rate)',
+        'formula' => 'currencyDivide($list_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
     ),
