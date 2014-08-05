@@ -32,6 +32,7 @@ $files=array(
     "modules/UpgradeWizard/WebUpgrader.php",
     "modules/UpgradeWizard/upgrade_screen.php",
     "modules/UpgradeWizard/upgrader_version.json",
+    'modules/UpgradeWizard/language/en_us.lang.php',
     "sidecar/lib/jquery/jquery.iframe.transport.js",
 
     // misc
@@ -96,6 +97,9 @@ $installdefs['beans'] = array(
         'tab' => false,
     ),
 );
+
+unset($installdefs['copy'][5]);
+$installdefs['copy'][] = array("from" => "<basepath>/modules/UpgradeWizard/language/en_us.lang.php", "to" => "custom/modules/UpgradeWizard/language/en_us.lang.php");
 
 // administration menu entry
 $installdefs['copy'][] = array("from" => "<basepath>/upgrader2.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/upgrader2.php");

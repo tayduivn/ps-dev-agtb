@@ -947,9 +947,11 @@ abstract class UpgradeDriver
             // add install strings if they are available, since some DB routines rely on it
             $langdirs[] = $this->context['new_source_dir']."/install/language";
             $langdirs[] = $this->context['new_source_dir']."/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['new_source_dir']."/custom/modules/UpgradeWizard/language";
         } elseif (!empty($this->context['source_dir'])) {
             $langdirs[] = $this->context['source_dir']."/install/language";
             $langdirs[] = $this->context['source_dir']."/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['source_dir']."/custom/modules/UpgradeWizard/language";
         }
         $langdirs[] = dirname(__FILE__)."/language";
 

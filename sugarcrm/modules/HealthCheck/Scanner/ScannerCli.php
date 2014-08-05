@@ -122,7 +122,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
     }
 }
 
-if(isset($argv[0]) && basename($argv[0]) != basename(__FILE__)) return;
+if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
 
 /**
  *

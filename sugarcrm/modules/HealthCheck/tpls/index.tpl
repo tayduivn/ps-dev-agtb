@@ -9,7 +9,7 @@
                     <i class="icon-remove"></i>
                 </button>
                 <strong>Error</strong>
-                There was a problem with upgrade. Please correct the issue and <a href="index.php?module=HealthCheck">restart</a>
+                The health check didn't pass. Please correct the issue and <a href="index.php?module=HealthCheck">restart</a>
                 or <a href="mailto:support@sugarcrm.com">contact support</a>.
             </div>
             <div class="alert alert-success alert-block" data-flag="1">
@@ -17,7 +17,7 @@
                     <i class="icon-remove"></i>
                 </button>
                 <strong>Success</strong>
-                You have passed the upgrade check.
+                You have passed the health check.
             </div>
             <div class="alert alert-warning alert-block" data-flag="2">
                 <button class="btn btn-link btn-invisible close" data-action="close">
