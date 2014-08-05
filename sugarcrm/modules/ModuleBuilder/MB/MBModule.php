@@ -188,6 +188,10 @@ class MBModule
         if (! empty ( $vardef [ 'source' ] ) && $vardef [ 'source' ] == 'custom_fields')
             unset ( $vardef [ 'source' ] ) ;
 
+        if (!empty($vardef['default'])) {
+            $vardef['default'] = htmlspecialchars_decode($vardef['default'], ENT_QUOTES);
+        }
+
 	    $this->mbvardefs->load();
         $this->addField ( $vardef ) ;
         $this->mbvardefs->save();
