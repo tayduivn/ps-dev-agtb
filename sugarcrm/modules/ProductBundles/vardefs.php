@@ -108,7 +108,7 @@ $dictionary['ProductBundle'] = array(
             ),
             'formula' => 'ifElse(isNumeric(related($taxrate, "value")),
                     currencyMultiply(
-                        rollupConditionalCurrencySum($products, "subtotal", "tax_class", "Taxable"),
+                        rollupConditionalSum($products, "subtotal", "tax_class", "Taxable"),
                         currencyDivide(related($taxrate, "value"), 100)
                     ),
                     0
