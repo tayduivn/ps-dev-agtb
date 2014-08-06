@@ -32,6 +32,7 @@
     display: table-row;
     margin: 0;
     vertical-align: top;
+    color: @gray;
 
     > .record-cell {
       display: table-cell;
@@ -43,7 +44,7 @@
         display: none;
       }
       &.edit {
-        padding: 3px 0 0 13px;
+        padding: 2px 0 0 13px;
         .record-cell {
           white-space: normal;
           overflow: visible;
@@ -89,10 +90,11 @@
 
   .record-edit-link-wrapper {
     width: 100%;
-    height: calc(100% - 16px);
+    height: 30px;
     top: 0;
     left: 0;
     z-index: 0;
+    display: block;
     .record-edit-link {
       margin-left: 0;
       .icon-pencil {
@@ -107,6 +109,16 @@
     color: @grayLight;
     line-height: @fontSizeSmall + 2;
     padding: 0 0 0 7px;
+    display: none;
+  }
+
+  .record-cell.edit {
+    .record-edit-link-wrapper {
+      display: none;
+    }
+    .record-label {
+      display: block;
+    }
   }
 
   span[data-type="image"],
@@ -199,8 +211,10 @@
   }
 
   span[data-type="follow"],
+  span[data-type="status"],
   span[data-type="badge"] {
     padding: 18px 16px 0 0;
+    line-height: 20px;
     .label {
       font-size: 0.7em;
       line-height: 0.7em;
@@ -222,7 +236,21 @@
       font-weight: 600;
     }
   }
-
+  span[data-type="status"] {
+    .record-label {
+      padding-left: 1px;
+    }
+    .select2-choice {
+      border: 1px solid transparent;
+      background-image: none;
+      background-color: transparent;
+      .box-shadow(none);
+      padding-left: 0;
+    }
+  }
+  .record-cell.hide + span[data-type="status"] {
+    padding-left: 16px;
+  }
   span[data-type="favorite"] {
     font-size: @baseFontSize;
     padding: 19px 16px 0 0;

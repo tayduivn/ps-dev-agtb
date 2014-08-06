@@ -17,6 +17,16 @@
     extendsFrom: 'EnumField',
 
     /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        if (this.view && this.view.layout) {
+            this.view.layout.on('headerpane:adjust_fields', this.repositionDropdown, this);
+        }
+    },
+
+    /**
      * @inheritDoc
      *
      * This field renders as a label when not in edit mode and as an enum when
@@ -31,6 +41,18 @@
         this._super('_render');
         this.type = 'status';
         this.styleLabel(this.model.get('status'));
+    },
+
+    /**
+     * Resets position of status dropdown if Select2 is active and open
+     * and the position of the Select2 container is shifted, which happens
+     * when other fields in the headerpane are hidden on status edit
+     */
+    repositionDropdown: function() {
+        var $el = this.$(this.fieldTag).select2('container');
+        if ($el.hasClass('select2-dropdown-open')) {
+            this.$(this.fieldTag).data('select2').dropdown.css({'left': $el.offset().left});
+        }
     },
 
     /**

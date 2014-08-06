@@ -523,8 +523,6 @@
      *   otherwise.
      */
     toggleEdit: function(isEdit) {
-        this.$('.record-edit-link-wrapper').toggle(!isEdit);
-        this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
         this.toggleViewButtons(isEdit);
         this.adjustHeaderpane();
@@ -570,7 +568,6 @@
      *   otherwise.
      */
     toggleHeaderLabels: function(isEdit) {
-        this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleViewButtons(isEdit);
         this.adjustHeaderpane();
     },
@@ -598,17 +595,9 @@
      *   action.
      */
     toggleLabelByField: function(field, inCreate) {
-        if (field.action === 'edit' || (field.action === 'disabled' && inCreate)) {
-            field.$el.closest('.record-cell')
-                .addClass('edit')
-                .find('.record-label')
-                .show();
-        } else {
-            field.$el.closest('.record-cell')
-                .removeClass('edit')
-                .find('.record-label')
-                .hide();
-        }
+        var edit = (field.action === 'edit' || (field.action === 'disabled' && inCreate));
+        field.$el.closest('.record-cell')
+            .toggleClass('edit', edit);
     },
 
     handleSave: function() {
@@ -1130,6 +1119,10 @@
                     this._widenLastCell($recordCells);
                 }
             }
+        }
+
+        if (this.layout) {
+            this.layout.trigger('headerpane:adjust_fields');
         }
     },
 
