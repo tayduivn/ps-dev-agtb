@@ -184,6 +184,10 @@ $viewdefs['MyFakeModule']['DetailView'] = array(
                     'name' => 'detail_only',
                     'label' => 'LBL_FAX',
                 ),
+                array(
+                    'name' => 'unexisting_detailview_field',
+                    'label' => 'LBL_UNEXISTING_DETAILVIEW_FIELD',
+                ),
             ),
         ),
     ),
@@ -223,6 +227,10 @@ EOQ;
                     array(
                         'name' => 'edit_only',
                         'label' => 'LBL_FAX',
+                    ),
+                    array(
+                        'name' => 'unexisting_editview_field',
+                        'label' => 'LBL_UNEXISTING_EDITVIEW_FIELD',
                     ),
                 ),
             ),
@@ -323,10 +331,71 @@ EOQ;
         // CRYS-156. Verify that there is no 'date_entered_by' since 'date_entered' is not present on legacy layout.
         $this->assertArrayNotHasKey("date_entered_by", $finalRecordFields);
     }
+
+    /**
+     * Check that unexisting in vardefs editView fields are not get converted to sidecar.
+     */
+    public function testConvertUnexistingEditViewField()
+    {
+        $mergeGrid = new MockSidecarMergeGridMetaDataUpgrader($this->upgrader, array(
+            'client' => 'base',
+            'type' => 'custom',
+            'viewtype' => MB_RECORDVIEW,
+            'module' => 'MyFakeModule',
+            'fullpath' => 'custom/modules/MyFakeModule/metadata/editviewdefs.php',
+            'defsfile' => 'modules/MyFakeModule/clients/base/views/record/record.php'
+        ));
+
+        $mergeGrid->upgrade();
+
+        $finalRecordFields = $mergeGrid->getFieldsOnFinalLayout();
+        $this->assertArrayNotHasKey('unexisting_editview_field', $finalRecordFields);
+    }
+
+    /**
+     * Check that unexisting in vardefs detailView fields are not get converted to sidecar.
+     */
+    public function testConvertUnexistingDetailViewField()
+    {
+        $mergeGrid = new MockSidecarMergeGridMetaDataUpgrader($this->upgrader, array(
+            'client' => 'base',
+            'type' => 'custom',
+            'viewtype' => MB_RECORDVIEW,
+            'module' => 'MyFakeModule',
+            'fullpath' => 'custom/modules/MyFakeModule/metadata/detailviewdefs.php',
+            'defsfile' => 'modules/MyFakeModule/clients/base/views/record/record.php'
+        ));
+
+        $mergeGrid->upgrade();
+
+        $finalRecordFields = $mergeGrid->getFieldsOnFinalLayout();
+        $this->assertArrayNotHasKey('unexisting_detailview_field', $finalRecordFields);
+    }
 }
 
 class MockSidecarMergeGridMetaDataUpgrader extends SidecarMergeGridMetaDataUpgrader
 {
+    public function upgrade()
+    {
+        self::$upgraded = array();
+        return parent::upgrade();
+    }
+
+    /**
+     * Make the 'edit_only' and 'detail_only' fields valid.
+     *
+     * @param string $field Field name.
+     * @return bool
+     */
+    public function isValidField($field)
+    {
+        if ($field == 'edit_only' || $field == 'detail_only') {
+            return true;
+        }
+
+        return parent::isValidField($field);
+    }
+
     //Turn handle save into a no-op to prevent extra files from being generated.
     public function handleSave() {
 
