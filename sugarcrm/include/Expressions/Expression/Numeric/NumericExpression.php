@@ -53,4 +53,25 @@ abstract class NumericExpression extends AbstractExpression
     {
         return AbstractExpression::$NUMERIC_TYPE;
     }
+
+    /**
+     * Utility method to check if we have a Currency Field or not.
+     *
+     * @param SugarBean $bean
+     * @param string $field
+     * @return bool
+     */
+    protected function isCurrencyField($bean, $field)
+    {
+        $is_currency = false;
+        $def = $bean->getFieldDefinition($field);
+        if (is_array($def)) {
+            $type = !empty($def['custom_type']) ? $def['custom_type'] :
+                !empty($def['dbType']) ? $def['dbType'] : $def['type'];
+            $is_currency = ($type === 'Currency');
+        }
+
+        return $is_currency;
+
+    }
 }

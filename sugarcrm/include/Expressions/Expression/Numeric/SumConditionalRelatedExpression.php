@@ -12,15 +12,18 @@
 require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 
 /**
- * <b>rollupConditionalCurrencySum(Relate <i>link</i>, String <i>field</i>, Field <i>string</i>, Values <i>list</i>)</b><br>
- * Returns the sum of the values of <i>field</i> in records related by <i>link</i><br/>
- * ex: <i>rollupConditionalCurrencySum($products, "likely_case", "discount_select", "1")</i> in Opportunities would return the <br/>
- * sum of the likely_case field converted to base currency for all the products related to this Opportunity
+ * <b>rollupConditionalSum(Relate <i>link</i>, String <i>field</i>, String <i>conditionField</i>, List <i>conditionalValues</i>)</b><br>
+ * Returns the sum of the values of <i>field</i> in records related by <i>link</i> where <i>conditionField</i> contains something from <i>conditionalValues</i> <br/>
+ * ex: <i>rollupConditionalSum($products, "amount", "tax_cass", "Taxable")</i> in ProductBundles would return the <br/>
+ * sum of the <i>amount</i> field where <i>tax_class</i> is equal to <i>Taxable</i>
  */
-class ConditionalCurrencySumRelatedExpression extends NumericExpression
+class SumConditionalRelatedExpression extends NumericExpression
 {
     /**
-     * Returns the entire enumeration bare.
+     * Ability only rollup specific values from related records when a field on the related record is equal to
+     * something.
+     *
+     * @return string
      */
     public function evaluate()
     {
@@ -36,7 +39,7 @@ class ConditionalCurrencySumRelatedExpression extends NumericExpression
             $conditionalValues = array($conditionalValues);
         }
 
-        $ret = 0;
+        $ret = '0';
 
         if (!is_array($linkField) || empty($linkField)) {
             return $ret;
@@ -47,15 +50,26 @@ class ConditionalCurrencySumRelatedExpression extends NumericExpression
             $this->setContext();
         }
         $toRate = isset($this->context->base_rate) ? $this->context->base_rate : null;
+        $checkedTypeForCurrency = false;
+        $relFieldIsCurrency = false;
 
         foreach ($linkField as $bean) {
             if (!in_array($bean->$conditionalField, $conditionalValues)) {
                 continue;
             }
+            // only check the target field once to see if it's a currency field.
+            if ($checkedTypeForCurrency === false) {
+                $checkedTypeForCurrency = true;
+                $relFieldIsCurrency = $this->isCurrencyField($bean, $relfield);
+            }
             if (!empty($bean->$relfield)) {
-                $ret = SugarMath::init($ret)->add(
-                    SugarCurrency::convertWithRate($bean->$relfield, $bean->base_rate, $toRate)
-                )->result();
+                $value = $bean->$relfield;
+                // if we have a currency field, it needs to convert the value into the rate of the row it's
+                // being returned to.
+                if ($relFieldIsCurrency) {
+                    $value = SugarCurrency::convertWithRate($value, $bean->base_rate, $toRate);
+                }
+                $ret = SugarMath::init($ret)->add($value)->result();
             }
         }
 
@@ -71,12 +85,12 @@ class ConditionalCurrencySumRelatedExpression extends NumericExpression
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return array("rollupConditionalCurrencySum");
+        return array("rollupConditionalSum");
     }
 
     /**
