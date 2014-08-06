@@ -133,6 +133,10 @@ $mod_strings = array (
 	'ERR_YEAR_BETWEEN' => 'Sorry, calendar cannot handle the year you requested<br>Year must be between 1970 and 2037',
 	'ERR_NEIGHBOR_DATE' => 'get_neighbor_date_str: not defined for this view',
 
+    'LBL_CALENDAR_EVENT_LIMIT_EXCEEDED' => "Recurring {0} event count has exceeded the limit",
+    'LBL_CALENDAR_EVENT_NOT_A_RECURRING_EVENT' => "{0} is not a recurring event",
+    'LBL_CALENDAR_EVENT_NOT_A_PARENT_OCCURRENCE' => "{0} is not a parent recurrence",
+    'LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED' => "{0} is not recognized as a recurring event module",
 );
 
 $mod_list_strings = array(

@@ -212,6 +212,11 @@ $system_config = Administration::getSettings();
 LogicHook::initialize()->call_custom_logic('', 'after_entry_point');
 }
 
+//----- Instantiate Services and put them in Service Container ($GLOBALS for the time being) ----
+$GLOBALS['calendarEvents'] = new CalendarEvents();
+
+
+
 
 ////	END SETTING DEFAULT VAR VALUES
 ///////////////////////////////////////////////////////////////////////////////

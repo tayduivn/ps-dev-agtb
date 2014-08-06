@@ -36,7 +36,7 @@ class MeetingsApi extends CalendarEventsApi
             ),
         );
 
-        return array_merge(parent::registerApiRest(), $register);
+        return parent::getRestApi("Meetings", $register);
     }
 
     public function getAgenda($api, $args)

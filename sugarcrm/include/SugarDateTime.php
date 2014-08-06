@@ -700,4 +700,43 @@ class SugarDateTime extends DateTime
         return $this->modify((-$calcOffset)." seconds");
     }
 
+    /**
+     * Format SugarDateTime as date, dime or datetime string in any of "db", "iso" or "user" formats
+     * @param string type of the second argument : one of "date", "time", "datetime", "datetimecombo"
+     * @param string output format - one of: "db", "iso" or "user"
+     * @param User - optional  i.e. if type is 'user'
+     * @return string formatted result
+     */
+    public function formatDateTime($type, $toFormat, User $user = null)
+    {
+        global $timedate;
+        $result = '';
+
+        switch($toFormat) {
+            case "db":
+                $result = $timedate->asDbType($this, $type);
+                break;
+            case 'user':
+                $result = $timedate->asUserType($this, $type, $user);
+                break;
+            case 'iso':
+            default:
+                switch($type) {
+                    case "date":
+                        $result = $timedate->asIsoDate($this);
+                        break;
+                    case 'time':
+                        $result = $timedate->asIsoTime($this);
+                        break;
+                    case 'datetime':
+                    case 'datetimecombo':
+                    default:
+                        $result = $timedate->asIso($this);
+                        break;
+                }
+                break;
+        }
+
+        return $result;
+    }
 }

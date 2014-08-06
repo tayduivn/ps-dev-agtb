@@ -17,16 +17,93 @@ class CalendarEventsApi extends ModuleApi
      */
     public function registerApiRest()
     {
-        return array(
+        // Return any API definition that exists for this class
+        return array();
+    }
+
+    /**
+     * Tailor the specification (e.g. path) for the specified module and merge in the API specification passed in
+     * @param string module
+     * @param array child Api
+     * @return array
+     */
+    protected function getRestApi($module, $childApi = array())
+    {
+        $calendarEventsApi = array(
+            'create' => array(
+                'reqType' => 'POST',
+                'path' => array("{$module}"),
+                'pathVars' => array('module'),
+                'method' => 'createCalendarEvent',
+                'shortHelp' => 'This method creates a single event record or a series of event records of the specified type',
+                'longHelp' => 'include/api/help/calendar_events_record_create_help.html',
+            ),
+            'update' => array(
+                'reqType' => 'PUT',
+                'path' => array("{$module}", '?'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'updateCalendarEvent',
+                'shortHelp' => 'This method updates a single event record or a series of event records of the specified type',
+                'longHelp' => 'include/api/help/calendar_events_record_update_help.html',
+            ),
             'delete' => array(
                 'reqType' => 'DELETE',
-                'path' => array('<module>', '?'),
+                'path' => array("{$module}", '?'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'deleteCalendarEvent',
                 'shortHelp' => 'This method deletes a single event record or a series of event records of the specified type',
                 'longHelp' => 'include/api/help/calendar_events_record_delete_help.html',
             ),
         );
+
+        return array_merge($calendarEventsApi, $childApi);
+    }
+
+    /**
+     * Create either a single event record or a set of recurring events if record is a recurring event
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function createCalendarEvent($api, $args)
+    {
+        $createResult = $this->createRecord($api, $args);
+
+        if (!empty($createResult['id'])) {
+            $loadArgs = array(
+                'module' => $args['module'],
+                'record' => $createResult['id'],
+            );
+            $bean = $this->loadBean($api, $loadArgs, 'view', array('use_cache' => false));
+            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+                $this->generateRecurringCalendarEvents($bean);
+            }
+        }
+        return $createResult;
+    }
+
+    /**
+     * Updates either a single event record or a set of recurring events based on all_recurrences flag
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateCalendarEvent($api, $args)
+    {
+        $updateResult = array();
+        if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
+            $api->action = 'view';
+            $this->requireArgs($args, array('module', 'record'));
+            $bean = $this->loadBean($api, $args, 'view');
+            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+                $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
+            } else {
+                $updateResult = $this->updateRecord($api, $args);
+            }
+        } else {
+           $updateResult = $this->updateRecord($api, $args);
+        }
+        return $updateResult;
     }
 
     /**
@@ -42,6 +119,53 @@ class CalendarEventsApi extends ModuleApi
         } else {
             $this->deleteRecord($api, $args);
         }
+    }
+
+    /**
+     * Creates child events in recurring series
+     * @param SugarBean $bean
+     */
+    public function generateRecurringCalendarEvents(SugarBean $bean)
+    {
+        try {
+            $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
+        } catch (SugarApiException $e) {
+            throw($e);
+        } catch (Exception $e) {
+            throw new SugarApiException($e->getMessage());
+        }
+    }
+
+    /**
+     * Re-generates child events in recurring series
+     * @param SugarBean $bean
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateRecurringCalendarEvent(SugarBean $bean, $api, $args)
+    {
+        unset($args['id']);
+        unset($args['repeat_parent_id']);
+
+        if (!empty($bean->repeat_parent_id) && ($bean->repeat_parent_id !== $bean->id)) {
+            $args['record'] = $bean->repeat_parent_id;
+            $bean = $this->loadBean($api, $args, 'view');
+            $bean->repeat_parent_id = null;
+        }
+
+        $api->action = 'save';
+        $this->updateBean($bean, $api, $args);
+
+        try {
+            $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
+        } catch (SugarApiException $e) {
+            throw($e);
+        } catch (Exception $e) {
+            throw new SugarApiException($e->getMessage());
+        }
+
+        return $this->getLoadedAndFormattedBean($api, $args, $bean);
     }
 
     /**

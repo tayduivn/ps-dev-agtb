@@ -612,6 +612,10 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                                                    )
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,
+
+    'duplicate_check' => array(
+        'enabled' => false
+    ),
                             );
 
 VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
