@@ -696,6 +696,32 @@
             return changed;
         };
 
+        /**
+         * Copies all link fields on the model along with other copy rules
+         * TODO: When link fields are added to vardef, add check here
+         * for whether duplicate_on_record_copy is set
+         *
+         * @param {Data.Bean} source The bean to copy the fields from.
+         * @param {Array} [fields] The fields to copy. All fields are copied if not specified.
+         * @param {Object} [options] Standard Backbone options that should be passed to `Backbone.Model#set` method.
+         */
+        ModelOverrides.prototype.copy = function(source, fields, options) {
+            var linkFieldsToCopy = [];
+
+            if (source.linkFields && source.linkFields.length > 0) {
+                linkFieldsToCopy = source.linkFields;
+
+                //restrict link fields that are copied if specific list is passed in
+                if (fields && fields.length > 0) {
+                    linkFieldsToCopy = _.intersection(linkFieldsToCopy, fields);
+                }
+            }
+
+            _.each(linkFieldsToCopy, function(fieldName) {
+                this.model.copyLinkField(source, fieldName);
+            }, this);
+        };
+
         app.plugins.register('LinkField', ['model'], {
             onAttach: function(model, plugin) {
                 var overrides = new ModelOverrides(this);
@@ -738,6 +764,12 @@
                     return _.isEmpty(changed) ? false : changed;
                 });
 
+                // override {@link Bean#copy}
+                this.copy = _.wrap(this.copy, function(_super, source, fields, options) {
+                    overrides.copy(source, fields, options);
+                    _super.call(this, source, fields, options);
+                });
+
                 // keeps track of what attributes contain collections so they
                 // can be maintained automatically by this plugin
                 this.linkFields = [];
@@ -765,6 +797,28 @@
                         this.setDefaultAttribute(fieldName, collection);
                     }
                 }, this);
+            },
+
+            /**
+             * Copy models from the source model's link field to current model's link field
+             *
+             * @param {Data.Bean} source The model to copy from
+             * @param {String} fieldName name of the field on the source model to copy from
+             */
+            copyLinkField: function(source, fieldName) {
+                var sourceCollection = source.get(fieldName) || {},
+                    targetCollection,
+                    links = sourceCollection.links;
+
+                if (sourceCollection instanceof app.BeanCollection && links) {
+                    this.trigger('collection:initialize', fieldName, {links: _.keys(links)});
+                    targetCollection = this.get(fieldName);
+                    sourceCollection.each(function(model) {
+                        model = model.clone();
+                        model.set('delta', 1); // mark as new
+                        targetCollection.add(model);
+                    });
+                }
             }
         });
     });
