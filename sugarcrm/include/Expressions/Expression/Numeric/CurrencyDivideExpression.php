@@ -15,17 +15,19 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 
 /**
  * <b>currencyDivide(Number numerator, Number denominator)</b><br>
- * Returns the <i>numerator</i> divided by the <i>denominator</i>.<br/>
- * ex: <i>currencyDivide(8, 2)</i> = 4
+ * Returns the <i>numerator</i> divided by the <i>denominator</i> with a precision of 6 decimal places<br/>
+ * ex: <i>currencyDivide(800.00, 200.00)</i> = 4.000000
  */
 class CurrencyDivideExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @throws Exception
+     * @return String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $params = $this->getParameters();
         $numerator = $params[0]->evaluate();
         $denominator = $params[1]->evaluate();
@@ -36,7 +38,9 @@ class CurrencyDivideExpression extends NumericExpression
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {
