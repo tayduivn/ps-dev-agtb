@@ -478,6 +478,33 @@
         };
 
         /**
+         * Removes the reference to the collection at attr that will be unset
+         * to allow for reinitializing it.
+         *
+         * @param {String} attr The key under which the collection is stored
+         * @param {Object} [options] Not use, but retained so the method
+         * signature matches {@link Backbone.Model#unset}
+         */
+        ModelOverrides.prototype.unset = function(attr, options) {
+            if (this.model.linkFields && this.model.linkFields.length > 0) {
+                this.model.linkFields = _.without(this.model.linkFields, attr);
+            }
+        };
+
+        /**
+         * Removes references to all collections that will be cleared to allow
+         * for reinitializing them.
+         *
+         * @param {Object} [options] Not use, but retained so the method
+         * signature matches {@link Backbone.Model#clear}
+         */
+        ModelOverrides.prototype.clear = function(options) {
+            if (this.model.linkFields && this.model.linkFields.length > 0) {
+                this.model.linkFields = [];
+            }
+        };
+
+        /**
          * Wraps the success callback of [@link Bean#save} to allow for syncing
          * changes to the collections.
          *
@@ -672,6 +699,18 @@
         app.plugins.register('LinkField', ['model'], {
             onAttach: function(model, plugin) {
                 var overrides = new ModelOverrides(this);
+
+                // override {@link Bean#unset}
+                this.unset = _.wrap(this.unset, function(_super, attr, options) {
+                    overrides.unset(attr, options);
+                    return _super.call(this, attr, options);
+                });
+
+                // override {@link Bean#clear}
+                this.clear = _.wrap(this.clear, function(_super, options) {
+                    overrides.clear(options);
+                    return _super.call(this, options);
+                });
 
                 // override {@link Bean#save}
                 this.save = _.wrap(this.save, function(_super, attributes, options) {
