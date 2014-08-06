@@ -280,6 +280,21 @@
             },
 
             /**
+             * Returns true if the collection has been changed since it was
+             * last synchronized.
+             *
+             * The collection is considered dirty if the delta for any models
+             * is -1 or 1.
+             *
+             * @return {Boolean}
+             */
+            isDirty: function() {
+                return !!this.find(function(model) {
+                    return model.get('delta') !== 0;
+                });
+            },
+
+            /**
              * Reset the contents of the collection with its state from the
              * server.
              *
@@ -643,15 +658,9 @@
 
             if (this.model.linkFields && this.model.linkFields.length > 0) {
                 _.each(this.model.linkFields, function(fieldName) {
-                    var collection, dirt;
+                    var collection = this.get(fieldName);
 
-                    collection = this.get(fieldName);
-
-                    dirt = collection.find(function(model) {
-                        return model.get('delta') !== 0;
-                    });
-
-                    if (!_.isUndefined(dirt)) {
+                    if (collection.isDirty()) {
                         changed[fieldName] = collection;
                     }
                 }, this.model);
