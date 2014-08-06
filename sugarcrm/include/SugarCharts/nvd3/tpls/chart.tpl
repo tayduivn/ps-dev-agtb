@@ -49,7 +49,7 @@
     	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: 100%; height: {$height}px;"></div>
     </div>
     <div id="d3_{$chartId}_print" class="nv-chart nv-chart-print nv-{$config.chartType}" style="width: 720px; height: 480px;"></div>
-    <canvas id="canvas_{$chartId}" width="720" height="480" class="nv-image-canvas"></canvas>
+    <canvas id="canvas_{$chartId}" width="1440" height="960" class="nv-image-canvas"></canvas>
 </div>
 <div class="clear"></div>
 {else}
