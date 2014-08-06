@@ -143,12 +143,25 @@ class ViewResetmodule extends SugarView
         $sources = $module->getViewMetadataSources();
 
         $out = "";
+
+        // list of existing platforms including BWC
+        $platforms = MetaDataManager::getPlatformList();
+        array_unshift($platforms, '');
+
         foreach($sources as $view)
         {
-            $file = MetaDataFiles::getDeployedFileName($view['type'], $this->module);
-            if (file_exists($file)) {
-                unlink($file);
-                $out .= "Removed layout {$view['type']}.php<br/>";
+            foreach ($platforms as $platform) {
+                $file = MetaDataFiles::getDeployedFileName(
+                    $view['type'],
+                    $this->module,
+                    MB_CUSTOMMETADATALOCATION,
+                    $platform
+                );
+
+                if (file_exists($file)) {
+                    SugarAutoLoader::unlink($file);
+                    $out .= "Removed layout {$view['type']}.php<br/>";
+                }
             }
         }
 
