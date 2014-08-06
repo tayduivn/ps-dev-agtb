@@ -213,4 +213,6 @@ To create a {{meetings_singular_module}}:
     'LBL_RESPONSE_TENTATIVE' => 'Tentative',
     'LBL_RESPONSE_NONE' => 'No Reply',
     'LBL_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
+
+    'NTC_SEND_INVITES_CONFIRMATION' => 'Do you want to send an email to all invitees?',
 );

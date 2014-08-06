@@ -40,6 +40,9 @@ $viewdefs['base']['view']['create'] = array(
                     'type' => 'rowaction',
                     'name' => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
                 ),
             ),
         ),
@@ -53,6 +56,9 @@ $viewdefs['base']['view']['create'] = array(
                     'type' => 'rowaction',
                     'name' => 'save_button',
                     'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
                 ),
             ),
         ),
@@ -66,6 +72,9 @@ $viewdefs['base']['view']['create'] = array(
                     'type' => 'rowaction',
                     'name' => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
                 ),
             ),
         ),
