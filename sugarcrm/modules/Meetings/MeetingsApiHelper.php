@@ -81,6 +81,8 @@ class MeetingsApiHelper extends SugarBeanApiHelper
                 $data['contact_name'] = $contact->full_name;
             }
         }
+
+        unset($data['send_invites']);
         
         return $data;
     }    
