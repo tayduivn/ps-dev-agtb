@@ -482,7 +482,7 @@
          * to allow for reinitializing it.
          *
          * @param {String} attr The key under which the collection is stored
-         * @param {Object} [options] Not use, but retained so the method
+         * @param {Object} [options] Not used, but retained so the method
          * signature matches {@link Backbone.Model#unset}
          */
         ModelOverrides.prototype.unset = function(attr, options) {
@@ -495,7 +495,7 @@
          * Removes references to all collections that will be cleared to allow
          * for reinitializing them.
          *
-         * @param {Object} [options] Not use, but retained so the method
+         * @param {Object} [options] Not used, but retained so the method
          * signature matches {@link Backbone.Model#clear}
          */
         ModelOverrides.prototype.clear = function(options) {
@@ -505,7 +505,7 @@
         };
 
         /**
-         * Wraps the success callback of [@link Bean#save} to allow for syncing
+         * Wraps the success callback of {@link Bean#save} to allow for syncing
          * changes to the collections.
          *
          * The original success callback is called once all collections are
