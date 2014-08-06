@@ -209,6 +209,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         if (version_compare($this->from_version, '7.5', '<=')) {
             $files[] = 'sidecar/lib/jquery/jquery.placeholder.min.js';
             $files[] = 'modules/Home/clients/base/views/about-source-code/about-source-code.php';
+            $files[] = 'portal2/portal-ui.js';
         }
 
         $this->fileToDelete($files);
