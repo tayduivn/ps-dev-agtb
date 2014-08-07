@@ -1074,7 +1074,8 @@ protected function checkQuery($sql, $object_name = false)
                 $sql .=	"/* VARDEF - $name -  ROW";
                 foreach($value as $rKey => $rValue) {
                     if(is_array($rValue)) {
-                        $rValue = join("\n", $rValue);
+                        // we need to display this array as a string without new lines. json_encode is good enough
+                        $rValue = json_encode($rValue);
                     }
                     $sql .=	"[$rKey] => '$rValue'  ";
                 }
