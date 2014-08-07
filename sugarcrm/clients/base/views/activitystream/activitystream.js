@@ -28,10 +28,11 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['Timeago', 'FileDragoff', 'QuickSearchFilter', 'Taggable', 'Tooltip'],
+    plugins: ['RelativeTime', 'FileDragoff', 'QuickSearchFilter', 'Taggable', 'Tooltip'],
     cacheNamePrefix: "user:avatars:",
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds
+    thresholdRelativeTime: 2, //Show relative time for 2 days and then date time after
 
     _unformattedPost: null,
     _unformattedComments: {},
@@ -256,15 +257,6 @@
 
         this.processAvatars();
         this.$('.comments').prepend(template(model.attributes));
-        if ($.fn.timeago) {
-            this.$("span.relativetime").timeago({
-                logger: SUGAR.App.logger,
-                date: SUGAR.App.date,
-                lang: SUGAR.App.lang,
-                template: SUGAR.App.template
-            });
-        }
-
         this.initializeAllPluginTooltips();
         this.context.trigger('activitystream:post:prepend', this.model);
     },
@@ -301,6 +293,8 @@
         this.processAvatars();
         this.formatAllTagsAndLinks();
 
+        this._setRelativeTimeAvailable();
+
         app.view.View.prototype._renderHtml.call(this);
 
         this.resizeVideo();
@@ -331,6 +325,16 @@
             //then remove the broken image
             $brokenImg.closest('div[class="embed"]').remove();
         }, this));
+    },
+
+    /**
+     * Sets property on activity to show date created as a relative time or as date time.
+     *
+     * @private
+     */
+    _setRelativeTimeAvailable: function() {
+        var diffInDays = app.date().diff(this.model.get('date_entered'), 'days', true);
+        this.useRelativeTime = (diffInDays <= this.thresholdRelativeTime);
     },
 
     /**

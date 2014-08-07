@@ -955,6 +955,11 @@ $dictionary['Product'] = array(
             'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
         ),
         array('name' => 'idx_product_quantity', 'type' => 'index', 'fields' => array('quantity')),
+        array('name' => 'idx_product_contact', 'type' => 'index', 'fields' => array('contact_id')),
+        array('name' => 'idx_product_account', 'type' => 'index', 'fields' => array('account_id')),
+        array('name' => 'idx_product_opp', 'type' => 'index', 'fields' => array('opportunity_id')),
+        array('name' => 'idx_product_quote', 'type' => 'index', 'fields' => array('quote_id')),
+        array('name' => 'idx_product_rli', 'type' => 'index', 'fields' => array('revenuelineitem_id')),
     ),
     'relationships' => array(
         'product_currencies' => array(

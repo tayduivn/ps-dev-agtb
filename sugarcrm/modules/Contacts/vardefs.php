@@ -469,7 +469,6 @@ $dictionary['Contact'] = array(
             'rname' => 'id',
             'id_name' => 'campaign_id',
             'type' => 'id',
-            'table' => 'campaigns',
             'isnull' => 'true',
             'module' => 'Campaigns',
             'massupdate' => false,

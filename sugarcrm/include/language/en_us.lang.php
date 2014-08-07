@@ -4919,6 +4919,7 @@ $app_strings = array (
     'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
     'LBL_ACTIVITY_STREAM_DISABLED_MODULE' => 'Activity Stream is not enabled for this module',
     'LBL_ACTIVTY_STREAM_SHOW_MORE' => 'More posts...',
+    'LBL_ACTIVITYSTREAM_RELATIVETIME_ON' => ' on ',
     'LBL_ACTIVITY_STREAM_DASHLET_NAME' => 'My Activity Stream',
     'LBL_ACTIVITY_STREAM_DASHLET_DESCRIPTION' => 'View a list of activities performed on records and create and post comments.',
 
