@@ -533,8 +533,7 @@
     },
 
     confirmMemLeak: function(target) {
-        // FIXME we need to provide a better way to do this
-        if (app.config && app.config.logLevel === 'DEBUG') {
+        if (app.logger.getLevel() === app.logger.levels.DEBUG) {
 
             var registered = _.reduce($('a', target), function(memo, el) {
                 var events = $._data(el, 'events');
