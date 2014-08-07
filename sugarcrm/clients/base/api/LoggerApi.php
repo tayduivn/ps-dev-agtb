@@ -31,18 +31,22 @@ class LoggerApi extends SugarApi
     }
 
     /**
-     * Gets the exceptions list for the exceptions help endpoint
+     * Logs a message on the server, based on supplied arguments.
      *
-     * @param RestService $api The service object
-     * @param array $args The request arguments
-     * @return array status
+     * @param RestService $api The service object.
+     * @param array $args The request arguments.
+     * @return array Status.
      */
     public function logMessage($api, $args)
     {
+        if (empty($args['message'])) {
+            return array('status' => false);
+        }
+
         $log = LoggerManager::getLogger();
 
         $level = empty($args['level']) ? 'debug' : $args['level'];
-        $message = empty($args['message']) ? ' ' : $args['message'];
+        $message = $args['message'];
         $channel = empty($args['channel']) ? 'LoggerApi' : $args['channel'];
 
         $log->$level("{$channel} - {$message}");
