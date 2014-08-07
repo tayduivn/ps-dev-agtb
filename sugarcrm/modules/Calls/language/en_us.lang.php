@@ -139,6 +139,10 @@ $mod_strings = array (
     'LBL_SEND_INVITES' => 'Send Invites',
     'LBL_REMINDER_TITLE' => 'Call:',
 
+    //record save
+    'LBL_RECORD_SAVED_SUCCESS' => 'You scheduled the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a> for {{calendarTime date_start}}.',
+    'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You scheduled the {{moduleSingularLower}} for {{calendarTime date_start}}, but you do not have permission to access it.',
+
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
 
     'TPL_CALL_STATUS_CHANGED' => 'Call marked as {{status}}.',
