@@ -90,16 +90,13 @@ a > .label,
   border: 1px solid @gray;
   color: @white;
 }
-[data-type="status"] .label.label-success {
-  border: 1px solid @success;
-}
 
 .label {
-  &-important {background-color: @error;}
-  &-warning {background-color: lighten(@warning, 40%); color: darken(@warning, 45%);}
+  &-important {background-color: @errorBackground; border: 1px solid @errorBackground;}
+  &-warning {background-color: @warningBackground; color: @warningText; border: 1px solid @warningBackground;}
   &-pending {background-color: transparent; color: @gray; border: 1px solid @gray;}
-  &-success {background-color: @success;}
-  &-info {background-color: @inform;}
+  &-success {background-color: @successBackground; border: 1px solid @successBackground;}
+  &-info {background-color: @infoBackground; border: 1px solid @infoBackground;}
   &-inverse, &-unknown {background-color: @gray;}
   &-log {background-color: @black;}
 
