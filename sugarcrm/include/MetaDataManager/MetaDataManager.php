@@ -1679,8 +1679,6 @@ class MetaDataManager
         //Property 'on' of category 'portal' must be a boolean.
         $data['portal_active'] = !empty($admin->settings['portal_on']);
         //END SUGARCRM flav=ent ONLY
-        $sugar_config = $this->getSugarConfig();
-        $data['log_level'] = $sugar_config['logger']['level'];
         return $data;
     }
 
