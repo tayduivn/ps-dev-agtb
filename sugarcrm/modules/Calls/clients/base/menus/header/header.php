@@ -14,19 +14,14 @@
 $moduleName = 'Calls';
 $viewdefs[$moduleName]['base']['menu']['header'] = array(
     array(
-        'route' => '#bwc/index.php?' . http_build_query(
-            array(
-                'module' => $moduleName,
-                'action' => 'EditView',
-            )
-        ),
+        'route' => "#{$moduleName}/create",
         'label' => 'LNK_NEW_CALL',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
         'icon' => 'icon-plus',
     ),
     array(
-        'route' => '#' . $moduleName,
+        'route' => "#{$moduleName}",
         'label' => 'LNK_CALL_LIST',
         'acl_action' => 'list',
         'acl_module' => $moduleName,
