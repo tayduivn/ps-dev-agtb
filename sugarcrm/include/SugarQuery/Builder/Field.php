@@ -206,11 +206,11 @@ class SugarQuery_Builder_Field
                 // hunt down a relationship
                 $farBean = BeanFactory::newBean($this->def['module']);
 
-                // check and see if we need to do the join, it may already be done.
-                if (!$this->query->getJoinAlias($farBean->table_name) || !$this->query->getJoinAlias(
-                        $this->def['name']
-                    )
-                ) {
+                // check if relate field refers some other field as id_name, otherwise we may get infinite recursion
+                if ($this->def['id_name'] != $this->def['name']
+                    // check and see if we need to do the join, it may already be done.
+                    && (!$this->query->getJoinAlias($farBean->table_name)
+                        || !$this->query->getJoinAlias($this->def['name']))) {
                     //Custom relate fields may have the id field on the custom table, need to check for that.
                     $idField = new SugarQuery_Builder_Field($this->def['id_name'], $this->query);
                     $idField->setupField($this->query);
