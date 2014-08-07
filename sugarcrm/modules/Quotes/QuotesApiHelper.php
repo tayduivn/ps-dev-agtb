@@ -62,11 +62,9 @@ class QuotesApiHelper extends SugarBeanApiHelper
             if ($hasBillingAccountId) {
                 $account = BeanFactory::getBean('Accounts', $quote->billing_account_id);
                 $this->processBeanAddressFields($account, $quote, 'billing', 'billing', 'shipping');
-            } else {
-                if (!$hasBillingAccountId && $hasBillingContactId) {
-                    $contact = BeanFactory::getBean('Contacts', $quote->billing_contact_id);
-                    $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
-                }
+            } elseif (!$hasBillingAccountId && $hasBillingContactId) {
+                $contact = BeanFactory::getBean('Contacts', $quote->billing_contact_id);
+                $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
             }
 
             if (!$hasShippingAccountId && !$hasShippingContactId && $hasBillingAccountId) {
@@ -78,11 +76,9 @@ class QuotesApiHelper extends SugarBeanApiHelper
             if ($hasShippingAccountId && !$hasShippingContactId) {
                 $account = BeanFactory::getBean('Accounts', $quote->shipping_account_id);
                 $this->processBeanAddressFields($account, $quote, 'shipping', 'shipping', 'billing');
-            } else {
-                if ($hasShippingContactId) {
-                    $contact = BeanFactory::getBean('Contacts', $quote->shipping_contact_id);
-                    $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
-                }
+            } elseif ($hasShippingContactId) {
+                $contact = BeanFactory::getBean('Contacts', $quote->shipping_contact_id);
+                $this->processBeanAddressFields($contact, $quote, 'shipping', 'primary', 'alt');
             }
         }
 
@@ -127,10 +123,8 @@ class QuotesApiHelper extends SugarBeanApiHelper
             foreach ($bundle['items'] as $item) {
                 if ($item['module'] == 'ProductBundleNotes') {
                     $this->handleBundleNoteSave($item, $pb, $quote);
-                } else {
-                    if ($item['module'] == 'Products') {
-                        $this->handleBundleProductSave($item, $pb, $quote);
-                    }
+                } elseif ($item['module'] == 'Products') {
+                    $this->handleBundleProductSave($item, $pb, $quote);
                 }
             }
 
@@ -193,7 +187,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
         $product_bean->ignoreQuoteSave = true;
 
         $pb->load_relationship('products');
-        if ($product['deleted'] === 1) {
+        if (isset($product['deleted']) && $product['deleted'] === 1) {
             $product_bean->mark_deleted($product_bean->id);
         } else {
             $product_bean->save();
@@ -218,7 +212,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
 
 
         $pb->load_relationship('product_bundle_notes');
-        if ($note['deleted'] === 1) {
+        if (isset($note['deleted']) && $note['deleted'] === 1) {
             $product_bundle_note->mark_deleted($product_bundle_note->id);
         } else {
             $product_bundle_note->save();

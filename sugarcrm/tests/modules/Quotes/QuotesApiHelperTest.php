@@ -239,7 +239,7 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
 
         $mock_product_note = $this->getMockBuilder('ProductBundleNote')
-            ->setMethods(array('save', 'retrieve'))
+            ->setMethods(array('save', 'retrieve', 'mark_deleted'))
             ->setMockClassName('Mock_ProductBundleNote')
             ->getMock();
 
@@ -251,9 +251,6 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mock_link2->expects($this->never())
             ->method('add');
-
-        $mock_link2->expects($this->once())
-            ->method('delete');
 
         $mock_bundle->product_bundle_notes = $mock_link2;
 
@@ -346,9 +343,6 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mock_link2->expects($this->never())
             ->method('add');
-
-        $mock_link2->expects($this->once())
-            ->method('delete');
 
         $mock_bundle->products = $mock_link2;
 

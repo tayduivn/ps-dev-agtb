@@ -66,9 +66,16 @@ abstract class NumericExpression extends AbstractExpression
         $is_currency = false;
         $def = $bean->getFieldDefinition($field);
         if (is_array($def)) {
-            $type = !empty($def['custom_type']) ? $def['custom_type'] :
-                !empty($def['dbType']) ? $def['dbType'] : $def['type'];
-            $is_currency = ($type === 'Currency');
+            // start by just using the type in the def
+            $type = $def['type'];
+            // but if custom_type is set, use it, when it's not set and dbType is, use dbType
+            if (isset($def['custom_type']) && !empty($def['custom_type'])) {
+                $type = $def['custom_type'];
+            } elseif (isset($def['dbType']) && !empty($def['dbType'])) {
+                $type = $def['dbType'];
+            }
+            // always lower case the type just to make sure.
+            $is_currency = (strtolower($type) === 'currency');
         }
 
         return $is_currency;
