@@ -1,5 +1,6 @@
 <?php
 
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
 require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
 
 class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
@@ -17,7 +18,9 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
             ->getMock();
 
         $authUser = $this->getMock('SugarAuthenticateUser');
-        $authUser->expects($this->once())->method('loadUserOnLogin')->will($this->returnValue(true));
+        $authUser->expects($this->once())
+            ->method('loadUserOnLogin')
+            ->will($this->returnValue(true));
 
         $this->authenticate->userAuthenticate = $authUser;
     }
@@ -29,7 +32,8 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
     public function testLoginAuthenticateTriggersUpdateUserLastLogin()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
-        $this->authenticate->expects($this->once())->method('updateUserLastLogin');
+        $this->authenticate->expects($this->once())
+            ->method('updateUserLastLogin');
         $this->authenticate->loginAuthenticate($user->user_name, '');
     }
 
