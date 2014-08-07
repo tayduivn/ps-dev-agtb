@@ -112,6 +112,18 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'label' => 'LBL_REMOVE_ALL_RECURRENCES',
                     'acl_action' => 'delete',
                 ),
+                array(
+                    'type' => 'closebutton',
+                    'name' => 'record-close-new',
+                    'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_LABEL',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'closebutton',
+                    'name' => 'record-close',
+                    'label' => 'LBL_CLOSE_BUTTON_LABEL',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(

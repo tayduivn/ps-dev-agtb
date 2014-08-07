@@ -66,6 +66,12 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
                 'acl_action' => 'edit',
             ),
             array(
+                'type' => 'closebutton',
+                'name' => 'record-close',
+                'label' => 'LBL_LIST_CLOSE',
+                'acl_action' => 'edit',
+            ),
+            array(
                 'type' => 'follow',
                 'name' => 'follow_button',
                 'event' => 'list:follow:fire',
