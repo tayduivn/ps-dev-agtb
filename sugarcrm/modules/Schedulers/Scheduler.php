@@ -952,6 +952,18 @@ class Scheduler extends SugarBean {
         $sched16->modified_user_id   = '1';
         $sched16->catch_up           = '0';
         $sched16->save();
+
+        $sched17 = BeanFactory::getBean('Schedulers');
+        $sched17->name               = $mod_strings['LBL_OOTB_KBSCONTENT_EXPIRE'];
+        $sched17->job                = 'class::SugarJobKBSContentExpireArticles';
+        $sched17->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched17->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched17->job_interval       = '0::5::*::*::*';
+        $sched17->status             = 'Active';
+        $sched17->created_by         = '1';
+        $sched17->modified_user_id   = '1';
+        $sched17->catch_up           = '1';
+        $sched17->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS
