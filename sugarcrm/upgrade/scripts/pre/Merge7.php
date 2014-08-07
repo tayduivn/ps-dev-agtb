@@ -18,7 +18,7 @@
  */
 class SugarUpgradeMerge7 extends UpgradeScript
 {
-    public $order = 400;
+    public $order = 401;
     public $type = self::UPGRADE_CUSTOM;
 
     public function run()
@@ -94,12 +94,51 @@ class SugarUpgradeMerge7 extends UpgradeScript
             // defs missing - can't do anything here
             return;
         }
-        if($old_viewdefs[$module_name][$platform]['view'][$viewname]['panels'] == $new_viewdefs[$module_name][$platform]['view'][$viewname]['panels']
-             || $custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'] == $new_viewdefs[$module_name][$platform]['view'][$viewname]['panels']) {
+
+        // Shorten our viewdef path for easier handling
+        $oldDefs = $old_viewdefs[$module_name][$platform]['view'][$viewname];
+        $newDefs = $new_viewdefs[$module_name][$platform]['view'][$viewname];
+        $customDefs = $custom_viewdefs[$module_name][$platform]['view'][$viewname];
+        if ($this->defsUnchanged($oldDefs, $newDefs, $customDefs)) {
             // no changes to handle
             return;
         }
         $this->log("Queued for merge: $filename");
         $this->upgrader->state['for_merge'][$filename] = $old_viewdefs;
+    }
+
+    /**
+     * Check to see if there are changes between the old def and the new def OR 
+     * the custom def and the new def
+     * 
+     * @param array $old View defs for the previous installation
+     * @param array $new View defs for the upgraded installation
+     * @param array $custom Custom viewdefs from the previous installation
+     * @return boolean
+     */
+    public function defsUnchanged($old, $new, $custom)
+    {
+        // Grab all keys of the defs so we can diff them
+        $oldKeys = array_keys($old);
+        $custKeys = array_keys($custom);
+
+        // Set our default flag, which says that there were no changes
+        $changed = false;
+
+        // Check old defs for changes in the new
+        foreach ($oldKeys as $key) {
+            if (!isset($new[$key]) || $old[$key] != $new[$key]) {
+                $changed = true;
+            }
+        }
+
+        // Check custom props for changes in the new
+        foreach ($custKeys as $def) {
+            if (!isset($new[$def]) || $custom[$def] != $new[$def]) {
+                $changed = true;
+            }
+        }
+
+        return $changed === false;
     }
 }
