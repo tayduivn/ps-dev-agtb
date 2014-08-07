@@ -1233,9 +1233,7 @@
 
     /**
      * This is the hook point for when an event in the calendar is clicked
-     * For Calls, which is still in BWC, we are opening this in the old
-     * quick edit modal.
-     * For Meetings & Tasks, we are just routing for now since we can't
+     * We are just routing to Record View for now since we can't
      * open Sidecar record views in a drawer (and allow the user to close)
      *
      * @param {String} module_name The name of the module
@@ -1243,117 +1241,12 @@
      * @param {Boolean} edit_all_recurrences Whether there are recurrences
      */
     CAL.load_form = function (module_name, record, edit_all_recurrences) {
-        var navigateUrl;
-
-        if (module_name === 'Calls') {
-            CAL.load_calls_form(record, edit_all_recurrences);
-        } else {
-            //TODO: Open this in a drawer in edit mode - right now we can't do this
-            navigateUrl = '#' + app.router.buildRoute(module_name, record);
-            app.router.navigate(navigateUrl, {trigger: true});
-        }
+        //TODO: Open this in a drawer in edit mode - right now we can't do this
+        var navigateUrl = '#' + app.router.buildRoute(module_name, record);
+        app.router.navigate(navigateUrl, {trigger: true});
     };
 
-    /**
-     * Load a BWC modal form for editing a Calls Record
-     * TODO: Remove this when Calls is out of BWC
-     *
-     * @param {String} record The id of the record
-     * @param {Boolean} edit_all_recurrences Whether there are recurrences
-     */
-    CAL.load_calls_form = function (record, edit_all_recurrences) {
-        module_name = 'Calls';
-
-        CAL.disable_creating = true;
-
-        if (CAL.records_openable) {
-            CAL.get("form_content").style.display = "none";
-            CAL.disable_buttons();
-            CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;
-            CAL.repeat_tab_handle(module_name);
-            ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-
-            params = {};
-            if (edit_all_recurrences) {
-                params = {stay_on_tab: true};
-            } else {
-                edit_all_recurrences = "";
-            }
-
-            CAL.open_edit_dialog(params);
-            CAL.get("record").value = "";
-
-            var callback = {
-                success: function (o) {
-                    try {
-                        res = eval("(" + o.responseText + ")");
-                    } catch (err) {
-                        alert(CAL.lbl_error_loading);
-                        CAL.editDialog.cancel();
-                        ajaxStatus.hideStatus();
-                        return;
-                    }
-
-                    if (res.access === 'yes') {
-                        var fc = document.getElementById("form_content");
-                        CAL.script_evaled = false;
-                        fc.innerHTML = '<script type="text/javascript">CAL.script_evaled = true;</script>' + res.html;
-                        if (!CAL.script_evaled) {
-                            SUGAR.util.evalScript(res.html);
-                        }
-
-                        CAL.get("record").value = res.record;
-                        CAL.get("current_module").value = res.module_name;
-                        CAL.record_editable = (res.edit == 1);
-                        eval(res.gr);
-                        SugarWidgetScheduler.update_time();
-                        if (CAL.record_editable) {
-                            CAL.enable_buttons();
-                        }
-
-                        // don't let disallowed actions work
-                        var acl = res.acl;
-                        if (!acl.delete) {
-                            CAL.get('btn-delete').setAttribute('disabled', 'disabled');
-                        }
-
-                        CAL.get("form_content").style.display = "";
-
-                        if (typeof res.repeat != "undefined") {
-                            CAL.fill_repeat_tab(res.repeat);
-                        }
-
-                        CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
-                        ajaxStatus.hideStatus();
-                        CAL.get("btn-save").focus();
-
-                        setTimeout(function () {
-                            if (!res.edit) {
-                                $("#scheduler .schedulerInvitees").css("display", "none");
-                                $("#create-invitees-buttons").css("display", "none");
-                                $("#create-invitees-title").css("display", "none");
-                            }
-                            enableQS(false);
-                        }, 500);
-                    } else {
-                        alert(CAL.lbl_error_loading);
-                    }
-                },
-                failure: function () {
-                    alert(CAL.lbl_error_loading);
-                }
-            };
-            var url = "index.php?module=Calendar&action=QuickEdit&sugar_body_only=true";
-            var data = {
-                "current_module": module_name,
-                "record": record,
-                "edit_all_recurrences": edit_all_recurrences
-            };
-            YAHOO.util.Connect.asyncRequest('POST', url, callback, CAL.toURI(data));
-        }
-    };
-
-	CAL.editAllRecurrences = function (){		
+	CAL.editAllRecurrences = function() {
 		var record = CAL.get("record").value;
 		if(CAL.get("repeat_parent_id").value != ""){
 			record = CAL.get("repeat_parent_id").value;
@@ -1605,9 +1498,8 @@
 			CAL.get("btn-remove-all-recurrences").removeAttribute("disabled");
 		}
 	}
-		
-	
-	CAL.dialog_create = function (cell) {
+
+    CAL.dialog_create = function(cell) {
         var dateStart = CAL.unformatDateTime(cell.getAttribute('datetime')),
             meetingAttributes = {
                 'date_start': dateStart,
@@ -1631,70 +1523,13 @@
                     taskAttributes = {
                         'date_due': dateStart
                     };
-                    CAL.loadActivityCreateDrawer('Tasks', taskAttributes)
+                    CAL.loadActivityCreateDrawer('Tasks', taskAttributes);
                 } else if (action === 'schedule-call') {
-                    app.drawer.close();
-                    CAL.dialog_create_call(cell);
+                    CAL.loadActivityCreateDrawer('Calls', meetingAttributes);
                 }
             }
         });
-	}
-	
-	CAL.dialog_create_call = function (cell) {
-			var e,user_id,user_name;
-			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;
-			CAL.open_edit_dialog();
-
-			CAL.disable_buttons();
-
-			var module_name = 'Calls';
-
-			if(CAL.view == 'shared'){
-				// Pick the div that contains 2 custom attributes we
-				// use for storing values in case of 'shared' view
-				parentWithUserValues = $('div[user_id][user_name]');
-				// Pull out the values
-				user_name = parentWithUserValues.attr('user_name');
-				user_id = parentWithUserValues.attr('user_id');
-
-				// Shared by multiple users, need to get attributes from user whom is clicked
-				if (parentWithUserValues.length > 1) {
-				    var theUserName, theUserId;
-				    var theUser = cell.parentNode;
-				    while (theUser) {
-				        if (theUser.getAttribute("user_name") && theUser.getAttribute("user_id")) {
-				            theUserName = theUser.getAttribute("user_name");
-				            theUserId = theUser.getAttribute("user_id");
-				            break;
-				        }
-				        else {
-				            theUser = theUser.parentNode;
-				        }
-				    }
-				    // Found user in the parentNode iteration, use it
-				    if (theUserName && theUserId) {
-				        user_name = theUserName;
-				        user_id = theUserId;
-				    }
-				}
-
-				CAL.GR_update_user(user_id);
-			}else{
-				user_id = CAL.current_user_id;
-				user_name = CAL.current_user_name;
-				CAL.GR_update_user(CAL.current_user_id);
-			}
-
-			var params = {
-				'module_name': module_name,
-				'user_id': user_id,
-				'user_name': user_name,
-				'date_start': cell.getAttribute("datetime")
-			};
-			CAL.current_params = params;
-			CAL.load_create_form(CAL.current_params);
-
-	}
+    };
 
 	CAL.dialog_save = function(){
 						CAL.disable_buttons();
