@@ -27,6 +27,11 @@
     },
 
     /**
+     * View name that corresponds to the list of fields API should retrieve
+     */
+    dataViewName: 'subpanel-list',
+
+    /**
      * @override
      * @param {Object} options
      */

@@ -36,6 +36,10 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'required' => true,
     'importable' => 'required',
     'exportable'=>true,
+    'studio' => array(
+        'portalrecordview' => false,
+        'portallistview' => false,
+    ),
   ),
 
     'account_id'=>

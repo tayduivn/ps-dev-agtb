@@ -44,7 +44,6 @@
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
-        this.salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
         if (!this.forecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
         }
@@ -82,7 +81,8 @@
             .margin({top: 0})
             .tooltipContent(function(key, x, y, e, graph) {
                 var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
-                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + ((salesStageLabels && salesStageLabels[key]) ? salesStageLabels[key] : key) + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             })
@@ -160,12 +160,9 @@
         if (!timePeriod) {
             return;
         }
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        var url_base = 'Opportunities/chart/pipeline';
-//END SUGARCRM flav=pro && flav!=ent ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-        var url_base = 'RevenueLineItems/chart/pipeline';
-//END SUGARCRM flav=ent ONLY
+
+        var forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities',
+            url_base = forecastBy + '/chart/pipeline';
         if (this.settings.has('selectedTimePeriod')) {
             url_base += '/' + timePeriod;
             if (this.isManager) {
@@ -175,10 +172,12 @@
             app.api.call('GET', url, null, {
                 success: _.bind(function(o) {
                     if (o && o.data) {
+                        var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
+
                         // update sales stage labels to translated strings
                         _.each(o.data, function(dataBlock){
-                            if(dataBlock && dataBlock.key && this.salesStageLabels && this.salesStageLabels[dataBlock.key]) {
-                                dataBlock.key = this.salesStageLabels[dataBlock.key];
+                            if(dataBlock && dataBlock.key && salesStageLabels && salesStageLabels[dataBlock.key]) {
+                                dataBlock.key = salesStageLabels[dataBlock.key];
                             }
 
                         });

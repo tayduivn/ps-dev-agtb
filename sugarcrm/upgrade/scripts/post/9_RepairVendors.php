@@ -28,27 +28,36 @@ class SugarUpgradeRepairVendors extends UpgradeScript
     );
 
     public $directories = array(
-        'include/HTMLPurifier' => 'vendor/HTMLPurifier',
-        'include/HTTP_WebDAV_Server' => 'vendor/HTTP_WebDAV_Server',
-        'include/Pear' => 'vendor/Pear',
-        'include/Smarty' => 'vendor/Smarty',
-        'XTemplate' => 'vendor/XTemplate',
-        'Zend' => 'vendor/Zend',
-        'include/lessphp' => 'vendor/lessphp',
-        'log4php' => 'vendor/log4php',
-        'include/nusoap' => 'vendor/nusoap',
-        'include/oauth2-php' => 'vendor/oauth2-php',
-        'include/pclzip' => 'vendor/pclzip',
-        'include/reCaptcha' => 'vendor/reCaptcha',
-        'include/tcpdf' => 'vendor/tcpdf',
-        'include/ytree' => 'vendor/ytree',
-        'include/SugarSearchEngine/Elastic/Elastica' => 'vendor/Elastica',
+        'pre7' => array(
+            'include/HTMLPurifier' => 'vendor/HTMLPurifier',
+            'include/HTTP_WebDAV_Server' => 'vendor/HTTP_WebDAV_Server',
+            'include/Pear' => 'vendor/Pear',
+            'include/Smarty' => 'vendor/Smarty',
+            'XTemplate' => 'vendor/XTemplate',
+            'Zend' => 'vendor/Zend',
+            'include/lessphp' => 'vendor/lessphp',
+            'log4php' => 'vendor/log4php',
+            'include/nusoap' => 'vendor/nusoap',
+            'include/oauth2-php' => 'vendor/oauth2-php',
+            'include/pclzip' => 'vendor/pclzip',
+            'include/reCaptcha' => 'vendor/reCaptcha',
+            'include/tcpdf' => 'vendor/tcpdf',
+            'include/ytree' => 'vendor/ytree',
+            'include/SugarSearchEngine/Elastic/Elastica' => 'vendor/ruflin/elastica/lib/Elastica',
+        ),
+        'pre75' => array(
+            'vendor/Elastica' => 'vendor/ruflin/elastica/lib/Elastica',
+        ),
     );
 
     public function run()
     {
-        // run only when upgrade version is less than 7.0.0
-        if (!version_compare($this->from_version, '7.0.0', "<")) {
+        // determine directory set
+        if (version_compare($this->from_version, '7.0.0', "<")) {
+            $directories = $this->directories['pre7'];
+        } elseif (version_compare($this->from_version, '7.0.0', ">=") && version_compare($this->from_version, '7.5.0', "<")) {
+            $directories = $this->directories['pre75'];
+        } else {
             return;
         }
 
@@ -56,12 +65,12 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         $this->replaceCustomSmartyPlugins();
 
         // check custom directory
-        $this->scanDir('custom/');
+        $this->scanDir('custom/', $directories);
 
         // check ModuleBuilder modules
         if (!empty($this->upgrader->state['MBModules'])) {
             foreach ($this->upgrader->state['MBModules'] as $mbModule) {
-                $this->scanDir("modules/{$mbModule}/");
+                $this->scanDir("modules/{$mbModule}/", $directories);
             }
         }
     }
@@ -139,9 +148,10 @@ class SugarUpgradeRepairVendors extends UpgradeScript
     /**
      * Scan directory and replace vendors links
      * @param string $path
+     * @param array $directories
      * @return array Files data
      */
-    public function scanDir($path)
+    public function scanDir($path, array $directories)
     {
         if (file_exists($path)) {
 
@@ -165,7 +175,7 @@ class SugarUpgradeRepairVendors extends UpgradeScript
                         // skip disable dirs
                         continue;
                     }
-                    $this->scanDir($path . $filename . "/");
+                    $this->scanDir($path . $filename . "/", $directories);
                 } elseif ($item->getExtension() != 'php') {
                     continue;
                 } else {
@@ -173,7 +183,7 @@ class SugarUpgradeRepairVendors extends UpgradeScript
                         $file = $item->getPathname();
                         // check for any occurrence of the directories and replace them
                         $fileContents = file_get_contents($file);
-                        foreach ($this->directories as $pattern => $replace) {
+                        foreach ($directories as $pattern => $replace) {
                             if (preg_match("#(include|require|require_once|include_once)\s*[\(]?['\"]([^\._-]*?)(\b{$pattern}\b.*?)['\"][\)]?;#is", $fileContents, $match)) {
 
                                 if ('vendor/' === $match[2]) {

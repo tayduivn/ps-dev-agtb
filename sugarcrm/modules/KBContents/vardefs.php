@@ -45,16 +45,6 @@ $dictionary['KBContent'] = array(
 			'comment' => 'The document revision id to which this content is associated'
 		),
 		
-		'created_by_link' => array (
-			'name' => 'created_by_link',
-			'type' => 'link',
-			'relationship' => 'contents_created_by',
-			'vname' => 'LBL_CREATED_BY_USER',
-			'link_type' => 'one',
-			'module' => 'Users',
-			'bean_name' => 'User',
-			'source' => 'non-db',
-		),
 		'date_entered' => array (
 			'name' => 'date_entered',
 			'vname' => 'LBL_DATE_ENTERED',
@@ -85,16 +75,6 @@ $dictionary['KBContent'] = array(
 			'isnull' => false,
 			'reportable' => true,
 			'dbType' => 'id'
-		), 
-		'modified_user_link' => array (
-			'name' => 'modified_user_link',
-			'type' => 'link',
-			'relationship' => 'contents_modified_user',
-			'vname' => 'LBL_MODIFIED_BY_USER',
-			'link_type' => 'one',
-			'module' => 'Users',
-			'bean_name' => 'User',
-			'source' => 'non-db',
 		),
 	    'kb_index' => array (
 			'name' => 'kb_index',

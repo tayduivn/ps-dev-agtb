@@ -62,11 +62,12 @@ EOC;
     /**
      * @dataProvider getContents
      */
-    public function testRepairVendors($content, $expected)
+    public function testRepairVendors($content, $expected, $fromVersion)
     {
         $file = $this->testDir . 'RepairVendorsTest.php';
 
         $this->upgradeDriver->context['source_dir'] = $this->testDir;
+        $this->upgradeDriver->setVersions($fromVersion, 'ULT', '7.9.9', 'ULT');
         SugarAutoLoader::ensureDir($this->testDir);
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($file, $content);
@@ -102,44 +103,67 @@ EOC;
             array(
                 "<?php \n require_once 'include/ytree/ytree.php';\n?>",
                 "<?php \n require_once 'vendor/ytree/ytree.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'include/nusoap/nusoap.php';\n?>",
                 "<?php \n require_once 'vendor/nusoap/nusoap.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'vendor/ytree/ytree.php';\n?>",
                 "<?php \n require_once 'vendor/ytree/ytree.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'include/Sugar_Smarty.php';\n?>",
                 "<?php \n require_once 'include/Sugar_Smarty.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'include/Sugar-Smarty.php';\n?>",
                 "<?php \n require_once 'include/Sugar-Smarty.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'include/Sugar.Smarty.php';\n?>",
                 "<?php \n require_once 'include/Sugar.Smarty.php';\n?>",
+                "6.1.1",
             ),
             array(
                 "<?php \n require_once 'include/Smarty.php';\n?>",
                 "<?php \n require_once 'vendor/Smarty.php';\n?>",
+                "6.1.1",
             ),
+            // Elastica path change before 7.0.0
             array(
                 "<?php \n include_once 'include/SugarSearchEngine/Elastic/Elastica/Index.php';\n?>",
+                "<?php \n include_once 'vendor/ruflin/elastica/lib/Elastica/Index.php';\n?>",
+                "6.1.1",
+            ),
+            // Elastica path change from 7.x to 7.5.0
+            array(
                 "<?php \n include_once 'vendor/Elastica/Index.php';\n?>",
+                "<?php \n include_once 'vendor/ruflin/elastica/lib/Elastica/Index.php';\n?>",
+                "7.2.1",
             ),
             // ZF1 code-style test
             array(
                 "<?php \n require_once 'Zend/Date/Cities.php'; \n require_once 'Zend/Date/Countries.php'; \n\n class Zend_Date_Cities \n { \n public static \$cities; \n } \n?>",
                 "<?php \n require_once 'vendor/Zend/Date/Cities.php'; \n require_once 'vendor/Zend/Date/Countries.php'; \n\n class Zend_Date_Cities \n { \n public static \$cities; \n } \n?>",
+                "6.1.1",
             ),
             // ZF2 code-style test
             array(
                 "<?php \n require_once 'Zend/Date/Cities.php'; \n require_once 'Zend/Date/Countries.php'; \n\n namespace Zend\Form; \n\n use Zend\Stdlib\ArrayUtils; \n use Zend\Stdlib\InitializableInterface; \n\n class Element implements \n ElementAttributeRemovalInterface, \n ElementInterface, \n InitializableInterface, \n LabelAwareInterface \n { \n protected \$attributes = array(); \n } \n?>",
                 "<?php \n require_once 'vendor/Zend/Date/Cities.php'; \n require_once 'vendor/Zend/Date/Countries.php'; \n\n namespace Zend\Form; \n\n use Zend\Stdlib\ArrayUtils; \n use Zend\Stdlib\InitializableInterface; \n\n class Element implements \n ElementAttributeRemovalInterface, \n ElementInterface, \n InitializableInterface, \n LabelAwareInterface \n { \n protected \$attributes = array(); \n } \n?>",
+                "6.1.1",
+            ),
+            // Negative test to verify we are only running the pre75 replaces - this is not an actual use case
+            array(
+                "<?php \n require_once 'include/nusoap/nusoap.php';\n?>",
+                "<?php \n require_once 'include/nusoap/nusoap.php';\n?>",
+                "7.2.1",
             ),
         );
     }

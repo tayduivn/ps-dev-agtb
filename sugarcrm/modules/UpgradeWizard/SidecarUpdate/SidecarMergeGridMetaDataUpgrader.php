@@ -740,11 +740,11 @@ END;
                 foreach($legacyPanelFields as $fieldname => $fielddef) {
                     // Handle removal of fields from customFields (legacy defs) as needed
                     $skip = false;
-                    if (empty($fieldname)) {
-                        // Definitely skip keeping empty field names
+                    if (empty($fieldname) || !$this->isValidField($fieldname)) {
+                        // Definitely skip keeping empty and invalid field names.
                         $skip = true;
                     } else {
-                        // Is this field alread in the customFields collection?
+                        // Is this field already in the customFields collection?
                         $cf = isset($customFields[$fieldname]);
 
                         // Or perhaps it is explicitly in the removeFields array?
@@ -769,6 +769,10 @@ END;
             // Handle field conversion and renames from previous versions
             $customFields = $this->applyFieldConversionPatches($customFields);
 
+            // Grab our twitter conversion flag early since twitter_id could be
+            // an array as a field
+            $convertTwitter = $this->needsTwitterConversion();
+
             // Handle unsetting of header fields from non header panels and handle
             // email1 <=> email conversion
             foreach ($defaultDefs['panels'] as $panelIndex => $panel) {
@@ -779,23 +783,37 @@ END;
                         $check1 = is_array($fieldName) && isset($fieldName['name']) && isset($headerFields[$fieldName['name']]);
                         $check2 = is_string($fieldName) && isset($headerFields[$fieldName]);
                         if ($check1 || $check2) {
+                            // Remove this field from the defs and move on
                             unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
+                            continue;
                         }
                     }
 
                     // Hack email field into submission
                     if ($fieldName == 'email1') {
                         $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'email';
+                    } elseif (is_array($fieldName) && isset($fieldName['name']) && $fieldName['name'] === 'email1') {
+                        $fieldName['name'] = 'email';
+                        $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = $fieldName;
                     }
 
                     // Handle twitter_id to twitter renaming
-                    if ($fieldName == 'twitter_id' && $this->needsTwitterConversion()) {
+                    if ($fieldName == 'twitter_id' && $convertTwitter) {
                         // If twitter is already on the defaults, remove twitter_id entirely
                         if (isset($defaultDefsFields['twitter'])) {
                             unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
                         } else {
                             // If twitter is not on the default layout, rename twitter_id
                             $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'twitter';
+                        }
+                    } elseif (is_array($fieldName) && isset($fieldName['name']) && $fieldName['name'] === 'twitter_id' && $convertTwitter) {
+                        // If twitter is already on the defaults, remove twitter_id entirely
+                        if (isset($defaultDefsFields['twitter'])) {
+                            unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
+                        } else {
+                            // If twitter is not on the default layout, rename twitter_id
+                            $fieldName['name'] = 'twitter';
+                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = $fieldName;
                         }
                     }
                 }
@@ -1160,10 +1178,28 @@ END;
      */
     public function applyFieldConversionPatches($data)
     {
+        // We need to keep the order of fields in tact when changing field names.
+        // The basics are, when changing a field name like email1 to email, 
+        // "renaming" it basically removed it from the current array and added a
+        // new field to the end of the array:
+        // $data = array('a' => '', 'b1' => '', 'c' => '') gets turned into
+        // $data = array('a' => '', 'c' => '', 'b' => '')
+        // Keeping order fixes that issue
+        $order = array();
+        foreach ($data as $key => $val) {
+            $order[$key] = $key;
+        }
+
         // Hack: we've moved email1 to email
         if(isset($data['email1'])) {
+            // Get the defs for the email1 field into the email field
             $data['email'] = $data['email1'];
+
+            // Remove the email1 field since it is not longer used
             unset($data['email1']);
+
+            // Keep the order of the fields in tact
+            $order['email1'] = 'email';
         }
 
         // We've also moved twitter_id to twitter for some module types
@@ -1175,9 +1211,18 @@ END;
 
             // We no longer need this
             unset($data['twitter_id']);
+
+            // Keep the order of this field
+            $order['twitter_id'] = 'twitter';
         }
 
-        return $data;
+        // Reset the return data to use the proper order
+        $return = array();
+        foreach ($order as $new) {
+            $return[$new] = $data[$new];
+        }
+
+        return $return;
     }
 
     /**

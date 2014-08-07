@@ -128,6 +128,7 @@ $vardef_meta_array = array(
                 'file_url',
                 'resource_id'
             ),
+            'readonly' => array(true),
             'workflow' => array(false),
             'auto_increment' => array(true),
             'calculated' => array(true),

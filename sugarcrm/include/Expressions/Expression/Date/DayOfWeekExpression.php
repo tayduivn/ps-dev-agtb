@@ -30,15 +30,25 @@ class DayOfWeekExpression extends NumericExpression
 	}
 
 
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
-			var time = this.getParameters().evaluate();
-			return new Date(time).getDay();
+    /**
+     * Returns the JS Equivalent of the evaluate function.
+     */
+    public static function getJSEvaluate()
+    {
+        return <<<EOQ
+            var day,
+                time = this.getParameters().evaluate();
+
+            //Checks to see if the user is on a sidecar view and return results as a string
+            if (this.context.view) {
+                day = App.date(time).format('d').toString();
+            } else {
+                day = new Date(time).getDay();
+            }
+
+            return day;
 EOQ;
-	}
+    }
 
 	/**
 	 * Returns the opreation name that this Expression should be
@@ -68,5 +78,3 @@ EOQ;
 	function toString() {
 	}
 }
-
-?>

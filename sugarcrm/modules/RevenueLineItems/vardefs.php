@@ -262,7 +262,7 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
-            'formula' => 'divide($discount_amount,$base_rate)',
+            'formula' => 'currencyDivide($discount_amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -283,7 +283,10 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'deal_calc',
             'calculated' => true,
             'enforced' => true,
-            'formula' => 'ifElse($discount_select,currencyMultiply(currencyDivide($discount_amount,100),$discount_price), $discount_amount)',
+            'formula' => 'ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
             'related_fields' => array(
                 'currency_id',
@@ -310,7 +313,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_calc,$base_rate)',
+            'formula' => 'currencyDivide($deal_calc,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -343,7 +346,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($cost_price,$base_rate)',
+            'formula' => 'currencyDivide($cost_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -364,7 +367,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($discount_price,$base_rate)',
+            'formula' => 'currencyDivide($discount_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -385,7 +388,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($list_price,$base_rate)',
+            'formula' => 'currencyDivide($list_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -553,7 +556,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($book_value,$base_rate)',
+            'formula' => 'currencyDivide($book_value,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -765,7 +768,6 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'link',
             'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
             'link_class' => 'ArchivedEmailsBeanLink',
-            'link' => 'contacts',
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
             'module' => 'Emails',

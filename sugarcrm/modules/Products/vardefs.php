@@ -313,7 +313,7 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'formula' => 'divide($discount_amount,$base_rate)',
+            'formula' => 'currencyDivide($discount_amount,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -330,10 +330,18 @@ $dictionary['Product'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
-            'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+            'formula' => 'ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                        )',
+            'calculated' => true,
+            'enforced' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'discount_price',
+                'quantity',
+                'discount_amount'
             ),
         ),
         'deal_calc_usdollar' =>  array(
@@ -351,7 +359,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($deal_calc,$base_rate)',
+            'formula' => 'currencyDivide($deal_calc,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -383,7 +391,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($cost_price,$base_rate)',
+            'formula' => 'currencyDivide($cost_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -419,7 +427,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($list_price,$base_rate)',
+            'formula' => 'currencyDivide($list_price,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -584,7 +592,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'divide($book_value,$base_rate)',
+            'formula' => 'currencyDivide($book_value,$base_rate)',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -947,6 +955,11 @@ $dictionary['Product'] = array(
             'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
         ),
         array('name' => 'idx_product_quantity', 'type' => 'index', 'fields' => array('quantity')),
+        array('name' => 'idx_product_contact', 'type' => 'index', 'fields' => array('contact_id')),
+        array('name' => 'idx_product_account', 'type' => 'index', 'fields' => array('account_id')),
+        array('name' => 'idx_product_opp', 'type' => 'index', 'fields' => array('opportunity_id')),
+        array('name' => 'idx_product_quote', 'type' => 'index', 'fields' => array('quote_id')),
+        array('name' => 'idx_product_rli', 'type' => 'index', 'fields' => array('revenuelineitem_id')),
     ),
     'relationships' => array(
         'product_currencies' => array(

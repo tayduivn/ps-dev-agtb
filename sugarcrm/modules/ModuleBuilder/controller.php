@@ -601,6 +601,14 @@ class ModuleBuilderController extends SugarController
         $this->view = 'modulefield';
     }
 
+    public function action_refreshDropDown()
+    {
+        require_once 'modules/DynamicFields/templates/Fields/Forms/enum2.php';
+        $dropdowns = enum_get_lists();
+        $dropdowns = array_keys($dropdowns);
+        echo json_encode($dropdowns);
+    }
+
     public function action_saveVisibility()
     {
         $packageName = (isset ($_REQUEST ['view_package']) && (strtolower($_REQUEST['view_package']) != 'studio')) ? $_REQUEST ['view_package'] : null;

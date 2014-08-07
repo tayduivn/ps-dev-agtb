@@ -26,7 +26,6 @@ $mod_strings = array(
     'LBL_LIST_OPPORTUNITY_NAME' => 'Name',
     'LBL_LIST_ACCOUNT_NAME' => 'Account Name',
     'LBL_LIST_DATE_CLOSED' => 'Expected Close Date',
-    'LBL_LIST_SALES_STAGE' => 'Sales Stage',
     'LBL_LIST_AMOUNT' => 'Likely',
     'LBL_LIST_AMOUNT_USDOLLAR' => 'Converted Amount',
     'LBL_ACCOUNT_ID' => 'Account ID',

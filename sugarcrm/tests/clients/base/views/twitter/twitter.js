@@ -28,7 +28,7 @@ describe("Twitter View", function() {
         delete app.plugins.plugins['view']['Connector'];
     });
 
-    it("should set date labels", function() {
+    it("should set date flag", function() {
         // workaround since dashlet config not testable atm
         view.meta.config = false;
 
@@ -69,8 +69,8 @@ describe("Twitter View", function() {
         view.loadData();
         SugarTest.server.respond();
 
-        expect(view.tweets[0].timeLabel).toEqual('LBL_TIME_RELATIVE_TWITTER_SHORT');
-        expect(view.tweets[1].timeLabel).toEqual('LBL_TIME_RELATIVE_TWITTER_LONG');
+        expect(view.tweets[0].useAbsTime).toBeFalsy();
+        expect(view.tweets[1].useAbsTime).toBeTruthy();
     });
 
     it("should set current user info", function() {

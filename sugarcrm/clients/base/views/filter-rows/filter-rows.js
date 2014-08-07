@@ -204,11 +204,15 @@
     },
 
     /**
-     * Utility function to instanciate any field of this form
+     * Utility function that instantiates a field for this form.
      *
-     * @param {Model} model
-     * @param {Object} def
-     * @returns {Field}
+     * The field action is manually set to `detail` because we want to render
+     * the `edit` template but the action remains `detail` (filtering).
+     *
+     * @param {Data.Bean} model A bean necessary to the field for storing the
+     *   value(s).
+     * @param {Object} def The field definition.
+     * @return {View.Field} The field component.
      */
     createField: function(model, def) {
         var obj = {
@@ -222,6 +226,7 @@
             view: this
         };
         var field = app.view.createField(obj);
+        field.action = 'detail';
         return field;
     },
 
@@ -593,7 +598,6 @@
 
             data['valueField'] = minmax;
             _.each(minmax, function(field) {
-                field.action = 'detail';
                 var fieldContainer = $(field.getPlaceholder().string);
                 $fieldValue.append(fieldContainer);
                 this.listenTo(field, 'render', function() {
@@ -611,7 +615,6 @@
             // Render the value field
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
-            field.action = 'detail';
             $fieldValue.append(fieldContainer);
             data['valueField'] = field;
 

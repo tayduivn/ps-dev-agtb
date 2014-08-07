@@ -80,7 +80,8 @@
                 }
             }
         }
-
+        $calendarJSFileName = SugarAutoLoader::fileExists('custom/include/javascript/calendar.js') ?
+            'custom/include/javascript/calendar.js' : 'include/javascript/calendar.js';
         $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
@@ -89,7 +90,7 @@
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/menu.js'            => 'include/javascript/sugar_grp1.js',
-                'include/javascript/calendar.js'        => 'include/javascript/sugar_grp1.js',
+                $calendarJSFileName                     => 'include/javascript/sugar_grp1.js',
                 'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
                 //HTML decode

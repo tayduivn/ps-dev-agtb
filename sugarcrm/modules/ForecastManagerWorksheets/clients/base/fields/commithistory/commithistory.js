@@ -14,8 +14,11 @@
  * @extends View.Field
  */
 ({
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this.on('render', function() {
             this.loadData();
@@ -23,23 +26,25 @@
     },
 
     /**
-     * Load Data Method
+     * @inheritdoc
      */
     loadData: function() {
-
         var ctx = this.context.parent || this.context,
             su = ctx.get('selectedUser') || app.user.toJSON(),
             isManager = this.model.get('is_manager'),
             showOpps = (su.id == this.model.get('user_id')) ? 1 : 0,
             forecastType = app.utils.getForecastType(isManager, showOpps),
             args_filter = [],
-            options = {};
+            options = {},
+            url;
 
-        args_filter.push({"user_id": this.model.get('user_id')});
-        args_filter.push({"forecast_type": forecastType});
-        args_filter.push({"timeperiod_id": this.view.selectedTimeperiod});
+        args_filter.push(
+            {"user_id": this.model.get('user_id')},
+            {"forecast_type": forecastType},
+            {"timeperiod_id": this.view.selectedTimeperiod}
+        );
 
-        var url = {"url": app.api.buildURL('Forecasts', 'filter'), "filters": {"filter": args_filter}};
+        url = {"url": app.api.buildURL('Forecasts', 'filter'), "filters": {"filter": args_filter}};
 
         options.success = _.bind(function(data) {
             this.buildLog(data);
@@ -55,7 +60,7 @@
         data = data.records;
         var ctx = this.context.parent || this.context,
             forecastCommitDate = ctx.get('currentForecastCommitDate'),
-            commitDate = new Date(forecastCommitDate),
+            commitDate = app.date(forecastCommitDate),
             newestModel = new Backbone.Model(_.first(data)),
         // get everything that is left but the first item.
             otherModels = _.last(data, data.length - 1),
@@ -66,9 +71,8 @@
         for(var i = 0; i < otherModels.length; i++) {
             // check for the first model equal to or past the forecast commit date
             // we want the last commit just before the whole forecast was committed
-            if (new Date(otherModels[i].date_modified) <= commitDate) {
+            if (app.date(otherModels[i].date_modified) <= commitDate) {
                 oldestModel = new Backbone.Model(otherModels[i]);
-                displayCommitDate = oldestModel.get('date_modified');
                 break;
             }
         }
@@ -79,14 +83,6 @@
             commit: app.utils.createHistoryLog(oldestModel, newestModel).text,
             commit_date: displayCommitDate
         }));
-
-        // kick off the relativetime
-        this.$el.find("span.relativetime").timeago({
-            logger: SUGAR.App.logger,
-            date: SUGAR.App.date,
-            lang: SUGAR.App.lang,
-            template: SUGAR.App.template
-        });
     },
 
     /**
@@ -95,7 +91,7 @@
      */
     _render: function() {
         // set the $el equal to the place holder so it renders in the correct spot
-        this.$el = this.view.$el.find('span[sfuuid="' + this.sfId + '"]');
-        app.view.Field.prototype._render.call(this);
+        this.$el = this.view.$('span[sfuuid="' + this.sfId + '"]');
+        this._super('_render');
     }
 })

@@ -270,13 +270,23 @@ class ForecastsSeedData
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod);
 
+        $bean = BeanFactory::getBean($forecast_by);
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean($forecast_by))->where()
-            ->equals('assigned_user_id', $user_id)
+        $sq->select(array('forecast_by.*'));
+        $sq->from($bean, array('alias' => 'forecast_by'))->where()
+            ->equals('forecast_by.assigned_user_id', $user_id)
             ->queryAnd()
-            ->gte('date_closed_timestamp', $tp->start_date_timestamp)
-            ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+            ->gte('forecast_by.date_closed_timestamp', $tp->start_date_timestamp)
+            ->lte('forecast_by.date_closed_timestamp', $tp->end_date_timestamp);
+
+        $link_name = ($forecast_by == 'RevenueLineItems') ? 'account_link' : 'accounts';
+        $bean->load_relationship($link_name);
+        $bean->$link_name->buildJoinSugarQuery($sq, array('joinTableAlias', 'account'));
+        $sq->select(array(array('account.id', 'account_id')));
+
         $beans = $sq->execute();
+
+        unset($bean);
 
         foreach ($beans as $bean) {
             /* @var $obj Opportunity|Product */

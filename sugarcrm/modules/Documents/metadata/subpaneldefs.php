@@ -162,6 +162,8 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
         'revenuelineitems' => array(
             'order' => 80,
             'module' => 'RevenueLineItems',
@@ -179,7 +181,7 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),    
-        //END SUGARCRM flav=pro ONLY    
+        //END SUGARCRM flav=ent ONLY
 	),
 );
 ?>
