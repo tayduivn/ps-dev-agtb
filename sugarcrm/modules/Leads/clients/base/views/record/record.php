@@ -196,7 +196,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'do_not_call',
                 'account_name',
                 'email',
-                'tags',
             ),
         ),
         array(

@@ -192,7 +192,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'tags',
             )
         ),
     ),
