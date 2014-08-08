@@ -1661,8 +1661,9 @@ abstract class UpgradeDriver
      */
     protected function isHealthCheckInstalled()
     {
-        $file = $this->context['health_check_path'] . '/Scanner/Scanner.php';
-        return file_exists($file);
+        set_include_path(__DIR__ . DIRECTORY_SEPARATOR . realpath($this->context['health_check_path']) . PATH_SEPARATOR . get_include_path());
+        $file = 'Scanner/ScannerCli.php';
+        return stream_resolve_include_path($file);
     }
 
     /**
@@ -1673,7 +1674,7 @@ abstract class UpgradeDriver
     protected function  getHealthCheckScanner()
     {
         if ($this->isHealthCheckInstalled()) {
-            require_once $this->context['health_check_path'] . '/Scanner/ScannerCli.php';
+            require_once 'Scanner/ScannerCli.php';
             $scanner = new HealthCheckScannerCli();
             $scanner->setVerboseLevel(0);
             $scanner->setLogFilePointer($this->fp);

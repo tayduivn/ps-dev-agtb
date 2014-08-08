@@ -464,8 +464,7 @@ eoq2;
     {
         $output = "* $message (Yes/No) ";
         echo "\n".$output;
-        $line = readline("");
-
+        $line = trim(fgets(STDIN));
         $line = strtolower($line);
         if (in_array($line, array('yes', 'y'))) {
             return true;
@@ -520,11 +519,12 @@ eoq2;
         foreach ($scanner->getLogMeta() as $key => $entry) {
             $this->logHealthCheck(" => Issue $key (flag = {$entry['flag']}):", $stdOut);
             $this->logHealthCheck("  {$entry['log']}", $stdOut);
+            /**
             $this->logHealthCheck("  {$entry['title']}", $stdOut);
             $this->logHealthCheck("  {$entry['descr']}", $stdOut);
             if ($entry['kb']) {
                 $this->logHealthCheck("  {$entry['kb']}", $stdOut);
-            }
+            } */
         }
         $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
     }
