@@ -78,7 +78,6 @@ $fields = array(
         'name' => 'discount_rate_percent',
         'readonly' => true,
     ),
-    'tags',
 );
 
 $fieldsHidden = array(
@@ -252,7 +251,6 @@ $fields = array(
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
     ),
-    'tags',
 );
 
 $fieldsHidden = array(

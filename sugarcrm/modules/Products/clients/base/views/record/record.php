@@ -124,7 +124,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 'discount_select',
-                'tags',
             ),
         ),
         array(
