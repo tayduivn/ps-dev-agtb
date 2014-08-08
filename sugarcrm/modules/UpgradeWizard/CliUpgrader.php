@@ -82,11 +82,11 @@ Usage:
 php {$argv[0]} -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
-    php {$argv[0]} -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.1.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
+    php [path-to-PHP/]{$argv[0]} -z [path-to-upgrade-package/]upgradeZipFile.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
 
 Arguments:
     -z/--zip upgrade.zip                 : Upgrade package file.
-    -l/--log logFile                     : Upgarde log file (by default relative to instance dir)
+    -l/--log logFile                     : Upgrade log file (by default relative to instance dir)
     -s/--source pathToSugarInstance      : Sugar instance being upgraded.
     -u/--user admin-user                 : admin user performing the upgrade
 Optional arguments:
