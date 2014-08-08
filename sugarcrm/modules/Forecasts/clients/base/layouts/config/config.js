@@ -16,9 +16,13 @@
         var acls = app.user.getAcls().Forecasts,
             hasAccess = (!_.has(acls, 'access') || acls.access == 'yes'),
             isSysAdmin = (app.user.get('type') == 'admin'),
-            isDev = (!_.has(acls, 'developer') || acls.developer == 'yes');
-        // if user has access AND is a System Admin OR has a Developer role
-        if(hasAccess && (isSysAdmin || isDev)) {
+            isDev = (!_.has(acls, 'developer') || acls.developer == 'yes'),
+            // check if Sales Stage Won/Lost are ok to continue
+            loadConfigOK = app.utils.checkForecastConfig(),
+            // if user has access AND is a System Admin OR has a Developer role
+            loadConfigAccess = (hasAccess && (isSysAdmin || isDev));
+
+        if(loadConfigOK && loadConfigAccess) {
             if(options && options.context && options.context.has('model')) {
                 // make sure the model being passed to all config views has the latest metadata
                 options.context.get('model').set(app.metadata.getModule('Forecasts', 'config'));
@@ -27,6 +31,8 @@
             this._super('initialize', [options]);
             // load the data
             this._super('loadData');
+        } else if(!loadConfigOK) {
+            this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
         } else {
             this.codeBlockForecasts('LBL_FORECASTS_NO_ACCESS_TO_CFG_TITLE', 'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG');
         }
