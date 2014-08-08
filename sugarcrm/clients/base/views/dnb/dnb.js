@@ -47,7 +47,7 @@
     },
     //D&B Firmographic API product codes
     compInfoProdCD: {
-        'lite': 'CST_PRD_1',
+        'lite': 'DCP_BAS',
         'std': 'DCP_STD',
         'prem': 'DCP_PREM'
     },
@@ -772,7 +772,7 @@
     /**
      * Gets company information for a DUNS number
      * @param {String} duns_num -- duns_num of the company
-     * @param {String} prod_code -- CST_PRD_1 or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
+     * @param {String} prod_code -- DCP_BAS or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
      * @param {String} backToListLabel -- label to be rendered to redirect to the previous view
      * @param {Function} renderFunction -- a function to be called to render the dnbapiresponse
      */
