@@ -17,34 +17,45 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if(empty($argv[1])) {
-    die("Use $argv[0] name.phar\n");
+    die("Use $argv[0] name (no zip or phar extension)\n");
 }
 
-$name = $argv[1];
+$pathinfo = pathinfo($argv[1]);
+
+$name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(
-    "modules/UpgradeWizard/UpgradeDriver.php",
-    "modules/UpgradeWizard/CliUpgrader.php",
-    "modules/UpgradeWizard/upgrader_version.json",
-    'modules/HealthCheck/Scanner/Scanner.php',
-    'modules/HealthCheck/Scanner/ScannerCli.php',
-    'modules/HealthCheck/Scanner/ScannerMeta.php',
-    'modules/HealthCheck/language/en_us.lang.php',
+    "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
+    "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
+    "modules/UpgradeWizard/upgrader_version.json" => 'upgrader_version.json',
+    'modules/HealthCheck/Scanner/Scanner.php' => 'Scanner/Scanner.php',
+    'modules/HealthCheck/Scanner/ScannerCli.php' => 'Scanner/ScannerCli.php',
+    'modules/HealthCheck/Scanner/ScannerMeta.php' => 'Scanner/ScannerMeta.php',
+    'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php'
 );
 
-$phar = new Phar($argv[1]);
+$phar = new Phar($name . '.phar');
 
-foreach ($files as $file) {
-    $phar->addFile($file, $file);
+foreach ($files as $file => $inArchive) {
+    $phar->addFile($file, $inArchive);
 }
 
 $stub = <<<'STUB'
 <?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "modules/UpgradeWizard/CliUpgrader.php"; CliUpgrader::start(); __HALT_COMPILER();
+require_once "CliUpgrader.php"; CliUpgrader::start(); __HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
+
+$zip = new ZipArchive();
+$zip->open($name . '.zip', ZipArchive::CREATE);
+
+foreach ($files as $file => $local) {
+    $zip->addFile($file, $local);
+}
+
+$zip->close();
 
 exit(0);

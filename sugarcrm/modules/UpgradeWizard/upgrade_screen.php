@@ -285,7 +285,7 @@ $(window).bind("load", function () {
             </span>
 
             <div class="upgrade-title span8">
-                <h3>Sugar 6.5 to 7.5 Upgrade: Upload</h3>
+                <h3>Sugar Upgrader: Upload</h3>
                 <span>Upload the upgrade package</span>
             </div>
             <div class="progress-section span4 pull-right">
@@ -334,7 +334,7 @@ $(window).bind("load", function () {
             </span>
 
             <div class="upgrade-title span8">
-                <h3 id="upgradeTitle">Sugar 6.5 to 7.5 Upgrade: Upload</h3>
+                <h3 id="upgradeTitle">Sugar Upgrader: Upload</h3>
                 <span>Upgrading the instance...</span>
             </div>
             <div class="progress-section span4 pull-right">
