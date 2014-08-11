@@ -17,7 +17,7 @@ require_once __DIR__ . '/UpgradeDriver.php';
 class CliUpgrader extends UpgradeDriver
 {
     protected $options = array(
-    // required, short, long
+        // required, short, long
         "zip" => array(true, 'z', 'zip'),
         "log" => array(true, 'l', 'log'),
         "source_dir" => array(true, 's', 'source'),
@@ -40,19 +40,15 @@ class CliUpgrader extends UpgradeDriver
         'none' => 0,
     );
 
-    /**
-     * Do we use directory instead of zip file?
-     * @var bool
-     */
-    protected $zip_as_dir;
-
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
     public function runStage($stage)
     {
         $argv = $this->context['argv'];
-        $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(array("stage" => $stage));
+        $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(
+                array("stage" => $stage)
+            );
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == 0);
@@ -76,7 +72,7 @@ class CliUpgrader extends UpgradeDriver
     {
         global $argv;
         list($version, $build) = static::getVersion();
-$usage =<<<eoq2
+        $usage = <<<eoq2
 CLI Upgrader v.$version (build $build)
 Usage:
 php {$argv[0]} -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
@@ -102,23 +98,29 @@ eoq2;
 
     protected function verifyArguments()
     {
-        if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
+        if (empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
             self::argError("Source directory parameter must be a valid directory.");
         }
 
-        if(!is_file("{$this->context['source_dir']}/include/entryPoint.php") || !is_file("{$this->context['source_dir']}/config.php")) {
+        if (!is_file("{$this->context['source_dir']}/include/entryPoint.php") || !is_file(
+                "{$this->context['source_dir']}/config.php"
+            )
+        ) {
             self::argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
-        if(!is_readable("{$this->context['source_dir']}/include/entryPoint.php") || !is_readable("{$this->context['source_dir']}/config.php")) {
+        if (!is_readable("{$this->context['source_dir']}/include/entryPoint.php") || !is_readable(
+                "{$this->context['source_dir']}/config.php"
+            )
+        ) {
             self::argError("{$this->context['source_dir']} is not a accessible.");
         }
 
-        if(!is_file($this->context['zip']) && !is_dir($this->context['zip'])) { // valid zip?
+        if (!is_file($this->context['zip']) && !is_dir($this->context['zip'])) { // valid zip?
             self::argError("Zip file argument must be a full path to the patch file or directory.");
         }
 
-        if(!is_readable($this->context['zip'])) { // valid zip?
+        if (!is_readable($this->context['zip'])) { // valid zip?
             self::argError("Upgrade archive is not readable: {$this->context['zip']}");
         }
         return true;
@@ -131,21 +133,21 @@ eoq2;
      */
     public function parseScriptMask($mask)
     {
-        if(is_numeric($mask)) {
+        if (is_numeric($mask)) {
             return intval($mask);
         }
-        if(empty($mask)) {
+        if (empty($mask)) {
             $this->argError("Empty script mask");
             return $this->maskTypes['all'];
         }
         $parts = explode(',', $mask);
         $mask = 0;
-        if(empty($parts)) {
+        if (empty($parts)) {
             $this->argError("Empty script mask");
             return $this->maskTypes['all'];
         }
-        foreach($parts as $part) {
-            if(!isset($this->maskTypes[$part])) {
+        foreach ($parts as $part) {
+            if (!isset($this->maskTypes[$part])) {
                 $this->argError("Unknown script mask: $part");
                 continue;
             }
@@ -161,27 +163,28 @@ eoq2;
      */
     public function fixupContext($context)
     {
-        if(!empty($context['zip'])) {
+        if (!empty($context['zip'])) {
             $context['zip'] = realpath($context['zip']);
         }
+        $context['zip_as_dir'] = false;
         if(is_dir($context['zip'])) {
-            $this->zip_as_dir = true;
+            $context['zip_as_dir'] = true;
             $this->clean_on_fail = false;
         }
-        if(!empty($context['source_dir'])) {
+        if (!empty($context['source_dir'])) {
             $context['source_dir'] = realpath($context['source_dir']);
         }
-        if(isset($context['script_mask'])) {
+        if (isset($context['script_mask'])) {
             $context['script_mask'] = $this->parseScriptMask($context['script_mask']);
         }
-        if(!empty($context['log'])) {
+        if (!empty($context['log'])) {
             touch($context['log']);
-            if(!file_exists($context['log'])) {
+            if (!file_exists($context['log'])) {
                 $this->argError("Can not create log file: {$this->context['log']}");
                 // does not return
             }
             $context['log'] = realpath($context['log']);
-            if(empty($context['log'])) {
+            if (empty($context['log'])) {
                 $this->argError("Error resolving logfile name");
             }
         }
@@ -191,10 +194,10 @@ eoq2;
     public function init()
     {
         parent::init();
-        if(empty($this->context['autoconfirm'])) {
+        if (empty($this->context['autoconfirm'])) {
             $this->context['autoconfirm'] = false;
         }
-        if($this->zip_as_dir) {
+        if($this->context['zip_as_dir']) {
             $this->context['extract_dir'] = $this->context['zip'];
         }
     }
@@ -205,7 +208,7 @@ eoq2;
      */
     protected function preflightWriteUnzip()
     {
-        if($this->zip_as_dir) {
+        if($this->context['zip_as_dir']) {
             // if we're using extracted zip, we don't need it to be writable
             return true;
         }
@@ -218,9 +221,9 @@ eoq2;
      */
     protected function extractZip($zip)
     {
-        if($this->zip_as_dir && is_dir($zip)) {
+        if($this->context['zip_as_dir'] && is_dir($zip)) {
             // pre-extracted
-            if(!file_exists("$zip/manifest.php")) {
+            if (!file_exists("$zip/manifest.php")) {
                 return $this->error("$zip does not contain manifest.php");
             }
             $this->log("Using $zip as extracted ZIP directory");
@@ -239,32 +242,31 @@ eoq2;
     {
         $opt = '';
         $context = $longopt = array();
-        foreach($this->options as $ctx => $data)
-        {
-            $opt .= $data[1].':';
-            $longopt[] = $data[2].':';
+        foreach ($this->options as $ctx => $data) {
+            $opt .= $data[1] . ':';
+            $longopt[] = $data[2] . ':';
         }
         /* FIXME: getopt always uses global argv */
         $opts = getopt($opt, $longopt);
 
-        if(empty($opts)) {
+        if (empty($opts)) {
             $this->argError("Invalid upgrader options");
             return array(); // never happens
         }
 
-        foreach($this->options as $ctx => $data) {
+        foreach ($this->options as $ctx => $data) {
             $val = null;
-            if(isset($opts[$data[1]])) {
+            if (isset($opts[$data[1]])) {
                 $val = $opts[$data[1]];
-            } elseif(isset($opts[$data[2]])) {
+            } elseif (isset($opts[$data[2]])) {
                 $val = $opts[$data[2]];
             }
-            if(is_null($val)) {
-                if($data[0]) {
+            if (is_null($val)) {
+                if ($data[0]) {
                     $this->argError("Required option '{$data[2]}' missing");
                 }
                 continue;
-            } elseif(is_array($val)) {
+            } elseif (is_array($val)) {
                 $this->argError("Multiple valued for '{$data[2]}' are not allowed");
             }
 
@@ -280,23 +282,23 @@ eoq2;
      */
     public function mapArgs($argv)
     {
-        if(!empty($argv[1]) && $argv[1][0] == '-') {
+        if (!empty($argv[1]) && $argv[1][0] == '-') {
             /* named options */
             $context = $this->mapNamedArgs($argv);
         } else {
             $i = 1;
             $context = array();
-            foreach($this->options as $ctx => $data) {
-                if(isset($argv[$i])) {
-                    if(!$data[0] && $argv[$i][0] == '-') {
-                       // if we're positional then no options
+            foreach ($this->options as $ctx => $data) {
+                if (isset($argv[$i])) {
+                    if (!$data[0] && $argv[$i][0] == '-') {
+                        // if we're positional then no options
                         $this->argError("Positional and named arguments can not be mixed");
                         continue; // never happens
                     }
                     $context[$ctx] = $argv[$i];
                     $i++;
                 } else {
-                    if($data[0]) {
+                    if ($data[0]) {
                         $this->argError("Insufficient arguments");
                         continue; // never happens
                     } else {
@@ -317,31 +319,31 @@ eoq2;
      */
     public function parseArgs($argv)
     {
-        if(defined('PHP_BINDIR')) {
-            $php_path = PHP_BINDIR."/";
+        if (defined('PHP_BINDIR')) {
+            $php_path = PHP_BINDIR . "/";
         } else {
             $php_path = '';
         }
-        if(!file_exists($php_path . 'php')) {
+        if (!file_exists($php_path . 'php')) {
             $php_path = '';
         }
         $context = $this->mapArgs($argv);
-        if(defined("PHP_BINARY")) {
+        if (defined("PHP_BINARY")) {
             $context['php'] = PHP_BINARY;
-        } elseif(!empty($_ENV['_'])) {
+        } elseif (!empty($_ENV['_'])) {
             $context['php'] = $_ENV['_'];
-        } elseif(!empty($_SERVER['_'])) {
+        } elseif (!empty($_SERVER['_'])) {
             $context['php'] = $_SERVER['_'];
         } else {
-            $context['php'] = $php_path."php";
+            $context['php'] = $php_path . "php";
         }
-        if(empty($context['script'])) {
+        if (empty($context['script'])) {
             $pharPath = Phar::running(false);
             $context['script'] = $pharPath ? $pharPath : __FILE__;
         }
         $context['argv'] = $argv;
         $this->context = $context;
-        $this->log("Setting context to: ".var_export($context, true));
+        $this->log("Setting context to: " . var_export($context, true));
         return $context;
     }
 
@@ -352,9 +354,9 @@ eoq2;
      */
     protected function getStageCode($stage)
     {
-        foreach($this->stages as $k => $s) {
-            if($s === $stage) {
-                return $k+1;
+        foreach ($this->stages as $k => $s) {
+            if ($s === $stage) {
+                return $k + 1;
             }
         }
         return 99;
@@ -370,45 +372,45 @@ eoq2;
         $upgrader->parseArgs($argv);
         $upgrader->verifyArguments($argv);
         $upgrader->init();
-        if(isset($upgrader->context['stage'])) {
+        if (isset($upgrader->context['stage'])) {
             $stage = $upgrader->context['stage'];
         } else {
             $stage = null;
         }
-        if($stage && $stage != 'continue') {
+        if ($stage && $stage != 'continue') {
             // Run one step
-            if($upgrader->run($stage)) {
+            if ($upgrader->run($stage)) {
                 exit(0);
             } else {
-                if(!empty($upgrader->error)) {
+                if (!empty($upgrader->error)) {
                     echo "ERROR: {$upgrader->error}\n";
                 }
                 exit($upgrader->getStageCode($stage));
             }
         } else {
             // whole loop
-            if($stage != 'continue') {
+            if ($stage != 'continue') {
                 // reset state
                 $upgrader->cleanState();
             } else {
                 // remove 'continue' from the array
                 array_pop($upgrader->context['argv']);
             }
-            while(1) {
+            while (1) {
                 $begin = time();
                 $res = $upgrader->runStep($stage);
                 $end = time();
                 $duration = self::formatDuration($begin, $end);
-                if($res === false) {
-                    if($stage) {
+                if ($res === false) {
+                    if ($stage) {
                         echo "***************         Step \"{$stage}\" FAILED! - {$duration}\n";
                     }
                     exit($upgrader->getStageCode($stage));
                 }
-                if($stage) {
+                if ($stage) {
                     echo "***************         Step \"{$stage}\" OK - {$duration}\n";
                 }
-                if($res === true) {
+                if ($res === true) {
                     // we're done successfully
                     echo "***************         SUCCESS!\n";
                     exit(0);
@@ -423,14 +425,14 @@ eoq2;
      * @param string $arguments
      * @return string
      */
-    protected function buildArgString($arguments=array())
+    protected function buildArgString($arguments = array())
     {
         $argument_string = '';
 
         $arguments = array_merge($this->context, $arguments);
 
-        foreach($this->options as $ctx => $data) {
-            if(!$data[0] && !isset($arguments[$ctx])) {
+        foreach ($this->options as $ctx => $data) {
+            if (!$data[0] && !isset($arguments[$ctx])) {
                 continue;
             }
 
@@ -438,7 +440,7 @@ eoq2;
         }
 
         return $argument_string;
-   }
+    }
 
     /**
      * Format stage duration
@@ -463,7 +465,7 @@ eoq2;
     protected function confirmDialog($message = 'Continue?')
     {
         $output = "* $message (Yes/No) ";
-        echo "\n".$output;
+        echo "\n" . $output;
         $line = trim(fgets(STDIN));
         $line = strtolower($line);
         if (in_array($line, array('yes', 'y'))) {
@@ -520,11 +522,11 @@ eoq2;
             $this->logHealthCheck(" => Issue $key (flag = {$entry['flag']}):", $stdOut);
             $this->logHealthCheck("  {$entry['log']}", $stdOut);
             /**
-            $this->logHealthCheck("  {$entry['title']}", $stdOut);
-            $this->logHealthCheck("  {$entry['descr']}", $stdOut);
-            if ($entry['kb']) {
-                $this->logHealthCheck("  {$entry['kb']}", $stdOut);
-            } */
+             * $this->logHealthCheck("  {$entry['title']}", $stdOut);
+             * $this->logHealthCheck("  {$entry['descr']}", $stdOut);
+             * if ($entry['kb']) {
+             * $this->logHealthCheck("  {$entry['kb']}", $stdOut);
+             * } */
         }
         $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
     }
@@ -542,9 +544,33 @@ eoq2;
             echo "$msg\n";
         }
     }
+
+    /**
+     * @see UpgradeDriver::preflightDuplicateUpgrade
+     * @return bool
+     */
+    protected function preflightDuplicateUpgrade()
+    {
+        if ($this->context['zip_as_dir']) {
+            $md5sum = $this->context['zip'] . DIRECTORY_SEPARATOR . 'md5sum';
+            if (!file_exists($md5sum)) {
+                return $this->error("md5sum file doesn't exist", true);
+            }
+            $md5 = trim(file_get_contents($md5sum));
+        } else {
+            $md5 = md5_file($this->context['zip']);
+        }
+        $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='$md5'");
+        if (!empty($dup)) {
+            return $this->error("This package (md5: $md5) was already installed", true);
+        }
+        return true;
+    }
 }
 
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
+}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {

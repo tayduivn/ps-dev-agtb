@@ -1692,9 +1692,7 @@ abstract class UpgradeDriver
     public function healthcheck()
     {
         list($version,) = $this->loadVersion();
-        $this->log("TEST: " . $version);
         if (version_compare($version, '7.0', '<')) {
-            $this->log("TEST: HEALTHCHECK");
             return $this->doHealthcheck();
         }
         return true;
