@@ -107,9 +107,13 @@ nv.models.legend = function () {
         .attr('ry', 2)
         .attr('width', 0)
         .attr('height', 0)
-        .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2}))
         .style('opacity', 0)
         .style('pointer-events', 'all');
+
+      if (!showAll) {
+        back
+          .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2}));
+      }
 
       link
         .text(legendOpen === 1 ? legend.strings().close : legend.strings().open)

@@ -20,11 +20,17 @@
                         <li class="activity" data-id="{{id}}">
                             <a class="avatar pull-left" href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{str "LBL_MODULE_NAME_SINGULAR" module}}</span></a>
                             <p class="ellipsis_inline">
-                                <a href="javascript:void(0)">{{attributes.name}}</a>
-                                <br>
-                                <date class="date">
-                                    {{timeago attributes.date_entered}}
-                                </date>
+                                {{#with attributes}}
+                                    <a href="javascript:void(0)">{{name}}</a>
+                                    <br>
+                                    <date class="date">
+                                        {{#if showRelativeTime}}
+                                            {{relativeTime date_entered class='date' rel='tooltip'}}
+                                        {{else}}
+                                            {{str 'LBL_ACTIVITYSTREAM_RELATIVETIME_ON'}}{{formatDate date_entered}}
+                                        {{/if}}
+                                    </date>
+                                {{/with}}
                             </p>
                             <div class="actions">
                                <a href="javascript:void(0)" rel="tooltip" title="{{str "LBL_PREVIEW"}}"><i class="icon-eye-open"></i></a>

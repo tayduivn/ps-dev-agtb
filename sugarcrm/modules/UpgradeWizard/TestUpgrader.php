@@ -85,4 +85,9 @@ class TestUpgrader extends UpgradeDriver
         $this->to_version = $to;
         $this->to_flavor = $flav_to;
     }
+
+    protected function doHealthcheck()
+    {
+        return true;
+    }
 }

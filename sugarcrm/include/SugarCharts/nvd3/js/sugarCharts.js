@@ -15,7 +15,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
     // get chartId from params or use the default for sugar
     var d3ChartId = 'd3_' + chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
     var canvasChartId = 'canvas_' + chartId || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
-    var isIE = $.browser.msie || /\bMSIE\b/.test(navigator.userAgent);
 
     if (document.getElementById(d3ChartId) === null) {
         return false;
@@ -115,7 +114,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                         SUGAR.charts.trackWindowResize(paretoChart, chartId, data);
 
-                        if (!isIE && chartConfig['imageExportType']) {
+                        if (chartConfig['imageExportType']) {
                             SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType'], completeCallback);
                         } else {
                             SUGAR.charts.renderChart(chartId);
@@ -197,7 +196,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                         SUGAR.charts.trackWindowResize(barChart, chartId, data);
 
-                        if (!isIE && chartConfig['imageExportType']) {
+                        if (chartConfig['imageExportType']) {
                             SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
                         } else {
                             SUGAR.charts.renderChart(chartId);
@@ -267,7 +266,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                         SUGAR.charts.trackWindowResize(lineChart, chartId, data);
 
-                        if (!isIE && chartConfig['imageExportType']) {
+                        if (chartConfig['imageExportType']) {
                             SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
                         } else {
                             SUGAR.charts.renderChart(chartId);
@@ -311,7 +310,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                         SUGAR.charts.trackWindowResize(pieChart, chartId, data);
 
-                        if (!isIE && chartConfig['imageExportType']) {
+                        if (chartConfig['imageExportType']) {
                             SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
                         } else {
                             SUGAR.charts.renderChart(chartId);
@@ -361,7 +360,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                         SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
 
-                        if (!isIE && chartConfig['imageExportType']) {
+                        if (chartConfig['imageExportType']) {
                             SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
                         } else {
                             SUGAR.charts.renderChart(chartId);
@@ -833,6 +832,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             var self = this;
             var d3ChartId = '#d3_' + id + '_print' || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165_print';
             var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
+            var svgChartId = 'svg_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
 
             var completeCallback = complete || function() {
                 self.renderChart(id);
@@ -842,6 +842,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
 
             d3.select(d3ChartId)
                 .append('svg')
+                .attr('id', svgChartId)
                 .datum(this.json)
                 .transition().duration(0)
                 .call(this.chart);
@@ -849,8 +850,8 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             var parts = jsonfilename.split('/'),
                 filename = parts[parts.length - 1].replace('.js', '.' + imageExt),
                 oCanvas = document.getElementById(canvasChartId),
-                d3ChartContainer = $(d3ChartId + ' svg'),
-                DOMURL = window.URL || window.webkitURL || window,
+                d3Container = document.getElementById(svgChartId),
+                serializer = new XMLSerializer(),
                 saveToUrl = saveTo || 'index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1';
 
             if (!oCanvas) {
@@ -861,29 +862,26 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 url: 'styleguide/assets/css/nvd3_print.css',
                 dataType: 'text',
                 success: function(css) {
-                    var ctx = oCanvas.getContext('2d'),
-                        img = new Image(),
-                        dom = d3ChartContainer.html(),
-                        data = '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">' +
-                               '<style type="text/css"><![CDATA[' + css + ']]></style>' + dom + '</svg>',
-                        svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'}),
-                        url = DOMURL.createObjectURL(svg);
+                    var svg = serializer.serializeToString(d3Container),
+                        svgAttr = ' xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="480" viewBox="0 0 1440 960">',
+                        cssCdata = '<style type="text/css"><![CDATA[' + css.trim() + ']]></style>',
+                        d3Chart = svg.replace(/><g class="nvd3/, (svgAttr + cssCdata + '<g class="nvd3')),
+                        canvgOptions = {
+                            ignoreMouse: true,
+                            ignoreAnimation: false,
+                            ignoreDimensions: true,
+                            scaleWidth: 1440,
+                            scaleHeight: 960
+                        };
 
-                    img.onload = function() {
-                        ctx.drawImage(img, 0, 0);
+                    canvg(canvasChartId, d3Chart, canvgOptions);
 
-                        var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
+                    var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
 
-                        jQuery.post(saveToUrl, {imageStr: uri, filename: filename})
-                            .success(function() { })
-                            .error(function() { });
+                    $.post(saveToUrl, {imageStr: uri, filename: filename});
 
-                        ctx.clearRect(0, 0, 720, 480);
-
-                        DOMURL.revokeObjectURL(url);
-                    };
-
-                    img.src = url;
+                    var ctx = oCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, 1440, 960);
                 },
                 complete: completeCallback
             });

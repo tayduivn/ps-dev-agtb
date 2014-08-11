@@ -27,15 +27,13 @@
     },
 
     /**
-     * View name that corresponds to the list of fields API should retrieve
-     */
-    dataViewName: 'subpanel-list',
-
-    /**
      * @override
      * @param {Object} options
      */
     initialize: function(options) {
+        // `dataViewName` corresponds to the list of fields the API should retrieve.
+        this.dataViewName = options.name || 'subpanel-list';
+
         this._super("initialize", [options]);
         // Setup max limit on collection's fetch options for this subpanel's context
         if (app.config.maxSubpanelResult) {
