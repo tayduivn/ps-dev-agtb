@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Meetings']['base']['layout']['subpanels'] = array(
+$viewdefs['Calls']['base']['layout']['subpanels'] = array(
     'components' => array(
         array(
             'layout' => 'subpanel',
