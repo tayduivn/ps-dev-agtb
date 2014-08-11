@@ -158,7 +158,8 @@
             userDateFormat = this.getUserDateFormat(),
             options = {
                 format: app.date.toDatepickerFormat(userDateFormat),
-                languageDictionary: this._patchPickerMeta()
+                languageDictionary: this._patchPickerMeta(),
+                weekStart: parseInt(app.user.getPreference('first_day_of_week'), 10)
             };
 
         var appendToTarget = this._getAppendToTarget();
