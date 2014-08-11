@@ -20,8 +20,6 @@ class SupportPortalVisibility extends SugarVisibility
     protected $wherePart = '';
     protected static $accountIds;
 
-    private static $portalBeanName;
-
     /**
      * Pull the list of account id's for a particular contact, we can't cache this because
      * there are requirements about the account id's changing fairly often for a contact.
@@ -86,7 +84,6 @@ class SupportPortalVisibility extends SugarVisibility
         // The Portal Rules Of Visibility:
         switch ($this->bean->module_dir) {
             case 'KBSContents':
-                self::$portalBeanName = 'KBSContents';
                 if ($queryType == 'where') {
                     $queryPart = " $table_alias.active_rev=1 AND"
                                 ." ($table_alias.status = 'published-ex' OR $table_alias.status ='published') ";
@@ -127,13 +124,6 @@ class SupportPortalVisibility extends SugarVisibility
 
                 break;
             case 'Notes':
-                if (self::$portalBeanName == 'KBSContents') {
-                    if ($queryType == 'where') {
-                        $queryPart = " {$table_alias}.portal_flag = 1 AND " 
-                                    ."({$table_alias}.parent_type = 'KBSContentsNotes' OR {$table_alias}.parent_type = 'KBSContentsAttachments') ";
-                    }
-                    break;
-                }
                 // Notes: Notes that are connected to a Case or a Bug that is connected to one of our Accounts and has the portal_flag set to true
                 if ($queryType == 'from') {
                     if ( !empty($accountIds) ) {
@@ -159,10 +149,14 @@ class SupportPortalVisibility extends SugarVisibility
                     //ENd SUGARCRM flav=ent ONLY
 
                 } elseif ($queryType == 'where') {
+                    $KBSContentsCondition = "{$table_alias}.parent_type = 'KBSContentsNotes' "
+                                    . "OR {$table_alias}.parent_type = 'KBSContentsAttachments'";
+
                     if ( !empty($accountIds) ) {
-                        $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL OR {$KBSContentsCondition}) ";
                     } else {
-                        $queryPart = " {$table_alias}.portal_flag = 1 AND bugs_pv.id IS NOT NULL ";
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND "
+                                    . "(bugs_pv.id IS NOT NULL OR {$KBSContentsCondition}) ";
                     }
                 }
                 break;
