@@ -79,7 +79,7 @@ class CliUpgrader extends UpgradeDriver
 $usage =<<<eoq2
 CLI Upgrader v.$version (build $build)
 Usage:
-php {$argv[0]} -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
+php {$argv[0]} -z upgradeZipFile -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
     php [path-to-PHP/]{$argv[0]} -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.5.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
