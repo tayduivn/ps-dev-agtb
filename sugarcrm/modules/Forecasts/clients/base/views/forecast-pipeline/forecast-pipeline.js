@@ -160,12 +160,9 @@
         if (!timePeriod) {
             return;
         }
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        var url_base = 'Opportunities/chart/pipeline';
-//END SUGARCRM flav=pro && flav!=ent ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-        var url_base = 'RevenueLineItems/chart/pipeline';
-//END SUGARCRM flav=ent ONLY
+
+        var forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities',
+            url_base = forecastBy + '/chart/pipeline';
         if (this.settings.has('selectedTimePeriod')) {
             url_base += '/' + timePeriod;
             if (this.isManager) {

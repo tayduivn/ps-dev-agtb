@@ -3088,7 +3088,7 @@ $app_strings = array (
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
     'ERROR_MIN_FIELD_LENGTH' => 'Error. The min length of this field is {{this}}.',
-    'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}',
+    'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{{this}}} {{/each}}',
     'ERROR_PRIMARY_EMAIL' => 'Error. At least one primary address should be set.',
     'ERROR_DUPLICATE_EMAIL' => 'Error. Duplicate Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
@@ -3217,6 +3217,8 @@ $app_strings = array (
     'LBL_REMOVE_DASHLET_ROW_CONFIRM' => 'Are you sure you want to remove the row?',
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
+    'LBL_MAXIMUM_OF' => 'Maximum of ',
+    'LBL_COLUMNS_CAN_BE_DISPLAYED' => ' columns can be displayed.',
 
     /* Sugar7 Dashboard */
     'LBL_DASHBOARD_BWC' => 'My Legacy Dashboard',

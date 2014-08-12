@@ -21,34 +21,120 @@
         'click [name=show_more_button]': 'showMoreRecords'
     },
 
-    plugins: ['Tooltip'],
+    plugins: ['RelativeTime', 'Tooltip'],
+
+    /**
+     * Default settings used for the `RelativeTime` plugin.
+     *
+     * - `{boolean} useRelativeTime` Set `true` if the relative time should be
+     *   displayed, `false` if a formatted datetime should be used. Defaults to
+     *   `true`.
+     * - `{number} relativeTimeThreshold` Relative to today, this option
+     *   specifies how many days the relative time should be displayed (e.g.
+     *   '2 days ago'), before the formatted date-time thereafter (e.g.
+     *   '2015/05/27').
+     *
+     * These defaults can be overridden through the metadata (shown below) or by
+     * customizing this layout.
+     *
+     *     // ...
+     *     'settings' => array(
+     *         'relativeTimeThreshold' => 5,
+     *         //...
+     *     ),
+     *     //...
+     *
+     * @property {Object}
+     * @protected
+     */
+    _defaultSettings: {
+        relativeTimeThreshold: 2,
+        useRelativeTime: true
+    },
+
+    /**
+     * Settings after applying metadata settings on top of
+     * {@link #_defaultSettings}.
+     *
+     * @property {Object}
+     * @protected
+     */
+    _settings: {},
+
+    /**
+     * Handlebars flag for when activity stream contains no items
+     *
+     * @property {boolean}
+     */
+    emptyStream: false,
 
     /**
      * @override
      * @param options
      */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         this._addPreviewEvents();
+        this._initSettings();
     },
 
     /**
-     * Handlebars flag for when activity stream contains no items
+     * Merges settings defined in the metadata with {@link #_defaultSettings}.
+     *
+     * @protected
+     * @chainable
      */
-    emptyStream: false,
+    _initSettings: function() {
+        this._settings = _.extend({},
+            this._defaultSettings,
+            this.meta && this.meta.settings || {}
+        );
+        if (this._settings.useRelativeTime === true) {
+            this.useRelativeTime();
+        }
+        return this;
+    },
 
     /**
-     * @override
-     * @private
+     * Helper function that determines whether or not to show the date created
+     * attribute (on the model) as a relative time (e.g. '2 days ago') or as a
+     * date-time value instead.
+     *
+     * @chainable
+     * @return {boolean} `true` if the relative time should be displayed,
+     *   `false` if the date-time value should be shown instead.
      */
-    _render: function() {
-        if(this.hasLoadedActivities()){
+    useRelativeTime: function() {
+        if (_.isEmpty(this.collection.models)) {
+            return;
+        }
+
+        _.each(this.collection.models, function(model) {
+            var date = model.get('date_entered'),
+                diffInDays = app.date().diff(date, 'days', true),
+                useRelative = diffInDays <= this._settings.relativeTimeThreshold;
+
+            model.set('showRelativeTime', useRelative);
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _renderHtml: function() {
+        if (this.hasLoadedActivities()) {
             this.emptyStream = this.collection.length < 1;
         }
         // Bug 54597 activity view not respecting list ACL
         var oViewName = this.name;
         this.name = 'list';
-        app.view.View.prototype._render.call(this);
+
+        if (this._settings.useRelativeTime === true) {
+            this.useRelativeTime();
+        }
+        this._super('_renderHtml');
         this.name = oViewName;
     },
 

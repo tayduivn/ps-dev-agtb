@@ -33,16 +33,21 @@ How do you run CLI Upgrader?
 To execute the CLI Upgrader script, you need to supply the parameters, as described
 in the Arguments section below.
 
-Usage: php -f CliUpgrader.php upgradeZipFile logFile pathToSugarInstance admin-user
+Usage: php CliUpgrader.php -z upgradeZipFile -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
-    [path-to-PHP/]php -f CliUpgrader.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.7.x-to-7.0.0.zip [path-to-log-file/]silentupgrade.log  path-to-sugar-instance/ admin
+    [path-to-PHP/]php CliUpgrader.php -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.5.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
 
 Arguments:
-    upgradeZipFile                       : Upgrade package file.
-    logFile                              : Silent Upgarde log file.
-    pathToSugarInstance                  : Sugar instance being upgraded.
-    admin-user                           : admin user performing the upgrade
+    -z/--zip upgradeZipFile              : Upgrade package file.
+    -l/--log logFile                     : Upgrade log file (by default relative to instance dir)
+    -s/--source pathToSugarInstance      : Sugar instance being upgraded.
+    -u/--user admin-user                 : admin user performing the upgrade
+Optional arguments:
+    -m/--mask scriptMask                 : Script mask - which types of scripts to run.
+                                           Supported types: core, db, custom, all, none. Default is all.
+    -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
+    -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
 
 Upgrading the Sugar Database Schema: 
 ------------------------------------- 
@@ -55,12 +60,12 @@ Compatibility matrix for the CLI Upgrader:
   PHP  versions     			:  5.3, 5.4
   Databases              		:  MySQL, MSSQL, Oracle, DB2
   Operating systems    			:  Windows, Linux, Mac, IBM i
-  Upgrade from Sugar Instances  :  6.5.x, and 6.7.x
+  Upgrade from Sugar Instances          :  6.5.x, and 6.7.x
 
 You can also view the compatibility matrix online at:
 http://support.sugarcrm.com/05_Resources/03_Supported_Platforms
 
-Note: The CliUpgrader.php script creates new files for the user who is running it.
-For example, for the root user it create files as user/group root. Because Apache may
+Note: The CliUpgrader.php script creates new files for the OS user who is running it.
+For example, for the root user it will create files as user/group root. Because Apache may
 not be able to read these files, you must ensure that the Web server user has the
-permissions to read and write the scripts.
+permissions to read and write the files.

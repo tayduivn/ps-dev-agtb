@@ -533,7 +533,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
         $this->assertRegExp('#MISSING IN DATABASE.*bazz#i', $repair);
         $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $this->assertRegExp('#MISSING INDEX IN DATABASE.*' . $primaryKey . '#i', $repair);
+        $this->assertRegExp('#MISSING INDEX IN DATABASE.* primary #i', $repair);
         $this->_db->repairTableParams($tableName, $params, $indices, true);
 
         $idx = $this->_db->get_indices($tableName);

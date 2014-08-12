@@ -740,8 +740,8 @@ END;
                 foreach($legacyPanelFields as $fieldname => $fielddef) {
                     // Handle removal of fields from customFields (legacy defs) as needed
                     $skip = false;
-                    if (empty($fieldname)) {
-                        // Definitely skip keeping empty field names
+                    if (empty($fieldname) || !$this->isValidField($fieldname)) {
+                        // Definitely skip keeping empty and invalid field names.
                         $skip = true;
                     } else {
                         // Is this field already in the customFields collection?
