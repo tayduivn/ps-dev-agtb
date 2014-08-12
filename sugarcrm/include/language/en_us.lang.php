@@ -3217,6 +3217,8 @@ $app_strings = array (
     'LBL_REMOVE_DASHLET_ROW_CONFIRM' => 'Are you sure you want to remove the row?',
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
+    'LBL_MAXIMUM_OF' => 'Maximum of ',
+    'LBL_COLUMNS_CAN_BE_DISPLAYED' => ' columns can be displayed.',
 
     /* Sugar7 Dashboard */
     'LBL_DASHBOARD_BWC' => 'My Legacy Dashboard',

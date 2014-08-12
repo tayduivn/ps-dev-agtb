@@ -4322,7 +4322,7 @@ SUGAR.tabChooser = function () {
 			    }
 
 			    if(max_left != '' && (display_columns_ref.length + selected_right.length) > max_left) {
-			    	alert('Maximum of ' + max_left + ' columns can be displayed.');
+                    alert(SUGAR.language.get('app_strings','LBL_MAXIMUM_OF') + max_left + SUGAR.language.get('app_strings','LBL_COLUMNS_CAN_BE_DISPLAYED')); 
 					return;
 			    }
 
