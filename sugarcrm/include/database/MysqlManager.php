@@ -529,6 +529,11 @@ class MysqlManager extends DBManager
 	 */
 	public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
 	{
+        foreach ($indices as $key => $ind) {
+            if (strtolower($ind['type']) == 'primary') {
+                $indices[$key]['name'] = 'primary';
+            }
+        }
 		$sql = parent::repairTableParams($tablename,$fielddefs,$indices,false,$engine);
 
 		if ( $sql == '' )
