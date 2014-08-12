@@ -313,9 +313,10 @@ class QuoteConvertApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('add');
 
         $rliMock = $this->getMockBuilder('RevenueLineItem')
-            ->setMockClassName('MockRevenueLineItem')
             ->setMethods(array('save'))
             ->getMock();
+
+        $mockRliClassName = get_class($rliMock);
 
         $products = array();
 
@@ -326,7 +327,7 @@ class QuoteConvertApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             $productMock->expects($this->once())
                 ->method('convertToRevenueLineItem')
-                ->will($this->returnValue(new MockRevenueLineItem()));
+                ->will($this->returnValue(new $mockRliClassName()));
 
             $products[] = $productMock;
         }
