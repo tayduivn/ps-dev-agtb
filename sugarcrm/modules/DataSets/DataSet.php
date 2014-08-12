@@ -241,6 +241,7 @@ class DataSet extends SugarBean {
 		global $app_list_strings;
 
 		global $current_user;
+        global $focus;
 
 		if(empty($this->exportable)) $this->exportable="0";
 
@@ -253,6 +254,35 @@ class DataSet extends SugarBean {
 		$temp_array['HEADER'] = $this->header;
 		$temp_array['QUERY_NAME'] = $this->query_name;
 		$temp_array['REPORT_NAME'] = $this->report_name;
+
+        if (SugarACL::checkAccess('DataSets', 'edit')) {
+            $image = SugarThemeRegistry::current()->getImage(
+                'edit_inline',
+                'align="absmiddle" border="0"',
+                null,
+                null,
+                '.gif',
+                $app_strings['LNK_EDIT']
+            );
+
+            $params = array(
+                'module' => 'DataSets',
+                'action' => 'EditView',
+                'record' => $this->id,
+            );
+
+            if ($focus) {
+                $params = array_merge($params, array(
+                    'return_module' => $focus->module_name,
+                    'return_action' => 'DetailView',
+                    'return_id' => $focus->id,
+                ));
+            }
+
+            $url = 'index.php?' . http_build_query($params);
+            $temp_array['EDIT_BUTTON'] = '<a class="listViewTdToolsS1" href="' . $url . '">'
+                . $image . $app_strings['LNK_EDIT'] . '</a>&nbsp;&nbsp;';
+        }
 
 		return $temp_array;
 	}

@@ -41,6 +41,12 @@ foreach($focus->additional_column_fields as $field)
 	}
 }
 
+// replace currently assigned teams with the one from request
+// since the UI doesn't allow to specify multiple teams
+if ($focus->load_relationship('teams')) {
+    $focus->teams->replace(array($focus->team_id));
+}
+
 $focus->save();
 
 $return_id = $focus->id;
