@@ -310,7 +310,7 @@ class SugarWidgetReportField extends SugarWidgetField
  function queryFilterEmpty($layout_def)
  {
      $column = $this->_get_column_select($layout_def);
-     return "($column IS NULL OR $column = ".$this->reporter->db->emptyValue($layout_def['type']).")";
+        return "(coalesce({$this->reporter->db->convert($column, 'length')}, 0) = 0)";
  }
 
  function queryFilterIs($layout_def)
@@ -326,7 +326,7 @@ class SugarWidgetReportField extends SugarWidgetField
  function queryFilterNot_Empty($layout_def)
  {
      $column = $this->_get_column_select($layout_def);
-     return "($column IS NOT NULL AND $column <> ".$this->reporter->db->emptyValue($layout_def['type']).")";
+        return "(coalesce({$this->reporter->db->convert($column, 'length')}, 0) <> 0)";
  }
 
  protected function getInputValue($layout_def)
