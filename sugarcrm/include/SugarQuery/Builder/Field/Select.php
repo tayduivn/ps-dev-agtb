@@ -65,6 +65,7 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $nameFields = Localization::getObject()->getNameFormatFields($this->moduleName);
             foreach ($nameFields as $partOfName) {
                 $alias = !empty($this->alias) ? "{$this->alias}__{$partOfName}" : "{$this->def['name']}__{$partOfName}";
+                $alias = DBManagerFactory::getInstance()->getValidDBName($alias, false, 'alias');
                 $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
             }
             $this->markNonDb();
