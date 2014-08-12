@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
+require_once 'include/database/OraclePreparedStatement.php';
 
 /**
  * Oracle driver
@@ -55,7 +56,10 @@ class OracleManager extends DBManager
         "auto_increment_sequence" => true,
         'limit_subquery' => true,
         "recursive_query" => true,
+        "prepared_statements" => true,
     );
+
+    public $preparedStatementClass = 'OraclePreparedStatement';
 
     protected $maxNameLengths = array(
         'table' => 30,
@@ -65,38 +69,38 @@ class OracleManager extends DBManager
     );
 
     protected $type_map = array(
-            'int'      => 'number',
-            'double'   => 'number(38,10)',
-            'float'    => 'number(30,6)',
-            'uint'     => 'number(15)',
-            'ulong'    => 'number(38)',
-            'long'     => 'number(38)',
-            'short'    => 'number(3)',
-            'varchar'  => 'varchar2',
-            'text'     => 'clob',
-            'longtext' => 'clob',
-            'date'     => 'date',
-            'enum'     => 'varchar2(255)',
-            'relate'   => 'varchar2',
-            'multienum'=> 'clob',
-            'html'     => 'clob',
-            'longhtml' => 'clob',
-    		'datetime' => 'date',
-            'datetimecombo' => 'date',
-            'time'     => 'date',
-            'bool'     => 'number(1)',
-            'tinyint'  => 'number(3)',
-            'char'     => 'char',
-            'id'       => 'varchar2(36)',
-            'blob'     => 'blob',
-            'longblob' => 'blob',
-            'currency' => 'number(26,6)',
-            'decimal'  => 'number(20,2)',
-            'decimal2' => 'number(30,6)',
-            'url'      => 'varchar2',
-            'encrypt'  => 'varchar2(255)',
-            'file'     => 'varchar2(255)',
-	    	'decimal_tpl' => 'number(%d, %d)',
+        'int'      => 'number',
+        'double'   => 'number(38,10)',
+        'float'    => 'number(30,6)',
+        'uint'     => 'number(15)',
+        'ulong'    => 'number(38)',
+        'long'     => 'number(38)',
+        'short'    => 'number(3)',
+        'varchar'  => 'varchar2',
+        'text'     => 'clob',
+        'longtext' => 'clob',
+        'date'     => 'date',
+        'enum'     => 'varchar2(255)',
+        'relate'   => 'varchar2',
+        'multienum'=> 'clob',
+        'html'     => 'clob',
+        'longhtml' => 'clob',
+        'datetime' => 'date',
+        'datetimecombo' => 'date',
+        'time'     => 'date',
+        'bool'     => 'number(1)',
+        'tinyint'  => 'number(3)',
+        'char'     => 'char',
+        'id'       => 'varchar2(36)',
+        'blob'     => 'blob',
+        'longblob' => 'blob',
+        'currency' => 'number(26,6)',
+        'decimal'  => 'number(20,2)',
+        'decimal2' => 'number(30,6)',
+        'url'      => 'varchar2',
+        'encrypt'  => 'varchar2(255)',
+        'file'     => 'varchar2(255)',
+        'decimal_tpl' => 'number(%d, %d)',
             );
 	/**
      * List of known sequences
@@ -422,19 +426,67 @@ class OracleManager extends DBManager
         return false;
     }
 
+    /**
+     * Run query throuh prepared statement, accounting for LOBs
+     * @param string $sql SQL query
+     * @param string $data Data for SQL
+     * @param array $defs Field definitions
+     * @param string $msg Error message
+     * @return boolean
+     */
+    protected function preparedQueryLob($sql, $data, $defs, $msg = '')
+    {
+        $ps = new $this->preparedStatementClass($this);
+        if(!$ps->setLobs($this->getLobFields($defs))->preparePreparedStatement($msg)) {
+            return false;
+        }
+        return $ps->executePreparedStatement($data, $msg);
+    }
 
     /**
      * @see DBManager::update()
      */
     public function update(SugarBean $bean, array $where = array())
     {
-        $sql = $this->updateSQL($bean,$where);
         $this->tableName = $bean->getTableName();
-        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
-
         $msg = "Error updating table: ".$this->tableName;
+        if($this->usePreparedStatements) {
+            list($sql, $data) = $this->updateSQL($bean, $where, true);
+            return $this->preparedQueryLob($sql, $data, $bean->getFieldDefinitions(), $msg);
+        } else {
+            $sql = $this->updateSQL($bean,$where);
+            $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+        }
+
         $this->checkError($msg.' Query Failed: ' . $sql, true);
         return $ret;
+    }
+
+    /**
+     * Extract LOB fields from vardefs
+     * @param array $fieldDefs vardefs
+     * @return array Array containing LOB fields, keyed by field number and value is field name
+     */
+    protected function getLobFields($fieldDefs)
+    {
+        $lob_fields = array();
+        $cnt = 0;
+        foreach ($fieldDefs as $fieldDef) {
+            $type = $this->getColumnType($this->getFieldType($fieldDef));
+            if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
+                continue;
+            }
+
+            //not include the field if a value is not set...
+            if (!isset($data[$fieldDef['name']])) continue;
+
+            $cnt++;
+            $lob_type = false;
+            if ($this->isTextType($type)) {
+                $lob_fields[$cnt] = $fieldDef['name'];
+            }
+        }
+        return $lob_fields;
     }
 
     /**
@@ -442,12 +494,17 @@ class OracleManager extends DBManager
      */
     public function insert(SugarBean $bean)
     {
-        $sql = $this->insertSQL($bean);
         $this->tableName = $bean->getTableName();
-        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
-
         $msg = "Error inserting into table: ".$this->tableName;
-        $this->checkError($msg.' Query Failed: ' . $sql, true);
+        if($this->usePreparedStatements) {
+            list($sql, $data) = $this->insertSQL($bean, true);
+            return $this->preparedQueryLob($sql, $data, $bean->getFieldDefinitions(), $msg);
+        } else {
+            $sql = $this->insertSQL($bean);
+            $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+
+            $this->checkError($msg.' Query Failed: ' . $sql, true);
+        }
         return $ret;
     }
 
@@ -456,11 +513,17 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
     {
-        $sql = parent::insertParams($table, $field_defs, $data, $field_map, false);
-        if(!$execute) return $sql;
-        return $this->AltlobExecute($table, $field_defs, $data, $sql);
+
+        if ( !$usePrepared ) {
+            $sql = parent::insertParams($table, $field_defs, $data, $field_map, false, $usePrepared);
+            if(!$execute) return $sql;
+            return $this->AltlobExecute($table, $field_defs, $data, $sql);
+        }
+        else {
+            return parent::insertParams($table, $field_defs, $data, $field_map, $execute, $usePrepared);
+        }
     }
 
     /**
@@ -496,8 +559,13 @@ class OracleManager extends DBManager
             if (!isset($data[$fieldDef['name']])) continue;
 
             $lob_type = false;
-            if ($this->isTextType($type)) $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob') $lob_type = OCI_B_BLOB;
+            if ($this->isTextType($type)) {
+                if($this->getColumnType($type) == 'clob') {
+                    $lob_type = OCI_B_CLOB;
+                } else {
+                    $lob_type = OCI_B_BLOB;
+                }
+            }
 
             // this is not a lob, continue;
             if ($lob_type === false) continue;
@@ -692,6 +760,7 @@ class OracleManager extends DBManager
             case 'time':
                 return "to_date($string, 'HH24:MI:SS')";
             case 'datetime':
+            case 'datetimecombo':
                 return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'$additional_parameters_string)";
             case 'today':
                 return "sysdate";
@@ -811,7 +880,8 @@ class OracleManager extends DBManager
     public function isTextType($type)
     {
         $type = strtolower($type);
-        return ($type == 'clob' || $this->getColumnType($type) == 'clob');
+        $ctype = $this->getColumnType($type);
+        return $type == 'clob' || $ctype == 'clob' || $type == 'blob' || $ctype == 'blob';
     }
 
     /**
@@ -837,7 +907,7 @@ class OracleManager extends DBManager
     /**
 	 * @see DBManager::massageValue()
 	 */
-	public function massageValue($val, $fieldDef)
+    public function massageValue($val, $fieldDef, $forPrepared = false)
     {
         $type = $this->getFieldType($fieldDef);
         $ctype = $this->getColumnType($type);
@@ -855,7 +925,7 @@ class OracleManager extends DBManager
             return parent::massageValue($val[0], $fieldDef);            // get the date portion
         }
 
-        return parent::massageValue($val, $fieldDef);
+        return parent::massageValue($val, $fieldDef, $forPrepared);
     }
 
 	/**
@@ -1408,25 +1478,25 @@ EOQ;
         return $sequence_name;
     }
 
-    public function emptyValue($type)
+    public function emptyValue($type, $forPrepared = false)
     {
         $ctype = $this->getColumnType($type);
-        if($ctype == "datetime") {
-            return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
-        }
-        if($ctype == "date") {
-            return $this->convert($this->quoted("1970-01-01"), "date");
-        }
-        if($ctype == "time") {
-            return $this->convert($this->quoted("00:00:00"), "time");
-        }
+       	if($ctype == "datetime") {
+   			return $forPrepared?"1970-01-01 00:00:00":$this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
+   		}
+   		if($ctype == "date") {
+   			return $forPrepared?"1970-01-01":$this->convert($this->quoted("1970-01-01"), "date");
+   		}
+   		if($ctype == "time") {
+   			return $forPrepared?"00:00:00":$this->convert($this->quoted("00:00:00"), "time");
+   		}
         if($ctype == "clob") {
             return "EMPTY_CLOB()";
         }
         if($ctype == "blob") {
             return "EMPTY_BLOB()";
         }
-        return parent::emptyValue($type);
+        return parent::emptyValue($type, $forPrepared);
     }
 
     /**

@@ -59,6 +59,7 @@
 */
 
 include_once('include/database/MssqlManager.php');
+require_once 'include/database/SqlsrvPreparedStatement.php';
 
 /**
  * SQL Server (sqlsrv) manager
@@ -77,7 +78,10 @@ class SqlsrvManager extends MssqlManager
         'create_user' => true,
         "create_db" => true,
         "recursive_query" => true,
+        "prepared_statements" => true,
     );
+
+    public $preparedStatementClass = 'SqlsrvPreparedStatement';
 
     protected $type_map = array(
             'int'      => 'int',

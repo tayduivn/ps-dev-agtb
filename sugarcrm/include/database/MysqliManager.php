@@ -65,6 +65,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 require_once('include/database/MysqlManager.php');
+require_once 'include/database/MysqliPreparedStatement.php';
 
 /**
  * MySQL manager implementation for mysqli extension
@@ -78,6 +79,7 @@ class MysqliManager extends MysqlManager
 	public $variant = 'mysqli';
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
+	public $preparedStatementClass = 'MysqliPreparedStatement';
 
     /**
      * Create DB Driver
@@ -86,6 +88,7 @@ class MysqliManager extends MysqlManager
 	{
         parent::__construct();
         $this->capabilities["recursive_query"] = true;
+        $this->capabilities["prepared_statements"] = true;
 	}
 
 	/**
@@ -169,7 +172,7 @@ class MysqliManager extends MysqlManager
         $dumpQuery = str_replace(array('      ','     ','    ','   ','  ',"\n","\t","\r"),
                                  array(' ',     ' ',    ' ',   ' ',  ' ', ' ', ' ', ' ',),
                                  $sql);
-          
+
         $GLOBALS['log']->fatal("{$line['file']}:{$line['line']} ${line['function']} \nQuery: $dumpQuery\n");
         */
 
@@ -188,7 +191,6 @@ class MysqliManager extends MysqlManager
         }
 
         $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-
         return $result;
     }
 
@@ -312,7 +314,7 @@ class MysqliManager extends MysqlManager
 			if (ini_get('mysqli.allow_persistent') && $this->getOption('persistent')) {
 				$dbhost = "p:" . $dbhost;
 			}
-			
+
 			$this->database = mysqli_connect($dbhost,$configOptions['db_user_name'],$configOptions['db_password'],isset($configOptions['db_name'])?$configOptions['db_name']:'',$dbport);
 			if(empty($this->database)) {
 				$GLOBALS['log']->fatal("Could not connect to DB server ".$dbhost." as ".$configOptions['db_user_name'].". port " .$dbport . ": " . mysqli_connect_error());
@@ -579,5 +581,4 @@ class MysqliManager extends MysqlManager
         $sql = "$sql ORDER BY hrs._id DESC";  // try and mimic other DB return orders for consistancy. breaks unit test otherwise
         return $sql;
     }
-
 }

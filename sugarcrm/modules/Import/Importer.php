@@ -794,6 +794,11 @@ class Importer
     {
         global $timedate, $current_user;
 
+        // If the field we're examining is a relate, don't return a default value.
+        if ($fieldDef['type'] == 'relate') {
+            return '';
+        }
+
         if ( is_array($fieldValue) )
             $defaultRowValue = encodeMultienumValue($fieldValue);
         else
@@ -893,7 +898,7 @@ class Importer
     protected function _convertId($string)
     {
         return preg_replace_callback(
-            '|[^A-Za-z0-9\-\_]|',
+            '|[^A-Za-z0-9\-\_\.]|',
             create_function(
             // single quotes are essential here,
             // or alternative escape all $ as \$

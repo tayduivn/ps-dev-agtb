@@ -2,9 +2,7 @@
   ----------------*/
 
 .modal {
-  border: 1px solid @grayLight;
-  border: 1px solid rgba(0,0,0,.1);
-  *border: 1px solid @grayLight; /* IE6-7 */
+  border: @borderWidget;
   .box-shadow(@shadowWidget);
   .border-radius(@baseBorderRadius);
 }
@@ -23,7 +21,7 @@
 
 // Back to white header preserving 3px rounding
 .modal-header {
-  .border-radius(3px 3px 0 0);
+  .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
 }
 
 // Hack: Since we've used .record .record-cell, we can't just use record-cell by itself and had
@@ -119,9 +117,9 @@
   left: 0;
   right: 0;
   background-color: @grayLighter;
-  border-top: 1px solid @grayLight;
+  border-top: @borderWidget;
   .box-sizing(border-box);
-  .border-radius(0 0 3px 3px);
+  .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
 }
 
 .modal-backdrop,

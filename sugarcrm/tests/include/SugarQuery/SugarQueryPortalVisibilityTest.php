@@ -43,14 +43,14 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $this->getMock('SugarBean', array('loadVisibility'));
         $vis = $this->getMock('SupportPortalVisibility', array('addVisibilityFromQuery', 'addVisibilityWhereQuery'), array($bean));
         $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
-        $bean->module_dir = 'test';        
+        $bean->module_dir = 'test';
         $query = new SugarQuery();
         $vis->expects($this->once())->method('addVisibilityFromQuery')->with($query)->will($this->returnValue($query));
         $vis->expects($this->once())->method('addVisibilityWhereQuery')->with($query)->will($this->returnValue($query));
         $bean->addVisibilityQuery($query);
         unset($vis);
         unset($bean);
-        unset($query);        
+        unset($query);
     }
 
     public function testQueryReturnWithAccounts()
@@ -66,7 +66,7 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->addVisibilityQuery($query);
         $queryShouldBe = "INNER JOIN  accounts_contacts ON contacts.id=accounts_contacts.contact_id AND accounts_contacts.deleted=0
  INNER JOIN  accounts accounts_pv ON accounts_pv.id=accounts_contacts.account_id AND accounts_pv.deleted=0
- AND accounts_pv.id IN ('1','2','3','4')  WHERE contacts.deleted = 0";
+ AND accounts_pv.id IN ('1','2','3','4')  WHERE contacts.deleted";
 
 
         $this->assertContains($queryShouldBe, $query->compileSql(), "The query does not match");
@@ -88,12 +88,12 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->addVisibilityQuery($query);
 
         $queryShouldBe = "SELECT  * FROM contacts WHERE contacts.deleted = 0 AND  ( contacts.id = '1' )";
-        
+
         $this->assertEquals($queryShouldBe, $query->compileSql(), "The query does not match");
         unset($_SESSION);
         unset($contact);
-        unset($query);        
-    }    
+        unset($query);
+    }
 }
 
 class ContactsPortalVisibilityQueryMock extends Contact

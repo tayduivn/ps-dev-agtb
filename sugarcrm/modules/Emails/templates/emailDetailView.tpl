@@ -104,9 +104,8 @@
 <script>
 $(document).ready(function(){
 	SUGAR.themes.actionMenu();
-    if (window.parent && window.parent.SUGAR && window.parent.SUGAR.App.view) {
-        window.parent.SUGAR.App.view.views.BaseBwcView.prototype._rewriteLinksForSidecar(window);
-    }
+    // this view shouldn't be supported outside of a BWC frame.
+    window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
 });
 </script>
 {/literal}

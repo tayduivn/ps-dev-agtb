@@ -151,6 +151,7 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 		$panels_def = html_entity_decode($_REQUEST['panels_def']);
 		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
+        $args['reporter']->removeInvalidFilters();
 		$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 	}
 	if (isset($_REQUEST['id']))
@@ -206,13 +207,14 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		$saved_report_seed = BeanFactory::getBean('Reports');
 		$saved_report_seed->disable_row_level_security = true;
 		$saved_report_seed->retrieve($_REQUEST['id'], false);
-//		$args['reporter'] = new Report($saved_report_seed->content);
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
 		$args['reporter']->saved_report = &$saved_report_seed;
 		$args['reporter']->is_saved_report = true;
 		$args['reporter']->saved_report_id = $saved_report_seed->id;
+        $args['reporter']->removeInvalidFilters();
 	} else {
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
+        $args['reporter']->removeInvalidFilters();
 	}
 	$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 	$sugar_smarty->assign('current_step', $_REQUEST['current_step']);
@@ -287,6 +289,7 @@ else if (!empty($_REQUEST['id'])) {
 	$args['reporter']->saved_report = &$saved_report_seed;
 	$args['reporter']->is_saved_report = true;
 	$args['reporter']->saved_report_id = $saved_report_seed->id;
+	$args['reporter']->removeInvalidFilters();
 	$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 	if (!isset($args['reporter']->report_def['do_round']) || $args['reporter']->report_def['do_round'] == 1)
 			$sugar_smarty->assign("do_round", 1);
@@ -333,6 +336,7 @@ else if (!empty($_REQUEST['id'])) {
 
 
 			$args['reporter'] = new Report($global_json->encode($report_def));
+            $args['reporter']->removeInvalidFilters();
 			$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 		}
 	}

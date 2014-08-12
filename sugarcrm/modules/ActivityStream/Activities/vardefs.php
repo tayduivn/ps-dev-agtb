@@ -133,13 +133,6 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUGS',
         ),
-        'emails' => array(
-            'name'=> 'emails',
-            'vname'=> 'LBL_EMAILS',
-            'type'=> 'link',
-            'relationship'=> 'emails_activities',
-            'source'=> 'non-db',
-        ),
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',

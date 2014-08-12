@@ -24,8 +24,9 @@ $report_smarty = new Sugar_Smarty();
 function template_list_view(&$reporter,&$args) {	
 	global $start_link_wrapper,$end_link_wrapper;	
 	//echo "template_list_view";
-	global $mod_strings, $report_smarty;
-	$reporter->run_query();	
+	global $report_smarty;
+    $reporter->validateBeforeDisplay();
+    $reporter->run_query();
 	$reporter->_load_currency();
 	$start_link_wrapper= "javascript:set_sort('";
 	$end_link_wrapper =  "');";

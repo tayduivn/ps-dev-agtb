@@ -10,11 +10,17 @@
     top: 10px;
     right: 9px;
     color: @grayLight;
+    z-index: 1;
   }
   input[type="text"] {
-    border: 1px solid @inputBorder;
+    border: @inputBorder !important;
+    position: relative;
     &:focus {
       .box-shadow(none);
+      border: 1px solid @linkColor !important;
+    }
+    &.select2-active {
+      z-index: 2;
     }
   }
 }
@@ -25,11 +31,9 @@
     background: none;
   }
   &.select2-dropdown-open {
-    //can't do this here as it breaks search filter pill
-    //min-width: 100px;
     z-index: @zindexDropdown;
     .select2-choices {
-      .border-radius(3px 3px 0 0);
+      .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
     }
   }
   &.inherit-width {
@@ -37,16 +41,18 @@
   }
   &.select2-dropdown-open.select2-drop-above {
     .select2-choices {
-      .border-radius(0 0 3px 3px);
+      .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
     }
   }
   .select2-choices {
     padding: 2px 4px 2px 0;
     min-height: 22px;
-    border: 1px solid @inputBorder;
+    border: @inputBorder;
     background-image: none;
-    .border-radius(3px);
-    .box-shadow(~"inset 0 1px 1px rgba(0, 0, 0, 0.075)");
+    .border-radius(@baseBorderRadius);
+    &:focus {
+      border: 1px solid @linkColor !important;
+    }
   }
   .select2-search-field {
     height: 20px;
@@ -60,20 +66,24 @@
   &.select2-choices-pills .select2-search-choice,
   &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
     padding: 0;
-    margin: 3px 0 3px 4px;
+    margin: 2px 0 0 4px;
     font-size: 12px;
-    background: none;
+    font-weight: bold;
     border: none;
-    .border-radius(0);
     .box-shadow(none);
     line-height: 12px;
+    .border-radius(20px);
+    background: @gray;
+    color: @white;
+    padding: 2px 4px 2px 6px;
+    white-space: nowrap;
     &.select2-search-choice-focus {
-      border-color: rgba(82, 168, 236, 0.8);
+      border-color: @linkColor !important;
       outline: 0;
       outline: ~"thin dotted \9";
-      .box-shadow(~"0 0 4px 2px rgba(0, 0, 0, .075), 0 0 8px 3px rgba(82, 168, 236, .6)");
       .border-radius(11px);
-      background-color: rgba(82, 168, 236, 0.4);
+      .box-shadow(none);
+      background-color: @dropdownLinkBackgroundHover;
     }
   }
 
@@ -83,8 +93,8 @@
     }
     span {
       .border-radius(10px 0 0 10px);
-      background: #ddd;
-      color: #777;
+      background: darken(@grayLighter, 10%);
+      color: @gray;
       padding: 2px 4px 2px 6px;
       margin-right: 2px;
     }
@@ -109,50 +119,62 @@
   &.select2-container-multi.select2-choices-pills-close {
     .select2-search-choice {
       div {
-        .border-radius(10px);
-        background: @dropdownLinkBackgroundHover;
-        color: @dropdownLinkColorHover;
-        padding: 2px 18px 2px 6px;
+        font-size: 11px;
+        line-height: 12px;
+        display: inline;
       }
       a.select2-search-choice-close {
-        top: 2px;
-        right: 3px;
-        width: 12px;
-        height: 12px;
-        left: auto;
         font-family: FontAwesome;
-        font-size: 14px;
-        font-weight: bold;
+        font-size: 12px;
+        font-weight: normal;
         text-decoration: none;
-        color: darken(@dropdownLinkBackgroundHover,10%);
+        color: fade(@white, 70%);
         background: none;
+        line-height: 12px;
+        position: static;
+        display: inline;
+        vertical-align: middle;
       }
       a.select2-search-choice-close:hover {
-        color: lighten(@dropdownLinkColorHover,10%);
+        color: @white;
       }
       a.select2-search-choice-close::before {
         content: "\f057";
       }
       &.select2-locked {
-        padding: 0 !important;
+        padding: 1px 4px !important;
+        background: @grayLighter;
+        border: 1px solid @gray;
         div {
-          padding-right: 6px;
           color: @gray;
-          background: @grayLighter;
         }
       }
     }
     &.attachments .select2-search-choice {
       div {
-        background: @dropdownLinkBackgroundHover;
-        padding: 2px 18px 2px 6px;
+        background: @gray;
+        padding: 2px 28px 2px 6px;
       }
     }
+    //forecasts
     &.search-filter .select2-search-choice {
       margin: 0 0 4px 4px;
+      background: none;
+      padding: 0;
+      position: relative;
       a.select2-search-choice-close {
-        top: 6px;
+        top: 2px;
+        position: absolute;
         right: 4px;
+        left: auto;
+        &::before {
+          line-height: 14px;
+          height: 14px;
+          vertical-align: top;
+          display: inline-block;
+          margin-top: 3px;
+          font-size: 14px;
+        }
       }
       div {
         background: none;
@@ -228,15 +250,20 @@
     color: @grayLight !important; //important needed here to overide select2
   }
   .select2-choice {
-    #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 3%));
-    color: lighten(@gray, 20%);
-    border-color: @inputBorder;
+    background: @grayLighter;
+    color: @grayLight;
+    border-color: @inputBorderColor;
+    filter: none;
     line-height: 26px;
     height: 26px;
     .box-shadow(none);
+    &:focus {
+      border-color: @linkColor;
+    }
     .select2-arrow {
       border: none;
       background: none;
+      filter: none;
       .border-radius(0);
       top: 0;
       padding-left: 4px;
@@ -263,13 +290,15 @@
     }
   }
   &.select2-container-active .select2-choice {
-    border-color: rgba(82,168,236,.8);
+    border-color: @linkColor;
     outline: 0;
     outline: ~"thin dotted \9"; /* IE6-9 */
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
   }
   &.required .select2-choice {
-    border-color: lighten(@gray, 25%);
+    border-color: darken(@grayLighter, 10%);
+    &:focus {
+      border-color: @linkColor !important;
+    }
   }
 }
 
@@ -284,16 +313,15 @@
 
 .select2-drop {
   color: @textColor;
-  border-color: @inputBorder;
+  border-color: @inputBorderColor;
   z-index: @zindexSelect2menu;
   &.select2-drop-active {
-    min-width: 100px;
-    border-color: rgba(82,168,236,.8);
+    min-width: 50px;
+    border-color: @linkColor;
     outline: 0;
     outline: ~"thin dotted \9"; /* IE6-9 */
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 1px 4px 0px rgba(82,168,236,.6)");
     &.select2-narrow {
-      border-top: 1px solid rgba(82,168,236,.8);
+      border-top: 1px solid @linkColor;
       width: auto !important;
       max-width: 200px;
       &.select2-parent {
@@ -302,14 +330,21 @@
     }
   }
   .select2-results:last-child {
-    .border-radius(0 0 3px 3px);
+    .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
   }
 }
 
 .select2-drop-error {
-  border-color:@errorText;
+  border-color: @errorText;
   .select2-results {
-
+  /*    li:first-child {
+      border-top: none;
+      .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+    }
+    li:last-child {
+      border-bottom: none;
+      .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+    }*/
   }
 }
 
@@ -322,7 +357,7 @@
   border: none;
   .select2-results {
     margin-top: 8px;
-    border: 1px solid @inputBorder;
+    border: @inputBorder;
     .result-selected {
       display: block;
       font-weight: bold;
@@ -340,7 +375,6 @@
   }
   li div {
     line-height: 18px;
-    //border-bottom: 1px solid darken(@grayLighter, 5%);
   }
   li div:hover,
   .select2-highlighted {
@@ -349,7 +383,7 @@
   }
   li:last-child {
     border-bottom: none;
-    .border-radius(0 0 3px 3px);
+    .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
   }
 }
 .select2-no-results,
@@ -363,7 +397,7 @@
   .select2-results {
     li:first-child {
       border-top: none;
-      .border-radius(3px 3px 0 0);
+      .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
     }
     li:last-child {
       border-bottom: none;
@@ -462,7 +496,7 @@
     input[type="text"] {
       width: 95%;
       .calcWidth(~"100% - 14px");
-      .border-radius(0 2px 2px 0);
+      .border-radius(0 @baseBorderRadius @baseBorderRadius 0);
     }
   }
   > input[type="text"] {
@@ -478,7 +512,7 @@
     width: 100px;
   }
   .select2-container .select2-choice {
-    .border-radius(3px 0 0 3px);
+    .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
     border-right: none;
   }
 }

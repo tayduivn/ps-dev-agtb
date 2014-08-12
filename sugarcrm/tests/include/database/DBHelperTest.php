@@ -16,8 +16,19 @@ require_once 'modules/Cases/Case.php';
 
 class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_db;
-    private $_helper;
+    /**
+     * DB Manager
+     * @var DBManager
+     */
+    protected $_db;
+    /**
+     * DB Manager - for BC
+     * @var DBManager
+     */
+    protected $_helper;
+
+    public $usePreparedStatements = false;
+
 
     static public function setUpBeforeClass()
     {
@@ -36,6 +47,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_db = DBManagerFactory::getInstance();
         $this->_helper = $this->_db;
+        $this->_db->usePreparedStatements = $this->usePreparedStatements;
     }
 
     public function tearDown()

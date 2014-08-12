@@ -28,7 +28,11 @@
                             </div>
                             <div class="span6">
                                 <a class="pull-right" target="_blank" href="https://twitter.com/{{screen_name}}/status/{{id}}">
-                                    {{timeago date timeLabel}}
+                                    {{#if useAbsTime}}
+                                        {{date}}
+                                    {{else}}
+                                        {{relativeTime date class='date' rel='tooltip'}}
+                                    {{/if}}
                                 </a>
                             </div>
                         </div>

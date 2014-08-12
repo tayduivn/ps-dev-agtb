@@ -381,7 +381,6 @@ $mod_strings = array(
 'LBL_EDIT_ROWS'=>'Edit Rows',
 'LBL_EDIT_COLUMNS'=>'Edit Columns',
 'LBL_EDIT_LABELS'=>'Edit Labels',
-'LBL_EDIT_FIELDS'=>'Edit Custom Fields',
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
@@ -395,7 +394,6 @@ $mod_strings = array(
 'LBL_LAYOUTS'=>'Layouts',
 'LBL_LISTVIEW'=>'List View',
 'LBL_RECORDVIEW'=>'Record View',
-'LBL_MODULES'=>'Modules',
 'LBL_MODULE_TITLE' => 'Studio',
 'LBL_NEW_PACKAGE' => 'New Package',
 'LBL_NEW_PANEL'=>'New Panel',
@@ -411,7 +409,6 @@ $mod_strings = array(
 'LBL_SUBPANEL' => 'Subpanel',
 'LBL_SUBPANEL_TITLE' => 'Title:',
 'LBL_SEARCH_FORMS' => 'Search',
-'LBL_SEARCH'=>'Search',
 'LBL_STAGING_AREA' => 'Staging Area (drag and drop items here)',
 'LBL_SUGAR_FIELDS_STAGE' => 'Sugar Fields (click items to add to staging area)',
 'LBL_SUGAR_BIN_STAGE' => 'Sugar Bin (click items to add to staging area)',
@@ -448,7 +445,6 @@ $mod_strings = array(
 // @TODO: Remove this lang string and uncomment out the string below once studio
 // supports removing combo fields if a member field is on the layout already.
 'LBL_INDICATES_COMBO_FIELD' => '** Indicates a combination field. A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>Doubleclick a combination field to see which fields it contains.',
-//'LBL_INDICATES_COMBO_FIELD' => '<b>** Indicates a combination field</b><br>There are both single fields and combination fields available for the record view.<br><br>A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>You can add either a combination field or its individual fields to a layout - but NOT both. For example: if you add "State" to the layout, the combination field "Address" is no longer available to select from the toolbox. Similarly, if you add "Address", the individual field "State" is no longer available in the toolbox.',
 'LBL_COMBO_FIELD_CONTAINS' => 'contains:',
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -466,7 +462,6 @@ $mod_strings = array(
 'LBL_DEPENDANT' => 'Dependant',
 'LBL_CALCULATED' => 'Calculated Value',
 'LBL_READ_ONLY' => 'Read Only',
-'LBL_FORMULA' => 'Formula',
 'LBL_FORMULA_BUILDER' => 'Formula Builder',
 'LBL_FORMULA_INVALID' => 'Invalid Formula',
 'LBL_FORMULA_TYPE' => 'The formula must be of type ',
@@ -655,14 +650,12 @@ $mod_strings = array(
 'LBL_MY_ACCOUNT'=>'My Account',
 'LBL_LOGOUT'=>'Logout',
 'LBL_CREATE_NEW'=>'Create New',
-'LBL_LIST'=>'List',
 'LBL_LOW'=>'Low',
 'LBL_MEDIUM'=>'Medium',
 'LBL_HIGH'=>'High',
 'LBL_NUMBER'=>'Number:',
 'LBL_PRIORITY'=>'Priority:',
 'LBL_SUBJECT'=>'Subject',
-'LBL_DESCRIPTION'=>'Description:',
 
 //END SUGARCRM flav=pro ONLY
 
@@ -823,7 +816,6 @@ $mod_strings = array(
 'LBL_RESET_LABELS' => 'Reset Labels',
 'LBL_RESET_LAYOUTS' => 'Reset Layouts"',
 'LBL_REMOVE_FIELDS' => 'Remove Custom Fields',
-'LBL_CLEAR_EXTENSIONS' => 'Clear Extensions',
 'LBL_CLEAR_EXTENSIONS' => 'Clear Extensions',
 
 'LBL_HISTORY_TIMESTAMP' => 'TimeStamp',

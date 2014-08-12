@@ -183,6 +183,7 @@
     cancel: function () {
         //Clear unsaved changes on cancel.
         app.events.trigger('create:model:changed', false);
+        this.$el.off();
         if(app.drawer){
             app.drawer.close(this.context);
         }

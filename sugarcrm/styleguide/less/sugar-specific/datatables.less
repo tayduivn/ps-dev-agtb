@@ -23,7 +23,8 @@
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
-    border-right: 1px solid darken(@grayLighter,5%);
+    border-right: @tableBorder;
+    border-bottom: none;
     background-color: @white;
     .rtl(@direction,ltr);
     &:last-child {
@@ -49,6 +50,7 @@
       border-bottom: none;
       border-left: none;
       max-height: none;
+      position: static;
       > div {
         position: absolute;
         display: table;
@@ -66,7 +68,7 @@
       }
     }
     > span {
-      display: block;
+      display: inline-block;
       width: 100%;
       overflow-x: hidden;
       white-space: nowrap;
@@ -99,9 +101,9 @@
     vertical-align: middle;
     text-overflow: ellipsis;
     max-width: 82px;
-    border-top: 1px solid darken(@grayLighter, 5%);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    background-color: @white;
+    background: @white;
+    border-top: none;
+    border-bottom: none;
     .rtl(@direction,ltr);
 
     &:last-child {
@@ -182,7 +184,7 @@
       vertical-align: middle;
     }
     .list + .list .icon-favorite {
-      margin-left: 13px;
+      margin: 0 8px;
     }
     // email and merge (change)
     .icon-star {
@@ -214,15 +216,28 @@
   }
 
   /* ---------
+  TABLE HEAD (specific) */
+  thead tr {
+    border-bottom: @tableBorder;
+  }
+
+  /* ---------
   TABLE FOOTER */
   tfoot {
+    tr {
+      border-top: 2px solid @tableBorderColor;
+    }
     th {
       white-space: normal;
       word-break: break-word;
     }
     td {
       font-weight: bold;
-      border-top: 2px solid @grayLight;
+    }
+    tr:first-child {
+      td {
+        border-top: 2px solid @grayLight;
+      }
     }
     tr.overall th {
       font-weight: bold;
@@ -231,62 +246,50 @@
 
   /* ---------
   TABLE ROW (specific) */
-  tr {
-    //last row
-    &:last-child {
-      td {
-        border-bottom: 2px solid darken(@grayLighter, 5%);
-      }
-    }
+  tbody tr {
+    border-top: @tableBorder;
+    border-bottom: @tableBorder;
     //for preview
     &.highlighted {
-      &.current td {
-        #gradient > .vertical(darken(@grayLighter, 6%), darken(@grayLighter, 2%));
-        border-bottom: 1px solid darken(@grayLighter, 8%);
-        &:last-child {
-          z-index: 2;
-        }
-        .rowaction.btn:not(.btn-invisible) {
-          .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important");
-        }
-        .icon-eye-open {
-          color: @grayDark;
+      &.current {
+        td {
+          &:last-child {
+            z-index: 2;
+          }
+          .btn.preview-list-item,
+          .rowaction.btn:not(.btn-invisible) {
+            background: @gray;
+          }
+          .icon-eye-open {
+            color: @grayLighter !important;
+          }
+          background: @dropdownLinkBackgroundHover;
         }
       }
     }
-    //also for preview??legacy?
     &.active {
       td {
-        background-image: url('@{textureSecondary}');
         .icon-eye-open {
-          color:@black !important;
+          color:@grayLighter;
+          background: @gray;
         }
       }
-    }
-    //selecting a row using shortcut keys
-    &.selected td:first-child:before {
-      content: " ";
-      position: absolute;
-      z-index: 11;
-      background: #e61718;
-      height: 36px;
-      margin-top: -18px;
-      width: 4px;
-      left: 0;
     }
     //inline editing
     &.tr-inline-edit {
       td {
         overflow: visible;
-        background: #e5f1fc;
         padding: 4px;
+        background: @dropdownLinkBackgroundHover;
         &:first-child {
+          border-right: 1px solid lighten(@dropdownLinkBackgroundHover,5%);
           .btn {
             margin-left: 0;
             padding: 0;
           }
         }
         &:last-child {
+          border-left: 1px solid lighten(@dropdownLinkBackgroundHover,5%);
           .btn {
             margin-left: 0;
             width: 100%;
@@ -425,10 +428,11 @@
     }
   }
 
-}
 
-.extend + .flex-list-view {
-  margin-top: 1px;
+  &.table-striped tbody > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
+    background: @grayLighter;
+  }
+
 }
 
 //Search and Select lists
@@ -444,10 +448,10 @@
 FLEXLIST GENERIC */
 .flex-list-view {
   position: relative;
+  border-top: @borderWidget;
   .flex-list-view-content {
     overflow-x: auto;
     width: 100%;
-    margin-bottom: -1px;
     /*-webkit-overflow-scrolling: touch;*/
   }
 
@@ -478,11 +482,11 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 27px;
+        height: 28px;
         top: 0;
         left: 0;
         padding: 7px 8px;
-        border-right: 1px solid darken(@grayLighter, 5%);
+        border-right: @tableBorder;
         background-color: inherit;
         z-index: 999;
       }
@@ -498,13 +502,19 @@ FLEXLIST GENERIC */
         height: 36px;
         margin-top: -18px;
         left: 0;
-        border-bottom: 1px solid darken(@grayLighter, 5%);
+        border-bottom: @tableBorder;
         background-color: inherit;
         overflow: visible;
         z-index: 10;
         // single search and select
         > input[type=radio] {
           margin-top: 11px;
+        }
+        > span.list {
+          input[type=checkbox],
+          input[type=radio] {
+            margin: 0 8px;
+          }
         }
         > span.list,
         > span.edit {
@@ -520,20 +530,19 @@ FLEXLIST GENERIC */
   &.left-actions.scroll-width .dataTable {
     th:first-child {
       > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
+        border-right: @tableBorder;
         -webkit-transform: translate3d(0,0,0);
         &:after {
-          .right-shadow;
-          height: 43px;
+          .right-shadow(43px);
         }
       }
     }
     td:first-child {
       > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
+        border-right: @tableBorder;
         -webkit-transform: translate3d(0,0,0);
         &:after {
-          .right-shadow;
+          .right-shadow(37px);
         }
       }
     }
@@ -558,10 +567,10 @@ FLEXLIST GENERIC */
         position: absolute;
         overflow: visible;
         width: 55px;
-        height: 27px;
+        height: 28px;
         top: 0;
-        right: 0;
-        padding: 7px 8px;
+        right: 1px;
+        padding: 7px 7px 7px 8px;
         background-color: inherit;
         &.open {
           z-index: 999;
@@ -575,9 +584,9 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         margin-top: -18px;
-        right: 0px;
-        padding: 4px 8px;
-        border-bottom: 1px solid darken(@grayLighter, 5%);
+        right: 1px;
+        padding: 4px 7px 4px 8px;
+        border-bottom: @tableBorder;
         background-color: inherit;
         overflow: visible;
         &.open {
@@ -600,7 +609,7 @@ FLEXLIST GENERIC */
         }
         &.open {
           .icon-eye-open {
-            color: @gray !important;
+            color: @gray;
           }
         }
         .dropdown-menu {
@@ -620,18 +629,17 @@ FLEXLIST GENERIC */
     th:last-child {
       .dropdown,
       > span {
-        border-left: 1px solid darken(@grayLighter, 5%);
+        border-left: @tableBorder;
         &:before {
-          .left-shadow;
-          height: 43px;
+          .left-shadow(43px);
         }
       }
     }
     td:last-child {
       > span {
-        border-left: 1px solid darken(@grayLighter, 5%);
+        border-left: @tableBorder;
         &:before {
-          .left-shadow;
+          .left-shadow(37px);
         }
       }
     }
@@ -639,19 +647,30 @@ FLEXLIST GENERIC */
 
   /*DUPLICATES*/
   .dataTable.duplicates {
+    tr {
+      border-top-color: @warningBorder;
+      border-bottom-color: @warningBorder;
+    }
     th {
-      background-color: lighten(@yellow_duplicate, 5%);
-    }
-    tr:nth-child(odd) > td {
-      background-color: @yellow_duplicate;
-    }
-    tr:nth-child(even) > td {
-      background-color: lighten(@yellow_duplicate, 5%);
+      background-color: @warningBackground;
+      border-right-color: @warningBorder;
     }
 
+    tbody > tr:not(.current):nth-child(odd) > td {
+      background-color: darken(@warningBackground,5%);
+    }
+    tbody > tr:not(.current):nth-child(even) > td {
+      background-color: @warningBackground;
+    }
+
+  // &.table-striped tbody > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
+  //   background: @grayLighter;
+  // }
     /*create record dup check*/
     &.duplicates-selectedit {
-      border-bottom: 1px solid darken(@grayLighter,5%);
+      tr {
+        border-bottom: 1px solid @warningBorder;
+      }
       th,
       td {
         &:first-child {
@@ -669,6 +688,7 @@ FLEXLIST GENERIC */
         > .list {
           width: 125px;
           padding-left: 2px;
+          border-bottom: 1px solid @warningBorder;
           > .list {
             width: auto;
             position: relative;
@@ -683,7 +703,7 @@ FLEXLIST GENERIC */
     }
     /*convert lead dup check*/
     &.duplicates-singleselect {
-      tr:last-child > td {
+      tr:last-child {
         border-bottom-width: 0;
       }
     }
@@ -693,6 +713,7 @@ FLEXLIST GENERIC */
         //hack fix for messed up button group
         .btn.checkall {
           .border-radius(3px);
+          margin-left: 0;
         }
         .btn-group span,
         .dropdown-menu {
@@ -702,12 +723,9 @@ FLEXLIST GENERIC */
     }
     &.duplicates-singleselect,
     &.duplicates-multiselect {
-      td:last-child {
-        > .list {
-          > .list {
-            width: 54px;
-          }
-        }
+      td:last-child > .list > .list {
+        width: 28px;
+        right: 22px;
       }
     }
   }
@@ -746,6 +764,10 @@ FLEXLIST GENERIC */
         .clickToEdit.active span.edit {
           display: inline-block;
         }
+      }
+      &:last-child > .list > .list:first-child {
+        width: 28px;
+        right: 22px;
       }
     }
   }
@@ -789,11 +811,11 @@ FLEXLIST GENERIC */
 
   /*FORECASTS MANAGER WORKSHEET*/
   &.forecast-manager-worksheet .dataTable {
-    border-top: 1px solid darken(@grayLighter,10%);
+    border-top: @tableBorder;
     tr[name$="_commit_history"] td:first-child:last-child {
       padding: 0;
       height: auto;
-      background-color: @grayLight;
+      background-color: darken(@grayLighter,5%);
       .icon-arrow-down:before {
         color: @red;
       }
@@ -810,7 +832,6 @@ FLEXLIST GENERIC */
         margin: 0;
         border: none;
         .box-sizing(border-box);
-        .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.4)");
         .relativetime {
           color: @gray;
         }
@@ -919,9 +940,9 @@ table th.nosort span:after {
       width: 71px;
       .btn {
         .box-shadow(none);
-        background-color: darken(@grayLighter, 5%);
+        background-color: @gray;
         > [class^="icon-"] {
-          color: @grayDark;
+          color: @white;
         }
       }
     }

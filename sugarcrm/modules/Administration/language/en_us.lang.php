@@ -48,7 +48,6 @@ $mod_strings = array (
 
     'LBL_MINUTES'=>'Minutes',
     'LBL_HOURS'=>'Hours',
-    'LBL_DAYS'=>'Days',
     'LBL_WEEKS'=>'Weeks',
     'LBL_MONTHS'=>'Months',
 
@@ -666,7 +665,6 @@ $mod_strings = array (
     'LBL_REBUILD_WORKFLOW_CACHE' => 'Rebuilding Workflow Cache...<BR>',
     'LBL_REBUILD_WORKFLOW_COMPILING' => 'Compiling Plugins... <BR>',
     'LBL_REBUILD' => 'Rebuild',
-    'LBL_REBUILD'=>'Rebuild',
     'LBL_REGEX_HELP_TITLE'		=>'Regex Description',
     'LBL_REGEX_HELP_TEXT'		=>'<b>Regular Expressions </b> provide a concise and flexible means for identifying strings of the password, such as particular characters or patterns of characters. You can create custom password rules by providing a regex that will be used in a NOT MATCH condition; the password must not contain a match to any expressions in the regex.',
     'LBL_REGEX_DESC_HELP_TEXT'	=>'This description should explain the Regex Requirement and will be displayed in the list of requirements for users when they provide new passwords.',
@@ -773,7 +771,6 @@ $mod_strings = array (
     'LBL_THEME_SETTINGS_UNAVAILABLE_THEMES' => 'Unavailable Themes',
     'LBL_TIMEZONE' => 'Time Zone',
     'LBL_TO'    => ' to ',
-    'LBL_TRACKER_SETTINGS' => 'Tracker',
 	'LBL_TRACKER_SETTINGS_DESC' => 'Select what system and user data is tracked',
     'LBL_UPDATE_CHECK_AUTO'=>'Automatically',
     'LBL_UPDATE_CHECK_MANUAL'=>'Manually',
@@ -1165,7 +1162,6 @@ $mod_strings = array (
    'LBL_SAML_CERT' => 'X509 Certificate',
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
-   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
     //BEGIN SUGARCRM flav=com ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',

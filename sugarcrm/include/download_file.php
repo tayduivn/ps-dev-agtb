@@ -237,9 +237,9 @@ class DownloadFile {
 
                     // Quick existence check to make sure we are actually working
                     // on a real file
-                    if (!file_exists($filepath)) {
-                        return false;
-                    }
+            if (!file_exists($filepath) && ($bean->doc_type == "Sugar" || empty($bean->doc_type))) {
+                return false;
+            }
 
                     if (empty($fileurl) && !empty($bean->doc_url)) {
                         $fileurl = $bean->doc_url;
@@ -256,6 +256,7 @@ class DownloadFile {
                         'name' => $name,
                         'uri' => $fileurl,
                         'path' => $filepath,
+                        'doc_type' => $bean->doc_type
                     );
         } else {
             return null;
@@ -371,6 +372,11 @@ class DownloadFileApi extends DownloadFile
     {
         if(empty($info['path'])) {
             throw new SugarApiException('No file name supplied');
+        }
+
+        if (isset($info['doc_type']) && $info['doc_type'] != "Sugar") {
+            $this->api->setHeader("Location", $info['uri']);
+            return;
         }
 
         $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));

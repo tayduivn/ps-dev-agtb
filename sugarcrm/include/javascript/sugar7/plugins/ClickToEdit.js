@@ -238,10 +238,12 @@
             /**
              * Logic to make sure that we can actually edit the field
              *
-             * @returns {boolean}
+             * @return {boolean}
              */
             checkIfCanEdit: function() {
-                if (!_.isUndefined(this.def.click_to_edit) && this.def.click_to_edit === true) {
+                var isEnforce = (!_.isUndefined(this.def.enforced) && this.def.enforced === true),
+                    isClickToEdit = (!_.isUndefined(this.def.click_to_edit) && this.def.click_to_edit === true);
+                if (!isEnforce && isClickToEdit) {
                     // only worksheet owner can edit
                     // make sure we get the correct context, if we are in the forecast module
                     // its this.context.parent otherwise, its this.context

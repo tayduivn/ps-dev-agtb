@@ -80,7 +80,8 @@
                 }
             }
         }
-
+        $calendarJSFileName = SugarAutoLoader::fileExists('custom/include/javascript/calendar.js') ?
+            'custom/include/javascript/calendar.js' : 'include/javascript/calendar.js';
         $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
@@ -89,7 +90,7 @@
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/menu.js'            => 'include/javascript/sugar_grp1.js',
-                'include/javascript/calendar.js'        => 'include/javascript/sugar_grp1.js',
+                $calendarJSFileName                     => 'include/javascript/sugar_grp1.js',
                 'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
                 //HTML decode
@@ -234,7 +235,7 @@
             ),
            $sugar_grp_sidecar = array_merge(
                 array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
-               'sidecar/lib/jquery/jquery.placeholder.min.js' => 'include/javascript/sugar_sidecar.min.js'),
+               'sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'include/javascript/sugar_sidecar.min.js'),
                 getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
                array(
                    // D3 library
@@ -318,7 +319,7 @@
            ),
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array_merge(
-                array('sidecar/lib/jquery/jquery.placeholder.min.js' => 'portal2/portal.min.js'), // preserve ordering
+                array('sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'portal2/portal.min.js'), // preserve ordering
                 array(
                     'portal2/error.js'               => 'portal2/portal.min.js',
                     'portal2/user.js'                => 'portal2/portal.min.js',

@@ -59,6 +59,8 @@ $app_list_strings = array (
     'TaxRates'=>'Tax Rates',
     'ContractTypes' => 'Contract Types',
     'Schedulers'=>'Schedulers',
+    'Project'=>'Projects',
+    'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'CampaignTrackers'=>'Campaign Trackers',
@@ -164,6 +166,8 @@ $app_list_strings = array (
     'Schedulers'=>'Scheduler',
     'Campaigns'=>'Campaign',
     'CampaignLog'=>'Campaign Log',
+    'Project'=>'Project',
+    'ProjectTask'=>'Project Task',
     'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
@@ -566,7 +570,46 @@ $app_list_strings = array (
     'Yahoo!' => 'Yahoo!',
     'AOL' => 'AOL',
   ),
+    'project_task_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_task_priority_default' => 'Medium',
 
+    'project_task_status_options' => array (
+        'Not Started' => 'Not Started',
+        'In Progress' => 'In Progress',
+        'Completed' => 'Completed',
+        'Pending Input' => 'Pending Input',
+        'Deferred' => 'Deferred',
+    ),
+    'project_task_utilization_options' => array (
+        '0' => 'none',
+        '25' => '25',
+        '50' => '50',
+        '75' => '75',
+        '100' => '100',
+    ),
+
+    'project_status_dom' => array (
+        'Draft' => 'Draft',
+        'In Review' => 'In Review',
+        'Published' => 'Published',
+    ),
+    'project_status_default' => 'Draft',
+
+    'project_duration_units_dom' => array (
+        'Days' => 'Days',
+        'Hours' => 'Hours',
+    ),
+
+    'project_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_priority_default' => 'Medium',
   //Note:  do not translate record_type_default_key
 //       it is the key for the default record_type_module value
   'record_type_default_key' => 'Accounts',
@@ -582,7 +625,11 @@ $app_list_strings = array (
     'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
     'Bugs' => 'Bug',
+    'Project' => 'Project',
+
     'Prospects' => 'Target',
+    'ProjectTask' => 'Project Task',
+
     'Tasks' => 'Task',
   ),
 
@@ -602,6 +649,8 @@ $app_list_strings = array (
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
     'Prospects' => 'Target',
     'Cases' => 'Case',
     'Leads' => 'Lead',
@@ -627,6 +676,9 @@ $app_list_strings = array (
     'Bugs' => 'Bugs',
     'Cases' => 'Case',
     'Leads' => 'Lead',
+
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
 
@@ -822,6 +874,7 @@ $app_list_strings = array (
     'Product Catalog' => 'Product Catalog',
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
+    'Projects' => 'Projects',
     'Quotes' => 'Quotes',
     'Releases' => 'Releases',
     'RSS' => 'RSS',
@@ -1216,14 +1269,6 @@ $app_list_strings = array (
     'Math' => 'Math Calc',
   ),
 
-  'query_calc_oper_dom' =>
-      array (
-    '+' => '(+) Plus',
-    '-' => '(-) Minus',
-    '*' => '(X) Multiplied By',
-    '/' => '(/) Divided By',
-  ),
-
     'query_calc_leftright_type_dom' =>
       array (
     'Field' => 'Field',
@@ -1599,7 +1644,17 @@ $app_list_strings = array (
 
 
 
+    'projects_priority_options' => array (
+        'high'      => 'High',
+        'medium'    => 'Medium',
+        'low'       => 'Low',
+    ),
 
+    'projects_status_options' => array (
+        'notstarted'    => 'Not Started',
+        'inprogress'    => 'In Progress',
+        'completed'     => 'Completed',
+    ),
     // strings to pass to Flash charts
     'chart_strings' => array (
         'expandlegend'      => 'Expand Legend',
@@ -1820,6 +1875,8 @@ $app_strings = array (
   'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
   'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
   'LBL_BASIC_QUICK_SEARCH' => 'Search...' /*for 508 compliance fix*/,
+  'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
   'LBL_Blank' => ' ' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_1' => 'Column' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_2' => '2 Columns' /*for 508 compliance fix*/,
@@ -1840,7 +1897,6 @@ $app_strings = array (
     'LBL_MODULE_FILTER' => 'Filter by...',
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
-    'LBL_MOREDETAIL'=>'More Detail',
     'LBL_EDITINLINE'=>'Edit',
     'LBL_VIEWINLINE'=>'View',
     'LBL_INFOINLINE'=>'Info',
@@ -2300,9 +2356,7 @@ $app_strings = array (
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
     'LBL_TEAMS' =>'Teams',
-    'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
-    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
@@ -2316,7 +2370,6 @@ $app_strings = array (
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
-    'LBL_CLOSE_BUTTON_KEY' => 'C',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
@@ -2557,7 +2610,6 @@ $app_strings = array (
     'LBL_FILTER_BETWEEN_TO' => 'To',
     'LBL_FILTER_DATEBETWEEN_FROM' => 'Start date',
     'LBL_FILTER_DATEBETWEEN_TO' => 'End date',
-    'LBL_FOLLOW' => 'Follow',
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
@@ -2597,11 +2649,11 @@ $app_strings = array (
     'LBL_IMPORT_STARTED' => 'Import Started: ',
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
-    'LBL_SHOW_LESS' => 'Show Less',
-    'LBL_SHOW_MORE' => 'Show More',
+    'LBL_SHOW_LESS' => 'Show less',
+    'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
-    'LBL_SHOW_LESS_RECENTS' => 'Less recents...',
+    'LBL_SHOW_LESS_RECENTS' => '...Less recents',
     'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
@@ -2673,7 +2725,7 @@ $app_strings = array (
     'TPL_MASSLINK_SUCCESS' => '{{num}} records were linked successfully.',
     'TPL_MASSLINK_TITLE' => '{{module}} Mass Link',
 
-    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
+    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
@@ -2719,7 +2771,6 @@ $app_strings = array (
     'LBL_NEW_BUTTON_LABEL' => 'Create',
     'LBL_NEW_BUTTON_TITLE' => 'Create',
     'LBL_NEXT_BUTTON_LABEL' => 'Next',
-    'LBL_NONE' => '--None--',
     'LBL_NOTES'=>'Notes',
     'LBL_OPENALL_BUTTON_KEY' => 'O',
     'LBL_OPENALL_BUTTON_LABEL' => 'Open All',
@@ -2796,7 +2847,6 @@ $app_strings = array (
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
     'LBL_RELATED_RECORDS' => 'Related Records',
-    'LBL_REMOVE' => 'Remove',
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_REQUIRED_SYMBOL' => '*',
     'LBL_REQUIRED_TITLE' => 'Indicates required field',
@@ -2918,7 +2968,6 @@ $app_strings = array (
 
     // LOGIN PAGE STRINGS
     'LBL_LOGIN_BUTTON_KEY' => 'L',
-    'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_LOGIN_BUTTON_TITLE' => 'Log In',
     'LBL_LOGIN_WELCOME_TO' => 'Welcome to',
     'LBL_LOGIN_OPTIONS' => 'Options',
@@ -3114,7 +3163,6 @@ $app_strings = array (
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
     'LBL_CREATE_CONTACT' => 'Create Contact',
-    'LBL_CREATE_CASE' => 'Create Case',
     'LBL_CREATE_NOTE' => 'Create Note',
     'LBL_CREATE_OPPORTUNITY' => 'Create Opportunity',
     'LBL_SCHEDULE_CALL' => 'Log Call',
@@ -3191,7 +3239,6 @@ $app_strings = array (
     'LBL_DASHLET_MINIMIZE' => 'Close',
     'LBL_DASHLET_MAXIMIZE' => 'Open',
     'LBL_DASHLET_CONFIGURE' => 'Configure',
-    'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_TOGGLE' => 'Open/Close',
     'LBL_DASHBOARD_TOGGLE' => 'Open/Close Dashboard',
 
@@ -3227,11 +3274,8 @@ $app_strings = array (
     'LBL_DASHLET_COMPANY_INFO_DESC' => 'Enrich existing account with D&B Data. Requires D&B subscription.',
     'LBL_DASHLET_COMPANY_INFO_LONG_DESC' => 'Keep your account information up-to-date with D&B import and enrich Feature.',
     'LBL_DNB_NAME'=>'Name',
-    'LBL_DNB_DUNS'=>'DUNS',
     'LBL_DNB_ADDRESS'=>'Address',
     'LBL_DNB_URL'=>'URL',
-    'LBL_DNB_PHONE'=>'Phone',
-    'LBL_DNB_LOCATION_TYPE'=>'Location Type',
     'LBL_DNB_FOUNDATION_YEAR'=>'Foundation Year',
     'LBL_DNB_SIC'=>'SIC Code',
     'LBL_DNB_NAICS'=>'NAICS',
@@ -3571,37 +3615,23 @@ $app_strings = array (
     'LBL_DNB_STD_COMPANY_INFO'=>'D&B: Company Information - Standard',
     'LBL_DNB_STD_COMPANY_INFO_DESC'=>'Standard company information From D&B. Requires D&B subscription.',
     'LBL_DNB_DUNS' => 'DUNS',
-    'LBL_DNB_TF_DUNS'=>'Transerfered DUNS Number',
-    'LBL_DNB_TF_DUNS' => 'Transfered DUNSNumber',
+    'LBL_DNB_TF_DUNS' => 'Transfered DUNS Number',
     'LBL_DNB_TOTAL_INQUIRY_COUNT' => 'Total Inquiry Count',
     'LBL_DNB_MARKETABILITY_INDICATOR' => 'Marketability Indicator',
     'LBL_DNB_NON_MARKETABILITY_INDICATOR' => 'NonMarketable Reason Text',
     'LBL_DNB_LAST_UPDATE' => 'Last Update',
     'LBL_DNB_SUMMARY' => 'Summary',
-    'LBL_DNB_SELF_REQUEST_INDICATOR' => 'Self Request Indicator',
     'LBL_DNB_STREET_ADDRESSLINE' => 'Street Addressline',
-    'LBL_DNB_COUNTRY_OFFICIAL_NAME' => 'Country Official Name',
-    'LBL_DNB_TERRITORY_OFFICIAL_NAME' => 'Territory Official Name',
     'LBL_DNB_TERRITORY_ABBREVIATED_NAME' => 'Territory Abbreviated Name',
-    'LBL_DNB_TELECOMMUNICATION_NUMBER' => 'Telecommunication Number',
     'LBL_DNB_FACSIMILE_NUMBER' => 'FacsimileNumber Number',
     'LBL_DNB_INT_DIALLING_CODE' => 'Int Dialling Code',
-    'LBL_DNB_INCORPORATION_YEAR' => 'Incorporation Year',
     'LBL_DNB_ORGANISATION_IDENTIFICATION_NUMBER' => 'Organisation Identification Number',
     'LBL_DNB_ORGANISATION_IDENTIFICATION_START_DATE' => 'Organisation Identification Start Date',
-    'LBL_DNB_STOCK_EXCHANGE_TICKER_NAME' => 'Stock Exchange Ticker Name',
     'LBL_DNB_STOCK_EXCHANGE_COUNTRY_ISO_ALPHA_CODE' => 'Stock Exchange Country ISO Alpha Code',
-    'LBL_DNB_LINE_OF_BUSINESS_DESCRIPTION' => 'Line of Business Description',
     'LBL_DNB_IMPORT_DETAILS_' => 'Import Details ',
-    'LBL_DNB_EXPORT_DETAILS_INDICATOR' => 'Export Details Indicator',
     'LBL_DNB_AGENT_INDICATOR' => 'Agent Indicator',
-    'LBL_DNB_TOTAL_EMPLOYEE_QUANTITY' => 'Total Employee Quantity',
-    'LBL_DNB_CURRENT_PRINCIPAL_FULL_NAME' => 'Current Principal Full Name',
-    'LBL_DNB_UNREACHABLE_INDICATOR' => 'Unreachable Indicator',
     'LBL_DNB_REGISTERED_ADDRESS_INDICATOR' => 'Registered Address Indicator',
-    'LBL_DNB_RESIDENTIAL_ADDRESS_INDICATOR' => 'Residential Address Indicator',
     'LBL_DNB_DNB_CODE_VALUE' => 'DNB Code Value',
-    'LBL_DNB_INDUSTRY_CODE_DESCRIPTION' => 'Industry Code Description',
     'LBL_DNB_FILLING_ORGANISATION_NAME' => 'Filling Organisation Name',
     'LBL_DNB_IMPORT_DETAILS_INDICATOR' => 'Import Details Indicator',
     'LBL_DNB_ASSOCIATE' => 'Associate',
@@ -3768,6 +3798,7 @@ $app_strings = array (
     'LBL_DNB_BAL_JOBCD_PH' => 'Select Job Function',
     'LBL_DNB_BAL_ORG_NAME' => 'Organization Name',
     'LBL_DNB_BAL_IMPORT_AS' => 'Import As:',
+    'LBL_DNB_BAL_ORG_NAME' => 'Company Name',
 
     /*Tool tips for BAL*/
     'LBL_TT_DNB_BAL_MILLIONS' => 'in $USD Millions',
@@ -3784,6 +3815,7 @@ $app_strings = array (
     'LBL_TT_DNB_BAL_MILLIONS_EX' => 'In $USD Millions. Example: 100 or 4.3',
     'LBL_TT_DNB_BAL_NET_INCOME_GROWTH' => 'Percentage (%)',
     'LBL_TT_DNB_BAL_IPO_PRICE_RANGE' => 'In $USD. Example: IPO Price Range 2.00 to 2.50',
+    'LBL_TT_DNB_BAL_ORG_NAME' => 'Enter Company Name',
 
     /* D&B BAL Validation Messages */
     'ERR_DNB_BAL_COMPARISON' => 'Error. Lower limit must be less than upper limit',
@@ -3874,7 +3906,7 @@ $app_strings = array (
     'ERR_STORE_FILE_MISSING' => 'Error: Unable to find Store implementation file',
 
     'LBL_MONITOR_ID' => 'Monitor Id',
-    'LBL_TEAM_ID' => 'Team id',
+    'LBL_TEAM_ID' => 'Team ID',
     'LBL_SELECT_MODULE' => 'Select a module:',
     'LBL_USER_ID' => 'User Id',
     'LBL_MODULE_NAME' => 'Module Name',
@@ -3979,9 +4011,6 @@ $app_strings = array (
 
     //Elastic
     'ERR_ELASTIC_TEST_FAILED' => 'Failed to connect to Elastic server',
-
-    // fastcgi checks
-    'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
 
     //cma
     'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
@@ -4153,7 +4182,6 @@ $app_strings = array (
     'LBL_SHARE_BUTTON_KEY' => 'r',
     'LBL_SHARE_BUTTON_LABEL' => 'Share',
     'LBL_SHARE_BUTTON_TITLE' => 'Share',
-    'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
@@ -4198,11 +4226,9 @@ $app_strings = array (
     'LBL_TIME_UNTIL_DAY' => 'tomorrow',
     'LBL_TIME_UNTIL_DAYS' => 'in {{this}} days',
     'LBL_TIME_UNTIL_YEAR' => 'in over a year',
-    'LBL_TIME_RELATIVE_TWITTER_SHORT' => '{{relativetime}}',
-    'LBL_TIME_RELATIVE_TWITTER_LONG' => '{{date}}',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
     'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
-    'LBL_COMMITTED_TIME_RELATIVE' => 'Last Commit: {{relativetime}} at {{time}}',
+    'LBL_LAST_COMMIT' => 'Last Commit: ',
     'LBL_LISTVIEW_NO_RECORDS' => 'No data available.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
@@ -4823,7 +4849,7 @@ $app_strings = array (
     'LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as completed?',
     'LBL_ACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
     'LBL_ACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
-
+    'LBL_LIST_REMOVE_EMAIL_INFO' => 'There was an additional email on the record you are modifying. It is now the primary and has been populated below.',
     // inactive tasks dashlet
     'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',
     'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Tasks dashlet displays deferred and completed Tasks.',
@@ -4904,7 +4930,11 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
+    'LBL_ACTIVITY_STREAM_DISABLED_MODULE' => 'Activity Stream is not enabled for this module',
     'LBL_ACTIVTY_STREAM_SHOW_MORE' => 'More posts...',
+    'LBL_ACTIVITYSTREAM_RELATIVETIME_ON' => ' on ',
+    'LBL_ACTIVITY_STREAM_DASHLET_NAME' => 'My Activity Stream',
+    'LBL_ACTIVITY_STREAM_DASHLET_DESCRIPTION' => 'View a list of activities performed on records and create and post comments.',
 
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',
@@ -5165,6 +5195,12 @@ $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['moduleListSingular']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
+$app_list_strings['project_priority_default'] = 'Medium';
+$app_list_strings['project_priority_options'] = array (
+    'High' => 'High',
+    'Medium' => 'Medium',
+    'Low' => 'Low',
+);
 $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
 $app_list_strings['kbsdocument_status_dom'] = array(
@@ -6026,6 +6062,11 @@ $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] =
     'Opportunities' => 'Opportunities',
 );
 
+$app_list_strings['forecast_fiscal_year_options'] = array(
+    'current_year' => '{{year}}',
+    'next_year' => '{{year}}'
+);
+
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,
     'no' => 'No',
@@ -6296,127 +6337,6 @@ $app_list_strings['dnb_countries_iso'] = array(
    "YE" => "Yemen",
    "ZM" => "Zambia",
    "ZW" => "Zimbabwe"
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
-);
-
-$app_list_strings['dnb_bal_gte_lte_btw'] = array(
-    'gte' => 'Greater than or Equal to',
-    'lte' => 'Lesser than or Equal to',
-    'btw' => 'Between'
-);
-
-$app_list_strings['dnb_bal_prescreen_options'] = array(
-    '10925' => 'Low',
-    '10926' => 'Medium',
-    '10927' => 'High'
-);
-
-$app_list_strings['dnb_bal_primary_secondary'] = array(
-    'true' => 'Primary Only',
-    'false' => 'Primary and Secondary'
-);
-
-$app_list_strings['dnb_bal_miles_km'] = array(
-    '3353' => 'Miles',
-    '3349' => 'KM'
-);
-
-$app_list_strings['dnb_bal_single_all'] = array(
-    'singlesite' => 'Single Site',
-    'allsites' => 'All Sites'
-);
-
-$app_list_strings['dnb_countries_radius_iso'] = array(
-    "US" => "United States",
-    "CA" => "Canada"
-);
-
-$app_list_strings['dnb_sic_naics_code'] = array(
-    "3599" => "SIC Code",
-    "700" => "NAICS Code"
 );
 
 $app_list_strings['dnb_bal_gte_lte_btw'] = array(

@@ -19,7 +19,6 @@ require_once 'modules/Users/User.php';
 
 class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static public $db;
     protected $mock;
 
     static public $monitorList;
@@ -31,7 +30,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
-        self::$db = SugarTestHelper::setUp('mock_db');
+        SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
@@ -399,6 +398,34 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'parent_type',
                 ),
             ),
+            // url field
+            array(
+                'Leads',
+                array(  // field defs
+                    'name' => array(
+                        'name' => 'name',
+                        'type' => 'fullname',
+                    ),
+                    'url_c' => array(
+                        'name' => 'url_c',
+                        'type' => 'url',
+                        'default' => 'test/{name}'
+                    ),
+                ),
+                array(), // view def
+                array( // arguments
+                    'fields' => 'my_favorite,converted,url_c',
+                    'view' => 'list',
+                ),
+                'view', // view
+                array(  // expected
+                    'my_favorite',
+                    'converted',
+                    'url_c',
+                    'name',
+                ),
+            ),
+
         );
     }
 }

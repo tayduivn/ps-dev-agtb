@@ -1,31 +1,52 @@
 // Grays
 // -------------------------
 @black:                 #000;
-@grayDarker:            darken(@grayDark, 1%);
-@grayDark:              #343433;
-@gray:                  #58595B;
-@grayLight:             #bbb;
-@grayLighter:           #f5f5f5;
+@grayDarker:            #111;
+@grayDark:              #222;
+@gray:                  #555;
+@grayLight:             #717171;
+@grayLighter:           #f6f6f6;
 @white:                 #fff;
 @transparent:           rgba(0,0,0,0);
 
-// Accent colors
-// -------------------------
-@blueLight:             lighten(@blue, 10%);
-@blue:                  #1774E6;
-@blueDark:              darken(@blue, 5%);
-@army:                  #c3e517;
-@green:                 #37880E;
-@red:                   #E61718;
-@yellow:                #E6AF17;
-@yellow_favorite:       #E6AF17;
-@yellow_duplicate:      #FBF7E2;
-@orange:                #C65517;
-@pink:                  #D81982;
-@purple:                #7e17e5;
-@teal:                  #17e5a1;
-@ocean:                 #17c3e5;
-@pacific:               #17a1e5;
+// Accent colors (auto)
+// For @color values we spin based off the @BorderColor from the theme
+// to keep consistent to a single brand set.
+// You can replace with your own hex colors if you desire.
+// -------------------------------------------------------------
+@color0:				@BorderColor;
+@color1:				spin(@BorderColor, 20);
+@color2:				spin(@BorderColor, 40);
+@color3:				spin(@BorderColor, 60);
+@color4:				spin(@BorderColor, 80);
+@color5:				spin(@BorderColor, 100);
+@color6:				spin(@BorderColor, 120);
+@color7:				spin(@BorderColor, 160);
+@color8:				spin(@BorderColor, -160);
+@color9:				spin(@BorderColor, -140);
+@color10:				spin(@BorderColor, -120);
+@color11:				spin(@BorderColor, -100);
+@color12:				spin(@BorderColor, -80);
+@color13:				spin(@BorderColor, -60);
+@color14:				spin(@BorderColor, -40);
+@color15:				spin(@BorderColor, -20);
+
+// Accent colors (defined)
+// -------------------------------------------------------------
+@mint:					#0d8046;
+@green:                 #33800d;
+@army:                  #6a800d;
+@yellow:               	#e5a117;
+@orange:                #cc3314;
+@red:                   #e61718;
+@pink:                  #e5176d;
+@purple:                #6d17e5;
+@night:					#1f12b3;
+@blue:                  #176de5;
+@ocean:                 #1378bf;
+@pacific:               #0f7799;
+@teal:                  #0d806c;
+@coral:                 #ff6fcf;
 
 // Scaffolding
 // -------------------------
@@ -34,7 +55,7 @@
 
 // Links
 // -------------------------
-@linkColor:             lighten(@PrimaryButton,10%);
+@linkColor:             @PrimaryButton;
 @linkColorHover:        darken(@linkColor, 10%);
 @linkMore:              @PrimaryButton;
 
@@ -53,7 +74,11 @@
 
 //Shadows
 //--------------------------
-@shadowWidget: 	0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4), -1px -1px 2px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.1);
+@shadowWidget: 	0 2px 1px rgba(0,0,0,.1);
+@shadowWidgetInset: inset 0 2px 1px rgba(0,0,0,.1);
+
+@borderWidget: 1px solid darken(@grayLighter, 10%);
+@borderWidgetLight: 1px solid darken(@grayLighter, 5%);
 
 // Component sizing
 // -------------------------
@@ -69,44 +94,64 @@
 @baseBorderRadius:      3px;
 @borderRadiusLarge:     6px;
 @borderRadiusSmall:     2px;
-@borderRadiusMini:      1px;
+@borderRadiusMini:      2px;
 
 // Tables
 // -------------------------
 @tableBackground:                   transparent; // overall background-color
 @tableBackgroundAccent:             lighten(@grayLighter, 1%); // for striping
-@tableBackgroundHover:              lighten(@warningBackground, 4%); // for hover
-@tableBorder:                       darken(@grayLighter, 5%); // table and cell border
-@tableHeader:                       lighten(@gray, 12%); // table headers
+@tableBorderColor:                  darken(@grayLighter, 5%); // table and cell border
+@tableBorder:                       1px solid @tableBorderColor;
+@tableHeader:                       @gray; // table headers
+
+
+// Form states and alerts
+// -------------------------
+@error:					@red;
+@warning:				@yellow;
+@success:				@green;
+@inform:				@pacific;
+
+@warningText:             darken(@warning, 40%);
+@warningBackground:       lighten(@warning, 47%);
+@warningBorder:           lighten(@warning, 30%);
+@errorText:               @error;
+@errorTextAlert:          @white;
+@errorBackground:         @error;
+@errorBorder:             darken(@error, 10%);
+@successText:             @white;
+@successBackground:       @success;
+@successBorder:           darken(@success, 10%);
+@infoText:                @white;
+@infoBackground:          @inform;
+@infoBorder:              darken(@inform, 10%);
+
 
 // Buttons
 // -------------------------
-/*
-@btnBackground:                     lighten(@grayLighter, 1%);
-@btnBackgroundHighlight:            lighten(@grayLighter, 1%);
-*/
-@btnBackground:                     darken(@grayLighter, 2%);
-@btnBackgroundHighlight:            darken(@grayLighter, 2%);
-@btnBorder:                         darken(@grayLighter, 5%);
+@btnBackground:                     @grayLighter;
+@btnBackgroundHighlight:            @grayLighter;
+@btnBorder:                         darken(@grayLighter, 10%);
 
 @btnPrimaryBackground:              @PrimaryButton;
-@btnPrimaryBackgroundHighlight:     darken(@PrimaryButton, 1%);
-@btnInfoBackground:                 darken(@pacific, 11%);
-@btnInfoBackgroundHighlight:        darken(@pacific, 12%);
-@btnSuccessBackground:              @green;
-@btnSuccessBackgroundHighlight:     darken(@green, 1%);
-@btnWarningBackground:              @yellow;
-@btnWarningBackgroundHighlight:     darken(@yellow, 1%);
-@btnDangerBackground:               @red;
-@btnDangerBackgroundHighlight:      darken(@red, 1%);
-@btnInverseBackground:              @grayDarker;
-@btnInverseBackgroundHighlight:     darken(@black, 1%);
+@btnPrimaryBackgroundHighlight:     @PrimaryButton;
+@btnInfoBackground:                 @inform;
+@btnInfoBackgroundHighlight:        @inform;
+@btnSuccessBackground:              @success;
+@btnSuccessBackgroundHighlight:     @success;
+@btnWarningBackground:              @warning;
+@btnWarningBackgroundHighlight:     @warning;
+@btnDangerBackground:               @error;
+@btnDangerBackgroundHighlight:      @error;
+@btnInverseBackground:              @black;
+@btnInverseBackgroundHighlight:     @black;
 
 // Forms
 // -------------------------
 @inputBackground:               @white;
-@inputBorder:                   darken(@grayLighter, 10%);
-@inputBorderRadius:             2px;
+@inputBorderColor:              darken(@grayLighter, 10%);
+@inputBorder:                   1px solid @inputBorderColor;
+@inputBorderRadius:             @baseBorderRadius;
 @inputDisabledBackground:       @grayLighter;
 @formActionsBackground:         @grayLighter;
 @inputHeight:                   @baseLineHeight + 10px;
@@ -114,14 +159,14 @@
 // Dropdowns
 // -------------------------
 @dropdownBackground:            @white;
-@dropdownBorder:                @grayLight;
-@dropdownDividerTop:            @grayLighter;
+@dropdownBorder:                @grayLighter;
+@dropdownDividerTop:            darken(@grayLighter, 10%);
 @dropdownDividerBottom:         @white;
-@dropdownLinkColor:             @grayDark;
+@dropdownLinkColor:             @gray;
 @dropdownLinkColorHover:        @linkColor;
-@dropdownLinkColorActive:       @linkColor;
-@dropdownLinkBackgroundHover:   lighten(@PrimaryButton,45%);
-@dropdownLinkBackgroundActive:  lighten(@PrimaryButton,80%);//#E1F0FA; //@linkColor;
+@dropdownLinkColorActive:       darken(@linkColor, 10%);
+@dropdownLinkBackgroundHover:   lighten(@linkColor, 48%);
+@dropdownLinkBackgroundActive:  lighten(@linkColor, 40%);
 @dropdownDisabledBackground:    @grayLighter;
 @dropdownDisabledLinkColor:     @grayLight;
 
@@ -168,24 +213,25 @@
 @navbarCollapseWidth:             979px;
 @navbarCollapseDesktopWidth:      @navbarCollapseWidth + 1;
 @navbarHeight:                    44px;
-@navbarBackgroundHighlight:       lighten(@NavigationBar, 25%);
-@navbarBackground:                lighten(@NavigationBar, 10%);
-@navbarText:                      @grayLight;
+@navbarBackgroundHighlight:       @NavigationBar;
+@navbarBackground:                @NavigationBar;
+@navbarText:                      darken(@white, 10%);
 @navbarLinkColor:                 @white;
-@navbarLinkColorHover:            @white;
+@navbarLinkColorHover:            darken(@white, 5%);
 @navbarLinkColorActive:           @navbarLinkColorHover;
 @navbarLinkBackgroundHover:       transparent;
 @navbarLinkBackgroundActive:      @navbarBackground;
-@navbarSearchBackground:          lighten(@NavigationBar, 25%);
-@navbarSearchBackgroundFocus:     @gray;
-@navbarSearchBorder:              darken(@navbarSearchBackground, 30%);
+@navbarSearchBackground:          @white;
+@navbarSearchBackgroundFocus:     @white;
+@navbarSearchBorder:              darken(@NavigationBar, 10%);
+@navbarButton:              	  darken(@NavigationBar, 10%);
 @navbarSearchPlaceholderColor:    @gray;
 @navbarBrandColor:                @navbarLinkColor;
 
 // Inverted navbar
-@navbarInverseBackground:                #111111;
-@navbarInverseBackgroundHighlight:       #222222;
-@navbarInverseBorder:                    #252525;
+@navbarInverseBackground:                @grayDarker;
+@navbarInverseBackgroundHighlight:       @grayDarker;
+@navbarInverseBorder:                    @grayDarker;
 @navbarInverseText:                      @grayLight;
 @navbarInverseLinkColor:                 @grayLight;
 @navbarInverseLinkColorHover:            @white;
@@ -200,30 +246,15 @@
 
 // Pagination
 // -------------------------
-@paginationBackground:                #fff;
-@paginationBorder:                    #ddd;
-@paginationActiveBackground:          #f5f5f5;
+@paginationBackground:                @white;
+@paginationBorder:                    darken(@grayLighter, 10%);
+@paginationActiveBackground:          @grayLighter;
 
 // Hero unit
 // -------------------------
 @heroUnitBackground:              @grayLighter;
 @heroUnitHeadingColor:            inherit;
 @heroUnitLeadColor:               inherit;
-
-// Form states and alerts
-// -------------------------
-@warningText:             darken(@warningBackground, 70%);
-@warningBackground:       #fcf8e3;
-@warningBorder:           darken(spin(@warningBackground, -5), 30%);
-@errorText:               darken(@errorBackground, 60%);
-@errorBackground:         #ffe9e9;
-@errorBorder:             @errorText;
-@successText:             darken(@successBackground, 70%);
-@successBackground:       #dff0d8;
-@successBorder:           darken(spin(@successBackground, -5), 30%);
-@infoText:                darken(@infoBackground, 70%);
-@infoBackground:          #d9edf7;
-@infoBorder:              darken(spin(@infoBackground, -5), 30%);
 
 // Tooltips and popovers
 // -------------------------
@@ -275,52 +306,50 @@
 @beforeRightCaretPos : auto;
 
 // Standard Avatar fontSizes
-@sizeLarge:         42px;
-@sizeMedium:         32px;
-@sizeButton:          28px;
-@sizeDefault:         24px;
-@sizeSmall:          20px;
-@sizeMini:          16px;
+@sizeLarge:             42px;
+@sizeMedium:            32px;
+@sizeButton:            28px;
+@sizeDefault:           24px;
+@sizeSmall:             20px;
+@sizeMini:              16px;
 
 // CHART
 // --------------------------------------------------
 
 @chartTextSize:         @fontSizeSmall;
 @chartTickColor:        @grayLight;
-@chartTickWidth:        2px;
+@chartTickWidth:        1px;
 
-// Default fill colors
+// Default chart fill colors
 // -------------------------
-@fill00: @blue;
-@fill01: lighten(@blue,25%);
-@fill02: @red;
-@fill03: lighten(@red,25%);
+@fill00: @red;
+@fill01: @orange;
+@fill02: @yellow;
+@fill03: @army;
 @fill04: @green;
-@fill05: lighten(@green,25%);
-@fill06: darken(@ocean,20%);
-@fill07: lighten(darken(@ocean,20%),25%);
-@fill08: @orange;
-@fill09: lighten(@orange,25%);
-@fill10: darken(@army,19%);
-@fill11: lighten(darken(@army,19%),25%);
-@fill12: darken(@purple,20%);
-@fill13: lighten(darken(@purple,20%),25%);
-@fill14: @yellow;
-@fill15: lighten(@yellow,25%);
-@fill16: @pink;
-@fill17: lighten(@pink,25%);
-@fill18: @gray;
-@fill19: lighten(@gray,25%);
+@fill05: @mint;
+@fill06: @teal;
+@fill07: @pacific;
+@fill08: @ocean;
+@fill09: @blue;
+@fill10: @night;
+@fill11: @purple;
+@fill12: @pink;
+@fill13: @coral;
 
-// Default stroke colors
+// Default chart stroke colors
 // -------------------------
-@stroke0: @blue;
-@stroke1: @red;
-@stroke2: @green;
-@stroke3: darken(@ocean,20%);
-@stroke4: @orange;
-@stroke5: darken(@army,19%);
-@stroke6: darken(@purple,20%);
-@stroke7: @yellow;
-@stroke8: @pink;
+@stroke0: @red;
+@stroke1: @orange;
+@stroke2: @yellow;
+@stroke3: @army;
+@stroke4: @green;
+@stroke5: @mint;
+@stroke6: @teal;
+@stroke7: @pacific;
+@stroke8: @ocean;
 @stroke9: @gray;
+@stroke10: @night;
+@stroke11: @purple;
+@stroke12: @pink;
+@stroke13: @coral;

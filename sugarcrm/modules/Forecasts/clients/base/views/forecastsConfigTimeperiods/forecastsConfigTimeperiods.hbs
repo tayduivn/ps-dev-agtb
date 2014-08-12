@@ -20,10 +20,14 @@
             <p>{{str "LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC" "Forecasts"}}</p>
             <ol>
                 {{#each fields}}
-                    <li>
-                        <p>{{{str label "Forecasts"}}}</p>
-                        <p>{{field ../../this model=../../model}}<p>
-                    </li>
+                    {{#if enabled}}
+                        <li>
+                            <p>{{{str ../label "Forecasts"}}}</p>
+                            <p>{{field ../../../this model=../../../model}}</p>
+                            <p id="{{../name}}_sublabel"></p>
+                            <p id="{{../name}}_subfield"></p>
+                        </li>
+                    {{/if}}
                 {{/each}}
             </ol>
         {{/each}}

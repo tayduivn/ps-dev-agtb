@@ -18,19 +18,16 @@ a:not(.disabled):active > [class^="icon-"] {
 }
 
 .icon-favorite:before {
+  content: "\f006";
+}
+
+.icon-favorite.active:before {
   content: "\f005";
 }
 
 .icon-favorite {
   color: @grayLight;
   cursor: pointer;
-  &.active {
-    color: @yellow_favorite !important;
-  }
-}
-
-.btn:hover > .icon-favorite.active {
-  color: @yellow_favorite !important;
 }
 
 .wide {

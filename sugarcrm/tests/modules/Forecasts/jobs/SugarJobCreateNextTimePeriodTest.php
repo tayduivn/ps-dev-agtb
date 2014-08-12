@@ -31,7 +31,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        
+
         global $current_user;
         $current_user->is_admin = 1;
     }

@@ -983,6 +983,28 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('FIXED_IN_RELEASE', $defs['panels'][0]['fields'][6]['id']);
     }
 
+    public function testSidecarProductTemplatesRecordMerge()
+    {
+        $module = 'ProductTemplates';
+        $filepath = "custom/modules/$module/clients/base/views/record/record.php";
+
+        // Simple first assertions
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        // Begin proper assertions
+        $defs = $viewdefs[$module]['base']['view']['record'];
+        $this->assertTrue(isset($defs['panels'][0]['fields']), 'Field array is missing from the upgrade file');
+
+        // Before assertions on our test field, make sure it's there
+        $found = $this->_fieldExistsInDefs('favorite', $defs);
+        $this->assertFalse($found, "The `Favorite' field exists in file $filepath");
+
+        // The "unit_test_c" field do not appear in vardefs, skip it.
+        $found = $this->_fieldExistsInDefs('unit_test_c', $defs);
+        $this->assertFalse($found, "The `unit_test_c` field was found in file $filepath");
+    }
+
 
 }
 

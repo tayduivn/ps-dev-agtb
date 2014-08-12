@@ -27,4 +27,17 @@ class EmailAddress extends SugarEmailAddress
 		    SugarBean::save($id);
 		}
 	}
+
+    /**
+     * Called by DuplicateCheck api to remove email_addr_bean_rel records created in the process
+     * @param string $id
+     * @param string $module
+     */
+    public function deleteLinks($id, $module)
+    {
+        // Need to correct this to handle the Employee/User split
+        $module = $this->getCorrectedModule($module);
+        $query = "update email_addr_bean_rel eabr set deleted = 1 WHERE eabr.bean_id = '".$this->db->quote($id)."' AND eabr.bean_module = '".$this->db->quote($module)."'";
+        $this->db->query($query);
+    }
 }

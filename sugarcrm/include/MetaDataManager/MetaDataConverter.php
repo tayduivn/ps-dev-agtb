@@ -585,12 +585,14 @@ class MetaDataConverter
                             } else {
                                 $subpanelFileName = "For{$focus->module_name}";
                             }
+                        } else {
+                            $subpanelFileName = "For{$focus->module_name}";
                         }
                     }
                 }
                 $viewdefs['override_subpanel_list_view'] = array(
                     'view' => $this->fromLegacySubpanelName($subpanelFileName),
-                    'link' => $layoutdef['get_subpanel_data'],
+                    'link' => (isset($layoutdef['get_subpanel_data']) ? $layoutdef['get_subpanel_data'] : ''),
                 );
             }
             elseif ($key == 'title_key') {

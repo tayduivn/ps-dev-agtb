@@ -61,7 +61,6 @@ $mod_strings = array (
 	'COLUMN_TITLE_AUTOINC_NEXT' => 'Auto Increment Next Value',
     'COLUMN_DISABLE_NUMBER_FORMAT' => 'Disable Format',
     'COLUMN_TITLE_ENABLE_RANGE_SEARCH' => 'Enable Range Search',
-    'COLUMN_TITLE_GLOBAL_SEARCH'=>'Global Search',	
 	'LBL_DROP_DOWN_LIST' => 'Drop Down List',
 	'LBL_RADIO_FIELDS'=> 'Radio Fields',
 	'LBL_MULTI_SELECT_LIST'=> 'Multi Select List',

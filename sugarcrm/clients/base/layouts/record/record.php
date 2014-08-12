@@ -49,7 +49,7 @@ $viewdefs['base']['layout']['record'] = array(
                                             ),
                                             array(
                                                 'name' => 'activitystream',
-                                                'icon' => 'icon-th-list',
+                                                'icon' => 'icon-time',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
                                         ),

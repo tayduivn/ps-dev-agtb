@@ -219,6 +219,22 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 continue;
             }
 
+            // Skip subpanels that have links to non-existing modules
+            if (!empty($def['module']) && !in_array($def['module'], $GLOBALS['moduleList'])) {
+                unset($convertSubpanelDefs[$key]);
+                $this->logUpgradeStatus(
+                    "Skipping subpanel $key in {$this->module} module. Linked module '{$def['module']}' does not exist"
+                );
+                continue;
+            }
+
+            // Type function in "get_subpanel_data" is no longer supported in Sugar 7.x,
+            // but if necessary better to handle it here.
+            if (!empty($def['get_subpanel_data']) && !$this->isValidField($def['get_subpanel_data'])) {
+                $this->logUpgradeStatus("Skipping subpanel $key in {$this->module} module.");
+                continue;
+            }
+
             $newdefs = $this->extractSidecarData($convertSubpanelDefs[$key], $def, $newdefs);
         }
 

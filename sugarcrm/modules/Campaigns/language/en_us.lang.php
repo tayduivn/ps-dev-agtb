@@ -19,7 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $mod_strings = array (
-  'LBL_FROM_ADDR' => '"From" Address: ',
   'LBL_REPLY_ADDR' => '"Reply-to" Address: ',
   'LBL_REPLY_NAME' => '"Reply-to" Name: ',
 
@@ -217,7 +216,6 @@ $mod_strings = array (
   'LBL_NAVIGATION_MENU_MARKETING' => 'Marketing',
   'LBL_NAVIGATION_MENU_SEND_EMAIL' => 'Send Email',
   'LBL_NAVIGATION_MENU_SUBSCRIPTIONS' => 'Subscriptions',
-  'LBL_NAVIGATION_MENU_SUMMARY' => 'Summary',
   'LBL_SUBSCRIPTION_TARGET_WIZARD_DESC' =>  'This will define the target list of type Subscription for this campaign.<br>  This target list will be used to send out emails for this campaign.  <br>If you do not have a list ready, an empty list will be created for you.',
   'LBL_UNSUBSCRIPTION_TARGET_WIZARD_DESC' => 'This will define the target list of type Unsubscription for this campaign.  <br>This target list will contain names of people who have opted out of your campaign and should not be contacted through email.  <br>If you do not have a list ready, an empty list will be created for you.',
   'LBL_TEST_TARGET_WIZARD_DESC' => 'This will define the target list of type Test for this campaign.  <br>This target list will be used to send out test emails for this campaign.  <br>If you do not have a list ready, an empty list will be created for you.',

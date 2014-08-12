@@ -306,7 +306,11 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testFollowerFilter()
+    /**
+     * @param array $filter Filter definition
+     * @dataProvider followerFilterProvider
+     */
+    public function testFollowerFilter(array $filter)
     {
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
 
@@ -316,7 +320,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array('$following' => '')),
+                'filter' => $filter,
                 'fields' => 'id,name',
                 'order_by' => 'name:ASC'
             )
@@ -326,7 +330,32 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($reply['records']));
     }
 
-
+    public static function followerFilterProvider()
+    {
+        return array(
+            'simple' => array(
+                array(
+                    array(
+                        '$following' => '',
+                    ),
+                ),
+            ),
+            'BR-1432' => array(
+                array(
+                    array(
+                        '$or' => array(
+                            array(
+                                'id' => 'non-existing-id',
+                            ),
+                            array(
+                                '$following' => '',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
 
     //BEGIN SUGARCRM flav=pro ONLY
     public function testFavoriteFilter()

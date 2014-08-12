@@ -1,11 +1,13 @@
 /* BUTTONS
   ----------------*/
 .btn {
-  font-size: @baseFontSize;
+  font-size: @fontSizeSmall;
+  font-weight: bold;
   .box-shadow(none);
   margin-left: 8px;
   border: 1px solid rgba(0,0,0,.1);
   letter-spacing: normal;
+  text-shadow: none;
   /* keeps button widths with icons the same regardless of icon width */
   > [class^="icon-"],
   > [class*=" icon-"] {
@@ -18,38 +20,30 @@
     top: 1px;
     color: @grayLight;
   }
-  &.down {
-    .buttonBackground(@btnBackgroundHighlight,@btnBackground);
-  }
   // Hover state
-  &:not(.disabled):hover {
-    .box-shadow(~"inset 0 -8px 8px rgba(0,0,0,.1)");
-    > [class^="icon-"] {
-      color: lighten(@gray, 5%);
-    }
+  &:not(.disabled):hover,
+  &.focus
+    {
+    .box-shadow(~"inset 0, 0, 10px fade(@black, 40%)");
   }
   // Active state
-  &.active,
-  &:not(.disabled):active,
-  &.active:hover {
-    color: @gray;
+  &.active {
+    color: @white !important;
     text-shadow: none;
-    background-color: darken(@grayLighter, 5%);
-    .box-shadow(~"inset 0 1px 8px rgba(0,0,0,.2)");
+    background: @gray !important;
     > [class^="icon-"] {
-      color: @grayDark;
+      color: @grayLighter !important;
     }
   }
   &.active:hover {
     > [class^="icon-"] {
-      color: @gray;
-      color: lighten(@gray, 5%);
+      color: @white !important;
     }
   }
   // Disabled state override bootstrap default
   &.disabled,
   &[disabled] {
-    .opacity(35);
+    .opacity(65);
   }
 }
 
@@ -59,19 +53,23 @@
   background-image: none;
   background-color: transparent;
   border: 1px solid transparent;
+  font-weight: normal;
+  font-size: @baseFontSize;
   .box-shadow(none);
   .outline(none);
   &:not(.disabled):hover {
-    color: @gray;
     .box-shadow(none);
     border-color: transparent;
-    text-shadow: none;
+    background-color: transparent;
+    > [class^="icon-"] {
+      color: @grayDark;
+      text-shadow: none;
+    }
   }
-  &.active,
-  &:not(.disabled):active {
-    color: @gray;
+  &.active {
+    color: @grayLighter;
     .box-shadow(none);
-    background-color: darken(@grayLighter, 5%);
+    background: @gray;
   }
   &.disabled {
     text-decoration: none;
@@ -99,11 +97,12 @@
     text-decoration: underline;
     color: @linkColorHover;
     .box-shadow(none);
+    background: transparent;
   }
   &.active,
   &:not(.disabled):active {
     color: @linkColor;
-    background-color: transparent;
+    background: transparent;
     .box-shadow(none);
   }
 }
@@ -114,6 +113,8 @@
   border: none;
   height: auto;
   line-height: inherit;
+  font-size: inherit;
+  font-weight: inherit;
   vertical-align: baseline;
 }
 
@@ -140,7 +141,6 @@
 .btn-success,
 .btn-inverse {
   .icon-caret-down {
-    border-top-color: @white;
     .opacity(60);
   }
 }
@@ -148,8 +148,6 @@
 // Set caret text color
 .btn-primary,
 .btn-primary:hover,
-.btn-warning,
-.btn-warning:hover,
 .btn-danger,
 .btn-danger:hover,
 .btn-success,
@@ -167,6 +165,21 @@
     [class^="icon-"],
     [class*=" icon-"] {
       color: @white;
+    }
+  }
+}
+
+.btn-warning,
+.btn-warning:hover {
+  color: darken(@yellow, 70%);
+  [class^="icon-"],
+  [class*=" icon-"] {
+    color: darken(@yellow, 70%);
+  }
+  &:not(.disabled):hover {
+    [class^="icon-"],
+    [class*=" icon-"] {
+      color: darken(@yellow, 70%);
     }
   }
 }

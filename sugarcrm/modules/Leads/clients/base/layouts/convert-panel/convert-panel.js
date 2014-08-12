@@ -247,7 +247,12 @@
     openPanel: function () {
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
-            this.$(this.accordionBody).collapse('show');
+            // if the panel is already open, do not re-open it, just trigger the event
+            if (this.$(this.accordionBody).hasClass('in')) {
+                this.context.trigger('lead:convert:' + this.meta.module + ':shown');
+            } else {
+                this.$(this.accordionBody).collapse('show');
+            }
         }
     },
 
@@ -443,7 +448,8 @@
         var targetFields = app.metadata.getModule(this.meta.module, 'fields');
 
         _.each(model.attributes, function(fieldValue, fieldName) {
-            if (!_.isUndefined(sourceFields[fieldName]) &&
+            if (app.acl.hasAccessToModel("edit", this.createView.model, fieldName) &&
+                !_.isUndefined(sourceFields[fieldName]) &&
                 !_.isUndefined(targetFields[fieldName]) &&
                 sourceFields[fieldName].type === targetFields[fieldName].type &&
                 (_.isUndefined(sourceFields[fieldName]['duplicate_on_record_copy']) ||

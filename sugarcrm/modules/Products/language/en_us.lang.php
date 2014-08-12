@@ -47,7 +47,6 @@ $mod_strings = array(
     'LBL_DEAL_TOT' => 'Discount:',
     'LBL_DISCOUNT_RATE' => 'Discount Rate',
     'LBL_DISCOUNT_RATE_USDOLLAR' => 'Discount Rate (US Dollar)',
-    'LBL_DISCOUNT_TOTAL' => 'Discount Total',
     'LBL_DISCOUNT_TOTAL_USDOLLAR' => 'Discount (US Dollar)',
     'LBL_SELECT_DISCOUNT' => 'Discount Select',
     'LBL_LIST_PRICE' => 'List Price:',

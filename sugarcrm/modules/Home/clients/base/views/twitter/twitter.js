@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'Timeago', 'Connector'],
+    plugins: ['Dashlet', 'RelativeTime', 'Connector', 'Tooltip'],
     limit : 20,
     events: {
         'click .connect-twitter': 'onConnectTwitterClick'
@@ -182,7 +182,7 @@
                             j,
                             rightNow = new Date(),
                             diff = (rightNow.getTime() - time.getTime())/(1000*60*60*24),
-                            timeLabel= diff > 1 ? 'LBL_TIME_RELATIVE_TWITTER_LONG' : 'LBL_TIME_RELATIVE_TWITTER_SHORT';
+                            useAbsTime = diff > 1;
 
                         // Search for links and turn them into hrefs
                         for (j = 0; j < tokenText.length; j++) {
@@ -192,7 +192,7 @@
                         }
 
                         text = tokenText.join(' ');
-                        tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date, timeLabel: timeLabel});
+                        tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date, useAbsTime: useAbsTime});
                     }, this);
                 }
 

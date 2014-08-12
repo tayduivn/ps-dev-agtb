@@ -17,7 +17,7 @@ span.filetype-thumbnail {
     position: absolute;
     top: 15px;
     left: 0;
-    color: #FFF;
+    color: @white;
     width: 25px;
     height: 14px;
     font-size: 10px;
@@ -37,10 +37,10 @@ span.filetype-thumbnail[data-filetype="PDF"] {
 }
 span.filetype-thumbnail[data-filetype="DOC"] {
   .ft-ribbon {
-    fill: darken(@blueDark,10%);
+    fill: darken(@blue,10%);
   }
   &::before {
-    background-color: darken(@blueDark,10%);
+    background-color: darken(@blue,10%);
   }
 }
 span.filetype-thumbnail[data-filetype="XLS"] {

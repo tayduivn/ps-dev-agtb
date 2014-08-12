@@ -228,13 +228,13 @@ function make_sugar_config(&$sugar_config)
         'jobs' => array(
             'min_retry_interval' => 60, // minimal job retry delay
             'max_retries' => 5, // how many times to retry the job
-            'timeout' => 86400, // how long a job may spend as running before being force-failed
+            'timeout' => 3600, // how long a job may spend as running before being force-failed
             'soft_lifetime' => 7, // how many days until job record will be soft deleted after completion
             'hard_lifetime' => 21, // how many days until job record will be purged from DB
         ),
         "cron" => array(
             'max_cron_jobs' => 25, // max jobs per cron schedule run
-            'max_cron_runtime' => 60, // max runtime for cron jobs
+            'max_cron_runtime' => 1800, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
@@ -462,11 +462,11 @@ function get_sugar_config_defaults()
         'jobs' => array(
             'min_retry_interval' => 30, // 30 seconds minimal job retry
             'max_retries' => 5, // how many times to retry the job
-            'timeout' => 86400, // how long a job may spend as running before being force-failed
+            'timeout' => 3600, // how long a job may spend as running before being force-failed
         ),
         "cron" => array(
             'max_cron_jobs' => 25, // max jobs per cron schedule run
-            'max_cron_runtime' => 30, // max runtime for cron jobs
+            'max_cron_runtime' => 1800, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
@@ -1602,6 +1602,15 @@ function displayWorkflowForCurrentUser()
     foreach ($moduleList as $module) {
         $workflow_mod_list[$module] = $module;
     }
+    // This list is taken from the previous version of workflow_utils.php
+    $workflow_mod_list['Tasks'] = "Tasks";
+    $workflow_mod_list['Calls'] = "Calls";
+    $workflow_mod_list['Meetings'] = "Meetings";
+    $workflow_mod_list['Notes'] = "Notes";
+    $workflow_mod_list['ProjectTask'] = "Project Tasks";
+    $workflow_mod_list['Leads'] = "Leads";
+    $workflow_mod_list['Opportunities'] = "Opportunities";
+    // End of list
 
     $access = get_workflow_admin_modules_for_user($GLOBALS['current_user']);
     foreach ($access as $key=>$val) {
@@ -1638,14 +1647,21 @@ function get_admin_modules_for_user($user)
         return $_SESSION['get_workflow_admin_modules_for_user'];
     }
 
-    global $moduleList, $modInvisList;
+    global $moduleList;
     $workflow_mod_list = array();
     foreach ($moduleList as $module) {
-        if($module == 'ProjectTask' && in_array('Project', $modInvisList)) {
-            continue;
-        }
         $workflow_mod_list[$module] = $module;
     }
+
+    // This list is taken from teh previous version of workflow_utils.php
+    $workflow_mod_list['Tasks'] = "Tasks";
+    $workflow_mod_list['Calls'] = "Calls";
+    $workflow_mod_list['Meetings'] = "Meetings";
+    $workflow_mod_list['Notes'] = "Notes";
+    $workflow_mod_list['ProjectTask'] = "Project Tasks";
+    $workflow_mod_list['Leads'] = "Leads";
+    $workflow_mod_list['Opportunities'] = "Opportunities";
+    // End of list
 
     $workflow_admin_modules = array();
     if (empty($user)) {
@@ -2850,6 +2866,10 @@ function parse_list_modules(&$listArray)
         }
         //END SUGARCRM flav=pro ONLY
 
+        // special case for projects
+        if (array_key_exists('Project', $modListHeader)) {
+            $returnArray['ProjectTask'] = $listArray['ProjectTask'];
+        }
     }
     $returnArray = SugarACL::filterModuleList($listArray, 'access', true);
     asort($returnArray);
@@ -3713,6 +3733,10 @@ function convert_module_to_singular($module_array)
 
         if ($value=="Cases") {
             $module_array[$key] = "Case";
+        }
+        if ($key=="projecttask") {
+            $module_array['ProjectTask'] = "Project Task";
+            unset($module_array[$key]);
         }
     }
 
@@ -5545,9 +5569,9 @@ function ensureCache($minifyUtils, $rootDir)
 }
 
 /**
- * Ensures that a javascript cache file exists and if it doesn't, will create 
+ * Ensures that a javascript cache file exists and if it doesn't, will create
  * the necessary JS Groupings files into the cache directory for consumption.
- * 
+ *
  * @param array $files The basename of the file to check or an array of names to check
  * @param string $root The directory off which the cache file path lives
  * @param boolean $addPath Adds the path to the cache for this file if true
@@ -5772,4 +5796,73 @@ function getFunctionValue($bean, $function, $args = array())
 function isTruthy($value)
 {
     return ($value === true || $value === 'true' || $value === 1 || $value === '1' || $value === 'on' || $value === 'yes') ? true : false;
+}
+
+/**
+ * Warn a message to log
+ * @param string $param
+ * @param array $backtrace
+ */
+function sugar_upgrade_print($param, $backtrace)
+{
+    if ($backtrace) {
+        $GLOBALS['log']->warn("Found {$param} in file: {$backtrace['file']}, line: {$backtrace['line']}");
+    }
+}
+
+/**
+ * Replace base print_r function call
+ */
+function sugar_upgrade_print_r()
+{
+    sugar_upgrade_print('print_r', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base var_dump function call
+ */
+function sugar_upgrade_var_dump()
+{
+    sugar_upgrade_print('var_dump', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base echo function call
+ */
+function sugar_upgrade_echo()
+{
+    sugar_upgrade_print('echo', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base exit function call
+ */
+function sugar_upgrade_exit()
+{
+    sugar_upgrade_print('exit', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Replace base die function call
+ */
+function sugar_upgrade_die()
+{
+    sugar_upgrade_print('die', getBacktraceData(__FUNCTION__));
+}
+
+/**
+ * Getting backtrace information for called function
+ * @param $function
+ * @return bool | array
+ */
+function getBacktraceData($function) {
+    if(inDeveloperMode()) {
+        $backtrace = debug_backtrace();
+        foreach($backtrace as $backtraceItem) {
+            if ($backtraceItem['function'] == $function) {
+                return $backtraceItem;
+            }
+        }
+    }
+    return false;
 }

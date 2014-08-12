@@ -465,4 +465,22 @@ describe("Activity Stream View", function() {
             expect(view.$(view._attachImageSelector).length).toBe(0);
         });
     });
+
+    describe('_setRelativeTimeAvailable', function() {
+        it('Should show relative time if date created before threshold', function() {
+            var now = app.date();
+            view.model.set('date_entered', now.format());
+            view._setRelativeTimeAvailable();
+
+            expect(view.useRelativeTime).toBeTruthy();
+        });
+
+        it('Should show date and time format when activity created past threshold', function() {
+            var date = app.date().subtract('days', 7);
+            view.model.set('date_entered', date.format());
+            view._setRelativeTimeAvailable();
+
+            expect(view.useRelativeTime).toBeFalsy();
+        });
+    });
 });

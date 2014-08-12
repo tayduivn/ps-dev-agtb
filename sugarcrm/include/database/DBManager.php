@@ -70,7 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 abstract class DBManager
 {
 	/**
-	 * Name of database
+	 * Actual database link, used in concrete classes
 	 * @var resource
 	 */
 	public $database = null;
@@ -88,7 +88,7 @@ abstract class DBManager
 	/**
 	 * Records the execution time of the last query
 	 */
-	protected $query_time = 0;
+	public $query_time = 0;
 
 	/**
 	 * Last error message from the DB backend
@@ -114,6 +114,11 @@ abstract class DBManager
 	 * Array of prepared statements and their correspoding parsed tokens
 	 */
 	protected $preparedTokens = array();
+
+    /**
+     * default state for using Prepared Statements
+     */
+    public $usePreparedStatements = false;
 
 	/**
 	 * TimeDate instance
@@ -175,10 +180,11 @@ abstract class DBManager
 	/**
 	 * Type classification into:
 	 * - int
+	 * - bigint
 	 * - bool
 	 * - float
 	 * - date
-	 * @abstract
+	 * - time
 	 * @var array
 	 */
 	protected $type_class = array(
@@ -198,6 +204,7 @@ abstract class DBManager
 			'currency' => 'float',
 			'decimal'  => 'float',
 			'decimal2' => 'float',
+	        'decimal_tpl' => 'float',
 	);
 
 	/**
@@ -344,7 +351,7 @@ abstract class DBManager
 	 * @param string $message Message from SQL driver
 	 * @param bool $dieOnError
 	 */
-	protected function registerError($userMessage, $message, $dieOnError = false)
+	public function registerError($userMessage, $message, $dieOnError = false)
 	{
 		if(!empty($message)) {
 			if(!empty($userMessage)) {
@@ -384,7 +391,7 @@ abstract class DBManager
 	 * @param  string  $query query to log
 	 * @return boolean true if the query was logged, false otherwise
 	 */
-	protected function dump_slow_queries($query)
+	public function dump_slow_queries($query)
 	{
 		global $sugar_config;
 
@@ -599,10 +606,16 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function insert(SugarBean $bean)
 	{
-		$sql = $this->insertSQL($bean);
 		$tablename =  $bean->getTableName();
 		$msg = "Error inserting into table: $tablename:";
-		return $this->query($sql,true,$msg);
+	    if ($this->usePreparedStatements) {
+	        list($sql, $data) = $this->insertSQL($bean, true);
+	        // Prepare and execute the statement
+	        return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	       $sql = $this->insertSQL($bean);
+	       return $this->query($sql,true,$msg);
+	    }
 	}
 
 	/**
@@ -643,13 +656,13 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param bool $execute Execute or return query?
      * @return bool query result
      */
-	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
+	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = false)
 	{
-		$values = array();
+        $values = array();
 		foreach ($field_defs as $field => $fieldDef)
 		{
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-			//custom fields handle there save seperatley
+			//custom fields handle their save separately
 			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
 
 			if(isset($data[$field])) {
@@ -674,7 +687,7 @@ protected function checkQuery($sql, $object_name = false)
 			} else {
 				// need to do some thing about types of values
 				if(!is_null($val) || !empty($fieldDef['required'])) {
-					$values[$field] = $this->massageValue($val, $fieldDef);
+					$values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
 				}
 			}
 		}
@@ -682,10 +695,28 @@ protected function checkQuery($sql, $object_name = false)
 		if (empty($values))
 			return $execute?true:''; // no columns set
 
-		// get the entire sql
-		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
-					VALUES (".implode(",", $values).")";
-		return $execute?$this->query($query):$query;
+        if (!$usePreparedStatements) {
+            // get the entire sql
+            $query = "INSERT INTO $table (".implode(",", array_keys($values)).")
+                        VALUES (".implode(",", $values).")";
+            return $execute?$this->query($query):$query;
+        } else {  //Prepared Statement
+            $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
+            $types = $data_values = array();
+            foreach($values as $valueKey => $value) {
+                $type = $this->getFieldType($field_defs[$valueKey]);
+                $types[] = $this->convert("?$type", $type);
+                $data_values[] = $value;
+            }
+            $query .= join(",", $types).")";
+
+            if (!$execute)
+                return array($query, $data_values);
+
+            // Prepare and execute the statement
+            return $this->preparedQuery($query, $data_values);
+        }
+
 	}
 
     /**
@@ -700,10 +731,16 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function update(SugarBean $bean, array $where = array())
 	{
-		$sql = $this->updateSQL($bean, $where);
 		$tablename = $bean->getTableName();
 		$msg = "Error updating table: $tablename:";
-		return $this->query($sql,true,$msg);
+	    if($this->usePreparedStatements) {
+            list($sql, $data) = $this->updateSQL($bean, $where, true);
+            // Prepare and execute the statement
+            return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	        $sql = $this->updateSQL($bean, $where);
+	        return $this->query($sql,true,$msg);
+	    }
 	}
 
     /**
@@ -717,10 +754,16 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function delete(SugarBean $bean, array $where = array())
 	{
-		$sql = $this->deleteSQL($bean, $where);
-		$tableName = $bean->getTableName();
-		$msg = "Error deleting from table: ".$tableName. ":";
-		return $this->query($sql,true,$msg);
+	    $tablename =  $bean->getTableName();
+	    $msg = "Error deleting from table: $tablename:";
+	    if($this->usePreparedStatements) {
+	        list($sql, $data) = $this->deleteSQL($bean, $where, true);
+	        // Prepare and execute the statement
+	        return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	        $sql = $this->deleteSQL($bean, $where);
+	        return $this->query($sql,true,$msg);
+	    }
 	}
 
 	/**
@@ -735,10 +778,16 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function retrieve(SugarBean $bean, array $where = array())
 	{
-		$sql = $this->retrieveSQL($bean, $where);
-		$tableName = $bean->getTableName();
-		$msg = "Error retriving values from table:".$tableName. ":";
-		return $this->query($sql,true,$msg);
+		$tablename =  $bean->getTableName();
+	    $msg = "Error retriving values from table: $tablename:";
+	    if($this->usePreparedStatements) {
+	        list($sql, $data) = $this->retrieveSQL($bean, $where, true);
+	        // Prepare and execute the statement
+	        return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	        $sql = $this->retrieveSQL($bean, $where);
+	        return $this->query($sql,true,$msg);
+	    }
 	}
 
 	/**
@@ -764,6 +813,21 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($sql,true,$msg);
 	}
 
+	/**
+	 * Run query throuh prepared statement
+	 * @param string $sql SQL query
+	 * @param string $data Data for SQL
+	 * @param string $msg Error message
+	 * @return boolean
+	 */
+	public function preparedQuery($sql, $data, $msg = '')
+	{
+	    $ps = $this->prepareStatement($sql);
+	    if(!$ps) {
+	        return false;
+	    }
+	    return $ps->executePreparedStatement($data, $msg);
+	}
 
 	/**
 	 * Implements creation of a db table for a bean.
@@ -2220,6 +2284,8 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->executePreparedQuery($stmt, $data);
 	}
 
+
+
 /********************** SQL FUNCTIONS ****************************/
     /**
      * Generates sql for create table statement for a bean.
@@ -2242,12 +2308,11 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  SugarBean $bean SugarBean instance
 	 * @return string SQL Create Table statement
 	 */
-	public function insertSQL(SugarBean $bean)
+	public function insertSQL(SugarBean $bean, $usePreparedStatements = false)
 	{
 		// get column names and values
-		$sql = $this->insertParams($bean->getTableName(), $bean->getFieldDefinitions(), get_object_vars($bean),
-		        isset($bean->field_name_map)?$bean->field_name_map:null, false);
-		return $sql;
+		return $this->insertParams($bean->getTableName(), $bean->getFieldDefinitions(), get_object_vars($bean),
+		        isset($bean->field_name_map)?$bean->field_name_map:null, false, $usePreparedStatements);
 	}
 
 	/**
@@ -2257,10 +2322,11 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $where Optional, where conditions in an array
 	 * @return string SQL Create Table statement
 	 */
-	public function updateSQL(SugarBean $bean, array $where = array())
+	public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = false)
 	{
 		$primaryField = $bean->getPrimaryFieldDefinition();
 		$columns = array();
+        $data= array();
         $fields = $bean->getFieldDefinitions();
 		// get column names and values
 		foreach ($fields as $field => $fieldDef) {
@@ -2285,7 +2351,9 @@ protected function checkQuery($sql, $object_name = false)
     			continue;
     		}
 
-    		if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
+    		$fieldType = $this->getFieldType($fieldDef);
+
+    		if($fieldType == 'bool'){
     			$val = $bean->getFieldValue($field);
     		}
 
@@ -2301,27 +2369,48 @@ protected function checkQuery($sql, $object_name = false)
 			    $val = $this->truncate($val, $fieldDef['len']);
 			}
 
-    		if(!is_null($val) || !empty($fieldDef['required'])) {
-    			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
-    		} elseif($this->isNullable($fieldDef)) {
-    			$columns[] = "{$fieldDef['name']}=NULL";
-    		} else {
-    		    $columns[] = "{$fieldDef['name']}=".$this->emptyValue($fieldDef['type']);
-    		}
+			if(!is_null($val) || !empty($fieldDef['required'])) {
+			    $val = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+			} elseif($this->isNullable($fieldDef)) {
+			    $val = $usePreparedStatements?null:'NULL';
+			} else {
+			    $val = $this->emptyValue($fieldType, $usePreparedStatements);
+			}
+
+			if ($usePreparedStatements) {
+			    $columns[] = "{$fieldDef['name']}=".$this->convert("?$fieldType", $fieldType);
+			    $data[] = $val;
+			} else {
+			    $columns[] = "{$fieldDef['name']}=$val";
+			}
 		}
 
-		if ( sizeof($columns) == 0 )
+		if (empty($columns)) {
 			return ""; // no columns set
-
-		// build where clause
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
-		if(isset($fields['deleted'])) {
-		    $where .= " AND deleted=0";
 		}
 
-		return "UPDATE ".$bean->getTableName()."
+        // build where clause
+		$where_data = $this->updateWhereArray($bean, $where, $usePreparedStatements);
+		$where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+
+        if(isset($fields['deleted'])) {
+            $where .= " AND deleted=0";
+        }
+
+        if (!$usePreparedStatements) {
+            return "UPDATE ".$bean->getTableName()."
 					SET ".implode(",", $columns)."
 					$where";
+        }
+        else {  //Prepared Statement
+            $data = array_merge($data, array_values($where_data));
+            $query = "UPDATE ".$bean->getTableName()."
+					 SET ".implode(",", $columns)."
+					 $where";
+            return array($query, $data);
+        }
+
+
 	}
 
 	/**
@@ -2357,7 +2446,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getColumnWhereClause($table, array $whereArray = array())
+	protected function getColumnWhereClause($table, array $whereArray = array(), $forPrepared = false)
 	{
 		$where = array();
 		foreach ($whereArray as $name => $val) {
@@ -2366,12 +2455,12 @@ protected function checkQuery($sql, $object_name = false)
 				$op = "IN";
 				$temp = array();
 				foreach ($val as $tval){
-					$temp[] = $this->quoted($tval);
+					$temp[] = $forPrepared?$tval:$this->quoted($tval);
 				}
 				$val = implode(",", $temp);
 				$val = "($val)";
 			} else {
-				$val = $this->quoted($val);
+				$val = $forPrepared?$val:$this->quoted($val);
 			}
 
 			$where[] = " $table.$name $op $val";
@@ -2391,9 +2480,15 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getWhereClause(SugarBean $bean, array $whereArray=array())
+	protected function getWhereClause(SugarBean $bean, array $whereArray=array(), $forPrepared = false)
 	{
-	    return " WHERE " . $this->getColumnWhereClause($bean->getTableName(), $whereArray);
+	    if($forPrepared) {
+	       $where = $this->getColumnWhereClause($bean->getTableName(), $this->prepareTypeData($bean, array_keys($whereArray)), true);
+	    } else {
+	        $where = $this->getColumnWhereClause($bean->getTableName(), $whereArray);
+	    }
+
+	    return " WHERE $where";
 	}
 
 	/**
@@ -2403,7 +2498,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array $fieldDef field definition
 	 * @return mixed
 	 */
-	public function massageValue($val, $fieldDef)
+	public function massageValue($val, $fieldDef, $forPrepared = false)
 	{
 		$type = $this->getFieldType($fieldDef);
 
@@ -2444,9 +2539,9 @@ protected function checkQuery($sql, $object_name = false)
 							if (isset($fieldDef['default'])) {
 								return $fieldDef['default'];
 							}
-							return $this->emptyValue($type);
+							return $this->emptyValue($type, $forPrepared);
 						}
-						return "NULL";
+						return $forPrepared?null:"NULL";
 					}
 					break;
 			}
@@ -2461,15 +2556,19 @@ protected function checkQuery($sql, $object_name = false)
 				if (isset($fieldDef['default']) && !empty($fieldDef['default'])){
 					return $fieldDef['default'];
 				}
-				return $this->emptyValue($type);
+				return $this->emptyValue($type, $forPrepared);
 			} else {
-				return "NULL";
+				return $forPrepared?null:"NULL";
 			}
 		}
         if($type == "datetimecombo") {
             $type = "datetime";
         }
-		return $this->convert($this->quoted($val), $type);
+        if ($forPrepared) {
+            return $val;
+        } else {
+		    return $this->convert($this->quoted($val), $type);
+        }
 	}
 
 	/**
@@ -2571,30 +2670,58 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Generates SQL for delete statement identified by id.
-	 *
-	 * @param  SugarBean $bean SugarBean instance
-	 * @param  array  $where where conditions in an array
-	 * @return string SQL Update Statement
+	 * Make array of types for prepared statement from list of columns
+	 * @param SugarBean $bean
+	 * @param array $columns
+	 * @return array
 	 */
-	public function deleteSQL(SugarBean $bean, array $where)
+	protected function prepareTypeData(SugarBean $bean, $columns)
 	{
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
-		return "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
+	    $types = array();
+	    foreach ($columns as $name) {
+	        $def = $bean->getFieldDefinition($name);
+	        $types[$name] = "?" . $def['type'];
+	    }
+	    return $types;
 	}
+
+    /**
+     * Generates SQL for delete statement identified by id.
+     *
+     * @param SugarBean $bean SugarBean instance
+     * @param array $where where conditions in an array
+     * @return string SQL Update Statement
+     */
+    public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    {
+        $where_data = $this->updateWhereArray($bean, $where);
+        $tname = $bean->getTableName();
+        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+        if ($usePreparedStatements) {
+            return array("UPDATE $tname SET deleted=1 $where", array_values($where_data));
+        } else {
+            return "UPDATE $tname SET deleted=1 $where";
+        }
+    }
 
     /**
      * Generates SQL for select statement for any bean identified by id.
      *
-     * @param  SugarBean $bean SugarBean instance
-     * @param  array  $where where conditions in an array
+     * @param SugarBean $bean SugarBean instance
+     * @param array $where where conditions in an array
      * @return string SQL Select Statement
      */
-	public function retrieveSQL(SugarBean $bean, array $where)
-	{
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
-		return "SELECT * FROM ".$bean->getTableName()." $where AND deleted=0";
-	}
+    public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    {
+        $where_data = $this->updateWhereArray($bean, $where);
+        $tname = $bean->getTableName();
+        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+        if ($usePreparedStatements) {
+            return array("SELECT * FROM $tname $where AND deleted=0", array_values($where_data));
+        } else {
+            return "SELECT * FROM $tname $where AND deleted=0";
+        }
+    }
 
     /**
      * This method implements a generic sql for a collection of beans.
@@ -3400,7 +3527,8 @@ protected function checkQuery($sql, $object_name = false)
 		if (empty($val))
 			return true;
 
-		if($this->emptyValue($type) == $val) {
+		// Use raw empty value
+		if($this->emptyValue($type, true) == $val) {
 			return true;
 		}
 		switch ($type) {
@@ -3473,15 +3601,16 @@ protected function checkQuery($sql, $object_name = false)
 	 * Return representation of an empty value depending on type
 	 * The value is fully quoted, converted, etc.
 	 * @param string $type
+	 * @param bool $forPrepared Is it going to be used for prepared statement?
      * @return mixed Empty value
      */
-	public function emptyValue($type)
+	public function emptyValue($type, $forPrepared = false)
 	{
 		if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'bool' || $this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
 			return 0;
 		}
 
-		return "''";
+		return $forPrepared?"":"''";
 	}
 
 	/**
@@ -3779,7 +3908,11 @@ protected function checkQuery($sql, $object_name = false)
 	        $GLOBALS['log']->deprecated("Using row number in fetchByAssoc is not portable and no longer supported. Please fix your code.");
 	        $encode = func_get_arg(2);
 	    }
-	    $row = $this->fetchRow($result);
+	    if($result instanceof PreparedStatement) {
+	       $row = $result->preparedStatementFetch();
+	    } else {
+	       $row = $this->fetchRow($result);
+	    }
 	    if (!empty($row) && $encode && $this->encode) {
 	    	return array_map(array($this, "encodeHTML"), $row);
 	    } else {
@@ -3989,6 +4122,25 @@ protected function checkQuery($sql, $object_name = false)
 	public function postInstall()
 	{
 	}
+
+	/**
+	 * Create prepared statement from query
+	 * @param string $sql SQL Query
+	 * @param string $msg Error message
+	 * @return false|PreparedStatement
+	 */
+	public function prepareStatement($sql, $msg = '')
+	{
+	    if(empty($this->capabilities['prepared_statements']) || empty($this->preparedStatementClass)) {
+	       $this->registerError($msg, "Prepared statements not supported");
+	    }
+	    $ps = new $this->preparedStatementClass($this);
+	    if(!$ps) {
+	        return false;
+	    }
+	    return $ps->prepareStatement($sql, $msg);
+	}
+
 
 	/**
 	 * Disable keys on the table

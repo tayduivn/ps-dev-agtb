@@ -74,13 +74,17 @@
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$COST_PRICE currency_id=$CURRENCY_ID}</td>
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$LIST_PRICE currency_id=$CURRENCY_ID}</td>
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_PRICE currency_id=$CURRENCY_ID}</td>
+            {if $product_bundle->deal_tot!= "0.00" && $product_bundle->deal_tot!= ""}
+            <td valign="top" style="text-align: right;">
 			{if $line_item->discount_amount != "0.00" && $product_bundle->deal_tot!= ""}
 			     {if $line_item->discount_select}
-			         <td valign="top" style="text-align: right;">{sugar_number_format var=$DISCOUNT_AMOUNT}%</td>
+			         {sugar_number_format var=$DISCOUNT_AMOUNT}%
 			     {else}
-			         <td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_AMOUNT currency_id=$CURRENCY_ID}</td>
+			         {sugar_currency_format var=$DISCOUNT_AMOUNT currency_id=$CURRENCY_ID}
 			     {/if}
 			{/if}
+            </td>
+            {/if}
 			</tr>
 
         {elseif $line_item->object_name == "ProductBundleNote"}

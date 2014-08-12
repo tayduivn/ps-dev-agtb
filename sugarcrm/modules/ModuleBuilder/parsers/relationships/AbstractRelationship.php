@@ -437,7 +437,13 @@ class AbstractRelationship
             switch ( strtolower( $sourceModule ) )
             {
                 case 'prospects' :
-                    $vardef [ 'rname' ] = 'account_name' ;
+                    $bean = BeanFactory::getBean($this->definition['rhs_module']);
+                    $fields = array_keys($bean->field_name_map);
+                    if (in_array('name', $fields)) {
+                        $vardef['rname'] = 'name';
+                    } else {
+                        $vardef['rname'] = 'account_name';
+                    }
                     break ;
                 case 'documents' :
                     $vardef [ 'rname' ] = 'document_name' ;

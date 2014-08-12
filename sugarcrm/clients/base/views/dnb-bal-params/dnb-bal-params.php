@@ -597,6 +597,36 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'label',
                             'cell_css_class' => 'span2',
+                            'default_value' => 'LBL_DNB_BAL_ORG_NAME',
+                            'css' => 'dnb-bal-param-label'
+                        ),
+                        array(
+                            'name' => 'dnb_bal_org_name',
+                            'tooltip' => 'LBL_TT_DNB_BAL_ORG_NAME',
+                            'cell_css_class' => 'span2',
+                            'no_required_placeholder' => true,
+                            'required' => true,
+                            'len' => 240
+                        ),
+                        array(
+                            'type' => 'rowaction',
+                            'cell_css_class' => 'span1',
+                            'icon' => 'icon-plus',
+                            'css_class' => 'dnb-bal-add-btn btn',
+                            'event' => 'dnb-bal-org-name-btn'
+                        ),
+                        array(
+                            'type' => 'tagcontainer',
+                            'cell_css_class' => 'tagcontainer span3',
+                            'id' => 'dnb-org-name-tags'
+                        ),
+                    ),
+                ),
+                array(
+                    'fields' => array(
+                        array(
+                            'type' => 'label',
+                            'cell_css_class' => 'span2',
                             'default_value' => 'LBL_DNB_BAL_YEAR_OF_FOUNDING',
                             'css' => 'dnb-bal-param-label'
                         ),
@@ -1162,6 +1192,14 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             'modelKey' => 'dunsNum', //keys to be used in model
             'modelSubKey' => 'DUNSNumber-'
         ),
+        'dnb-bal-org-name-btn' => array(
+            'addBtn' => '.dnb-bal-org-name-btn',
+            'container' => '#dnb-org-name-tags',
+            'tagLimit' => 1,
+            'inputKey' => 'dnb_bal_org_name',
+            'modelKey' => 'orgName', //keys to be used in model
+            'modelSubKey' => 'OrganizationName'
+        ),
         'dnb-bal-postal-code-btn' => array(
             'addBtn' => '.dnb-bal-postal-code-btn',
             'container' => '#dnb-postal-code-tags',
@@ -1306,6 +1344,10 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             )
         ),
         'companyInfo' => array(
+            'orgName' => array(
+                'label' => 'LBL_DNB_BAL_ORG_NAME',
+                'id' => 'dnb-org-name-tags'
+            ),
             'foundingYear' => array(
                 'label' => 'LBL_DNB_BAL_YEAR_OF_FOUNDING',
                 'id' => 'dnb-year-of-founding-tags'

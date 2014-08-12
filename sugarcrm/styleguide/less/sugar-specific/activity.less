@@ -7,16 +7,16 @@
   list-style: none;
 }
 .activitystream-posts-comments-container {
-  border-bottom: 1px solid @grayLighter;
-  padding: 12px 68px 8px 62px;
+  border-bottom: @borderWidget;
+  padding: 10px 68px 0 57px;
   position: relative;
-  font-size: @fontSizeLarge - 2;
+  font-size: @fontSizeLarge;
   min-height: 46px;
   .avatar,
   .label-module {
     position: absolute;
-    left: 20px;
-    top: 12px;
+    left: 10px;
+    top: 10px;
   }
   .tagged span.label {
     font-size: @baseFontSize - 1;
@@ -38,43 +38,44 @@
     }
   }
   .comments {
-    margin: 12px -68px -8px -62px;
+    margin: 10px -68px 0 0;
     .avatar {
-      left: 28px;
-    }
-    &> .comment:first-child {
-      .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
+      left: 0px;
     }
     .comment {
-      background: @grayLighter;
       list-style: none;
-      border-top: 1px solid @white;
-      border-bottom: 1px solid darken(@grayLighter, 5%);
-      padding: 8px 10px 8px 62px;
+      border-top: 1px dotted darken(@grayLighter, 10%);
+      padding: 10px 10px 10px 37px;
       font-size: @baseFontSize;
       position: relative;
     }
+    .date {
+      font-size: @fontSizeSmall;
+    }
     .more-comments {
-      padding: 6px 8px 6px 40px;
+      padding: 10px 0;
+      font-size: @baseFontSize;
     }
   }
   .reply-area {
     .reply-input {
       position: relative;
-      margin-right: 60px;
+      margin-left: -37px;
     }
     .reply-btn {
       position: absolute;
-      top: 2px;
-      right: -60px;
+      top: 7px;
+      right: 7px;
     }
     .reply {
-      background-color: @white;
-      border: 1px solid darken(@grayLighter, 5%);
       min-height: 18px;
-      padding: 6px 8px;
-      .placeholder {
-        color: @grayLight;
+      padding: 10px;
+      border: dashed 1px darken(@grayLighter, 10%);
+      color: @grayLight;
+      font-size: @baseFontSize;
+      &:focus {
+        border: @borderWidget;
+        color: @gray;
       }
     }
   }
@@ -95,8 +96,8 @@
     margin: 8px;
   }
   .activitystream-list {
-    background-color: #fff;
-    border: 1px solid darken(@grayLighter, 15%);
+    background-color: @white;
+    border: @borderWidget;
   }
   .activitystream-posts-comments-container {
     padding: 8px 14px 8px 54px;
@@ -153,9 +154,30 @@
   }
 }
 
-// UIUX-513: Add support for placeholders in content editable div tags.
 div[data-placeholder]:not(:focus):not([data-hide-placeholder]):before {
   content: attr(data-placeholder);
-  margin-left: 2px;
   color: @grayLight;
+}
+
+// Fix for activity stream dashlet for record view
+.dashboard .well .dashlet-content .activitystream-posts-comments-container {
+  padding: 12px 68px 8px 62px !important;
+}
+
+// Fix for activity stream dashlet actions
+.dashlet .activitystream-posts-comments-container  .actions {
+  position: absolute;
+  top: 10px;
+}
+
+.dashlet .activitystream-layout .omnibar .sayit {
+  margin-right: 70px;
+}
+
+.activitystream-layout .omnibar .inputactions {
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  padding:0px;
+  background-color: #fff;
 }

@@ -58,7 +58,7 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         $searchFields = array();
         $module_name = $this->module;
         include $filename;
-        return $searchFields[$module_name];
+        return (isset($searchFields[$module_name]) ? $searchFields[$module_name] : array());
     }
 
     /**

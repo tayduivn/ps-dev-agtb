@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -24,6 +23,20 @@ $viewdefs['Products']['base']['layout']['subpanels'] = array (
       'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'documents',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+      'context' => array (
+        'link' => 'notes',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+      'context' => array (
+        'link' => 'contracts',
       ),
     ),
     array (

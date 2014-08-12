@@ -518,7 +518,14 @@ class PdfManagerHelper
                ) {
                 $fields_module[$name] = $GLOBALS['sugar_config']['upload_dir']."/".$value;
             } elseif (is_string($value)) {
-                $fields_module[$name] = htmlspecialchars_decode(nl2br(stripslashes($value)), ENT_QUOTES);
+                $value = nl2br(stripslashes($value));
+
+                if (isset($module_instance->field_defs[$name]['type']) &&
+                    $module_instance->field_defs[$name]['type'] === 'html'
+                ) {
+                    $value = htmlspecialchars_decode($value, ENT_QUOTES);
+                }
+                $fields_module[$name] = $value;
             }
         }
 

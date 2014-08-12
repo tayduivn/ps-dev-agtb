@@ -442,9 +442,13 @@
         if (_.isEmpty(this._keysOrder)) {
             return results;
         }
-        sortedResults = _.sortBy(results, function(item) {
-            return this._keysOrder[item.id];
-        }, this);
+        sortedResults = results;
+        // if it is not a dependency field (visibility_grid is not defined), we show the order from drop down list
+        if (!this.def.visibility_grid) {
+            sortedResults = _.sortBy(results, function(item) {
+                return this._keysOrder[item.id];
+            }, this);
+        }
         return sortedResults;
     },
 

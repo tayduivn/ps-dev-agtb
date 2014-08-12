@@ -80,13 +80,20 @@
             parentType = this.context.parent.get("model").module,
             attachments = this.$('.activitystream-pending-attachment'),
             $submitButton = this.$('button.addPost'),
-            payload = {
-                activity_type: "post",
-                parent_id: parentId || null,
-                parent_type: parentType !== "Activities" ? parentType : null,
-                data: {}
-            },
             bean;
+
+        // Process "Home" and "Activity" layouts as global activity stream types
+        if (parentType == 'Home' || parentType == 'Activities') {
+            parentType = null;
+            parentId = null;
+        }
+
+        var payload = {
+            activity_type: "post",
+            parent_id: parentId || null,
+            parent_type: parentType,
+            data: {}
+        };
 
         if (!$submitButton.hasClass('disabled')) {
             payload.data = this.getPost();

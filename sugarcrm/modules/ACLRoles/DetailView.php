@@ -29,11 +29,6 @@ $sugar_smarty->assign('APP_LIST', $app_list_strings);
 }*/
 $role = BeanFactory::getBean('ACLRoles', $_REQUEST['record']);
 $categories = ACLRole::getRoleActions($_REQUEST['record']);
-global $modInvisList;
-if (in_array('Project', $modInvisList)) {
-    unset($categories['Project']);
-    unset($categories['ProjectTask']);
-}
 $names = ACLAction::setupCategoriesMatrix($categories);
 //BEGIN SUGARCRM flav=pro ONLY
 $categories2 = array();

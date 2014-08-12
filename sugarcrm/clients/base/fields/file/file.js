@@ -158,10 +158,12 @@
     _createFileObj: function (value, urlOpts) {
         var isImage = this._isImage(this.model.get('file_mime_type')),
             forceDownload = !isImage,
-            mimeType = isImage ? 'image' : '';
+            mimeType = isImage ? 'image' : '',
+            docType = this.model.get('doc_type');
         return {
             name: value,
             mimeType: mimeType,
+            docType: docType,
             url: app.api.buildFileURL(urlOpts,
                 {
                     htmlJsonFormat: false,

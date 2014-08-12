@@ -221,9 +221,16 @@
 
     /**
      * {@inheritDoc}
+     * Add ability to edit and save an invalid team set.
      */
     _render: function () {
         var self = this;
+
+        if (_.isEmpty(this.value) && this.action == 'edit') {
+            // Leave an empty team set on list view in case of cancel.
+            this.value = app.utils.deepCopy(app.user.getPreference('default_teams'));
+            this._updateAndTriggerChange(this.value);
+        }
         this._super('_render');
 
         if (this.tplName === 'edit') {

@@ -29,6 +29,7 @@ atlassian-ide-plugin.xml
 sugarcrm/node_modules
 sugarcrm/vendor/autoload.php
 sugarcrm/vendor/composer/
+sugarcrm/vendor/ruflin/
 sugarcrm/vendor/bin/
 sugarcrm/vendor/phpunit/
 sugarcrm/vendor/sebastian/

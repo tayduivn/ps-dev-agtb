@@ -11,6 +11,7 @@
  */
  
 require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
+require_once('include/SugarFields/SugarFieldHandler.php');
 
 class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -51,10 +52,53 @@ class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
 					    'comment' => 'The priority of the case',
 					);
 		$field_value = "P2";
-		
-        require_once('include/SugarFields/SugarFieldHandler.php');
+
    		$sfr = SugarFieldHandler::getSugarField('enum');
     	
    	 	$this->assertEquals(trim($sfr->formatField($field_value,$fieldDef)),'Medium');
     }
+
+    /**
+     * this tests that functions are being evaluated on fields of type enum that are used in email templates
+     * @ticket 36744
+     */
+    public function testGetEmailTemplateValue(){
+        //vardef definition, note that function is called
+        $fieldDef = array (
+                        'name' => 'type_dropdown',
+                        'vname' => 'LBL_TYPE',
+                        'type' => 'enum',
+                        'function' => 'getEnumTestDDVals',
+                    );
+        //create sugarfield of type enum and run
+        $sfr = SugarFieldHandler::getSugarField('enum');
+        $second = $sfr->getEmailTemplateValue('2',$fieldDef,null);
+
+        //assert that object returned is a string and not an array
+        $this->assertFalse(is_array($second),'array was returned, string value to search for is not getting passed in');
+
+        //assert that right value was returned
+        $this->assertEquals($second, 'two', 'wrong value was returned from getEnumTestDDVals function');
+
+    }
+
 }
+
+
+    /**
+     * function that gets called when enum field is being evaluated from testGetEmailTemplateValue() above
+     */
+    function getEnumTestDDVals($numb)
+    {
+
+       $numbArray = array(
+                '' => '',
+                '1' => 'one',
+                '2' => 'two',
+                '3' => 'three',
+        );
+                if($numb){
+                    return $numbArray[$numb];
+                }
+        return $numbArray;
+    }

@@ -547,7 +547,7 @@ nv.models.bubbleChart = function () {
         return 'inherit';
       };
       classes = function (d, i) {
-        var iClass = (d.series*(params.step || 1)) % 20;
+        var iClass = (d.series*(params.step || 1)) % 14;
         return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
       };
       break;

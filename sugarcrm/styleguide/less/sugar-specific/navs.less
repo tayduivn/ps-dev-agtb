@@ -90,7 +90,7 @@
 // Active state, and it's :hover to override normal :hover
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover {
-  border: 1px solid darken(@grayLighter, 5%);
+  border: @borderWidgetLight;
   border-bottom-color: @white;
   font-weight: bold;
 }
@@ -177,7 +177,7 @@
       font-size: 11px;
       color: @gray;
       background-color: @grayLighter;
-      border: 1px solid darken(@grayLighter,5%);
+      border: @borderWidgetLight;
       &.active {
         font-weight: bold;
         border-bottom: transparent;
@@ -235,7 +235,7 @@
     padding-left: 20px;
     .tab {
       &.active {
-        border: 1px solid darken(@grayLighter,5%);
+        border: @borderWidgetLight;
         border-bottom: 1px solid @white;
         background: @white;
         margin-top: -2px;

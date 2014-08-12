@@ -58,7 +58,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $rli->discount_price = '1.00';
         $product = $rli->convertToQuotedLineItem();
 
-        $this->assertEquals('0.50', $product->discount_amount);
+        $this->assertEquals('25.00', $product->discount_amount);
     }
 
     public function testConvertToQuoteLineItemsSetCorrectDiscountAmountWhenPercent()

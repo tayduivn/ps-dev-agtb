@@ -90,7 +90,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             // check if we need to upgrade opportunities when coming from version below 6.7.x.
             $upgraded = $db->getOne(
                 "SELECT count(id) as total FROM upgrade_history
-                    WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%';"
+                    WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'"
             );
             if ($upgraded == 1) {
                 //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
@@ -239,8 +239,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             'likely_case',
             'best_case',
             'date_closed',
-            'sales_stage',
-            'probability'
+            'sales_stage'
         );
 
         $currency_fields = array(

@@ -121,14 +121,14 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 	} else{
         $return = file_put_contents($filename, $data, $flags, $context);
 	}
-    
+
     // Add to the file loader cache if it isn't there
     if ($return) {
         if (!SugarAutoLoader::fileExists($filename)) {
             SugarAutoLoader::addToMap($filename);
         }
     }
-    
+
     return $return;
 }
 
@@ -178,7 +178,7 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
         if (!SugarAutoLoader::fileExists($filename)) {
             SugarAutoLoader::addToMap($filename);
         }
-        
+
         return sugar_chmod($filename);
     }
 
@@ -228,7 +228,7 @@ function sugar_file_get_contents($filename, $use_include_path=false, $context=nu
 function sugar_touch($filename, $time=null, $atime=null) {
 
     if (!empty($GLOBALS['sugar_config']['default_permissions']['dir_mode'])) {
-        $dirmode = sugar_chmod($filename, $GLOBALS['sugar_config']['default_permissions']['dir_mode']);
+        $dirmode = $GLOBALS['sugar_config']['default_permissions']['dir_mode'];
     } else {
         $dirmode = null;
     }
@@ -265,7 +265,7 @@ function sugar_touch($filename, $time=null, $atime=null) {
     if (!SugarAutoLoader::fileExists($filename)) {
         SugarAutoLoader::addToMap($filename);
     }
-    
+
     return true;
 }
 

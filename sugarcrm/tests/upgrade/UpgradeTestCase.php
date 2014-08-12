@@ -1,4 +1,15 @@
 <?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'modules/UpgradeWizard/TestUpgrader.php';
 
 abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
@@ -16,30 +27,11 @@ abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
         // create admin user
         self::$admin = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $GLOBALS['current_user'] = static::$admin;
-        // put two files in custom 1 that needs failure, one that doesn't matter
-        if (!is_dir('custom/modules/Accounts')) {
-            sugar_mkdir('custom/modules/Accounts', false, true);
-        }
-        $needsFixed = '
-        <?php
-        require_once "include/ytree/ytree.php";
-        ';
-
-        file_put_contents('custom/modules/Accounts/NeedsFixed.php', $needsFixed);
-
-        $noFixNeeded = '
-        <?php
-        require_once "vendor/ytree/ytree.php";
-        ';
-
-        file_put_contents('custom/modules/Accounts/NoFixNeeded.php', $noFixNeeded);
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unlink('custom/modules/Accounts/NeedsFixed.php');
-        unlink('custom/modules/Accounts/NoFixNeeded.php');
     }
 
 	public function setUp()

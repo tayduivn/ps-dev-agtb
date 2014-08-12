@@ -3390,6 +3390,10 @@ class SugarBean
                 }
             }
 
+            if ($this->createLocaleFormattedName == true && $field_value['type'] == 'fullname' && empty($this->$field)) {
+                $this->$field = $locale->formatName($this, $row);
+            }
+
             if (isset($field_value['type']) && $field_value['type'] === 'encrypt') {
                 $this->preprocess_encrypt_before_get($field);
             }

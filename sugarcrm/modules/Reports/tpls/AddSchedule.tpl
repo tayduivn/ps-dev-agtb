@@ -20,7 +20,6 @@
 <script type="text/javascript" src='{sugar_getjspath file="$CACHE_DIR/include/javascript/sugar_grp1_jquery.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_3.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="$CACHE_DIR/include/javascript/sugar_grp1_yui.js"}'></script>
-<script type="text/javascript" src='{sugar_getjspath file="include/javascript/calendar.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="$CACHE_DIR/include/javascript/sugar_grp1.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"}'></script>
 <script type="text/javascript" src="{$CACHE_DIR}/jsLanguage/{$CURRENT_LANGUAGE}.js?s={$JS_VERSION}&c={$JS_CUSTON_VERSION}&j={$JS_LANGUAGE_VERSION}"></script>
