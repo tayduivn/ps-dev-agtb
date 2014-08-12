@@ -472,14 +472,10 @@ class QuoteConvertApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    public function testLinkQuoteContactsToOpportunityDoesNotAddWhenNotContacts()
+    public function testLinkQuoteContactsToOpportunityDoesNotAddWhenNoContacts()
     {
 
         $this->opp->contacts = $this->opp_link2;
-
-        $this->opp->expects($this->never())
-            ->method('load_relationship')
-            ->with('contacts');
 
         $this->opp_link2->expects($this->never())
             ->method('add');
