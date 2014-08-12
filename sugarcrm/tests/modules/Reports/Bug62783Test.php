@@ -84,6 +84,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
     public function testDateTimeFiscalQueryFilter(
         $qualifier,
         $type,
+        $class,
         $startDate,
         $date,
         $modifyStart,
@@ -101,7 +102,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
 
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
-        $SWFDT = new SugarWidgetFielddatetime62783Test($layoutManager);
+        $SWFDT = new $class($layoutManager);
         $layoutDef = array(
             'qualifier_name' => $qualifier,
             'type' => $type
@@ -329,131 +330,145 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'quarter',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '',
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-04-01 07:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-07-01 07:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-07-01 06:59:59'), 'datetime')}",
                 'America/Los_Angeles'
             ),
             array(
                 'year',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
                 ">= {$db->convert($db->quoted('2013-12-31 22:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2014-12-31 22:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2014-12-31 21:59:59'), 'datetime')}",
                 'Europe/Helsinki'
             ),
             array(
                 'quarter',
                 'date',
+                'SugarWidgetFielddate62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= {$db->convert($db->quoted('2013-04-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-07-01 00:00:00'), 'datetime')}",
+                ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
                 'America/Los_Angeles'
             ),
             array(
                 'year',
                 'date',
+                'SugarWidgetFielddate62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
-                ">= {$db->convert($db->quoted('2014-01-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2015-01-01 00:00:00'), 'datetime')}",
+                ">= {$db->convert($db->quoted('2014-01-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2014-12-31'), 'date')}",
                 'Europe/Helsinki'
             ),
             array(
                 'quarter',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '-3 month',
                 '',
                 ">= {$db->convert($db->quoted('2013-01-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-04-01 00:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-03-31 23:59:59'), 'datetime')}",
                 'UTC'
             ),
             array(
                 'year',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '1987-01-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-01-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2015-01-01 00:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2014-12-31 23:59:59'), 'datetime')}",
                 'UTC'
             ),
             array(
                 'quarter',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '',
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-05-01 07:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-08-01 07:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-08-01 06:59:59'), 'datetime')}",
                 'America/Los_Angeles'
             ),
-            array('year',
+            array(
+                'year',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-04-30 21:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2015-04-30 21:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2015-04-30 20:59:59'), 'datetime')}",
                 'Europe/Helsinki'
             ),
             array(
                 'quarter',
                 'date',
+                'SugarWidgetFielddate62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= {$db->convert($db->quoted('2013-05-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-08-01 00:00:00'), 'datetime')}",
+                ">= {$db->convert($db->quoted('2013-05-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2013-07-31'), 'date')}",
                 'America/Los_Angeles'
             ),
-            array('year',
+            array(
+                'year',
                 'date',
+                'SugarWidgetFielddate62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
-                ">= {$db->convert($db->quoted('2014-05-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2015-05-01 00:00:00'), 'datetime')}",
+                ">= {$db->convert($db->quoted('2014-05-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2015-04-30'), 'date')}",
                 'Europe/Helsinki'
             ),
             array(
                 'quarter',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '-3 month',
                 '',
                 ">= {$db->convert($db->quoted('2013-02-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2013-05-01 00:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-04-30 23:59:59'), 'datetime')}",
                 'UTC'
             ),
             array(
                 'year',
                 'datetime',
+                'SugarWidgetFielddatetime62783Test',
                 '2018-05-01',
                 '2013-05-05',
                 '+1 year',
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-05-01 00:00:00'), 'datetime')}",
-                "< {$db->convert($db->quoted('2015-05-01 00:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2015-04-30 23:59:59'), 'datetime')}",
                 'UTC'
             ),
         );
@@ -464,6 +479,17 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
  * Helper class for testing getFiscalYearFilter() method
  */
 class SugarWidgetFielddatetime62783Test extends SugarWidgetFielddatetime
+{
+    public function getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date = '')
+    {
+        return parent::getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date);
+    }
+}
+
+/**
+ * Helper class for testing getFiscalYearFilter() method
+ */
+class SugarWidgetFielddate62783Test extends SugarWidgetFielddate
 {
     public function getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date = '')
     {
