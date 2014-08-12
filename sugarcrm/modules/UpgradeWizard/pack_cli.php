@@ -26,6 +26,7 @@ $name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(
+    "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
     "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
     "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
     "modules/UpgradeWizard/upgrader_version.json" => 'upgrader_version.json',
