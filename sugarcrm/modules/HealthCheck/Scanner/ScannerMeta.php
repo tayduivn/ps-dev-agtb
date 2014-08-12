@@ -352,6 +352,12 @@ class HealthCheckScannerMeta
         ),
     );
 
+    protected $flagLabelMap = array(
+        self::FLAG_RED => 'red',
+        self::FLAG_YELLOW => 'yellow',
+        self::FLAG_GREEN => 'green'
+    );
+
     protected $metaByReportId = array();
 
     /**
@@ -458,6 +464,7 @@ class HealthCheckScannerMeta
         if (!isset($meta['flag'])) {
             $meta['flag'] = $this->getDefaultFlag($meta['bucket']);
         }
+        $meta['flag_label'] = $this->getFlagLabel($meta['flag']);
         if (!isset($meta['kb'])) {
             $meta['kb'] = $this->defaultKbUrl;
         }
@@ -469,6 +476,19 @@ class HealthCheckScannerMeta
         }
 
         return $meta;
+    }
+
+    /**
+     * Returns flag's label
+     *
+     * @param $flag
+     * @return string
+     */
+    protected function getFlagLabel($flag) {
+        if(isset($this->flagLabelMap[$flag])) {
+            return $this->flagLabelMap[$flag];
+        }
+        return $flag;
     }
 
     /**
