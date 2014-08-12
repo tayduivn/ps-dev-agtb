@@ -276,4 +276,51 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($call->id, $response['record']['id'], 'Call is not returned by API');
         $this->assertEmpty($response['record']['contact_id'], 'Contact is not unlinked from call');
     }
+
+    /**
+     * Before Save hook should be called only once.
+     * @ticket PAT-769
+     */
+    public function testBeforeSaveOnCreateRelatedRecord()
+    {
+        LogicHook::refreshHooks();
+        $hook = array(
+            'Notes',
+            'before_save',
+            Array(1, 'Notes::before_save', __FILE__, 'SugarBeanBeforeSaveTestHook', 'beforeSave')
+        );
+        call_user_func_array('check_logic_hook_file', $hook);
+
+        $contact = SugarTestContactUtilities::createContact();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'module' => 'Contacts',
+            'record' => $contact->id,
+            'link_name' => 'notes',
+            'name' => 'Test Note',
+            'assigned_user_id' => $api->user->id,
+        );
+        $apiClass = new RelateRecordApi();
+        $result = $apiClass->createRelatedRecord($api, $args);
+
+        call_user_func_array('remove_logic_hook', $hook);
+        $this->createdBeans[] = BeanFactory::getBean('Notes', $result['related_record']['id']);
+        $expectedCount = SugarBeanBeforeSaveTestHook::$callCounter;
+        SugarBeanBeforeSaveTestHook::$callCounter = 0;
+
+        $this->assertEquals(1, $expectedCount);
+    }
+}
+
+class SugarBeanBeforeSaveTestHook
+{
+    static public $callCounter = 0;
+
+    public function beforeSave($bean, $event, $arguments)
+    {
+        self::$callCounter++;
+    }
 }

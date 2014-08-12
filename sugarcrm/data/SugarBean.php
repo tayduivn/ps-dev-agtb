@@ -2365,7 +2365,11 @@ class SugarBean
             {
                 // It's a self-referencing relationship
                 if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
-                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                // CRYS-358. Many-to-many relationship with real type one-to-many has two valid sides which have
+                // different names.
+                $new_rel_link = ($this->$rel_link->getSide() == REL_RHS) ?
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink() :
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
                 } else {
                     // Doesn't have a right hand side, so let's just use the LHS
                     $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
