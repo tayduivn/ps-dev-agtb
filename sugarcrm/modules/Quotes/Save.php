@@ -109,15 +109,6 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
     $pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
     $pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
 
-    // Bug 54931. Grand Total for custom groups too.
-    /*$focus->tax = SugarMath::init($focus->tax, 6)->add($pb->tax)->result();
-    $focus->shipping = SugarMath::init($focus->shipping, 6)->add($pb->shipping)->result();
-    $focus->subtotal = SugarMath::init($focus->subtotal, 6)->add($pb->subtotal)->result();
-    $focus->deal_tot = SugarMath::init($focus->deal_tot, 6)->add($pb->deal_tot)->result();
-    $focus->new_sub = SugarMath::init($focus->new_sub, 6)->add($pb->new_sub)->result();
-    $focus->total = SugarMath::init($focus->total, 6)->add($pb->total)->result();
-    */
-
     $product_bundels[$total_keys[$k]] = $pb->save();
     if (substr_count($total_keys[$k], 'group_') > 0) {
         $lastIndex = getLastProductBundleIndex($focus->id);
