@@ -327,6 +327,9 @@ $dictionary['Contact'] = array(
             'relationship' => 'contact_leads',
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
+            'populate_list' => array(
+                'account_name' => 'account_name',
+            ),
         ),
         'products' => array(
             'name' => 'products',
