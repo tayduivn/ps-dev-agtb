@@ -124,6 +124,7 @@ class ModuleScanner{
     'tmpfile',
     'umask',
     'ini_set',
+    'set_time_limit',
 	'eval',
 	'exec',
 	'system',
