@@ -16,12 +16,16 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        //Turn off caching now() or else date_modified checks are invalid
+        TimeDate::getInstance()->allow_cache = false;
+
         SugarTestHelper::setUp('current_user');
     }
     
     public function tearDown()
     {
         MetaDataManagerBug61201::resetMetadataCacheQueueState();
+        TimeDate::getInstance()->allow_cache = true;
         SugarTestHelper::tearDown();
     }
 
@@ -33,18 +37,17 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetaDataCacheQueueHandling()
     {
+        $db = DBManagerFactory::getInstance();
+
         // Get the private metadata manager for base
-        $mm   = MetaDataManager::getManager();
-        
-        // Cache file path... we will need this for tests in here
-        $file = $mm->getMetadataCacheFileName();
+        $mm = MetaDataManager::getManager();
         
         // Get the metadata now to force a cache build if it isn't there
         $mm->getMetadata();
         
         // Assert that there is a private base metadata file
-        $this->assertFileExists($file, "Private cache file was not created");
-        $time = filemtime($file);
+        $dateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $this->assertNotEmpty($dateModified);
         
         // Set the queue
         MetaDataManager::enableCacheRefreshQueue();
@@ -63,7 +66,8 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         
         // Get the metadata again and ensure it is the same
         $mm->getMetadata();
-        $this->assertEquals($time, filemtime($file), "Meta Data cache file has changed and it should not have");
+        $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $this->assertEquals($dateModified, $newDateModified, "Meta Data cache has changed and it should not have");
         
         // Force a time diff
         sleep(1);
@@ -73,12 +77,18 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         
         // Get the metadata again and ensure it is different now
         $mm->getMetadata();
+
+        $newDateModified = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
         
         // Test the file first
-        $this->assertFileExists($file, "Private cache file was not found after refresh.");
+        $this->assertNotEmpty($newDateModified, "Private cache metadata was not found after refresh.");
         
         // Test the time on the new file
-        $this->assertGreaterThan($time, filemtime($file), "Second cache file make time is not greater than the first.");
+        $this->assertGreaterThan(
+            TimeDate::getInstance()->fromDb($dateModified)->getTimestamp(),
+            TimeDate::getInstance()->fromDb($newDateModified)->getTimestamp(),
+            "Second cache file make time is not greater than the first."
+        );
     }
 }
 
@@ -87,6 +97,7 @@ class MetaDataManagerBug61201 extends MetaDataManager
     public static function resetMetadataCacheQueueState()
     {
         MetaDataManager::$isQueued = false;
+        MetaDataManager::$inProcess = false;
         MetaDataManager::$queue    = array();
     }
     

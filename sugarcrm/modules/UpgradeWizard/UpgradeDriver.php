@@ -224,7 +224,25 @@ abstract class UpgradeDriver
      */
     public function cleanCaches()
     {
+        require_once "include/MetaDataManager/MetaDataManager.php";
+
         $this->log("Cleaning cache");
+        $this->cleanFileCache();
+        $this->cleanDir($this->cacheDir("smarty"));
+        $this->cleanDir($this->cacheDir("modules"));
+        $this->cleanDir($this->cacheDir("jsLanguage"));
+        $this->cleanDir($this->cacheDir("Expressions"));
+        $this->cleanDir($this->cacheDir("themes"));
+        $this->cleanDir($this->cacheDir("include/api"));
+        MetaDataManager::clearAPICache(true, true);
+        $this->log("Cache cleaned");
+    }
+
+    /**
+     * Clear only the autoloader cache
+     */
+    public function cleanFileCache()
+    {
         if (is_callable(array('SugarAutoLoader', 'buildCache'))) {
             SugarAutoLoader::buildCache();
         } else {
@@ -232,14 +250,6 @@ abstract class UpgradeDriver
             @unlink("cache/file_map.php");
             @unlink("cache/class_map.php");
         }
-        $this->cleanDir($this->cacheDir("smarty"));
-        $this->cleanDir($this->cacheDir("modules"));
-        $this->cleanDir($this->cacheDir("jsLanguage"));
-        $this->cleanDir($this->cacheDir("Expressions"));
-        $this->cleanDir($this->cacheDir("themes"));
-        $this->cleanDir($this->cacheDir("include/api"));
-        $this->cleanDir($this->cacheDir("api/metadata"));
-        $this->log("Cache cleaned");
     }
 
     /**
@@ -457,7 +467,7 @@ abstract class UpgradeDriver
             }
         }
         $d->close();
-        if (@rmdir($path) === FALSE){
+        if (@rmdir($path) === false){
             $this->log("Failed to remove directory: $path");
             return false;
         }
@@ -1073,7 +1083,7 @@ abstract class UpgradeDriver
 
         // BR-385 - This fixes the issues around SugarThemeRegistry fatals.  The cache needs rebuild on stage-post init of sugar
         if ($this->current_stage == 'post') {
-            $this->cleanCaches();
+            $this->cleanFileCache();
         }
 
         if (!defined('sugarEntry')) define('sugarEntry', true);
@@ -1090,6 +1100,10 @@ abstract class UpgradeDriver
         }
         $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
         $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
+        //Once we have a DB, we can do a full cache clear
+        if ($this->current_stage == 'post') {
+            $this->cleanCaches();
+        }
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
         if (empty($locale)) {

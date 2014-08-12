@@ -44,6 +44,9 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         // refresh tests
         $this->buildNumber = isset($GLOBALS['sugar_build']) ? $GLOBALS['sugar_build'] : null;
 
+        //Don't cache now() or else we can't verify updates
+        TimeDate::getInstance()->allow_cache = false;
+
         // Ensure we are starting clean
         MetaDataManager::clearAPICache();
     }
@@ -54,6 +57,8 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->buildNumber) {
             $GLOBALS['sugar_build'] = $this->buildNumber;
         }
+
+        TimeDate::getInstance()->allow_cache = true;
         
         SugarTestHelper::tearDown();
         
@@ -95,19 +100,19 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
      * 
      * @group MetaDataManager
      */
-    public function testRefreshCacheCreatesNewCacheFiles()
+    public function testRefreshCacheCreatesNewCacheEntries()
     {
+        $db = DBManagerFactory::getInstance();
+
         // Start by wiping out everything
         MetaDataManager::clearAPICache();
-        $basePrivate = sugar_cached('api/metadata/metadata_base_private.php');
-        $basePublic  = sugar_cached('api/metadata/metadata_base_public.php');
-        $this->assertFileNotExists($basePrivate, "Private base cache file found and it shouldn't be.");
-        $this->assertFileNotExists($basePublic, "Public base cache file found and it shouldn't be.");
-        
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
+
         // Refresh the cache and ensure that there are file in place
         MetaDataManager::refreshCache(array('base'), true);
-        $this->assertFileExists($basePrivate, "Private base cache file not found.");
-        $this->assertFileExists($basePublic, "Public base cache file not found.");
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
     }
 
     /**
@@ -117,32 +122,42 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider platformProvider
      * @param string $platform
      */
-    public function testRefreshCacheCreatesNewCacheFilesForPlatform($platform)
+    public function testRefreshCacheCreatesNewCacheEntriesForPlatform($platform)
     {
+        $db = DBManagerFactory::getInstance();
+
         // Get the private metadata manager for $platform
         $mm = MetaDataManager::getManager($platform);
         
-        // Cache file path... we will need this for tests in here
-        $file = $mm->getMetadataCacheFileName();
-        
         // Get the current metadata to ensure there is a cache built
         $mm->getMetadata();
-        
-        // Assert that there is a private base metadata file
-        $this->assertFileExists($file, "Private cache file was not created for $platform");
-        $time = filemtime($file);
-        
-        // Force a change in filemtime by sleeping. Not ideal, but it works
+
+        $key = "meta_hash_{$platform}";
+        if ($platform != "base") {
+            $key .= "_base";
+        }
+
+        $dateModified = TimeDate::getInstance()->fromDb(
+            $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'")
+        );
+
+        //Wait to ensure timestamp inscreases
         sleep(1);
         
         // This will wipe out and rebuild the private metadata cache for $platform
         $mm->rebuildCache();
-        
+
         // Test the file first
-        $this->assertFileExists($file, "Private cache file for $platform was not found after refresh.");
+        $newDateModified = TimeDate::getInstance()->fromDb(
+            $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'")
+        );
         
         // Test the time on the new file
-        $this->assertGreaterThan($time, filemtime($file), "Second cache file make time is not greater than the first.");
+        $this->assertGreaterThan(
+            $dateModified->getTimestamp(),
+            $newDateModified->getTimestamp(),
+            "Second cache file make time is not greater than the first."
+        );
     }
 
     /**
@@ -154,24 +169,29 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testQuickRepairRefreshesCache($public)
     {
-        $visibility = $public ? "Public" : "Private";
-        
+        $db = DBManagerFactory::getInstance();
+
+        $key = $public ? "meta_hash_public_base" : "meta_hash_base";
         // Get the metadata manager for use in this test
         $mm = MetaDataManager::getManager(array('base'), $public);
         
         // Wipe out the cache
         $repair = new RepairAndClear();
         $repair->clearMetadataAPICache();
-        $cache = $mm->getMetadataCacheFileName();
-        $this->assertFileNotExists($cache, "$visibility base cache file found and it shouldn't be");
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"));
         
         // Build the cache now to ensure we have a cache file
         $mm->getMetadata();
-        $this->assertFileExists($cache, "$visibility base cache file not found and it should be");
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
+            "Could not load the metadata cache for $key after load"
+        );
+
         
         // Refresh the cache and ensure that there are file in place
         $repair->repairMetadataAPICache();
-        $this->assertFileExists($cache, "$visibility base cache file not found.");
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
+            "Could not load the metadata cache for $key after repair"
+        );
     }
 
     /**
@@ -280,3 +300,5 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
         );
     }
 }
+
+
