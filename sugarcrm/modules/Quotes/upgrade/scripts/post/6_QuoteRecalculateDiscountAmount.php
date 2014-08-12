@@ -17,6 +17,16 @@ class SugarUpgradeQuoteRecalculateDiscountAmount extends UpgradeScript
 
     public function run()
     {
+        // lets make sure the hotfix is not installed
+        // the id_name is the key from the package
+        $sql = 'select name, date_entered from upgrade_history where id_name = "1407215153"';
+        $result = $this->db->fetchOne($sql);
+
+        if ($result !== false) {
+            $this->log("Skipping Discount Price Recalculate as Hotfix '{$result['name']}' was applied on {$result['date_entered']}");
+            return 1;
+        }
+
         if (version_compare($this->from_version, '7.5.0.0', '<')) {
             // Collect all quote, product_bundle and products data
             $sql = "UPDATE products
