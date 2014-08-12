@@ -27,9 +27,6 @@ class Bug47403Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_focus = SugarTestAccountUtilities::createAccount();
 
-        $this->_focus->field_defs['assigned_user_id']['type'] = 'relate';
-        $this->_focus->field_defs['assigned_user_id']['module'] = 'Users';
-
         $this->_actionArray = array (
             'action_module' => '',
             'action_type' => 'update',
