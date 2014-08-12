@@ -269,7 +269,12 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             $dictionary = array();
             include $file;
             $this->upgrader->backupFile($file);
-            $dictionary[$seed->object_name]['relationships'][$def['name']] = $def;
+            if (!empty($dictionary[$seed->object_name]['relationships'][$def['name']])) {
+                $dictionary[$seed->object_name]['relationships'][$def['name']] = $def;
+            }
+            if (!empty($dictionary[$def['name']])) {
+                $dictionary[$def['name']] = $def;
+            }
             $this->log("Updating definition of {$def['name']} for module {$seed->module_dir} in {$file}");
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
             foreach (array_keys($dictionary) as $key) {
