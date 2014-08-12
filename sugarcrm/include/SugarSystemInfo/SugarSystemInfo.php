@@ -32,14 +32,20 @@ class SugarSystemInfo
     protected $db;
 
     /**
+     * @var array
+     */
+    protected $settings;
+
+    /**
      * @var SugarSystemInfo
      */
-    protected static $instance;
+    private static $instance;
 
     private function __construct()
     {
         $this->db = DBManagerFactory::getInstance();
         $this->sugarConfig = $GLOBALS['sugar_config'];
+        $this->settings = $this->getSettings();
     }
 
     /**
@@ -128,11 +134,13 @@ class SugarSystemInfo
      */
     public function getActiveUsersXDaysCount($days)
     {
-        $query = sprintf(
-            "SELECT COUNT(id) AS count FROM users WHERE last_login >= %s AND %s",
-            $this->getLastXDays($days),
-            User::getLicensedUsersWhere()
-        );
+        $info = $this->getAppInfo();
+        if(version_compare($info['sugar_version'], '7.2', '>')) {
+            $query = "SELECT COUNT(id) AS user_count FROM users WHERE last_login >= %s AND %s";
+        } else {
+            $query = "SELECT COUNT(DISTINCT users.id) AS user_count FROM tracker, users WHERE users.id = tracker.user_id AND tracker.date_modified >= %s AND %s";
+        }
+        $query = sprintf($query, $this->getLastXDays($days), $this->getExcludeSystemUsersWhere());
         return $this->db->getOne($query, false, 'fetching last 30 users count');
     }
 
@@ -146,7 +154,7 @@ class SugarSystemInfo
         $query = sprintf(
             "SELECT COUNT(id) AS count FROM users WHERE status = %s AND deleted != 1 AND is_admin = 1 AND %s",
             $this->db->quoted('Active'),
-            User::getSystemUsersWhere()
+            $this->getExcludeSystemUsersWhere()
         );
         return $this->db->getOne($query, false, 'fetching admin count');
     }
@@ -158,7 +166,7 @@ class SugarSystemInfo
      */
     public function getUsersCount()
     {
-        $query = "SELECT COUNT(id) AS count FROM users WHERE " . User::getSystemUsersWhere();
+        $query = "SELECT COUNT(id) AS count FROM users WHERE " . $this->getExcludeSystemUsersWhere();
         return $this->db->getOne($query, false, 'fetching all users count');
     }
 
@@ -169,7 +177,7 @@ class SugarSystemInfo
      */
     public function getActiveUsersCount()
     {
-        $query = "SELECT count(id) AS total FROM users WHERE " . User::getLicensedUsersWhere();
+        $query = "SELECT count(id) AS total FROM users WHERE " . $this->getExcludeSystemUsersWhere();
         return $this->db->getOne($query, false, 'fetching active users count');
     }
 
@@ -180,9 +188,8 @@ class SugarSystemInfo
      */
     public function getSystemName()
     {
-        $administration = Administration::getSettings('system');
-        return (!empty($administration->settings['system_name'])) ? substr(
-            $administration->settings['system_name'],
+        return (!empty($this->settings['system_name'])) ? substr(
+            $this->settings['system_name'],
             0,
             255
         ) : '';
@@ -205,15 +212,14 @@ class SugarSystemInfo
      */
     public function getLicenseInfo()
     {
-        $license = Administration::getSettings('license');
         $info = array();
-        if (!empty($license->settings)) {
-            $info['license_users'] = $license->settings['license_users'];
-            $info['license_expire_date'] = $license->settings['license_expire_date'];
-            $info['license_key'] = $license->settings['license_key'];
-            $info['license_num_lic_oc'] = $license->settings['license_num_lic_oc'];
-            if (!empty($license->settings['license_num_portal_users'])) {
-                $info['license_num_portal_users'] = $license->settings['license_num_portal_users'];
+        if (!empty($this->settings)) {
+            $info['license_users'] = $this->settings['license_users'];
+            $info['license_expire_date'] = $this->settings['license_expire_date'];
+            $info['license_key'] = $this->settings['license_key'];
+            $info['license_num_lic_oc'] = $this->settings['license_num_lic_oc'];
+            if (!empty($this->settings['license_num_portal_users'])) {
+                $info['license_num_portal_users'] = $this->settings['license_num_portal_users'];
             } else {
                 $info['license_num_portal_users'] = '';
             }
@@ -344,6 +350,14 @@ class SugarSystemInfo
     }
 
     /**
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        return $this->settings['license_key'];
+    }
+
+    /**
      * Returns db-formatted 30-days-ago date
      *
      * @param $days
@@ -354,5 +368,26 @@ class SugarSystemInfo
         $days = (int)$days;
         $timedate = TimeDate::getInstance();
         return $this->db->convert($this->db->quoted($timedate->getNow()->modify("-$days days")->asDb(false)), 'datetime');
+    }
+
+    /**
+     * Returns settings array
+     *
+     * @return array
+     */
+    protected function getSettings()
+    {
+        return BeanFactory::getBean('Administration')->retrieveSettings()->settings;
+    }
+
+    /**
+     * Returns where clause
+     * This is a copy-paste from User::getSystemUsersWhere because that method is not available in 6.5
+     *
+     * @return string
+     */
+    protected function getExcludeSystemUsersWhere()
+    {
+        return " user_name <> 'SugarCRMSupport' AND user_name <> 'SugarCRMUpgradeUser'";
     }
 }

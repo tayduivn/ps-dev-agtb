@@ -10,7 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'vendor/nusoap/nusoap.php';
+//BWC: nusoap library has been moved to vendor directory in 7+
+if(file_exists('vendor/nusoap/nusoap.php')) {
+    require_once 'vendor/nusoap/nusoap.php';
+} else if(file_exists("include/nusoap/nusoap.php")) {
+    require_once "include/nusoap/nusoap.php";
+}
 
 /**
  * Class SugarHeartbeatClient
@@ -25,7 +30,7 @@ class SugarHeartbeatClient extends nusoap_client
      *
      * @var string Endpoint url
      */
-    const ENDPOINT = 'https://updates.sugarcrm.com/heartbeat/soap.php';
+    const DEFAULT_ENDPOINT = 'https://updates.sugarcrm.com/heartbeat/soap.php';
 
     /**
      * These parameters are already SoapClient compatible when moving away
@@ -43,8 +48,32 @@ class SugarHeartbeatClient extends nusoap_client
      */
     public function __construct()
     {
-        $timeout = $this->defaultOptions['connection_timeout'];
-        parent::__construct(self::ENDPOINT, false, false, false, false, false, $timeout);
+        $options = $this->getOptions();
+        parent::__construct($this->getEndpoint(), false, false, false, false, false, $options['connection_timeout']);
+    }
+
+    /**
+     * Returns endpoint
+     * reads $sugar_config['heartbeat']['endpoint']
+     * default is SugarHeartbeatClient::DEFAULT_ENDPOINT
+     *
+     * @return string
+     */
+    protected function getEndpoint()
+    {
+        return SugarConfig::getInstance()->get('heartbeat.endpoint', self::DEFAULT_ENDPOINT);
+    }
+
+    /**
+     * Returns Soap Options
+     * reads $sugar_config['heartbeat']['options']
+     * default is SugarHeartbeatClient::$defaultOptions
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return array_merge($this->defaultOptions, SugarConfig::getInstance()->get('heartbeat.options', array()));
     }
 
     /**
@@ -84,7 +113,7 @@ class SugarHeartbeatClient extends nusoap_client
     }
 
     /**
-     * Base64 decode + Unsterilize
+     * Base64 decode + Unserialize
      * @see SugarHeartbeatClient::sugarHome
      *
      * @param $value

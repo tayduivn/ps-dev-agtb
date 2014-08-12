@@ -163,13 +163,13 @@
         this.userId = app.user.get('id');
         var picture = app.user.get("picture");
 
-        this.pictureUrl = picture ? app.api.buildFileURL({
+        this.pictureUrl = picture ? (this.pictureUrl || app.api.buildFileURL({
             module: "Users",
             id: app.user.get("id"),
             field: "picture"
         }, {
             cleanCache: true
-        }) : '';
+        })) : '';
 
         this.render();
     },
