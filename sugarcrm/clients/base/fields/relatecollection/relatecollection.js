@@ -70,7 +70,7 @@
             tags: true,
             multiple: true,
             width: '100%',
-            containerCssClass: 'select2-choices-pills-close select2-choices-pills-square',
+            containerCssClass: 'select2-choices-pills-close',
             initSelection: _.bind(this._initSelection, this),
             createSearchChoice: _.bind(this._createSearchChoice, this),
             query: _.debounce(_.bind(this._query, this), 300)

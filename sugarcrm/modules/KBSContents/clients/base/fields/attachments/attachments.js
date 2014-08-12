@@ -121,7 +121,7 @@
             this.$node.select2({
                 allowClear: true,
                 multiple: true,
-                containerCssClass: 'select2-choices-pills-close span12 select2-choices-pills-square with-padding',
+                containerCssClass: 'select2-choices-pills-close span12 with-padding',
                 tags: [],
                 formatSelection: _.bind(this.formatSelection, this),
                 width: 'off',
