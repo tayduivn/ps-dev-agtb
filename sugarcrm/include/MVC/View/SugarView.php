@@ -37,6 +37,8 @@ class SugarView
     /**
      * Sugar_Smarty. This is useful if you have a view and a subview you can
      * share the same smarty object.
+     *
+     * @var Sugar_Smarty
      */
     var $ss = null;
     /**
