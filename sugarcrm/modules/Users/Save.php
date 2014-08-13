@@ -149,9 +149,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         $focus->is_group=0;
         $focus->portal_only=0;
 
-             if(isset($_POST['status']) && $_POST['status']== "Inactive") $focus->employee_status = "Terminated"; //bug49972
-
-            if (isset($_POST['user_name'])) {
+        if (isset($_POST['user_name'])) {
             $focus->user_name = $_POST['user_name'];
         }
         if((isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) ||
