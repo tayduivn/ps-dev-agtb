@@ -390,7 +390,7 @@ class SugarQuery
             $alias .= "_" . $table_name;
         }
 
-        return $alias;
+        return $this->db->getValidDBName($alias, 'alias');
     }
 
     /**
@@ -765,7 +765,8 @@ class SugarQuery
         $bean = !empty($options['relatedJoin']) ? $this->join[$options['relatedJoin']]->bean : $this->from;
 
         if (is_array($bean)) {
-            list($bean, $alias) = $bean;
+            // the bean is the first element of the array
+            $bean = reset($bean);
         }
 
         $bean->load_relationship($join);

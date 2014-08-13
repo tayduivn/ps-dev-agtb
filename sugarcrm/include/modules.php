@@ -538,10 +538,6 @@ $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
-$beanList['KBSTopics'] = 'KBSTopic';
-$beanFiles['KBSTopic'] = 'modules/KBSTopics/KBSTopic.php';
-$modInvisList[] = 'KBSTopics';
-
 // TODO: this definition should be grouped with all the others definitions like $beanList, $beanFiles and so on
 $bwcModules = array(
     'ACLFields',
@@ -682,9 +678,20 @@ $beanList['KBSContentTemplates'] = 'KBSContentTemplate';
 $beanFiles['KBSContentTemplate'] = 'modules/KBSContentTemplates/KBSContentTemplate.php';
 $moduleList[] = 'KBSContentTemplates';
 
+$beanList['KBSTopics'] = 'KBSTopic';
+$beanFiles['KBSTopic'] = 'modules/KBSTopics/KBSTopic.php';
+$modInvisList[] = 'KBSTopics';
+
 $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $moduleList[] = 'EmbeddedFiles';
+
+// Health Check module
+$beanList['HealthCheck'] = 'HealthCheck';
+$beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';
+$modInvisList[] = 'HealthCheck';
+$adminOnlyList['HealthCheck'] = array('all' => 1);
+$bwcModules[] = 'HealthCheck';
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;

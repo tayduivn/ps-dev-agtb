@@ -106,6 +106,57 @@ span.count {
   .rotate(90deg);
 }
 
+// org tree chart
+
+@-webkit-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-moz-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-o-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+// for org chart demo renderer
+.nv-chart-org {
+  .nv-foreign-object body {
+    width: 100px;
+    height: 32px;
+    padding: 5px;
+    margin: 5px;
+    border: 2px solid darken(@grayLighter, 10%);
+    .border-radius(4px);
+    background-color: #E9EFEF;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    overflow: visible;
+  }
+  .nv-foreign-object img.rep-avatar {
+    float: left;
+    margin-right: 4px;
+    width: 32px;
+    height: 32px;
+    &.loaded {
+      -webkit-animation: animaopacity .5s;
+      animation: animaopacity .5s;
+    }
+  }
+  .nv-foreign-object div.rep-name {
+    font-size: 10px;
+    color: steelblue;
+  }
+  .nv-foreign-object div.rep-title {
+    font-size: 8px;
+  }
+}
+
 // org chart zoom control
 .btn-slider {
   display: inline-block;

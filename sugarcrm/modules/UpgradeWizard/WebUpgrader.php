@@ -152,47 +152,47 @@ class WebUpgrader extends UpgradeDriver
      */
     public function process($action)
     {
-        if($action == "status") {
+        if ($action == "status") {
             return $this->getStatus();
         }
-        if(!in_array($action, $this->stages)) {
+        if (!in_array($action, $this->stages)) {
             return $this->error("Unknown stage $action", true);
         }
-        if($action == 'unpack') {
+        if ($action == 'unpack') {
             // accept file upload
-            if(!$this->handleUpload()) {
+            if (!$this->handleUpload()) {
                 return false;
             }
         }
-       $res = $this->runStep($action);
-       if($res !== false) {
-        	if($action == 'unpack') {
-        	    $manifest = $this->getManifest();
-        	    if (empty($manifest)) {
-        	        return false;
-        	    }
-        	    if(!empty($manifest['copy_files']['from_dir'])) {
-        	        $new_source_dir = $this->context['extract_dir']."/".$manifest['copy_files']['from_dir'];
-        	    } else {
-        	        $this->error("No from_dir in manifest", true);
-        	        return false;
-        	    }
-        		if(is_file("$new_source_dir/LICENSE")) {
-        			$this->license = file_get_contents("$new_source_dir/LICENSE");
-        		} elseif(is_file("$new_source_dir/LICENSE.txt")) {
-        			$this->license = file_get_contents("$new_source_dir/LICENSE.txt");
-        		} elseif(is_file($this->context['source_dir']."/LICENSE.txt")) {
-        		    $this->license = file_get_contents($this->context['source_dir']."/LICENSE.txt");
-        		} elseif(is_file($this->context['source_dir']."/LICENSE")) {
-        		    $this->license = file_get_contents($this->context['source_dir']."/LICENSE");
-        		}
-        	    if(is_file($this->context['extract_dir']."/README")) {
-        			$this->readme = file_get_contents($this->context['extract_dir']."/README");
-        		} elseif(is_file($this->context['extract_dir']."/README.txt")) {
-        			$this->readme = file_get_contents($this->context['extract_dir']."/README.txt");
-        		}
-        	}
-        	return $res;
+        $res = $this->runStep($action);
+        if ($res !== false) {
+            if ($action == 'unpack') {
+                $manifest = $this->getManifest();
+                if (empty($manifest)) {
+                    return false;
+                }
+                if (!empty($manifest['copy_files']['from_dir'])) {
+                    $new_source_dir = $this->context['extract_dir'] . "/" . $manifest['copy_files']['from_dir'];
+                } else {
+                    $this->error("No from_dir in manifest", true);
+                    return false;
+                }
+                if (is_file("$new_source_dir/LICENSE")) {
+                    $this->license = file_get_contents("$new_source_dir/LICENSE");
+                } elseif (is_file("$new_source_dir/LICENSE.txt")) {
+                    $this->license = file_get_contents("$new_source_dir/LICENSE.txt");
+                } elseif (is_file($this->context['source_dir'] . "/LICENSE.txt")) {
+                    $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE.txt");
+                } elseif (is_file($this->context['source_dir'] . "/LICENSE")) {
+                    $this->license = file_get_contents($this->context['source_dir'] . "/LICENSE");
+                }
+                if (is_file($this->context['extract_dir'] . "/README")) {
+                    $this->readme = file_get_contents($this->context['extract_dir'] . "/README");
+                } elseif (is_file($this->context['extract_dir'] . "/README.txt")) {
+                    $this->readme = file_get_contents($this->context['extract_dir'] . "/README.txt");
+                }
+            }
+            return $res;
         }
         return false;
     }
@@ -257,5 +257,21 @@ class WebUpgrader extends UpgradeDriver
     {
         parent::removeTempFiles();
         $this->removeDir($this->cacheDir("upgrades/driver/"));
+    }
+
+    /**
+     *
+     * @see UpgradeDriver::doHealthcheck()
+     */
+    protected function doHealthcheck()
+    {
+        if (!isset($_REQUEST['confirm_id'])) {
+            $this->log("No previous health check id set in request");
+            return false;
+        }
+
+        // TODO - check the confirm_id against actual run ? Need db connection though which isnt there yet ...
+        $this->log("Skipping health check - we have a confirmed id");
+        return true;
     }
 }

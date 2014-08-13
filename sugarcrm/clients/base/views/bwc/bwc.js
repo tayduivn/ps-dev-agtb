@@ -140,7 +140,7 @@
 
         this.$('iframe').load(function() {
             //In order to update current location once bwc link is clicked.
-            this.url = 'index.php' + this.contentWindow.location.search;
+            self.url = 'index.php' + this.contentWindow.location.search;
             self._setCurrentUrl();
 
             if (this.contentWindow.$ === undefined) {

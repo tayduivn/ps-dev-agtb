@@ -350,11 +350,16 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 	for ($i = 0 ; $i < count($rowArray) ; $i++) {
 		$row = $rowArray[$i];
 		$changeGroupHappend = false;
-		if (whereToStartGroupByRow($reporter, $i, $header_row, $previousRow, $row) === 0) {
+		$whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
+		if ($whereToStartGroupByRow === -1) {
 			$rowsAndColumnsData[$count] = array();
 			$changeGroupHappend = true;
 			$countIndex = $count;
-		} // if
+		}
+		else
+		{
+			$countIndex = $whereToStartGroupByRow;
+		}
 		
 		$groupBy2ndColumnValue = "";
 		for ($j = 0 ; $j < count($group_def_array) ; $j++) {
@@ -768,11 +773,16 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 		$row = $rowArray[$i];
 		$changeGroupHappend = false;
 		//_pp(whereToStartGroupByRow($reporter, $i, $header_row, $previousRow, $row));
-		if (whereToStartGroupByRow($reporter, $i, $header_row, $previousRow, $row) === 0) {
+		$whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
+		if ($whereToStartGroupByRow === -1) {
 			$rowsAndColumnsData[$count] = array();
 			$changeGroupHappend = true;
 			$countIndex = $count;
-		} // if		
+		}
+		else
+		{
+			$countIndex = $whereToStartGroupByRow;
+		}
 		
 		for ($j = 0 ; $j < count($group_def_array) ; $j++) {
 			$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name']."#".$group_def_array[$j]['table_key']]['label'];
@@ -1009,21 +1019,23 @@ function getColumnNamesForMatrix($reporter, $header_row, $columnDataFor2ndGroup)
 } // fn
 
 
-function whereToStartGroupByRow(&$reporter, $count, $header_row, $previous_row, $row) {
-	$toStart = 0;
-	if ($count == 0 || empty($previous_row)){
-		return $toStart;
+function whereToStartGroupByRow(&$reporter, $count, $rowsAndColumnsData, $row) {
+	if ($count == 0 || empty($rowsAndColumnsData)){
+		return -1;
 	} // if
 	$group_def_array = $reporter->report_def['group_defs'];
 	
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
 		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
-		if ($previous_row['cells'][$key] != $row['cells'][$key]) {
-			$toStart = $i;
-			break;
-		} // if
+		for ($j = 0 ; $j < count($rowsAndColumnsData) ; $j++)
+		{
+			if ($rowsAndColumnsData[$j][$group_def_array[$i]['label']] == $row['cells'][$key])
+			{
+				return $j;
+			}
+		}
 	} // for
-	return $toStart;
+    return -1;
 } // fn
 
 function setGroupCount($header_row, $row, &$groupCountArray, $groupString, $countKeyIndex) {

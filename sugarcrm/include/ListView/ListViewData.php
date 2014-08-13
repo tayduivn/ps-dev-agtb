@@ -398,7 +398,9 @@ class ListViewData {
                 $temp = clone $seed;
 			    $dataIndex = count($data);
 
-			    $temp->setupCustomFields($temp->module_dir);
+                if (!isset($temp->custom_fields) && empty($temp->disable_custom_fields)) {
+                    $temp->setupCustomFields($temp->module_dir);
+                }
 				$temp->loadFromRow($row);
 				if($idIndex[$row[$id_field]][0] == $dataIndex){
 				    $pageData['tag'][$dataIndex] = $temp->listviewACLHelper();
