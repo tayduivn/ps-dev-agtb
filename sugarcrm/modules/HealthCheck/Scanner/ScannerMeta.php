@@ -138,6 +138,10 @@ class HealthCheckScannerMeta
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
         ),
+        314 => array(
+            'report' => 'badVardefsMultienum',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
 
         // BUCKET E
         401 => array(
@@ -268,6 +272,10 @@ class HealthCheckScannerMeta
             'report' => 'badVardefsNameCustom',
             'bucket' => self::CUSTOM
         ),
+        433 => array(
+            'report' => 'badVardefsMultienumCustom',
+            'bucket' => self::CUSTOM
+        ),
 
         // BUCKET F
         501 => array(
@@ -353,10 +361,10 @@ class HealthCheckScannerMeta
      */
     protected $defaultFlagMap = array(
         self::VANILLA => self::FLAG_GREEN,
-        self::STUDIO => self::FLAG_YELLOW,
-        self::STUDIO_MB => self::FLAG_YELLOW,
+        self::STUDIO => self::FLAG_GREEN,
+        self::STUDIO_MB => self::FLAG_GREEN,
         self::STUDIO_MB_BWC => self::FLAG_YELLOW,
-        self::CUSTOM => self::FLAG_RED,
+        self::CUSTOM => self::FLAG_YELLOW,
         self::MANUAL => self::FLAG_RED,
         self::UPGRADED => self::FLAG_GREEN,
     );

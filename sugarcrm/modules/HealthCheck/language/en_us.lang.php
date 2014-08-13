@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_SCAN_311_LOG' => 'Vardef HTML function %s in $module module for field %s',
     'LBL_SCAN_312_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_313_LOG' => 'Extension dir %s detected - %s is not MB module',
+    'LBL_SCAN_314_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '{%s}'",
 
     'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor/:\r\n%s',
     'LBL_SCAN_402_LOG' => 'Bad module %s - not in beanList and not in filesystem',
@@ -75,6 +76,7 @@ $mod_strings = array(
     'LBL_SCAN_430_LOG' => 'Found output buffering (%s) in %s on line %s',
     'LBL_SCAN_431_LOG' => 'Vardef HTML function %s in $module module for field %s',
     'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
+    'LBL_SCAN_433_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '{%s}'",
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',

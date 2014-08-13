@@ -88,10 +88,15 @@ class HealthCheckScanner
         'JJWDesign_Google_Maps' => '*',
         'Dashboard Manager' => '*',
         'wSQL Admin' => '*',
+        'Fonality CRM Module' => '*',
+        'inetDOCS Box' => '*',
+        'Forums, Threads, Posts Modules' => '*',
+        'Accounting' => '*',
+	    'Marketo Marketing Automation for SugarCRM' => '3.0',
+	    'SugarChimp' => '7.0.1',
     );
 
     /**
-     *
      * @var array List of unsupported modules.
      */
     protected $unsupportedModules = array(
@@ -100,7 +105,6 @@ class HealthCheckScanner
     );
 
     /**
-     *
      * @var integer Number of fields on detail/editview to trigger class E
      */
     protected $fieldCountMax = self::DEFAULT_FIELD_COUNT_MAX;
@@ -444,11 +448,17 @@ class HealthCheckScanner
         $this->listUpgrades();
         $this->checkPackages();
         $this->checkLanguageFiles();
-        $this->checkVendorFiles();
+        $this->checkVendorAndRemovedFiles();
         if(!empty($this->filesToFix))
         {
             $files_to_fix = implode("\r\n", $this->filesToFix);
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
+        }
+
+        if(!empty($this->deletedFilesReferenced))
+        {
+            $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
+            $this->updateStatus(self::MANUAL, "Previously removed files found referenced in:".$files_with_bad_includes);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
@@ -559,6 +569,31 @@ class HealthCheckScanner
     }
 
     /**
+     * Check if $table_name property in bean match table parameter in module/vardefs.php
+     * @param $module
+     * @return bool
+     */
+    protected function checkTableName($module) {
+        $object = $this->getObjectName($module);
+
+        VardefManager::loadVardef($module, $object);
+        if(empty($GLOBALS['dictionary'][$object]['table'])) {
+            $this->log("Failed to load vardefs for $module:$object");
+            return false;
+        }
+
+        $seed = BeanFactory::getBean($module);
+        if(empty($seed)) {
+            $this->log("Failed to instantiate bean for $module, not checking table");
+            return false;
+        }
+
+        if ($GLOBALS['dictionary'][$object]['table'] !== $seed->getTableName()) {
+            $this->updateStatus(self::CUSTOM, "Table name in bean {$module} does not match the table attribute in the {$module}/vardefs.php");
+        }
+    }
+
+    /**
      * Log upgrades registered for the instance
      */
     protected function listUpgrades()
@@ -592,6 +627,13 @@ class HealthCheckScanner
             'include/ytree',
             'include/SugarSearchEngine/Elastic/Elastica',
     );
+    /**
+     * dirs or files that have been deleted
+     * @var array
+     */
+    protected $removed_files = array(
+        'include/Smarty/plugins/function.sugar_help.php',
+    );
 
     protected $excludedScanDirectories = array(
             'backup',
@@ -600,12 +642,14 @@ class HealthCheckScanner
     );
     protected $filesToFix = array();
 
+    protected $deletedFilesReferenced = array();
+
     /**
-     * This method checks for directories that have been moved that are referenced
+     * This method checks for directories/files that have been moved/removed that are referenced
      * in custom code
      * @return bool
     */
-    protected function checkVendorFiles()
+    protected function checkVendorAndRemovedFiles()
     {
         $this->log("Checking for bad includes");
         $files = $this->getPhpFiles("custom/");
@@ -616,6 +660,12 @@ class HealthCheckScanner
                 if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$directory})#",$fileContents) > 0) {
                     $this->log("Found $directory in $file");
                     $this->filesToFix[] = $file;
+                }
+            }
+            foreach ($this->removed_files AS $deletedFile) {
+                if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$deletedFile})#",$fileContents) > 0) {
+                    $this->log("Found $deletedFile in $file");
+                    $this->deletedFilesReferenced[] = $file;
                 }
             }
         }
@@ -641,6 +691,9 @@ class HealthCheckScanner
             return;
         }
         // TODO: check if module table is OK
+        if (!in_array($module, $this->excludeModules)) {
+            $this->checkTableName($module);
+        }
 
         if($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
@@ -977,7 +1030,7 @@ class HealthCheckScanner
         $origdefs = $this->loadFromFile($original, $varname);
 
         $defs_code = $this->lookupCustomCode('', $defs, array());
-        $orig_code = $this->lookupCustomCode('', $defs, array());
+        $orig_code = $this->lookupCustomCode('', $origdefs, array());
         foreach($defs_code as $code => $places) {
             if(!isset($orig_code[$code])) {
                 $this->updateStatus("foundCustomCode", $code, join(", ", $places));
@@ -1323,7 +1376,7 @@ class HealthCheckScanner
         return $data;
     }
 
-    /**`
+    /**
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
      * @param array &$hook_files
@@ -1693,6 +1746,24 @@ ENDP;
                             // found html functional field
                             $this->updateStatus("vardefHtmlFunction" . $custom, $key);
                         }
+
+                        // Check option-list multienum fields
+                        if ($value['type'] == 'multienum'
+                            && !empty($value['options'])
+                            && !empty($GLOBALS['app_list_strings'][$value['options']])) {
+
+                            $optionKeys = array_keys($GLOBALS['app_list_strings'][$value['options']]);
+                            // Strip all valid characters in dropdown keys - a-zA-Z0-9. and spaces
+                            $result = preg_replace('/[\w\d\s\.]/', '', $optionKeys);
+
+                            // Get unique chars
+                            $result = count_chars(implode('', $result), 3);
+
+                            if ($result) {
+                                $this->updateStatus("badVardefsMultienum" . $custom, $value['name'], $value['options'], $result);
+                            }
+                        }
+
                         break;
                     case 'link':
                         $seed->load_relationship($key);
