@@ -36,6 +36,14 @@ class ContactsApi extends ListApi
                 'shortHelp' => '',
                 'longHelp' => '',
             ),
+            'getFreeBusySchedule' => array(
+                'reqType' => 'GET',
+                'path' => array("Contacts", '?', "freebusy"),
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'getFreeBusySchedule',
+                'shortHelp' => 'Retrieve a list of calendar event start and end times for specified person',
+                'longHelp' => 'include/api/help/contact_get_freebusy_help.html',
+            ),
         );
     }
 
@@ -109,6 +117,17 @@ class ContactsApi extends ListApi
         return $return;
     }
 
+    /**
+     * Retrieve a list of calendar event start and end times for specified person
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function getFreeBusySchedule($api, $args)
+    {
+        $bean = $this->loadBean($api, $args, 'view');
+        return $bean->getFreeBusySchedule();
+    }
 
     protected function getBean($api, $args)
     {
