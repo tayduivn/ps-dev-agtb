@@ -318,6 +318,51 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($args['repeat_count'], count($eventsCreated) + 1, "Unexpected Number of Recurring Meetings");
     }
 
+    public function testSendInviteEmails_SendsOneEmailPerParticipant()
+    {
+        $participants = array('foo', 'bar', 'biz', 'baz');
+
+        $meeting = $this->getMock('Meeting', array('get_notification_recipients', 'send_assignment_notifications'));
+        $meeting->expects($this->once())
+            ->method('get_notification_recipients')
+            ->will($this->returnValue($participants));
+        $meeting->expects($this->exactly(count($participants)))->method('send_assignment_notifications');
+        $meeting->id = create_guid();
+
+        $api = $this->getMock('CalendarEventsApi', array('getLoadedAndFormattedBean', 'loadBean'));
+        $api->expects($this->once())->method('getLoadedAndFormattedBean');
+        $api->expects($this->once())->method('loadBean')->will($this->returnValue($meeting));
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+        );
+
+        $api->sendInviteEmails($this->api, $args);
+    }
+
+    public function testSendInviteEmails_ReturnsTheBean()
+    {
+        $meeting = $this->getMock('Meeting', array('get_notification_recipients'));
+        $meeting->expects($this->once())->method('get_notification_recipients')->will($this->returnValue(array()));
+        $meeting->id = create_guid();
+        BeanFactory::setBeanClass('Meetings', get_class($meeting));
+        BeanFactory::registerBean($meeting);
+
+        $api = $this->getMock('CalendarEventsApi', array('loadBean'));
+        $api->expects($this->any())->method('loadBean')->will($this->returnValue($meeting));
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+        );
+
+        $actual = $api->sendInviteEmails($this->api, $args);
+        $this->assertEquals($meeting->id, $actual['id'], 'The returned bean should have the same ID');
+
+        BeanFactory::unregisterBean($meeting);
+    }
+
     private function dateTimeAsISO($dbDateTime)
     {
         global $timedate;
