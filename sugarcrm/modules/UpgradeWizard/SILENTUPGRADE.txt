@@ -33,7 +33,7 @@ How do you run CLI Upgrader?
 To execute the CLI Upgrader script, you need to supply the parameters, as described
 in the Arguments section below.
 
-Usage: php CliUpgrader.php -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
+Usage: php CliUpgrader.php -z upgradeZipFile -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
     [path-to-PHP/]php CliUpgrader.php -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.5.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin

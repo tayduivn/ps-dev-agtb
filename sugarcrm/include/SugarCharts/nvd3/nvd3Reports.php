@@ -53,6 +53,7 @@ class nvd3Reports extends nvd3
     function processReportData($dataset, $level = 1, $first = false)
     {
         $data = '';
+        asort($this->super_set);
 
         // rearrange $dataset to get the correct order for the first row
         if ($first) {
