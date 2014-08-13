@@ -21,6 +21,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'default' => true,
                     'link' => true,
                     'name' => 'name',
+                    'related_fields' => array('repeat_type'),
                 ),
                 array(
                     'name' => 'parent_name',

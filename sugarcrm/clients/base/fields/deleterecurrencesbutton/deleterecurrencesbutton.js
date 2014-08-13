@@ -26,7 +26,7 @@
     },
 
     /**
-     * Checks whether the user has both the access to the model and the meeting is a recurring type.
+     * Checks whether the user has both the access to the model and that the calendar event is a recurring type.
      * @inheritdoc
      * @returns {Boolean}
      */
@@ -45,7 +45,7 @@
     },
 
     /**
-     * Event handler for deleting all recurring meetings of a series
+     * Event handler for deleting all recurring calendar events of a series
      * @inheritdoc
      */
     rowActionSelect: function() {
@@ -58,7 +58,7 @@
     },
 
     /**
-     * Calls destroy on the model and makes api call to delete all recurring meetings in a series.
+     * Calls destroy on the model and makes api call to delete all recurring calendar events in a series.
      * Navigates to the list view on success.
      */
     deleteRecurrences: function() {

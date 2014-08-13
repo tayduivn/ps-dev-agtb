@@ -97,6 +97,12 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'acl_action' => 'delete',
                 ),
                 array(
+                    'type' => 'deleterecurrencesbutton',
+                    'name' => 'delete_recurrence_button',
+                    'label' => 'LBL_REMOVE_ALL_RECURRENCES',
+                    'acl_action' => 'delete',
+                ),
+                array(
                     'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_LABEL',
