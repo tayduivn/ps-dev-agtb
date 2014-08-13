@@ -275,7 +275,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      * @param SugarDateTime $begin Start DateTime object
      * @param SugarDateTime $end End DateTime object
      */
-	function get_start_end_date_filter($layout_def, $begin, $end)
+    public function get_start_end_date_filter($layout_def, $begin, $end)
     {
         if (isset($layout_def['rel_field'])) {
             $field_name = $this->reporter->db->convert(
@@ -504,7 +504,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      * @param $layout_def - Filter layout_def
      * @param string $modifyFilter - Modification to start/end date, used to select previous/next year
      */
-    private function queryYear($layout_def, $modifyFilter)
+    protected function queryYear($layout_def, $modifyFilter)
     {
         $begin = $this->now();
         $begin->setDate($begin->year, 1, 1)->setTime(0, 0);
