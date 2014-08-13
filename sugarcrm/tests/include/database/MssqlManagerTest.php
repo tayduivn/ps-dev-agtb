@@ -357,4 +357,171 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($isUnionExpected, $isUnion);
     }
+
+    /**
+     * Data provider for testColumnLengthLimits()
+     *
+     * @return array
+     */
+    public function dataProviderColumnLengthLimits()
+    {
+        return array(
+            // char with length less than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'char',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // char with length greater than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'char',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(8000\)/i',
+            ),
+            // varchar with length less than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // varchar with length greater than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+            // varchar with length max
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => 'max',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+            // binary with length less than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'binary',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // binary with length greater than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'binary',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(8000\)/i',
+            ),
+            // varbinary with length less than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varbinary',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // varbinary with length greater than 8000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varbinary',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+            // varbinary with length max
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varbinary',
+                    'len' => 'max',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+            // nchar with length less than 4000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'nchar',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // nchar with length greater than 4000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'nchar',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(4000\)/i',
+            ),
+            // nvarchar with length less than 4000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'nvarchar',
+                    'len' => '1024',
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            // nvarchar with length greater than 4000
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'nvarchar',
+                    'len' => '9000',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+            // nvarchar with length max
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'nvarchar',
+                    'len' => 'max',
+                ),
+                '/foo\s+$baseType\(max\)/i',
+            ),
+        );
+    }
+
+    /**
+     * Test for check valid column type limits.
+     *
+     * @dataProvider dataProviderColumnLengthLimits
+     */
+    public function testColumnLengthLimits(array $fieldDef, $successRegex)
+    {
+        $db = DBManagerFactory::getInstance();
+        if (!$db instanceof MssqlManager) {
+            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
+        }
+
+        $colType = $db->getColumnType($db->getFieldType($fieldDef));
+        if ($type = $db->getTypeParts($colType)) {
+            $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
+        }
+
+        $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
+        $this->assertEquals(1, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
+    }
 }
