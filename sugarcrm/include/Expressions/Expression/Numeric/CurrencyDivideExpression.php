@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencyDivide(Number numerator, Number denominator)</b><br>
@@ -34,6 +33,7 @@ class CurrencyDivideExpression extends NumericExpression
         if ($denominator == 0) {
             throw new Exception("Division by zero");
         }
+
         return (string)SugarMath::init($numerator, 6)->div($denominator)->result();
     }
 
@@ -72,4 +72,3 @@ JS;
         return 2;
     }
 }
-
