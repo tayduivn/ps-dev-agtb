@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencyAdd(Number n, ...)</b><br>
@@ -29,6 +29,7 @@ class CurrencyAddExpression extends NumericExpression
         foreach ($this->getParameters() as $expr) {
             $sum = SugarMath::init($sum, 6)->add($expr->evaluate())->result();
         }
+
         return (string)$sum;
     }
 

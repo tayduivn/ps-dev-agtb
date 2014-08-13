@@ -9,56 +9,66 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
+
 /**
  * <b>add(Number n, ...)</b><br>
  * Returns the sum of the given numbers.<br/>
  * ex: <i>add(2, 1, 3)</i> = 6
  */
-class AddExpression extends NumericExpression {
-	/**
-	 * Returns itself when evaluating.
-	 */
-	function evaluate() {
-		// TODO: add caching of return values
-		$sum = 0;
-		foreach ( $this->getParameters() as $expr ) {
-			$sum += $expr->evaluate();
-		}
-		return $sum;
-	}
+class AddExpression extends NumericExpression
+{
+    /**
+     * Returns itself when evaluating.
+     */
+    public function evaluate()
+    {
+        // TODO: add caching of return values
+        $sum = 0;
+        foreach ($this->getParameters() as $expr) {
+            $sum += $expr->evaluate();
+        }
 
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
+        return $sum;
+    }
+
+    /**
+     * Returns the JS Equivalent of the evaluate function.
+     */
+    public static function getJSEvaluate()
+    {
+        return <<<EOQ
 			var params = this.getParameters();
 			var sum = 0;
 			for ( var i = 0; i < params.length; i++ )	sum += params[i].evaluate();
 			return sum;
 EOQ;
-	}
+    }
 
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "add";
-	}
+    /**
+     * Returns the opreation name that this Expression should be
+     * called by.
+     */
+    public static function getOperationName()
+    {
+        return "add";
+    }
 
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
-		$str = "";
+    /**
+     * Returns the String representation of this Expression.
+     */
+    public function toString()
+    {
+        $str = "";
 
-		foreach ( $this->getParameters() as $expr ) {
-			if ( ! $expr instanceof ConstantExpression )	$str .= "(";
-			$str .= $expr->toString();
-			if ( ! $expr instanceof ConstantExpression )	$str .= ")";
-		}
-	}
+        foreach ($this->getParameters() as $expr) {
+            if (!$expr instanceof ConstantExpression) {
+                $str .= "(";
+            }
+            $str .= $expr->toString();
+            if (!$expr instanceof ConstantExpression) {
+                $str .= ")";
+            }
+        }
+    }
 }
-?>

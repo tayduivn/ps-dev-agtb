@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencySubtract(Number n, ...)</b><br>

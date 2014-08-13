@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencyMultiply(Number n, ...)</b><br>
@@ -31,6 +30,7 @@ class CurrencyMultiplyExpression extends NumericExpression
         foreach ($this->getParameters() as $expr) {
             $product = SugarMath::init($product, 6)->mul($expr->evaluate())->result();
         }
+
         return (string)$product;
     }
 
