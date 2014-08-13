@@ -19,11 +19,13 @@ require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 class DivideExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @throws Exception
+     * @return String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $params = $this->getParameters();
         $numerator = $params[0]->evaluate();
         $denominator = $params[1]->evaluate();
@@ -31,31 +33,34 @@ class DivideExpression extends NumericExpression
             throw new Exception("Division by zero");
         }
 
-        return $numerator / $denominator;
+        return (string)SugarMath::init($numerator, 6)->div($denominator)->result();
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-			var params = this.getParameters();
-			var numerator   = params[0].evaluate();
-			var denominator = params[1].evaluate();
-			if (denominator == 0)
-			    throw "Devision by 0 error";
-			return numerator/denominator;
-EOQ;
+        return <<<JS
+			var params = this.getParameters(),
+			    numerator   = params[0].evaluate();
+			    denominator = params[1].evaluate();
+            if (denominator == 0) {
+			    throw "Division by 0 error";
+            }
+			return this.context.divide(numerator, denominator);
+JS;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return "divide";
+        return array('divide', 'currencyDivide', 'div');
     }
 
     /**

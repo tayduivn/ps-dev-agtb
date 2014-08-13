@@ -19,39 +19,44 @@ require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 class AddExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @returns String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
-        $sum = 0;
+        $sum = '0';
         foreach ($this->getParameters() as $expr) {
-            $sum += $expr->evaluate();
+            $sum = SugarMath::init($sum, 6)->add($expr->evaluate())->result();
         }
 
-        return $sum;
+        return (string)$sum;
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-			var params = this.getParameters();
-			var sum = 0;
-			for ( var i = 0; i < params.length; i++ )	sum += params[i].evaluate();
+        return <<<JS
+			var params = this.getParameters(),
+			    sum = 0;
+			for (var i = 0; i < params.length; i++) {
+                sum = this.context.add(sum, params[i].evaluate());
+            }
 			return sum;
-EOQ;
+JS;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return "add";
+        return array('add', 'currencyAdd');
     }
 
     /**

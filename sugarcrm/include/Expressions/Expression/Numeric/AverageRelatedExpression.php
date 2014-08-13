@@ -29,7 +29,7 @@ class AverageRelatedExpression extends NumericExpression
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
 
-        $ret = 0;
+        $ret = '0';
 
         if (!is_array($linkField) || empty($linkField)) {
             return $ret;
@@ -37,11 +37,11 @@ class AverageRelatedExpression extends NumericExpression
 
         foreach ($linkField as $bean) {
             if (!empty($bean->$relfield)) {
-                $ret += $bean->$relfield;
+                $ret = SugarMath::init($ret)->add($bean->$relfield)->result();
             }
         }
 
-        return $ret / count($linkField);
+        return SugarMath::init($ret)->div(count($linkField))->result();
     }
 
     /**
@@ -68,12 +68,12 @@ EOQ;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return array("rollupAve");
+        return array('rollupAve', 'rollupAvg');
     }
 
     /**

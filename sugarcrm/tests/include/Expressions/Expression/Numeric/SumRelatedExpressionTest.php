@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=een ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,73 +9,117 @@
  * install or use this SugarCRM file.
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
- */
-require_once("include/Expressions/Expression/Numeric/SumRelatedExpression.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
 
 /**
  * @outputBuffering enabled
- */   
+ */
+
 class SumRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static $createdBeans = array();
+    public function testRelatedSum()
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
 
-	public static function setUpBeforeClass()
-	{
-	    $beanList = array();
-	    $beanFiles = array();
-	    require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
 
-	public static function tearDownAfterClass()
-	{
-	    foreach(self::$createdBeans as $bean)
-        {
-            $bean->mark_deleted($bean->id);
+        $link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $opp->revenuelineitems = $link2;
+
+        $rlis = array();
+        // lets create 3 rlis which with 10 * the index, which will give us the total of 60
+        for ($x = 1; $x <= 3; $x++) {
+            $rli = $this->getMockBuilder('RevenueLineItem')
+                ->setMethods(array('save', 'getFieldDefinition'))
+                ->getMock();
+
+            $rli->expects($this->any())
+                ->method('getFieldDefinition')
+                ->will(
+                    $this->returnValue(
+                        array(
+                            'type' => 'integer'
+                        )
+                    )
+                );
+
+            $rli->quantity = SugarMath::init(10)->mul($x)->result();
+
+            $rlis[] = $rli;
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    unset($GLOBALS['current_user']);
-	    unset($GLOBALS['beanList']);
-	    unset($GLOBALS['beanFiles']);
-	}
 
-    /**
-     * @group bug39037
-     */
-	public function testRelatedSum()
-	{
-        $account = new Account();
-            $account->name = "Sum Related Test";
-            self::$createdBeans[] = $account;
-            $account->save();
+        $opp->expects($this->any())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
 
-            $opp1 = new Opportunity();
-            $opp1->name = "Sum Related Test Opp 1";
-            $opp1->amount = $opp1->amount_usdollar = 100;
-            $opp1->account_id = $account->id;
-            $opp1->account_name = $account->name;
+        $link2->expects($this->any())
+            ->method('getBeans')
+            ->will($this->returnValue($rlis));
 
-            self::$createdBeans[] = $opp1;
-            $opp1->save();
+        $expr = 'rollupSum($revenuelineitems, "quantity")';
+        $result = Parser::evaluate($expr, $opp)->evaluate();
+        $this->assertSame('60', $result);
+    }
+
+    public function testRelatedSumWithCurrency()
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
 
 
-            $opp2 = new Opportunity();
-            $opp2->name = "Sum Related Test Opp 2";
-            $opp2->amount = $opp1->amount_usdollar = 200;
-            $opp2->account_id = $account->id;
-            $opp2->account_name = $account->name;
+        $link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
 
-            self::$createdBeans[] = $opp2;
-            $opp2->save();
+        $opp->revenuelineitems = $link2;
+        $opp->base_rate = '1.0';
+        $opp->currecy_id = '-1';
+
+        $rlis = array();
+        // lets create 3 rlis which with 100 * the index
+        for ($x = 1; $x <= 3; $x++) {
+            $rli = $this->getMockBuilder('RevenueLineItem')
+                ->setMethods(array('save', 'getFieldDefinition'))
+                ->getMock();
+
+            $rli->expects($this->any())
+                ->method('getFieldDefinition')
+                ->will(
+                    $this->returnValue(
+                        array(
+                            'type' => 'currency',
+                            'precision' => '6'
+                        )
+                    )
+                );
+
+            $rli->base_rate = '0.90';
+            $rli->currency_id = 'test_currency';
+            $rli->likely_case = SugarMath::init(100)->mul($x)->result();
+
+            $rlis[] = $rli;
+        }
+
+        $opp->expects($this->any())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
+
+        $link2->expects($this->any())
+            ->method('getBeans')
+            ->will($this->returnValue($rlis));
+
         try {
-            $expr = 'rollupSum($opportunities, "amount")';
-            $result = Parser::evaluate($expr, $account)->evaluate();
-            $this->assertEquals($result, 300);
-        } catch (Exception $e){
-        	$this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
+            $expr = 'rollupCurrencySum($revenuelineitems, "likely_case")';
+            $result = Parser::evaluate($expr, $opp)->evaluate();
+            $this->assertSame('666.666666', $result);
+        } catch (Exception $e) {
+            $this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
         }
     }
 }

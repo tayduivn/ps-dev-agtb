@@ -79,6 +79,41 @@ abstract class NumericExpression extends AbstractExpression
         }
 
         return $is_currency;
+    }
 
+    protected function getFieldPrecision($bean, $field)
+    {
+        $precision = '0';
+        $def = $bean->getFieldDefinition($field);
+        if (is_array($def)) {
+            if (isset($def['len']) && strpos($def['len'], ",") !== false) {
+                list($len, $precision) = explode(",", $def['len']);
+            }
+            if (isset($def['precision'])) {
+                $precision = $def['precision'];
+            }
+        }
+
+        return $precision;
+    }
+
+    protected function isIntegerField($bean, $field)
+    {
+        $is_integer = false;
+        $def = $bean->getFieldDefinition($field);
+        if (is_array($def)) {
+            // start by just using the type in the def
+            $type = $def['type'];
+            // but if custom_type is set, use it, when it's not set and dbType is, use dbType
+            if (isset($def['custom_type']) && !empty($def['custom_type'])) {
+                $type = $def['custom_type'];
+            } elseif (isset($def['dbType']) && !empty($def['dbType'])) {
+                $type = $def['dbType'];
+            }
+            // always lower case the type just to make sure.
+            $is_integer = (strtolower($type) === 'int' || strtolower($type) === 'integer');
+        }
+
+        return $is_integer;
     }
 }
