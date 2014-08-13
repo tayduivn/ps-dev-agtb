@@ -67,18 +67,17 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::setBeanClass('Meetings', get_class($mockMeeting));
 
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->id = create_guid();
-        BeanFactory::registerBean($meeting);
+        $mockMeeting->id = create_guid();
+        BeanFactory::registerBean($mockMeeting);
 
         $args = array(
             'module' => 'Meetings',
-            'record' => $meeting->id,
+            'record' => $mockMeeting->id,
         );
 
         $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
 
-        BeanFactory::unregisterBean($meeting);
+        BeanFactory::unregisterBean($mockMeeting);
     }
 
     public function testDeleteRecord_RecurringMeeting_CallsDeleterRecurrenceMethod()
@@ -101,19 +100,18 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::setBeanClass('Meetings', get_class($mockMeeting));
 
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->id = create_guid();
-        BeanFactory::registerBean($meeting);
+        $mockMeeting->id = create_guid();
+        BeanFactory::registerBean($mockMeeting);
 
         $args = array(
             'module' => 'Meetings',
-            'record' => $meeting->id,
+            'record' => $mockMeeting->id,
             'all_recurrences' => 'true',
         );
 
         $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
 
-        BeanFactory::unregisterBean($meeting);
+        BeanFactory::unregisterBean($mockMeeting);
     }
 
     /**
@@ -128,18 +126,17 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::setBeanClass('Meetings', get_class($mockMeeting));
 
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->id = create_guid();
-        BeanFactory::registerBean($meeting);
+        $mockMeeting->id = create_guid();
+        BeanFactory::registerBean($mockMeeting);
 
         $args = array(
             'module' => 'Meetings',
-            'record' => $meeting->id,
+            'record' => $mockMeeting->id,
         );
 
         $this->calendarEventsApi->deleteRecordAndRecurrences($this->api, $args);
 
-        BeanFactory::unregisterBean($meeting);
+        BeanFactory::unregisterBean($mockMeeting);
     }
 
     public function testDeleteRecordAndRecurrences_RetrievesParentRecord_DeletesAllMeetings()
@@ -188,14 +185,6 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('generateRecurringCalendarEvents');
 
         $this->calendarEventsApi = $calendarEventsApiMock;
-
-        $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
-        $mockMeeting->repeat_type = null;
-        $mockMeeting->expects($this->any())
-            ->method('ACLAccess')
-            ->will($this->returnValue(true));
-
-        BeanFactory::setBeanClass('Meetings', get_class($mockMeeting));
         $args = array(
             'module' => 'Meetings',
         );

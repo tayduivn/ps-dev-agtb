@@ -64,20 +64,18 @@ class SubscriptionsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::setBeanClass('Leads', get_class($mockLead));
 
-        $lead = BeanFactory::newBean('Leads');
-        $lead->id = create_guid();
-
-        BeanFactory::registerBean($lead);
+        $mockLead->id = create_guid();
+        BeanFactory::registerBean($mockLead);
 
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
             array(
                 'module' => 'Leads',
-                'record' => $lead->id,
+                'record' => $mockLead->id,
             )
         );
 
-        BeanFactory::unregisterBean($lead);
+        BeanFactory::unregisterBean($mockLead);
     }
 
     /**
@@ -109,18 +107,17 @@ class SubscriptionsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::setBeanClass('Leads', get_class($mockLead));
 
-        $lead = BeanFactory::newBean('Leads');
-        $lead->id = create_guid();
-        BeanFactory::registerBean($lead);
+        $mockLead->id = create_guid();
+        BeanFactory::registerBean($mockLead);
 
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
             array(
                 'module' => 'Leads',
-                'record' => $lead->id,
+                'record' => $mockLead->id,
             )
         );
 
-        BeanFactory::unregisterBean($lead);
+        BeanFactory::unregisterBean($mockLead);
     }
 }
