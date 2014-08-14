@@ -123,7 +123,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                'discount_select'
+                'discount_select',
+                'contact_name'
             ),
         ),
         array(

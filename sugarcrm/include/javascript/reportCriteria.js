@@ -719,7 +719,7 @@ function addFilterInputDate(row,filter) {
 	Calendar.setup ({
 		inputFieldObj : new_input , 
 		buttonObj : img_element, 
-		ifFormat : cal_date_format, 
+		ifFormat : cal_date_format,
 		showsTime : false, 
 		singleClick : true, step : 1,
 		weekNumbers:false
@@ -871,6 +871,9 @@ function addFilterInputSelectMultiple(row,options,filter) {
 
 	var selected_map = new Object();
 	for (i=0;i < filter.input_name0.length;i++) {
+        if (filter.input_name0[i] == 'Current User') {
+            filter.input_name0[i] = current_user_id;
+        }
 		selected_map[filter.input_name0[i] ] = 1;
 	}
 

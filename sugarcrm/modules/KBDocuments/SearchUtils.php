@@ -1116,8 +1116,11 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
 
                 //Create if filter type is set to none
                 if($attachment_search_opt == 'none' || $attachment_search_opt == 'some'){
-                    $return_att = "and kbdocuments.id not in
-                                        (select kbdocument_id from kbdocument_revisions where ".$db->convert('kbdocument_id', 'length')." or kbcontent_id IS NULL)";
+                    $return_att = "and kbdocuments.id not in (
+                            select kbdocument_id
+                            from kbdocument_revisions
+                            where coalesce({$db->convert('kbdocument_id', 'length')},0) > 0 or kbcontent_id IS NULL
+                        )";
                 }
                 //Create if filter type is set to name
                 if($attachment_search_opt == 'name'){

@@ -149,6 +149,12 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                     'displayParams' => array('required' => true),
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'entry_count',
+                    'label' => 'LBL_ENTRIES',
+                    'readonly' => true,
+                ),
+                'domain_name',
                 'assigned_user_name',
                 array(
                     'name' => 'date_modified_by',

@@ -1608,7 +1608,7 @@ EOQ;
      */
     public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array(), $label = 1)
     {
-        $condition = $or_condition = array();
+        $condition = $or_condition = $not_condition = array();
         foreach($must_terms as $term) {
             $condition[] = $this->quoteTerm($term);
         }
@@ -1618,13 +1618,13 @@ EOQ;
         }
 
         if(!empty($or_condition)) {
-            $condition[] = " & (".join(" | ", $or_condition).")";
+            $condition[] = "(".join(" | ", $or_condition).")";
         }
 
         foreach($exclude_terms as $term) {
-            $condition[] = "~".$this->quoteTerm($term);
+            $not_condition[] = " ~".$this->quoteTerm($term);
         }
-        $condition = $this->quoted(join(" & ",$condition));
+        $condition = $this->quoted(join(" & ",$condition).join('', $not_condition));
         return "CONTAINS($field, $condition, $label) > 0";
     }
 

@@ -10,8 +10,15 @@
  */
 
 describe("Forecasts.Layout.Config", function() {
-    var app, layout, layoutProtoInitStub, aclStub, codeBlockSpy, moduleName = 'Forecasts';
-    var context;
+    var app,
+        layout,
+        layoutProtoInitStub,
+        aclStub,
+        codeBlockSpy,
+        moduleName = 'Forecasts',
+        context,
+        checkForecastConfigStub;
+
     beforeEach(function() {
         app = SUGAR.App;
         SugarTest.testMetadata.init();
@@ -34,15 +41,22 @@ describe("Forecasts.Layout.Config", function() {
             });
         context.prepare();
 
-        layout = SugarTest.createLayout('base', 'Forecasts', 'config',null, context, true);
+        layout = SugarTest.createLayout('base', 'Forecasts', 'config', null, context, true);
         layoutProtoInitStub = sinon.stub(app.view.Layout.prototype, 'initialize', function() {});
         codeBlockSpy = sinon.spy(layout, 'codeBlockForecasts', function() {});
+        checkForecastConfigStub = sinon.stub(app.utils, 'checkForecastConfig', function() {
+            return true;
+        });
+
+        sinon.collection.stub(app.view.Layout.prototype, 'loadData', function() {});
     });
 
     afterEach(function() {
         aclStub.restore();
         layoutProtoInitStub.restore();
         codeBlockSpy.restore();
+        checkForecastConfigStub.restore();
+        sinon.collection.restore();
         layout = undefined;
         app = undefined;
     });
@@ -83,11 +97,34 @@ describe("Forecasts.Layout.Config", function() {
                 layout.initialize();
             });
 
-            it("should not call Layout.initialize", function() {
-                expect(layoutProtoInitStub).not.toHaveBeenCalled();
+            describe('config: OK', function() {
+                beforeEach(function() {
+                    layout.initialize();
+                });
+
+                it("should not call Layout.initialize", function() {
+                    expect(layoutProtoInitStub).not.toHaveBeenCalled();
+                });
+                it("should call codeBlockForecasts", function() {
+                    expect(codeBlockSpy).toHaveBeenCalled();
+                });
             });
-            it("should call codeBlockForecasts", function() {
-                expect(codeBlockSpy).toHaveBeenCalled();
+
+            describe('config: NOT OK', function() {
+                beforeEach(function() {
+                    checkForecastConfigStub.restore();
+                    checkForecastConfigStub = sinon.stub(app.utils, 'checkForecastConfig', function() {
+                        return false;
+                    });
+                    layout.initialize();
+                });
+
+                it("should not call Layout.initialize", function() {
+                    expect(layoutProtoInitStub).not.toHaveBeenCalled();
+                });
+                it("should call codeBlockForecasts", function() {
+                    expect(codeBlockSpy).toHaveBeenCalled();
+                });
             });
         });
 
@@ -101,14 +138,37 @@ describe("Forecasts.Layout.Config", function() {
                         }
                     };
                 });
-                layout.initialize();
             });
 
-            it("should call Layout.initialize", function() {
-                expect(layoutProtoInitStub).toHaveBeenCalled();
+            describe('config: OK', function() {
+                beforeEach(function() {
+                    layout.initialize();
+                });
+
+                it("should call Layout.initialize", function() {
+                    expect(layoutProtoInitStub).toHaveBeenCalled();
+                });
+                it("should not call codeBlockForecasts", function() {
+                    expect(codeBlockSpy).not.toHaveBeenCalled();
+                });
             });
-            it("should not call codeBlockForecasts", function() {
-                expect(codeBlockSpy).not.toHaveBeenCalled();
+
+            describe('config: NOT OK', function() {
+                beforeEach(function() {
+                    checkForecastConfigStub.restore();
+                    checkForecastConfigStub = sinon.stub(app.utils, 'checkForecastConfig', function() {
+                        return false;
+                    });
+
+                    layout.initialize();
+                });
+
+                it("should call Layout.initialize", function() {
+                    expect(layoutProtoInitStub).not.toHaveBeenCalled();
+                });
+                it("should not call codeBlockForecasts", function() {
+                    expect(codeBlockSpy).toHaveBeenCalled();
+                });
             });
         });
 
@@ -154,4 +214,4 @@ describe("Forecasts.Layout.Config", function() {
             });
         });
     });
-})
+});
