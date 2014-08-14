@@ -260,7 +260,8 @@ class OAuth2Api extends SugarApi
     {
         // This needs to be sent back
         $session_name = session_name();
-        $lifetime = ini_get('session.cookie_lifetime');
+        $masSessionLifeTime = SugarConfig::getInstance()->get('oauth2.max_session_lifetime');
+        $lifetime = $masSessionLifeTime ?: ini_get('session.cookie_lifetime');
         setcookie(
             $session_name,
             session_id(),
