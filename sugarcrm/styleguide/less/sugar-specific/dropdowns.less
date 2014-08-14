@@ -7,13 +7,9 @@
   border: @borderWidget;
   .box-shadow(@shadowWidget);
   .border-radius(@baseBorderRadius);
-  .rtlLeft(@direction,auto);
-  .rtlRight(@direction,-4px);
   &.left {
     left: auto;
     right: 0;
-    .rtlLeft(@direction,0px);
-    .rtlRight(@direction,auto);
   }
   &.scroll {
     max-height: 333px;

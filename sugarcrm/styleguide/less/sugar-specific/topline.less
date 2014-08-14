@@ -23,12 +23,6 @@
       span {
         font-size: @fontSizeLarge;
         line-height: 28px;
-        .rtlMargin(@direction,0 0 0 22px);
-        .rtl(@direction,ltr);
-      }
-      //this is the caret
-      div {
-        .rtlLeft(@direction,0px);
       }
     }
 
@@ -74,15 +68,11 @@
     padding: 10px 10px 0 0;
     margin-left: 20px;
     float: left;
-    .rtlFloat(@direction,right);
-    .rtlMargin(@direction,0 20px 0 0);
-    .rtlPadding(@direction,10px 0 0 10px);
   }
 
   .datapoints {
     float: right;
     text-align: right;
-    .rtlFloat(@direction,left);
       div.pull-right .info:last-child .datapoint {
           border-right: 0;
           padding-right: 0;
@@ -98,7 +88,6 @@
       padding-bottom: 5px;
       padding-right: 10px;
       min-width: 120px;
-      .rtlFloat(@direction,right);
       border-right: @borderWidgetLight;
   }
 
@@ -132,7 +121,6 @@
     }
     .title {
       padding: 0 10px 10px 0;
-      .rtlPadding(@direction,0 0 10px 20px);
     }
     .toggle {
       padding-top: 3px;
@@ -152,7 +140,6 @@
   div.divider {
     float: left;
     right: auto;
-    .rtlFloat(@direction,right);
     right: 121px;
     border-right: @borderWidgetLight;
     height: 80px;
@@ -247,7 +234,6 @@
             float: left;
             padding: 8px 7px 8px 0px;
             min-width: 120px;
-            .rtlFloat(@direction,right);
             border-right: @borderWidgetLight;
             text-align: right;
         }
