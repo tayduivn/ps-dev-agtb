@@ -36,6 +36,14 @@
 	}
 
     $my_list_strings = enum_get_lists();
+    // should not display read only options
+    $excludedOptions = array('Elastic_boost_options');
+    foreach ($excludedOptions as $options) {
+        if (isset($my_list_strings[$options])) {
+            unset($my_list_strings[$options]);
+        }
+    }
+
 	$dropdowns = array_keys($my_list_strings);
     if(!empty($vardef['options']) && !empty($my_list_strings[$vardef['options']])){
     		$default_dropdowns = $my_list_strings[$vardef['options']];
