@@ -208,4 +208,46 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
         unset($dictionary['Meeting']['fields']['type']['options']);
     }
+
+    public function testGetNotificationRecipients_RecipientsAreAlreadyLoaded_ReturnsRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->users_arr = array($GLOBALS['current_user']->id);
+        $meeting->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+
+        SugarTestContactUtilities::removeAllCreatedContacts();
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $GLOBALS['current_user']->id);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[0]->id);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+    }
 }
