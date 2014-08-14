@@ -4380,9 +4380,10 @@ svg .title {
     display: inline-block;
 }
 .upgrade .modal-body {
-    padding: 10px 8px 54px 8px;
     min-height: 168px;
-    margin: 0;
+    margin: 0 0 58px;
+    max-height: 342px;
+    padding: 10px 8px;
 }
 .upgrade .modal-body.record .record-cell {
     padding-left: 11px;
@@ -4646,7 +4647,4 @@ svg .title {
     100% {
         transform: rotate(359deg);
     }
-}
-#healthcheck {
-    padding-bottom: 100px;
 }
