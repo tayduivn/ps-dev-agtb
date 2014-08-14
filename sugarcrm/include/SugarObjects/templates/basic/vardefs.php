@@ -214,15 +214,25 @@ $vardefs = array(
     ),
     'indices' => array(
         'id' => array(
-            'name' => preg_replace('/[^a-z_\-]/i', '', strtolower($module)) . 'pk',
+            'name' => 'idx_' . preg_replace('/[^a-z_\-]/i', '', strtolower($module)) . '_pk',
             'type' => 'primary',
             'fields' => array('id')
         ),
         'date_modified' => array(
-            'name' => strtolower($table_name) . 'mod',
+            'name' => 'idx_' . strtolower($table_name) . '_date_modfied',
             'type' => 'index',
             'fields' => array('date_modified')
-        )
+        ),
+        'deleted' => array(
+            'name' => 'idx_' . strtolower($table_name) . '_id_del',
+            'type' => 'index',
+            'fields' => array('id', 'deleted')
+        ),
+        'date_entered' => array(
+            'name' => 'idx_' . strtolower($table_name) . '_date_entered',
+            'type' => 'index',
+            'fields' => array('date_entered')
+        ),
     ),
     'relationships' => array(
         strtolower($module) . '_modified_user' =>

@@ -608,7 +608,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
        array('name' => 'idx_meet_date_start', 'type' => 'index', 'fields'=> array('date_start')),
        // due to pulls from client side to check if there are reminders to handle.
        array('name' => 'idx_meet_date_start_reminder', 'type' => 'index', 'fields'=> array('date_start', 'reminder_time')),
-       array('name' => 'idx_meeting_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 
                                                    )
 //This enables optimistic locking for Saves From EditView

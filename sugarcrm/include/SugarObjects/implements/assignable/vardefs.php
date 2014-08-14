@@ -63,6 +63,13 @@ $vardefs = array(
     'table' => 'users',
   ),
 ),
+    'indicies' => array(
+        'assigned_user_id' => array(
+            'name' => 'idx_' . strtolower($table_name) . '_assigned_del',
+            'type' => 'index',
+            'fields' => array('deleted', 'assigned_user_id')
+        ),
+    ),
 'relationships'=>array(
 	  strtolower($module).'_assigned_user' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',

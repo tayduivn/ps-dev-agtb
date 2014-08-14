@@ -304,7 +304,6 @@ $dictionary['Campaign'] = array (
         array('name' => 'idx_campaign_status', 'type' => 'index', 'fields' => array('status')),
         array('name' => 'idx_campaign_campaign_type', 'type' => 'index', 'fields' => array('campaign_type')),
         array('name' => 'idx_campaign_end_date', 'type' => 'index', 'fields' => array('end_date')),
-        array('name' => 'idx_campaign_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
 
     'relationships' => array (

@@ -792,11 +792,6 @@ $dictionary['Quote'] = array(
                 'date_quote_expected_closed'
             )
         ),
-        array(
-            'name' => 'idx_quote_date_entered',
-            'type' => 'index',
-            'fields' => array('date_entered')
-        ),
     ),
     'relationships' => array(
         'quote_tasks' => array(

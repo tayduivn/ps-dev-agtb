@@ -189,10 +189,8 @@ $dictionary['Prospect'] = array(
                 'deleted'
             )
         ),
-        array('name' => 'idx_prospects_id_del', 'type' => 'index', 'fields' => array('id', 'deleted')),
         array('name' => 'idx_prospects_assigned', 'type' => 'index', 'fields' => array('assigned_user_id')),
         array('name' => 'idx_prospect_title', 'type' => 'index', 'fields' => array('title')),
-        array('name' => 'idx_prospect_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships' => array(
         'prospect_tasks' => array(
