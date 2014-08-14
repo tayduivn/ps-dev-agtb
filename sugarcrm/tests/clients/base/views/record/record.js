@@ -722,7 +722,7 @@ describe("Record View", function () {
                 description: 'Description'
             });
 
-            expect(view.$('.record-label[data-name=name]').css('display')).toBe('none');
+            expect(view.$('.record-label[data-name=name]').closest('.record-cell').hasClass('edit')).toBe(false);
         });
 
         it("should be shown on view for non-headerpane fields", function () {
@@ -746,7 +746,7 @@ describe("Record View", function () {
 
             view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
 
-            expect(view.$('.record-label[data-name=name]').css('display')).not.toBe('none');
+            expect(view.$('.record-label[data-name=name]').closest('.record-cell').hasClass('edit')).toBe(true);
         });
     });
 
