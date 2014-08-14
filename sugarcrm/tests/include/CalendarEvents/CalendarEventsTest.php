@@ -64,18 +64,13 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result, "Expected Meeting Event to be recognized as Recurring");
     }
 
+    /**
+     * @expectedException SugarException
+     */
     public function testCalendarEvents_Account_EventRecurring_UnsupportedCalendarEventModule()
     {
-        $exceptionThrown = null;
         $account = BeanFactory::newBean('Accounts');
-        try {
-            $GLOBALS['calendarEvents']->isEventRecurring($account);
-        } catch (Exception $e) {
-            $exceptionThrown = get_class($e);
-        }
-
-        $this->assertFalse(empty($exceptionThrown), "Exception Expected: Account was not identified as a Non-Calendar Event");
-        $this->assertEquals($exceptionThrown, "SugarException", "Expected SugarException to be thrown");
+        $GLOBALS['calendarEvents']->isEventRecurring($account);
     }
 
     public function testCalendarEvents_SaveRecurringEvents_EventsSaved()
