@@ -834,10 +834,6 @@ class SubPanelDefinitions
 		$spd_arr = array();
 		//iterate through modules and build subpanel array
 		foreach($modules_to_check as $mod_name){
-            // If the module is hidden from subpanels don't add it to this list
-            if (isset($hidden[strtolower($mod_name)])) {
-                    continue;
-            }
 
 		    $bean_class = BeanFactory::getBean($mod_name);
             if(empty($bean_class)) continue;
