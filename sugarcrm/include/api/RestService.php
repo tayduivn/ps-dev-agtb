@@ -324,6 +324,9 @@ class RestService extends ServiceBase
     {
         return array(
             'xhr' => array(
+                'status' => $code,
+                'responseText' => $message,
+                // "code" and "message" are deprecated keys left for backward compatibility
                 'code' => $code,
                 'message' => $message,
             ),
@@ -441,32 +444,6 @@ class RestService extends ServiceBase
         }
 
         if (!$valid) {
-            // In the case of large file uploads that are too big for the request too handle AND
-            // the auth token being sent as part of the request body, you will get a no auth error
-            // message on uploads. This check is in place specifically for file uploads that are too
-            // big to be handled by checking for an empty request body for POST and PUT file requests.
-
-            // Grab our path elements of the request and see if this is a files request
-            $pathParts = $this->request->path;
-            // FIXME: this part is not testable in this form
-            if (isset($pathParts[1]) && is_array($pathParts[1]) && in_array('file', $pathParts[1])) {
-                // If this is a POST request then we can inspect the $_FILES and $_POST arrays
-                if ($this->request->getMethod() == 'POST') {
-                    // If the post and files array are both empty on a POST request...
-                    if (empty($_FILES) && empty($_POST)) {
-                        throw new SugarApiExceptionRequestTooLarge('Request is too large');
-                    }
-                } elseif ($this->request->getMethod() == 'PUT') {
-                    // PUT requests need to read the php://input stream
-                    // Keep in mind that reading php://input is a one time deal
-                    // But since we are bound for an exception here this is a safe
-                    // consumption
-                    $input = file_get_contents('php://input');
-                    if (empty($input)) {
-                        throw new SugarApiExceptionRequestTooLarge('Request is too large');
-                    }
-                }
-            }
             // If token is invalid, clear the session for bwc
             // It looks like a big upload can cause no auth error,
             // so we do it here instead of the catch block above
