@@ -80,8 +80,8 @@ abstract class ServiceBase {
     protected function loadGuestEnvironment()
     {
         global $current_language;
-        if (!empty($this->request->postContents)) {
-            $postContents = json_decode($this->request->postContents, true);
+        if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+            $postContents = json_decode($GLOBALS['HTTP_RAW_POST_DATA'], true);
             if (!empty($postContents['current_language'])) {
                 $current_language = $postContents['current_language'];
             }
