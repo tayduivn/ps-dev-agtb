@@ -1098,3 +1098,31 @@
     }
   }
 }
+// for preview pane
+.participants {
+  display: table;
+  .row {
+    display: table-row;
+    .cell {
+      display: table-cell;
+      vertical-align: middle;
+      height: 34px;
+      padding: 0 5px;
+    }
+    &.spacer {
+      .cell {
+        height: 5px;
+      }
+    }
+  }
+  .participant {
+    border: 1px solid rgb(181,181,181);
+    border-radius: 3px;
+  }
+  .name {
+    font-size: 11px;
+    font-weight: bold;
+    width: 95px;
+    max-width: 95px;
+  }
+}
