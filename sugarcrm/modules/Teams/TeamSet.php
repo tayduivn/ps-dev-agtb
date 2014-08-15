@@ -142,8 +142,19 @@ class TeamSet extends SugarBean{
             //we did not find a set with this combination of teams
             //so we should create the set and associate the teams with the set and return the set id.
             if(count($team_ids) == 1) {
-            $this->new_with_id = true;
-            $this->id = $team_ids[0];
+                $this->new_with_id = true;
+                $this->id = $team_ids[0];
+                if ($this->db->getOne(
+                    sprintf(
+                        "SELECT id FROM %s WHERE id='%s'",
+                        $this->table_name,
+                        $this->db->quote($this->id)
+                    ))
+                ) {
+                    $GLOBALS['log']->error("Detected duplicate team set for $this->id");
+                    // Reset new_with_id so we overwrite this wrong set
+                    $this->new_with_id = false;
+                }
             }
             $this->team_md5 = $team_md5;
             $this->primary_team_id = $this->getPrimaryTeamId();
