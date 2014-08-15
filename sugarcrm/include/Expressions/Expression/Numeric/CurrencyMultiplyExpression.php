@@ -10,31 +10,34 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencyMultiply(Number n, ...)</b><br>
- * Multiplies the supplied numbers and returns the result as a string<br/>
- * ex: <i>currencyMultiply(-4, 2, 3)</i> = -24
+ * Multiplies the supplied currencies numbers and returns the result with a precision of 6 decimal places<br/>
+ * ex: <i>currencyMultiply(400.00, 200.00, 2)</i> = 160000.000000
  */
 class CurrencyMultiplyExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @return String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $product = 1;
         foreach ($this->getParameters() as $expr) {
             $product = SugarMath::init($product, 6)->mul($expr->evaluate())->result();
         }
+
         return (string)$product;
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {

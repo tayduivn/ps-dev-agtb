@@ -620,7 +620,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
  */
 SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	// a raw numeric constant
-	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
+	if (isFinite(expr) && !isNaN(parseFloat(expr))) {
 		return new SUGAR.expressions.ConstantExpression( parseFloat(expr) );
 	}
 

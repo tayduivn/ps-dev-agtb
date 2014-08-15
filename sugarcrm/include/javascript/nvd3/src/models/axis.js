@@ -4,7 +4,7 @@ nv.models.axis = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var axis = d3.svg.axis();
+  var axis = d3.svg.axisStatic();
 
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
       thickness = 0,

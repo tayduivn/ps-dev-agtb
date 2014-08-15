@@ -269,7 +269,12 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             $dictionary = array();
             include $file;
             $this->upgrader->backupFile($file);
-            $dictionary[$seed->object_name]['relationships'][$def['name']] = $def;
+            if (!empty($dictionary[$seed->object_name]['relationships'][$def['name']])) {
+                $dictionary[$seed->object_name]['relationships'][$def['name']] = $def;
+            }
+            if (!empty($dictionary[$def['name']])) {
+                $dictionary[$def['name']] = $def;
+            }
             $this->log("Updating definition of {$def['name']} for module {$seed->module_dir} in {$file}");
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
             foreach (array_keys($dictionary) as $key) {
@@ -475,7 +480,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         foreach ($tokens as $ind => $token) {
             if (is_array($token) && $token[0] == T_VARIABLE) {
                 $res = $token[1];
-                while ($tokens[$ind] != '=' || $ind >= count($tokens)) {
+                while ($tokens[$ind] != '=' && $ind < count($tokens)) {
                     $ind++;
                     if (!is_array($tokens[$ind])) {
                         if ($tokens[$ind] == '=') {
@@ -486,7 +491,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                         $res .= str_replace('"', "'", $tokens[$ind][1]);
                     }
                 }
-                if (strpos($res, $need) === 0) {
+                if (strpos($res, $need) === 0 && !is_array($tokens[$ind]) && $tokens[$ind] == '=') {
                     return true;
                 }
             }

@@ -47,7 +47,7 @@ class IsNumericExpression extends BooleanExpression
             if (params == '') {
                 return SUGAR.expressions.Expression.FALSE
             }
-            if ( /^(\-)?([0-9]+)?(\.[0-9]+)?$/.test(params) ) {
+            if (isFinite(params) && !isNaN(parseFloat(params))) {
                 return SUGAR.expressions.Expression.TRUE;
             }
 

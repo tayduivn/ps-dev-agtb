@@ -10,21 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
- * <b>currencySubtract(Number a, Number b)</b><br>
- * Returns <i>a</i> minus <i>b</i>.<br/>
- * ex: <i>currencySubtract(9, 2, 3)</i> = 4
+ * <b>currencySubtract(Number n, ...)</b><br>
+ * Returns the difference of the given currency numbers with a precision of 6 decimal places<br/>
+ * ex: <i>currencySubtract(900.00, 200.00, 300.00)</i> = 400.00
  */
 class CurrencySubtractExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @returns string
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $params = $this->getParameters();
         $diff = $params[0]->evaluate();
         for ($i = 1; $i < sizeof($params); $i++) {
@@ -35,7 +36,9 @@ class CurrencySubtractExpression extends NumericExpression
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {

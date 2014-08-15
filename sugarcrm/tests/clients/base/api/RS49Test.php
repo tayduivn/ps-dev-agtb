@@ -154,7 +154,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * We should get exception if $_FILES is empty
      *
-     * @expectedException SugarApiExceptionRequestTooLarge
+     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testSaveFilePostFilesAreSetAndEmpty()
     {
@@ -215,7 +215,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if $_FILES is empty
      * Also mark_deleted method should be called if delete_if_fails parameter is present
      *
-     * @expectedException SugarApiExceptionRequestTooLarge
+     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testDeleteIfFailsWithParameter()
     {
@@ -243,7 +243,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if $_FILES is empty
      * Also mark_deleted method shouldn't be called if delete_if_fails parameter isn't present
      *
-     * @expectedException SugarApiExceptionRequestTooLarge
+     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testDeleteIfFailsWithoutParameter()
     {

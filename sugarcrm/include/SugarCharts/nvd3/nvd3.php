@@ -28,6 +28,9 @@ class nvd3 extends JsChart
         return '
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/lib/d3.min.js').'"></script>
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/nvd3/nv.d3.min.js').'"></script>
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/rgbcolor.js').'"></script>
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/StackBlur.js').'"></script>
+        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/canvg.js').'"></script>
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/nvd3/js/sugarCharts.js').'"></script>
         ';
     }

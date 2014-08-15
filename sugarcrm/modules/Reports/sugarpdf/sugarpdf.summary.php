@@ -57,7 +57,7 @@ class ReportsSugarpdfSummary extends ReportsSugarpdfReports
                     $freeWidth = 0.9 * ($pageWidth - $marginLeft - $marginRight);
                     $freeHeight = 0.9 * ($pageHeight - $marginTop - $marginBottom);
 
-                    $rate = min($freeHeight / $imageHeightAsUnits, $freeWidth / $imageWidthAsUnits);
+                    $rate = min($freeHeight / $imageHeightAsUnits, $freeWidth / $imageWidthAsUnits, 2);
                     $imageWidth = floor($rate * $imageWidthAsUnits);
                     $imageHeight = floor($rate * $imageHeightAsUnits);
 

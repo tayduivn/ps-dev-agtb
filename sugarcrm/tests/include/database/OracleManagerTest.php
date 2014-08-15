@@ -208,9 +208,45 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
          $result
          )
      {
-         $this->assertEquals(
-             $this->_db->fromConvert($parameters[0],$parameters[1]),
-             $result);
+         $this->assertEquals($result,
+             $this->_db->fromConvert($parameters[0],$parameters[1])
+         );
+    }
+
+    public function providerFullTextQuery()
+    {
+        return array(
+            array(array('word1'), array(), array(),
+                "CONTAINS(unittest, '({word1})', 1) > 0"),
+            array(array("'word1'"), array(), array(),
+                "CONTAINS(unittest, '({''word1''})', 1) > 0"),
+            array(array('word1', 'word2'), array(), array(),
+                "CONTAINS(unittest, '({word1} | {word2})', 1) > 0"),
+            array(array('word1', 'word2'), array('mustword'), array(),
+                "CONTAINS(unittest, '{mustword} & ({word1} | {word2})', 1) > 0"),
+            array(array('word1', 'word2'), array('mustword', 'mustword2'), array(),
+                "CONTAINS(unittest, '{mustword} & {mustword2} & ({word1} | {word2})', 1) > 0"),
+            array(array(), array('mustword', 'mustword2'), array(),
+                "CONTAINS(unittest, '{mustword} & {mustword2}', 1) > 0"),
+            array(array('word1'), array(), array('notword'),
+                "CONTAINS(unittest, '({word1}) ~{notword}', 1) > 0"),
+            array(array('word1'), array(), array('notword', 'notword2'),
+                "CONTAINS(unittest, '({word1}) ~{notword} ~{notword2}', 1) > 0"),
+            array(array('word1', 'word2'), array('mustword', 'mustword2'), array('notword', 'notword2'),
+                "CONTAINS(unittest, '{mustword} & {mustword2} & ({word1} | {word2}) ~{notword} ~{notword2}', 1) > 0"),
+        );
+    }
+
+    /**
+     * @ticket 37435
+     * @dataProvider providerFullTextQuery
+     * @param array $terms
+     * @param string $result
+     */
+    public function testFullTextQuery($terms, $must_terms, $exclude_terms, $result)
+    {
+        $this->assertEquals($result,
+            $this->_db->getFulltextQuery('unittest', $terms, $must_terms, $exclude_terms));
     }
 
     /**

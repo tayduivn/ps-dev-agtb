@@ -225,7 +225,7 @@ nv.models.scatter = function() {
                 'series': vertices[i][2],
                 'point': vertices[i][3]
               }
-            }).filter(function(d) { return !!d.series; });
+            }).filter(function(d) { return d.series !== null; });
 
           var pointPaths = wrap.select('.nv-point-paths').selectAll('path')
               .data(voronoi);

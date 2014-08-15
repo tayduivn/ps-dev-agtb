@@ -9,30 +9,34 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>currencyAdd(Number n, ...)</b><br>
- * Returns the sum of the given currency numbers as a string.<br/>
- * ex: <i>currencyAdd(2, 1, 3)</i> = 6
+ * Returns the sum of the given currency numbers with a precision of 6 decimal places<br/>
+ * ex: <i>currencyAdd(2, 1, 3)</i> = 6.000000
  */
 class CurrencyAddExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @returns String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $sum = 0;
         foreach ($this->getParameters() as $expr) {
             $sum = SugarMath::init($sum, 6)->add($expr->evaluate())->result();
         }
+
         return (string)$sum;
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {

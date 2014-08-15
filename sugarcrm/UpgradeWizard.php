@@ -36,6 +36,10 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
         }
         die($errmsg);
     }
+    if(!$upg->healthcheck()) {
+        header("Location: index.php?module=HealthCheck&referrer=UpgradeWizard");
+        exit;
+    }
 	$upg->displayUpgradePage();
 	exit(0);
 }
@@ -56,7 +60,7 @@ if($res !== false && $upg->success) {
     }
 } else {
     // error
-    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed");
+    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed", 'data' => $res);
 }
 $msg = ob_get_clean();
 

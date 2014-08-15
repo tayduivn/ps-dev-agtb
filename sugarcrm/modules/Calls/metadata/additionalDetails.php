@@ -20,6 +20,10 @@ function additionalDetailsCall($fields) {
 
 	$overlib_string = '';
 
+	if (!empty($fields['NAME'])) {
+	    $overlib_string .= '<b>' . $mod_strings['LBL_SUBJECT'] . '</b> ' . $fields['NAME'];
+	    $overlib_string .= '<br>';
+	}
 	//Modify by jchi 6/27/2008 1515pm china time , bug 20626.
 	if(!empty($fields['DATE_START']))
 		$overlib_string .= '<b>'. $mod_strings['LBL_DATE_TIME'] . '</b> ' . $fields['DATE_START'] . ' <br>';
@@ -43,6 +47,11 @@ function additionalDetailsCall($fields) {
             $fields['PARENT_NAME'] . "</a>";
         $overlib_string .= '<br>';
     }
+
+	if (!empty($fields['STATUS'])) {
+	    $overlib_string .= '<b>' . $mod_strings['LBL_STATUS'] . '</b> ' . $fields['STATUS'];
+	    $overlib_string .= '<br>';
+	}
 
 	if(!empty($fields['DESCRIPTION'])) {
 		$overlib_string .= '<b>'. $mod_strings['LBL_DESCRIPTION'] . '</b> ' . substr($fields['DESCRIPTION'], 0, 300);

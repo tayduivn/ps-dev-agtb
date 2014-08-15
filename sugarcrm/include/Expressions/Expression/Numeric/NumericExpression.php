@@ -9,7 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/AbstractExpression.php');
+require_once 'include/Expressions/Expression/AbstractExpression.php';
+
 abstract class NumericExpression extends AbstractExpression
 {
 	/**
@@ -45,13 +46,11 @@ abstract class NumericExpression extends AbstractExpression
 		}
 	}*/
 
-
-	/**
-	 * All parameters have to be a number.
-	 */
-    static function getParameterTypes() {
-		return AbstractExpression::$NUMERIC_TYPE;
-	}
+    /**
+     * All parameters have to be a number.
+     */
+    public static function getParameterTypes()
+    {
+        return AbstractExpression::$NUMERIC_TYPE;
+    }
 }
-
-?>

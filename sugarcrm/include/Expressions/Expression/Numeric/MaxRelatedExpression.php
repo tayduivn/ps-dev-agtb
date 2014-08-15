@@ -9,7 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
+
 /**
  * <b>rollupMax(Relate <i>link</i>, String <i>field</i>)</b><br>
  * Returns the highest value of <i>field</i> in records related by <i>link</i><br/>
@@ -18,40 +19,42 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
  */
 class MaxRelatedExpression extends NumericExpression
 {
-	/**
-	 * Returns the entire enumeration bare.
-	 */
-	function evaluate() {
-		$params = $this->getParameters();
-		//This should be of relate type, which means an array of SugarBean objects
+    /**
+     * Returns the entire enumeration bare.
+     */
+    public function evaluate()
+    {
+        $params = $this->getParameters();
+        //This should be of relate type, which means an array of SugarBean objects
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
 
-		if (!is_array($linkField) || empty($linkField))
+        if (!is_array($linkField) || empty($linkField)) {
             return 0;
+        }
 
-		$ret = false;
+        $ret = false;
 
-        foreach($linkField as $bean)
-        {
-            if (isset($bean->$relfield) && $ret === false || $ret < $bean->$relfield)
+        foreach ($linkField as $bean) {
+            if (isset($bean->$relfield) && $ret === false || $ret < $bean->$relfield) {
                 $ret = $bean->$relfield;
+            }
         }
 
         return $ret;
-	}
+    }
 
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
+    /**
+     * Returns the JS Equivalent of the evaluate function.
+     */
+    public static function getJSEvaluate()
+    {
+        return <<<EOQ
 		    var params = this.getParameters();
 			var linkField = params[0].evaluate();
 			var relField = params[1].evaluate();
 
-			if (typeof(linkField) == "string" && linkField != "")
-			{
+			if (typeof(linkField) == "string" && linkField != "") {
                 return this.context.getRelatedField(linkField, 'rollupMax', relField);
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
@@ -62,35 +65,37 @@ class MaxRelatedExpression extends NumericExpression
 
 			return "";
 EOQ;
-	}
+    }
 
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return array("rollupMax");
-	}
+    /**
+     * Returns the opreation name that this Expression should be
+     * called by.
+     */
+    public static function getOperationName()
+    {
+        return array("rollupMax");
+    }
 
-	/**
-	 * The first parameter is a number and the second is the list.
-	 */
-    static function getParameterTypes() {
-		return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
-	}
+    /**
+     * The first parameter is a number and the second is the list.
+     */
+    public static function getParameterTypes()
+    {
+        return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
+    }
 
-	/**
-	 * Returns the maximum number of parameters needed.
-	 */
-	static function getParamCount() {
-		return 2;
-	}
+    /**
+     * Returns the maximum number of parameters needed.
+     */
+    public static function getParamCount()
+    {
+        return 2;
+    }
 
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
-	}
+    /**
+     * Returns the String representation of this Expression.
+     */
+    public function toString()
+    {
+    }
 }
-
-?>

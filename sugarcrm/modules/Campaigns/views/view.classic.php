@@ -55,11 +55,19 @@ class CampaignsViewClassic extends SugarView
     					$params[] = $GLOBALS['mod_strings']['LBL_LEAD_FORM_WIZARD'];
     					break;
     				case 'WizardNewsletter':
-				    	if(!empty($this->bean->id))
-				    	{
-				    		$params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$GLOBALS['mod_strings']['LBL_NEWSLETTER_TITLE']."</a>";
-				    	}
-				    	$params[] = $GLOBALS['mod_strings']['LBL_CREATE_NEWSLETTER'];
+
+                        if (isset($_REQUEST['wizardtype']) && $_REQUEST['wizardtype'] == '2') {
+                            if (!empty($this->bean->id)) {
+                                $params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$GLOBALS['mod_strings']['LBL_EMAIL_TITLE']."</a>";
+                            }
+                            $params[] = $GLOBALS['mod_strings']['LBL_CREATE_EMAIL'];
+                        } else {
+                            if (!empty($this->bean->id)) {
+				    		    $params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$GLOBALS['mod_strings']['LBL_NEWSLETTER_TITLE']."</a>";
+				    	    }
+                            $params[] = $GLOBALS['mod_strings']['LBL_CREATE_NEWSLETTER'];
+
+                        }
 				    	break;
     				case 'CampaignDiagnostic':
     					$params[] = $GLOBALS['mod_strings']['LBL_CAMPAIGN_DIAGNOSTICS'];

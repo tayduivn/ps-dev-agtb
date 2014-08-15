@@ -152,4 +152,9 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('latest_tracker_id', $info);
         $this->assertGreaterThan(0, $info['latest_tracker_id']);
     }
+
+    public function testGetLicenseKey()
+    {
+        $this->assertNotEmpty($this->sysInfo->getLicenseKey());
+    }
 }

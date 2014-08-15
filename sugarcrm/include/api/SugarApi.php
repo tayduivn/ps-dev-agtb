@@ -423,4 +423,85 @@ abstract class SugarApi {
     {
         return MetaDataManager::getManager($platform, $public);
     }
+
+    /**
+     * Checks if POST request body was successfully delivered to the application.
+     * Throws exception, if it was not.
+     *
+     * @throws SugarApiExceptionRequestTooLarge
+     * @throws SugarApiExceptionMissingParameter
+     */
+    protected function checkPostRequestBody()
+    {
+        if (empty($_FILES)) {
+            $contentLength = $this->getContentLength();
+            $postMaxSize = $this->getPostMaxSize();
+            if ($contentLength && $postMaxSize && $contentLength > $postMaxSize) {
+                // @TODO Localize this exception message
+                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
+            }
+
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionMissingParameter('Attachment is missing');
+        }
+    }
+
+    /**
+     * Returns max size of post data allowed defined by PHP configuration in bytes, or NULL if unable to determine.
+     *
+     * @return int|null
+     */
+    protected function getPostMaxSize()
+    {
+        $iniValue = ini_get('post_max_size');
+        $postMaxSize = parseShorthandBytes($iniValue);
+
+        return $postMaxSize;
+    }
+
+    /**
+     * Checks if PUT request body was successfully delivered to the application.
+     * Throws exception, if it was not.
+     *
+     * We have to require callers to provide the amount of data read from input stream, because otherwise we
+     * would have to read the data ourselves, however the stream cannot be rewound. It seems there's no way
+     * to get actual input size without reading it (e.g. by inspecting stream metadata).
+     *
+     * @param int $length The amount of data read from input stream
+     *
+     * @throws SugarApiExceptionRequestTooLarge
+     * @throws SugarApiExceptionMissingParameter
+     */
+    protected function checkPutRequestBody($length)
+    {
+        $contentLength = $this->getContentLength();
+        if ($contentLength && $length < $contentLength) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionRequestTooLarge('File is too large');
+        } elseif (!$length) {
+            throw new SugarApiExceptionMissingParameter('File is missing or no file data was received.');
+        }
+    }
+
+    /**
+     * Returns request body length, or NULL if unable to determine.
+     *
+     * @return int|null
+     */
+    protected function getContentLength()
+    {
+        if (isset($_SERVER['CONTENT_LENGTH'])) {
+            return (int) $_SERVER['CONTENT_LENGTH'];
+        }
+
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            $headers = array_change_key_case($headers, CASE_LOWER);
+            if (isset($headers['content-length'])) {
+                return (int) $headers['content-length'];
+            }
+        }
+
+        return null;
+    }
 }
