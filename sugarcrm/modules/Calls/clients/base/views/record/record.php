@@ -184,6 +184,41 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'name' => 'repeat_type',
                     'span' => 3,
                 ),
+                array(
+                    'name' => 'recurrence',
+                    'type' => 'recurrence',
+                    'span' => 12,
+                    'fields' => array(
+                        array(
+                            'label' => 'LBL_CALENDAR_REPEAT_INTERVAL',
+                            'name' => 'repeat_interval',
+                            'type' => 'enum',
+                            'options' => 'repeat_interval_number',
+                            'required' => true,
+                            'span' => 2,
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_REPEAT_DOW',
+                            'name' => 'repeat_dow',
+                            'type' => 'repeat-dow',
+                            'options' => 'dom_cal_day_short',
+                            'isMultiSelect' => true,
+                            'span' => 4,
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
+                            'name' => 'repeat_until',
+                            'type' => 'date',
+                            'span' => 3,
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_REPEAT_COUNT',
+                            'name' => 'repeat_count',
+                            'type' => 'repeat-count',
+                            'span' => 3,
+                        ),
+                    ),
+                ),
                 'parent_name',
                 array(
                     'name' => 'reminders',

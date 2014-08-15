@@ -459,6 +459,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'vname' => 'LBL_REPEAT_COUNT',
     'type' => 'int',
     'len' => 7,
+      'default' => 10,
+      'validation' => array('type' => 'range', 'min' => 0),
     'comment' => 'Number of recurrence',
     'importable' => 'false',
     'massupdate' => false,
@@ -574,6 +576,10 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'	=> true,
+
+    'duplicate_check' => array(
+        'enabled' => false,
+    ),
 );
 
 VardefManager::createVardef('Calls','Call', array('default', 'assignable',
