@@ -13,6 +13,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
 require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateExternal.php';
+require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
 /**
  * This file is used to control the authentication process.
@@ -60,6 +61,15 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
     {
         $authrequest = new OneLogin_Saml_AuthRequest(self::loadSettings());
         return $authrequest->getRedirectUrl();
+    }
+
+    public function getLogoutUrl()
+    {
+        if(empty($GLOBALS['sugar_config']['SAML_SLO'])) {
+            return;
+        }
+        $req = new OneLogin_Saml_LogoutRequest(SAMLAuthenticate::loadSettings());
+        return $req->getLogoutUrl();
     }
 
     /**

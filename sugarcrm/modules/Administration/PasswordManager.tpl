@@ -827,6 +827,13 @@
 
                             </tr>
                             <tr>
+                                <td scope="row" valign='middle'
+                                    nowrap>{$MOD.LBL_SAML_LOGOUT_URL} {sugar_help text=$MOD.LBL_SAML_LOGOUT_URL_DESC}</td>
+                                <td align="left" valign='middle'><input name="SAML_SLO" size='35' type="text"
+                                                                        value="{$config.SAML_SLO}"></td>
+
+                            </tr>
+                            <tr>
                                 <td width='25%' scope="row" valign='top'
                                     nowrap>{$MOD.LBL_SAML_CERT} {sugar_help text=$MOD.LBL_SAML_CERT_DESC}</td>{$settings.proxy_host}
                                 <td width='25%' align="left" valign='top'><textarea style='height:200px;width:600px'
