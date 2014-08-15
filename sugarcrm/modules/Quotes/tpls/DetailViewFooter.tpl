@@ -96,6 +96,9 @@
 			<td valign="top">&nbsp;</td>
 			<td valign="top">&nbsp;</td>
 			<td valign="top">&nbsp;</td>
+			{if $product_bundle->deal_tot!= "0.00" && $product_bundle->deal_tot!= ""}
+			<td valign="top">&nbsp;</td>
+			{/if}
 			</tr>
 
         {/if}

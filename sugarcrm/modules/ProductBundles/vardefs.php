@@ -88,6 +88,11 @@ $dictionary['ProductBundle'] = array(
             'type' => 'text',
             'comment' => 'Group description'
         ),
+        'taxrate_id' => array(
+            'name' => 'taxrate_id',
+            'vname' => 'LBL_TAXRATE_ID',
+            'type' => 'id',
+        ),
         'tax' => array(
             'name' => 'tax',
             'vname' => 'LBL_TAX',
@@ -97,8 +102,19 @@ $dictionary['ProductBundle'] = array(
             'comment' => 'Tax rate applied to items in the group',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'taxrate_id',
+                'new_sub',
             ),
+            'formula' => 'ifElse(isNumeric(related($taxrate, "value")),
+                    currencyMultiply(
+                        rollupConditionalSum($products, "total_amount", "tax_class", "Taxable"),
+                        currencyDivide(related($taxrate, "value"), 100)
+                    ),
+                    0
+                )',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'tax_usdollar' => array(
             'name' => 'tax_usdollar',
@@ -116,7 +132,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($tax,$base_rate)',
+            'formula' => 'ifElse(isNumeric($tax),currencyDivide($tax,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -129,8 +145,14 @@ $dictionary['ProductBundle'] = array(
             'comment' => 'Total amount for all items in the group',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'new_sub',
+                'tax',
+                'shipping',
             ),
+            'formula' => 'currencyAdd($new_sub, $tax, $shipping)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'total_usdollar' => array(
             'name' => 'total_usdollar',
@@ -148,7 +170,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($total,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal),currencyDivide($total,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -168,7 +190,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($subtotal,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal),currencyDivide($subtotal,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -188,7 +210,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($shipping,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal),currencyDivide($shipping,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -203,6 +225,9 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($products, "deal_calc")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'deal_tot_usdollar' => array(
             'name' => 'deal_tot_usdollar',
@@ -220,7 +245,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($deal_tot,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal),currencyDivide($deal_tot,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -235,6 +260,9 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'currencySubtract($subtotal, $deal_tot)',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'new_sub_usdollar' => array(
             'name' => 'new_sub_usdollar',
@@ -252,7 +280,7 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($new_sub,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal),currencyDivide($new_sub,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
 
@@ -268,6 +296,9 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($products, "subtotal")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'shipping' => array(
             'name' => 'shipping',
@@ -298,6 +329,14 @@ $dictionary['ProductBundle'] = array(
             'type' => 'decimal',
             'len' => '26,6',
             'studio' => false
+        ),
+        'taxrate' => array(
+            'name' => 'taxrate',
+            'type' => 'link',
+            'relationship' => 'product_bundle_taxrate',
+            'module' => 'TaxRates',
+            'bean_name' => 'TaxRate',
+            'source' => 'non-db'
         ),
         'products' => array(
             'name' => 'products',
@@ -330,10 +369,32 @@ $dictionary['ProductBundle'] = array(
             'rel_fields' => array('note_index' => array('type' => 'integer')),
             'vname' => 'LBL_NOTES',
         ),
+        'position' => array(
+            'massupdate' => false,
+            'name' => 'position',
+            'type' => 'integer',
+            'studio' => false,
+            'source' => 'non-db',
+            'vname' => 'LBL_QUOTE_BUNDLE_POSITION',
+            'importable' => false,
+            'link' => 'quotes',
+            'rname_link' => 'bundle_index',
+        ),
     ),
     'indices' => array(
         array('name' => 'procuct_bundlespk', 'type' => 'primary', 'fields' => array('id')),
         array('name' => 'idx_products_bundles', 'type' => 'index', 'fields' => array('name', 'deleted')),
+    ),
+    'relationships' => array(
+        'product_bundle_taxrate' => array(
+            'rhs_module' => 'ProductBundles',
+            'rhs_table' => 'product_bundles',
+            'rhs_key' => 'taxrate_id',
+            'lhs_module' => 'TaxRates',
+            'lhs_table' => 'taxrates',
+            'lhs_key' => 'id',
+            'relationship_type' => 'one-to-many',
+        ),
     )
 );
 

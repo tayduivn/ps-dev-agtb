@@ -76,7 +76,7 @@ $dictionary['ProductBundleNote'] = array(
         'product_bundles' => array(
             'name' => 'product_bundles',
             'type' => 'link',
-            'relationship' => 'product_bundle_product',
+            'relationship' => 'product_bundle_note',
             'module' => 'ProductBundles',
             'bean_name' => 'ProductBundle',
             'source' => 'non-db',
@@ -89,6 +89,17 @@ $dictionary['ProductBundleNote'] = array(
                 'note_index' => 'note_index'
             ),
             'vname' => 'LBL_NOTES',
+        ),
+        'position' => array(
+            'massupdate' => false,
+            'name' => 'position',
+            'type' => 'integer',
+            'studio' => false,
+            'source' => 'non-db',
+            'vname' => 'LBL_BUNDLE_NOTE_POSITION',
+            'importable' => false,
+            'link' => 'product_bundles',
+            'rname_link' => 'note_index',
         ),
 
     ),
