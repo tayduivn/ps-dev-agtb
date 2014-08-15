@@ -73,7 +73,7 @@ class QuoteConvertApiTest extends Sugar_PHPUnit_Framework_TestCase
         $endpoints = $convertApi->registerApiRest();
 
         $this->assertEquals(1, count($endpoints));
-        $this->assertEquals(4, count($endpoints['convert']['path']));
+        $this->assertEquals(3, count($endpoints['convert']['path']));
         $this->assertEquals('POST', $endpoints['convert']['reqType']);
     }
 

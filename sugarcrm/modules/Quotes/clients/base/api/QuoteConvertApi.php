@@ -18,8 +18,8 @@ class QuoteConvertApi extends SugarApi
         return array(
             'convert' => array(
                 'reqType' => 'POST',
-                'path' => array('Quotes', '?', 'convert', 'Opportunity'),
-                'pathVars' => array('module', 'record', 'convert', 'targetModule'),
+                'path' => array('Quotes', '?', 'opportunity'),
+                'pathVars' => array('module', 'record', 'opportunity'),
                 'method' => 'convertQuote',
                 'shortHelp' => 'Convert a Quote into another record',
                 'longHelp' => 'modules/Quotes/clients/base/api/help/quote_convert.html',
@@ -34,7 +34,7 @@ class QuoteConvertApi extends SugarApi
         $quote = $this->loadBean($api, $args);
 
         if (!$quote->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', 'view');
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
         }
 
         // first lets load up the bean to make sure we have access to the opportunity save
