@@ -80,14 +80,12 @@ abstract class ServiceBase {
     protected function loadGuestEnvironment()
     {
         global $current_language;
+        $current_language = $GLOBALS['sugar_config']['default_language'];
         if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
             $postContents = json_decode($GLOBALS['HTTP_RAW_POST_DATA'], true);
             if (!empty($postContents['current_language'])) {
                 $current_language = $postContents['current_language'];
             }
-        }
-        else {
-            $current_language = $GLOBALS['sugar_config']['default_language'];
         }
 
         $GLOBALS['app_strings'] = return_application_language($current_language);
