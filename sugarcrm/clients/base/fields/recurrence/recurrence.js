@@ -105,7 +105,7 @@
      */
     repeatTypeChanged: function() {
         _.each(this.fields, function(field) {
-            this.model.set(field.name, this.model.getDefaultAttribute(field.name));
+            this.model.set(field.name, field.def['default']);
         }, this);
 
         this.render();

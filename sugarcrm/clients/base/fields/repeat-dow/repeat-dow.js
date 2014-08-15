@@ -31,11 +31,7 @@
         this._super('initialize', [options]);
         this.type = 'enum';
 
-        this.model.setDefaultAttribute(this.name, this.getDefaultDayOfWeek());
-        // apply default immediately if this is a new model
-        if (this.model.isNew() && !this.model.get(this.name)) {
-            this.model.set(this.name, this.model.getDefaultAttribute(this.name));
-        }
+        this.def['default'] = this.getDefaultDayOfWeek();
 
         this.model.addValidationTask(
             'repeat_dow_validator_' + this.cid,

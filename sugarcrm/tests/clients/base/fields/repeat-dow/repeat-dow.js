@@ -76,7 +76,7 @@ describe('View.Fields.Base.RepeatDowField', function() {
         });
         field.dispose();
         field = SugarTest.createField(createFieldProperties);
-        expect(field.model.get(field.name)).toEqual('3');
+        expect(field.def['default']).toEqual('3');
     });
 
     it('should translate Sunday value when retrieving day of week default', function() {

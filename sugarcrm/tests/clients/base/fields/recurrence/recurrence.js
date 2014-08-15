@@ -94,14 +94,10 @@ describe('View.Fields.Base.RecurrenceField', function() {
                 repeat_count: 10
             };
 
-            field.model.setDefaultAttribute('repeat_interval', expected.repeat_interval);
-            field.model.setDefaultAttribute('repeat_until', expected.repeat_until);
-            field.model.setDefaultAttribute('repeat_count', expected.repeat_count);
-
             field.fields = [
-                { name: 'repeat_interval' },
-                { name: 'repeat_until' },
-                { name: 'repeat_count' }
+                { name: 'repeat_interval', def: { 'default': expected.repeat_interval } },
+                { name: 'repeat_until', def: { 'default': expected.repeat_until } },
+                { name: 'repeat_count', def: { 'default': expected.repeat_count } }
             ];
 
             field.model.set('repeat_type', 'Daily');
