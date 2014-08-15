@@ -66,6 +66,16 @@ class AuthenticationController
 	}
 
 	/**
+	 * Set currect instance (for testing)
+	 * @param AuthenticationController $instance
+	 */
+    public static function setInstance($instance)
+	{
+	    self::$authcontrollerinstance = $instance;
+	}
+
+
+	/**
 	 * This function is called when a user initially tries to login.
 	 *
 	 * @param string $username

@@ -28,6 +28,59 @@ class SAMLAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    protected function tearDown()
+    {
+        AuthenticationController::setInstance(null);
+        parent::tearDown();
+    }
+
+    public function testLoginUrl()
+    {
+        global $sugar_config;
+
+        $sugar_config['SAML_loginurl'] = 'loginURL';
+        $sugar_config['SAML_X509Cert'] = 'TestCert';
+        $sugar_config['SAML_issuer'] = 'testIssuer';
+
+        $authc = new AuthenticationController('SAMLAuthenticate');
+        $login = $authc->getLoginUrl(array("platform" => "myplatform", "other" => "stuff"));
+        $this->assertContains('loginURL', $login);
+        $vars = array();
+        parse_str(parse_url($login, PHP_URL_QUERY), $vars);
+        $this->assertArrayHasKey("SAMLRequest", $vars);
+        $data = gzinflate(base64_decode($vars['SAMLRequest']));
+        $this->assertContains("platform=myplatform", $data);
+        $this->assertContains("other=stuff", $data);
+    }
+
+    public function testNeedLogin()
+    {
+        $mockauth = $this->getMock('AuthenticationController', array('getLoginUrl', 'isExternal'));
+        $rest = SugarTestRestUtilities::getRestServiceMock();
+
+        $mockauth->expects($this->once())
+            ->method('isExternal')
+            ->will($this->returnValue(true));
+
+        $mockauth->expects($this->once())
+            ->method('getLoginUrl')
+            ->will($this->returnValue('LoginURLString'));
+
+        AuthenticationController::setInstance($mockauth);
+
+        $e = null;
+        try {
+            $rest->needLogin();
+        } catch (SugarApiExceptionNeedLogin $e) {
+        }
+        $this->assertNotEmpty($e);
+
+        $this->assertArrayHasKey('url', $e->extraData);
+        $this->assertArrayHasKey('platform', $e->extraData);
+        $this->assertContains('LoginURLString', $e->extraData['url']);
+    }
+
+
     public static function addQueryVarsProvider()
     {
         return array(

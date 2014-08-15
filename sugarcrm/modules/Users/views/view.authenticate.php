@@ -60,8 +60,11 @@ class UsersViewAuthenticate extends SidecarView
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
             sugar_die($e->getMessage());
         }
-        if(!empty($_REQUEST['dataOnly'])) {
+        if (!empty($_REQUEST['dataOnly'])) {
             $this->dataOnly = true;
+        }
+        if (!empty($_REQUEST['platform'])) {
+            $this->platform = true;
         }
         parent::preDisplay();
     }
@@ -85,12 +88,11 @@ class UsersViewAuthenticate extends SidecarView
      */
     protected function getAuthenticateTemplate()
     {
-        if (isset($_REQUEST['platform'])) {
-            $platform = $_REQUEST['platform'];
+        if (isset($this->platform)) {
             $platforms = MetaDataManager::getPlatformList();
-            if (in_array($platform, $platforms, true)) {
+            if (in_array($this->platform, $platforms, true)) {
                 $platformTemplate = SugarAutoLoader::existingCustomOne(
-                    'modules/Users/tpls/Authenticate' . ucfirst($platform) . '.tpl'
+                    'modules/Users/tpls/Authenticate' . ucfirst($this->platform) . '.tpl'
                 );
                 if ($platformTemplate) {
                     return $platformTemplate;
