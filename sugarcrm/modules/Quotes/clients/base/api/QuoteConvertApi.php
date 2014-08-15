@@ -33,6 +33,10 @@ class QuoteConvertApi extends SugarApi
         /* @var $quote Quote */
         $quote = $this->loadBean($api, $args);
 
+        if (!$quote->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', 'view');
+        }
+
         // first lets load up the bean to make sure we have access to the opportunity save
         /* @var $opportunity Opportunity */
         $opportunity = $this->loadBean($api, array('module' => 'Opportunities', 'record' => ''));

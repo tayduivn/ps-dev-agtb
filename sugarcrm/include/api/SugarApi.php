@@ -132,7 +132,7 @@ abstract class SugarApi {
      * @param $options Options array to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
-    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read', $options = array()) {
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'view', $options = array()) {
         $this->requireArgs($args, array('module','record'));
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
