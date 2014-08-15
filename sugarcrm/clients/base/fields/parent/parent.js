@@ -18,10 +18,16 @@
     extendsFrom: 'RelateField',
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
+
     _render: function() {
         var result, self = this;
         this._super("_render");
-        if(this.tplName === 'edit') {
+
+        /**
+         * Only allow modification of the select2 functionality under the specified templates
+         */
+        var allowedTpls = ['edit', 'massupdate'];
+        if (_.contains(allowedTpls, this.tplName)) {
             this.checkAcl('access', this.model.get('parent_type'));
 
             var inList = (this.view.name === 'recordlist') ? true : false;
