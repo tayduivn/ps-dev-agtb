@@ -38,6 +38,10 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         ApiHelper::$moduleHelpers = array();
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
+
+        $_FILES = array();
+        unset($_SERVER['CONTENT_LENGTH']);
+
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
@@ -224,6 +228,52 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array("html" => array("nested_result" => array("data" => "def < abc > xyz"))),
                 "HTML came out wrong"
             ),
+        );
+    }
+
+    /**
+     * @dataProvider checkPostRequestBodyProvider
+     */
+    public function testCheckPostRequestBody($contentLength, $postMaxSize, $expectedException)
+    {
+        $api = $this->getMockBuilder('SugarApi')
+            ->setMethods(array('getPostMaxSize'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('getPostMaxSize')
+            ->will($this->returnValue($postMaxSize));
+
+        $_FILES = array();
+        $_SERVER['CONTENT_LENGTH'] = $contentLength;
+        $this->setExpectedException($expectedException);
+        SugarTestReflection::callProtectedMethod($api, 'checkPostRequestBody');
+    }
+
+    public static function checkPostRequestBodyProvider()
+    {
+        return array(
+            array(null, null, 'SugarApiExceptionMissingParameter'),
+            array(1024, 1023, 'SugarApiExceptionRequestTooLarge'),
+        );
+    }
+
+    /**
+     * @dataProvider checkPutRequestBodyProvider
+     */
+    public function testCheckPutRequestBody($length, $contentLength, $expectedException)
+    {
+        $api = $this->getMockForAbstractClass('SugarApi');
+
+        $_SERVER['CONTENT_LENGTH'] = $contentLength;
+        $this->setExpectedException($expectedException);
+        SugarTestReflection::callProtectedMethod($api, 'checkPutRequestBody', array($length));
+    }
+
+    public static function checkPutRequestBodyProvider()
+    {
+        return array(
+            array(0, null, 'SugarApiExceptionMissingParameter'),
+            array(1023, 1024, 'SugarApiExceptionRequestTooLarge'),
         );
     }
 

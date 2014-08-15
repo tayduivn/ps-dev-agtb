@@ -177,6 +177,12 @@ class MBModule
         $vardef = $field->get_field_def () ;
 		$this->mbvardefs->mergeVardefs();
 		$existingVardefs = $this->mbvardefs->getVardefs () ;
+
+                // default unified_search is false, but if the fts is enabled, we need it to be true
+                if (!empty($field->supports_unified_search) && isset($vardef['full_text_search']) && !empty($vardef['full_text_search']['enabled'])) {
+                    $vardef['unified_search'] = true;
+                }
+
 		//Merge with the existing vardef if it already exists
 		if(!empty($existingVardefs['fields'][$vardef['name']])){
 		    // if we edited non-db field, do not override its source

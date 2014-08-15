@@ -29,7 +29,7 @@
         this.$('[data-display=global]').append(this.buildGlobalHelpTable().children());
         this.$('[data-display=contextual]').append(this.buildContextualHelpTable().children());
 
-        app.shortcuts.register('Shortcuts:Help:Close', ['esc', 'ctrl+opt+l'], function() {
+        app.shortcuts.register('Shortcuts:Help:Close', ['esc', 'ctrl+alt+l'], function() {
             this.close();
         }, this);
     },
