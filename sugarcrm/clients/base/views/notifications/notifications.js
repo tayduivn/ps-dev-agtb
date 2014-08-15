@@ -199,7 +199,7 @@
             this._alertsCollections[module] = app.data.createBeanCollection(module);
             this._alertsCollections[module].options = {
                 limit: this.meta.remindersLimit,
-                fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
+                fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
             };
         }, this);
 
@@ -369,7 +369,8 @@
                 model: model,
                 location: model.get('location'),
                 description: model.get('description'),
-                dateStart: dateValue
+                dateStart: dateValue,
+                parentName: model.get('parent_name')
             });
         _.defer(function() {
             if (confirm(message)) {

@@ -5866,3 +5866,33 @@ function getBacktraceData($function) {
     }
     return false;
 }
+
+/**
+ * Parses shorthand bytes value
+ *
+ * @param string $string
+ *
+ * @return int|null
+ * @link http://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+ */
+function parseShorthandBytes($string)
+{
+    if (preg_match('/^(\d+)/', $string, $matches)) {
+        $value = (int) $matches[1];
+        $modifier = substr($string, -1);
+        switch (strtoupper($modifier)) {
+            case 'G':
+                $value *= 1024;
+                // no break
+            case 'M':
+                $value *= 1024;
+                // no break
+            case 'K':
+                $value *= 1024;
+        }
+
+        return $value;
+    }
+
+    return null;
+}

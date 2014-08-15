@@ -1,13 +1,15 @@
 describe('Notifications', function() {
-    var moduleName = 'Notifications',
+    var app, view,
+        moduleName = 'Notifications',
         viewName = 'notifications';
 
-    describe('Initialization with default values', function() {
-        var app, view;
+    beforeEach(function() {
+        app = SugarTest.app;
+    });
 
+    describe('Initialization with default values', function() {
         beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
-            app = SugarTest.app;
         });
 
         afterEach(function() {
@@ -67,7 +69,7 @@ describe('Notifications', function() {
     });
 
     describe('Initialization with metadata overridden values', function() {
-        var app, view, customOptions = {
+        var customOptions = {
             delay: 10,
             limit: 8
         };
@@ -78,7 +80,6 @@ describe('Notifications', function() {
             SugarTest.testMetadata.set();
 
             view = SugarTest.createView('base', moduleName, viewName);
-            app = SugarTest.app;
         });
 
         afterEach(function() {
@@ -125,8 +126,6 @@ describe('Notifications', function() {
     });
 
     describe('Pulling mechanism', function() {
-        var view;
-
         beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
         });
@@ -225,8 +224,7 @@ describe('Notifications', function() {
         });
 
         it('should stop pulling if authentication expires', function() {
-            var app = SugarTest.app,
-                isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
+            var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
                     return false;
                 }),
                 pull = sinon.collection.stub(view, 'pull', $.noop()),
@@ -246,8 +244,6 @@ describe('Notifications', function() {
     });
 
     describe('Reminders', function() {
-        var app, view;
-
         beforeEach(function() {
             var meta = {
                 remindersFilterDef: {
@@ -257,7 +253,6 @@ describe('Notifications', function() {
                 remindersLimit: 100
             };
 
-            app = SugarTest.app;
             view = SugarTest.createView('base', moduleName, viewName, meta);
         });
 
@@ -298,7 +293,7 @@ describe('Notifications', function() {
             _.each(['Calls', 'Meetings'], function(module) {
                 expect(view._alertsCollections[module].options).toEqual({
                     limit: 100,
-                    fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
+                    fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
                 });
             });
 
@@ -372,6 +367,63 @@ describe('Notifications', function() {
 
                 clock.restore();
             });
+        });
+    });
+
+    describe('Notification alert content', function() {
+        var message,
+            template,
+            parentName = 'Parent Company',
+            model;
+
+        beforeEach(function() {
+            template = app.template.getView('notifications.notifications-alert'),
+            model = new app.data.createBean('Meetings', {
+                'id': '105b0b4a-1337-e0db-b448-522784b92270',
+                'name': 'Discuss pricing',
+                'date_modified': '2013-09-05T00:59:00+02:00',
+                'description': 'Meeting',
+                'location': 'GoTo',
+                'date_start': '2013-09-05T00:59:00+02:00',
+                'reminder_time': '1800',
+                'module': 'Meetings'
+            });
+        });
+
+        afterEach(function() {
+            template = null;
+            model = null;
+        });
+
+        it('Should show the parent name if exists on the model', function() {
+            model.set('parent_name', parentName);
+            message = template({
+                title: 'Test',
+                module: model.module,
+                model: model,
+                location: model.get('location'),
+                description: model.get('description'),
+                dateStart: model.get('date_start'),
+                parentName: model.get('parent_name')
+            });
+
+            expect(message).toContain(app.lang.get('LBL_RELATED_TO', model.module));
+            expect(message).toContain(parentName);
+        });
+
+        it('Should not show the parent name if the model does not have a parent record', function() {
+            message = template({
+                title: 'Test',
+                module: model.module,
+                model: model,
+                location: model.get('location'),
+                description: model.get('description'),
+                dateStart: model.get('date_start'),
+                parentName: model.get('parent_name')
+            });
+
+            expect(message).not.toContain(app.lang.get('LBL_RELATED_TO', model.module));
+            expect(message).not.toContain(parentName);
         });
     });
 });

@@ -53,7 +53,7 @@
             //shortcut keys
             app.shortcuts.register(
                 'Filter:Close',
-                ['esc', 'ctrl+opt+l'],
+                ['esc', 'ctrl+alt+l'],
                 function() {
                     this.$('a.filter-close').click();
                 },
@@ -62,7 +62,7 @@
             );
             app.shortcuts.register(
                 'Filter:Save',
-                ['ctrl+s', 'ctrl+opt+a'],
+                ['ctrl+s', 'ctrl+alt+a'],
                 function() {
                     this.$('a.save_button:not(.disabled)').click();
                 },

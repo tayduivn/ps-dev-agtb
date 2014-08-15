@@ -529,7 +529,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'type' =>'index',
         'fields'=>array( 'deleted', 'assigned_user_id')),
     array('name' => 'idx_call_direction', 'type' => 'index', 'fields' => array('direction')),
-    array('name' => 'idx_call_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 ),
 'relationships' => array (
 		'calls_assigned_user' => array(
