@@ -150,16 +150,21 @@
      * @protected
      */
     _setupTimePicker: function() {
-        var $field = this.$(this.secondaryFieldTag);
+        var options;
 
-        $field.timepicker({
+        this.def.time || (this.def.time = {});
+
+        options = {
             timeFormat: this.getUserTimeFormat(),
-            // FIXME: add metadata driven support for the following properties
-            scrollDefaultNow: true,
-            step: 15,
-            className: 'prevent-mousedown',
-            appendTo: this.view.$el
-        });
+            scrollDefaultNow: _.isUndefined(this.def.time.scroll_default_now) ?
+                true :
+                !!this.def.time.scroll_default_now,
+            step: this.def.time.step || 15,
+            disableTextInput: _.isUndefined(this.def.time.disable_text_input) ?
+                false :
+                !!this.def.time.disable_text_input
+        };
+        this.$(this.secondaryFieldTag).timepicker(options);
     },
 
     /**

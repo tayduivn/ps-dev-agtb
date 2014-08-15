@@ -147,6 +147,18 @@ describe('Base.Field.Duration', function() {
         });
     });
 
+    describe('Verify that when the end date changes, the duration fields are correctly recalculated', function() {
+        it('should calculate the duration based on the new end date value', function() {
+            field.model.set({
+                date_start: '2014-07-17T08:00',
+                date_end: '2014-07-17T08:00'
+            });
+            field.model.set('date_end', '2014-07-17T09:15');
+            expect(field.model.get('duration_hours')).toEqual(1);
+            expect(field.model.get('duration_minutes')).toEqual(15);
+        });
+    });
+
     describe('isDateRangeValid()', function() {
         it('should have valid date range if the start date is before the end date', function() {
             field.model.set({

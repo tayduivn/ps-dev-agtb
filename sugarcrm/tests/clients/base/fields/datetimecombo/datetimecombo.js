@@ -25,6 +25,37 @@ describe('Base.Field.DateTimeCombo', function() {
         app.view.reset();
     });
 
+    describe('verify options from field definitions are recognized and passed into timepicker', function() {
+        var timeFieldOptions = [
+            {key: 'disable_text_input', value: true, name: 'disableTextInput'},
+            {key: 'disable_text_input', value: false, name: 'disableTextInput'},
+            {key: 'scroll_default_now', value: true, name: 'scrollDefaultNow'},
+            {key: 'scroll_default_now', value: false, name: 'scrollDefaultNow'},
+            {key: 'step', value: 20, name: 'step'},
+            {key: 'step', value: 55, name: 'step'}
+        ];
+
+        using('time field options', timeFieldOptions, function(option) {
+            it('should use the ' + option.key + ' option from the field def when instantiating the timepicker', function() {
+                var def, field, spy;
+                def = {time: {}};
+                def.time[option.key] = option.value;
+                sinon.collection.stub(app.user, 'getPreference').withArgs('timepref').returns('h:ia');
+                field = SugarTest.createField('base', 'time', 'datetimecombo', 'edit', def);
+                spy = sinon.collection.spy();
+                sinon.collection.stub(field, '$').withArgs(field.secondaryFieldTag).returns({
+                    timepicker: function() {
+                        spy(arguments);
+                    }
+                });
+                field._setupTimePicker();
+                expect(spy.args[0][0][0][option.name]).toBe(option.value);
+                sinon.collection.restore();
+                field.dispose();
+            });
+        });
+    });
+
     describe('format', function() {
         beforeEach(function() {
             sinon.collection.spy(app, 'date');

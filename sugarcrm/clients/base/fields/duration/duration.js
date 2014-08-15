@@ -26,7 +26,17 @@
         // In detail mode, re-render the field if either start or end date changes.
         this.model.on('change:date_start change:date_end', function(model) {
             var dateStartField,
-                dateEndField;
+                dateEndField,
+                diff;
+
+            diff = moment(model.get('date_end')).diff(model.get('date_start'));
+            model.set('duration_hours', moment.duration(diff).hours());
+            model.set(
+                'duration_minutes',
+                moment.duration(diff).subtract(
+                    moment.duration(model.get('duration_hours'), 'h')
+                ).minutes()
+            );
 
             if (this.action === 'edit') {
                 dateStartField = this.view.getField('date_start');

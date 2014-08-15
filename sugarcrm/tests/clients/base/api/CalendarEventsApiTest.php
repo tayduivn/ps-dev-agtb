@@ -173,6 +173,65 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($meeting2->deleted, 0, 'The meeting2 record should be deleted');
     }
 
+    public function dataProviderForCheckRequiredParams_ApiMethods_ExceptionThrownIfMissing()
+    {
+        $dateStart = $this->dateTimeAsISO('2014-08-01 14:30:00');
+        return array(
+            array(
+                "createCalendarEvent",
+                array(
+                    'duration_hours' => '9',
+                    'duration_minutes' => '9',
+                ),
+            ),
+            array(
+                "createCalendarEvent",
+                array(
+                    'date_start' => $dateStart,
+                    'duration_minutes' => '9',
+                ),
+            ),
+            array(
+                "createCalendarEvent",
+                array(
+                    'date_start' => $dateStart,
+                    'duration_hours' => '9',
+                ),
+            ),
+            array(
+                "updateCalendarEvent",
+                array(
+                    'duration_hours' => '9',
+                    'duration_minutes' => '9',
+                ),
+            ),
+            array(
+                "updateCalendarEvent",
+                array(
+                    'date_start' => $dateStart,
+                    'duration_minutes' => '9',
+                ),
+            ),
+            array(
+                "updateCalendarEvent",
+                array(
+                    'date_start' => $dateStart,
+                    'duration_hours' => '9',
+                ),
+            ),
+       );
+    }
+
+    /**
+     * @dataProvider dataProviderForCheckRequiredParams_ApiMethods_ExceptionThrownIfMissing
+     * @param $args
+     */
+    public function testRequiredArgsPresent_MissingArgument_ExceptionThrown($apiMethod, $args)
+    {
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->calendarEventsApi->$apiMethod($this->api, $args);
+    }
+
     public function testCreateRecord_NotRecurringMeeting_CallsCreateMethod()
     {
         $calendarEventsApiMock = $this->getMock(
@@ -187,6 +246,9 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->calendarEventsApi = $calendarEventsApiMock;
         $args = array(
             'module' => 'Meetings',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
         );
 
         $this->calendarEventsApi->createCalendarEvent($this->api, $args);
@@ -200,6 +262,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->repeat_type = 'Daily';
         $meeting->date_start = '2014-08-01 13:00:00';
         $meeting->date_end = '2014-08-01 14:30:00';
+        $meeting->duration_hours = 1;
+        $meeting->duration_minutes = 30;
         $meeting->save();
 
         $args = array();
@@ -208,6 +272,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['repeat_type'] = $meeting->repeat_type;
         $args['date_start'] = $meeting->date_start;
         $args['date_end'] = $meeting->date_end;
+        $args['duration_hours'] = $meeting->duration_hours;
+        $args['duration_minutes'] = $meeting->date_end;
 
         $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApi',
@@ -237,6 +303,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['repeat_parent_id'] = '';
         $args['date_start'] = $this->dateTimeAsISO('2014-12-25 13:00:00');
         $args['date_end'] = $this->dateTimeAsISO('2014-12-25 14:30:00');
+        $args['duration_hours'] = 1;
+        $args['duration_minutes'] = 30;
 
         $GLOBALS['calendarEvents'] = new CalendarEventsApiTest_CalendarEvents();
         $result = $this->calendarEventsApi->createCalendarEvent($this->api, $args);

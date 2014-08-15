@@ -177,8 +177,20 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'detail_view_label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'fields' => array(
-                        'date_start',
-                        'date_end',
+                        array(
+                            'name' => 'date_start',
+                            'time' => array(
+                                'disable_text_input' => true,
+                                'step' => 15,
+                            ),
+                        ),
+                        array(
+                            'name' => 'date_end',
+                            'time' => array(
+                                'disable_text_input' => true,
+                                'step' => 15,
+                            ),
+                        ),
                     ),
                     'span' => 9,
                 ),
