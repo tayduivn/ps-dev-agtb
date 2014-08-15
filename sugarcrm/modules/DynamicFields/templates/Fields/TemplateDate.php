@@ -69,8 +69,8 @@ function get_field_def(){
 		$def = parent::get_field_def();
 		if(!empty($def['default'])){
 			$def['display_default'] = $def['default'];
-			$def['default'] = '';
-		}
+        }
+        $def['default'] = null;
 		return $def;
 	}
     
