@@ -96,8 +96,7 @@ array (
           1 => 
           array (
             'name' => 'direction',
-            'customCode' => '{$fields.direction.options[$fields.direction.value]}</span>'
-                . ' <span id="status" class="sugar_field">{$fields.status.options[$fields.status.value]}',
+            'customCode' => '{$fields.direction.options[$fields.direction.value]} {$fields.status.options[$fields.status.value]}',
             'label' => 'LBL_STATUS',
           ),
         ), 
