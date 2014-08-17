@@ -70,6 +70,16 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
+                array(
+                    'name' => 'date_modified',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'date_entered',
+                    'enabled' => true,
+                    'default' => true,
+                ),
             ),
         ),
     ),

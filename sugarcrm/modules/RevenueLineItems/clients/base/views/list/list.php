@@ -202,7 +202,17 @@ $fields = array(
         'name' => 'assigned_user_name',
         'enabled' => true,
         'default' => true,
-    )
+    ),
+    array(
+        'name' => 'date_modified',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
+        'name' => 'date_entered',
+        'enabled' => true,
+        'default' => true,
+    ),
 );
 //END SUGARCRM flav=ent ONLY
 

@@ -69,6 +69,11 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
+                array(
+                    'name' => 'date_modified',
+                    'enabled' => true,
+                    'default' => true,
+                ),
                 array (
                     'name' => 'date_entered',
                     'type' => 'datetime',

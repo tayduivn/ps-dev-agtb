@@ -69,6 +69,11 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
+                    'name' => 'date_modified',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'width' => 10,
