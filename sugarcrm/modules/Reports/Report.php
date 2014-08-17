@@ -419,7 +419,8 @@ class Report
             $bean = BeanFactory::getBean($beanLabel);
 
             if (empty($bean)) {
-                die("beanList[" . $beanLabel . "] is empty!<br>\n");
+                $GLOBALS['log']->warn("$beanLabel doesn't exist.");
+                continue;
             }
             // Store this for later, in case we want it.
             $this->full_table_list[$table_key]['bean_label'] = $beanLabel;
