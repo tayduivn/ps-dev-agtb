@@ -141,5 +141,17 @@
         }
 
         return padding;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    setMode: function(mode) {
+        this._super('setMode', [mode]);
+
+        //FIXME: components (like headerpane) should listen to setMode of the fields inside of it.
+        //Triggering window resize will allow components (like headerpane) to
+        //recalculate their inner elements placement.
+        $(window).trigger('resize');
     }
 })

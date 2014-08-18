@@ -55,7 +55,8 @@
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;
-                    field.setMode('edit');
+                    field.parent ? field.parent.setMode('edit') : field.setMode('edit');
+
                     // As we're now "post form submission", if `no_required_placeholder`, we need to
                     // manually decorateRequired (as we only omit required on form's initial render)
                     if (!field._shouldRenderRequiredPlaceholder()) {
