@@ -133,10 +133,10 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
      * Test prefix/directory namespace mapping to filename
      * @dataProvider providerTestGetFilenameForFQCN
      */
-    public function testGetFilenameForFQCN($prefix, $dir, $fqcn, $fileName)
+    public function testGetFilenameForFQCN($type, $namespace, $dir, $className, $fileName)
     {
-        SugarAutoLoader::addNamespace($prefix, $dir);
-        $this->assertSame($fileName, SugarAutoLoader::getFilenameForFQCN($fqcn));
+        SugarAutoLoader::addNamespace($namespace, $dir, $type);
+        $this->assertSame($fileName, SugarAutoLoader::getFilenameForFQCN($className));
     }
 
     public function providerTestGetFilenameForFQCN()
@@ -144,35 +144,94 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         $ds = DIRECTORY_SEPARATOR;
 
         return array(
+
+            /*
+             * PSR-0 - see http://www.php-fig.org/psr/psr-0/
+             */
             array(
-                'Sugarcrm\\lib\\',
-                'include',
-                'Sugarcrm\\lib\\SugarLogger\\SugarLogger',
-                'include' . $ds . 'SugarLogger' . $ds . 'SugarLogger.php',
+                'psr0',
+                'Doctrine',
+                'vendor',
+                'Doctrine\\Common\\IsolatedClassLoader',
+                'vendor'.$ds.'Doctrine'.$ds.'Common'.$ds.'IsolatedClassLoader.php',
             ),
-          array(
-                'Sugarcrm\\',
+            array(
+                'psr0',
+                'Symfony\\Core',
+                'vendor/Symfony/Core/src',
+                'Symfony\\Core\\Request',
+                'vendor'.$ds.'Symfony'.$ds.'Core'.$ds.'src'.$ds.'Symfony'.$ds.'Core'.$ds.'Request.php',
+            ),
+            array(
+                'psr0',
+                'Zend',
+                'vendor',
+                'Zend\\Acl',
+                'vendor'.$ds.'Zend'.$ds.'Acl.php',
+            ),
+            array(
+                'psr0',
+                'namespace',
+                'vendor',
+                'namespace\\package\\Class_Name',
+                'vendor'.$ds.'namespace'.$ds.'package'.$ds.'Class'.$ds.'Name.php',
+            ),
+            array(
+                'psr0',
+                'namespace',
+                'vendor',
+                'namespace\package_name\Class_Name',
+                'vendor'.$ds.'namespace'.$ds.'package_name'.$ds.'Class'.$ds.'Name.php',
+            ),
+
+            /*
+             * PSR-4 - see http://www.php-fig.org/psr/psr-4/
+             */
+            array(
+                'psr4',
+                'Acme\Log\Writer',
+                'acme-log-writer/lib',
+                'Acme\\Log\\Writer\\File_Writer',
+                'acme-log-writer'.$ds.'lib'.$ds.'File_Writer.php',
+            ),
+            array(
+                'psr4',
+                'Symfony\Core',
+                'vendor/Symfony/Core',
+                'Symfony\Core\Request',
+                'vendor'.$ds.'Symfony'.$ds.'Core'.$ds.'Request.php',
+            ),
+            array(
+                'psr4',
+                'namespace',
+                'vendor/namespace',
+                'namespace\package_name\Class_Name',
+                'vendor'.$ds.'namespace'.$ds.'package_name'.$ds.'Class_Name.php',
+            ),
+
+            /*
+             * Sugarcrm namespace
+             */
+            array(
+                'psr4',
+                'Sugarcrm\\Core',
                 '',
-                'Sugarcrm\\modules\\Accounts\\Account',
-                'modules' . $ds . 'Accounts' . $ds . 'Account.php',
+                'Sugarcrm\\Core\\modules\\Account',
+                'modules'.$ds.'Account.php',
             ),
             array(
-                'Monolog\\',
-                'vendor' . $ds . 'Monolog' . $ds . 'src' . $ds . 'Monolog',
-                'Monolog\Logger',
-                'vendor' . $ds . 'Monolog' . $ds . 'src' . $ds . 'Monolog' . $ds . 'Logger.php',
+                'psr4',
+                'Sugarcrm\\Core\\include',
+                'include',
+                'Sugarcrm\\Core\\include\\SugarLogger\\LoggerManager',
+                'include'.$ds.'SugarLogger'.$ds.'LoggerManager.php',
             ),
             array(
-                'Acme\\',
-                'vendor' . $ds . 'Acme',
-                'Acme\Coyote\Bad_Ass',
-                'vendor' . $ds . 'Acme' . $ds . 'Coyote' . $ds . 'Bad' . $ds . 'Ass.php',
-            ),
-            array(
-                'Acme\\',
-                'vendor' . $ds . 'Acme',
-                'Acme\Road_Runner\Smart_Ass',
-                'vendor' . $ds . 'Acme' . $ds . 'Road_Runner' . $ds . 'Smart' . $ds . 'Ass.php',
+                'psr4',
+                'Sugarcrm\\Core\\Extension',
+                'custom/Extension',
+                'Sugarcrm\\Core\\Extension\\modules\\xxx_Module\\yyy_Bean',
+                'custom'.$ds.'Extension'.$ds.'modules'.$ds.'xxx_Module'.$ds.'yyy_Bean.php',
             ),
         );
     }
@@ -185,22 +244,21 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     {
         // create test class/file
         $ds = DIRECTORY_SEPARATOR;
-        $fqcn = 'Sugarcrm\\modules\\Accounts\\Bogus';
+        $fqcn = 'Sugarcrm\\Core\\modules\\Accounts\\Bogus';
         $fileName = 'modules' . $ds . 'Accounts' . $ds . 'Bogus.php';
-        $content = "<?php\nnamespace Sugarcrm\\modules\\Accounts;\nclass Bogus { }\n";
+        $content = "<?php\nnamespace Sugarcrm\\Core\\modules\\Accounts;\nclass Bogus { }\n";
         file_put_contents($fileName, $content);
 
         // rebuid cache to pick up the test file
         SugarAutoLoader::buildCache();
 
         // reset classMap and register test namespace
-        SugarAutoLoader::$classMap = array();
-        SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules');
+        SugarAutoLoader::addNamespace('Sugarcrm\\Core\\modules\\', 'modules', 'psr4');
 
         // instantiate test class
-        $bogus = new \Sugarcrm\modules\Accounts\Bogus();
+        $bogus = new \Sugarcrm\Core\modules\Accounts\Bogus();
         $this->assertEquals($fileName, SugarAutoLoader::$classMap[$fqcn]);
-        $this->assertInstanceOf('Sugarcrm\\modules\\Accounts\\Bogus', $bogus);
+        $this->assertInstanceOf('Sugarcrm\\Core\\modules\\Accounts\\Bogus', $bogus);
 
         // cleanup
         unlink($fileName);
@@ -217,56 +275,56 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         // 1st pass - add first level namespace - also test fixups on trailing \ and /
         SugarAutoLoader::addNamespace('Sugarcrm', '/');
         $expected = array(
-            'Sugarcrm\\' => '',
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 2nd pass - add second level namespace
         SugarAutoLoader::addNamespace('Sugarcrm\\lib\\', 'include');
         $expected = array(
-            'Sugarcrm\\lib\\' => 'include',
-            'Sugarcrm\\' => '',
+            'Sugarcrm\\lib\\' => array('include'),
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 3rd pass - add another second level namespace (alphabetic order matters)
         SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\', 'vendor/Acme');
         $expected = array(
-            'Acme\\LooneyTunes\\' => 'vendor/Acme',
-            'Sugarcrm\\lib\\' => 'include',
-            'Sugarcrm\\' => '',
+            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
+            'Sugarcrm\\lib\\' => array('include'),
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 4th pass - add third level namespace
         SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\RoadRunner\\', 'vendor/RoadRunner');
         $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
-            'Acme\\LooneyTunes\\' => 'vendor/Acme',
-            'Sugarcrm\\lib\\' => 'include',
-            'Sugarcrm\\' => '',
+            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
+            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
+            'Sugarcrm\\lib\\' => array('include'),
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 5th pass - add another second level namespace (alphabetic order matters)
         SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules');
         $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
-            'Acme\\LooneyTunes\\' => 'vendor/Acme',
-            'Sugarcrm\\lib\\' => 'include',
-            'Sugarcrm\\modules\\' => 'modules',
-            'Sugarcrm\\' => '',
+            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
+            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
+            'Sugarcrm\\lib\\' => array('include'),
+            'Sugarcrm\\modules\\' => array('modules'),
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
-        // 6th pass - overwrite already existing second level namespace
+        // 6th pass - add new path to already existing second level namespace
         SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules2');
         $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
-            'Acme\\LooneyTunes\\' => 'vendor/Acme',
-            'Sugarcrm\\lib\\' => 'include',
-            'Sugarcrm\\modules\\' => 'modules2',
-            'Sugarcrm\\' => '',
+            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
+            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
+            'Sugarcrm\\lib\\' => array('include'),
+            'Sugarcrm\\modules\\' => array('modules', 'modules2'),
+            'Sugarcrm\\' => array(''),
         );
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
     }

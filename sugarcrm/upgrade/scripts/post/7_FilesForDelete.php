@@ -30,6 +30,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/HTTP_WebDAV_Server',
             'include/Pear',
             'include/Smarty',
+            'include/Sugar_Smarty.php',
             'XTemplate',
             'Zend',
             'include/lessphp',
