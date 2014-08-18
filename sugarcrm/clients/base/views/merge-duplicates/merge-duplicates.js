@@ -125,7 +125,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['email', 'team_list', 'link', 'id', 'password'],
+    fieldTypesBlacklist: ['team_list', 'link', 'id', 'password'],
 
     /**
      * Links names won't be mergeable.
@@ -199,7 +199,8 @@
         { type: 'relate' },
         { type: 'parent' },
         { type: 'image' },
-        { type: 'teamset' }
+        { type: 'teamset' },
+        { type: 'email' }
     ],
 
     /**

@@ -201,6 +201,17 @@
         this.chartCollection = {
             data: data.records.map(function(d) {
                 var sales_stage = app.lang.getAppListStrings(statusOptions)[d.sales_stage] || d.sales_stage;
+
+                // if probability is null or empty set to 0
+                if(_.isNull(d.probability) || d.probability === '') {
+                    d.probability = 0;
+                }
+
+                // if likely is null or empty set to 0, for customers that do not require likely
+                if(_.isNull(d[this.likelyField]) || d[this.likelyField] === '') {
+                    d[this.likelyField] = 0;
+                }
+
                 return {
                     id: d.id,
                     x: d.date_closed,

@@ -101,8 +101,8 @@ class TemplateDatetimecombo extends TemplateRange
 	    $def['dbType'] = 'datetime';
 	    if(!empty($def['default'])){
 			$def['display_default'] = $def['default'];
-			$def['default'] = '';
-		}
+        }
+        $def['default'] = null;
 		return $def;
 	}
 	

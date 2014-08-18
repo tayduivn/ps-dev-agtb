@@ -233,4 +233,16 @@ class AuthenticationController
 	    }
 	    return false;
 	}
+
+	/**
+	 * Get URL for external login
+	 * @return string
+	 */
+	public function getLogoutUrl()
+	{
+	    if($this->isExternal()) {
+	        return $this->authController->getLogoutUrl();
+	    }
+	    return false;
+	}
 }
