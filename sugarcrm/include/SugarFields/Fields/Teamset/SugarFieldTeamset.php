@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
+
 /**
  * SugarFieldTeamset.php
  *
@@ -31,9 +33,6 @@
  * separately from the widget code.
  *
  */
-
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-
 class SugarFieldTeamset extends SugarFieldBase {
 
     public $needsSecondaryQuery = true;
