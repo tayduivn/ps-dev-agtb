@@ -11,7 +11,12 @@
  */
 --}}
 {{#each fields}}
-    <span class="edit-cell" data-name="{{name}}" data-type="{{type}}">
-        {{placeholder}}
+    <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
+        {{#unless dismiss_label}}
+            <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
+        {{/unless}}
+        <span data-fieldname="{{name}}">
+            {{placeholder}}
+        </span>
     </span>
 {{/each}}
