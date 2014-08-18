@@ -223,6 +223,10 @@ function checkSavedReportACL(&$reporter,&$args) {
             $ACLenabled = false;
 			if(!isset($hashModules[$col_module])) {
                $b = BeanFactory::getBean($col_module);
+                // If the Module doesn't exist, just continue, and allow Report to show invalid field
+                if (empty($b)) {
+                    continue;
+                }
 			   $ACLenabled = $b->bean_implements('ACL');
                $hashModules[$col_module] = !empty($b) ? $b->acltype : 'module';
 			}
