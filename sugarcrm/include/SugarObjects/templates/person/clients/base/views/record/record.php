@@ -221,6 +221,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                'team_name',
             ),
         ),
         array(
