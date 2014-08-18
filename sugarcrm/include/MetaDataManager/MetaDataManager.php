@@ -1225,6 +1225,20 @@ class MetaDataManager
     {
 
         $data['jssource'] = $this->buildJavascriptComponentFile($data, !$this->public);
+        //If this is private meta, we will still need to build the public javascript to verify that it hasn't changed.
+        //If it has changed, the client will need to refresh to load it.
+        if (!$this->public) {
+            $this->public = true;
+            $cache = $this->getMetadataCache(true);
+            if (empty($cache['jssource'])) {
+                $publicMM = MetaDataManager::getManager($this->platforms, true);
+                $cache = $publicMM->getMetadata($this->args);
+            }
+            if ($cache && !empty($cache['jssource'])) {
+                $data['jssource_public'] =  $cache['jssource'];
+            }
+            $this->public = false;
+        }
         return $data;
     }
 
