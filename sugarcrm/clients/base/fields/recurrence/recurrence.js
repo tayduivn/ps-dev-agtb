@@ -22,6 +22,13 @@
     /**
      * @inheritdoc
      *
+     * This field doesn't support `showNoData`.
+     */
+    showNoData: false,
+
+    /**
+     * @inheritdoc
+     *
      * Add validator to ensure that either `repeat_count` or `repeat_until`
      * has a value set
      */
@@ -58,10 +65,10 @@
             case 'Weekly':
             case 'Monthly':
             case 'Yearly':
-                this.$el.closest('.record-cell[data-type=recurrence]').show();
+                this.show();
                 break;
             default:
-                this.$el.closest('.record-cell[data-type=recurrence]').hide();
+                this.hide();
                 break;
         }
 
@@ -105,7 +112,9 @@
      */
     repeatTypeChanged: function() {
         _.each(this.fields, function(field) {
-            this.model.set(field.name, field.def['default']);
+            if (!this._isPopulated(this.model.get(field.name))) {
+                this.model.set(field.name, field.def['default']);
+            }
         }, this);
 
         this.render();
@@ -183,10 +192,14 @@
      * @private
      */
     _doValidateRepeatCountOrUntilRequired: function(fields, errors, callback) {
-        var repeatCount = this.model.get('repeat_count'),
+        var repeatType = this.model.get('repeat_type'),
+            repeatCount = this.model.get('repeat_count'),
             repeatUntil = this.model.get('repeat_until');
 
-        if (!this._isPopulated(repeatCount) && !this._isPopulated(repeatUntil)) {
+        if (this._isPopulated(repeatType) &&
+            !this._isPopulated(repeatCount) &&
+            !this._isPopulated(repeatUntil)
+        ) {
             errors.repeat_count = {'required': true};
         }
         callback(null, fields, errors);

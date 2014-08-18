@@ -80,15 +80,22 @@
 
     /**
      * Dispose and remove start date and end date fields from the view.
+     * If we do dispose these old fields, refresh the editableFields list
+     * to ensure they are also removed from that list.
      * @private
      */
     _disposeOldFields: function() {
+        var fieldDisposed = false;
         _.each(this.fields, function(field) {
             if (this.view.fields[field.sfId]) {
                 this.view.fields[field.sfId].dispose();
                 delete this.view.fields[field.sfId];
+                fieldDisposed = true;
             }
         }, this);
+        if (fieldDisposed && _.isFunction(this.view.setEditableFields)) {
+            this.view.setEditableFields();
+        }
         this.fields = [];
     },
 

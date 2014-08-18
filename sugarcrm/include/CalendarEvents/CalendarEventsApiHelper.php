@@ -41,6 +41,8 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
             return preg_match('/^\d+$/', (string)$time) === 1;
         };
 
+        unset($submittedData['repeat_parent_id']); // never allow this to be updated via the api
+
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         if (empty($bean->date_start)) {

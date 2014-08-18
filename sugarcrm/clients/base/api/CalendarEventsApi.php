@@ -98,17 +98,25 @@ class CalendarEventsApi extends ModuleApi
      */
     public function updateCalendarEvent($api, $args)
     {
-        $updateResult = array();
-        if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
-            $api->action = 'view';
-            $bean = $this->loadBean($api, $args, 'view');
-            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+        $api->action = 'view';
+        $bean = $this->loadBean($api, $args, 'view');
+
+        if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+            if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
             } else {
-                $updateResult = $this->updateRecord($api, $args);
+                // when updating a single occurrence of a recurring meeting without the
+                // `all_recurrences` flag, no updates to recurrence fields are allowed
+                $updateResult = $this->updateRecord($api, $this->filterOutRecurrenceFields($args));
             }
         } else {
             $updateResult = $this->updateRecord($api, $args);
+
+            // check if it changed from a non-recurring to recurring & generate events if necessary
+            $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
+            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+                $this->generateRecurringCalendarEvents($bean);
+            }
         }
         return $updateResult;
     }
@@ -131,6 +139,7 @@ class CalendarEventsApi extends ModuleApi
     /**
      * Creates child events in recurring series
      * @param SugarBean $bean
+     * @throws SugarApiException
      */
     public function generateRecurringCalendarEvents(SugarBean $bean)
     {
@@ -149,23 +158,25 @@ class CalendarEventsApi extends ModuleApi
      * @param $api
      * @param $args
      * @return array
+     * @throws SugarApiException
      */
     public function updateRecurringCalendarEvent(SugarBean $bean, $api, $args)
     {
-        unset($args['id']);
-        unset($args['repeat_parent_id']);
-
         if (!empty($bean->repeat_parent_id) && ($bean->repeat_parent_id !== $bean->id)) {
-            $args['record'] = $bean->repeat_parent_id;
-            $bean = $this->loadBean($api, $args, 'view');
-            $bean->repeat_parent_id = null;
+            throw new SugarApiException('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
         }
 
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
 
         try {
-            $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
+            // if event is still recurring after update, save recurring events
+            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+                $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
+            } else {
+                // event is not recurring anymore, delete child instances
+                $this->deleteRecurrences($bean);
+            }
         } catch (SugarApiException $e) {
             throw($e);
         } catch (Exception $e) {
@@ -194,10 +205,40 @@ class CalendarEventsApi extends ModuleApi
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
 
-        CalendarUtils::markRepeatDeleted($bean);
+        $this->deleteRecurrences($bean);
         $bean->mark_deleted($bean->id);
 
         return array('id' => $bean->id);
+    }
+
+    /**
+     * Deletes the child recurrences of the given bean
+     *
+     * @param $bean
+     */
+    public function deleteRecurrences($bean)
+    {
+        CalendarUtils::markRepeatDeleted($bean);
+    }
+
+    /**
+     * Filter out recurrence fields from the API arguments
+     *
+     * @param array $args
+     * @return array
+     */
+    protected function filterOutRecurrenceFields($args) {
+        $recurrenceFieldBlacklist = array(
+            'repeat_type',
+            'repeat_interval',
+            'repeat_dow',
+            'repeat_until',
+            'repeat_count',
+        );
+        foreach($recurrenceFieldBlacklist as $fieldName) {
+            unset($args[$fieldName]);
+        }
+        return $args;
     }
 
     /**

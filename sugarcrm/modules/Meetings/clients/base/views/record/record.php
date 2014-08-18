@@ -40,6 +40,13 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
+                    'type' => 'editrecurrencesbutton',
+                    'event' => 'button:edit_recurrence_button:click',
+                    'name' => 'edit_recurrence_button',
+                    'label' => 'LBL_EDIT_ALL_RECURRENCES',
+                    'acl_action' => 'edit',
+                ),
+                array(
                     'type' => 'launchbutton',
                     'name' => 'host_button',
                     'host' => true,
@@ -200,6 +207,9 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 array(
                     'name' => 'repeat_type',
                     'span' => 3,
+                    'related_fields' => array(
+                        'repeat_parent_id',
+                    ),
                 ),
                 array(
                     'name' => 'recurrence',
