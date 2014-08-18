@@ -21,6 +21,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('current_user', array(true, true));
+        SugarTestHelper::setup('files');
 
         // Backup current language settings so manipulation can be tested
         $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
@@ -394,6 +395,24 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         );
+    }
+
+    public function testGetPlatformList()
+    {
+        SugarTestHelper::saveFile('custom/clients/platforms.php');
+        SugarAutoLoader::ensureDir('custom/clients');
+
+        $contents = <<<PLATFORMS
+<?php
+\$platforms[] = 'metadata-manager-test';
+PLATFORMS;
+        SugarAutoLoader::put('custom/clients/platforms.php', $contents);
+
+        $platforms = MetaDataManager::getPlatformList();
+        $this->assertContains('base', $platforms);
+        $this->assertContains('mobile', $platforms);
+        $this->assertContains('portal', $platforms);
+        $this->assertContains('metadata-manager-test', $platforms);
     }
 }
 
