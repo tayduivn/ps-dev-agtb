@@ -110,7 +110,9 @@
         this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
-            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
+            // we need to pass in the module for the layout, so it will get the correct
+            // side of the link based on the linkName
+            this.initializeFilterState(this.layout.module, this.layout.currentLink);
         }, this);
 
         this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
