@@ -48,6 +48,7 @@ Optional arguments:
                                            Supported types: core, db, custom, all, none. Default is all.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
+    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
 
 Upgrading the Sugar Database Schema: 
 ------------------------------------- 
@@ -58,7 +59,7 @@ new version schema.
 Compatibility matrix for the CLI Upgrader:
 ----------------------------------------------
   PHP  versions     			:  5.3, 5.4
-  Databases              		:  MySQL, MSSQL, Oracle, DB2
+  Databases              		:  MySQL, DB2
   Operating systems    			:  Windows, Linux, Mac, IBM i
   Upgrade from Sugar Instances          :  6.5.x, and 6.7.x
 

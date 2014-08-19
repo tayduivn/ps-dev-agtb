@@ -56,11 +56,9 @@ class Quote extends SugarBean
     public $quote_stage;
     public $calc_grand_total;
     public $show_line_nums;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $team_id;
     public $team_name;
     public $system_id;
-    //END SUGARCRM flav=pro ONLY
 
     public $billing_address_street;
     public $billing_address_city;
@@ -152,9 +150,7 @@ class Quote extends SugarBean
         'case_id' => 'cases',
         'contact_id' => 'contacts',
         'member_id' => 'members',
-        //BEGIN SUGARCRM flav=pro ONLY
         'quote_id' => 'quotes',
-        //END SUGARCRM flav=pro ONLY
     );
     public $new_schema = true;
 
@@ -451,8 +447,6 @@ class Quote extends SugarBean
 
     public function save($check_notify = false)
     {
-
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!isset($this->system_id) || empty($this->system_id)) {
 
             $admin = Administration::getSettings();
@@ -465,7 +459,6 @@ class Quote extends SugarBean
             $this->quote_type = 'Quotes';
         }
 
-        //END SUGARCRM flav=pro ONLY
         return parent::save($check_notify);
     }
 
@@ -646,6 +639,4 @@ class Quote extends SugarBean
         $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
         return $this->db->getOne($query);
     }
-
-
 }

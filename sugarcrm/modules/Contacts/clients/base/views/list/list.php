@@ -45,7 +45,7 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'email',
+                    'name' => 'email1',
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -59,6 +59,11 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'date_modified',
                     'enabled' => true,
                     'default' => true,
                 ),

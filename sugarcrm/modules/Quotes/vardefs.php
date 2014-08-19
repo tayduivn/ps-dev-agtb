@@ -197,6 +197,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "subtotal")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'subtotal_usdollar' => array(
             'name' => 'subtotal_usdollar',
@@ -219,7 +222,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($subtotal,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal), currencyDivide($subtotal,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -233,6 +236,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "shipping")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'shipping_usdollar' => array(
             'name' => 'shipping_usdollar',
@@ -254,7 +260,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($shipping,$base_rate)',
+            'formula' => 'ifElse(isNumeric($shipping),currencyDivide($shipping,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -275,6 +281,9 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,2',
+            'formula' => 'rollupCurrencySum($product_bundles, "deal_tot")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'deal_tot_usdollar' => array(
             'name' => 'deal_tot_usdollar',
@@ -291,7 +300,7 @@ $dictionary['Quote'] = array(
                 'wireless_advanced_search' => false,
                 'mobile' => false,
             ),
-            'formula' => 'currencyDivide($deal_tot,$base_rate)',
+            'formula' => 'ifElse(isNumeric($deal_tot),currencyDivide($deal_tot,$base_rate),"")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -305,6 +314,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "new_sub")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'new_sub_usdollar' => array(
             'name' => 'new_sub_usdollar',
@@ -325,7 +337,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($new_sub,$base_rate)',
+            'formula' => 'ifElse(isNumeric($new_sub),currencyDivide($new_sub,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -339,6 +351,9 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'formula' => 'rollupCurrencySum($product_bundles, "tax")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'tax_usdollar' => array(
             'name' => 'tax_usdollar',
@@ -361,7 +376,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($tax,$base_rate)',
+            'formula' => 'ifElse(isNumeric($tax),currencyDivide($tax,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -371,6 +386,9 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            'formula' => 'rollupCurrencySum($product_bundles, "total")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'total_usdollar' => array(
             'name' => 'total_usdollar',
@@ -395,7 +413,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($total,$base_rate)',
+            'formula' => 'ifElse(isNumeric($total),currencyDivide($total,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),

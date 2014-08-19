@@ -119,6 +119,7 @@ $mod_strings = array(
     'LBL_EXPERT_ID' => 'Product Expert',
     'LBL_FORECAST' => 'Include in Forecast',
     'LBL_CALCULATED_LINE_ITEM_AMOUNT' => 'Calculated Quoted Line Item Amount',
+    'LBL_SUBTOTAL' => 'Subtotal',
     'LBL_CONTACT' => 'Contact',
     'LBL_DISCOUNT_TOTAL' => 'Discount Total',
     'LBL_DISCOUNT_AMOUNT' => 'Discount Amount',

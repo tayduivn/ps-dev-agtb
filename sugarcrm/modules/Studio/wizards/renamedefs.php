@@ -933,6 +933,9 @@ $renamedefs = array(
             array('name' => 'ERR_TIME_PERIOD_DATE_RANGE', 'type' => 'singular', 'source' => 'TimePeriods'),
             array('name' => 'LBL_LIST_WARNING', 'type' => 'singular', 'source' => 'TimePeriods'),
         ),
+        'ProductBundles' => array(
+            array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),
+        ),
     ),
     'global' => array(
         // Accounts

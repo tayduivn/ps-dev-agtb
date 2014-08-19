@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
 require_once 'tests/include/database/TestBean.php';
@@ -2541,6 +2539,212 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
+    }
+
+    /**
+     * Returns def and its expectation
+     *
+     * @return array
+     */
+    static public function getTypeForOneColumnSQLRep()
+    {
+        return array(
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'date',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'datetime',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'encrypt',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'dropdown',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'decimal',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'float',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'integer',
+                    'default' => '',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'date',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'datetime',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'encrypt',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'dropdown',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'decimal',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'float',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'integer',
+                    'default' => 'not-empty',
+                ),
+                'once',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'date',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'datetime',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'encrypt',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'dropdown',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'decimal',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'float',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+            array(
+                array(
+                    'name' => 'test',
+                    'type' => 'integer',
+                    'default' => 'not-empty',
+                    'no_default' => true,
+                ),
+                'never',
+            ),
+        );
+    }
+    /**
+     * Testing that massageValue is called only when we need that
+     *
+     * @dataProvider getTypeForOneColumnSQLRep
+     */
+    public function testOneColumnSQLRep($fieldDef, $expected)
+    {
+        $db = $this->getMock(get_class($this->_db), array('massageValue'));
+        $method = $db->expects($this->$expected())->method('massageValue');
+        if ($expected != 'never') {
+            $method->with($this->equalTo($fieldDef['default']), $this->equalTo($fieldDef))->will($this->returnValue("correct"));
+        }
+
+        $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
+        if ($expected == 'once') {
+            $this->assertContains('correct', $result);
+        } elseif ($expected == 'never') {
+            $this->assertNotContains('correct', $result);
+        }
     }
 
     public function lengthTestProvider()

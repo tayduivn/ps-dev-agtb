@@ -111,12 +111,7 @@
                 relate: this.model.link ? true : false
             };
 
-        options = _.extend({
-            params: {
-                // tell the API to return only relevant fields
-                fields: this.context.get("fields")
-            }
-        }, options, this.getCustomSaveOptions(options));
+        options = _.extend({}, options, this.getCustomSaveOptions(options));
 
         this.model.save({}, options);
     },

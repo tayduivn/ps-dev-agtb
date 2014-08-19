@@ -93,6 +93,11 @@ $viewdefs['Tasks']['base']['view']['list'] = array(
                     'default' => false,
                 ),
                 array(
+                    'name' => 'date_modified',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
                     'name' => 'date_entered',
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',

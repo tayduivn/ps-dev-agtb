@@ -873,7 +873,7 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 			}
 		} else if (typeof(value) == "object" && value != null && value.getTime) {
 			//This is probably a date object that we must convert to an expression
-			var d = new SUGAR.DateExpression("");
+			var d = new SE.DateExpression("");
 			d.evaluate = function(){return this.value};
 			d.value = value;
 			return d;
