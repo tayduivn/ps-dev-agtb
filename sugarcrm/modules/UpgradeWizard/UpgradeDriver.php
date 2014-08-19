@@ -1058,6 +1058,8 @@ abstract class UpgradeDriver
     {
         $user = BeanFactory::getBean('Users');
         $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
+        // Disable logic hooks.
+        $user->processed = true;
         $user->retrieve($user_id);
         return $user;
     }
@@ -1692,9 +1694,7 @@ abstract class UpgradeDriver
     public function healthcheck()
     {
         list($version,) = $this->loadVersion();
-        $this->log("TEST: " . $version);
         if (version_compare($version, '7.0', '<')) {
-            $this->log("TEST: HEALTHCHECK");
             return $this->doHealthcheck();
         }
         return true;

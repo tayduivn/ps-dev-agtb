@@ -2882,6 +2882,15 @@ class InboundEmail extends SugarBean {
 			$c->save(true);
 			$caseId = $c->id;
 			$c = BeanFactory::getBean('Cases', $caseId);
+            if (empty($c->case_number)) {
+                $sq = new SugarQuery();
+                $sq->select(array('case_number'));
+                $sq->from(BeanFactory::getBean('Cases'))
+                    ->where()
+                    ->equals('id', $c->id);
+
+                $c->case_number = $sq->getOne();
+            }
 			if($c->load_relationship('emails')) {
 				$c->emails->add($email->id);
 			} // if

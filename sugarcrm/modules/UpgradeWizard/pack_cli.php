@@ -22,7 +22,11 @@ if(empty($argv[1])) {
 
 $pathinfo = pathinfo($argv[1]);
 
-$name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
+if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip', 'phar'))) {
+    $name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
+} else {
+    $name = $argv[1];
+}
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(

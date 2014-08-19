@@ -77,7 +77,8 @@ $dictionary['Product'] = array(
                 'cost_usdollar' => 'cost_usdollar',
                 'discount_usdollar' => 'discount_usdollar',
                 'tax_class' => 'tax_class',
-                'weight' => 'weight'
+                'weight' => 'weight',
+                'type_name' => 'type_name',
             ),
         ),
         'account_id' =>  array(

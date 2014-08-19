@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,17 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- * External Auth interface
- */
-interface SugarAuthenticateExternal
-{
-    /**
-     * Get URL to follow to get logged in
-     */
-    public function getLoginUrl();
-    /**
-     * Get URL to follow to get logged out
-     */
-    public function getLogoutUrl();
-}
+$platforms[] = 'base';
+$platforms[] = 'mobile';
+$platforms[] = 'portal';

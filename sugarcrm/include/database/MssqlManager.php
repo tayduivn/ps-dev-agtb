@@ -1896,7 +1896,42 @@ EOQ;
      */
     protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
-    	//Bug 25814
+        if (!empty($fieldDef['len'])) {
+            // Variable-length can be a value from 1 through 8,000 or 4,000 for (n).
+            // Max indicates that the maximum storage size is 2^31-1 bytes.
+            // The storage size is the actual length of data entered + 2 bytes.
+            // @link: http://msdn.microsoft.com/en-us/library/ff848814.aspx
+            $colType = $this->getColumnType($this->getFieldType($fieldDef));
+            if ($parts = $this->getTypeParts($colType)) {
+                $colType = $parts['baseType'];
+            }
+            switch (strtolower($colType)) {
+                case 'char':
+                case 'binary':
+                    if (8000 < $fieldDef['len']) {
+                        $fieldDef['len'] = 8000;
+                    }
+                    break;
+                case 'varchar':
+                case 'varbinary':
+                    if (8000 < $fieldDef['len']) {
+                        $fieldDef['len'] = 'max';
+                    }
+                    break;
+                case 'nchar':
+                    if (4000 < $fieldDef['len']) {
+                        $fieldDef['len'] = 4000;
+                    }
+                    break;
+                case 'nvarchar':
+                    if (4000 < $fieldDef['len']) {
+                        $fieldDef['len'] = 'max';
+                    }
+                    break;
+            }
+        }
+
+        //Bug 25814
 		if(isset($fieldDef['name'])){
 		    $colType = $this->getFieldType($fieldDef);
         	if(stristr($this->getFieldType($fieldDef), 'decimal') && isset($fieldDef['len'])){

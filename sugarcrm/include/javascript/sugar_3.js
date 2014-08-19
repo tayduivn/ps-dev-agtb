@@ -1128,6 +1128,10 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
+    if (Dom.getAttribute(field, "type") == "hidden") {
+        return true;
+    }
+
 	var td = Dom.getAncestorByTagName(field, 'TD');
 
     // For 'datetime' field type html representation differ from others ( td.vis_action_hidden > table > td > input[name])

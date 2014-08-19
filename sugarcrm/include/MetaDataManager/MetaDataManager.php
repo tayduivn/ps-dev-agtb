@@ -1025,16 +1025,11 @@ class MetaDataManager
     public static function getPlatformList()
     {
         $platforms = array();
-        // remove ones with _
-        foreach (SugarAutoLoader::getFilesCustom("clients", true) as $dir) {
-            $dir = basename($dir);
-            if ($dir[0] == '_') {
-                continue;
-            }
-            $platforms[$dir] = true;
+        foreach (SugarAutoLoader::existingCustom('clients/platforms.php') as $file) {
+            require $file;
         }
 
-        return array_keys($platforms);
+        return $platforms;
     }
 
     /**
@@ -1225,6 +1220,20 @@ class MetaDataManager
     {
 
         $data['jssource'] = $this->buildJavascriptComponentFile($data, !$this->public);
+        //If this is private meta, we will still need to build the public javascript to verify that it hasn't changed.
+        //If it has changed, the client will need to refresh to load it.
+        if (!$this->public) {
+            $this->public = true;
+            $cache = $this->getMetadataCache(true);
+            if (empty($cache['jssource'])) {
+                $publicMM = MetaDataManager::getManager($this->platforms, true);
+                $cache = $publicMM->getMetadata($this->args);
+            }
+            if ($cache && !empty($cache['jssource'])) {
+                $data['jssource_public'] =  $cache['jssource'];
+            }
+            $this->public = false;
+        }
         return $data;
     }
 

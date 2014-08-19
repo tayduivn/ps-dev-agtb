@@ -125,7 +125,9 @@
         }
         if (!silent) {
             this.layout.layout.trigger("filter:change", linkModuleName, linkName);
-            this.layout.trigger('filter:get', linkModuleName, linkName);
+            // always pass in the current layout module as the listener will expect to look up
+            // the other module based on the linkName
+            this.layout.trigger('filter:get', this.layout.module, linkName);
             //Clear the search input and apply filter
             this.layout.trigger('filter:clear:quicksearch');
         }

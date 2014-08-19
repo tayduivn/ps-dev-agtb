@@ -320,13 +320,11 @@ $dictionary['Account'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'idx_accnt_id_del', 'type' => 'index', 'fields' => array('id', 'deleted')),
         array('name' => 'idx_accnt_name_del', 'type' => 'index', 'fields' => array('name', 'deleted')), //bug #5530
         array('name' => 'idx_accnt_assigned_del', 'type' => 'index', 'fields' => array('deleted', 'assigned_user_id')),
         array('name' => 'idx_accnt_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
         array('name' => 'idx_account_billing_address_city', 'type' => 'index', 'fields' => array('billing_address_city')),
         array('name' => 'idx_account_billing_address_country', 'type' => 'index', 'fields' => array('billing_address_country')),
-        array('name' => 'idx_account_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships' => array(
         'member_accounts' => array(

@@ -1026,7 +1026,7 @@ $mod_strings = array (
     'LBL_QR_CLEARLANG'=>'Clearing language files from cache...done',
     'LBL_QR_CLEARSEARCH'=>'Clearing Unified Search Cache...done',
     'LBL_QR_REBUILDAUDIT'=>'Rebuilding Audit Tables...',
-    'LBL_QR_REBUILDFILEMAP'=>'Rebuilding mapping file...', 
+    'LBL_QR_REBUILDFILEMAP'=>'Rebuilding mapping file...',
     'LBL_QR_CBOX_CLEARSUGARFEEDCACHE'=> 'Clear Sugar Feed Cache',
     'LBL_QR_CLEARSUGARFEEDCACHE'=>'Clearing Sugar Feed Cache...done',
     'LBL_QR_CBOX_CLEARTHEMECACHE'=> 'Clear Theme Cache',
@@ -1162,6 +1162,7 @@ $mod_strings = array (
    'LBL_SAML_CERT' => 'X509 Certificate',
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
+   'LBL_SAML_LOGOUT_URL' => 'SLO URL',
 
     //BEGIN SUGARCRM flav=com ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
@@ -1186,6 +1187,7 @@ $mod_strings = array (
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
+    'LBL_SAML_LOGOUT_URL_DESC' => 'Enter Single Log-Out URL (optional)',
 
     // SNIP / Sugar Ease / Email Archiving
     'LBL_SNIP_TITLE' => 'Email Archiving',
