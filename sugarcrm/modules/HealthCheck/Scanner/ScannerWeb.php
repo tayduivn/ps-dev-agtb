@@ -20,4 +20,14 @@ require_once 'modules/HealthCheck/Scanner/Scanner.php';
  */
 class HealthCheckScannerWeb extends HealthCheckScanner
 {
+    /**
+     * @see HealthCheckScanner::run()
+     * @return array
+     */
+    public function scan()
+    {
+        $result = parent::scan();
+        $this->dumpMeta();
+        return $result;
+    }
 }

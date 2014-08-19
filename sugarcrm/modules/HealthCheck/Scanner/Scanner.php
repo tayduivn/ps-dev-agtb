@@ -250,12 +250,13 @@ class HealthCheckScanner
         $status = $scanMeta['bucket'];
         $code   = $scanMeta['id'];
         $report = $scanMeta['report'];
+        $this->logMeta[] = $scanMeta;
+        $issueNo = count($this->logMeta) + 1;
 
-        $reason = "[$report][$code] " . vsprintf($scanMeta['log'], $params);
+        $reason = "[Issue $issueNo][$report][$code] " . vsprintf($scanMeta['log'], $params);
 
         $this->log($reason, 'CHECK-'.$status);
         $this->logReason($status, $code, $reason);
-        $this->logMeta[] = $scanMeta;
 
 
         if ($status > $this->status) {
@@ -599,6 +600,26 @@ class HealthCheckScanner
             'temp',
     );
     protected $filesToFix = array();
+
+    /**
+     * Dump Scanner issues to log and optional stdout
+     */
+    public function dumpMeta()
+    {
+        $this->log('*** START HEALTHCHECK ISSUES ***');
+        foreach ($this->getLogMeta() as $key => $entry) {
+            if(strpos($entry['title'], 'LBL_') === 0) {
+                $entry['title'] = $entry['report'];
+            }
+            if(strpos($entry['descr'], 'LBL_') === 0) {
+                $entry['descr'] = $entry['log'];
+            }
+            $issueNo = $key + 1;
+            $this->log(" => Issue {$issueNo} (flag = {$entry['flag_label']}):");
+            $this->log(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}");
+        }
+        $this->log('*** END HEALTHCHECK ISSUES ***');
+    }
 
     /**
      * This method checks for directories that have been moved that are referenced
