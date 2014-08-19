@@ -1025,16 +1025,11 @@ class MetaDataManager
     public static function getPlatformList()
     {
         $platforms = array();
-        // remove ones with _
-        foreach (SugarAutoLoader::getFilesCustom("clients", true) as $dir) {
-            $dir = basename($dir);
-            if ($dir[0] == '_') {
-                continue;
-            }
-            $platforms[$dir] = true;
+        foreach (SugarAutoLoader::existingCustom('clients/platforms.php') as $file) {
+            require $file;
         }
 
-        return array_keys($platforms);
+        return $platforms;
     }
 
     /**
