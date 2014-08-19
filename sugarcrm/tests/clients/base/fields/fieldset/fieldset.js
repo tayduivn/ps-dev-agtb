@@ -1,4 +1,4 @@
-describe('fieldset field', function() {
+describe('Base.Field.Fieldset', function() {
 
     describe('normal render of child fields', function() {
         var field;
@@ -21,6 +21,8 @@ describe('fieldset field', function() {
         afterEach(function() {
             field.dispose();
             field = null;
+            sinon.collection.restore();
+            Handlebars.templates = {};
         });
 
         it('should initialize all the private properties correctly', function() {
@@ -32,48 +34,39 @@ describe('fieldset field', function() {
             expect(field.fields).toEqual(expectedFields);
         });
 
-        it('should render fields html nested on the fieldset', function() {
-
-            var html = field.getPlaceholder();
-            var regex = new RegExp('<span sfuuid="' + field.sfId + '"><span (.*)>(.*)</span></span>');
-            expect(html).toMatch(regex);
-        });
-
         it('should render nested fields on render', function() {
-
+            field._getChildFields();
             _.each(field.fields, function(childField) {
-                sinon.spy(childField, 'render');
+                sinon.collection.spy(childField, 'render');
             });
 
             field.render();
 
             _.each(field.fields, function(childField) {
                 expect(childField.render).toHaveBeenCalled();
-                childField.render.restore();
             });
         });
 
         it('should render with css classes', function() {
 
-            var addClass = sinon.spy(field.getFieldElement(), 'addClass');
+            var addClass = sinon.collection.spy(field.getFieldElement(), 'addClass');
 
             field.render();
 
             expect(addClass).toHaveBeenCalled();
             expect(field.getFieldElement().hasClass('address_fields')).toBeTruthy();
-
-            addClass.restore();
         });
 
         it('should update the CSS classes of the itself and its child fields', function() {
             var editClass = 'edit',
                 viewClass = 'view',
-                addViewClassSpy = sinon.spy(field, '_addViewClass'),
-                removeViewClassSpy = sinon.spy(field, '_removeViewClass');
+                addViewClassSpy = sinon.collection.spy(field, '_addViewClass'),
+                removeViewClassSpy = sinon.collection.spy(field, '_removeViewClass');
 
+            field._getChildFields();
             _.each(field.fields, function(childField) {
-                sinon.spy(childField, '_addViewClass');
-                sinon.spy(childField, '_removeViewClass');
+                sinon.collection.spy(childField, '_addViewClass');
+                sinon.collection.spy(childField, '_removeViewClass');
             });
 
             field.render();
@@ -90,14 +83,6 @@ describe('fieldset field', function() {
             _.each(field.fields, function(childField) {
                 expect(childField._removeViewClass.calledWith(editClass)).toBeTruthy();
                 expect(childField._addViewClass.calledWith(viewClass)).toBeTruthy();
-            });
-
-            addViewClassSpy.restore();
-            removeViewClassSpy.restore();
-
-            _.each(field.fields, function(childField) {
-                childField._addViewClass.restore();
-                childField._removeViewClass.restore();
             });
         });
 
@@ -123,7 +108,7 @@ describe('fieldset field', function() {
                 ]
             };
             field = SugarTest.createField('base', 'fieldset', 'fieldset', 'edit', fieldDef, 'Contacts');
-            field.getPlaceholder();
+            field.render();
         });
 
         afterEach(function() {
