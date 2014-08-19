@@ -97,6 +97,16 @@ class HealthCheckScanner
     );
 
     /**
+     * @var array List of modules which excluded from table check.
+     */
+    protected $excludeModules = array(
+        'Audit',
+        'Connectors',
+        'DynamicFields',
+        'MergeRecords',
+    );
+
+    /**
      * @var array List of unsupported modules.
      */
     protected $unsupportedModules = array(
