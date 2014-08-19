@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,7 +15,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ApiHelper
 {
-    static $moduleHelpers = array();
+    /**
+     * A list of all the loaded helpers so we don't have to reload them all again
+     *
+     * @var array
+     */
+    public static $moduleHelpers = array();
 
     /**
      * This method looks up the helper class for the bean and will provide the default helper
@@ -28,14 +32,14 @@ class ApiHelper
      * @param $bean SugarBean Grab the helper module for this bean
      * @returns SugarBeanApiHelper A API helper class for beans
      */
-    public static function getHelper(ServiceBase $api, SugarBean $bean) {
+    public static function getHelper(ServiceBase $api, SugarBean $bean)
+    {
         $module = $bean->module_dir;
-        if ( !isset(self::$moduleHelpers[$module]) ) {
-
+        if (!isset(self::$moduleHelpers[$module])) {
             require_once('data/SugarBeanApiHelper.php');
-            if (SugarAutoLoader::requireWithCustom('modules/'.$module.'/'.$module.'ApiHelper.php')) {
-                $moduleHelperClass = SugarAutoLoader::customClass($module.'ApiHelper');
-            } else if (SugarAutoLoader::fileExists('custom/data/SugarBeanApiHelper.php')) {
+            if (SugarAutoLoader::requireWithCustom('modules/' . $module . '/' . $module . 'ApiHelper.php')) {
+                $moduleHelperClass = SugarAutoLoader::customClass($module . 'ApiHelper');
+            } elseif (SugarAutoLoader::fileExists('custom/data/SugarBeanApiHelper.php')) {
                 require_once('custom/data/SugarBeanApiHelper.php');
                 $moduleHelperClass = 'CustomSugarBeanApiHelper';
             } else {
@@ -47,5 +51,22 @@ class ApiHelper
 
         $moduleHelperClass = self::$moduleHelpers[$module];
         return $moduleHelperClass;
+    }
+
+    /**
+     * Override module's api helper class
+     *
+     * For use mainly in unit tests
+     *
+     * @param $module
+     * @param SugarBeanApiHelper|null $helper What class to set the helper as, if null, the helper will be unset
+     */
+    public static function setHelper($module, SugarBeanApiHelper $helper = null)
+    {
+        if (is_null($helper) && isset(self::$moduleHelpers[$module])) {
+            unset(self::$moduleHelpers[$module]);
+        } elseif (is_object($helper)) {
+            self::$moduleHelpers[$module] = $helper;
+        }
     }
 }
