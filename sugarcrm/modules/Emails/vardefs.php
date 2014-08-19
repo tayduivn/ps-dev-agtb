@@ -40,14 +40,10 @@ $dictionary['Email'] = array(
         ),
         'assigned_user_id' => array(
             'name' => 'assigned_user_id',
-            'rname' => 'user_name',
-            'id_name' => 'assigned_user_id',
             'vname' => 'LBL_ASSIGNED_TO',
-            'type' => 'assigned_user_name',
-            'table' => 'users',
+            'type' => 'id',
             'isnull' => false,
             'reportable' => true,
-            'dbType' => 'id',
             'comment' => 'User ID that last modified record',
         ),
         'assigned_user_name' => array(

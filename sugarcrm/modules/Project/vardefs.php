@@ -49,14 +49,9 @@ $dictionary['Project'] = array(
 		),
 		'assigned_user_id' => array(
 			'name' => 'assigned_user_id',
-			'rname' => 'user_name',
-			'id_name' => 'assigned_user_id',
-			'type' => 'assigned_user_name',
+            'type' => 'id',
 			'vname' => 'LBL_ASSIGNED_USER_ID',
 			'required' => false,
-			'len' => 36,
-			'dbType' => 'id',
-			'table' => 'users',
 			'isnull' => false,
 			'reportable'=>true,
 			'comment' => 'User assigned to this record'

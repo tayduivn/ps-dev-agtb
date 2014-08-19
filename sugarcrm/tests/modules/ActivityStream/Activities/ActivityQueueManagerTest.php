@@ -112,7 +112,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'field_name' => 'assigned_user_id',
                     'data_type'  => 'id',
                     'before'     => '',
-                    'after'      => $assignedUser->name,
+                    'after'      => $assignedUser->id,
                 ),
             ),
         );

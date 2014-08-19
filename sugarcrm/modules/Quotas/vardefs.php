@@ -41,8 +41,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	array (
 	  'name' => 'assigned_user_id',
 	  'vname' => 'LBL_ASSIGNED_USER_ID',
-	  'type' => 'assigned_user_name',
-	  'table' => 'users',
+        'type' => 'id',
 	  'required' => true,
 	  'reportable' => false,
 	  'source' => 'non-db',
