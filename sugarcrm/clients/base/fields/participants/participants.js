@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.MeetingsParticipantsField
- * @alias SUGAR.App.view.fields.BaseMeetingsParticipantsField
+ * @class View.Fields.Base.ParticipantsField
+ * @alias SUGAR.App.view.fields.BaseParticipantsField
  * @extends View.Field
  */
 ({
@@ -29,14 +29,14 @@
     /**
      * @inheritdoc
      *
-     * View.Fields.Base.MeetingsParticipantsField#placeholder can be overridden
-     * via options.
+     * View.Fields.Base.ParticipantsField#placeholder can be overridden via
+     * options.
      *
-     * Adds a delay to the View.Fields.Base.MeetingsParticipantsField#addRow,
-     * View.Fields.Base.MeetingsParticipantsField#removeRow,
-     * View.Fields.Base.MeetingsParticipantsField#previewRow, and
-     * View.Fields.Base.MeetingsParticipantsField#search methods so that these
-     * event handlers do not execute too frequently.
+     * Adds a delay to the View.Fields.Base.ParticipantsField#addRow,
+     * View.Fields.Base.ParticipantsField#removeRow,
+     * View.Fields.Base.ParticipantsField#previewRow, and
+     * View.Fields.Base.ParticipantsField#search methods so that these event
+     * handlers do not execute too frequently.
      *
      * Initializes the participants collection on the {@link Bean model} and
      * fetches the collection if the model is not new.
@@ -177,9 +177,9 @@
      * @param {LinkField} value
      * @return {Object} Array of models with view properties defined
      * @return {String} return.Object.accept_status The translated string
-     * indicating the model's meeting status
+     * indicating the model's accept status
      * @return {String} return.Object.accept_class The CSS class representing
-     * the model's meeting status per Twitter Bootstrap's label component
+     * the model's accept status per Twitter Bootstrap's label component
      * @return {String} return.Object.avatar The URL where the model's avatar
      * can be downloaded or undefined if one does not exist
      * @return {Boolean} return.Object.deletable Whether or not the model can
@@ -192,28 +192,29 @@
      * the model when hovering over the preview button
      */
     format: function(value) {
-        var acceptStatus, deletable, i, participants, preview, rows, self;
+        var acceptStatus, acceptStatusFieldName, deletable, i, participants, preview, rows, self;
 
         self = this;
 
+        acceptStatusFieldName = 'accept_status_' + this.module.toLowerCase();
         acceptStatus = function(participant) {
             var status = {};
 
-            switch (participant.get('accept_status_meetings')) {
+            switch (participant.get(acceptStatusFieldName)) {
                 case 'accept':
-                    status.label = 'LBL_RESPONSE_ACCEPT';
+                    status.label = 'LBL_CALENDAR_EVENT_RESPONSE_ACCEPT';
                     status.css_class = 'success';
                     break;
                 case 'decline':
-                    status.label = 'LBL_RESPONSE_DECLINE';
+                    status.label = 'LBL_CALENDAR_EVENT_RESPONSE_DECLINE';
                     status.css_class = 'important';
                     break;
                 case 'tentative':
-                    status.label = 'LBL_RESPONSE_TENTATIVE';
+                    status.label = 'LBL_CALENDAR_EVENT_RESPONSE_TENTATIVE';
                     status.css_class = 'warning';
                     break;
                 default:
-                    status.label = 'LBL_RESPONSE_NONE';
+                    status.label = 'LBL_CALENDAR_EVENT_RESPONSE_NONE';
                     status.css_class = '';
             }
 

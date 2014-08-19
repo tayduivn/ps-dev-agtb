@@ -5168,6 +5168,12 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
     'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
     'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
+
+    'LBL_CALENDAR_EVENT_RESPONSE_ACCEPT' => 'Attending',
+    'LBL_CALENDAR_EVENT_RESPONSE_DECLINE' => 'Declined',
+    'LBL_CALENDAR_EVENT_RESPONSE_TENTATIVE' => 'Tentative',
+    'LBL_CALENDAR_EVENT_RESPONSE_NONE' => 'No Reply',
+    'LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
 );
 
 $app_list_strings['interactions_options'] = array (

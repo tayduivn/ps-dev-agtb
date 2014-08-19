@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('View.Fields.Base.Meetings.ParticipantsField', function() {
+describe('View.Fields.Base.ParticipantsField', function() {
     var app, context, field, fieldDef, fixture, model, module, participants, sandbox;
 
     module = 'Meetings';
@@ -52,9 +52,9 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
         SugarTest.testMetadata.updateModuleMetadata('Users', _.extend({}, fixture, {isBwcEnabled: true}));
         SugarTest.testMetadata.updateModuleMetadata('Contacts', {isBwcEnabled: false});
         SugarTest.testMetadata.updateModuleMetadata('Leads', _.extend({}, fixture, {isBwcEnabled: false}));
-        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'detail', module);
-        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit', module);
-        SugarTest.loadComponent('base', 'field', 'participants', module);
+        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
+        SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
         SugarTest.loadPlugin('LinkField');
@@ -376,15 +376,15 @@ describe('View.Fields.Base.Meetings.ParticipantsField', function() {
             collection.reset(participants);
             collection.add([{_module: 'Contacts', id: '5', name: 'George Walton', accept_status_meetings: ''}]);
             formatted = field.format(undefined);
-            expect(formatted[0].accept_status.label).toEqual('LBL_RESPONSE_ACCEPT');
+            expect(formatted[0].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_ACCEPT');
             expect(formatted[0].accept_status.css_class).toEqual('success');
-            expect(formatted[1].accept_status.label).toEqual('LBL_RESPONSE_DECLINE');
+            expect(formatted[1].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_DECLINE');
             expect(formatted[1].accept_status.css_class).toEqual('important');
-            expect(formatted[2].accept_status.label).toEqual('LBL_RESPONSE_TENTATIVE');
+            expect(formatted[2].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_TENTATIVE');
             expect(formatted[2].accept_status.css_class).toEqual('warning');
-            expect(formatted[3].accept_status.label).toEqual('LBL_RESPONSE_NONE');
+            expect(formatted[3].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_NONE');
             expect(formatted[3].accept_status.css_class).toEqual('');
-            expect(formatted[4].accept_status.label).toEqual('LBL_RESPONSE_NONE');
+            expect(formatted[4].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_NONE');
             expect(formatted[4].accept_status.css_class).toEqual('');
         });
     });

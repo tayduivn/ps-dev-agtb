@@ -207,12 +207,6 @@ To create a {{meetings_singular_module}}:
 3. Click "Save" to finalize the new record and return to the previous page.
     - Choose "Save and view" to open the new meeting in record view.
     - Choose "Save and create new" to immediately create another new {{meetings_singular_module}}.',
-
-    'LBL_RESPONSE_ACCEPT' => 'Attending',
-    'LBL_RESPONSE_DECLINE' => 'Declined',
-    'LBL_RESPONSE_TENTATIVE' => 'Tentative',
-    'LBL_RESPONSE_NONE' => 'No Reply',
-    'LBL_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
-
+    
     'NTC_SEND_INVITES_CONFIRMATION' => 'Do you want to send an email to all invitees?',
 );

@@ -25,8 +25,8 @@ describe('Plugins.SearchForMore', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit', module);
-        SugarTest.loadComponent('base', 'field', 'participants', module);
+        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
+        SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module);
         SugarTest.loadPlugin('LinkField');
         SugarTest.loadPlugin('SearchForMore');
