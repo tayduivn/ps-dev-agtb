@@ -52,7 +52,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
 
             $this->markNonDb();
         } elseif (!empty($this->def['rname']) && !empty($this->def['table'])) {
-            $jta = $this->query->getJoinAlias($this->def['table']);
+            $jta = $this->query->getJoinAlias($this->def['table'], false);
             if (empty($jta)) {
                 $jta = $this->table;
             }
