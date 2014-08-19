@@ -193,6 +193,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         ),
                     ),
                     'span' => 9,
+                    'related_fields' => array(
+                        'duration_hours',
+                        'duration_minutes',
+                    ),
                 ),
                 array(
                     'name' => 'repeat_type',
