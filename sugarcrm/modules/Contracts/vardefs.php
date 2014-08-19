@@ -192,7 +192,7 @@ $dictionary['Contract'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($total_contract_value,$base_rate)',
+            'formula' => 'ifElse(isNumeric($total_contract_value), currencyDivide($total_contract_value, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
