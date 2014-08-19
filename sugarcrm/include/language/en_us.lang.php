@@ -5122,6 +5122,15 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
+
+    // config drawer
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',
+    'LBL_CONFIG_MODULE_SETTINGS_SAVED' => '{{module}} configuration settings have been saved.',
+    'LBL_CONFIG_BLOCKED_TITLE' => '{{module}} Configuration Error',
+    'LBL_CONFIG_BLOCKED_DESC_NO_CONFIG_METADATA' => '{{module}} does not have any configuration settings',
+    'LBL_CONFIG_BLOCKED_DESC_USER_ACCESS' => 'User does not have access to {{module}}',
+    'LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS' => 'User does not have access to configure {{module}} settings',
+    'LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS' => 'Database settings for {{module}} need to be fixed',
 );
 
 $app_list_strings['interactions_options'] = array (
@@ -5214,6 +5223,11 @@ $app_list_strings['forecast_pipeline_visibility_options'] = array (
 $app_list_strings['forecast_pareto_visibility_options'] = array (
     'user' => 'My Forecast',
     'group' => 'My Team\'s Forecast',
+);
+
+$app_list_strings['opps_config_view_by_options_dom'] = array(
+    'Opportunities' => 'Opportunities',
+    'RevenueLineItems' => 'Revenue Line Items'
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

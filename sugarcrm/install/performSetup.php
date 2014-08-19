@@ -317,7 +317,6 @@ echo "<br>";
 
   //END SUGARCRM lic=sub ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //Install forecasts configuration
     require_once('modules/Forecasts/ForecastsDefaults.php');
     $forecast_config = ForecastsDefaults::setupForecastSettings();
@@ -332,7 +331,12 @@ echo "<br>";
     $client->setWorksheetColumns($api, $forecast_config['worksheet_columns'], $forecast_config['forecast_by']);
 
     unset($api, $client, $forecast_config);
-    //END SUGARCRM flav=pro ONLY
+
+    //Install Opportunities configuration
+    require_once('modules/Opportunities/OpportunitiesDefaults.php');
+    $opps_config = OpportunitiesDefaults::setupOpportunitiesSettings();
+
+    unset($opps_config);
 
     installerHook('pre_createUsers');
     if ($new_tables) {

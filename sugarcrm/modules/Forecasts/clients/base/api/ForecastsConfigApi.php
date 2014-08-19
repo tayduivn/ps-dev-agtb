@@ -231,7 +231,7 @@ class ForecastsConfigApi extends ConfigModuleApi
         // get the proper order from the admin panel, where we defined what is displayed, in the order that we want it
         $mm = MetadataManager::getManager();
         $views = $mm->getModuleViews('Forecasts');
-        $fields = $views['forecastsConfigWorksheetColumns']['meta']['panels'][0]['fields'];
+        $fields = $views['config-worksheet-columns']['meta']['panels'][0]['fields'];
 
         $cteable = array(
             'commit_stage',
