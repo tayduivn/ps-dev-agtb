@@ -126,7 +126,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                             continue;
                         }
 
-                        if (empty($field['default'])) {
+                        if (empty($field['default']) && (!isset($field['enabled']) || $field['enabled'])) {
                             if (isset($this->_fielddefs[$field['name']])) {
                                 $additionalFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
                             } else {

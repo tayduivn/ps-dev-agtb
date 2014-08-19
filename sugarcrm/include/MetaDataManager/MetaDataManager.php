@@ -491,7 +491,36 @@ class MetaDataManager
      */
     public function getModuleViews($moduleName)
     {
-        return $this->getModuleClientData('view',$moduleName);
+        $data = $this->getModuleClientData('view', $moduleName);
+        $data = $this->removeDisabledFields($data);
+        return $data;
+    }
+
+    /**
+     * Removes disabled fields from view definition
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function removeDisabledFields(array $data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                if ($key === 'fields') {
+                    $value = array_filter($value, function ($field) {
+                        return !is_array($field) || !isset($field['enabled']) || $field['enabled'];
+                    });
+
+                    // make sure the resulting array has no gaps in keys
+                    $value = array_values($value);
+                } else {
+                    $value = $this->removeDisabledFields($value);
+                }
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
     }
 
     /**
