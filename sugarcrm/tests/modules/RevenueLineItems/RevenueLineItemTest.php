@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -63,7 +64,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testConvertToQuoteLineItemsSetCorrectDiscountAmountWhenPercent()
     {
-         /* @var $rli RevenueLineItem */
+        /* @var $rli RevenueLineItem */
         $rli = $this->getMock('RevenueLineItem', array('save'));
         $rli->discount_amount = '25.00';
         $rli->quantity = '50';
@@ -75,7 +76,35 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('25.00', $product->discount_amount);
     }
 
+    /**
+     * @dataProvider dataProviderSetDiscountPrice
+     * @param string $likely
+     * @param string $quantity
+     * @param string $discount_price
+     * @param string $expected_discount
+     */
+    public function testSetDiscountPrice($likely, $quantity, $discount_price, $expected_discount)
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli->likely_case = $likely;
+        $rli->quantity = $quantity;
+        $rli->discount_price = $discount_price;
 
+        SugarTestReflection::callProtectedMethod($rli, 'setDiscountPrice');
+
+        $this->assertEquals($expected_discount, $rli->discount_price);
+    }
+
+    public function dataProviderSetDiscountPrice()
+    {
+        // values are likely, quantity, discount_price, expected_discount_price
+        return array(
+            array('100.00', '1', '', '100.00'),
+            array('100.00', '1', '0.00', '0.00'),
+            array('100.00', '1', '150', '150.00'),
+        );
+    }
 }
 
 
