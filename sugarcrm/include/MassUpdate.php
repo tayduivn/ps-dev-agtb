@@ -681,6 +681,11 @@ eoq;
 eoq;
 		}
 
+        if ($this->sugarbean->object_name == 'User' && $current_user->isAdmin()) {
+            $html .=<<<eoq
+            <input type='hidden' name='current_admin_id' value="{$current_user->id}">
+eoq;
+        }
 		$html .= "</td></tr></table></div></div>";
 
 		$html .= <<<EOJS
