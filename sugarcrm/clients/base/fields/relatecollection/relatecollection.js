@@ -29,7 +29,6 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        _.bindAll(this);
         this._super('initialize', [options])
         this.collectionCreate = options.def.collection_create || this.collectionCreate;
 
@@ -52,7 +51,7 @@
         }
 
         if (this.$select2) {
-            this.$select2.on("change", this.storeValues);
+            this.$select2.on("change", _.bind(this.storeValues, this));
         }
     },
 

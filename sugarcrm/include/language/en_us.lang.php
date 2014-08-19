@@ -107,7 +107,6 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
-    'UserIdentities' => 'User Identities',
     'Tags' => 'Tags',
   ),
 
@@ -217,6 +216,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Reports_1'=>'Saved Report',
+    'Tags' => 'Tag',
   ),
 
 /*

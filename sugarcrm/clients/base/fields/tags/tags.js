@@ -23,7 +23,6 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        _.bindAll(this);
         this._super('initialize', [options]);
     }
 })
