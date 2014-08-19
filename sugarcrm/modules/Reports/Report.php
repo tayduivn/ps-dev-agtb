@@ -1818,12 +1818,17 @@ class Report
             $db = DBManagerFactory::getInstance();
             $field_type = $db->getFieldType($this->focus->field_name_map[$field_data[1]]);
 
-            // add IFNULL to the field and then re-add alias back
-            return $this->db->convert(
-                $field_name,
-                'IFNULL',
-                array($db->emptyValue($field_type))
-            ) . ' ' . substr($field, $has_space + 1) . "\n";
+            if (!in_array($field_type, array('currency','double','float','decimal','int','date','datetime'))) {
+                if ($field_type === 'bool') {
+                    $default = '0';
+                } else {
+                    $default = "''";
+                }
+
+                // add IFNULL to the field and then re-add alias back
+                return $this->db->convert($field_name, "IFNULL", array($default))
+                    . " " . substr($field, $has_space + 1) . "\n";
+            }
         }
         return $field;
     }
