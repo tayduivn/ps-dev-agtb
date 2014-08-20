@@ -75,8 +75,6 @@ class CalendarEventsApi extends ModuleApi
      */
     public function createCalendarEvent($api, $args)
     {
-        $this->requireArgs($args, array('date_start', 'duration_hours', 'duration_minutes'));
-
         $createResult = $this->createRecord($api, $args);
 
         if (!empty($createResult['id'])) {
@@ -100,8 +98,6 @@ class CalendarEventsApi extends ModuleApi
      */
     public function updateCalendarEvent($api, $args)
     {
-        $this->requireArgs($args, array('date_start', 'duration_hours', 'duration_minutes'));
-
         $updateResult = array();
         if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
             $api->action = 'view';
