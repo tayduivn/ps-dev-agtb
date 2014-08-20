@@ -999,7 +999,7 @@ abstract class UpgradeDriver
         	if(!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
         		$matches_empty = false;
         		foreach($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
-        			if($match == $this->from_version) {
+                    if ($this->implodeVersion($match, 4) == $this->implodeVersion($this->from_version, 4)) {
         				$version_ok = true;
         				break;
         			}

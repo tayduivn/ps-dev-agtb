@@ -141,7 +141,9 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function providerTestGetFilenameForFQCN()
     {
+        // platform dependent baseDir, used for path normalization tests
         $ds = DIRECTORY_SEPARATOR;
+        $baseDir = realpath(dirname(__FILE__) . '/../../..') . $ds;
 
         return array(
 
@@ -153,35 +155,35 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
                 'Doctrine',
                 'vendor',
                 'Doctrine\\Common\\IsolatedClassLoader',
-                'vendor'.$ds.'Doctrine'.$ds.'Common'.$ds.'IsolatedClassLoader.php',
+                'vendor/Doctrine/Common/IsolatedClassLoader.php',
             ),
             array(
                 'psr0',
                 'Symfony\\Core',
                 'vendor/Symfony/Core/src',
                 'Symfony\\Core\\Request',
-                'vendor'.$ds.'Symfony'.$ds.'Core'.$ds.'src'.$ds.'Symfony'.$ds.'Core'.$ds.'Request.php',
+                'vendor/Symfony/Core/src/Symfony/Core/Request.php',
             ),
             array(
                 'psr0',
                 'Zend',
                 'vendor',
                 'Zend\\Acl',
-                'vendor'.$ds.'Zend'.$ds.'Acl.php',
+                'vendor/Zend/Acl.php',
             ),
             array(
                 'psr0',
                 'namespace',
                 'vendor',
                 'namespace\\package\\Class_Name',
-                'vendor'.$ds.'namespace'.$ds.'package'.$ds.'Class'.$ds.'Name.php',
+                'vendor/namespace/package/Class/Name.php',
             ),
             array(
                 'psr0',
                 'namespace',
                 'vendor',
                 'namespace\package_name\Class_Name',
-                'vendor'.$ds.'namespace'.$ds.'package_name'.$ds.'Class'.$ds.'Name.php',
+                'vendor/namespace/package_name/Class/Name.php',
             ),
 
             /*
@@ -189,24 +191,24 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
              */
             array(
                 'psr4',
-                'Acme\Log\Writer',
+                'Acme\\Log\\Writer',
                 'acme-log-writer/lib',
                 'Acme\\Log\\Writer\\File_Writer',
-                'acme-log-writer'.$ds.'lib'.$ds.'File_Writer.php',
+                'acme-log-writer/lib/File_Writer.php',
             ),
             array(
                 'psr4',
-                'Symfony\Core',
+                'Symfony\\Core',
                 'vendor/Symfony/Core',
-                'Symfony\Core\Request',
-                'vendor'.$ds.'Symfony'.$ds.'Core'.$ds.'Request.php',
+                'Symfony\\Core\\Request',
+                'vendor/Symfony/Core/Request.php',
             ),
             array(
                 'psr4',
                 'namespace',
                 'vendor/namespace',
-                'namespace\package_name\Class_Name',
-                'vendor'.$ds.'namespace'.$ds.'package_name'.$ds.'Class_Name.php',
+                'namespace\\package_name\\Class_Name',
+                'vendor/namespace/package_name/Class_Name.php',
             ),
 
             /*
@@ -217,21 +219,39 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
                 'Sugarcrm\\Core',
                 '',
                 'Sugarcrm\\Core\\modules\\Account',
-                'modules'.$ds.'Account.php',
+                'modules/Account.php',
             ),
             array(
                 'psr4',
                 'Sugarcrm\\Core\\include',
                 'include',
                 'Sugarcrm\\Core\\include\\SugarLogger\\LoggerManager',
-                'include'.$ds.'SugarLogger'.$ds.'LoggerManager.php',
+                'include/SugarLogger/LoggerManager.php',
             ),
             array(
                 'psr4',
                 'Sugarcrm\\Core\\Extension',
                 'custom/Extension',
                 'Sugarcrm\\Core\\Extension\\modules\\xxx_Module\\yyy_Bean',
-                'custom'.$ds.'Extension'.$ds.'modules'.$ds.'xxx_Module'.$ds.'yyy_Bean.php',
+                'custom/Extension/modules/xxx_Module/yyy_Bean.php',
+            ),
+
+            /*
+             * Path normalization tests
+             */
+            array(
+                'psr0',
+                'Foo\\Bar',
+                $baseDir . 'vendor'.$ds.'Foo'.$ds.'Bar'.$ds.'src',
+                'Foo\\Bar\\Deer',
+                'vendor/Foo/Bar/src/Foo/Bar/Deer.php',
+            ),
+            array(
+                'psr4',
+                'Acme\\Factory',
+                $baseDir . 'vendor'.$ds.'figures',
+                'Acme\\Factory\\Roadrunner',
+                'vendor/figures/Roadrunner.php',
             ),
         );
     }
@@ -243,9 +263,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     public function testAutoloadNamespaces()
     {
         // create test class/file
-        $ds = DIRECTORY_SEPARATOR;
         $fqcn = 'Sugarcrm\\Core\\modules\\Accounts\\Bogus';
-        $fileName = 'modules' . $ds . 'Accounts' . $ds . 'Bogus.php';
+        $fileName = 'modules/Accounts/Bogus.php';
         $content = "<?php\nnamespace Sugarcrm\\Core\\modules\\Accounts;\nclass Bogus { }\n";
         file_put_contents($fileName, $content);
 
@@ -253,7 +272,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::buildCache();
 
         // reset classMap and register test namespace
-        SugarAutoLoader::addNamespace('Sugarcrm\\Core\\modules\\', 'modules', 'psr4');
+        $classPath = SUGAR_BASE_DIR . DIRECTORY_SEPARATOR . "modules";
+        SugarAutoLoader::addNamespace('Sugarcrm\\Core\\modules\\', $classPath, 'psr4');
 
         // instantiate test class
         $bogus = new \Sugarcrm\Core\modules\Accounts\Bogus();
