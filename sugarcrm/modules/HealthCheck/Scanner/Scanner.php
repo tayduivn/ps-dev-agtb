@@ -848,10 +848,10 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach(glob("custom/$module/Ext/*") as $extdir) {
-            if(isset($badExts[basename($extdir)])) {
+        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+            if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
-                if(!empty($extfiles)) {
+                if (!empty($extfiles)) {
                     $this->updateStatus("extensionDir", $extdir);
                     break;
                 }
@@ -860,7 +860,17 @@ class HealthCheckScanner
 
         // check logic hooks for module
         $this->checkHooks($module, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
+    }
 
+    /**
+     * Make sure glob always returns array
+     *
+     * @param $pattern
+     * @return array
+     */
+    protected function glob($pattern) {
+        $dirs = glob($pattern);
+        return ($dirs ? $dirs : array());
     }
 
     /**
@@ -1255,7 +1265,7 @@ class HealthCheckScanner
         $object = $this->beanList[$module];
         if(empty($this->beanFiles[$object])) {
             // no bean file - check directly
-            foreach(glob("modules/$module/*") as $file) {
+            foreach($this->glob("modules/$module/*") as $file) {
                 // if any file from this dir mentioned in md5 - not a new module
                 if(!empty($this->md5_files["./$file"])) {
                     return false;
@@ -1477,7 +1487,7 @@ ENDP;
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
-        foreach(glob("$module_dir/*") as $file) {
+        foreach($this->glob("$module_dir/*") as $file) {
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
@@ -1509,7 +1519,7 @@ ENDP;
         $mbFiles['logic_hooks.php'] = true;
 
         // now check custom/ for unknown files
-        foreach(glob("custom/$module_dir/*") as $file) {
+        foreach($this->glob("custom/$module_dir/*") as $file) {
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
@@ -1524,7 +1534,7 @@ ENDP;
                 "FileAccessControlMap", "WirelessModuleRegistry");
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
-        foreach(glob("custom/$module_dir/Ext/*") as $extdir) {
+        foreach($this->glob("custom/$module_dir/Ext/*") as $extdir) {
             if(isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if(!empty($extfiles)) {
@@ -1545,7 +1555,7 @@ ENDP;
      */
     protected function checkViewsDir($view_dir)
     {
-        foreach(glob("$view_dir/*") as $file) {
+        foreach($this->glob("$view_dir/*") as $file) {
             // for now we allow only view.edit.php
             if(basename($file) != 'view.edit.php') {
                 $this->updateStatus("unknownFile", $view_dir, $file);
