@@ -24,6 +24,7 @@ class CaseEmailsLink extends ArchivedEmailsBeanLink
      */
     protected function getEmailsJoin($params = array())
     {
+        $params['source'] = true;
         $join = parent::getEmailsJoin($params);
         if ($this->focus instanceof aCase && !empty($this->focus->case_number)) {
             $where = str_replace("%1", $this->focus->case_number, $this->focus->getEmailSubjectMacro());
@@ -33,7 +34,10 @@ class CaseEmailsLink extends ArchivedEmailsBeanLink
                 $table_name = 'emails';
             }
             $where = DBManagerFactory::getInstance()->sqlLikeString($where, '%', false);
-            $join .= " AND (email_ids.source = 'direct' OR {$table_name}.name LIKE '%$where%')";
+            preg_match('|^INNER JOIN \\((.*)\\) email_ids|ism', trim($join), $match);
+            $inside = $match[1];
+            $join = "INNER JOIN ( SELECT email_id, MIN(source) sources FROM ($inside) email_ids2 GROUP BY email_id ) email_ids ON $table_name.id=email_ids.email_id";
+            $join .= " AND (email_ids.sources = 1 OR {$table_name}.name LIKE '%$where%')";
         }
         return $join;
     }

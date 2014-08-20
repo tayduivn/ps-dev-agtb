@@ -171,23 +171,11 @@ class RevenueLineItem extends SugarBean
             $this->worst_case = $this->likely_case;
         }
 
-        if ($this->quantity == '') {
+        if ($this->quantity === '' || is_null($this->quantity)) {
             $this->quantity = 1;
         }
 
-        if (
-            empty($this->discount_price) &&
-            empty($this->product_template_id) &&
-            !empty($this->likely_case)
-        ) {
-            $quantity = floatval($this->quantity);
-
-            if (empty($quantity)) {
-                $quantity = 1;
-            }
-
-            $this->discount_price = SugarMath::init($this->likely_case)->div($quantity)->result();
-        }
+        $this->setDiscountPrice();
 
         if ($this->probability === '') {
             $this->mapProbabilityFromSalesStage();
@@ -204,6 +192,24 @@ class RevenueLineItem extends SugarBean
 
         return $id;
     }
+
+    protected function setDiscountPrice()
+    {
+        if (
+            !is_numeric($this->discount_price) &&
+            empty($this->product_template_id) &&
+            is_numeric($this->likely_case)
+        ) {
+            $quantity = floatval($this->quantity);
+
+            if (empty($quantity)) {
+                $quantity = 1;
+            }
+
+            $this->discount_price = SugarMath::init($this->likely_case)->div($quantity)->result();
+        }
+    }
+
     
     /**
      * Override the current SugarBean functionality to make sure that when this method is called that it will also

@@ -999,7 +999,7 @@ abstract class UpgradeDriver
         	if(!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
         		$matches_empty = false;
         		foreach($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
-        			if($match == $this->from_version) {
+                    if ($this->implodeVersion($match, 4) == $this->implodeVersion($this->from_version, 4)) {
         				$version_ok = true;
         				break;
         			}
@@ -1058,6 +1058,8 @@ abstract class UpgradeDriver
     {
         $user = BeanFactory::getBean('Users');
         $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
+        // Disable logic hooks.
+        $user->processed = true;
         $user->retrieve($user_id);
         return $user;
     }

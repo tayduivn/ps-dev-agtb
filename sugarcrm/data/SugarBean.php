@@ -1254,8 +1254,8 @@ class SugarBean
                         $value_list = "'" . implode("','", array_values($toInsert)) . "'";
 
                         // Create the record.
-                        $insert_string = "INSERT into relationships 
-                                          ($column_list) values 
+                        $insert_string = "INSERT into relationships
+                                          ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
                     }
@@ -3309,9 +3309,7 @@ class SugarBean
             count($beans)
         );
 
-        // Set the log level to something notable, but not fatal since this isn't
-        // a fatal type situation
-        $GLOBALS['log']->warn($msg);
+        $GLOBALS['log']->fatal($msg);
 
         // detailed logging
         $counts = array();
