@@ -3373,7 +3373,10 @@ protected function checkQuery($sql, $object_name = false)
                 //if the type and values match, do nothing.
                 if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
                     $change = false;
-                    if (trim($before_value) !== trim($after_value)) {
+
+                    $check_before = is_object($before_value)?$before_value:trim($before_value);
+                    $check_after = is_object($after_value)?$after_value:trim($after_value);
+                    if ($check_before !== $check_after) {
                         // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
                         // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper
                         // This fix also fixes Bug #44624 in a more generic way and therefore eliminates the need for fix 0a55125b281c4bee87eb347709af462715f33d2d in DBHelper
