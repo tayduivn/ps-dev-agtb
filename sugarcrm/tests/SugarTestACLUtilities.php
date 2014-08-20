@@ -25,7 +25,7 @@ class SugarTestACLUtilities
      * @param  array     $ownerActions   - any owner actions [Edit Owner, etc] the user needs
      * @return SugarBean role
      */
-    public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
+    public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array(), $type = 'module')
     {
         self::$_modules = array_merge($allowedModules, self::$_modules);
 
@@ -39,10 +39,10 @@ class SugarTestACLUtilities
         $roleActions = $role->getRoleActions($role->id);
         foreach ($roleActions as $moduleName => $actions) {
             // enable allowed modules
-            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
+            if (isset($actions[$type]['access']['id']) && !in_array($moduleName, $allowedModules)) {
+                $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_DISABLED);
+            } elseif (isset($actions[$type]['access']['id']) && in_array($moduleName, $allowedModules)) {
+                $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_ENABLED);
             } else {
                 foreach ($actions as $action => $actionName) {
                     if (isset($actions[$action]['access']['id'])) {
@@ -52,7 +52,7 @@ class SugarTestACLUtilities
             }
 
             if (in_array($moduleName, $allowedModules)) {
-                foreach ($actions['module'] as $actionName => $action) {
+                foreach ($actions[$type] as $actionName => $action) {
                     if (in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
                         $aclAllow = ACL_ALLOW_OWNER;
                     } elseif (in_array($actionName, $allowedActions)) {
