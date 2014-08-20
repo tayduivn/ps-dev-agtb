@@ -248,6 +248,11 @@ eoq;
 			}
 			//END SUGARCRM flav=pro ONLY
 
+            // should use 'User Type' to change this field
+            if ($this->sugarbean->object_name == 'User' && isset($_POST['is_admin'])) {
+                unset($_POST['is_admin']);
+            }
+
 			foreach($_POST['mass'] as $id){
                 if(empty($id)) {
                     continue;
@@ -323,6 +328,22 @@ eoq;
 						$_REQUEST['record'] = $id;
 						$newbean=$this->sugarbean;
 
+                        // ACL check above should have blocked non-admin users
+                        if ($newbean->object_name == 'User') {
+                            //admin can't change his own status and user type
+                            if ($current_user->id == $id && (isset($_POST['UserType']) || isset($_POST['status']))) {
+                                continue;
+                            }
+                            if (isset($_POST['UserType'])) {
+                                if ($_POST['UserType'] == "Administrator") { 
+                                    $newbean->is_admin = 1;
+                                }
+                                else if ($_POST['UserType'] == "RegularUser") { 
+                                    $newbean->is_admin = 0;
+                                }
+                            }
+                        }
+
 						$old_reports_to_id = null;
 						if(!empty($_POST['reports_to_id']) && $newbean->reports_to_id != $_POST['reports_to_id']) {
 						   $old_reports_to_id = empty($newbean->reports_to_id) ? 'null' : $newbean->reports_to_id;
@@ -365,7 +386,6 @@ eoq;
 
 							} // if
 	                    } // if
-
 
 						$newbean->save($check_notify);
 						if (!empty($email_address_id)) {
@@ -540,6 +560,11 @@ eoq;
 			   	  continue;
 			   }
 			//END SUGARCRM flav=pro ONLY
+
+            if ($this->sugarbean->object_name == 'User' && $field['name'] == 'is_admin') {
+                // already have 'User Type'
+                continue;
+            }
 			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate'])))
 			 {
 				$newhtml = '';
@@ -681,7 +706,7 @@ eoq;
 eoq;
 		}
 
-        if ($this->sugarbean->object_name == 'User' && $current_user->isAdmin()) {
+        if ($this->sugarbean->object_name == 'User' && ($current_user->is_admin || $current_user->isAdminForModule('Users'))) {
             $html .=<<<eoq
             <input type='hidden' name='current_admin_id' value="{$current_user->id}">
 eoq;
