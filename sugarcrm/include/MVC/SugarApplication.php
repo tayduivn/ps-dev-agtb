@@ -129,6 +129,12 @@ class SugarApplication
             return false;
         }
 
+        // If we're authenticating, do not redirect
+        if (!empty($_REQUEST['module']) && !empty($_REQUEST['action'])
+            && 'Users' == $_REQUEST['module'] && 'authenticate' == strtolower($_REQUEST['action'])) {
+            return false;
+        }
+
         if (isset($_REQUEST['mobile']) || isset($_COOKIE['sugar_mobile'])) {
             if ((isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == '0') || (isset($_COOKIE['sugar_mobile']) && $_COOKIE['sugar_mobile'] == '0')) {
                 if (!isset($_COOKIE['sugar_mobile']) || $_COOKIE['sugar_mobile'] != '0') {
@@ -182,14 +188,14 @@ EOF;
 
         $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
 
-        
+
         $isIosDevice = preg_match("/(iphone|ipod)/i", $ua);
         if ($isIosDevice) {
             // detect iOS version
             preg_match("/OS (\d+)_\d+(_\d+)?\s+/i", $ua, $osVersionMatches);
             return $osVersionMatches ? $osVersionMatches[1] >= 5 : false;  // check iOS version >= 5
         }
-        
+
         // check for Chrome in Android
         $isAndroid = preg_match('/Android/i', $ua);
         if ($isAndroid) {
