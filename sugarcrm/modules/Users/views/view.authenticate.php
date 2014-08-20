@@ -64,7 +64,7 @@ class UsersViewAuthenticate extends SidecarView
             $this->dataOnly = true;
         }
         if (!empty($_REQUEST['platform'])) {
-            $this->platform = true;
+            $this->platform = $_REQUEST['platform'];
         }
         parent::preDisplay();
     }
