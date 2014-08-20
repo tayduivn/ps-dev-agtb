@@ -16,7 +16,61 @@
     extendsFrom: 'FieldsetWithLabelsField',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
+     *
+     * Adds a custom validation task to the model.
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.model.addValidationTask('duration_validator_' + this.cid, _.bind(this.doValidateDuration, this));
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Removes the custom validator from the model.
+     */
+    _dispose: function() {
+        this.model._validationTasks = _.omit(this.model._validationTasks, 'duration_validator_' + this.cid);
+        this._super('_dispose');
+    },
+
+    /**
+     * Custom required validator for the `duration` field.
+     *
+     * The `duration_hours` and `duration_minutes` fields must have integer-
+     * like values that are greater than or equal to 0.
+     *
+     * @param {Object} fields The list of field names and their definitions.
+     * @param {Object} errors The list of field names and their errors.
+     * @param {Function} callback Async.js waterfall callback.
+     */
+    doValidateDuration: function(fields, errors, callback) {
+        var hours, isPositiveInteger, minutes;
+
+        /**
+         * The duration_hours and duration_minutes fields must be positive
+         * integers; either actual integers or strings that are integers.
+         *
+         * @param {*} value
+         * @return {boolean}
+         */
+        isPositiveInteger = function(value) {
+            return /^\d+$/.test(String(value));
+        };
+
+        hours = this.model.get('duration_hours');
+        minutes = this.model.get('duration_minutes');
+
+        if (!isPositiveInteger(hours) || !isPositiveInteger(minutes)) {
+            errors[this.name] = app.lang.get('NOTICE_DURATION_TIME', this.module);
+        }
+
+        callback(null, fields, errors);
+    },
+
+    /**
+     * @inheritdoc
      */
     bindDataChange: function() {
         // Change the end date when start date changes.
@@ -62,7 +116,7 @@
     /**
      * Render start date and end date fields on edit. In detail mode, render
      * date range as a display string.
-     * {@inheritDoc}
+     * @inheritdoc
      * @private
      */
     _render: function() {

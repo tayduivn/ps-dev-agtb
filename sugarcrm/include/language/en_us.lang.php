@@ -5163,6 +5163,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_SAME_DAY' => '{{date}} {{start}} - {{end}} ({{duration}})',
     'LBL_START_AND_END_DATE_TO' => 'to',
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
+    'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
 
     'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",

@@ -1,13 +1,14 @@
 describe('Base.Field.Duration', function() {
-    var app, field;
+    var app, field, sandbox;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         field = SugarTest.createField('base', 'duration', 'duration');
         SugarTest.testMetadata.set();
 
-        sinon.stub(app.user, 'getPreference')
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.user, 'getPreference')
             .withArgs('datepref')
             .returns('m/d/Y')
             .withArgs('timepref')
@@ -24,7 +25,7 @@ describe('Base.Field.Duration', function() {
     });
 
     afterEach(function() {
-        app.user.getPreference.restore();
+        sandbox.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -198,6 +199,62 @@ describe('Base.Field.Duration', function() {
             });
             field.model.unset('date_end');
             expect(field.isDateRangeValid()).toBe(false);
+        });
+    });
+
+    describe('perform validation', function() {
+        it('should add a validation task to the model when the field is initialized', function() {
+            var task = 'duration_validator_' + field.cid;
+            expect(_.has(field.model._validationTasks, task)).toBe(true);
+        });
+
+        it('should remove the validation task from the model when the field is disposed', function() {
+            var model, task;
+            // keep a copy of the model to test that the task was removed
+            model = field.model;
+            task = 'duration_validator_' + field.cid;
+            field.dispose();
+            expect(_.has(model._validationTasks, task)).toBe(false);
+        });
+
+        var validDurations = [
+            {hours: 0, minutes: 0},
+            {hours: '0', minutes: '0'},
+            {hours: 1, minutes: 1},
+            {hours: '1', minutes: '1'}
+        ];
+        using('valid durations', validDurations, function(durations) {
+            it('should not report errors when duration_hours and duration_minutes are valid', function() {
+                var callback = sandbox.spy();
+                field.model.set('duration_hours', durations.hours);
+                field.model.set('duration_minutes', durations.minutes);
+                field.doValidateDuration({}, {}, callback);
+                expect(_.size(callback.args[0][2])).toBe(0);
+            });
+        });
+
+        var invalidDurations = [
+            {hours: null, minutes: 1},
+            {hours: 1, minutes: null},
+            {hours: undefined, minutes: 1},
+            {hours: 1, minutes: undefined},
+            {hours: '', minutes: 1},
+            {hours: 1, minutes: ''},
+            {hours: 0, minutes: -1},
+            {hours: -1, minutes: 0},
+            {hours: 0.5, minutes: 0},
+            {hours: 0, minutes: 0.5},
+            {hours: 'a', minutes: 1},
+            {hours: 1, minutes: 'a'}
+        ];
+        using('invalid durations', invalidDurations, function(durations) {
+            it('should report errors when duration_hours and/or duration_minutes are invalid', function() {
+                var callback = sandbox.spy();
+                field.model.set('duration_hours', durations.hours);
+                field.model.set('duration_minutes', durations.minutes);
+                field.doValidateDuration({}, {}, callback);
+                expect(_.size(callback.args[0][2])).toBe(1);
+            });
         });
     });
 });
