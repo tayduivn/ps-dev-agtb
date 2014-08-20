@@ -265,6 +265,10 @@ class MetaDataManager
         'default_number_grouping_seperator' => true,
         'default_currency_significant_digits' => true,
         'enable_legacy_dashboards' => true,
+        'logger' => array(
+            'level' => true,
+            'write_to_server' => true,
+        ),
     );
 
     /**
@@ -1688,7 +1692,6 @@ class MetaDataManager
         //Property 'on' of category 'portal' must be a boolean.
         $data['portal_active'] = !empty($admin->settings['portal_on']);
         //END SUGARCRM flav=ent ONLY
-
         return $data;
     }
 
