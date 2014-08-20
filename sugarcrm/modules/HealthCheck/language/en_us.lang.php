@@ -77,6 +77,7 @@ $mod_strings = array(
     'LBL_SCAN_431_LOG' => 'Vardef HTML function %s in $module module for field %s',
     'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_433_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '{%s}'",
+    'LBL_SCAN_434_LOG' => "Table name in bean %s does not match the table attribute in the %s/vardefs.php",
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -93,6 +94,7 @@ $mod_strings = array(
     'LBL_SCAN_513_LOG' => 'Found "var_dump" in %s on line %s',
     'LBL_SCAN_514_LOG' => 'Found output buffering (%s) in %s on line %s',
     'LBL_SCAN_515_LOG' => 'Script failure: %s',
+    'LBL_SCAN_516_LOG' => 'Previously removed files found referenced in: %s',
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_LOG' => 'Unknown failure, please consult support',

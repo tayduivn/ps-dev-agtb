@@ -276,6 +276,10 @@ class HealthCheckScannerMeta
             'report' => 'badVardefsMultienumCustom',
             'bucket' => self::CUSTOM
         ),
+        434 => array(
+            'report' => 'badVardefsTableName',
+            'bucket' => self::CUSTOM
+        ),
 
         // BUCKET F
         501 => array(
@@ -338,6 +342,11 @@ class HealthCheckScannerMeta
             'report' => 'scriptFailure',
             'bucket' => self::MANUAL,
         ),
+        516 => array(
+            'report' => 'deletedFilesReferenced',
+            'bucket' => self::MANUAL
+        ),
+
 
         // Bucket G
         901 => array(

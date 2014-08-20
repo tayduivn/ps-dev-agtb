@@ -468,7 +468,7 @@ class HealthCheckScanner
         if(!empty($this->deletedFilesReferenced))
         {
             $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
-            $this->updateStatus(self::MANUAL, "Previously removed files found referenced in:".$files_with_bad_includes);
+            $this->updateStatus("deletedFilesReferenced", $files_with_bad_includes);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
@@ -599,7 +599,7 @@ class HealthCheckScanner
         }
 
         if ($GLOBALS['dictionary'][$object]['table'] !== $seed->getTableName()) {
-            $this->updateStatus(self::CUSTOM, "Table name in bean {$module} does not match the table attribute in the {$module}/vardefs.php");
+            $this->updateStatus('badVardefsTableName', $module, $module);
         }
     }
 
