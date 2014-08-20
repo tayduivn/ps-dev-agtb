@@ -190,7 +190,8 @@ class QuotesViewEdit extends ViewEdit
         $this->ss->assign("CURRENCY", $selectCurrency);
 		$this->ss->assign('CURRENCY_JAVASCRIPT', $currency->getJavascript());
 
-        if($this->bean->fetched_row['date_quote_expected_closed'] == '1970-01-01') {
+        if($this->bean->fetched_row['date_quote_expected_closed'] == '1970-01-01' ||
+            $this->bean->fetched_row['date_quote_expected_closed'] == '0001-01-01') {
             $this->bean->date_quote_expected_closed = '';
         }
 
@@ -338,7 +339,7 @@ class QuotesViewEdit extends ViewEdit
 		$this->ss->assign('NO_MATCH_VARIABLE', '<script type="text/javascript">sqs_no_match_text = "' . $app_strings['ERR_SQS_NO_MATCH'] . '";</script>');
 
 		$str = "<script language=\"javascript\">
-		YAHOO.util.Event.addListener(window, 'load', add_rows_on_load);
+		YAHOO.util.Event.onAvailable('add_tables', add_rows_on_load);
 		</script>";
 		$this->ss->assign('SAVED_SEARCH_SELECTS', $str);
 

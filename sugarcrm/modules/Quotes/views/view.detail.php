@@ -24,6 +24,11 @@ class QuotesViewDetail extends ViewDetail
         require_once($beanFiles['TaxRate']);
         require_once($beanFiles['Shipper']);
 
+        if ($this->bean->fetched_row['date_quote_expected_closed'] == '1970-01-01' ||
+            $this->bean->fetched_row['date_quote_expected_closed'] == '0001-01-01') {
+            $this->bean->date_quote_expected_closed = '';
+        }
+
         $this->bean->load_relationship('product_bundles');
         $product_bundle_list = $this->bean->product_bundles->getBeans();
         if (is_array($product_bundle_list)) {
