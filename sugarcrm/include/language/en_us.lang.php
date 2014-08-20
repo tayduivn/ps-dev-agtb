@@ -2575,6 +2575,7 @@ $app_strings = array (
     'LBL_CREATE_NEW_TARGET_LIST' => 'Create new target list',
     'LBL_CURRENT_USER_FILTER' => 'My Items:',
     'LBL_CURRENCY'=>'Currency:',
+    'LBL_CURRENCIES' => 'Currencies',
     'LBL_CURRENCY_NAME'=>'Currency Name',
     'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
     'LBL_CURRENCY_RATE' => 'Base Rate:',
