@@ -113,7 +113,7 @@ class CalendarEventsApi extends ModuleApi
                 $updateResult = $this->updateRecord($api, $args);
             }
         } else {
-           $updateResult = $this->updateRecord($api, $args);
+            $updateResult = $this->updateRecord($api, $args);
         }
         return $updateResult;
     }
@@ -188,7 +188,7 @@ class CalendarEventsApi extends ModuleApi
      */
     public function deleteRecordAndRecurrences($api, $args)
     {
-        $this->requireArgs($args,array('module','record'));
+        $this->requireArgs($args, array('module', 'record'));
 
         $bean = $this->loadBean($api, $args, 'delete');
 
