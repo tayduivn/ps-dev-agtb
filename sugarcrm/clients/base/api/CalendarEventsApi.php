@@ -32,7 +32,7 @@ class CalendarEventsApi extends ModuleApi
         $calendarEventsApi = array(
             'create' => array(
                 'reqType' => 'POST',
-                'path' => array("{$module}"),
+                'path' => array($module),
                 'pathVars' => array('module'),
                 'method' => 'createCalendarEvent',
                 'shortHelp' => 'This method creates a single event record or a series of event records of the specified type',
@@ -40,7 +40,7 @@ class CalendarEventsApi extends ModuleApi
             ),
             'update' => array(
                 'reqType' => 'PUT',
-                'path' => array("{$module}", '?'),
+                'path' => array($module, '?'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'updateCalendarEvent',
                 'shortHelp' => 'This method updates a single event record or a series of event records of the specified type',
@@ -48,7 +48,7 @@ class CalendarEventsApi extends ModuleApi
             ),
             'delete' => array(
                 'reqType' => 'DELETE',
-                'path' => array("{$module}", '?'),
+                'path' => array($module, '?'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'deleteCalendarEvent',
                 'shortHelp' => 'This method deletes a single event record or a series of event records of the specified type',
@@ -105,7 +105,6 @@ class CalendarEventsApi extends ModuleApi
         $updateResult = array();
         if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
             $api->action = 'view';
-            $this->requireArgs($args, array('module', 'record'));
             $bean = $this->loadBean($api, $args, 'view');
             if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
@@ -188,8 +187,6 @@ class CalendarEventsApi extends ModuleApi
      */
     public function deleteRecordAndRecurrences($api, $args)
     {
-        $this->requireArgs($args, array('module', 'record'));
-
         $bean = $this->loadBean($api, $args, 'delete');
 
         if (!empty($bean->repeat_parent_id)) {
