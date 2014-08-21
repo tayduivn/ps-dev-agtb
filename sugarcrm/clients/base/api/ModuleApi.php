@@ -166,6 +166,9 @@ class ModuleApi extends SugarApi {
 
         $id = $this->updateBean($bean, $api, $args);
 
+        $relateArgs = $this->getRelateRecordArguments($bean, $args);
+        $this->linkRelatedRecords($bean, $api, $relateArgs);
+
         $args['record'] = $id;
 
         $this->processAfterCreateOperations($args, $bean);
@@ -180,6 +183,12 @@ class ModuleApi extends SugarApi {
         $bean = $this->loadBean($api, $args, 'save');
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
+
+        $relateArgs = $this->getRelateRecordArguments($bean, $args, 'delete');
+        $this->unlinkRelatedRecords($bean, $api, $relateArgs);
+
+        $relateArgs = $this->getRelateRecordArguments($bean, $args, 'add');
+        $this->linkRelatedRecords($bean, $api, $relateArgs);
 
         return $this->getLoadedAndFormattedBean($api, $args);
     }
@@ -316,5 +325,103 @@ class ModuleApi extends SugarApi {
                 $bean->$linkName->add($beanCopiedFrom->$linkName->beans);
             }
         }
+    }
+
+    /**
+     * Returns arguments for RelateRecordApi for the given action
+     *
+     * @param SugarBean $bean Primary bean
+     * @param array $args This API arguments
+     * @param string|null $action Related record action.
+     *                            If not specified, it's assumed that API arguments are not grouped by action
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function getRelateRecordArguments(SugarBean $bean, array $args, $action = null)
+    {
+        $arguments = array();
+        foreach ($bean->getFieldDefinitions() as $field => $definition) {
+            if (!isset($definition['type']) || $definition['type'] != 'link') {
+                continue;
+            }
+            if (!isset($args[$field])) {
+                continue;
+            }
+            if ($action) {
+                if (!is_array($args[$field])) {
+                    throw new SugarApiExceptionInvalidParameter();
+                }
+                if (!isset($args[$field][$action])) {
+                    continue;
+                }
+                $data = $args[$field][$action];
+            } else {
+                $data = $args[$field];
+            }
+
+            if (!is_array($data)) {
+                throw new SugarApiExceptionInvalidParameter();
+            }
+
+            $arguments[$field] = $data;
+        }
+
+        return $arguments;
+    }
+
+    /**
+     * Links related records to the given bean
+     *
+     * @param SugarBean $bean Primary bean
+     * @param ServiceBase $service
+     * @param array $ids Related record IDs
+     *
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function linkRelatedRecords(SugarBean $bean, ServiceBase $service, array $ids)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($ids as $linkName => $items) {
+            $api->createRelatedLinks($service, array(
+                'module' => $bean->module_name,
+                'record' => $bean->id,
+                'link_name' => $linkName,
+                'ids' => $items,
+            ));
+        }
+    }
+
+    /**
+     * Unlinks related records from the given bean
+     *
+     * @param SugarBean $bean Primary bean
+     * @param ServiceBase $service
+     * @param array $ids Related record IDs
+     *
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function unlinkRelatedRecords(SugarBean $bean, ServiceBase $service, array $ids)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($ids as $linkName => $items) {
+            foreach ($items as $id) {
+                $api->deleteRelatedLink($service, array(
+                    'module' => $bean->module_name,
+                    'record' => $bean->id,
+                    'link_name' => $linkName,
+                    'remote_id' => $id,
+                ));
+            }
+        }
+    }
+
+    /**
+     * Returns RelateRecordApi
+     *
+     * @return RelateRecordApi
+     */
+    protected function getRelateRecordApi()
+    {
+        return new RelateRecordApi();
     }
 }

@@ -230,6 +230,7 @@ class RelateRecordApi extends ModuleApi {
      * @param ServiceBase $api The API class of the request.
      * @param array $args The arguments array passed in from the API.
      * @return array Array of formatted fields.
+     * @throws SugarApiExceptionInvalidParameter If wrong arguments are passed
      * @throws SugarApiExceptionNotFound If bean can't be retrieved.
      */
     public function createRelatedLinks($api, $args)
@@ -243,13 +244,24 @@ class RelateRecordApi extends ModuleApi {
         list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
         $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
 
-        foreach ($args['ids'] as $id) {
+        foreach ($args['ids'] as $record) {
+            if (is_array($record)) {
+                if (!isset($record['id'])) {
+                    throw new SugarApiExceptionInvalidParameter('Related record ID is not specified');
+                }
+                $id = $record['id'];
+                $additionalValues = $record;
+                unset($additionalValues['id']);
+            } else {
+                $id = $record;
+                $additionalValues = array();
+            }
             $relatedBean = BeanFactory::retrieveBean($relatedModuleName, $id);
 
             if (!$relatedBean || $relatedBean->deleted) {
                 throw new SugarApiExceptionNotFound('Could not find the related bean');
             }
-            $primaryBean->$linkName->add(array($relatedBean));
+            $primaryBean->$linkName->add(array($relatedBean), $additionalValues);
 
             $result['related_records'][] = $this->formatBean($api, $args, $relatedBean);
         }
