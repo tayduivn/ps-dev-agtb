@@ -1,4 +1,14 @@
 <?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'HealthCheckScannerMeta.php';
 require_once 'HealthCheckScanner.php';
@@ -49,36 +59,8 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCase($code, $case)
     {
-        switch ($case) {
-            case '402' :
-            case '414' :
-            case '416' :
-            case '419' :
-            case '420' :
-            case '421' :
-            case '422' :
-            case '423' :
-            case '424' :
-            case '425' :
-            case '426' :
-            case '427' :
-            case '428' :
-            case '429' :
-            case '430' :
-            case '431' :
-            case '432' :
-            case '507' :
-            case '514' :
-                $this->markTestIncomplete('Noo');
-                break;
-        }
-
         if (!is_dir(__DIR__ . '/cases/' . $case)) {
-            $this->fail('HealthCheck code ' . $code . ' case ' . $case . ' is not covered');
-        }
-
-        if ($case != '409') {
-//            $this->markTestSkipped('Noo');
+            $this->markTestIncomplete('HealthCheck code ' . $code . ' case ' . $case . ' is not covered');
         }
 
         list($this->scanner, $this->healthCheck) = $this->getHealthCheckObjects($case);
