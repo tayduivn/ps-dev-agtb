@@ -958,8 +958,9 @@
       }
       .cell {
         &.times {
+          border-right: 1px transparent;
           .timeblock {
-            width: 12.5%;
+            width: 11.111%;
             text-align: center;
             line-height: 16px;
             border-radius: 2px;
@@ -1016,7 +1017,7 @@
           border-width: 1px 1px 1px 0;
           border-radius: 0 3px 3px 0;
           position: relative;
-          &.unavailable {
+          &.unavailable, &.loading {
             .overlay {
               position: absolute;
               top: 0;
@@ -1039,21 +1040,39 @@
           .container {
             border-radius: 0 3px 3px 0;
             .timeblock {
-              width: 3.125%;
+              width: 11.111%;
               height: 32px;
               border-left: 1px solid rgb(204,204,204);
-              background-color: rgb(229,229,229);
               &:last-child {
                 border-radius: 0 3px 3px 0;
               }
-              &.filled {
-                background-color: rgb(101,101,101);
-                border-color: rgb(70,70,70);
-              }
-              &.break {
-                background-color: rgb(255,255,255);
-                border-left-color: rgb(55,136,14);
-                border-right: 1px solid rgb(190,0,20);
+              span {
+                width: 25%;
+                height: 26px;
+                display: inline-block;
+                float: left;
+                border-left: 1px solid rgba(204,204,204,.5);
+                box-sizing: border-box;
+                &:first-child {
+                  border: none;
+                }
+                &.schedule {
+                  border-top: 2px solid #ccc;
+                  border-bottom: 2px solid #ccc;
+                  &.start {
+                    border-left: 2px solid rgb(55,136,14);
+                  }
+                  &.end {
+                    border-right: 2px solid rgb(190,0,20);
+                  }
+                }
+                &.start-end {
+                  border-left: 2px solid rgb(55,136,14);
+                }
+                &.busy {
+                  background-color: rgb(101,101,101);
+                  border-color: rgb(70,70,70);
+                }
               }
             }
           }

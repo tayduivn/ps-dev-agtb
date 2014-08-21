@@ -5213,6 +5213,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_EVENT_RESPONSE_NONE' => 'No Reply',
     'LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
 
+    'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
+
     'NTC_SEND_INVITES_CONFIRMATION' => 'Do you want to send an email to all invitees?',
 );
 

@@ -26,6 +26,14 @@
 
     placeholder: 'LBL_SEARCH_SELECT',
 
+    // Number of hours before the meeting start datetime that will be the beginning
+    // of the free/busy schedule timeline.
+    timelineStart: 4,
+    // Number of hours to display on free/busy schedule timeline.
+    timelineLength: 9,
+    // Regular Expression that parses module and ID from url
+    moduleAndIdParserRegExp: new RegExp('/v\\d+/([^/]+)/([^/]+)/freebusy'),
+
     /**
      * @inheritdoc
      *
@@ -80,6 +88,9 @@
                 app.logger.warn(e);
             }
         }
+
+        // get template for timeline header
+        this.timelineHeaderTemplate = app.template.getField(this.type, 'timeline-header.partial', this.module);
     },
 
     /**
@@ -111,6 +122,8 @@
      */
     bindDataChange: function() {
         this.model.on('change:' + this.name, this.render, this);
+        this.model.on('change:date_start', this.renderTimelineInfo, this);
+        this.model.on('change:date_end', this.markStartAndEnd, this);
     },
 
     /**
@@ -165,7 +178,350 @@
 
         this.$('[name=newRow]').hide();
 
+        this.renderTimelineInfo();
+
         return this;
+    },
+
+    /**
+     * Render timeline header, meeting start and end lines, and fill in busy
+     * schedule timeslots.
+     */
+    renderTimelineInfo: function() {
+        var startAndEndDates = this.getStartAndEndDates();
+
+        if ((this.getTimelineBlocks().length > 0) && (!_.isEmpty(startAndEndDates))) {
+            this.renderTimelineHeader();
+            this.getFieldValue().each(function(participant) {
+                this.markStartAndEnd(participant.module, participant.get('id'));
+            }, this);
+            this.fetchFreeBusyInformation();
+        }
+    },
+
+    /**
+     * Render timeline header. It begins 4 hours before the meeting start datetime
+     * and ends 5 hours after.
+     */
+    renderTimelineHeader: function() {
+        var timelineHeader = [],
+            startAndEndDates = this.getStartAndEndDates(),
+            timeFormat,
+            timelineStart;
+
+        if (_.isEmpty(startAndEndDates)) {
+            return;
+        }
+
+        timeFormat = this.getTimeFormat();
+        timelineStart = startAndEndDates.timelineStart;
+
+        for (var index = 0; index < this.timelineLength; index++) {
+            timelineHeader.push({
+                hour: timelineStart.format(timeFormat),
+                alt: (index % 2 === 0)
+            });
+            timelineStart.add('hours', 1);
+        }
+
+        this.$('[data-render=timeline-header]').html(this.timelineHeaderTemplate(timelineHeader));
+    },
+
+    /**
+     * Get the time display format for timeline header.
+     * @returns {string}
+     */
+    getTimeFormat: function() {
+        var timeFormat = app.date.getUserTimeFormat();
+        return (timeFormat.charAt(0) + timeFormat.charAt(4));
+    },
+
+    /**
+     * Mark the start and end datetime on the timeline for all participants.
+     */
+    markStartAndEnd: function() {
+        var startAndEndDates = this.getStartAndEndDates(),
+            timelineBlockStart,
+            timelineBlockEnd,
+            $timelineBlocks;
+
+        this.getTimelineBlocks().removeClass('schedule start end start-end');
+
+        if (_.isEmpty(startAndEndDates)) {
+            return;
+        }
+
+        timelineBlockStart = startAndEndDates.meetingStart.diff(startAndEndDates.timelineStart, 'hours', true) * 4;
+        timelineBlockEnd = (startAndEndDates.meetingEnd.diff(startAndEndDates.timelineStart, 'hours', true) * 4) - 1;
+
+        this.getFieldValue().each(function(participant) {
+            $timelineBlocks = this.getTimelineBlocks(participant.module, participant.get('id'));
+
+            // start and end datetime is the same
+            if (timelineBlockStart - timelineBlockEnd === 1) {
+                $timelineBlocks.eq(timelineBlockStart).addClass('start-end');
+                return;
+            }
+
+            // mark start and end datetime range
+            $timelineBlocks.each(function(index, timelineBlock) {
+                var $block = $(timelineBlock);
+
+                if ((index >= timelineBlockStart) && (index <= timelineBlockEnd)) {
+                    $block.addClass('schedule');
+                }
+
+                if (index === timelineBlockStart) {
+                    $block.addClass('start');
+                }
+
+                if (index === timelineBlockEnd) {
+                    $block.addClass('end');
+                }
+            });
+        }, this);
+    },
+
+    /**
+     * Fetch schedules for Users.
+     */
+    fetchFreeBusyInformation: function() {
+        var self = this,
+            requests = [],
+            participants = this.getFieldValue();
+
+        participants.each(function(participant) {
+            var url,
+                freeBusyFromCache,
+                moduleName = participant.module,
+                id = participant.get('id');
+
+            if (moduleName === 'Users') {
+                freeBusyFromCache = self.getFreeBusyInformationFromCache(moduleName, id);
+
+                if (freeBusyFromCache) {
+                    self.fillInFreeBusyInformation(freeBusyFromCache);
+                } else {
+                    url = app.api.buildURL(moduleName, 'freebusy', {id: id});
+                    requests.push({
+                        url: url.substring(4) //need to remove "rest" from the URL to be compatible with the bulk API
+                    });
+
+                    self.showLoadingOnTimeline(moduleName, id);
+                }
+            }
+        });
+
+        this.callBulkApi(requests, {
+            success: function(data) {
+                _.each(data, function(response) {
+                    self.fillInFreeBusyInformation(response.contents);
+                });
+            },
+            error: function() {
+                app.logger.warn('Error received from server while retrieving free/busy information.');
+                app.alert.show('freebusy-error', {
+                    level: 'warning',
+                    autoClose: true,
+                    messages: 'LBL_ERROR_RETRIEVING_FREE_BUSY'
+                });
+            },
+            complete: function(request) {
+                var data;
+                if (request.params.data) {
+                    data = JSON.parse(request.params.data);
+                    _.each(data.requests, function(requestData) {
+                        var moduleAndId = self.parseModuleAndIdFromUrl(requestData.url);
+                        self.hideLoadingOnTimeline(moduleAndId.module, moduleAndId.id);
+                    });
+                }
+            }
+        });
+    },
+
+    /**
+     * Calls the bulk api to make multiple requests in a single call.
+     * @param {Array} requests
+     * @param {Object} options
+     */
+    callBulkApi: function(requests, options) {
+        if (!_.isEmpty(requests)) {
+            app.api.call('create', app.api.buildURL(null, 'bulk'), {requests: requests}, options);
+        }
+    },
+
+    /**
+     * Fill in the busy slots on the timeline.
+     * @param {Object} scheduleInfo - free/busy info from the server
+     */
+    fillInFreeBusyInformation: function(scheduleInfo) {
+        var startAndEndDates = this.getStartAndEndDates(),
+            timelineStart = startAndEndDates.timelineStart,
+            timelineEnd = startAndEndDates.timelineEnd;
+
+        if (!scheduleInfo || _.isEmpty(startAndEndDates)) {
+            return;
+        }
+
+        this.cacheFreeBusyInformation(scheduleInfo);
+        this.getTimelineBlocks(scheduleInfo.module, scheduleInfo.id).removeClass('busy');
+
+        _.each(scheduleInfo.freebusy, function(busy) {
+            var busyStartDate = app.date(busy.start),
+                busyEndDate = app.date(busy.end);
+
+            if (busyStartDate.isBefore(timelineEnd) && !busyEndDate.isBefore(timelineStart)) {
+                this.setAsBusy(busy, scheduleInfo.module, scheduleInfo.id);
+            }
+        }, this);
+    },
+
+    /**
+     * Mark the timeslot as busy.
+     * @param {Object} busy - start and end datetime that should be marked as busy
+     * @param {string} moduleName
+     * @param {string} id
+     */
+    setAsBusy: function(busy, moduleName, id) {
+        var startAndEndDates = this.getStartAndEndDates(),
+            busyStartDate = app.date(busy.start),
+            busyEndDate = app.date(busy.end),
+            diffInHours,
+            $timelineBlocks = this.getTimelineBlocks(moduleName, id);
+
+        if (_.isEmpty(startAndEndDates)) {
+            return;
+        }
+
+        while (busyStartDate.isBefore(busyEndDate) && busyStartDate.isBefore(startAndEndDates.timelineEnd)) {
+            diffInHours = busyStartDate.diff(startAndEndDates.timelineStart, 'hours', true);
+
+            if (diffInHours >= 0) {
+                $timelineBlocks.eq(diffInHours * 4).addClass('busy');
+            }
+
+            busyStartDate.add('minutes', 15);
+        }
+    },
+
+    /**
+     * Get timeline start and end datetime and meeting start and end datetimes.
+     * Returns empty object if the meeting start and end datetimes are invalid.
+     * @returns {Object}
+     */
+    getStartAndEndDates: function() {
+        var dateStartString = this.model.get('date_start'),
+            dateEndString = this.model.get('date_end'),
+            meetingStart,
+            meetingEnd,
+            result = {};
+
+        if (!dateStartString || !dateEndString) {
+            return result;
+        }
+
+        meetingStart = app.date(dateStartString);
+        meetingEnd = app.date(dateEndString);
+
+        if (!meetingStart.isAfter(meetingEnd)) {
+            result.meetingStart = meetingStart;
+            result.meetingEnd = meetingEnd;
+            result.timelineStart = app.date(meetingStart).subtract('hours', this.timelineStart).minutes(0);
+            result.timelineEnd = app.date(result.timelineStart).add('hours', this.timelineLength).minutes(0);
+        }
+
+        return result;
+    },
+
+    /**
+     * Get timeline timeslots for a given module and ID. If moduleName and ID are
+     * not specified, return timeslots for all timelines.
+     * @param {string} moduleName (optional)
+     * @param {string} id (optional)
+     * @returns {jQuery}
+     */
+    getTimelineBlocks: function(moduleName, id) {
+        var selector;
+
+        if (moduleName && id) {
+            selector = '[data-module=' + moduleName + '][data-id=' + id + ']';
+        } else {
+            selector = '.participant';
+        }
+
+        selector += ' .times .timeblock span';
+
+        return this.$(selector);
+    },
+
+    /**
+     * Cache free/busy data received from the server.
+     * @param {Object} data - the free/busy data from the server
+     */
+    cacheFreeBusyInformation: function(data) {
+        if (_.isUndefined(this._freeBusyCache)) {
+            this._freeBusyCache = [];
+        } else {
+            this._freeBusyCache = _.reject(this._freeBusyCache, function(freebusy) {
+                return (freebusy.id === data.id) && (freebusy.module === data.module);
+            });
+        }
+
+        this._freeBusyCache.push(data);
+    },
+
+    /**
+     * Get free/busy data from cache.
+     * @param {string} moduleName
+     * @param {string} id
+     * @returns {Object}
+     */
+    getFreeBusyInformationFromCache: function(moduleName, id) {
+        return _.findWhere(this._freeBusyCache, {
+            module: moduleName,
+            id: id
+        });
+    },
+
+    /**
+     * Show loading message on timeline.
+     * @param {string} moduleName
+     * @param {string} id
+     */
+    showLoadingOnTimeline: function(moduleName, id) {
+        this.$('[data-module=' + moduleName + '][data-id=' + id + '] .times')
+            .addClass('loading')
+            .find('[data-toggle=loading]')
+            .removeClass('hide');
+    },
+
+    /**
+     * Hide loading message on timeline.
+     * @param {string} moduleName
+     * @param {string} id
+     */
+    hideLoadingOnTimeline: function(moduleName, id) {
+        this.$('[data-module=' + moduleName + '][data-id=' + id + '] .times')
+            .removeClass('loading')
+            .find('[data-toggle=loading]')
+            .addClass('hide');
+    },
+
+    /**
+     * Get module name and ID from URL.
+     * @param {string} url
+     * @returns {Object}
+     */
+    parseModuleAndIdFromUrl: function(url) {
+        var moduleAndId = {},
+            parsed = this.moduleAndIdParserRegExp.exec(url);
+
+        if (parsed) {
+            moduleAndId.module = parsed[1];
+            moduleAndId.id = parsed[2];
+        }
+
+        return moduleAndId;
     },
 
     /**

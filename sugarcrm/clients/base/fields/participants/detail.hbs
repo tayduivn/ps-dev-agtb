@@ -16,41 +16,14 @@
 <div class="participants-schedule">
     <div class="row header">
         <div class="cell"></div>
-        <div class="cell times">
-            <div class="container">
-                <div class="timeblock alt">
-                    <span>9am</span>
-                </div>
-                <div class="timeblock">
-                    <span>10am</span>
-                </div>
-                <div class="timeblock alt">
-                    <span>11am</span>
-                </div>
-                <div class="timeblock">
-                    <span>12am</span>
-                </div>
-                <div class="timeblock alt">
-                    <span>1pm</span>
-                </div>
-                <div class="timeblock">
-                    <span>2pm</span>
-                </div>
-                <div class="timeblock alt">
-                    <span>3pm</span>
-                </div>
-                <div class="timeblock">
-                    <span>4pm</span>
-                </div>
-            </div>
-        </div>
+        <div class="cell times" data-render="timeline-header"></div>
         <div class="cell"></div>
     </div>
     <div class="row spacer">
         <div class="cell"></div>
     </div>
     {{#each value}}
-    <div class="row participant">
+    <div class="row participant" data-module="{{_module}}" data-id="{{id}}">
         <div class="cell profile">
             <div class="container">
                 <div class="avatar">
@@ -72,43 +45,68 @@
                 </div>
             </div>
         </div>
-        <div class="cell times unavailable">
-            <div class="overlay">
-                {{str "LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE" ../module}}
-            </div>
+        <div class="cell times{{#notEq _module 'Users'}} unavailable{{/notEq}}">
+            <div data-toggle="loading" class="overlay hide">{{str "LBL_LOADING"}}</div>
+            {{#notEq _module 'Users'}}
+                <div class="overlay">
+                    {{str "LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE" ../../module}}
+                </div>
+            {{/notEq}}
             <div class="container">
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
-                <div class="timeblock"></div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="timeblock">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
         <div class="cell buttons">

@@ -126,7 +126,11 @@ class ContactsApi extends ListApi
     public function getFreeBusySchedule($api, $args)
     {
         $bean = $this->loadBean($api, $args, 'view');
-        return $bean->getFreeBusySchedule();
+        return array(
+            "module" => $bean->module_name,
+            "id" => $bean->id,
+            "freebusy" => $bean->getFreeBusySchedule(),
+        );
     }
 
     protected function getBean($api, $args)
