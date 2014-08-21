@@ -2916,7 +2916,7 @@ protected function checkQuery($sql, $object_name = false)
 
         if(!empty($fieldDef['len'])) {
             if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
-                                          'clob', 'blob', 'text'))) {
+                                          'clob', 'blob', 'text', 'binary', 'varbinary'))) {
           	    $colType = "$colBaseType({$fieldDef['len']})";
             } elseif(($colBaseType == 'decimal' || $colBaseType == 'float')){
                   if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))

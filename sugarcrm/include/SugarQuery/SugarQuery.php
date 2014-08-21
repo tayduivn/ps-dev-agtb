@@ -372,17 +372,16 @@ class SugarQuery
      * or joining a table against itself
      *
      * @param string $table_name (optional)
+     * @param bool $relatedJoin (optional)
+     * @param bool isLink (optional)
      *
      * @return string
      */
-    public function getJoinTableAlias($table_name = "", $relatedJoin = false)
+    public function getJoinTableAlias($table_name = "", $relatedJoin = false, $isLink = true)
     {
         $table_name = $relatedJoin ? $relatedJoin . '_' . $table_name : $table_name;
-
-        if (isset($this->joinLinkToKey[$table_name])) {
-            return $this->joinLinkToKey[$table_name];
-        } elseif (isset($this->joinTableToKey[$table_name])) {
-            return $this->joinTableToKey[$table_name];
+        if ($alias = $this->getJoinAlias($table_name, $isLink)) {
+            return $alias;
         }
 
         $alias = "jt" . $this->jt_index++;
@@ -845,12 +844,15 @@ class SugarQuery
         return $this->table_beans[$table_name];
     }
 
-    public function getJoinAlias($table_name)
+    public function getJoinAlias($name, $isLink = true)
     {
-        if (isset($this->joinLinkToKey[$table_name])) {
-            return $this->joinLinkToKey[$table_name];
-        } elseif (isset($this->joinTableToKey[$table_name])) {
-            return $this->joinTableToKey[$table_name];
+        if ($isLink) {
+            return isset($this->joinLinkToKey[$name]) ? $this->joinLinkToKey[$name] : false;
+        }
+        if (isset($this->joinLinkToKey[$name])) {
+            return $this->joinLinkToKey[$name];
+        } elseif (isset($this->joinTableToKey[$name])) {
+            return $this->joinTableToKey[$name];
         }
         return false;
     }
