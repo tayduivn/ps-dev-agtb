@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.Meetings.SavebuttonField
- * @alias SUGAR.App.view.fields.BaseMeetingsSavebuttonField
+ * @class View.Fields.Base.SaveAndSendInvitesButtonField
+ * @alias SUGAR.App.view.fields.BaseSaveAndSendInvitesButtonField
  * @extends View.Fields.Base.Rowaction
  */
 ({

@@ -27,7 +27,7 @@ $viewdefs['Meetings']['base']['view']['create'] = array(
         ),
         array(
             'name' => 'save_button',
-            'type' => 'savebutton',
+            'type' => 'save-and-send-invites-button',
             'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn btn-primary',
         ),

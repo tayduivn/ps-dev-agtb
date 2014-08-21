@@ -17,9 +17,9 @@
     extendsFrom: 'ResolveConflictsListView',
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
-     * The invitees field should not displayed on list views. It is removed
+     * The invitees field should not be displayed on list views. It is removed
      * before comparing models so that it doesn't get included.
      */
     _buildFieldDefinitions: function(modelToSave, modelInDb) {

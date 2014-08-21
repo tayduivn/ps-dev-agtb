@@ -1,4 +1,4 @@
-describe('View.Fields.Base.Meetings.SavebuttonField', function() {
+describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
     var app, event, field, sandbox;
 
     beforeEach(function() {
@@ -6,13 +6,13 @@ describe('View.Fields.Base.Meetings.SavebuttonField', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
-        SugarTest.loadComponent('base', 'field', 'savebutton', 'Meetings');
+        SugarTest.loadComponent('base', 'field', 'save-and-send-invites-button');
         SugarTest.testMetadata.set();
 
         field = SugarTest.createField(
             'base',
             'save_button',
-            'savebutton',
+            'save-and-send-invites-button',
             'edit',
             undefined,
             'Meetings',

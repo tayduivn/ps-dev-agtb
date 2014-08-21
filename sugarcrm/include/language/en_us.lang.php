@@ -5204,6 +5204,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_EVENT_RESPONSE_TENTATIVE' => 'Tentative',
     'LBL_CALENDAR_EVENT_RESPONSE_NONE' => 'No Reply',
     'LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
+
+    'NTC_SEND_INVITES_CONFIRMATION' => 'Do you want to send an email to all invitees?',
 );
 
 $app_list_strings['interactions_options'] = array (
