@@ -61,6 +61,13 @@ class CallsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($data['contact_name'], $this->contact->full_name, "Calls name does not match");
     }
 
+    public function testFormatForApi_SendInvitesFlagIsNotReturned()
+    {
+        $helper = new CallsApiHelper(new CallsServiceMockup());
+        $this->bean->send_invites = true;
+        $data = $helper->formatForApi($this->bean);
+        $this->assertArrayNotHasKey('send_invites', $data, 'Should not include the send_invites flag');
+    }
 }
 
 class CallsServiceMockup extends ServiceBase

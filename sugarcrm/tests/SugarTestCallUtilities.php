@@ -58,10 +58,26 @@ class SugarTestCallUtilities
         return $id;
     }
 
+    public static function addCallContactRelation($call_id, $contact_id)
+    {
+        $result = $GLOBALS['db']->query(
+            "SELECT id FROM calls_contacts WHERE call_id='{$call_id}' AND contact_id='{$contact_id}'"
+        );
+        $result = $GLOBALS['db']->fetchByAssoc($result);
+        if (empty($result)) {
+            $id = create_guid();
+            $GLOBALS['db']->query(
+                "INSERT INTO calls_contacts (id, call_id, contact_id) values ('{$id}', '{$call_id}', '{$contact_id}')"
+            );
+        } else {
+            $id = $result['id'];
+        }
+        return $id;
+    }
+
     public static function removeCallUsers()
     {
         $call_ids = self::getCreatedCallIds();
         $GLOBALS['db']->query(sprintf("DELETE FROM calls_users WHERE call_id IN ('%s')", implode("', '", $call_ids)));
     }
 }
-?>

@@ -563,13 +563,25 @@ class Call extends SugarBean {
 			$this->contacts_arr =	array();
 		}
 
+        if (empty($this->contacts_arr) && $this->load_relationship('contacts')) {
+            $this->contacts_arr = $this->contacts->get();
+        }
+
 		if(!is_array($this->users_arr)) {
 			$this->users_arr =	array();
 		}
 
+        if (empty($this->users_arr) && $this->load_relationship('users')) {
+            $this->users_arr = $this->users->get();
+        }
+
         if(!is_array($this->leads_arr)) {
 			$this->leads_arr =	array();
 		}
+
+        if (empty($this->leads_arr) && $this->load_relationship('leads')) {
+            $this->leads_arr = $this->leads->get();
+        }
 
 		foreach($this->users_arr as $user_id) {
 			$notify_user = BeanFactory::getBean('Users', $user_id);

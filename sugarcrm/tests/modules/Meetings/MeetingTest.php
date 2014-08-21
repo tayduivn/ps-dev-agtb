@@ -51,6 +51,10 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
@@ -224,8 +228,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
-
-        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsRecipients()
@@ -244,10 +246,5 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
-
-        SugarTestMeetingUtilities::removeMeetingUsers();
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 }

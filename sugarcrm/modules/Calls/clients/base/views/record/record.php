@@ -20,8 +20,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
             'showOn' => 'edit',
         ),
         array(
-            'type' => 'rowaction',
-            'event' => 'button:save_button:click',
+            'type' => 'save-and-send-invites-button',
             'name' => 'save_button',
             'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn btn-primary',
