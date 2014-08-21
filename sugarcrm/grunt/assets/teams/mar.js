@@ -10,5 +10,4 @@
  */
 
 [
-    'include/javascript/sugar7/metadata-manager.js'
 ]
