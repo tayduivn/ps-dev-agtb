@@ -286,7 +286,9 @@ class RelateRecordApi extends ModuleApi {
         $relatedArray = array();
 
         // Make sure there is a related object
-        $relObj = $primaryBean->$linkName->getRelationshipObject();
+        if (!empty($primaryBean->$linkName)) {
+            $relObj = $primaryBean->$linkName->getRelationshipObject();
+        }
 
         if (!empty($relObj)) {
             if ($primaryBean->module_name === $relObj->getLHSModule()){
