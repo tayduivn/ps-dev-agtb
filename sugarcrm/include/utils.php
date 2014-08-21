@@ -265,6 +265,8 @@ function get_sugar_config_defaults()
      */
 
     $sugar_config_defaults = array (
+    'oauth_token_life' => 86400, // 60*60*24
+    'oauth_token_expiry' => 0,
     'admin_export_only' => false,
     'export_delimiter' => ',',
     'cache_dir' => 'cache/',
