@@ -1,0 +1,8 @@
+<?php
+
+class S_513_HealthCheckScannerCasesTestWrapper extends HealthCheckScannerCasesTestWrapper
+{
+    public $md5_files = array(
+        './modules/Accounts/Account.php' => 'fakeMD5'
+    );
+}

@@ -67,6 +67,8 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
             case '430' :
             case '431' :
             case '432' :
+            case '507' :
+            case '514' :
                 $this->markTestIncomplete('Noo');
                 break;
         }
