@@ -134,28 +134,12 @@
             return;
         }
         this.on('render', this.initHolders, this);
-        this.before('start', this.checkAvailable, this, true);
         this.collection.on('massupdate:always', this.updateProgress, this);
         this.collection.on('massupdate:start', this.showProgress, this);
         this.collection.on('massupdate:end', this.hideProgress, this);
         this.collection.on('massupdate:fail', this.checkError, this);
         this.collection.on('massupdate:resume', this.resumeProcess, this);
         this.collection.on('massupdate:pause', this.pauseProcess, this);
-    },
-
-    /**
-     * Before displaying the progress popup,
-     * verify that the collection contains suitable size.
-     * @return {Boolean} If the job can be executed once,
-     *    it returns false to avoid rendering.
-     */
-    checkAvailable: function() {
-        if (this.collection.chunks.length === this.collection.length) {
-            this.unbindData();
-            this.collection.on('massupdate:end', this.hideProgress, this);
-            return false;
-        }
-        return true;
     },
 
     /**
@@ -334,9 +318,6 @@
     showProgress: function() {
         this.initLabels();
         this.totalRecord = this.getTotalRecords();
-        if (this.triggerBefore('start') === false) {
-            return false;
-        }
         this._startTime = new Date().getTime();
 
         //restore back previous button status.

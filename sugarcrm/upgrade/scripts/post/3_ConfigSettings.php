@@ -61,5 +61,31 @@ class SugarUpgradeConfigSettings extends UpgradeScript
         // Backward compatibilty modules look and feel must be in accordance to
         // Sidecar modules, thus there is only one possible theme: `RacerX`
         $this->upgrader->config['default_theme'] = 'RacerX';
+
+        $this->removeMassActionsDefaultSettings();
+    }
+
+    /**
+     * Removes system's mass actions settings if they are same as pre - 7.6.0
+     * default settings.
+     */
+    private function removeMassActionsDefaultSettings()
+    {
+        if (version_compare($this->from_version, '7.6.0', '>') || empty($this->upgrader->config['mass_actions'])) {
+            return;
+        }
+        $this->log('Checking mass config action values...');
+        $settings = array(
+            'mass_update_chunk_size' => 20,
+            'mass_delete_chunk_size' => 20,
+            'mass_link_chunk_size' => 20,
+        );
+        foreach ($settings as $setting => $previousDefaultValue) {
+            if (!empty($this->upgrader->config['mass_actions'][$setting]) &&
+                $this->upgrader->config['mass_actions'][$setting] === $previousDefaultValue
+            ) {
+                unset($this->upgrader->config['mass_actions'][$setting]);
+            }
+        }
     }
 }
