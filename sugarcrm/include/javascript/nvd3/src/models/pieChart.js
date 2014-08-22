@@ -187,13 +187,13 @@ nv.models.pieChart = function () {
         holeWrap.append('text')
           .text(hole)
           .attr('text-anchor', 'middle')
-          .attr('class','nv-pie-hole')
-          //.attr('dy', '.71')
+          .attr('class', 'nv-pie-hole')
+          .attr('dy', '.35em')
           .style('fill', '#333')
           .style('font-size', '32px')
           .style('font-weight', 'bold');
         holeWrap
-          .attr('transform', 'translate('+ (innerMargin.left + innerWidth / 2) + ',' + (innerMargin.top + innerHeight / 2) +')');
+          .attr('transform', 'translate(' + (innerWidth / 2 + innerMargin.left) + ',' + (innerHeight / 2 + innerMargin.top) + ')');
       }
 
       //============================================================
@@ -284,7 +284,7 @@ nv.models.pieChart = function () {
   chart.legend = legend;
 
   d3.rebind(chart, pie, 'id', 'x', 'y', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
+  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'showLeaders', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
 
   chart.colorData = function (_) {
     var colors = function (d, i) {
