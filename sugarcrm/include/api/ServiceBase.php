@@ -157,7 +157,9 @@ abstract class ServiceBase {
        $login_exc = new SugarApiExceptionNeedLogin($message);
        $auth = AuthenticationController::getInstance();
        if($auth->isExternal()) {
-           $login_exc->setExtraData("url", $auth->getLoginUrl());
+            $login_exc->setExtraData("url", $auth->getLoginUrl(array(
+                'platform' => $this->platform,
+            )))->setExtraData('platform', $this->platform);
        }
        throw $login_exc;
     }
