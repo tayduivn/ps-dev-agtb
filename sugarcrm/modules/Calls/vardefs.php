@@ -35,6 +35,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '2',
     'comment' => 'Call duration, hours portion',
 	'required' => true,
+    'massupdate' => false,
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
 
   ),
@@ -48,6 +49,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'group'=>'duration_hours',
     'importable' => 'required',
     'comment' => 'Call duration, minutes portion',
+    'massupdate' => false,
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
 
@@ -60,6 +62,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
 	'required' => true,
+    'massupdate' => false,
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
