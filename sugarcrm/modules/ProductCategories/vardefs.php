@@ -253,10 +253,10 @@ $dictionary['ProductCategory'] = array(
         'member_categories' => array(
             'lhs_module' => 'ProductCategories',
             'lhs_table' => 'product_categories',
-            'lhs_key' => 'parent_id',
+            'lhs_key' => 'id',
             'rhs_module' => 'ProductCategories',
             'rhs_table' => 'product_categories',
-            'rhs_key' => 'id',
+            'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many'
         ),
         'product_categories_modified_user' =>
