@@ -11,6 +11,10 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+if (!defined('SUGAR_BASE_DIR')) {
+    define('SUGAR_BASE_DIR', str_replace('\\', '/', realpath(dirname(__FILE__) . '/../..')));
+}
+
 /*
  * First step in removing getimage and getYUIComboFile -- at least this bypasses most of the app,
  * making assets load faster.

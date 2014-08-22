@@ -17,6 +17,12 @@ interface SugarAuthenticateExternal
 {
     /**
      * Get URL to follow to get logged in
+     *
+     * @param array $returnQueryVars Query variables that should be added to the callback URL
      */
-    public function getLoginUrl();
+    public function getLoginUrl($returnQueryVars = array());
+    /**
+     * Get URL to follow to get logged out
+     */
+    public function getLogoutUrl();
 }

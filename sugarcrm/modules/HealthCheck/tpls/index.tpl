@@ -49,7 +49,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span></span>
             </div>
             <div class="progress-section span5 pull-right">
@@ -88,7 +88,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span>Review health check results</span>
             </div>
             <div class="progress-section span5 pull-right">
@@ -141,7 +141,7 @@
                         $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", item.report, "</h1><p>", item.log];
+                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", item.title, "</h1><p>", item.descr];
                             if (data[i].kb) {
                                 html.push("<a href='");
                                 html.push(data[i].kb);

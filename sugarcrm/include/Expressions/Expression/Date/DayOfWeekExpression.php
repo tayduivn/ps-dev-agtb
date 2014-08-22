@@ -39,6 +39,9 @@ class DayOfWeekExpression extends NumericExpression
             var day,
                 time = this.getParameters().evaluate();
 
+            if (_.isString(time) && _.isEmpty(time)) {
+                return '';
+            }
             //Checks to see if the user is on a sidecar view and return results as a string
             if (this.context.view) {
                 day = App.date(time).format('d').toString();
@@ -46,7 +49,7 @@ class DayOfWeekExpression extends NumericExpression
                 day = new Date(time).getDay();
             }
 
-            return day;
+           return day;
 EOQ;
     }
 

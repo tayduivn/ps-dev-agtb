@@ -49,8 +49,8 @@ class AuthenticationController
 	/**
 	 * Returns an instance of the authentication controller
 	 *
-	 * @param string $type this is the type of authetnication you want to use default is SugarAuthenticate
-	 * @return an instance of the authetnciation controller
+     * @param string $type this is the type of authentication you want to use default is SugarAuthenticate
+     * @return AuthenticationController An instance of the authentication controller
 	 */
 	public static function getInstance($type = null)
 	{
@@ -64,6 +64,16 @@ class AuthenticationController
 
 		return self::$authcontrollerinstance;
 	}
+
+	/**
+	 * Set currect instance (for testing)
+	 * @param AuthenticationController $instance
+	 */
+    public static function setInstance($instance)
+	{
+	    self::$authcontrollerinstance = $instance;
+	}
+
 
 	/**
 	 * This function is called when a user initially tries to login.
@@ -224,12 +234,26 @@ class AuthenticationController
 
 	/**
 	 * Get URL for external login
+     *
+     * @param array $returnQueryVars Query variables that should be added to the return URL
 	 * @return string
 	 */
-	public function getLoginUrl()
+    public function getLoginUrl(array $returnQueryVars = array())
 	{
 	    if($this->isExternal()) {
-	        return $this->authController->getLoginUrl();
+            return $this->authController->getLoginUrl($returnQueryVars);
+	    }
+	    return false;
+	}
+
+	/**
+	 * Get URL for external login
+	 * @return string
+	 */
+	public function getLogoutUrl()
+	{
+	    if($this->isExternal()) {
+	        return $this->authController->getLogoutUrl();
 	    }
 	    return false;
 	}

@@ -45,7 +45,7 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'email',
+                    'name' => 'email1',
                     'enabled' => true,
                     'default' => true,
                 ),

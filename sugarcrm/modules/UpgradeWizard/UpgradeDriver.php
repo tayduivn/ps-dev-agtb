@@ -821,6 +821,15 @@ abstract class UpgradeDriver
         }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
+        $db = DBManagerFactory::getInstance();
+        $manifest = $this->getManifest();
+        $to_version = $this->implodeVersion($manifest['version'], 4);
+        if (version_compare($this->from_version, 7, '<')
+            && version_compare($to_version, '7.5.0.0', '=')
+            && !$db instanceof MysqlManager
+        ) {
+            return $this->error("Can't upgrade version 6.x to 7.5.0.0 on non-Mysql database", true);
+        }
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {
@@ -999,7 +1008,7 @@ abstract class UpgradeDriver
         	if(!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
         		$matches_empty = false;
         		foreach($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
-        			if($match == $this->from_version) {
+                    if ($this->implodeVersion($match, 4) == $this->implodeVersion($this->from_version, 4)) {
         				$version_ok = true;
         				break;
         			}
@@ -1058,6 +1067,8 @@ abstract class UpgradeDriver
     {
         $user = BeanFactory::getBean('Users');
         $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
+        // Disable logic hooks.
+        $user->processed = true;
         $user->retrieve($user_id);
         return $user;
     }

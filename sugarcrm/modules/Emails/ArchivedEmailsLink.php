@@ -183,11 +183,11 @@ class ArchivedEmailsLink extends Link2
 
         return "INNER JOIN (\n".
                 // directly assigned emails
-            "select eb.email_id, 'direct' source FROM emails_beans eb where eb.bean_module = '{$this->focus->module_dir}'
+            "select eb.email_id FROM emails_beans eb where eb.bean_module = '{$this->focus->module_dir}'
                 AND eb.bean_id = $bean_id AND eb.deleted=0\n" .
   " UNION ".
         // Related by directly by email
-            "select DISTINCT eear.email_id, 'relate' source  from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            "select DISTINCT eear.email_id  from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
             ON eabr.bean_id = $bean_id AND eabr.bean_module = '{$this->focus->module_dir}' AND
             eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0\n" .
              ") email_ids ON $table_name.id=email_ids.email_id ";
