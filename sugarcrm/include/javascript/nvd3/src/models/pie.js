@@ -22,6 +22,7 @@ nv.models.pie = function() {
       startAngle = false,
       endAngle = false,
       donutRatio = 0.447,
+      durationMs = 0,
       color = nv.utils.defaultColor(),
       fill = color,
       classes = function(d, i) { return 'nv-slice nv-series-' + i; },
@@ -146,15 +147,17 @@ nv.models.pie = function() {
               d3.event.stopPropagation();
             });
 
-      slices
-        .attr('fill', function(d, i) { return fill(d.data, i); })
-        .attr('stroke', function(d, i) { return fill(d.data, i); });
-
       var paths = ae.append('path')
             .each(function(d) { this._current = d; });
             //.attr('d', arc);
 
-      d3.transition(slices.select('path'))
+      slices.select('path')
+        .style('fill', function(d, i) { return fill(d.data, d.data.series); })
+        .style('stroke', '#ffffff')
+        .style('stroke-width', 3)
+        .style('stroke-opacity', 1);
+
+      slices.select('path').transition().duration(durationMs)
         .attr('d', arc)
         .attrTween('d', arcTween);
 
@@ -194,8 +197,9 @@ nv.models.pie = function() {
               });
 
             group.append('rect')
-                .style('stroke', '#fff')
                 .style('fill', '#fff')
+                .style('fill-opacity', 0.4)
+                .style('stroke-opacity', 0)
                 .attr('rx', 3)
                 .attr('ry', 3);
 
@@ -204,7 +208,7 @@ nv.models.pie = function() {
                 .style('fill', '#000');
           });
 
-        slices.select('.nv-label').transition()
+        slices.select('.nv-label').transition().duration(durationMs)
           .attr('transform', function(d) {
             if (labelSunbeamLayout) {
               d.outerRadius = arcRadius + 10; // Set Outer Coordinate

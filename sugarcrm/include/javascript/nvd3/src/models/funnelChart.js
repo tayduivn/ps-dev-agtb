@@ -18,6 +18,7 @@ nv.models.funnelChart = function () {
       },
       x,
       y,
+      durationMs = 0,
       state = {},
       strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},
@@ -68,7 +69,7 @@ nv.models.funnelChart = function () {
           innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
 
       chart.update = function () {
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       };
 
       chart.container = this;
@@ -100,9 +101,17 @@ nv.models.funnelChart = function () {
 
       //------------------------------------------------------------
       // Process data
+      //add series index to each data point for reference
+      var funnelData = data.map(function(d, i) {
+          d.series = i;
+          d.values.map(function(v) {
+            v.series = d.series;
+          });
+          return d;
+        });
 
       //set state.disabled
-      state.disabled = data.map(function (d) { return !!d.disabled; });
+      state.disabled = funnelData.map(function(d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup Scales
@@ -113,17 +122,17 @@ nv.models.funnelChart = function () {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([data]),
+      var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([funnelData]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-funnelChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
@@ -163,7 +172,7 @@ nv.models.funnelChart = function () {
           .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(data)
+          .datum(funnelData)
           .call(legend);
 
         legend
@@ -186,16 +195,16 @@ nv.models.funnelChart = function () {
         .height(innerHeight);
 
       funnelWrap
-        .datum(data.filter(function (d) { return !d.disabled; }))
+        .datum(funnelData.filter(function (d) { return !d.disabled; }))
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-        .transition()
+        .transition().duration(durationMs)
           .call(funnel);
 
       //------------------------------------------------------------
       // Setup Scales (again, not sure why it has to be here and not above?)
 
       var series1 = [{x:0,y:0}];
-      var series2 = data.filter(function (d) {
+      var series2 = funnelData.filter(function (d) {
               return !d.disabled;
             })
             .map(function (d) {
@@ -226,7 +235,7 @@ nv.models.funnelChart = function () {
 
       yAxisWrap
         .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerWidth) + ',' + innerMargin.top + ')')
-        .transition().duration(chart.delay())
+        .transition().duration(durationMs)
           .call(yAxis);
 
       //============================================================
@@ -236,18 +245,18 @@ nv.models.funnelChart = function () {
       legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function (d) { return !d.disabled; }).length) {
-          data.map(function (d) {
+        if (!funnelData.filter(function (d) { return !d.disabled; }).length) {
+          funnelData.map(function (d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function (d) { return !!d.disabled; });
+        state.disabled = funnelData.map(function (d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('tooltipShow', function (e) {
@@ -271,13 +280,13 @@ nv.models.funnelChart = function () {
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function (e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          funnelData.forEach(function (series,i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
         }
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('chartClick', function (e) {
@@ -325,7 +334,7 @@ nv.models.funnelChart = function () {
           return nv.utils.defaultColor()(d, i);
         },
         classes = function (d, i) {
-          return 'nv-group nv-series-' + i;
+          return 'nv-bar positive';
         },
         type = arguments[0],
         params = arguments[1] || {};
@@ -345,7 +354,7 @@ nv.models.funnelChart = function () {
         };
         classes = function (d, i) {
           var iClass = (i * (params.step || 1)) % 14;
-          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
+          return 'nv-bar positive ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
         };
         break;
     }
