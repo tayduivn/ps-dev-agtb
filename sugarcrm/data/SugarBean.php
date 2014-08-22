@@ -2174,7 +2174,7 @@ class SugarBean
             $this->current_notify_user = $notify_user;
 
             $templateName = $this->getTemplateNameForNotificationEmail();
-            $xtpl         = $this->createNotificationEmailTemplate($templateName);
+            $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
             $subject      = $xtpl->text($templateName . "_Subject");
             $body         = trim($xtpl->text($templateName));
 
@@ -2259,15 +2259,21 @@ class SugarBean
    /**
     * This function handles create the email notifications email.
     * @param string $templateName the name of the template used for the email content
+    * @param null|User $notify_user User object, current user if not specified
     * @return XTemplate
     */
-    protected function createNotificationEmailTemplate($templateName) {
+    protected function createNotificationEmailTemplate($templateName, $notify_user = null)
+    {
         global $sugar_config,
                $current_user,
                $sugar_version,
             $locale;
 
-        $currentLanguage = $locale->getAuthenticatedUserLanguage();
+        if ($notify_user && !empty($notify_user->preferred_language)) {
+            $currentLanguage = $notify_user->preferred_language;
+        } else {
+            $currentLanguage = $locale->getAuthenticatedUserLanguage();
+        }
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
