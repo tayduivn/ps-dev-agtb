@@ -102,18 +102,18 @@ class HealthCheckScannerMeta
             'report' => 'isNotMBModule',
             'bucket' => self::STUDIO_MB_BWC,
         ),
-        305 => array(
-            'report' => 'badVardefsKey',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        306 => array(
-            'report' => 'badVardefsRelate',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        307 => array(
-            'report' => 'badVardefsLink',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
+//        305 => array(
+//            'report' => 'badVardefsKey',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        306 => array(
+//            'report' => 'badVardefsRelate',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        307 => array(
+//            'report' => 'badVardefsLink',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
         308 => array(
             'report' => 'vardefHtmlFunction',
             'bucket' => self::STUDIO_MB_BWC,
@@ -130,18 +130,18 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionName',
             'bucket' => self::STUDIO_MB_BWC
         ),
-        312 => array(
-            'report' => 'badVardefsName',
-            'bucket' => self::STUDIO_MB_BWC
-        ),
+//        312 => array(
+//            'report' => 'badVardefsName',
+//            'bucket' => self::STUDIO_MB_BWC
+//        ),
         313 => array(
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
         ),
-        314 => array(
-            'report' => 'badVardefsMultienum',
-            'bucket' => self::STUDIO_MB_BWC
-        ),
+//        314 => array(
+//            'report' => 'badVardefsMultienum',
+//            'bucket' => self::STUDIO_MB_BWC
+//        ),
 
         // BUCKET E
         401 => array(
@@ -160,10 +160,11 @@ class HealthCheckScannerMeta
             'report' => 'logicHookAfterUIFooter',
             'bucket' => self::CUSTOM,
         ),
-        405 => array(
-            'report' => 'incompatIntegration',
-            'bucket' => self::CUSTOM,
-        ),
+        //Moved incompatIntegration to F bucket. Use this code for new reports
+//        405 => array(
+//            'report' => 'incompatIntegration',
+//            'bucket' => self::CUSTOM,
+//        ),
         406 => array(
             'report' => 'hasCustomViews',
             'bucket' => self::CUSTOM,
@@ -208,24 +209,24 @@ class HealthCheckScannerMeta
             'report' => 'byRefInHookFile',
             'bucket' => self::CUSTOM,
         ),
-        417 => array(
-            'report' => 'incompatModule',
-            'bucket' => self::CUSTOM,
-        ),
+//        417 => array(
+//            'report' => 'incompatModule',
+//            'bucket' => self::CUSTOM,
+//        ),
         418 => array(
             'report' => 'subpanelLinkNonExistModule',
             'bucket' => self::CUSTOM,
         ),
         419 => array(
-            'report' => 'badVardefsKeyCustom',
+            'report' => 'badVardefsKey',
             'bucket' => self::CUSTOM,
         ),
         420 => array(
-            'report' => 'badVardefsRelateCustom',
+            'report' => 'badVardefsRelate',
             'bucket' => self::CUSTOM,
         ),
         421 => array(
-            'report' => 'badVardefsLinkCustom',
+            'report' => 'badVardefsLink',
             'bucket' => self::CUSTOM,
         ),
         422 => array(
@@ -269,11 +270,11 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM
         ),
         432 => array(
-            'report' => 'badVardefsNameCustom',
+            'report' => 'badVardefsName',
             'bucket' => self::CUSTOM
         ),
         433 => array(
-            'report' => 'badVardefsMultienumCustom',
+            'report' => 'badVardefsMultienum',
             'bucket' => self::CUSTOM
         ),
         434 => array(
@@ -345,6 +346,14 @@ class HealthCheckScannerMeta
         516 => array(
             'report' => 'deletedFilesReferenced',
             'bucket' => self::MANUAL
+        ),
+        517 => array(
+            'report' => 'incompatIntegration',
+            'bucket' => self::MANUAL,
+        ),
+        518 => array(
+            'report' => 'incompatModule',
+            'bucket' => self::MANUAL,
         ),
 
 

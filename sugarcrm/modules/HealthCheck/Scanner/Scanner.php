@@ -1727,7 +1727,7 @@ ENDP;
                 // Assume those types are valid, cause they used in stock modules
                 $validNameTypes = array('id', 'fullname', 'varchar');
                 if (!in_array($value['type'], $validNameTypes)) {
-                    $this->updateStatus('badVardefsName' . $custom, $value['type'], $module);
+                    $this->updateStatus('badVardefsName', $value['type'], $module);
                     continue;
                 }
             }
@@ -1770,7 +1770,7 @@ ENDP;
                             $result = count_chars(implode('', $result), 3);
 
                             if ($result) {
-                                $this->updateStatus("badVardefsMultienum" . $custom, $value['name'], $value['options'], $result);
+                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result);
                             }
                         }
 
@@ -1778,19 +1778,19 @@ ENDP;
                     case 'link':
                         $seed->load_relationship($key);
                         if(empty($seed->$key)) {
-                            $this->updateStatus("badVardefsLink" . $custom, $key);
+                            $this->updateStatus("badVardefsLink", $key);
                         }
                         break;
                     case 'relate':
                         if(!empty($value['link'])) {
                             $lname = $value['link'];
                             if(empty($fieldDefs[$lname])) {;
-                                $this->updateStatus("badVardefsKey" . $custom, $key, $lname);
+                                $this->updateStatus("badVardefsKey", $key, $lname);
                                 break;
                             }
                             $seed->load_relationship($lname);
                             if(empty($seed->$lname)) {
-                                $this->updateStatus("badVardefsRelate" . $custom, $key);
+                                $this->updateStatus("badVardefsRelate", $key);
                                 break;
                             }
                             $relatedModuleName = $seed->$lname->getRelatedModuleName();
