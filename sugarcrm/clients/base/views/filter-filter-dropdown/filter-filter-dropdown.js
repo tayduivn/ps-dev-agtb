@@ -19,6 +19,7 @@
  */
 ({
     tagName: "span",
+    className: "table-cell",
 
     events: {
         "click .choice-filter.choice-filter-clickable": "handleEditFilter",

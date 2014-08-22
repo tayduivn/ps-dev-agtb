@@ -2893,6 +2893,26 @@ protected function checkQuery($sql, $object_name = false)
         }
     }
 
+    /**
+     * Get default value for database from field definition.
+     * @param array $fieldDef
+     * @return string
+     */
+    protected function getDefaultFromDefinition($fieldDef)
+    {
+        $default = '';
+        if (!empty($fieldDef['no_default'])) {
+            // nothing to do
+        } elseif ($this->getFieldType($fieldDef) == 'bool') {
+            if (isset($fieldDef['default'])) {
+                $default = " DEFAULT " . (int)isTruthy($fieldDef['default']);
+            }
+        } elseif (isset($fieldDef['default'])) {
+            $default = " DEFAULT " . $this->massageValue($fieldDef['default'], $fieldDef);
+        }
+        return $default;
+    }
+
 	/**
 	 * Returns the defintion for a single column
 	 *
@@ -2934,18 +2954,7 @@ protected function checkQuery($sql, $object_name = false)
             }
         }
 
-        $default = '';
-
-        // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
-        if (!empty($fieldDef['no_default'])) {
-            // nothing to do
-        } elseif ($type == 'bool') {
-            if (isset($fieldDef['default'])) {
-                $default = " DEFAULT " . (int)isTruthy($fieldDef['default']);
-            }
-        } elseif (isset($fieldDef['default'])) {
-            $default = " DEFAULT " . $this->massageValue($fieldDef['default'], $fieldDef);
-        }
+        $default = $this->getDefaultFromDefinition($fieldDef);
 
 		$auto_increment = '';
 		if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
@@ -3316,6 +3325,7 @@ protected function checkQuery($sql, $object_name = false)
      * @param array|null $options Array of optional arguments
      *                   field_filter => Array of filter names to be inspected (NULL means all fields)
      *                   for => Who are we getting the changes for, options are audit (default) and activity
+     *                   excludeType => Types of fields to exclude
      * @return array
      */
     public function getDataChanges(SugarBean &$bean, array $options = null)
@@ -3325,7 +3335,11 @@ protected function checkQuery($sql, $object_name = false)
         $fields = $bean->field_defs;
 
         if (!empty($options['for']) && $options['for'] == 'activity') {
-            $fields = $bean->getActivityEnabledFieldDefinitions();
+            $excludeType = array('datetime');
+            if (isset($options['excludeType'])) {
+                $excludeType = $options['excludeType'];
+            }
+            $fields = $bean->getActivityEnabledFieldDefinitions($excludeType);
         } elseif (!empty($options['for']) && $options['for'] == 'audit') {
             $fields = $bean->getAuditEnabledFieldDefinitions();
         }

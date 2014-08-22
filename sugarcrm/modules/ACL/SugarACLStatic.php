@@ -165,16 +165,22 @@ class SugarACLStatic extends SugarACLStrategy
             $action = self::$action_translate[$action];
         }
 
+        // Some modules (Trackers, TrackerSessions, TrackerPerfs, TrackerQueries) use special acltype
+        $aclType = 'module';
+        if (!empty($bean->acltype)) {
+            $aclType = $bean->acltype;
+        }
+
         switch ($action)
         {
             case 'import':
             case 'list':
-                return ACLController::checkAccessInternal($module, $action, true);
+                return ACLController::checkAccessInternal($module, $action, true, $aclType);
             case 'delete':
             case 'view':
             case 'export':
             case 'massupdate':
-                return ACLController::checkAccessInternal($module, $action, $is_owner);
+                return ACLController::checkAccessInternal($module, $action, $is_owner, $aclType);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
                     if(!empty($bean->fetched_row) && !empty($bean->fetched_row['id']) && !empty($bean->fetched_row['assigned_user_id']) && !empty($bean->fetched_row['created_by'])){
@@ -194,7 +200,7 @@ class SugarACLStatic extends SugarACLStrategy
                 }
             case 'popupeditview':
             case 'editview':
-                return ACLController::checkAccessInternal($module,'edit', $is_owner);
+                return ACLController::checkAccessInternal($module,'edit', $is_owner, $aclType);
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

@@ -25,17 +25,16 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         6 => "\"date_entered\"|\"description\"\n\"3/26/2011 10:02am\"|\"test description\"",
     );
 
-    public function setUp()
+    protected function setUp()
     {
-        // if beanList got unset, set it back
-        if (!isset($GLOBALS['beanList'])) {
-            require('include/modules.php');
-            $GLOBALS['beanList'] = $beanList;
-        }
+        parent::setUp();
+
+        SugarTestHelper::setUp('files');
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
+        SugarTestHelper::tearDown();
     }
 
     public function providerCsvData()
@@ -57,6 +56,10 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetCsvProperties($content_idx, $delimiter, $enclosure, $date, $time, $header)
     {
         $file = $GLOBALS['sugar_config']['tmp_dir'].'test.csv';
+        SugarTestHelper::saveFile($file);
+
+        $dirName = dirname($file);
+        SugarTestHelper::ensureDir($dirName);
         $ret = file_put_contents($file, self::$CsvContent[$content_idx]);
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.$content_idx);
 
