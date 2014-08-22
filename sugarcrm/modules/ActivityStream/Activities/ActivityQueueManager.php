@@ -276,7 +276,9 @@ class ActivityQueueManager
                 $def = $bean->getFieldDefinition($fieldName);
 
                 //strip out changes where the field has activity_enabled is false
-                if (isset($def['activity_enabled']) && $def['activity_enabled'] === false) {
+                // According to documentation the audited option is still supported and a field with
+                // neither of the options should not be in activities.
+                if (empty($def['audited']) && empty($def['activity_enabled'])) {
                     unset($data['changes'][$fieldName]);
                     continue;
                 }
