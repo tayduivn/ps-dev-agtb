@@ -152,10 +152,21 @@
                         id: 'temp',
                         field: self.name,
                         fileId: fileId
-                    });
+                    }, {keep: true});
                     // show image
                     var image = $('<img>').addClass('hide').attr('src', url).on('load', $.proxy(self.resizeWidget, self));
                     self.$('.image_preview').html(image);
+
+                    // Add the guid to the list of fields to set on the model.
+                    if (fileId) {
+                        if (!self.model.fields[self.name + '_guid']) {
+                            self.model.fields[self.name + '_guid'] = {
+                                type: 'file_temp',
+                                group: self.name
+                            };
+                        }
+                        self.model.set(self.name + '_guid', fileId);
+                    }
 
                     //Trigger a change event with param "image" so the view can detect that the dom changed.
                     self.model.trigger("change", "image");
@@ -316,19 +327,20 @@
         }
     },
 
-    /****
-     * Custom requiredValidator for image field because we need to check if the input inside the view is empty or not.
+    /**
+     * Custom requiredValidator for image field because we need to check if the
+     * input inside the view is empty or not.
      *
-     + @param {Object} fields Hash of field definitions to validate.
-     + @param {Object} errors Error validation errors
-     + @param {Function} callback Async.js waterfall callback
+     * @param {Object} fields Hash of field definitions to validate.
+     * @param {Object} errors Error validation errors.
+     * @param {Function} callback Async.js waterfall callback.
      */
     _doValidateImageField: function(fields, errors, callback) {
-        var $input = this.$('input[type=file]');
-        if (this.def.required && (_.isEmpty($input) || _.isEmpty($input.val()))) {
+        if (this.def.required && !this.model.get(this.name + '_guid')) {
             errors[this.name] = errors[this.name] || {};
             errors[this.name].required = true;
         }
+
         callback(null, fields, errors);
     },
 
