@@ -32,11 +32,9 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", this.render, this);
-        app.events.on("app:sync:complete", this.setCurrentUserData, this);
         app.events.on("bwc:profile:entered", this.bwcProfileEntered, this);
         app.events.on("bwc:avatar:removed", this.bwcAvatarRemoved, this);
         app.user.on("change:picture", this.setCurrentUserData, this);
-        app.user.on("change:full_name", this.setCurrentUserData, this);
     },
 
     /**
@@ -163,13 +161,13 @@
         this.userId = app.user.get('id');
         var picture = app.user.get("picture");
 
-        this.pictureUrl = picture ? (this.pictureUrl || app.api.buildFileURL({
+        this.pictureUrl = picture ? app.api.buildFileURL({
             module: "Users",
-            id: app.user.get("id"),
+            id: this.userId,
             field: "picture"
         }, {
             cleanCache: true
-        })) : '';
+        }) : '';
 
         this.render();
     },
