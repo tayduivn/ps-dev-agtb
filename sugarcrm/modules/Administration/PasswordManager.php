@@ -16,38 +16,15 @@ require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.
 if(!is_admin($current_user)){
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
-function clearPasswordSettings() {
-	    $_POST['passwordsetting_SystemGeneratedPasswordON'] = '';
-	    $_POST['passwordsetting_generatepasswordtmpl'] = '';
-	    $_POST['passwordsetting_lostpasswordtmpl'] = '';
-	    $_POST['passwordsetting_forgotpasswordON'] = '0';
-	    $_POST['passwordsetting_linkexpiration'] = '1';
-	    $_POST['passwordsetting_linkexpirationtime'] = '30';
-	    $_POST['passwordsetting_linkexpirationtype'] = '1';
-	    $_POST['passwordsetting_systexpiration'] = '0';
-	    $_POST['passwordsetting_systexpirationtime'] = '';
-	    $_POST['passwordsetting_systexpirationtype'] = '0';
-	    $_POST['passwordsetting_systexpirationlogin'] = '';
 
-	 //BEGIN SUGARCRM flav=pro ONLY
-	    $_POST['passwordsetting_minpwdlength'] = '';
-	    $_POST['passwordsetting_maxpwdlength'] = '';
-	    $_POST['passwordsetting_oneupper'] = '';
-	    $_POST['passwordsetting_onelower'] = '';
-	    $_POST['passwordsetting_onenumber'] = '';
-	    $_POST['passwordsetting_onespecial'] = '';
-	    $_POST['passwordsetting_customregex'] = '';
-	    $_POST['passwordsetting_regexcomment'] = '';
-	    $_POST['passwordsetting_userexpiration'] = '0';
-	    $_POST['passwordsetting_userexpirationtime'] = '';
-	    $_POST['passwordsetting_userexpirationtype'] = '1';
-	    $_POST['passwordsetting_userexpirationlogin'] = '';
-	    $_POST['passwordsetting_lockoutexpiration'] = '0';
-	    $_POST['passwordsetting_lockoutexpirationtime'] = '';
-	    $_POST['passwordsetting_lockoutexpirationtype'] = '1';
-	    $_POST['passwordsetting_lockoutexpirationlogin'] = '';
-	//END SUGARCRM flav=pro ONLY
+/**
+ * clearPasswordSettings
+ * @deprecated as of 7.5
+ */
+function clearPasswordSettings() {
+    $GLOBALS['log']->deprecated("This method is no longer valid for use and will be removed in a future version of SugarCRM");
 }
+
 require_once('modules/Administration/Forms.php');
 echo getClassicModuleTitle(
         "Administration",
@@ -78,7 +55,6 @@ if(!empty($_POST['saveConfig'])){
 	if ($valid_public_key){
 		if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
 			$_POST['system_ldap_enabled'] = 1;
-			clearPasswordSettings();
 		}
 		else
 			$_POST['system_ldap_enabled'] = 0;
