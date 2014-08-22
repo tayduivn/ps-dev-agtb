@@ -111,7 +111,7 @@
      */
     getHelpString: function(shortcutId) {
         if (this.meta.help && this.meta.help[shortcutId]) {
-            return app.lang.getAppString(this.meta.help[shortcutId]);
+            return app.lang.get(this.meta.help[shortcutId]);
         } else {
             return '';
         }

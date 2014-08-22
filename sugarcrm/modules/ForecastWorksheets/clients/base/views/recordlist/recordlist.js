@@ -497,7 +497,7 @@
      * Actually run the export
      */
     doExport: function() {
-        app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        app.alert.show('massexport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
         var params = {
             timeperiod_id: this.selectedTimeperiod,
             user_id: this.selectedUser.id,
@@ -804,7 +804,7 @@
      */
     displayLoadingMessage: function() {
         app.alert.show('workshet_loading',
-            {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
+            {level: 'process', title: app.lang.get('LBL_LOADING')}
         );
         this.collection.once('reset', function() {
             app.alert.dismiss('workshet_loading');

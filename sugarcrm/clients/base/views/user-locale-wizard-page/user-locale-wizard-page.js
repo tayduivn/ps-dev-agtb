@@ -74,7 +74,7 @@
                     var payload = this._prepareRequestPayload();
                     app.alert.show('wizardlocale', {
                         level: 'process',
-                        title: app.lang.getAppString('LBL_LOADING'),
+                        title: app.lang.get('LBL_LOADING'),
                         autoClose: false
                     });
                     // 'ut' is, historically, a special flag in user's preferences that is

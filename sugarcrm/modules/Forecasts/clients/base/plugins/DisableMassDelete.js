@@ -68,7 +68,7 @@
                     }
 
                     if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
-                        message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
+                        message = app.lang.get("WARNING_NO_DELETE_SELECTED");
                         return true;
                     }
 

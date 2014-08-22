@@ -31,10 +31,10 @@
         };
 
         this.legend = {
-            calls: app.lang.getAppString('LBL_CALLS'),
-            emailsSent: app.lang.getAppString('LBL_EMAILS') + ' (' + app.lang.getAppString('LBL_EMAIL_SENT') + ')',
-            emailsRecv: app.lang.getAppString('LBL_EMAILS') + ' (' + app.lang.getAppString('LBL_EMAIL_RECV') + ')',
-            meetings: app.lang.getAppString('LBL_MEETINGS')
+            calls: app.lang.get('LBL_CALLS'),
+            emailsSent: app.lang.get('LBL_EMAILS') + ' (' + app.lang.get('LBL_EMAIL_SENT') + ')',
+            emailsRecv: app.lang.get('LBL_EMAILS') + ' (' + app.lang.get('LBL_EMAIL_RECV') + ')',
+            meetings: app.lang.get('LBL_MEETINGS')
         };
 
         this.on("data-changed", function () {
@@ -62,10 +62,10 @@
                     .stacked(true)
                     .strings({
                         legend: {
-                            close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                            open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            close: app.lang.get('LBL_CHART_LEGEND_CLOSE'),
+                            open: app.lang.get('LBL_CHART_LEGEND_OPEN')
                         },
-                        noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        noData: app.lang.get('LBL_CHART_NO_DATA')
                     });
 
             canvas.children().remove();

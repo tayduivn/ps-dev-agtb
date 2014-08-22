@@ -64,7 +64,7 @@
 
                     //if this item has a closed status, this message wins, so set it accordingly
                     if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
-                        message = app.lang.getAppString("NOTICE_NO_DELETE_CLOSED");
+                        message = app.lang.get("NOTICE_NO_DELETE_CLOSED");
                     }
 
                     //if we have a message, disable the button.

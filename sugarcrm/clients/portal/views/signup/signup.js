@@ -144,7 +144,7 @@
         self.model.doValidate(null, function(isValid) {
             if (isValid) {
                 app.$contentEl.hide();
-                app.alert.show('signup', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
+                app.alert.show('signup', {level: 'process', title: app.lang.get('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
 
                 var payload = self._prepareRequestPayload();
                 app.api.signup(payload, null,

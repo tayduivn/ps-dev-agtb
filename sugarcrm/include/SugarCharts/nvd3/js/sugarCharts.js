@@ -615,9 +615,9 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 }
             } else if (SUGAR.App) {
                 if (module) {
-                    return SUGAR.App.lang.getAppString(appString, module);
+                    return SUGAR.App.lang.get(appString, module);
                 } else {
-                    return SUGAR.App.lang.getAppString(appString);
+                    return SUGAR.App.lang.get(appString);
                 }
             } else {
                 return appString;

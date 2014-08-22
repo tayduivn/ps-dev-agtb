@@ -61,7 +61,7 @@
                 var self = this;
                 if (isValid) {
                     var payload = self._prepareRequestPayload();
-                    app.alert.show('wizardprofile', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
+                    app.alert.show('wizardprofile', {level: 'process', title: app.lang.get('LBL_LOADING'), autoClose: false});
                     app.user.updateProfile(payload, function(err) {
                         app.alert.dismiss('wizardprofile');
                         self.updateButtons(); //re-enable buttons

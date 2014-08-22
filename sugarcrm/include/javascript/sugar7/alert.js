@@ -26,7 +26,7 @@
      * On 'app:sync' we display a simple 'LBL_LOADING' process alert
      */
     app.events.on('app:sync', function() {
-        app.alert.show('app:sync', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        app.alert.show('app:sync', {level: 'process', title: app.lang.get('LBL_LOADING')});
     });
 
     /**
@@ -135,15 +135,15 @@
 
         // Pull labels for each method
         if (method === 'read') {
-            alertOpts.title = app.lang.getAppString('LBL_LOADING');
+            alertOpts.title = app.lang.get('LBL_LOADING');
         }
         else if (method === 'delete') {
             // options.relate means we are breaking a relationship between two records, not actually deleting a record
             alertOpts.title = options.relate ?
-                app.lang.getAppString('LBL_UNLINKING') : app.lang.getAppString('LBL_DELETING');
+                app.lang.get('LBL_UNLINKING') : app.lang.get('LBL_DELETING');
         }
         else {
-            alertOpts.title = app.lang.getAppString('LBL_SAVING');
+            alertOpts.title = app.lang.get('LBL_SAVING');
         }
 
         // Check for an alert options object attach to options that would override
