@@ -127,4 +127,37 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(false, $tp5);
          
      }
+
+    /**
+     * @dataProvider dataProviderGetGenericStartEndByDuration
+     *
+     * @param $duration
+     * @param $expected_start
+     * @param $expected_end
+     */
+    public function testGetGenericStartEndByDuration($duration, $expected_start, $expected_end)
+    {
+        $tp = new TimePeriod();
+
+        // set the start date since this is a unit test.
+        $dates = $tp->getGenericStartEndByDuration($duration, '2014-08-21');
+
+        $this->assertEquals($expected_start, $dates['start_date']);
+        $this->assertEquals($expected_end, $dates['end_date']);
+    }
+
+    public function dataProviderGetGenericStartEndByDuration()
+    {
+        return array(
+            array(0, '2014-07-01', '2014-09-30'),
+            array(3, '2014-10-01', '2014-12-31'),
+            array(12, '2014-01-01', '2014-12-31'),
+            array('0', '2014-07-01', '2014-09-30'),
+            array('3', '2014-10-01', '2014-12-31'),
+            array('12', '2014-01-01', '2014-12-31'),
+            array('current', '2014-07-01', '2014-09-30'),
+            array('next', '2014-10-01', '2014-12-31'),
+            array('year', '2014-01-01', '2014-12-31')
+        );
+    }
 }

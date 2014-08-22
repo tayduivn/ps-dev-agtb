@@ -244,7 +244,7 @@ class TimePeriod extends SugarBean
 
         if (!isset($fiscal_years)) {
 
-            $query = 'select id, name from timeperiods where deleted=0 and is_fiscal_year = 1 order by name';
+            $query = 'SELECT id, name FROM timeperiods WHERE deleted=0 AND is_fiscal_year = 1 ORDER BY name';
             $db = DBManagerFactory::getInstance();
             $result = $db->query($query, true, " Error filling in fiscal year domain: ");
 
@@ -531,7 +531,7 @@ class TimePeriod extends SugarBean
     {
         $sql = "SELECT id FROM timeperiods
                 WHERE deleted = 0
-                    AND (start_date_timestamp is null OR end_date_timestamp is null)";
+                    AND (start_date_timestamp IS NULL OR end_date_timestamp IS NULL)";
         $result = $this->db->query($sql);
 
         $updated = 0;
@@ -1183,6 +1183,65 @@ class TimePeriod extends SugarBean
         }
 
         return false;
+    }
+
+    /**
+     * @param integer $duration
+     * @param string|null $start_date The starting date in format of Y-m-d
+     * @return array
+     */
+    public function getGenericStartEndByDuration($duration, $start_date = null)
+    {
+        $mapping = array('current' => 0, 'next' => 3, 'year' => 12);
+        if(array_key_exists($duration, $mapping)) {
+            $duration = $mapping[$duration];
+        } elseif (!is_numeric($duration)) {
+            $duration = 0;
+        }
+
+        $start = false;
+        if (!is_null($start_date)) {
+            $start = SugarDateTime::createFromFormat('Y-m-d', $start_date);
+            $end = SugarDateTime::createFromFormat('Y-m-d', $start_date);
+        }
+        if ($start === false) {
+            $start = new SugarDateTime();
+            $end = new SugarDateTime();
+        }
+        // since we subtract one from the month, we need to add one to the duration since php is
+        // not zero 0 based for months
+        // figure out what the starting month is.
+        $startMonth = (floor(($start->month - 1) / 3) * 3) + $duration + 1;
+        $year = $start->year;
+        $endYear = $year;
+        $endMonth = $startMonth + 3;
+
+        // if the end month is dec, we put it to Jan and increase the end year as well so it goes back to the last
+        // day of dec
+        if ($endMonth == 12) {
+            $endYear++;
+            $endMonth = 1;
+        }
+
+        if ($duration == 12) {
+            $endYear++;
+            $startMonth = 1;
+            $endMonth = 1;
+        }
+
+        $start->setDate($year, $startMonth, 1);
+        $end->setDate($endYear, $endMonth, 0);
+
+        // since we are using timestamp, we need to convert this into UTC since that is
+        // what the DB is storing as
+        $tz = new DateTimeZone("UTC");
+
+        return array(
+            'start_date' => $start->asDbDate(false),
+            'start_date_timestamp' => $start->setTimezone($tz)->setTime(0, 0, 0)->format('U'),
+            'end_date' => $end->asDbDate(false),
+            'end_date_timestamp' => $end->setTimezone($tz)->setTime(0, 0, 0)->format('U')
+        );
     }
 }
 

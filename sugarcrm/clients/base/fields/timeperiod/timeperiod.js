@@ -53,15 +53,25 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        this._super("initialize", [options]);
+        var collectionParams = {limit: 100};
+        this._super('initialize', [options]);
+
+        if (this.def.use_generic_timeperiods) {
+            collectionParams.use_generic_timeperiods = true;
+        }
 
         // get timeperiods list
-        this.tpCollection = app.data.createBeanCollection("TimePeriods");
+        this.tpCollection = app.data.createBeanCollection('TimePeriods');
         this.tpCollection.once('reset', this.formatTooltips, this);
-        this.tpCollection.fetch({limit: 100});
+        this.tpCollection.fetch(collectionParams);
 
         // load the tooltip template
         this.tooltipTemplate = app.template.getField('timeperiod', 'tooltip', this.module);
+
+        // if forecast is not setup, then we need to use the generic options
+        if (app.metadata.getModule('Forecasts', 'config').is_setup === 0) {
+            this.def.options = 'generic_timeperiod_options';
+        }
     },
 
     /**
@@ -127,7 +137,7 @@
      */
     onSelectOpen: function() {
         var $el = $('div.' + this.cssClassSelector);
-        this.removePluginTooltips($el);
+        this.removePluginTooltips();
         this.addPluginTooltips($el);
     },
 
@@ -137,6 +147,7 @@
     onSelectClear: function() {
         var $el = $('div.' + this.cssClassSelector);
         this.removePluginTooltips($el);
+        this.addPluginTooltips();
     },
 
     /**

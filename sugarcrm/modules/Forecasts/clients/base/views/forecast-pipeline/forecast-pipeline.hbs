@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if forecastSetup}}
 <div class="dashlet-options">
     <div class="row-fluid">
         <div class="span6">{{#each dashletConfig.timeperiod}}
@@ -36,8 +35,3 @@
     </div>
     <div class="block-footer hide" data-content="nodata">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
 </div>
-{{else}}
-<div class="opportunity-pipeline-wrapper">
-    {{{forecastsNotSetUpMsg}}}
-</div>
-{{/if}}

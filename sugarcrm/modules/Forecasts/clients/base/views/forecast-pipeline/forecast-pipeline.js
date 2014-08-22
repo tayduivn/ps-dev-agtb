@@ -19,11 +19,6 @@
     forecastSetup: 0,
 
     /**
-     * Is the user a forecast Admin? This is only used if forecasts is not setup
-     */
-    forecastAdmin: false,
-
-    /**
      * Holds the forecast isn't set up message if Forecasts hasn't been set up yet
      */
     forecastsNotSetUpMsg: undefined,
@@ -43,10 +38,6 @@
 
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
-        this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
-        if (!this.forecastSetup) {
-            this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
-        }
     },
 
     /**
@@ -73,6 +64,8 @@
                 }, this),
                 complete: view.options ? view.options.complete : null
             });
+        } else {
+            this.settings.set({'selectedTimePeriod': 'current'}, {silent: true});
         }
         var currencySymbol = SUGAR.App.currency.getCurrencySymbol(SUGAR.App.currency.getBaseCurrencyId());
         this.chart = nv.models.funnelChart()
@@ -156,15 +149,11 @@
      * @inheritDoc
      */
     loadData: function(options) {
-        var timePeriod = this.settings.get('selectedTimePeriod');
-        if (!timePeriod) {
-            return;
-        }
+        var timeperiod = this.settings.get('selectedTimePeriod');
+        if (timeperiod) {
+            var forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities',
+                url_base = forecastBy + '/chart/pipeline/' + timeperiod + '/';
 
-        var forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities',
-            url_base = forecastBy + '/chart/pipeline';
-        if (this.settings.has('selectedTimePeriod')) {
-            url_base += '/' + timePeriod;
             if (this.isManager) {
                 url_base += '/' + this.getVisibility();
             }
@@ -175,8 +164,8 @@
                         var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
 
                         // update sales stage labels to translated strings
-                        _.each(o.data, function(dataBlock){
-                            if(dataBlock && dataBlock.key && salesStageLabels && salesStageLabels[dataBlock.key]) {
+                        _.each(o.data, function(dataBlock) {
+                            if (dataBlock && dataBlock.key && salesStageLabels && salesStageLabels[dataBlock.key]) {
                                 dataBlock.key = salesStageLabels[dataBlock.key];
                             }
 

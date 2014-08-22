@@ -5195,13 +5195,12 @@ $app_list_strings['list_visibility_options'] = array(
     '0' => 'No',
 );
 
-//top 10 opportunites chart config options
-// see sugarcrm/clients/base/views/bubblechart/bubblechart.php
-$app_list_strings['top10_opportunities_duration_options'] = array (
-    0 => 'This Quarter',
-    3 => 'Next Quarter',
-    12 => 'This Year',
+$app_list_strings['generic_timeperiod_options'] = array (
+    'current' => 'This Quarter',
+    'next' => 'Next Quarter',
+    'year' => 'This Year',
 );
+
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
 $app_list_strings['top10_opportunities_visibility_options'] = array (
     //BEGIN SUGARCRM flav=ent ONLY
