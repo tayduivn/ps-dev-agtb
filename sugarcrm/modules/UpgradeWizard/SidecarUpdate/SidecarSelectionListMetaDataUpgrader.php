@@ -64,6 +64,10 @@ class SidecarSelectionListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrad
         if ($this->client != 'base' || $this->type != 'base') {
             return false;
         }
+        // Ignore undeployed packages
+        if (!empty($this->package) && !$this->deployed) {
+            return false;
+        }
         return true;
     }
 
