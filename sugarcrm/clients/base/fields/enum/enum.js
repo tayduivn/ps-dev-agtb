@@ -191,7 +191,7 @@
                     plugin.container.attr('dir', this.dir);
                     plugin.results.attr('dir', this.dir);
                 }
-                $el.select2("container").addClass("tleft");
+                $el.select2('container');
                 $el.on('change', function(ev) {
                     var value = ev.val;
                     if (_.isUndefined(value)) {
