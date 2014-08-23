@@ -221,12 +221,28 @@
 
         app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_SAVING')});
 
-        convertModel = new Backbone.Model(_.extend({}, {'modules' : this.associatedModels}));
+        convertModel = new Backbone.Model(_.extend({}, {'modules' : this.parseEditableFields(this.associatedModels)}));
         myURL = app.api.buildURL('Leads', 'convert', {id: this.context.get('leadsModel').id});
         app.api.call('create', myURL, convertModel, {
             success: _.bind(this.uploadAssociatedRecordFiles, this),
             error: _.bind(this.convertError, this)
         });
+    },
+
+    /**
+     * Returns only the fields for the models that the user is allowed to edit.
+     * This method is run in the sync method of data-manager for creating records.
+     *
+     * @param {Array} models to get fields from.
+     * @return {Object} Hash of models with editable fields.
+     */
+    parseEditableFields: function(models) {
+        var filteredModels = {};
+        _.each(models, function(associatedModel, associatedModule) {
+            filteredModels[associatedModule] = app.data.getEditableFields(associatedModel);
+        }, this);
+
+        return filteredModels;
     },
 
     /**
