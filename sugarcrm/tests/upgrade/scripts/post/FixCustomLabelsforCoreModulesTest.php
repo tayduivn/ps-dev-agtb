@@ -34,6 +34,88 @@ class FixCustomLabelsForCoreModulesTest extends UpgradeTestCase
                 'test_test'   => 'Test',
                 'test2_test2' => 'Test 2',
             );
+
+        // Setup subpanels
+        $dataViewdefs = <<<END
+<?php
+\$viewdefs['TestModule1']['base']['view']['subpanel-for-testmodule2'] = array(
+'panels' =>
+    array(
+        0 =>
+            array(
+                'name' => 'panel_header',
+                'label' => 'LBL_PANEL_1',
+                'fields' =>
+                    array(
+                        0 =>
+                            array(
+                                'type' => 'currency',
+                                'default' => true,
+                                'sortable' => false,
+                                'label' => 'LBL_OLD_1',
+                                'enabled' => true,
+                                'name' => 'best_case',
+                            ),
+                    ),
+            ),
+    ),
+);
+END;
+
+        $dataSubpanelLayout = <<<END
+<?php
+\$subpanel_layout = array(
+	'top_buttons' => array(
+		array('widget_class' => 'SubPanelTopCreateButton'),
+		array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'TestModule1'),
+	),
+
+	'where' => '',
+
+	'list_fields' => array(
+		'name' => array(
+ 		 	'vname' => 'LBL_OLD_1',
+			'widget_class' => 'SubPanelDetailViewLink',
+			'width' => '45%',
+		),
+		'billing_address_city' => array(
+ 		 	'vname' => 'LBL_OLD_1',
+			'width' => '27%',
+		),
+		'phone_office' => array(
+ 		 	'vname' => 'LBL_OLD_2',
+			'width' => '20%',
+		),
+		'edit_button' => array(
+			'vname' => 'LBL_OLD_3',
+			'widget_class' => 'SubPanelEditButton',
+			'width' => '4%',
+		),
+		'remove_button' => array(
+			'vname' => 'LBL_OLD_1',
+			'widget_class' => 'SubPanelRemoveButton',
+			'width' => '4%',
+		),
+	),
+);
+END;
+
+        $subpanelPaths = array(
+            "custom/modules/TestModule1/clients/base/views/subpanel-for-TestModule2/subpanel-for-TestModule2.php" => $dataViewdefs,
+            "custom/modules/TestModule1/metadata/subpanels/TestModule1_subpanel_TestModule2.php" => $dataSubpanelLayout
+        );
+
+        foreach($subpanelPaths as $subpanelPath => $subpanelContent) {
+            mkdir_recursive(dirname($subpanelPath));
+            SugarTestHelper::saveFile($subpanelPath);
+            sugar_file_put_contents($subpanelPath, $subpanelContent);
+        }
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        rmdir_recursive('custom/modules/TestModule1');
     }
 
     /**
@@ -60,6 +142,143 @@ class FixCustomLabelsForCoreModulesTest extends UpgradeTestCase
         include $path;
 
         $this->assertEquals($expected, $mod_strings);
+    }
+
+    /**
+     * Test change old labels to new ones in all $module subpanels
+     *
+     * @dataProvider providerDataForUpgradeSubpanelLabels
+     * @param string $module
+     * @param array $labelsToChange
+     * @param array $expectedViewdefs
+     * @param array $expectedLayout
+     * @param string $viewFile
+     * @param string $metaFile
+     */
+    public function testUpgradeSubpanelModuleLabels($module, $labelsToChange, $expectedViewdefs, $expectedLayout, $viewFile, $metaFile)
+    {
+        $this->script->upgradeLabels = array($module => $labelsToChange);
+        $this->script->upgradeSubpanelModuleLabels($module);
+
+        $this->assertFileExists($viewFile);
+        $this->assertFileExists($metaFile);
+
+        $viewdefs = array();
+        include $viewFile;
+
+        foreach ($expectedViewdefs as $expected) {
+            $viewdefsSearch = $viewdefs;
+            foreach ((array)$expected['path'] as $pathKey) {
+                $this->assertArrayHasKey($pathKey, $viewdefsSearch);
+                $viewdefsSearch = $viewdefsSearch[$pathKey];
+            }
+            $this->assertEquals($expected['value'], $viewdefsSearch);
+        }
+        unset($viewdefs);
+
+        $subpanel_layout = array();
+        include $metaFile;
+
+        foreach ($expectedLayout as $expected) {
+            $subpanelLayoutSearch = $subpanel_layout;
+            foreach ((array)$expected['path'] as $pathKey) {
+                $this->assertArrayHasKey($pathKey, $subpanelLayoutSearch);
+                $subpanelLayoutSearch = $subpanelLayoutSearch[$pathKey];
+            }
+            $this->assertEquals($expected['value'], $subpanelLayoutSearch);
+        }
+    }
+
+    /**
+     * Dete provider for test change old labels to new ones in all $module subpanels
+     *
+     * @return array
+     */
+    public function providerDataForUpgradeSubpanelLabels()
+    {
+        return array(
+            array(
+                'TestModule1',
+                array(
+                    'LBL_OLD_1' => 'LBL_NEW_1',
+                    'LBL_OLD_2' => 'LBL_NEW_2',
+                    'LBL_OLD_3' => 'LBL_NEW_3',
+                    'LBL_PANEL_1' => 'LBL_PANEL_NEW_1',
+                ),
+                array(
+                    array(
+                        'path' => array(
+                            'TestModule1',
+                            'base',
+                            'view',
+                            'subpanel-for-testmodule2',
+                            'panels',
+                            0,
+                            'label',
+                        ),
+                        'value' => 'LBL_PANEL_NEW_1',
+                    ),
+                    array(
+                        'path' => array(
+                            'TestModule1',
+                            'base',
+                            'view',
+                            'subpanel-for-testmodule2',
+                            'panels',
+                            0,
+                            'fields',
+                            0,
+                            'label',
+                        ),
+                        'value' => 'LBL_NEW_1',
+                    )
+                ),
+                array(
+                    array(
+                        'path' => array(
+                            'list_fields',
+                            'name',
+                            'vname',
+                        ),
+                        'value' => 'LBL_NEW_1',
+                    ),
+                    array(
+                        'path' => array(
+                            'list_fields',
+                            'billing_address_city',
+                            'vname',
+                        ),
+                        'value' => 'LBL_NEW_1',
+                    ),
+                    array(
+                        'path' => array(
+                            'list_fields',
+                            'phone_office',
+                            'vname',
+                        ),
+                        'value' => 'LBL_NEW_2',
+                    ),
+                    array(
+                        'path' => array(
+                            'list_fields',
+                            'edit_button',
+                            'vname',
+                        ),
+                        'value' => 'LBL_NEW_3',
+                    ),
+                    array(
+                        'path' => array(
+                            'list_fields',
+                            'remove_button',
+                            'vname',
+                        ),
+                        'value' => 'LBL_NEW_1',
+                    ),
+                ),
+                'custom/modules/TestModule1/clients/base/views/subpanel-for-TestModule2/subpanel-for-TestModule2.php',
+                'custom/modules/TestModule1/metadata/subpanels/TestModule1_subpanel_TestModule2.php',
+            ),
+        );
     }
 
     public function providerDataForUpgradeLabels()

@@ -17,7 +17,7 @@ require_once('include/SugarSmarty/plugins/function.sugar_replace_vars.php');
 class SugarFieldLink extends SugarFieldBase {
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
     	// this is only for generated links
-    	if(isset($bean->field_defs[$fieldName]['gen']) && $bean->field_defs[$fieldName]['gen'] == 1) {
+    	if(isset($bean->field_defs[$fieldName]['gen']) && $bean->field_defs[$fieldName]['gen'] == 1 && !empty($bean->field_defs[$fieldName]['default'])) {
 	        $params = array(
 	            'use_curly' => true,
 	            'subject' => $bean->field_defs[$fieldName]['default'],

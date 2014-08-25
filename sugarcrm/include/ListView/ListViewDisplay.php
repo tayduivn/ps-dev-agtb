@@ -296,7 +296,7 @@ class ListViewDisplay {
 	protected function buildExportLink($loc = 'top')
 	{
 		global $app_strings;
-        return "<a href='javascript:void(0)' id=\"export_listview_". $loc ." \" onclick=\"return sListView.send_form("
+        return "<a href='javascript:void(0)' id=\"export_listview_". $loc ."\" onclick=\"return sListView.send_form("
             . "true, '{$this->seed->module_dir}', 'index.php?entryPoint=export', "
             . "SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED')"
             . ")\">{$app_strings['LBL_EXPORT']}</a>";

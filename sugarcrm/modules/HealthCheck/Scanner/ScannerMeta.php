@@ -366,7 +366,7 @@ class HealthCheckScannerMeta
      *
      * @var string
      */
-    protected $defaultKbUrl = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate/Sugar_Ultimate_7.5/Installation_and_Upgrade_Guide/';
+    protected $defaultKbUrl = 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/';
 
     /**
      *
