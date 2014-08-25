@@ -990,6 +990,69 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         )
                     ),
                 ),
+                array(
+                    'fields' => array(
+                        array(
+                            'type' => 'label',
+                            'cell_css_class' => 'span2',
+                            'default_value' => 'LBL_DNB_IPO_DATE',
+                            'css' => 'dnb-bal-param-label'
+                        ),
+                        array(
+                            'name' => 'dnb_bal_ipo_date_cat',
+                            'type' => 'enum',
+                            'cell_css_class' => 'span2',
+                            'searchBarThreshold' => -1,
+                            'options' => 'dnb_bal_filing_trading_option'
+                        ),
+                    ),
+                ),
+                array(
+                    'fields' => array(
+                        array(
+                            'name' => 'dnb_bal_ipo_date',
+                            'type' => 'enum',
+                            'cell_css_class' => 'span2 offset2',
+                            'searchBarThreshold' => -1,
+                            'options' => 'dnb_bal_after_before_btw',
+                        ),
+                        array(
+                            'name' => 'dnb_bal_ipo_date_low', //lower limit
+                            'type' => 'date',
+                            'format' => 'Y-m-d',
+                            'cell_css_class' => 'hide toggleCandidate span2',
+                        ),
+                        array(
+                            'name' => 'dnb_bal_annl_sale_and_str',
+                            'type' => 'label',
+                            'cell_css_class' => 'hide toggleCandidate span1',
+                            'css' => 'dnb-bal-param-label',
+                            'default_value' => 'LBL_DNB_AND'
+                        ),
+                        array(
+                            'name' => 'dnb_bal_ipo_date_high', //upper limit
+                            'type' => 'date',
+                            'format' => 'Y-m-d',
+                            'cell_css_class' => 'span2',
+                        ),
+                        array(
+                            'type' => 'rowaction',
+                            'cell_css_class' => 'span1',
+                            'icon' => 'icon-plus',
+                            'css_class' => 'dnb-bal-add-btn btn',
+                            'event' => 'dnb-bal-ipo-date-btn'
+                        ),
+                    ),
+                ),
+                array(
+                    'fields' => array(
+                        array(
+                            'type' => 'tagcontainer',
+                            'cell_css_class' => 'tagcontainer span3 offset2',
+                            'id' => 'dnb-ipo-date-tags'
+                        ),
+                    ),
+                ),
             ),
         ),
     ),
@@ -1087,6 +1150,24 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
             'allsites' => array(
                 'lowKey' => 'ConsolidatedEmployeeLowRangeQuantity', //keys to be used in model
                 'highKey' => 'ConsolidatedEmployeeHighRangeQuantity'//keys to be used in model
+            )
+        ),
+        'dnb-bal-ipo-date-btn' => array(
+            'operator' => 'dnb_bal_ipo_date',
+            'lowerLimit' => 'dnb_bal_ipo_date_low',
+            'upperLimit' => 'dnb_bal_ipo_date_high',
+            'addBtn' => '.dnb-bal-ipo-date-btn',
+            'container' => '#dnb-ipo-date-tags',
+            'tagLimit' => 1,
+            'keyType' => 'dnb_bal_ipo_date_cat',
+            'modelKey' => 'ipoDate', //keys to be used in model
+            'filingdate' => array(
+                'lowKey' => 'InitialPublicOfferingFilingFromDate', //keys to be used in model
+                'highKey' => 'InitialPublicOfferingFilingToDate'//keys to be used in model
+            ),
+            'tradingdate' => array(
+                'lowKey' => 'InitialPublicOfferingTradingFromDate', //keys to be used in model
+                'highKey' => 'InitialPublicOfferingTradingToDate'//keys to be used in model
             )
         ),
         'dnb-bal-empgrwth-btn' => array(
@@ -1263,6 +1344,10 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
             'ipoPriceRange' => array(
                 'label' => 'LBL_DNB_BAL_IPO_PRICE_RANGE',
                 'id' => 'dnb-ipo-price-range-tags'
+            ),
+            'ipoDate' => array(
+                'label' => 'LBL_DNB_IPO_DATE',
+                'id' => 'dnb-ipo-date-tags'
             )
         ),
         'companyInfo' => array(

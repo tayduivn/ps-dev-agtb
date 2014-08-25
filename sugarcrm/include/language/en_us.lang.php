@@ -6321,6 +6321,17 @@ $app_list_strings['dnb_countries_iso'] = array(
    "ZW" => "Zimbabwe"
 );
 
+$app_list_strings['dnb_bal_after_before_btw'] = array(
+    'gte' => 'After',
+    'lte' => 'Before',
+    'btw' => 'Between'
+);
+
+$app_list_strings['dnb_bal_filing_trading_option'] = array(
+    'filingdate' => 'Filing Date',
+    'tradingdate' => 'Trading Date'
+);
+
 $app_list_strings['dnb_bal_gte_lte_btw'] = array(
     'gte' => 'Greater than or Equal to',
     'lte' => 'Lesser than or Equal to',
