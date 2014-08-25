@@ -1142,10 +1142,14 @@ class Report
                 //$where_arr[count($where_arr)] = $select_piece;
                 $where_clause .= $select_piece;
             }
-            if ($isSubCondition == 1)
+            if ($isSubCondition == 1) {
                 $where_clause .= ")";
-            if ($i != count($filters) - 2)
+                // reset the subCondition
+                $isSubCondition = 0;
+            }
+            if ($i != count($filters) - 2) {
                 $where_clause .= " $operator ";
+            }
 
         }
         $where_clause .= ')';
