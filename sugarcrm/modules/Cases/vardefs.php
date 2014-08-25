@@ -56,6 +56,15 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
   	'massupdate' => false,
   	'comment' => 'The account to which the case is associated'
   	),
+        'source' =>
+        array(
+            'name' => 'source',
+            'vname' => 'LBL_SOURCE',
+            'type' => 'enum',
+            'options' => 'source_dom',
+            'len' => 255,
+            'comment' => 'An indicator of how the bug was entered (ex: via web, email, etc.)'
+        ),
 
   'status' =>
   array (

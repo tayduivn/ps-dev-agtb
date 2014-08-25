@@ -839,7 +839,8 @@ $app_list_strings = array (
     'Internal' => 'Internal',
     'Forum' => 'Forum',
     'Web' => 'Web',
-    'InboundEmail' => 'Email'
+    'InboundEmail' => 'Email',
+    'Twitter' => 'Twitter'
   ),
 
   'product_category_default_key' => '',
@@ -3830,6 +3831,7 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
+    'LBL_TWITTER_SOURCE' => 'Source Tweet:',
 
     /* Learning Resources Dashlet */
     'LBL_LEARNING_RESOURCES_TITLE' => 'Learning Resources',
