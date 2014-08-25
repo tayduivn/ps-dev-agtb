@@ -172,7 +172,9 @@ class SugarFieldEnum extends SugarFieldBase {
 
         //if function is defined then call the function value and retrieve the input field string
         if(!empty($vardef['function'])) {
-            return getFunctionValue(NULL, $vardef['function'], $args = array('selectID' => $inputField));
+            // figure out the bean we should be using
+            $bean = (isset($vardef['function_bean']) && !empty($vardef['function_bean'])) ? $vardef['function_bean'] : null;
+            return getFunctionValue($bean, $vardef['function'], $args = array('selectID' => $inputField));
         }
         
         // call format field to return value
