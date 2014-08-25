@@ -32,6 +32,7 @@ $mod_strings = array (
     'LBL_ACCOUNT_ID' => 'Account ID',
     'LBL_ACCOUNT_NAME' => 'Account Name:',
     'LBL_OPPORTUNITY' => 'Opportunity',
+    'LBL_OPPORTUNITY_ID' => 'Opportunity ID',
     'LBL_START_DATE' => 'Start Date:',
     'LBL_END_DATE' => 'End Date:',
     'LBL_TOTAL_CONTRACT_VALUE' => 'Contract Value:',
@@ -84,6 +85,7 @@ $mod_strings = array (
     'LBL_LIST_CONTRACT_VALUE' => 'Value',
 
     'LBL_TYPE'=>'Type',
+    'LBL_TYPE_NAME' => 'Type Name',
     'LBL_CONTRACT_TYPE'=>'Type:',
 
     'LBL_CREATED_USER' => 'Created User',
@@ -91,6 +93,10 @@ $mod_strings = array (
     'LBL_DOCUMENTS' => 'Documents',
     'LBL_CONTRACT_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     'LBL_CONTRACT_INFORMATION' => 'Overview',
-);
 
-?>
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+    'LBL_EXPORT_TYPE_NAME' => 'Type Name',
+);
