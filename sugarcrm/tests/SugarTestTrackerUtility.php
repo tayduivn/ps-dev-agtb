@@ -92,6 +92,9 @@ class SugarTestTrackerUtility
         {
             $GLOBALS['db']->query("DELETE FROM tracker WHERE monitor_id = '".self::$_monitorId."'");
         }
+
+        // make sure that next requested TrackerManager instance has default configuration
+        TrackerManager::resetInstance();
     }
 }
 ?>
