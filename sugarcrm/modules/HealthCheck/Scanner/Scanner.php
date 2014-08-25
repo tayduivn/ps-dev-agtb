@@ -1116,10 +1116,14 @@ class HealthCheckScanner
         // start counting panels -> rows -> columns
         foreach ($defs[$module][$defName]['panels'] as $panel) {
             foreach ($panel as $row) {
-                foreach ($row as $column) {
-                    if (!empty($column)) {
-                        $count++;
+                if(is_array($row)) {
+                    foreach ($row as $column) {
+                        if (!empty($column)) {
+                            $count++;
+                        }
                     }
+                } elseif(is_string($row)) {
+                    $count++;
                 }
             }
         }
@@ -1607,7 +1611,7 @@ ENDP;
             }
         }
 
-        return $check === true;
+        return true;
     }
 
     /**
