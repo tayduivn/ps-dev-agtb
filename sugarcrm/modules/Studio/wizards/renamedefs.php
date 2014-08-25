@@ -730,6 +730,8 @@ $renamedefs = array(
             array('name' => 'LBL_LIST_PRODUCT_NAME', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_QUOTES_NAME', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Opportunities'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),

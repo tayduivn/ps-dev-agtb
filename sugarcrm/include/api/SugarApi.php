@@ -132,7 +132,7 @@ abstract class SugarApi {
      * @param $options Options array to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
-    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read', $options = array()) {
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'view', $options = array()) {
         $this->requireArgs($args, array('module','record'));
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
@@ -146,7 +146,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
-        if ($aclToCheck != 'view' && !$bean->ACLAccess($aclToCheck)) {
+        if (SugarACLStatic::fixUpActionName($aclToCheck) != 'view' && !$bean->ACLAccess(SugarACLStatic::fixUpActionName($aclToCheck))) {
             throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array($aclToCheck));
         }
 
