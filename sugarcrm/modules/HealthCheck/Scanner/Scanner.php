@@ -251,7 +251,7 @@ class HealthCheckScanner
         $code   = $scanMeta['id'];
         $report = $scanMeta['report'];
         $this->logMeta[] = $scanMeta;
-        $issueNo = count($this->logMeta) + 1;
+        $issueNo = count($this->logMeta);
 
         $reason = "[Issue $issueNo][$report][$code] " . vsprintf($scanMeta['log'], $params);
 
