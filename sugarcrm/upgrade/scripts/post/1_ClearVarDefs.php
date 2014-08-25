@@ -39,15 +39,8 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             $this->modules[strtolower($bean)] = $bean;
         }
 
-        include 'include/language/en_us.lang.php';
-        // English list because old module list was populated from it.
-        $newModules = array_diff($app_list_strings['moduleList'], $this->upgrader->state['old_moduleList']);
-
         $needClearCache = false;
         foreach ($beanList as $bean => $class) {
-            if (isset($newModules[$bean])) {
-                continue;
-            }
             $seed = BeanFactory::getBean($bean);
             if ($seed instanceof SugarBean) {
                 if (!$this->checkBean($seed)) {
