@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class S_901_HealthCheckScannerCasesTestWrapper extends HealthCheckScannerCasesTestWrapper
+class S_901_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     public function getVersionAndFlavor()
     {

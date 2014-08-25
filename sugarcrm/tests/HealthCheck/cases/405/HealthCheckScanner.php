@@ -24,7 +24,7 @@ class S_405_PackageManager extends PackageManager
     }
 }
 
-class S_405_HealthCheckScannerCasesTestWrapper extends HealthCheckScannerCasesTestWrapper
+class S_405_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     public function getPackageManager()
     {

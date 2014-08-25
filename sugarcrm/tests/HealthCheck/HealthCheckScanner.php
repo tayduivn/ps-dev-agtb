@@ -12,7 +12,7 @@
 
 require_once 'modules/HealthCheck/Scanner/Scanner.php';
 
-class HealthCheckScannerCasesTestWrapper extends HealthCheckScanner
+class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
     public $md5_files = array();
     public $bwcModulesHash = array();

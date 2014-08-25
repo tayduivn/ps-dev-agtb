@@ -456,6 +456,11 @@ class HealthCheckScanner
         return $this->status_log;
     }
 
+    /**
+     * Method detects current version and flavor of installed SugarCRM and returns them
+     *
+     * @return array (version, flavor)
+     */
     public function getVersionAndFlavor()
     {
         $sugar_version = '9.9.9';

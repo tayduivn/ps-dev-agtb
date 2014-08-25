@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class S_509_HealthCheckScannerCasesTestWrapper extends HealthCheckScannerCasesTestWrapper
+class S_509_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     public $md5_files = array(
         './modules/Accounts/Account.php' => 'fakeMD5'

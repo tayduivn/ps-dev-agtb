@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'HealthCheckScannerMeta.php';
 require_once 'HealthCheckScanner.php';
-require_once 'HealthCheck.php';
 
 class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -20,10 +18,8 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
     protected $currentPath = '';
     protected $cachedPath = '';
 
-    /** @var HealthCheckScannerCasesTestWrapper */
+    /** @var HealthCheckScannerCasesTestMock */
     protected $scanner = null;
-    /** @var HealthCheckCasesTestWrapper */
-    protected $healthCheck = null;
 
     public function setUp()
     {
@@ -47,7 +43,7 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
         ini_set('include_path', $this->currentPath);
         $this->currentPath = '';
 
-        if ($this->scanner instanceof HealthCheckScannerCasesTestWrapper) {
+        if ($this->scanner instanceof HealthCheckScannerCasesTestMock) {
             $this->scanner->tearDown();
         }
 
@@ -63,7 +59,7 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
             $this->markTestIncomplete('HealthCheck code ' . $code . ' case ' . $case . ' is not covered');
         }
 
-        list($this->scanner, $this->healthCheck) = $this->getHealthCheckObjects($case);
+        $this->scanner = $this->getScanner($case);
 
         if (is_dir(__DIR__ . '/cases/' . $case . '/sugarcrm')) {
             copy_recursive(__DIR__ . '/cases/' . $case . '/sugarcrm', $this->cachedPath);
@@ -71,7 +67,7 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
         ini_set('include_path', realpath($this->cachedPath) . PATH_SEPARATOR . ini_get('include_path'));
         chdir($this->cachedPath);
 
-        $this->healthCheck->run($this->scanner);
+        $this->scanner->scan();
 
         $detectedStatuses = array();
         foreach ($this->scanner->getStatusLog() as $bucket) {
@@ -85,35 +81,26 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @param $case
-     * @return array
+     * @return HealthCheckScannerCasesTestMock
      */
-    protected function getHealthCheckObjects($case)
+    protected function getScanner($case)
     {
-        $this->scanner = 'HealthCheckScannerCasesTestWrapper';
+        $scanner = 'HealthCheckScannerCasesTestMock';
         if (is_file(__DIR__ . '/cases/' . $case . '/HealthCheckScanner.php')) {
             require_once __DIR__ . '/cases/' . $case . '/HealthCheckScanner.php';
-            if (class_exists('S_' . $case . '_' . $this->scanner)) {
-                $this->scanner = 'S_' . $case . '_' . $this->scanner;
+            if (class_exists('S_' . $case . '_' . $scanner)) {
+                $scanner = 'S_' . $case . '_' . $scanner;
             }
         }
-        $this->scanner = new $this->scanner();
 
-        $this->healthCheck = 'HealthCheckCasesTestWrapper';
-        if (is_file(__DIR__ . '/cases/' . $case . '/HealthCheck.php')) {
-            require_once __DIR__ . '/cases/' . $case . '/HealthCheck.php';
-            if (class_exists('S_' . $case . '_' . $this->healthCheck)) {
-                $this->healthCheck = 'S_' . $case . '_' . $this->healthCheck;
-            }
-        }
-        $this->healthCheck = new $this->healthCheck();
-
-        return array($this->scanner, $this->healthCheck);
+        return new $scanner();
     }
 
     static public function getCases()
     {
         $cases = array();
-        foreach (HealthCheckScannerMetaCasesTestWrapper::getCodes() as $code) {
+
+        foreach (SugarTestReflection::getProtectedValue(new HealthCheckScannerMeta(), 'meta') as $code => $data) {
             $iterator = new DirectoryIterator(__DIR__ . '/cases');
             /** @var DirectoryIterator $pointer */
             $isUpdated = false;
