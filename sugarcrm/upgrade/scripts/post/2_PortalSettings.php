@@ -17,12 +17,17 @@ class SugarUpgradePortalSettings extends UpgradeScript
 {
     public $order = 2170;
     public $type = self::UPGRADE_DB;
-    public $version = '7.1.5';
 
     public function run()
     {
         if (!$this->toFlavor('ent')) {
             return;
+        }
+
+        if (version_compare($this->from_version, '7.5', '<')) {
+            // Remove `portal_on` with platform equals to NULL or platform equals to empty string
+            $query = "DELETE FROM config WHERE category='portal' AND name='on' AND (platform IS NULL OR platform='')";
+            $this->db->query($query);
         }
 
         // only run this when coming from a version lower than 7.1.5
@@ -43,10 +48,6 @@ class SugarUpgradePortalSettings extends UpgradeScript
             $error = sprintf($this->mod_strings['ERROR_UW_PORTAL_CONFIG_DB'], 'portal', $fieldKey, $fieldValue);
             return $this->fail($error);
         }
-
-        // Remove `portal_on` with platform equals to NULL
-        $query = "DELETE FROM config WHERE category='portal' AND name='on' AND platform IS NULL";
-        $this->db->query($query);
 
         // Remove `fieldsToDisplay` (# of fields displayed in detail view - not used anymore in 7.0)
         $query = "DELETE FROM config WHERE category='portal' AND name='fieldsToDisplay' AND platform='support'";

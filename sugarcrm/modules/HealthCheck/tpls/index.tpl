@@ -49,7 +49,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span></span>
             </div>
             <div class="progress-section span5 pull-right">
@@ -88,7 +88,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span>Review health check results</span>
             </div>
             <div class="progress-section span5 pull-right">
