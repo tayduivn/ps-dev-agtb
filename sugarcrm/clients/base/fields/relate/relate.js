@@ -175,6 +175,21 @@
             _.defer(function(){self.$(self.fieldTag).select2('open')});
         }
     },
+
+    createCssClasses: function() {
+        var cssClasses = [];
+        if (this.view.name === 'recordlist') {
+            cssClasses.push('select2-narrow');
+        }
+        if (this.type === 'parent') {
+            cssClasses.push('select2-parent');
+        }
+        if (this.def.isMultiSelect) {
+            cssClasses.push('select2-choices-pills-close');
+        }
+        return !_.isEmpty(cssClasses) ? cssClasses.join(' ') : '';
+    },
+
     /**
      * Renders relate field
      */
@@ -192,14 +207,14 @@
         //FIXME remove check for tplName SC-2608
         if (this.tplName === 'edit' || this.tplName === 'massupdate') {
 
-            var inList = (this.view.name === 'recordlist'),
-                cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
+            var inList = _.contains(this.view.name === 'recordlist'),
                 relatedModuleField = this.getRelatedModuleField();
 
             this.$(this.fieldTag).select2({
                 width: inList?'off':'100%',
-                dropdownCssClass: cssClasses,
-                containerCssClass: cssClasses,
+                dropdownCssClass: _.bind(this.createCssClasses, this),
+                multiple : !!this.def.isMultiSelect,
+                containerCssClass: _.bind(this.createCssClasses, this),
                 initSelection: function (el, callback) {
                     var $el = $(el),
                         id = $el.data('id'),
@@ -216,7 +231,7 @@
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
                 query: _.bind(this.search, this)
-            }).on("select2-open",function () {
+            }).on("select2-open", function () {
                     var plugin = $(this).data('select2');
                     if (!plugin.searchmore) {
                         var $content = $('<li class="select2-result">').append(
@@ -233,6 +248,11 @@
                     $(this).select2('close');
                     self.openSelectDrawer();
                 }).on('change', function(e) {
+
+                    if (self.def.isMultiSelect) {
+                        self.model.set(self.def.id_name, e.val);
+                        return;
+                    }
                     var id = e.val,
                         plugin = $(this).data('select2'),
                         value = (id) ? plugin.selection.find('span').text() : $(this).data('id'),
@@ -630,7 +650,6 @@
         if (query.context) {
             params.offset = this.searchCollection.next_offset;
         }
-
         params.filter = this.buildFilterDefinition(term);
 
         this.searchCollection.fetch({
@@ -698,5 +717,7 @@
     unbindDom: function() {
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
-    }
+    },
+
+
 })
