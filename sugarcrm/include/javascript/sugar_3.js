@@ -1128,6 +1128,10 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
+    if (Dom.getAttribute(field, "type") == "hidden") {
+        return true;
+    }
+
 	var td = Dom.getAncestorByTagName(field, 'TD');
 
     // For 'datetime' field type html representation differ from others ( td.vis_action_hidden > table > td > input[name])
@@ -4322,7 +4326,7 @@ SUGAR.tabChooser = function () {
 			    }
 
 			    if(max_left != '' && (display_columns_ref.length + selected_right.length) > max_left) {
-			    	alert('Maximum of ' + max_left + ' columns can be displayed.');
+                    alert(SUGAR.language.get('app_strings','LBL_MAXIMUM_OF') + max_left + SUGAR.language.get('app_strings','LBL_COLUMNS_CAN_BE_DISPLAYED')); 
 					return;
 			    }
 

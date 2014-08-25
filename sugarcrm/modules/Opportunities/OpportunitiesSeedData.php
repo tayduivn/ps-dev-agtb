@@ -213,6 +213,9 @@ class OpportunitiesSeedData {
                 $rli->quantity = $quantity;
                 $rli->currency_id = $currency_id;
                 $rli->base_rate = $base_rate;
+                $rli->discount_amount = '0.00';
+                $rli->book_value = '0.00';
+                $rli->deal_calc = '0.00';
                 //BEGIN SUGARCRM flav=pro && flav != ent ONLY
                 $rli->sales_stage = $opp->sales_stage;
                 $rli->probability = $opp->probability;

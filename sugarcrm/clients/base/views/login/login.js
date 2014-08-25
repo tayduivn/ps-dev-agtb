@@ -122,6 +122,8 @@
             this.showPasswordReset = true;
         }
 
+        // Set the page title to 'SugarCRM' while on the login screen
+        $(document).attr('title', 'SugarCRM');
     },
 
     /**

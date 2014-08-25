@@ -791,6 +791,9 @@ function handleSugarConfig() {
     }
 //END SUGARCRM flav=com ONLY
     $sugar_config['demoData'] = $_SESSION['demoData'];
+    if( isset( $setup_site_guid ) ){
+        $sugar_config['unique_key'] = $setup_site_guid;
+    }
     if(empty($sugar_config['unique_key'])){
         $sugar_config['unique_key'] = md5( create_guid() );
     }

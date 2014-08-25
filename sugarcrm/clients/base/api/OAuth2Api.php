@@ -165,7 +165,16 @@ class OAuth2Api extends SugarApi
         $this->killSessionCookie();
         $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
-        return array('success'=>true);
+        $auth = AuthenticationController::getInstance();
+        $res = array('success'=>true);
+        if ($auth->isExternal()) {
+            $logout = $auth->getLogoutUrl();
+            if ($logout) {
+                $res['url'] = $logout;
+            }
+        }
+
+        return $res;
     }
 
     /**
@@ -260,7 +269,8 @@ class OAuth2Api extends SugarApi
     {
         // This needs to be sent back
         $session_name = session_name();
-        $lifetime = ini_get('session.cookie_lifetime');
+        $masSessionLifeTime = SugarConfig::getInstance()->get('oauth2.max_session_lifetime');
+        $lifetime = $masSessionLifeTime ?: ini_get('session.cookie_lifetime');
         setcookie(
             $session_name,
             session_id(),

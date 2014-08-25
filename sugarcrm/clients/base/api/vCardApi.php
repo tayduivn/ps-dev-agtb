@@ -106,6 +106,8 @@ class vCardApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
         }
 
+        $this->checkPostRequestBody();
+
         if (isset($_FILES) && count($_FILES) === 1) {
             reset($_FILES);
             $first_key = key($_FILES);
@@ -125,8 +127,6 @@ class vCardApi extends SugarApi
 
                 return $results;
             }
-        } else {
-            throw new SugarApiExceptionMissingParameter('ERR_VCARD_FILE_MISSING');
         }
     }
 

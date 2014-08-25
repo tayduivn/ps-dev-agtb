@@ -491,7 +491,36 @@ class MetaDataManager
      */
     public function getModuleViews($moduleName)
     {
-        return $this->getModuleClientData('view',$moduleName);
+        $data = $this->getModuleClientData('view', $moduleName);
+        $data = $this->removeDisabledFields($data);
+        return $data;
+    }
+
+    /**
+     * Removes disabled fields from view definition
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function removeDisabledFields(array $data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                if ($key === 'fields') {
+                    $value = array_filter($value, function ($field) {
+                        return !is_array($field) || !isset($field['enabled']) || $field['enabled'];
+                    });
+
+                    // make sure the resulting array has no gaps in keys
+                    $value = array_values($value);
+                } else {
+                    $value = $this->removeDisabledFields($value);
+                }
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -1025,16 +1054,11 @@ class MetaDataManager
     public static function getPlatformList()
     {
         $platforms = array();
-        // remove ones with _
-        foreach (SugarAutoLoader::getFilesCustom("clients", true) as $dir) {
-            $dir = basename($dir);
-            if ($dir[0] == '_') {
-                continue;
-            }
-            $platforms[$dir] = true;
+        foreach (SugarAutoLoader::existingCustom('clients/platforms.php') as $file) {
+            require $file;
         }
 
-        return array_keys($platforms);
+        return $platforms;
     }
 
     /**
@@ -1225,6 +1249,20 @@ class MetaDataManager
     {
 
         $data['jssource'] = $this->buildJavascriptComponentFile($data, !$this->public);
+        //If this is private meta, we will still need to build the public javascript to verify that it hasn't changed.
+        //If it has changed, the client will need to refresh to load it.
+        if (!$this->public) {
+            $this->public = true;
+            $cache = $this->getMetadataCache(true);
+            if (empty($cache['jssource'])) {
+                $publicMM = MetaDataManager::getManager($this->platforms, true);
+                $cache = $publicMM->getMetadata($this->args);
+            }
+            if ($cache && !empty($cache['jssource'])) {
+                $data['jssource_public'] =  $cache['jssource'];
+            }
+            $this->public = false;
+        }
         return $data;
     }
 

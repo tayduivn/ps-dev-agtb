@@ -21,7 +21,6 @@ require_once ("clients/base/api/FileApi.php");
  */
 class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public $acl = array();
     public $documents;
     public $fileApi;
     public $tempFileFrom = 'tests/clients/base/api/FileApiTempFileFrom.txt';
@@ -45,11 +44,6 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         $document->name = "RelateApi setUp Documents";
         $document->save();
         $this->documents[] = $document;
-
-        // no Document view, delete
-        $acldata['module']['view']['aclaccess'] = ACL_ALLOW_NONE;
-        $acldata['module']['delete']['aclaccess'] = ACL_ALLOW_NONE;
-        ACLAction::setACLData($GLOBALS['current_user']->id, 'Documents', $acldata);
     }
 
     public function tearDown() {
@@ -57,8 +51,6 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->tempFileTo && file_exists($this->tempFileTo)) {
             @unlink($this->tempFileTo);
         }
-
-        $GLOBALS['current_user']->is_admin = 1;
 
         foreach($this->documents AS $document) {
             $document->mark_deleted($document->id);
@@ -70,6 +62,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSaveFilePost()
     {
+        $this->denyDocumentView();
         $this->setExpectedException(
           'SugarApiExceptionNotAuthorized'
         );
@@ -78,10 +71,24 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetFileList()
     {
+        $this->denyDocumentView();
         $this->setExpectedException(
           'SugarApiExceptionNotAuthorized'
         );
         $this->fileApi->getFileList(new FileApiServiceMockUp(), array('module' => 'Documents', 'record' => $this->documents[0]->id, 'field' => 'filename'));
+    }
+
+    private function denyDocumentView()
+    {
+        global $current_user;
+
+        ACLAction::setACLData($current_user->id, 'Documents', array(
+            'module' => array(
+                'view' => array(
+                    'aclaccess' => ACL_ALLOW_NONE,
+                ),
+            ),
+        ));
     }
 
     public function testCreateTempFileFromInput()

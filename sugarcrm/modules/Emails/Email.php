@@ -133,6 +133,13 @@ class Email extends SugarBean {
     public $modifiedFieldDefs = array();
 
     /**
+     * Used for keeping track of field defs that have been added
+     *
+     * @var array
+     */
+    protected $addedFieldDefs = array();
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -3100,6 +3107,14 @@ eoq;
                     $this->modifiedFieldDefs[$field]['dbType'] = $this->field_defs[$field]['dbType'];
                     unset($this->field_defs[$field]['dbType']);
                 }
+
+                if (!isset($this->field_defs[$field]['required'])) {
+                    $this->addedFieldDefs[$field]['required'] = true;
+                    $this->field_defs[$field]['required'] = false;
+                } elseif (!empty($this->field_defs[$field]['required'])) {
+                    $this->modifiedFieldDefs[$field]['required'] = $this->field_defs[$field]['required'];
+                    $this->field_defs[$field]['required'] = false;
+                }
             }
         }
     }
@@ -3121,8 +3136,15 @@ eoq;
             }
 
             unset($this->modifiedFieldDefs[$field]);
+        }
+
+        if (isset($this->addedFieldDefs[$field])) {
+            foreach (array_keys($this->addedFieldDefs[$field]) as $param) {
+                unset($this->field_defs[$field][$param]);
             }
-    	}
+            unset($this->addedFieldDefs[$field]);
+        }
+    }
 
     /**
      * Set the DateTime Search Data based on Current User TimeZone

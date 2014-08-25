@@ -104,13 +104,15 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'date_entered',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'default' => false,
+                    'name' => 'date_modified',
                     'enabled' => true,
-                    'readonly' => true,
+                    'default' => true,
                 ),
-                
+                array(
+                    'name' => 'date_entered',
+                    'enabled' => true,
+                    'default' => true,
+                ),
                 array(
                     'name' => 'created_by_name',
                     'label' => 'LBL_CREATED',

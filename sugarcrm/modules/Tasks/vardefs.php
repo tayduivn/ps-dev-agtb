@@ -327,11 +327,6 @@ $dictionary['Task'] = array(
             'type' => 'index',
             'fields' => array('date_due')
         ),
-        array(
-            'name' => 'idx_task_date_entered',
-            'type' => 'index',
-            'fields' => array('date_entered')
-        ),
     ),
     'duplicate_check' => array(
         'enabled' => false

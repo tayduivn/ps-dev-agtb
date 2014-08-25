@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,13 +9,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
- * $Id: en_us.lang.php 13782 2006-06-06 17:58:55Z majed $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 $mod_strings = array (
     'LBL_BUNDLE_STAGE' => 'Group Stage:',
@@ -31,5 +23,5 @@ $mod_strings = array (
     'LBL_TAX' => 'Tax:',
     'LBL_TOTAL_USDOLLAR'=>'Total (US Dollar)',
     'LBL_TOTAL' => 'Total:',
+    'LBL_QUOTE_BUNDLE_POSITION' => 'Quote Bundle Position'
 );
-?>

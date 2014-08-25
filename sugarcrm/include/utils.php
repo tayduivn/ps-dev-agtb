@@ -240,9 +240,6 @@ function make_sugar_config(&$sugar_config)
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -472,9 +469,6 @@ function get_sugar_config_defaults()
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -5865,4 +5859,34 @@ function getBacktraceData($function) {
         }
     }
     return false;
+}
+
+/**
+ * Parses shorthand bytes value
+ *
+ * @param string $string
+ *
+ * @return int|null
+ * @link http://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+ */
+function parseShorthandBytes($string)
+{
+    if (preg_match('/^(\d+)/', $string, $matches)) {
+        $value = (int) $matches[1];
+        $modifier = substr($string, -1);
+        switch (strtoupper($modifier)) {
+            case 'G':
+                $value *= 1024;
+                // no break
+            case 'M':
+                $value *= 1024;
+                // no break
+            case 'K':
+                $value *= 1024;
+        }
+
+        return $value;
+    }
+
+    return null;
 }

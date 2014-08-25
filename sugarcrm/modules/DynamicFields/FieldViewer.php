@@ -10,6 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 class FieldViewer{
+    public static $fieldNameBlacklist = array(
+        'date_entered', 'date_modified', 'modified_user_id', 'created_by', 'deleted'
+    );
+
+    public static $fieldTypeBlacklist = array(
+        'password'
+    );
+
 	public function FieldViewer(){
         self::__construct();
     }
@@ -25,6 +33,11 @@ class FieldViewer{
 		$this->ss->assign('APP', $GLOBALS['app_strings']);
 		//Only display range search option if in Studio, not ModuleBuilder
 		$this->ss->assign('range_search_option_enabled', empty($_REQUEST['view_package']));
+
+        if ((isset($vardef['name']) && in_array($vardef['name'], self::$fieldNameBlacklist))
+        || (isset($vardef['type']) && in_array($vardef['type'], self::$fieldTypeBlacklist))) {
+            $this->ss->assign('hideDuplicatable', 'true');
+        }
 
 		$GLOBALS['log']->debug('FieldViewer.php->getLayout() = '.$vardef['type']);
 		switch($vardef['type']){

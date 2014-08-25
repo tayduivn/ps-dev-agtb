@@ -569,4 +569,19 @@
         }}, NProgress),
         false
     );
+
+    // For SAML Logout support
+    app.events.on("app:logout:success", function(data) {
+        if (app.config && app.config.externalLogin && data && data.url) {
+            if (!$('#logoutframe').length) {
+                $("#sugarcrm").append('<iframe id="logoutframe" />');
+                $('#logoutframe').hide();
+            }
+            $('#logoutframe').load(function() {
+                $('#logoutframe').off('load');
+                $('#logoutframe').attr('src','');
+            });
+            $('#logoutframe').attr('src',data.url);
+        }
+    });
 })(SUGAR.App);

@@ -44,10 +44,10 @@ class IsNumericExpression extends BooleanExpression
     {
         return <<<JS
             var params = this.getParameters().evaluate();
-            if (params == '') {
+            if (params === '' || params === null) {
                 return SUGAR.expressions.Expression.FALSE
             }
-            if ( /^(\-)?([0-9]+)?(\.[0-9]+)?$/.test(params) ) {
+            if (isFinite(params) && !isNaN(parseFloat(params))) {
                 return SUGAR.expressions.Expression.TRUE;
             }
 

@@ -115,6 +115,7 @@ $dictionary['ProspectList'] = array(
             'vname' => 'LBL_DOMAIN_NAME',
             'type'  => 'varchar',
             'len'   => '255',
+            'dependency' => 'equal($list_type, "exempt_domain")',
         ),
         'entry_count'      => array(
             'name'   => 'entry_count',

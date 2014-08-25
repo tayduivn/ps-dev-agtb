@@ -141,6 +141,13 @@ class Contract extends SugarBean
         if ($this->total_contract_value_usdollar == '') {
             $this->total_contract_value_usdollar = 0;
         }
+
+        // contracts_opportunities is many to many but for some reason the UI implements it as if it's one to many
+        // that is, for a contract, only one opp can be linked to it
+        // workaround here to delete the current entry so when it's inserted later we have only the new record
+        $query = 'delete from ' . $this->rel_opportunity_table . " where contract_id = '" . $this->id . "'";
+        $this->db->query($query);
+
         $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=pro ONLY
@@ -172,21 +179,24 @@ class Contract extends SugarBean
 
     function _set_related_opportunity_info()
     {
-        $contracts_table = $this->table_name;
-        $opportunity_link_table = $this->rel_opportunity_table;
-        $query = "SELECT opportunities.id, opportunities.name "
-            . "FROM opportunities "
-            . "INNER JOIN $opportunity_link_table "
-            . "ON opportunities.id=$opportunity_link_table.opportunity_id "
-            . "INNER JOIN $contracts_table "
-            . "ON $contracts_table.id=$opportunity_link_table.contract_id "
-            . "WHERE contracts.id='$this->id' AND contracts.deleted=0 AND opportunities.deleted=0 AND $opportunity_link_table.deleted=0 ";
-        $result = $this->db->query($query, true, 'Error retrieving opportunity info for contract: ');
-        $row = $this->db->fetchByAssoc($result);
+        // only need to populate opp if it's empty
+        if (empty($this->opportunity_id)) {
+            $contracts_table = $this->table_name;
+            $opportunity_link_table = $this->rel_opportunity_table;
+            $query = "SELECT opportunities.id, opportunities.name "
+                . "FROM opportunities "
+                . "INNER JOIN $opportunity_link_table "
+                . "ON opportunities.id=$opportunity_link_table.opportunity_id "
+                . "INNER JOIN $contracts_table "
+                . "ON $contracts_table.id=$opportunity_link_table.contract_id "
+                . "WHERE contracts.id='$this->id' AND contracts.deleted=0 AND opportunities.deleted=0 AND $opportunity_link_table.deleted=0 ";
+            $result = $this->db->query($query, true, 'Error retrieving opportunity info for contract: ');
+            $row = $this->db->fetchByAssoc($result);
 
-        if (!empty($row)) {
-            $this->opportunity_id = stripslashes($row['id']);
-            $this->opportunity_name = stripslashes($row['name']);
+            if (!empty($row)) {
+                $this->opportunity_id = stripslashes($row['id']);
+                $this->opportunity_name = stripslashes($row['name']);
+            }
         }
     }
 

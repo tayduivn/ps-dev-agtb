@@ -22,10 +22,15 @@ if(empty($argv[1])) {
 
 $pathinfo = pathinfo($argv[1]);
 
-$name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
+if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip', 'phar'))) {
+    $name = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['filename'];
+} else {
+    $name = $argv[1];
+}
 
 chdir(dirname(__FILE__)."/../..");
 $files=array(
+    "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
     "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
     "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
     "modules/UpgradeWizard/upgrader_version.json" => 'upgrader_version.json',

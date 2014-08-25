@@ -649,16 +649,10 @@ $dictionary['Opportunity'] = array(
             'type' => 'index',
             'fields' => array('assigned_user_id', 'date_closed_timestamp', 'deleted'),
         ),
-        array(
-            'name' => 'idx_opp_id_deleted',
-            'type' => 'index',
-            'fields' => array('id', 'deleted'),
-        ),
         array('name' => 'idx_opportunity_sales_status', 'type' => 'index', 'fields' => array('sales_status')),
         array('name' => 'idx_opportunity_opportunity_type', 'type' => 'index', 'fields' => array('opportunity_type')),
         array('name' => 'idx_opportunity_lead_source', 'type' => 'index', 'fields' => array('lead_source')),
         array('name' => 'idx_opportunity_next_step', 'type' => 'index', 'fields' => array('next_step')),
-        array('name' => 'idx_opportunity_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
         array(
             'name' => 'idx_opportunity_mkto_id',
             'type' => 'index',

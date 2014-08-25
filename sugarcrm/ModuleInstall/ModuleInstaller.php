@@ -2765,6 +2765,7 @@ private function dir_file_count($path){
                 "modules_info",
                 "hidden_subpanels",
                 "jssource",
+                "jssource_public",
                 "ordered_labels",
                 "module_tab_map",
                 "modules",

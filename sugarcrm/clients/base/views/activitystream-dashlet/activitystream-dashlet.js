@@ -42,7 +42,7 @@
 
         var moduleMeta = app.metadata.getModule(opts.context.parent.get('module'));
         this.activityStreamEnabled = moduleMeta.activityStreamEnabled;
-        if (this.activityStreamEnabled) {
+        if (this.activityStreamEnabled && this.activityStreamEnabled === true) {
             this.plugins.push('Pagination');
         }
 

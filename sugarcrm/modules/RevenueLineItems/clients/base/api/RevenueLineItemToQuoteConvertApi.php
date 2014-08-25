@@ -130,16 +130,6 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
             array('quote_id' => $quote->id, 'bundle_id' => $product_bundle->id, 'bundle_index' => 0)
         );
 
-        $quote->total = $product_bundle->total;
-        $quote->total_usdollar = $product_bundle->total_base;
-        $quote->subtotal = $product_bundle->total;
-        $quote->subtotal_usdollar = $product_bundle->total_base;
-        $quote->deal_tot = $product_bundle->total;
-        $quote->deal_tot_usdollar = $product_bundle->total_base;
-        $quote->new_sub = $product_bundle->total;
-        $quote->new_sub_usdollar = $product_bundle->total_base;
-        $quote->tax = 0.00;
-        $quote->tax_usdollar = 0.00;
         // quote should default to same currency as RLI
         $quote->currency_id = $rli->currency_id;
         $quote->base_rate = $rli->base_rate;
@@ -178,11 +168,6 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
             /* @var $product Product */
             $product = $rli->convertToQuotedLineItem();
 
-            $total = SugarMath::init($total)->add($product->likely_case)->result();
-            $total_base = SugarMath::init($total_base)->add(
-                SugarCurrency::convertWithRate($product->likely_case, $product->base_rate)
-            )->result();
-
             $product_bundle->set_relationship(
                 'product_bundle_product',
                 array('bundle_id' => $product_bundle->id, 'product_id' => $product->id, 'product_index' => ($key + 1))
@@ -200,17 +185,8 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
             $product->save();
         }
         $product_bundle->bundle_stage = 'Draft';
-        $product_bundle->total = $total;
-        $product_bundle->total_usdollar = $total_base;
-        $product_bundle->subtotal = $total;
-        $product_bundle->subtotal_usdollar = $total_base;
-        $product_bundle->deal_tot = $total;
-        $product_bundle->deal_tot_usdollar = $total_base;
-        $product_bundle->new_sub = $total;
-        $product_bundle->new_sub_usdollar = $total_base;
-        $product_bundle->tax = 0.00;
-        $product_bundle->tax_usdollar = 0.00;
         $product_bundle->currency_id = $product->currency_id;
+        $product_bundle->base_rate = $product->base_rate;
         $product_bundle->save();
 
         return $product_bundle;

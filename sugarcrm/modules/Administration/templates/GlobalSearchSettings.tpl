@@ -100,7 +100,7 @@
 </form>
 
 <div id='selectFTSModules' class="yui-hidden">
-    <div style="background-color: white; padding: 20px;">
+    <div style="background-color: white; padding: 20px; overflow:scroll; height:400px;">
         <div id='selectFTSModulesTable' ></div>
         <div style="padding-top: 10px"><input type="checkbox" name="clearDataOnIndex" id="clearDataOnIndex" >&nbsp;{$MOD.LBL_DELETE_FTS_DATA}</div>
     </div>
@@ -226,8 +226,8 @@
 	SUGAR.saveCallBack = function(o)
 	{
 	   ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE'));
-	   if (o.responseText == "true")
-	   {
+        var response = YAHOO.lang.trim(o.responseText);
+        if (response === "true") {
             var app = parent.SUGAR.App;
             app.metadata.sync(function (){
                 app.additionalComponents.header.getComponent('globalsearch').populateModules();
@@ -235,7 +235,7 @@
 
 	       window.location.assign('index.php?module=Administration&action=index');
 	   } else {
-	       YAHOO.SUGAR.MessageBox.show({msg:o.responseText});
+            YAHOO.SUGAR.MessageBox.show({msg: response});
 	   }
 	}
 })();

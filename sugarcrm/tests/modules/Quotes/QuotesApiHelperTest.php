@@ -11,12 +11,21 @@
  */
 
 require_once('modules/Quotes/QuotesApiHelper.php');
+
 class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var QuotesApiHelper
      */
     protected $helper;
+
+    private $_address_fields = array(
+        'address_street',
+        'address_city',
+        'address_state',
+        'address_street',
+        'address_street'
+    );
 
     public function setUp()
     {
@@ -31,6 +40,7 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unset($this->helper);
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
@@ -47,11 +57,344 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         /* @var $bean Quote */
         $this->helper->formatForApi($bean);
     }
+
+    public function testPopulateFromApiSettingBillingAddressCorrectly()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $this->fillAddressForAccount($account);
+
+        /* @var $bean Quote */
+        $bean = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $data = array(
+            "name" => 'test_quote' . time(),
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
+            'billing_account_id' => $account->id
+        );
+
+        $this->helper->populateFromApi($bean, $data);
+
+        foreach ($this->_address_fields as $field) {
+            $_field = 'billing_' . $field;
+            $this->assertEquals($account->$_field, $bean->$_field);
+        }
+    }
+
+    public function testPopulateFromApiWithSettingBillingAccountIdWillFillingShippingAccountInfo()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $this->fillAddressForAccount($account);
+
+        /* @var $bean Quote */
+        $bean = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $data = array(
+            "name" => 'test_quote' . time(),
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
+            'billing_account_id' => $account->id
+        );
+
+        $this->helper->populateFromApi($bean, $data);
+
+        $this->assertEquals($account->id, $bean->shipping_account_id);
+
+        foreach ($this->_address_fields as $field) {
+            $_bean_field = 'billing_' . $field;
+            $_field = 'shipping_' . $field;
+            $this->assertEquals($account->$_bean_field, $bean->$_field);
+        }
+    }
+
+    public function testPopulateFromApiWillSetCorrectShippingInfo()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $this->fillAddressForAccount($account);
+        $this->fillAddressForAccount($account, 'shipping');
+
+        /* @var $bean Quote */
+        $bean = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $data = array(
+            "name" => 'test_quote' . time(),
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
+            'billing_account_id' => $account->id,
+        );
+
+        $this->helper->populateFromApi($bean, $data);
+
+        $this->assertEquals($account->id, $bean->shipping_account_id);
+
+        foreach ($this->_address_fields as $field) {
+            $_field = 'shipping_' . $field;
+            $this->assertEquals($account->$_field, $bean->$_field);
+        }
+    }
+
+    public function testPopulateFromApiSetBillingFromAccountAndShippingFromContact()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $this->fillAddressForAccount($account);
+        $this->fillAddressForAccount($account, 'shipping');
+
+        $contact = SugarTestContactUtilities::createContact();
+        $this->fillAddressForContact($contact);
+        $this->fillAddressForContact($contact, 'alt');
+
+        /* @var $bean Quote */
+        $bean = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $data = array(
+            "name" => 'test_quote' . time(),
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
+            'billing_account_id' => $account->id,
+            'billing_contact_id' => $contact->id,
+            'shipping_account_id' => $account->id,
+            'shipping_contact_id' => $contact->id,
+        );
+
+        $this->helper->populateFromApi($bean, $data);
+
+        $this->assertEquals($account->id, $bean->shipping_account_id);
+
+        foreach ($this->_address_fields as $field) {
+            $_field = 'billing_' . $field;
+            $this->assertEquals($account->$_field, $bean->$_field, 'Billing ' . $field . ' does not match');
+        }
+
+        foreach ($this->_address_fields as $field) {
+            $_bean_field = 'primary_' . $field;
+            $_field = 'shipping_' . $field;
+            $this->assertEquals($contact->$_bean_field, $bean->$_field, 'Shipping ' . $field . ' does not match');
+        }
+    }
+
+    public function testHandleBundleNoteSaveAddsNoteToProductBundle()
+    {
+        $mock_bundle = $this->getMockBuilder('ProductBundle')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
+
+        $mock_link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock_product_note = $this->getMockBuilder('ProductBundleNote')
+            ->setMethods(array('save', 'retrieve'))
+            ->setMockClassName('Mock_ProductBundleNote')
+            ->getMock();
+
+        $mock_quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        BeanFactory::setBeanClass('ProductBundleNotes', 'Mock_ProductBundleNote');
+
+        $mock_link2->expects($this->once())
+            ->method('add');
+
+        $mock_link2->expects($this->never())
+            ->method('delete');
+
+        $mock_bundle->product_bundle_notes = $mock_link2;
+
+        SugarTestReflection::callProtectedMethod(
+            $this->helper,
+            'handleBundleNoteSave',
+            array(
+                array(
+                    'deleted' => 0,
+                    'description' => 'hello world',
+                    'position' => 0
+                ),
+                $mock_bundle,
+                $mock_quote
+            )
+        );
+
+        BeanFactory::setBeanClass('ProductBundleNotes', 'ProductBundleNote');
+    }
+
+    public function testHandleBundleNoteSaveDeletesNoteProductBundle()
+    {
+        $mock_bundle = $this->getMockBuilder('ProductBundle')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
+
+        $mock_link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock_product_note = $this->getMockBuilder('ProductBundleNote')
+            ->setMethods(array('save', 'retrieve', 'mark_deleted'))
+            ->setMockClassName('Mock_ProductBundleNote')
+            ->getMock();
+
+        $mock_quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        BeanFactory::setBeanClass('ProductBundleNotes', 'Mock_ProductBundleNote');
+
+        $mock_link2->expects($this->never())
+            ->method('add');
+
+        $mock_bundle->product_bundle_notes = $mock_link2;
+
+        SugarTestReflection::callProtectedMethod(
+            $this->helper,
+            'handleBundleNoteSave',
+            array(
+                array(
+                    'deleted' => 1,
+                    'description' => 'hello world',
+                    'position' => 0
+                ),
+                $mock_bundle,
+                $mock_quote
+            )
+        );
+
+        BeanFactory::setBeanClass('ProductBundleNotes', 'ProductBundleNote');
+    }
+
+    public function testHandleBundleProductSaveAddsProductToProductBundle()
+    {
+        $mock_bundle = $this->getMockBuilder('ProductBundle')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
+
+        $mock_link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock_product = $this->getMockBuilder('Product')
+            ->setMethods(array('save', 'retrieve'))
+            ->setMockClassName('Mock_Product')
+            ->getMock();
+
+        $mock_quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        BeanFactory::setBeanClass('Products', 'Mock_Product');
+
+        $mock_link2->expects($this->once())
+            ->method('add');
+
+        $mock_link2->expects($this->never())
+            ->method('delete');
+
+        $mock_bundle->products = $mock_link2;
+
+        SugarTestReflection::callProtectedMethod(
+            $this->helper,
+            'handleBundleProductSave',
+            array(
+                array(
+                    'deleted' => 0,
+                    'description' => 'hello world',
+                    'position' => 0,
+                    'name' => 'Test Product'
+                ),
+                $mock_bundle,
+                $mock_quote
+            )
+        );
+
+        BeanFactory::setBeanClass('Products', 'Product');
+    }
+
+    public function testHandleBundleProductSaveRemovesProductFromProductBundle()
+    {
+        $mock_bundle = $this->getMockBuilder('ProductBundle')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
+
+        $mock_link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock_product = $this->getMockBuilder('Product')
+            ->setMethods(array('save', 'retrieve'))
+            ->setMockClassName('Mock_Product')
+            ->getMock();
+
+        $mock_quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        BeanFactory::setBeanClass('Products', 'Mock_Product');
+
+        $mock_link2->expects($this->never())
+            ->method('add');
+
+        $mock_bundle->products = $mock_link2;
+
+        SugarTestReflection::callProtectedMethod(
+            $this->helper,
+            'handleBundleProductSave',
+            array(
+                array(
+                    'deleted' => 1,
+                    'description' => 'hello world',
+                    'position' => 0,
+                    'name' => 'Test Product'
+                ),
+                $mock_bundle,
+                $mock_quote
+            )
+        );
+
+        BeanFactory::setBeanClass('Products', 'Product');
+    }
+
+
+    private function fillAddressForAccount($account, $address = 'billing')
+    {
+        $address = in_array($address, array('billing', 'shipping')) ? $address : 'billing';
+        $time = time();
+        foreach ($this->_address_fields as $_field) {
+            $_field = $address . '_' . $_field;
+            $account->$_field = $_field . $time;
+        }
+        $account->save(false);
+    }
+
+    private function fillAddressForContact($contact, $address = 'primary')
+    {
+        $address = in_array($address, array('primary', 'alt')) ? $address : 'primary';
+        $time = time();
+        foreach ($this->_address_fields as $_field) {
+            $_field = $address . '_' . $_field;
+            $contact->$_field = $_field . $time;
+        }
+        $contact->save(false);
+    }
 }
 
 class QuotesServiceMock extends ServiceBase
 {
-    public function execute() {}
+    public function execute()
+    {
+    }
 
-    protected function handleException(Exception $exception) {}
+    protected function handleException(Exception $exception)
+    {
+    }
 }

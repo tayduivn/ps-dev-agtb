@@ -222,7 +222,6 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
        array('name' =>'idx_case_name', 'type' =>'index', 'fields'=>array('name')),
        array( 'name' => 'idx_account_id', 'type' => 'index', 'fields'=> array('account_id')),
        array('name' => 'idx_cases_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),
-        array('name' => 'idx_case_date_entered', 'type' => 'index', 'fields' => array('date_entered'))
 
     )
 

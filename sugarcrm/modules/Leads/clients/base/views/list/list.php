@@ -55,7 +55,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array (
-                    'name'  => 'email',
+                    'name'  => 'email1',
                     'label' => 'LBL_LIST_EMAIL_ADDRESS',
                     'enabled' => true,
                     'default' => true,
@@ -63,6 +63,11 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 array (
                     'name'  => 'assigned_user_name',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'date_modified',
                     'enabled' => true,
                     'default' => true,
                 ),

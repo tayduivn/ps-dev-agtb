@@ -102,9 +102,7 @@ class FileApi extends SugarApi {
 
         // Now validate our file
         $filesize = filesize($tempfile);
-        if (empty($filesize)) {
-            throw new SugarApiExceptionMissingParameter('File is missing or no file data was received.');
-        }
+        $this->checkPutRequestBody($filesize);
 
         // Now get our actual mime type from our internal methodology if it wasn't passed
         if (empty($filetype)) {
@@ -200,21 +198,14 @@ class FileApi extends SugarApi {
         // if the auth token was sent as part of the request body, you will get a no auth error
         // message on uploads. This check is in place specifically for file uploads that are too
         // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
-        if (isset($_FILES)) {
-            if (empty($_FILES)) {
-
-                // If we get here, the attachment was > php.ini upload_max_filesize value so we need to
-                // check if delete_if_fails optional parameter was set true, etc.
-                $this->deleteIfFails($bean, $args);
-
-                // @TODO Localize this exception message
-                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
-            }
-        } else {
-            throw new SugarApiExceptionMissingParameter('Attachment is missing');
-        }
-
         if (empty($_FILES[$filesIndex])) {
+
+            // If we get here, the attachment was > php.ini upload_max_filesize value so we need to
+            // check if delete_if_fails optional parameter was set true, etc.
+            $this->deleteIfFails($bean, $args);
+
+            $this->checkPostRequestBody();
+
             // @TODO Localize this exception message
             throw new SugarApiExceptionMissingParameter("Incorrect field name for attachement: $filesIndex");
         }
