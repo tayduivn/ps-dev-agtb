@@ -34,10 +34,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'int',
     'len' => '2',
     'comment' => 'Call duration, hours portion',
-	'required' => true,
+    'required' => true,
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
-
+    'studio' => false,
   ),
   'duration_minutes' =>
   array (
@@ -49,14 +48,15 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'group'=>'duration_hours',
     'importable' => 'required',
     'comment' => 'Call duration, minutes portion',
+    'required' => true,
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'studio' => false,
   ),
 
    'date_start' =>
   array (
     'name' => 'date_start',
-    'vname' => 'LBL_DATE',
+    'vname' => 'LBL_CALENDAR_START_DATE',
     'type' => 'datetimecombo',
     'dbType' => 'datetime',
     'comment' => 'Date in which call is schedule to (or did) start',
@@ -66,19 +66,20 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
+    'studio' => array('recordview' => false),
   ),
 
   'date_end' =>
   array (
     'name' => 'date_end',
-    'vname' => 'LBL_DATE_END',
+    'vname' => 'LBL_CALENDAR_END_DATE',
     'type' => 'datetimecombo',
 	'dbType' => 'datetime',
-    'massupdate'=>false,
+    'massupdate' => false,
     'comment' => 'Date is which call is scheduled to (or did) end',
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
-    'studio' => array('wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
+    'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
   ),
 
  'parent_type'=>
@@ -410,7 +411,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_type' =>
   array(
     'name' => 'repeat_type',
-    'vname' => 'LBL_REPEAT_TYPE',
+    'vname' => 'LBL_CALENDAR_REPEAT_TYPE',
     'type' => 'enum',
     'len' => 36,
     'options' => 'repeat_type_dom',
@@ -423,7 +424,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_interval' =>
   array(
     'name' => 'repeat_interval',
-    'vname' => 'LBL_REPEAT_INTERVAL',
+    'vname' => 'LBL_CALENDAR_REPEAT_INTERVAL',
     'type' => 'int',
     'len' => 3,
     'default' => 1,
@@ -436,7 +437,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_dow' =>
   array(
     'name' => 'repeat_dow',
-    'vname' => 'LBL_REPEAT_DOW',
+    'vname' => 'LBL_CALENDAR_REPEAT_DOW',
     'type' => 'varchar',
     'len' => 7,
     'comment' => 'Days of week in recurrence',
@@ -448,7 +449,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_until' =>
   array(
     'name' => 'repeat_until',
-    'vname' => 'LBL_REPEAT_UNTIL',
+    'vname' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
     'type' => 'date',
     'comment' => 'Repeat until specified date',
     'importable' => 'false',
@@ -459,7 +460,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_count' =>
   array(
     'name' => 'repeat_count',
-    'vname' => 'LBL_REPEAT_COUNT',
+    'vname' => 'LBL_CALENDAR_REPEAT_COUNT',
     'type' => 'int',
     'len' => 7,
       'default' => 10,

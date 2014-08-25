@@ -32,6 +32,13 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'date_end',
+                    'link' => false,
+                    'default' => false,
+                    'enabled' => true,
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'parent_name',
                     'label' => 'LBL_LIST_RELATED_TO',
                     'id' => 'PARENT_ID',

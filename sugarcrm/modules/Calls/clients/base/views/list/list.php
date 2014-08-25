@@ -47,6 +47,13 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'name' => 'date_start',
                 ),
                 array(
+                    'name' => 'date_end',
+                    'link' => false,
+                    'default' => false,
+                    'enabled' => true,
+                    'readonly' => true,
+                ),
+                array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'status',

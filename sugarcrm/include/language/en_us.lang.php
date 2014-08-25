@@ -5192,6 +5192,13 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_TO' => 'to',
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
 
+    'LBL_CALENDAR_START_DATE' => "Start Date",
+    'LBL_CALENDAR_END_DATE' => "End Date",
+    'LBL_CALENDAR_DURATION' => "Duration",
+    'LBL_CALENDAR_RECURRENCE' => "Recurrence",
+    'LBL_CALENDAR_REMINDERS' => "Reminders",
+
+    'LBL_CALENDAR_REPEAT_TYPE' => "Repeat Type",
     'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
     'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
