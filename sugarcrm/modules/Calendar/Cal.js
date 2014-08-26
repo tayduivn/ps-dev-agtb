@@ -1501,9 +1501,12 @@
 
     CAL.dialog_create = function(cell) {
         var dateStart = CAL.unformatDateTime(cell.getAttribute('datetime')),
+            meetingDurationMinutes = 15,
             meetingAttributes = {
                 'date_start': dateStart,
-                'date_end': app.date(dateStart).add('m', 15).formatServer()
+                'date_end': app.date(dateStart).add('m', meetingDurationMinutes).formatServer(),
+                'duration_hours': 0,
+                'duration_minutes': meetingDurationMinutes
             };
 
         CAL.openActivityCreateDrawer('Meetings', meetingAttributes);
