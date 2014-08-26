@@ -518,14 +518,16 @@ class SugarQuery_Compiler_SQL
                     }
 
                     if (is_array($condition->values)) {
+                        $conditions = array();
                         foreach ($condition->values as $value) {
                             $val = $this->prepareValue($value, $condition);
-                            $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
+                            $conditions[] = "{$field} {$comparitor} {$val}";
                         }
-                        $sql = rtrim($sql, "$chainWith ");
+                        $sql .= '(' . implode(' ' . $chainWith . ' ', $conditions);
                         if ($condition->operator === 'DOES NOT CONTAIN') {
-                            $sql .= " OR {$field} IS NULL ";
+                            $sql .= " OR {$field} IS NULL";
                         }
+                        $sql .= ') ';
                     } else {
                         $value = $this->prepareValue($condition->values, $condition);
                         $sql .= "{$field} {$comparitor} {$value}";

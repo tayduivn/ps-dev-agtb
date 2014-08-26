@@ -83,4 +83,47 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @dataProvider compileConditionProvider
+     */
+    public function testCompileCondition($input, $expected)
+    {
+        $query = new SugarQuery();
+
+        /** @var SugarQuery_Builder_Where $where */
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('dummy'))
+            ->disableOriginalConstructor()
+            ->getMock();
+        $where->query = $query;
+        $input($where);
+        $condition = array_shift($where->conditions);
+        $condition->field->table = 't';
+
+        $compiler = new SugarQuery_Compiler_SQL($GLOBALS['db']);
+        SugarTestReflection::setProtectedValue($compiler, 'sugar_query', $query);
+        $sql = SugarTestReflection::callProtectedMethod($compiler, 'compileCondition', array($condition));
+        $sql = trim($sql);
+
+        $this->assertContains($expected, $sql);
+    }
+
+    public static function compileConditionProvider()
+    {
+        return array(
+            array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->contains('foo', array('bar', 'baz'));
+                },
+                "(t.foo LIKE 'bar' OR t.foo LIKE 'baz')"
+            ),
+            array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->notContains('foo', array('bar', 'baz'));
+                },
+                "(t.foo NOT LIKE 'bar' AND t.foo NOT LIKE 'baz' OR t.foo IS NULL)"
+            ),
+        );
+    }
 }
