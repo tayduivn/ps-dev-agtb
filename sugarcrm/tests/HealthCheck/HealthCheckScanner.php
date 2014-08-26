@@ -16,7 +16,6 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
     public $md5_files = array();
     public $bwcModulesHash = array();
-    private $logString = '';
 
     /**
      * Initialize instance environment

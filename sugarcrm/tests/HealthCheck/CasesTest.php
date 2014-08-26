@@ -51,6 +51,11 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test uses temp directory ($this->cachedPath) for files which need fo test.
+     * Also it changes include_path and current directory to the temp directory, so
+     * HealthCheckScanner will try to load test files first and only if they're not present it
+     * loads sugar's files.
+     *
      * @dataProvider getCases
      */
     public function testCase($code, $case)
@@ -96,7 +101,7 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
         return new $scanner();
     }
 
-    static public function getCases()
+    public static function getCases()
     {
         $cases = array();
 
@@ -114,11 +119,11 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
                 if ($pointer->getFilename() != $code && substr($pointer->getFilename(), 0, strlen($code) + 1) != $code . '_') {
                     continue;
                 }
-                $cases[] = array($code, $pointer->getFilename());
+                $cases['CASE_' . $pointer->getFilename()] = array($code, $pointer->getFilename());
                 $isUpdated = true;
             }
             if (!$isUpdated) {
-                $cases[] = array($code, $code);
+                $cases['CASE_' . $code] = array($code, $code);
             }
         }
 
