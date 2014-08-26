@@ -436,6 +436,8 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
     	    }
 	    }
 	} else {
+	    // When the type is "date", asDbType() does not change the TZ by default, so the date will still be in user TZ
+	    // even though formatted as DB date. That's because we do not convert dates (as opposed to datetimes) by default.
 	    $date = $timedate->getNow($user_format);
 	}
 
