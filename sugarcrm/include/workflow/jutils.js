@@ -368,6 +368,7 @@ function submit_filtered(srcForm)
     document.body.appendChild(dstForm);
 
     var inputs = srcForm.getElementsByTagName("input");
+    inputs = inputs.concat(srcForm.getElementsByTagName("select"));
     for (var i = 0, length = inputs.length, srcInput, dstInput; i < length; i++) {
         srcInput = inputs[i];
         if (srcInput.value !== "") {
