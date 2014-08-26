@@ -1522,7 +1522,7 @@ function QuotesEditManager(Y) {
                     }
 
                     if (chckd) {
-                        formula = "(unformatNumber('_var_quantity_', num_grp_sep, dec_sep) " +
+                        formula_discount = "(unformatNumber('_var_quantity_', num_grp_sep, dec_sep) " +
                             "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep)) " +
                             "* (unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100)";
                     }

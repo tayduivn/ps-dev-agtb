@@ -142,13 +142,14 @@ class RecentApi extends SugarApi
         $lastViewedDates = array();
 
         $results = $mainQuery->execute();
+        $db = DBManagerFactory::getInstance();
         foreach ($results as $idx => $recent) {
             if ($idx == $options['limit']) {
                 $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
                 break;
             }
             $seed = BeanFactory::getBean($recent['module_name'], $recent['id']);
-            $lastViewedDates[$seed->id] = $recent['last_viewed_date'];
+            $lastViewedDates[$seed->id] = $db->fromConvert($recent['last_viewed_date'], 'datetime');
             $beans[$seed->id] = $seed;
         }
 

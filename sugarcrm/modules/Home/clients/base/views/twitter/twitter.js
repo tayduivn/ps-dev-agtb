@@ -17,11 +17,14 @@
     plugins: ['Dashlet', 'RelativeTime', 'Connector', 'Tooltip'],
     limit : 20,
     events: {
-        'click .connect-twitter': 'onConnectTwitterClick'
+        'click .connect-twitter': 'onConnectTwitterClick',
+        'click .create-case': 'createCase'
     },
 
     initDashlet: function() {
         this.initDashletConfig();
+        var serverInfo = app.metadata.getServerInfo();
+        this.tweet2case = serverInfo.system_tweettocase_on ? true : false;
         var limit = this.settings.get('limit') || this.limit;
         this.settings.set('limit', limit);
         this.cacheKey = 'twitter.dashlet.current_user_cache';
@@ -32,6 +35,7 @@
         if (currentUserCache && currentUserCache.current_twitter_user_pic) {
             self.current_twitter_user_pic = currentUserCache.current_twitter_user_pic;
         }
+        this.caseCreateAcl = app.acl.hasAccess('edit','Cases');
     },
 
     initDashletConfig: function() {
@@ -62,7 +66,111 @@
             });
         }
     },
+    /**
+     * opens case create drawer with case attributes prefilled
+     * @param event
+     */
+    createCase: function (event) {
+        var module = 'Cases';
+        var layout = 'create';
+        var self = this;
 
+        // set up and open the drawer
+        app.drawer.reset();
+        app.drawer.open({
+            layout: layout,
+            context: {
+                create: true,
+                module: module
+            }
+        }, function (refresh, createModelPointer) {
+            if (refresh) {
+                var collection = app.controller.context.get('collection');
+                if (collection && collection.module === module) {
+                    collection.fetch({
+                        //Don't show alerts for this request
+                        showAlerts: false
+                    });
+                }
+            }
+        });
+
+        var createLayout = _.last(app.drawer._components),
+            tweetId = this.$(event.target).data('url').split('/');
+            tweetId = tweetId[tweetId.length-1];
+        var createValues = {
+            'source':'Twitter',
+            'name': app.lang.get('LBL_CASE_FROM_TWITTER_TITLE', 'Cases') + ' ' + tweetId +' @'+ this.$(event.target).data('screen_name'),
+            'description': app.lang.get('LBL_TWITTER_SOURCE', 'Cases') +' '+  this.$(event.target).data('url')
+        };
+        // update the create models values
+        this.createModel = createLayout.model;
+        if (this.model) {
+            if(this.model.module == 'Accounts') {
+                createValues.account_name = this.model.get('name');
+                createValues.account_id = this.model.get('id');
+            } else {
+                createValues.account_name = this.model.get('account_name');
+                createValues.account_id = this.model.get('account_id');
+            }
+        }
+
+        this.setCreateModelFields(this.createModel, createValues);
+
+        this.createModel.on('sync', _.once(function (model) {
+            // add activity stream on save
+            var activity = app.data.createBean('Activities', {
+                activity_type: "post",
+                comment_count: 0,
+                data: {
+                    value: app.lang.get('LBL_TWITTER_SOURCE') +' '+ self.$(event.target).data('url'),
+                    tags: []
+                },
+                tags: [],
+                value: app.lang.get('LBL_TWITTER_SOURCE') +' '+ self.$(event.target).data('url'),
+                deleted: "0",
+                parent_id: model.id,
+                parent_type: "Cases"
+            });
+
+            activity.save();
+
+            //relate contact if we can find one
+            var contacts = app.data.createBeanCollection('Contacts');
+            var options = {
+                filter: [
+                    {
+                        "twitter": {
+                            "$equals": self.$(event.target).data('screen_name')
+                        }
+                    }
+                ],
+                success: function (data) {
+                    if (data && data.models && data.models[0]) {
+                        var url = app.api.buildURL('Cases', 'contacts', {id: self.createModel.id, relatedId: data.models[0].id, link: true});
+                        app.api.call('create', url);
+                    }
+                }
+            };
+            contacts.fetch(options);
+        }));
+    },
+    /**
+     * sets fields on model according to acls
+     * @param model
+     * @param fields
+     * @returns {*}
+     */
+    setCreateModelFields: function(model, fields) {
+        var action = 'edit', module = 'Cases', ownerId = app.user.get('id');
+        _.each(fields, function(value, fieldName) {
+            if(app.acl.hasAccess(action, module, ownerId, fieldName)) {
+                model.set(fieldName, value);
+            }
+        });
+
+        return model;
+    },
     _render: function () {
         if (this.tweets || this.meta.config) {
             app.view.View.prototype._render.call(this);

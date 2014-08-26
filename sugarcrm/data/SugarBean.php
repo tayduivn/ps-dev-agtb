@@ -806,12 +806,13 @@ class SugarBean
      * Before calling this function, check whether activity has been enabled for the table/module or not.
      * You would set the activity flag in the implemting module's vardef file.
      *
+     * @param array $excludeType Array of field types to exclude
      * @return an array of
      * @see isActivityEnabled
      *
      * Internal function, do not override.
      */
-    function getActivityEnabledFieldDefinitions()
+    function getActivityEnabledFieldDefinitions($excludeType = array('datetime'))
     {
         if (!isset($this->activity_enabled_fields))
         {
@@ -829,7 +830,7 @@ class SugarBean
                     else
                         $field_type=$properties['dbtype'];
                 }
-                if ($field != 'modified_user_id' && !empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
+                if ($field != 'modified_user_id' && !empty($field_type) && !in_array($field_type, $excludeType))
                 {
                     $this->activity_enabled_fields[$field]=$properties;
                 }
@@ -2365,7 +2366,11 @@ class SugarBean
             {
                 // It's a self-referencing relationship
                 if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
-                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                // CRYS-358. Many-to-many relationship with real type one-to-many has two valid sides which have
+                // different names.
+                $new_rel_link = ($this->$rel_link->getSide() == REL_RHS) ?
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink() :
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
                 } else {
                     // Doesn't have a right hand side, so let's just use the LHS
                     $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
