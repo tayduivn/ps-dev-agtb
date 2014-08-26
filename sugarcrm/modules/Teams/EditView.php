@@ -45,6 +45,12 @@ $xtpl = new XTemplate("modules/Teams/EditView.html");
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 
+if ($focus->private)
+    $xtpl->assign("READONLY", 'readonly');
+else
+    $xtpl->assign("READONLY", '');
+
+
 $return_id = isset($_REQUEST['return_id']) ?  $_REQUEST['return_id'] : '';
 $return_module = isset($_REQUEST['return_module']) ?  $_REQUEST['return_module'] : '';
 $return_action= isset($_REQUEST['return_action']) ?  $_REQUEST['return_action'] : '';
