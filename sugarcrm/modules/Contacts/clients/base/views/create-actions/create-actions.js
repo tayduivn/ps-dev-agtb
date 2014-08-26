@@ -10,7 +10,7 @@
  */
 //FILE SUGARCRM flav=ent ONLY
 ({
-    extendsFrom: 'CreateView',
+    extendsFrom: 'CreateActionsView',
 
     /**
      * Gets the portal status from metadata to know if we render portal specific fields.

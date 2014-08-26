@@ -31,10 +31,43 @@ $viewdefs['base']['view']['create'] = array(
             'showOn'    => 'select',
         ),
         array(
-            'name'    => 'save_button',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
             'primary' => true,
+            'showOn' => 'create',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+            ),
+        ),
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'duplicate_dropdown',
+            'primary' => true,
+            'showOn' => 'duplicate',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
+                ),
+            ),
+        ),
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'select_dropdown',
+            'primary' => true,
+            'showOn' => 'select',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+            ),
         ),
         array(
             'name' => 'sidebar_toggle',
