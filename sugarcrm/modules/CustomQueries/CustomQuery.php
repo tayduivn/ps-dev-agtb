@@ -321,7 +321,6 @@ class CustomQuery extends SugarBean {
 					AND deleted=0
 					";
 		$this->db->query($query,true,"Error deleting query_id from datasets: ");
-		$GLOBALS['log']->debug("Error deleting query_id from datasets: ".$result);
 
 	}
 
