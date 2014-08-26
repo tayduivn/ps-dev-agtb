@@ -57,4 +57,40 @@ class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $quote->getRelatedOpportunityCount());
     }
 
+    public function testMarkDeleted()
+    {
+        $quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->getMock();
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('getBeans'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $product_bundle = $this->getMockBuilder('ProductBundle')
+            ->setMethods(array('mark_deleted'))
+            ->getMock();
+
+        $product_bundle->id = 'pb_unittest';
+
+        $product_bundle->expects($this->once())
+            ->method('mark_deleted')
+            ->with('pb_unittest');
+
+        $link2->expects($this->once())
+            ->method('getBeans')
+            ->will($this->returnValue(array($product_bundle)));
+
+        $quote->product_bundles = $link2;
+
+
+        $quote->expects($this->once())
+            ->method('retrieve')
+            ->with('quote_unittest');
+
+        /* @var $quote Quote */
+        $quote->mark_deleted('quote_unittest');
+    }
+
 }
