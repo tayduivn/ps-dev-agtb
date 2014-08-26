@@ -14,15 +14,16 @@ require_once 'CliUpgrader.php';
 class ShadowUpgrader extends CliUpgrader
 {
     protected $options = array(
-            // required, short, long
-            'pre_template' => array(true, 'f', 'from'),
-            'post_template' => array(true, 't', 'to'),
-            "source_dir" => array(true, 's', 'source'),
-            "log" => array(true, 'l', 'log'),
-            "admin" => array(true, 'u', 'user'),
-            "backup" => array(false, 'b', 'backup'),
-            "script_mask" => array(false, 'm', 'mask'),
-            "stage" => array(false, 'S', 'stage'),
+        // required, short, long
+        'pre_template' => array(true, 'f', 'from'),
+        'post_template' => array(true, 't', 'to'),
+        "source_dir" => array(true, 's', 'source'),
+        "log" => array(true, 'l', 'log'),
+        "admin" => array(true, 'u', 'user'),
+        "backup" => array(false, 'b', 'backup'),
+        "script_mask" => array(false, 'm', 'mask'),
+        "stage" => array(false, 'S', 'stage'),
+        "autoconfirm" => array(false, 'A', 'autoconfirm')
     );
 
     protected function commit()
@@ -33,8 +34,8 @@ class ShadowUpgrader extends CliUpgrader
 
     protected static function usage()
     {
-		list($version, $build) = static::getVersion();
-    	$usage =<<<eoq2
+        list($version, $build) = static::getVersion();
+        $usage = <<<eoq2
 Shadow Upgrader v.$version (build $build)
 php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -l logFile -u admin-user
 
@@ -53,38 +54,39 @@ Optional arguments:
                                            Supported types: db, custom, none. Default is db,custom.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
+    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
 
 eoq2;
-    	echo $usage;
+        echo $usage;
     }
 
     protected function verifyArguments()
     {
-        if(!function_exists("shadow")) {
+        if (!function_exists("shadow")) {
             $this->argError("Shadow module should be installed to run this script.");
         }
 
-        if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
+        if (empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
             $this->argError("Source dir parameter must be a valid directory.");
         }
 
-        if(empty($this->context['pre_template']) || empty($this->context['post_template'])) {
+        if (empty($this->context['pre_template']) || empty($this->context['post_template'])) {
             $this->argError("Templates should be specified");
         }
 
-        if(!is_file("{$this->context['pre_template']}/include/entryPoint.php")) {
+        if (!is_file("{$this->context['pre_template']}/include/entryPoint.php")) {
             $this->argError("{$this->context['pre_template']} is not a SugarCRM template.");
         }
 
-        if(!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
+        if (!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
             $this->argError("{$his->context['post_template']} is not a SugarCRM template.");
         }
 
-        if(!is_file("{$this->context['source_dir']}/config.php")) {
+        if (!is_file("{$this->context['source_dir']}/config.php")) {
             $this->argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
-    	return true;
+        return true;
     }
 
     protected function getVersionFromPath($path)
@@ -92,7 +94,7 @@ eoq2;
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         $f = array_pop($parts);
         $v = array_pop($parts);
-        return $v.$f;
+        return $v . $f;
     }
 
     /**
@@ -110,10 +112,10 @@ eoq2;
         $to = $this->getVersionFromPath($context['post_template']);
         $context['zip'] = "ShadowUpgrade-$from-$to";
         // only use custom and DB scripts
-        if(isset($context['script_mask'])) {
-            $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
+        if (isset($context['script_mask'])) {
+            $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM | UpgradeScript::UPGRADE_DB;
         } else {
-            $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
+            $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM | UpgradeScript::UPGRADE_DB;
         }
         $context['new_source_dir'] = $context['post_template'];
         $context['backup'] = 0;
@@ -128,11 +130,11 @@ eoq2;
 
     public function unlink($file)
     {
-        if($file[0] == '/') {
+        if ($file[0] == '/') {
             return parent::unlink($file);
         }
         // check relative paths against source dir
-        if(file_exists($this->context['source_dir']."/".$file)) {
+        if (file_exists($this->context['source_dir'] . "/" . $file)) {
             return @unlink($file);
         }
         return true;
@@ -163,7 +165,7 @@ eoq2;
 
     protected function initSugar()
     {
-        if($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
+        if ($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
             $templ_dir = $this->context['pre_template'];
         } else {
             $templ_dir = $this->context['post_template'];
@@ -176,7 +178,9 @@ eoq2;
     }
 }
 
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
+}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
