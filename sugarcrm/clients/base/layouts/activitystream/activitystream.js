@@ -59,6 +59,10 @@
                 collection.each(function(model) {
                     self.renderPost(model);
                 });
+            },
+            error: function(error) {
+                self.collection.dataFetched = true;
+                self.collection.reset();
             }
         });
     },

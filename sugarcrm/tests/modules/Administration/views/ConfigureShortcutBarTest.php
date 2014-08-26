@@ -297,9 +297,9 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
      * Bug #57703
      * @ticket 57703
      * @group 57703
-     * @covers ViewConfigureshortcutbar::filterModules
+     * @covers ViewConfigureshortcutbar::filterAndFormatModuleList
      */
-    public function testFilterModules()
+    public function testFilterAndFormatModuleList_ReturnsFilteredData()
     {
         $moduleList = array(
             'PdfManager' => array('module'=>'PdfManager'),

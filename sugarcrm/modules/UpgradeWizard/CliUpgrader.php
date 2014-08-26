@@ -519,14 +519,14 @@ eoq2;
     {
         $this->logHealthCheck('*** START HEALTHCHECK ISSUES ***', $stdOut);
         foreach ($scanner->getLogMeta() as $key => $entry) {
-            $this->logHealthCheck(" => Issue $key (flag = {$entry['flag']}):", $stdOut);
-            $this->logHealthCheck("  {$entry['log']}", $stdOut);
-            /**
-             * $this->logHealthCheck("  {$entry['title']}", $stdOut);
-             * $this->logHealthCheck("  {$entry['descr']}", $stdOut);
-             * if ($entry['kb']) {
-             * $this->logHealthCheck("  {$entry['kb']}", $stdOut);
-             * } */
+            if(strpos($entry['title'], 'LBL_') === 0) {
+                $entry['title'] = $entry['report'];
+            }
+            if(strpos($entry['descr'], 'LBL_') === 0) {
+                $entry['descr'] = $entry['log'];
+            }
+            $this->logHealthCheck(" => Issue $key (flag = {$entry['flag_label']}):", $stdOut);
+            $this->logHealthCheck(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}", $stdOut);
         }
         $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
     }

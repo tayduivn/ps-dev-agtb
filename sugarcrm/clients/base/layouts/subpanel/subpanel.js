@@ -17,32 +17,46 @@
     extendsFrom: 'PanelLayout',
 
     /**
+     * What is our current dataview
+     */
+    dataView: 'subpanel-list',
+
+    /**
      * @override
      */
-    initialize: function(opts) {
-        opts.type = 'panel';
+    initialize: function(options) {
+        options.type = 'panel';
         //Check for the override_subpanel_list_view from the parent layout metadata and replace the list view if found.
-        if (opts.meta && opts.def && opts.def.override_subpanel_list_view) {
-            _.each(opts.meta.components, function(def) {
+        if (options.meta && options.def && options.def.override_subpanel_list_view) {
+            _.each(options.meta.components, function(def) {
                 if (def.view && def.view == 'subpanel-list') {
-                    def.view = opts.def.override_subpanel_list_view;
+                    def.view = options.def.override_subpanel_list_view;
                 }
             });
+            // set the dataview if we override it
+            this.dataView = options.def.override_subpanel_list_view;
             // override last_state.id with "override_subpanel_list_view" for unique state name.
-            if (opts.meta.last_state.id) {
-                opts.meta.last_state.id = opts.def.override_subpanel_list_view;
+            if (options.meta.last_state.id) {
+                options.meta.last_state.id = options.def.override_subpanel_list_view;
             }
         }
 
-        if (opts.meta && opts.def && opts.def.override_paneltop_view) {
-            _.each(opts.meta.components, function(def) {
+        if (options.meta && options.def && options.def.override_paneltop_view) {
+            _.each(options.meta.components, function(def) {
                 if (def.view && def.view == 'panel-top') {
-                    def.view = opts.def.override_paneltop_view;
+                    def.view = options.def.override_paneltop_view;
                 }
             });
         }
 
-        this._super("initialize", [opts]);
+        this._super('initialize', [options]);
+
+        // if the dataView variable does not equal 'subpanel-list', it means it was changed
+        // and we need to set the correct dataView on the context so when the data is fetched via
+        // the api, it pulls the correct fields.
+        if (this.dataView !== 'subpanel-list') {
+            this.context.set('dataView', this.dataView);
+        }
 
         // binding so subpanels can trigger other subpanels to reload by link name
         // example: ctx.trigger('subpanel:reload', {links: ['opportunities','revenuelineitems']});

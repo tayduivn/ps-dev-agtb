@@ -57,7 +57,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $GLOBALS['starttTime'] = microtime(true);
 
 if (!defined('SUGAR_BASE_DIR')) {
-    define('SUGAR_BASE_DIR', realpath(dirname(__FILE__) . '/..'));
+    define('SUGAR_BASE_DIR', str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')));
 }
 
 set_include_path(

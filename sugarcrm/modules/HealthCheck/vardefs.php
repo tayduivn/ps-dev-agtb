@@ -35,7 +35,7 @@ $dictionary['HealthCheck'] = array(
         'logmeta' => array(
             'name' => 'logmeta',
             'vname' => 'LBL_LOGMETA',
-            'type' => 'text',
+            'type' => 'longtext',
         ),
         'error' => array(
             'name' => 'error',

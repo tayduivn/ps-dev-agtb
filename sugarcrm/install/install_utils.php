@@ -1309,6 +1309,7 @@ function insert_default_settings(){
     //END SUGARCRM flav=pro ONLY
 
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'skypeout_on', '1')" );
+    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0')" );
 
 }
 

@@ -754,7 +754,7 @@ $alert_file_contents = "";
                 $eval_dump .= "\$_SESSION['workflow_cron'] = 'Yes';\n";
                 ++ $trigger_time_count;
                 $eval_dump .= "\$secondary_array = array();";
-                $eval_dump .= "\$checkFields = array('for' => 'activity', ";
+                $eval_dump .= "\$checkFields = array('for' => 'activity', 'excludeType' => array(), ";
                 $eval_dump .= "'field_filter' => array(";
                 $additionalEval = array();
                 $additionalEvalRelated = array();

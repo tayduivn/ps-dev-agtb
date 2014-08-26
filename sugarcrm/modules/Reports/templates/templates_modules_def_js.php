@@ -652,6 +652,11 @@ qualifiers[qualifiers.length] = {name:'all',value:'<?php echo $mod_strings['LBL_
 qualifiers[qualifiers.length] = {name:'exact',value:'<?php echo $mod_strings['LBL_EXACT']; ?>'};
 filter_defs['team_set_id'] = qualifiers;
 
+    filter_defs['file'] = [
+        {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'},
+        {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'}
+    ];
+
 function in_array(n, h){
     var i = 0;
     while (i < h.length) {

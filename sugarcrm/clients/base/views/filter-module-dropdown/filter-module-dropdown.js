@@ -20,6 +20,7 @@
 ({
     //Override default Backbone tagName
     tagName: "span",
+    className: "table-cell",
 
     /**
      * @inheritdoc

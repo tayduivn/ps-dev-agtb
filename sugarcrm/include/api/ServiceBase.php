@@ -81,6 +81,12 @@ abstract class ServiceBase {
     {
         global $current_language;
         $current_language = $GLOBALS['sugar_config']['default_language'];
+        if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+            $postContents = json_decode($GLOBALS['HTTP_RAW_POST_DATA'], true);
+            if (!empty($postContents['current_language'])) {
+                $current_language = $postContents['current_language'];
+            }
+        }
 
         $GLOBALS['app_strings'] = return_application_language($current_language);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
@@ -151,7 +157,9 @@ abstract class ServiceBase {
        $login_exc = new SugarApiExceptionNeedLogin($message);
        $auth = AuthenticationController::getInstance();
        if($auth->isExternal()) {
-           $login_exc->setExtraData("url", $auth->getLoginUrl());
+            $login_exc->setExtraData("url", $auth->getLoginUrl(array(
+                'platform' => $this->platform,
+            )))->setExtraData('platform', $this->platform);
        }
        throw $login_exc;
     }

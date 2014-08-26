@@ -535,7 +535,7 @@ class Product extends SugarBean
         $rli->fetched_row = array();
 
         foreach ($this->getFieldDefinitions() as $field) {
-            if ($field['name'] != 'id') {
+            if ($field['name'] != 'id' && isset($this->fetched_row[$field['name']])) {
                 $rli->$field['name'] = $this->fetched_row[$field['name']];
                 // set the fetched row, so we prevent the product_template from fetching again
                 // when the re-save happens because of the relationships

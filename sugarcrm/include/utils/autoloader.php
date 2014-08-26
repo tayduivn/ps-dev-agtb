@@ -275,10 +275,7 @@ class SugarAutoLoader
     public static function getComposerClassMap()
     {
         $classMap = self::getIncludeReturn(self::$composerPaths['autoload_classmap']);
-        foreach ($classMap as $class => $path) {
-            $classMap[$class] = self::normalizeFilePath($path);
-        }
-        return $classMap;
+        return array_map(array('SugarAutoLoader', 'normalizeFilePath'), $classMap);
     }
 
     /**
@@ -467,13 +464,12 @@ class SugarAutoLoader
         foreach (self::$namespaceMap as $namespace => $paths) {
             foreach ($paths as $path) {
                 if (strpos($class, $namespace) === 0) {
-                    $ds = DIRECTORY_SEPARATOR;
-                    $path = empty($path) ? '' : $path . $ds;
+                    $path = empty($path) ? '' : $path . '/';
                     if (false !== $pos = strrpos($class, '\\')) {
-                        $path .= str_replace('\\', $ds, substr($class, 0, $pos)) . $ds;
-                        $path .= str_replace('_', $ds, substr($class, $pos + 1)) . '.php';
+                        $path .= str_replace('\\', '/', substr($class, 0, $pos)) . '/';
+                        $path .= str_replace('_', '/', substr($class, $pos + 1)) . '.php';
                     } else {
-                        $path .= str_replace('_', $ds, $class) . '.php';
+                        $path .= str_replace('_', '/', $class) . '.php';
                     }
                     return $path;
                 }
@@ -493,9 +489,8 @@ class SugarAutoLoader
         foreach (self::$namespaceMapPsr4 as $prefix => $paths) {
             foreach ($paths as $path) {
                 if (strpos($class, $prefix) === 0) {
-                    $ds = DIRECTORY_SEPARATOR;
-                    $path = empty($path) ? '' : $path . $ds;
-                    $path .= str_replace('\\', $ds, str_replace($prefix, '', $class)) . '.php';
+                    $path = empty($path) ? '' : $path . '/';
+                    $path .= str_replace('\\', '/', str_replace($prefix, '', $class)) . '.php';
                     return $path;
                 }
             }
@@ -535,9 +530,14 @@ class SugarAutoLoader
      */
     public static function addNamespace($prefix, $dir, $type = 'psr0')
     {
+        // select which map to use
         $map = ($type === 'psr4') ? 'namespaceMapPsr4' : 'namespaceMap';
-        $prefix = rtrim($prefix, '\\') . '\\';  // enforce trailing \
-        $dir = rtrim($dir, '/');                // remove trailing /
+
+        // enforce trailing \
+        $prefix = rtrim($prefix, '\\') . '\\';
+
+        // remove trailing / and normalize path
+        $dir = rtrim(self::normalizeFilePath($dir), '/');
 
         // use a list of paths per prefix
         self::${$map}[$prefix][] = $dir;
@@ -1369,7 +1369,8 @@ class SugarAutoLoader
      * @param string $filename The name of the file to work on
      * @return string
      */
-    public static function normalizeFilePath($filename) {
+    public static function normalizeFilePath($filename)
+    {
         // Normalize directory separators
         if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
