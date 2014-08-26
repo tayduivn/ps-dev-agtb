@@ -2772,7 +2772,7 @@ class MetaDataManager
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
                 } catch (Exception $e) {
-                    $GLOBALS['log']->error("Exception when decompresiing metadata hash for $key:" . $e->getMessage());
+                    $GLOBALS['log']->error("Exception when decompressing metadata hash for $key:" . $e->getMessage());
 
                 }
             }
