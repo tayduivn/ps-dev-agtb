@@ -61,10 +61,6 @@ $files=array(
 );
 
 $manifest = array(
-    'acceptable_sugar_versions' =>
-    array (
-    'regex_matches' => array('6\.[5-7]\.*','7\.\d+\.*')
-    ),
     'author' => 'SugarCRM, Inc.',
     'description' => 'SugarCRM Upgrader 2.0',
     'icon' => '',
@@ -78,7 +74,12 @@ if (file_exists("modules/UpgradeWizard/upgrader_version.json")) {
     if (!empty($v['upgrader_version'])) {
         $manifest['version'] = $v['upgrader_version'];
     }
+    if (!empty($v['from'])) {
+        $manifest['acceptable_sugar_versions'] = (array)$v['from'];
+    }
 }
+
+
 $installdefs = array("id" => "upgrader".time(), "copy" => array());
 $zip = new ZipArchive();
 $zip->open($name, ZipArchive::CREATE);

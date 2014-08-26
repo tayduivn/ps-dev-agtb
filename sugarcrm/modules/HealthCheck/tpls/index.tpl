@@ -134,14 +134,14 @@
                     success: function (data) {
                         if (data.length == 0) {
                             data = [
-                                { flag: 1, log: "Your instance is ready for upgrade!", report: "Success" }
+                                { flag: 1, descr: "Your instance is ready for upgrade!", title: "Success" }
                             ];
                         }
                         data = data.sort(_sortByBucket);
                         $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", item.title, "</h1><p>", item.descr];
+                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i, ". ", item.title, "</h1><p>", item.descr];
                             if (data[i].kb) {
                                 html.push("<a href='");
                                 html.push(data[i].kb);

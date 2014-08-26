@@ -102,18 +102,18 @@ class HealthCheckScannerMeta
             'report' => 'isNotMBModule',
             'bucket' => self::STUDIO_MB_BWC,
         ),
-        305 => array(
-            'report' => 'badVardefsKey',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        306 => array(
-            'report' => 'badVardefsRelate',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        307 => array(
-            'report' => 'badVardefsLink',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
+//        305 => array(
+//            'report' => 'badVardefsKey',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        306 => array(
+//            'report' => 'badVardefsRelate',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        307 => array(
+//            'report' => 'badVardefsLink',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
         308 => array(
             'report' => 'vardefHtmlFunction',
             'bucket' => self::STUDIO_MB_BWC,
@@ -130,14 +130,18 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionName',
             'bucket' => self::STUDIO_MB_BWC
         ),
-        312 => array(
-            'report' => 'badVardefsName',
-            'bucket' => self::STUDIO_MB_BWC
-        ),
+//        312 => array(
+//            'report' => 'badVardefsName',
+//            'bucket' => self::STUDIO_MB_BWC
+//        ),
         313 => array(
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
         ),
+//        314 => array(
+//            'report' => 'badVardefsMultienum',
+//            'bucket' => self::STUDIO_MB_BWC
+//        ),
 
         // BUCKET E
         401 => array(
@@ -156,10 +160,11 @@ class HealthCheckScannerMeta
             'report' => 'logicHookAfterUIFooter',
             'bucket' => self::CUSTOM,
         ),
-        405 => array(
-            'report' => 'incompatIntegration',
-            'bucket' => self::CUSTOM,
-        ),
+        //Moved incompatIntegration to F bucket. Use this code for new reports
+//        405 => array(
+//            'report' => 'incompatIntegration',
+//            'bucket' => self::CUSTOM,
+//        ),
         406 => array(
             'report' => 'hasCustomViews',
             'bucket' => self::CUSTOM,
@@ -204,24 +209,24 @@ class HealthCheckScannerMeta
             'report' => 'byRefInHookFile',
             'bucket' => self::CUSTOM,
         ),
-        417 => array(
-            'report' => 'incompatModule',
-            'bucket' => self::CUSTOM,
-        ),
+//        417 => array(
+//            'report' => 'incompatModule',
+//            'bucket' => self::CUSTOM,
+//        ),
         418 => array(
             'report' => 'subpanelLinkNonExistModule',
             'bucket' => self::CUSTOM,
         ),
         419 => array(
-            'report' => 'badVardefsKeyCustom',
+            'report' => 'badVardefsKey',
             'bucket' => self::CUSTOM,
         ),
         420 => array(
-            'report' => 'badVardefsRelateCustom',
+            'report' => 'badVardefsRelate',
             'bucket' => self::CUSTOM,
         ),
         421 => array(
-            'report' => 'badVardefsLinkCustom',
+            'report' => 'badVardefsLink',
             'bucket' => self::CUSTOM,
         ),
         422 => array(
@@ -265,7 +270,15 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM
         ),
         432 => array(
-            'report' => 'badVardefsNameCustom',
+            'report' => 'badVardefsName',
+            'bucket' => self::CUSTOM
+        ),
+        433 => array(
+            'report' => 'badVardefsMultienum',
+            'bucket' => self::CUSTOM
+        ),
+        434 => array(
+            'report' => 'badVardefsTableName',
             'bucket' => self::CUSTOM
         ),
 
@@ -330,6 +343,19 @@ class HealthCheckScannerMeta
             'report' => 'scriptFailure',
             'bucket' => self::MANUAL,
         ),
+        516 => array(
+            'report' => 'deletedFilesReferenced',
+            'bucket' => self::MANUAL
+        ),
+        517 => array(
+            'report' => 'incompatIntegration',
+            'bucket' => self::MANUAL,
+        ),
+        518 => array(
+            'report' => 'incompatModule',
+            'bucket' => self::MANUAL,
+        ),
+
 
         // Bucket G
         901 => array(
@@ -344,6 +370,12 @@ class HealthCheckScannerMeta
         ),
     );
 
+    protected $flagLabelMap = array(
+        self::FLAG_RED => 'red',
+        self::FLAG_YELLOW => 'yellow',
+        self::FLAG_GREEN => 'green'
+    );
+
     protected $metaByReportId = array();
 
     /**
@@ -353,10 +385,10 @@ class HealthCheckScannerMeta
      */
     protected $defaultFlagMap = array(
         self::VANILLA => self::FLAG_GREEN,
-        self::STUDIO => self::FLAG_YELLOW,
-        self::STUDIO_MB => self::FLAG_YELLOW,
+        self::STUDIO => self::FLAG_GREEN,
+        self::STUDIO_MB => self::FLAG_GREEN,
         self::STUDIO_MB_BWC => self::FLAG_YELLOW,
-        self::CUSTOM => self::FLAG_RED,
+        self::CUSTOM => self::FLAG_YELLOW,
         self::MANUAL => self::FLAG_RED,
         self::UPGRADED => self::FLAG_GREEN,
     );
@@ -450,6 +482,7 @@ class HealthCheckScannerMeta
         if (!isset($meta['flag'])) {
             $meta['flag'] = $this->getDefaultFlag($meta['bucket']);
         }
+        $meta['flag_label'] = $this->getFlagLabel($meta['flag']);
         if (!isset($meta['kb'])) {
             $meta['kb'] = $this->defaultKbUrl;
         }
@@ -461,6 +494,19 @@ class HealthCheckScannerMeta
         }
 
         return $meta;
+    }
+
+    /**
+     * Returns flag's label
+     *
+     * @param $flag
+     * @return string
+     */
+    protected function getFlagLabel($flag) {
+        if(isset($this->flagLabelMap[$flag])) {
+            return $this->flagLabelMap[$flag];
+        }
+        return $flag;
     }
 
     /**
