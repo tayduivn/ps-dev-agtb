@@ -206,6 +206,21 @@
  </table>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+    <tr>
+        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_TWEETTOCASE_TITLE}</h4></th>
+    </tr>
+    <tr>
+        <td width="25%" scope="row" valign='middle'>{$MOD.LBL_TWEETTOCASE_ON}&nbsp{sugar_help text=$MOD.LBL_TWEETTOCASE_ON_DESC WIDTH=400}</td>
+        {if !empty($settings.system_tweettocase_on)}
+            {assign var='system_tweettocase_on_checked' value='CHECKED'}
+        {else}
+            {assign var='system_tweettocase_on_checked' value=''}
+        {/if}
+        <td width="75%" align="left"  valign='middle'><input type='hidden' name='system_tweettocase_on' value='0'><input name="system_tweettocase_on" value="1" class="checkbox" tabindex='1' type="checkbox" {$system_tweettocase_on_checked}></td>
+    </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
 	</tr>
