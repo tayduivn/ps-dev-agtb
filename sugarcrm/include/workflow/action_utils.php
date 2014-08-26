@@ -61,6 +61,8 @@ function process_action_update($focus, $action_array){
             if (in_array($focus->field_defs[$field]['type'], array('double', 'decimal','currency', 'float')))
             {
                 $new_value = (float)unformat_number($new_value);
+            } elseif ($focus->field_defs[$field]['type'] === 'multienum') {
+                $new_value = workflow_convert_multienum_value($new_value);
             }
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
@@ -130,7 +132,9 @@ function process_action_update_rel($focus, $action_array){
             $check_notify = false;
             $old_owner = $rel_object->assigned_user_id;
 			foreach($action_array['basic'] as $field => $new_value){
-
+                if (isset($rel_object->field_defs[$field]['type']) && $rel_object->field_defs[$field]['type'] === 'multienum') {
+                    $new_value = workflow_convert_multienum_value($new_value);
+                }
 				if(empty($action_array['basic_ext'][$field])){
 					$rel_object->$field = convert_bool($new_value, $rel_object->field_defs[$field]['type']);
 				}
@@ -189,6 +193,9 @@ function process_action_new($focus, $action_array){
     }
 
 	foreach($action_array['basic'] as $field => $new_value){
+        if (isset($target_module->field_defs[$field]['type']) && $target_module->field_defs[$field]['type'] === 'multienum') {
+            $new_value = workflow_convert_multienum_value($new_value);
+        }
 			//rrs - bug 10466
 			$target_module->$field = convert_bool($new_value, $target_module->field_defs[$field]['type'], (empty($target_module->field_defs[$field]['dbType']) ? '' : $target_module->field_defs[$field]['dbType']));
             if($field == "email1") $target_module->email1_set_in_workflow = $target_module->email1;
@@ -275,6 +282,9 @@ function process_action_new_rel($focus, $action_array){
 			$target_module = & $rel_handler->rel2_bean;
 
 			foreach($action_array['basic'] as $field => $new_value){
+                if (isset($target_module->field_defs[$field]['type']) && $target_module->field_defs[$field]['type'] === 'multienum') {
+                    $new_value = workflow_convert_multienum_value($new_value);
+                }
 				$target_module->$field = convert_bool($new_value, $target_module->field_defs[$field]['type']);
                 if($field == "email1") $target_module->email1_set_in_workflow = $target_module->email1;
                 if($field == "email2") $target_module->email2_set_in_workflow = $target_module->email2;
@@ -447,4 +457,19 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
 	$date->modify("+$time_interval seconds");
     return $timedate->asDbType($date, $stamp_type);
 	//end function get_expiry_date
+}
+
+/**
+ * Creates proper representation of multienum value from actions_array.php
+ *
+ * @param string $value
+ * @return string
+ */
+function workflow_convert_multienum_value($value)
+{
+    // this is weird, but new value is stored in workflow definition as a partially
+    // encoded string — without leading and trailing ^s, but with delimiting ^s and commas.
+    // thus we pretend it's a single value and wrap it into array in order to get the leading and trailing ^s
+    // @see parse_multi_array()
+    return encodeMultienumValue(array($value));
 }
