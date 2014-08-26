@@ -925,13 +925,13 @@ AddType     application/javascript  .js
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA,DPI]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA,DPI]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA]
+    RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA,DPI]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
     RewriteRule ^portal$ portal/? [R=301,L]

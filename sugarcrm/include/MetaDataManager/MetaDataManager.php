@@ -326,6 +326,12 @@ class MetaDataManager
     protected static $runQueueOnCall = true;
 
     /**
+     * Name of the cache table used to store metadata cache data
+     * @var string
+     */
+    protected static $cacheTable = "metadata_cache";
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -379,6 +385,8 @@ class MetaDataManager
         // Load the hacks object
         $className = SugarAutoLoader::customClass('MetaDataHacks');
         $this->metaDataHacks = new $className();
+
+        $this->db = DBManagerFactory::getInstance();
     }
 
     /**
@@ -1197,6 +1205,7 @@ class MetaDataManager
                     unlink($metadataFile);
                 }
             }
+            static::clearCacheTable();
 
             // clear the platform cache from sugar_cache to avoid out of date data as well as platform component files
             $platforms = self::getPlatformList();
@@ -2010,35 +2019,7 @@ class MetaDataManager
             return null;
         }
 
-        $cacheFile = $this->getMetadataCacheFileName($this->platforms[0], $this->public);
-        if (file_exists($cacheFile)) {
-            require $cacheFile;
-            return $metadata;
-        }
-
-        // No metadata file found
-        return null;
-    }
-
-    /**
-     * Gets the name of the cache file for this manager
-     *
-     * @param string $platform
-     * @param boolean $public
-     * @return string
-     */
-    public function getMetadataCacheFileName($platform = null, $public = null)
-    {
-        if (empty($platform)) {
-            $platform = $this->platforms[0];
-        }
-
-        if ($public === null) {
-            $public = $this->public;
-        }
-
-        $type = $public ? 'public' : 'private';
-        return sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        return $this->getFromCacheTable($this->getCachedMetadataHashKey());
     }
 
     /**
@@ -2788,11 +2769,87 @@ class MetaDataManager
      */
     protected function getFromHashCache($key)
     {
-        $hashes = array();
-        $path = sugar_cached("api/metadata/hashes.php");
-        @include($path);
-
+        $hashes = $this->getFromCacheTable('hashes');
         return !empty($hashes[$key]) ? $hashes[$key] : false;
+    }
+
+    /**
+     * Used to cache metadata responses in the database
+     * @param String $key key for data stored in the cache table
+     *
+     * @return mixed|null Value pulled from cache table blob if found.
+     */
+    protected function getFromCacheTable($key) {
+        $result = null;
+        //During install/setup, this function might get called before the DB is setup.
+        if (!empty($this->db)) {
+            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type='{$key}'");
+            if (!empty($cacheResult)) {
+                try {
+                    $result = unserialize(gzinflate(base64_decode($cacheResult)));
+                } catch (Exception $e) {
+                    $GLOBALS['log']->error("Exception when decompressing metadata hash for $key:" . $e->getMessage());
+
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Stores data in the cache table compressed and serialized. Any PHP data is valid.
+     *
+     * @param String $key key to store data with
+     * @param mixed $data Data to store in the cache table blob
+     *
+     * @return bool
+     */
+    protected function storeToCacheTable($key, $data) {
+        //During install/setup, this function might get called before the DB is setup.
+        if (!empty($this->db)) {
+            try {
+                $encoded = base64_encode(gzdeflate(serialize($data)));
+            } catch (Exception $e) {
+                $GLOBALS['log']->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
+                return false;
+            }
+            $id = $this->db->getOne("SELECT id FROM " . static::$cacheTable . " WHERE type='{$key}'");
+            if (!empty($id)) {
+                return $this->db->query("UPDATE " . static::$cacheTable . " SET data='{$encoded}',date_modified=". $this->db->now() . " WHERE id='{$id}'");
+            } else {
+                $values = array(
+                    'id' => "'" . create_guid() ."'",
+                    'type' => "'{$key}'",
+                    'data' => "'{$encoded}'",
+                    'date_modified' => $this->db->now(),
+                    'deleted' => 0
+                );
+                return $this->db->query("INSERT INTO " . static::$cacheTable . " (" . implode(",", array_keys($values)) . ")"
+                               . " VALUES (" . implode(",", $values) . ")");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Remove an entry in the cache table.
+     * @param String $key
+     *
+     * @return mixed
+     */
+    protected function removeFromCacheTable($key)
+    {
+        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type='$key'");
+    }
+
+    /**
+     * Clears all entries in the cache table.
+     */
+    protected static function clearCacheTable()
+    {
+        $db = DBManagerFactory::getInstance();
+        $db->query($db->truncateTableSQL(static::$cacheTable));
     }
 
     /**
@@ -2830,12 +2887,12 @@ class MetaDataManager
      */
     protected function addToHashCache($key, $hash)
     {
-        $hashes = array();
-        $path = sugar_cached("api/metadata/hashes.php");
-        @include($path);
+        $hashes = $this->getFromCacheTable('hashes');
+        if (empty($hashes)) {
+            $hashes = array();
+        }
         $hashes[$key] = $hash;
-        write_array_to_file("hashes", $hashes, $path);
-        SugarAutoLoader::addToMap($path);
+        $this->storeToCacheTable('hashes', $hashes);
     }
 
     /**
@@ -2869,7 +2926,7 @@ class MetaDataManager
      *
      * @return string A metadata cache file hash or false if not found
      */
-    protected function getCachedMetadataHash()
+    public function getCachedMetadataHash()
     {
         $key = $this->getCachedMetadataHashKey();
         return $this->getFromHashCache($key);
@@ -2882,21 +2939,7 @@ class MetaDataManager
      */
     protected function putMetadataCache($data)
     {
-        // Create the cache cirectory if need be
-        // The is a fix for the cache/cache/api/metadata problem
-        $cacheDir  = 'api/metadata';
-        create_cache_directory($cacheDir);
-
-        // Handle the cache file
-        $cacheFile = $this->getMetadataCacheFileName();
-        $write =   "<?php\n" .
-                   '// created: ' . date('Y-m-d H:i:s') . "\n" .
-                   '$metadata = ' .
-                    var_export_helper($data) . ';';
-
-        // Write with atomic writing to prevent issues with simultaneous requests
-        // for this file
-        sugar_file_put_contents_atomic($cacheFile, $write);
+        $this->storeToCacheTable($this->getCachedMetadataHashKey(), $data);
 
         // Cache the hash as well
         if (isset($data['_hash'])) {
@@ -2913,9 +2956,10 @@ class MetaDataManager
         $deleted = false;
 
         // Get the hashes array
-        $hashes = array();
-        $path = sugar_cached("api/metadata/hashes.php");
-        @include($path);
+        $hashes = $this->getFromCacheTable('hashes');
+        if (empty($hashes)) {
+            $hashes = array();
+        }
 
         // Delete language caches and remove from the hash cache
         foreach (array(true, false) as $ordered) {
@@ -2929,7 +2973,9 @@ class MetaDataManager
                     unset($hashes[$k]);
 
                     // Delete the file
-                    unlink($k);
+                    if (is_file($k)) {
+                        unlink($k);
+                    }
 
                     $deleted = true;
                 }
@@ -2938,17 +2984,16 @@ class MetaDataManager
 
         // Then delete the metadata cache and delete from the hash cache if there
         // is a cache to handle
-        $cacheFile = $this->getMetadataCacheFileName();
-        $cacheKey  = $this->getCachedMetadataHashKey();
-        if (file_exists($cacheFile)) {
+        $cacheKey = $this->getCachedMetadataHashKey();
+        if (!empty($hashes[$cacheKey])) {
+            $this->removeFromCacheTable($cacheKey);
             unset($hashes[$cacheKey]);
-            unlink($cacheFile);
             $deleted = true;
         }
 
         // Save file I/O by only writing if there are changes to write
         if ($deleted) {
-            write_array_to_file("hashes", $hashes, $path);
+            $this->storeToCacheTable('hashes', $hashes);
         }
 
         // Return the flag
