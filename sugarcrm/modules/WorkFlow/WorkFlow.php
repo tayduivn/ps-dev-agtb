@@ -1289,29 +1289,62 @@ check_logic_hook_file($module_name, $event, $action_array);
 }
 
 
-//////////Repair function for repairing or cleaning up cached (Custom Folder) files
+    /**
+     * Repair and rebuild all Workflows
+     */
+    public function repair_workflow()
+    {
+        $query = "SELECT DISTINCT base_module, id FROM $this->table_name WHERE deleted = 0";
 
-function repair_workflow(){
+        $result = $this->db->query($query, true, " Error repairing workflow: ");
 
-	$query = "SELECT DISTINCT base_module, id FROM $this->table_name WHERE deleted = 0";
+        // Get the id and the name.
+        while ($row = $this->db->fetchByAssoc($result)) {
+            $this->retrieve($row['id']);
+            $this->rebuildTriggers();
+            $this->check_logic_hook_file();
+            $this->write_workflow();
+        }
+    }
 
-	$result = $this->db->query($query,true," Error repairing workflow: ");
+    /**
+     * Rebuild workflow triggers
+     */
+    public function rebuildTriggers()
+    {
+        $triggerList = $this->get_linked_beans('triggers', 'WorkFlowTriggerShell');
+        if (!empty($triggerList)) {
+            foreach ($triggerList as $trigger) {
+                $futureTrigger = BeanFactory::getBean('Expressions');
+                $futureTriggers = $trigger->get_linked_beans('future_triggers', 'Expression');
+                if (!empty($futureTriggers)) {
+                    $futureTrigger = $futureTriggers[0];
+                }
 
-		// Get the id and the name.
-		while($row = $this->db->fetchByAssoc($result)){
+                $pastTrigger = BeanFactory::getBean('Expressions');
+                $pastTriggers = $trigger->get_linked_beans('future_triggers', 'Expression');
+                if (!empty($pastTriggers)) {
+                    $pastTrigger = $pastTriggers[0];
+                }
 
-			//Instantiate the workflow object and run the write
-			//$temp_workflow = BeanFactory::getBean('WorkFlow');
-			$this->retrieve($row['id']);
-			$this->check_logic_hook_file();
-			$this->write_workflow();
-		//end while loop of workflow items
-		}
+                $trigger->glue_triggers($pastTrigger, $futureTrigger);
+                $trigger->save();
+            }
+        }
 
+        $triggerFilterList = $this->get_linked_beans('trigger_filters', 'WorkFlowTriggerShell');
+        if (!empty($triggerFilterList)) {
+            foreach ($triggerFilterList as $triggerFilter) {
+                $triggerExpressions = $triggerFilter->get_linked_beans('expressions', 'Expression');
+                if (!empty($triggerExpressions)) {
+                    $triggerExpression = $triggerExpressions[0];
 
-
-//end function repair_workflow
-}
+                    $triggerFilter->glue_trigger_filters($triggerExpression);
+                    $triggerFilter->save();
+                }
+            }
+        }
+    }
 
 	function get_parent_object(){
 
