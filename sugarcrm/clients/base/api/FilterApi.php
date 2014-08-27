@@ -161,7 +161,6 @@ class FilterApi extends SugarApi
         // Set up the defaults
         $options['limit'] = $this->defaultLimit;
         $options['offset'] = 0;
-        $options['order_by'] = $this->defaultOrderBy;
         $options['add_deleted'] = true;
 
         if (!empty($args['max_num'])) {
@@ -179,7 +178,12 @@ class FilterApi extends SugarApi
             }
         }
 
-        $options['order_by'] = $this->getOrderByFromArgs($args, $seed);
+        $orderBy = $this->getOrderByFromArgs($args, $seed);
+        if ($orderBy) {
+            $options['order_by'] = $orderBy;
+        } else {
+            $options['order_by'] = $this->defaultOrderBy;
+        }
 
         // Set $options['module'] so that runQuery can create beans of the right
         // type.
