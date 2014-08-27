@@ -634,7 +634,14 @@ function get_languages()
     global $sugar_config;
     $lang = isset($sugar_config['languages']) ? $sugar_config['languages'] : array();
     if (!empty($sugar_config['disabled_languages'])) {
-        foreach (explode(',', $sugar_config['disabled_languages']) as $disable) {
+        $disabledLanguages = explode(',', $sugar_config['disabled_languages']);
+
+        // Make sure we don't disable the default language
+        if (($key = array_search($sugar_config['default_language'], $disabledLanguages)) !== false) {
+            unset($disabledLanguages[$key]);
+        }
+
+        foreach ($disabledLanguages as $disable) {
             unset($lang[$disable]);
         }
     }

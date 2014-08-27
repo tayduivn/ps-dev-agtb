@@ -38,12 +38,17 @@ describe('Base.Fields.Float', function() {
             expect(field.unformat('12.351.616.461,2552')).toEqual('12351616461.2552');
 
             expect(field.unformat('5.000,65,')).toEqual('5.000,65,');
-            expect(field.unformat('5.000,65')).toEqual('5000.65');
+            expect(field.unformat('5.000,65')).toEqual('5000.6500');
 
             field.def.precision = 2;
 
             expect(field.format(value)).toEqual('12.351.616.461,26');
             expect(field.unformat('12.351.616.461,26')).toEqual('12351616461.26');
+
+            // this tests the rounding of what will be stored in the model,
+            // we should store what will be in the db into the model so SugarLogic works correctly
+            expect(field.format('0.001')).toEqual('0,00');
+            expect(field.unformat('0,001')).toEqual('0.00');
 
         });
 

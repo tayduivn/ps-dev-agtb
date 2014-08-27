@@ -141,7 +141,7 @@
                         $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i, ". ", item.title, "</h1><p>", item.descr];
+                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i + 1, ". ", item.title, "</h1><p>", item.descr];
                             if (data[i].kb) {
                                 html.push("<a href='");
                                 html.push(data[i].kb);
