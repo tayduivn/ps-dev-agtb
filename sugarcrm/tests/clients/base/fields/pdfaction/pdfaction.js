@@ -8,7 +8,9 @@ describe('Base.Fields.Pdfaction', function() {
         SugarTest.testMetadata.set();
 
         var stubAppDataCreateBeanCollection = sinon.collection.stub(app.data, 'createBeanCollection');
-        stubAppDataCreateBeanCollection.withArgs('PdfManager').returns(new Backbone.Collection);
+        stubAppDataCreateBeanCollection.withArgs('PdfManager').returns(new Backbone.Collection([{"name": "pdfaction"}]));
+
+        sinon.collection.stub(Backbone.Collection.prototype, 'fetch');
     });
 
     afterEach(function() {

@@ -42,6 +42,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.templateCollection = app.data.createBeanCollection('PdfManager');
+        this._fetchTemplate();
     },
 
     /**
@@ -61,7 +62,8 @@
      */
     _render: function() {
         var emailClientPreference = app.user.getPreference('email_client_preference');
-        if (this.def.action === 'email' && emailClientPreference.type !== 'sugar') {
+        if (!this.templateCollection.length > 0 ||
+            (this.def.action === 'email' && emailClientPreference.type !== 'sugar')) {
             this.hide();
         } else {
             this._super('_render');
