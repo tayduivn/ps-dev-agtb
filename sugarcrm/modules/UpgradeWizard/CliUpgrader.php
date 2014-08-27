@@ -27,6 +27,8 @@ class CliUpgrader extends UpgradeDriver
         "stage" => array(false, 'S', 'stage'),
         "autoconfirm" => array(false, 'A', 'autoconfirm'),
         "sendlog" => array(false, 'H', 'sendlog'),
+        // Appears when stage was not specified and upgrader is running step by step.
+        'all' => array(false, 'a', 'all'),
     );
 
     /**
@@ -46,9 +48,8 @@ class CliUpgrader extends UpgradeDriver
      */
     public function runStage($stage)
     {
-        $argv = $this->context['argv'];
         $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(
-                array("stage" => $stage)
+                array('stage' => $stage, 'all' => true)
             );
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
@@ -91,8 +92,8 @@ Optional arguments:
                                            Supported types: core, db, custom, all, none. Default is all.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
-    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
     -H/--sendlog 0/1                     : Automatic push HealthCheck logs to sugarcrm server, default to 0.
+    -A/--autoconfirm 0/1                 : Automatic confirm health check results (use with caution !). Default is 0.
 
 eoq2;
         echo $usage;
@@ -499,27 +500,26 @@ eoq2;
             );
             $this->log('HealthCheck log was sent to sugarcrm.com');
         }
+        $scanner->dumpMeta();
         if ($scanner->isFlagRed()) {
-            $scanner->dumpMeta();
-            return $this->error("Health check stage failed! Please fix issues described in the log file.");
+            return $this->error(
+                'Health check failed (red flags). Please refer to the log file ' . $this->context['log'],
+                true
+            );
         }
-        if ($scanner->isFlagYellow()) {
-            if ($this->context['autoconfirm']) {
-                $scanner->dumpMeta();
-                $this->log('Yellow flag(s) present - proceeding because of autoconfirm option has been set');
-                return true;
-            } else {
-                $scanner->setVerboseLevel(1);
-                $scanner->dumpMeta();
-                if ($this->confirmDialog("Are you sure you want to continue?")) {
-                    $this->log('User interactively confirmed yellow flag(s) - proceeding');
-                    return true;
+        if ($scanner->isFlagGreen() || $scanner->isFlagYellow()) {
+            $flagLabel = $scanner->isFlagGreen() ? 'green' : 'yellow';
+            echo "Health check passed ({$flagLabel} flags). Please refer to the log file {$this->context['log']}\n";
+
+            if (isset($this->context['all']) && !$this->context['autoconfirm']) {
+                if ($this->confirmDialog('Are you sure you want to continue?')) {
+                    $this->log("User interactively confirmed {$flagLabel} flag(s) - proceeding");
                 } else {
-                    return $this->error("Health check stage failed! User has canceled upgrade process.");
+                    $this->log("User interactively confirmed {$flagLabel} flag(s) - aborting");
+                    return false;
                 }
             }
         }
-        $this->log("Health check passed. All good.");
         return true;
     }
 
