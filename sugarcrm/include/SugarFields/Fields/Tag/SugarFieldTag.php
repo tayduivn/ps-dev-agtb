@@ -66,4 +66,14 @@ class SugarFieldTag extends SugarFieldRelatecollection
         $tagBean->save();
         return $tagBean;
     }
+
+    /**
+     * {inheritdoc}
+     */
+    protected function getOrderBy() {
+        return array(
+            'fieldName' => 'name',
+            'order' => 'ASC'
+        );
+    }
 }

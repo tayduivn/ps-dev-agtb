@@ -203,6 +203,12 @@ class SugarFieldRelatecollection extends SugarFieldBase
         $sq = $this->getSugarQuery();
         $sq->select($fields);
         $sq->from($relSeed);
+        $orderBy = $this->getOrderBy();
+
+        if (!empty($orderBy['fieldName']) && !empty($orderBy['order'])) {
+            $sq->orderBy($orderBy['fieldName'], $orderBy['order']);
+        }
+
 
         if ($limit > 0) {
             $sq->limit($limit);
@@ -266,5 +272,13 @@ class SugarFieldRelatecollection extends SugarFieldBase
     protected function getSugarQuery()
     {
         return new SugarQuery();
+    }
+
+    /**
+     * Returns default order by for related collection search
+     * @return array
+     */
+    protected function getOrderBy() {
+        return array();
     }
 }

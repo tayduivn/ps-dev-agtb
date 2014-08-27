@@ -111,7 +111,12 @@
                         app.alert.show('collections_error', {level: 'error', messages: 'There was an issue retrieving the collection.'});
                     }
                 });
-            }, 300)
+            }, 300),
+
+            sortResults: function(results, container, query) {
+                results = _.sortBy(results, 'text');
+                return results;
+            }
         });
         records = _.pluck(self.value, "id").join();
         if (records.length) {
