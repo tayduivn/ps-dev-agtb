@@ -16,6 +16,15 @@ require_once 'include/Expressions/Expression/Parser/Parser.php';
 
 class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    private static $custom_field_def = array(
+        'formula'     => 'strToUpper(related($accounts,"name"))',
+        'name'        => 'custom_58282',
+        'type'        => 'text',
+        'label'       => 'LBL_CUSTOM_FIELD',
+        'module'      => 'ModuleBuilder',
+        'view_module' => 'Opportunities',
+    );
+
     /** @var Account */
     private $account;
 
@@ -26,18 +35,12 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
 
-        SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('custom_field', array(
-            'Opportunities',
-            array(
-                'formula'     => 'strToUpper(related($accounts,"name"))',
-                'name'        => 'custom_58282',
-                'type'        => 'text',
-                'label'       => 'LBL_CUSTOM_FIELD',
-                'module'      => 'ModuleBuilder',
-                'view_module' => 'Opportunities',
-            )
-        ));
+        $mbc = new ModuleBuilderController();
+        //Create the new Fields
+        $_REQUEST = self::$custom_field_def;
+        $mbc->action_SaveField();
+
+        VardefManager::refreshVardefs('Opportunities', 'Opportunity');
     }
 
     public function setUp()
@@ -52,7 +55,20 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        $mbc = new ModuleBuilderController();
+
+        $custom_field_def = self::$custom_field_def;
+        $custom_field_def['name'] .= '_c';
+        $_REQUEST = $custom_field_def;
+        $mbc->action_DeleteField();
+
+        VardefManager::refreshVardefs('Opportunities', 'Opportunity');
+
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        $_REQUEST = array();
+        SugarCache::$isCacheReset = false;
+
         SugarTestHelper::tearDown();
     }
 
@@ -97,7 +113,7 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->id = 'Bug58282Test';
 
         if ($shouldBeanBeSaved) {
-            $bean->expects($this->atLeastOnce())
+            $bean->expects($this->any())
                 ->method('save');
         } else {
             $bean->expects($this->never())
