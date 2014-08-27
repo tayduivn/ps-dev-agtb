@@ -226,12 +226,17 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider normalizeOffsetSuccess
      */
-    public function testNormalizeOffsetSuccess(array $args, array $links, array $expected)
+    public function testNormalizeOffsetSuccess($offset, array $expected)
     {
         $actual = SugarTestReflection::callProtectedMethod(
             $this->api,
             'normalizeOffset',
-            array($args, $links)
+            array(
+                array('offset' => $offset),
+                array(
+                    array('name' => 'a'),
+                ),
+            )
         );
 
         $this->assertEquals($expected, $actual);
@@ -241,32 +246,26 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'default' => array(
-                array(),
-                array(
-                    array('name' => 'a'),
-                ),
+                null,
                 array(
                     'a' => 0,
                 ),
             ),
-            'normalized' => array(
-                array(
-                    'offset' => array(
-                        'a' => 1,
-                        'b' => '-1',
-                        'c' => 'non-numeric-string',
-                    ),
-                ),
-                array(
-                    array('name' => 'a'),
-                    array('name' => 'b'),
-                    array('name' => 'c'),
-                ),
-                array(
-                    'a' => 1,
-                    'b' => -1,
-                    'c' => 0,
-                ),
+            'integer' => array(
+                array('a' => 1),
+                array('a' => 1),
+            ),
+            'numeric-string' => array(
+                array('a' => '-1'),
+                array('a' => -1),
+            ),
+            'non-numeric-string' => array(
+                array('a' => 'non-numeric-string'),
+                array('a' => 0),
+            ),
+            'negative' => array(
+                array('a' => -2),
+                array('a' => -1),
             ),
         );
     }

@@ -274,6 +274,9 @@ class CollectionApi extends SugarApi
                 $offset[$name] = 0;
             } else {
                 $offset[$name] = (int) $offset[$name];
+                if ($offset[$name] < 0) {
+                    $offset[$name] = -1;
+                }
             }
         }
 
