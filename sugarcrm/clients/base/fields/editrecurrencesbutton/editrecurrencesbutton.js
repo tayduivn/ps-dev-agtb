@@ -26,14 +26,12 @@
 
     /**
      * Checks whether the user has both the access to the model and the record is a recurring type
-     * and record is the parent record in the recurring series //todo: remove with MAR-2268
      * @inheritdoc
      */
     hasAccess: function() {
         var acl = this._super('hasAccess');
         return (
             acl &&
-            _.isEmpty(this.model.get('repeat_parent_id')) && //todo: remove with MAR-2268
             !_.isEmpty(this.model.get('repeat_type'))
         );
     },

@@ -17,6 +17,9 @@
          * an 'All Recurrences' mode for record view. When the mode is off,
          * only the single event record is updated. When the mode is on, all
          * event records in the series are updated.
+         * This plugin also handles switching from a child record in the series
+         * to the parent record (since we require the parent record to control
+         * the recurrence information).
          *
          * This plugin is built to enhance {@link View.Views.Base.RecordView}
          * and its descendants.
@@ -29,7 +32,14 @@
                 });
 
                 this.on('render', function() {
-                    this.toggleAllRecurrencesMode(false); // default to off
+                    // TODO: This solution is temporary until SC-3244 which will provide a cleaner way into edit mode
+                    // if context has all_recurrences flag, go directly into editing all
+                    if (this.context.get('all_recurrences') === true && this.buttons.edit_recurrence_button) {
+                        this.editAllRecurrences();
+                        this.context.unset('all_recurrences');
+                    } else {
+                        this.toggleAllRecurrencesMode(false); // default to off
+                    }
                 });
 
                 // override {@link View.Views.Base.RecordView#cancelClicked}
@@ -52,11 +62,24 @@
 
             /**
              * Puts the record view in edit mode for all event records in
-             * the series.
+             * the series. If launching from a child record, we switch over to
+             * the parent record since that is what controls the recurrence
+             * information.
              */
             editAllRecurrences: function() {
-                this.toggleAllRecurrencesMode(true);
-                this.context.trigger('button:edit_button:click');
+                var parentId = this.model.get('repeat_parent_id');
+                if (!_.isEmpty(parentId) && parentId !== this.model.id) {
+                    app.alert.show('recurrence_parent_route_confirmation', {
+                        level: 'confirmation',
+                        messages: 'LBL_CALENDAR_CONFIRM_ROUTE_TO_PARENT',
+                        onConfirm: _.bind(function() {
+                            this.editAllRecurrencesFromParent(parentId);
+                        }, this)
+                    });
+                } else {
+                    this.toggleAllRecurrencesMode(true);
+                    this.context.trigger('button:edit_button:click');
+                }
             },
 
             /**
@@ -104,6 +127,14 @@
                 }, this);
 
                 this.setEditableFields();
+            },
+
+            /**
+             * Route to parent record in edit all recurrences mode
+             */
+            editAllRecurrencesFromParent: function(parentId) {
+                var route = app.router.buildRoute(this.module, parentId, 'edit/all-recurrences');
+                app.router.navigate('#' + route, {trigger: true});
             },
 
             /**

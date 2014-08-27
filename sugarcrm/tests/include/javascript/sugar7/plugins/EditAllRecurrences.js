@@ -2,7 +2,8 @@ describe("Plugins.EditAllRecurrences", function() {
     var moduleName = 'Meetings',
         view,
         pluginsBefore,
-        app;
+        app,
+        sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -17,9 +18,11 @@ describe("Plugins.EditAllRecurrences", function() {
         SugarTest.loadPlugin('EditAllRecurrences');
         SugarTest.app.plugins.attach(view, 'view');
         view.trigger('init');
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        sandbox.restore();
         view.plugins = pluginsBefore;
         view.dispose();
         app.view.reset();
@@ -29,16 +32,42 @@ describe("Plugins.EditAllRecurrences", function() {
         view = null;
     });
 
-    it("should turn on all recurrence mode when all_recurrences:edit event is fired", function() {
+    it("should turn on all recurrence mode when all_recurrences:edit event is fired from parent", function() {
+        view.model.set('repeat_parent_id', '');
         view.allRecurrencesMode = false;
         view.context.trigger('all_recurrences:edit');
         expect(view.allRecurrencesMode).toEqual(true);
+    });
+
+    it("should redirect to parent when all_recurrences:edit event is fired from child", function() {
+        var repeatParentId = '123',
+            navigateStub = sandbox.stub(app.router, 'navigate');
+
+        sandbox.stub(app.alert, 'show', function(alertName, options) {
+            options.onConfirm();
+        });
+        view.model.set('repeat_parent_id', repeatParentId);
+        view.allRecurrencesMode = false;
+        view.context.trigger('all_recurrences:edit');
+        expect(navigateStub.callCount).toEqual(1);
+        expect(navigateStub.lastCall.args[0]).toEqual('#Meetings/123/edit/all-recurrences');
     });
 
     it("should turn off all recurrence mode on initial render", function() {
         view.allRecurrencesMode = true;
         view.render();
         expect(view.allRecurrencesMode).toEqual(false);
+    });
+
+    it("should turn go into edit all recurrence mode when rendering with all_recurrences in the context and edit button initialized", function() {
+        var button = SugarTest.createField('base', 'button', 'button');
+        view.context.set('all_recurrences', true);
+        view.buttons.edit_recurrence_button = button;
+        view.render();
+        expect(view.allRecurrencesMode).toEqual(true);
+        //clear out all_recurrences so next render will not do this
+        expect(view.context.get('all_recurrences')).toBeUndefined();
+        button.dispose();
     });
 
     it("should turn off all recurrence mode when the cancel button is clicked", function() {
