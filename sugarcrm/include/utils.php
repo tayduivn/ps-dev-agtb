@@ -2179,7 +2179,7 @@ function xss_check_pattern($pattern, $str)
 /**
  * Designed to take a string passed in the URL as a parameter and clean all "bad" data from it
  *
- * @param string $str
+ * @param string $value
  * @param string $filter which corresponds to a regular expression to use; choices are:
  * 		"STANDARD" ( default )
  * 		"STANDARDSPACE"
@@ -2193,7 +2193,7 @@ function xss_check_pattern($pattern, $str)
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
  */
-function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
+function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
     global  $sugar_config;
 
@@ -2210,9 +2210,21 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
     "ALPHANUM"        => '#[^A-Z0-9\-]#i',
     );
 
-    if (preg_match($filters[$filter], $str)) {
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            $value[$k] = clean_string($v, $filter, $dieOnBadData);
+        }
+
+        return $value;
+    }
+
+    if (!is_string($value)) {
+        return $value;
+    }
+
+    if (preg_match($filters[$filter], $value)) {
         if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
-            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$str}");
+            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$value}");
         }
         if ($dieOnBadData) {
             die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2220,7 +2232,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
         return false;
     } else {
-        return $str;
+        return $value;
     }
 }
 

@@ -112,6 +112,9 @@ class FilterApi extends SugarApi
     protected static $isFavorite = false;
 
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
+    protected $defaultOrderBy = array(
+        array('date_modified', 'DESC'),
+    );
 
     protected static $current_user;
 
@@ -158,7 +161,7 @@ class FilterApi extends SugarApi
         // Set up the defaults
         $options['limit'] = $this->defaultLimit;
         $options['offset'] = 0;
-        $options['order_by'] = array(array('date_modified', 'DESC'));
+        $options['order_by'] = $this->defaultOrderBy;
         $options['add_deleted'] = true;
 
         if (!empty($args['max_num'])) {
@@ -175,29 +178,8 @@ class FilterApi extends SugarApi
                 $options['offset'] = (int) $args['offset'];
             }
         }
-        if (!empty($args['order_by']) && !empty($seed)) {
-            $orderBys = explode(',', $args['order_by']);
-            $orderByArray = array();
-            foreach ($orderBys as $order) {
-                $orderSplit = explode(':', $order);
 
-                if (!$seed->ACLFieldAccess($orderSplit[0], 'list')
-                    || !isset($seed->field_defs[$orderSplit[0]])
-                ) {
-                    throw new SugarApiExceptionNotAuthorized(
-                        sprintf('No access to view field: %s in module: %s', $orderSplit[0], $args['module'])
-                    );
-                }
-
-                if (!isset($orderSplit[1]) || strtolower($orderSplit[1]) == 'desc') {
-                    $orderSplit[1] = 'DESC';
-                } else {
-                    $orderSplit[1] = 'ASC';
-                }
-                $orderByArray[] = $orderSplit;
-            }
-            $options['order_by'] = $orderByArray;
-        }
+        $options['order_by'] = $this->getOrderByFromArgs($args, $seed);
 
         // Set $options['module'] so that runQuery can create beans of the right
         // type.
@@ -229,6 +211,25 @@ class FilterApi extends SugarApi
         }
 
         return $options;
+    }
+
+    /**
+     * Creates internal representation of ORDER BY expression from API arguments
+     *
+     * Overrides parent implementation in order to convert the value to the structure
+     * which is currently used in Filter API
+     *
+     * {@inheritDoc}
+     */
+    protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
+    {
+        $orderBy = parent::getOrderByFromArgs($args, $seed);
+        $converted = array();
+        foreach ($orderBy as $field => $direction) {
+            $converted[] = array($field, $direction ? 'ASC' : 'DESC');
+        }
+
+        return $converted;
     }
 
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
@@ -834,5 +835,21 @@ class FilterApi extends SugarApi
         $q->order_by = array();
         $q->orderByRaw('tracker.track_max', 'DESC');
         $q->distinct(false);
+    }
+
+    /**
+     * Returns default limit of returned records
+     */
+    public function getDefaultLimit()
+    {
+        return $this->defaultLimit;
+    }
+
+    /**
+     * Returns default record order
+     */
+    public function getDefaultOrderBy()
+    {
+        return $this->defaultOrderBy;
     }
 }

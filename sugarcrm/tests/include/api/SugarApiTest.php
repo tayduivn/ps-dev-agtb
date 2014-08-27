@@ -478,6 +478,79 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         );
     }
+
+    /**
+     * @dataProvider getOrderByFromArgsSuccessProvider
+     */
+    public function testGetOrderByFromArgsSuccess(array $args, array $expected)
+    {
+        $actual = $this->getOrderByFromArgs($args);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getOrderByFromArgsSuccessProvider()
+    {
+        return array(
+            'not-specified' => array(
+                array(),
+                array(),
+            ),
+            'specified' => array(
+                array(
+                    'order_by' => 'a:asc,b:desc,c,d:whatever',
+                ),
+                array(
+                    'a' => true,
+                    'b' => false,
+                    'c' => true,
+                    'd' => true,
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getOrderByFromArgsFailureProvider
+     */
+    public function testGetOrderByFromArgsFailure(array $args, $expectedException)
+    {
+        /** @var SugarBean|PHPUnit_Framework_MockObject_MockObject $bean */
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
+        $bean->expects($this->any())
+            ->method('ACLFieldAccess')
+            ->will($this->returnValue(false));
+        $bean->field_defs = array('name' => array());
+
+        $this->setExpectedException($expectedException);
+        $this->getOrderByFromArgs($args, $bean);
+    }
+
+    public static function getOrderByFromArgsFailureProvider()
+    {
+        return array(
+            'field-not-found' => array(
+                array(
+                    'order_by' => 'not-existing-field',
+                ),
+                'SugarApiExceptionInvalidParameter',
+            ),
+            'field-no-access' => array(
+                array(
+                    'order_by' => 'name',
+                ),
+                'SugarApiExceptionNotAuthorized',
+            ),
+        );
+    }
+
+    private function getOrderByFromArgs(array $args, SugarBean $bean = null)
+    {
+        $api = $this->getMockForAbstractClass('SugarApi');
+        return SugarTestReflection::callProtectedMethod($api, 'getOrderByFromArgs', array($args, $bean));
+    }
 }
 
 
