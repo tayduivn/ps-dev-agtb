@@ -1074,7 +1074,8 @@ protected function checkQuery($sql, $object_name = false)
                 $sql .=	"/* VARDEF - $name -  ROW";
                 foreach($value as $rKey => $rValue) {
                     if(is_array($rValue)) {
-                        $rValue = join("\n", $rValue);
+                        // no newlines
+                        $rValue = str_replace("\n", " ", print_r($rValue, true));
                     }
                     $sql .=	"[$rKey] => '$rValue'  ";
                 }
