@@ -82,6 +82,64 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual);
     }
 
+    /**
+     * @dataProvider getLinkArgumentsProvider
+     */
+    public function testGetLinkArguments(array $args, array $link, array $expected)
+    {
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'getLinkArguments',
+            array($args, $link)
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getLinkArgumentsProvider()
+    {
+        return array(
+            array(
+                array(
+                    'fields' => array('alias', 'another_field'),
+                    'filter' => array(
+                        '$or' => array(
+                            'alias' => 'a',
+                            'another_field' => 'b',
+                        ),
+                    ),
+                    'order_by' => array(
+                        'alias' => true,
+                        'another_field' => false,
+                    ),
+                    'offset' => array(
+                        'test_link' => 10,
+                    ),
+                    'max_num' => 20,
+                ),
+                array(
+                    'name' => 'test_link',
+                    'field_map' => array(
+                        'alias' => 'field',
+                    ),
+                ),
+                array(
+                    'fields' => array('field', 'another_field'),
+                    'filter' => array(
+                        '$or' => array(
+                            'field' => 'a',
+                            'another_field' => 'b',
+                        ),
+                    ),
+                    'order_by' => 'field,another_field:desc',
+                    'offset' => 10,
+                    'max_num' => 20,
+                    'link_name' => 'test_link'
+                ),
+            )
+        );
+    }
+
     public function testGetCollectionDefinitionSuccess()
     {
         /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
@@ -218,6 +276,88 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'no-name' => array(
                 array(
                     array(),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider normalizeArgumentsProvider
+     */
+    public function testNormalizeArguments(array $args, array $definition, $expected)
+    {
+        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('CollectionApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('normalizeOffset', 'getDefaultLimit', 'getDefaultOrderBy'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('normalizeOffset')
+            ->will($this->returnCallback(function () {
+                return 'from-normalize-offset';
+            }));
+        $api->expects($this->any())
+            ->method('getDefaultLimit')
+            ->will($this->returnCallback(function () {
+                return 'from-default-limit';
+            }));
+        $api->expects($this->any())
+            ->method('getDefaultOrderBy')
+            ->will($this->returnCallback(function () {
+                return 'from-default-order-by';
+            }));
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $api,
+            'normalizeArguments',
+            array($args, array_merge(array(
+                'links' => array(),
+            ), $definition))
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function normalizeArgumentsProvider()
+    {
+        return array(
+            'defaults' => array(
+                array(),
+                array(),
+                array(
+                    'offset' => 'from-normalize-offset',
+                    'max_num' => 'from-default-limit',
+                    'order_by' => 'from-default-order-by',
+                ),
+            ),
+            'from-arguments' => array(
+                array(
+                    'order_by' => 'order,by',
+                    'max_num' => 25,
+                ),
+                array(),
+                array(
+                    'order_by' => array(
+                        'order' => true,
+                        'by' => true,
+                    ),
+                    'max_num' => 25,
+                    'offset' => 'from-normalize-offset',
+                ),
+            ),
+            'from-link-definition' => array(
+                array(),
+                array(
+                    'order_by' => 'defined,in:desc,link',
+                ),
+                array(
+                    'offset' => 'from-normalize-offset',
+                    'max_num' => 'from-default-limit',
+                    'order_by' => array(
+                        'defined' => true,
+                        'in' => false,
+                        'link' => true,
+                    ),
                 ),
             ),
         );
@@ -710,6 +850,29 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'a' => 'c',
                     'b' => 'c',
                 ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider mapFieldsProvider
+     */
+    public function testMapFields(array $fields, array $fieldMap, array $expected)
+    {
+        $actual = SugarTestReflection::callProtectedMethod($this->api, 'mapFields', array($fields, $fieldMap));
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function mapFieldsProvider()
+    {
+        return array(
+            array(
+                array('a-alias', 'b-alias', 'c'),
+                array(
+                    'a-alias' => 'a',
+                    'b-alias' => 'b',
+                ),
+                array('a', 'b', 'c'),
             ),
         );
     }

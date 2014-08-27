@@ -19,6 +19,7 @@ require_once 'clients/base/api/RelateApi.php';
  */
 class CollectionApi extends SugarApi
 {
+    /** @var RelateApi */
     protected $relateApi;
 
     /**
@@ -124,11 +125,13 @@ class CollectionApi extends SugarApi
             'offset' => $args['offset'][$link['name']],
         ));
 
-        if (isset($link['field_map']) && isset($args['filter'])) {
-            $args['filter'] = $this->mapFilter($args['filter'], $link['field_map']);
-        }
-
         if (isset($link['field_map'])) {
+            if (isset($args['fields'])) {
+                $args['fields'] = $this->mapFields($args['fields'], $link['field_map']);
+            }
+            if (isset($args['filter'])) {
+                $args['filter'] = $this->mapFilter($args['filter'], $link['field_map']);
+            }
             $args['order_by'] = $this->mapOrderBy($args['order_by'], $link['field_map']);
         }
 
@@ -225,7 +228,7 @@ class CollectionApi extends SugarApi
     {
         $args['offset'] = $this->normalizeOffset($args, $definition['links']);
         if (!isset($args['max_num'])) {
-            $args['max_num'] = $this->relateApi->getDefaultLimit();
+            $args['max_num'] = $this->getDefaultLimit();
         }
 
         $args['order_by'] = $this->getOrderByFromArgs($args);
@@ -394,6 +397,19 @@ class CollectionApi extends SugarApi
     }
 
     /**
+     * Maps field names
+     *
+     * @param array $fields
+     * @param array $fieldMap
+     *
+     * @return array
+     */
+    protected function mapFields(array $fields, array $fieldMap)
+    {
+        return $this->mapArrayValues($fields, $fieldMap);
+    }
+
+    /**
      * Map filter definition using field map
      *
      * @param array $filter
@@ -409,7 +425,7 @@ class CollectionApi extends SugarApi
             }
         }
 
-        return $this->mapArray($filter, $fieldMap);
+        return $this->mapArrayKeys($filter, $fieldMap);
     }
 
     /**
@@ -422,11 +438,11 @@ class CollectionApi extends SugarApi
      */
     protected function mapOrderBy(array $orderBy, array $fieldMap)
     {
-        return $this->mapArray($orderBy, $fieldMap);
+        return $this->mapArrayKeys($orderBy, $fieldMap);
     }
 
     /**
-     * Converts array by replacing aliased keys with real field names
+     * Converts array by replacing aliased keys with real fields
      *
      * @param array $array
      * @param array $fieldMap
@@ -434,7 +450,7 @@ class CollectionApi extends SugarApi
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function mapArray(array $array, array $fieldMap)
+    protected function mapArrayKeys(array $array, array $fieldMap)
     {
         $mapped = array();
         foreach ($array as $alias => $value) {
@@ -454,6 +470,24 @@ class CollectionApi extends SugarApi
         }
 
         return $mapped;
+    }
+
+    /**
+     * Converts array by replacing aliased values with real fields
+     *
+     * @param array $array
+     * @param array $fieldMap
+     *
+     * @return array
+     */
+    protected function mapArrayValues(array $array, array $fieldMap)
+    {
+        return array_map(function ($value) use ($fieldMap) {
+            if (isset($fieldMap[$value])) {
+                return $fieldMap[$value];
+            }
+            return  $value;
+        }, $array);
     }
 
     /**
@@ -492,5 +526,15 @@ class CollectionApi extends SugarApi
         }
 
         return $orderBy;
+    }
+
+    /**
+     * Returns default records limit
+     *
+     * @return int
+     */
+    protected function getDefaultLimit()
+    {
+        return $this->relateApi->getDefaultLimit();
     }
 }
