@@ -382,6 +382,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
 
         try {
             $mailer                   = MailerFactory::getSystemDefaultMailer();
+            $mailer->getConfig()->setEncoding(Encoding::Base64);
             $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             foreach ($address_array['to'] as $userInfo) {
@@ -653,8 +654,48 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
     }
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id, $alert_user_array));
-
+    // Adding attachments if they exist
+    $note = BeanFactory::getBean('Notes');
+    $notes = $note->get_full_list("notes.name", "notes.parent_id=" . $GLOBALS['db']->quoted($template_id), true);
+    handle_email_attachments($mail_object, $notes);
     return false; // false=no errors
+}
+
+/**
+ * Add email attachments if exists
+ * @param object $mail_object
+ * @param array $notes
+ */
+function handle_email_attachments(&$mail_object, $notes) 
+{
+    if (!empty($notes)) {
+        foreach($notes as $note) {
+            $mime_type = 'text/plain';
+            $file_location = '';
+            $filename = '';
+
+            if($note->object_name == 'Note') {
+                if (! empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
+                    $file_location = $note->file->temp_file_location;
+                    $filename = $note->file->original_file_name;
+                    $mime_type = $note->file->mime_type;
+                } else {
+                    $file_location = "upload://{$note->id}";
+                    $filename = $note->id.$note->filename;
+                    $mime_type = $note->file_mime_type;
+                }
+            } elseif($note->object_name == 'DocumentRevision') { // from Documents
+                $filename = $note->id.$note->filename;
+                $file_location = "upload://$filename";
+                $mime_type = $note->file_mime_type;
+            }
+        
+            $filename = substr($filename, 36, strlen($filename)); // strip GUID 
+            if (!$note->embed_flag) {
+                $mail_object->addAttachment(new Attachment($file_location, $filename, Encoding::Base64, $mime_type));
+            } // else
+        }
+    }
 }
 
 function parse_alert_template($focus, $target_body, $notify_user_id="", $alert_user_array = array()){

@@ -476,7 +476,6 @@ eoq2;
     }
 
     /**
-     *
      * @see UpgradeDriver::doHealthcheck()
      */
     protected function doHealthcheck()
@@ -487,16 +486,17 @@ eoq2;
         }
         $scanner->scan();
         if ($scanner->isFlagRed()) {
-            $this->dumpHealthCheckMeta($scanner);
+            $scanner->dumpMeta();
             return $this->error("Health check stage failed! Please fix issues described in the log file.");
         }
         if ($scanner->isFlagYellow()) {
             if ($this->context['autoconfirm']) {
-                $this->dumpHealthCheckMeta($scanner);
+                $scanner->dumpMeta();
                 $this->log('Yellow flag(s) present - proceeding because of autoconfirm option has been set');
                 return true;
             } else {
-                $this->dumpHealthCheckMeta($scanner, true);
+                $scanner->setVerboseLevel(1);
+                $scanner->dumpMeta();
                 if ($this->confirmDialog("Are you sure you want to continue?")) {
                     $this->log('User interactively confirmed yellow flag(s) - proceeding');
                     return true;
@@ -507,42 +507,6 @@ eoq2;
         }
         $this->log("Health check passed. All good.");
         return true;
-    }
-
-    /**
-     *
-     * Dump Scanner issues to log and optional stdout
-     * @param Scanner $scanner
-     * @param boolean $stdOut
-     */
-    protected function dumpHealthCheckMeta(HealthCheckScanner $scanner, $stdOut = false)
-    {
-        $this->logHealthCheck('*** START HEALTHCHECK ISSUES ***', $stdOut);
-        foreach ($scanner->getLogMeta() as $key => $entry) {
-            if(strpos($entry['title'], 'LBL_') === 0) {
-                $entry['title'] = $entry['report'];
-            }
-            if(strpos($entry['descr'], 'LBL_') === 0) {
-                $entry['descr'] = $entry['log'];
-            }
-            $this->logHealthCheck(" => Issue $key (flag = {$entry['flag_label']}):", $stdOut);
-            $this->logHealthCheck(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}", $stdOut);
-        }
-        $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
-    }
-
-    /**
-     *
-     * Send message to log an optional to stdout
-     * @param string $msg
-     * @param boolean $stdOut
-     */
-    protected function logHealthCheck($msg, $stdOut = false)
-    {
-        $this->log($msg);
-        if ($stdOut) {
-            echo "$msg\n";
-        }
     }
 
     /**

@@ -1694,7 +1694,7 @@ abstract class UpgradeDriver
     /**
      *
      * Get Scanner object
-     * @return Scanner|boolean
+     * @return HealthCheckScannerCli
      */
     protected function  getHealthCheckScanner()
     {
