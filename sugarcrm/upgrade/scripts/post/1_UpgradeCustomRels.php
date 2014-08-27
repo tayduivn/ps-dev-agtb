@@ -16,7 +16,7 @@
  */
 class SugarUpgradeUpgradeCustomRels extends UpgradeScript
 {
-    public $order = 5000;
+    public $order = 1009;
     public $type = self::UPGRADE_CUSTOM;
 
     public function run()
