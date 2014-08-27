@@ -298,6 +298,7 @@ class ActivitiesApi extends FilterApi
                 $homeActivityFilter = $query->where()->queryOr();
                 $homeActivityFilter->isNull('activities.parent_type');
                 $homeActivityFilter->equals('activities.parent_type', 'Activities');
+                $homeActivityFilter->equals('activities.parent_type', 'Home');
                 $homeActivityFilter->equals('activities_users.parent_type', 'Users');
             }
         } else {
