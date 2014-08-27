@@ -28,7 +28,6 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', array(false, true));
         $beanList = array(
             self::MODULE => 'PreScriptBean',
@@ -132,7 +131,6 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($upgradeDriver)
         );
-        $script->upgrader->state['old_moduleList'] = $GLOBALS['app_list_strings']['moduleList'];
 
         $script->expects($this->once())
             ->method('cleanCache');
