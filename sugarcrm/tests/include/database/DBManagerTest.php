@@ -24,11 +24,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $backupGlobals = false;
 
-    /**
-     * @var bool Backup for DBManager::usePreparedStatements.
-     */
-    protected $usePStates;
-
     static public function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -48,15 +43,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db))
         {
             $this->_db = DBManagerFactory::getInstance();
-            $this->usePStates = $this->_db->usePreparedStatements;
         }
+
         $this->created = array();
 
     }
 
     public function tearDown()
     {
-        $this->_db->usePreparedStatements = $this->usePStates;
         foreach($this->created as $table => $dummy) {
             $this->_db->dropTableName($table);
         }
@@ -537,7 +531,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
         $this->assertRegExp('#MISSING IN DATABASE.*bazz#i', $repair);
         $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $this->assertRegExp('#MISSING INDEX IN DATABASE.*primary#i', $repair);
+        $this->assertRegExp('#MISSING INDEX IN DATABASE.* primary #i', $repair);
         $this->_db->repairTableParams($tableName, $params, $indices, true);
 
         $idx = $this->_db->get_indices($tableName);
@@ -1259,7 +1253,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAlterColumn($i, $target, $temp)
     {
-        if ($this->_db instanceof OracleManager && ($i == 4 || $i == 5)) {
+        if($this->_db->dbType == "oci8" && ($i == 4 || $i == 6)) {
             $this->markTestSkipped("Cannot reliably shrink columns in Oracle");
         }
 
@@ -2916,10 +2910,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'text',
                 'len' =>'200000',
             ),
-            'col3' => array(
-                'name' => 'col3',
-                'type' => 'date',
-            )
         );
         $indexes = array(
             array(
@@ -2943,24 +2933,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function providerPreparedStatementsInsert()
     {
-        return array(
-            array(
-                array(
-                    'id' => 1,
-                    'col1' => "col1 data",
-                    'col2' => "col2 data",
-                    'col3' => '2012-12-31',
-                )
-            ),
-            array(
-                array(
-                    'id' => 2,
-                    'col1' => "2",
-                    'col2' => "col2 data",
-                    'col3' => '2012-12-31',
-                )
-            ),
-        );
+        return array( array( array('id'=>1, 'col1'=>"col1 data", 'col2'=>"col2 data") ),
+                      array( array('id'=>2, 'col1'=>"2", 'col2'=>"col2 data") ),
+                          );
     }
 
     /**
@@ -2974,7 +2949,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $dataStructure = $this->setupPreparedStatementsInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $sql = "INSERT INTO {$tableName}(id,col1,col2, col3) VALUES(?int, ?, ?text, ?date)";
+        $sql = "INSERT INTO {$tableName}(id,col1,col2) VALUES(?int, ?, ?text)";
         $ps = $this->_db->preparedQuery($sql, $data);
         $this->assertNotEmpty($ps, "Prepare failed");
 
@@ -3038,36 +3013,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
     }
 
-    /**
-     * @group preparedStatements
-     */
-    public function testMultipleUsageOfPreparedStatements()
-    {
-        $dataStructure = $this->setupPreparedStatementsInsertStructure();
-        $tableName = $dataStructure['tableName'];
-
-        $sql = "INSERT INTO {$tableName} (id, col1, col2, col3) VALUES (?int, ?, ?text, ?date)";
-        $ps = $this->_db->prepareStatement($sql);
-        $this->assertNotEmpty($ps, 'Prepare failed');
-
-        $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
-        while (strlen($blobData) < 10000) {
-            $blobData .= $blobData;
-        }
-
-        for ($i = 0; $i < 5000; $i++) {
-            $data =  array(
-                0 => $i,
-                1 => "col1 data",
-                2 => $blobData,
-                3 => '2012-12-31',
-            );
-            $ps->executePreparedStatement($data, 'Error');
-        }
-
-        $row = $this->_db->fetchOne("SELECT COUNT(id) c FROM $tableName");
-        $this->assertEquals(5000, $row['c'], "Incorrect number or records.");
-    }
 
     /**
      * @group preparedStatements
@@ -3079,7 +3024,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id   = 'test' . mt_rand();
-        $bean->new_with_id = true;
         $this->_db->insert($bean);
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
@@ -3148,6 +3092,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                             'url_param'           =>array ('name'=>'url_param',           'type'=>'url',     'default'=>'test'),
                             'encrypt_param'       =>array ('name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'),
                             'file_param'          =>array ('name'=>'file_param',          'type'=>'file',    'default'=>'test'),
+                            'decimal_tpl_param'   =>array ('name'=>'decimal_tpl_param',   'type'=>'decimal_tpl', 'len' => 10, 'precision' => 4,    'default'=>1.11),
                         );
 
         $indexes = array(
@@ -3206,6 +3151,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'url_param'           => 'utl',
                         'encrypt_param'       => 'encrypt',
                         'file_param'          => 'file',
+                        'decimal_tpl_param'   => 12.34,
                           ),
                      array( 'id'                  => 2,
                             'int_param'           => 2,
@@ -3239,6 +3185,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                             'url_param'           => 'utl',
                             'encrypt_param'       => 'encrypt',
                             'file_param'          => 'file',
+                            'decimal_tpl_param'   => 12.34,
                           ),
                      array( 'id'                  => 3,
                             'int_param'           => 3,
@@ -3268,7 +3215,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
             while(($row = $this->_db->fetchByAssoc($result)) != null) {
                     foreach ($data as $colKey => $col ) {
-                        $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
+                        $found=$row[$colKey];
                         $expected=$data[$colKey];
                         if (empty($expected)) { // if null then compare to the table defined default
                             $expected = $params[$colKey]['default'];
