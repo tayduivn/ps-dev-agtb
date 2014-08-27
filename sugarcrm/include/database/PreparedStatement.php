@@ -54,7 +54,7 @@ abstract class PreparedStatement
      * Parsed SQL text
      * @var string
      */
-    protected $parsedSQL = null;
+    protected $parseSQL = null;
 
     /**
      * Prepared field definitions
@@ -171,7 +171,6 @@ abstract class PreparedStatement
             // add the remaining sql
             $cleanedSql .= $sql;
         }
-
         $this->parsedSQL = $cleanedSql;
         return true;
     }

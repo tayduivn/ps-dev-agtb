@@ -848,7 +848,6 @@ class SugarTestHelper
      */
     protected static function setUp_custom_field(array $params)
     {
-        require_once 'include/Expressions/Expression/Parser/Parser.php';
         self::$registeredVars['custom_field'] = true;
 
         if (count($params) < 2) {
@@ -881,24 +880,12 @@ class SugarTestHelper
         $dynamicField->setup($bean);
         $dynamicField->addFieldObject($field);
 
-        $mi = new ModuleInstaller();
-        $mi->silent = true;
-        $mi->rebuild_vardefs();
-
         self::$customFields[] = array($dynamicField, $field);
 
         $objectName = BeanFactory::getObjectName($module);
-        VardefManager::loadVardef($module, $objectName, true);
+        VardefManager::clearVardef($module, $objectName);
 
-        if (!empty($vardefs['formula'])) {
-            foreach (Parser::getFieldsFromExpression($vardefs['formula'], array($vardefs['name'] => $vardefs)) as $m) {
-                $m = ucfirst(strtolower($m));
-                if ($objectName = BeanFactory::getObjectName($m)) {
-                    $mi->rebuild_dependencies();
-                    VardefManager::loadVardef($m, $objectName, true);
-                };
-            }
-        }
+        $GLOBALS['reload_vardefs'] = true;
     }
 
     /**
@@ -908,26 +895,11 @@ class SugarTestHelper
      */
     protected static function tearDown_custom_field()
     {
-        $mi = new ModuleInstaller();
-        $mi->silent = true;
+        unset($GLOBALS['reload_vardefs']);
 
         foreach (self::$customFields as $data) {
             list($dynamicField, $field) = $data;
-            $vardefs = $field->get_field_def();
             $dynamicField->deleteField($field);
-            $mi->rebuild_vardefs();
-            if (!empty($vardefs['formula'])) {
-                foreach (Parser::getFieldsFromExpression($vardefs['formula'], array($vardefs['name'] => $vardefs)) as $m) {
-                    $m = ucfirst(strtolower($m));
-                    if ($objectName = BeanFactory::getObjectName($m)) {
-                        $mi->rebuild_dependencies();
-                        VardefManager::loadVardef($m, $objectName, true);
-                    };
-                }
-            }
-            $module = $dynamicField->module;
-            $objectName = BeanFactory::getObjectName($module);
-            VardefManager::loadVardef($module, $objectName, true);
         }
 
         self::$customFields = array();
