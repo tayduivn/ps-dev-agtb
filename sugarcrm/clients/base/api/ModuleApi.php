@@ -358,7 +358,12 @@ class ModuleApi extends SugarApi {
                 continue;
             }
             if (!is_array($args[$field])) {
-                throw new SugarApiExceptionInvalidParameter();
+                throw new SugarApiExceptionInvalidParameter(
+                    sprintf(
+                        'Link field must contain array of actions, %s given',
+                        gettype($field)
+                    )
+                );
             }
             if (!isset($args[$field][$action])) {
                 continue;
@@ -367,7 +372,12 @@ class ModuleApi extends SugarApi {
             $data = $args[$field][$action];
 
             if (!is_array($data)) {
-                throw new SugarApiExceptionInvalidParameter();
+                throw new SugarApiExceptionInvalidParameter(
+                    sprintf(
+                        'Link action data must be array, %s given',
+                        gettype($data)
+                    )
+                );
             }
 
             $arguments[$field] = $data;

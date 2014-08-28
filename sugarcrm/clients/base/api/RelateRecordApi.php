@@ -235,6 +235,9 @@ class RelateRecordApi extends ModuleApi {
      */
     public function createRelatedLinks($api, $args)
     {
+        $this->requireArgs($args, array('ids'));
+        $ids = $this->normalizeLinkIds($args['ids']);
+
         $result = array(
             'related_records' => array(),
         );
@@ -244,18 +247,7 @@ class RelateRecordApi extends ModuleApi {
         list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
         $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
 
-        foreach ($args['ids'] as $record) {
-            if (is_array($record)) {
-                if (!isset($record['id'])) {
-                    throw new SugarApiExceptionInvalidParameter('Related record ID is not specified');
-                }
-                $id = $record['id'];
-                $additionalValues = $record;
-                unset($additionalValues['id']);
-            } else {
-                $id = $record;
-                $additionalValues = array();
-            }
+        foreach ($ids as $id => $additionalValues) {
             $relatedBean = BeanFactory::retrieveBean($relatedModuleName, $id);
 
             if (!$relatedBean || $relatedBean->deleted) {
@@ -271,6 +263,41 @@ class RelateRecordApi extends ModuleApi {
         $result['record'] = $this->formatBean($api, $args, $primaryBean);
 
         return $result;
+    }
+
+    /**
+     * Normalizes related record IDs obtained from API arguments
+     *
+     * @param mixed $ids
+     *
+     * @return array Associative array where key is record ID, value is additional link values
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function normalizeLinkIds($ids)
+    {
+        if (!is_array($ids)) {
+            throw new SugarApiExceptionInvalidParameter(
+                sprintf('Related record IDs must be array, %s given', gettype($ids))
+            );
+        }
+
+        $normalized = array();
+        foreach ($ids as $record) {
+            if (is_array($record)) {
+                if (!isset($record['id'])) {
+                    throw new SugarApiExceptionInvalidParameter('Related record ID is not specified in array notation');
+                }
+                $id = $record['id'];
+                $additionalValues = $record;
+                unset($additionalValues['id']);
+            } else {
+                $id = $record;
+                $additionalValues = array();
+            }
+            $normalized[$id] = $additionalValues;
+        }
+
+        return $normalized;
     }
 
     function updateRelatedLink($api, $args) {
