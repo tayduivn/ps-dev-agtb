@@ -10,13 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/UpgradeWizard/SugarMerge/EditViewMerge.php');
-require_once('modules/UpgradeWizard/SugarMerge/DetailViewMerge.php');
-require_once('modules/UpgradeWizard/SugarMerge/SearchMerge.php');
-require_once('modules/UpgradeWizard/SugarMerge/ListViewMerge.php');
-require_once('modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php');
-require_once('modules/ModuleBuilder/parsers/views/History.php');
-
 /**
  * SugarMerge wraps around all the merge functionality of Sugar given a module name and the path to an unzipped patch
  *
@@ -29,11 +22,20 @@ class SugarMerge {
 	private $merged = array();
 	private $fp = NULL;
 
-	function SugarMerge($new_path='', $original_path='', $custom_path='custom') {
+	function SugarMerge($new_path='', $original_path='', $custom_path='custom', $includeFromNew = false) {
 
 		$this->new_path = empty($new_path) || preg_match('/[\/]$/', $new_path) ? $new_path : $new_path . '/';
 		$this->original_path = empty($original_path) || preg_match('/[\/]$/', $original_path) ? $original_path : $original_path . '/';
 		$this->custom_path = empty($custom_path) || preg_match('/[\/]$/', $custom_path) ? $custom_path : $custom_path . '/';
+        $includePrepend = $includeFromNew ? $this->new_path : "";
+        //Use the new Merge classes if requested
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/MergeUtils.php');
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php');
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/DetailViewMerge.php');
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/ListViewMerge.php');
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/SearchMerge.php');
+        require_once($includePrepend . 'modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php');
+        require_once('modules/ModuleBuilder/parsers/views/History.php');
 
 		$this->mergeMapping = array(
 			'editviewdefs.php'=> new EditViewMerge(),

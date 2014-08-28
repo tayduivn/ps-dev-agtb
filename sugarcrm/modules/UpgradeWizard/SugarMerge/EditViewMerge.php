@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
+
 /**
  * This is the base class that all other SugarMerge objects extend 
  *
@@ -116,7 +116,7 @@ class EditViewMerge{
 	 *
 	 * @var FILEPOINTER
 	 */
-	protected $fp = NULL;
+	protected $fp = null;
 	
 	
 	/**
@@ -506,15 +506,42 @@ class EditViewMerge{
         if (isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName])
             && is_array($this->customData[$this->module][$this->viewDefs][$this->templateMetaName])
         ) {
-            foreach ($this->customData[$this->module][$this->viewDefs][$this->templateMetaName] as $key => $value) {
+            $custTM = &$this->customData[$this->module][$this->viewDefs][$this->templateMetaName];
+            $newTM = &$this->newData[$this->module][$this->viewDefs][$this->templateMetaName];
+            $oldTM = &$this->originalData[$this->module][$this->viewDefs][$this->templateMetaName];
+            foreach ($custTM as $key => $value) {
+                //Some sections we can always clone from custom to new
                 if (in_array($key, $this->templateMetaVarsToMerge)) {
-                    $this->newData[$this->module][$this->viewDefs][$this->templateMetaName][$key] = $value;
+                    $newTM[$key] = $value;
+                }
+                //Check for entire sections that were removed and skip taking the custom version
+                else if (isset($oldTM[$key]) && !isset($newTM[$key])) {
+                    continue;
+                }
+                //3-way merge
+                else if (is_array($value)){
+                    $newTM[$key] = MergeUtils::deepMergeDef(
+                        isset($oldTM[$key]) ? $oldTM[$key] : array(),
+                        isset($newTM[$key]) ? $newTM[$key] : array(),
+                        $value
+                    );
+                }
+                //If the value didn't change, keep the custom version
+                else {
+                    if ((empty($newTM[$key]) && empty($oldTM[$key]))
+                        || (!empty($newTM[$key]) && !empty($oldTM[$key]) && $newTM[$key] == $oldTM[$key])
+                    ) {
+                        $newTM[$key] = $value;
+                    }
                 }
             }
 
         }
 
+
     }
+
+
 	
 	/**
 	 * Sets the panel section for the meta-data after it has been merged
@@ -539,7 +566,6 @@ class EditViewMerge{
 		$this->customFields = $this->getFields($this->customData[$this->module][$this->viewDefs][$this->panelName]);
 		$this->customPanelIds = $this->getPanelIds($this->customData[$this->module][$this->viewDefs][$this->panelName]);		
 		$this->newFields = $this->getFields($this->newData[$this->module][$this->viewDefs][$this->panelName]);
-		//echo var_export($this->newFields, true);
 		$this->newPanelIds = $this->getPanelIds($this->newData[$this->module][$this->viewDefs][$this->panelName]);
 		$this->mergeFields();
 		$this->mergeTemplateMeta();
@@ -565,7 +591,7 @@ class EditViewMerge{
 		   } else {
 		   	  $panels = $panels[''];
 		   }
-		   $setDefaultPanel = true;   
+		   $setDefaultPanel = true;
 		}		
 		
 		if($this->scanForMultiPanel){
@@ -651,7 +677,7 @@ class EditViewMerge{
 		   } else {
 		   	  $panels = $panels[''];
 		   }
-		   $setDefaultPanel = true;   
+		   $setDefaultPanel = true;
 		}		
 		
 		if($this->scanForMultiPanel){

@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/UpgradeWizard/SugarMerge/ListViewMerge.php');
 /**
  * SearchMerge is a class for merging search meta data together. This search meta-data has a listing of fields similar to ListViews
  *
@@ -41,7 +40,7 @@ class SearchMerge extends ListViewMerge{
 		$this->originalData = array($module=>array( $this->viewDefs=>$this->originalData[$module]));
 		$this->customData = array($module=>array( $this->viewDefs=>$this->customData[$module]));
 		$this->newData = array($module=>array( $this->viewDefs=>$this->newData[$module]));
-	
+
 	}
 	/**
 	 * This takes in a  list of panels and returns an associative array of field names to the meta-data of the field as well as the locations of that field
