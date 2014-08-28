@@ -112,6 +112,19 @@ class SidecarLayoutdefsMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_Test
             ), // Test correct subpanel should be converted to new defs
         );
     }
+
+    /**
+     * @ticket BR-1597
+     */
+    public function testBogusOverride()
+    {
+        $this->subpanelData['projects'] = array('override_subpanel_name' => 'Quotedefault');
+        $this->upgrader->loadSubpanelData($this->module, $this->subpanelData);
+
+        $this->upgrader->setLegacyViewdefs(array("projects" => array('override_subpanel_name' => 'Quotedefault')));
+        $this->upgrader->convertLegacyViewDefsToSidecar();
+        $this->assertEmpty($this->upgrader->getSidecarViewDefs(), "Should not convert bogus data");
+    }
 }
 
 /**
