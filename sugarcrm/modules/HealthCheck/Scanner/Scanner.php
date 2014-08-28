@@ -94,6 +94,13 @@ class HealthCheckScanner
         'Accounting' => '*',
 	    'Marketo Marketing Automation for SugarCRM' => '3.0',
 	    'SugarChimp' => '7.0.1',
+        'Calendar 2.0 V1.2 003' => '*',
+        'Sugar - MAS90 Integration' => '*',
+        'MAS90Integrator' => '*',
+        'ContactIndicators' => '*',
+        'Integral Sales' => '*',
+        'Teleseller' => '*',
+        'Freshdesk for SugarCRM' => '*',
     );
 
     /**
