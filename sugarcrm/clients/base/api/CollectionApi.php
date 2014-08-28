@@ -23,14 +23,6 @@ class CollectionApi extends SugarApi
     protected $relateApi;
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->relateApi = new RelateApi();
-    }
-
-    /**
      * Registers API
      *
      * @return array
@@ -103,7 +95,7 @@ class CollectionApi extends SugarApi
             $linkName = $link['name'];
             if ($args['offset'][$linkName] >= 0) {
                 $linkArgs = $this->getLinkArguments($args, $link);
-                $data[$linkName] = $this->relateApi->filterRelated($api, $linkArgs);
+                $data[$linkName] = $this->getRelateApi()->filterRelated($api, $linkArgs);
             }
         }
 
@@ -224,6 +216,14 @@ class CollectionApi extends SugarApi
         return $normalized;
     }
 
+    /**
+     * Normalizes API arguments according to collection field definition
+     *
+     * @param array $args API arguments
+     * @param array $definition Collection field definition
+     *
+     * @return array Normalized arguments
+     */
     protected function normalizeArguments(array $args, array $definition)
     {
         $args['offset'] = $this->normalizeOffset($args, $definition['links']);
@@ -519,7 +519,7 @@ class CollectionApi extends SugarApi
     protected function getDefaultOrderBy()
     {
         $orderBy = array();
-        foreach ($this->relateApi->getDefaultOrderBy() as $column) {
+        foreach ($this->getRelateApi()->getDefaultOrderBy() as $column) {
             $field = array_shift($column);
             $direction = array_shift($column);
             $orderBy[$field] = strtolower($direction) != 'desc';
@@ -535,6 +535,20 @@ class CollectionApi extends SugarApi
      */
     protected function getDefaultLimit()
     {
-        return $this->relateApi->getDefaultLimit();
+        return $this->getRelateApi()->getDefaultLimit();
+    }
+
+    /**
+     * Lazily loads Relate API
+     *
+     * @return RelateApi
+     */
+    protected function getRelateApi()
+    {
+        if (!$this->relateApi) {
+            $this->relateApi = new RelateApi();
+        }
+
+        return $this->relateApi;
     }
 }
