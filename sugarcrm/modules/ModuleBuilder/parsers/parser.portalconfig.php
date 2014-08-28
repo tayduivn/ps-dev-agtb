@@ -46,7 +46,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
-            'serverTimeout' => 30,
             'defaultModule' => 'Cases',
             'orderByDefaults' => array(
                 'Cases' => array(
