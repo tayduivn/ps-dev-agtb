@@ -171,10 +171,10 @@ class ModuleApi extends SugarApi {
         $id = $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
-        $this->linkRelatedRecords($bean, $api, $relateArgs);
+        $this->linkRelatedRecords($api, $bean, $relateArgs);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
-        $this->createRelatedRecords($bean, $api, $relateArgs);
+        $this->createRelatedRecords($api, $bean, $relateArgs);
 
         $args['record'] = $id;
 
@@ -192,13 +192,13 @@ class ModuleApi extends SugarApi {
         $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
-        $this->unlinkRelatedRecords($bean, $api, $relateArgs);
+        $this->unlinkRelatedRecords($api, $bean, $relateArgs);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
-        $this->linkRelatedRecords($bean, $api, $relateArgs);
+        $this->linkRelatedRecords($api, $bean, $relateArgs);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
-        $this->createRelatedRecords($bean, $api, $relateArgs);
+        $this->createRelatedRecords($api, $bean, $relateArgs);
 
         return $this->getLoadedAndFormattedBean($api, $args);
     }
@@ -379,13 +379,14 @@ class ModuleApi extends SugarApi {
     /**
      * Links related records to the given bean
      *
-     * @param SugarBean $bean Primary bean
      * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
      * @param array $ids Related record IDs
      *
+     * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotFound
      */
-    protected function linkRelatedRecords(SugarBean $bean, ServiceBase $service, array $ids)
+    protected function linkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
     {
         $api = $this->getRelateRecordApi();
         foreach ($ids as $linkName => $items) {
@@ -401,13 +402,13 @@ class ModuleApi extends SugarApi {
     /**
      * Unlinks related records from the given bean
      *
-     * @param SugarBean $bean Primary bean
      * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
      * @param array $ids Related record IDs
      *
      * @throws SugarApiExceptionNotFound
      */
-    protected function unlinkRelatedRecords(SugarBean $bean, ServiceBase $service, array $ids)
+    protected function unlinkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
     {
         $api = $this->getRelateRecordApi();
         foreach ($ids as $linkName => $items) {
@@ -425,13 +426,11 @@ class ModuleApi extends SugarApi {
     /**
      * Creates related records for the given bean
      *
-     * @param SugarBean $bean Primary bean
      * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
      * @param array $data New record data
-     *
-     * @throws SugarApiExceptionNotFound
      */
-    protected function createRelatedRecords(SugarBean $bean, ServiceBase $service, array $data)
+    protected function createRelatedRecords(ServiceBase $service, SugarBean $bean, array $data)
     {
         $api = $this->getRelateRecordApi();
         foreach ($data as $linkName => $records) {
@@ -453,6 +452,7 @@ class ModuleApi extends SugarApi {
     protected function getRelateRecordApi()
     {
         if (!$this->relateRecordApi) {
+            require_once 'clients/base/api/RelateRecordApi.php';
             $this->relateRecordApi = new RelateRecordApi();
         }
 
