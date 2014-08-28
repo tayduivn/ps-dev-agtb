@@ -15,6 +15,10 @@ require_once('data/BeanFactory.php');
 require_once('include/api/SugarApi.php');
 
 class ModuleApi extends SugarApi {
+
+    /** @var RelateRecordApi */
+    protected $relateRecordApi;
+
     public function registerApiRest() {
         return array(
             'create' => array(
@@ -166,8 +170,11 @@ class ModuleApi extends SugarApi {
 
         $id = $this->updateBean($bean, $api, $args);
 
-        $relateArgs = $this->getRelateRecordArguments($bean, $args);
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
         $this->linkRelatedRecords($bean, $api, $relateArgs);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
+        $this->createRelatedRecords($bean, $api, $relateArgs);
 
         $args['record'] = $id;
 
@@ -184,11 +191,14 @@ class ModuleApi extends SugarApi {
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
 
-        $relateArgs = $this->getRelateRecordArguments($bean, $args, 'delete');
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
         $this->unlinkRelatedRecords($bean, $api, $relateArgs);
 
-        $relateArgs = $this->getRelateRecordArguments($bean, $args, 'add');
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
         $this->linkRelatedRecords($bean, $api, $relateArgs);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
+        $this->createRelatedRecords($bean, $api, $relateArgs);
 
         return $this->getLoadedAndFormattedBean($api, $args);
     }
@@ -332,12 +342,12 @@ class ModuleApi extends SugarApi {
      *
      * @param SugarBean $bean Primary bean
      * @param array $args This API arguments
-     * @param string|null $action Related record action.
-     *                            If not specified, it's assumed that API arguments are not grouped by action
+     * @param string $action Related record action.
+     *
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function getRelateRecordArguments(SugarBean $bean, array $args, $action = null)
+    protected function getRelatedRecordArguments(SugarBean $bean, array $args, $action)
     {
         $arguments = array();
         foreach ($bean->getFieldDefinitions() as $field => $definition) {
@@ -347,17 +357,14 @@ class ModuleApi extends SugarApi {
             if (!isset($args[$field])) {
                 continue;
             }
-            if ($action) {
-                if (!is_array($args[$field])) {
-                    throw new SugarApiExceptionInvalidParameter();
-                }
-                if (!isset($args[$field][$action])) {
-                    continue;
-                }
-                $data = $args[$field][$action];
-            } else {
-                $data = $args[$field];
+            if (!is_array($args[$field])) {
+                throw new SugarApiExceptionInvalidParameter();
             }
+            if (!isset($args[$field][$action])) {
+                continue;
+            }
+
+            $data = $args[$field][$action];
 
             if (!is_array($data)) {
                 throw new SugarApiExceptionInvalidParameter();
@@ -416,12 +423,39 @@ class ModuleApi extends SugarApi {
     }
 
     /**
-     * Returns RelateRecordApi
+     * Creates related records for the given bean
+     *
+     * @param SugarBean $bean Primary bean
+     * @param ServiceBase $service
+     * @param array $data New record data
+     *
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function createRelatedRecords(SugarBean $bean, ServiceBase $service, array $data)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($data as $linkName => $records) {
+            foreach ($records as $record) {
+                $api->createRelatedRecord($service, array_merge($record, array(
+                    'module' => $bean->module_name,
+                    'record' => $bean->id,
+                    'link_name' => $linkName,
+                )));
+            }
+        }
+    }
+
+    /**
+     * Lazily loads RelateRecord API
      *
      * @return RelateRecordApi
      */
     protected function getRelateRecordApi()
     {
-        return new RelateRecordApi();
+        if (!$this->relateRecordApi) {
+            $this->relateRecordApi = new RelateRecordApi();
+        }
+
+        return $this->relateRecordApi;
     }
 }
