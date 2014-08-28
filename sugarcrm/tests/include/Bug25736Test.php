@@ -22,7 +22,7 @@ class Bug25736ExportTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('current_user', array(true, true));
     }
 
     public static function tearDownAfterClass()

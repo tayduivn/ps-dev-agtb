@@ -25,10 +25,77 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 	    $this->_db = DBManagerFactory::getInstance();
 	}
 
-	public function tearDown()
-	{
+    public function providerClobsNonOracle()
+    {
+        return array(
+            array(
+                array(
+                    'foo' => array(
+                        'name' => 'foo',
+                        'type' => 'clob',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            array(
+                array(
+                    'foo' => array (
+                        'name' => 'foo',
+                        'type' => 'blob',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+            array(
+                array(
+                    'foo' => array (
+                        'name' => 'foo',
+                        'type' => 'text',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType\(1024\)/i',
+            ),
+        );
+    }
 
-	}
+    public function providerClobsOracle()
+    {
+        return array(
+            array(
+                array(
+                    'foo' => array(
+                        'name' => 'foo',
+                        'type' => 'clob',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType/i',
+            ),
+            array(
+                array(
+                    'foo' => array (
+                        'name' => 'foo',
+                        'type' => 'blob',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType/i',
+            ),
+            array(
+                array(
+                    'foo' => array (
+                        'name' => 'foo',
+                        'type' => 'text',
+                        'len' => '1024',
+                    ),
+                ),
+                '/foo\s+$baseType/i',
+            ),
+        );
+    }
 
 
 	public function providerBug51161()
@@ -43,7 +110,6 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						),
 					),
 					'/foo\s+$baseType\(34\)/i',
-					1
 				),
 				array(
 					array(
@@ -54,7 +120,6 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						),
 					),
 					'/foo\s+$baseType\(35\)/i',
-					1
 				),
 				array(
 					array(
@@ -65,18 +130,6 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						),
 					),
 					'/foo\s+$baseType\(23\)/i',
-					1
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'text',
-						'len' => '1024',
-						),
-					),
-					'/foo\s+$baseType\(1024\)/i',
-					1
 				),
 				array(
 					array(
@@ -86,29 +139,6 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						),
 					),
 					'/foo\s+$colType/i',
-					1
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'clob',
-						'len' => '1024',
-						),
-					),
-					'/foo\s+$baseType\(1024\)/i',
-					1
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'blob',
-						'len' => '1024',
-						),
-					),
-					'/foo\s+$baseType\(1024\)/i',
-					1
 				),
            );
 
@@ -117,12 +147,59 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerBug51161
+     * @param $fieldDef
+     * @param $successRegex
      */
-
-    public function testBug51161($fieldDef,$successRegex, $times)
+    public function testBug51161($fieldDef, $successRegex)
     {
         // Allowing type part variables in passed in regular expression so that database specific mappings
         // can be accounted for in the test
+        list($sql, $successRegex) = $this->getTableSql($fieldDef, $successRegex);
+        $this->assertEquals(
+            1,
+            preg_match($successRegex, $sql),
+            "Resulting statement: $sql failed to match /$successRegex/"
+        );
+    }
+
+    /**
+     * @dataProvider providerClobsOracle
+     * @param $fieldDef
+     * @param $successRegex
+     */
+    public function testOracleClobs($fieldDef, $successRegex)
+    {
+        if (!$this->_db instanceof OracleManager) {
+            $this->markTestSkipped('Oracle only');
+        }
+        list($sql, $successRegex) = $this->getTableSql($fieldDef, $successRegex);
+        $this->assertEquals(
+            1,
+            preg_match($successRegex, $sql),
+            "Resulting statement: $sql failed to match /$successRegex/"
+        );
+    }
+
+    /**
+     * @dataProvider providerClobsNonOracle
+     * @param $fieldDef
+     * @param $successRegex
+     */
+    public function testNonOracleClobs($fieldDef, $successRegex)
+    {
+        if ($this->_db instanceof OracleManager) {
+            $this->markTestSkipped('non-Oracle only');
+        }
+        list($sql, $successRegex) = $this->getTableSql($fieldDef, $successRegex);
+        $this->assertEquals(
+            1,
+            preg_match($successRegex, $sql),
+            "Resulting statement: $sql failed to match /$successRegex/"
+        );
+    }
+
+    protected function getTableSql($fieldDef, $successRegex)
+    {
         $ftype = $this->_db->getFieldType($fieldDef['foo']);
         $colType = $this->_db->getColumnType($ftype);
         $successRegex = preg_replace('/\$colType/', $colType, $successRegex);
@@ -136,7 +213,6 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
             if(isset($type['arg']))
                 $successRegex = preg_replace('/\$arg/', $type['arg'], $successRegex);
         }
-        $result = $this->_db->createTableSQLParams('test', $fieldDef, array());
-        $this->assertEquals($times, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
+        return array($this->_db->createTableSQLParams('test', $fieldDef, array()), $successRegex);
     }
 }
