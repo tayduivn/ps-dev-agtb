@@ -25,7 +25,6 @@
 
     plugins: ['QuickSearchFilter'],
 
-    // Defining tagName, className and attributes allows us to avoid a template and an extra element
     className: 'table-cell full-width',
 
     /**
@@ -43,6 +42,16 @@
                 this.$el.focus();
             }
         }, this);
+    },
+
+    /**
+     * @inheritDoc
+     *
+     * Changes `this.$el` to point to the `<input>` element.
+     */
+    _renderHtml: function() {
+        this._super('_renderHtml');
+        this.setElement(this.$('input'));
     },
 
     /**
