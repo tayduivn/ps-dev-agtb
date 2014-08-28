@@ -100,7 +100,8 @@ class HealthCheckScanner
         'ContactIndicators' => '*',
         'Integral Sales' => '*',
         'Teleseller' => '*',
-        'Freshdesk for SugarCRM' => '*',
+        'Freshdesk' => '*',
+        'Sugar-Sage Integration Modules' => '2.7.0-8-g74f8c47'
     );
 
     /**
