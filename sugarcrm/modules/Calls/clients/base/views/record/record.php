@@ -41,6 +41,13 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
+                    'type' => 'editrecurrencesbutton',
+                    'event' => 'button:edit_recurrence_button:click',
+                    'name' => 'edit_recurrence_button',
+                    'label' => 'LBL_EDIT_ALL_RECURRENCES',
+                    'acl_action' => 'edit',
+                ),
+                array(
                     'type' => 'shareaction',
                     'name' => 'share',
                     'label' => 'LBL_RECORD_SHARE_BUTTON',
@@ -191,12 +198,13 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 array(
                     'name' => 'repeat_type',
                     'span' => 3,
+                    'related_fields' => array(
+                        'repeat_parent_id',
+                    ),
                 ),
                 array(
                     'name' => 'recurrence',
                     'type' => 'recurrence',
-                    'label' => 'LBL_CALENDAR_RECURRENCE',
-                    'dismiss_label' => true,
                     'span' => 12,
                     'fields' => array(
                         array(
@@ -233,8 +241,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 array(
                     'name' => 'reminders',
                     'type' => 'fieldset-with-labels',
-                    'label' => 'LBL_CALENDAR_REMINDERS',
-                    'dismiss_label' => true,
                     'fields' => array(
                         array(
                             'name' => 'reminder_time',
