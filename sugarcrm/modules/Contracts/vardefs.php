@@ -71,7 +71,7 @@ $dictionary['Contract'] = array(
         'opportunity_id' => array(
             'name' => 'opportunity_id',
             'type' => 'id',
-            'vname' => 'LBL_OPPORTUNITY_NAME',
+            'vname' => 'LBL_OPPORTUNITY_ID',
             'source' => 'non-db',
         ),
         'account_name' => array(
@@ -247,7 +247,7 @@ $dictionary['Contract'] = array(
         ),
         'type_name' => array(
             'name' => 'type_name',
-            'vname' => 'LBL_TYPE',
+            'vname' => 'LBL_TYPE_NAME',
             'rname' => 'name',
             'id_name' => 'type',
             'type' => 'relate',
