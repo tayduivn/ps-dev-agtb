@@ -205,6 +205,7 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
 
         $newdefs = array();
+        $allNewDefs = array();
 
         // find the subpaneldef that contains the $convertSubpanelDefs
         foreach (self::$supanelData[$this->module] as $key => $def) {
@@ -242,13 +243,24 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             }
 
             $newdefs = $this->extractSidecarData($convertSubpanelDefs[$key], $def, $newdefs);
+
+            if (!empty($newdefs)) {
+                if (empty($newdefs['override_subpanel_list_view'])) {
+                    $newdefs['layout'] = 'subpanel';
+                }
+                $allNewDefs[$key] = $newdefs;
+            }
+
         }
 
-        if (!empty($newdefs)) {
-            if(empty($newdefs['override_subpanel_list_view'])) {
-                $newdefs['layout'] = 'subpanel';
+        if (!empty($allNewDefs)) {
+            if (sizeof($allNewDefs) > 1) {
+                $this->sidecarViewdefs = $allNewDefs;
+                $this->collection = true;
+            } else {
+                $this->sidecarViewdefs = current($allNewDefs);
+                $this->collection = false;
             }
-            $this->sidecarViewdefs = $newdefs;
         }
 
     }
