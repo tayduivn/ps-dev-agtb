@@ -78,6 +78,9 @@
             this.componentsList[name].render();
             this._components.push(this.componentsList[name]);
             this.getContainer(this.componentsList[name]).append(this.componentsList[name].el);
+            // notify the component it's been appended to the container.
+            // it may want to adapt to its new neighborhood
+            this.componentsList[name].trigger("append");
             this.componentsList[name] = null;
         }
 
