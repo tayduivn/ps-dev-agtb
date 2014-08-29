@@ -219,7 +219,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($subtotal,$base_rate)',
+            'formula' => 'ifElse(isNumeric($subtotal), currencyDivide($subtotal,$base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -254,7 +254,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($shipping,$base_rate)',
+            'formula' => 'ifElse(isNumeric($shipping), currencyDivide($shipping, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -291,7 +291,7 @@ $dictionary['Quote'] = array(
                 'wireless_advanced_search' => false,
                 'mobile' => false,
             ),
-            'formula' => 'currencyDivide($deal_tot,$base_rate)',
+            'formula' => 'ifElse(isNumeric($deal_tot), currencyDivide($deal_tot, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -325,7 +325,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($new_sub,$base_rate)',
+            'formula' => 'ifElse(isNumeric($new_sub), currencyDivide($new_sub, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -361,7 +361,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($tax,$base_rate)',
+            'formula' => 'ifElse(isNumeric($tax), currencyDivide($tax, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -395,7 +395,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($total,$base_rate)',
+            'formula' => 'ifElse(isNumeric($total), currencyDivide($total, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
