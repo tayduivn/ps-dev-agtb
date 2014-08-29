@@ -43,7 +43,6 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_DATE',
                     'enabled' => true,
                     'default' => true,
-                    'readonly' => true,
                     'name' => 'date_start',
                 ),
                 array(
@@ -51,7 +50,6 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'link' => false,
                     'default' => false,
                     'enabled' => true,
-                    'readonly' => true,
                 ),
                 array(
                     'enabled' => true,

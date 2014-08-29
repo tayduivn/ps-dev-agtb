@@ -171,6 +171,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                                 'disable_text_input' => true,
                                 'step' => 15,
                             ),
+                            'readonly' => false,
                         ),
                         array(
                             'name' => 'date_end',
@@ -178,6 +179,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                                 'disable_text_input' => true,
                                 'step' => 15,
                             ),
+                            'readonly' => false,
                         ),
                     ),
                     'span' => 9,
