@@ -238,27 +238,27 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM,
         ),
         424 => array(
-            'report' => 'inlineHtmlCustom',
-            'bucket' => self::MANUAL,
+            'report' => 'inlineHtmlSpacing',
+            'bucket' => self::CUSTOM,
         ),
         425 => array(
-            'report' => 'foundEchoCustom',
+            'report' => 'foundEcho',
             'bucket' => self::CUSTOM,
         ),
         426 => array(
-            'report' => 'foundPrintCustom',
+            'report' => 'foundPrint',
             'bucket' => self::CUSTOM,
         ),
         427 => array(
-            'report' => 'foundDieExitCustom',
+            'report' => 'foundDieExit',
             'bucket' => self::CUSTOM,
         ),
         428 => array(
-            'report' => 'foundPrintRCustom',
+            'report' => 'foundPrintR',
             'bucket' => self::CUSTOM,
         ),
         429 => array(
-            'report' => 'foundVarDumpCustom',
+            'report' => 'foundVarDump',
             'bucket' => self::CUSTOM,
         ),
 //        430 => array(
@@ -315,26 +315,28 @@ class HealthCheckScannerMeta
             'report' => 'inlineHtml',
             'bucket' => self::MANUAL,
         ),
-        509 => array(
-            'report' => 'foundEcho',
-            'bucket' => self::MANUAL,
-        ),
-        510 => array(
-            'report' => 'foundPrint',
-            'bucket' => self::MANUAL,
-        ),
-        511 => array(
-            'report' => 'foundDieExit',
-            'bucket' => self::MANUAL,
-        ),
-        512 => array(
-            'report' => 'foundPrintR',
-            'bucket' => self::MANUAL,
-        ),
-        513 => array(
-            'report' => 'foundVarDump',
-            'bucket' => self::MANUAL,
-        ),
+
+        //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
+//        509 => array(
+//            'report' => 'foundEcho',
+//            'bucket' => self::MANUAL,
+//        ),
+//        510 => array(
+//            'report' => 'foundPrint',
+//            'bucket' => self::MANUAL,
+//        ),
+//        511 => array(
+//            'report' => 'foundDieExit',
+//            'bucket' => self::MANUAL,
+//        ),
+//        512 => array(
+//            'report' => 'foundPrintR',
+//            'bucket' => self::MANUAL,
+//        ),
+//        513 => array(
+//            'report' => 'foundVarDump',
+//            'bucket' => self::MANUAL,
+//        ),
 //        514 => array(
 //            'report' => 'foundOutputBuffering',
 //            'bucket' => self::MANUAL,

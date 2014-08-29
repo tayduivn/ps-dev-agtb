@@ -10,14 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class S_424_6_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
-{
-    public $md5_files = array(
-        './modules/Accounts/Account.php' => 'fakeMD5'
-    );
-
-    public function isStockBWCModule()
-    {
-        return true;
-    }
-}
+$hook_array['after_ui_frame'][] = array(1, 'fake', 'custom/hook.php', 'fake', 'fake');

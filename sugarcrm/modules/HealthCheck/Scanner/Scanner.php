@@ -1553,7 +1553,8 @@ ENDP;
         foreach ($tokens as $index => $token) {
             if (is_array($token)) {
                 if ($token[0] == T_INLINE_HTML) {
-                    $args = array('inlineHtml', $phpfile, $token[2]);
+                    $inlineHTMLStatus = (strlen(trim($token[1])) != 0) ? 'inlineHtml' : 'inlineHtmlSpacing';
+                    $args = array($inlineHTMLStatus, $phpfile, $token[2]);
                 } elseif ($token[0] == T_ECHO) {
                     $args = array('foundEcho', $phpfile, $token[2]);
                 } elseif ($token[0] == T_PRINT) {
@@ -1568,9 +1569,6 @@ ENDP;
                     $args = array('inlineHtml', $token[1], $phpfile, $token[2]);
                 } else {
                     continue;
-                }
-                if($status == HealthCheckScannerMeta::CUSTOM) {
-                    $args[0] = $args[0] . 'Custom';
                 }
                 call_user_func_array(array($this, 'updateStatus'), $args);
             }

@@ -11,12 +11,12 @@
  */
 
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
-require_once 'upgrade/scripts/pre/RemoveInlineHTML.php';
+require_once 'upgrade/scripts/pre/RemoveInlineHTMLSpacing.php';
 
 /**
  * Test asserts correct removal of inline html in php files under custom directory
  */
-class RemoveInlineHTMLTest extends Sugar_PHPUnit_Framework_TestCase
+class RemoveInlineHTMLSpacingTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var UpgradeDriver */
     protected $upgradeDriver = null;
@@ -50,7 +50,7 @@ class RemoveInlineHTMLTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($path . '/' . $file, $content);
 
-        $script = $this->getMock('SugarUpgradeRemoveInlineHTML', array('backupFile') , array($this->upgradeDriver));
+        $script = $this->getMock('SugarUpgradeRemoveInlineHTMLSpacing', array('backupFile') , array($this->upgradeDriver));
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {
