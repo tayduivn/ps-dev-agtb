@@ -58,6 +58,18 @@
     background: darken(@navbarBackground, 5%);
   }
 
+  .navbar-search {
+    .btn-group.open {
+      > button.dropdown-toggle,
+      > button.dropdown-toggle:hover {
+        background: none;
+          .icon-caret-down {
+            color: @black;
+          }
+      }
+    }
+  }
+
   .megamenu {
     margin: 0;
   }
