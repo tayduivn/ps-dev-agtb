@@ -97,4 +97,12 @@ class MaxRelatedDateExpression extends DateExpression
     {
         return "";
     }
+
+    /**
+     * The first parameter is a link and the second is a string.
+     */
+    public static function getParameterTypes()
+    {
+    	return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
+    }
 }
