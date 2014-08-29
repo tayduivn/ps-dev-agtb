@@ -47,6 +47,14 @@ class CalendarEvents
     }
 
     /**
+     * Rebuild the FreeBusy Vcal Cache for specified user
+     */
+    public function rebuildFreeBusyCache(User $user)
+    {
+        vCal::cache_sugar_vcal($user);
+    }
+
+    /**
      * @param SugarBean $parentBean
      * @param bool $checkLimit
      * @return array events saved
@@ -147,7 +155,7 @@ class CalendarEvents
 
         Activity::enable();
 
-        vCal::cache_sugar_vcal($GLOBALS['current_user']);
+        $this->rebuildFreeBusyCache($GLOBALS['current_user']);
 
         return $recurringEvents;
     }

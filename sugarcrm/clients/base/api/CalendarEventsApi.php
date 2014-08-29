@@ -78,6 +78,7 @@ class CalendarEventsApi extends ModuleApi
         $createResult = $this->createRecord($api, $args);
 
         if (!empty($createResult['id'])) {
+            $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             $loadArgs = array(
                 'module' => $args['module'],
                 'record' => $createResult['id'],
@@ -108,6 +109,7 @@ class CalendarEventsApi extends ModuleApi
                 // when updating a single occurrence of a recurring meeting without the
                 // `all_recurrences` flag, no updates to recurrence fields are allowed
                 $updateResult = $this->updateRecord($api, $this->filterOutRecurrenceFields($args));
+                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         } else {
             $updateResult = $this->updateRecord($api, $args);
@@ -116,6 +118,8 @@ class CalendarEventsApi extends ModuleApi
             $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
             if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
+            } else {
+                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         }
         return $updateResult;
@@ -134,6 +138,7 @@ class CalendarEventsApi extends ModuleApi
         } else {
             $this->deleteRecord($api, $args);
         }
+        $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
     }
 
     /**
