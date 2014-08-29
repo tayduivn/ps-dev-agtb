@@ -55,7 +55,7 @@ class HealthCheckController extends SugarController
             echo json_encode(array('error' => $hc->error));
         } else {
             // logmeta is already json encoded
-            echo $hc->logmeta;
+            echo htmlspecialchars($hc->logmeta, ENT_NOQUOTES);
         }
 
         if($this->pingHeartbeat($hc)) {
