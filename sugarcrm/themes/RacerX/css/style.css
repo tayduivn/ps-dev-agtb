@@ -5456,10 +5456,10 @@ input, select, textarea, button
 .reportChartContainer .chartContainer {
   position: absolute;
   float: none;
-  margin: 0 auto 20px !important;
-  width: calc(100% - 40px);
-  -moz-calc(100% - 40px);
-  -webkit-calc(100% - 40px);
+  margin: 0 auto 0 !important;
+  width: calc(100% - 46px);
+  -moz-calc: calc(100% - 46px);
+  -webkit-calc: calc(100% - 46px);
   -moz-border-radius:0px 0px 6px 6px;
   border-radius:0px 0px 6px 6px;
   -webkit-border-radius:0px 0px 6px 6px;
@@ -5470,6 +5470,9 @@ input, select, textarea, button
 }
 .reportChartContainer .scrollBars {
   border-radius: 8px;
+}
+.reportChartContainer .chartContainer .scrollBars {
+  max-height: 480px;
 }
 
 /* for all views */
