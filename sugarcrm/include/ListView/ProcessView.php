@@ -841,6 +841,18 @@ class ProcessView {
                 $act_ext2 = "";
                 $act_ext3 = "";
             }
+
+            // get the label for the field
+            $field = $temp_module->getFieldDefinition($value);
+            $field_label = $value;
+            if(is_array($field) && isset($field['vname'])) {
+                // lets get the correct label
+                $mod_strings = return_module_language($GLOBALS['current_language'], $temp_module->module_name);
+                if (isset($mod_strings[$field['vname']])) {
+                    $field_label = str_replace(':', '', $mod_strings[$field['vname']]);
+                }
+            }
+
             $sub_array = array();
             $sub_array["ACTION_VALUE"] = $act_action_value;
             $sub_array["ACTION_ACTION_ID"] = $act_id;
@@ -849,7 +861,7 @@ class ProcessView {
             $sub_array["START_DISPLAY"] = $start_display;
             $sub_array["FIELD_NUM"] = $field_count;
             $sub_array["FIELD_VALUE"] = $key;
-            $sub_array["FIELD_NAME"] = $value;
+            $sub_array["FIELD_NAME"] = $field_label;
             $sub_array["ACTION_DISPLAY_TEXT"] = get_display_text($temp_module, $key, $act_action_value, $act_adv_type, $act_ext1, array('for_action_display' => true));
             $sub_array["ACTION_ADV_VALUE"] = $act_adv_value;
             $sub_array["ACTION_EXT1"] = $act_ext1;
