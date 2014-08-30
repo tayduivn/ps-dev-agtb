@@ -258,7 +258,7 @@ class HealthCheckScanner
         $this->logMeta[] = $scanMeta;
         $issueNo = count($this->logMeta);
 
-        $reason = "[Issue $issueNo][$report][$code] " . vsprintf($scanMeta['log'], $params);
+        $reason = "[Issue $issueNo][$report][$code][" . vsprintf($scanMeta['log'], $params) . ']';
 
         $this->log($reason, 'CHECK-'.$status);
         $this->logReason($status, $code, $reason);
@@ -630,8 +630,7 @@ class HealthCheckScanner
         $this->log('*** START HEALTHCHECK ISSUES ***');
         foreach ($this->getLogMeta() as $key => $entry) {
             $issueNo = $key + 1;
-            $this->log(" => Issue {$issueNo} (flag = {$entry['flag_label']}):");
-            $this->log(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}");
+            $this->log(" => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}");
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
