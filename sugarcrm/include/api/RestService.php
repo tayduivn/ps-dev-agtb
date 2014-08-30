@@ -391,6 +391,13 @@ class RestService extends ServiceBase
         $replyData = array(
             'error'=>$errorLabel,
         );
+        if ($errorLabel === 'metadata_out_of_date') {
+            $mM = $this->getMetadataManager();
+            // In case of a `metadata_out_of_date` error, return the current
+            // valid metadata hash so the client knows if it is worth
+            // re-syncing.
+            $replyData['metadata_hash'] = $mM->getMetadataHash();
+        }
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;
         }

@@ -4292,6 +4292,7 @@ $app_strings = array (
     'LBL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
     'LBL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
     'LBL_PRECONDITION_MISSING_TITLE' => 'Error: ',
+    'LBL_INVALID_412_RESPONSE' => 'A request is failing that makes the application unusable. Please contact technical support.',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
