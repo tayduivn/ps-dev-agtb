@@ -25,7 +25,8 @@ class CliUpgrader extends UpgradeDriver
         "backup" => array(false, 'b', 'backup'),
         "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
-        "autoconfirm" => array(false, 'A', 'autoconfirm')
+        "autoconfirm" => array(false, 'A', 'autoconfirm'),
+        "sendlog" => array(false, 'H', 'sendlog'),
     );
 
     /**
@@ -91,6 +92,7 @@ Optional arguments:
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
     -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
+    -H/--sendlog 0/1                     : Automatic push HealthCheck logs to sugarcrm server, default to 0.
 
 eoq2;
         echo $usage;
@@ -197,6 +199,7 @@ eoq2;
         if (empty($this->context['autoconfirm'])) {
             $this->context['autoconfirm'] = false;
         }
+        $this->context['sendlog'] = !empty($this->context['sendlog']);
         if($this->context['zip_as_dir']) {
             $this->context['extract_dir'] = $this->context['zip'];
         }
@@ -485,6 +488,17 @@ eoq2;
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
         $scanner->scan();
+        if ($this->context['sendlog']) {
+            require_once 'HealthCheckClient.php';
+            require_once 'SugarSystemInfo.php';
+            $scanner->dumpMeta();
+            $client = new HealthCheckClient();
+            $client->send(
+                SugarSystemInfo::getInstance()->getLicenseKey(),
+                $this->context['log']
+            );
+            $this->log('HealthCheck log was sent to sugarcrm.com');
+        }
         if ($scanner->isFlagRed()) {
             $scanner->dumpMeta();
             return $this->error("Health check stage failed! Please fix issues described in the log file.");

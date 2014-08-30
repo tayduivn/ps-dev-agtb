@@ -37,7 +37,9 @@ $files=array(
     'modules/HealthCheck/Scanner/Scanner.php' => 'Scanner/Scanner.php',
     'modules/HealthCheck/Scanner/ScannerCli.php' => 'Scanner/ScannerCli.php',
     'modules/HealthCheck/Scanner/ScannerMeta.php' => 'Scanner/ScannerMeta.php',
-    'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php'
+    'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php',
+    'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
+    'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
 );
 
 $phar = new Phar($name . '.phar');
