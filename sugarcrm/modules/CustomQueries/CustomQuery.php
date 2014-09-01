@@ -330,6 +330,7 @@ class CustomQuery extends SugarBean {
 
 	function get_list_view_data(){
 		global $app_strings;
+        global $mod_strings;
 
 		$temp_array = $this->get_list_view_array();
 
@@ -349,6 +350,44 @@ class CustomQuery extends SugarBean {
          } else {
          	$temp_array["VALID"] = "<font color='green'>".$app_strings['LBL_QUERY_VALID']."</font>";
          }
+
+        if (SugarACL::checkAccess($this->module_name, 'delete')) {
+            $image = SugarThemeRegistry::current()->getImage(
+                'delete_inline',
+                'align="absmiddle" border="0"',
+                null,
+                null,
+                '.gif',
+                $app_strings['LNK_DELETE']
+            );
+
+            $url = 'index.php?' . http_build_query(array(
+                'module' => $this->module_name,
+                'action' => 'Delete',
+                'record' => $this->id,
+                'return_module' => $this->module_name,
+                'return_action' => 'index',
+            ));
+            $url = htmlspecialchars($url);
+
+            $temp_array['DELETE_BUTTON_INLINE'] = <<<BUTTON
+<form id="{$this->id}" method="post" action="{$url}">
+    <a class="listViewTdToolsS1" href="javascript:void(0);" onclick="if (confirm('{$mod_strings['NTC_DELETE_CONFIRMATION']}')) document.getElementById('{$this->id}').submit();">{$image}&nbsp;{$app_strings['LNK_REMOVE']}</a>
+</form>
+BUTTON;
+        }
+
+        if (SugarACL::checkAccess($this->module_name, 'edit')) {
+            $url = 'index.php?' . http_build_query(array(
+                    'module' => $this->module_name,
+                    'action' => 'index',
+                    'record' => $this->id,
+                    'edit' => 'true',
+                ));
+            $temp_array['LINK'] = '<a href="' . htmlspecialchars($url) . '">' . $temp_array['NAME'] . '</a>';
+        } else {
+            $temp_array['LINK'] = $temp_array['NAME'];
+        }
 
          return $temp_array;
 
