@@ -635,7 +635,7 @@ class PackageManager{
         global $current_language;
         $uh = new UpgradeHistory();
         $base_upgrade_dir       = "upload://upgrades";
-        $uContent = findAllFiles( $base_upgrade_dir, array() , false, 'zip');
+        $uContent = findAllFiles($base_upgrade_dir, array(), false, 'zip', $base_upgrade_dir . '/backup');
         $upgrade_contents = array();
         $content_values = array_values($uContent);
         $alreadyProcessed = array();
