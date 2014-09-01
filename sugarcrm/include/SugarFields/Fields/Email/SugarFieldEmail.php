@@ -106,6 +106,7 @@ class SugarFieldEmail extends SugarFieldBase
 
         // Here is a hack for SugarEmailAddress.php so it doesn't attempt a legacy save
         $bean->emailAddress->dontLegacySave = true;
+        $bean->emailAddress->populateLegacyFields($bean);
     }
 
     /**
