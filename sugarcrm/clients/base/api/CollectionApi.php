@@ -144,9 +144,7 @@ class CollectionApi extends SugarApi
     {
         $definition = $bean->getFieldDefinition($collectionName);
         if (!is_array($definition) || !isset($definition['type']) || $definition['type'] !== 'collection') {
-            throw new SugarApiExceptionNotFound(
-                sprintf('Could not find collection %s in module %s', $collectionName, $bean->module_name)
-            );
+            throw new SugarApiExceptionNotFound('Collection not found');
         }
 
         if (!isset($definition['links'])) {
