@@ -49,7 +49,9 @@
             &lt;string&gt;
         </td>
         <td>
-            Related record ID.
+            The name value list of related records. Each item of the list may be either string equal to related item ID,
+            or map containing record ID (<code>"id"</code> key is required in this case)
+            and addition relationship properties.
         </td>
         <td>
             True
@@ -64,7 +66,10 @@
     link_name: "accounts"
     ids: [
         "da6a3741-2a81-ba7f-f249-512d0932e94e",
-        "e689173e-c953-1e14-c215-512d0927e7a2"
+        {
+            "id": "e689173e-c953-1e14-c215-512d0927e7a2",
+            "role": "owner"
+        }
     ]
 }
 </pre>
@@ -332,6 +337,14 @@
     <tr>
         <th>Version</th>
         <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10 (7.6.0)
+        </td>
+        <td>
+            Added support for additional relationship values.
+        </td>
     </tr>
     <tr>
         <td>
