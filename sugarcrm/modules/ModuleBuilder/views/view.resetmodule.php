@@ -119,7 +119,10 @@ class ViewResetmodule extends SugarView
         foreach($seed->field_defs as $def) {
             if (isset($def['custom_module']) && $def['custom_module'] === $moduleName) {
                $field = $df->getFieldWidget($moduleName, $def['name']);
-               $field->delete ( $df ) ;
+                // the field may have already been deleted
+                if ($field) {
+                    $field->delete($df);
+                }
 
                $module->removeFieldFromLayouts( $def['name'] );
                $customFields[] = $def['name'];
