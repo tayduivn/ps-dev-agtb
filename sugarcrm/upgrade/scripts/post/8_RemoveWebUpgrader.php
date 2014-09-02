@@ -17,7 +17,7 @@ class SugarUpgradeRemoveWebUpgrader extends UpgradeScript
 {
     public $order = 8500;
 
-    public $type = self::UPGRADE_ALL;
+    public $type = self::UPGRADE_CUSTOM;
 
     protected $filesToRemove = array(
         'custom/Extension/application/Ext/Language/en_us.HealthCheck.php',
