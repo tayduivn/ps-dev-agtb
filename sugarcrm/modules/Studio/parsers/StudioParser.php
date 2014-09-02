@@ -180,7 +180,7 @@ EOQ;
 
 	function getFiles($module, $fileId=false){
 		if(empty($GLOBALS['studioDefs'][$module])){
-			require_once('modules/'. $module . '/metadata/studio.php');
+            SugarAutoLoader::requireWithCustom('modules/'. $module . '/metadata/studio.php');
 		}
 		if($fileId){
 			return 	$GLOBALS['studioDefs'][$module][$fileId];

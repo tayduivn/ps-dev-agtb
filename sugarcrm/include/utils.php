@@ -1573,7 +1573,7 @@ function displayStudioForCurrentUser()
     }
     $access = $current_user->getDeveloperModules();
     foreach ($access as $key=>$mod) {
-        if (SugarAutoLoader::fileExists('modules/'. $mod . '/metadata/studio.php')) {
+        if (SugarAutoLoader::existingCustomOne("modules/{$mod}/metadata/studio.php")) {
             $_SESSION['display_studio_for_user'] = true;
 
             return true;
