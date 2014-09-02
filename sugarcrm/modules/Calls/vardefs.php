@@ -67,6 +67,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
     'studio' => array('recordview' => false),
+    'readonly' => true,
   ),
 
   'date_end' =>
@@ -80,6 +81,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
+    'readonly' => true,
   ),
 
  'parent_type'=>
