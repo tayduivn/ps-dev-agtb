@@ -20,6 +20,9 @@ abstract class UpgradeDriver
 
     const DEFAULT_HEALTHCHECK_PATH =  '/../HealthCheck';
 
+    // Stops upgrade process despite step result.
+    const STOP_SIGNAL = 23;
+
     /**
      * If upgrade is successful
      * @var bool
@@ -1515,7 +1518,11 @@ abstract class UpgradeDriver
         if ($stage_num === false) {
             return false;
         }
-        if (!$this->runStage($stage)) {
+        $stageCode = $this->runStage($stage);
+        if ($stageCode === self::STOP_SIGNAL) {
+            return self::STOP_SIGNAL;
+        }
+        if ($stageCode === false) {
             return false;
         }
         if (++$stage_num >= count($this->stages)) {
