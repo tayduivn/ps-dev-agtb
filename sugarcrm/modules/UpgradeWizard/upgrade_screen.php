@@ -97,10 +97,14 @@ $(window).bind("load", function () {
         };
         uploader.setNextStatusUpdate = function () {
             uploader.statusUpdates = true;
+            if (!$('a[data-action=gohome]').hasClass('disabled')) {
+                $('a[data-action=gohome]').addClass('disabled');
+            }
             uploader.updateInterval = setTimeout(uploader.updateStatus, uploader.STATUS_FREQ);
         };
         uploader.clearStatusUpdate = function () {
             uploader.statusUpdates = false;
+            $('a[data-action=gohome]').removeClass('disabled');
             if (uploader.updateInterval) {
                 clearTimeout(uploader.updateInterval);
             }
@@ -396,7 +400,7 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-primary disabled" href="index.php">Go to Home Page</a>
+            <a class="btn btn-primary disabled" href="index.php" data-action="gohome">Go to Home Page</a>
           </span>
         </div>
     </div>
