@@ -43,6 +43,18 @@ class SugarUpgradeRemoveWebUpgrader extends UpgradeScript
                     $this->log("Useless files of {$pack['name']} v{$pack['version']} removed");
                 }
             }
+            foreach ($pm->getPackagesInStaging() as $pack) {
+                if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
+                    $file = UploadStream::getFSPath(hashToFile($pack['file']));
+                    $this->fileToDelete($file);
+                    foreach (array('manifest', 'icon') as $meta) {
+                        $this->fileToDelete(
+                            pathinfo($file, PATHINFO_DIRNAME) . '/' .
+                            pathinfo($file, PATHINFO_FILENAME) . "-$meta.php"
+                        );
+                    }
+                }
+            }
         }
     }
 }
