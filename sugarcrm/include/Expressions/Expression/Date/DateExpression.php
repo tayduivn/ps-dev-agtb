@@ -80,26 +80,12 @@ abstract class DateExpression extends AbstractExpression
             return false;
 
         $min = $date->format("i");
-        $offset = 0;
-        if ($min < 16){
-            $offset = 15 - $min;
-        } else if ($min < 31)
-        {
-            $offset = 30 - $min;
-        }
-        else if ($min < 46)
-        {
-            $offset = 45 - $min;
-        }
-        else if ($min < 46)
-        {
-            $offset = 60 - $min;
-        }
-        if($offset != 0) {
+        $remainder = $min % 15;
+        if ($remainder != 0) {
+            $offset = 15 - $remainder;
             $date->modify("+$offset minutes");
         }
 
         return $date;
     }
 }
-?>
