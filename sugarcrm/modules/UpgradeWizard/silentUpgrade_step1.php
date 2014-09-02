@@ -294,10 +294,3 @@ if(empty($errors)) {
 	}
     logThis("**** Pre-install complete", $path);
 }
-
-//Also add the three-way merge here.
-logThis("**** Merge started ", $path);
-require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
-$merger = new SugarMerge($zipBasePath);
-$merger->mergeAll();
-logThis("**** Merge finished ", $path);

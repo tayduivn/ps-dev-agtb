@@ -34,7 +34,7 @@
 	<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view" class="actionsContainer">
 		<tr>
 						<td width="15%" scope="row"><slot>{MOD.LBL_NAME} <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-						<td width="85%" ><slot><input name="name" type="text" value="{NAME}" tabindex="1"></slot></td>
+						<td width="85%" ><slot><input {READONLY} name="name" type="text" value="{NAME}" tabindex="1" {BORDER}></slot></td>
 					</tr>
 					<tr>
 						<td scope="row"><slot>{MOD.LBL_DESCRIPTION}</slot></td>

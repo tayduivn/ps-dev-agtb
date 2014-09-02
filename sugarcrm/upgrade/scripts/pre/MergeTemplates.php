@@ -1,5 +1,7 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -20,14 +22,47 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
 
     public function run()
     {
-        if(empty($this->context['new_source_dir'])) {
+        if (empty($this->context['new_source_dir'])) {
             $this->log("**** Merge skipped - no new source dir");
             return;
         }
         $this->log("**** Merge started ");
+        //If we are coming from 6.x, use the old 3-way merge to preserve compatiability
+        //When upgrading from 7.x->7.y, use the merge from the new package
+        if (version_compare($this->from_version, '7.0', '>=') &&
+            file_exists($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge.php')
+        ) {
+            $this->mergeWithNewClasses();
+        } else {
+            $this->mergeWithExistingClasses();
+        }
+        $this->log("**** Merge finished ");
+    }
+
+    protected function mergeWithNewClasses()
+    {
+        $this->log("**** Using new merge classes");
+        require_once($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge.php');
+        if ($this->loadSugarMerge7()) {
+            $merger = new SugarMerge7($this->context['new_source_dir'], null, null, true);
+            $merger->setUpgrader($this->upgrader);
+            $merger->mergeAll();
+        }
+    }
+
+    protected function mergeWithExistingClasses()
+    {
+        $this->log("**** Using old merge classes");
         require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
-        if (file_exists($this->context['new_source_dir'].'/modules/UpgradeWizard/SugarMerge/SugarMerge7.php')) {
-            require_once($this->context['new_source_dir'].'/modules/UpgradeWizard/SugarMerge/SugarMerge7.php');
+        if ($this->loadSugarMerge7()) {
+            $merger = new SugarMerge7($this->context['new_source_dir']);
+            $merger->mergeAll();
+        }
+    }
+
+    protected function loadSugarMerge7() {
+        if (file_exists($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge7.php')) {
+            require_once($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge7.php');
         } else {
             if (file_exists('modules/UpgradeWizard/SugarMerge/SugarMerge7.php')) {
                 require_once('modules/UpgradeWizard/SugarMerge/SugarMerge7.php');
@@ -35,9 +70,6 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
                 return $this->error('SugarMerge7.php not found, this file is required for Sugar7 Upgrades', true);
             }
         }
-        $merger = new SugarMerge7($this->context['new_source_dir']);
-        $merger->setUpgrader($this->upgrader);
-        $merger->mergeAll();
-        $this->log("**** Merge finished ");
+        return true;
     }
 }

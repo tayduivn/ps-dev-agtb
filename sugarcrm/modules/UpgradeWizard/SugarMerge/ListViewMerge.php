@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/UpgradeWizard/SugarMerge/EditViewMerge.php');
 /**
  * This class is used to merge list view meta data. It subclasses EditView merge and transforms listview meta data into EditView meta data  for the merge and then transforms it back into list view meta data
  *

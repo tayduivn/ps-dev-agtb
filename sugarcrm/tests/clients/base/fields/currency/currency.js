@@ -222,6 +222,19 @@ describe('Base.Fields.Currency', function() {
                 });
             });
 
+        using('valid values with precision',
+            [['5.000,23', '5000.230000'], ['1.345.567,235', '1345567.235000'], [',33', '0.330000']],
+            function(value, result) {
+                it('should unformat valid value with ., swapped', function() {
+                    field.def = {
+                        'precision' : 6
+                    };
+                    app.user.setPreference('decimal_separator', ',');
+                    app.user.setPreference('number_grouping_separator', '.');
+                    expect(field.unformat(value)).toEqual(result);
+                });
+            });
+
         using('invalid values',
             [['abc.123,45', 'abc.123,45'], ['12.45,45,', '12.45,45,'], ['12.345,3a', '12.345,3a']],
             function(value, result) {

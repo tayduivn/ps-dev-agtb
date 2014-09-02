@@ -376,7 +376,7 @@ class RestService extends ServiceBase
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
         // For edge cases when an HTML response is needed as a wrapper to JSON
-        if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
+        if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json' && $httpError == 200) {
             $this->response->setContent($this->getHXRReturnArray($message, $httpError));
             $this->response->setType(RestResponse::JSON_HTML, true);
             $this->response->setStatus(200);
@@ -391,6 +391,13 @@ class RestService extends ServiceBase
         $replyData = array(
             'error'=>$errorLabel,
         );
+        if ($errorLabel === 'metadata_out_of_date') {
+            $mM = $this->getMetadataManager();
+            // In case of a `metadata_out_of_date` error, return the current
+            // valid metadata hash so the client knows if it is worth
+            // re-syncing.
+            $replyData['metadata_hash'] = $mM->getMetadataHash();
+        }
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;
         }

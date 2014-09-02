@@ -270,11 +270,22 @@
             safari: {min: 536},
             chrome: {min: 537}
         };
-        for (var b in supportedBrowsers) {
-            if ($.browser[b]) {
-                var current = parseInt($.browser.version);
-                var supported = supportedBrowsers[b];
-                return current >= supported.min;
+
+        var current = parseInt($.browser.version);
+
+        // For IE11, navigator behaves differently in order to conform to HTML5
+        // standards. This changes the behavior of jQuery.Browser and so IE11
+        // will show up as not supported in the above checks when it should be
+        // supported. The following check rectifies this issue.
+        if ((/Trident\/7\./).test(navigator.userAgent)) {
+            var supported = supportedBrowsers['msie'];
+            return current >= supported.min;
+        } else {
+            for (var b in supportedBrowsers) {
+                if ($.browser[b]) {
+                    var supported = supportedBrowsers[b];
+                    return current >= supported.min;
+                }
             }
         }
     }

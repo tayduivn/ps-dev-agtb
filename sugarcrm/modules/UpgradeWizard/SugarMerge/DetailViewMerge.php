@@ -17,8 +17,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-require_once('modules/UpgradeWizard/SugarMerge/EditViewMerge.php');
 /**
  * This class extends the EditViewMerge - since the meta data is relatively the same the only thing that needs to be changed is the parameter for viewdefs
  *
