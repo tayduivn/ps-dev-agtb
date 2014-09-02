@@ -1389,12 +1389,12 @@ class HealthCheckScanner
 if\s*\(\s*!\s*defined\s*\(\s*'sugarEntry'\s*\)\s*(\|\|\s*!\s*sugarEntry\s*)?\)\s*{?\s*die\s*\(\s*'Not A Valid Entry Point'\s*\)\s*;\s*}?
 ENDP;
         $contents = preg_replace("#$sePattern#i", '', $contents);
-        $fileLines = explode(PHP_EOL, $contents);
 
         $tokens = token_get_all($contents);
-        foreach ($tokens as $token) {
+        $tokens = array_filter($tokens, array($this, 'ignoreWhitespace'));
+        $tokens = array_values($tokens);
+        foreach ($tokens as $index => $token) {
             if (is_array($token)) {
-                $args = array();
                 if ($token[0] == T_INLINE_HTML) {
                     $args = array('inlineHtml', $phpfile, $token[2]);
                 } elseif ($token[0] == T_ECHO) {
@@ -1403,13 +1403,7 @@ ENDP;
                     $args = array('foundPrint', $phpfile, $token[2]);
                 } elseif ($token[0] == T_EXIT) {
                     $args = array('foundDieExit', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'print_r') {
-                    // Checks if print_r has the second parameter as 'true', according to:
-                    // When this parameter is set to TRUE, print_r() will return the information rather than print it.
-                    // Continue to scan, if has.
-                    if (preg_match('#print_r\([^\)]+,\s*true\s*\)#is', $fileLines[$token[2] - 1]) > 0) {
-                        continue;
-                    }
+                } elseif ($token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
                     $args = array('foundPrintR', $phpfile, $token[2]);
                 } elseif ($token[0] == T_STRING && $token[1] == 'var_dump') {
                     $args = array('foundVarDump', $phpfile, $token[2]);
@@ -1425,6 +1419,54 @@ ENDP;
             }
         }
     }
+
+    /**
+     * Returns false if $item is T_WHITESPACE token.
+     * @see \HealthCheckScanner::checkFileForOutput
+     * @param $item
+     * @return bool
+     */
+    protected function ignoreWhitespace($item)
+    {
+        return !(is_array($item) && $item[0] == T_WHITESPACE);
+    }
+
+    /**
+     * Checks if print_r has the second parameter as 'true', according to:
+     * When this parameter is set to TRUE, print_r() will return the information rather than print it.
+     * We cannot check if the second parameter is actually true
+     * in cases when the second parameter is a variable i.e. print_r($foo, $bar).
+     * We blindly assume that if second parameter is passed then it is true.
+     * Continue to scan, if has.
+     * @param $index int index to start traversing $tokens at
+     * @param $tokens array of tokens from token_get_all
+     * @return bool
+     */
+    protected function checkPrintR($index, $tokens)
+    {
+        $curlyBracketsCount = 0;
+        $found = false;
+        $count = count($tokens);
+        for ($i = $index + 1; $i < $count; $i++) {
+            if ($tokens[$i] === '(') {
+                $curlyBracketsCount += 1;
+            } else {
+                if ($tokens[$i] === ')') {
+                    if ($curlyBracketsCount === 1 && !$found) {
+                        return true;
+                    }
+                    $curlyBracketsCount -= 1;
+                } else {
+                    if ($tokens[$i] === ',' && $curlyBracketsCount === 1) {
+                        $next = $tokens[$i + 1];
+                        return (is_array($next) && $next[1] === 'false');
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * PHP error handler, to log PHP errors
