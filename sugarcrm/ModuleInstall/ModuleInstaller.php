@@ -2098,6 +2098,10 @@ class ModuleInstaller{
 			if(!empty($mod) && $mod instanceof SugarBean) {
 				$GLOBALS['log']->debug( "Drop Tables : $bean");
 				if(isset($GLOBALS['mi_remove_tables']) && $GLOBALS['mi_remove_tables']) {
+                    // remove custom fields before dropping tables
+                    // in order to let DynamicField drop custom columns first
+                    $studioModule = StudioModuleFactory::getStudioModule($bean);
+                    $studioModule->removeCustomFields();
 					$mod->drop_tables();
 				}
 			}
