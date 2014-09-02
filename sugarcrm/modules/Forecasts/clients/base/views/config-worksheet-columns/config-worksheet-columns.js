@@ -36,12 +36,10 @@
      */
     likelyFieldObj: {},
 
-
     /**
      * The field object id/label for best_case
      */
     bestFieldObj: {},
-
 
     /**
      * The field object id/label for worst_case
@@ -62,10 +60,9 @@
 
         // set up scenarioOptions
         _.each(this.meta.panels[0].fields, function(field) {
-            var labelModule = (!_.isUndefined(field.label_module)) ? field.label_module : 'Forecasts',
-                obj = {
+            var obj = {
                     id: field.name,
-                    text: app.lang.get(field.label, labelModule),
+                    text: app.lang.get(field.label, this._getLabelModule(field.name, field.label_module)),
                     index: index,
                     locked: field.locked || false
                 },
@@ -77,13 +74,13 @@
             // save the field objects
             if (field.name == 'best_case') {
                 this.bestFieldObj = obj;
-                addFieldToFullList = (this.model.get('show_worksheet_best') === 1)
+                addFieldToFullList = (this.model.get('show_worksheet_best') === 1);
             } else if (field.name == 'likely_case') {
                 this.likelyFieldObj = obj;
-                addFieldToFullList = (this.model.get('show_worksheet_likely') === 1)
+                addFieldToFullList = (this.model.get('show_worksheet_likely') === 1);
             } else if (field.name == 'worst_case') {
                 this.worstFieldObj = obj;
-                addFieldToFullList = (this.model.get('show_worksheet_worst') === 1)
+                addFieldToFullList = (this.model.get('show_worksheet_worst') === 1);
             }
 
             if (addFieldToFullList) {
@@ -123,15 +120,19 @@
             _.each(metaFields, function(metaField) {
                 _.each(cfgFields, function(field) {
                     if (metaField.name == field) {
-                        var labelModule = metaField.label_module || 'Forecasts';
-                        arr.push(app.lang.get(metaField.label, labelModule));
+                        arr.push(
+                            app.lang.get(
+                                metaField.label,
+                                this._getLabelModule(metaField.name, metaField.label_module)
+                            )
+                        );
                     }
                 }, this);
             }, this);
             this.titleSelectedValues = arr.join(', ');
 
             // Handle truncating the title string and adding "..."
-            this.titleSelectedValues = this.titleSelectedValues.slice(0, 50) + "...";
+            this.titleSelectedValues = this.titleSelectedValues.slice(0, 50) + '...';
 
             this.updateTitle();
         }, this);
@@ -204,7 +205,7 @@
         this.wkstColumnsSelect2 = this.$('#wkstColumnsSelect').select2({
             data: this.allOptions,
             multiple: true,
-            containerCssClass: "select2-choices-pills-close",
+            containerCssClass: 'select2-choices-pills-close',
             initSelection: _.bind(function(element, callback) {
                 callback(this.selectedOptions);
             }, this)
@@ -217,7 +218,7 @@
     /**
      * Handles the select2 adding/removing columns
      *
-     * @param evt change event from the select2 selected values
+     * @param {Object} evt change event from the select2 selected values
      */
     handleColumnModelChange: function(evt) {
         // did we add something?  if so, lets add it to the selectedOptions
@@ -245,5 +246,23 @@
             this.wkstColumnsSelect2 = null;
         }
         this._super('_dispose');
+    },
+
+    /**
+     * Re-usable method to get the module label for the column list
+     *
+     * @param {String} fieldName The field we are currently looking at
+     * @param {String} setModule If the metadata has a module set it will be passed in here
+     * @return {string}
+     * @private
+     */
+    _getLabelModule: function(fieldName, setModule) {
+        var labelModule = setModule || 'Forecasts';
+        if (fieldName === 'parent_name') {
+            // when we have the parent_name, pull the label from the module we are forecasting by
+            labelModule = this.model.get('forecast_by');
+        }
+
+        return labelModule;
     }
 })

@@ -12,15 +12,24 @@
  */
 $viewdefs['Opportunities']['base']['view']['config-opps-view-by'] = array(
     'label' => 'LBL_OPPS_CONFIG_VIEW_BY_LABEL',
-    'panels' => array (
+    'panels' => array(
         array(
             'fields' => array(
                 array(
-                    'name' =>'opps_view_by',
-                    'type' => 'radioenum',
+                    'name' => 'opps_view_by',
+                    'type' => 'enum',
                     'label' => 'LBL_OPPS_CONFIG_VIEW_BY_FIELD_TEXT',
                     'view' => 'edit',
                     'options' => 'opps_config_view_by_options_dom',
+                    'default' => false,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'opps_closedate_rollup',
+                    'type' => 'enum',
+                    'label' => 'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP',
+                    'view' => 'edit',
+                    'options' => 'opps_config_view_by_closedate_rollup_dom',
                     'default' => false,
                     'enabled' => true,
                 )

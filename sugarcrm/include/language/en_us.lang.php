@@ -4935,18 +4935,11 @@ $app_strings = array (
     'LBL_DASHLET_CASESSUMMARY_OPEN_CASES' => 'Open Cases',
 
     //top 10 opportunities chart
-    //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
-    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Revenue Line Items in a bubble chart.',
-    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Revenue Line Items',
-    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Revenue Line Items",
-    //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
-    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Opportunities in a bubble chart.',
-    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
-    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
-    //END SUGARCRM flav!=ent ONLY
+    // these are the generic ones, the module specific ones are in the modules language files
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten sales in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Items',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Items",
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
 
@@ -5228,6 +5221,11 @@ $app_list_strings['forecast_pareto_visibility_options'] = array (
 $app_list_strings['opps_config_view_by_options_dom'] = array(
     'Opportunities' => 'Opportunities',
     'RevenueLineItems' => 'Revenue Line Items'
+);
+
+$app_list_strings['opps_config_view_by_closedate_rollup_dom'] = array(
+    'latest' => 'Latest Close Date',
+    'earliest' => 'Earliest Close Date'
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

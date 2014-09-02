@@ -74,6 +74,8 @@
         this.model.on('change:opps_view_by', function() {
             if (this.hasWarningText && this.currentOppsViewBySetting !== this.model.get('opps_view_by')) {
                 this.displayWarningAlert();
+            } else {
+                this.showRollupOptions();
             }
         }, this);
     },
@@ -87,11 +89,7 @@
             title: app.lang.get('LBL_WARNING'),
             messages: app.lang.get('LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT', 'Opportunities'),
             onConfirm: _.bind(function() {
-                /**
-                 *
-                 * CALL ENDPOINT TO ERASE FORECAST DATA
-                 *
-                 */
+                this.showRollupOptions();
             }, this),
             onCancel: _.bind(function() {
                 this.model.set({
@@ -99,6 +97,17 @@
                 });
             }, this)
         });
+    },
+
+    showRollupOptions: function() {
+        if (this.currentOppsViewBySetting === 'RevenueLineItems' &&
+            this.model.get('opps_view_by') === 'Opportunities') {
+            this.getField('opps_closedate_rollup').show();
+            this.$('[for=opps_closedate_rollup]').show();
+        } else {
+            this.getField('opps_closedate_rollup').hide();
+            this.$('[for=opps_closedate_rollup]').hide();
+        }
     },
 
     /**
@@ -110,6 +119,8 @@
         if (this.hasWarningText) {
             this.appendWarning();
         }
+
+        this.showRollupOptions();
     },
 
     /**

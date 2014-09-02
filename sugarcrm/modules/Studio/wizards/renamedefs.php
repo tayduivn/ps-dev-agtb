@@ -445,6 +445,7 @@ $renamedefs = array(
             array('name' => 'LBL_FORECAST_HISTORY', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LNK_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LNK_ACCOUNTS', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_TIMEPERIOD_NAME', 'type' => 'singular', 'source' => 'TimePeriods'),

@@ -435,4 +435,28 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertEquals($result[0]['id'], $account_id, 'The ID Did Not Match');
     }
+
+    public function testSelectHasRawFieldWithFromAfterSelect()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array('id'))
+            ->fieldRaw('min(my_int_field)', 'int_field');
+        $sq->from(BeanFactory::getBean('Notes'));
+
+        $sql = $sq->compileSql();
+
+        $this->assertContains('min(my_int_field)', $sql);
+    }
+
+    public function testSelectHasRawFieldWithFromBeforeSelect()
+    {
+        $sq = new SugarQuery();
+        $sq->from(BeanFactory::getBean('Notes'));
+        $sq->select(array('id'))
+            ->fieldRaw('min(my_int_field)', 'int_field');
+
+        $sql = $sq->compileSql();
+
+        $this->assertContains('min(my_int_field)', $sql);
+    }
 }

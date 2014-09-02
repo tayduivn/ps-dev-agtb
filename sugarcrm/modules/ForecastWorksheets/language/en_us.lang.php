@@ -26,6 +26,7 @@ $mod_strings = array (
     'LBL_ACCOUNT_NAME' => 'Account Name:',
     'LBL_SALES_STATUS' => 'Status',
     'LBL_REVENUELINEITEM_NAME' => 'Revenue Line Item Name',
+    'LBL_OPPORTUNITY_NAME' => 'Opportunity Name',
     'LNK_OPPORTUNITY' => 'Opportunity',
     'LNK_ACCOUNTS' => 'Account',
 

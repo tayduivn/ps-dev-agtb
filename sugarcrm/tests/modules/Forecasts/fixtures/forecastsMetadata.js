@@ -102,6 +102,9 @@ if(!_.has(fixtures.metadata.modules, 'ForecastManagerWorksheets')) {
 if(!_.has(fixtures.metadata.modules, 'Opportunities')) {
     fixtures.metadata.modules.Opportunities = {
         '_hash': '12345678910asdgae',
+            "config": {
+                "opps_view_by": "RevenueLineItems"
+            },
             "fields": {
                 "id": {
                     "name": "id",

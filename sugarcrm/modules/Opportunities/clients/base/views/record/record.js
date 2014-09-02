@@ -16,19 +16,10 @@
      */
     alert: undefined,
 
-//BEGIN SUGARCRM flav!=ent ONLY
-    /**
-     * @inheritdoc
-     */
-    initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
-        this._super('initialize', [options]);
-    },
-
     /**
      * Holds a reference to the alert this view triggers
      */
-    cancelClicked: function () {
+    cancelClicked: function() {
         /**
          * todo: this is a sad way to work around some problems with sugarlogic and revertAttributes
          * but it makes things work now. Probability listens for Sales Stage to change and then by
@@ -43,61 +34,43 @@
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
         this._super('cancelClicked');
-    },
-//END SUGARCRM flav=!ent ONLY
-
-//BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * {@inheritdoc}
-     * @param options
-     */
-    initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary']);
-        this.once('init', function() {
-            var rlis = this.model.getRelatedCollection('revenuelineitems');
-            rlis.once('reset', function(collection) {
-                // check if the RLI collection is empty
-                // and make sure there isn't another RLI warning on the page
-                if (collection.length === 0 && $('#createRLI').length === 0) {
-                    this.showRLIWarningMessage(this.model.module);
-                }
-            }, this);
-            rlis.fetch({ relate: true });
-        }, this);
-        this._super('initialize', [options]);
     },
 
     /**
      * @inheritdoc
+     * @param {Object} options
      */
-    cancelClicked: function () {
-        /**
-         * todo: this is a sad way to work around some problems with sugarlogic and revertAttributes
-         * but it makes things work now. Probability listens for Sales Stage to change and then by
-         * SugarLogic, it updates probability when sales_stage changes. When the user clicks cancel,
-         * it goes to revertAttributes() which sets the model back how it was, but when you try to
-         * navigate away, it picks up those new changes as unsaved changes to your model, and tries to
-         * falsely warn the user. This sets the model back to those changed attributes (causing them to
-         * show up in this.model.changed) then calls the parent cancelClicked function which does the
-         * exact same thing, but that time, since the model was already set, it doesn't see anything in
-         * this.model.changed, so it doesn't warn the user.
-         */
-        var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
-        this.model.set(changedAttributes);
-        this._super('cancelClicked');
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary']);
+        //BEGIN SUGARCRM flav=ent ONLY
+        if (app.metadata.getModule('Opportunities', 'config').opps_view_by == 'RevenueLineItems') {
+            this.once('init', function() {
+                var rlis = this.model.getRelatedCollection('revenuelineitems');
+                rlis.once('reset', function(collection) {
+                    // check if the RLI collection is empty
+                    // and make sure there isn't another RLI warning on the page
+                    if (collection.length === 0 && $('#createRLI').length === 0) {
+                        this.showRLIWarningMessage(this.model.module);
+                    }
+                }, this);
+                rlis.fetch({relate: true});
+            }, this);
+        }
+        //END SUGARCRM flav=ent ONLY
+        this._super('initialize', [options]);
     },
 
+//BEGIN SUGARCRM flav=ent ONLY
     /**
      * Display the warning message about missing RLIs
-     * @param string module     The module that we are currently on.
      */
-    showRLIWarningMessage: function(module) {
+    showRLIWarningMessage: function() {
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
-        var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities')
-            + '  <a href="javascript:void(0);" id="createRLI">'
-            + app.lang.get('TPL_RLI_CREATE_LINK_TEXT', 'Opportunities') + '</a>';
+        var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities') +
+            '  <a href="javascript:void(0);" id="createRLI">' +
+            app.lang.get('TPL_RLI_CREATE_LINK_TEXT', 'Opportunities') + '</a>';
 
         this.alert = app.alert.show('opp-rli-create', {
             level: 'warning',
@@ -144,7 +117,7 @@
 
     /**
      * Callback for when the create drawer closes
-     * @param model
+     * @param {String} model
      */
     rliCreateClose: function(model) {
         if (!model) {

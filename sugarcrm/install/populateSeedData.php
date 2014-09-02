@@ -776,24 +776,11 @@ $portalConfig->handleSave();
 $GLOBALS['mod_strings']  = $installerStrings;
 //END SUGARCRM flav=ent ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/products_SeedData.php');
     include('install/seed_data/quotes_SeedData.php');
-    //include('install/seed_data/opportunities_SeedData.php');
-
-    //This is set to yes at the begininning of this file
-	unset($_SESSION['disable_workflow']);
-//END SUGARCRM flav=pro ONLY
 
     require_once('modules/Opportunities/OpportunitiesSeedData.php');
-    //BEGIN SUGARCRM flav=com ONLY
-    $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts);
-    //END SUGARCRM flav=com ONLY
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    //$products = $account->build_related_list('SELECT id FROM revenue_line_items', new RevenueLineItem(), 0, 50);
     $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies*3, $app_list_strings, $accounts, $sugar_demodata['users']);
-    //END SUGARCRM flav=pro ONLY
 
     foreach($contacts as $id)
     {
@@ -803,19 +790,12 @@ $GLOBALS['mod_strings']  = $installerStrings;
         $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
-    //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
     include('install/seed_data/entreport_SeedData.php');
     //END SUGARCRM flav=ent ONLY
 
-
-
-//BEGIN SUGARCRM flav=pro ONLY
-    include('install/seed_data/ForecastTreeSeedData.php');
-    ForecastTreeSeedData::populateUserSeedData();
-//END SUGARCRM flav=pro ONLY
-
+//This is set to yes at the begininning of this file
+unset($_SESSION['disable_workflow']);

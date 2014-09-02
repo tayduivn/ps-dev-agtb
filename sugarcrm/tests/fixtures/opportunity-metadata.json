@@ -1,6 +1,9 @@
 {
     "modules": {
         "Opportunities": {
+            "config": {
+                "opps_view_by": "Opportunities"
+            },
             "fields": {
                 "account_name": {
                     "name": "account_name",

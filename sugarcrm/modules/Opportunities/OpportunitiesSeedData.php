@@ -30,25 +30,13 @@ class OpportunitiesSeedData {
      * @param $records Integer value indicating the number of Opportunities to create
      * @param $app_list_strings Array of application language strings
      * @param $accounts Array of Account instances to randomly build data against
-     //BEGIN SUGARCRM flav=pro ONLY
      * @param $timeperiods Array of Timeperiods to create timeperiod seed data off of
      * @param $users Array of User instances to randomly build data against
-     //END SUGARCRM flav=pro ONLY
      * @return array Array of Opportunities created
      */
-    public static function populateSeedData($records, $app_list_strings, $accounts
-    //BEGIN SUGARCRM flav=pro ONLY
-        , $users
-    //END SUGARCRM flav=pro ONLY
-    )
+    public static function populateSeedData($records, $app_list_strings, $accounts, $users)
     {
-        if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-    //BEGIN SUGARCRM flav=pro ONLY
-           || empty($users)
-    //END SUGARCRM flav=pro ONLY
-
-        )
-        {
+        if (empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1) || empty($users)) {
             return array();
         }
 
@@ -59,25 +47,6 @@ class OpportunitiesSeedData {
         /* @var $currency Currency */
         $currency = SugarCurrency::getCurrencyByISO('EUR');
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        // load up the product template_ids
-        $pt_ids = array();
-        $sql = 'SELECT id, list_price, cost_price, discount_price FROM product_templates where deleted = 0';
-        /* @var $db DBManager */
-        $db = DBManagerFactory::getInstance();
-        $results = $db->query($sql);
-        while ($row = $db->fetchByAssoc($results)) {
-            $pt_ids[$row['id']] = $row;
-        }
-
-        $pc_ids = array();
-        $sql = 'SELECT id FROM product_categories where deleted = 0';
-        $results = $db->query($sql);
-        while ($row = $db->fetchByAssoc($results)) {
-            $pc_ids[] = $row['id'];
-        }
-        //END SUGARCRM flav=pro ONLY
-
         while ($records-- > 0) {
             $key = array_rand($accounts);
             $account = $accounts[$key];
@@ -86,10 +55,8 @@ class OpportunitiesSeedData {
             $opp = BeanFactory::getBean('Opportunities');
 
             //Create new opportunities
-            //BEGIN SUGARCRM flav=pro ONLY
             $opp->team_id = $account->team_id;
             $opp->team_set_id = $account->team_set_id;
-            //END SUGARCRM flav=pro ONLY
 
             $opp->assigned_user_id = $account->assigned_user_id;
             $opp->assigned_user_name = $account->assigned_user_name;
@@ -105,14 +72,8 @@ class OpportunitiesSeedData {
                 $base_rate = '1.0';
             }
 
-            //BEGIN SUGARCRM flav=ent ONLY
-            $opp->base_rate = '1.0';
-            $opp->currency_id = '-99';
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav!=ent ONLY
             $opp->base_rate = $base_rate;
             $opp->currency_id = $currency_id;
-            //END SUGARCRM flav!=ent ONLY
 
             $opp->name = $account->name;
             $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
@@ -129,7 +90,6 @@ class OpportunitiesSeedData {
             $opp->amount = $amount;
             $opp->probability = $app_list_strings['sales_probability_dom'][$opp->sales_stage];
 
-            //BEGIN SUGARCRM flav=pro ONLY
             //Setup forecast seed data
             $opp->best_case = $opp->amount;
             $opp->worst_case = $opp->amount;
@@ -141,145 +101,13 @@ class OpportunitiesSeedData {
             $opp->account_id = $account->id;
             $opp->account_name = $account->name;
 
-            // we need to save the opp before we create the rlis
-            //$opp->save();
-
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            $rlis_to_create = 1;
-            //end SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=ent ONLY
-            $rlis_to_create = rand(3, 5);
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
-            $rlis_created = 0;
-
-            $opp_best_case = 0;
-            $opp_worst_case = 0;
-            $opp_amount = 0;
-            $opp_units = 0;
-            $opp->total_revenue_line_items = $rlis_to_create;
-            $opp->closed_revenue_line_items = 0;
-    
-            // stop obsessive saving
-            SugarBean::enterOperation('saving_related');
-            BeanFactory::registerBean($opp);
-
-            while($rlis_created < $rlis_to_create) {
-                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-                $amount = $opp->amount;
-                $rand_best_worst = rand(100, 500);
-                //end SUGARCRM flav=pro && flav!=ent ONLY
-                //BEGIN SUGARCRM flav=ent ONLY
-                $amount = rand(1000, 7500);
-                $rand_best_worst = rand(100, 900);
-                //END SUGARCRM flav=ent ONLY
-
-                $doPT = false;
-
-                $quantity = rand(1, 100);
-                $cost_price = $amount/2;
-                $list_price = $amount;
-                $discount_price = ($amount / $quantity);
-
-
-                if ($rlis_created%2 === 0) {
-                    $doPT = true;
-                    $pt_id = array_rand($pt_ids);
-                    $pt = $pt_ids[$pt_id];
-
-                    $cost_price = $pt['cost_price'];
-                    $list_price = $pt['list_price'];
-                    $discount_price = ($pt['discount_price'] / $quantity);
-                    $amount = $discount_price;
-                    $rand_best_worst = rand(100, $cost_price);
-                }
-
-
-                /* @var $rli RevenueLineItem */
-                $rli = BeanFactory::getBean('RevenueLineItems');
-
-                //BEGIN SUGARCRM flav=pro ONLY
-                $rli->team_id = $opp->team_id;
-                $rli->team_set_id = $opp->team_set_id;
-                //END SUGARCRM flav=pro ONLY
-                $rli->name = $opp->name;
-                $rli->best_case = $amount+$rand_best_worst;
-                $rli->likely_case = $amount;
-                $rli->worst_case = $amount-$rand_best_worst;
-                $rli->list_price = $list_price;
-                $rli->discount_price = $discount_price;
-                $rli->cost_price = $cost_price;
-                $rli->quantity = $quantity;
-                $rli->currency_id = $currency_id;
-                $rli->base_rate = $base_rate;
-                $rli->discount_amount = '0.00';
-                $rli->book_value = '0.00';
-                $rli->deal_calc = '0.00';
-                //BEGIN SUGARCRM flav=pro && flav != ent ONLY
-                $rli->sales_stage = $opp->sales_stage;
-                $rli->probability = $opp->probability;
-                $rli->commit_stage = $opp->commit_stage;
-                //END SUGARCRM flav=pro && flav != ent ONLY
-                //BEGIN SUGARCRM flav=ent ONLY
-                $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
-                $rli->probability = $app_list_strings['sales_probability_dom'][$rli->sales_stage];
-                if ($rli->sales_stage == "Closed Won" || $rli->sales_stage == "Closed Lost") {
-                    $opp->closed_revenue_line_items++;
-                }
-                $rli->commit_stage = $rli->probability >= 70 ? 'include' : 'exclude';
-                //END SUGARCRM flav=ent ONLY
-                $rli->date_closed = $opp->date_closed;
-                $rli->date_closed_timestamp = $opp->date_closed_timestamp;
-                $rli->assigned_user_id = $opp->assigned_user_id;
-                $rli->opportunity_id = $opp->id;
-                $rli->account_id = $account->id;
-                $rli->lead_source = array_rand($app_list_strings['lead_source_dom']);
-                //BEGIN SUGARCRM flav=pro ONLY
-                // if this is an even number, assign a product template
-                if ($doPT) {
-                    $rli->product_template_id = $pt_id;
-                    $rli->discount_amount = rand(100, $rli->cost_price);
-                    $rli->discount_rate_percent = (($rli->discount_amount/$rli->discount_price)*100);
-                } else {
-                    $rli->discount_amount = 0;
-                    $rli->discount_rate_percent = 0;
-                    // if this is not an even number, assign a product category only
-                    $rli->category_id = $pc_ids[array_rand($pc_ids, 1)];
-                }
-                $rli->total_amount = (($rli->discount_price-$rli->discount_amount)*$rli->quantity);
-                //END SUGARCRM flav=pro ONLY
-                $rli->save();
-
-                $opp_units += $rli->quantity;
-                $opp_amount += $amount;
-                $opp_best_case += $amount+$rand_best_worst;
-                $opp_worst_case += $amount-$rand_best_worst;
-
-                $rlis_created++;
-            }
-            SugarBean::leaveOperation('saving_related');
-
-            $opp->amount = $opp_amount;
-            $opp->best_case = $opp_best_case;
-            $opp->worst_case = $opp_worst_case;
-            $opp->name .= ' - ' . $opp_units . ' Units';
-
-            //END SUGARCRM flav=pro ONLY
-
-
             // save the opp again
             $opp->save();
 
-            //BEGIN SUGARCRM flav=pro ONLY
             // save a draft worksheet for the new forecasts stuff
             /* @var $worksheet ForecastWorksheet */
             $worksheet = BeanFactory::getBean('ForecastWorksheets');
             $worksheet->saveRelatedOpportunity($opp);
-            //BEGIN SUGARCRM flav=ent ONLY
-            $worksheet->saveOpportunityProducts($opp);
-            //END SUGARCRM flav=ent ONLY
-
             $opp_ids[] = $opp->id;
         }
 

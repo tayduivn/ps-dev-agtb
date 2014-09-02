@@ -95,6 +95,9 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
     });
 
     describe('bindDataChange()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'showRollupOptions');
+        });
         it('should call displayWarningAlert if hasWarningText and change is different than current', function() {
             sinon.collection.stub(view, 'displayWarningAlert', function() {});
             view.hasWarningText = true;
@@ -102,6 +105,7 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
             expect(view.displayWarningAlert).toHaveBeenCalled();
+            expect(view.showRollupOptions).not.toHaveBeenCalled();
         });
 
         it('should not call displayWarningAlert if hasWarningText == false', function() {
@@ -111,6 +115,7 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
             expect(view.displayWarningAlert).not.toHaveBeenCalled();
+            expect(view.showRollupOptions).toHaveBeenCalled();
         });
 
         it('should not call displayWarningAlert if changing to the same as current', function() {
@@ -120,16 +125,21 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
             expect(view.displayWarningAlert).not.toHaveBeenCalled();
+            expect(view.showRollupOptions).toHaveBeenCalled();
         });
     });
 
     describe('_render()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'showRollupOptions');
+        });
         it('should call appendWarning if hasWarningText == true', function() {
             sinon.collection.stub(view, '_super', function() {});
             sinon.collection.stub(view, 'appendWarning', function() {});
             view.hasWarningText = true;
             view._render();
             expect(view.appendWarning).toHaveBeenCalled();
+            expect(view.showRollupOptions).toHaveBeenCalled();
         });
 
         it('should not call appendWarning if hasWarningText == false', function() {
@@ -138,10 +148,14 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             view.hasWarningText = false;
             view._render();
             expect(view.appendWarning).not.toHaveBeenCalled();
+            expect(view.showRollupOptions).toHaveBeenCalled();
         });
     });
 
     describe('_updateTitleValues()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'showRollupOptions');
+        });
         it('should set this.titleSelectedValues', function() {
             view.model.set('opps_view_by', 'testValue');
             view._updateTitleValues();

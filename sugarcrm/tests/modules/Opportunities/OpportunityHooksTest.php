@@ -49,6 +49,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();
+        $hookMock::$useRevenueLineItems = true;
 
         $hookMock::setSalesStatus($oppMock, 'before_save', array());
 
@@ -69,6 +70,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();
+        $hookMock::$useRevenueLineItems = true;
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -203,6 +205,14 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MockOpportunityHooks extends OpportunityHooks
 {
+    public static $useRevenueLineItems = false;
+
+    public static function useRevenueLineItems()
+    {
+        return self::$useRevenueLineItems;
+    }
+
+
     public static function isForecastSetup()
     {
         return true;

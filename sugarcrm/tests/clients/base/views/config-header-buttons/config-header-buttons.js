@@ -32,6 +32,9 @@ describe('Base.View.ConfigHeaderButtons', function() {
     });
 
     describe('cancelConfig()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.router, 'goBack', function() {});
+        });
         it('if app.drawer exists, should call app.drawer.close()', function() {
             app.drawer = {
                 close: function() {}
@@ -43,31 +46,9 @@ describe('Base.View.ConfigHeaderButtons', function() {
         });
 
         describe('if app.drawer does not exists', function() {
-            beforeEach(function() {
-                sinon.collection.stub(app.router, 'goBack', function() {});
-            });
-
-            describe('and module is_setup == 0', function() {
-                it('and module != "Administration", should call app.router.goBack()', function() {
-                    view.context.get('model').set('is_setup', 0);
-                    view.cancelConfig();
-                    expect(app.router.goBack).toHaveBeenCalled();
-                });
-
-                it('and module == "Administration", should not call app.router.goBack()', function() {
-                    sinon.collection.stub(app.controller.context, 'get', function() {
-                        return 'Administration';
-                    });
-                    view.context.get('model').set('is_setup', 0);
-                    view.cancelConfig();
-                    expect(app.router.goBack).not.toHaveBeenCalled();
-                });
-            });
-
-            it('and module is_setup == 1, should not call app.router.goBack()', function() {
-                view.context.get('model').set('is_setup', 1);
+            it('should call app.router.goBack()', function() {
                 view.cancelConfig();
-                expect(app.router.goBack).not.toHaveBeenCalled();
+                expect(app.router.goBack).toHaveBeenCalled();
             });
         });
     });

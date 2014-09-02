@@ -36,7 +36,7 @@
     /**
      * {@inheritDoc}
      */
-    initialize: function (options) {
+    initialize: function(options) {
         this.plugins = _.union(this.plugins, ['LinkedModel']);
         this._super('initialize', [options]);
     },
@@ -45,10 +45,11 @@
      * @override
      */
     getCustomSaveOptions: function(options) {
-        this.createdModel = this.model;
-        // since we are in a drawer
-        this.listContext = this.context.parent || this.context;
-        this.originalSuccess = options.success;
+        if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
+            this.createdModel = this.model;
+            // since we are in a drawer
+            this.listContext = this.context.parent || this.context;
+            this.originalSuccess = options.success;
 
         var success = _.bind(function(model) {
             this.originalSuccess(model);
@@ -61,22 +62,22 @@
             }
         }, this);
 
-        return {
-            success: success
-        };
+            return {
+                success: success
+            };
+        }
     },
 
     /**
      * Display the warning message about missing RLIs
-     * @param string module     The module that we are currently on.
      */
-    showRLIWarningMessage: function(module) {
+    showRLIWarningMessage: function() {
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
-        var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities')
-            + '  <a href="javascript:void(0);" id="createRLI">'
-            + app.lang.get('TPL_RLI_CREATE_LINK_TEXT', 'Opportunities') + '</a>';
+        var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities') +
+            '  <a href="javascript:void(0);" id="createRLI">' +
+            app.lang.get('TPL_RLI_CREATE_LINK_TEXT', 'Opportunities') + '</a>';
 
         this.alert = app.alert.show('opp-rli-create', {
             level: 'warning',
@@ -98,7 +99,7 @@
      */
     dismissAlert: function(data) {
         // if we are not navigating to the Opps list view, dismiss the alert
-        if(data && !(data.args && data.args[0] == 'Opportunities' && data.route == 'list')) {
+        if (data && !(data.args && data.args[0] === 'Opportunities' && data.route === 'list')) {
             app.alert.dismiss('opp-rli-create');
             // close RLI warning alert
             // remove before route event listener
@@ -140,7 +141,7 @@
      * @inheritdoc
      */
     _dispose: function() {
-        if(this.alert){
+        if (this.alert) {
             this.alert.getCloseSelector().off('click');
         }
 

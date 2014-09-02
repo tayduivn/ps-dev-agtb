@@ -269,12 +269,9 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $acc = SugarTestAccountUtilities::createAccount();
         $opp = SugarTestOpportunityUtilities::createOpportunity(null, $acc);
 
-        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $rli->opportunity_id = $opp->id;
-        $rli->account_id = $acc->id;
-        $rli->assigned_user_id = $GLOBALS['current_user']->id;
-        $rli->date_closed = $tp->start_date;
-        $rli->save();
+        $opp->assigned_user_id = $GLOBALS['current_user']->id;
+        $opp->date_closed = $tp->start_date;
+        $opp->save();
 
         $bean = $this->getMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob'));
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');
@@ -287,7 +284,6 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     /**

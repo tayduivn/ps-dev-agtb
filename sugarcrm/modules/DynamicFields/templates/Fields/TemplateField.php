@@ -98,6 +98,7 @@ class TemplateField{
         'enforced' => 'enforced',
         'dependency' => 'dependency',
         'related_fields' => 'related_fields',
+        'studio' => 'studio'
 	);
     // Bug #48826
     // fields to decode from post request
@@ -343,6 +344,9 @@ class TemplateField{
             'unified_search'=>$this->convertBooleanValue($this->unified_search),
             'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter
 		);
+        if (isset($this->studio)) {
+            $array['studio'] = $this->convertBooleanValue($this->studio);
+        }
         if (isset($this->full_text_search)) {
             $array['full_text_search'] = $this->full_text_search;
         }

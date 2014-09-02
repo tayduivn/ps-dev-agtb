@@ -52,6 +52,16 @@
     forecastsNotSetUpMsg: undefined,
 
     /**
+     * Holds the Forecast Module Config
+     */
+    forecastConfig: undefined,
+
+    /**
+     * Are we using Opportunities with RevenueLineItems?
+     */
+    opportunitiesWithRevenueLineItems: false,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -59,7 +69,7 @@
         this._initPlugins();
 
         // if the user is a manager, check if they're toplevel or not
-        if(this.isManager) {
+        if (this.isManager) {
             this.isTopLevelManager = app.user.get('is_top_level_manager');
         }
 
@@ -68,6 +78,10 @@
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
+
+        this.opportunitiesWithRevenueLineItems = (
+            app.metadata.getModule('Opportunities', 'config')['opps_view_by'] === 'RevenueLineItems'
+        );
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
@@ -89,7 +103,7 @@
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(isAdmin);
         }
 
-        app.view.View.prototype.initialize.call(this, this.initOptions);
+        this._super('initialize', [this.initOptions]);
     },
 
     /**
@@ -161,8 +175,8 @@
 
         var model = this._getNonForecastModel();
 
-        if (model && !this.displayTimeperiodPivot && model.has('date_closed_timestamp')
-            && model.get('date_closed_timestamp') != 0) {
+        if (model && !this.displayTimeperiodPivot && model.has('date_closed_timestamp') &&
+            model.get('date_closed_timestamp') != 0) {
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = model.get('date_closed_timestamp');
         } else {
@@ -185,7 +199,7 @@
     _render: function() {
         this.settings.set('display_manager', this.isDisplayManager());
         this.spanSize = this.displayTimeperiodPivot && this.dashletConfig.show_dataset ? 'span4' : 'span6';
-        this._super("_render");
+        this._super('_render');
 
         var chartField = this.getField('paretoChart');
 
@@ -193,8 +207,10 @@
             chartField.renderChart();
             chartField.once('chart:pareto:rendered', function() {
                 //BEGIN SUGARCRM flav=ent ONLY
-                if (this.forecastConfig.forecast_by == 'RevenueLineItems' &&
+                if (this.opportunitiesWithRevenueLineItems &&
                     this.context.get('module') == 'RevenueLineItems') {
+                    this.addRowToChart();
+                } else {
                     this.addRowToChart();
                 }
                 //END SUGARCRM flav=ent ONLY
@@ -219,19 +235,19 @@
         }
 
         if (this.displayTimeperiodPivot) {
-            mgrToggleOffset = mgrToggleOffset-3;
+            mgrToggleOffset = mgrToggleOffset - 3;
         }
 
         if (this.isManager) {
             var el = this.$el.find('#' + this.cid + '-mgr-toggle');
-            if(el.length > 0) {
-                var classes = el.attr("class").split(" ").filter(function(item) {
-                    return item.indexOf("offset") === -1 ? item : "";
+            if (el.length > 0) {
+                var classes = el.attr('class').split(' ').filter(function(item) {
+                    return item.indexOf('offset') === -1 ? item : '';
                 });
-                if(mgrToggleOffset != 0) {
+                if (mgrToggleOffset != 0) {
                     classes.push('offset' + mgrToggleOffset);
                 }
-                el.attr("class", classes.join(" "));
+                el.attr('class', classes.join(' '));
             }
         }
     },
@@ -281,10 +297,10 @@
                 // while the chart is loading from the server
                 if (chartField && dashletToolbar) {
                     chartField.before('chart:pareto:render', function() {
-                        this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh)
+                        this.$('[data-action=loading]').removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
                     }, {}, dashletToolbar);
                     chartField.on('chart:pareto:rendered', function() {
-                        this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault)
+                        this.$('[data-action=loading]').removeClass(this.cssIconRefresh).addClass(this.cssIconDefault);
                     }, dashletToolbar);
                 }
             }, this);
@@ -309,21 +325,23 @@
     findModelToListen: function() {
         this.listenModel = this._getNonForecastModel();
         //BEGIN SUGARCRM flav=ent ONLY
-        // now that this context is set to the forecast module, we should use the parent context if it exists
-        // if it doesn't then we use the context on this dashlet
-        var context = this.context.parent || this.context;
-        if (this.forecastConfig.forecast_by == 'RevenueLineItems' && context.get('module') == 'Opportunities') {
-            // we need to watch for when the date changes time periods on the opportunity to re-render the chart
-            this._getNonForecastModel().on('change:date_closed_timestamp', function(model, changed) {
-                this.settings.set('timeperiod_id', changed);
-            }, this);
-            // since we are forecasting by RLI but on the Opp Module, we need to find the subpanel for RLI to watch
-            // for the changes there
-            var ctx = _.find(context.children, function(child) {
-                return (child.get('module') == 'RevenueLineItems');
-            });
-            if (ctx && ctx.has('collection')) {
-                this.listenModel = ctx.get('collection');
+        if (this.opportunitiesWithRevenueLineItems) {
+            // now that this context is set to the forecast module, we should use the parent context if it exists
+            // if it doesn't then we use the context on this dashlet
+            var context = this.context.parent || this.context;
+            if (context.get('module') == 'Opportunities') {
+                // we need to watch for when the date changes time periods on the opportunity to re-render the chart
+                this._getNonForecastModel().on('change:date_closed_timestamp', function(model, changed) {
+                    this.settings.set('timeperiod_id', changed);
+                }, this);
+                // since we are forecasting by RLI but on the Opp Module, we need to find the subpanel for RLI to watch
+                // for the changes there
+                var ctx = _.find(context.children, function(child) {
+                    return (child.get('module') == 'RevenueLineItems');
+                });
+                if (ctx && ctx.has('collection')) {
+                    this.listenModel = ctx.get('collection');
+                }
             }
         }
         //END SUGARCRM flav=ent ONLY
@@ -333,7 +351,7 @@
      * Utility Method to find the proper model to use, if this.model.module is forecasts, go up to the parent context
      * and use the model that's attached to it otherwise return this.model
      *
-     * @returns {*}
+     * @return {*}
      * @private
      */
     _getNonForecastModel: function() {
@@ -353,7 +371,10 @@
         var changed = model.changed,
             changedField = _.keys(changed),
             validChangedFields = _.intersection(this.validChangedFields, _.keys(changed)),
-            changedCurrencyFields = _.intersection(['amount', 'best_case', 'likely_case', 'worst_case'], validChangedFields),
+            changedCurrencyFields = _.intersection(
+                ['amount', 'best_case', 'likely_case', 'worst_case'],
+                validChangedFields
+            ),
             assigned_user = model.get('assigned_user_id');
 
         // lets make sure that the values actually changed on the currencies,
@@ -459,7 +480,7 @@
             }
         } else if (_.contains(changedField, 'assigned_user_id')) {
             if (assigned_user === app.user.get('id')) {
-                this.addRowToChart(model)
+                this.addRowToChart(model);
             } else {
                 this.removeRowFromChart(model);
             }
@@ -479,12 +500,13 @@
                 found = _.find(serverData.data, function(record) {
                     return (record.record_id == model.get('id'));
                 }),
-                base_rate = model.get('base_rate');
+                base_rate = model.get('base_rate'),
+                likely_field = model.has('amount') ? model.get('amount') : model.get('likely_case');
 
             if (_.isEmpty(found)) {
                 serverData.data.push({
                     best: this._convertCurrencyValue(model.get('best_case'), base_rate),
-                    likely: this._convertCurrencyValue(model.has('amount') ? model.get('amount') : model.get('likely_case'), base_rate),
+                    likely: this._convertCurrencyValue(likely_field, base_rate),
                     worst: this._convertCurrencyValue(model.get('worst_case'), base_rate),
                     record_id: model.get('id'),
                     date_closed_timestamp: model.get('date_closed_timestamp'),
@@ -501,7 +523,7 @@
      * Utility Method to convert to base rate
      * @param {Number} value
      * @param {Number} base_rate
-     * @returns {Number}
+     * @return {Number}
      * @protected
      */
     _convertCurrencyValue: function(value, base_rate) {

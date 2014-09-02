@@ -14,6 +14,10 @@ describe('Forecasts.View.ConfigHeaderButtons', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'view', 'config-header-buttons');
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
         view = SugarTest.createView('base', 'Forecasts', 'config-header-buttons', null, null, true);
     });
 
@@ -70,7 +74,7 @@ describe('Forecasts.View.ConfigHeaderButtons', function() {
                     show_custom_buckets_ranges: ranges,
                     show_custom_buckets_options: rangeLabelsObj,
                     commit_stages_included: ['trashValues']
-                })
+                });
             });
 
             it('should unset any commit_stages_included and rebuild', function() {
@@ -86,6 +90,38 @@ describe('Forecasts.View.ConfigHeaderButtons', function() {
             it('should unset any commit_stages_included and rebuild', function() {
                 view._beforeSaveConfig();
                 expect(ctxModel.get('show_custom_buckets_options')).toEqual(rangeLabelsArr);
+            });
+        });
+    });
+
+    describe('cancelConfig()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.router, 'goBack', function() {});
+        });
+
+        it('if app.drawer exists, should call app.drawer.close()', function() {
+            app.drawer = {
+                close: function() {}
+            };
+            sinon.collection.spy(app.drawer, 'close');
+            view.cancelConfig();
+            expect(app.drawer.close).toHaveBeenCalled();
+            delete app.drawer;
+        });
+
+        describe('if app.drawer does not exists', function() {
+            describe('and module is_setup == 0', function() {
+                it('should call app.router.goBack()', function() {
+                    view.context.get('model').set('is_setup', 0);
+                    view.cancelConfig();
+                    expect(app.router.goBack).toHaveBeenCalled();
+                });
+            });
+
+            it('and module is_setup == 1, should not call app.router.goBack()', function() {
+                view.context.get('model').set('is_setup', 1);
+                view.cancelConfig();
+                expect(app.router.goBack).not.toHaveBeenCalled();
             });
         });
     });
