@@ -19,7 +19,6 @@ describe('View.Views.Base.Meetings.ResolveConflictsListView', function() {
         SugarTest.testMetadata.set();
 
         SugarTest.loadComponent('base', 'view', 'flex-list');
-        SugarTest.loadComponent('base', 'view', 'resolve-conflicts');
         SugarTest.loadComponent('base', 'view', 'resolve-conflicts-list', module);
         view = SugarTest.createView('base', module, 'resolve-conflicts-list');
 

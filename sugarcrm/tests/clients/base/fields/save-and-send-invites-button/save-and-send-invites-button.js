@@ -15,9 +15,6 @@ describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
             'save-and-send-invites-button',
             'edit',
             undefined,
-            'Meetings',
-            undefined,
-            undefined,
             'Meetings'
         );
 

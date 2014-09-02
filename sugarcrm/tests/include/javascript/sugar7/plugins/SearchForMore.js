@@ -27,7 +27,7 @@ describe('Plugins.SearchForMore', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'participants');
-        SugarTest.declareData('base', module);
+        SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('LinkField');
         SugarTest.loadPlugin('SearchForMore');
         SugarTest.testMetadata.set();
@@ -63,8 +63,7 @@ describe('Plugins.SearchForMore', function() {
             fieldDef,
             module,
             model,
-            context,
-            true
+            context
         );
         field.action = 'edit';
         field.getFieldValue().reset(participants);
