@@ -174,9 +174,10 @@
             return;
         }
         var responseText = JSON.parse(error.responseText),
-            newHash = responseText && responseText.metadata_hash;
+            newHash = responseText && responseText.metadata_hash,
+            userHash = responseText && responseText.user_hash;
 
-        if (newHash === app.metadata.getHash()) {
+        if (newHash === app.metadata.getHash() && (!userHash || userHash === app.user.get("_hash"))) {
             app.logger.fatal('A request returned the error code "metadata_out_of_date" for no reason.');
             app.alert.show('invalid_412', {
                 level: 'error',
