@@ -234,7 +234,7 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
         423 => array(
-            'report' => 'badVardefsCustom',
+            'report' => 'badVardefsSubfieldsCustom',
             'bucket' => self::CUSTOM,
         ),
         424 => array(
@@ -308,7 +308,7 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
         507 => array(
-            'report' => 'badVardefs',
+            'report' => 'badVardefsSubfields',
             'bucket' => self::MANUAL,
         ),
         508 => array(
