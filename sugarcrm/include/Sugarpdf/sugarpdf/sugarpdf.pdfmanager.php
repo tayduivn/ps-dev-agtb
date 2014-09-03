@@ -148,6 +148,17 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
          $this->ss->assign('fields', $fields);
     }
 
+    public function display()
+    {
+        parent::display();
+
+        $headerdata = $this->getHeaderData();
+        // Remove the temporary logo copy (starts with "upload/") if exists
+        if (!empty($headerdata['logo']) && file_exists($headerdata['logo']) && strpos($headerdata['logo'], "upload/") === 0) {
+            unlink($headerdata['logo']);
+        }
+    }
+
     /**
      * Build the Email with the attachement
      *
@@ -432,9 +443,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
   				$this->SetX($ormargins['left']);
   			}
   			$this->Cell(0, 0, '', 'T', 0, 'C');
-
-            // Remove the temporary logo copy
-            unlink($headerdata['logo']);
   		}
 
     /**

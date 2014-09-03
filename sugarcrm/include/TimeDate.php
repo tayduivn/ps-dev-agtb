@@ -764,7 +764,7 @@ class TimeDate
     {
         switch($type) {
             case "date":
-                return $this->fromUserDate($date, $user);
+                return $this->fromUserDate($date, true, $user);
                 break;
             case 'time':
                 return $this->fromUserTime($date, $user);

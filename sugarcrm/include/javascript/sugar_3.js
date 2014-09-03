@@ -1128,7 +1128,7 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
-    if (Dom.getAttribute(field, "type") == "hidden") {
+    if (Dom.getAttribute(field, "type") == "hidden" && type != "datetimecombo") {
         return true;
     }
 

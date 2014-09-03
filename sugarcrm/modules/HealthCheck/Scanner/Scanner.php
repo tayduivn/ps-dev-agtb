@@ -23,10 +23,6 @@ class HealthCheckScanner
     // failure status
     const FAIL = 99;
 
-    const DEFAULT_FIELD_COUNT_MAX = 100;
-
-    const DEFAULT_FIELD_COUNT_WARN = 50;
-
     /**
      *
      * @var HealthCheckScannerMeta
@@ -78,7 +74,6 @@ class HealthCheckScanner
     protected $packages = array(
         'Zendesk' => '2.8',
         'Act-On Integrated Marketing Automation for SugarCRM' => '*',
-        'Admin Sandbox' => '*',
         'Pardot Marketing Automation for SugarCRM' => '*',
         'iNetMaps' => '*',
         'Sugar-Constant Contact Integration' => '*',
@@ -87,13 +82,20 @@ class HealthCheckScanner
         'FBSG SugarCRM QuickBooks Integration' => '*',
         'JJWDesign_Google_Maps' => '*',
         'Dashboard Manager' => '*',
-        'wSQL Admin' => '*',
-        'Fonality CRM Module' => '*',
+        'Fonality' => '*',
         'inetDOCS Box' => '*',
         'Forums, Threads, Posts Modules' => '*',
         'Accounting' => '*',
 	    'Marketo Marketing Automation for SugarCRM' => '3.0',
 	    'SugarChimp' => '7.0.1',
+        'Calendar 2.0 V1.2 003' => '*',
+        'Sugar - MAS90 Integration' => '*',
+        'MAS90Integrator' => '*',
+        'ContactIndicators' => '*',
+        'Integral Sales' => '*',
+        'Teleseller' => '*',
+        'Freshdesk' => '*',
+        'Sugar-Sage Integration Modules' => '2.7.0-8-g74f8c47'
     );
 
     /**
@@ -113,17 +115,6 @@ class HealthCheckScanner
         'Feeds',
         'iFrames'
     );
-
-    /**
-     * @var integer Number of fields on detail/editview to trigger class E
-     */
-    protected $fieldCountMax = self::DEFAULT_FIELD_COUNT_MAX;
-
-    /**
-     *
-     * @var integer Number of fields on detail/editview to trigger a warning
-     */
-    protected $fieldCountWarn = self::DEFAULT_FIELD_COUNT_WARN;
 
     /**
      *
@@ -267,7 +258,7 @@ class HealthCheckScanner
         $this->logMeta[] = $scanMeta;
         $issueNo = count($this->logMeta);
 
-        $reason = "[Issue $issueNo][$report][$code] " . vsprintf($scanMeta['log'], $params);
+        $reason = "[Issue $issueNo][$report][$code][" . vsprintf($scanMeta['log'], $params) . ']';
 
         $this->log($reason, 'CHECK-'.$status);
         $this->logReason($status, $code, $reason);
@@ -367,25 +358,6 @@ class HealthCheckScanner
         $this->verbose = $level;
     }
 
-    /**
-     * Setter field count max
-     *
-     * @param $value
-     */
-    public function setFieldCountMax($value)
-    {
-        $this->fieldCountMax = (int)$value;
-    }
-
-    /**
-     * Setter field count warn
-     *
-     * @param $value
-     */
-    public function setFieldCountWarn($value)
-    {
-        $this->fieldCountWarn = (int)$value;
-    }
 
     /**
      *
@@ -491,17 +463,6 @@ class HealthCheckScanner
             $this->log("Checking module $module");
             $this->scanModule($module);
         }
-
-        // checking app_list_strings for weird entries
-        // FIXME: can not do this check yet because we have entries like FAQ and Newsletter in moduleList
-//         $app_list = return_app_list_strings_language('en_us');
-//         foreach($app_list['moduleList'] as $module => $name) {
-//             if(empty($this->beanList[$module]) && !file_exists("modules/$module")) {
-//                 $this->log("Bad module $module - not in beanList and not in filesystem");
-//                 $this->updateStatus(HealthCheckScannerMeta::CUSTOM);
-//             }
-//         }
-
 
         // Check global hooks
         $this->log("Checking global hooks");
@@ -646,6 +607,14 @@ class HealthCheckScanner
         'include/Smarty/plugins/function.sugar_help.php',
     );
 
+    /**
+     * Specific files that should be excluded from SH include check
+     * @var array
+     */
+    protected $specificSugarFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php'
+    );
+
     protected $excludedScanDirectories = array(
             'backup',
             'tmp',
@@ -660,15 +629,8 @@ class HealthCheckScanner
     {
         $this->log('*** START HEALTHCHECK ISSUES ***');
         foreach ($this->getLogMeta() as $key => $entry) {
-            if(strpos($entry['title'], 'LBL_') === 0) {
-                $entry['title'] = $entry['report'];
-            }
-            if(strpos($entry['descr'], 'LBL_') === 0) {
-                $entry['descr'] = $entry['log'];
-            }
             $issueNo = $key + 1;
-            $this->log(" => Issue {$issueNo} (flag = {$entry['flag_label']}):");
-            $this->log(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}");
+            $this->log(" => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}");
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
@@ -687,9 +649,35 @@ class HealthCheckScanner
         foreach ($files as $name => $file) {
             // check for any occurrence of the directories and flag them
             $fileContents = file_get_contents($file);
-            foreach ($this->removed_directories AS $directory) {
-                if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$directory})#",$fileContents) > 0) {
-                    $this->log("Found $directory in $file");
+            if (preg_match_all(
+                "#(\b(include|require|require_once|include_once)\b[\s('\"]*(.*?);)#",
+                $fileContents,
+                $m
+            )
+            ) {
+                $vendorFileFound = false;
+                foreach ($m[1] as $value) {
+                    foreach ($this->removed_directories as $directory) {
+                        if (preg_match(
+                                "#(include|require|require_once|include_once)[\s('\"]*({$directory})#",
+                                $value
+                            ) > 0
+                        ) {
+                            foreach ($this->specificSugarFiles as $specificSugarFile) {
+                                if (preg_match(
+                                        "#(include|require|require_once|include_once)[\s('\"]*(\b{$specificSugarFile}\b)#",
+                                        $value
+                                    ) > 0
+                                ) {
+                                    break 2;
+                                }
+                            }
+                            $vendorFileFound = true;
+                            break;
+                        }
+                    }
+                }
+                if ($vendorFileFound) {
                     $this->filesToFix[] = $file;
                 }
             }
@@ -1076,85 +1064,6 @@ class HealthCheckScanner
             if(!isset($orig_code[$code])) {
                 $this->updateStatus("foundCustomCode", $code, join(", ", $places));
             }
-        }
-
-        // Perform viewdef field count - putting this logic here to avoid
-        // additional file access to get the viewdefs as we already have
-        // them here
-        $this->checkViewFieldCount($deffile, $defs);
-    }
-
-    /**
-     * Figure out if we need to perform a field count and for which view
-     * @param string $deffile
-     * @return array
-     */
-    protected function getFieldCountParams($deffile)
-    {
-        if (strpos($deffile, 'detailviewdefs')) {
-            return array(true, 'DetailView');
-        }
-
-        if (strpos($deffile, 'editviewdefs')) {
-            return array(true, 'EditView');
-        }
-
-        return array(false, null);
-    }
-
-    /**
-     * Check field count on view defs
-     * @param string $deffile Filename for definitions file
-     * @param string $varname Variable to get defs from
-     */
-    protected function checkViewFieldCount($deffile, $defs)
-    {
-        list($doFieldCount, $defName) = $this->getFieldCountParams($deffile);
-        if (!$doFieldCount) {
-            return;
-        }
-        $this->log("Checking $deffile for field count");
-        $count = 0;
-
-        if(empty($defs) || !is_array($defs)) {
-            $this->log("No defs found for $defName in $deffile");
-            return;
-        }
-
-        // figure out module
-        reset($defs);
-        $module = key($defs);
-
-        // sanity check base field defs array
-        if (empty($defs[$module]) ||
-            empty($defs[$module][$defName]) ||
-            empty($defs[$module][$defName]['panels']))
-        {
-            $this->log("No valid panel defs found for $defName in $deffile for $module");
-            return;
-        }
-
-        // start counting panels -> rows -> columns
-        foreach ($defs[$module][$defName]['panels'] as $panel) {
-            foreach ($panel as $row) {
-                if(is_array($row)) {
-                    foreach ($row as $column) {
-                        if (!empty($column)) {
-                            $count++;
-                        }
-                    }
-                } elseif(is_string($row)) {
-                    $count++;
-                }
-            }
-        }
-
-        $this->log("Found $count fields for $defName in $deffile for $module");
-
-        if ($count >= $this->fieldCountMax) {
-            $this->updateStatus("maxFieldsView", $this->fieldCountMax, $count, $deffile);
-        } elseif ($count >= $this->fieldCountWarn) {
-            $this->log("Found more than {$this->fieldCountWarn} fields in $deffile", "WARN");
         }
     }
 
@@ -1688,11 +1597,11 @@ ENDP;
      * @param array $fieldDefs Vardefs
      * @param array $status Status array to store errors
      */
-    protected function checkFields($key, $fields, $fieldDefs, &$status)
+    protected function checkFields($key, $fields, $fieldDefs, $custom = '')
     {
         foreach ($fields as $subField) {
             if(empty($fieldDefs[$subField])) {
-                $status[] = "Bad vardefs - $key refers to bad subfield $subField";
+                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
             }
         }
     }
@@ -1738,7 +1647,7 @@ ENDP;
             $this->log("Failed to instantiate bean for $module, not checking vardefs");
             return true;
         }
-        $status = array();
+
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
 
         // get names of 'stock' fields, that are defined in original vardefs.php
@@ -1848,11 +1757,11 @@ ENDP;
             if(empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
-                    $this->checkFields($key, $value['fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
                 }
                 // check db_concat_fields
                 if (isset($value['db_concat_fields'])) {
-                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
                 }
                 // check sort_on
                 if(!empty($value['sort_on'])) {
@@ -1861,15 +1770,13 @@ ENDP;
                     } else {
                         $sort = array($value['sort_on']);
                     }
-                    $this->checkFields($key, $sort, $fieldDefs, $status);
+                    $this->checkFields($key, $sort, $fieldDefs, $custom);
                 }
             }
         }
 
         // check if we have any type changes for vardefs, BR-1427
         $this->checkVardefTypeChange($module, $object);
-
-        return $status?$status:true;
     }
 
     /* END of copypaste from 6_ScanModules */

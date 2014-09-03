@@ -1358,6 +1358,10 @@ abstract class UpgradeDriver
      */
     public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        if (error_reporting() == 0) {
+            // do not log muted errors
+            return;
+        }
         $this->log("PHP: [$errno] $errstr in $errfile at $errline");
     }
 

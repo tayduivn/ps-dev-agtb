@@ -1,31 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 
 /*********************************************************************************
@@ -134,10 +118,10 @@ class OraclePreparedStatement extends PreparedStatement
             'string'           => SQLT_CHR,
             'date'             => SQLT_CHR,
             'time'             => SQLT_CHR,
-            'float'            => SQLT_LNG,
+            'float'            => SQLT_FLT,
             'bigint'           => SQLT_LNG,
             'int'              => SQLT_INT,
-            'bool'             => SQLT_INT,
+            'bool'             => OCI_B_BOL,
     );
 
     /**
@@ -156,28 +140,23 @@ class OraclePreparedStatement extends PreparedStatement
 
         $GLOBALS['log']->info('QueryPrepare: ' . $this->parsedSQL);
 
-        $i = -1;
+        $i = 0;
         $db = $this->DBM;
         $defs = $this->fieldDefs;
-        $lobFields = $this->lobFields;
         $oSQL = preg_replace_callback('#\?#',
-            function () use (&$i, $db, $defs, $lobFields) {
+            function() use(&$i, $db, $defs) {
                 ++$i;
-                if ($db->isTextType($defs[$i]["type"]) || !empty($lobFields[$i])) {
+                if($db->isTextType($defs[$i]["type"]) || !empty($this->lobFields[$i])) {
                     // BLOBS should have empty(...) in the query
-                    return $db->emptyValue($defs[$i]["type"], true);
+                    return $db->emptyValue($defs[$i]["type"]);
                 }
-                return ":p$i";
+                return $db->convert(":p$i", $defs[$i]["type"]);
             },
-            $this->parsedSQL
-        );
+            $this->parseSQL);
+
         if(!empty($this->lobFields)) {
-            $aliases = array();
-            foreach ($this->lobFields as $key => $_) {
-                array_push($aliases, ":p{$key}");
-            }
-            $oSQL .= ' RETURNING ' . implode(",", array_values($this->lobFields)).
-                ' INTO ' . implode(",", $aliases);
+            $oSQL .= ' RETURNING '.implode(",", array_values($this->lobFields)).
+                ' INTO :p'.implode(",p:", array_keys($this->lobFields));
         }
 
         // do the prepare
@@ -190,9 +169,36 @@ class OraclePreparedStatement extends PreparedStatement
         $num_args = count($this->fieldDefs);
         $this->bound_vars = array_fill(0, $num_args, null);
 
-        foreach ($this->lobFields as $idx => $name) {
-            $this->bound_vars[$idx] = oci_new_descriptor($this->dblink, OCI_D_LOB);
+        for($i=0; $i<$num_args;$i++) {
+            if(empty($this->fieldDefs[$i]["type"])) {
+                $this->DBM->registerError($msg, "No defs entry for parameter $i");
+                return false;
+            }
+
+            $type = $this->fieldDefs[$i]["type"];
+            if($this->DBM->isTextType($type)) {
+                if($this->DBM->getColumnType($type) == 'clob') {
+                    $mappedType = OCI_B_CLOB;
+                } else {
+                    $mappedType = OCI_B_BLOB;
+                }
+            } else {
+                $mappedType = $this->DBM->getTypeClass($type);
+                if(!empty($this->typeMap[$mappedType])) {
+                    $mappedType = $this->typeMap[$mappedType];
+                } else {
+                    $mappedType = SQLT_CHR;
+                }
+            }
+
+            oci_bind_by_name($this->stmt, ":p$i", $this->bound_vars[$i], -1, $mappedType);
+            if($this->DBM->checkError("$msg: QueryPrepare Failed for parameter $i")) {
+                oci_free_statement($this->stmt);
+                $this->stmt = null;
+                return false;
+            }
         }
+
         return $this;
     }
 
@@ -212,87 +218,24 @@ class OraclePreparedStatement extends PreparedStatement
      */
     public function executePreparedStatement(array $data,  $msg = '')
     {
-        if (!$this->prepareStatementData($data, count($this->fieldDefs), $msg)) {
+        if(!$this->prepareStatementData($data, count($this->fieldDefs), $msg)) {
             return false;
         }
-        $res = oci_execute($this->stmt, OCI_NO_AUTO_COMMIT);
+        foreach($this->lobFields as $idx => $name) {
+            $this->bound_vars[$idx] = oci_new_descriptor($this->dblink, OCI_D_LOB);
+        }
 
-        foreach ($this->lobFields as $ind => $field) {
-            if (isset($data[$ind])) {
-                if (!$this->bound_vars[$ind]->save($data[$ind])) {
-                    $this->DBM->checkError("$msg: Saving BLOB for {$field}");
-                    oci_rollback($this->dblink);
-                    return false;
-                }
+        $res = oci_execute($this->stmt, OCI_NO_AUTO_COMMIT);
+        foreach($this->lobFields as $idx => $name) {
+            if(!$this->bound_vars[$idx]->save($data[$idx])) {
+                $this->DBM->checkError("$msg: Saving BLOB for {$data[$idx]}");
+                oci_rollback($this->dblink);
+                return false;
             }
         }
         oci_commit($this->dblink);
 
         return $this->finishStatement($res, $msg);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function prepareStatementData(array $data, $param_count, $msg)
-    {
-        if (!$this->stmt) {
-            $this->DBM->registerError($msg, "No prepared statement to execute");
-            return false;
-        }
-        $this->DBM->countQuery($this->parsedSQL);
-        $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
-
-        $this->DBM->query_time = microtime(true);
-
-        if ($param_count > count($data)) {
-            $this->DBM->registerError(
-                $msg,
-                "Incorrect number of elements. Expected $param_count but got " . count($data)
-            );
-            return false;
-        }
-        if (!empty($data)) {
-            reset($data);
-            for ($i = 0; $i < $param_count; $i++) {
-                if (empty($this->fieldDefs[$i]["type"])) {
-                    $this->DBM->registerError($msg, "No defs entry for parameter $i");
-                    return false;
-                }
-                $type = $this->fieldDefs[$i]["type"];
-                if (empty($this->lobFields[$i])) {
-
-                    if (empty($this->fieldDefs[$i]["type"])) {
-                        $this->DBM->registerError($msg, "No defs entry for parameter $i");
-                        return false;
-                    }
-
-                    $mappedType = $this->DBM->getTypeClass($type);
-                    if (!empty($this->typeMap[$mappedType])) {
-                        $mappedType = $this->typeMap[$mappedType];
-                    } else {
-                        $mappedType = SQLT_CHR;
-                    }
-
-                    $this->bound_vars[$i] = current($data);
-                } else {
-                    if ($this->DBM->getColumnType($type) == 'clob') {
-                        $mappedType = OCI_B_CLOB;
-                    } else {
-                        $mappedType = OCI_B_BLOB;
-                    }
-                }
-                oci_bind_by_name($this->stmt, ":p$i", $this->bound_vars[$i], -1, $mappedType);
-                if ($this->DBM->checkError("$msg: QueryPrepare Failed for parameter $i")) {
-                    oci_free_statement($this->stmt);
-                    $this->stmt = null;
-                    return false;
-                }
-                next($data);
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -308,31 +251,5 @@ class OraclePreparedStatement extends PreparedStatement
         }
 
         $this->stmt = null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseSQL($sql)
-    {
-        if (!parent::parseSQL($sql)) {
-            return false;
-        }
-
-        preg_match_all('/\(([^)]+)\)/m', $sql, $matches);
-        if (!empty($matches[1][0])) {
-            $lobFields = array();
-            $columns = explode(',', $matches[1][0]);
-            $i = 0;
-            foreach ($columns as $col) {
-                $this->fieldDefs[$i]['name'] = $col;
-                if ($this->DBM->isTextType($this->fieldDefs[$i]['type'])) {
-                    $lobFields[$i] = $col;
-                }
-                $i++;
-            }
-            $this->setLobs($lobFields);
-        }
-        return true;
     }
 }

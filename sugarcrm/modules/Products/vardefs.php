@@ -334,7 +334,7 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'formula' => 'ifElse(isNumeric($discount_amount),currencyDivide($discount_amount,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($discount_amount), currencyDivide($discount_amount, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -380,7 +380,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($deal_calc),currencyDivide($deal_calc,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($deal_calc), currencyDivide($deal_calc, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -412,7 +412,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($cost_price),currencyDivide($cost_price,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($cost_price), currencyDivide($cost_price, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -448,7 +448,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($list_price),currencyDivide($list_price,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($list_price), currencyDivide($list_price, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -614,7 +614,7 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($book_value),currencyDivide($book_value,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($book_value), currencyDivide($book_value, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),

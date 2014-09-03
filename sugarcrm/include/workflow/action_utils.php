@@ -82,9 +82,10 @@ function process_action_update($focus, $action_array){
             $GLOBALS['log']->info("workflow attempting to update calculated field $field.");
             continue;
         }
+		$fieldType = get_field_type($focus->field_defs[$field]);
 		//Only here if there is a datetime.
 		if($new_value=='Triggered Date'){
-			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field]);
+			$focus->$field = get_expiry_date($fieldType, $action_array['basic'][$field], $fieldType === 'date');
 			if($focus->field_defs[$field]['type']=='date' && !empty($focus->field_defs[$field]['rel_field']) ){
 				$rel_field = $focus->field_defs[$field]['rel_field'];
 				$focus->$rel_field = get_expiry_date('time', $action_array['basic'][$field]);
@@ -92,7 +93,7 @@ function process_action_update($focus, $action_array){
 			execute_special_logic($field, $focus);
 		}
 		if($new_value=='Existing Value'){
-			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field], false, true, $focus->$field);
+			$focus->$field = get_expiry_date($fieldType, $action_array['basic'][$field], false, true, $focus->$field);
 			execute_special_logic($field, $focus);
 		}
 	}
@@ -445,8 +446,9 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
     	    }
 	    }
 	} else {
-	    $date = $timedate->getNow();
-
+	    // When the type is "date", asDbType() does not change the TZ by default, so the date will still be in user TZ
+	    // even though formatted as DB date. That's because we do not convert dates (as opposed to datetimes) by default.
+	    $date = $timedate->getNow($user_format);
 	}
 
     if (empty($date)) {
@@ -456,7 +458,6 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
 
 	$date->modify("+$time_interval seconds");
     return $timedate->asDbType($date, $stamp_type);
-	//end function get_expiry_date
 }
 
 /**

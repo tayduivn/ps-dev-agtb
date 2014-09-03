@@ -1074,7 +1074,8 @@ protected function checkQuery($sql, $object_name = false)
                 $sql .=	"/* VARDEF - $name -  ROW";
                 foreach($value as $rKey => $rValue) {
                     if(is_array($rValue)) {
-                        $rValue = join("\n", $rValue);
+                        // no newlines
+                        $rValue = str_replace("\n", " ", print_r($rValue, true));
                     }
                     $sql .=	"[$rKey] => '$rValue'  ";
                 }
@@ -2893,26 +2894,6 @@ protected function checkQuery($sql, $object_name = false)
         }
     }
 
-    /**
-     * Get default value for database from field definition.
-     * @param array $fieldDef
-     * @return string
-     */
-    protected function getDefaultFromDefinition($fieldDef)
-    {
-        $default = '';
-        if (!empty($fieldDef['no_default'])) {
-            // nothing to do
-        } elseif ($this->getFieldType($fieldDef) == 'bool') {
-            if (isset($fieldDef['default'])) {
-                $default = " DEFAULT " . (int)isTruthy($fieldDef['default']);
-            }
-        } elseif (isset($fieldDef['default'])) {
-            $default = " DEFAULT " . $this->massageValue($fieldDef['default'], $fieldDef);
-        }
-        return $default;
-    }
-
 	/**
 	 * Returns the defintion for a single column
 	 *
@@ -2954,7 +2935,18 @@ protected function checkQuery($sql, $object_name = false)
             }
         }
 
-        $default = $this->getDefaultFromDefinition($fieldDef);
+        $default = '';
+
+        // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
+        if (!empty($fieldDef['no_default'])) {
+            // nothing to do
+        } elseif ($type == 'bool') {
+            if (isset($fieldDef['default'])) {
+                $default = " DEFAULT " . (int)isTruthy($fieldDef['default']);
+            }
+        } elseif (isset($fieldDef['default'])) {
+            $default = " DEFAULT " . $this->massageValue($fieldDef['default'], $fieldDef);
+        }
 
 		$auto_increment = '';
 		if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
