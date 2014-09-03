@@ -222,6 +222,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'recurrence',
                     'type' => 'recurrence',
                     'label' => 'LBL_CALENDAR_RECURRENCE',
+                    'dismiss_label' => true,
                     'span' => 12,
                     'fields' => array(
                         array(
@@ -259,6 +260,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'reminders',
                     'type' => 'fieldset-with-labels',
                     'label' => 'LBL_CALENDAR_REMINDERS',
+                    'dismiss_label' => true,
                     'fields' => array(
                         array(
                             'name' => 'reminder_time',
