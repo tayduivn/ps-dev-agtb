@@ -155,6 +155,7 @@
     .record-label {
       font-size: @fontSizeSmall;
       color: lighten(@gray, 12%);
+      display: block;
     }
     .normal > span {
       display: block;
@@ -625,13 +626,6 @@
 
   }
 
-  .record-edit-link-wrapper {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
   .wide {
     width: 100%;
   }
@@ -818,43 +812,40 @@
 
 .record-edit-link-wrapper {
   position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
   z-index: 0;
   .record-edit-link {
     display: none;
     padding: 0px;
     text-decoration: none;
-    cursor: pointer;
+    cursor: text;
+    height: 100%;
+    width: 100%;
     &.btn-invisible:hover {
       border: 1px solid transparent;
       background: none;
     }
-    cursor: text;
-    height: 100%;
-    width: 100%;
   }
 }
-.record-cell {
-  &:hover {
-    .record-edit-link {
-      display: inline-block;
-      .icon-pencil {
-        left: 0;
-        top: 2px;
-        font-size: 10px;
-        position: absolute;
-        color: @grayLight;
-      }
+.record-cell:not(.edit):hover {
+  .record-edit-link {
+    display: inline-block;
+    .icon-pencil {
+      left: 0;
+      top: 2px;
+      font-size: 10px;
+      position: absolute;
+      color: @grayLight;
     }
   }
 }
 .record-cell.edit {
-  &:hover {
-    .record-edit-link {
-      display: none;
-      .icon-pencil {
-        display: none;
-      }
-    }
+  .record-edit-link-wrapper {
+    display: none;
   }
 }
 
