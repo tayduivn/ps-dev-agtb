@@ -61,6 +61,7 @@ $mod_strings = array (
   'LBL_BODY_HTML_POPUP_HELP' => 'Create the template using the HTML editor. After saving the template, you will be able to view a preview of the PDF version of the template.',
   'LBL_BODY_HTML_POPUP_QUOTES_HELP' => 'Create the template using the HTML editor. After saving the template, you will be able to view a preview of the PDF version of the template.<br /><br />To edit the loop used to create the Revenue Line items, click the "HTML" button in the editor to access the code.  The code is contained within &lt;!--START_BUNDLE_LOOP--&gt;, &lt;!--START_PRODUCT_LOOP--&gt;, &lt;!--END_PRODUCT_LOOP--&gt; and &lt;!--END_BUNDLE_LOOP--&gt;.',
   'LBL_KEYWORDS_POPUP_HELP' => 'Associate Keywords with the document, generally in the form "keyword1 keyword2..."',
+  'LBL_HEADER_LOGO_POPUP_HELP' => 'The uploaded file will not appear while editing. To view the final template you must save and preview it.',
   'LBL_BTN_INSERT' => 'Insert',
   'LBL_FIELDS_LIST' => 'Fields',
   'LBL_LINK_LIST' => 'Links',
