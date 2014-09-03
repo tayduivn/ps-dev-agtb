@@ -167,11 +167,11 @@ class HealthCheckScannerMeta
 //        ),
         406 => array(
             'report' => 'hasCustomViews',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         407 => array(
             'report' => 'hasCustomViewsModDir',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         519 => array(
             'report' => 'extensionDir',
@@ -195,7 +195,7 @@ class HealthCheckScannerMeta
         ),
         413 => array(
             'report' => 'unknownWidgetClass',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
 //        414 => array(
 //            'report' => 'unknownField',
