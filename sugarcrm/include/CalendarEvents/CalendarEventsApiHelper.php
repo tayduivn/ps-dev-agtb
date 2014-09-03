@@ -20,7 +20,10 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
      * The bean must have values for `date_start`, `duration_hours`, and `duration_minutes` after it has been populated.
      * These values can either already exist on the bean or have been populated from the submitted data.
      *
-     * Adds the calendar event specific saves for leads, contacts, and users. Updates the vcal.
+     * Adds the calendar event specific saves for leads, contacts, and users.
+     *
+     * The vCal cache is not updated for the current user as it is handled in the endpoints to guarantee that it happens
+     * after all recurrences of an event are saved.
      *
      * @param SugarBean $bean
      * @param array $submittedData
@@ -65,7 +68,6 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
             throw new SugarApiExceptionInvalidParameter('Invalid parameter: duration_minutes');
         }
 
-        // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
         $bean->update_vcal = false;
 
         // add existing invitees to the lists so they don't get removed
