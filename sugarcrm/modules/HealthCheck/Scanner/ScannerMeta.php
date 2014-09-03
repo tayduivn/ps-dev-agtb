@@ -130,10 +130,10 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionName',
             'bucket' => self::STUDIO_MB_BWC
         ),
-//        312 => array(
-//            'report' => 'badVardefsName',
-//            'bucket' => self::STUDIO_MB_BWC
-//        ),
+        312 => array(
+            'report' => 'badVardefsName',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
         313 => array(
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
@@ -167,11 +167,11 @@ class HealthCheckScannerMeta
 //        ),
         406 => array(
             'report' => 'hasCustomViews',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         407 => array(
             'report' => 'hasCustomViewsModDir',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         519 => array(
             'report' => 'extensionDir',
@@ -195,7 +195,7 @@ class HealthCheckScannerMeta
         ),
         413 => array(
             'report' => 'unknownWidgetClass',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
 //        414 => array(
 //            'report' => 'unknownField',
@@ -234,12 +234,12 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
         423 => array(
-            'report' => 'badVardefsCustom',
+            'report' => 'badVardefsSubfieldsCustom',
             'bucket' => self::CUSTOM,
         ),
         424 => array(
             'report' => 'inlineHtmlCustom',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         425 => array(
             'report' => 'foundEchoCustom',
@@ -269,10 +269,10 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionNameCustom',
             'bucket' => self::MANUAL
         ),
-        432 => array(
-            'report' => 'badVardefsName',
-            'bucket' => self::CUSTOM
-        ),
+//        432 => array(
+//            'report' => 'badVardefsName',
+//            'bucket' => self::CUSTOM
+//        ),
         526 => array(
             'report' => 'badVardefsMultienum',
             'bucket' => self::MANUAL
@@ -308,7 +308,7 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
         507 => array(
-            'report' => 'badVardefs',
+            'report' => 'badVardefsSubfields',
             'bucket' => self::MANUAL,
         ),
         508 => array(

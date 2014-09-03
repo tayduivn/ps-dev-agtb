@@ -258,7 +258,7 @@ class HealthCheckScanner
         $this->logMeta[] = $scanMeta;
         $issueNo = count($this->logMeta);
 
-        $reason = "[Issue $issueNo][$report][$code] " . vsprintf($scanMeta['log'], $params);
+        $reason = "[Issue $issueNo][$report][$code][" . vsprintf($scanMeta['log'], $params) . ']';
 
         $this->log($reason, 'CHECK-'.$status);
         $this->logReason($status, $code, $reason);
@@ -630,8 +630,7 @@ class HealthCheckScanner
         $this->log('*** START HEALTHCHECK ISSUES ***');
         foreach ($this->getLogMeta() as $key => $entry) {
             $issueNo = $key + 1;
-            $this->log(" => Issue {$issueNo} (flag = {$entry['flag_label']}):");
-            $this->log(" ({$entry['bucket']}:{$entry['report']}:{$entry['id']}: {$entry['title']}) {$entry['descr']}");
+            $this->log(" => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}");
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
@@ -1598,11 +1597,11 @@ ENDP;
      * @param array $fieldDefs Vardefs
      * @param array $status Status array to store errors
      */
-    protected function checkFields($key, $fields, $fieldDefs, &$status)
+    protected function checkFields($key, $fields, $fieldDefs, $custom = '')
     {
         foreach ($fields as $subField) {
             if(empty($fieldDefs[$subField])) {
-                $status[] = "Bad vardefs - $key refers to bad subfield $subField";
+                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
             }
         }
     }
@@ -1648,7 +1647,7 @@ ENDP;
             $this->log("Failed to instantiate bean for $module, not checking vardefs");
             return true;
         }
-        $status = array();
+
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
 
         // get names of 'stock' fields, that are defined in original vardefs.php
@@ -1758,11 +1757,11 @@ ENDP;
             if(empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
-                    $this->checkFields($key, $value['fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
                 }
                 // check db_concat_fields
                 if (isset($value['db_concat_fields'])) {
-                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
                 }
                 // check sort_on
                 if(!empty($value['sort_on'])) {
@@ -1771,15 +1770,13 @@ ENDP;
                     } else {
                         $sort = array($value['sort_on']);
                     }
-                    $this->checkFields($key, $sort, $fieldDefs, $status);
+                    $this->checkFields($key, $sort, $fieldDefs, $custom);
                 }
             }
         }
 
         // check if we have any type changes for vardefs, BR-1427
         $this->checkVardefTypeChange($module, $object);
-
-        return $status?$status:true;
     }
 
     /* END of copypaste from 6_ScanModules */

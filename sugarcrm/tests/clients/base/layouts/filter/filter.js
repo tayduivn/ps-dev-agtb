@@ -23,7 +23,9 @@ describe('Base.Layout.Filter', function() {
     describe("filter layout", function () {
         var parentLayout;
         beforeEach(function () {
-            parentLayout = new Backbone.View();
+            parentLayout = app.view.createLayout({
+                module: moduleName
+            });
             layout = SugarTest.createLayout('base', moduleName, 'filter', {last_state: {id: "filter"}}, false, false, {layout: parentLayout});
         });
 

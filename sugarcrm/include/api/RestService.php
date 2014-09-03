@@ -397,6 +397,7 @@ class RestService extends ServiceBase
             // valid metadata hash so the client knows if it is worth
             // re-syncing.
             $replyData['metadata_hash'] = $mM->getMetadataHash();
+            $replyData['user_hash'] = $this->user->getUserMDHash();
         }
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;

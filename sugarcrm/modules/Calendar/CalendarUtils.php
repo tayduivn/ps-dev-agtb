@@ -466,7 +466,7 @@ class CalendarUtils
 			$id = $ro['id'];
 			if($i == 0){
 				$new_parent_id = $id;
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '' AND recurring_source = '' WHERE id = '{$id}'";
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '', recurring_source = '' WHERE id = '{$id}'";
 			}else{
 				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}' WHERE id = '{$id}'";
 			}
