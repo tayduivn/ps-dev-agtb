@@ -112,13 +112,30 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(
             count($users) + 1,
             $meeting->users_arr,
-            'Should have the number of generated users plus the assigned user/current user'
+            'Should have the number of generated users plus the assigned user'
         );
         $this->assertCount(count($leads), $meeting->leads_arr, 'Should have the number of generated leads');
         $this->assertCount(count($contacts), $meeting->contacts_arr, 'Should have the number of generated contacts');
     }
 
-    public function testPopulateFromApi_TheAssignedUserIsNotTheCurrentUser_BothUsersAreInvited()
+    public function testPopulateFromApi_TheEventIsNew_TheAssignedUserIsNotTheCurrentUser_BothUsersAreInvited()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->new_with_id = true;
+        $meeting->date_start = $GLOBALS['timedate']->nowDb();
+        $meeting->duration_hours = 1;
+        $meeting->duration_minutes = '0';
+        $meeting->assigned_user_id = create_guid();
+
+        $helper = $this->getMock('MeetingsApiHelper', array('getInvitees'), array($this->api));
+        $helper->method('getInvitees')->will($this->returnValue(array()));
+
+        $helper->populateFromApi($meeting, array());
+        $this->assertCount(2, $meeting->users_arr, 'Should include both the assigned user and current user');
+    }
+
+    public function testPopulateFromApi_TheEventIsExisting_TheAssignedUserIsNotTheCurrentUser_TheCurrentUserIsNotInvited()
     {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
@@ -131,7 +148,8 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $helper->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
-        $this->assertCount(2, $meeting->users_arr, 'Should include both the assigned user and current user');
+        $this->assertCount(1, $meeting->users_arr, 'Should only contain the assigned user');
+        $this->assertContains($meeting->assigned_user_id, $meeting->users_arr, 'The assigned user was not found');
     }
 
     /**

@@ -125,7 +125,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
     /**
      * Returns an array of IDs for associated users.
      *
-     * The assigned user is included if not already invited. The current user is included if not already invited and the
+     * The assigned user is included if not already invited. The current user is included if the event is new and the
      * current user is not the assigned user.
      *
      * @param SugarBean $bean
@@ -136,7 +136,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         $userInvitees = $this->getInvitees($bean, 'users');
         $userInvitees[] = $bean->assigned_user_id;
 
-        if ($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+        if ($bean->assigned_user_id != $GLOBALS['current_user']->id && (empty($bean->id) || $bean->new_with_id)) {
             $userInvitees[] = $GLOBALS['current_user']->id;
         }
 
