@@ -239,7 +239,7 @@ class HealthCheckScannerMeta
         ),
         424 => array(
             'report' => 'inlineHtmlCustom',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         425 => array(
             'report' => 'foundEchoCustom',
