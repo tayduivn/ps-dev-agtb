@@ -231,11 +231,23 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(field.$('div.row.participant').length).toBe(participants.length - 1);
         });
 
-        it("should disable a participant's delete button when the participant is the current user", function() {
+        it("should disable a participant's delete button on create when the participant is the current user and not the assigned user", function() {
+            var appUserId = app.user.id;
+            app.user.id = '1';
+            model.isNew.restore();
+            sandbox.stub(model, 'isNew').returns(true);
+            field.render();
+            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
+            if (appUserId) {
+                app.user.id = appUserId;
+            }
+        });
+
+        it("should not disable a participant's delete button on update when the participant is the current user and not the assigned user", function() {
             var appUserId = app.user.id;
             app.user.id = '1';
             field.render();
-            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
+            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(false);
             if (appUserId) {
                 app.user.id = appUserId;
             }

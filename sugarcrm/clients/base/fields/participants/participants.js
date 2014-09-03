@@ -578,10 +578,14 @@
         };
 
         deletable = function(participant) {
-            var undeletable = [
-                app.user.id,
-                self.model.get('assigned_user_id')
-            ];
+            var assignedUser, undeletable;
+
+            assignedUser = self.model.get('assigned_user_id');
+            undeletable = [assignedUser];
+
+            if (app.user.id !== assignedUser && self.model.isNew()) {
+                undeletable.push(app.user.id);
+            }
 
             return !_.contains(undeletable, participant.id);
         };
