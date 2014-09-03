@@ -75,10 +75,18 @@ class File extends Basic
 		}
 		$this->file_url_noimage = $this->id;
 
-		if(!empty($this->status_id)) {
-	       $this->status = $app_list_strings['document_status_dom'][$this->status_id];
-	    }
-	}
+        // Handle getting the status if the source of the status id field has
+        // changed
+        if (!empty($this->status_id)) {
+            // Default value for the DLL source for this field
+            $ddl_source = 'document_status_dom';
+            if (isset($this->field_defs['status_id']['options'])) {
+                $ddl_source = $this->field_defs['status_id']['options'];
+            }
+
+            $this->status = $app_list_strings[$ddl_source][$this->status_id];
+        }
+    }
 
     /**
      * @see SugarBean::fill_in_additional_list_fields()
