@@ -130,10 +130,10 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionName',
             'bucket' => self::STUDIO_MB_BWC
         ),
-//        312 => array(
-//            'report' => 'badVardefsName',
-//            'bucket' => self::STUDIO_MB_BWC
-//        ),
+        312 => array(
+            'report' => 'badVardefsName',
+            'bucket' => self::STUDIO_MB_BWC
+        ),
         313 => array(
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
@@ -269,10 +269,10 @@ class HealthCheckScannerMeta
             'report' => 'vardefHtmlFunctionNameCustom',
             'bucket' => self::MANUAL
         ),
-        432 => array(
-            'report' => 'badVardefsName',
-            'bucket' => self::CUSTOM
-        ),
+//        432 => array(
+//            'report' => 'badVardefsName',
+//            'bucket' => self::CUSTOM
+//        ),
         526 => array(
             'report' => 'badVardefsMultienum',
             'bucket' => self::MANUAL
