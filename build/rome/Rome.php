@@ -22,6 +22,13 @@ class Rome
     protected $onlyBuild = array();
 
     protected $symlinks = array();
+    
+    /**
+     * The Regex that is used for matching build tags.
+     *
+     * @var string
+     */
+    protected $buildTagRegex = '/\/\/\s*(BEGIN|END|FILE|ELSE)\s*SUGARCRM\s*(.*) ONLY/i';
 
     /**
      * Construct that loads the config file
@@ -405,7 +412,7 @@ class Rome
         $cur = '';
         $token = '';
         $newToken = false;
-        preg_match('/\/\/\s*(BEGIN|END|FILE|ELSE)\s*SUGARCRM\s*(.*) ONLY/i', $line, $match);
+        preg_match($this->buildTagRegex, $line, $match);
         if (empty($match[2])) {
             return $results;
         }
@@ -438,6 +445,8 @@ class Rome
         } elseif ($this->isLink($path)) {
             $linkTarget = readlink($path);
             $this->saveSymlink($path, $linkTarget, $skipBuilds);
+        } elseif (!$this->hasSugarBuildTag($path)) {
+            $this->quickCopy($path, $skipBuilds);
         } else {
             $this->file = $path;
             if (!empty($startPath)) {
@@ -470,6 +479,17 @@ class Rome
             }
             $this->writeFiles($path, $skipBuilds);
         }
+    }
+
+    /**
+     * Check if the file contains and SugarCRM Build Tags
+     *
+     * @param string $file
+     * @return bool
+     */
+    protected function hasSugarBuildTag($file)
+    {
+        return (preg_match($this->buildTagRegex, file_get_contents($file)) === 1);
     }
 
     public function cleanPath($path)
