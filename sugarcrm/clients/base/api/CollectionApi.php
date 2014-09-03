@@ -80,7 +80,7 @@ class CollectionApi extends SugarApi
         $definition = $this->getCollectionDefinition($bean, $args['collection_name']);
         $args = $this->normalizeArguments($args, $definition);
 
-        $data = $this->getData($api, $args, $definition['links']);
+        $data = $this->getData($api, $args, $bean, $definition['links']);
         $allRecords = $this->flattenData($data, $nextOffset);
 
         $sortSpec = $this->getSortSpec($bean, $definition['links'], $args['order_by']);
@@ -101,19 +101,20 @@ class CollectionApi extends SugarApi
      *
      * @param ServiceBase $api
      * @param array $args API arguments
+     * @param SugarBean $bean Primary bean
      * @param array $links Collection link definitions
      *
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionNotFound
      */
-    protected function getData(ServiceBase $api, array $args, array $links)
+    protected function getData(ServiceBase $api, array $args, SugarBean $bean, array $links)
     {
         $data = array();
         foreach ($links as $link) {
             $linkName = $link['name'];
             if ($args['offset'][$linkName] >= 0) {
-                $linkArgs = $this->getLinkArguments($args, $link);
+                $linkArgs = $this->getLinkArguments($api, $args, $bean, $link);
                 $data[$linkName] = $this->getRelateApi()->filterRelated($api, $linkArgs);
             }
         }
@@ -124,12 +125,14 @@ class CollectionApi extends SugarApi
     /**
      * Creates arguments for RelateApi for specific link
      *
+     * @param ServiceBase $api
      * @param array $args CollectionApi arguments
+     * @param SugarBean $bean Primary bean
      * @param array $link Collection link definition
      *
      * @return array RelateApi arguments
      */
-    protected function getLinkArguments(array $args, array $link)
+    protected function getLinkArguments(ServiceBase $api, array $args, SugarBean $bean, array $link)
     {
         $args = array_merge($args, array(
             'link_name' => $link['name'],
@@ -137,8 +140,9 @@ class CollectionApi extends SugarApi
         ));
 
         if (isset($link['field_map'])) {
-            if (isset($args['fields'])) {
-                $args['fields'] = $this->mapFields($args['fields'], $link['field_map']);
+            $fields = $this->getFieldsFromArgs($api, $args, $bean);
+            if ($fields) {
+                $args['fields'] = implode(',', $this->mapFields($fields, $link['field_map']));
             }
             if (isset($args['filter'])) {
                 $args['filter'] = $this->mapFilter($args['filter'], $link['field_map']);
@@ -147,6 +151,10 @@ class CollectionApi extends SugarApi
         }
 
         $args['order_by'] = $this->formatOrderBy($args['order_by']);
+
+        // view name is only applicable to primary module, and it doesn't make
+        // sense to pass it to related module
+        unset($args['view']);
 
         return $args;
     }

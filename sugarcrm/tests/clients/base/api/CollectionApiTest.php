@@ -47,8 +47,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
         $api->expects($this->exactly(2))
             ->method('getLinkArguments')
-            ->will($this->returnCallback(function ($value) {
-                return $value;
+            ->will($this->returnCallback(function () {
+                return array();
             }));
 
         SugarTestReflection::setProtectedValue($api, 'relateApi', $relateApi);
@@ -64,7 +64,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'b' => -1,
                     'c' => 1,
                 ),
-            ), array(
+            ), new SugarBean(), array(
                 array('name' => 'a'),
                 array('name' => 'b'),
                 array('name' => 'c'),
@@ -87,10 +87,12 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetLinkArguments(array $args, array $link, array $expected)
     {
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $bean = new SugarBean();
         $actual = SugarTestReflection::callProtectedMethod(
             $this->api,
             'getLinkArguments',
-            array($args, $link)
+            array($service, $args, $bean, $link)
         );
 
         $this->assertEquals($expected, $actual);
@@ -101,7 +103,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(
                 array(
-                    'fields' => array('alias', 'another_field'),
+                    'fields' => 'alias,another_field',
                     'filter' => array(
                         '$or' => array(
                             'alias' => 'a',
@@ -124,7 +126,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'fields' => array('field', 'another_field'),
+                    'fields' => 'field,another_field',
                     'filter' => array(
                         '$or' => array(
                             'field' => 'a',
