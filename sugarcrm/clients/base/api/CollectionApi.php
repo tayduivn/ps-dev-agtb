@@ -23,6 +23,13 @@ class CollectionApi extends SugarApi
     protected $relateApi;
 
     /**
+     * Function to compare string values when sorting records
+     *
+     * @var callable
+     */
+    protected $collator = 'strcasecmp';
+
+    /**
      * Registers API
      *
      * @return array
@@ -40,6 +47,16 @@ class CollectionApi extends SugarApi
                 'longHelp' => 'include/api/help/module_record_collection_collection_name_get_help.html',
             ),
         );
+    }
+
+    /**
+     * Sets the function to compare string values when sorting records
+     *
+     * @param callable $collator
+     */
+    public function setCollator($collator)
+    {
+        $this->collator = $collator;
     }
 
     /**
@@ -65,7 +82,9 @@ class CollectionApi extends SugarApi
 
         $data = $this->getData($api, $args, $definition['links']);
         $allRecords = $this->flattenData($data, $nextOffset);
-        $this->sortRecords($allRecords, $args['order_by'], $definition['links']);
+
+        $sortSpec = $this->getSortSpec($bean, $definition['links'], $args['order_by']);
+        $this->sortRecords($allRecords, $sortSpec);
 
         $records = array_slice($allRecords, 0, $args['max_num']);
         $remainder = array_slice($allRecords, $args['max_num']);
@@ -311,50 +330,150 @@ class CollectionApi extends SugarApi
     }
 
     /**
-     * Sorts collection data
+     * Creates sorting specification from the given set of links and ORDER BY expression
      *
-     * @param array $data Collection data
-     * @param array $orderBy Order specification
-     * @param array $links Link definitions
+     * @param SugarBean $bean Primary bean
+     * @param array $links Collection link definitions
+     * @param array $orderBy ORDER BY expression
+     *
+     * @return array The sorting specification
+     * @throws SugarApiExceptionError
      */
-    protected function sortRecords(array &$data, $orderBy, array $links)
+    protected function getSortSpec(SugarBean $bean, array $links, $orderBy)
     {
-        $map = array();
-        foreach ($links as $link) {
-            if (isset($link['field_map'])) {
-                foreach ($link['field_map'] as $alias => $field) {
-                    $map[$link['name']][$field] = $alias;
-                }
+        $linkData = array();
+        foreach ($links as $definition) {
+            $linkName = $definition['name'];
+            if (!$bean->load_relationship($linkName)) {
+                throw new SugarApiExceptionError(
+                    sprintf('Unable to load link %s on module %s', $linkName, $bean->module_name)
+                );
             }
+
+            $relatedModule = $bean->$linkName->getRelatedModuleName();
+            $relatedBean = BeanFactory::getBean($relatedModule);
+            if (isset($definition['field_map'])) {
+                $fieldMap = $definition['field_map'];
+            } else {
+                $fieldMap = array();
+            }
+            $linkData[$linkName] = array($relatedBean, $fieldMap);
         }
 
-        usort($data, function ($a, $b) use ($map, $orderBy) {
-            foreach ($orderBy as $alias => $direction) {
+        $spec = array();
+        foreach ($orderBy as $alias => $direction) {
+            $isNumeric = null;
+            $map = array();
+            foreach ($linkData as $linkName => $data) {
+                /** @var SugarBean $relatedBean */
+                list($relatedBean, $fieldMap) = $data;
 
-                if (isset($a['_link'], $map[$a['_link']][$alias])) {
-                    $fieldA = $map[$a['_link']][$alias];
+                if (isset($fieldMap[$alias])) {
+                    $field = $fieldMap[$alias];
                 } else {
-                    $fieldA = $alias;
+                    $field = $alias;
                 }
 
-                if (isset($b['_link'], $map[$b['_link']][$alias])) {
-                    $fieldB = $map[$b['_link']][$alias];
+                $map[$linkName] = $field;
+
+                $fieldDef = $relatedBean->getFieldDefinition($field);
+                if (!$fieldDef) {
+                    // do not display alias since it may come from API arguments
+                    throw new SugarApiExceptionError('Unable to load field definition');
+                }
+
+                $type = $relatedBean->db->getFieldType($fieldDef);
+                if ($type) {
+                    $isFieldNumeric = $relatedBean->db->isNumericType($type);
                 } else {
-                    $fieldB = $alias;
+                    // assume field is varchar in case type is not specified
+                    $isFieldNumeric = false;
                 }
 
-                if (!isset($a[$fieldA], $b[$fieldB])) {
-                    continue;
+                if ($isNumeric === null) {
+                    $isNumeric = $isFieldNumeric;
+                } elseif ($isNumeric != $isFieldNumeric) {
+                    throw new SugarApiExceptionError(
+                        sprintf('Alias %s points to both string and numeric fields', $field)
+                    );
                 }
+            }
 
-                $result = strcasecmp($a[$fieldA], $b[$fieldB]);
+            $spec[] = array(
+                'map' => $map,
+                'is_numeric' => $isNumeric,
+                'direction' => $direction,
+            );
+        }
+
+        return $spec;
+    }
+
+    /**
+     * Sorts collection data
+     *
+     * @param array $records Collection records
+     * @param array $spec Sorting specification
+     */
+    protected function sortRecords(array &$records, array $spec)
+    {
+        $comparator = $this->getRecordComparator($spec);
+        usort($records, $comparator);
+    }
+
+    /**
+     * Builds column comparison function
+     *
+     * @param array $map Map of link name to field name for the given alias
+     * @param boolean $isNumeric Whether the column is numeric
+     * @param boolean $direction Sorting direction
+     *
+     * @return callable
+     */
+    protected function getColumnComparator($map, $isNumeric, $direction)
+    {
+        $comparator = $isNumeric ? function ($a, $b) {
+            return $a - $b;
+        } : $this->collator;
+
+        $factor = $direction ? 1 : -1;
+
+        return function ($a, $b) use ($comparator, $map, $factor) {
+            return $comparator(
+                $a[$map[$a['_link']]],
+                $b[$map[$b['_link']]]
+            ) * $factor;
+        };
+    }
+
+    /**
+     * Builds record comparison function according to specification
+     *
+     * @param array $spec
+     *
+     * @return callable
+     */
+    protected function getRecordComparator(array $spec)
+    {
+        $comparators = array();
+        foreach ($spec as $alias => $properties) {
+            $comparators[] = $this->getColumnComparator(
+                $properties['map'],
+                $properties['is_numeric'],
+                $properties['direction']
+            );
+        }
+
+        return function ($a, $b) use ($comparators) {
+            foreach ($comparators as $comparator) {
+                $result = $comparator($a, $b);
                 if ($result != 0) {
-                    return $result * ($direction ? 1 : -1);
+                    return $result;
                 }
             }
 
             return 0;
-        });
+        };
     }
 
     /**
