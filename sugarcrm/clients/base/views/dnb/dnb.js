@@ -520,7 +520,7 @@
         'srchCount': 'FindContactResponse.FindContactResponseDetail.CandidateMatchedQuantity',
         'orgName': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$'
     },
-    
+
     //dashlets that occupy the full sidepane
     //account create and build a list for now
     sidePaneDashlets: {
@@ -687,6 +687,25 @@
             obj = obj[args[i]];
         }
         return true;
+    },
+
+    /**
+     * Checks if
+     * 1. User has access to the field using the acl api
+     * 2. Checks is the user layout has the field
+     * @param {String} fieldName
+     */
+    checkFieldExists: function(fieldName) {
+        var checkUserAccess = app.acl.hasAccess('view', this.module, null, fieldName);
+        if (checkUserAccess) {
+            var viewMeta = App.metadata.getView(this.module, 'record');
+            var fieldExists = _.find(_.flatten(_.pluck(viewMeta.panels, 'fields')), function(fieldObj) {
+                return fieldObj.name === fieldName;
+            });
+        } else {
+            return false;
+        }
+        return fieldExists;
     },
 
     /**
@@ -1799,10 +1818,10 @@
      * @param {Array} recordSet
      * @param {Number} pageStart
      * @param {Number} pageEnd
-     * @returns {Array} recordSet
+     * @return {Array} recordSet
      */
     getNextPage: function(recordSet, pageStart, pageEnd) {
-        return  _.filter(recordSet, function(resultObj) {
+        return _.filter(recordSet, function(resultObj) {
             return resultObj.recordNum >= pageStart && resultObj.recordNum <= pageEnd;
         });
     },
@@ -1885,11 +1904,52 @@
     /**
      * Sets pagination params to existing params
      * @param {Object} apiParams
-     * @returns {Object}
+     * @return {Object}
      */
     setApiPaginationParams: function(apiParams) {
         apiParams.CandidatePerPageMaximumQuantity = this.apiPageSize;
         apiParams.CandidateDisplayStartSequenceNumber = this.apiPageOffset;
         return apiParams;
+    },
+
+    /**
+     * Loads the D&B Dashlets with appropriate data
+     * @param {String} modelAttribute
+     * @param {String} contextAttribute
+     * @param {Function} callBackFunction
+     * @param {String} callBackParams
+     * @param {String} errorTemplate
+     */
+    loadDNBData: function(modelAttribute, contextAttribute, callBackFunction, callBackParams, errorTemplate, fieldAclTemplate) {
+        if (this.checkFieldExists(modelAttribute)) {
+            var field,
+            modelAttr = this[modelAttribute],
+            contextAttr;
+            if (!_.isNull(contextAttribute)) {
+                contextAttr = app.controller.context.get(contextAttribute);
+            }
+            if (!_.isUndefined(modelAttr)) {
+                field = modelAttr;
+            } else if (!_.isUndefined(contextAttr)) {
+                field = contextAttr;
+            }
+            if (!_.isUndefined(field)) {
+                if(!_.isNull(callBackParams)) {
+                    callBackFunction.call(this, field, callBackParams);
+                } else {
+                    callBackFunction.call(this, field);
+                }
+            } else {
+                this.template = app.template.get(errorTemplate);
+                if (!this.disposed) {
+                    this.render();
+                }
+            }
+        } else {
+            this.template = app.template.get(fieldAclTemplate);
+            if (!this.disposed) {
+                this.render();
+            }
+        }
     }
-})
+});
