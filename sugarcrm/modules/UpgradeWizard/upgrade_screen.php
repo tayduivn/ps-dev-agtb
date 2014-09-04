@@ -306,7 +306,7 @@ $(window).bind("load", function () {
             <div id="unpack" class="row-fluid ">
                 <h1><i class="icon-cog color_yellow"></i>Upload the upgrade package</h1>
 
-                <p>Please provide the upgrade package files. <a href="#">Learn more...</a></p>
+                <p>Please provide the upgrade package files. <a target="_blank" href="#">Learn more...</a></p>
                 <form id="uploadForm">
                     <input type="hidden" name="token" value="<?php echo $token ?>">
                     <input type="hidden" name="action" value="unpack">
@@ -328,7 +328,7 @@ $(window).bind("load", function () {
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
             <a class="btn btn-invisible btn-primary" href="index.php">Cancel</a>
-            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>
+            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>:
           </span>
         </div>
     </div>

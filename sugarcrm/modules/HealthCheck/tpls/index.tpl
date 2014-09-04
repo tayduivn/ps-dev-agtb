@@ -156,7 +156,7 @@
                             var item = data[i];
                             var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i + 1, ". ", item.title, "</h1><p>", item.descr];
                             if (data[i].kb) {
-                                html.push("<a href='");
+                                html.push("<a target='_blank' href='");
                                 html.push(data[i].kb);
                                 html.push("'> Learn more...</a>");
                             }
