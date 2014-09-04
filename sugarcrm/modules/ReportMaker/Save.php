@@ -15,10 +15,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
-
-
-
-
+if (!is_admin($current_user)) {
+    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+}
 
 $focus = BeanFactory::getBean('ReportMaker', $_POST['record']);
 

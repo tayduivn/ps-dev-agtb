@@ -15,6 +15,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
+if (!is_admin($current_user)) {
+    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+}
+
 require_once('modules/DataSets/DataSet_Layout.php');
 
 $focus = BeanFactory::getBean('CustomQueries');
