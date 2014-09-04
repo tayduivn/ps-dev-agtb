@@ -203,7 +203,7 @@
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on('add', function(model) {
-                this.prependPost(model);
+                this.renderPost(model);
             }, this);
             this.collection.on('reset', function() {
                 this.disposeAllActivities();
