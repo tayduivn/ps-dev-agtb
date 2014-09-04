@@ -93,7 +93,7 @@ nv.models.multiBarChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -269,15 +269,6 @@ nv.models.multiBarChart = function () {
       // Setup Axes
 
       //------------------------------------------------------------
-      // X-Axis
-
-      xAxisWrap
-        .call(xAxis);
-
-      innerMargin[xAxis.orient()] += xAxis.height();
-      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
-
-      //------------------------------------------------------------
       // Y-Axis
 
       yAxisWrap
@@ -285,6 +276,23 @@ nv.models.multiBarChart = function () {
 
       innerMargin[yAxis.orient()] += yAxis.width();
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+
+      multibar
+        .width(innerWidth)
+        .height(innerHeight);
+
+      multibar.resetScale();
+
+      //------------------------------------------------------------
+      // X-Axis
+
+      xAxisWrap
+        .call(xAxis);
+
+      innerMargin[xAxis.orient()] += xAxis.height();
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
       // Main Chart Components
