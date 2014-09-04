@@ -548,6 +548,17 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /', $sql);
     }
 
+    public function testSetJoinOn()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id","last_name", "opportunity_role"));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->setJoinOn(array('baseBean'=>'contact', 'baseBeanId' => 'test'));
+        $sq->where('id', 'test');
+        $sql = $sq->compileSql();
+        $this->assertcontains("contact_id = 'test'", $sql);
+    }
+
 }
 
 class Contact_Mock_Bug62961 extends Contact

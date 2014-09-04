@@ -115,6 +115,8 @@ class RelateApi extends FilterApi {
         }
 
         $q->joinSubpanel($record, $linkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+        
+        $q->setJoinOn(array('baseBean' => strtolower($record->object_name), 'baseBeanId' => $record->id));
 
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
