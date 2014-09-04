@@ -23,5 +23,7 @@ $mod_strings = array (
     'LBL_TAX' => 'Tax:',
     'LBL_TOTAL_USDOLLAR'=>'Total (US Dollar)',
     'LBL_TOTAL' => 'Total:',
-    'LBL_QUOTE_BUNDLE_POSITION' => 'Quote Bundle Position'
+    'LBL_QUOTE_BUNDLE_POSITION' => 'Quote Bundle Position',
+    'EXCEPTION_INVALID_QUOTE_ID' => 'Quote ID is missing from the payload',
+    'EXCEPTION_NOT_FOUND_QUOTE' =>  'The Quote you requested was not found'
 );

@@ -938,6 +938,8 @@ $renamedefs = array(
         ),
         'ProductBundles' => array(
             array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_INVALID_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_NOT_FOUND_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
         ),
     ),
     'global' => array(
