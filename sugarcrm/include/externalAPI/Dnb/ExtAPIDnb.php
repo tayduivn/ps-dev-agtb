@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 require_once 'include/SugarQuery/SugarQuery.php';
@@ -1113,4 +1113,5 @@ class ExtAPIDnb extends ExternalAPIBase
             'duplicates' => $duplicates
         );
     }
+}
 }

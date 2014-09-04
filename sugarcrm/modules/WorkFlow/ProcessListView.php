@@ -17,7 +17,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
 
 global $current_user;
 $workflow_modules = get_workflow_admin_modules_for_user($current_user);

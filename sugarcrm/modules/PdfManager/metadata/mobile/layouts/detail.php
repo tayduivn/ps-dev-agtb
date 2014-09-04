@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
 
 $viewdefs['PdfManager']['mobile']['layout']['detail'] = array(
     'type' => 'detail',

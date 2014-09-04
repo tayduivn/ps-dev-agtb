@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 $dictionary["documents_revenuelineitems"] = array(
     'true_relationship_type' => 'many-to-many',
     'relationships' => array(

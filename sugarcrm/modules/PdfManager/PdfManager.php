@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 require_once 'modules/PdfManager/PdfManagerHelper.php';
 require_once 'include/upload_file.php';

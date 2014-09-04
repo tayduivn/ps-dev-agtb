@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
  $metafiles['PdfManager'] = array(
     'detailviewdefs'  => 	'modules/PdfManager/metadata/detailviewdefs.php',
