@@ -23,7 +23,7 @@ nv.models.pieChart = function () {
         controls: {close: 'Hide controls', open: 'Show controls'},
         noData: 'No Data Available.'
       },
-      dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
+      dispatch = d3.dispatch('chartClick', 'elementClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
   // Private Variables
@@ -41,6 +41,10 @@ nv.models.pieChart = function () {
         content = tooltipContent(e.point.key, x, y, e, chart);
 
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+  };
+
+  var seriesClick = function (data, e) {
+    return;
   };
 
   //============================================================
@@ -62,6 +66,35 @@ nv.models.pieChart = function () {
 
       chart.update = function () {
         container.transition().duration(durationMs).call(chart);
+      };
+
+      chart.dataSeriesActivate = function (e) {
+        var series = e.point;
+
+        series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive' ;
+
+        // if you have activated a data series, inactivate the rest
+        if (series.active === 'active') {
+          data.filter(function (d) {
+            return d.active !== 'active';
+          }).map(function (d) {
+            d.active = 'inactive';
+            return d;
+          });
+        }
+
+        // if there are no active data series, activate them all
+        if (!data.filter(function (d) {
+          return d.active === 'active';
+        }).length) {
+          data.map(function (d) {
+            d.active = '';
+            container.selectAll('.nv-series').classed('nv-inactive', false);
+            return d;
+          });
+        }
+
+        container.call(chart);
       };
 
       chart.container = this;
@@ -253,6 +286,10 @@ nv.models.pieChart = function () {
         }
       });
 
+      pie.dispatch.on('elementClick', function (e) {
+        seriesClick(data, e);
+      });
+
     });
 
     return chart;
@@ -427,6 +464,14 @@ nv.models.pieChart = function () {
         strings[prop] = _[prop];
       }
     }
+    return chart;
+  };
+
+  chart.seriesClick = function (_) {
+    if (!arguments.length) {
+      return seriesClick;
+    }
+    seriesClick = _;
     return chart;
   };
 

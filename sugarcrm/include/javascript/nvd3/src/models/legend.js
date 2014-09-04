@@ -77,8 +77,10 @@ nv.models.legend = function () {
         .append('g').attr('class', 'nv-legend');
       var mask = container.select('.nv-legend-mask');
       var g = container.select('g.nv-legend');
+      g .attr('transform', 'translate(0,0)');
 
-      var series = g.selectAll('.nv-series').data(function (d) { return d; });
+      var series = g.selectAll('.nv-series')
+            .data(function(d) { return d; }, function(d) { return d.key; });
       var seriesEnter = series.enter().append('g').attr('class', 'nv-series');
       series.exit().remove();
 
@@ -141,70 +143,75 @@ nv.models.legend = function () {
 
         seriesEnter.append('circle')
           .attr('r', radius)
+          .style('stroke-width', 2);
+        series.select('circle')
           .attr('class', function (d, i) {
-            return this.getAttribute('class') || classes(d, i);
+            return classes(d, i);
           })
           .attr('fill', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
+            return color(d, i);
           })
           .attr('stroke', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
-          })
-          .style('stroke-width', 2);
+            return color(d, i);
+          });
 
         seriesEnter.append('text')
-          .text(getKey)
           .attr('dy', '.36em');
+        series.select('text')
+          .text(getKey);
 
       } else {
 
         seriesEnter.append('circle')
+          .style('stroke-width', 0);
+        series.select('circle')
           .attr('r', function (d, i) {
             return d.type === 'dash' ? 0 : radius;
           })
           .attr('class', function (d, i) {
-            return this.getAttribute('class') || classes(d, i);
+            return classes(d, i);
           })
           .attr('fill', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
+            return color(d, i);
           })
           .attr('stroke', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
-          })
-          .style('stroke-width', 0);
+            return color(d, i);
+          });
 
         seriesEnter.append('line')
-          .attr('class', function (d, i) {
-            return this.getAttribute('class') || classes(d, i);
-          })
-          .attr('stroke', function (d, i) {
-            return this.getAttribute('stroke') || color(d, i);
-          })
-          .attr('stroke-width', 3)
           .attr('x0', 0)
           .attr('y0', 0)
           .attr('y1', 0)
           .style('stroke-width', '4px');
+        series.select('line')
+          .attr('class', function (d, i) {
+            return classes(d, i);
+          })
+          .attr('stroke', function (d, i) {
+            return color(d, i);
+          });
 
         seriesEnter.append('circle')
+          .style('stroke-width', 0);
+        series.select('circle')
           .attr('r', function (d, i) {
             return d.type === 'dash' ? 0 : radius;
           })
           .attr('class', function (d, i) {
-            return this.getAttribute('class') || classes(d, i);
+            return classes(d, i);
           })
           .attr('fill', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
+            return color(d, i);
           })
           .attr('stroke', function (d, i) {
-            return this.getAttribute('fill') || color(d, i);
-          })
-          .style('stroke-width', 0);
+            return color(d, i);
+          });
 
         seriesEnter.append('text')
-          .text(getKey)
           .attr('dy', '.32em')
-          .attr('dx', 0)
+          .attr('dx', 0);
+        series.select('text')
+          .text(getKey)
           .attr('text-anchor', position);
 
       }

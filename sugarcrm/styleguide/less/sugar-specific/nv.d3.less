@@ -340,6 +340,15 @@ body.full-screen {
   fill-opacity: .7;
 }
 
+.nv-pie {
+  .nv-inactive path {
+    fill-opacity: 0.5;
+  }
+  .nv-inactive:hover path {
+    fill-opacity: 0.75;
+  }
+}
+
 /**********
 * Lines
 */
@@ -511,6 +520,12 @@ body.full-screen {
 .nv-funnelChart {
   .nv-y path {
     stroke: none;
+  }
+  .nv-inactive polygon {
+    fill-opacity: 0.5;
+  }
+  .nv-inactive:hover polygon {
+    fill-opacity: 0.75;
   }
 }
 

@@ -141,10 +141,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                 if (SUGAR.charts.isDataEmpty(data)) {
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
-                    var barChart = (chartConfig['orientation'] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
+                    var vertical = chartConfig['orientation'] === 'vertical' ? true : false;
+
+                    var barChart = nv.models.multiBarChart();
 
                     barChart
                         .id(d3ChartId)
+                        .vertical(vertical)
                         .margin(params.margin)
                         .showTitle(params.show_title)
                         .tooltips(params.show_tooltips)
