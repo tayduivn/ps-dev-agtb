@@ -652,8 +652,9 @@
      * @private
      */
     _getColumnsForDisplay: function() {
-        var columns = [],
-            fields = this.getFieldMetaForView(this._getListMeta(this.settings.get('module')));
+        var columns = [];
+        var fields = this.getFieldMetaForView(this._getListMeta(this.settings.get('module')));
+        var moduleMeta = app.metadata.getModule(this.module);
         if (!this.settings.get('display_columns')) {
             this._updateDisplayColumns();
         }
@@ -664,12 +665,16 @@
             var field = _.find(fields, function(field) {
                 return field.name === name;
             }, this);
-            var column = _.extend({name: name, sortable: true}, field || {});
+            // It's possible that a column is on the dashlet and not on the
+            // main list view (thus was never patched by metadata-manager).
+            // We need to fix up the columns in that case.
+            // FIXME: This method should not be used as a public method (though
+            // it's being used everywhere in the app) this should be reviewed
+            // when SC-3607 gets in.
+            field = field || app.metadata._patchFields(this.module, moduleMeta, [name]);
+            var column = _.extend({sortable: true}, field);
             columns.push(column);
         }, this);
-        //Its possible that a column is on the dashlet and not on the main list view.
-        //We need to fix up the columns in that case.
-        columns = app.metadata._patchFields(this.module, app.metadata.getModule(this.module), columns);
         return columns;
     },
 
