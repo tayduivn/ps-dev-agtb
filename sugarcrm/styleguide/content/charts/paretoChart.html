@@ -56,7 +56,6 @@
           var data = model.models.map( function(d,i) { return d.attributes; })[0];
           d3.select(self.el)
               .datum(data)
-            .transition().duration(500)
               .call(self.chart);
       });
     },

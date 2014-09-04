@@ -16,13 +16,14 @@ nv.models.funnel = function() {
     , getV = function(d) { return d.value; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = true
-    , delay = 1200
     , xDomain
     , yDomain
+    , delay = 0
+    , durationMs = 0
     , fmtValueLabel = function (d) { return d.value; }
     , color = nv.utils.defaultColor()
     , fill = color
-    , classes = function (d,i) { return 'nv-group nv-series-' + i; }
+    , classes = function (d,i) { return 'nv-bar positive'; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     ;
 
@@ -189,71 +190,73 @@ nv.models.funnel = function() {
           .data(function(d) { return d; }, function(d) { return d.key; });
 
       groups.enter().append('g')
-          .style('stroke-opacity', 1e-6)
-          .style('fill-opacity', 1e-6);
+          .attr('class', function(d, i) { return this.getAttribute('class') || 'nv-group nv-series-' + i; });
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
-              return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 0);
+              return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
             })
           .remove();
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
-          .attr('transform', 'translate('+ c +',0)')
+          .attr('transform', 'translate(' + c + ',0)')
           .remove();
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
-          .attr('transform', 'translate('+ availableWidth +',0)')
+          .attr('transform', 'translate(' + availableWidth + ',0)')
           .remove();
 
-      groups
-          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
-          .classed('hover', function(d) { return d.hover; })
-          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
-          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
 
-      d3.transition(groups).duration(0)
-          .style('stroke-opacity', 1)
-          .style('fill-opacity', 1);
       //------------------------------------------------------------
       // Polygons
 
       var funs = groups.selectAll('polygon.nv-bar')
-          .data(function(d) { return d.values; });
+          .data(function(d, i) {
+            d.values.map(function(v) {
+              v.series = d.series;
+            });
+            return d.values;
+          });
 
       var funsEnter = funs.enter()
           .append('polygon')
-            .attr('class', 'nv-bar positive')
+            .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, d.series); })
             .attr('points', function(d) {
-              return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 0);
-            });
+              return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
+            })
+            .classed('hover', function(d) { return d.hover; })
+            .attr('fill', function(d, i) { return this.getAttribute('fill') || fill(d, d.series); })
+            .style('stroke', '#ffffff')
+            .style('stroke-width', 3)
+            .style('stroke-opacity', 1)
+            .style('fill-opacity', 1);
 
-      d3.transition(funs).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
+      funs.transition().duration(durationMs)
+          .delay(function(d, i) { var ms = i * delay / data[0].values.length; return ms; })
           .attr('points', function(d) {
-            return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 1);
+            return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 1);
           });
 
       //------------------------------------------------------------
       // Value Labels
 
       var lblValue = groups.selectAll('.nv-label-value')
-            .data( function(d) { return d.values; } );
+            .data(function(d) { return d.values; });
 
       var lblValueEnter = lblValue.enter()
             .append('g')
               .attr('class', 'nv-label-value')
-              .attr('transform', 'translate('+ c +',0)');
+              .attr('transform', 'translate(' + c + ',0)');
 
       // lblValueEnter.append('rect')
       //     .attr('x', -labelBoxWidth/2)
@@ -271,9 +274,11 @@ nv.models.funnel = function() {
           .attr('x', 0)
           .attr('y', 5)
           .attr('text-anchor', 'middle')
-          .text(function(d){ return (d.height > 2*funnelMinHeight) ? fmtValueLabel(d) : ''; })
-          .style('pointer-events', 'none')
-        ;
+          .text(function(d) { return (d.height > 2 * funnelMinHeight) ? fmtValueLabel(d) : ''; })
+          .style('font-size', '15px')
+          .style('fill', '#fff')
+          .style('stroke', 'none')
+          .style('pointer-events', 'none');
 
       // lblValue.selectAll('text').each(function(d,i){
       //       var width = this.getBBox().width + 20;
@@ -287,36 +292,40 @@ nv.models.funnel = function() {
       //         .attr('x', -labelBoxWidth/2);
       //     });
 
-      d3.transition(lblValue).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
-          .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; });
+      lblValue.transition().duration(durationMs)
+          .attr('transform', function(d) { return 'translate(' + c + ',' + (y(d.y0 + d.y / 2)) + ')'; });
 
       //------------------------------------------------------------
       // Group Labels
 
       var lblGroup = groups.selectAll('text.nv-label-group')
-          .data( function(d) { return [ { y: d.values[0].y, y0: d.values[0].y0, key: d.count } ]; });
+          .data(function(d) {
+            d.values.map(function(v) {
+              v.count = d.count;
+            });
+            return d.values;
+          });
 
       var lblGroupEnter = lblGroup.enter()
           .append('text')
             .attr('class', 'nv-label-group')
-            .attr('x', 0 )
-            .attr('y', 0 )
+            .attr('x', 0)
+            .attr('y', 0)
             .attr('dx', -10)
             .attr('dy', 5)
             .attr('text-anchor', 'middle')
-            .text(function(d) { return d.key; })
-            .attr('stroke', 'none')
+            .text(function(d) { return d.count; })
+            .style('stroke', 'none')
             .style('fill', 'black')
             .style('fill-opacity', 1e-6)
-            .attr('transform', 'translate('+ availableWidth +',0)')
-          ;
+            .style('font-size', '15px')
+            .style('font-weight', 'bold')
+            .attr('transform', 'translate(' + availableWidth + ',0)');
 
-      d3.transition(lblGroup).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
+      lblGroup.transition().duration(durationMs)
+          .delay(function(d, i) { return i * delay / data[0].values.length; })
           .style('fill-opacity', 1)
-          .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
-        ;
+          .attr('transform', function(d) { return 'translate(' + availableWidth + ',' + (y(d.y0 + d.y / 2)) + ')'; });
 
       //------------------------------------------------------------
 

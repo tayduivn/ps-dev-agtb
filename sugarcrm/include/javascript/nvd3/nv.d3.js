@@ -3387,13 +3387,14 @@ nv.models.funnel = function() {
     , getV = function(d) { return d.value; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = true
-    , delay = 1200
     , xDomain
     , yDomain
+    , delay = 0
+    , durationMs = 0
     , fmtValueLabel = function (d) { return d.value; }
     , color = nv.utils.defaultColor()
     , fill = color
-    , classes = function (d,i) { return 'nv-group nv-series-' + i; }
+    , classes = function (d,i) { return 'nv-bar positive'; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     ;
 
@@ -3560,71 +3561,73 @@ nv.models.funnel = function() {
           .data(function(d) { return d; }, function(d) { return d.key; });
 
       groups.enter().append('g')
-          .style('stroke-opacity', 1e-6)
-          .style('fill-opacity', 1e-6);
+          .attr('class', function(d, i) { return this.getAttribute('class') || 'nv-group nv-series-' + i; });
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
-              return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 0);
+              return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
             })
           .remove();
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
-          .attr('transform', 'translate('+ c +',0)')
+          .attr('transform', 'translate(' + c + ',0)')
           .remove();
 
-      d3.transition(groups.exit()).duration(0)
+      groups.exit().transition().duration(durationMs)
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
-          .attr('transform', 'translate('+ availableWidth +',0)')
+          .attr('transform', 'translate(' + availableWidth + ',0)')
           .remove();
 
-      groups
-          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
-          .classed('hover', function(d) { return d.hover; })
-          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
-          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
 
-      d3.transition(groups).duration(0)
-          .style('stroke-opacity', 1)
-          .style('fill-opacity', 1);
       //------------------------------------------------------------
       // Polygons
 
       var funs = groups.selectAll('polygon.nv-bar')
-          .data(function(d) { return d.values; });
+          .data(function(d, i) {
+            d.values.map(function(v) {
+              v.series = d.series;
+            });
+            return d.values;
+          });
 
       var funsEnter = funs.enter()
           .append('polygon')
-            .attr('class', 'nv-bar positive')
+            .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, d.series); })
             .attr('points', function(d) {
-              return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 0);
-            });
+              return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
+            })
+            .classed('hover', function(d) { return d.hover; })
+            .attr('fill', function(d, i) { return this.getAttribute('fill') || fill(d, d.series); })
+            .style('stroke', '#ffffff')
+            .style('stroke-width', 3)
+            .style('stroke-opacity', 1)
+            .style('fill-opacity', 1);
 
-      d3.transition(funs).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
+      funs.transition().duration(durationMs)
+          .delay(function(d, i) { var ms = i * delay / data[0].values.length; return ms; })
           .attr('points', function(d) {
-            return pointsTrapezoid(y(d.y0), y(d.y0+d.y), 1);
+            return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 1);
           });
 
       //------------------------------------------------------------
       // Value Labels
 
       var lblValue = groups.selectAll('.nv-label-value')
-            .data( function(d) { return d.values; } );
+            .data(function(d) { return d.values; });
 
       var lblValueEnter = lblValue.enter()
             .append('g')
               .attr('class', 'nv-label-value')
-              .attr('transform', 'translate('+ c +',0)');
+              .attr('transform', 'translate(' + c + ',0)');
 
       // lblValueEnter.append('rect')
       //     .attr('x', -labelBoxWidth/2)
@@ -3642,9 +3645,11 @@ nv.models.funnel = function() {
           .attr('x', 0)
           .attr('y', 5)
           .attr('text-anchor', 'middle')
-          .text(function(d){ return (d.height > 2*funnelMinHeight) ? fmtValueLabel(d) : ''; })
-          .style('pointer-events', 'none')
-        ;
+          .text(function(d) { return (d.height > 2 * funnelMinHeight) ? fmtValueLabel(d) : ''; })
+          .style('font-size', '15px')
+          .style('fill', '#fff')
+          .style('stroke', 'none')
+          .style('pointer-events', 'none');
 
       // lblValue.selectAll('text').each(function(d,i){
       //       var width = this.getBBox().width + 20;
@@ -3658,36 +3663,40 @@ nv.models.funnel = function() {
       //         .attr('x', -labelBoxWidth/2);
       //     });
 
-      d3.transition(lblValue).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
-          .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; });
+      lblValue.transition().duration(durationMs)
+          .attr('transform', function(d) { return 'translate(' + c + ',' + (y(d.y0 + d.y / 2)) + ')'; });
 
       //------------------------------------------------------------
       // Group Labels
 
       var lblGroup = groups.selectAll('text.nv-label-group')
-          .data( function(d) { return [ { y: d.values[0].y, y0: d.values[0].y0, key: d.count } ]; });
+          .data(function(d) {
+            d.values.map(function(v) {
+              v.count = d.count;
+            });
+            return d.values;
+          });
 
       var lblGroupEnter = lblGroup.enter()
           .append('text')
             .attr('class', 'nv-label-group')
-            .attr('x', 0 )
-            .attr('y', 0 )
+            .attr('x', 0)
+            .attr('y', 0)
             .attr('dx', -10)
             .attr('dy', 5)
             .attr('text-anchor', 'middle')
-            .text(function(d) { return d.key; })
-            .attr('stroke', 'none')
+            .text(function(d) { return d.count; })
+            .style('stroke', 'none')
             .style('fill', 'black')
             .style('fill-opacity', 1e-6)
-            .attr('transform', 'translate('+ availableWidth +',0)')
-          ;
+            .style('font-size', '15px')
+            .style('font-weight', 'bold')
+            .attr('transform', 'translate(' + availableWidth + ',0)');
 
-      d3.transition(lblGroup).duration(0)
-          .delay(function(d,i) { return i * delay / data[0].values.length; })
+      lblGroup.transition().duration(durationMs)
+          .delay(function(d, i) { return i * delay / data[0].values.length; })
           .style('fill-opacity', 1)
-          .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
-        ;
+          .attr('transform', function(d) { return 'translate(' + availableWidth + ',' + (y(d.y0 + d.y / 2)) + ')'; });
 
       //------------------------------------------------------------
 
@@ -3895,6 +3904,7 @@ nv.models.funnelChart = function () {
       },
       x,
       y,
+      durationMs = 0,
       state = {},
       strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},
@@ -3945,7 +3955,7 @@ nv.models.funnelChart = function () {
           innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
 
       chart.update = function () {
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       };
 
       chart.container = this;
@@ -3977,9 +3987,17 @@ nv.models.funnelChart = function () {
 
       //------------------------------------------------------------
       // Process data
+      //add series index to each data point for reference
+      var funnelData = data.map(function(d, i) {
+          d.series = i;
+          d.values.map(function(v) {
+            v.series = d.series;
+          });
+          return d;
+        });
 
       //set state.disabled
-      state.disabled = data.map(function (d) { return !!d.disabled; });
+      state.disabled = funnelData.map(function(d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup Scales
@@ -3990,17 +4008,17 @@ nv.models.funnelChart = function () {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([data]),
+      var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([funnelData]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-funnelChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
@@ -4040,7 +4058,7 @@ nv.models.funnelChart = function () {
           .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(data)
+          .datum(funnelData)
           .call(legend);
 
         legend
@@ -4063,16 +4081,16 @@ nv.models.funnelChart = function () {
         .height(innerHeight);
 
       funnelWrap
-        .datum(data.filter(function (d) { return !d.disabled; }))
+        .datum(funnelData.filter(function (d) { return !d.disabled; }))
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-        .transition()
+        .transition().duration(durationMs)
           .call(funnel);
 
       //------------------------------------------------------------
       // Setup Scales (again, not sure why it has to be here and not above?)
 
       var series1 = [{x:0,y:0}];
-      var series2 = data.filter(function (d) {
+      var series2 = funnelData.filter(function (d) {
               return !d.disabled;
             })
             .map(function (d) {
@@ -4103,7 +4121,7 @@ nv.models.funnelChart = function () {
 
       yAxisWrap
         .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerWidth) + ',' + innerMargin.top + ')')
-        .transition().duration(chart.delay())
+        .transition().duration(durationMs)
           .call(yAxis);
 
       //============================================================
@@ -4113,18 +4131,18 @@ nv.models.funnelChart = function () {
       legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function (d) { return !d.disabled; }).length) {
-          data.map(function (d) {
+        if (!funnelData.filter(function (d) { return !d.disabled; }).length) {
+          funnelData.map(function (d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function (d) { return !!d.disabled; });
+        state.disabled = funnelData.map(function (d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('tooltipShow', function (e) {
@@ -4148,13 +4166,13 @@ nv.models.funnelChart = function () {
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function (e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          funnelData.forEach(function (series,i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
         }
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('chartClick', function (e) {
@@ -4202,7 +4220,7 @@ nv.models.funnelChart = function () {
           return nv.utils.defaultColor()(d, i);
         },
         classes = function (d, i) {
-          return 'nv-group nv-series-' + i;
+          return 'nv-bar positive';
         },
         type = arguments[0],
         params = arguments[1] || {};
@@ -4222,7 +4240,7 @@ nv.models.funnelChart = function () {
         };
         classes = function (d, i) {
           var iClass = (i * (params.step || 1)) % 14;
-          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
+          return 'nv-bar positive ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
         };
         break;
     }
@@ -9380,6 +9398,7 @@ nv.models.pie = function() {
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       valueFormat = d3.format(',.2f'),
       showLabels = true,
+      showLeaders = true,
       pieLabelsOutside = true,
       donutLabelsOutside = false,
       labelThreshold = 0.02, //if slice percentage is under this, don't show label
@@ -9388,6 +9407,7 @@ nv.models.pie = function() {
       startAngle = false,
       endAngle = false,
       donutRatio = 0.447,
+      durationMs = 0,
       color = nv.utils.defaultColor(),
       fill = color,
       classes = function(d, i) { return 'nv-slice nv-series-' + i; },
@@ -9401,7 +9421,7 @@ nv.models.pie = function() {
       var availableWidth = width - margin.left - margin.right,
           availableHeight = height - margin.top - margin.bottom,
           radius = Math.min(availableWidth, availableHeight) / 2,
-          arcRadius = radius - (showLabels ? radius / 5 : 0),
+          arcRadius = radius - (showLabels ? radius / 8 : 0),
           container = d3.select(this);
 
       //------------------------------------------------------------
@@ -9414,7 +9434,7 @@ nv.models.pie = function() {
 
       //set up the gradient constructor function
       chart.gradient = function(d, i) {
-        var params = {x: 0, y: 0, r: radius, s: (donut ? (donutRatio * 100 ) + '%' : '0%'), u: 'userSpaceOnUse'};
+        var params = {x: 0, y: 0, r: radius, s: (donut ? (donutRatio * 100) + '%' : '0%'), u: 'userSpaceOnUse'};
         return nv.utils.colorRadialGradient(d, id + '-' + i, params, color(d, i), wrap.select('defs'));
       };
 
@@ -9512,15 +9532,17 @@ nv.models.pie = function() {
               d3.event.stopPropagation();
             });
 
-      slices
-        .attr('fill', function(d, i) { return fill(d.data, i); })
-        .attr('stroke', function(d, i) { return fill(d.data, i); });
-
       var paths = ae.append('path')
             .each(function(d) { this._current = d; });
             //.attr('d', arc);
 
-      d3.transition(slices.select('path'))
+      slices.select('path')
+        .style('fill', function(d, i) { return fill(d.data, d.data.series); })
+        .style('stroke', '#ffffff')
+        .style('stroke-width', 3)
+        .style('stroke-opacity', 1);
+
+      slices.select('path').transition().duration(durationMs)
         .attr('d', arc)
         .attrTween('d', arcTween);
 
@@ -9541,36 +9563,31 @@ nv.models.pie = function() {
             var group = d3.select(this);
 
             group
-              .attr('transform', function(d) {
-                if (labelSunbeamLayout) {
-                  d.outerRadius = arcRadius + 10; // Set Outer Coordinate
-                  d.innerRadius = arcRadius + 15; // Set Inner Coordinate
-                  var rotateAngle = (d.startAngle + d.endAngle) / 2 * (180 / Math.PI);
-                  if ((d.startAngle + d.endAngle) / 2 < Math.PI) {
-                    rotateAngle -= 90;
-                  } else {
-                    rotateAngle += 90;
-                  }
-                  return 'translate(' + labelsArc.centroid(d) + ') rotate(' + rotateAngle + ')';
-                } else {
-                  d.outerRadius = radius + 10; // Set Outer Coordinate
-                  d.innerRadius = radius + 15; // Set Inner Coordinate
-                  return 'translate(' + labelsArc.centroid(d) + ')';
-                }
-              });
+              .attr('transform', 'translate(0,0)');
 
-            group.append('rect')
-                .style('stroke', '#fff')
-                .style('fill', '#fff')
-                .attr('rx', 3)
-                .attr('ry', 3);
+            if (!pieLabelsOutside && !donutLabelsOutside) {
+              group.append('rect')
+                  .style('fill', '#fff')
+                  .style('fill-opacity', 0.4)
+                  .style('stroke-opacity', 0)
+                  .attr('rx', 3)
+                  .attr('ry', 3);
+            }
 
             group.append('text')
+                .attr('dy', '.35em')
                 .style('text-anchor', labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle') //center the text on it's origin or begin/end if orthogonal aligned
                 .style('fill', '#000');
           });
 
-        slices.select('.nv-label').transition()
+        if (showLeaders) {
+          ae.append('polyline')
+            .attr('class', 'nv-label-leader')
+            .style('stroke', '#aaa')
+            .style('fill', 'none');
+        }
+
+        slices.select('.nv-label').transition().duration(durationMs)
           .attr('transform', function(d) {
             if (labelSunbeamLayout) {
               d.outerRadius = arcRadius + 10; // Set Outer Coordinate
@@ -9583,30 +9600,55 @@ nv.models.pie = function() {
               }
               return 'translate(' + labelsArc.centroid(d) + ') rotate(' + rotateAngle + ')';
             } else {
-              d.outerRadius = radius + 10; // Set Outer Coordinate
-              d.innerRadius = radius + 15; // Set Inner Coordinate
-              return 'translate(' + labelsArc.centroid(d) + ')';
+              d.outerRadius = radius + 0; // Set Outer Coordinate
+              d.innerRadius = radius + 0; // Set Inner Coordinate
+              var labelsPosition = labelsArc.centroid(d),
+                  leadOffset = showLeaders ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 15 : -15) : 0;
+              return 'translate(' + [labelsPosition[0] + leadOffset, labelsPosition[1]] + ')';
             }
           });
 
+        if (showLeaders) {
+          slices.select('.nv-label-leader').transition().duration(durationMs)
+            .attr('points', function(d) {
+              d.outerRadius = radius; // Set Outer Coordinate
+              d.innerRadius = radius; // Set Inner Coordinate
+              var outerArcPoints = d3.svg.arc()
+                    .outerRadius(arc.outerRadius())
+                    .innerRadius(arc.outerRadius())
+                    .centroid(d),
+                  labelsArcPoints = labelsArc.centroid(d),
+                  leadOffset = (d.startAngle + d.endAngle) / 2 < Math.PI ? 10 : -10;
+                  leadArcPoints = [labelsArcPoints[0] + leadOffset, labelsArcPoints[1]];
+              return outerArcPoints + ' ' + labelsArcPoints + ' ' + leadArcPoints;
+            })
+            .style('stroke-opacity', function(d, i) {
+              var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
+                  label = getX(d.data);
+              return (label && percent > labelThreshold) ? 1 : 0;
+            });
+        }
+
         slices.each(function(d, i) {
           var slice = d3.select(this);
-
           slice
             .select('.nv-label text')
-              .style('text-anchor', labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle') //center the text on it's origin or begin/end if orthogonal aligned
+              .style('text-anchor', (d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') //center the text on it's origin or begin/end if orthogonal aligned
               .text(function(d, i) {
-                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
-                return (d.value && percent > labelThreshold) ? getX(d.data) : '';
+                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
+                    label = getX(d.data);
+                return (label && percent > labelThreshold) ? label : '';
               });
 
-          var textBox = slice.select('text').node().getBBox();
-          slice.select(".nv-label rect")
-            .attr("width", textBox.width + 10)
-            .attr("height", textBox.height + 10)
-            .attr("transform", function() {
-              return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
-            });
+          if (!pieLabelsOutside && !donutLabelsOutside) {
+            var textBox = slice.select('text').node().getBBox();
+            slice.select(".nv-label rect")
+              .attr("width", textBox.width + 10)
+              .attr("height", textBox.height + 10)
+              .attr("transform", function() {
+                return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
+              });
+          }
         });
       }
 
@@ -9765,6 +9807,14 @@ nv.models.pie = function() {
     return chart;
   };
 
+  chart.showLeaders = function(_) {
+    if (!arguments.length) {
+      return showLeaders;
+    }
+    showLeaders = _;
+    return chart;
+  };
+
   chart.donut = function(_) {
     if (!arguments.length) {
       return donut;
@@ -9837,6 +9887,7 @@ nv.models.pieChart = function () {
       showLegend = true,
       hole = false,
       tooltip = null,
+      durationMs = 0,
       tooltips = true,
       tooltipContent = function (key, x, y, e, graph) {
         return '<h3>' + key + ' - ' + x + '</h3>' +
@@ -9886,7 +9937,7 @@ nv.models.pieChart = function () {
           innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
 
       chart.update = function () {
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       };
 
       chart.container = this;
@@ -9916,24 +9967,29 @@ nv.models.pieChart = function () {
 
       //------------------------------------------------------------
       // Process data
+      //add series index to each data point for reference
+      var pieData = data.map(function(d, i) {
+          d.series = i;
+          return d;
+        });
 
       //set state.disabled
-      state.disabled = data.map(function (d) { return !!d.disabled; });
+      state.disabled = pieData.map(function (d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]),
+      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([pieData]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-pieWrap');
@@ -9973,7 +10029,7 @@ nv.models.pieChart = function () {
           .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(data)
+          .datum(pieData)
           .call(legend);
 
         legend
@@ -9997,9 +10053,9 @@ nv.models.pieChart = function () {
         .height(innerHeight);
 
       pieWrap
-        .datum(data.filter(function (d) { return !d.disabled; }))
+        .datum(pieData.filter(function (d) { return !d.disabled; }))
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-        .transition()
+        .transition().duration(durationMs)
           .call(pie);
 
       if (hole) {
@@ -10007,11 +10063,13 @@ nv.models.pieChart = function () {
         holeWrap.append('text')
           .text(hole)
           .attr('text-anchor', 'middle')
-          .attr('class','nv-pie-hole')
-          .attr('fill', '#333')
-          .style('alignment-baseline', 'central');
+          .attr('class', 'nv-pie-hole')
+          .attr('dy', '.35em')
+          .style('fill', '#333')
+          .style('font-size', '32px')
+          .style('font-weight', 'bold');
         holeWrap
-          .attr('transform', 'translate('+ (innerMargin.left + innerWidth / 2) + ',' + (innerMargin.top + innerHeight / 2) +')');
+          .attr('transform', 'translate(' + (innerWidth / 2 + innerMargin.left) + ',' + (innerHeight / 2 + innerMargin.top) + ')');
       }
 
       //============================================================
@@ -10021,7 +10079,7 @@ nv.models.pieChart = function () {
       legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!pie.values()(data).filter(function (d) { return !d.disabled; }).length) {
+        if (!pie.values()(pieData).filter(function (d) { return !d.disabled; }).length) {
           pie.values()(data).map(function (d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
@@ -10029,10 +10087,10 @@ nv.models.pieChart = function () {
           });
         }
 
-        state.disabled = data.map(function (d) { return !!d.disabled; });
+        state.disabled = pieData.map(function (d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('tooltipShow', function (e) {
@@ -10056,13 +10114,13 @@ nv.models.pieChart = function () {
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function (e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          pieData.forEach(function (series,i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
         }
 
-        container.transition().call(chart);
+        container.transition().duration(durationMs).call(chart);
       });
 
       dispatch.on('chartClick', function (e) {
@@ -10102,7 +10160,7 @@ nv.models.pieChart = function () {
   chart.legend = legend;
 
   d3.rebind(chart, pie, 'id', 'x', 'y', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
+  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'showLeaders', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
 
   chart.colorData = function (_) {
     var colors = function (d, i) {
