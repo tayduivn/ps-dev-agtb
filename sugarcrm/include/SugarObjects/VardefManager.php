@@ -624,6 +624,8 @@ class VardefManager{
             return;
         }
 
+        $GLOBALS['log']->debug("VardefManager::loadVardef called for module: $module");
+
         //BEGIN SUGARCRM flav=pro ONLY
         if (empty($params['ignore_rel_calc_fields']) &&
             !empty($GLOBALS['dictionary'][$object]) &&
