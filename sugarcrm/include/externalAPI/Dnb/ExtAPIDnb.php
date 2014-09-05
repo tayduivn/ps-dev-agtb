@@ -1114,4 +1114,3 @@ class ExtAPIDnb extends ExternalAPIBase
         );
     }
 }
-}

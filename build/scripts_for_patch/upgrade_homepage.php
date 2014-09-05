@@ -1,5 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
+
 /**
  * This script executes after the files are copied during the install.
  *
