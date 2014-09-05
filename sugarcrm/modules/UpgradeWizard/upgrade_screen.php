@@ -306,7 +306,7 @@ $(window).bind("load", function () {
             <div id="unpack" class="row-fluid ">
                 <h1><i class="icon-cog color_yellow"></i>Upload the upgrade package</h1>
 
-                <p>Please provide the upgrade package files. <a href="#">Learn more...</a></p>
+                <p>Please provide the upgrade package files. <a href="http://support.sugarcrm.com/03_Training/06_Upgrade_Training/" target="_blank">Learn more...</a></p>
                 <form id="uploadForm">
                     <input type="hidden" name="token" value="<?php echo $token ?>">
                     <input type="hidden" name="action" value="unpack">
