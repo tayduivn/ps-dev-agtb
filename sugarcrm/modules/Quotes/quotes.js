@@ -10,7 +10,7 @@
  */
 
 table_array = [];
-function QuotesEditManager(Y) {
+function QuotesEditManager() {
     this.count = 0;
     this.openPopup = function(value, count) {
         var popup_request_data = {
@@ -320,7 +320,7 @@ function QuotesEditManager(Y) {
         }
         table_array[id] = new Array();
         rows_nb_per_group[id] = 1;
-        var form = Y.one('#EditView')._node;
+        var form = $('#EditView')[0];
         var textEl = this.createElement('input', {
             'type': 'hidden',
             'name': 'delete_table[' + id + ']',
@@ -330,7 +330,7 @@ function QuotesEditManager(Y) {
         item_list_MSI['delete_table[' + id + ']'] = textEl;
         form.appendChild(textEl);
 
-        var tables = Y.one('#add_tables')._node;
+        var tables = $('#add_tables')[0];
         var tableEl = this.createElement('table', {
             'name': id,
             'id': id,
@@ -345,7 +345,7 @@ function QuotesEditManager(Y) {
         var newDIV = this.createElement('div', {
             'id': id + '_header'
         });
-        Y.one(newDIV).setContent(this.getTableSettings(id));
+        $(newDIV).html(this.getTableSettings(id));
         tables.appendChild(newHR);
         tables.appendChild(newDIV);
         tables.appendChild(tableEl);
@@ -813,7 +813,7 @@ function QuotesEditManager(Y) {
         cell.appendChild(buttonEl);
         rows_nb_per_group[table_id] = rows_nb_per_group[table_id] + 1;
         this.count++;
-        Y.one('#product_count')._node.value = this.count;
+        $('#product_count')[0].value = this.count;
     };
 
     this.addRow = function(id, quantity, product_template_id, product_name, cost_price, list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, bundle_name, bundle_shipping, product_description, type_id, discount_amount, discount_select, deal_calc, product_status) {
@@ -975,7 +975,7 @@ function QuotesEditManager(Y) {
         });
         var quantName = 'quantity_' + this.count;
         item_list_MSI['quantity[' + this.count + ']'] = textEl;
-        Y.one(textEl).on('change', function() {
+        $(textEl).on('change', function() {
             if (isFloat(quotesManager.lookup_item(quantName, document).value)) {
                 quotesManager.calculate(document);
             } else {
@@ -1040,7 +1040,7 @@ function QuotesEditManager(Y) {
             'id': itemName,
             'value': this.selectButtonValue
         }, ['button']);
-        Y.one(buttonEl).setContent('<img src="index.php?entryPoint=getImage&imageName=id-ff-select.png&themeName=' + SUGAR.themes.theme_name + '">');
+        $(buttonEl).html('<img src="index.php?entryPoint=getImage&imageName=id-ff-select.png&themeName=' + SUGAR.themes.theme_name + '">');
         buttonEl.textElement = 'name_' + this.count;
         buttonEl.count = this.count;
         buttonEl.onclick = function() {
@@ -1077,7 +1077,7 @@ function QuotesEditManager(Y) {
         var divselect = this.createElement('div', {
             'id': 'taxselect' + this.count
         });
-        Y.one(divselect).hide();
+        $(divselect).hide();
         item_list_MSI['taxselect' + this.count] = divselect;
         var cell3 = row.insertCell(row.cells.length);
         cell3.width = 100;
@@ -1108,7 +1108,7 @@ function QuotesEditManager(Y) {
         var divnoselect = this.createElement('div', {
             'id': 'taxinput' + this.count
         });
-        Y.one(divnoselect).hide();
+        $(divnoselect).hide();
         //        divnoselect.style.display = 'none';>
         item_list_MSI['taxinput' + this.count] = divselect;
 
@@ -1252,7 +1252,7 @@ function QuotesEditManager(Y) {
         var divnoselect = this.createElement('div', {
             'id': 'deal_calc' + this.count
         });
-        Y.one(divnoselect).hide();
+        $(divnoselect).hide();
         item_list_MSI['deal_calc' + this.count] = divselect;
 
         var itemName = 'discount_select_' + this.count;
@@ -1676,16 +1676,16 @@ function QuotesEditManager(Y) {
         return true;
     };
     this.createElement = function(tagName, validAttributes, classes) {
-        var inputEl = Y.Node.create('<' + tagName + ' />');
+        var inputEl = $(document.createElement(tagName));
         for (var attr in validAttributes) {
-            inputEl.set(attr, validAttributes[attr]);
+            inputEl.attr(attr, validAttributes[attr]);
         }
         if (typeof classes != 'undefined') {
             for (var i = 0; i < classes.length; i++) {
                 inputEl.addClass(classes[i]);
             }
         }
-        return inputEl._node;
+        return inputEl[0];
     };
 }
 

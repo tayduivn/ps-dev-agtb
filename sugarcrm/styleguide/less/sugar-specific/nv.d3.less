@@ -49,7 +49,7 @@ svg .title {
   visibility: hidden;
   position: absolute;
   left: -10000px;
-  width: 640px;
+  width: 720px;
   height: 480px;
   svg text {
     font-size: 15px;
@@ -245,9 +245,6 @@ body.full-screen {
   fill: steelblue;
   cursor: pointer;
   fill-opacity: .75;
-
-  @transition: fill-opacity 250ms linear;
-  .transition(@transition);
 }
 
 .nv-bars rect:hover {
@@ -277,8 +274,6 @@ body.full-screen {
   stroke-opacity: 1;
   stroke-width: 2px;
   stroke: @white;
-  @transition: fill-opacity 250ms linear;
-  .transition(@transition);
 }
 
 .nv-multibar .nv-groups rect:hover,
@@ -301,38 +296,9 @@ body.full-screen {
 *  Pie Chart
 */
 
-.nv-pie path {
-  stroke-opacity: 0;
-
-  @transition: fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
-  .transition(@transition);
-}
-
-.nv-pie .nv-slice text {
-  stroke: @black;
-  stroke-width: 0;
-}
-
-.nv-pie path {
-  stroke: @white;
-  stroke-width: 3px;
-  stroke-opacity: 1;
-}
-
 .nv-pie .hover path {
   fill-opacity: .7;
 }
-
-.nv-pie .nv-label rect {
-  fill-opacity: 0;
-  stroke-opacity: 0;
-}
-
-.nv-pie-hole {
-  font-size: 32px;
-  font-weight: bold;
-}
-
 
 /**********
 * Lines
@@ -365,11 +331,6 @@ body.full-screen {
   stroke-opacity: .5;
 }
 
-.nv-groups .nv-point {
-  @transition: stroke-width 250ms linear, stroke-opacity 250ms linear;
-  .transition(@transition);
-}
-
 .nv-scatter .nv-groups .nv-point.hover,
 .nv-groups .nv-point.hover {
   stroke-width: 20px;
@@ -386,13 +347,6 @@ body.full-screen {
 .nv-indexLine {
   cursor: ew-resize;
 }
-
-/*.nv-lineChart .nv-line .nv-scatter .nv-groups .nv-point {
-  fill-opacity: 1;
-  stroke-opacity: 1;
-  stroke: @white;
-  stroke-width: 3px;
-}*/
 
 
 /**********
@@ -429,9 +383,6 @@ body.full-screen {
 .nv-stackedarea path.nv-area {
   fill-opacity: .7;
   stroke-opacity: 0;
-
-  @transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
-  .transition(@transition);
 }
 
 .nv-stackedarea path.nv-area.hover {
@@ -520,21 +471,6 @@ body.full-screen {
 .nv-funnelChart {
   .nv-y path {
     stroke: none;
-  }
-  .nv-label-value text {
-    font-size: 15px;
-    fill: @white;
-    stroke: none;
-  }
-  text.nv-label-group {
-    font-size: 15px;
-    font-weight: bold;
-    fill: @gray;
-  }
-  .nv-group polygon {
-    stroke: @white;
-    stroke-width: 1px;
-    stroke-opacity: 1;
   }
 }
 

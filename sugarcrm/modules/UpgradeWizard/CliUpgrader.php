@@ -43,6 +43,15 @@ class CliUpgrader extends UpgradeDriver
         'none' => 0,
     );
 
+    /**
+     * Returns an exit code for given stage
+     *
+     * @var array
+     */
+    protected $stageExitCodes = array(
+        'healthcheck' => 6, 'unpack' => 1, 'pre' => 2, 'commit' => 3, 'post' => 4, 'cleanup' => 5
+    );
+
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
@@ -358,10 +367,8 @@ eoq2;
      */
     protected function getStageCode($stage)
     {
-        foreach ($this->stages as $k => $s) {
-            if ($s === $stage) {
-                return $k + 1;
-            }
+        if(isset($this->stageExitCodes[$stage])) {
+            return $this->stageExitCodes[$stage];
         }
         return 99;
     }
