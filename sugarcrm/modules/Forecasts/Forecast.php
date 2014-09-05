@@ -285,9 +285,14 @@ class Forecast extends SugarBean
      */
     public function getCommitStageDropdown()
     {
-        $adminBean = BeanFactory::getBean('Administration');
-        $config = $adminBean->getConfigForModule($this->module_name);
-        return translate($config['buckets_dom']);
+        static $str = null;
+        if (is_null($str)) {
+            $adminBean = BeanFactory::getBean('Administration');
+            $config = $adminBean->getConfigForModule($this->module_name);
+            $str = $config['buckets_dom'];
+        }
+
+        return translate($str);
     }
 
     public static function getSettings($reload = false)

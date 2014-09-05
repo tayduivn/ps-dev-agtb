@@ -53,6 +53,11 @@ class OutboundEmail {
 	var $mail_smtpdisplay; // calculated value, not in DB
 	var $new_with_id = FALSE;
 
+    /**
+     * @var null|OutboundEmail
+     */
+    protected static $sysMailerCache = null;
+
 	/**
 	 * Sole constructor
 	 */
@@ -331,33 +336,42 @@ class OutboundEmail {
 	/**
 	 * Retrieves the system's Outbound options
 	 */
-	function getSystemMailerSettings() {
-		$q = "SELECT id FROM outbound_email WHERE type = 'system'";
-		$r = $this->db->query($q);
-		$a = $this->db->fetchByAssoc($r);
+    function getSystemMailerSettings() {
+        if (is_null(self::$sysMailerCache)) {
+            // result puts in static cache to avoid per-request repeating calls
+            $q = "SELECT id FROM outbound_email WHERE type = 'system'";
+            $r = $this->db->query($q);
+            $a = $this->db->fetchByAssoc($r);
 
-		if(empty($a)) {
-			$this->id = "";
-			$this->name = 'system';
-			$this->type = 'system';
-			$this->user_id = '1';
-			$this->mail_sendtype = 'SMTP';
-			$this->mail_smtptype = 'other';
-			$this->mail_smtpserver = '';
-			$this->mail_smtpport = 25;
-			$this->mail_smtpuser = '';
-			$this->mail_smtppass = '';
-			$this->mail_smtpauth_req = 1;
-			$this->mail_smtpssl = 0;
-			$this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype,$this->mail_smtpserver);
-			$this->save();
-			$ret = $this;
-		} else {
-			$ret = $this->retrieve($a['id']);
-		}
+            if(empty($a)) {
+                $this->id = "";
+                $this->name = 'system';
+                $this->type = 'system';
+                $this->user_id = '1';
+                $this->mail_sendtype = 'SMTP';
+                $this->mail_smtptype = 'other';
+                $this->mail_smtpserver = '';
+                $this->mail_smtpport = 25;
+                $this->mail_smtpuser = '';
+                $this->mail_smtppass = '';
+                $this->mail_smtpauth_req = 1;
+                $this->mail_smtpssl = 0;
+                $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype,$this->mail_smtpserver);
+                $this->save();
+                self::$sysMailerCache = $this;
+            } else {
+                self::$sysMailerCache = $this->retrieve($a['id']);
+            }
+        }
 
-		return $ret;
-	}
+        if (is_object(self::$sysMailerCache)) {
+            foreach(self::$sysMailerCache as $k => $v) {
+                $this->$k = $v;
+            }
+        }
+
+        return self::$sysMailerCache;
+    }
 
 	/**
 	 * Populates this instance
@@ -450,6 +464,7 @@ class OutboundEmail {
 		}
 
 		$this->db->query($q, true);
+        $this->resetSystemMailerCache();
 		return $this;
 	}
 
@@ -489,6 +504,7 @@ class OutboundEmail {
         }
 
         $this->updateUserSystemOverrideAccounts();
+        $this->resetSystemMailerCache();
 	}
 
     /**
@@ -580,4 +596,12 @@ class OutboundEmail {
         }
 	    return $this->retrieve($a['id']);
 	}
+
+    /**
+     * Reset system mailer settings cache
+     */
+    public function resetSystemMailerCache()
+    {
+        self::$sysMailerCache = null;
+    }
 }
