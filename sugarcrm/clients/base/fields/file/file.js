@@ -33,6 +33,10 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        // FIXME: This needs an API instead. SC-3369 should address this.
+        app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
+        app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
+
         if (this.model) {
             this.model.addValidationTask('file_upload_' + this.cid, _.bind(this._doValidateFile, this));
         }
@@ -124,11 +128,15 @@
 
         var errors = errors || {},
             fieldName = this.name;
+        errors[fieldName] = {};
 
-        errors[error.responseText] = {};
-        this.model.trigger('error:validation:' + fieldName, errors);
-        this.model.trigger('error:validation', errors);
-
+        switch (error.code) {
+            case 'request_too_large':
+               errors[fieldName].tooBig = true;
+               break;
+            default:
+                errors[fieldName].uploadFailed = true;
+        }
         this.model.unset(fieldName + '_guid');
         callback(null, fields, errors);
     },
