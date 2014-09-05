@@ -157,6 +157,26 @@ describe('Base.Field.Duration', function() {
             expect(field.model.get('duration_hours')).toEqual(1);
             expect(field.model.get('duration_minutes')).toEqual(15);
         });
+
+        it('should calculate the duration when the new end date is more than 24 hours from the start date', function() {
+            field.model.set({
+                date_start: '2014-07-17T08:00',
+                date_end: '2014-07-17T08:00'
+            });
+            field.model.set('date_end', '2014-07-18T09:15');
+            expect(field.model.get('duration_hours')).toEqual(25);
+            expect(field.model.get('duration_minutes')).toEqual(15);
+        });
+
+        it('should calculate to 0 duration hours and minutes if the start and end dates are the same', function() {
+            field.model.set({
+                date_start: '2014-07-17T08:00',
+                date_end: '2014-07-17T09:00'
+            });
+            field.model.set('date_end', '2014-07-17T08:00');
+            expect(field.model.get('duration_hours')).toEqual(0);
+            expect(field.model.get('duration_minutes')).toEqual(0);
+        });
     });
 
     describe('isDateRangeValid()', function() {

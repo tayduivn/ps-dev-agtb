@@ -29,14 +29,9 @@
                 dateEndField,
                 diff;
 
-            diff = moment(model.get('date_end')).diff(model.get('date_start'));
-            model.set('duration_hours', moment.duration(diff).hours());
-            model.set(
-                'duration_minutes',
-                moment.duration(diff).subtract(
-                    moment.duration(model.get('duration_hours'), 'h')
-                ).minutes()
-            );
+            diff = app.date(model.get('date_end')).diff(model.get('date_start'));
+            model.set('duration_hours', Math.floor(app.date.duration(diff).asHours()));
+            model.set('duration_minutes', app.date.duration(diff).minutes());
 
             if (this.action === 'edit') {
                 dateStartField = this.view.getField('date_start');
