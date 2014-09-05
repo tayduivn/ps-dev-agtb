@@ -65,8 +65,15 @@
          * @return {String} String Template
          */
         Handlebars.registerHelper('subViewTemplate', function(key, data, options) {
-            var template =  app.template.getView(key, options.hash.module);
-            return template ? template(data) : '';
+            var frame, template;
+
+            template = app.template.getView(key, options.hash.module);
+
+            // merge the hash variables into the frame so they can be added as
+            // private @variables via the data option below
+            frame = _.extend(Handlebars.createFrame(options.data || {}), options.hash);
+
+            return template ? template(data, {data: frame}) : '';
         });
 
         /**
@@ -78,8 +85,15 @@
          * @return {String} String Template
          */
         Handlebars.registerHelper('subFieldTemplate', function(fieldName, view, data, options) {
-            var template =  app.template.getField(fieldName, view, options.hash.module);
-            return template ? template(data) : '';
+            var frame, template;
+
+            template = app.template.getField(fieldName, view, options.hash.module);
+
+            // merge the hash variables into the frame so they can be added as
+            // private @variables via the data option below
+            frame = _.extend(Handlebars.createFrame(options.data || {}), options.hash);
+
+            return template ? template(data, {data: frame}) : '';
         });
 
         /**
@@ -90,8 +104,15 @@
          * @return {String} String Template
          */
         Handlebars.registerHelper('subLayoutTemplate', function(key, data, options) {
-            var template =  app.template.getLayout(key, options.hash.module);
-            return template ? template(data) : '';
+            var frame, template;
+
+            template = app.template.getLayout(key, options.hash.module);
+
+            // merge the hash variables into the frame so they can be added as
+            // private @variables via the data option below
+            frame = _.extend(Handlebars.createFrame(options.data || {}), options.hash);
+
+            return template ? template(data, {data: frame}) : '';
         });
 
         /**
