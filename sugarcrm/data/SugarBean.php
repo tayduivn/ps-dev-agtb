@@ -1259,6 +1259,7 @@ class SugarBean
                                           ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
+                        Relationship::$relCacheInternal[$rel_name] = true;
                     }
                 }
             } else {
