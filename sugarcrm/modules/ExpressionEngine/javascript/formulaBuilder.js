@@ -111,6 +111,11 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 				break;
 			}
 		}
+		if(t.name == "ifElse") {
+		    var args = t.args;
+		    if(args[1].returnType == 'date' && args[2].returnType == 'date')
+		        t.returnType = "date";
+		}
 		if(!t.returnType)
 			throw (t.name + ": No known return type!");
 	}
