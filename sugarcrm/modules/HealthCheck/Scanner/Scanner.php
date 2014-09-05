@@ -857,7 +857,10 @@ class HealthCheckScanner
         }
 
         // check custom viewdefs
-        $defs = $this->getPhpFiles("custom/modules/$module/metadata");
+        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function($def) {
+            // CRYS-424 - exclude dashletviewdefs.php
+            return basename($def) != 'dashletviewdefs.php';
+        });
 
         if($module == "Connectors") {
             $pos = array_search("custom/modules/Connectors/metadata/connectors.php", $defs);
