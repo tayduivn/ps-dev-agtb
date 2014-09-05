@@ -29,7 +29,7 @@
         //Check for the override_subpanel_list_view from the parent layout metadata and replace the list view if found.
         if (options.meta && options.def && options.def.override_subpanel_list_view) {
             _.each(options.meta.components, function(def) {
-                if (def.view && def.view == 'subpanel-list') {
+                if (def.view && def.view.indexOf('subpanel-list') !== -1) {
                     def.view = options.def.override_subpanel_list_view;
                 }
             });

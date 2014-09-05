@@ -173,7 +173,7 @@
                     }
                 }, this);
                 this.collection.on('add', function() {
-                    if (massCollection.length < this.collection.length) {
+                    if (!this.disposed && massCollection.length < this.collection.length) {
                         this.$(this.fieldTag).attr('checked', false);
                         this.view.layout.trigger('list:alert:hide');
                     }
@@ -323,7 +323,6 @@
         if (!massCollection) {
             return;
         }
-
         /**
          * Shows or hides the appropriate alert based on the state of the mass collection.
          */
@@ -493,6 +492,7 @@
         }
         if (this.collection) {
             this.collection.off('reset', null, this);
+            this.collection.off('add', null, this);
         }
         this.off('render', null, this);
         this._super('unbindData');

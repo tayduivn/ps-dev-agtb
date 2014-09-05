@@ -9,9 +9,25 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = array(
-    'type' => 'subpanel-list',
-    'favorite' => true,
+$viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create'] = array(
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn deleteBtn',
+                'icon' => 'icon-minus',
+                'event' => 'list:deleterow:fire',
+                'tooltip' => 'LBL_DELETE_BUTTON',
+            ),
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn addBtn',
+                'icon' => 'icon-plus',
+                'event' => 'list:addrow:fire',
+                'tooltip' => 'LBL_ADD_BUTTON',
+            ),
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -21,12 +37,6 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'name' => 'name',
                     'link' => true,
                     'label' => 'LBL_LIST_NAME',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'account_name',
-                    'readonly' => true,
                     'enabled' => true,
                     'default' => true
                 ),
@@ -100,67 +110,11 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'default' => true
                 ),
                 array(
-                    'name' => 'quote_name',
-                    'label' => 'LBL_ASSOCIATED_QUOTE',
-                    'related_fields' => array('quote_id'),
-                    // this is a hack to get the quote_id field loaded
-                    'readonly' => true,
-                    'bwcLink' => true,
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
                     'name' => 'assigned_user_name',
                     'enabled' => true,
                     'default' => true
                 )
             )
-        ),
-    ),
-    'selection' => array (
-        'type' => 'multi',
-        'actions' => array (
-            array (
-                'name' => 'quote_button',
-                'type' => 'button',
-                'label' => 'LBL_GENERATE_QUOTE',
-                'primary' => true,
-                'events' => array (
-                    'click' => 'list:massquote:fire',
-                ),
-                'acl_action' => 'massquote',
-            ),
-            array(
-                'name' => 'delete_button',
-                'type' => 'button',
-                'label' => 'LBL_DELETE',
-                'acl_action' => 'delete',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'list:massdelete:fire',
-                ),
-            ),
-        ),
-    ),
-    'rowactions' => array(
-        'css_class' => 'pull-right',
-        'actions' => array(
-            array(
-                'type' => 'rowaction',
-                'css_class' => 'btn',
-                'tooltip' => 'LBL_PREVIEW',
-                'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
-                'acl_action' => 'view',
-            ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'edit_button',
-                'icon' => 'icon-pencil',
-                'label' => 'LBL_EDIT_BUTTON',
-                'event' => 'list:editrow:fire',
-                'acl_action' => 'edit',
-            ),
         ),
     ),
 );

@@ -40,6 +40,11 @@
     _viewAlerts: [],
 
     /**
+     * If this create view has subpanel models to save
+     */
+    hasSubpanelModels: false,
+
+    /**
      * A collection of alert messages to be used in this view. The alert methods
      * should be invoked by Function.prototype.call(), passing in an instance of
      * a sidecar view. For example:
@@ -264,6 +269,18 @@
                 this.clear();
                 this.model.set(this.model.relatedAttributes);
                 this.resetDuplicateState();
+
+                if (this.hasSubpanelModels) {
+                    // loop through subpanels and call resetCollection on create subpanels
+                    _.each(this.context.children, function(child) {
+                        if (child.get('isCreateSubpanel')) {
+                            this.context.trigger('subpanel:resetCollection:' + child.get('link'), true);
+                        }
+                    }, this);
+
+                    // reset the hasSubpanelModels flag
+                    this.hasSubpanelModels = false;
+                }
         }, this));
     },
 
@@ -300,6 +317,7 @@
     initiateSave: function (callback) {
         this.disableButtons();
         async.waterfall([
+            _.bind(this.validateSubpanelModelsWaterfall, this),
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
@@ -321,6 +339,28 @@
         this.model.doValidate(this.getFields(this.module), function(isValid) {
             callback(!isValid);
         });
+    },
+
+    /**
+     * Check to see if there are subpanel create models on this view
+     * And trigger an event to tell the subpanel to validate itself
+     *
+     * @param callback
+     * @returns {*}
+     */
+    validateSubpanelModelsWaterfall: function(callback) {
+        this.hasSubpanelModels = false;
+        _.each(this.context.children, function(child) {
+            if (child.get('isCreateSubpanel')) {
+                this.hasSubpanelModels = true;
+                this.context.trigger('subpanel:validateCollection:' + child.get('link'), callback, true);
+            }
+        }, this);
+
+        // If there are no subpanel models, callback false so the waterfall can continue
+        if (!this.hasSubpanelModels) {
+            return callback(false);
+        }
     },
 
     /**
@@ -461,6 +501,27 @@
             lastSaveAction: this.context.lastSaveAction
         };
         this.applyAfterCreateOptions(options);
+
+        // Check if this has subpanel create models
+        if (this.hasSubpanelModels) {
+            _.each(this.context.children, function(child) {
+                if (child.get('isCreateSubpanel')) {
+                    // create the child collection JSON structure to save
+                    var childCollection = {
+                        create: []
+                    };
+
+                    // loop through the models in the collection and push each model's JSON
+                    // data to the 'create' array
+                    _.each(child.get('collection').models, function(model) {
+                        childCollection.create.push(model.toJSON())
+                    }, this)
+
+                    // set the child JSON collection data to the model
+                    this.model.set(child.get('link'), childCollection);
+                }
+            }, this);
+        }
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));
         self.model.save(null, options);

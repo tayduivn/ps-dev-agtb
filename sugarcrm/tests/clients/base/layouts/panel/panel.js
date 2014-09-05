@@ -89,4 +89,19 @@ describe("Base.Layout.Panel", function () {
             lastStateSetStub.restore();
         });
     });
+
+    describe('_hideComponent', function() {
+        it('should always call show on a create subpanel', function() {
+            var component = {
+                    show: function() {},
+                    hide: function() {}
+                },
+                showSpy = sinon.spy(component, 'show');
+            layout.context.set('isCreateSubpanel', true);
+
+            layout._hideComponent(component, false);
+            expect(showSpy).toHaveBeenCalled();
+            showSpy.restore();
+        });
+    });
 });
