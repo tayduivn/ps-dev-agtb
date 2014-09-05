@@ -51,12 +51,16 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $this->SetKeywords($pdfTemplate->keywords);
                 $this->templateLocation = $this->buildTemplateFile($pdfTemplate, $previewMode);
 
-                if (!empty($pdfTemplate->header_logo) &&
-                    !empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
+                $headerLogo = '';
+                if (!empty($pdfTemplate->header_logo)) {
                     // Create a temporary copy of the header logo
                     // and append the original filename, so TCPDF can figure the extension
                     $headerLogo = 'upload/' . $pdfTemplate->id . $pdfTemplate->header_logo;
                     copy('upload/' . $pdfTemplate->id, $headerLogo);
+                }
+
+                if (!empty($pdfTemplate->header_logo) ||
+                    !empty($pdfTemplate->header_title) || !empty($pdfTemplate->header_text)) {
                     $this->setHeaderData(
                         $headerLogo,
                         PDF_HEADER_LOGO_WIDTH,
@@ -65,6 +69,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                     );
                     $this->setPrintHeader(true);
                 }
+
                 if (!empty($pdfTemplate->footer_text)) {
                     $this->footerText = $pdfTemplate->footer_text;
                 }
@@ -412,9 +417,11 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
   			$ormargins = $this->getOriginalMargins();
   			$headerfont = $this->getHeaderFont();
   			$headerdata = $this->getHeaderData();
-  			if (($headerdata['logo']) AND ($headerdata['logo'] != K_BLANK_IMAGE)) {
+  			if ($headerdata['logo'] && $headerdata['logo'] != K_BLANK_IMAGE) {
                 $this->Image($headerdata['logo'], $this->GetX(), $this->getHeaderMargin(), $headerdata['logo_width'], 12);
   				$imgy = $this->getImageRBY();
+                // Remove the temporary logo copy
+                unlink($headerdata['logo']);
   			} else {
   				$imgy = $this->GetY();
   			}
