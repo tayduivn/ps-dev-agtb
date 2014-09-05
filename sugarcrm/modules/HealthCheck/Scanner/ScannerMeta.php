@@ -495,6 +495,8 @@ class HealthCheckScannerMeta
         if (!isset($meta['scripts'])) {
             $meta['scripts'] = array();
         }
+        
+        $meta['params'] = $params;
 
         return $meta;
     }

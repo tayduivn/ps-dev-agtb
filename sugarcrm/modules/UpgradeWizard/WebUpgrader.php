@@ -265,12 +265,20 @@ class WebUpgrader extends UpgradeDriver
      */
     protected function doHealthcheck()
     {
-        if (!isset($_REQUEST['confirm_id'])) {
+        $id = $_REQUEST['confirm_id'];
+        if (!isset($id)) {
             $this->log("No previous health check id set in request");
             return false;
         }
 
-        // TODO - check the confirm_id against actual run ? Need db connection though which isnt there yet ...
+        $bean = BeanFactory::retrieveBean('HealthCheck', $id);
+        if(!$bean) {
+            $this->log("Cannot find health check result by id $id");
+            return false;
+        }
+
+        $this->state['healthcheck'] = json_decode($bean->logMeta);
+
         $this->log("Skipping health check - we have a confirmed id");
         return true;
     }
