@@ -20,24 +20,25 @@
     },
     // Delegate events
     saveButton: function() {
-        var self = this,
-            createModel = this.context.get('createModel');
+        var createModel = this.context.get('createModel');
 
-        self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
-        self.$('[name=save_button]').button('loading');
+        this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
+        this.$('[name=save_button]').button('loading');
 
-        self.processModel(createModel);
+        // Disable the buttons during save.
+        this.disableButtons(true);
+        this.processModel(createModel);
 
         // saves the related bean
         createModel.save(null, {
             relate: true,
             fieldsToValidate: this.getFields(this.module),
-            success: function() {
-                self.saveComplete();
-            },
-            error: function() {
-                self.resetButton();
-            }
+            success: _.bind(function() {
+                this.saveComplete();
+            }, this),
+            error: _.bind(function() {
+                this.disableButtons(false);
+            }, this)
 
         });
     },
@@ -61,11 +62,24 @@
         //reset the form
         this.$('.modal').modal('hide').find('form').get(0).reset();
         //reset the `Save` button
-        this.resetButton();
+        this.disableButtons(false);
         //add the new model to the collection
         this.collection.fetch({relate: true});
     },
-    resetButton: function() {
-        this.$('[name=save_button]').button('reset');
+
+    /**
+     * Enables or disables the buttons from the metadata. Disables them by
+     * default.
+     *
+     * @param {boolean} [disable=true] Whether to enable or disable the buttons.
+     *   Defaults to `true`.
+     */
+    disableButtons: function(disable) {
+        var state = _.isUndefined(disable) ? true : disable;
+
+        _.each(this.meta.buttons, function(button) {
+            var btn = this.getField(button.name);
+            btn.setDisabled(state);
+        }, this);
     }
 })
