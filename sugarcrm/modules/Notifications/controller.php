@@ -11,7 +11,19 @@
  */
 require_once('modules/Notifications/Notifications.php');
 
+/**
+ * @deprecated Since 7.5 will be removed on 7.8
+ */
 class NotificationsController extends SugarController
 {
     var $action_remap = array ( ) ;
+
+    /**
+     * @deprecated Since 7.5 will be removed on 7.8
+     */
+    public function __construct()
+    {
+        $GLOBALS['log']->deprecated('Notifications/controller.php is deprecated');
+        parent::SugarController();
+    }
 }
