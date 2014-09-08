@@ -1067,9 +1067,9 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider fromUserTypeDataProvider
      */
-    public function testFromUserType($date, $type, $user, $timezone, $expected, $function)
+    public function testFromUserType($date, $type, $user, $timezone, $expected, $function, $dateFormat)
     {
-        $this->_setPrefs("Y-m-d", "H:i:s", "GMT");
+        $this->_setPrefs($dateFormat, "H:i:s", "GMT");
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
 
@@ -1082,13 +1082,13 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                '2014-01-01', 'date', null, 'Pacific/Kwajalein', '2013-12-31', 'asDbDate'
+                '2014-01-01 09:00:00', 'date', null, 'Pacific/Kwajalein', '2013-12-31', 'asDbDate', 'Y-m-d H:i:s'
             ),
             array(
-                '2014-01-01 12:12:12', 'datetime', null, 'America/Denver', '2014-01-01 19:12:12', 'asDb'
+                '2014-01-01 12:12:12', 'datetime', null, 'America/Denver', '2014-01-01 19:12:12', 'asDb', 'Y-m-d'
             ),
             array(
-                '12:12:12', 'time', null, 'GMT', '12:12:12', 'asDb'
+                '12:12:12', 'time', null, 'GMT', '12:12:12', 'asDb', 'Y-m-d'
             ),
         );
     }
