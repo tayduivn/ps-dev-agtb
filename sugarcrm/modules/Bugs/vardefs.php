@@ -370,6 +370,9 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 
     //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'=>true,
+    'uses' => array(
+        'taggable',
+    ),
  );
 
 VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',

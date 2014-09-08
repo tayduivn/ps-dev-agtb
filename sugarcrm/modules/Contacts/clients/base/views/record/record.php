@@ -174,7 +174,10 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'do_not_call',
                 'account_name',
                 'email',
-                'tag',
+                array (
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

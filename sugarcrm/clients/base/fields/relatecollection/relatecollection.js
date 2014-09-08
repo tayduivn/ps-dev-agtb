@@ -88,7 +88,7 @@
 
                 // new item
                 if (selectedRecord.length === 0 && self.collectionCreate) {
-                    return {id: false, text: term, locked: false};
+                    return {id: term, text: term, locked: false};
                 }
             },
 
@@ -150,10 +150,25 @@
     storeValues: function(e) {
         this.value = app.utils.deepCopy(this.value) || [];
         if (e.added) {
-            this.value.push({id: e.added.id, name: e.added.text});
+            // Check to see if the tag we're adding has already been added.
+            // If it already does, and it's been flagged for removal, remove the removal flag
+            var valFound = false;
+            _.each(this.value, function(vals) {
+                if (vals.name === e.added.text) {
+                    valFound = true;
+                    if (vals.removed) {
+                        delete vals.removed;
+                    }
+                }
+            });
+            if (!valFound) {
+                // If ID = text, then it is a new tag. Set ID to false for the backend to create a new tag out of it.
+                var id = (e.added.id === e.added.text) ? false : e.added.id;
+                this.value.push({id: id, name: e.added.text});
+            }
         } else if (e.removed) {
             _.each(this.value, function(record) {
-                if  (record.id === e.removed.id) {
+                if  (record.name === e.removed.text) {
                     record.removed = true;
                 }
             });
