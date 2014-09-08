@@ -4,7 +4,6 @@
   TO DO: replace all these with a single class
 */
 #dnb-industry-info,
-#dnb-contact-list,
 #dnb-contact-details,
 #dnb-refresh-details,
 #dnb-std-company-details,
@@ -272,6 +271,15 @@ div#dnb-contact-list {
 .dnb-result-list {
   border-top: 1px solid #eee;
 }
+.dnb-short-list {
+  .dnb-result-list;
+  max-height: 175px;
+  overflow: auto;
+}
+.dnb-medium-list {
+  max-height: 200px;
+  overflow: auto;
+}
 
 a.dnb-companyname {
   font-size: 13px;
@@ -345,113 +353,13 @@ li.txt {
 .dnb-params-header {
   .common-font;
 }
-
-/*Build A List Styles*/
-.dnb-bal-add-btn {
-  margin-top: -5px;
-}
-.dnb-bal-param-label {
-  font-size: 14px;
-}
-.tagcontainer {
-  margin-left: 0px; !important;
-}
-#dnb_bal_accordian {
-  .select2-chosen {
-    font-size: 12px;
-  }
-}
-.dnb-bal-list {
-  .common-font;
-}
-.dnb-bal-rslt {
-  font-size: @fontSizeLarge;
-  font-weight: 500;
-}
-.dnb-params-header {
-  .common-font;
-}
-
-/*Build A List Styles*/
-.dnb-bal-add-btn {
-  margin-top: -5px;
-}
-.dnb-bal-param-label {
-  font-size: 14px;
-}
-.tagcontainer {
-  margin-left: 0px; !important;
-}
-#dnb_bal_accordian {
-  .select2-chosen {
-    font-size: 12px;
-  }
-}
-.dnb-bal-list {
-  .common-font;
-}
-.dnb-bal-rslt {
-  font-size: @fontSizeLarge;
-  font-weight: 500;
-}
-.dnb-params-header {
-  .common-font;
-}
-#dnb-results-list li {
+#dnb-results-list li, #dnb-contact-list li {
   padding: 8px 14px;
 }
-
-/*Build A List Styles*/
-.dnb-bal-add-btn {
-  margin-top: -5px;
+#dnb-page-ctrl {
+  text-align: left;
 }
-.dnb-bal-param-label {
-  font-size: 14px;
-}
-.tagcontainer {
-  margin-left: 0px; !important;
-}
-#dnb_bal_accordian {
-  .select2-chosen {
-    font-size: 12px;
-  }
-}
-.dnb-bal-list {
-  .common-font;
-}
-.dnb-bal-rslt {
-  font-size: @fontSizeLarge;
-  font-weight: 500;
-}
-.dnb-params-header {
-  .common-font;
-}
-
-/*Build A List Styles*/
-.dnb-bal-add-btn {
-  margin-top: -5px;
-}
-.dnb-bal-param-label {
-  font-size: 14px;
-}
-.tagcontainer {
-  margin-left: 0px; !important;
-}
-#dnb_bal_accordian {
-  .select2-chosen {
-    font-size: 12px;
-  }
-}
-.dnb-bal-list {
-  .common-font;
-}
-.dnb-bal-rslt {
-  font-size: @fontSizeLarge;
-  font-weight: 500;
-}
-.dnb-params-header {
-  .common-font;
-}
-#dnb-results-list li {
-  padding: 8px 14px;
+#dnb-match-btn {
+  width: 20%;
+  padding: 2px;
 }

@@ -20,8 +20,12 @@ $viewdefs['base']['view']['dnb-company-info'] = array(
                 ),
                 'view' => 'record'
             ),
-            'config' => array(),
-            'preview' => array(),
+            'config' => array(
+                'pagesz' => '10',
+            ),
+            'preview' => array(
+                'pagesz' => '10',
+            ),
         ),
     ),
     'custom_toolbar' => array(
@@ -60,5 +64,21 @@ $viewdefs['base']['view']['dnb-company-info'] = array(
                 "tooltip" => "LBL_DASHLET_MAXIMIZE",
             )
         )
+    ),
+    'config' => array(
+        'fields' => array(
+            array(
+                'name' => 'pagesz',
+                'label' => 'LBL_DNB_PAGESZ',
+                'type' => 'enum',
+                'searchBarThreshold' => -1,
+                'options' => array(
+                    5 => 5,
+                    10 => 10,
+                    15 => 15,
+                    20 => 20
+                ),
+            ),
+        ),
     )
 );

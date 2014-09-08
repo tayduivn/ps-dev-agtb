@@ -10,15 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div id="dnb-company-list-loading" class="block-footer">
+<div id="dnb-company-list-loading" class="block-footer hide">
     {{str "LBL_DNB_SEARCH_LOADING"}}
 </div>
-<div id="dnb-company-list">
-    {{#if dnbCompanyList.product}}
-        <div>
-            <ul class="unstyled listed" id="dnb_company_list">
-                {{#each dnbCompanyList.product}}
-                    <li>
+<div id="dnb-company-list" class="hide">
+    {{#if listData.product}}
+        <ul class="unstyled listed dnb-medium-list" id="dnb-results-list">
+            {{#each listData.product}}
+                <li>
                     <div class='dnb-company-label'>
                         <a class="dnb-company-name" id="{{this.duns_num}}">
                             {{this.companyname}}
@@ -48,22 +47,37 @@
                             </span>
                         {{/if}}
                     </div>
-                    </li>
-                {{/each}}
-            </ul>
+                </li>
+            {{/each}}
+        </ul>
+        <div class="block-footer hide" id="dnb-page-ctrl">
+            <button data-action="show-more" class="btn btn-link btn-invisible more">
+                {{str "LBL_DNB_MORE_SRCH_RES"}}
+            </button>
+            <div class="loading">
+                {{str "LBL_ALERT_TITLE_LOADING"}}
+                <i class="l1 icon-circle"></i>
+                <i class="l2 icon-circle"></i>
+                <i class="l3 icon-circle"></i>
+            </div>
+            <div>
+                <button data-action="backToImportEnrich" class="btn btn-link btn-invisible more">
+                    {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
+                </button>
+            </div>
         </div>
     {{else}}
         <aside class='create-no-data'>
-            {{#if dnbCompanyList.errmsg}}
-                <em>{{dnbCompanyList.errmsg}}</em>
+            {{#if listData.errmsg}}
+                <em>{{listData.errmsg}}</em>
             {{else}}
                 <em>{{str "LBL_DNB_NO_DATA"}}</em>
             {{/if}}
         </aside>
+        <div>
+            <button data-action="backToImportEnrich" class="btn btn-link btn-invisible more">
+                {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
+            </button>
+        </div>
     {{/if}}
-    <div class="dnb-show-more">
-        <a class="backToImportEnrich">
-            {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
-        </a>
-    </div>
 </div>
