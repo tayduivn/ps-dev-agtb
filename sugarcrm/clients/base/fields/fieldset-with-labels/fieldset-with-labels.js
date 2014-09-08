@@ -17,6 +17,18 @@
     extendsFrom: 'FieldsetField',
 
     /**
+     * @inheritDoc
+     *
+     * @deprecated 7.5 Use {@link View.Fields.Base.FieldsetField} instead.
+     * This field will be removed in 7.6.
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        app.logger.warn('FieldsetWithLabels field is deprecated and will be removed as part of 7.6.' +
+            'Please use Fieldset field instead.');
+    },
+
+    /**
      * {@inheritdoc}
      */
     _render: function() {
