@@ -341,13 +341,14 @@ class SugarController
 			$file = self::getActionFilename($this->do_action);
 
 			$this->loadBean();
-
-			$processed = false;
-			foreach($this->process_tasks as $process){
-				$this->$process();
-				if($this->_processed)
-					break;
-			}
+            if (!$this->_processed) {
+                foreach ($this->process_tasks as $process) {
+                    $this->$process();
+                    if ($this->_processed) {
+                        break;
+                    }
+                }
+            }
 
 			$this->redirect();
 		}else{
