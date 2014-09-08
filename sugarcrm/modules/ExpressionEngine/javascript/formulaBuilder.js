@@ -111,11 +111,6 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 				break;
 			}
 		}
-		if(t.name == "ifElse") {
-		    var args = t.args;
-		    if(args[1].returnType == 'date' && args[2].returnType == 'date')
-		        t.returnType = "date";
-		}
 		if(!t.returnType)
 			throw (t.name + ": No known return type!");
 	}
@@ -233,7 +228,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
         SUGAR.expressions.validateRelateFunctions(tokens);
-		if (matchType && matchType != tokens.returnType)
+		if (matchType && tokens.returnType != 'generic' && matchType != tokens.returnType)
 		{
 			Msg.show({
                 type: "alert",
