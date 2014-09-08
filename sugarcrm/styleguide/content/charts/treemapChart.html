@@ -47,7 +47,6 @@
     d3.json("data/flare.json", function(data) {
       d3.select('#treemap svg')
           .datum(data)
-        .transition().duration(500)
           .call(chart);
 
       nv.utils.windowResize(chart.update);

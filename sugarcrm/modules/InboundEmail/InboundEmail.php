@@ -4662,7 +4662,7 @@ eoq;
 			$sub3 = substr($sub2, 0, strpos($sub2, $close));
 
             // case number is supposed to be numeric
-            if (ctype_digit($sub3)) {
+            if (ctype_digit(ltrim($sub3))) {
                 // filter out deleted records in order to create a new case
                 // if email is related to deleted one (bug #49840)
                 $query = 'SELECT id FROM cases WHERE case_number = '

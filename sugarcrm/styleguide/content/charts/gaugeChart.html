@@ -48,7 +48,6 @@
     d3.json("data/gauge_data.json", function(data) {
         d3.select("#chart1 svg")
             .datum(data)
-          .transition().duration(1200)
             .call(chart);
 
         nv.utils.windowResize(chart.update);

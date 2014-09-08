@@ -719,11 +719,14 @@
             return;
         }
         this.dnbError = {};
-        var errorCode, errorMessage, errorLink;
-        if (xhr.code) {
-            errorCode = xhr.code;
-            app.logger.error('D&B API Error :' + app.lang.get(this.commonErrorMap[errorCode]));
+        var errorCode = xhr.code,
+            errorMessage, errorLink;
+        if (!_.isUndefined(errorCode)) {
+            app.logger.error('D&B API Error:' + errorCode);
             errorMessage = this.commonErrorMap[errorCode];
+            if (_.isUndefined(errorMessage)) {
+                errorMessage = app.lang.get('LBL_DNB_API_ERR') + ':' + errorCode;
+            }
             if (errorCode === 'ERROR_DNB_CONFIG') {
                 errorLink = this.commonConst.connectorSettingsURL;
             } else if (errorCode.indexOf('ERROR_CURL_') !== -1) {

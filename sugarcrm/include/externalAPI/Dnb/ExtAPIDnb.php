@@ -70,7 +70,10 @@ class ExtAPIDnb extends ExternalAPIBase
         'competitors' => 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
         'cleansematch' => 'GetCleanseMatchResponse.GetCleanseMatchResponseDetail.MatchResponseDetail.MatchCandidate',
         'contacts' => 'FindContactResponse.FindContactResponseDetail.FindCandidate',
-        'principalIdPath' => 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
+        'principalIdPath' => 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber',
+        'industryResponseCode' => 'FindIndustryResponse.TransactionResult.ResultID',
+        'industryResponseMsg' => 'FindIndustryResponse.TransactionResult.ResultText',
+        'findindustry' => 'FindIndustryResponse.FindIndustryResponseDetail.IndustryCode'
     );
 
     function __construct()
@@ -537,13 +540,19 @@ class ExtAPIDnb extends ExternalAPIBase
      */
     public function dnbIndustryInfoPost($indMapParams)
     {
+        //converting the SIC code to HIC
         $reply = $this->dnbIndustryConversion($indMapParams);
-        if (empty($reply['FindIndustryResponse'])) {
+        $responseCode = $this->getObjectValue($reply, $this->commonJsonPaths['industryResponseCode']);
+        if (empty($responseCode) || $responseCode !== 'CM000') {
             $GLOBALS['log']->error('DNB failed, reply said: ' . print_r('Error Converting Industry Code', true));
-            return $reply;
+            $responseMessage = $this->getObjectValue($reply, $this->commonJsonPaths['industryResponseMsg']);
+            if (empty($responseMessage)) {
+                $responseMessage = 'ERROR_DNB_SVC_ERR';
+            }
+            return array('error' => $responseMessage);
         } else {
             //get the HIC from the result of the industry conversion call
-            $industryCodePath = "FindIndustryResponse.FindIndustryResponseDetail.IndustryCode";
+            $industryCodePath = $this->commonJsonPaths['findindustry'];
             if ($this->arrayKeyExists($reply, $industryCodePath)) {
                 $industryArray = $reply['FindIndustryResponse']['FindIndustryResponseDetail']['IndustryCode'];
                 //get the primary hic
