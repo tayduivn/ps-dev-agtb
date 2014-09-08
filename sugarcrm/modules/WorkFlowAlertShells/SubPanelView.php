@@ -46,7 +46,6 @@ echo $the_title;
 
 $buttons = array(
     "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' type='submit' name='NewWorkFlowAlertShells' id='NewWorkFlowAlertShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '>\n",
-    "<input type='button' name='SelectWorkFlowAlertShells' id='SelectWorkFlowAlertShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowAlertShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>",
 );
 
 $button  = "<form  action='index.php' method='post' name='form' id='form'>\n";
