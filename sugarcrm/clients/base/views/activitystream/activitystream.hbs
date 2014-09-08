@@ -51,7 +51,7 @@
     {{#if model.attributes.comment_count}}
         {{#each model.attributes.comments.models}}
             {{#with attributes}}
-                {{{subViewTemplate "activitystream.comment" this}}}
+                {{{subViewTemplate "activitystream.comment" this useRelativeTime=../../useRelativeTime}}}
             {{/with}}
         {{/each}}
         {{#if remaining_comments}}
