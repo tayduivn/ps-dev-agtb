@@ -608,6 +608,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             } else {
                 MetaDataManager::refreshModulesCache(array($this->_moduleName));
             }
+            parent::_clearCaches();
         }
     }
 

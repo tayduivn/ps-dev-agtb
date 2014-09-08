@@ -184,8 +184,13 @@ abstract class AbstractMetaDataParser
     /**
      * Cache killer, to be defined in child classes as needed.
      */
-    protected function _clearCaches() {}
-    
+    protected function _clearCaches()
+    {
+        if ($this->implementation->isDeployed()) {
+            SugarCache::cleanOpcodes();
+        }
+    }
+
     /**
      * Gets client specific vardef rules for a field for studio
      * 
