@@ -380,6 +380,15 @@ class HealthCheckScanner
     }
 
     /**
+     * Getter verbose (output)
+     * @return int
+     */
+    public function getVerbose()
+    {
+        return $this->verbose;
+    }
+
+    /**
      *
      * Getter flag
      * @return integer
