@@ -1243,7 +1243,7 @@ protected function checkQuery($sql, $object_name = false)
 
                 } else {
                     // ok we need this field lets create it
-                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
+                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name - {$value['type']}  ROW */\n";
                     $sql .= $this->addIndexes($tableName,array($value), $execute) .  "\n";
                 }
                 $take_action = true;
@@ -2912,7 +2912,11 @@ protected function checkQuery($sql, $object_name = false)
         if($parts = $this->getTypeParts($colType))
         {
             $colBaseType = $parts['baseType'];
-            $defLen =  isset($parts['len']) ? $parts['len'] : '255'; // Use the mappings length (precision) as default if it exists
+            $defLen = 255;
+            if ($type == 'char') {
+                $defLen = 254;
+            }
+            $defLen =  isset($parts['len']) ? $parts['len'] : $defLen; // Use the mappings length (precision) as default if it exists
         }
 
         if(!empty($fieldDef['len'])) {

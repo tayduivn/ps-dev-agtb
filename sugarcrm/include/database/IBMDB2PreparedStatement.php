@@ -65,8 +65,16 @@ class IBMDB2PreparedStatement extends PreparedStatement
         $this->DBM->countQuery($this->parsedSQL);
         $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
 
+        $i = 0;
+        foreach ($data as $v) {
+            $i ++;
+            $k = 'bind_' . $i;
+            $$k = $v;
+            db2_bind_param($this->stmt, $i, $k, DB2_PARAM_IN);
+        }
+
         $this->query_time = microtime(true);
-        $res = db2_execute($this->stmt, $data);
+        $res = db2_execute($this->stmt);
 
         return $this->finishStatement($res, $msg);
     }
