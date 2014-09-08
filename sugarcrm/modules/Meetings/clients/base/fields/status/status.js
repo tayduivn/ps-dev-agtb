@@ -78,5 +78,15 @@
                     break;
             }
         }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        if (this.view && this.view.layout) {
+            this.view.layout.off(null, null, this);
+        }
+        this._super('_dispose');
     }
 })
