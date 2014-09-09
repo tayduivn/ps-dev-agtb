@@ -20,7 +20,7 @@ class ConfiguratorController extends SugarController
     function action_FontManager(){
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $this->view = 'fontmanager';
     }
@@ -48,7 +48,7 @@ class ConfiguratorController extends SugarController
     function action_listview(){
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $this->view = 'edit';
     }
@@ -58,7 +58,7 @@ class ConfiguratorController extends SugarController
     function action_addFontView(){
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $this->view = 'addFontView';
     }
@@ -100,18 +100,13 @@ class ConfiguratorController extends SugarController
             $_REQUEST['pdf_embedded']=true;
             $_REQUEST['pdf_cidinfo']="";
         }
-        if(empty($_REQUEST['pdf_patch'])){
-            $_REQUEST['pdf_patch']="return array();";
-        }else{
-            $_REQUEST['pdf_patch']="return {$_REQUEST['pdf_patch']};";
-        }
         $this->view = 'addFontResult';
     }
     function action_saveadminwizard()
     {
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $focus = Administration::getSettings();
         $focus->saveConfig();
@@ -139,7 +134,7 @@ class ConfiguratorController extends SugarController
     {
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $configurator = new Configurator();
 
@@ -163,7 +158,7 @@ class ConfiguratorController extends SugarController
     {
         global $current_user;
         if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $this->view = 'edit';
     }
