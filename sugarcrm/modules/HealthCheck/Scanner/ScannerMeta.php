@@ -469,16 +469,26 @@ class HealthCheckScannerMeta
         // add scan id
         $meta['id'] = $id;
 
+        $strings = array_map(
+            function ($item) {
+                if (is_array($item)) {
+                    return implode("\r\n", $item);
+                }
+                return $item;
+            },
+            $params
+        );
+
         // add labels from modStrings
-        $meta['log'] = $this->getModString("LBL_SCAN_{$id}_LOG", $params);
-        $meta['title'] = $this->getModString("LBL_SCAN_{$id}_TITLE", $params);
-        $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $params);
+        $meta['log'] = $this->getModString("LBL_SCAN_{$id}_LOG", $strings);
+        $meta['title'] = $this->getModString("LBL_SCAN_{$id}_TITLE", $strings);
+        $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $strings);
 
         if(strpos($meta['title'], 'LBL_') === 0) {
             $entry['title'] = $meta['report'];
         }
         if(strpos($meta['descr'], 'LBL_') === 0) {
-            $entry['descr'] = $entry['log'];
+            $entry['descr'] = $meta['log'];
         }
 
         // set defaults
@@ -495,7 +505,7 @@ class HealthCheckScannerMeta
         if (!isset($meta['scripts'])) {
             $meta['scripts'] = array();
         }
-        
+
         $meta['params'] = $params;
 
         return $meta;

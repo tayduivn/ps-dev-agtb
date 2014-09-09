@@ -434,14 +434,13 @@ class HealthCheckScanner
         $this->checkVendorAndRemovedFiles();
         if(!empty($this->filesToFix))
         {
-            $files_to_fix = implode("\r\n", $this->filesToFix);
+            $files_to_fix = $this->filesToFix;
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
         if(!empty($this->deletedFilesReferenced))
         {
-            $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
-            $this->updateStatus("deletedFilesReferenced", $files_with_bad_includes);
+            $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
@@ -831,7 +830,7 @@ class HealthCheckScanner
         // Check for extension files
         $extfiles = $this->getPhpFiles("custom/Extension/modules/$module/Ext");
         if(!empty($extfiles)) {
-            $this->updateStatus("hasExtensions", $module, var_export($extfiles, true));
+            $this->updateStatus("hasExtensions", $module, $extfiles);
         }
         foreach($extfiles as $phpfile) {
             $this->checkFileForOutput($phpfile, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
