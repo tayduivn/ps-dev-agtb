@@ -496,6 +496,7 @@ eoq2;
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
         $this->state['healthcheck'] = $scanner->scan();
+        $this->saveState();
         if ($this->context['sendlog']) {
             require_once 'HealthCheckClient.php';
             require_once 'SugarSystemInfo.php';
