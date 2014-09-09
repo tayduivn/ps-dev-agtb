@@ -23,6 +23,9 @@
         this.on("header:update:route", this.resize, this);
         app.events.on("app:sync:complete", this.resize, this);
         app.events.on("app:view:change", this.resize, this);
+        // Event listeners for showing and hiding the megamenu on auth expiration
+        app.events.on("router:reauth:load", this.hideMenu, this);
+        app.events.on("router:reauth:success", this.showMenu, this);
 
         var resize = _.bind(this.resize, this);
         $(window)
@@ -65,14 +68,32 @@
         this.trigger('view:resize', maxMenuWidth - totalWidth);
     },
 
+    /**
+     * @inheritDoc
+     */
     _render: function() {
         this._super('_render');
 
+        // If we are authenticated show the megamenu
         if (app.api.isAuthenticated()) {
-            this.$el.show();
-            this.resize();
+            this.showMenu();
         } else {
-            this.$el.hide();
+            this.hideMenu();
         }
+    },
+
+    /**
+     * Shows the megamenu
+     */
+    showMenu: function() {
+        this.$el.show();
+        this.resize();
+    },
+
+    /**
+     * Hides the megamenu
+     */
+    hideMenu: function() {
+        this.$el.hide();
     }
 })
