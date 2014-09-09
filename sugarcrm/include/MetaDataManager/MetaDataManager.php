@@ -2580,7 +2580,8 @@ class MetaDataManager
             // don't force a metadata refresh
             $urlList[$lang] = getVersionedPath(
                 $this->getUrlForCacheFile($file),
-                $GLOBALS['sugar_config']['js_lang_version']
+                $GLOBALS['sugar_config']['js_lang_version'],
+                true
             );
         }
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
