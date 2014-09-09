@@ -232,11 +232,6 @@ class ProductBundle extends SugarBean
         return $bundle_list;
     }
 
-    public function save_relationship_changes($is_update)
-    {
-    }
-
-
     /**
      * @deprecated
      * @param string $bundle_id
