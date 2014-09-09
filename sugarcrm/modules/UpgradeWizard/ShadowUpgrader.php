@@ -11,6 +11,9 @@
  */
 require_once 'CliUpgrader.php';
 
+/**
+ * Upgrder for the shadow environment
+ */
 class ShadowUpgrader extends CliUpgrader
 {
     protected $options = array(
@@ -26,16 +29,22 @@ class ShadowUpgrader extends CliUpgrader
         "autoconfirm" => array(false, 'A', 'autoconfirm')
     );
 
+    /**
+     * @see CliUpgrader::usage()
+     */
     protected function commit()
     {
         // commit doesn't do anything
         return true;
     }
 
+    /**
+     * @see CliUpgrader::usage()
+     */
     protected static function usage()
     {
-        list($version, $build) = static::getVersion();
-        $usage = <<<eoq2
+		list($version, $build) = static::getVersion();
+    	$usage =<<<eoq2
 Shadow Upgrader v.$version (build $build)
 php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -l logFile -u admin-user
 
@@ -57,44 +66,53 @@ Optional arguments:
     -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
 
 eoq2;
-        echo $usage;
+    	echo $usage;
     }
 
+    /**
+     * @see UpgradeDriver::verifyArguments()
+     * @return bool
+     */
     protected function verifyArguments()
     {
-        if (!function_exists("shadow")) {
+        if(!function_exists("shadow")) {
             $this->argError("Shadow module should be installed to run this script.");
         }
 
-        if (empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
+        if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
             $this->argError("Source dir parameter must be a valid directory.");
         }
 
-        if (empty($this->context['pre_template']) || empty($this->context['post_template'])) {
+        if(empty($this->context['pre_template']) || empty($this->context['post_template'])) {
             $this->argError("Templates should be specified");
         }
 
-        if (!is_file("{$this->context['pre_template']}/include/entryPoint.php")) {
+        if(!is_file("{$this->context['pre_template']}/include/entryPoint.php")) {
             $this->argError("{$this->context['pre_template']} is not a SugarCRM template.");
         }
 
-        if (!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
-            $this->argError("{$his->context['post_template']} is not a SugarCRM template.");
+        if(!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
+            $this->argError("{$this->context['post_template']} is not a SugarCRM template.");
         }
 
-        if (!is_file("{$this->context['source_dir']}/config.php")) {
+        if(!is_file("{$this->context['source_dir']}/config.php")) {
             $this->argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
-        return true;
+    	return true;
     }
 
+    /**
+     * Returns version from the given $path
+     * @param $path
+     * @return string
+     */
     protected function getVersionFromPath($path)
     {
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         $f = array_pop($parts);
         $v = array_pop($parts);
-        return $v . $f;
+        return $v.$f;
     }
 
     /**
@@ -112,34 +130,48 @@ eoq2;
         $to = $this->getVersionFromPath($context['post_template']);
         $context['zip'] = "ShadowUpgrade-$from-$to";
         // only use custom and DB scripts
-        if (isset($context['script_mask'])) {
-            $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM | UpgradeScript::UPGRADE_DB;
+        if(isset($context['script_mask'])) {
+            $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         } else {
-            $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM | UpgradeScript::UPGRADE_DB;
+            $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         }
         $context['new_source_dir'] = $context['post_template'];
         $context['backup'] = 0;
         return $context;
     }
 
+    /**
+     * @see CliUpgrader::extractZip()
+     * @param string $zip
+     * @return bool|false
+     */
     protected function extractZip($zip)
     {
         // no zip, nothing to extract
         return true;
     }
 
+    /**
+     * @see CliUpgrader::unlink()
+     * @param string $file
+     * @return bool
+     */
     public function unlink($file)
     {
-        if ($file[0] == '/') {
+        if($file[0] == '/') {
             return parent::unlink($file);
         }
         // check relative paths against source dir
-        if (file_exists($this->context['source_dir'] . "/" . $file)) {
+        if(file_exists($this->context['source_dir']."/".$file)) {
             return @unlink($file);
         }
         return true;
     }
 
+    /**
+     * @see CliUpgrader::getManifest()
+     * @return array
+     */
     protected function getManifest()
     {
         // load target data
@@ -157,15 +189,24 @@ eoq2;
         );
     }
 
+    /**
+     * @see CliUpgrader::verify()
+     * @param string $zip
+     * @param string $dir
+     * @return bool|false
+     */
     protected function verify($zip, $dir)
     {
         chdir($this->context['pre_template']);
         return parent::verify($zip, $dir);
     }
 
+    /**
+     * @see CliUpgrader::initSugar()
+     */
     protected function initSugar()
     {
-        if ($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
+        if($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
             $templ_dir = $this->context['pre_template'];
         } else {
             $templ_dir = $this->context['post_template'];
@@ -176,11 +217,28 @@ eoq2;
         $this->context['source_dir'] = $templ_dir;
         return parent::initSugar();
     }
+
+    /**
+     * @see CliUpgrader::healthcheck()
+     * @return bool
+     */
+    public function healthcheck()
+    {
+        $this->initSugar();
+        return parent::healthcheck();
+    }
+
+    /**
+     * @see UpgradeDriver::getPackageUid()
+     * @return string
+     */
+    protected function getPackageUid()
+    {
+        return md5($this->context['post_template']);
+    }
 }
 
-if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
-    return;
-}
+if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {

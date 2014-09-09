@@ -724,12 +724,23 @@ abstract class UpgradeDriver
 
     protected function preflightDuplicateUpgrade()
     {
-        $md5 = md5_file($this->context['zip']);
+        $md5 = $this->getPackageUid();
         $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='$md5'");
         if (!empty($dup)) {
             return $this->error("This package (md5: $md5) was already installed", true);
         }
         return true;
+    }
+
+    /**
+     * Calculates unique package identifier.
+     * This function is specific to upgrade wizard type.
+     * Default is md5 sum of package file.
+     * @return string
+     */
+    protected function getPackageUid()
+    {
+        return md5_file($this->context['zip']);
     }
 
     /**
@@ -851,13 +862,6 @@ abstract class UpgradeDriver
             return false;
         }
 
-        // load manifest
-        if (!file_exists($this->context['extract_dir'] . "/manifest.php")) {
-            if ($this->clean_on_fail) {
-                $this->cleanDir($this->context['extract_dir']);
-            }
-            return $this->error("Package does not contain manifest.php", true);
-        }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $db = DBManagerFactory::getInstance();
@@ -1747,7 +1751,7 @@ abstract class UpgradeDriver
      */
     public function healthcheck()
     {
-        list($version,) = $this->loadVersion();
+        list($version,) = $this->loadVersion($this->context['source_dir']);
         if (version_compare($version, '7.0', '<')) {
             return $this->doHealthcheck();
         }
