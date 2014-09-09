@@ -411,8 +411,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
             );
             field.model.off();
             field.getFieldValue().reset(participants);
-            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
-            field.model.set('date_end', '2014-08-27T10:15:00-04:00');
+            field.model.set('date_start', '2014-08-27T08:45');
+            field.model.set('date_end', '2014-08-27T10:15');
 
             sandbox.stub(field, 'getTimeFormat', function() {
                 return 'ha';
