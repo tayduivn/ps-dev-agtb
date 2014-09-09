@@ -6371,7 +6371,7 @@ $app_list_strings['dnb_countries_radius_iso'] = array(
 
 $app_list_strings['dnb_sic_naics_code'] = array(
     "3599" => "SIC Code",
-    "700" => "NAICS Code..."
+    "700" => "NAICS Code"
 );
 
 $app_list_strings['dnb_states_iso'] = array(

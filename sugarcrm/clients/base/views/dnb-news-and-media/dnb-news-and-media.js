@@ -97,12 +97,6 @@
 
     },
 
-    loadData: function(options) {
-        if (this.model.get('duns_num')) {
-            this.duns_num = this.model.get('duns_num');
-        }
-    },
-
     _render: function() {
         app.view.View.prototype._renderHtml.call(this);
         //applying the select 2 plugins to all the social media data
