@@ -879,7 +879,7 @@ class SugarBean
 
         // Renaming template indexes to fit the particular audit table (removed the brittle hard coding)
         foreach($indices as $nr => $properties){
-            $indices[$nr]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $properties['name'];
+            $indices[$nr]['name'] = 'idx_' . strtolower($table_name) . '_' . $properties['name'];
         }
 
         $engine = null;
