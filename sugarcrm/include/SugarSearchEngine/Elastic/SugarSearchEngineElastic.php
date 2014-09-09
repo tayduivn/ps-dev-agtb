@@ -735,30 +735,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->logger->info("Going to search with query $queryString");
         $results = null;
         try {
-            // trying to match everything, make a MatchAll query
-            if ($queryString == '*') {
-                $queryObj = new \Elastica\Query\MatchAll();
-
-            } else {
-                $qString = html_entity_decode($queryString, ENT_QUOTES);
-
-                // we need to escape slash for lucene query_string query
-                $qString = str_replace('/', '\\/', $qString);
-
-                $queryObj = new \Elastica\Query\QueryString($qString);
-                $queryObj->setAnalyzeWildcard(true);
-                $queryObj->setAutoGeneratePhraseQueries(false);
-
-                // set query string fields
-                $options['addSearchBoosts'] = true;
-                $fields = $this->getSearchFields($options);
-                $options['addSearchBoosts'] = false;
-                if (!empty($options['searchFields'])) {
-                    $queryObj->setFields($options['searchFields']);
-                } else {
-                    $queryObj->setFields($fields);
-                }
-            }
+            $queryObj = $this->buildQueryObject($queryString, $options);
             $s = new \Elastica\Search($this->_client);
 
             $finalTypes = array();
@@ -806,6 +783,40 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return null;
         }
         return $results;
+    }
+
+    /**
+     * @param string $queryString
+     * @param array $options
+     * @return \Elastica\Query
+     */
+    protected function buildQueryObject($queryString, $options)
+    {
+        // trying to match everything, make a MatchAll query
+        if ($queryString == '*') {
+            $queryObj = new \Elastica\Query\MatchAll();
+
+        } else {
+            $qString = html_entity_decode($queryString, ENT_QUOTES);
+
+            // we need to escape slash for lucene query_string query
+            $qString = str_replace('/', '\\/', $qString);
+
+            $queryObj = new \Elastica\Query\QueryString($qString);
+            $queryObj->setAnalyzeWildcard(true);
+            $queryObj->setAutoGeneratePhraseQueries(false);
+
+            // set query string fields
+            $options['addSearchBoosts'] = true;
+            $fields = $this->getSearchFields($options);
+            $options['addSearchBoosts'] = false;
+            if (!empty($options['searchFields'])) {
+                $queryObj->setFields($options['searchFields']);
+            } else {
+                $queryObj->setFields($fields);
+            }
+        }
+        return $queryObj;
     }
 
     /**
