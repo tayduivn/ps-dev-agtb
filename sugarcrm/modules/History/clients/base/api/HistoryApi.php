@@ -125,7 +125,9 @@ class HistoryApi extends RelateApi
             $orderBy = explode(',', $args['order_by']);
             foreach ($orderBy as $key => $list) {
                 list($field, $direction) = explode(':', $list);
-                if ($field == 'module') {
+                // `picture` is considered the same field as `module` because it
+                // corresponds to the module icon.
+                if ($field === 'module' || $field === 'picture') {
                     unset($orderBy[$key]);
                     $removedModuleDirection = !empty($direction) ? $direction : 'DESC';
                 }

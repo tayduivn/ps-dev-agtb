@@ -27,11 +27,15 @@ $viewdefs['base']['view']['history-summary'] = array(
         array(
             'fields' => array(
                 array(
-                    'name' => 'module',
+                    'name' => 'picture',
+                    'type' => 'avatar',
+                    'align' => 'tcenter',
                     'label' => 'LBL_MODULE_TYPE',
+                    'dismiss_label' => true,
+                    'readonly' => true,
                     'enabled' => true,
                     'default' => true,
-                    'isSortable' => true
+                    'isSortable' => true,
                 ),
                 array(
                     'name' => 'name',

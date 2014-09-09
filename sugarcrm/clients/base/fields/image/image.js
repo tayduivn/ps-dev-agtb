@@ -32,11 +32,17 @@
 
     /**
      * @override
+     *
+     * FIXME: The {@link #model} used by this view should be a {@link Data.Bean}
+     * and not a simple {@link Backbone.Model}. This should be removed when
+     * {@link View.Views.Base.HistorySummaryView} view is refactored to use a
+     * true {@link Data.MixedBeanCollection}.
      */
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
 
-        if (!this.model.hasImageRequiredValidator) {
+        // FIXME: we should have a {@link Da
+        if (_.isFunction(this.model.addValidationTask) && !this.model.hasImageRequiredValidator) {
             this.model.hasImageRequiredValidator = true;
             this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
         }
