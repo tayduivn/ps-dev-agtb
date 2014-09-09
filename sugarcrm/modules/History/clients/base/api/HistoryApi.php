@@ -72,6 +72,8 @@ class HistoryApi extends RelateApi
         'date_entered',
         'date_modified',
         'related_contact',
+        'assigned_user_name',
+        'assigned_user_id',
     );
 
     public function registerApiRest()

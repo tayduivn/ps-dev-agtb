@@ -98,6 +98,29 @@
     },
 
     /**
+     * @override
+     *
+     * This view doesn't use the regular {@link Utils.Utils#isSortable} to check
+     * whether the field is sortable.
+     */
+    _initOrderBy: function() {
+        var lastStateOrderBy = app.user.lastState.get(this.orderByLastStateKey) || {},
+            lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
+
+        if (_.isEmpty(lastOrderedFieldMeta) || !lastOrderedFieldMeta.isSortable) {
+            lastStateOrderBy = {};
+        }
+
+        return _.extend({
+                field: '',
+                direction: 'desc'
+            },
+            this.meta.orderBy,
+            lastStateOrderBy
+        );
+    },
+
+    /**
      * Sets the activityModules array which the collection sends to the endpoint
      * Override this function in child views to set a custom list of modules to fetch
      */
