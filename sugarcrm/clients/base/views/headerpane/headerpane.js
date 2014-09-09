@@ -14,14 +14,17 @@
  * @extends View.View
  */
 ({
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         if (this.meta && this.meta.title) {
             this.title = this.meta.title;
         }
 
-        this.context.on("headerpane:title",function(title){
+        this.context.on('headerpane:title', function(title) {
             this.title = title;
             if (!this.disposed) this.render();
         }, this);
@@ -45,10 +48,27 @@
         }, this, true);
     },
 
+    /**
+     * @inheritDoc
+     */
     _renderHtml: function() {
-        var title = this.title || this.module;
-        this.title = app.lang.get(title, this.module);
+        /**
+         * The title being rendered in the headerpane.
+         *
+         * @type {string}
+         */
+        this.title = this.formatTitle(this.title || this.module);
 
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
+    },
+
+    /**
+     * Formats the title before being rendered.
+     *
+     * @param {string} title The unformatted title.
+     * @return {string} The formatted title.
+     */
+    formatTitle: function(title) {
+        return app.lang.get(title, this.module);
     }
 })

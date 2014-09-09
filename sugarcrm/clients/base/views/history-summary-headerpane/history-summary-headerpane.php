@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['history-summary-headerpane'] = array(
-    'template' => 'headerpane',
-    'title' => 'LBL_HISTORICAL_SUMMARY',
+    'title' => 'TPL_HISTORICAL_SUMMARY',
     'buttons' => array(
         array(
             'name'    => 'cancel_button',
