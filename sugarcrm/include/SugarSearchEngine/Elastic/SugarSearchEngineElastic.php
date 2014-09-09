@@ -67,17 +67,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     /**
      *
-     * Index strategy for reading and writing per module
-     * Defaults to using unique_key if not set
-     *
-     * @see $sugar_config['search_engine']['index_strategy_settings']
-     * @see $sugar_config['search_engine']['unique_key']
-     * @var string
-     */
-    protected $indexStrategySettings;
-
-    /**
-     *
      * Index strategy object
      *
      * @var SugarSearchEngineIndexStrategy
