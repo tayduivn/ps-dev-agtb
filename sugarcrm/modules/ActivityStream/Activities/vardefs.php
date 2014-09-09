@@ -89,6 +89,13 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITIES',
         ),
+        'quotas' => array(
+            'name' => 'quotas',
+            'type' => 'link',
+            'relationship' => 'quota_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_QUOTAS',
+        ),
         'leads' => array(
             'name' => 'leads',
             'type' => 'link',
@@ -96,7 +103,6 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'name' => 'products',
             'type' => 'link',
@@ -125,7 +131,6 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTS',
         ),
-        //END SUGARCRM flav=pro ONLY
         'bugs' => array(
             'name' => 'bugs',
             'type' => 'link',

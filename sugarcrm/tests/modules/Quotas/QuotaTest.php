@@ -127,4 +127,34 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
             $quota->getRollupQuota($test_tp_id, 'test_user_id')
         );
     }
+
+    /**
+     * @covers Quotas::get_summary_text
+     */
+    public function testGetSummaryText()
+    {
+        $tpname = "Test TimePeriod";
+        $userFullName = "Test User Full Name";
+        $expectedSummary = "$tpname -- $userFullName";
+
+        $mocktp = $this->getMock('TimePeriod');
+
+        BeanFactory::setBeanClass('TimePeriods', get_class($mocktp));
+
+        $tp = BeanFactory::newBean('TimePeriods');
+        $tp->id = create_guid();
+        $tp->name = $tpname;
+
+        BeanFactory::registerBean($tp);
+
+        $quota = BeanFactory::newBean('Quotas');
+        $quota->timeperiod_id = $tp->id;
+        $quota->user_full_name = $userFullName;
+
+        $this->assertSame($expectedSummary, $quota->get_summary_text());
+
+        BeanFactory::unregisterBean($tp);
+        BeanFactory::setBeanClass('TimePeriods');
+    }
 }
+
