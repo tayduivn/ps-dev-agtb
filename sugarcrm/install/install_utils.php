@@ -755,29 +755,49 @@ function handleSugarConfig() {
         $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
     }
 
-    //Setup FTS
-    if (!empty($_SESSION['fts_type'])) {
+    // Setup FTS
+    if (!empty($_SESSION['setup_fts_type'])) {
+
+        // Base settings
+        $ftsSettings = array(
+            'host' => $_SESSION['setup_fts_host'],
+            'port' => $_SESSION['setup_fts_port'],
+        );
+
+        // Add optional settings
+        $ftsOptional = array(
+            'curl',
+            'transport',
+            'index_settings',
+            'index_strategy',
+        );
+        foreach ($ftsOptional as $ftsOpt) {
+            $ftsConfigKey = "setup_fts_{$ftsOpt}";
+            if (!empty($_SESSION[$ftsConfigKey])) {
+                $ftsSettings[$ftsOpt] = $_SESSION[$ftsConfigKey];
+            }
+        }
+
+        // Add FTS settings to $sugar_config
         $sugar_config['full_text_engine'] = array(
-            $_SESSION['fts_type'] => array(
-                'host' => $_SESSION['fts_host'],
-                'port' => $_SESSION['fts_port']
-            )
+            $_SESSION['setup_fts_type'] => $ftsSettings,
         );
     }
 
 
-	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
-		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
-    $sugar_config['logger']	=
-    	array ('level'=>$setup_site_log_level,
-    	 'file' => array(
-			'ext' => '.log',
-			'name' => 'sugarcrm',
-			'dateFormat' => '%c',
-			'maxSize' => '10MB',
-			'maxLogs' => 10,
-			'suffix' => ''), // bug51583, change default suffix to blank for backwards comptability
-  	);
+    /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
+       these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
+    $sugar_config['logger']	= array(
+        'level' => $setup_site_log_level,
+        'file' => array(
+            'ext' => '.log',
+            'name' => 'sugarcrm',
+            'dateFormat' => '%c',
+            'maxSize' => '10MB',
+            'maxLogs' => 10,
+            'suffix' => '',
+        ), // bug51583, change default suffix to blank for backwards comptability
+    );
 
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
@@ -1681,12 +1701,39 @@ function pullSilentInstallVarsIntoSession() {
         $derived['install_method'] = $sugar_config_si['install_method'];
     //END SUGARCRM flav=pro ONLY
 
-    $needles = array('setup_db_create_database','setup_db_create_sugarsales_user','setup_license_key_users',
-                     'setup_license_key_expire_date','setup_license_key', 'setup_num_lic_oc',
-                     'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
-                     'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
-                     'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter', 'cache_dir', 'setup_db_options',
+    $needles = array(
+        'setup_db_create_database',
+        'setup_db_create_sugarsales_user',
+        'setup_license_key_users',
+        'setup_license_key_expire_date',
+        'setup_license_key',
+        'setup_num_lic_oc',
+        'default_currency_iso4217',
+        'default_currency_name',
+        'default_currency_significant_digits',
+        'default_currency_symbol',
+        'default_date_format',
+        'default_time_format',
+        'default_decimal_seperator',
+        'default_export_charset',
+        'default_language',
+        'default_locale_name_format',
+        'default_number_grouping_seperator',
+        'export_delimiter',
+        'cache_dir',
+        'setup_db_options',
+
+        // Base Elastic settings
+        'setup_fts_type',
+        'setup_fts_host',
+        'setup_fts_port',
+
+        // Optional Elastic settings only supported through silent installer
+        'setup_fts_curl',
+        'setup_fts_transport',
+        'setup_fts_index_settings',
+        'setup_fts_index_strategy',
+
     );
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
@@ -1701,11 +1748,7 @@ function pullSilentInstallVarsIntoSession() {
     }
 
     // for silent install
-    if (!empty($_SESSION['setup_fts_type'])) {
-        $_SESSION['fts_type'] = $_SESSION['setup_fts_type'];
-        $_SESSION['fts_host'] = $_SESSION['setup_fts_host'];
-        $_SESSION['fts_port'] = $_SESSION['setup_fts_port'];
-    } else {
+    if (empty($_SESSION['setup_fts_type'])) {
         installLog("ERROR::  {$mod_strings['LBL_FTS_REQUIRED']}");
     }
 }
