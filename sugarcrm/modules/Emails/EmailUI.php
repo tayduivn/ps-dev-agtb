@@ -2361,7 +2361,7 @@ eoq;
 
 		$desc = (!empty($html)) ? $html : $plain;
 
-		$email->description = $header.$email->quoteHtmlEmailForNewEmailUI($desc);
+        $email->description = $header.$email->quoteHtmlEmail($desc);
 		return $email;
 
 	}
