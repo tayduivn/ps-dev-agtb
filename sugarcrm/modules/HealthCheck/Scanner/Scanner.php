@@ -1024,7 +1024,7 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+        foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if (!empty($extfiles)) {
