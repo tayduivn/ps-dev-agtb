@@ -372,6 +372,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
 
+        $baseSpans = array();
+        foreach ($this->baseViewFields as $baseKey => $baseFieldDef) {
+            if (is_array($baseFieldDef) && isset($baseFieldDef['span'])) {
+                $baseSpans[$baseKey] = $baseFieldDef['span'];
+            }
+        }
+
         // Set up the panel index so we know where the header panel meta needs to
         // be injected if there is header panel meta to be injected
         $panelIndex = 0;
@@ -481,6 +488,23 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             } else {
                 $newPanel = $panelDefaults;
+            }
+
+            // populate field spans with standard values unless other is defined layout
+            foreach ($fields as $i => $field) {
+                if (is_array($field)) {
+                    if (isset($field['name'])) {
+                        $fieldName = $field['name'];
+                        if (!isset($field['span']) && isset($baseSpans[$fieldName])) {
+                            $fields[$i]['span'] = $baseSpans[$fieldName];
+                        }
+                    }
+                } elseif (isset($baseSpans[$field])) {
+                    $fields[$i] = array(
+                        'name' => $field,
+                        'span' => $baseSpans[$field],
+                    );
+                }
             }
 
             $newPanel['fields'] = $fields;
