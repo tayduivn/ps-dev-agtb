@@ -16,7 +16,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
         array(
             'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES',
             'fields' => array(
-                'forecast_ranges' => array(
+                array(
                     'name' => 'forecast_ranges',
                     'type' => 'radioenum',
                     'label' => 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
@@ -25,7 +25,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                     'default' => false,
                     'enabled' => true,
                 ),
-                'category_ranges' => array(
+                array(
+                    'name' => 'category_ranges',
                     'include' => array(
                         'name' => 'include',
                         'type' => 'range',
@@ -79,7 +80,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                     ),
 //END SUGARCRM flav=ent ONLY
                 ),
-                'buckets_dom' => array(
+                array(
                     'name' => 'buckets_dom',
                     'options' => array(
                         'show_binary' => 'commit_stage_binary_dom',
