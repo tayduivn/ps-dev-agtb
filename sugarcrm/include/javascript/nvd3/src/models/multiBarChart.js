@@ -13,6 +13,8 @@ nv.models.multiBarChart = function() {
       showLegend = true,
       tooltip = null,
       tooltips = true,
+      scrollEnabled = true,
+      overflowHandler = function(d) { return; },
       x,
       y,
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
@@ -414,12 +416,22 @@ nv.models.multiBarChart = function() {
       //------------------------------------------------------------
       // Main Chart Component(s)
 
+      function getDimension(d) {
+        if (d === 'width') {
+          return vertical && scrollEnabled ? Math.max(innerWidth, minDimension) : innerWidth;
+        } else if (d === 'height') {
+          return !vertical && scrollEnabled ? Math.max(innerHeight, minDimension) : innerHeight;
+        } else {
+          return 0;
+        }
+      }
+
       multibar
         .vertical(vertical)
         .baseDimension(baseDimension)
         .disabled(data.map(function(series) { return series.disabled; }))
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension))
+        .width(getDimension('width'))
+        .height(getDimension('height'))
         .id(chart.id());
       barsWrap
         .data([dataBars])
@@ -438,8 +450,8 @@ nv.models.multiBarChart = function() {
 
       // Recalc chart scales based on new inner dimensions
       multibar
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension));
+        .width(getDimension('width'))
+        .height(getDimension('height'));
 
       multibar.resetScale();
 
@@ -452,8 +464,8 @@ nv.models.multiBarChart = function() {
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       multibar
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension));
+        .width(getDimension('width'))
+        .height(getDimension('height'));
 
       //------------------------------------------------------------
       // Main Chart Components
@@ -467,7 +479,7 @@ nv.models.multiBarChart = function() {
           .call(multibar);
 
       trans = 'translate(';
-      trans += vertical ? '0' : (xAxis.orient() === 'left' ? 0 : innerWidth);
+      trans += vertical ? 0 : (xAxis.orient() === 'left' ? 0 : innerWidth);
       trans += ',';
       trans += vertical ? (xAxis.orient() === 'bottom' ? innerHeight : 0) : 0;
       trans += ')';
@@ -498,27 +510,30 @@ nv.models.multiBarChart = function() {
 
       //------------------------------------------------------------
       // Enable scrolling
-      var diff = (vertical ? innerWidth : innerHeight) - minDimension,
-          panMultibar = function() {
-            scrollOffset = scroll.pan(diff);
-            dispatch.tooltipHide(d3.event);
-          };
+      if (scrollEnabled) {
+        var diff = (vertical ? innerWidth : innerHeight) - minDimension,
+            panMultibar = function() {
+              scrollOffset = scroll.pan(diff);
+              dispatch.tooltipHide(d3.event);
+            };
 
-      scroll
-        .id(id)
-        .vertical(vertical)
-        .width(innerWidth)
-        .height(innerHeight)
-        .margin(innerMargin)
-        .minDimension(minDimension)
-        .panHandler(panMultibar);
+        scroll
+          .id(id)
+          .enable(useScroll)
+          .vertical(vertical)
+          .width(innerWidth)
+          .height(innerHeight)
+          .margin(innerMargin)
+          .minDimension(minDimension)
+          .panHandler(panMultibar);
 
-      scroll(g, gEnter, scrollWrap, xAxis);
+        scroll(g, gEnter, scrollWrap, xAxis);
 
-      scroll.init(useScroll, scrollOffset);
+        scroll.init(scrollOffset, overflowHandler);
 
-      // initial call to zoom in case of scrolled bars on window resize
-      scroll.panHandler()();
+        // initial call to zoom in case of scrolled bars on window resize
+        scroll.panHandler()();
+      }
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
@@ -815,6 +830,22 @@ nv.models.multiBarChart = function() {
     return chart;
   };
 
+  chart.allowScroll = function(_) {
+    if (!arguments.length) {
+      return scrollEnabled;
+    }
+    scrollEnabled = _;
+    return chart;
+  };
+
+  chart.overflowHandler = function(_) {
+    if (!arguments.length) {
+      return overflowHandler;
+    }
+    overflowHandler = d3.functor(_);
+    return chart;
+  };
+
   chart.seriesClick = function(_) {
     if (!arguments.length) {
       return seriesClick;
@@ -830,7 +861,6 @@ nv.models.multiBarChart = function() {
     hideEmptyGroups = _;
     return chart;
   };
-
 
 
   //============================================================

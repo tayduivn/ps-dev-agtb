@@ -2103,6 +2103,7 @@ nv.models.scroll = function() {
       height,
       minDimension,
       panHandler,
+      overflowHandler,
       enable;
 
   //============================================================
@@ -2120,9 +2121,10 @@ nv.models.scroll = function() {
 
       var scrollOffset = 0;
 
-      scroll.init = function(enable, offset) {
+      scroll.init = function(offset, overflow) {
 
         scrollOffset = offset;
+        overflowHandler = overflow;
 
         this.gradients(enable);
         this.mask(enable);
@@ -2140,24 +2142,33 @@ nv.models.scroll = function() {
         // don't fire on events other than zoom and drag
         // we need click for handling legend toggle
         var distance = 0,
-            translate = '';
+            overflowDistance = 0,
+            translate = '',
+            x = 0,
+            y = 0;
 
         if (d3.event) {
           if (d3.event.type === 'zoom') {
-            var x = d3.event.sourceEvent.deltaX || 0,
-                y = d3.event.sourceEvent.deltaY || 0;
+            x = d3.event.sourceEvent.deltaX || 0;
+            y = d3.event.sourceEvent.deltaY || 0;
             distance = (Math.abs(x) > Math.abs(y) ? x : y) * -1;
           } else if (d3.event.type === 'drag') {
-            distance = vertical ? d3.event.dx || 0 : d3.event.dy || 0;
+            x = d3.event.dx || 0;
+            y = d3.event.dy || 0;
+            distance = vertical ? x : y;
           } else if (d3.event.type !== 'click') {
             return 0;
           }
+          overflowDistance = (Math.abs(y) > Math.abs(x) ? y : 0);
         }
 
         // reset value defined in panMultibar();
-        scrollOffset = Math.min(Math.max(scrollOffset + distance, diff), 0);
-
+        scrollOffset = Math.min(Math.max(scrollOffset + distance, diff), -1);
         translate = 'translate(' + (vertical ? scrollOffset + ',0' : '0,' + scrollOffset) + ')';
+
+        if (scrollOffset + distance > 0 || scrollOffset + distance < diff) {
+          overflowHandler(overflowDistance);
+        }
 
         foreShadows
           .attr('transform', translate);
@@ -2220,18 +2231,18 @@ nv.models.scroll = function() {
           .attr(dim, val);
 
         backShadows.select('.nv-back-shadow-more')
-          .attr('x', x + (v ? width - 20 : 0))
-          .attr('y', y + (v ? 0 : height - 20))
+          .attr('x', x + (v ? width - 5 : 1))
+          .attr('y', y + (v ? 0 : height - 4))
           .attr(dim, val);
 
         foreShadows.select('.nv-fore-shadow-prev')
-          .attr('x', x)
-          .attr('y', y)
+          .attr('x', x + (v ? 1 : 0))
+          .attr('y', y + (v ? 0 : 1))
           .attr(dim, val);
 
         foreShadows.select('.nv-fore-shadow-more')
-          .attr('x', x + (v ? minDimension - 40 : 0))
-          .attr('y', y + (v ? 0 : minDimension - 40))
+          .attr('x', x + (v ? minDimension - 20 : 0))
+          .attr('y', y + (v ? 0 : minDimension - 19))
           .attr(dim, val);
       };
 
@@ -2271,7 +2282,7 @@ nv.models.scroll = function() {
 
         bgpEnter
           .append('stop')
-          .attr('stop-color', '#DDDDDD')
+          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
           .attr('offset', 0);
         bgpEnter
           .append('stop')
@@ -2283,12 +2294,12 @@ nv.models.scroll = function() {
           .attr('offset', 0);
         bgmEnter
           .append('stop')
-          .attr('stop-color', '#DDDDDD')
+          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
           .attr('offset', 1);
 
         fgpEnter
           .append('stop')
-          .attr('stop-color', '#FFFFFF')
+          .attr('stop-color', '#FFF')
           .attr('offset', 0);
         fgpEnter
           .append('stop')
@@ -2300,7 +2311,7 @@ nv.models.scroll = function() {
           .attr('offset', 0);
         fgmEnter
           .append('stop')
-          .attr('stop-color', '#FFFFFF')
+          .attr('stop-color', '#FFF')
           .attr('offset', 1);
       };
 
@@ -2345,11 +2356,11 @@ nv.models.scroll = function() {
 
           backShadows.select('rect.nv-back-shadow-prev')
             .attr('fill', 'url(#nv-back-gradient-prev-' + id + ')')
-            .attr(dimension, 20);
+            .attr(dimension, 5);
 
           backShadows.select('rect.nv-back-shadow-more')
             .attr('fill', 'url(#nv-back-gradient-more-' + id + ')')
-            .attr(dimension, 20);
+            .attr(dimension, 5);
         } else {
           backShadows.selectAll('rect').attr('fill', 'transparent');
         }
@@ -2375,11 +2386,11 @@ nv.models.scroll = function() {
 
           foreShadows.select('rect.nv-fore-shadow-prev')
             .attr('fill', 'url(#nv-fore-gradient-prev-' + id + ')')
-            .attr(dimension, 40);
+            .attr(dimension, 20);
 
           foreShadows.select('rect.nv-fore-shadow-more')
             .attr('fill', 'url(#nv-fore-gradient-more-' + id + ')')
-            .attr(dimension, 40);
+            .attr(dimension, 20);
         } else {
           foreShadows.selectAll('rect').attr('fill', 'transparent');
         }
@@ -7967,6 +7978,8 @@ nv.models.multiBarChart = function() {
       showLegend = true,
       tooltip = null,
       tooltips = true,
+      scrollEnabled = true,
+      overflowHandler = function(d) { return; },
       x,
       y,
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
@@ -8368,12 +8381,22 @@ nv.models.multiBarChart = function() {
       //------------------------------------------------------------
       // Main Chart Component(s)
 
+      function getDimension(d) {
+        if (d === 'width') {
+          return vertical && scrollEnabled ? Math.max(innerWidth, minDimension) : innerWidth;
+        } else if (d === 'height') {
+          return !vertical && scrollEnabled ? Math.max(innerHeight, minDimension) : innerHeight;
+        } else {
+          return 0;
+        }
+      }
+
       multibar
         .vertical(vertical)
         .baseDimension(baseDimension)
         .disabled(data.map(function(series) { return series.disabled; }))
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension))
+        .width(getDimension('width'))
+        .height(getDimension('height'))
         .id(chart.id());
       barsWrap
         .data([dataBars])
@@ -8392,8 +8415,8 @@ nv.models.multiBarChart = function() {
 
       // Recalc chart scales based on new inner dimensions
       multibar
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension));
+        .width(getDimension('width'))
+        .height(getDimension('height'));
 
       multibar.resetScale();
 
@@ -8406,8 +8429,8 @@ nv.models.multiBarChart = function() {
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       multibar
-        .width(vertical ? Math.max(innerWidth, minDimension) : innerWidth)
-        .height(vertical ? innerHeight : Math.max(innerHeight, minDimension));
+        .width(getDimension('width'))
+        .height(getDimension('height'));
 
       //------------------------------------------------------------
       // Main Chart Components
@@ -8421,7 +8444,7 @@ nv.models.multiBarChart = function() {
           .call(multibar);
 
       trans = 'translate(';
-      trans += vertical ? '0' : (xAxis.orient() === 'left' ? 0 : innerWidth);
+      trans += vertical ? 0 : (xAxis.orient() === 'left' ? 0 : innerWidth);
       trans += ',';
       trans += vertical ? (xAxis.orient() === 'bottom' ? innerHeight : 0) : 0;
       trans += ')';
@@ -8452,27 +8475,30 @@ nv.models.multiBarChart = function() {
 
       //------------------------------------------------------------
       // Enable scrolling
-      var diff = (vertical ? innerWidth : innerHeight) - minDimension,
-          panMultibar = function() {
-            scrollOffset = scroll.pan(diff);
-            dispatch.tooltipHide(d3.event);
-          };
+      if (scrollEnabled) {
+        var diff = (vertical ? innerWidth : innerHeight) - minDimension,
+            panMultibar = function() {
+              scrollOffset = scroll.pan(diff);
+              dispatch.tooltipHide(d3.event);
+            };
 
-      scroll
-        .id(id)
-        .vertical(vertical)
-        .width(innerWidth)
-        .height(innerHeight)
-        .margin(innerMargin)
-        .minDimension(minDimension)
-        .panHandler(panMultibar);
+        scroll
+          .id(id)
+          .enable(useScroll)
+          .vertical(vertical)
+          .width(innerWidth)
+          .height(innerHeight)
+          .margin(innerMargin)
+          .minDimension(minDimension)
+          .panHandler(panMultibar);
 
-      scroll(g, gEnter, scrollWrap, xAxis);
+        scroll(g, gEnter, scrollWrap, xAxis);
 
-      scroll.init(useScroll, scrollOffset);
+        scroll.init(scrollOffset, overflowHandler);
 
-      // initial call to zoom in case of scrolled bars on window resize
-      scroll.panHandler()();
+        // initial call to zoom in case of scrolled bars on window resize
+        scroll.panHandler()();
+      }
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
@@ -8769,6 +8795,22 @@ nv.models.multiBarChart = function() {
     return chart;
   };
 
+  chart.allowScroll = function(_) {
+    if (!arguments.length) {
+      return scrollEnabled;
+    }
+    scrollEnabled = _;
+    return chart;
+  };
+
+  chart.overflowHandler = function(_) {
+    if (!arguments.length) {
+      return overflowHandler;
+    }
+    overflowHandler = d3.functor(_);
+    return chart;
+  };
+
   chart.seriesClick = function(_) {
     if (!arguments.length) {
       return seriesClick;
@@ -8784,7 +8826,6 @@ nv.models.multiBarChart = function() {
     hideEmptyGroups = _;
     return chart;
   };
-
 
 
   //============================================================

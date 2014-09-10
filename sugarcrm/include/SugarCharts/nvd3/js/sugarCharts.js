@@ -43,8 +43,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
         show_x_label: false,
         x_axis_label: '',
         rotateTicks: 0,
+        vertical: true,
         staggerTicks: false,
         reduceXTicks: false,
+        allowScroll: false,
+        overflowHandler: false,
         colorData: 'default',
         margin: {top: 10, right: 10, bottom: 10, left: 10}
     }, params);
@@ -81,6 +84,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .showControls(false)
                         .colorData('default')
                         .colorFill('default')
+                        .allowScroll(false)
                         .stacked(!params.display_manager)
                         .id(chartId)
                         .strings({
@@ -141,13 +145,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                 if (SUGAR.charts.isDataEmpty(data)) {
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
-                    var vertical = chartConfig['orientation'] === 'vertical' ? true : false;
+                    params.vertical = chartConfig['orientation'] === 'vertical' ? true : false;
 
-                    var barChart = nv.models.multiBarChart();
-
-                    barChart
+                    var barChart = nv.models.multiBarChart()
                         .id(d3ChartId)
-                        .vertical(vertical)
+                        .vertical(params.vertical)
                         .margin(params.margin)
                         .showTitle(params.show_title)
                         .tooltips(params.show_tooltips)
@@ -161,6 +163,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .reduceXTicks(params.reduceXTicks)
                         .colorData(params.colorData)
                         .stacked(chartConfig.barType === 'stacked' ? true : true)
+                        .allowScroll(params.allowScroll)
+                        .overflowHandler(params.overflowHandler)
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
