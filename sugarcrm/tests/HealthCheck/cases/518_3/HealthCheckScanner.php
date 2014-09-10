@@ -12,6 +12,8 @@
 
 class S_518_3_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
+    // TODO: remote when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
+    public $skip = true;
     public $md5_files = array(
         './modules/Accounts/Account.php' => 'fakeMD5'
     );

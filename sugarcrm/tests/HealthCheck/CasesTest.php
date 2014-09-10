@@ -65,6 +65,9 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->scanner = $this->getScanner($case);
+        if ($this->scanner->skip) {
+            $this->markTestIncomplete('HealthCheck code ' . $code . ' case ' . $case . ' is skipped by itself');
+        }
 
         if (is_dir(__DIR__ . '/cases/' . $case . '/sugarcrm')) {
             copy_recursive(__DIR__ . '/cases/' . $case . '/sugarcrm', $this->cachedPath);
