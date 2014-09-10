@@ -443,7 +443,10 @@ class HealthCheckScanner
         $this->checkVendorAndRemovedFiles();
         if(!empty($this->filesToFix))
         {
-            $files_to_fix = implode("\r\n", $this->filesToFix);
+            $files_to_fix = '';
+            foreach ($this->filesToFix as $fileToFix) {
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . var_export($fileToFix['vendors'], true) . PHP_EOL;
+            }
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
@@ -665,6 +668,7 @@ class HealthCheckScanner
             )
             ) {
                 $vendorFileFound = false;
+                $includedVendors = array();
                 foreach ($m[1] as $value) {
                     foreach ($this->removed_directories as $directory) {
                         if (preg_match(
@@ -682,12 +686,16 @@ class HealthCheckScanner
                                 }
                             }
                             $vendorFileFound = true;
+                            $includedVendors[] = $directory;
                             break;
                         }
                     }
                 }
                 if ($vendorFileFound) {
-                    $this->filesToFix[] = $file;
+                    $this->filesToFix[] = array(
+                        'file' => $file,
+                        'vendors' => $includedVendors
+                    );
                 }
             }
             foreach ($this->removed_files AS $deletedFile) {

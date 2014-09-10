@@ -44,7 +44,7 @@ $mod_strings = array(
     'LBL_SCAN_313_LOG' => 'Extension dir %s detected - %s is not MB module',
     'LBL_SCAN_314_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '{%s}'",
 
-    'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor/:\r\n%s',
+    'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_LOG' => 'Bad module %s - not in beanList and not in filesystem',
     'LBL_SCAN_520_LOG' => 'Logic hook after_ui_frame detected',
     'LBL_SCAN_521_LOG' => 'Logic hook after_ui_footer detected',
@@ -122,7 +122,7 @@ $mod_strings = array(
     'LBL_SCAN_312_TITLE' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_313_TITLE' => 'Extension dir %s detected - %s is not MB module',
 
-    'LBL_SCAN_401_TITLE' => 'Vendor files inclusion found, for files that have been moved to vendor/:\r\n%s',
+    'LBL_SCAN_401_TITLE' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_TITLE' => 'Bad module %s - not in beanList and not in filesystem',
     'LBL_SCAN_520_TITLE' => 'Logic hook after_ui_frame detected',
     'LBL_SCAN_521_TITLE' => 'Logic hook after_ui_footer detected',
