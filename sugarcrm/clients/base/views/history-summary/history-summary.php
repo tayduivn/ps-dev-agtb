@@ -36,6 +36,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
+                    'css_class' => 'cell-small',
                 ),
                 array(
                     'name' => 'name',
@@ -44,7 +45,8 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'enabled' => true,
                     'default' => true,
                     'link' => true,
-                    'isSortable' => true
+                    'isSortable' => true,
+                    'css_class' => 'cell-large',
                 ),
                 array(
                     'name' => 'status',
@@ -59,7 +61,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'label' => 'LBL_DESCRIPTION',
                     'enabled' => true,
                     'default' => true,
-                    'css_class' => 'description_col'
+                    'css_class' => 'cell-xlarge'
                 ),
                 array(
                     'name' => 'to_addrs',
