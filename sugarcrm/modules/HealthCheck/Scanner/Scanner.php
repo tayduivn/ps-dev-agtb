@@ -990,8 +990,7 @@ class HealthCheckScanner
                         $defsname = "viewdefs";
                     }
                 }
-                // TODO: uncomment checkCustomCode() when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
-                // $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
+                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
                 // For stock modules, check subpanels and also list views for non-bwc modules
                 if($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
