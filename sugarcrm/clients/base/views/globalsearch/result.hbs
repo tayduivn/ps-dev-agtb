@@ -14,7 +14,7 @@
     {{#each data.records}}
     <li>
         <a href="{{link}}">
-            <span class="label label-module label-module-mini label-{{module}}" title="{{str "LBL_MODULE_NAME" module}}">{{moduleIconLabel module}}</span> {{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
+            <span class="label label-module label-module-mini label-{{module}}" title="{{getModuleName module plural=true}}">{{moduleIconLabel module}}</span> {{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
         </a>
     </li>
     {{/each}}

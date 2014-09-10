@@ -11,14 +11,14 @@
  */
 --}}
                 <div class="block filtered tabbable tabs-left" id="moduleActivity">
-                    <h4>{{str "LBL_MODULE_NAME" module}}</h4>
+                    <h4>{{getModuleName module plural=true}}</h4>
 
                     {{#each meta.panels}}
                     <ul class="nav nav-tabs results">
                         {{#if ../collection.models}}
                         {{#each ../../collection.models}}
                         <li class="activity" data-id="{{id}}">
-                            <a class="avatar pull-left" href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{str "LBL_MODULE_NAME_SINGULAR" module}}</span></a>
+                            <a class="avatar pull-left" href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{getModuleName module}}</span></a>
                             <p class="ellipsis_inline">
                                 {{#with attributes}}
                                     <a href="javascript:void(0)">{{name}}</a>

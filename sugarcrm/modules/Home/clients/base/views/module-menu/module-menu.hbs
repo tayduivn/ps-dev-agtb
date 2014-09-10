@@ -13,9 +13,9 @@
 {{#if meta.short}}
     <a class="cube module-list-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:cube" tabindex="-1"><img src="{{buildUrl url='styleguide/assets/img/logo.svg'}}" alt="{{str 'LBL_SUGAR_CUBE_ALT' module}}"></a>
 {{else}}
-    <a class="cube btn btn-invisible btn-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:cube" aria-label="{{str 'LBL_MODULE_NAME' module}}"><img src="{{buildUrl url='styleguide/assets/img/logo.svg'}}" alt="{{str 'LBL_SUGAR_CUBE_ALT' module}}"></a>
+    <a class="cube btn btn-invisible btn-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:cube" aria-label="{{getModuleName module plural=true}}"><img src="{{buildUrl url='styleguide/assets/img/logo.svg'}}" alt="{{str 'LBL_SUGAR_CUBE_ALT' module}}"></a>
     {{#if actions}}
-    <button type="button" title="{{str 'LBL_LINK_MORE' module}}" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:cube-dropdown" aria-label="{{str 'LBL_MODULE_NAME' module}} - {{str 'LBL_LINK_MORE' module}}"><i class="icon-caret-down"></i></button>
+    <button type="button" title="{{str 'LBL_LINK_MORE' module}}" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:cube-dropdown" aria-label="{{getModuleName module plural=true}} - {{str 'LBL_LINK_MORE' module}}"><i class="icon-caret-down"></i></button>
     <div class="dropdown-menu scroll">
         <ul role="menu">
             {{#each actions}}
