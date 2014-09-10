@@ -271,7 +271,7 @@ class WebUpgrader extends UpgradeDriver
             return false;
         }
 
-        $bean = BeanFactory::retrieveBean('HealthCheck', $id);
+        $bean = BeanFactory::getBean('HealthCheck', $id);
         if(!$bean) {
             $this->log("Cannot find health check result by id $id");
             return false;
