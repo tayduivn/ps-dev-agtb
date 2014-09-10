@@ -2247,7 +2247,12 @@ class Report
                 $this->layout_manager->setAttribute('context', 'List');
             }
 
-            if ($display_column['type'] != 'currency' || (substr_count($display_column['name'], '_usdoll') == 0 && (isset($display_column['group_function'] ) && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum'))) {
+            if ($display_column['type'] != 'currency' || (substr_count($display_column['name'], '_usdoll') == 0 &&
+                    (isset($display_column['group_function']) ?
+                        ($display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum') :
+                        true)
+                )
+            ) {
                 $pos = $display_column['table_key'];
                 $module_name = '';
                 if ($pos) {
