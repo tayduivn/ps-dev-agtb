@@ -319,6 +319,7 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
+        BeanFactory::registerBean($relatedBean);
 
         // updateBean may remove the relationship. see PAT-337 for details
         $id = $this->updateBean($relatedBean, $api, $args);
@@ -371,6 +372,7 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
+        BeanFactory::registerBean($relatedBean);
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
         
