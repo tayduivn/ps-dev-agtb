@@ -34,6 +34,7 @@
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
+        this.listenTo(this.layout, 'filter:quicksearch:apply', this.applyQuickSearch);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
 
         //shortcut keys
@@ -52,26 +53,26 @@
     _renderHtml: function() {
         this._super('_renderHtml');
         this.setElement(this.$('input'));
+        this._lastQuicksearchKey = this._getLastQuicksearchKey();
+        this.$el.val(app.user.lastState.get(this._lastQuicksearchKey));
+        this.applyQuickSearch();
     },
 
     /**
-     * Fire quick search
-     * @param {Event} e
+     * Fires the quick search.
+     * @param {Event} [event] A keyup event.
      */
-    throttledSearch: _.debounce(function(e) {
-        var newSearch = this.$el.val();
-        if(this.currentSearch !== newSearch) {
-            this.currentSearch = newSearch;
-            this.layout.trigger('filter:apply', newSearch);
-        }
+    throttledSearch: _.debounce(function(event) {
+            this.applyQuickSearch();
     }, 400),
 
     /**
-     * Retrieve the field labels
+     * Retrieves the labels for the fields that are searchable in the
+     * quicksearch.
      *
-     * @param {String} moduleName
-     * @param {Array} field names
-     * @returns {Array} field labels
+     * @param {string} moduleName The module name the fields belong to.
+     * @param {string[]} fields The list of searchable fields.
+     * @return {string[]} The list of labels.
      */
     getFieldLabels: function(moduleName, fields) {
         var moduleMeta = app.metadata.getModule(moduleName);
@@ -122,7 +123,38 @@
         if (_.isFunction(input.placeholder)) {
             input.placeholder();
         }
-        this.currentSearch = '';
-        this.layout.trigger('filter:apply');
+        this.applyQuickSearch();
+    },
+
+    /**
+     * Invokes the `filter:apply` event with the current value on the quicksearch field.
+     */
+    applyQuickSearch: function() {
+        var newSearch = this.$el.val();
+        if (this.currentSearch !== newSearch) {
+            this.currentSearch = newSearch;
+            app.user.lastState.set(this._lastQuicksearchKey, newSearch);
+            this.layout.trigger('filter:apply', newSearch);
+        }
+    },
+
+    /**
+     * Gets the key containing the last quicksearch value.
+     *
+     * @return {string} The key.
+     * @protected
+     */
+    _getLastQuicksearchKey: function() {
+        var parentModuleKey = this.context.parent ? '-' + this.context.parent.get('module') : '';
+
+        /**
+         * The key in which we set the last quicksearch value.
+         *
+         * @property {string}
+         * @private
+         */
+        this._lastQuicksearchKey = this._lastQuicksearchKey ||
+            app.user.lastState.key('last-quickSearch-' + this.layout.layoutType + parentModuleKey, this.layout);
+        return this._lastQuicksearchKey;
     }
 })
