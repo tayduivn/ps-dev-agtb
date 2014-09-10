@@ -51,6 +51,7 @@ class ImportController extends SugarController
         if ( !$this->bean ) {
             $_REQUEST['message'] = $mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'];
             $this->view = 'error';
+            $this->_processed = true;
         }
         else
             $GLOBALS['FOCUS'] = $this->bean;
