@@ -111,7 +111,10 @@
     setMode: function(name) {
         // FIXME: This will be updated pending changes to fields in sidecar,
         // see SC-2608, SC-2776.
-        var mode = (this.tplName === 'list') && _.contains(['edit', 'disabled'], name) ? this.tplName : name;
+        // FIXME: Check on 'merge-duplicates' to identify editable fields
+        // see SC-3325
+        var isList = (this.tplName === 'list') && _.contains(['edit', 'disabled'], name),
+            mode = isList && this.view.name !== 'merge-duplicates' ? this.tplName : name;
         this._super('setMode', [mode]);
     },
 
