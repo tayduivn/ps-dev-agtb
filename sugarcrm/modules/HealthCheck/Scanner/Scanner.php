@@ -445,7 +445,10 @@ class HealthCheckScanner
         {
             $files_to_fix = '';
             foreach ($this->filesToFix as $fileToFix) {
-                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . var_export($fileToFix['vendors'], true) . PHP_EOL;
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
+                foreach ($fileToFix['vendors'] as $vendor) {
+                    $files_to_fix .= " '{$vendor['directory']}' found in line {$vendor['line']}" . PHP_EOL;
+                }
             }
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
@@ -685,9 +688,22 @@ class HealthCheckScanner
                                     break 2;
                                 }
                             }
-                            $vendorFileFound = true;
-                            $includedVendors[] = $directory;
-                            break;
+
+                            $fileContentsLined = file($file);
+                            $pattern = "#$value#";
+                            $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+                            if (count($linesFound) > 0) {
+                                $foundVendor = array();
+
+                                foreach ($linesFound as $linePosition => $lineContent) {
+                                    $foundVendor['line'] = ((int)$linePosition + 1);
+                                    $foundVendor['directory'] = $directory;
+                                }
+
+                                $vendorFileFound = true;
+                                $includedVendors[] = $foundVendor;
+                                break;
+                            }
                         }
                     }
                 }
