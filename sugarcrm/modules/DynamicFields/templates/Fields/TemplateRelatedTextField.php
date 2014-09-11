@@ -223,6 +223,7 @@ class TemplateRelatedTextField extends TemplateText{
      */
     public function delete($df)
     {
+        $fieldId = null;
         if ($df instanceof DynamicField) {
             $fieldId = $df->getFieldWidget($df->module, $this->id_name);
         } elseif ($df instanceof MBModule) {
@@ -231,8 +232,12 @@ class TemplateRelatedTextField extends TemplateText{
             $GLOBALS['log']->fatal('Unsupported DynamicField type');
         }
 
-        $this->deleteIdLabel($fieldId, $df);
-        $fieldId->delete($df);
+        // the field may have already been deleted
+        if ($fieldId) {
+            $this->deleteIdLabel($fieldId, $df);
+            $fieldId->delete($df);
+        }
+
         parent::delete($df);
     }
         

@@ -21,6 +21,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('current_user', array(true, true));
+        SugarTestHelper::setup('files');
 
         // Backup current language settings so manipulation can be tested
         $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
@@ -236,6 +237,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $manager = $this->getMockBuilder('MetadataManager')
             ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+        //Skipping the constructor requires we set up the db ourselves
+        $manager->db = DBManagerFactory::getInstance();
 
         $manager->expects($this->once())->method('getAppListStrings')
             ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
@@ -391,6 +394,77 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'bar',
                     'good',
                     'karma',
+                ),
+            ),
+        );
+    }
+
+    public function testGetPlatformList()
+    {
+        SugarTestHelper::saveFile('custom/clients/platforms.php');
+        SugarAutoLoader::ensureDir('custom/clients');
+
+        $contents = <<<PLATFORMS
+<?php
+\$platforms[] = 'metadata-manager-test';
+PLATFORMS;
+        SugarAutoLoader::put('custom/clients/platforms.php', $contents);
+
+        $platforms = MetaDataManager::getPlatformList();
+        $this->assertContains('base', $platforms);
+        $this->assertContains('mobile', $platforms);
+        $this->assertContains('portal', $platforms);
+        $this->assertContains('metadata-manager-test', $platforms);
+    }
+
+    /**
+     * @param array $input
+     * @param array $expected
+     *
+     * @dataProvider removeDisabledFieldsProvider
+     */
+    public function testRemoveDisabledFields($input, $expected)
+    {
+        $mm = new MetaDataManager();
+        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', array($input));
+        $this->assertSame($actual, $expected);
+    }
+
+    public static function removeDisabledFieldsProvider()
+    {
+        return array(
+            array(
+                array(
+                    'some-arbitrary-structure' => array(
+                        'fields' => array(
+                            array(
+                                'name' => 'f1',
+                                'enabled' => true,
+                            ),
+                            array(
+                                'name' => 'f2',
+                                'enabled' => false,
+                            ),
+                            array(
+                                'name' => 'f3',
+                            ),
+                            'f4',
+                        ),
+                    ),
+                ),
+                array(
+                    'some-arbitrary-structure' => array(
+                        'fields' => array(
+                            array(
+                                'name' => 'f1',
+                                'enabled' => true,
+                            ),
+                            array(
+                                'name' => 'f3',
+                            ),
+                            'f4',
+                        ),
+                    ),
                 ),
             ),
         );

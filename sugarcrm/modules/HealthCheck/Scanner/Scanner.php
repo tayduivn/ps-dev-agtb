@@ -23,10 +23,6 @@ class HealthCheckScanner
     // failure status
     const FAIL = 99;
 
-    const DEFAULT_FIELD_COUNT_MAX = 100;
-
-    const DEFAULT_FIELD_COUNT_WARN = 50;
-
     /**
      *
      * @var HealthCheckScannerMeta
@@ -78,7 +74,6 @@ class HealthCheckScanner
     protected $packages = array(
         'Zendesk' => '2.8',
         'Act-On Integrated Marketing Automation for SugarCRM' => '*',
-        'Admin Sandbox' => '*',
         'Pardot Marketing Automation for SugarCRM' => '*',
         'iNetMaps' => '*',
         'Sugar-Constant Contact Integration' => '*',
@@ -87,29 +82,39 @@ class HealthCheckScanner
         'FBSG SugarCRM QuickBooks Integration' => '*',
         'JJWDesign_Google_Maps' => '*',
         'Dashboard Manager' => '*',
-        'wSQL Admin' => '*',
+        'Fonality' => '*',
+        'inetDOCS Box' => '*',
+        'Forums, Threads, Posts Modules' => '*',
+        'Accounting' => '*',
+	    'Marketo Marketing Automation for SugarCRM' => '3.0',
+	    'SugarChimp' => '7.0.1',
+        'Calendar 2.0 V1.2 003' => '*',
+        'Sugar - MAS90 Integration' => '*',
+        'MAS90Integrator' => '*',
+        'ContactIndicators' => '*',
+        'Integral Sales' => '*',
+        'Teleseller' => '*',
+        'Freshdesk' => '*',
+        'Sugar-Sage Integration Modules' => '2.7.0-8-g74f8c47'
     );
 
     /**
-     *
+     * @var array List of modules which excluded from table check.
+     */
+    protected $excludeModules = array(
+        'Audit',
+        'Connectors',
+        'DynamicFields',
+        'MergeRecords',
+    );
+
+    /**
      * @var array List of unsupported modules.
      */
     protected $unsupportedModules = array(
         'Feeds',
         'iFrames'
     );
-
-    /**
-     *
-     * @var integer Number of fields on detail/editview to trigger class E
-     */
-    protected $fieldCountMax = self::DEFAULT_FIELD_COUNT_MAX;
-
-    /**
-     *
-     * @var integer Number of fields on detail/editview to trigger a warning
-     */
-    protected $fieldCountWarn = self::DEFAULT_FIELD_COUNT_WARN;
 
     /**
      *
@@ -250,12 +255,13 @@ class HealthCheckScanner
         $status = $scanMeta['bucket'];
         $code   = $scanMeta['id'];
         $report = $scanMeta['report'];
+        $this->logMeta[] = $scanMeta;
+        $issueNo = count($this->logMeta);
 
-        $reason = "[$report][$code] " . vsprintf($scanMeta['log'], $params);
+        $reason = "[Issue $issueNo][$report][$code][" . vsprintf($scanMeta['log'], $params) . ']';
 
         $this->log($reason, 'CHECK-'.$status);
         $this->logReason($status, $code, $reason);
-        $this->logMeta[] = $scanMeta;
 
 
         if ($status > $this->status) {
@@ -352,25 +358,6 @@ class HealthCheckScanner
         $this->verbose = $level;
     }
 
-    /**
-     * Setter field count max
-     *
-     * @param $value
-     */
-    public function setFieldCountMax($value)
-    {
-        $this->fieldCountMax = (int)$value;
-    }
-
-    /**
-     * Setter field count warn
-     *
-     * @param $value
-     */
-    public function setFieldCountWarn($value)
-    {
-        $this->fieldCountWarn = (int)$value;
-    }
 
     /**
      *
@@ -444,11 +431,17 @@ class HealthCheckScanner
         $this->listUpgrades();
         $this->checkPackages();
         $this->checkLanguageFiles();
-        $this->checkVendorFiles();
+        $this->checkVendorAndRemovedFiles();
         if(!empty($this->filesToFix))
         {
             $files_to_fix = implode("\r\n", $this->filesToFix);
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
+        }
+
+        if(!empty($this->deletedFilesReferenced))
+        {
+            $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
+            $this->updateStatus("deletedFilesReferenced", $files_with_bad_includes);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
@@ -470,17 +463,6 @@ class HealthCheckScanner
             $this->log("Checking module $module");
             $this->scanModule($module);
         }
-
-        // checking app_list_strings for weird entries
-        // FIXME: can not do this check yet because we have entries like FAQ and Newsletter in moduleList
-//         $app_list = return_app_list_strings_language('en_us');
-//         foreach($app_list['moduleList'] as $module => $name) {
-//             if(empty($this->beanList[$module]) && !file_exists("modules/$module")) {
-//                 $this->log("Bad module $module - not in beanList and not in filesystem");
-//                 $this->updateStatus(HealthCheckScannerMeta::CUSTOM);
-//             }
-//         }
-
 
         // Check global hooks
         $this->log("Checking global hooks");
@@ -559,6 +541,31 @@ class HealthCheckScanner
     }
 
     /**
+     * Check if $table_name property in bean match table parameter in module/vardefs.php
+     * @param $module
+     * @return bool
+     */
+    protected function checkTableName($module) {
+        $object = $this->getObjectName($module);
+
+        VardefManager::loadVardef($module, $object);
+        if(empty($GLOBALS['dictionary'][$object]['table'])) {
+            $this->log("Failed to load vardefs for $module:$object");
+            return false;
+        }
+
+        $seed = BeanFactory::getBean($module);
+        if(empty($seed)) {
+            $this->log("Failed to instantiate bean for $module, not checking table");
+            return false;
+        }
+
+        if ($GLOBALS['dictionary'][$object]['table'] !== $seed->getTableName()) {
+            $this->updateStatus('badVardefsTableName', $module, $module);
+        }
+    }
+
+    /**
      * Log upgrades registered for the instance
      */
     protected function listUpgrades()
@@ -592,6 +599,21 @@ class HealthCheckScanner
             'include/ytree',
             'include/SugarSearchEngine/Elastic/Elastica',
     );
+    /**
+     * dirs or files that have been deleted
+     * @var array
+     */
+    protected $removed_files = array(
+        'include/Smarty/plugins/function.sugar_help.php',
+    );
+
+    /**
+     * Specific files that should be excluded from SH include check
+     * @var array
+     */
+    protected $specificSugarFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php'
+    );
 
     protected $excludedScanDirectories = array(
             'backup',
@@ -601,21 +623,68 @@ class HealthCheckScanner
     protected $filesToFix = array();
 
     /**
-     * This method checks for directories that have been moved that are referenced
+     * Dump Scanner issues to log and optional stdout
+     */
+    public function dumpMeta()
+    {
+        $this->log('*** START HEALTHCHECK ISSUES ***');
+        foreach ($this->getLogMeta() as $key => $entry) {
+            $issueNo = $key + 1;
+            $this->log(" => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}");
+        }
+        $this->log('*** END HEALTHCHECK ISSUES ***');
+    }
+
+    protected $deletedFilesReferenced = array();
+
+    /**
+     * This method checks for directories/files that have been moved/removed that are referenced
      * in custom code
      * @return bool
     */
-    protected function checkVendorFiles()
+    protected function checkVendorAndRemovedFiles()
     {
         $this->log("Checking for bad includes");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
             // check for any occurrence of the directories and flag them
             $fileContents = file_get_contents($file);
-            foreach ($this->removed_directories AS $directory) {
-                if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$directory})#",$fileContents) > 0) {
-                    $this->log("Found $directory in $file");
+            if (preg_match_all(
+                "#(\b(include|require|require_once|include_once)\b[\s('\"]*(.*?);)#",
+                $fileContents,
+                $m
+            )
+            ) {
+                $vendorFileFound = false;
+                foreach ($m[1] as $value) {
+                    foreach ($this->removed_directories as $directory) {
+                        if (preg_match(
+                                "#(include|require|require_once|include_once)[\s('\"]*({$directory})#",
+                                $value
+                            ) > 0
+                        ) {
+                            foreach ($this->specificSugarFiles as $specificSugarFile) {
+                                if (preg_match(
+                                        "#(include|require|require_once|include_once)[\s('\"]*(\b{$specificSugarFile}\b)#",
+                                        $value
+                                    ) > 0
+                                ) {
+                                    break 2;
+                                }
+                            }
+                            $vendorFileFound = true;
+                            break;
+                        }
+                    }
+                }
+                if ($vendorFileFound) {
                     $this->filesToFix[] = $file;
+                }
+            }
+            foreach ($this->removed_files AS $deletedFile) {
+                if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$deletedFile})#",$fileContents) > 0) {
+                    $this->log("Found $deletedFile in $file");
+                    $this->deletedFilesReferenced[] = $file;
                 }
             }
         }
@@ -641,6 +710,9 @@ class HealthCheckScanner
             return;
         }
         // TODO: check if module table is OK
+        if (!in_array($module, $this->excludeModules)) {
+            $this->checkTableName($module);
+        }
 
         if($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
@@ -848,10 +920,10 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach(glob("custom/$module/Ext/*") as $extdir) {
-            if(isset($badExts[basename($extdir)])) {
+        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+            if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
-                if(!empty($extfiles)) {
+                if (!empty($extfiles)) {
                     $this->updateStatus("extensionDir", $extdir);
                     break;
                 }
@@ -860,7 +932,17 @@ class HealthCheckScanner
 
         // check logic hooks for module
         $this->checkHooks($module, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
+    }
 
+    /**
+     * Make sure glob always returns array
+     *
+     * @param $pattern
+     * @return array
+     */
+    protected function glob($pattern) {
+        $dirs = glob($pattern);
+        return ($dirs ? $dirs : array());
     }
 
     /**
@@ -977,86 +1059,11 @@ class HealthCheckScanner
         $origdefs = $this->loadFromFile($original, $varname);
 
         $defs_code = $this->lookupCustomCode('', $defs, array());
-        $orig_code = $this->lookupCustomCode('', $defs, array());
+        $orig_code = $this->lookupCustomCode('', $origdefs, array());
         foreach($defs_code as $code => $places) {
             if(!isset($orig_code[$code])) {
                 $this->updateStatus("foundCustomCode", $code, join(", ", $places));
             }
-        }
-
-        // Perform viewdef field count - putting this logic here to avoid
-        // additional file access to get the viewdefs as we already have
-        // them here
-        $this->checkViewFieldCount($deffile, $defs);
-    }
-
-    /**
-     * Figure out if we need to perform a field count and for which view
-     * @param string $deffile
-     * @return array
-     */
-    protected function getFieldCountParams($deffile)
-    {
-        if (strpos($deffile, 'detailviewdefs')) {
-            return array(true, 'DetailView');
-        }
-
-        if (strpos($deffile, 'editviewdefs')) {
-            return array(true, 'EditView');
-        }
-
-        return array(false, null);
-    }
-
-    /**
-     * Check field count on view defs
-     * @param string $deffile Filename for definitions file
-     * @param string $varname Variable to get defs from
-     */
-    protected function checkViewFieldCount($deffile, $defs)
-    {
-        list($doFieldCount, $defName) = $this->getFieldCountParams($deffile);
-        if (!$doFieldCount) {
-            return;
-        }
-        $this->log("Checking $deffile for field count");
-        $count = 0;
-
-        if(empty($defs) || !is_array($defs)) {
-            $this->log("No defs found for $defName in $deffile");
-            return;
-        }
-
-        // figure out module
-        reset($defs);
-        $module = key($defs);
-
-        // sanity check base field defs array
-        if (empty($defs[$module]) ||
-            empty($defs[$module][$defName]) ||
-            empty($defs[$module][$defName]['panels']))
-        {
-            $this->log("No valid panel defs found for $defName in $deffile for $module");
-            return;
-        }
-
-        // start counting panels -> rows -> columns
-        foreach ($defs[$module][$defName]['panels'] as $panel) {
-            foreach ($panel as $row) {
-                foreach ($row as $column) {
-                    if (!empty($column)) {
-                        $count++;
-                    }
-                }
-            }
-        }
-
-        $this->log("Found $count fields for $defName in $deffile for $module");
-
-        if ($count >= $this->fieldCountMax) {
-            $this->updateStatus("maxFieldsView", $this->fieldCountMax, $count, $deffile);
-        } elseif ($count >= $this->fieldCountWarn) {
-            $this->log("Found more than {$this->fieldCountWarn} fields in $deffile", "WARN");
         }
     }
 
@@ -1255,7 +1262,7 @@ class HealthCheckScanner
         $object = $this->beanList[$module];
         if(empty($this->beanFiles[$object])) {
             // no bean file - check directly
-            foreach(glob("modules/$module/*") as $file) {
+            foreach($this->glob("modules/$module/*") as $file) {
                 // if any file from this dir mentioned in md5 - not a new module
                 if(!empty($this->md5_files["./$file"])) {
                     return false;
@@ -1323,7 +1330,7 @@ class HealthCheckScanner
         return $data;
     }
 
-    /**`
+    /**
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
      * @param array &$hook_files
@@ -1477,7 +1484,7 @@ ENDP;
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
-        foreach(glob("$module_dir/*") as $file) {
+        foreach($this->glob("$module_dir/*") as $file) {
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
@@ -1509,7 +1516,7 @@ ENDP;
         $mbFiles['logic_hooks.php'] = true;
 
         // now check custom/ for unknown files
-        foreach(glob("custom/$module_dir/*") as $file) {
+        foreach($this->glob("custom/$module_dir/*") as $file) {
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
@@ -1524,7 +1531,7 @@ ENDP;
                 "FileAccessControlMap", "WirelessModuleRegistry");
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
-        foreach(glob("custom/$module_dir/Ext/*") as $extdir) {
+        foreach($this->glob("custom/$module_dir/Ext/*") as $extdir) {
             if(isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if(!empty($extfiles)) {
@@ -1534,7 +1541,7 @@ ENDP;
             }
         }
 
-        return $check === true;
+        return true;
     }
 
     /**
@@ -1545,7 +1552,7 @@ ENDP;
      */
     protected function checkViewsDir($view_dir)
     {
-        foreach(glob("$view_dir/*") as $file) {
+        foreach($this->glob("$view_dir/*") as $file) {
             // for now we allow only view.edit.php
             if(basename($file) != 'view.edit.php') {
                 $this->updateStatus("unknownFile", $view_dir, $file);
@@ -1590,11 +1597,11 @@ ENDP;
      * @param array $fieldDefs Vardefs
      * @param array $status Status array to store errors
      */
-    protected function checkFields($key, $fields, $fieldDefs, &$status)
+    protected function checkFields($key, $fields, $fieldDefs, $custom = '')
     {
         foreach ($fields as $subField) {
             if(empty($fieldDefs[$subField])) {
-                $status[] = "Bad vardefs - $key refers to bad subfield $subField";
+                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
             }
         }
     }
@@ -1640,7 +1647,7 @@ ENDP;
             $this->log("Failed to instantiate bean for $module, not checking vardefs");
             return true;
         }
-        $status = array();
+
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
 
         // get names of 'stock' fields, that are defined in original vardefs.php
@@ -1664,7 +1671,7 @@ ENDP;
                 // Assume those types are valid, cause they used in stock modules
                 $validNameTypes = array('id', 'fullname', 'varchar');
                 if (!in_array($value['type'], $validNameTypes)) {
-                    $this->updateStatus('badVardefsName' . $custom, $value['type'], $module);
+                    $this->updateStatus('badVardefsName', $value['type'], $module);
                     continue;
                 }
             }
@@ -1693,23 +1700,41 @@ ENDP;
                             // found html functional field
                             $this->updateStatus("vardefHtmlFunction" . $custom, $key);
                         }
+
+                        // Check option-list multienum fields
+                        if ($value['type'] == 'multienum'
+                            && !empty($value['options'])
+                            && !empty($GLOBALS['app_list_strings'][$value['options']])) {
+
+                            $optionKeys = array_keys($GLOBALS['app_list_strings'][$value['options']]);
+                            // Strip all valid characters in dropdown keys - a-zA-Z0-9. and spaces
+                            $result = preg_replace('/[\w\d\s\.]/', '', $optionKeys);
+
+                            // Get unique chars
+                            $result = count_chars(implode('', $result), 3);
+
+                            if ($result) {
+                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result);
+                            }
+                        }
+
                         break;
                     case 'link':
                         $seed->load_relationship($key);
                         if(empty($seed->$key)) {
-                            $this->updateStatus("badVardefsLink" . $custom, $key);
+                            $this->updateStatus("badVardefsLink", $key);
                         }
                         break;
                     case 'relate':
                         if(!empty($value['link'])) {
                             $lname = $value['link'];
                             if(empty($fieldDefs[$lname])) {;
-                                $this->updateStatus("badVardefsKey" . $custom, $key, $lname);
+                                $this->updateStatus("badVardefsKey", $key, $lname);
                                 break;
                             }
                             $seed->load_relationship($lname);
                             if(empty($seed->$lname)) {
-                                $this->updateStatus("badVardefsRelate" . $custom, $key);
+                                $this->updateStatus("badVardefsRelate", $key);
                                 break;
                             }
                             $relatedModuleName = $seed->$lname->getRelatedModuleName();
@@ -1732,11 +1757,11 @@ ENDP;
             if(empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
-                    $this->checkFields($key, $value['fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
                 }
                 // check db_concat_fields
                 if (isset($value['db_concat_fields'])) {
-                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $status);
+                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
                 }
                 // check sort_on
                 if(!empty($value['sort_on'])) {
@@ -1745,15 +1770,13 @@ ENDP;
                     } else {
                         $sort = array($value['sort_on']);
                     }
-                    $this->checkFields($key, $sort, $fieldDefs, $status);
+                    $this->checkFields($key, $sort, $fieldDefs, $custom);
                 }
             }
         }
 
         // check if we have any type changes for vardefs, BR-1427
         $this->checkVardefTypeChange($module, $object);
-
-        return $status?$status:true;
     }
 
     /* END of copypaste from 6_ScanModules */

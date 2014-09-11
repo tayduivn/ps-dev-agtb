@@ -102,13 +102,18 @@
             _.isEmpty(new_model.get('product_template_id')) &&
             !_.isFinite(new_model.get('discount_price'))
         ) {
-            var quantity = new_model.get('quantity');
+            var quantity = new_model.get('quantity'),
+                new_value = '';
 
             if (!_.isFinite(quantity) || parseFloat(quantity) === 0) {
                 quantity = 1;
             }
 
-            new_model.set({ discount_price: app.math.div(val, quantity) });
+            if (!_.isEmpty(val)) {
+                new_value = app.math.div(val, quantity);
+            }
+
+            new_model.set({discount_price: new_value});
         }
     },
 

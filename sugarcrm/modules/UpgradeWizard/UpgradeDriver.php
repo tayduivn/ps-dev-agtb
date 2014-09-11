@@ -224,7 +224,25 @@ abstract class UpgradeDriver
      */
     public function cleanCaches()
     {
+        require_once "include/MetaDataManager/MetaDataManager.php";
+
         $this->log("Cleaning cache");
+        $this->cleanFileCache();
+        $this->cleanDir($this->cacheDir("smarty"));
+        $this->cleanDir($this->cacheDir("modules"));
+        $this->cleanDir($this->cacheDir("jsLanguage"));
+        $this->cleanDir($this->cacheDir("Expressions"));
+        $this->cleanDir($this->cacheDir("themes"));
+        $this->cleanDir($this->cacheDir("include/api"));
+        MetaDataManager::clearAPICache(true, true);
+        $this->log("Cache cleaned");
+    }
+
+    /**
+     * Clear only the autoloader cache
+     */
+    public function cleanFileCache()
+    {
         if (is_callable(array('SugarAutoLoader', 'buildCache'))) {
             SugarAutoLoader::buildCache();
         } else {
@@ -232,14 +250,6 @@ abstract class UpgradeDriver
             @unlink("cache/file_map.php");
             @unlink("cache/class_map.php");
         }
-        $this->cleanDir($this->cacheDir("smarty"));
-        $this->cleanDir($this->cacheDir("modules"));
-        $this->cleanDir($this->cacheDir("jsLanguage"));
-        $this->cleanDir($this->cacheDir("Expressions"));
-        $this->cleanDir($this->cacheDir("themes"));
-        $this->cleanDir($this->cacheDir("include/api"));
-        $this->cleanDir($this->cacheDir("api/metadata"));
-        $this->log("Cache cleaned");
     }
 
     /**
@@ -457,7 +467,7 @@ abstract class UpgradeDriver
             }
         }
         $d->close();
-        if (@rmdir($path) === FALSE){
+        if (@rmdir($path) === false){
             $this->log("Failed to remove directory: $path");
             return false;
         }
@@ -821,6 +831,10 @@ abstract class UpgradeDriver
         }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
+        $db = DBManagerFactory::getInstance();
+        if (version_compare($this->from_version, 7, '<') && !$db instanceof MysqlManager) {
+            return $this->error("Can't upgrade version 6.x on non-Mysql database", true);
+        }
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {
@@ -999,7 +1013,7 @@ abstract class UpgradeDriver
         	if(!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
         		$matches_empty = false;
         		foreach($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
-        			if($match == $this->from_version) {
+                    if ($this->implodeVersion($match, 4) == $this->implodeVersion($this->from_version, 4)) {
         				$version_ok = true;
         				break;
         			}
@@ -1058,6 +1072,8 @@ abstract class UpgradeDriver
     {
         $user = BeanFactory::getBean('Users');
         $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
+        // Disable logic hooks.
+        $user->processed = true;
         $user->retrieve($user_id);
         return $user;
     }
@@ -1073,7 +1089,7 @@ abstract class UpgradeDriver
 
         // BR-385 - This fixes the issues around SugarThemeRegistry fatals.  The cache needs rebuild on stage-post init of sugar
         if ($this->current_stage == 'post') {
-            $this->cleanCaches();
+            $this->cleanFileCache();
         }
 
         if (!defined('sugarEntry')) define('sugarEntry', true);
@@ -1090,6 +1106,10 @@ abstract class UpgradeDriver
         }
         $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
         $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
+        //Once we have a DB, we can do a full cache clear
+        if ($this->current_stage == 'post') {
+            $this->cleanCaches();
+        }
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
         if (empty($locale)) {
@@ -1333,6 +1353,10 @@ abstract class UpgradeDriver
      */
     public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        if (error_reporting() == 0) {
+            // do not log muted errors
+            return;
+        }
         $this->log("PHP: [$errno] $errstr in $errfile at $errline");
     }
 
@@ -1669,7 +1693,7 @@ abstract class UpgradeDriver
     /**
      *
      * Get Scanner object
-     * @return Scanner|boolean
+     * @return HealthCheckScannerCli
      */
     protected function  getHealthCheckScanner()
     {

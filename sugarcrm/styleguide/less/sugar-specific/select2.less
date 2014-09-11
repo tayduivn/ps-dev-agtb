@@ -65,8 +65,7 @@
 
   &.select2-choices-pills .select2-search-choice,
   &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
-    padding: 0;
-    margin: 2px 0 0 4px;
+    margin: 2px 0 2px 4px;
     font-size: 12px;
     font-weight: bold;
     border: none;
@@ -142,7 +141,7 @@
         content: "\f057";
       }
       &.select2-locked {
-        padding: 1px 4px !important;
+        padding: 1px 4px !important; //overide bootstrap
         background: @grayLighter;
         border: 1px solid @gray;
         div {
@@ -153,19 +152,20 @@
     &.attachments .select2-search-choice {
       div {
         background: @gray;
-        padding: 2px 28px 2px 6px;
+        padding: 2px 6px 2px 6px;
       }
     }
     //forecasts
     &.search-filter .select2-search-choice {
-      margin: 0 0 4px 4px;
+      height: 24px;
+      margin: 0 0 4px 0;
       background: none;
       padding: 0;
       position: relative;
       a.select2-search-choice-close {
-        top: 2px;
+        top: 3px;
         position: absolute;
-        right: 4px;
+        right: 7px;
         left: auto;
         &::before {
           line-height: 14px;

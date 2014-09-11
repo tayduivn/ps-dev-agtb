@@ -59,17 +59,7 @@
     loadFamilyTree: function(isCollapsed) {
         if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
-            if (this.duns_num) {
-                this.getDNBFamilyTree(this.duns_num, 'LNK_FF');
-            } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
-                //check if D-U-N-S is set in context by refresh dashlet
-                this.getDNBFamilyTree(app.controller.context.get('dnb_temp_duns_num'), 'LNK_FF');
-            } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) {
-                    this.render();
-                }
-            }
+            this.loadDNBData('duns_num', null, this.getDNBFamilyTree, 'LNK_FF', 'dnb.dnb-no-duns', 'dnb.dnb-no-duns-field');
         }
     },
 
@@ -231,7 +221,7 @@
                 self.$('#dnb-family-tree').addClass('jstree-sugar');
                 self.$('#dnb-family-tree > ul').addClass('list');
                 self.$('#dnb-family-tree > ul > li > a').addClass('jstree-clicked');
-            }).bind('select_node.jstree', function (e, data) {
+            }).bind('select_node.jstree', function(e, data) {
                 // do stuff when a node is selected
                 if (data.rslt.e.target.getAttribute('href')) {
                     var duns_num = data.rslt.obj.attr('duns');
@@ -268,4 +258,4 @@
         this.$('div#dnb-company-details').hide();
         this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_FAMILY_TREE_BACK'), this.renderCompanyDetails);
     }
-})
+});

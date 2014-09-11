@@ -109,16 +109,11 @@ $dictionary['EmailTemplate'] = array(
 		),
 		'assigned_user_id' => array (
 			'name' => 'assigned_user_id',
-			'rname' => 'user_name',
-			'id_name' => 'assigned_user_id',
 			'vname' => 'LBL_ASSIGNED_TO_ID',
 			'group'=>'assigned_user_name',
-			'type' => 'relate',
-			'table' => 'users',
-			'module' => 'Users',
+            'type' => 'id',
 			'reportable'=>true,
 			'isnull' => 'false',
-			'dbType' => 'id',
 			'audited'=>true,
 			'comment' => 'User ID assigned to record',
             'duplicate_merge'=>'disabled'

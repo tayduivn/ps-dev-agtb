@@ -1,3 +1,16 @@
+{*
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+*}
+
 <link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=3"/>
 <script src='include/javascript/jquery/jquery-min.js?v=1'></script>
 
@@ -49,7 +62,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span></span>
             </div>
             <div class="progress-section span5 pull-right">
@@ -88,7 +101,7 @@
             </span>
 
             <div class="upgrade-title span7">
-                <h3>Sugar 7 Health Check</h3>
+                <h3>Sugar Health Check</h3>
                 <span>Review health check results</span>
             </div>
             <div class="progress-section span5 pull-right">
@@ -134,14 +147,14 @@
                     success: function (data) {
                         if (data.length == 0) {
                             data = [
-                                { flag: 1, log: "Your instance is ready for upgrade!", report: "Success" }
+                                { flag: 1, descr: "Your instance is ready for upgrade!", title: "Success" }
                             ];
                         }
                         data = data.sort(_sortByBucket);
                         $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", item.report, "</h1><p>", item.log];
+                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i + 1, ". ", item.title, "</h1><p>", item.descr];
                             if (data[i].kb) {
                                 html.push("<a href='");
                                 html.push(data[i].kb);

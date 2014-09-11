@@ -102,18 +102,18 @@ class HealthCheckScannerMeta
             'report' => 'isNotMBModule',
             'bucket' => self::STUDIO_MB_BWC,
         ),
-        305 => array(
-            'report' => 'badVardefsKey',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        306 => array(
-            'report' => 'badVardefsRelate',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
-        307 => array(
-            'report' => 'badVardefsLink',
-            'bucket' => self::STUDIO_MB_BWC,
-        ),
+//        305 => array(
+//            'report' => 'badVardefsKey',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        306 => array(
+//            'report' => 'badVardefsRelate',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
+//        307 => array(
+//            'report' => 'badVardefsLink',
+//            'bucket' => self::STUDIO_MB_BWC,
+//        ),
         308 => array(
             'report' => 'vardefHtmlFunction',
             'bucket' => self::STUDIO_MB_BWC,
@@ -138,51 +138,56 @@ class HealthCheckScannerMeta
             'report' => 'extensionDirDetected',
             'bucket' => self::STUDIO_MB_BWC
         ),
+//        314 => array(
+//            'report' => 'badVardefsMultienum',
+//            'bucket' => self::STUDIO_MB_BWC
+//        ),
 
         // BUCKET E
         401 => array(
             'report' => 'vendorFilesInclusion',
             'bucket' => self::CUSTOM,
         ),
-        402 => array(
-            'report' => 'badModule',
-            'bucket' => self::CUSTOM,
-        ),
-        403 => array(
+//        402 => array(
+//            'report' => 'badModule',
+//            'bucket' => self::CUSTOM,
+//        ),
+        520 => array(
             'report' => 'logicHookAfterUIFrame',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
-        404 => array(
+        521 => array(
             'report' => 'logicHookAfterUIFooter',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
-        405 => array(
-            'report' => 'incompatIntegration',
-            'bucket' => self::CUSTOM,
-        ),
+        //Moved incompatIntegration to F bucket. Use this code for new reports
+//        405 => array(
+//            'report' => 'incompatIntegration',
+//            'bucket' => self::CUSTOM,
+//        ),
         406 => array(
             'report' => 'hasCustomViews',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         407 => array(
             'report' => 'hasCustomViewsModDir',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
-        408 => array(
+        519 => array(
             'report' => 'extensionDir',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
-        409 => array(
+        518 => array(
             'report' => 'foundCustomCode',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         410 => array(
            'report' => 'maxFieldsView',
             'bucket' => self::CUSTOM,
         ),
-        411 => array(
+        522 => array(
             'report' => 'subPanelWithFunction',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         412 => array(
             'report' => 'badSubpanelLink',
@@ -190,19 +195,19 @@ class HealthCheckScannerMeta
         ),
         413 => array(
             'report' => 'unknownWidgetClass',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
-        414 => array(
-            'report' => 'unknownField',
-            'bucket' => self::CUSTOM,
-        ),
+//        414 => array(
+//            'report' => 'unknownField',
+//            'bucket' => self::CUSTOM,
+//        ),
         415 => array(
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
         ),
-        416 => array(
+        523 => array(
             'report' => 'byRefInHookFile',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         417 => array(
             'report' => 'incompatModule',
@@ -213,28 +218,28 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM,
         ),
         419 => array(
-            'report' => 'badVardefsKeyCustom',
+            'report' => 'badVardefsKey',
             'bucket' => self::CUSTOM,
         ),
         420 => array(
-            'report' => 'badVardefsRelateCustom',
+            'report' => 'badVardefsRelate',
             'bucket' => self::CUSTOM,
         ),
         421 => array(
-            'report' => 'badVardefsLinkCustom',
+            'report' => 'badVardefsLink',
             'bucket' => self::CUSTOM,
         ),
-        422 => array(
+        525 => array(
             'report' => 'vardefHtmlFunctionCustom',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         423 => array(
-            'report' => 'badVardefsCustom',
+            'report' => 'badVardefsSubfieldsCustom',
             'bucket' => self::CUSTOM,
         ),
         424 => array(
             'report' => 'inlineHtmlCustom',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         425 => array(
             'report' => 'foundEchoCustom',
@@ -256,17 +261,25 @@ class HealthCheckScannerMeta
             'report' => 'foundVarDumpCustom',
             'bucket' => self::CUSTOM,
         ),
-        430 => array(
-            'report' => 'foundOutputBufferingCustom',
-            'bucket' => self::CUSTOM,
-        ),
-        431 => array(
+//        430 => array(
+//            'report' => 'foundOutputBufferingCustom',
+//            'bucket' => self::CUSTOM,
+//        ),
+        524 => array(
             'report' => 'vardefHtmlFunctionNameCustom',
-            'bucket' => self::CUSTOM
+            'bucket' => self::MANUAL
         ),
-        432 => array(
-            'report' => 'badVardefsNameCustom',
-            'bucket' => self::CUSTOM
+//        432 => array(
+//            'report' => 'badVardefsName',
+//            'bucket' => self::CUSTOM
+//        ),
+        526 => array(
+            'report' => 'badVardefsMultienum',
+            'bucket' => self::MANUAL
+        ),
+        527 => array(
+            'report' => 'badVardefsTableName',
+            'bucket' => self::MANUAL
         ),
 
         // BUCKET F
@@ -295,7 +308,7 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
         507 => array(
-            'report' => 'badVardefs',
+            'report' => 'badVardefsSubfields',
             'bucket' => self::MANUAL,
         ),
         508 => array(
@@ -322,14 +335,23 @@ class HealthCheckScannerMeta
             'report' => 'foundVarDump',
             'bucket' => self::MANUAL,
         ),
-        514 => array(
-            'report' => 'foundOutputBuffering',
-            'bucket' => self::MANUAL,
-        ),
+//        514 => array(
+//            'report' => 'foundOutputBuffering',
+//            'bucket' => self::MANUAL,
+//        ),
         515 => array(
             'report' => 'scriptFailure',
             'bucket' => self::MANUAL,
         ),
+        516 => array(
+            'report' => 'deletedFilesReferenced',
+            'bucket' => self::MANUAL
+        ),
+        517 => array(
+            'report' => 'incompatIntegration',
+            'bucket' => self::MANUAL,
+        ),
+
 
         // Bucket G
         901 => array(
@@ -344,6 +366,12 @@ class HealthCheckScannerMeta
         ),
     );
 
+    protected $flagLabelMap = array(
+        self::FLAG_RED => 'red',
+        self::FLAG_YELLOW => 'yellow',
+        self::FLAG_GREEN => 'green'
+    );
+
     protected $metaByReportId = array();
 
     /**
@@ -353,10 +381,10 @@ class HealthCheckScannerMeta
      */
     protected $defaultFlagMap = array(
         self::VANILLA => self::FLAG_GREEN,
-        self::STUDIO => self::FLAG_YELLOW,
-        self::STUDIO_MB => self::FLAG_YELLOW,
+        self::STUDIO => self::FLAG_GREEN,
+        self::STUDIO_MB => self::FLAG_GREEN,
         self::STUDIO_MB_BWC => self::FLAG_YELLOW,
-        self::CUSTOM => self::FLAG_RED,
+        self::CUSTOM => self::FLAG_YELLOW,
         self::MANUAL => self::FLAG_RED,
         self::UPGRADED => self::FLAG_GREEN,
     );
@@ -366,7 +394,7 @@ class HealthCheckScannerMeta
      *
      * @var string
      */
-    protected $defaultKbUrl = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate/Sugar_Ultimate_7.5/Installation_and_Upgrade_Guide/';
+    protected $defaultKbUrl = 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/';
 
     /**
      *
@@ -446,10 +474,18 @@ class HealthCheckScannerMeta
         $meta['title'] = $this->getModString("LBL_SCAN_{$id}_TITLE", $params);
         $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $params);
 
+        if(strpos($meta['title'], 'LBL_') === 0) {
+            $entry['title'] = $meta['report'];
+        }
+        if(strpos($meta['descr'], 'LBL_') === 0) {
+            $entry['descr'] = $entry['log'];
+        }
+
         // set defaults
         if (!isset($meta['flag'])) {
             $meta['flag'] = $this->getDefaultFlag($meta['bucket']);
         }
+        $meta['flag_label'] = $this->getFlagLabel($meta['flag']);
         if (!isset($meta['kb'])) {
             $meta['kb'] = $this->defaultKbUrl;
         }
@@ -461,6 +497,19 @@ class HealthCheckScannerMeta
         }
 
         return $meta;
+    }
+
+    /**
+     * Returns flag's label
+     *
+     * @param $flag
+     * @return string
+     */
+    protected function getFlagLabel($flag) {
+        if(isset($this->flagLabelMap[$flag])) {
+            return $this->flagLabelMap[$flag];
+        }
+        return $flag;
     }
 
     /**
@@ -513,7 +562,7 @@ class HealthCheckScannerMeta
         if (is_callable('return_module_language')) {
             $this->modStrings = return_module_language($this->locale, 'HealthCheck');
         } else {
-
+            $mod_strings = array();
             include __DIR__ . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
             $this->modStrings = $mod_strings;
         }

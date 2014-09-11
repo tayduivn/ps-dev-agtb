@@ -119,7 +119,10 @@ class ViewResetmodule extends SugarView
         foreach($seed->field_defs as $def) {
             if (isset($def['custom_module']) && $def['custom_module'] === $moduleName) {
                $field = $df->getFieldWidget($moduleName, $def['name']);
-               $field->delete ( $df ) ;
+                // the field may have already been deleted
+                if ($field) {
+                    $field->delete($df);
+                }
 
                $module->removeFieldFromLayouts( $def['name'] );
                $customFields[] = $def['name'];
@@ -143,12 +146,25 @@ class ViewResetmodule extends SugarView
         $sources = $module->getViewMetadataSources();
 
         $out = "";
+
+        // list of existing platforms including BWC
+        $platforms = MetaDataManager::getPlatformList();
+        array_unshift($platforms, '');
+
         foreach($sources as $view)
         {
-            $file = MetaDataFiles::getDeployedFileName($view['type'], $this->module);
-            if (file_exists($file)) {
-                unlink($file);
-                $out .= "Removed layout {$view['type']}.php<br/>";
+            foreach ($platforms as $platform) {
+                $file = MetaDataFiles::getDeployedFileName(
+                    $view['type'],
+                    $this->module,
+                    MB_CUSTOMMETADATALOCATION,
+                    $platform
+                );
+
+                if (file_exists($file)) {
+                    SugarAutoLoader::unlink($file);
+                    $out .= "Removed layout {$view['type']}.php<br/>";
+                }
             }
         }
 

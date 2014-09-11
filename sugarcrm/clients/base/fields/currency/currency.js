@@ -275,6 +275,13 @@
         } else {
             unformattedValue = app.currency.unformatAmountLocale(value);
         }
+
+        // if we got a number back and we have a precision we should round to that precision as that is what will
+        // be stored in the db, this is needed just in case SugarLogic is used on this field's value
+        if (_.isFinite(unformattedValue) && this.def && this.def.precision) {
+            unformattedValue = app.math.round(unformattedValue, this.def.precision, true);
+        }
+
         // if unformat failed, return original value
         return _.isFinite(unformattedValue) ? unformattedValue : value;
     },

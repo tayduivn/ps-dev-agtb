@@ -341,6 +341,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .fmtValueLabel(function(d) {
                             return d.value;
                         })
+                        .clipEdge(false)
+                        .delay(1)
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
@@ -672,7 +674,6 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         });
                         break;
 
-
                     case 'lineChart':
                         data = json.values.map(function(d, i) {
                             return {
@@ -844,8 +845,12 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 .append('svg')
                 .attr('id', svgChartId)
                 .datum(this.json)
-                .transition().duration(0)
                 .call(this.chart);
+
+            d3.select(d3ChartId).selectAll('.nv-axis line')
+              .style('stroke', '#DDD')
+              .style('stroke-width', 1)
+              .style('stroke-opacity', 1);
 
             var parts = jsonfilename.split('/'),
                 filename = parts[parts.length - 1].replace('.js', '.' + imageExt),
@@ -862,28 +867,34 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 url: 'styleguide/assets/css/nvd3_print.css',
                 dataType: 'text',
                 success: function(css) {
-                    var svg = serializer.serializeToString(d3Container),
-                        svgAttr = ' xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="480" viewBox="0 0 1440 960">',
-                        cssCdata = '<style type="text/css"><![CDATA[' + css.trim() + ']]></style>',
-                        d3Chart = svg.replace(/><g class="nvd3/, (svgAttr + cssCdata + '<g class="nvd3')),
-                        canvgOptions = {
+                    var canvgOptions = {
                             ignoreMouse: true,
                             ignoreAnimation: false,
+                            ignoreClear: true,
                             ignoreDimensions: true,
                             scaleWidth: 1440,
-                            scaleHeight: 960
+                            scaleHeight: 960,
+                            renderCallback: function() {
+                                var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
+
+                                $.post(saveToUrl, {imageStr: uri, filename: filename});
+
+                                var ctx = oCanvas.getContext('2d');
+                                ctx.clearRect(0, 0, 1440, 960);
+
+                                completeCallback();
+                            }
                         };
 
-                    canvg(canvasChartId, d3Chart, canvgOptions);
+                    setTimeout(function() {
+                        var svg = serializer.serializeToString(d3Container),
+                            svgAttr = ' xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="480" viewBox="0 0 1440 960">',
+                            cssCdata = '<style type="text/css"><![CDATA[' + css.trim() + ']]></style>',
+                            d3Chart = svg.replace(/><g class="nvd3/, (svgAttr + cssCdata + '<g class="nvd3'));
 
-                    var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
-
-                    $.post(saveToUrl, {imageStr: uri, filename: filename});
-
-                    var ctx = oCanvas.getContext('2d');
-                    ctx.clearRect(0, 0, 1440, 960);
-                },
-                complete: completeCallback
+                        canvg(canvasChartId, d3Chart, canvgOptions);
+                    }, 1000);
+                }
             });
         }
     };

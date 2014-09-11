@@ -1128,6 +1128,10 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
+    if (Dom.getAttribute(field, "type") == "hidden" && type != "datetimecombo") {
+        return true;
+    }
+
 	var td = Dom.getAncestorByTagName(field, 'TD');
 
     // For 'datetime' field type html representation differ from others ( td.vis_action_hidden > table > td > input[name])
@@ -2858,7 +2862,8 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 				alert(no_record_txt);
 				return false;
 			}
-			if(typeof(current_admin_id)!='undefined' && document.MassUpdate.module!= 'undefined' && document.MassUpdate.module.value == 'Users' && (document.MassUpdate.is_admin.value!='' || document.MassUpdate.status.value!='')) {
+			if(typeof(document.MassUpdate.current_admin_id)!='undefined' && document.MassUpdate.module!= 'undefined' && document.MassUpdate.module.value == 'Users' && (document.MassUpdate.UserType.value!='' || document.MassUpdate.status.value!='')) {
+				var current_admin_id = document.MassUpdate.current_admin_id.value;
 				var reg_for_current_admin_id = new RegExp('^'+current_admin_id+'[\s]*,|,[\s]*'+current_admin_id+'[\s]*,|,[\s]*'+current_admin_id+'$|^'+current_admin_id+'$');
 				if(reg_for_current_admin_id.test(document.MassUpdate.uid.value)) {
 					//if current user is admin, we should not allow massupdate the user_type and status of himself
@@ -2874,7 +2879,7 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 			entireInput.value = 'index';
 			document.MassUpdate.appendChild(entireInput);
 			//confirm(no_record_txt);
-			if(document.MassUpdate.module!= 'undefined' && document.MassUpdate.module.value == 'Users' && (document.MassUpdate.is_admin.value!='' || document.MassUpdate.status.value!='')) {
+			if(document.MassUpdate.module!= 'undefined' && document.MassUpdate.module.value == 'Users' && (document.MassUpdate.UserType.value!='' || document.MassUpdate.status.value!='')) {
 				alert(SUGAR.language.get('Users','LBL_LAST_ADMIN_NOTICE'));
 				return false;
 			}

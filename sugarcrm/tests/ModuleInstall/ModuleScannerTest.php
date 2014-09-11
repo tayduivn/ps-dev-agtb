@@ -13,18 +13,22 @@ require_once 'ModuleInstall/ModuleScanner.php';
 
 class ModuleScannerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $fileLoc;
+    public $fileLoc = "cache/moduleScannerTemp.php";
 
 	public function setUp()
 	{
-        $this->fileLoc = "cache/moduleScannerTemp.php";
+        SugarTestHelper::setUp('files');
+        SugarTestHelper::saveFile($this->fileLoc);
+        SugarTestHelper::saveFile('files.md5');
 	}
 
-	public function tearDown()
-	{
-		if (is_file($this->fileLoc))
-			unlink($this->fileLoc);
-	}
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        if (is_dir(sugar_cached("ModuleScannerTest"))) {
+            rmdir_recursive(sugar_cached("ModuleScannerTest"));
+        }
+    }
 
 	public function phpSamples()
 	{
@@ -245,6 +249,95 @@ EOQ;
 		$this->assertTrue(!empty($errors), "Not detected config change");
 		$this->assertFalse($ms->config['test'], "config was changed");
     }
+
+    /**
+     * @dataProvider normalizePathProvider
+     * @param string $path
+     * @param string $expected
+     */
+    public function testNormalize($path, $expected)
+    {
+        $ms = new ModuleScanner();
+        $this->assertEquals($expected, $ms->normalizePath($path));
+    }
+
+    public function normalizePathProvider()
+    {
+        return array(
+            array('./foo', 'foo'),
+            array('foo//bar///baz/', 'foo/bar/baz'),
+            array('./foo/.//./bar/foo', 'foo/bar/foo'),
+            array('foo/../bar', false),
+            array('../bar/./', false),
+            array('./', ''),
+            array('.', ''),
+            array('', ''),
+            array('/', ''),
+        );
+    }
+
+    /**
+     * @dataProvider scanCopyProvider
+     * @param string $from
+     * @param string $to
+     * @param bool $ok is it supposed to be ok?
+     */
+    public function testScanCopy($file, $from, $to, $ok)
+    {
+        copy(__DIR__."/../upgrade/files.md5", "files.md5");
+        // ensure target file exists
+        $from = sugar_cached("ModuleScannerTest/$from");
+        $file = sugar_cached("ModuleScannerTest/$file");
+        mkdir_recursive(dirname($file));
+        SugarTestHelper::saveFile($file);
+        sugar_touch($file);
+
+        $ms = new ModuleScanner();
+        $ms->scanCopy($from, $to);
+        if ($ok) {
+            $this->assertEmpty($ms->getIssues(), "Issue found where it should not be");
+        } else {
+            $this->assertNotEmpty($ms->getIssues(), "Issue not detected");
+        }
+        // check with dir
+        $ms->scanCopy(dirname($from), $to);
+        if ($ok) {
+            $this->assertEmpty($ms->getIssues(), "Issue found where it should not be");
+        } else {
+            $this->assertNotEmpty($ms->getIssues(), "Issue not detected");
+        }
+    }
+
+    public function scanCopyProvider()
+    {
+        return array(
+          array(
+            'copy/modules/Audit/Audit.php',
+            'copy/modules/Audit/Audit.php',
+            "modules/Audit",
+            false
+          ),
+          array(
+            'copy/modules/Audit/Audit.php',
+            'copy/modules/Audit/Audit.php',
+            "modules/Audit/Audit.php",
+            false
+          ),
+        array(
+            'copy/modules/Audit/Audit.php',
+            'copy',
+            ".",
+            false
+          ),
+        array(
+            'copy/modules/Audit/SomeFile.php',
+            'copy',
+            ".",
+            true
+          ),
+        );
+    }
+
 }
 
 class MockModuleScanner extends  ModuleScanner

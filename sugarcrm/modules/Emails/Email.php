@@ -133,6 +133,13 @@ class Email extends SugarBean {
     public $modifiedFieldDefs = array();
 
     /**
+     * Used for keeping track of field defs that have been added
+     *
+     * @var array
+     */
+    protected $addedFieldDefs = array();
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -3007,33 +3014,43 @@ eoq;
 		return $out;
 	}
 
-        /**
-         * Guesses Primary Parent id from From: email address.  Cascades guesses from Accounts to Contacts to Leads to
-         * Users.  This will not affect the many-to-many relationships already constructed as this is, at best,
-         * informational linking.
-         */
-        function fillPrimaryParentFields() {
-                if(empty($this->from_addr))
-                        return;
+    /**
+     * Guesses primary parent id from "To" and "From" email addresses.
+     * This will not affect the many-to-many relationships already constructed as this is, at best,
+     * informational linking.
+     */
+    public function fillPrimaryParentFields($table)
+    {
 
-                $GLOBALS['log']->debug("*** Email trying to guess Primary Parent from address [ {$this->from_addr} ]");
+        $addrs = $this->email2ParseAddressesForAddressesOnly($this->to_addrs);
+        $addrs[] = $this->from_addr;
 
-                $tables = array('accounts');
-                $ret = array();
-                // loop through types to get hits
-                foreach($tables as $table) {
-                        $q = "SELECT name, id FROM {$table} WHERE email1 = '{$this->from_addr}' OR email2 = '{$this->from_addr}' AND deleted = 0";
-                        $r = $this->db->query($q);
-                        while($a = $this->db->fetchByAssoc($r)) {
-                                if(!empty($a['name']) && !empty($a['id'])) {
-                                        $this->parent_type      = ucwords($table);
-                                        $this->parent_id        = $a['id'];
-                                        $this->parent_name      = $a['name'];
-                                        return;
-                                }
-                        }
-                }
+        if (empty($addrs)) {
+            return;
         }
+
+        $table = strtolower($table);
+        $uctable = ucfirst($table);
+
+        $addrs = "'" . implode("','", $addrs) . "'";
+        $q = "SELECT a.name, a.id FROM {$table} a";
+        $q .= " INNER JOIN email_addresses ea";
+        $q .= " INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id";
+        $q .= " WHERE eabr.bean_module = '{$uctable}' AND email_address IN ({$addrs})";
+        $q .= " AND eabr.bean_id = a.id AND a.deleted = 0";
+
+        $ret = array();
+        // loop through types to get hits
+        $r = $this->db->query($q);
+        while ($a = $this->db->fetchByAssoc($r)) {
+            if (!empty($a['name']) && !empty($a['id'])) {
+                $this->parent_type      = $uctable;
+                $this->parent_id        = $a['id'];
+                $this->parent_name      = $a['name'];
+                return;
+            }
+        }
+    }
 
         /**
          * Convert reference to inline image (stored as Note) to URL link
@@ -3100,6 +3117,14 @@ eoq;
                     $this->modifiedFieldDefs[$field]['dbType'] = $this->field_defs[$field]['dbType'];
                     unset($this->field_defs[$field]['dbType']);
                 }
+
+                if (!isset($this->field_defs[$field]['required'])) {
+                    $this->addedFieldDefs[$field]['required'] = true;
+                    $this->field_defs[$field]['required'] = false;
+                } elseif (!empty($this->field_defs[$field]['required'])) {
+                    $this->modifiedFieldDefs[$field]['required'] = $this->field_defs[$field]['required'];
+                    $this->field_defs[$field]['required'] = false;
+                }
             }
         }
     }
@@ -3121,8 +3146,15 @@ eoq;
             }
 
             unset($this->modifiedFieldDefs[$field]);
+        }
+
+        if (isset($this->addedFieldDefs[$field])) {
+            foreach (array_keys($this->addedFieldDefs[$field]) as $param) {
+                unset($this->field_defs[$field][$param]);
             }
-    	}
+            unset($this->addedFieldDefs[$field]);
+        }
+    }
 
     /**
      * Set the DateTime Search Data based on Current User TimeZone

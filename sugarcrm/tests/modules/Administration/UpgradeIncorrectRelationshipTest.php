@@ -252,17 +252,18 @@ EOF;
                           "I did not create the right hand side of the relationship");
         $this->assertEquals('id',$dictionary['t_bas']['fields']['t_bas_t_bas_1t_bas_ida']['type'],
                             "The field type was correctly updated.");
-        $this->assertEquals('t_bas_t_bas_1_right',$dictionary['t_bas']['fields']['t_bas_t_bas_1t_bas_ida']['link'],
+        $this->assertEquals('t_bas_t_bas_1',$dictionary['t_bas']['fields']['t_bas_t_bas_1t_bas_ida']['link'],
                             "The id field link was not set correctly");
-        $this->assertEquals('t_bas_t_bas_1_right',$dictionary['t_bas']['fields']['t_bas_t_bas_1_name']['link'],
+        $this->assertEquals('t_bas_t_bas_1',$dictionary['t_bas']['fields']['t_bas_t_bas_1_name']['link'],
                             "The name field link was not set correctly");
 
         require($testLayout);
         $this->assertTrue(isset($layout_defs['t_bas']['subpanel_setup']['t_bas_t_bas_1']),
             "The layout index has been correctly changed");
-        $this->assertEquals('t_bas_t_bas_1',$layout_defs['t_bas']['subpanel_setup']['t_bas_t_bas_1']['get_subpanel_data'],
-                            "The get_subpanel_data has been properly adjusted.");
-        
-
+        $this->assertEquals(
+            't_bas_t_bas_1_right',
+            $layout_defs['t_bas']['subpanel_setup']['t_bas_t_bas_1']['get_subpanel_data'],
+            "The get_subpanel_data has been properly adjusted."
+        );
     }
 }

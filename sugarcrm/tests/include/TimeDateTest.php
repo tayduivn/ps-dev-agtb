@@ -24,7 +24,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	public static function setUpBeforeClass()
 	{
 	    unset($GLOBALS['disable_date_format']);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
 	}
 
 	public function setUp()
@@ -42,8 +42,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function tearDownAfterClass()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 	}
 
 	public function dateTestSet()
@@ -1060,6 +1059,37 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
             array('datetime', 7, true, 'asDb'),
             array('datetimecombo', 8, true, 'asDb'),
             array('other', 9, true, 'asDb'),
+        );
+    }
+
+    /**
+     * Test fromUserType()
+     *
+     * @dataProvider fromUserTypeDataProvider
+     */
+    public function testFromUserType($date, $type, $user, $timezone, $expected, $function, $dateFormat)
+    {
+        $this->_setPrefs($dateFormat, "H:i:s", "GMT");
+
+        $GLOBALS['current_user']->setPreference('timezone', $timezone);
+
+        $value = $this->time_date->fromUserType($date, $type, $user);
+
+        $this->assertContains($expected, $value->$function());
+    }
+
+    public static function fromUserTypeDataProvider()
+    {
+        return array(
+            array(
+                '2014-01-01 09:00:00', 'date', null, 'Pacific/Kwajalein', '2013-12-31', 'asDbDate', 'Y-m-d H:i:s'
+            ),
+            array(
+                '2014-01-01 12:12:12', 'datetime', null, 'America/Denver', '2014-01-01 19:12:12', 'asDb', 'Y-m-d'
+            ),
+            array(
+                '12:12:12', 'time', null, 'GMT', '12:12:12', 'asDb', 'Y-m-d'
+            ),
         );
     }
 }

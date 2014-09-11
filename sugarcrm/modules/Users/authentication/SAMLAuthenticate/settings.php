@@ -10,7 +10,10 @@ $settings->idpSingleSignOnUrl       = isset($GLOBALS['sugar_config']['SAML_login
 $settings->idpPublicCertificate          = isset($GLOBALS['sugar_config']['SAML_X509Cert']) ? $GLOBALS['sugar_config']['SAML_X509Cert'] : '';
 
 // The URL where to the SAML Response/SAML Assertion will be posted
-$settings->spReturnUrl = htmlspecialchars($GLOBALS['sugar_config']['site_url']. "/index.php?module=Users&action=Authenticate&dataOnly=1");
+$settings->spReturnUrl = htmlspecialchars(
+    rtrim($GLOBALS['sugar_config']['site_url'], '/')
+    . '/index.php?module=Users&action=Authenticate&dataOnly=1'
+);
 
 // Name of this application
 $settings->spIssuer                         = isset($GLOBALS['sugar_config']['SAML_issuer']) ? $GLOBALS['sugar_config']['SAML_issuer'] :"php-saml";

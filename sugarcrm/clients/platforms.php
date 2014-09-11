@@ -1,4 +1,5 @@
-{{!--
+<?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div id="dnb-no-duns" class="block-footer">
-    <aside>
-        <em>{{str "LBL_DNB_NO_DUNS"}}</em>
-    </aside>
-</div>
+
+$platforms[] = 'base';
+$platforms[] = 'mobile';
+$platforms[] = 'portal';

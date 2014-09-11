@@ -56,10 +56,16 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
 
     /**
      * Get URL to follow to get logged in
+     *
+     * @param array $returnQueryVars Query variables that should be added to the return URL
+     *
+     * @return string
      */
-    public function getLoginUrl()
+    public function getLoginUrl($returnQueryVars = array())
     {
-        $authrequest = new OneLogin_Saml_AuthRequest(self::loadSettings());
+        $settings = self::loadSettings();
+        $this->patchSettings($settings, $returnQueryVars);
+        $authrequest = $this->getAuthRequest($settings);
         return $authrequest->getRedirectUrl();
     }
 
@@ -70,6 +76,17 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
         }
         $req = new OneLogin_Saml_LogoutRequest(SAMLAuthenticate::loadSettings());
         return $req->getLogoutUrl();
+    }
+
+    /**
+     * Returns SAML authentication request
+     *
+     * @param OneLogin_Saml_Settings $settings
+     * @return OneLogin_Saml_AuthRequest
+     */
+    protected function getAuthRequest(OneLogin_Saml_Settings $settings)
+    {
+        return new OneLogin_Saml_AuthRequest($settings);
     }
 
     /**
@@ -118,6 +135,41 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
         }
 
         return $settings;
+    }
+
+    /**
+     * Patches SAML settings stored in configuration by adding query variables in return URL
+     *
+     * @param OneLogin_Saml_Settings $settings
+     * @param array $returnQueryVars
+     */
+    protected function patchSettings($settings, array $returnQueryVars)
+    {
+        // OneLogin_Saml_AuthRequest doesn't escape strings before placing them into XML,
+        // so the URL is kind of expected to be already escaped. Historically, we store it escaped
+        // in a file which may be customized. Here we un-escape the URL, patch it and escape back
+        $returnUrl = htmlspecialchars_decode($settings->spReturnUrl);
+        $returnUrl = $this->addQueryVars($returnUrl, $returnQueryVars);
+        $settings->spReturnUrl = htmlspecialchars($returnUrl);
+    }
+
+    /**
+     * Adds query variables to the URL
+     *
+     * @param string $url
+     * @param array $queryVars
+     *
+     * @return string
+     */
+    protected function addQueryVars($url, array $queryVars)
+    {
+        if ($queryVars) {
+            $hasQuery = strpos($url, '?') !== false;
+            $prefix = $hasQuery ? '&' : '?';
+            $url .= $prefix . http_build_query($queryVars);
+        }
+
+        return $url;
     }
 }
 

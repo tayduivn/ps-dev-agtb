@@ -112,6 +112,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
             $pb->team_set_id = $quote->team_set_id;
             $pb->shipping = $bundle['shipping'];
             $pb->currency_id = $quote->currency_id;
+            $pb->base_rate = $quote->base_rate;
             $pb->taxrate_id = $quote->taxrate_id;
             $pb->bundle_stage = $bundle['bundle_stage'];
             $pb->name = $bundle['name'];
@@ -132,18 +133,20 @@ class QuotesApiHelper extends SugarBeanApiHelper
             $quote->load_relationship('product_bundles');
             if (!isset($bundle['position'])) {
                 $bundle['position'] = isset($bundle['bundle_index']) ?
-                    $bundle['bundle_index'] : count($quote->product_bundles->getBeans());
+                    $bundle['bundle_index'] : count($quote->product_bundles->get());
             }
             $quote->product_bundles->add($pb, array('bundle_index' => $bundle['position']));
         }
     }
 
     /**
+     * Save a line item to the Product Bundle
+     *
      * @param array $product
      * @param SugarBean|ProductBundle $pb
      * @param SugarBean|Quote $quote
      */
-    protected function handleBundleProductSave(array $product, SugarBean $pb, SugarBean $quote)
+    public function handleBundleProductSave(array $product, SugarBean $pb, SugarBean $quote)
     {
         if (!isset($product['id'])) {
             $product['id'] = null;
@@ -177,6 +180,7 @@ class QuotesApiHelper extends SugarBeanApiHelper
             }
         }
 
+        $product_bean->assigned_user_id = $quote->assigned_user_id;
         $product_bean->currency_id = $quote->currency_id;
         $product_bean->base_rate = $quote->base_rate;
         $product_bean->team_id = $quote->team_id;
@@ -199,8 +203,14 @@ class QuotesApiHelper extends SugarBeanApiHelper
         }
     }
 
-
-    protected function handleBundleNoteSave(array $note, SugarBean $pb, SugarBean $quote)
+    /**
+     * Save a note to the product bundle
+     *
+     * @param array $note
+     * @param SugarBean|ProductBundle $pb
+     * @param SugarBean|Quote $quote
+     */
+    public function handleBundleNoteSave(array $note, SugarBean $pb, SugarBean $quote)
     {
         if (!isset($note['id'])) {
             $note['id'] = null;

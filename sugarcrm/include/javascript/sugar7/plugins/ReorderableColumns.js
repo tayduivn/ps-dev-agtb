@@ -48,6 +48,10 @@
              */
             _makeColumnReorderable: function() {
 
+                if (this.disposed) {
+                    return;
+                }
+
                 if (!this.$('table').hasClass('reorderable-columns')) {
                     app.logger.error('ReorderableColumns plugin expects the table to have .draggable-columns class ' +
                         'in order to work.');

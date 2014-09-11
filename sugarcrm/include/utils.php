@@ -240,9 +240,6 @@ function make_sugar_config(&$sugar_config)
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -265,6 +262,8 @@ function get_sugar_config_defaults()
      */
 
     $sugar_config_defaults = array (
+    'oauth_token_life' => 86400, // 60*60*24
+    'oauth_token_expiry' => 0,
     'admin_export_only' => false,
     'export_delimiter' => ',',
     'cache_dir' => 'cache/',
@@ -472,9 +471,6 @@ function get_sugar_config_defaults()
         'max_record_fetch_size' => 1000,
         'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -632,7 +628,14 @@ function get_languages()
     global $sugar_config;
     $lang = isset($sugar_config['languages']) ? $sugar_config['languages'] : array();
     if (!empty($sugar_config['disabled_languages'])) {
-        foreach (explode(',', $sugar_config['disabled_languages']) as $disable) {
+        $disabledLanguages = explode(',', $sugar_config['disabled_languages']);
+
+        // Make sure we don't disable the default language
+        if (($key = array_search($sugar_config['default_language'], $disabledLanguages)) !== false) {
+            unset($disabledLanguages[$key]);
+        }
+
+        foreach ($disabledLanguages as $disable) {
             unset($lang[$disable]);
         }
     }
@@ -3820,6 +3823,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
     foreach ($focus->relationship_fields as $rel_key => $rel_value) {
         if ($rel_value == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
     //		echo $focus->$rel_key;
             $temp_bean->retrieve($focus->$rel_key);
             if ($temp_bean->id!="") {
@@ -3839,6 +3843,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         && $focus->field_defs[$field_def['id_name']]['relationship'] == $relationship_name)
         {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
         //	echo $focus->$field_def['id_name'];
             $temp_bean->retrieve($focus->$field_def['id_name']);
             if ($temp_bean->id!="") {
@@ -3850,6 +3855,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         //Check if the relationship_name matches a "link" in a relate field
         } elseif (!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
         //	echo $focus->$rel_value['id_name'];
             $temp_bean->retrieve($focus->$rel_value['id_name']);
             if ($temp_bean->id!="") {
@@ -3861,9 +3867,13 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         }
     }
 
+    if ($focus->module_name == "Emails") {
+        $focus->fillPrimaryParentFields($tar_rel_module);
+    }
     // special case for unlisted parent-type relationships
     if ( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
         $temp_bean = BeanFactory::getBean($tar_rel_module);
+        $temp_bean->disable_row_level_security = true;
         $temp_bean->retrieve($focus->parent_id);
         if ($temp_bean->id!="") {
             $rel_list[] = $temp_bean;

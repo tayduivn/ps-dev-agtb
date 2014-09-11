@@ -174,7 +174,9 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
         while ($row = $this->db->fetchByAssoc($results)) {
             $row['id'] = create_guid();
             foreach ($row as $key => $value) {
-                $row[$key] = $this->db->massageValue($value, $fw->getFieldDefinition($key));
+                $fieldDefs = $fw->getFieldDefinition($key);
+                $convertedValue = $this->db->fromConvert($value, $this->db->getFieldType($fieldDefs));
+                $row[$key] = $this->db->massageValue($convertedValue, $fieldDefs);
             }
 
             $this->db->query($insertSQL . '(' . join(',', array_keys($row)) . ') VALUES (' . join(',', $row) . ');');

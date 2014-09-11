@@ -66,9 +66,17 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.date_purchased, 
                            p.cost_price, 
                            p.discount_price, 
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
+                           CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END AS discount_amount,
                            null as discount_rate_percent,
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.discount_price/p.discount_usdollar) as discount_amount_usdollar,
+                           (CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END)/(p.discount_price/p.discount_usdollar) AS discount_amount_usdollar,
                            0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
@@ -139,9 +147,18 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.team_id, 
                            p.team_set_id, 
                            p.product_template_id, 
-                           p.account_id, 
-                           (IF(p.discount_price IS NULL or p.discount_price = '0.000000', IF(p.likely_case IS NULL, o.amount, p.likely_case)/p.quantity, p.discount_price) * p.quantity) as total_amount,
-                           p.type_id, 
+                           p.account_id,
+                           (CASE
+                             WHEN p.discount_price IS NULL or p.discount_price = '0.000000'
+                             THEN
+                               (CASE
+                                 WHEN p.likely_case IS NULL
+                                 THEN o.amount
+                                 ELSE p.likely_case
+                               END) / p.quantity
+                             ELSE p.discount_price
+                           END) * p.quantity AS total_amount,
+                           p.type_id,
                            p.quote_id, 
                            p.manufacturer_id, 
                            p.category_id, 
@@ -149,10 +166,27 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.vendor_part_num, 
                            p.date_purchased,
                            p.cost_price,
-                           IF(p.discount_price IS NULL or p.discount_price = '0.000000', IF(p.likely_case IS NULL, o.amount, p.likely_case)/p.quantity, p.discount_price) as discount_price,
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
+                           CASE
+                             WHEN p.discount_price IS NULL or p.discount_price = '0.000000'
+                             THEN
+                               (CASE
+                                 WHEN p.likely_case IS NULL
+                                 THEN o.amount
+                                 ELSE p.likely_case
+                               END) / p.quantity
+                             ELSE p.discount_price
+                           END AS discount_price,
+                           CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END AS discount_amount,
                            null as discount_rate_percent,
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.cost_price/p.cost_usdollar) as discount_amount_usdollar,
+                           (CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END)/(p.cost_price/p.cost_usdollar) AS discount_amount_usdollar,
                            0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
@@ -180,9 +214,21 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.book_value, 
                            p.book_value_usdollar, 
                            p.book_value_date, 
-                           IF(p.best_case IS NULL, o.best_case, p.best_case) as best_case,
-                           IF(p.likely_case IS NULL, o.amount, p.likely_case) as likely_case,
-                           IF(p.worst_case IS NULL, o.worst_case, p.worst_case) as worst_case,  
+                           CASE
+                             WHEN p.best_case IS NULL
+                             THEN o.best_case
+                             ELSE p.best_case
+                           END AS best_case,
+                           CASE
+                             WHEN p.likely_case IS NULL
+                             THEN o.amount
+                             ELSE p.likely_case
+                           END AS likely_case,
+                           CASE
+                             WHEN p.worst_case IS NULL
+                             THEN o.worst_case
+                             ELSE p.worst_case
+                           END AS worst_case,
                            p.date_closed, 
                            p.date_closed_timestamp, 
                            o.next_step, 
@@ -227,9 +273,17 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.date_purchased, 
                            p.cost_price, 
                            p.discount_price,
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity) as discount_amount,
+                           CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END AS discount_amount,
                            null as discount_rate_percent,
-                           IF(p.discount_select = 1, p.deal_calc*p.quantity, (p.discount_amount*p.quantity))/(p.discount_price/p.discount_usdollar) as discount_amount_usdollar,
+                           (CASE
+                             WHEN p.discount_select = 1
+                             THEN p.deal_calc*p.quantity
+                             ELSE p.discount_amount*p.quantity
+                           END)/(p.discount_price/p.discount_usdollar) AS discount_amount_usdollar,
                            0 as discount_select,
                            p.deal_calc, 
                            p.deal_calc_usdollar, 
@@ -257,10 +311,37 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.book_value, 
                            p.book_value_usdollar, 
                            p.book_value_date, 
-                           IF(p.best_case IS NULL OR p.best_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.best_case) as best_case,
-                           IF(p.likely_case IS NULL OR p.likely_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.likely_case) as likely_case,
-                           IF(p.worst_case IS NULL OR p.worst_case = '0.000000', p.discount_price-IF(p.discount_select = 1, p.deal_calc*p.quantity, p.discount_amount*p.quantity), p.worst_case) as worst_case,
-                           o.date_closed, 
+                           CASE
+                             WHEN p.best_case IS NULL OR p.best_case = '0.000000'
+                             THEN p.discount_price -
+                               (CASE
+                                 WHEN p.discount_select = 1
+                                 THEN p.deal_calc*p.quantity
+                                 ELSE p.discount_amount*p.quantity
+                               END)
+                             ELSE p.best_case
+                           END AS best_case,
+                           CASE
+                             WHEN p.likely_case IS NULL OR p.likely_case = '0.000000'
+                             THEN p.discount_price -
+                               (CASE
+                                 WHEN p.discount_select = 1
+                                 THEN p.deal_calc*p.quantity
+                                 ELSE p.discount_amount*p.quantity
+                               END)
+                             ELSE p.likely_case
+                           END AS likely_case,
+                           CASE
+                             WHEN p.worst_case IS NULL OR p.worst_case = '0.000000'
+                             THEN p.discount_price -
+                               (CASE
+                                 WHEN p.discount_select = 1
+                                 THEN p.deal_calc*p.quantity
+                                 ELSE p.discount_amount*p.quantity
+                               END)
+                             ELSE p.worst_case
+                           END AS worst_case,
+                           o.date_closed,
                            o.date_closed_timestamp, 
                            o.next_step, 
                            p.commit_stage, 
@@ -320,7 +401,9 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
             $productToRliMapping[$row['id']] = create_guid();
             $row['id'] = $productToRliMapping[$row['id']];
             foreach ($row as $key => $value) {
-                $row[$key] = $this->db->massageValue($value, $rli->getFieldDefinition($key));
+                $fieldDefs = $rli->getFieldDefinition($key);
+                $convertedValue = $this->db->fromConvert($value, $this->db->getFieldType($fieldDefs));
+                $row[$key] = $this->db->massageValue($convertedValue, $fieldDefs);
             }
 
             $this->db->query($insertSQL . '(' . $columns . ') VALUES (' . join(',', $row) . ');');

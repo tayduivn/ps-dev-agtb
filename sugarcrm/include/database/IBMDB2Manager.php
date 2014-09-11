@@ -145,7 +145,7 @@ class IBMDB2Manager  extends DBManager
 		$stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
 
 		if($stmt){
-			$sp_msg = '';
+			$sp_msg = null;
 			if($this->bindPreparedSqlParams($sql, $suppress, $stmt, $sp_msg)) {
 				$this->query_time = microtime(true);
 				$rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
@@ -205,7 +205,7 @@ class IBMDB2Manager  extends DBManager
 			// we are also not using parameterized prepared queries. If either one of these assumptions
 			// changes this code needs to be revisited.
 			try {
-				$sp_msg = '';
+				$sp_msg = null;
 				$this->commit(); // XXX TODO: DIRTY HACK to work around auto-commit off problem. I.e. TS index creation will hang if tables hasn't been committed yet.
 				// HENCE THIS COMMIT IS ONLY INTENDED FOR THE CREATION OF TS INDEXES. This should be moved into its execution objects in phase 3
 				$proceed = ($suppress) ? @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT) :

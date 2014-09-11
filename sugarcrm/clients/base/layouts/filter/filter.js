@@ -567,7 +567,8 @@
                     linkName ||
                     'all_modules';
 
-                if (linkName !== 'all_modules') {
+                // if the incoming module is the same as the layoutModule then we need to find the other side.
+                if (linkName !== 'all_modules' && this.layout.module === moduleName) {
                     moduleName = app.data.getRelatedModule(moduleName, linkName) || moduleName;
                 }
             }
@@ -575,7 +576,7 @@
 
         filterId = filterId || this.getLastFilter(moduleName, this.layoutType);
 
-        this.layout.trigger('filterpanel:change:module', moduleName);
+        this.layout.trigger('filterpanel:change:module', moduleName, linkName);
         this.trigger('filter:change:module', moduleName, linkName, true);
         this.getFilters(moduleName, filterId);
     },

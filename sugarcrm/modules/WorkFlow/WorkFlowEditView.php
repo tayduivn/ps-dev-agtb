@@ -88,6 +88,7 @@ $GLOBALS['log']->info("EmailTemplate detail view");
 $xtpl=new XTemplate ('modules/WorkFlow/WorkFlowEditView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
+$xtpl->assign("MOD_EMAILS", return_module_language($GLOBALS['current_language'], 'EmailTemplates'));
 
 $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($mod_strings['LBL_EMAILTEMPLATES_TYPE_LIST_WORKFLOW'],'workflow'));
 
@@ -108,6 +109,37 @@ if ( $focus->published == 'on')
 $xtpl->assign("PUBLISHED","CHECKED");
 }
 
+///////////////////////////////////////
+////    ATTACHMENTS
+$attachments = '';
+if (!empty($focus->id)) {
+    $etid = $focus->id;
+} elseif(!empty($old_id)) {
+    $xtpl->assign('OLD_ID', $old_id);
+    $etid = $old_id;
+}
+if(!empty($etid)) {
+    $note = BeanFactory::getBean('Notes');
+    $notes_list = $note->get_full_list("", "notes.parent_id=" . $GLOBALS['db']->quoted($etid) . " AND notes.filename IS NOT NULL", true);
+    if (!empty($notes_list)) {
+        for ($i = 0; $i < count($notes_list); $i++) {
+            $the_note = $notes_list[$i];
+            if (empty($the_note->filename)) {
+                continue;
+            }
+            $secureLink = 'index.php?entryPoint=download&id=' . $the_note->id . '&type=Notes';
+            $attachments .= '<input type="checkbox" name="remove_attachment[]" value="' . $the_note->id . '"> ' . $app_strings['LNK_REMOVE'] . '&nbsp;&nbsp;';
+            $attachments .= '<a href="' . $secureLink . '" target="_blank">' . $the_note->filename . '</a><br>';
+        }
+    }
+}
+$attJs  = '<script type="text/javascript">';
+$attJs .= 'var lnk_remove = "'.$app_strings['LNK_REMOVE'].'";';
+$attJs .= '</script>';
+$xtpl->assign('ATTACHMENTS', $attachments);
+$xtpl->assign('ATTACHMENTS_JAVASCRIPT', $attJs);
+////    END ATTACHMENTS
+///////////////////////////////////////
 
 /////////////////////////Workflow Area/////////////////////////////
 
@@ -154,23 +186,12 @@ $tiny->defaultConfig['apply_source_formatting']=true;
 $tiny->defaultConfig['cleanup_on_startup']=true;
 $tiny->defaultConfig['relative_urls']=false;
 $tiny->defaultConfig['convert_urls']=false;
-$ed = $tiny->getInstance('body_html');
+$ed = $tiny->getInstance('body_text');
 $xtpl->assign("tiny", $ed);
 $edValue = $focus->body_html ;
 $xtpl->assign("HTMLAREA",$edValue);
 $xtpl->parse("main.htmlarea");
 //////////////////////////////////
-
- echo <<<EOQ
-	  <SCRIPT>
-	  function insert_variable_html(text) {
-        var inst = tinyMCE.getInstanceById('body_html');
-        if (inst)
-                    inst.getWin().focus();
-        inst.execCommand('mceInsertContent', false, text);
-      }
-	  </SCRIPT>
-EOQ;
 
 //Add Custom Fields
 require_once('modules/DynamicFields/templates/Files/EditView.php');

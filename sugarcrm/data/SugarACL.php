@@ -86,7 +86,7 @@ class SugarACL
 
             $name = BeanFactory::getObjectName($module);
             if(!isset($GLOBALS['dictionary'][$name])) {
-                if(empty($name) || empty($GLOBALS['beanList'][$module]) || empty($GLOBALS['beanFiles'][$GLOBALS['beanList'][$module]])) {
+                if(empty($name) || empty($GLOBALS['beanList'][$module]) || empty($GLOBALS['beanFiles'][$GLOBALS['beanList'][$module]]) || in_array($module, array('Empty'))) {
                     // try to weed out non-bean modules - these can't have ACLs as they don't have vardefs to keep them
                     $GLOBALS['log']->debug("Non-bean $module - no ACL for you!");
                     return array();

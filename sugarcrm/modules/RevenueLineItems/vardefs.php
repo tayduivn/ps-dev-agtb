@@ -78,14 +78,15 @@ $dictionary['RevenueLineItem'] = array(
         'total_amount' => array(
             'name' => 'total_amount',
             'formula' => '
-                ifElse(isNumeric($quantity),
-                    currencySubtract(
-                        currencyMultiply(
-                            ifElse(isNumeric($discount_price), $discount_price, 0),
-                            ifElse(isNumeric($quantity), $quantity, 0)
-                        ),
-                    ifElse(isNumeric($discount_amount), $discount_amount, 0)
-                ), 0
+                ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
+                  ifElse(equal($quantity, 0),
+                    "0",
+                      currencySubtract(
+                        currencyMultiply($discount_price, $quantity),
+                        ifElse(isNumeric($discount_amount), $discount_amount, 0
+                      )
+                  )
+                ), ""
             )',
             'calculated' => true,
             'enforced' => true,
@@ -242,7 +243,7 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
-            'formula' => 'ifElse(isNumeric($discount_amount),ifElse(equal($discount_amount,0),0,multiply(divide($discount_amount,ifElse(equal(add($discount_amount,$total_amount), 0), $discount_amount, add($discount_amount,$total_amount))),100)),0)',
+            'formula' => 'ifElse(isNumeric($discount_amount),ifElse(equal($discount_amount,0),0,multiply(divide($discount_amount,ifElse(equal(add($discount_amount,$total_amount), 0), $discount_amount, add($discount_amount,$total_amount))),100)),"")',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_DISCOUNT_AS_PERCENT',
@@ -262,7 +263,7 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
-            'formula' => 'ifElse(isNumeric($discount_amount),currencyDivide($discount_amount,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($discount_amount), currencyDivide($discount_amount, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -313,7 +314,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($deal_calc),currencyDivide($deal_calc,$base_rate),"")',
+            'formula' => 'ifElse(isNumeric($deal_calc), currencyDivide($deal_calc, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -346,7 +347,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($cost_price),currencyDivide($cost_price,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($cost_price), currencyDivide($cost_price, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -367,7 +368,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($discount_price),currencyDivide($discount_price,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($discount_price), currencyDivide($discount_price, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -388,7 +389,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($list_price),currencyDivide($list_price,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($list_price), currencyDivide($list_price, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -450,7 +451,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'decimal',
             'len' => 12,
             'precision' => 2,
-            'validation' => array('type' => 'range', 'min' => 0),
+            'validation' => array('type' => 'range', 'greaterthan' => 0),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),
@@ -556,7 +557,7 @@ $dictionary['RevenueLineItem'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($book_value),currencyDivide($book_value,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($book_value), currencyDivide($book_value, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),

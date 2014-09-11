@@ -50,6 +50,11 @@ class Bug63989Test extends Sugar_PHPUnit_Framework_TestCase
         $actual_id = $ie->getCaseIdFromCaseNumber($subject, $this->case);
 
         $this->assertEquals($id, $actual_id);
+
+        $subject = '[CASE: ' . $number . ']';
+        $actual_id = $ie->getCaseIdFromCaseNumber($subject, $this->case);
+
+        $this->assertEquals($id, $actual_id);
     }
 
     /**

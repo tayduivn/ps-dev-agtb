@@ -806,12 +806,13 @@ class SugarBean
      * Before calling this function, check whether activity has been enabled for the table/module or not.
      * You would set the activity flag in the implemting module's vardef file.
      *
+     * @param array $excludeType Array of field types to exclude
      * @return an array of
      * @see isActivityEnabled
      *
      * Internal function, do not override.
      */
-    function getActivityEnabledFieldDefinitions()
+    function getActivityEnabledFieldDefinitions($excludeType = array('datetime'))
     {
         if (!isset($this->activity_enabled_fields))
         {
@@ -829,7 +830,7 @@ class SugarBean
                     else
                         $field_type=$properties['dbtype'];
                 }
-                if ($field != 'modified_user_id' && !empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
+                if ($field != 'modified_user_id' && !empty($field_type) && !in_array($field_type, $excludeType))
                 {
                     $this->activity_enabled_fields[$field]=$properties;
                 }
@@ -1254,8 +1255,8 @@ class SugarBean
                         $value_list = "'" . implode("','", array_values($toInsert)) . "'";
 
                         // Create the record.
-                        $insert_string = "INSERT into relationships 
-                                          ($column_list) values 
+                        $insert_string = "INSERT into relationships
+                                          ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
                     }
@@ -2174,7 +2175,7 @@ class SugarBean
             $this->current_notify_user = $notify_user;
 
             $templateName = $this->getTemplateNameForNotificationEmail();
-            $xtpl         = $this->createNotificationEmailTemplate($templateName);
+            $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
             $subject      = $xtpl->text($templateName . "_Subject");
             $body         = trim($xtpl->text($templateName));
 
@@ -2259,15 +2260,21 @@ class SugarBean
    /**
     * This function handles create the email notifications email.
     * @param string $templateName the name of the template used for the email content
+    * @param null|User $notify_user User object, current user if not specified
     * @return XTemplate
     */
-    protected function createNotificationEmailTemplate($templateName) {
+    protected function createNotificationEmailTemplate($templateName, $notify_user = null)
+    {
         global $sugar_config,
                $current_user,
                $sugar_version,
             $locale;
 
-        $currentLanguage = $locale->getAuthenticatedUserLanguage();
+        if ($notify_user && !empty($notify_user->preferred_language)) {
+            $currentLanguage = $notify_user->preferred_language;
+        } else {
+            $currentLanguage = $locale->getAuthenticatedUserLanguage();
+        }
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
@@ -2365,7 +2372,11 @@ class SugarBean
             {
                 // It's a self-referencing relationship
                 if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
-                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                // CRYS-358. Many-to-many relationship with real type one-to-many has two valid sides which have
+                // different names.
+                $new_rel_link = ($this->$rel_link->getSide() == REL_RHS) ?
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink() :
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
                 } else {
                     // Doesn't have a right hand side, so let's just use the LHS
                     $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
@@ -3309,9 +3320,7 @@ class SugarBean
             count($beans)
         );
 
-        // Set the log level to something notable, but not fatal since this isn't
-        // a fatal type situation
-        $GLOBALS['log']->warn($msg);
+        $GLOBALS['log']->fatal($msg);
 
         // detailed logging
         $counts = array();

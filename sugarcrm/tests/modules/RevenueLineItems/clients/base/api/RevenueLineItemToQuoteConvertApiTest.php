@@ -34,12 +34,18 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
 
         self::$revenueLineItem = new RevenueLineItem();
         self::$revenueLineItem->opportunity_id = self::$opp->id;
+        self::$revenueLineItem->quantity = '50';
+        self::$revenueLineItem->discount_amount = '10.00';
+        self::$revenueLineItem->likely_case = '40.00';
+        self::$revenueLineItem->discount_price = '1.00';
         self::$revenueLineItem->save();
+
+        SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem(self::$revenueLineItem->id);
     }
 
     public static function tearDownAfterClass()
     {
-        self::$revenueLineItem->mark_deleted(self::$revenueLineItem->id);
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestHelper::tearDown();
@@ -67,6 +73,12 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
         $quote = BeanFactory::getBean('Quotes', $return['id']);
 
         $this->assertEquals(self::$opp->id, $quote->opportunity_id);
+
+        // lets make sure the totals are correct
+        $this->assertEquals('50.00', $quote->subtotal);
+        $this->assertEquals('10.00', $quote->deal_tot);
+        $this->assertEquals('40.00', $quote->new_sub);
+        $this->assertEquals('40.00', $quote->total);
 
         $quote->load_relationship('revenuelineitems');
         $revenueLineItem = $quote->revenuelineitems->getBeans();

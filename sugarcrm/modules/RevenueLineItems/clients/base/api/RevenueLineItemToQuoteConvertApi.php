@@ -157,8 +157,8 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
         $product_bundle = BeanFactory::getBean('ProductBundles');
         $product_bundle->id = create_guid();
         $product_bundle->new_with_id = true;
-        $total = 0;
-        $total_base = 0;
+        $subtotal = SugarMath::init(0);
+        $deal_tot = SugarMath::init(0);
 
         foreach ($rlis as $key => $rli_id) {
 

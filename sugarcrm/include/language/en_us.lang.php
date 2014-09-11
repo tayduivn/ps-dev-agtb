@@ -839,7 +839,8 @@ $app_list_strings = array (
     'Internal' => 'Internal',
     'Forum' => 'Forum',
     'Web' => 'Web',
-    'InboundEmail' => 'Email'
+    'InboundEmail' => 'Email',
+    'Twitter' => 'Twitter'
   ),
 
   'product_category_default_key' => '',
@@ -2575,6 +2576,7 @@ $app_strings = array (
     'LBL_CREATE_NEW_TARGET_LIST' => 'Create new target list',
     'LBL_CURRENT_USER_FILTER' => 'My Items:',
     'LBL_CURRENCY'=>'Currency:',
+    'LBL_CURRENCIES' => 'Currencies',
     'LBL_CURRENCY_NAME'=>'Currency Name',
     'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
     'LBL_CURRENCY_RATE' => 'Base Rate:',
@@ -3092,8 +3094,10 @@ $app_strings = array (
     'ERROR_PRIMARY_EMAIL' => 'Error. At least one primary address should be set.',
     'ERROR_DUPLICATE_EMAIL' => 'Error. Duplicate Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
-    'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
-    'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
+    'ERROR_MINVALUE' => 'Error. The minimum value of this field is {{this}}.',
+    'ERROR_MAXVALUE' => 'Error. The maximum value of this field is {{this}}.',
+    'ERROR_IS_GREATER_THAN' => 'Error. The value of this field must be greater than {{this}}.',
+    'ERROR_IS_LESS_THAN' => 'Error. The value of this field must be less than {{this}}.',
     'ERROR_DATETIME' => 'Error. This field requires a valid date.',
     'ERROR_IS_BEFORE' => 'Error. The date of this field can not be after date of {{this}} field.',
     'ERROR_IS_AFTER' => 'Error. The date of this field can not be before date of {{this}} field.',
@@ -3333,6 +3337,8 @@ $app_strings = array (
     'LBL_DNB_CONFIG' => 'Contact your Administrator to configure D&B connector',
     'LBL_DNB_NO_DATA' => 'No data available',
     'LBL_DNB_NO_DUNS' => 'No identifying DUNS',
+    'LBL_DNB_NO_DUNS_FIELD' => 'Warning: The DUNS field is currently not included in the record view layout. Contact your administrator to add it.',
+    'LBL_DNB_NO_SIC_FIELD' => 'Warning: The SIC field is currently not included in the record view layout. Contact your administrator to add it.',
     'LBL_DNB_NO_INDUSTRY' => 'No linked industry code',
     'LBL_DNB_SVC_ERR' => 'D&B service error',
     'LBL_DNB_NOT_CONFIGURED' => 'D&B connector not configured. Please configure the connector.',
@@ -3374,7 +3380,7 @@ $app_strings = array (
     'LBL_DNB_UNKNOWN_ERROR' => 'Unknown error. Please check the logs for more details.',
     'LBL_DNB_EMPTY_PARAM' => 'Empty parameter passed to D&B Duplicate Check API',
     'LBL_DNB_INVALID_MODULE_NAME' => 'Invalid module name passed to D&B Duplicate Check API',
-
+    'LBL_DNB_API_ERR' => 'D&B API Error',
 
     /*DNB Financial Dashlet*/
     'LBL_DNB_FINANCIAL'=>'D&B: Financial Information',
@@ -3828,17 +3834,18 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
+    'LBL_TWITTER_SOURCE' => 'Source Tweet:',
 
     /* Learning Resources Dashlet */
     'LBL_LEARNING_RESOURCES_TITLE' => 'Learning Resources',
     'LBL_LEARNING_RESOURCES_DESC' => 'SugarCRM Learning Resources',
     'LBL_LEARNING_RESOURCES_NAME' => 'Learning Resources',
-    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University',
-    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_TEASER' => 'Become a Sugar expert with upgrade training, videos, classes, webinars, and certification.',
-    'LBL_LEARNING_RESOURCES_COMMUNITY_LINK' => 'Community Forums',
-    'LBL_LEARNING_RESOURCES_COMMUNITY_TEASER' => 'Join the discussion, problem solve, and share ideas with other users.',
-    'LBL_LEARNING_RESOURCES_SUPPORT_LINK' => 'Documentation & Support',
-    'LBL_LEARNING_RESOURCES_SUPPORT_TEASER' => 'Learn the details of how Sugar works and engage with support.',
+    'LBL_LEARNING_RESOURCES_DISCOVER_LINK' => 'Discover SugarCRM: YouTube Channel',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University - Training & Videos',
+    'LBL_LEARNING_RESOURCES_START_LINK' => 'Getting Started with SugarCRM',
+    'LBL_LEARNING_RESOURCES_TRAINING_LINK' => 'SugarCRM Weekly Live Training',
+    'LBL_LEARNING_RESOURCES_WEBINARS_LINK' => 'SugarCRM Weekly Webinars',
+    'LBL_LEARNING_RESOURCES_VIDEOS_LINK' => 'Helpful How-to Videos',
 
     /* Country Chart Dashlet */
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
@@ -4288,6 +4295,7 @@ $app_strings = array (
     'LBL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
     'LBL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
     'LBL_PRECONDITION_MISSING_TITLE' => 'Error: ',
+    'LBL_INVALID_412_RESPONSE' => 'A request is failing that makes the application unusable. Please contact technical support.',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -6316,6 +6324,17 @@ $app_list_strings['dnb_countries_iso'] = array(
    "YE" => "Yemen",
    "ZM" => "Zambia",
    "ZW" => "Zimbabwe"
+);
+
+$app_list_strings['dnb_bal_after_before_btw'] = array(
+    'gte' => 'After',
+    'lte' => 'Before',
+    'btw' => 'Between'
+);
+
+$app_list_strings['dnb_bal_filing_trading_option'] = array(
+    'filingdate' => 'Filing Date',
+    'tradingdate' => 'Trading Date'
 );
 
 $app_list_strings['dnb_bal_gte_lte_btw'] = array(

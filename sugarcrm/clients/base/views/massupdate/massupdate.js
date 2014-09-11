@@ -61,7 +61,7 @@
     _defaultSettings: {
         max_records_to_merge: 5,
         mass_delete_chunk_size: 20,
-        mass_update_chunk_size: 20
+        mass_update_chunk_size: 500
     },
 
     /**
@@ -119,10 +119,15 @@
      */
     _initSettings: function() {
 
-        var configSettings = app.config.massActions && {
-            mass_delete_chunk_size: app.config.massActions.massDeleteChunkSize,
-            mass_update_chunk_size: app.config.massActions.massUpdateChunkSize
-        };
+        var configSettings = {};
+        if (app.config.massActions) {
+            if (app.config.massActions.massDeleteChunkSize) {
+                configSettings.mass_delete_chunk_size = app.config.massActions.massDeleteChunkSize;
+            }
+            if (app.config.massActions.massUpdateChunkSize) {
+                configSettings.mass_update_chunk_size = app.config.massActions.massUpdateChunkSize;
+            }
+        }
 
         this._settings = _.extend(
             {},
