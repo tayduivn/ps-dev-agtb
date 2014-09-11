@@ -5215,6 +5215,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
 
+    'LBL_SEND_INVITES_CONFIRMATION' => "Send Invites",
     'NTC_SEND_INVITES_CONFIRMATION' => 'Do you want to send an email to all invitees?',
 );
 

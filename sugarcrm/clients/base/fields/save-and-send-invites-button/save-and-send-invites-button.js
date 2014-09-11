@@ -42,7 +42,7 @@
         }
 
         app.alert.show('save_confirmation', {
-            title: app.lang.get('LBL_SEND_BUTTON_LABEL', this.module),
+            title: app.lang.get('LBL_SEND_INVITES_CONFIRMATION', this.module),
             level: 'confirmation',
             messages: app.lang.get('NTC_SEND_INVITES_CONFIRMATION', this.module),
             confirm: {
