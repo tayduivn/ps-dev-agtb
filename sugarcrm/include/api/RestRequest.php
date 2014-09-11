@@ -329,7 +329,7 @@ class RestRequest
             $apiBase .= "v".$this->version;
 
             // This is for our URI return value
-            $siteUrl = SugarConfig::get('site_url');
+            $siteUrl = SugarConfig::getInstance()->get('site_url');
 
             // Get the file uri bas
             $this->resourceURIBase = $siteUrl . $apiBase .'/';
