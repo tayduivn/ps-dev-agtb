@@ -277,7 +277,8 @@ class WebUpgrader extends UpgradeDriver
             return false;
         }
 
-        $this->state['healthcheck'] = json_decode($bean->logMeta);
+        $this->state['healthcheck'] = json_decode($bean->logmeta);
+        $this->saveState();
 
         $this->log("Skipping health check - we have a confirmed id");
         return true;
