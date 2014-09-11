@@ -3340,9 +3340,7 @@ class MetaDataManager
                 $type = null;
                 if (isset($field['name'])) {
                     $fields[] = $field['name'];
-                    if (isset($field['type'])) {
-                        $type = $field['type'];
-                    } elseif (isset($field['name'], $fieldDefs[$field['name']]['type'])) {
+                    if (isset($fieldDefs[$field['name']]['type'])) {
                         $type = $fieldDefs[$field['name']]['type'];
                     }
                 }
