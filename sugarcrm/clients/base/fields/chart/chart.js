@@ -55,7 +55,7 @@
             },
             chart = new loadSugarChart(chartId, this.model.get('rawChartData'), [], chartConfig, params, _.bind(function(chart) {
                 this.chart = chart;
-                this.chart_loaded = _.isFunction(this.chart.update);
+                this.chart_loaded = _.isFunction(chart.update);
             }, this));
 
         // This event fires when a preview is closed.

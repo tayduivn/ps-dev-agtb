@@ -1,7 +1,12 @@
 {
   "properties": {
     "title": "Closed Won Opportunities Gauge",
-    "value": 4
+    "values": [
+      {
+        "group": 1,
+        "t": 4
+      }
+    ]
   },
   "data": [
     {
