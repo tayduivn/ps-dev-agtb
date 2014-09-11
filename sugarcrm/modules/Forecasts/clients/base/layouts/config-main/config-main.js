@@ -37,8 +37,8 @@
         var appLang = app.lang,
             forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by,
             forecastByLabels = {
-                forecastByModule: appLang.getAppListStrings('moduleList')[forecastBy],
-                forecastByModuleSingular: appLang.getAppListStrings('moduleListSingular')[forecastBy]
+                forecastByModule: appLang.getModuleName(forecastBy, {plural: true}),
+                forecastByModuleSingular: appLang.getModuleName(forecastBy)
             };
 
         this.timeperiodsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');

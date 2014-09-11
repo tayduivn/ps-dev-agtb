@@ -182,7 +182,7 @@
             this.settings.on('change:module', function(model, moduleName) {
                 var label = (model.get('filter_id') === 'assigned_to_me') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
                 model.set('label', app.lang.get(label, moduleName, {
-                    module: app.lang.getAppListStrings('moduleList')[moduleName]
+                    module: app.lang.getModuleName(module, {plural: true})
                 }));
 
                 // Re-initialize the filterpanel with the new module.
@@ -279,7 +279,7 @@
      */
     getLabel: function() {
         var module = this.settings.get('module') || this.context.get('module'),
-            moduleName = app.lang.getAppListStrings('moduleList')[module];
+            moduleName = app.lang.getModuleName(module, {plural: true});
         return app.lang.get(this.settings.get('label'), module, {module: moduleName});
     },
 

@@ -112,10 +112,10 @@
      * @protected
      */
     _getShareParams: function() {
-        var moduleString = app.lang.getAppListStrings('moduleListSingular');
+        var moduleString = app.lang.getModuleName(this.module);
 
         return _.extend({}, this.model.attributes, {
-            module: moduleString[this.module] || this.module,
+            module: moduleString,
             appId: app.config.appId,
             url: window.location.href,
             name: new Handlebars.SafeString(this.model.attributes.name || this.model.attributes.full_name)
