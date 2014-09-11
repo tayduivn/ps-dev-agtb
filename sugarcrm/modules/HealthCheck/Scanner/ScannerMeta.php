@@ -475,10 +475,10 @@ class HealthCheckScannerMeta
         $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $params);
 
         if(strpos($meta['title'], 'LBL_') === 0) {
-            $entry['title'] = $meta['report'];
+            $meta['title'] = $meta['report'];
         }
         if(strpos($meta['descr'], 'LBL_') === 0) {
-            $entry['descr'] = $entry['log'];
+            $meta['descr'] = $meta['log'];
         }
 
         // set defaults

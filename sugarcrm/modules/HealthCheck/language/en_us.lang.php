@@ -76,7 +76,7 @@ $mod_strings = array(
     'LBL_SCAN_430_LOG' => 'Found output buffering (%s) in %s on line %s',
     'LBL_SCAN_524_LOG' => 'Vardef HTML function %s in $module module for field %s',
     'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
-    'LBL_SCAN_526_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '{%s}'",
+    'LBL_SCAN_526_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s'",
     'LBL_SCAN_527_LOG' => "Table name in bean %s does not match the table attribute in the %s/vardefs.php",
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
@@ -171,6 +171,7 @@ $mod_strings = array(
     'LBL_SCAN_514_TITLE' => 'Found output buffering (%s) in %s on line %s',
     'LBL_SCAN_515_TITLE' => 'Script failure: %s',
     'LBL_SCAN_517_TITLE' => 'Incompatible Integration - %s %s',
+    'LBL_SCAN_526_TITLE' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s'",
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
@@ -246,6 +247,7 @@ $mod_strings = array(
     'LBL_SCAN_514_DESCR' => 'Code contains this output-producing function',
     'LBL_SCAN_515_DESCR' => 'The checking script failed, which means the instaScannerMeta.phpnce probably contains bad PHP code that the script tried to load.',
     'LBL_SCAN_517_DESCR' => 'Package detected which has been blacklisted as not supported in Sugar 7',
+    'LBL_SCAN_526_DESCR' => "This List contains Item Name values that prevent the upgrade.",
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
