@@ -19,7 +19,7 @@ describe("Base.View.ListBottom", function () {
     it('should module names start with lowercase letters', function() {
         var lowerCaseModuleName = 'opportunities';
         var showMoreLabel = app.lang.get(view.options.meta.showMoreLabel, 'Opportunities', {
-            module: app.lang.get('LBL_MODULE_NAME', lowerCaseModuleName)
+            module: app.lang.getModuleName(lowerCaseModuleName, {plural: true})
         });
         expect(view.showMoreLabel).toEqual(showMoreLabel);
 

@@ -103,7 +103,7 @@ describe('Base.View.FilterModuleDropdown', function() {
 
         it('gets module list for Activity Stream', function() {
             var expected, filterList;
-            expected = [{ id: 'Activities', text: app.lang.get('LBL_MODULE_NAME', 'Cases')}];
+            expected = [{ id: 'Activities', text: app.lang.getModuleName('Cases', {plural: true})}];
             filterList = view.getModuleListForActivities();
             expect(filterList).toEqual(expected);
             view.module = 'Activities';
@@ -168,7 +168,7 @@ describe('Base.View.FilterModuleDropdown', function() {
         it('should initSelection for selected module', function() {
             var $input = $('<input type="text">').val('all_modules'),
                 callback = sinon.stub(),
-                expected = { id: 'all_modules', text: app.lang.get("LBL_MODULE_NAME", 'Cases')};
+                expected = { id: 'all_modules', text: app.lang.getModuleName('Cases', {plural: true})};
 
             view.initSelection($input, callback);
 
@@ -177,7 +177,7 @@ describe('Base.View.FilterModuleDropdown', function() {
             callback.reset();
 
             $input.val('Cases');
-            expected = { id: 'Cases', text: app.lang.get("LBL_MODULE_NAME", 'Cases')};
+            expected = { id: 'Cases', text: app.lang.getModuleName('Cases', {plural: true})};
 
             view.filterList = [expected];
             view.initSelection($input, callback);

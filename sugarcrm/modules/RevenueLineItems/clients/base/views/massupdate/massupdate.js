@@ -41,7 +41,7 @@
             }
             return false;
         }))) {
-            var forecastModuleSingular = app.lang.get('LBL_MODULE_NAME_SINGULAR', 'Forecasts');
+            var forecastModuleSingular = app.lang.getModuleName('Forecasts');
             message = app.lang.get("WARNING_DELETED_RECORD_LIST_RECOMMIT_1", "RevenueLineItems")
                 + '<a href="#Forecasts">' + forecastModuleSingular + '</a>.  '
                 + app.lang.get("WARNING_DELETED_RECORD_LIST_RECOMMIT_2", "RevenueLineItems")

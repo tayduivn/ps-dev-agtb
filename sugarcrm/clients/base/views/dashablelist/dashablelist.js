@@ -525,7 +525,7 @@
             _.each(allowedModules, function(module) {
                 var hasListView = !_.isEmpty(this.getFieldMetaForView(app.metadata.getView(module, 'list')));
                 if (hasListView) {
-                    this._availableModules[module] = app.lang.get('LBL_MODULE_NAME', module);
+                    this._availableModules[module] = app.lang.getModuleName(module, {plural: true});
                 }
             }, this);
         }

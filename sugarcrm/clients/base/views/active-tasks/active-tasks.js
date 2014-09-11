@@ -73,7 +73,7 @@
     closeTask: function(model){
         var self = this;
         var name = model.get('name') || '',
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
         app.alert.show('complete_task_confirmation:' + model.get('id'), {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE'), [context]),
