@@ -35,8 +35,8 @@
          */
         get: function (module, view, context) {
             var objModule = _.extend({
-                    'module_name' : app.lang.getModuleSingular(module),
-                    'plural_module_name' : app.lang.getAppListStrings('moduleList')[module] || module
+                    'module_name' : app.lang.getModuleName(module),
+                    'plural_module_name' : app.lang.getModuleName(module, {plural: true})
                 }, context || {}, this._getModuleLabelMap()),
                 viewName = this._cleanupViewName(view).toUpperCase();
 
@@ -96,19 +96,16 @@
          * @private
          */
         _getModuleLabelMap: function() {
-            if (_.isUndefined(this._moduleLabelMap)) {
-                var singularModules = {},
-                    modules = {};
-                _.each(app.lang.getAppListStrings('moduleListSingular'), function(module, key) {
-                    singularModules[key.replace(/\s/g, '').toLowerCase() + '_singular_module'] = module;
-                }, this);
-                _.each(app.lang.getAppListStrings('moduleList'), function(module, key) {
-                    modules[key.replace(/\s/g, '').toLowerCase() + '_module'] = module;
-                }, this);
-
-                // combine them into one master object and save it on the object
-                this._moduleLabelMap = _.extend(singularModules, modules);
+            if (!_.isUndefined(this._moduleLabelMap)) {
+                return this._moduleLabelMap;
             }
+            this._moduleLabelMap = {};
+
+            _.each(app.metadata.getModuleNames({filter: 'enabled'}), function(module) {
+                var key = module.toLowerCase();
+                this._moduleLabelMap[key + '_singular_module'] = app.lang.getModuleName(module);
+                this._moduleLabelMap[key + '_module'] = app.lang.getModuleName(module, {plural: true});
+            }, this);
 
             return this._moduleLabelMap;
         },

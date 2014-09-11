@@ -418,7 +418,7 @@
                 'overwrite-confirmation',
                 this.model.module),
             messages = [],
-            relatedModuleSingular = app.lang.getModuleSingular(this.def.module);
+            relatedModuleSingular = app.lang.getModuleName(this.def.module);
 
         _.each(newData, function(value, field) {
             var before = this.model.get(field),
