@@ -228,7 +228,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
         SUGAR.expressions.validateRelateFunctions(tokens);
-		if (matchType && matchType != tokens.returnType)
+		if (matchType && tokens.returnType != 'generic' && matchType != tokens.returnType)
 		{
 			Msg.show({
                 type: "alert",

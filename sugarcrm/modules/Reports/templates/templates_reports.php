@@ -1202,12 +1202,17 @@ function hasExportAccess($args = array())
         return false;
     }
 
+    $is_owner =  true;
+    if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
+        $is_owner = false;
+    }
+
     if (// Exports disabled
         !(empty($sugar_config['disable_export']))
         // Report is not tabular
         || $args['reporter']->report_def['report_type'] != 'tabular'
         // User doesn't have rights to export the reported module
-        || !SugarACL::checkAccess($args['reporter']->module, 'export')
+        || !SugarACL::checkAccess($args['reporter']->module, 'export', $is_owner?array("owner_override" => true):array())
         // Only admins can export, and the user doesn't have admin rights
         || (
             $sugar_config['admin_export_only']

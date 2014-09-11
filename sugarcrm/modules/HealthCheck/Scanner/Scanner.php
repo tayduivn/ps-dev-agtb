@@ -380,6 +380,15 @@ class HealthCheckScanner
     }
 
     /**
+     * Getter verbose (output)
+     * @return int
+     */
+    public function getVerbose()
+    {
+        return $this->verbose;
+    }
+
+    /**
      *
      * Getter flag
      * @return integer
@@ -857,7 +866,10 @@ class HealthCheckScanner
         }
 
         // check custom viewdefs
-        $defs = $this->getPhpFiles("custom/modules/$module/metadata");
+        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function($def) {
+            // CRYS-424 - exclude dashletviewdefs.php
+            return basename($def) != 'dashletviewdefs.php';
+        });
 
         if($module == "Connectors") {
             $pos = array_search("custom/modules/Connectors/metadata/connectors.php", $defs);
@@ -888,7 +900,8 @@ class HealthCheckScanner
                         $defsname = "viewdefs";
                     }
                 }
-                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
+                // TODO: uncomment checkCustomCode() when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
+                // $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
                 // For stock modules, check subpanels and also list views for non-bwc modules
                 if($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
@@ -1389,12 +1402,12 @@ class HealthCheckScanner
 if\s*\(\s*!\s*defined\s*\(\s*'sugarEntry'\s*\)\s*(\|\|\s*!\s*sugarEntry\s*)?\)\s*{?\s*die\s*\(\s*'Not A Valid Entry Point'\s*\)\s*;\s*}?
 ENDP;
         $contents = preg_replace("#$sePattern#i", '', $contents);
-        $fileLines = explode(PHP_EOL, $contents);
 
         $tokens = token_get_all($contents);
-        foreach ($tokens as $token) {
+        $tokens = array_filter($tokens, array($this, 'ignoreWhitespace'));
+        $tokens = array_values($tokens);
+        foreach ($tokens as $index => $token) {
             if (is_array($token)) {
-                $args = array();
                 if ($token[0] == T_INLINE_HTML) {
                     $args = array('inlineHtml', $phpfile, $token[2]);
                 } elseif ($token[0] == T_ECHO) {
@@ -1403,13 +1416,7 @@ ENDP;
                     $args = array('foundPrint', $phpfile, $token[2]);
                 } elseif ($token[0] == T_EXIT) {
                     $args = array('foundDieExit', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'print_r') {
-                    // Checks if print_r has the second parameter as 'true', according to:
-                    // When this parameter is set to TRUE, print_r() will return the information rather than print it.
-                    // Continue to scan, if has.
-                    if (preg_match('#print_r\([^\)]+,\s*true\s*\)#is', $fileLines[$token[2] - 1]) > 0) {
-                        continue;
-                    }
+                } elseif ($token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
                     $args = array('foundPrintR', $phpfile, $token[2]);
                 } elseif ($token[0] == T_STRING && $token[1] == 'var_dump') {
                     $args = array('foundVarDump', $phpfile, $token[2]);
@@ -1425,6 +1432,54 @@ ENDP;
             }
         }
     }
+
+    /**
+     * Returns false if $item is T_WHITESPACE token.
+     * @see \HealthCheckScanner::checkFileForOutput
+     * @param $item
+     * @return bool
+     */
+    protected function ignoreWhitespace($item)
+    {
+        return !(is_array($item) && $item[0] == T_WHITESPACE);
+    }
+
+    /**
+     * Checks if print_r has the second parameter as 'true', according to:
+     * When this parameter is set to TRUE, print_r() will return the information rather than print it.
+     * We cannot check if the second parameter is actually true
+     * in cases when the second parameter is a variable i.e. print_r($foo, $bar).
+     * We blindly assume that if second parameter is passed then it is true.
+     * Continue to scan, if has.
+     * @param $index int index to start traversing $tokens at
+     * @param $tokens array of tokens from token_get_all
+     * @return bool
+     */
+    protected function checkPrintR($index, $tokens)
+    {
+        $curlyBracketsCount = 0;
+        $found = false;
+        $count = count($tokens);
+        for ($i = $index + 1; $i < $count; $i++) {
+            if ($tokens[$i] === '(') {
+                $curlyBracketsCount += 1;
+            } else {
+                if ($tokens[$i] === ')') {
+                    if ($curlyBracketsCount === 1 && !$found) {
+                        return true;
+                    }
+                    $curlyBracketsCount -= 1;
+                } else {
+                    if ($tokens[$i] === ',' && $curlyBracketsCount === 1) {
+                        $next = $tokens[$i + 1];
+                        return (is_array($next) && $next[1] === 'false');
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * PHP error handler, to log PHP errors
