@@ -1,15 +1,17 @@
 describe("Subpanel List View", function() {
-    var app, parentLayout, layout, view, sinonSandbox;
+    var app, module, parentLayout, layout, view, sinonSandbox;
 
     beforeEach(function () {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
+        SugarTest.app.data.declareModels();
         app = SugarTest.app;
-        layout = SugarTest.createLayout("base", "Cases", "subpanels", null, null);
-        parentLayout = SugarTest.createLayout("base", "Cases", "list", null, null);
+        module = 'Cases';
+        layout = SugarTest.createLayout("base", module, "subpanels", null, null);
+        parentLayout = SugarTest.createLayout("base", module, "list", null, null);
         layout.layout = parentLayout;
         SugarTest.loadComponent('base', 'view', 'subpanel-list');
-        view = SugarTest.createView("base", 'Cases', 'subpanel-list', null, null, null, layout);
+        view = SugarTest.createView("base", module, 'subpanel-list', null, null, null, layout);
     });
 
     afterEach(function () {
@@ -96,7 +98,7 @@ describe("Subpanel List View", function() {
         });
         it("should redirect the user to the targetUrl", function() {
             var unbindSpy = sinonSandbox.spy(view, 'unbindBeforeRouteUnlink');
-            view._modelToUnlink = new Backbone.Model();
+            view._modelToUnlink = app.data.createBean(module);
             view._currentUrl = 'Accounts';
             view._targetUrl = 'Contacts';
             view.unlinkModel();
