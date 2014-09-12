@@ -580,6 +580,328 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::unregisterBean($meeting);
     }
 
+    public function testCreateCalendarEvent_CreateRecordFails_rebuildFBCacheNotInvoked()
+    {
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            array('createRecord',)
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('createRecord')
+            ->will($this->returnValue(array()));
+
+        $this->calendarEventsApi = $calendarEventsApiMock;
+        $args = array(
+            'module' => 'Meetings',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+    }
+
+    public function testCreateCalendarEvent_NotRecurring_rebuildFBCacheInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $meetingRecord = array('id' => $meeting->id);
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(false));
+        $GLOBALS['calendarEvents']->expects($this->once())
+            ->method('rebuildFreeBusyCache');
+
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            array('createRecord', 'loadBean', 'generateRecurringCalendarEvents')
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('createRecord')
+            ->will($this->returnValue($meetingRecord));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $calendarEventsApiMock->expects($this->never())
+            ->method('generateRecurringCalendarEvents');
+
+        $this->calendarEventsApi = $calendarEventsApiMock;
+        $args = array(
+            'module' => 'Meetings',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+    }
+
+    public function testCreateCalendarEvent_Recurring_rebuildFBCacheNotInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $meetingRecord = array('id' => $meeting->id);
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $GLOBALS['calendarEvents']->expects($this->never())
+            ->method('rebuildFreeBusyCache');
+
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            array('createRecord', 'loadBean', 'generateRecurringCalendarEvents')
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('createRecord')
+            ->will($this->returnValue($meetingRecord));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('generateRecurringCalendarEvents');
+
+        $this->calendarEventsApi = $calendarEventsApiMock;
+        $args = array(
+            'module' => 'Meetings',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+    }
+
+    /**
+     * @expectedException     SugarApiExceptionMissingParameter
+     */
+    public function testUpdateCalendarEvent_EventIdMissing_rebuildFBCacheNotInvoked()
+    {
+        $args = array();
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    /**
+     * @expectedException     SugarApiExceptionNotFound
+     */
+    public function testUpdateCalendarEvent_EventNotFound_rebuildFBCacheNotInvoked()
+    {
+        $args = array();
+        $args['module'] = 'Meetings';
+        $args['record'] = create_guid();
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    public function testUpdateCalendarEvent_isRecurringAndAllRecurrences_rebuildFBCacheNotInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'all_recurrences' => 'true',
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $GLOBALS['calendarEvents']->expects($this->never())
+            ->method('rebuildFreeBusyCache');
+
+        $this->mockCalendarEventsApiForUpdate();
+        $this->calendarEventsApi->expects($this->any())
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $this->calendarEventsApi->expects($this->once())
+            ->method('updateRecurringCalendarEvent')
+            ->will($this->returnValue(array()));
+
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    public function testUpdateCalendarEvent_isRecurringAndNotAllRecurrences_rebuildFBCacheInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'all_recurrences' => 'false',
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $GLOBALS['calendarEvents']->expects($this->once())
+            ->method('rebuildFreeBusyCache');
+
+        $this->mockCalendarEventsApiForUpdate();
+        $this->calendarEventsApi->expects($this->any())
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $this->calendarEventsApi->expects($this->once())
+            ->method('updateRecord')
+            ->will($this->returnValue(array()));
+
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    public function testUpdateCalendarEvent_NonRecurringChangedToRecurring_rebuildFBCacheNotInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+
+        //first time called will return false
+        $GLOBALS['calendarEvents']->expects($this->at(0))
+            ->method('isEventRecurring')
+            ->will($this->returnValue(false));
+        //second time called will return true
+        $GLOBALS['calendarEvents']->expects($this->at(1))
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $GLOBALS['calendarEvents']->expects($this->never())
+            ->method('rebuildFreeBusyCache');
+
+        $this->mockCalendarEventsApiForUpdate();
+        $this->calendarEventsApi->expects($this->any())
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $this->calendarEventsApi->expects($this->once())
+            ->method('updateRecord');
+        $this->calendarEventsApi->expects($this->never())
+            ->method('updateRecurringCalendarEvent');
+        $this->calendarEventsApi->expects($this->once())
+            ->method('generateRecurringCalendarEvents');
+
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    public function testUpdateCalendarEvent_NonRecurring_rebuildFBCacheInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('isEventRecurring', 'rebuildFreeBusyCache')
+        );
+
+        //first time called will return false
+        $GLOBALS['calendarEvents']->expects($this->exactly(2))
+            ->method('isEventRecurring')
+            ->will($this->returnValue(false));
+        $GLOBALS['calendarEvents']->expects($this->once())
+            ->method('rebuildFreeBusyCache');
+
+        $this->mockCalendarEventsApiForUpdate();
+        $this->calendarEventsApi->expects($this->exactly(2))
+            ->method('loadBean')
+            ->will($this->returnValue($meeting));
+        $this->calendarEventsApi->expects($this->once())
+            ->method('updateRecord');
+        $this->calendarEventsApi->expects($this->never())
+            ->method('updateRecurringCalendarEvent');
+        $this->calendarEventsApi->expects($this->never())
+            ->method('generateRecurringCalendarEvents');
+
+        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+    }
+
+    public function testDeleteRecord_SingleOccurrence_rebuildFBCacheInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'all_recurrences' => 'false',
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->once())
+            ->method('rebuildFreeBusyCache');
+
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            array('deleteRecord', 'deleteRecordAndRecurrences')
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('deleteRecord');
+        $calendarEventsApiMock->expects($this->never())
+            ->method('deleteRecordAndRecurrences');
+
+        $this->calendarEventsApi = $calendarEventsApiMock;
+        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+    }
+
+    public function testDeleteRecord_AllOccurrences_rebuildFBCacheInvoked()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'all_recurrences' => 'true',
+        );
+
+        $GLOBALS['calendarEvents'] = $this->getMock(
+            'CalendarEvents',
+            array('rebuildFreeBusyCache')
+        );
+        $GLOBALS['calendarEvents']->expects($this->once())
+            ->method('rebuildFreeBusyCache');
+
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            array('deleteRecord', 'deleteRecordAndRecurrences')
+        );
+        $calendarEventsApiMock->expects($this->never())
+            ->method('deleteRecord');
+        $calendarEventsApiMock->expects($this->once())
+            ->method('deleteRecordAndRecurrences');
+
+        $this->calendarEventsApi = $calendarEventsApiMock;
+        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+    }
+
     private function dateTimeAsISO($dbDateTime)
     {
         global $timedate;

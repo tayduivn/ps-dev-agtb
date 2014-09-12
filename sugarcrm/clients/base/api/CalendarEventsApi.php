@@ -78,7 +78,6 @@ class CalendarEventsApi extends ModuleApi
         $createResult = $this->createRecord($api, $args);
 
         if (!empty($createResult['id'])) {
-            $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             $loadArgs = array(
                 'module' => $args['module'],
                 'record' => $createResult['id'],
@@ -86,6 +85,8 @@ class CalendarEventsApi extends ModuleApi
             $bean = $this->loadBean($api, $loadArgs, 'view', array('use_cache' => false));
             if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
+            } else {
+                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         }
         return $createResult;
