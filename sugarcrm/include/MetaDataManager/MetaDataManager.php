@@ -2760,7 +2760,7 @@ class MetaDataManager
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
         if (!empty($this->db)) {
-            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type='{$key}'");
+            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
             if (!empty($cacheResult)) {
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
@@ -2791,22 +2791,41 @@ class MetaDataManager
                 $GLOBALS['log']->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
                 return false;
             }
-            $id = $this->db->getOne("SELECT id FROM " . static::$cacheTable . " WHERE type='{$key}'");
-            if (!empty($id)) {
-                return $this->db->query("UPDATE " . static::$cacheTable . " SET data='{$encoded}',date_modified=". $this->db->now() . " WHERE id='{$id}'");
+
+            $values = array(
+                'id' => $this->db->getOne("SELECT id FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)),
+                'type' => $key,
+                'data' => $encoded,
+                'date_modified' => TimeDate::getInstance()->nowDb(),
+                'deleted' => 0,
+            );
+
+            $fields = array();
+            foreach ($this->getFields() as $field) {
+                $fields[$field['name']] = $field;
+            }
+            if (empty($values['id'])) {
+                $values['id'] = create_guid();
+                return $this->db->insertParams(static::$cacheTable, $fields, $values, null, true, true);
             } else {
-                $values = array(
-                    'id' => "'" . create_guid() ."'",
-                    'type' => "'{$key}'",
-                    'data' => "'{$encoded}'",
-                    'date_modified' => $this->db->now(),
-                    'deleted' => 0
-                );
-                return $this->db->query("INSERT INTO " . static::$cacheTable . " (" . implode(",", array_keys($values)) . ")"
-                               . " VALUES (" . implode(",", $values) . ")");
+                return $this->db->updateParams(static::$cacheTable, $fields, $values, array('id' => $values['id']), null, true, true);
             }
         }
         return false;
+    }
+
+    /**
+     * Returns array of fields of static::$cacheTable
+     * 
+     * @return array
+     */
+    protected function getFields()
+    {
+        $fields = array();
+        if (!empty($GLOBALS['dictionary'][static::$cacheTable]['fields'])) {
+            $fields = $GLOBALS['dictionary'][static::$cacheTable]['fields'];
+        }
+        return $fields;
     }
 
     /**
@@ -2817,7 +2836,7 @@ class MetaDataManager
      */
     protected function removeFromCacheTable($key)
     {
-        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type='$key'");
+        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type=" . $this->db->quoted($key));
     }
 
     /**
@@ -2826,6 +2845,7 @@ class MetaDataManager
     protected static function clearCacheTable()
     {
         $db = DBManagerFactory::getInstance();
+        $db->commit();
         $db->query($db->truncateTableSQL(static::$cacheTable));
     }
 
