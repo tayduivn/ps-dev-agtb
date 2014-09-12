@@ -17,14 +17,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function checkFTSSettings()
 {
     installLog("Begining to check FTS Settings.");
-    require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+    require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
+
     $searchEngine = SugarSearchEngineFactory::getInstance(
         $_SESSION['setup_fts_type'],
-        array(
-            'host' => $_SESSION['setup_fts_host'],
-            'port' => $_SESSION['setup_fts_port'],
-        )
+        getFtsSettings()
     );
+
     $status = $searchEngine->getServerStatus();
     installLog("FTS connection results: " . var_export($status, TRUE));
 
@@ -189,7 +188,7 @@ function checkDBSettings($silent=false) {
             $errors['ERR_FTS'] = $mod_strings['LBL_FTS_REQUIRED'];
         } else {
             if (!checkFTSSettings()) {
-                installLog("ERROR:: Unable to connect to FTS." . $_REQUEST['setup_fts_type']);
+                installLog("ERROR:: Unable to connect to FTS." . $_SESSION['setup_fts_type']);
                 $errors['ERR_FTS'] = $mod_strings['LBL_FTS_ERROR'];
             }
         }
