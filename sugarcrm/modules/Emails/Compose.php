@@ -207,7 +207,14 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 
         // If it's a 'Reply All' action, append the CC addresses
         if ($data['reply'] == 'replyAll') {
-            $ret['cc_addrs'] = from_html($ie->email->to_addrs);
+            $cc_addrs = from_html($ie->email->cc_addrs);
+            $to_addrs = from_html(
+                !empty($ie->email->to_addrs_names) ? $ie->email->to_addrs_names : $ie->email->to_addrs
+            );
+            if (!empty($to_addrs)) {
+                $cc_addrs = $cc_addrs . ", " . $to_addrs;
+            }
+            $ret['cc_addrs'] = $cc_addrs;
         }
 
 	} else {
