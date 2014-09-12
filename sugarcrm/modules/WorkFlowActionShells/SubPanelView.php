@@ -40,7 +40,6 @@ $buttons = array(
     "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."'  class='button' type='button' name='NewWorkFlowActionShells' id='NewWorkFlowActionShells' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."'" .
         "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowActionShells&action=CreateStep1&html=CreateStep1&form=ComponentView&form_submit=false&query=true&sugar_body_only=true&workflow_id=$focus->id\",\"new\",\"width=525,height=500,resizable=1,scrollbars=1\");'" .
         ">\n",
-    "<input type='button' name='SelectWorkFlowActionShells' id='SelectWorkFlowActionShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."'  value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowActionShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>",
 );
 
 
