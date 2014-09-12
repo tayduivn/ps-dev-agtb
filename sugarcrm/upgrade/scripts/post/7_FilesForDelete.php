@@ -202,6 +202,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'portal2/portal-ui.js';
         }
 
+        if (version_compare($this->from_version, '7.5', '<')) {
+            $files[] = 'modules/Notifications/Senders';
+        }
+
         $this->fileToDelete($files);
     }
 
