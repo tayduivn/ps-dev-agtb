@@ -269,21 +269,29 @@ nv.models.multiBarHorizontalChart = function () {
       // Setup Axes
 
       //------------------------------------------------------------
-      // X-Axis
-
-      xAxisWrap
-        .call(xAxis);
-
-      innerMargin[xAxis.orient()] += xAxis.width();
-      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
-
-      //------------------------------------------------------------
       // Y-Axis
 
       yAxisWrap
         .call(yAxis);
 
-      innerMargin[yAxis.orient()] += yAxis.height();
+      innerMargin[yAxis.orient()] += yAxis.width();
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+
+      multibar
+        .width(innerWidth)
+        .height(innerHeight);
+
+      multibar.resetScale();
+
+      //------------------------------------------------------------
+      // X-Axis
+
+      xAxisWrap
+        .call(xAxis);
+
+      innerMargin[xAxis.orient()] += xAxis.height();
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
@@ -336,14 +344,17 @@ nv.models.multiBarHorizontalChart = function () {
 
       controls.dispatch.on('legendClick', function (d, i) {
 
+        //if the option is not currently enabled (i.e., selected)
         if (!d.disabled) {
           return;
         }
 
+        //set the controls all to false
         controlsData = controlsData.map(function (s) {
           s.disabled = true;
           return s;
         });
+        //activate the the selected control option
         d.disabled = false;
 
         switch (d.key) {
@@ -426,6 +437,7 @@ nv.models.multiBarHorizontalChart = function () {
     dispatch.tooltipMove(e);
   });
 
+
   //============================================================
   // Expose Public Variables
   //------------------------------------------------------------
@@ -441,7 +453,6 @@ nv.models.multiBarHorizontalChart = function () {
   d3.rebind(chart, multibar, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'delay', 'color', 'fill', 'classes', 'gradient');
   d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
-  d3.rebind(chart, legend, 'closeMenu');
 
   chart.colorData = function (_) {
     var colors = function (d, i) {

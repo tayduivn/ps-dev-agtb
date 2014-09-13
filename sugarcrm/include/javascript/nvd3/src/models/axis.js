@@ -43,19 +43,24 @@ nv.models.axis = function() {
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
-
       var wrap = container.selectAll('g.nv-wrap.nv-axis').data([data]),
-          gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-axis').append('g'),
-          g = wrap.select('g');
+          gEnter = wrap.enter()
+            .append('g').attr('class', 'nvd3 nv-wrap nv-axis')
+            .append('g').attr('class', 'nv-axis-inner'),
+          g = wrap.select('.nv-axis-inner');
 
       //------------------------------------------------------------
 
-      var orientation = axis.orient() === 'left' || axis.orient() === 'right' ? 'vertical' : 'horizontal';
+      var orientation = axis.orient() === 'left' || axis.orient() === 'right' ? 'vertical' : 'horizontal',
+          labelThickness = null;
 
       var tickPaddingOriginal = axis.tickPadding(),
           fmt = axis.tickFormat(),
-          w = (scale.range().length === 2) ? scale.range()[1] : (scale.range()[scale.range().length - 1] + (scale.range()[1] - scale.range()[0])),
-          label = {y: 0, dy: 0, x: w / 2, a: 'middle', t: ''},
+          w = typeof scale.rangeExtent === 'function' ?
+                scale.rangeExtent()[1] :
+                //scale.range()[scale.range().length - 1] + (scale.range()[1] - scale.range()[0])
+                Math.abs(scale.range()[0] - scale.range()[1]),
+          label = {y: 0, dy: 0, x: 0, a: 'middle', t: ''},
           maxmin = {};
 
       if (ticks !== null) {
@@ -67,6 +72,11 @@ nv.models.axis = function() {
       if (rotateTicks % 360 && axis.orient() === 'bottom') {
         axis.tickPadding(0);
       }
+
+      //TODO: investigate why the ticks are not being removed on data.exit()
+      var myTicks = g.selectAll('.tick')
+            .data(data, function(d) { return d; });
+      myTicks.exit().remove();
 
       g.call(axis);
 
@@ -80,22 +90,58 @@ nv.models.axis = function() {
 
       //------------------------------------------------------------
       //Calculate the longest tick width and height
+      thickness = tickPaddingOriginal + (!!axisLabelText ? axisLabelDistance : 0);
+
+      var tickText = g.selectAll('g.tick').select('text');
+
+      var tickValueArray = tickText[0].map(function(d, i, j) {
+        return d3.select(d).text();
+      });
 
       var maxTickWidth = 0,
           maxTickHeight = 0;
-      var tickText = g.selectAll('g.tick').select('text');
-      tickText.each(function(d, i) {
-        var bbox = this.getBoundingClientRect(),
-            size = {w: parseInt(bbox.width, 10), h: parseInt(bbox.height / 1.15, 10)};
-        if (size.w > maxTickWidth) {
-          maxTickWidth = size.w;
-        }
-        if (size.h > maxTickHeight) {
-          maxTickHeight = size.h;
-        }
-      });
 
-      thickness = tickPaddingOriginal + (!!axisLabelText ? axisLabelDistance : 0);
+      calculateMax();
+
+      function calculateMax() {
+        var maxW = 0,
+            maxH = 0;
+        tickText.each(function(d, i) {
+          var bbox = this.getBoundingClientRect(),
+              w = parseInt(bbox.width, 10),
+              h = parseInt(bbox.height / 1.15, 10);
+          if (w > maxW) {
+            maxW = w;
+          }
+          if (h > maxH) {
+            maxH = h;
+          }
+        });
+        maxTickWidth = maxW;
+        maxTickHeight = maxH;
+      }
+
+      function labelCollision(s) {
+        if (axis.scale().rangeBand) {
+          return axis.scale().rangeBand() * s < maxTickWidth;
+        } else {
+          return false;
+        }
+      }
+
+      function tickRotation(a) {
+        //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
+        var sin = Math.abs(Math.sin(a * Math.PI / 180));
+        thickness += sin ? sin * maxTickWidth : maxTickWidth;
+        thickness += sin ? sin * maxTickHeight : 0;
+        //Rotate all tickText
+        tickText
+          .attr('transform', function(d, i, j) {
+            return 'translate(0,' + tickPaddingOriginal + ') rotate(' + a + ')';
+          })
+          .attr('y', '0')
+          .style('text-anchor', a % 360 > 0 ? 'start' : 'end');
+      }
 
       //------------------------------------------------------------
       // Orientation parameters
@@ -106,6 +152,7 @@ nv.models.axis = function() {
         if (axisLabelText) {
           label.y = -thickness;
           label.dy = '-.71em';
+          label.x = w / 2;
         }
 
         if (showMaxMin) {
@@ -123,85 +170,87 @@ nv.models.axis = function() {
         break;
 
       case 'bottom':
-
         if (rotateTicks % 360) {
 
-          //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
-          var sin = Math.abs(Math.sin(rotateTicks * Math.PI / 180));
-          thickness += sin ? sin * maxTickWidth : maxTickWidth;
-          thickness += sin ? sin * maxTickHeight : 0;
-          //Rotate all tickText
-          tickText
-            .attr('transform', function(d, i, j) { return 'translate(0,' + tickPaddingOriginal + ') rotate(' + rotateTicks + ')'; })
-            .style('text-anchor', rotateTicks % 360 > 0 ? 'start' : 'end');
-
-        } else if (wrapTicks) {
-
-          var maxRows = 1;
-
-          g .selectAll('.tick').select('text')
-              .each(function(d) {
-
-                var textContent = this.textContent,
-                    textNode = d3.select(this),
-                    textArray = textContent.split(' '),
-                    i = 0,
-                    l = textArray.length,
-                    dy = 0.71,
-                    rows = 1,
-                    maxWidth = axis.scale().rangeBand();
-
-                if (this.getBoundingClientRect().width > maxWidth) {
-                  this.textContent = '';
-
-                  do {
-                    var textString,
-                      textSpan = textNode.append('tspan')
-                        .text(textArray[i] + ' ')
-                        .attr('dy', dy + 'em')
-                        .attr('x', 0 + 'px');
-
-                    if (i === 0) {
-                      dy = 1;
-                    }
-
-                    i += 1;
-
-                    while (i < l) {
-                      textString = textSpan.text();
-                      textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.getBoundingClientRect().width <= maxWidth) {
-                        i += 1;
-                      } else {
-                        textSpan.text(textString);
-                        rows += 1;
-                        break;
-                      }
-                    }
-                  } while (i < l);
-                }
-
-                maxRows = Math.max(maxRows, rows);
-              });
-
-          thickness += maxRows * maxTickHeight;
-
-        } else if (staggerTicks) {
-
-          tickText
-            .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 === 0 ? '0' : '12') + ')'; });
-
-          thickness += 2 * maxTickHeight;
+          tickRotation(rotateTicks);
 
         } else {
 
-          thickness += maxTickHeight;
+          if (wrapTicks || (labelCollision(1.25) && !staggerTicks)) {
 
+            g .selectAll('.tick').select('text').each(function(d) {
+
+              var textContent = this.textContent,
+                  textNode = d3.select(this),
+                  textArray = textContent.replace('/', '/ ').split(' '),
+                  i = 0,
+                  l = textArray.length,
+                  dy = 0.71,
+                  maxWidth = axis.scale().rangeBand();
+
+              if (this.getBoundingClientRect().width > maxWidth) {
+                this.textContent = '';
+
+                do {
+                  var textString,
+                    textSpan = textNode.append('tspan')
+                      .text(textArray[i] + ' ')
+                      .attr('dy', dy + 'em')
+                      .attr('x', 0 + 'px');
+
+                  if (i === 0) {
+                    dy = 1;
+                  }
+
+                  i += 1;
+
+                  while (i < l) {
+                    textString = textSpan.text();
+                    textSpan.text(textString + ' ' + textArray[i]);
+                    if (this.getBoundingClientRect().width <= maxWidth) {
+                      i += 1;
+                    } else {
+                      textSpan.text(textString);
+                      break;
+                    }
+                  }
+                } while (i < l);
+              }
+
+            });
+
+            calculateMax();
+          }
+
+          if (staggerTicks || labelCollision(1.25)) {
+            tickText.selectAll('tspan').remove();
+
+            tickText
+              .text(function(d, i) { return tickValueArray[i]; });
+
+            calculateMax();
+
+            tickText
+              .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * maxTickHeight) + ')'; });
+
+            thickness += maxTickHeight - 2;
+          } else {
+            tickText
+              .attr('transform', function(d, i) { return 'translate(0,0)'; });
+          }
+
+          if (labelCollision(2.5)) {
+            thickness = tickPaddingOriginal + (!!axisLabelText ? axisLabelDistance : 0);
+            tickRotation(30);
+          } else {
+            thickness += maxTickHeight;
+          }
         }
 
         if (axisLabelText) {
           label.y = thickness;
           label.dy = '.71em';
+          label.x = w / 2;
         }
 
         if (reduceXTicks) {
@@ -234,9 +283,9 @@ nv.models.axis = function() {
 
         if (axisLabelText) {
           label = {
-            y: rotateYLabel ? -thickness : -10,
+            y: rotateYLabel ? -(thickness + 2) : -10,
             dy: 0,
-            x: rotateYLabel ? scale.range()[0] / 2 : axis.tickPadding(),
+            x: rotateYLabel ? w / 2 : axis.tickPadding(),
             a: rotateYLabel ? 'middle' : 'begin',
             t: rotateYLabel ? 'rotate(90)' : ''
           };
@@ -257,13 +306,13 @@ nv.models.axis = function() {
 
       case 'left':
 
-        thickness += maxTickWidth;
+        thickness += maxTickWidth + 2;
 
         if (axisLabelText) {
           label = {
-            y: rotateYLabel ? -thickness : -10, //TODO: consider calculating this based on largest tick width... OR at least expose this on chart
+            y: rotateYLabel ? -(thickness + 2) : -10, //TODO: consider calculating this based on largest tick width... OR at least expose this on chart
             dy: 0,
-            x: rotateYLabel ? -scale.range()[0] / 2 : -axis.tickPadding(),
+            x: rotateYLabel ? -w / 2 : -axis.tickPadding(),
             a: rotateYLabel ? 'middle' : 'end',
             t: rotateYLabel ? 'rotate(-90)' : ''
           };
@@ -287,11 +336,12 @@ nv.models.axis = function() {
       //------------------------------------------------------------
       // Axis label
 
-      var axisLabel = g.selectAll('text.nv-axislabel').data([axisLabelText]);
+      var axisLabel = container.selectAll('text.nv-axislabel').data([axisLabelText]);
       axisLabel.exit().remove();
       axisLabel.enter().append('text').attr('class', 'nv-axislabel');
 
       if (axisLabelText) {
+
         axisLabel
           .text(function(d) { return d; })
           .attr('y', label.y)
@@ -301,10 +351,12 @@ nv.models.axis = function() {
           .style('text-anchor', label.a);
 
         axisLabel.each(function(d, i) {
-          thickness += orientation === 'horizontal' ?
+          labelThickness += orientation === 'horizontal' ?
             parseInt(this.getBoundingClientRect().height / 1.15, 10) :
             parseInt(this.getBoundingClientRect().width / 1.15, 10);
         });
+
+        thickness += labelThickness;
       }
 
       //------------------------------------------------------------
@@ -401,6 +453,10 @@ nv.models.axis = function() {
 
       //store old scales for use in transitions on update
       scale0 = scale.copy();
+
+      chart.labelThickness = function() {
+        return labelThickness;
+      };
 
     });
 
