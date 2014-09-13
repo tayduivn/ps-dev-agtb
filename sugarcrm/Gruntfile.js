@@ -81,7 +81,7 @@ module.exports = function(grunt) {
                     'include/javascript/sugar7/{*,plugins/*}.js',
                     'modules/*/clients/**/*.js',
                     'sidecar/src/**/*.js',
-                    'sidecar/lib/sugarapi.js'
+                    'sidecar/lib/sugarapi/sugarapi.js'
                 ],
 
                 dest: 'docs',
