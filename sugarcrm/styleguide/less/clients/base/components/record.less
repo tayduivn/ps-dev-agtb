@@ -482,6 +482,10 @@
           .border-bottom-left-radius(@baseBorderRadius);
           .border-bottom-right-radius(@baseBorderRadius);
         }
+        .fieldset-field .record-label + .edit input[type="text"],
+        .fieldset-field .record-label + .edit textarea {
+          .border-radius(@baseBorderRadius);
+        }
       }
 
       h1 {
