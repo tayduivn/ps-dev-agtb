@@ -66,10 +66,9 @@
          */
         this.fields = [];
 
-        if (this.def.inline) {
-            this.def.css_class = this.def.css_class ? this.def.css_class + ' fieldset-inline' :
-                'fieldset-inline';
-        }
+        var inlineTag = this.def.inline ? '-inline' : '';
+        this.def.css_class = (this.def.css_class ? this.def.css_class + ' fieldset' :
+            'fieldset') + inlineTag;
     },
 
     /**

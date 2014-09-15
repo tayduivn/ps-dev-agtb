@@ -278,6 +278,7 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
+        margin-bottom: 15px;
       }
       .detail {
         line-height: 20px;
@@ -287,9 +288,6 @@
         margin-right: -7px;
         .btn-toolbar {
           top: -5px;
-        }
-        &:last-of-type {
-          margin-bottom: 0;
         }
       }
       .help-block {
@@ -422,34 +420,29 @@
         width: 100%;
       }
     }
-    &[data-type="datetimecombo"] {
+   .date.datetime {
       input[type="text"].datepicker {
         min-width: 0;
         width: 50%;
-        .calcWidth(~"55% - 9px");
+        .calcWidth(~"55% - 11px");
       }
       input[type="text"].ui-timepicker-input {
         min-width: 0;
         width: 40%;
-        .calcWidth(~"45% - 9px");
+        .calcWidth(~"45% - 11px");
       }
-      .input-append.date {
+      .ui-timepicker-input,
+      .ui-timepicker-list {
+        margin-left: -24px;
+      }
+      &.error {
         .ui-timepicker-input,
         .ui-timepicker-list {
-          margin-left: -24px;
-        }
-        &.error {
-          .ui-timepicker-input,
-          .ui-timepicker-list {
-            margin-left: -46px;
-          }
+          margin-left: -46px;
         }
       }
-    }
-    &[data-type="date"],
-    &[data-type="datetimecombo"] {
       .add-on {
-        margin-top: -5px;
+        //margin-top: -5px;
       }
       .help-block {
         display: block;
@@ -457,7 +450,7 @@
       }
     }
 
-    &[data-type="fieldset"] {
+    &[data-type="fieldset"] .fieldset {
       .error {
         .input-append.date {
           .error-tooltip.add-on {
@@ -570,10 +563,11 @@
       }
     }
 
-    &:not([data-type=recipients]) {
+    &:not([data-type="recipients"]) {
       .select2-container {
         .select2-choice {
           color: @gray;
+          padding-left: 6px;
           .box-shadow(0 0 1px transparent);
         }
         &.select2-container-disabled {
@@ -648,6 +642,71 @@
   }
   #recordTab li.hidden{
       display: none;
+  }
+}
+
+.fieldset {
+  .fieldset-field:first-child {
+    .record-label {
+      margin: -2px 0 2px;
+    }
+  }
+  .fieldset-field:not(:first-child) {
+    .record-label {
+      margin: 2px 0 -2px;
+    }
+  }
+  .fieldset-field:last-child {
+    .detail,
+    .edit {
+      display: block;
+      min-height: 28px;
+    }
+    .detail {
+      margin-bottom: 7px;
+    }
+    .edit {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.record .record-cell .normal > .fieldset-inline {
+  display: table;
+  min-height: 0;
+  width: 100%;
+  .calcWidth(~"100% + 16px");
+}
+.fieldset-inline {
+  .fieldset-field {
+    display: table-cell;
+    padding-right: 8px;
+    vertical-align: bottom;
+    .record-label {
+      min-height: 18px;
+      margin: -2px 0 2px;
+      display: block;
+      &:empty {
+        display: none;
+        &+ .edit {
+          display: block;
+          margin-bottom: 5px;
+        }
+      }
+    }
+  }
+  .fieldset-field:last-child {
+    padding-right: 0;
+  }
+  &:not(.edit) {
+    .fieldset-field:last-child {
+      width: 100%;
+    }
+  }
+  &.edit {
+    .fieldset-field:not(:last-child) {
+      padding-right: 16px;
+    }
   }
 }
 
