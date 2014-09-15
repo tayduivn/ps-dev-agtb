@@ -203,6 +203,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         }
 
         if (version_compare($this->from_version, '7.5', '<')) {
+            $files[] = 'clients/portal/fields/date';
+            $files[] = 'clients/portal/fields/datetimecombo';
             $files[] = 'include/MVC/View/views/view.gs.php';
             $files[] = 'include/MVC/View/views/view.wirelessdetail.php';
             $files[] = 'include/MVC/View/views/view.wirelessedit.php';
