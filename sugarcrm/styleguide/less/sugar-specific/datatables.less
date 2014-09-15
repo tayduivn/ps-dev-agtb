@@ -526,7 +526,6 @@ FLEXLIST GENERIC */
     th:first-child {
       > span {
         border-right: @tableBorder;
-        -webkit-transform: translate3d(0,0,0);
         &:after {
           .right-shadow(43px);
         }
@@ -535,8 +534,7 @@ FLEXLIST GENERIC */
     td:first-child {
       > span {
         border-right: @tableBorder;
-        -webkit-transform: translate3d(0,0,0);
-        &:after {
+          &:after {
           .right-shadow(37px);
         }
       }
@@ -840,19 +838,19 @@ FLEXLIST GENERIC */
 
 .touch .flex-list-view {
   /*Fix rendering of scrolled absolute spans on iPad*/
-  &.left-actions.scroll-width .dataTable,
-  &.right-actions.scroll-width .dataTable {
+  &.left-actions.scroll-width .dataTable {
     th:first-child,
     td:first-child {
       > span {
-        -webkit-transform: translate3d(0,0,0);
+        .translate3d(0,0,0);
       }
     }
   }
   &.right-actions.scroll-width .dataTable {
+    th:last-child,
     th:last-child {
       .dropdown {
-        -webkit-transform: translate3d(0,0,0);
+        .translate3d(0,0,0);
       }
     }
   }
