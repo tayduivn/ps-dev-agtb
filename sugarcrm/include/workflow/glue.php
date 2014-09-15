@@ -322,7 +322,10 @@ class WorkFlowGlue {
             // GREATER THAN interval timestamp.
             $operator = $this->operator_array[$type_object->operator]=='<' ? '>' : '<';
 
-            $eval_string .= ' && ' . sprintf('strtotime(%sfocus->%s)', '$',  $type_object->lhs_field);
+            $eval_string .= ' && ' . sprintf(
+                'TimeDate::getInstance()->fromDB($focus->%s)->getTimestamp()',
+                $type_object->lhs_field
+            );
             $eval_string .= " $operator ";
             
             // Sign should be driven by point in time
