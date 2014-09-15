@@ -214,6 +214,7 @@
             title: app.lang.get('LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS', 'Forecasts') + ':',
             messages: app.lang.get('LBL_FORECASTS_CONFIG_SETTINGS_SAVED', 'Forecasts'),
             autoClose: true,
+            autoCloseDelay: 10000,
             onAutoClose: _.bind(function() {
                 alert.getCloseSelector().off();
                 onClose();
