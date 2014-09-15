@@ -203,6 +203,13 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         }
 
         if (version_compare($this->from_version, '7.5', '<')) {
+            $files[] = 'include/MVC/View/views/view.gs.php';
+            $files[] = 'include/MVC/View/views/view.wirelessdetail.php';
+            $files[] = 'include/MVC/View/views/view.wirelessedit.php';
+            $files[] = 'include/MVC/View/views/view.wirelesslist.php';
+            $files[] = 'include/MVC/View/views/view.wirelessmodule.php';
+            $files[] = 'include/MVC/View/views/view.wirelesssave.php';
+            $files[] = 'include/SugarWireless';
             $files[] = 'modules/Notifications/Senders';
         }
 

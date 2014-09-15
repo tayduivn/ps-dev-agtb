@@ -15,75 +15,28 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 {
     function get_module_view_defs($moduleName, $type, $view)
     {
-        require_once('include/MVC/View/SugarView.php');
+        require_once 'include/MVC/View/SugarView.php';
         $metadataFile = null;
         $results = array();
-        if( empty($moduleName) )
+        if (empty($moduleName)) {
             return $results;
+        }
 
         $view = strtolower($view);
-        switch (strtolower($type)){
-//BEGIN SUGARCRM flav=pro ONLY
-            case 'wireless':
-                if( $view == 'list'){
-                    require_once('include/SugarWireless/SugarWirelessListView.php');
-                    $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
-                    $v = new SugarWirelessListView();
-                    $results = $v->getMetaDataFile();
-                    
-                    // Needed for conversion
-                    require_once 'include/MetaDataManager/MetaDataConverter.php';
-                    $results = MetaDataConverter::toLegacy('list', $results);
-                    $results = self::formatWirelessListViewResultsToArray($results);
-                    
-                }
-                elseif ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($moduleName, $type);
-                else{
-                    require_once('include/SugarWireless/SugarWirelessView.php');
-                    $v = new SugarWirelessView();
-                    $v->module = $moduleName;
-                    $fullView = ucfirst($view) . 'View';
-                    $meta = $v->getMetaDataFile('Wireless' . $fullView);
-                    $metadataFile = $meta['filename'];
-                    require($metadataFile);
-
-                    // For handling view def conversion
-                    $viewtype = strtolower($view);
-
-                    // Handle found view defs
-                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]) {
-                        // Needed for conversion
-                        require_once 'include/MetaDataManager/MetaDataConverter.php';
-                        $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
-                        
-                        // Handle fieldset conversions
-                        $results = MetaDataConverter::fromGridFieldsets($results);
-                    } else {
-                        //Wireless detail metadata may actually be just edit metadata.
-                        $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
-                    }
-                }
-
-                break;
-//END SUGARCRM flav=pro ONLY
-            case 'default':
-            default:
-                if ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($moduleName, $type);
-                else
-                {
-                    $v = new SugarView(null,array());
-                    $v->module = $moduleName;
-                    $v->type = $view;
-                    $fullView = ucfirst($view) . 'View';
-                    $metadataFile = $v->getMetaDataFile();
-                    require_once($metadataFile);
-                    if($view == 'list')
-                        $results = $listViewDefs[$moduleName];
-                    else
-                        $results = $viewdefs[$moduleName][$fullView];
-                }
+        if ($view == 'subpanel') {
+            $results = $this->get_subpanel_defs($moduleName, $type);
+        } else {
+            $v = new SugarView(null,array());
+            $v->module = $moduleName;
+            $v->type = $view;
+            $fullView = ucfirst($view) . 'View';
+            $metadataFile = $v->getMetaDataFile();
+            require_once $metadataFile;
+            if ($view == 'list') {
+                $results = $listViewDefs[$moduleName];
+            } else {
+                $results = $viewdefs[$moduleName][$fullView];
+            }
         }
 
         //Add field level acls.
