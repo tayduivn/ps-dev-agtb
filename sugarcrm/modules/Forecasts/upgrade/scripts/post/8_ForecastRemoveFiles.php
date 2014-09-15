@@ -168,6 +168,10 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
             $files = array_merge($files, $newFiles);
         }
 
+        if (version_compare($this->to_version, '7.6', '<=')) {
+            $files[] = 'modules/Forecasts/upgrade/scripts/post/2_ForecastsChangeForecastBy.php';
+        }
+
         if (!empty($files)) {
             $this->fileToDelete($files);
         }

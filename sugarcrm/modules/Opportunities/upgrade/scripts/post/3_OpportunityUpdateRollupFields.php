@@ -22,8 +22,9 @@ class SugarUpgradeOpportunityUpdateRollupFields extends UpgradeScript
             return;
         }
 
-        // we need to anything other than ENT and ULT
-        if (!$this->fromFlavor('ent')) {
+        $settings = Opportunity::getSettings();
+        if ($settings['opps_view_by'] !== 'RevenueLineItems') {
+            $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
             return;
         }
 
