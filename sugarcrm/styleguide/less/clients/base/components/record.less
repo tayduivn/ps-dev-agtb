@@ -274,7 +274,7 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 0;
+        margin-bottom: 15px;
       }
       .detail {
         line-height: 20px;
@@ -461,30 +461,40 @@
         height: 18px;
       }
       .normal > .fieldset {
-        .fieldset-field input[type="text"],
-        .fieldset-field textarea {
-          margin-top: -1px;
-          .border-radius(0);
-          &:focus {
-            z-index: 2;
-          }
-          & + .error-tooltip.add-on {
+        .fieldset-field {
+          input[type="text"],
+          textarea {
             margin-top: -1px;
+            .border-radius(0);
+            &:focus {
+              z-index: 2;
+            }
+            & + .error-tooltip.add-on {
+              margin-top: -1px;
+            }
+          }
+          &:first-child input[type="text"],
+          &:first-child textarea {
+            .border-top-left-radius(@baseBorderRadius);
+            .border-top-right-radius(@baseBorderRadius);
+          }
+          &:last-child input[type="text"],
+          &:last-child textarea,
+          .address_country {
+            .border-bottom-left-radius(@baseBorderRadius);
+            .border-bottom-right-radius(@baseBorderRadius);
+          }
+          .record-label + .edit input[type="text"],
+          .record-label + .edit textarea {
+            .border-radius(@baseBorderRadius);
           }
         }
-        .fieldset-field:first-child input[type="text"],
-        .fieldset-field:first-child textarea {
-          .border-top-left-radius(@baseBorderRadius);
-          .border-top-right-radius(@baseBorderRadius);
-        }
-        .fieldset-field:last-child input[type="text"],
-        .fieldset-field:first-child textarea {
-          .border-bottom-left-radius(@baseBorderRadius);
-          .border-bottom-right-radius(@baseBorderRadius);
-        }
-        .fieldset-field .record-label + .edit input[type="text"],
-        .fieldset-field .record-label + .edit textarea {
-          .border-radius(@baseBorderRadius);
+        &:not(.edit) .fieldset-field {
+          .address_city,
+          .address_state {
+            float: left;
+            margin-right: 6px;
+          }
         }
       }
 
@@ -503,13 +513,10 @@
       }
     }
 
-    &[data-name="fieldset_address"],
-    &[data-name="fieldset_shipping_address"],
-    &[data-name="fieldset_alt_address"],
-    &[data-name="fieldset_altaddress"] {
-      input[type="text"] {
-        margin-top: -1px;
-      }
+    &[data-name="address"],
+    &[data-name="shipping_address"],
+    &[data-name="alt_address"],
+    &[data-name="altaddress"] {
       .address.edit > .edit:nth-last-of-type(2) > input {
         .border-bottom-left-radius(@baseBorderRadius);
         .border-bottom-right-radius(@baseBorderRadius);
@@ -517,9 +524,6 @@
       .edit label {
         padding: 4px 0 0;
         margin-bottom: 0;
-      }
-      .address .detail {
-        min-height: 10px;
       }
     }
 
@@ -665,10 +669,9 @@
       .detail,
       .edit {
         display: block;
-        min-height: 28px;
       }
       .detail {
-        margin-bottom: 7px;
+        margin-bottom: 17px;
       }
       .edit {
         margin-bottom: 12px;
