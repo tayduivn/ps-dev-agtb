@@ -271,6 +271,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 array(
                     'name' => 'description',
                     'span' => 12,
+                    'rows' => 3,
                 ),
                 array(
                     'name' => 'type',
