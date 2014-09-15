@@ -72,30 +72,78 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
-        'Zendesk' => '2.8',
-        'Act-On Integrated Marketing Automation for SugarCRM' => '*',
-        'Pardot Marketing Automation for SugarCRM' => '*',
-        'iNetMaps' => '*',
-        'Sugar-Constant Contact Integration' => '*',
-        'Adobe EchoSign e-Signatures for SugarCRM' => '*',
-        'DocuSign for SugarCRM' => '*',
-        'FBSG SugarCRM QuickBooks Integration' => '*',
-        'JJWDesign_Google_Maps' => '*',
-        'Dashboard Manager' => '*',
-        'Fonality' => '*',
-        'inetDOCS Box' => '*',
-        'Forums, Threads, Posts Modules' => '*',
-        'Accounting' => '*',
-	    'Marketo Marketing Automation for SugarCRM' => '3.0',
-	    'SugarChimp' => '7.0.1',
-        'Calendar 2.0 V1.2 003' => '*',
-        'Sugar - MAS90 Integration' => '*',
-        'MAS90Integrator' => '*',
-        'ContactIndicators' => '*',
-        'Integral Sales' => '*',
-        'Teleseller' => '*',
-        'Freshdesk' => '*',
-        'Sugar-Sage Integration Modules' => '2.7.0-8-g74f8c47'
+        'Zendesk' => array(
+            array('version' => '2.8'),
+        ),
+        'Act-On Integrated Marketing Automation for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'Pardot Marketing Automation for SugarCRM' =>  array(
+            array('version' => '*'),
+        ),
+        'iNetMaps' => array(
+            array('version' => '*'),
+        ),
+        'Sugar-Constant Contact Integration' => array(
+            array('version' => '*'),
+        ),
+        'Adobe EchoSign e-Signatures for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'DocuSign for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'FBSG SugarCRM QuickBooks Integration' => array(
+            array('version' => '*'),
+        ),
+        'JJWDesign_Google_Maps' => array(
+            array('version' => '*'),
+        ),
+        'Dashboard Manager' => array(
+            array('version' => '*'),
+        ),
+        'Fonality' => array(
+            array('version' => '*'),
+        ),
+        'inetDOCS Box' => array(
+            array('version' => '*'),
+        ),
+        'Forums, Threads, Posts Modules' => array(
+            array('version' => '*'),
+        ),
+        'Accounting' => array(
+            array('version' => '*', 'author' => 'CRM Online Australia Pty Ltd'),
+        ),
+        'Marketo Marketing Automation for SugarCRM' => array(
+            array('version' => '3.0'),
+        ),
+        'SugarChimp' => array(
+            array('version' => '7.0.1'),
+        ),
+        'Calendar 2.0 V1.2 003' => array(
+            array('version' => '*'),
+        ),
+        'Sugar - MAS90 Integration' => array(
+            array('version' => '*'),
+        ),
+        'MAS90Integrator' => array(
+            array('version' => '*'),
+        ),
+        'ContactIndicators' => array(
+            array('version' => '*'),
+        ),
+        'Integral Sales' => array(
+            array('version' => '*'),
+        ),
+        'Teleseller' => array(
+            array('version' => '*'),
+        ),
+        'Freshdesk' => array(
+            array('version' => '*'),
+        ),
+        'Sugar-Sage Integration Modules' => array(
+            array('version' => '2.7.0-8-g74f8c47'),
+        ),
     );
 
     /**
@@ -541,13 +589,29 @@ class HealthCheckScanner
                 continue;
             }
             $this->log("Package {$pack['name']} (version {$pack['version']}) detected");
-            if (array_key_exists($pack['name'], $this->packages) &&
-                (
-                    $this->packages[$pack['name']] == '*' ||
-                    version_compare($pack['version'], $this->packages[$pack['name']], '<')
-                )
-            ) {
-                $this->updateStatus("incompatIntegration", $pack['name'], $pack['version']);
+            if (array_key_exists($pack['name'], $this->packages)) {
+                $incompatible = false;
+                foreach ($this->packages[$pack['name']] as $req) {
+                    if (empty($req['version'])) {
+                        $incompatible = true;
+                    } elseif ($req['version'] == '*' || version_compare($pack['version'], $req['version'], '<')) {
+                        $incompatible = true;
+                    }
+                    if (!empty($req['author'])) {
+                        $uh = new UpgradeHistory();
+                        $uh->retrieve_by_string_fields(array('name' => $pack['name'], 'version' => $pack['version']), true, false);
+                        $manifest = unserialize(base64_decode($uh->manifest));
+                        $manifest = $manifest['manifest'];
+                        $scp = strcasecmp($manifest['author'], $req['author']);
+                        $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));
+                    }
+                    if ($incompatible) {
+                        break;
+                    }
+                }
+                if ($incompatible) {
+                    $this->updateStatus("incompatIntegration", $pack['name'], $pack['version']);
+                }
             }
         }
     }
