@@ -457,6 +457,27 @@ class HealthCheckScanner
     }
 
     /**
+     * Method detects current version and flavor of installed SugarCRM and returns them
+     *
+     * @return array (version, flavor)
+     */
+    public function getVersionAndFlavor()
+    {
+        $sugar_version = '9.9.9';
+        $sugar_flavor = 'unknown';
+        include "sugar_version.php";
+        return array($sugar_version, $sugar_flavor);
+    }
+
+    /**
+     * @return PackageManager
+     */
+    public function getPackageManager()
+    {
+        return new PackageManager();
+    }
+
+    /**
      *
      * Main
      * @return void|multitype:
@@ -469,9 +490,7 @@ class HealthCheckScanner
             return $this->logMeta;
         }
 
-        $sugar_version = '9.9.9';
-        $sugar_flavor = 'unknown';
-        include "sugar_version.php";
+        list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
@@ -581,7 +600,7 @@ class HealthCheckScanner
         require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
         $this->log("Checking packages");
-        $pm = new PackageManager();
+        $pm = $this->getPackageManager();
         $packages = $pm->getinstalledPackages(array('module'));
         foreach ($packages as $pack) {
             if($pack['enabled'] == 'DISABLED') {
@@ -834,21 +853,21 @@ class HealthCheckScanner
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
         if(!$this->isMBModule($module)) {
-            $this->log("toBeRunAsBWC", $module);
+            $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
         }
 
         $objectName = $this->getObjectName($module);
         // check for subpanels since BWC subpanels can be used in non-BWC modules
-        $defs = $this->getPhpFiles("$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             foreach($defs as $deffile) {
                 $this->checkListFields($deffile, "subpanel_layout", 'list_fields', $module, $objectName);
             }
         }
 
-        $defs = $this->getPhpFiles("custom/$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("custom/modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             $this->log("$module has custom subpanels");
             foreach($defs as $deffile) {
@@ -1005,7 +1024,7 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+        foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if (!empty($extfiles)) {

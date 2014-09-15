@@ -83,6 +83,7 @@
             <directory>./install/</directory>
             <directory>./jssource/</directory>
             <directory>./ModuleInstall/</directory>
+            <directory>./HealthCheck/</directory>
         </testsuite>
         <testsuite name="Sugar Vendor Test Suite">
             <directory>./vendor/</directory>
