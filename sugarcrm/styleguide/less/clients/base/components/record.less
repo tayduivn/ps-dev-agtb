@@ -190,6 +190,7 @@
     .input-append {
       .add-on {
         z-index: 1;
+        margin-top: -5px;
       }
     }
 
@@ -198,11 +199,6 @@
     }
 
     /* Must be same as above margin-top definition */
-    .input-append input[type="text"] + .add-on,
-    .input-append input[type="password"] + .add-on,
-    .input-append textarea + .add-on {
-      margin-top: -5px;
-    }
     .input-append input[type="text"][disabled] + .add-on,
     .input-append input[type="password"][disabled] + .add-on,
     .input-append textarea[disabled] + .add-on {
@@ -278,7 +274,7 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 15px;
+        margin-bottom: 0;
       }
       .detail {
         line-height: 20px;
@@ -286,12 +282,40 @@
       .edit .control-group {
         padding-right: 135px;
         margin-right: -7px;
+        &:last-of-type {
+          margin-bottom: 5px;
+        }
         .btn-toolbar {
           top: -5px;
         }
       }
-      .help-block {
-        margin-top: 5px;
+    }
+
+    &[data-type="teamset"] {
+      .detail .control-group {
+        label {
+          margin-bottom: 0;
+        }
+      }
+      .edit .control-group {
+        margin-right: -7px;
+        .controls-three {
+          padding-right: 101px;
+        }
+        .btn {
+          top: -5px;
+        }
+        &:last-of-type {
+          margin-bottom: 5px;
+        }
+      }
+      .input-append.error {
+        .add-on.error-tooltip {
+          position: absolute;
+          right: 24px;
+          left: auto;
+          background: transparent;
+        }
       }
     }
 
@@ -340,7 +364,6 @@
         font-size: inherit;
         .add-on.error-tooltip {
           position: absolute;
-          top: -2px;
           right: 24px;
           left: auto;
           background: transparent;
@@ -353,7 +376,9 @@
         padding-left: 6px;
       }
       .help-block {
-        margin-top: 28px;
+        margin-top: 0;
+        position: relative;
+        top: 28px;
       }
     }
 
@@ -364,6 +389,13 @@
       .calcWidth(~"100% + 16px") !important;
     }
 
+    &[data-type="parent"],
+    &[data-type="relate"] {
+      .help-block {
+        margin-top: 0;
+      }
+    }
+
     &[data-type="parent"] {
       .edit {
         margin-right: -14px;
@@ -371,7 +403,6 @@
       .input-append.error {
         .add-on.error-tooltip {
           position: absolute;
-          top: -2px;
           right: 24px;
           left: auto;
           background: transparent;
@@ -379,39 +410,6 @@
       }
       .help-block {
         margin-top: 0;
-        display: block;
-      }
-    }
-
-    &[data-type="teamset"] {
-      .detail .control-group {
-        label {
-          margin-bottom: 0;
-        }
-      }
-      .edit .control-group {
-        margin-right: -7px;
-        .controls-three {
-          padding-right: 101px;
-        }
-        .btn {
-          top: -5px;
-        }
-        &:last-of-type {
-          margin-bottom: 0;
-        }
-      }
-      .input-append.error {
-        .add-on.error-tooltip {
-          position: absolute;
-          top: -2px;
-          right: 24px;
-          left: auto;
-          background: transparent;
-        }
-      }
-      .help-block {
-        margin-top: 5px;
       }
     }
 
@@ -441,16 +439,13 @@
           margin-left: -46px;
         }
       }
-      .add-on {
-        //margin-top: -5px;
-      }
       .help-block {
         display: block;
         margin-top: 4px;
       }
     }
 
-    &[data-type="fieldset"] .fieldset {
+    &[data-type="fieldset"] {
       .error {
         .input-append.date {
           .error-tooltip.add-on {
@@ -465,25 +460,25 @@
         margin-bottom: 0;
         height: 18px;
       }
-      input[type="text"] {
-        .border-radius(0);
-        margin-top: -1px;
-        &:focus {
-          z-index: 2;
-        }
-        & + .error-tooltip.add-on {
+      .normal > .fieldset {
+        .fieldset-field input[type="text"],
+        .fieldset-field textarea {
           margin-top: -1px;
+          .border-radius(0);
+          &:focus {
+            z-index: 2;
+          }
+          & + .error-tooltip.add-on {
+            margin-top: -1px;
+          }
         }
-      }
-      .normal > span {
-        > span:first-child input[type="text"],
-        > span:first-child textarea {
+        .fieldset-field:first-child input[type="text"],
+        .fieldset-field:first-child textarea {
           .border-top-left-radius(@baseBorderRadius);
           .border-top-right-radius(@baseBorderRadius);
-          .border-bottom-left-radius(0);
-          .border-bottom-right-radius(0);
         }
-        > span:last-child input[type="text"] {
+        .fieldset-field:last-child input[type="text"],
+        .fieldset-field:first-child textarea {
           .border-bottom-left-radius(@baseBorderRadius);
           .border-bottom-right-radius(@baseBorderRadius);
         }
@@ -531,6 +526,9 @@
     &[data-type="file"] {
       input[type="file"] {
         margin-bottom: -5px;
+      }
+      .add-on {
+        margin-top: 0;
       }
       .edit {
         margin-left: -7px;
@@ -612,6 +610,7 @@
   // a select2 field at end of input
   .select2-addon {
     margin: 0 -7px;
+    min-height: 28px;
     .input-append {
       input[type="text"] {
         width: 95%;
@@ -626,6 +625,9 @@
     }
     .select2-container {
       margin-left: 0;
+    }
+    & + .help-block {
+      margin-top: -2px;
     }
   }
   #recordTab{
@@ -643,70 +645,84 @@
   #recordTab li.hidden{
       display: none;
   }
-}
 
-.fieldset {
-  .fieldset-field:first-child {
-    .record-label {
-      margin: -2px 0 2px;
+  .fieldset {
+    .fieldset-field:first-child {
+      .record-label {
+        margin: -2px 0 2px;
+      }
     }
-  }
-  .fieldset-field:not(:first-child) {
-    .record-label {
-      margin: 2px 0 -2px;
+    .fieldset-field:not(:first-child) {
+      .record-label {
+        margin: 2px 0 -2px;
+      }
     }
-  }
-  .fieldset-field:last-child {
-    .detail,
-    .edit {
-      display: block;
-      min-height: 28px;
-    }
-    .detail {
-      margin-bottom: 7px;
-    }
-    .edit {
-      margin-bottom: 12px;
-    }
-  }
-}
-
-.record .record-cell .normal > .fieldset-inline {
-  display: table;
-  min-height: 0;
-  width: 100%;
-  .calcWidth(~"100% + 16px");
-}
-.fieldset-inline {
-  .fieldset-field {
-    display: table-cell;
-    padding-right: 8px;
-    vertical-align: bottom;
-    .record-label {
-      min-height: 18px;
-      margin: -2px 0 2px;
-      display: block;
-      &:empty {
-        display: none;
-        &+ .edit {
-          display: block;
-          margin-bottom: 5px;
-        }
+    .fieldset-field:last-child {
+      .detail,
+      .edit {
+        display: block;
+        min-height: 28px;
+      }
+      .detail {
+        margin-bottom: 7px;
+      }
+      .edit {
+        margin-bottom: 12px;
       }
     }
   }
-  .fieldset-field:last-child {
-    padding-right: 0;
+
+  .record-cell .normal > .fieldset-inline {
+    display: table;
+    min-height: 0;
+    width: 100%;
+    .calcWidth(~"100% + 16px");
+  }
+  .fieldset-inline {
+    .fieldset-field {
+      display: table-cell;
+      padding-right: 8px;
+      vertical-align: bottom;
+      .record-label {
+        min-height: 18px;
+        margin: -2px 0 2px;
+        display: block;
+        &:empty {
+          display: none;
+          &+ .edit {
+            display: block;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+    .fieldset-field:last-child {
+      padding-right: 0;
+    }
+    &:not(.edit) {
+      .fieldset-field:last-child {
+        width: 100%;
+      }
+    }
+    &.edit {
+      .fieldset-field:not(:last-child) {
+        padding-right: 16px;
+      }
+    }
+  }
+}
+
+.fieldset.list {
+  .fieldset-field > .list {
   }
   &:not(.edit) {
     .fieldset-field:last-child {
-      width: 100%;
+      width: auto;
+      padding: 0;
     }
   }
-  &.edit {
-    .fieldset-field:not(:last-child) {
-      padding-right: 16px;
-    }
+  .list:empty {
+    display: none;
   }
 }
 
