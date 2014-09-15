@@ -1029,7 +1029,7 @@ function whereToStartGroupByRow(&$reporter, $count, $rowsAndColumnsData, $row) {
 		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
 		for ($j = 0 ; $j < count($rowsAndColumnsData) ; $j++)
 		{
-			if ($rowsAndColumnsData[$j][$group_def_array[$i]['label']] == $row['cells'][$key])
+			if (isset($rowsAndColumnsData[$j][$group_def_array[$i]['label']]) && $rowsAndColumnsData[$j][$group_def_array[$i]['label']] == $row['cells'][$key])
 			{
 				return $j;
 			}
