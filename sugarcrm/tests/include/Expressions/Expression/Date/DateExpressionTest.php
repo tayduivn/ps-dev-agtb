@@ -298,4 +298,27 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInstanceOf("DateTime",$result,'Evaluation did not return a DateTime object');
         $this->assertEquals($now, $timedate->asUser($result), 'The time is not what expected');
     }
+
+    /**
+     * @dataProvider roundTimeProvider
+     */
+    public function testRoundTime($minutes, $expected)
+    {
+        $date = new DateTime('today 00:' . $minutes);
+        $rounded = DateExpression::roundTime($date);
+        $actual = $rounded->format('H:i');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function roundTimeProvider()
+    {
+        return array(
+            array(0, '00:00'),
+            array(8, '00:15'),
+            array(23, '00:30'),
+            array(38, '00:45'),
+            array(53, '01:00'),
+        );
+    }
 }
