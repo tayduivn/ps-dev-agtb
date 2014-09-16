@@ -247,8 +247,13 @@ class SugarAutoLoader
     {
         $map = self::getIncludeReturn(self::$composerPaths['autoload_psr4']);
         foreach ($map as $namespace => $paths) {
-            foreach ($paths as $path) {
-                $path = self::normalizeFilePath($path);
+            if (is_array($paths)) {
+                foreach ($paths as $path) {
+                    $path = self::normalizeFilePath($path);
+                    self::addNamespace($namespace, $path, 'psr4');
+                }
+            } else {
+                $path = self::normalizeFilePath($paths);
                 self::addNamespace($namespace, $path, 'psr4');
             }
         }
@@ -261,8 +266,13 @@ class SugarAutoLoader
     {
         $map = self::getIncludeReturn(self::$composerPaths['autoload_namespaces']);
         foreach ($map as $namespace => $paths) {
-            foreach ($paths as $path) {
-                $path = self::normalizeFilePath($path);
+            if (is_array($paths)) {
+                foreach ($paths as $path) {
+                    $path = self::normalizeFilePath($path);
+                    self::addNamespace($namespace, $path, 'psr0');
+                }
+            } else {
+                $path = self::normalizeFilePath($paths);
                 self::addNamespace($namespace, $path, 'psr0');
             }
         }
