@@ -44,7 +44,7 @@
         display: none;
       }
       &.edit {
-        padding: 2px 0 0 13px;
+        padding: 2px 13px 0 13px;
         .record-cell {
           white-space: normal;
           overflow: visible;
@@ -203,32 +203,14 @@
   }
 
   span[data-type="follow"],
-  span[data-type="status"],
-  span[data-type="badge"] {
+  span[data-type="badge"],
+  span[data-type="event-status"],
+  span[data-type="badge-select"] {
     padding: 18px 16px 0 0;
     line-height: 20px;
-    .label {
-      font-size: 0.7em;
-      line-height: 0.7em;
-      padding: 6px 4px 2px;
-      height: 10px;
-    }
   }
-  span[data-type="badge"] {
-    .label {
-      color: @grayDark;
-      background: transparent;
-      border: 1px solid @gray;
-      font-weight: 500;
-    }
-    .label.label-success {
-      color: @white;
-      background-color: @success;
-      border: 1px solid @success;
-      font-weight: 600;
-    }
-  }
-  span[data-type="status"] {
+  span[data-type="badge-select"],
+  span[data-type="event-status"] {
     .record-label {
       padding-left: 1px;
     }
@@ -236,13 +218,17 @@
       border: 1px solid transparent;
       background-image: none;
       background-color: transparent;
-      .box-shadow(none);
       padding-left: 0;
+      .box-shadow(none);
     }
   }
-  .record-cell.hide + span[data-type="status"] {
-    padding-left: 16px;
+  h1 > .record-cell.edit {
+    &[data-type="badge-select"],
+    &[data-type="event-status"] {
+      padding: 2px 11px 0 0;
+    }
   }
+
   span[data-type="favorite"] {
     font-size: @baseFontSize;
     padding: 19px 16px 0 0;

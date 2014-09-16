@@ -574,9 +574,6 @@
      * property).
      */
     toggleViewButtons: function(isEdit) {
-        this.$('.headerpane span[data-type="badge"]').toggleClass('hide', isEdit);
-        this.$('.headerpane span[data-type="favorite"]').toggleClass('hide', isEdit);
-        this.$('.headerpane span[data-type="follow"]').toggleClass('hide', isEdit);
         this.$('.headerpane .btn-group-previous-next').toggleClass('hide', isEdit);
     },
 
