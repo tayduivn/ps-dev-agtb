@@ -47,6 +47,13 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      */
     protected $fieldsetMemberFields = null;
 
+    /**
+     * Field parameters defined in base (standard) view
+     *
+     * @var array
+     */
+    protected $baseViewFields = array();
+
 	/**
      * Constructor
      * @param string $view           The view type, that is, editview, searchview etc
@@ -100,6 +107,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs [ 'panels' ] = $this->_convertFromCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ; // put into our internal format
         $this->_originalViewDef = $this->getFieldsFromLayout($this->implementation->getOriginalViewdefs ());
+        $this->baseViewFields = $this->getFieldsFromLayout($this->implementation->getBaseViewdefs());
 
         // Setup the fieldset member fields. Used by sidecar.
         $this->setFieldsetMemberFields();
