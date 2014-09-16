@@ -1260,7 +1260,7 @@ class SugarAutoLoader
         $data = self::scanDir($path);
 
         // append base path structure
-        $subDirs = array_reverse(explode(DIRECTORY_SEPARATOR, $path));
+        $subDirs = array_reverse(explode('/', $path));
         $data = array_reduce($subDirs, function ($c, $i) use ($data) {
             return array($i => (empty($c) ? $data : $c));
         });
