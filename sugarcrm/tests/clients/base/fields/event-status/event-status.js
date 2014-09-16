@@ -1,4 +1,4 @@
-describe('View.Fields.Base.Meetings.StatusField', function() {
+describe('View.Fields.Base.EventStatusField', function() {
     var app, field,
         module = 'Meetings',
         items = {
@@ -11,10 +11,10 @@ describe('View.Fields.Base.Meetings.StatusField', function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'edit');
-        SugarTest.loadHandlebarsTemplate('status', 'field', 'base', 'detail', module);
-        SugarTest.loadHandlebarsTemplate('status', 'field', 'base', 'list', module);
+        SugarTest.loadHandlebarsTemplate('event-status', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('event-status', 'field', 'base', 'list');
         SugarTest.loadComponent('base', 'field', 'enum');
-        SugarTest.loadComponent('base', 'field', 'status', module);
+        SugarTest.loadComponent('base', 'field', 'event-status');
         SugarTest.testMetadata.set();
     });
 
@@ -36,7 +36,7 @@ describe('View.Fields.Base.Meetings.StatusField', function() {
         };
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'status', 'status', 'detail', undefined, module);
+            field = SugarTest.createField('base', 'status', 'event-status', 'detail', undefined, module);
             field.items = items;
         });
 
@@ -70,7 +70,7 @@ describe('View.Fields.Base.Meetings.StatusField', function() {
 
     describe('when the status field is in edit mode', function() {
         beforeEach(function() {
-            field = SugarTest.createField('base', 'status', 'status', 'edit', undefined, module);
+            field = SugarTest.createField('base', 'status', 'event-status', 'edit', undefined, module);
             field.items = items;
         });
 

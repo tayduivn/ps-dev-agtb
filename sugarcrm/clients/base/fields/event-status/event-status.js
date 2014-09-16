@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.Meetings.StatusField
- * @alias SUGAR.App.view.fields.BaseMeetingsStatusField
+ * @class View.Fields.Base.EventStatusField
+ * @alias SUGAR.App.view.fields.BaseEventStatusField
  * @extends View.Fields.Base.EnumField
  */
 ({
@@ -39,7 +39,7 @@
             this.type = 'enum';
         }
         this._super('_render');
-        this.type = 'status';
+        this.type = 'event-status';
         this.styleLabel(this.model.get('status'));
     },
 
