@@ -70,6 +70,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'status',
+                    'type' => 'event-status',
                     'label' => 'LBL_LIST_STATUS',
                     'link' => false,
                     'default' => false,

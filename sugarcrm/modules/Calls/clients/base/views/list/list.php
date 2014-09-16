@@ -55,6 +55,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'status',
+                    'type' => 'event-status',
                 ),
                 array(
                     'enabled' => true,
