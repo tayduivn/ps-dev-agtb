@@ -15,6 +15,10 @@ require_once('data/BeanFactory.php');
 require_once('include/api/SugarApi.php');
 
 class ModuleApi extends SugarApi {
+
+    /** @var RelateRecordApi */
+    protected $relateRecordApi;
+
     public function registerApiRest() {
         return array(
             'create' => array(
@@ -166,6 +170,12 @@ class ModuleApi extends SugarApi {
 
         $id = $this->updateBean($bean, $api, $args);
 
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
+        $this->linkRelatedRecords($api, $bean, $relateArgs);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
+        $this->createRelatedRecords($api, $bean, $relateArgs);
+
         $args['record'] = $id;
 
         $this->processAfterCreateOperations($args, $bean);
@@ -180,6 +190,15 @@ class ModuleApi extends SugarApi {
         $bean = $this->loadBean($api, $args, 'save');
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
+        $this->unlinkRelatedRecords($api, $bean, $relateArgs);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
+        $this->linkRelatedRecords($api, $bean, $relateArgs);
+
+        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
+        $this->createRelatedRecords($api, $bean, $relateArgs);
 
         return $this->getLoadedAndFormattedBean($api, $args);
     }
@@ -316,5 +335,137 @@ class ModuleApi extends SugarApi {
                 $bean->$linkName->add($beanCopiedFrom->$linkName->beans);
             }
         }
+    }
+
+    /**
+     * Returns arguments for RelateRecordApi for the given action
+     *
+     * @param SugarBean $bean Primary bean
+     * @param array $args This API arguments
+     * @param string $action Related record action.
+     *
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function getRelatedRecordArguments(SugarBean $bean, array $args, $action)
+    {
+        $arguments = array();
+        foreach ($bean->getFieldDefinitions() as $field => $definition) {
+            if (!isset($definition['type']) || $definition['type'] != 'link') {
+                continue;
+            }
+            if (!isset($args[$field])) {
+                continue;
+            }
+            if (!is_array($args[$field])) {
+                throw new SugarApiExceptionInvalidParameter(
+                    sprintf(
+                        'Link field must contain array of actions, %s given',
+                        gettype($field)
+                    )
+                );
+            }
+            if (!isset($args[$field][$action])) {
+                continue;
+            }
+
+            $data = $args[$field][$action];
+
+            if (!is_array($data)) {
+                throw new SugarApiExceptionInvalidParameter(
+                    sprintf(
+                        'Link action data must be array, %s given',
+                        gettype($data)
+                    )
+                );
+            }
+
+            $arguments[$field] = $data;
+        }
+
+        return $arguments;
+    }
+
+    /**
+     * Links related records to the given bean
+     *
+     * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
+     * @param array $ids Related record IDs
+     *
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function linkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($ids as $linkName => $items) {
+            $api->createRelatedLinks($service, array(
+                'module' => $bean->module_name,
+                'record' => $bean->id,
+                'link_name' => $linkName,
+                'ids' => $items,
+            ));
+        }
+    }
+
+    /**
+     * Unlinks related records from the given bean
+     *
+     * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
+     * @param array $ids Related record IDs
+     *
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function unlinkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($ids as $linkName => $items) {
+            foreach ($items as $id) {
+                $api->deleteRelatedLink($service, array(
+                    'module' => $bean->module_name,
+                    'record' => $bean->id,
+                    'link_name' => $linkName,
+                    'remote_id' => $id,
+                ));
+            }
+        }
+    }
+
+    /**
+     * Creates related records for the given bean
+     *
+     * @param ServiceBase $service
+     * @param SugarBean $bean Primary bean
+     * @param array $data New record data
+     */
+    protected function createRelatedRecords(ServiceBase $service, SugarBean $bean, array $data)
+    {
+        $api = $this->getRelateRecordApi();
+        foreach ($data as $linkName => $records) {
+            foreach ($records as $record) {
+                $api->createRelatedRecord($service, array_merge($record, array(
+                    'module' => $bean->module_name,
+                    'record' => $bean->id,
+                    'link_name' => $linkName,
+                )));
+            }
+        }
+    }
+
+    /**
+     * Lazily loads RelateRecord API
+     *
+     * @return RelateRecordApi
+     */
+    protected function getRelateRecordApi()
+    {
+        if (!$this->relateRecordApi) {
+            require_once 'clients/base/api/RelateRecordApi.php';
+            $this->relateRecordApi = new RelateRecordApi();
+        }
+
+        return $this->relateRecordApi;
     }
 }

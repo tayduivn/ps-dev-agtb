@@ -49,8 +49,69 @@
     "name":"New Account Name",
     "phone_office":"(555) 888-5555",
     "website":"www.newsite.com",
+    "meetings": {
+    {
+        "add": ["21e3385e-404f-b470-407e-54044e3d8024"],
+        "delete": ["21e3385e-404f-b470-407e-54044e3d8023"],
+        "create": [
+        {
+            "name": "Test Meeting"
+        }
+      ]
+    }
 }
 </pre>
+
+<h3>Link fields</h3>
+<span class="lead">
+    It is possible to add or delete record relations to other records and create new related records.
+</span>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <code>add</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of related records ID. See <a href="module_record_link_post_help.html">RelateRecordApi</a>
+            for details.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>delete</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of related records ID.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>create</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of name to value arrays of related records.
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 <h2>Response Arguments</h2>
 <table class="table table-hover">
