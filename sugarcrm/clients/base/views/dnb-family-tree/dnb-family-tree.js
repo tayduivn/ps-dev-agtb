@@ -59,7 +59,7 @@
     loadFamilyTree: function(isCollapsed) {
         if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
-            this.loadDNBData('duns_num', null, this.getDNBFamilyTree, 'LNK_FF', 'dnb.dnb-no-duns', 'dnb.dnb-no-duns-field');
+            this.loadDNBData('duns_num', 'dnb_temp_duns_num', this.getDNBFamilyTree, 'LNK_FF', 'dnb.dnb-no-duns', 'dnb.dnb-no-duns-field');
         }
     },
 
