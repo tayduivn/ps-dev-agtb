@@ -61,6 +61,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'direction',
+                    'type' => 'badge-select',
                 ),
                 array(
                     'name' => 'assigned_user_name',

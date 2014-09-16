@@ -162,7 +162,14 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'dropdown_class' => 'select2-menu-only',
                     'container_class' => 'select2-menu-only',
                 ),
-                'direction',
+                array(
+                    'name' => 'direction',
+                    'type' => 'badge-select',
+                    'enum_width' => 'auto',
+                    'dropdown_width' => 'auto',
+                    'dropdown_class' => 'select2-menu-only',
+                    'container_class' => 'select2-menu-only',
+                ),
             ),
         ),
         array(
