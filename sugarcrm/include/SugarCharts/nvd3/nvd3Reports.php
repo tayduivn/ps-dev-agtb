@@ -53,7 +53,7 @@ class nvd3Reports extends nvd3
     function processReportData($dataset, $level = 1, $first = false)
     {
         $data = '';
-        asort($this->super_set);
+        $this->handleSort($this->super_set);
 
         // rearrange $dataset to get the correct order for the first row
         if ($first) {
@@ -127,12 +127,11 @@ class nvd3Reports extends nvd3
         // store last grouped field
         $lastgroupfield = end($this->group_by);
 
-        switch ($this->reporter->focus->field_defs[$lastgroupfield]['type']) {
-            case "date":
-                usort($super_set, array($this, "runDateSort"));
-                break;
-            default:
-                break;
+        if (isset($this->reporter->focus->field_defs[$lastgroupfield]) &&
+            $this->reporter->focus->field_defs[$lastgroupfield]['type'] === "date") {
+            usort($super_set, array($this, "runDateSort"));
+        } else {
+            asort($super_set);
         }
     }
 
