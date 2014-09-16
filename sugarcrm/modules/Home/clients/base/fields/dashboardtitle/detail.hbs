@@ -15,7 +15,7 @@
 <ul class="dropdown-menu">
     {{#if dashboards}}
         {{#each this.dashboards.models}}
-            <li><a href="javascript:void(0);" data-id="{{getFieldValue this "id"}}">{{getFieldValue this "name"}}</a></li>
+            <li><a href="javascript:void(0);" data-id="{{fieldValue this "id"}}">{{fieldValue this "name"}}</a></li>
         {{/each}}
     {{else}}
         <li>

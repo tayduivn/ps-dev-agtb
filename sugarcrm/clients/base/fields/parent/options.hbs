@@ -11,7 +11,7 @@
  */
 --}}
 {{#each selectOptions}}
-<option value="{{getFieldValue this "id"}}" {{#eq @index 0}}selected="selected"{{/eq}}>{{getFieldValue this "name"}}</option>
+<option value="{{fieldValue this "id"}}" {{#eq @index 0}}selected="selected"{{/eq}}>{{fieldValue this "name"}}</option>
 {{/each}}
 {{#eq selectOptions.length 0}}
 <option data-empty="true">{{str "MSG_LIST_VIEW_NO_RESULTS_BASIC"}}</option>

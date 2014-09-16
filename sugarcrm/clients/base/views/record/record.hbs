@@ -49,12 +49,12 @@
                                 <div class="btn-group btn-group-previous-next">
                                     <button class="btn btn-invisible previous-row{{#unless showPrevious}} disabled{{/unless}}"
                                             data-action="scroll" data-action-type="prev"
-                                            data-id="{{getFieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_PREVIOUS" model.module}}">
+                                            data-id="{{fieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_PREVIOUS" model.module}}">
                                         <i class="icon-chevron-left"></i>
                                     </button>
                                     <button class="btn btn-invisible next-row{{#unless showNext}} disabled{{/unless}}"
                                             data-action="scroll" data-action-type="next"
-                                            data-id="{{getFieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_NEXT" model.module}}">
+                                            data-id="{{fieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_NEXT" model.module}}">
                                         <i class="icon-chevron-right"></i>
                                     </button>
                                 </div>
