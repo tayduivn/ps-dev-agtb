@@ -110,9 +110,6 @@ var AjaxObject = {
 		if(document.getElementById('saveButton')) {
 			document.getElementById('saveButton').disabled = false;
 		}
-		//BEGIN SUGARCRM flav=int ONLY
-		debugger;
-		//END SUGARCRM flav=int ONLY
 	},
 
 	handleReplyForward : function(o) {
@@ -1569,10 +1566,6 @@ var callbackReplyForward = {
             }
 
 		} catch(e) {
-			//BEGIN SUGARCRM flav=int ONLY
-			console.log('could not set text for tinyMCE instance: ' + SUGAR.email2.tinyInstances.currentHtmleditor);
-			debugger;
-			//END SUGARCRM flav=int ONLY
 			if (retryCount < 5) {
 				setTimeout("callbackReplyForward.finish(globalA, " + retryCount + ");", 500);
 				return;
