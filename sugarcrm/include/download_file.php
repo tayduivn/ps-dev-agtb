@@ -374,7 +374,7 @@ class DownloadFileApi extends DownloadFile
             throw new SugarApiException('No file name supplied');
         }
 
-        if (isset($info['doc_type']) && $info['doc_type'] != "Sugar") {
+        if (!empty($info['doc_type']) && $info['doc_type'] != "Sugar") {
             $this->api->setHeader("Location", $info['uri']);
             return;
         }

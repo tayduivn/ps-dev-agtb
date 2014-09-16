@@ -170,11 +170,8 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=ent ONLY
                 'portal_viewable',
                 //END SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'resolution',
-                    'nl2br' => true,
-                    'span' => 12,
-                ),
+                'type',
+                'source',
                 'status',
                 'assigned_user_name',
                 array(
@@ -192,7 +189,11 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'type',
+                array(
+                    'name' => 'resolution',
+                    'nl2br' => true,
+                    'span' => 12,
+                ),
                 array(),
                 array(
                     'name' => 'date_entered_by',

@@ -101,7 +101,7 @@ class One2MRelationship extends M2MRelationship
     public function add($lhs, $rhs, $additionalFields = array())
     {
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-        
+
         //If the current data matches the existing data, don't do anything
         if (!$this->checkExisting($dataToInsert))
         {
@@ -111,29 +111,15 @@ class One2MRelationship extends M2MRelationship
 			// only the bean id is loaded into $rhs->$rhsLinkName)
 			$rhsLinkName = $this->rhsLink;
 			$rhs->load_relationship($rhsLinkName);
-        	
-			// If it's a One2Many self-referencing relationship
-        	// the positions of the default One (LHS) and Many (RHS) are swaped
-        	// so we should clear the links from the many (left) side
-        	if ($this->selfReferencing && ($this->rhsLink == $this->lhsLink) ) {
-        		// Load right hand side relationship name
-	            $linkName = $this->rhsLink;
-	            // Load the relationship into the left hand side bean
-	            $lhs->load_relationship($linkName);
-	            
-	            // Pick the loaded link
-	            $link = $lhs->$linkName;
-	            // Get many (LHS) side bean
-	            $focus = $link->getFocus();
-	            // Get relations
-	        	$related = $link->getBeans();
-	        	
-        		// Clear the relations from many side bean
-	        	foreach($related as $relBean) {
-	        		$this->remove($focus, $relBean);
-	        	}
+
+            // For self-referencing from 6.5.x
+            // The left side is one, and right side is many
+            if ($this->isRHSMany()) {
+                $lhsLinkName = $this->lhsLink;
+                $lhs->load_relationship($lhsLinkName);
+                $this->removeAll($lhs->$lhsLinkName);
             } else { // For non self-referencing, remove all the relationships from the many (RHS) side
-            	$this->removeAll($rhs->$rhsLinkName);
+                $this->removeAll($rhs->$rhsLinkName);
             }
             
             // Add relationship
@@ -165,5 +151,35 @@ class One2MRelationship extends M2MRelationship
     public function getType($side)
     {
         return $side == REL_LHS ? REL_TYPE_MANY : REL_TYPE_ONE;
+    }
+
+    /**
+     * Check if the relationship is coming from 6.5.x where we have the
+     * left and right sides swapped
+     *
+     * @return bool
+     */
+    private function isRHSMany()
+    {
+        return ($this->selfReferencing &&
+            (
+                (isset($this->lhsLinkDef['side']) && isset($this->lhsLinkDef['link-type']) &&
+                    $this->lhsLinkDef['side'] == 'left' && $this->lhsLinkDef['link-type'] == 'one') ||
+                (isset($this->rhsLinkDef['side']) && isset($this->rhsLinkDef['link-type']) &&
+                    $this->rhsLinkDef['side'] == 'right' && $this->rhsLinkDef['link-type'] == 'many')
+            )
+        );
+    }
+
+    /**
+     * @return String right link in relationship.
+     */
+    public function getRHSLink()
+    {
+        if ($this->isRHSMany()) {
+            return $this->lhsLink;
+        }
+
+        return $this->rhsLink;
     }
 }

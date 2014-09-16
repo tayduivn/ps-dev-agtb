@@ -25,7 +25,10 @@ class CliUpgrader extends UpgradeDriver
         "backup" => array(false, 'b', 'backup'),
         "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
-        "autoconfirm" => array(false, 'A', 'autoconfirm')
+        "autoconfirm" => array(false, 'A', 'autoconfirm'),
+        "sendlog" => array(false, 'H', 'sendlog'),
+        // Appears when stage was not specified and upgrader is running step by step.
+        'all' => array(false, 'a', 'all'),
     );
 
     /**
@@ -40,14 +43,22 @@ class CliUpgrader extends UpgradeDriver
         'none' => 0,
     );
 
+    /**
+     * Returns an exit code for given stage
+     *
+     * @var array
+     */
+    protected $stageExitCodes = array(
+        'healthcheck' => 6, 'unpack' => 1, 'pre' => 2, 'commit' => 3, 'post' => 4, 'cleanup' => 5
+    );
+
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
     public function runStage($stage)
     {
-        $argv = $this->context['argv'];
         $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(
-                array("stage" => $stage)
+                array('stage' => $stage, 'all' => true)
             );
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
@@ -90,7 +101,8 @@ Optional arguments:
                                            Supported types: core, db, custom, all, none. Default is all.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
-    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
+    -H/--sendlog 0/1                     : Automatic push HealthCheck logs to sugarcrm server, default to 0.
+    -A/--autoconfirm 0/1                 : Automatic confirm health check results (use with caution !). Default is 0.
 
 eoq2;
         echo $usage;
@@ -197,6 +209,7 @@ eoq2;
         if (empty($this->context['autoconfirm'])) {
             $this->context['autoconfirm'] = false;
         }
+        $this->context['sendlog'] = !empty($this->context['sendlog']);
         if($this->context['zip_as_dir']) {
             $this->context['extract_dir'] = $this->context['zip'];
         }
@@ -354,10 +367,8 @@ eoq2;
      */
     protected function getStageCode($stage)
     {
-        foreach ($this->stages as $k => $s) {
-            if ($s === $stage) {
-                return $k + 1;
-            }
+        if(isset($this->stageExitCodes[$stage])) {
+            return $this->stageExitCodes[$stage];
         }
         return 99;
     }
@@ -476,7 +487,6 @@ eoq2;
     }
 
     /**
-     *
      * @see UpgradeDriver::doHealthcheck()
      */
     protected function doHealthcheck()
@@ -486,63 +496,38 @@ eoq2;
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
         $scanner->scan();
-        if ($scanner->isFlagRed()) {
-            $this->dumpHealthCheckMeta($scanner);
-            return $this->error("Health check stage failed! Please fix issues described in the log file.");
+        if ($this->context['sendlog']) {
+            require_once 'HealthCheckClient.php';
+            require_once 'SugarSystemInfo.php';
+            $scanner->dumpMeta();
+            $client = new HealthCheckClient();
+            $client->send(
+                SugarSystemInfo::getInstance()->getLicenseKey(),
+                $this->context['log']
+            );
+            $this->log('HealthCheck log was sent to sugarcrm.com');
         }
-        if ($scanner->isFlagYellow()) {
-            if ($this->context['autoconfirm']) {
-                $this->dumpHealthCheckMeta($scanner);
-                $this->log('Yellow flag(s) present - proceeding because of autoconfirm option has been set');
-                return true;
-            } else {
-                $this->dumpHealthCheckMeta($scanner, true);
-                if ($this->confirmDialog("Are you sure you want to continue?")) {
-                    $this->log('User interactively confirmed yellow flag(s) - proceeding');
-                    return true;
+        $scanner->dumpMeta();
+        if ($scanner->isFlagRed()) {
+            return $this->error(
+                'Health check failed (red flags). Please refer to the log file ' . $this->context['log'],
+                true
+            );
+        }
+        if ($scanner->isFlagGreen() || $scanner->isFlagYellow()) {
+            $flagLabel = $scanner->isFlagGreen() ? 'green' : 'yellow';
+            echo "Health check passed ({$flagLabel} flags). Please refer to the log file {$this->context['log']}\n";
+
+            if (isset($this->context['all']) && !$this->context['autoconfirm']) {
+                if ($this->confirmDialog('Are you sure you want to continue?')) {
+                    $this->log("User interactively confirmed {$flagLabel} flag(s) - proceeding");
                 } else {
-                    return $this->error("Health check stage failed! User has canceled upgrade process.");
+                    $this->log("User interactively confirmed {$flagLabel} flag(s) - aborting");
+                    return false;
                 }
             }
         }
-        $this->log("Health check passed. All good.");
         return true;
-    }
-
-    /**
-     *
-     * Dump Scanner issues to log and optional stdout
-     * @param Scanner $scanner
-     * @param boolean $stdOut
-     */
-    protected function dumpHealthCheckMeta(HealthCheckScanner $scanner, $stdOut = false)
-    {
-        $this->logHealthCheck('*** START HEALTHCHECK ISSUES ***', $stdOut);
-        foreach ($scanner->getLogMeta() as $key => $entry) {
-            $this->logHealthCheck(" => Issue $key (flag = {$entry['flag']}):", $stdOut);
-            $this->logHealthCheck("  {$entry['log']}", $stdOut);
-            /**
-             * $this->logHealthCheck("  {$entry['title']}", $stdOut);
-             * $this->logHealthCheck("  {$entry['descr']}", $stdOut);
-             * if ($entry['kb']) {
-             * $this->logHealthCheck("  {$entry['kb']}", $stdOut);
-             * } */
-        }
-        $this->logHealthCheck('*** END HEALTHCHECK ISSUES ***', $stdOut);
-    }
-
-    /**
-     *
-     * Send message to log an optional to stdout
-     * @param string $msg
-     * @param boolean $stdOut
-     */
-    protected function logHealthCheck($msg, $stdOut = false)
-    {
-        $this->log($msg);
-        if ($stdOut) {
-            echo "$msg\n";
-        }
     }
 
     /**

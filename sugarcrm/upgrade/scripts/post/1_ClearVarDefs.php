@@ -32,8 +32,6 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     public function run()
     {
         global $beanList;
-        $reloadDefs = !empty($GLOBALS['reload_vardefs']);
-        $GLOBALS['reload_vardefs'] = true;
 
         foreach ($beanList as $bean => $class) {
             $this->modules[strtolower($bean)] = $bean;
@@ -41,6 +39,9 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
 
         $needClearCache = false;
         foreach ($beanList as $bean => $class) {
+            VardefManager::refreshVardefs($bean, $class);
+            SugarBean::clearLoadedDef($class);
+            SugarRelationshipFactory::rebuildCache();
             $seed = BeanFactory::getBean($bean);
             if ($seed instanceof SugarBean) {
                 if (!$this->checkBean($seed)) {
@@ -51,10 +52,6 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
 
         if ($needClearCache) {
             $this->cleanCache();
-        }
-
-        if (!$reloadDefs) {
-            unset($GLOBALS['reload_vardefs']);
         }
     }
 

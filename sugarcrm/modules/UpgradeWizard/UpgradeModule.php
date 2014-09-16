@@ -47,7 +47,7 @@ $smdUpgrader->setModule($module);
 if(($bwcPos = array_search($module, $GLOBALS['bwcModules'])) !== false) {
     // remove it from BWC modules for now
     // if we succeed, it becomes permanent
-    unset($GLOBALS['bwcModules']);
+    unset($GLOBALS['bwcModules'][$bwcPos]);
 }
 set_error_handler('scriptErrorHandler', E_ALL & ~E_STRICT & ~E_DEPRECATED);
 $smdUpgrader->upgrade();

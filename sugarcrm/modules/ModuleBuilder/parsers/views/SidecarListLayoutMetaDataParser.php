@@ -608,6 +608,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             } else {
                 MetaDataManager::refreshModulesCache(array($this->_moduleName));
             }
+            parent::_clearCaches();
         }
     }
 
@@ -650,13 +651,16 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      */
     public function setDefLink($fieldName, $fieldDef)
     {
-        // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
-        // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
-        if (isset($this->_fielddefs[$fieldName]['type']) &&
-            ($this->_fielddefs[$fieldName]['type'] == 'relate' ||
+        if (isset($this->_fielddefs[$fieldName]['type'])) {
+            if (($this->_fielddefs[$fieldName]['type'] == 'relate' ||
+                // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
+                // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
                 $this->_fielddefs[$fieldName]['type'] == 'parent')) {
-            $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
-            $fieldDef['link'] = true;
+                $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
+                $fieldDef['link'] = true;
+            } else if ($this->_fielddefs[$fieldName]['type'] == 'name') {
+                $fieldDef['link'] = true;
+            }
         }
 
         return $fieldDef;

@@ -67,7 +67,7 @@ class SugarCacheFile extends SugarCacheAbstract
         parent::__destruct();
 
         if ( $this->_cacheChanged )
-            sugar_file_put_contents(sugar_cached($this->_cacheFileName), serialize($this->_localStore));
+            sugar_file_put_contents_atomic(sugar_cached($this->_cacheFileName), serialize($this->_localStore));
     }
 
     /**

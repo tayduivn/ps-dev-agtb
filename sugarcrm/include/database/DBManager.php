@@ -1074,7 +1074,8 @@ protected function checkQuery($sql, $object_name = false)
                 $sql .=	"/* VARDEF - $name -  ROW";
                 foreach($value as $rKey => $rValue) {
                     if(is_array($rValue)) {
-                        $rValue = join("\n", $rValue);
+                        // no newlines
+                        $rValue = str_replace("\n", " ", print_r($rValue, true));
                     }
                     $sql .=	"[$rKey] => '$rValue'  ";
                 }
@@ -3316,6 +3317,7 @@ protected function checkQuery($sql, $object_name = false)
      * @param array|null $options Array of optional arguments
      *                   field_filter => Array of filter names to be inspected (NULL means all fields)
      *                   for => Who are we getting the changes for, options are audit (default) and activity
+     *                   excludeType => Types of fields to exclude
      * @return array
      */
     public function getDataChanges(SugarBean &$bean, array $options = null)
@@ -3325,7 +3327,11 @@ protected function checkQuery($sql, $object_name = false)
         $fields = $bean->field_defs;
 
         if (!empty($options['for']) && $options['for'] == 'activity') {
-            $fields = $bean->getActivityEnabledFieldDefinitions();
+            $excludeType = array('datetime');
+            if (isset($options['excludeType'])) {
+                $excludeType = $options['excludeType'];
+            }
+            $fields = $bean->getActivityEnabledFieldDefinitions($excludeType);
         } elseif (!empty($options['for']) && $options['for'] == 'audit') {
             $fields = $bean->getAuditEnabledFieldDefinitions();
         }
@@ -3373,7 +3379,10 @@ protected function checkQuery($sql, $object_name = false)
                 //if the type and values match, do nothing.
                 if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
                     $change = false;
-                    if (trim($before_value) !== trim($after_value)) {
+
+                    $check_before = is_object($before_value)?$before_value:trim($before_value);
+                    $check_after = is_object($after_value)?$after_value:trim($after_value);
+                    if ($check_before !== $check_after) {
                         // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
                         // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper
                         // This fix also fixes Bug #44624 in a more generic way and therefore eliminates the need for fix 0a55125b281c4bee87eb347709af462715f33d2d in DBHelper

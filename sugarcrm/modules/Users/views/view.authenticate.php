@@ -60,8 +60,11 @@ class UsersViewAuthenticate extends SidecarView
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
             sugar_die($e->getMessage());
         }
-        if(!empty($_REQUEST['dataOnly'])) {
+        if (!empty($_REQUEST['dataOnly'])) {
             $this->dataOnly = true;
+        }
+        if (!empty($_REQUEST['platform'])) {
+            $this->platform = $_REQUEST['platform'];
         }
         parent::preDisplay();
     }
@@ -70,9 +73,33 @@ class UsersViewAuthenticate extends SidecarView
     {
         if($this->dataOnly) {
             $this->ss->assign("siteUrl", $GLOBALS['sugar_config']['site_url']);
-            $this->ss->display(SugarAutoLoader::existingCustomOne('modules/Users/tpls/AuthenticateParent.tpl'));
+            $template = $this->getAuthenticateTemplate();
+            $this->ss->display($template);
         } else {
             parent::display();
         }
+    }
+
+    /**
+     * Returns Smarty template for authenticating the application with the data
+     * obtained from external identity provider
+     *
+     * @return string
+     */
+    protected function getAuthenticateTemplate()
+    {
+        if (isset($this->platform)) {
+            $platforms = MetaDataManager::getPlatformList();
+            if (in_array($this->platform, $platforms, true)) {
+                $platformTemplate = SugarAutoLoader::existingCustomOne(
+                    'modules/Users/tpls/Authenticate' . ucfirst($this->platform) . '.tpl'
+                );
+                if ($platformTemplate) {
+                    return $platformTemplate;
+                }
+            }
+        }
+
+        return SugarAutoLoader::existingCustomOne('modules/Users/tpls/AuthenticateParent.tpl');
     }
 }

@@ -196,6 +196,7 @@ $renamedefs = array(
             array('name' => 'LBL_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_TOTAL_CONTRACT_VALUE', 'type' => 'singular', 'source' => 'Contracts'),
             array('name' => 'LBL_TOTAL_CONTRACT_VALUE_USDOLLAR', 'type' => 'singular', 'source' => 'Contracts'),
+            array('name' => 'LBL_OPPORTUNITY_ID', 'type' => 'singular', 'source' => 'Opportunities'),
         ),
         'Documents' => array(
             array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'Documents'),
@@ -730,6 +731,8 @@ $renamedefs = array(
             array('name' => 'LBL_LIST_PRODUCT_NAME', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_QUOTES_NAME', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Opportunities'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
@@ -935,6 +938,8 @@ $renamedefs = array(
         ),
         'ProductBundles' => array(
             array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_INVALID_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_NOT_FOUND_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
         ),
     ),
     'global' => array(

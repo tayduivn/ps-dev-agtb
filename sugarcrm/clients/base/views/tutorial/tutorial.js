@@ -41,6 +41,7 @@
                 break;
 
             case 39: // right
+            case 13: // Enter
                 this.next(e);
                 break;
 

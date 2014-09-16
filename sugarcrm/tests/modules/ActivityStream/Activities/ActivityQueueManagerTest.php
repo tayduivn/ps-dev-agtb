@@ -247,6 +247,14 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'baz' => array(
                 'name' => 'baz',
             ),
+            'qux' => array(
+                'name' => 'qux',
+                'audited' => false,
+            ),
+            'quux' => array(
+                'name' => 'quux',
+                'audited' => true,
+            ),
         );
 
         $activityData = array(
@@ -269,6 +277,18 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'before'     => 'bazval1',
                     'after'      => 'bazval2',
                 ),
+                'qux' => array(
+                    'field_name' => 'qux',
+                    'data_type'  => 'varchar',
+                    'before'     => 'qux1',
+                    'after'      => 'qux2',
+                ),
+                'quux' => array(
+                    'field_name' => 'quux',
+                    'data_type'  => 'varchar',
+                    'before'     => 'quux1',
+                    'after'      => 'quux2',
+                ),
             ),
         );
 
@@ -280,11 +300,11 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'before'     => 'barval1',
                     'after'      => 'barval2',
                 ),
-                'baz' => array(
-                    'field_name' => 'baz',
+                'quux' => array(
+                    'field_name' => 'quux',
                     'data_type'  => 'varchar',
-                    'before'     => 'bazval1',
-                    'after'      => 'bazval2',
+                    'before'     => 'quux1',
+                    'after'      => 'quux2',
                 ),
             ),
         );
@@ -292,10 +312,10 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $actManager = new TestActivityQueueManager();
         $actManager->prepareChanges($contact, $activityData);
 
-        $this->assertEquals($expectedData, $activityData);
-
         //restore contact field defs
         $contact->field_defs = $originalFieldDefs;
+
+        $this->assertEquals($expectedData, $activityData);
     }
 
     public function dataProviderForAddSubscriptions()

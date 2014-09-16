@@ -14,6 +14,7 @@ nv.models.pie = function() {
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       valueFormat = d3.format(',.2f'),
       showLabels = true,
+      showLeaders = true,
       pieLabelsOutside = true,
       donutLabelsOutside = false,
       labelThreshold = 0.02, //if slice percentage is under this, don't show label
@@ -22,6 +23,7 @@ nv.models.pie = function() {
       startAngle = false,
       endAngle = false,
       donutRatio = 0.447,
+      durationMs = 0,
       color = nv.utils.defaultColor(),
       fill = color,
       classes = function(d, i) { return 'nv-slice nv-series-' + i; },
@@ -35,7 +37,7 @@ nv.models.pie = function() {
       var availableWidth = width - margin.left - margin.right,
           availableHeight = height - margin.top - margin.bottom,
           radius = Math.min(availableWidth, availableHeight) / 2,
-          arcRadius = radius - (showLabels ? radius / 5 : 0),
+          arcRadius = radius - (showLabels ? radius / 8 : 0),
           container = d3.select(this);
 
       //------------------------------------------------------------
@@ -48,7 +50,7 @@ nv.models.pie = function() {
 
       //set up the gradient constructor function
       chart.gradient = function(d, i) {
-        var params = {x: 0, y: 0, r: radius, s: (donut ? (donutRatio * 100 ) + '%' : '0%'), u: 'userSpaceOnUse'};
+        var params = {x: 0, y: 0, r: radius, s: (donut ? (donutRatio * 100) + '%' : '0%'), u: 'userSpaceOnUse'};
         return nv.utils.colorRadialGradient(d, id + '-' + i, params, color(d, i), wrap.select('defs'));
       };
 
@@ -146,15 +148,17 @@ nv.models.pie = function() {
               d3.event.stopPropagation();
             });
 
-      slices
-        .attr('fill', function(d, i) { return fill(d.data, i); })
-        .attr('stroke', function(d, i) { return fill(d.data, i); });
-
       var paths = ae.append('path')
             .each(function(d) { this._current = d; });
             //.attr('d', arc);
 
-      d3.transition(slices.select('path'))
+      slices.select('path')
+        .style('fill', function(d, i) { return fill(d.data, d.data.series); })
+        .style('stroke', '#ffffff')
+        .style('stroke-width', 3)
+        .style('stroke-opacity', 1);
+
+      slices.select('path').transition().duration(durationMs)
         .attr('d', arc)
         .attrTween('d', arcTween);
 
@@ -175,36 +179,31 @@ nv.models.pie = function() {
             var group = d3.select(this);
 
             group
-              .attr('transform', function(d) {
-                if (labelSunbeamLayout) {
-                  d.outerRadius = arcRadius + 10; // Set Outer Coordinate
-                  d.innerRadius = arcRadius + 15; // Set Inner Coordinate
-                  var rotateAngle = (d.startAngle + d.endAngle) / 2 * (180 / Math.PI);
-                  if ((d.startAngle + d.endAngle) / 2 < Math.PI) {
-                    rotateAngle -= 90;
-                  } else {
-                    rotateAngle += 90;
-                  }
-                  return 'translate(' + labelsArc.centroid(d) + ') rotate(' + rotateAngle + ')';
-                } else {
-                  d.outerRadius = radius + 10; // Set Outer Coordinate
-                  d.innerRadius = radius + 15; // Set Inner Coordinate
-                  return 'translate(' + labelsArc.centroid(d) + ')';
-                }
-              });
+              .attr('transform', 'translate(0,0)');
 
-            group.append('rect')
-                .style('stroke', '#fff')
-                .style('fill', '#fff')
-                .attr('rx', 3)
-                .attr('ry', 3);
+            if (!pieLabelsOutside && !donutLabelsOutside) {
+              group.append('rect')
+                  .style('fill', '#fff')
+                  .style('fill-opacity', 0.4)
+                  .style('stroke-opacity', 0)
+                  .attr('rx', 3)
+                  .attr('ry', 3);
+            }
 
             group.append('text')
+                .attr('dy', '.35em')
                 .style('text-anchor', labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle') //center the text on it's origin or begin/end if orthogonal aligned
                 .style('fill', '#000');
           });
 
-        slices.select('.nv-label').transition()
+        if (showLeaders) {
+          ae.append('polyline')
+            .attr('class', 'nv-label-leader')
+            .style('stroke', '#aaa')
+            .style('fill', 'none');
+        }
+
+        slices.select('.nv-label').transition().duration(durationMs)
           .attr('transform', function(d) {
             if (labelSunbeamLayout) {
               d.outerRadius = arcRadius + 10; // Set Outer Coordinate
@@ -217,30 +216,55 @@ nv.models.pie = function() {
               }
               return 'translate(' + labelsArc.centroid(d) + ') rotate(' + rotateAngle + ')';
             } else {
-              d.outerRadius = radius + 10; // Set Outer Coordinate
-              d.innerRadius = radius + 15; // Set Inner Coordinate
-              return 'translate(' + labelsArc.centroid(d) + ')';
+              d.outerRadius = radius + 0; // Set Outer Coordinate
+              d.innerRadius = radius + 0; // Set Inner Coordinate
+              var labelsPosition = labelsArc.centroid(d),
+                  leadOffset = showLeaders ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 15 : -15) : 0;
+              return 'translate(' + [labelsPosition[0] + leadOffset, labelsPosition[1]] + ')';
             }
           });
 
+        if (showLeaders) {
+          slices.select('.nv-label-leader').transition().duration(durationMs)
+            .attr('points', function(d) {
+              d.outerRadius = radius; // Set Outer Coordinate
+              d.innerRadius = radius; // Set Inner Coordinate
+              var outerArcPoints = d3.svg.arc()
+                    .outerRadius(arc.outerRadius())
+                    .innerRadius(arc.outerRadius())
+                    .centroid(d),
+                  labelsArcPoints = labelsArc.centroid(d),
+                  leadOffset = (d.startAngle + d.endAngle) / 2 < Math.PI ? 10 : -10;
+                  leadArcPoints = [labelsArcPoints[0] + leadOffset, labelsArcPoints[1]];
+              return outerArcPoints + ' ' + labelsArcPoints + ' ' + leadArcPoints;
+            })
+            .style('stroke-opacity', function(d, i) {
+              var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
+                  label = getX(d.data);
+              return (label && percent > labelThreshold) ? 1 : 0;
+            });
+        }
+
         slices.each(function(d, i) {
           var slice = d3.select(this);
-
           slice
             .select('.nv-label text')
-              .style('text-anchor', labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle') //center the text on it's origin or begin/end if orthogonal aligned
+              .style('text-anchor', (d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') //center the text on it's origin or begin/end if orthogonal aligned
               .text(function(d, i) {
-                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
-                return (d.value && percent > labelThreshold) ? getX(d.data) : '';
+                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
+                    label = getX(d.data);
+                return (label && percent > labelThreshold) ? label : '';
               });
 
-          var textBox = slice.select('text').node().getBBox();
-          slice.select(".nv-label rect")
-            .attr("width", textBox.width + 10)
-            .attr("height", textBox.height + 10)
-            .attr("transform", function() {
-              return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
-            });
+          if (!pieLabelsOutside && !donutLabelsOutside) {
+            var textBox = slice.select('text').node().getBBox();
+            slice.select(".nv-label rect")
+              .attr("width", textBox.width + 10)
+              .attr("height", textBox.height + 10)
+              .attr("transform", function() {
+                return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
+              });
+          }
         });
       }
 
@@ -396,6 +420,14 @@ nv.models.pie = function() {
       return pieLabelsOutside;
     }
     pieLabelsOutside = _;
+    return chart;
+  };
+
+  chart.showLeaders = function(_) {
+    if (!arguments.length) {
+      return showLeaders;
+    }
+    showLeaders = _;
     return chart;
   };
 

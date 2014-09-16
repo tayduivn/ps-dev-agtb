@@ -260,7 +260,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($shipping),currencyDivide($shipping,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($shipping), currencyDivide($shipping, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -300,7 +300,7 @@ $dictionary['Quote'] = array(
                 'wireless_advanced_search' => false,
                 'mobile' => false,
             ),
-            'formula' => 'ifElse(isNumeric($deal_tot),currencyDivide($deal_tot,$base_rate),"")',
+            'formula' => 'ifElse(isNumeric($deal_tot), currencyDivide($deal_tot, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -337,7 +337,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($new_sub),currencyDivide($new_sub,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($new_sub), currencyDivide($new_sub, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -376,7 +376,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($tax),currencyDivide($tax,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($tax), currencyDivide($tax, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -413,7 +413,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'ifElse(isNumeric($total),currencyDivide($total,$base_rate), "")',
+            'formula' => 'ifElse(isNumeric($total), currencyDivide($total, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -516,7 +516,7 @@ $dictionary['Quote'] = array(
         ),
         'shipping_contact_name' => array(
             'name' => 'shipping_contact_name',
-            'rname' => 'last_name',
+            'rname' => 'full_name',
             'id_name' => 'shipping_contact_id',
             'vname' => 'LBL_SHIPPING_CONTACT_NAME',
             'type' => 'relate',
@@ -589,7 +589,7 @@ $dictionary['Quote'] = array(
         ),
         'billing_contact_name' => array(
             'name' => 'billing_contact_name',
-            'rname' => 'last_name',
+            'rname' => 'full_name',
             'group' => 'billing_address',
             'id_name' => 'billing_contact_id',
             'vname' => 'LBL_BILLING_CONTACT_NAME',

@@ -619,13 +619,18 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 		$target_type = $temp_module->field_defs[$field]['type'];
 	}
 
-
 	//Land of the "one offs"
 	//This is for meetings and calls, the reminder time
 	if($temp_module->field_defs[$field]['name']=="reminder_time"){
 		$target_type = "enum";
 		$temp_module->field_defs[$field]['options'] = "reminder_time_options";
 	}
+
+    // handle currency_id field to display the actual currency name vs the id when in edit view.
+    if($target_type == 'currency_id' && !empty($field_value)) {
+        $currency = SugarCurrency::getCurrencyByID($field_value);
+        return $currency->name;
+    }
 
 	if($target_type == "assigned_user_name"){
 
@@ -679,9 +684,7 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sugarField = SugarFieldHandler::getSugarField($target_type);
-    $GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
     $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field], $context);
-    $GLOBALS['log']->debug("after: $field_value");
 
 	return $field_value;
 

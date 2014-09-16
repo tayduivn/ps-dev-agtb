@@ -147,7 +147,9 @@ class TeamSetLink extends Link {
 						}
 					}
 				}
-				$this->_bean->team_set_id = $this->_teamSet->addTeams($this->_teamList);
+				if (!empty($this->_teamList)) {
+				    $this->_bean->team_set_id = $this->_teamSet->addTeams($this->_teamList);
+				}
 			}//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
 
 	        //if this bean already exists in the database, and is not new with id

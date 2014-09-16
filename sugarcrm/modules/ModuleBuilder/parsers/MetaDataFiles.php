@@ -606,9 +606,9 @@ class MetaDataFiles
     public static function getSugarExtensionFileDir($module = '', $client = 'base', $component = self::COMPONENTVIEW)
     {
         if (empty($module)) {
-            $dirname = "custom/application/Ext/clients/{$client}/{$component}s/";
+            $dirname = "custom/application/Ext/clients/{$client}/{$component}s";
         } else {
-            $dirname = "custom/modules/{$module}/Ext/clients/{$client}/{$component}s/";
+            $dirname = "custom/modules/{$module}/Ext/clients/{$client}/{$component}s";
         }
 
         return $dirname;

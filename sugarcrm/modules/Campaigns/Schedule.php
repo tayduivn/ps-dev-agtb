@@ -103,9 +103,9 @@ if ($campaign_id && isset($campaign) && $campaign->status == 'Inactive') {
 	$ListView->show_select_menu = false;
 	$ListView->show_delete_button = false;
 	$ListView->setDisplayHeaderAndFooter(false);
-	$ListView->xTemplateAssign("RETURN_MODULE",$_POST['return_module']);
-	$ListView->xTemplateAssign("RETURN_ACTION",$_POST['return_action']);
-	$ListView->xTemplateAssign("RETURN_ID",$_POST['record']);
+	$ListView->xTemplateAssign("RETURN_MODULE", isset($_POST['return_module']) ? $_POST['return_module'] : false);
+	$ListView->xTemplateAssign("RETURN_ACTION", isset($_POST['return_action']) ? $_POST['return_action'] : false);
+	$ListView->xTemplateAssign("RETURN_ID", isset($_POST['record']) ? $_POST['record'] : false);
 	$ListView->setHeaderTitle($current_module_strings['LBL_LIST_FORM_TITLE']);
 	$ListView->setQuery($where, "", "name", "EMAILMARKETING");
 

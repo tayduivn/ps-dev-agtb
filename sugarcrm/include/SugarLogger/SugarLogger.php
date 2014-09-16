@@ -191,7 +191,7 @@ class SugarLogger implements LoggerTemplate
             $rollAt = ( int ) $match[1] * $units[strtolower($match[2])];
         }
 		//check if our log file is greater than that or if we are forcing the log to roll if and only if roll size assigned the value correctly
-        if ($force || (isset($rollAt) && filesize($this->full_log_file) >= $rollAt)) {
+        if ($force || (!empty($rollAt) && filesize($this->full_log_file) >= $rollAt)) {
 			//now lets move the logs starting at the oldest and going to the newest
 			for($i = $this->maxLogs - 2; $i > 0; $i --) {
                 if (file_exists ( $this->log_dir . $this->logfile . $this->date_suffix . '_'. $i . $this->ext )) {

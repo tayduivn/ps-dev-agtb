@@ -70,7 +70,110 @@ class SugarUpgradeFixCustomLabelsForCoreModules extends UpgradeScript
             if (!empty($changedLanguages)) {
                 $this->rebuildLanguages($changedLanguages, $module);
             }
+
+            $changedSubpanels = array();
+            // Fix subpanels
+            if ($this->upgradeSubpanelModuleLabels($module)) {
+                $changedSubpanels[$key] = $key;
+            }
         }
+    }
+
+    /**
+     * Change old labels to new ones in all $module subpanels
+     * @param $module
+     * @return bool
+     */
+    public function upgradeSubpanelModuleLabels($module)
+    {
+        $upgradeLabels = $this->upgradeLabels[$module];
+        $upgradeDriver = $this->upgrader;
+        $upgraded = false;
+
+        // upgrade viewdefs
+        $path = "custom/modules/{$module}/clients/base/views/subpanel-for-*/subpanel-for-*.php";
+        foreach (glob($path) as $scanFile) {
+            $viewdefs = array();
+
+            include $scanFile;
+            // Modification flag
+            $changed = false;
+
+            array_walk_recursive(
+                $viewdefs,
+                function (&$value, $key) use (&$changed, $upgradeLabels, $upgradeDriver, $scanFile) {
+                    if ('label' == $key && isset($upgradeLabels[$value])) {
+                        $upgradeDriver->log(sprintf(
+                            'FixCustomLabelsForCoreModules: Fix label name from "%s" to "%s" in file "%s"',
+                            $value,
+                            $upgradeLabels[$value],
+                            $scanFile
+                        ));
+                        $value = $upgradeLabels[$value];
+                        $changed = true;
+                    }
+                }
+            );
+            if ($changed) {
+                $this->backupFile($scanFile);
+                $upgraded = $upgraded || $changed;
+                $keyNames = array();
+                $viewdefsWrite = $viewdefs;
+
+                // collect key names for array path "{module}/{platform}/{view_type}/{view}"
+                for ($i = 0; $i < 4; $i++) {
+                    if (1 != count($viewdefsWrite)) {
+                        break;
+                    }
+                    $keyNames[] = key($viewdefsWrite);
+                    $viewdefsWrite = $viewdefsWrite[key($viewdefsWrite)];
+                }
+
+                $out = "<?php\n// created: ' . date('Y-m-d H:i:s')\n";
+                $out .= override_value_to_string_recursive($keyNames, 'viewdefs', $viewdefsWrite);
+
+                if (sugar_file_put_contents_atomic($scanFile, $out) !== false) {
+                    // record custom writes to file map
+                    SugarAutoLoader::addToMap($scanFile);
+                }
+                unset($out);
+                unset($viewdefsWrite);
+            }
+            unset($viewdefs);
+        }
+
+        // upgrade subpanel_layout
+        $path = "custom/modules/{$module}/metadata/subpanels/*.php";
+        foreach (glob($path) as $scanFile) {
+            $subpanel_layout = array();
+            include $scanFile;
+            // Modification flag
+            $changed = false;
+
+            array_walk_recursive(
+                $subpanel_layout,
+                function (&$value, $key) use (&$changed, $upgradeLabels, $upgradeDriver, $scanFile) {
+                    if ('vname' == $key && isset($upgradeLabels[$value])) {
+                        $upgradeDriver->log(sprintf(
+                            'FixCustomLabelsForCoreModules: Fix label name from "%s" to "%s" in file "%s"',
+                            $value,
+                            $upgradeLabels[$value],
+                            $scanFile
+                        ));
+                        $value = $upgradeLabels[$value];
+                        $changed = true;
+                    }
+                }
+            );
+
+            if ($changed) {
+                $upgraded = $upgraded || $changed;
+                $this->backupFile($scanFile);
+                write_array_to_file('subpanel_layout', $subpanel_layout, $scanFile, 'w');
+            }
+            unset($subpanel_layout);
+        }
+        return $upgraded;
     }
 
     /**

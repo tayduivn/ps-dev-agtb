@@ -21,7 +21,9 @@ function remember_place(obj)
 }
 </script>
 <script type="text/javascript" src="include/workflow/jutils.js?v={VERSION_MARK}"></script>
-<form name="EditView" method="POST" action="index.php" enctype="multipart/form-data">
+<script type="text/javascript" src="modules/Emails/javascript/Email.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="modules/EmailTemplates/EmailTemplate.js?v={VERSION_MARK}"></script>
+<form name="EditView" id="EditView" method="POST" action="index.php" enctype="multipart/form-data">
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 	<td>
@@ -33,7 +35,7 @@ function remember_place(obj)
 			<input type="hidden" name="return_module" value="{RETURN_MODULE}">
 			<input type="hidden" name="return_id" value="{RETURN_ID}">
 			<input type="hidden" name="return_action" value="{RETURN_ACTION}">
-		<input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save'; this.form.action.return_module='WorkFlow'; this.form.action.return_action='WorkFlowDetailView'; return check_form('EditView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " > <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  "></td>
+            <input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save';this.form.action.return_module='WorkFlow';this.form.action.return_action='WorkFlowDetailView';addUploadFiles('EditView');addUploadDocs('EditView');return check_form('EditView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " > <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  "></td>
 	<td align="right" nowrap><span  class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
 	<td align='right'>{ADMIN_EDIT}</td>
 	</tr>
@@ -116,8 +118,8 @@ function remember_place(obj)
 	<td valign="top" scope="row">{MOD.LBL_BODY}</td>
 <!-- BEGIN: htmlarea -->
     <td colspan="4" >
-        <textarea id='body_html' tabindex='90' name='body_html'>{HTMLAREA}</textarea> 
-        <input id="toggle_textarea_elem" onchange="toggle_textarea(this);" type="checkbox" name="toggle_html" {ALT_CHECKED}> {MOD.LBL_EDIT_ALT_TEXT}<br>
+        <textarea id='body_text' tabindex='90' name='body_html'>{HTMLAREA}</textarea>
+        <input id="toggle_textonly" onchange="toggle_textarea(this);" type="checkbox" name="toggle_html" {ALT_CHECKED}> {MOD.LBL_EDIT_ALT_TEXT}<br>
         <div id="text_div" style="display: none"><textarea tabindex='0' name='body' cols="100" rows="20">{BODY}</textarea></div>
     </td>
 <!-- END: htmlarea -->
@@ -132,17 +134,42 @@ function toggle_textarea(obj)
         document.getElementById('text_div').style.display = 'none';
  }
 }
-toggle_textarea( document.getElementById('toggle_textarea_elem'));
+toggle_textarea( document.getElementById('toggle_textonly'));
 </script>
 
-</tr></table>
+</tr>
+    <tr>
+        <td valign="top" scope="row">
+            {MOD_EMAILS.LBL_ATTACHMENTS}:
+        </td>
+        <td colspan="2" nowrap>
+            {ATTACHMENTS_JAVASCRIPT} {ATTACHMENTS}
+        </td>
+    </tr>
+</table>
 </td></tr></table>
 <script>
 focus_obj = document.EditView.body;
 </script>
 </form>
+<form id="upload_form" name="upload_form" method="POST" action='AttachDocuments.php' enctype="multipart/form-data">
+    <div id="upload_div">
+        <input type="file" id="my_file" name="file_1" size="40" />
+        <input type="hidden" id="documentName" name="uploaddoc" onchange="docUpload(); form_reset_doc();" size="1" />
+        <input type="hidden" id="documentId" name="seldoc" />
+        <input type="hidden" id="docRevId" name="seldoc" />
+        <input type="hidden" id="documentType" name="seldoc" />
+        <input type="button" name="add_doc" id="add_doc" onclick="selectDoc();" value='{MOD_EMAILS.LBL_SUGAR_DOCUMENT}' class="button" />
+    </div>
+    <div id="attachments_div">
+    </div>
+</form>
 {tiny}
 <script>
+if (document.getElementById('upload_form') != null) {
+    var multi_selector = new multiFiles(document.getElementById('upload_div'));
+    multi_selector.addElement(document.getElementById('my_file'));
+}
 toggle_portal_flag();
 
 function toggle_portal_flag() {

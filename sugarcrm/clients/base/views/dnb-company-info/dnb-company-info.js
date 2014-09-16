@@ -72,15 +72,8 @@
     loadImportEnrich: function(isCollapsed) {
         //if the dashlet is not collapsed load data from D&B
         if (!isCollapsed) {
-            //check if account is linked with a D-U-N-S
-            if (this.duns_num) {
-                this.getCompInfo(this.duns_num);
-            } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) {
-                    this.render();
-                }
-            }
+            var errTmpl = this.name + '.dnb-no-duns';
+            this.loadDNBData('duns_num', null, this.getCompInfo, null, errTmpl, 'dnb.dnb-no-duns-field');
         } else {
             this.toggleImportBtn(false, 'dnb_import');
         }
@@ -458,4 +451,4 @@
         },this);
         return dnbCompanyList;
     }
-})
+});

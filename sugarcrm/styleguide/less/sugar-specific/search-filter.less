@@ -3,6 +3,11 @@
 
 // search filter widget
 .search-filter {
+  .filter {
+    display: table;
+    width: 100%;
+    .box-sizing(border-box);
+  }
   // outer wrapper
   .control-group {
     padding: 5px 8px;
@@ -19,12 +24,21 @@
 // search filter inputs
 .filter-view {
   border: @inputBorder;
-  position: relative;
+  //display: table-row;
+  white-space: nowrap;
   margin-left: 0;
   background-color: @white;
   margin-bottom: 0;
   overflow: hidden;
-  height: 26px;
+  height: 28px;
+  .box-sizing(border-box);
+  .table-cell {
+    vertical-align: top;
+    padding: 3px 0;
+    &.full-width {
+      padding: 2px 0;
+    }
+  }
   .border-radius(@baseBorderRadius);
   .user-select(none);
   //not working for input focus
@@ -39,17 +53,15 @@
     display: inline-block;
     height: 12px;
     white-space: nowrap;
-    margin-top: 3px;
-    margin-left: -6px;
+    margin-top: 0;
     font-size: @fontSizeSmall;
     font-weight: bold;
     line-height: 13px;
-    vertical-align: top;
     .choice-filter-label {
       vertical-align: top;
+      margin-right: 2px;
     }
     .choice-filter-close {
-      margin-left: 2px;
       margin-right: 0;
       font-size: 14px;
       vertical-align: top;
@@ -68,6 +80,7 @@
     background: @gray;
     color: @white;
     cursor: text;
+    padding-right: 6px;
   }
   .choice-filter {
     background: @gray;
@@ -75,7 +88,8 @@
   }
   // select2 filter pills
   .select2-container {
-    &.related-filter {
+    &.related-filter,
+    &.search-filter {
       vertical-align: top;
     }
     &.select2-container-disabled .select2-choice {
@@ -104,6 +118,7 @@
       font-size: @fontSizeSmall;
       background: none;
       border: none;
+      height: 20px;
       .border-radius(0);
       .box-shadow(none);
       span {
@@ -118,8 +133,6 @@
         .border-radius(10px 0 0 10px);
         color: @gray;
         padding: 4px 4px 4px 6px;
-        margin-right: 5px;
-        margin-top: 3px;
         line-height: 13px;
         height: 12px;
         background: @grayLighter;
@@ -157,8 +170,9 @@
       }
     }
     &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
+      padding: 3px 4px 2px 6px !important;
+      .box-sizing(border-box);
       div {
-        display: inline-block;
         span.select2-choice-type {
           margin-right: 2px;
           margin-top: 0;
@@ -190,14 +204,11 @@
   }
   // search input field
   .search-name {
-    position: absolute;
-    left: auto;
     width: 100%;
     .box-sizing(border-box);
     height: 22px;
     border: 0;
     padding: 4px 8px;
-    top: 2px;
     box-shadow: none;
     &:focus {
       border: 0;
@@ -257,6 +268,7 @@
             display: table-cell;
             height: inherit;
             vertical-align: middle;
+            position: relative;
           }
         }
       }

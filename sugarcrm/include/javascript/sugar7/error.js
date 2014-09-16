@@ -159,12 +159,37 @@
 
     /**
      * 412 Header precondition failure error.
+     *
+     * A re-sync of the application is only kicked off if:
+     * - we are not already in the process of syncing,
+     * - the 412 response is valid (i.e. the current hash differs from the
+     *   server hash).
      */
     app.error.handleHeaderPreconditionFailed = function(error, b, c, d) {
         //Only kick off a sync if we are not already in the process of syncing
-        if (error && error.code ==='metadata_out_of_date' && app.isSynced) {
-            app.sync();
+        if (!app.isSynced) {
+            return;
         }
+        if (!error || error.code !== 'metadata_out_of_date') {
+            return;
+        }
+        var responseText = JSON.parse(error.responseText),
+            newHash = responseText && responseText.metadata_hash,
+            userHash = responseText && responseText.user_hash;
+
+        if (newHash === app.metadata.getHash() && (!userHash || userHash === app.user.get("_hash"))) {
+            app.logger.fatal('A request returned the error code "metadata_out_of_date" for no reason.');
+            app.alert.show('invalid_412', {
+                level: 'error',
+                messages: [
+                    'LBL_INVALID_412_RESPONSE'
+                ]
+            });
+            app.api.resetAuth();
+            app.router.refresh();
+            return;
+        }
+        app.sync();
     };
 
     /**

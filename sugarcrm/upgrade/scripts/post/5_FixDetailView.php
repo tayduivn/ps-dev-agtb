@@ -45,7 +45,7 @@ class SugarUpgradeFixDetailView extends UpgradeScript
     protected function fixModule($module) {
         if(!isModuleBWC($module)) {
             $this->log("$module is not BWC, not checking");
-            continue;
+            return;
         }
         $filename = "custom/modules/$module/metadata/detailviewdefs.php";
         if(file_exists($filename)) {
@@ -54,7 +54,7 @@ class SugarUpgradeFixDetailView extends UpgradeScript
             include $filename;
             if(empty($viewdefs[$module]) || empty($viewdefs[$module]['DetailView']['panels'])) {
                 $this->log("Could not find viewdefs, skipping");
-                continue;
+                return;
             }
             $modified = false;
             foreach($viewdefs[$module]['DetailView']['panels'] as $pname => $panel) {

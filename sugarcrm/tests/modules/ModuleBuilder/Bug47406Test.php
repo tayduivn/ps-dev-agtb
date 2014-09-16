@@ -43,7 +43,6 @@ class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
     public function providerMBVardefAddFieldVardef()
     {
         return array(
-            array(array('name' => 'field_name', 'default' => ''), null),
             array(array('name' => 'field_name', 'default' => 0), 0),
             array(array('name' => 'field_name', 'default' => '0'), '0'),
             array(array('name' => 'field_name', 'default' => '0.00'), '0.00'),
@@ -66,14 +65,7 @@ class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->mbvardef->addFieldVardef($vardef);
 
-        if ( null === $expected )
-        {
-            $this->assertArrayNotHasKey('default', $this->mbvardef->vardef['fields'][$vardef['name']]);
-        }
-        else
-        {
-            $this->assertEquals( $expected, $this->mbvardef->vardef['fields'][$vardef['name']]['default']);
-        }
+        $this->assertEquals( $expected, $this->mbvardef->vardef['fields'][$vardef['name']]['default']);
     }
 
     public function providerSugarCurrencyFormat()

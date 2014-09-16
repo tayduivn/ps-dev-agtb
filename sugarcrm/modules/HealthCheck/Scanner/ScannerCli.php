@@ -89,7 +89,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
     protected function log($msg, $tag = 'INFO')
     {
         $fmsg = parent::log($msg, $tag);
-        if ($this->verbose) {
+        if ($this->verbose > 1) {
             echo $fmsg;
         }
     }
@@ -142,5 +142,9 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 $scanner = new HealthCheckScannerCli();
 $scanner->parseCliArgs($argv);
 $scanner->scan();
+
+if ($scanner->getVerbose()) {
+    echo "VERDICT: {$scanner->getStatus()}\n";
+}
 
 exit($scanner->getResultCode());

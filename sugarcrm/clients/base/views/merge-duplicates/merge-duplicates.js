@@ -1111,7 +1111,6 @@
         var recordId = this.$(evt.currentTarget).closest('[data-record-id]').data('recordId'),
             model = this.collection.get(recordId),
             self = this;
-
         if (this.collection.length <= 2 || !recordId || !model) {
             return;
         }
@@ -1124,12 +1123,17 @@
                 return;
             }
         }
-
         app.alert.show('record-delete-confirm', {
             level: 'confirmation',
             messages: app.lang.get('LBL_MERGE_DUPLICATES_REMOVE', this.module),
             onConfirm: function() {
                 self.deleteFromMerge(model);
+                self.$('[data-container="merge-container"]').attr('class', function(){
+                    return $(this).attr('class').replace(
+                        /\b(num\-cols\-)(\d+)\b/g,
+                        '$1' + self.collection.length
+                    );
+                });
             }
         });
     },

@@ -262,6 +262,8 @@ function get_sugar_config_defaults()
      */
 
     $sugar_config_defaults = array (
+    'oauth_token_life' => 86400, // 60*60*24
+    'oauth_token_expiry' => 0,
     'admin_export_only' => false,
     'export_delimiter' => ',',
     'cache_dir' => 'cache/',
@@ -626,7 +628,14 @@ function get_languages()
     global $sugar_config;
     $lang = isset($sugar_config['languages']) ? $sugar_config['languages'] : array();
     if (!empty($sugar_config['disabled_languages'])) {
-        foreach (explode(',', $sugar_config['disabled_languages']) as $disable) {
+        $disabledLanguages = explode(',', $sugar_config['disabled_languages']);
+
+        // Make sure we don't disable the default language
+        if (($key = array_search($sugar_config['default_language'], $disabledLanguages)) !== false) {
+            unset($disabledLanguages[$key]);
+        }
+
+        foreach ($disabledLanguages as $disable) {
             unset($lang[$disable]);
         }
     }
@@ -2177,7 +2186,7 @@ function xss_check_pattern($pattern, $str)
 /**
  * Designed to take a string passed in the URL as a parameter and clean all "bad" data from it
  *
- * @param string $str
+ * @param string $value
  * @param string $filter which corresponds to a regular expression to use; choices are:
  * 		"STANDARD" ( default )
  * 		"STANDARDSPACE"
@@ -2191,7 +2200,7 @@ function xss_check_pattern($pattern, $str)
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
  */
-function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
+function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
     global  $sugar_config;
 
@@ -2208,9 +2217,21 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
     "ALPHANUM"        => '#[^A-Z0-9\-]#i',
     );
 
-    if (preg_match($filters[$filter], $str)) {
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            $value[$k] = clean_string($v, $filter, $dieOnBadData);
+        }
+
+        return $value;
+    }
+
+    if (!is_string($value)) {
+        return $value;
+    }
+
+    if (preg_match($filters[$filter], $value)) {
         if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
-            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$str}");
+            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$value}");
         }
         if ($dieOnBadData) {
             die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2218,7 +2239,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
         return false;
     } else {
-        return $str;
+        return $value;
     }
 }
 
@@ -3814,6 +3835,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
     foreach ($focus->relationship_fields as $rel_key => $rel_value) {
         if ($rel_value == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
     //		echo $focus->$rel_key;
             $temp_bean->retrieve($focus->$rel_key);
             if ($temp_bean->id!="") {
@@ -3833,6 +3855,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         && $focus->field_defs[$field_def['id_name']]['relationship'] == $relationship_name)
         {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
         //	echo $focus->$field_def['id_name'];
             $temp_bean->retrieve($focus->$field_def['id_name']);
             if ($temp_bean->id!="") {
@@ -3844,6 +3867,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         //Check if the relationship_name matches a "link" in a relate field
         } elseif (!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean->disable_row_level_security = true;
         //	echo $focus->$rel_value['id_name'];
             $temp_bean->retrieve($focus->$rel_value['id_name']);
             if ($temp_bean->id!="") {
@@ -3855,9 +3879,13 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         }
     }
 
+    if ($focus->module_name == "Emails") {
+        $focus->fillPrimaryParentFields($tar_rel_module);
+    }
     // special case for unlisted parent-type relationships
     if ( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
         $temp_bean = BeanFactory::getBean($tar_rel_module);
+        $temp_bean->disable_row_level_security = true;
         $temp_bean->retrieve($focus->parent_id);
         if ($temp_bean->id!="") {
             $rel_list[] = $temp_bean;

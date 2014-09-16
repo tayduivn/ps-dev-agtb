@@ -168,8 +168,8 @@ class SugarRelationshipFactory {
         // DO rebuild the cache if there is a cache, there is an internal relationships
         // property and it is different than $relationships
         $rebuildApiCache = false;
-        $mm = MetaDataManager::getManager();
-        if (file_exists($mm->getMetadataCacheFileName())) {
+        $metaCacheKey = MetaDataManager::getManager()->getCachedMetadataHash();
+        if (empty($metaCacheKey)) {
             $rebuildApiCache = !empty($this->relationships) && array_diff_key($this->relationships, $relationships) !== array();
         }
 

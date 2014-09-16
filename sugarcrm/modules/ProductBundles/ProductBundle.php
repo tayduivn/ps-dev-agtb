@@ -73,7 +73,13 @@ class ProductBundle extends SugarBean
     //deletes related products might want to change this in the future if we allow for sharing of products
     public function mark_deleted($id)
     {
-        $lineItems = $this->getLineItems();
+
+        // for now only delete comments, not the products
+        //$lineItems = $this->getLineItems();
+
+        $this->load_relationship('product_bundle_notes');
+        $lineItems = $this->product_bundle_notes->getBeans();
+
         /* @var $item SugarBean */
         foreach ($lineItems as $item) {
             $item->mark_deleted($item->id);
@@ -225,11 +231,6 @@ class ProductBundle extends SugarBean
 
         return $bundle_list;
     }
-
-    public function save_relationship_changes($is_update)
-    {
-    }
-
 
     /**
      * @deprecated

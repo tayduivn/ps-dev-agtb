@@ -35,12 +35,14 @@
             },
 
             dropAttachment: function(event) {
+
                 var proto = Object.getPrototypeOf(this);
                 if (_.isFunction(proto.dropAttachment)) {
                     return proto.dropAttachment.call(this, event);
                 }
-
-                var text = $.trim(event.dataTransfer.getData('text')),
+                // Use originalEvent to access the dataTransfer property since it may not exist on the jQuery event
+                // see http://bugs.jquery.com/ticket/7808 for more information
+                var text = $.trim(event.originalEvent.dataTransfer.getData('text')),
                     container = this.$(event.currentTarget);
                 this.shrinkNewPost(event);
 
@@ -48,7 +50,7 @@
                     container.append(' ' + text).trigger('change');
                 }
 
-                _.each(event.dataTransfer.files, function(file, i) {
+                _.each(event.originalEvent.dataTransfer.files, function(file, i) {
                     var fileReader = new FileReader();
 
                     // Set up the callback for the FileReader.
@@ -122,9 +124,7 @@
                     var self = this,
                         attachments = this.getAttachments(),
                         callback = _.after(_.size(attachments), this.clearAttachments),
-                        parentId = self.context.parent.get('model').id,
-                        parentType = self.context.parent.get('model').module,
-                        additionalNoteAttr = this._mapNoteParentAttributes(parentId, parentType);
+                        noteAttrs = this._mapNoteParentAttributes();
 
                     component.trigger('attachments:start');
 
@@ -133,7 +133,7 @@
                         note.set(_.extend({
                             'name': file.name,
                             'assigned_user_id': app.user.id
-                        }, additionalNoteAttr));
+                        }, noteAttrs));
                         async.waterfall([
                             //save the note
                             function(callback) {
@@ -169,8 +169,8 @@
                                 var activity = app.data.createBean('Activities'),
                                     payload = {
                                         activity_type: 'attach',
-                                        parent_id: parentId || null,
-                                        parent_type: parentType || null,
+                                        parent_id: noteAttrs.parent_id || null,
+                                        parent_type: noteAttrs.parent_type || null,
                                         data: {
                                             noteId: note.id,
                                             filename: file.name,
@@ -208,19 +208,34 @@
              * @param {string} parentType module of the parent record
              * @private
              */
-            _mapNoteParentAttributes: function(parentId, parentType) {
-                if (parentId && parentType) {
-                    return parentType === 'Contacts' ? {
-                        'parent_id': parentId,
-                        'parent_type': parentType,
-                        'contact_id': parentId
-                    } : {
-                        'parent_id': parentId,
+            _mapNoteParentAttributes: function() {
+                var parentId = this.context.parent.get('model').id,
+                    parentType = this.context.parent.get('model').module;
+
+                if (parentType && parentId) {
+                    switch (parentType) {
+                        case 'Contacts':
+                            return {
+                                'parent_id': parentId,
+                                'parent_type': parentType,
+                                'contact_id': parentId
+                            };
+                        case 'Home':
+                            return {
+                                'parent_type': parentType
+                            };
+                        default:
+                            return {
+                                'parent_id': parentId,
+                                'parent_type': parentType
+                            };
+                    }
+                } else if (parentType && parentType === 'Activities') {
+                    return {
                         'parent_type': parentType
                     };
-                } else {
-                    return {};
                 }
+                return {};
             }
         });
     });

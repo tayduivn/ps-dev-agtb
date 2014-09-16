@@ -1142,10 +1142,14 @@ class Report
                 //$where_arr[count($where_arr)] = $select_piece;
                 $where_clause .= $select_piece;
             }
-            if ($isSubCondition == 1)
+            if ($isSubCondition == 1) {
                 $where_clause .= ")";
-            if ($i != count($filters) - 2)
+                // reset the subCondition
+                $isSubCondition = 0;
+            }
+            if ($i != count($filters) - 2) {
                 $where_clause .= " $operator ";
+            }
 
         }
         $where_clause .= ')';
@@ -1856,14 +1860,15 @@ class Report
         $where_auto = " " . $this->focus->table_name . ".deleted=0 \n";
         // Start ACL check
         global $current_user, $mod_strings;
-        $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list', $type = 'module');
-        $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view', $type = 'module');
-
-        if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-            $this->handleException($mod_strings['LBL_NO_ACCESS']);
-        if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-            $where_auto .= " AND " . $this->focus->table_name . ".assigned_user_id='" . $current_user->id . "' \n";
-
+        if (!is_admin($current_user)) {
+            $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list', $type = 'module');
+            $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view', $type = 'module');
+    
+            if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
+                $this->handleException($mod_strings['LBL_NO_ACCESS']);
+            if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
+                $where_auto .= " AND " . $this->focus->table_name . ".assigned_user_id='" . $current_user->id . "' \n";
+        }
         // End ACL check
 
         if (!empty($this->where)) {

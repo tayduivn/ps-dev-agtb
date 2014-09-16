@@ -9,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+$step = isset($_REQUEST['confirm_id']) ? 2 : 0;
 ?>
 <html>
 <head>
@@ -95,10 +97,14 @@ $(window).bind("load", function () {
         };
         uploader.setNextStatusUpdate = function () {
             uploader.statusUpdates = true;
+            if (!$('a[data-action=gohome]').hasClass('disabled')) {
+                $('a[data-action=gohome]').addClass('disabled');
+            }
             uploader.updateInterval = setTimeout(uploader.updateStatus, uploader.STATUS_FREQ);
         };
         uploader.clearStatusUpdate = function () {
             uploader.statusUpdates = false;
+            $('a[data-action=gohome]').removeClass('disabled');
             if (uploader.updateInterval) {
                 clearTimeout(uploader.updateInterval);
             }
@@ -281,7 +287,7 @@ $(window).bind("load", function () {
     <div class="modal" data-step="1">
         <div class="modal-header modal-header-upgrade row-fluid">
             <span class="step-circle">
-                <span>3</span>
+                <span><?php echo ($step + 1) ?></span>
             </span>
 
             <div class="upgrade-title span8">
@@ -300,7 +306,7 @@ $(window).bind("load", function () {
             <div id="unpack" class="row-fluid ">
                 <h1><i class="icon-cog color_yellow"></i>Upload the upgrade package</h1>
 
-                <p>Please provide the upgrade package files. <a href="#">Learn more...</a></p>
+                <p>Please provide the upgrade package files. <a target="_blank" href="http://support.sugarcrm.com/03_Training/06_Upgrade_Training/" target="_blank">Learn more...</a></p>
                 <form id="uploadForm">
                     <input type="hidden" name="token" value="<?php echo $token ?>">
                     <input type="hidden" name="action" value="unpack">
@@ -322,7 +328,7 @@ $(window).bind("load", function () {
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
             <a class="btn btn-invisible btn-primary" href="index.php">Cancel</a>
-            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>
+            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>:
           </span>
         </div>
     </div>
@@ -330,7 +336,7 @@ $(window).bind("load", function () {
     <div class="modal" data-step="2">
         <div class="modal-header modal-header-upgrade row-fluid">
             <span class="step-circle">
-                <span>4</span>
+                <span><?php echo ($step + 2) ?></span>
             </span>
 
             <div class="upgrade-title span8">
@@ -394,7 +400,7 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-primary disabled" href="index.php">Go to Home Page</a>
+            <a class="btn btn-primary disabled" href="index.php" data-action="gohome">Go to Home Page</a>
           </span>
         </div>
     </div>

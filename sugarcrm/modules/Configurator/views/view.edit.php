@@ -51,9 +51,12 @@ class ConfiguratorViewEdit extends ViewEdit
         $sugarConfig = SugarConfig::getInstance();
         $configurator->parseLoggerSettings();
         $focus = Administration::getSettings();
+
+        /*
         if(!empty($_POST['restore'])){
             $configurator->restoreConfig();
         }
+        */
 
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);

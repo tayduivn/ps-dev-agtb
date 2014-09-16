@@ -104,8 +104,15 @@
 
         this.label = _.first(this.meta.panels).label;
 
-        // get the fields metadata
-        this.fieldsMeta = _.first(this.meta.panels).fields;
+        // get the fields metadata and fix it up for this.fieldsMeta
+        _.each(_.first(this.meta.panels).fields, function(field) {
+            this.fieldsMeta[field.name] = field;
+
+            if (field.name === 'category_ranges') {
+                // get rid of the name property on the object so it doesnt mess up ranges
+                delete this.fieldsMeta.category_ranges.name;
+            }
+        }, this);
 
         // init the fields from metadata
         this.forecastRangesField = this.fieldsMeta.forecast_ranges;

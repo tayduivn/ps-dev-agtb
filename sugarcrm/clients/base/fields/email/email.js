@@ -288,6 +288,9 @@
         var existingAddresses = app.utils.deepCopy(this.model.get(this.name));
         //Simply update the email address
         existingAddresses[index].email_address = newEmail;
+        if (this.tplName === 'edit') {
+            this.model.set(this.name + (index + 1), newEmail);
+        }
         this.model.set(this.name, existingAddresses);
     },
 

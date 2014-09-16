@@ -71,7 +71,7 @@ $dictionary['Contract'] = array(
         'opportunity_id' => array(
             'name' => 'opportunity_id',
             'type' => 'id',
-            'vname' => 'LBL_OPPORTUNITY_NAME',
+            'vname' => 'LBL_OPPORTUNITY_ID',
             'source' => 'non-db',
         ),
         'account_name' => array(
@@ -192,7 +192,7 @@ $dictionary['Contract'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencyDivide($total_contract_value,$base_rate)',
+            'formula' => 'ifElse(isNumeric($total_contract_value), currencyDivide($total_contract_value, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -247,7 +247,7 @@ $dictionary['Contract'] = array(
         ),
         'type_name' => array(
             'name' => 'type_name',
-            'vname' => 'LBL_TYPE',
+            'vname' => 'LBL_TYPE_NAME',
             'rname' => 'name',
             'id_name' => 'type',
             'type' => 'relate',

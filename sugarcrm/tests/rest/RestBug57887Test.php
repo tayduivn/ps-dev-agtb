@@ -68,6 +68,9 @@ class RestBug57887Test extends RestTestBase
             $filename = $tempdir . basename($this->_metadataFile);
             $this->_backedUp[$filename] = $this->_metadataFile;
         }
+
+        //Turn off caching now() or else date_modified checks are invalid
+        TimeDate::getInstance()->allow_cache = false;
     }
 
     public function tearDown()
@@ -80,7 +83,7 @@ class RestBug57887Test extends RestTestBase
             rename($temp, $file);
         }
 
-        // Wipe out the custom file if there is one
+        TimeDate::getInstance()->allow_cache = true;
 
         parent::tearDown();
     }
@@ -92,11 +95,12 @@ class RestBug57887Test extends RestTestBase
     {
         // Build the cache
         $mm = MetaDataManager::getManager('mobile');
-        $data = $mm->getMetadata();
-        $cacheFile = $mm->getMetadataCacheFileName();
+        $mm->getMetadata();
+        $db = DBManagerFactory::getInstance();
 
-        // Confirm cache file exists
-        $this->assertFileExists($cacheFile, "The cache metadata file does not exist");
+        // Assert that there is a private base metadata cache
+        $dateModified = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_mobile_base'");
+        $this->assertNotEmpty($dateModified);
 
         // Confirm custom file does not exist in the file map cache
         $exists = SugarAutoLoader::fileExists($this->_metadataFile);

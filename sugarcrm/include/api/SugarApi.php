@@ -132,7 +132,7 @@ abstract class SugarApi {
      * @param $options Options array to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
-    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read', $options = array()) {
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'view', $options = array()) {
         $this->requireArgs($args, array('module','record'));
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
@@ -146,7 +146,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
-        if ($aclToCheck != 'view' && !$bean->ACLAccess($aclToCheck)) {
+        if (SugarACLStatic::fixUpActionName($aclToCheck) != 'view' && !$bean->ACLAccess(SugarACLStatic::fixUpActionName($aclToCheck))) {
             throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array($aclToCheck));
         }
 
@@ -411,6 +411,55 @@ abstract class SugarApi {
         }
 
         return $fields;
+    }
+
+    /**
+     * Creates internal representation of ORDER BY expression from API arguments
+     *
+     * @param array $args API arguments
+     * @param SugarBean $seed The bean to validate the value against.
+     *                        If omitted, no validation is performed
+     *
+     * @return array Associative array where key is field name, boolean value is direction
+     *               (TRUE stands for ASC, FALSE stands for DESC)
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
+    {
+        $orderBy = array();
+        if (!isset($args['order_by']) || !is_string($args['order_by'])) {
+            return $orderBy;
+        }
+
+        $columns = explode(',', $args['order_by']);
+        $parsed = array();
+        foreach ($columns as $column) {
+            $column = explode(':', $column, 2);
+            $field = array_shift($column);
+
+            if ($seed) {
+                if (!isset($seed->field_defs[$field])) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        sprintf('Non existing field: %s in module: %s', $field, $seed->module_name)
+                    );
+                }
+
+                if (!$seed->ACLFieldAccess($field, 'list')) {
+                    throw new SugarApiExceptionNotAuthorized(
+                        sprintf('No access to view field: %s in module: %s', $field, $seed->module_name)
+                    );
+                }
+            }
+
+            // do not override previous value if it exists since it should have higher precedence
+            if (!isset($parsed[$field])) {
+                $direction = array_shift($column);
+                $parsed[$field] = strtolower($direction) !== 'desc';
+            }
+        }
+
+        return $parsed;
     }
 
     /**

@@ -95,7 +95,7 @@ for ($i = 0; $i <= $total_field_count; $i++) {
         //possibility exists that this attribute is being removed
         if (!empty($_REQUEST['action_id'][$i])) {
             //delete attribute
-            BeanFactory::deleteBean('WorkFlowActions', $_REQUEST['action_id_'.$i]);
+            BeanFactory::deleteBean('WorkFlowActions', $_REQUEST['action_id'][$i]);
             //end if to remove attribute
         }
     }

@@ -77,14 +77,21 @@
      */
     loadContacts: function(isCollapsed) {
         if (!isCollapsed) {
-            if (this.duns_num) {
-                //check if account is linked with a D-U-N-S
-                this.renderDashletFromState(this.dashletState);
-            } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
-                //check if D-U-N-S is set in context by refresh dashlet
-                this.getDNBContacts(app.controller.context.get('dnb_temp_duns_num'));
+            if (this.checkFieldExists('duns_num')) {
+                if (this.duns_num) {
+                    //check if account is linked with a D-U-N-S
+                    this.renderDashletFromState(this.dashletState);
+                } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
+                    //check if D-U-N-S is set in context by refresh dashlet
+                    this.getDNBContacts(app.controller.context.get('dnb_temp_duns_num'));
+                } else {
+                    this.template = app.template.get('dnb' + '.dnb-no-duns');
+                    if (!this.disposed) {
+                        this.render();
+                    }
+                }
             } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
+                this.template = app.template.get('dnb' + '.dnb-no-duns-field');
                 if (!this.disposed) {
                     this.render();
                 }
@@ -304,4 +311,4 @@
             this.getDNBContacts(this.duns_num);
         }
     }
-})
+});

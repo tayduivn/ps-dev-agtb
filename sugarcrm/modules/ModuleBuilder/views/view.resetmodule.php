@@ -108,23 +108,9 @@ class ViewResetmodule extends SugarView
      */
     function removeCustomFields()
     {
-        $moduleName = $this->module;
-        $seed = BeanFactory::getBean($moduleName);
-        $df = new DynamicField ( $moduleName ) ;
-        $df->setup ( $seed ) ;
+        $module = StudioModuleFactory::getStudioModule($this->module);
+        $customFields = $module->removeCustomFields();
 
-
-        $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
-        $customFields = array();
-        foreach($seed->field_defs as $def) {
-            if (isset($def['custom_module']) && $def['custom_module'] === $moduleName) {
-               $field = $df->getFieldWidget($moduleName, $def['name']);
-               $field->delete ( $df ) ;
-
-               $module->removeFieldFromLayouts( $def['name'] );
-               $customFields[] = $def['name'];
-            }
-        }
         $out = "";
         foreach ($customFields as $field) {
             $out .= "Removed field $field<br/>";

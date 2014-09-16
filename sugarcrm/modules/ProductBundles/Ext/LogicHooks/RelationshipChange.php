@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +9,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div id="dnb-no-duns" class="block-footer">
-	 <aside>
-        <em>{{str "LBL_DNB_NO_DUNS"}}</em>
-      </aside>
-</div>
+
+
+$hook_array['after_relationship_delete'][] = array(
+    1,
+    'afterRelationshipDelete',
+    'modules/ProductBundles/ProductBundleHooks.php',
+    'ProductBundleHooks',
+    'afterProductRelationship',
+);
+
+$hook_array['after_relationship_add'][] = array(
+    1,
+    'afterRelationshipAdd',
+    'modules/ProductBundles/ProductBundleHooks.php',
+    'ProductBundleHooks',
+    'afterProductRelationship',
+);

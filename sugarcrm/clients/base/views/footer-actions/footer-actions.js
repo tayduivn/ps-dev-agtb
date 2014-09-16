@@ -238,7 +238,10 @@
      * @param {Object} e click event.
      */
     showTutorialClick: function(e) {
-        this.showTutorial();
+        if (!app.tutorial.instance) {
+            this.showTutorial();
+            e.currentTarget.blur();
+        }
     },
 
     /**

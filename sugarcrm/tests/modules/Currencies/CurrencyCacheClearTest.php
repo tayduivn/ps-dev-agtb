@@ -24,6 +24,8 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         
         $this->testCacheFile = sugar_cached('api/metadata/metadata_unit_test.php');
+        //Turn off caching now() or else date_modified checks are invalid
+        TimeDate::getInstance()->allow_cache = false;
         
         // Start fresh
         MetaDataManager::clearAPICache(true);
@@ -35,6 +37,7 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         if ( file_exists($this->testCacheFile) ) {
             @unlink($this->testCacheFile);
         }
+        TimeDate::getInstance()->allow_cache = true;
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         
@@ -45,18 +48,17 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testResetMetadataCache()
     {
+        $db = DBManagerFactory::getInstance();
+
         // Get the private metadata manager for $platform
         $mm = MetaDataManager::getManager();
-        
-        // Cache file path... we will need this for tests in here
-        $file = $mm->getMetadataCacheFileName();
         
         // Get the current metadata to ensure there is a cache built
         $data = $mm->getMetadata();
         
-        // Assert that there is a private base metadata file
-        $this->assertFileExists($file, "Metadata cache file was not created");
-        $time = filemtime($file);
+        // Assert that there is a private base metadata cache
+        $dateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $this->assertNotEmpty($dateModified);
         
         // Test that currencies are in the metadata
         $this->assertArrayHasKey('currencies', $data, "currencies key not found in metadata");
@@ -70,10 +72,11 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         $defaultCurrency->save();
         
         // Test the file first
-        $this->assertFileExists($file, "Metadata cache file was not found after refresh.");
+        $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $this->assertNotEmpty($newDateModified);
         
         // Test the time on the new file
-        $this->assertGreaterThan($time, filemtime($file), "Second cache file make time is not greater than the first.");
+        $this->assertGreaterThan($dateModified, $newDateModified, "Second cache file make time is not greater than the first.");
         
         // Test that currencies are still there
         $data = $mm->getMetadata();

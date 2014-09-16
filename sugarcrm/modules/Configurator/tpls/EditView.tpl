@@ -31,7 +31,7 @@
 
 	<td>
 		<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="ConfigureSettings_save_button" type="submit"  name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
-		&nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  id="ConfigureSettings_restore_button"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL}  " >
+		<!-- &nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  id="ConfigureSettings_restore_button"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL}  " > -->
 		&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="ConfigureSettings_cancel_button"   onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " > </td>
 	</tr>
 </table>
@@ -206,6 +206,21 @@
  </table>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+    <tr>
+        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_TWEETTOCASE_TITLE}</h4></th>
+    </tr>
+    <tr>
+        <td width="25%" scope="row" valign='middle'>{$MOD.LBL_TWEETTOCASE_ON}&nbsp{sugar_help text=$MOD.LBL_TWEETTOCASE_ON_DESC WIDTH=400}</td>
+        {if !empty($settings.system_tweettocase_on)}
+            {assign var='system_tweettocase_on_checked' value='CHECKED'}
+        {else}
+            {assign var='system_tweettocase_on_checked' value=''}
+        {/if}
+        <td width="75%" align="left"  valign='middle'><input type='hidden' name='system_tweettocase_on' value='0'><input name="system_tweettocase_on" value="1" class="checkbox" tabindex='1' type="checkbox" {$system_tweettocase_on_checked}></td>
+    </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
 	</tr>
@@ -324,7 +339,7 @@
 
 <div style="padding-top: 2px;">
 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary"  type="submit" name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " class="button primary"/>
-		&nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL} " />
+		<!-- &nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL} " /> -->
 		&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " />
 </div>
 {$JAVASCRIPT}

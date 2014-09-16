@@ -237,6 +237,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $manager = $this->getMockBuilder('MetadataManager')
             ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+        //Skipping the constructor requires we set up the db ourselves
+        $manager->db = DBManagerFactory::getInstance();
 
         $manager->expects($this->once())->method('getAppListStrings')
             ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));

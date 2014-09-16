@@ -175,6 +175,29 @@ class Quote extends SugarBean
     }
 
     /**
+     * Delete all the associated Product Bundles from a Quote, This ensures that no orphaned records are left behind,
+     * when deleting a record.
+     *
+     * @param string $id The ID of the record that is being marked as deleted
+     */
+    public function mark_deleted($id)
+    {
+        // make sure we have the bean loaded
+        if ($this->id !== $id) {
+            $this->retrieve($id);
+        }
+        // load up all the product bundles and delete them
+        $this->load_relationship('product_bundles');
+        $bundles = $this->product_bundles->getBeans();
+        /* @var $bundle ProductBundle */
+        foreach ($bundles as $bundle) {
+            $bundle->mark_deleted($bundle->id);
+        }
+
+        parent::mark_deleted($id);
+    }
+
+    /**
      * returns bean name
      *
      * @return string Bean name

@@ -54,6 +54,7 @@ function upgrade_custom_relationships($modules = array())
 							if (!isset($rhsDef['side']) || $rhsDef['side'] != 'left')
 							{
 								$rhsDef['side'] = 'left';
+								$rhsDef['link-type'] = 'one';
 								$fileContents = file_get_contents($filePath);
 								$out = preg_replace(
 									'/\$dictionary[\w"\'\[\]]*?' . $relName . '["\'\[\]]*?\s*?=\s*?array\s*?\(.*?\);/s',
@@ -183,17 +184,15 @@ function upgrade_custom_relationships($modules = array())
         }
 
         if ( $selfReferencing ) {
-            $leftLinkName = $relateField['link'];
-            $newIdField['link'] = $relateField['link'].'_right';
-            $relateField['link'] = $newIdField['link'];
             $newLinkField = array(
-                'name' => $relateField['link'],
+                'name' => $relateField['link'] . '_right',
                 'type' => 'link',
                 'relationship' => $linkField['relationship'],
                 'source' => 'non-db',
                 'vname' => $idField['vname'],
                 'id_name' => $relObj->getJoinKeyRHS(),
                 'side' => 'right',
+                'link-type' => 'many',
             );
         }
             
@@ -214,7 +213,6 @@ function upgrade_custom_relationships($modules = array())
                 '$dictionary["' . $dictKey . '"]["fields"]["' . $relateField['name'] . '"]=' . var_export_helper($relateField) . ";\n",
                 $out
             );
-
         }
         file_put_contents($fileToFix, $out);
 
@@ -224,10 +222,14 @@ function upgrade_custom_relationships($modules = array())
             $layoutPath = dirname(dirname($fileToFix)).'/Layoutdefs';
             foreach(glob($layoutPath.'/*.php') as $layoutToCheck) {
                 // See if they match the id I just changed.
-                $layoutContents = file_get_contents($layoutToCheck);
-                if ( preg_match('/\$layout_defs[^=]*subpanel_setup[^=]*'.$idName.'[^=]*= array/',$layoutContents) ) {
-                    $layoutContents = str_replace($idName,$leftLinkName,$layoutContents);
-                    file_put_contents($layoutToCheck,$layoutContents);
+                $layout_defs = array();
+                include $layoutToCheck;
+
+                if (isset($layout_defs[$dictKey]['subpanel_setup'][$newIdField['name']])) {
+                    $newLayout[$dictKey]['subpanel_setup'][$relateField['link']] = $layout_defs[$dictKey]['subpanel_setup'][$newIdField['name']];
+                    $newLayout[$dictKey]['subpanel_setup'][$relateField['link']]['get_subpanel_data'] = $newLinkField['relationship'] . '_right';
+
+                    write_array_to_file('layout_defs', $newLayout, $layoutToCheck);
                 }
             }
         }

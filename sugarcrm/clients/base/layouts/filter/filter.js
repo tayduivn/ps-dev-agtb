@@ -110,9 +110,7 @@
         this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
-            // we need to pass in the module for the layout, so it will get the correct
-            // side of the link based on the linkName
-            this.initializeFilterState(this.layout.module, this.layout.currentLink);
+            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
         }, this);
 
         this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
@@ -428,6 +426,12 @@
             return;
         }
 
+        // to make sure quick filter is handled properly
+        if (_.isEmpty(query)) {
+            var filterQuicksearchView = this.getComponent('filter-quicksearch');
+            query = filterQuicksearchView && filterQuicksearchView.$el.val() || '';
+        }
+
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
         // reset the selected on filter apply
@@ -609,7 +613,8 @@
                     linkName ||
                     'all_modules';
 
-                if (linkName !== 'all_modules') {
+                // if the incoming module is the same as the layoutModule then we need to find the other side.
+                if (linkName !== 'all_modules' && this.layout.module === moduleName) {
                     moduleName = app.data.getRelatedModule(moduleName, linkName) || moduleName;
                 }
             }
@@ -617,7 +622,7 @@
 
         filterId = filterId || this.getLastFilter(moduleName, this.layoutType);
 
-        this.layout.trigger('filterpanel:change:module', moduleName);
+        this.layout.trigger('filterpanel:change:module', moduleName, linkName);
         this.trigger('filter:change:module', moduleName, linkName, true);
         this.getFilters(moduleName, filterId);
     },

@@ -92,17 +92,7 @@
     loadFinancials: function(isCollapsed) {
         if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
-            if (this.duns_num) {
-                this.getCompanyFinancials(this.duns_num);
-            } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
-                //check if D-U-N-S is set in context by refresh dashlet
-                this.getCompanyFinancials(app.controller.context.get('dnb_temp_duns_num'));
-            } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) {
-                    this.render();
-                }
-            }
+            this.loadDNBData('duns_num', 'dnb_temp_duns_num', this.getCompanyFinancials, null, 'dnb.dnb-no-duns', 'dnb.dnb-no-duns-field');
         }
     },
 
@@ -237,4 +227,4 @@
         }
         return frmtFinancials;
     }
-})
+});
