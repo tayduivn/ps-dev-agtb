@@ -11,48 +11,29 @@
 /**
  * @class View.Fields.Base.EventStatusField
  * @alias SUGAR.App.view.fields.BaseEventStatusField
- * @extends View.Fields.Base.EnumField
+ * @extends View.Fields.Base.BadgeSelectField
  */
 ({
-    extendsFrom: 'EnumField',
+    extendsFrom: 'BadgeSelectField',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        if (this.view && this.view.layout) {
-            this.view.layout.on('headerpane:adjust_fields', this.repositionDropdown, this);
-        }
+        this.type = 'badge-select';
     },
 
     /**
      * @inheritDoc
      *
-     * This field renders as a label when not in edit mode and as an enum when
-     * in edit mode.
+     * Styles the badge.
      *
      * @private
      */
     _render: function() {
-        if (this.action === 'edit') {
-            this.type = 'enum';
-        }
         this._super('_render');
-        this.type = 'event-status';
-        this.styleLabel(this.model.get('status'));
-    },
-
-    /**
-     * Resets position of status dropdown if Select2 is active and open
-     * and the position of the Select2 container is shifted, which happens
-     * when other fields in the headerpane are hidden on status edit
-     */
-    repositionDropdown: function() {
-        var $el = this.$(this.fieldTag).select2('container');
-        if ($el.hasClass('select2-dropdown-open')) {
-            this.$(this.fieldTag).data('select2').dropdown.css({'left': $el.offset().left});
-        }
+        this.styleLabel(this.model.get(this.name));
     },
 
     /**
@@ -65,8 +46,10 @@
      */
     styleLabel: function(status) {
         var $label;
+
         if (this.action !== 'edit') {
             $label = this.$('.label');
+
             switch (status) {
                 case 'Held':
                     $label.addClass('label-success');
@@ -78,15 +61,5 @@
                     break;
             }
         }
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _dispose: function() {
-        if (this.view && this.view.layout) {
-            this.view.layout.off(null, null, this);
-        }
-        this._super('_dispose');
     }
 })
