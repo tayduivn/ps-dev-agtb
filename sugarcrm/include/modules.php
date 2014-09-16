@@ -516,6 +516,10 @@ $beanList['Tags'] = 'Tag';
 $beanFiles['Tag'] = 'modules/Tags/Tag.php';
 $modInvisList[] = 'Tags';
 
+$beanList['Categories'] = 'Category';
+$beanFiles['Category'] = 'modules/Categories/Category.php';
+$modInvisList[] = 'Categories';
+
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
 //No future module should need an entry here.

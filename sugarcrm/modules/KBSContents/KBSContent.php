@@ -21,6 +21,49 @@ class KBSContent extends SugarBean {
     public $module_dir = 'KBSContents';
 
     /**
+     * Return root id for KB categories.
+     * @return string for root node of KB categories.
+     */
+    public function getCategoryRoot()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('KBSDocuments');
+
+        if (empty($config['category_root'])) {
+            $this->setupCategoryRoot();
+            $config = $admin->getConfigForModule('KBSDocuments');
+        }
+
+        return $config['category_root'];
+    }
+
+    /**
+     * Setup root for KBSDocuments categories.
+     */
+    public function setupCategoryRoot()
+    {
+        require_once 'clients/base/api/ConfigModuleApi.php';
+        require_once 'include/api/RestService.php';
+
+        $categoryRoot = BeanFactory::newBean('Categories');
+        $categoryRoot->name = 'KBSContentCategory';
+
+        $apiUser = new User();
+        $apiUser->is_admin = '1';
+        $api = new RestService();
+        $api->user = $apiUser;
+        $api->platform = 'base';
+        $client = new ConfigModuleApi();
+        $client->configSave(
+            $api,
+            array(
+                'category_root' => $categoryRoot->makeRoot(),
+                'module' => 'KBSDocuments',
+            )
+        );
+    }
+
+    /**
      * Return primary language for KB.
      * @return array Key and label for primary language.
      */

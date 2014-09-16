@@ -1,0 +1,103 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<span class="lead">
+    Retrieves a list of root nodes.
+</span>
+
+<h2>Request Arguments</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                module
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The name of sugar module that contains a nested set data and implements the NestedSetInterface.
+            </td>
+            <td>
+                True
+            </td>
+        </tr>
+    </tbody>
+</table>
+</table>
+
+<h2>Response Arguments</h2>
+<span class="lead">
+    This endpoint does not return any response arguments.
+</span>
+
+<h3>Response</h3>
+<pre class="pre-scrollable">
+[{
+    "id": "e1ae8646-ac90-104a-59d6-5412cf5009b2",
+    "name": "SugarCategoryRoot1951580828",
+    "date_entered": "2014-09-12 10:47:46",
+    "date_modified": "2014-09-12 10:47:46",
+    "modified_user_id": "9c9ad14e-1789-3340-f88d-5412cf551d3b",
+    "created_by": "9c9ad14e-1789-3340-f88d-5412cf551d3b",
+    "description": null,
+    "deleted": "0",
+    "source_id": null,
+    "source_type": null,
+    "source_meta": null,
+    "root": "e1ae8646-ac90-104a-59d6-5412cf5009b2",
+    "lft": "1",
+    "rgt": "6",
+    "level": "0"
+}, {
+    "id": "e3e3d9ee-a3fe-ab44-9159-5412cf050c4b",
+    "name": "SugarCategoryRoot1173290668",
+    "date_entered": "2014-09-12 10:48:26",
+    "date_modified": "2014-09-12 10:48:26",
+    "modified_user_id": "97db5270-bf07-9d85-9bd6-5412cfe951e2",
+    "created_by": "97db5270-bf07-9d85-9bd6-5412cfe951e2",
+    "description": null,
+    "deleted": "0",
+    "source_id": null,
+    "source_type": null,
+    "source_meta": null,
+    "root": "e3e3d9ee-a3fe-ab44-9159-5412cf050c4b",
+    "lft": "1",
+    "rgt": "12",
+    "level": "0"
+}]
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/&lt;module&gt;/tree/roots</code> GET endpoint.
+        </td>
+    </tr>
+</table>

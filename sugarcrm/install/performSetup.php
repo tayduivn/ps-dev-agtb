@@ -333,6 +333,7 @@ echo "<br>";
 
     $KBSContent = new KBSContent();
     $KBSContent->setupPrimaryLanguage();
+    $KBSContent->setupCategoryRoot();
 
     installerHook('pre_createUsers');
     if ($new_tables) {
