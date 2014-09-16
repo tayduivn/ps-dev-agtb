@@ -201,6 +201,9 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                             'time' => array(
                                 'disable_text_input' => true,
                                 'step' => 15,
+                                'duration' => array(
+                                    'relative_to' => 'date_start'
+                                )
                             ),
                             'readonly' => false,
                         ),

@@ -164,7 +164,50 @@
                 false :
                 !!this.def.time.disable_text_input
         };
+
+        this._enableDuration(options);
+
         this.$(this.secondaryFieldTag).timepicker(options);
+    },
+
+    /**
+     * Show duration on the timepicker dropdown if enabled in view definition.
+     * @param {Object} options - timepicker options
+     * @private
+     */
+    _enableDuration: function(options) {
+        var self = this;
+
+        if (this.def.time.duration) {
+            options.maxTime = 85500; //23.75 hours, which is 11:45pm
+
+            options.durationTime = function() {
+                var dateStartString = self.model.get(self.def.time.duration.relative_to),
+                    dateEndString = self.model.get(self.name),
+                    startDate,
+                    endDate;
+
+                this.minTime = null;
+                this.showDuration = false;
+
+                if (!dateStartString || !dateEndString) {
+                    return;
+                }
+
+                startDate = app.date(dateStartString);
+                endDate = app.date(dateEndString);
+
+                if ((startDate.years() === endDate.years()) && (startDate.months() === endDate.months()) && (startDate.days() === endDate.days())) {
+                    this.minTime = app.date.duration({
+                        hours: startDate.hours(),
+                        minutes: startDate.minutes()
+                    }).asSeconds();
+                    this.showDuration = true;
+                }
+
+                return this.minTime;
+            };
+        }
     },
 
     /**
