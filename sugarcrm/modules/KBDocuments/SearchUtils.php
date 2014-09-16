@@ -997,8 +997,8 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
         }else {
             $range = TimeDate::getInstance()->parseDateRange($filter);
             if($range) {
-                return "($field >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
-            		" AND $field <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
+                return "($field >=" . $db->convert($db->quoted($range[0]->asDb()), 'datetime') .
+                    " AND $field <= " . $db->convert($db->quoted($range[1]->asDb()), 'datetime') . ") ";
             }
         }
     }
@@ -1064,8 +1064,8 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
                 //process 'articles added last 30 days' filter
                 if($canned_search_opt == 'added'){
                     $range = TimeDate::getInstance()->parseDateRange('last_30_days');
-                    return " AND (kbdocuments.date_entered >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
-            			" AND kbdocuments.date_entered <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
+                    return " AND (kbdocuments.date_entered >=" .$db->convert($db->quoted($range[0]->asDb()), 'datetime') .
+            			" AND kbdocuments.date_entered <= " . $db->convert($db->quoted($range[1]->asDb()), 'datetime') .") ";
                 }
 
                 //process 'articles pending my approval' filter
@@ -1077,8 +1077,8 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
                 //process 'articles updated last 30 days' filter
                 if($canned_search_opt == 'updated'){
                     $range = TimeDate::getInstance()->parseDateRange('last_30_days');
-                    return " AND (kbdocuments.date_modified >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
-            			" AND kbdocuments.date_modified <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
+                    return " AND (kbdocuments.date_modified >=" .$db->convert($db->quoted($range[0]->asDb()), 'datetime') .
+            			" AND kbdocuments.date_modified <= " . $db->convert($db->quoted($range[1]->asDb()), 'datetime') .") ";
                 }
 
                 //process 'articles under faq's tag' filter
