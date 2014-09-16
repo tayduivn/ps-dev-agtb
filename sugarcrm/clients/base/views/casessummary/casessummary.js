@@ -189,7 +189,8 @@
             error: _.bind(function() {
                 this.displayNoData(true);
             }, this),
-            complete: options ? options.complete : null
+            complete: options ? options.complete : null,
+            limit: -1
         });
     }
 })
