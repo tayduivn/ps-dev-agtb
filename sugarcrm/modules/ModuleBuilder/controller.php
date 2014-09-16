@@ -538,7 +538,6 @@ class ModuleBuilderController extends SugarController
         $df = new StandardField ($module);
         $mod = BeanFactory::getBean($module);
         $obj = BeanFactory::getObjectName($module);
-        $class_name = $GLOBALS ['beanList'] [$module];
         $df->setup($mod);
 
         $field->module = $mod;
@@ -557,7 +556,7 @@ class ModuleBuilderController extends SugarController
         $mi->rebuild_extensions();
 
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
+        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearSearchCache'), array($module), true, false);
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();
