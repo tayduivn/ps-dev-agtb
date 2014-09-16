@@ -2300,6 +2300,11 @@ class Report
                 }
             }
 
+            //if no array key (no data), then set to blank to avoid out of index error
+            if(!isset($display_column['fields'][$field_name])) {
+                $display_column['fields'][$field_name] = '';
+            }
+
             if ($display_column['type'] == 'currency' && (strpos($display_column['name'], '_usdoll') !== false || !empty($display_column['group_function']))) {
                 // convert base to user preferred if set in user prefs
                 if($current_user->getPreference('currency_show_preferred')) {
