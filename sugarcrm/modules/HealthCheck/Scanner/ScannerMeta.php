@@ -181,10 +181,10 @@ class HealthCheckScannerMeta
             'report' => 'foundCustomCode',
             'bucket' => self::MANUAL,
         ),
-        410 => array(
-           'report' => 'maxFieldsView',
-            'bucket' => self::CUSTOM,
-        ),
+//        410 => array(
+//           'report' => 'maxFieldsView',
+//            'bucket' => self::CUSTOM,
+//        ),
         522 => array(
             'report' => 'subPanelWithFunction',
             'bucket' => self::MANUAL,
@@ -205,10 +205,10 @@ class HealthCheckScannerMeta
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
         ),
-        523 => array(
-            'report' => 'byRefInHookFile',
-            'bucket' => self::MANUAL,
-        ),
+//        523 => array(
+//            'report' => 'byRefInHookFile',
+//            'bucket' => self::MANUAL,
+//        ),
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
@@ -485,10 +485,10 @@ class HealthCheckScannerMeta
         $meta['descr'] = $this->getModString("LBL_SCAN_{$id}_DESCR", $strings);
 
         if(strpos($meta['title'], 'LBL_') === 0) {
-            $entry['title'] = $meta['report'];
+            $meta['title'] = $meta['report'];
         }
         if(strpos($meta['descr'], 'LBL_') === 0) {
-            $entry['descr'] = $meta['log'];
+            $meta['descr'] = $meta['log'];
         }
 
         // set defaults

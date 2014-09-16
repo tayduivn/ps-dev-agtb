@@ -34,7 +34,18 @@ function update_filter_select(){
 				}
 					this.document.getElementById(field_value).style.display='none'
 				}
-			
+
+            // Hide "0 Hours" from time dropdown for "Is Less Then" operator
+            if ($('#time_int').length && $('#future_trigger__operator').length) {
+                if ($('#future_trigger__operator option:selected').val() == 'Less Than') {
+                    $("#time_int option[value='0']").hide();
+                    if ($("#time_int option:selected").val() == 0) {
+                        $('#time_int').prop('selectedIndex', 1);
+                    }
+                } else {
+                    $("#time_int option[value='0']").show();
+                }
+            }
 		}
 function toggleFieldDisplayDiv(thediv){
 					this.document.getElementById(thediv).style.display='inline'

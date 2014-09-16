@@ -104,6 +104,12 @@
 
         $(window).on('resize.' + this.cid, this.overflowTabs);
 
+        // initialize tab view after the component is attached to DOM
+        this.on('append', function() {
+            this.overflowTabs();
+            this.handleActiveTab();
+        });
+
         this.on('render', this.registerShortcuts, this);
     },
 
@@ -232,8 +238,13 @@
             this.toggleFields(this.editableFields, true);
         }
 
-        this.handleActiveTab();
-        this.overflowTabs();
+        // initialize tab view only if the component is attached to DOM,
+        // otherwise it's initialized partially and cannot be properly
+        // re-initialized after the component is attached to DOM
+        if ($.contains(document, this.$el[0])) {
+            this.handleActiveTab();
+            this.overflowTabs();
+        }
     },
 
     /**

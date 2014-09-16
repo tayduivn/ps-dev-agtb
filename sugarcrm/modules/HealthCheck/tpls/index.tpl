@@ -126,7 +126,9 @@
                   <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm"
                      name="next_button">Confirm</a>
 
-                                    {else}
+
+                                                          {else}
+
 
                   <a class="btn btn-primary" href="index.php?module=Administration&action=index"
                      name="next_button">Back to Admin Page</a>
@@ -141,24 +143,27 @@
 
             function doHealthCheck() {
                 var flagToIcon = [, 'icon-ok-sign color_green', 'icon-ellipsis-horizontal color_yellow', 'icon-exclamation-sign color_red'],
-                    $healthcheck = $("#healthcheck");
+                        $healthcheck = $("#healthcheck");
                 $.ajax('index.php?module=HealthCheck&action=scan', {
                     dataType: 'json',
                     success: function (data) {
                         if (data.length == 0) {
                             data = [
-                                { flag: 1, descr: "Your instance is ready for upgrade!", title: "Success" }
+                                { flag: 1, descr: "Your instance is ready for upgrade!", title: "Success", displayNumber: false }
                             ];
                         }
                         data = data.sort(_sortByBucket);
                         $healthcheck.html("");
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> ", i + 1, ". ", item.title, "</h1><p>", item.descr];
+                            var displayNumber = typeof data[i].displayNumber == 'undefined' ? true : data[i].displayNumber;
+                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> "];
+                            if (displayNumber) {
+                                html.push(i + 1, ". ");
+                            }
+                            html.push(item.title, "</h1><p>", item.descr);
                             if (data[i].kb) {
-                                html.push("<a href='");
-                                html.push(data[i].kb);
-                                html.push("'> Learn more...</a>");
+                                html.push("<a target='_blank' href='", data[i].kb, "'> Learn more...</a>");
                             }
                             html.push("</p>");
                             $healthcheck.append(html.join(""));

@@ -26,7 +26,10 @@ class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
         $glueWorkflow = new WorkFlowGlue();
         $actualCondition = $glueWorkflow->glue_date('future', $condition, true);
         // Bug 50258 - fixed date logic
-        $expectedConditionChunk = preg_quote('strtotime($focus->date_closed) > (time() - 172800)', '~');
+        $expectedConditionChunk = preg_quote(
+            'TimeDate::getInstance()->fromDB($focus->date_closed)->getTimestamp() > (time() - 172800)',
+            '~'
+        );
         $matched = preg_match("~$expectedConditionChunk~i", $actualCondition);
         $this->assertEquals(1, $matched);
 

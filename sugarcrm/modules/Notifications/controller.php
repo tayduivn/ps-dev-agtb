@@ -11,37 +11,19 @@
  */
 require_once('modules/Notifications/Notifications.php');
 
+/**
+ * @deprecated Since 7.5 will be removed on 7.8
+ */
 class NotificationsController extends SugarController
 {
     var $action_remap = array ( ) ;
 
     /**
-     * @deprecated Since 7.2 will be removed on 7.5
+     * @deprecated Since 7.5 will be removed on 7.8
      */
-    function action_checkNewNotifications()
+    public function __construct()
     {
-	    global $timedate;
-	   
-	    $thirtySecondsAgoFormatted = $timedate->getNow()->get("30 seconds ago")->asDb();
-
-	    $now = $timedate->nowDb();
-
-	    $lastNotiticationCheck = !empty($_SESSION['lastNotificationCheck']) ? $_SESSION['lastNotificationCheck'] : $thirtySecondsAgoFormatted;
-	    
-        $n = BeanFactory::getBean('Notifications');
-        $unreadCount = $n->retrieveUnreadCountFromDateEnteredFilter($lastNotiticationCheck);
-        
-        //Store the last datetime checked.
-        $_SESSION['lastNotificationCheck'] = $now;
-        
-        $results = array('unreadCount' => $unreadCount );
-
-	    $json = getJSONobj();
-		$out = $json->encode($results);
-		ob_clean();
-		print($out);
-		sugar_cleanup(true);
-	    
+        $GLOBALS['log']->deprecated('Notifications/controller.php is deprecated');
+        parent::SugarController();
     }
 }
-?>
