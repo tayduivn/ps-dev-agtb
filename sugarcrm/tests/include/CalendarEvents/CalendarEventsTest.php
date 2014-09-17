@@ -129,9 +129,9 @@ class CalendarEventsTest_CalendarEvents extends CalendarEvents
         return $this->eventsCreated;
     }
 
-    protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray, array $args = array())
+    protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray)
     {
-        $this->eventsCreated = parent::saveRecurring($parentBean, $repeatDateTimeArray, $args);
+        $this->eventsCreated = parent::saveRecurring($parentBean, $repeatDateTimeArray);
     }
 }
 

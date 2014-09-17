@@ -127,37 +127,11 @@ class CalendarEvents
     /**
      * @param SugarBean $parentBean
      * @param array $repeatDateTimeArray
-     * @param array $args
      * @return array events saved
      */
-    protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray, array $args = array())
+    protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray)
     {
-        Activity::disable();
-
-        $recurringEvents = array();
-        $clone = clone $parentBean;
-        foreach ($repeatDateTimeArray as $dateStart) {
-            $clone->id = "";
-            $clone->date_start = $dateStart;
-            $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(), $dateStart);
-            $date = $date->get("+{$parentBean->duration_hours} Hours")->get("+{$parentBean->duration_minutes} Minutes");
-            $date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
-            $clone->date_end = $date_end;
-            $clone->recurring_source = "Sugar";
-            $clone->repeat_parent_id = $parentBean->id;
-            $clone->update_vcal = false;
-            $clone->save(false);
-
-            if ($clone->id) {
-                $recurringEvents[$clone->id] = $clone->date_start;
-            }
-        }
-
-        Activity::enable();
-
-        $this->rebuildFreeBusyCache($GLOBALS['current_user']);
-
-        return $recurringEvents;
+        return CalendarUtils::saveRecurring($parentBean, $repeatDateTimeArray);
     }
 
     /**
