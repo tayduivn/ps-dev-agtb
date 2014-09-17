@@ -181,10 +181,10 @@ class HealthCheckScannerMeta
             'report' => 'foundCustomCode',
             'bucket' => self::MANUAL,
         ),
-        410 => array(
-           'report' => 'maxFieldsView',
-            'bucket' => self::CUSTOM,
-        ),
+//        410 => array(
+//           'report' => 'maxFieldsView',
+//            'bucket' => self::CUSTOM,
+//        ),
         522 => array(
             'report' => 'subPanelWithFunction',
             'bucket' => self::MANUAL,
@@ -205,10 +205,10 @@ class HealthCheckScannerMeta
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
         ),
-        523 => array(
-            'report' => 'byRefInHookFile',
-            'bucket' => self::MANUAL,
-        ),
+//        523 => array(
+//            'report' => 'byRefInHookFile',
+//            'bucket' => self::MANUAL,
+//        ),
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,

@@ -52,12 +52,6 @@ class SugarSearchEngineElasticIndexStrategySingle extends SugarSearchEngineElast
         $params = array(),
         $recreate = false
     ) {
-        // During install refresh as a custom unique_key may have been provided
-        // which was not available earlier
-        if (!empty($GLOBALS['installing'])) {
-            $this->indexName = $this->getUniqueIndexName(true);
-        }
-
         $this->createSingleIndex($client, $this->indexName, $params, $recreate);
         $this->setMapping($mapper);
     }

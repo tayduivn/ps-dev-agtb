@@ -212,12 +212,10 @@ class ACLAction  extends SugarBean
     	}
 
     	if(isset(self::$acl_map[$user_id][$type])) {
-    	    $key = md5(self::$acl_map[$user_id][$type].$sessid);
+            $key = md5(self::$acl_map[$user_id][$type]);
     		return sugar_cache_retrieve($key);
-    	} else {
-    	    self::$acl_map[$user_id][$type] = "ACL_{$type}_{$user_id}";
-    	    sugar_cache_put('ACL', self::$acl_map);
     	}
+        return array();
     }
 
     protected static function storeToCache($user_id, $type, $data)
@@ -228,13 +226,12 @@ class ACLAction  extends SugarBean
     	}
 
     	if(!isset(self::$acl_map[$user_id][$type])) {
-    		 self::$acl_map[$user_id][$type] = "ACL_{$type}_{$user_id}";
+            self::$acl_map[$user_id][$type] = "ACL_{$type}_".md5(serialize($data));
     		 sugar_cache_put('ACL', self::$acl_map);
     	}
-    	$key = md5(self::$acl_map[$user_id][$type].$sessid);
+        $key = md5(self::$acl_map[$user_id][$type]);
     	sugar_cache_put($key, $data, session_cache_expire());
     }
-
 
     /**
     * static getUserActions($user_id,$refresh=false, $category='', $action='')

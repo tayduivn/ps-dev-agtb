@@ -128,12 +128,9 @@ class JitReports extends Jit {
         // store last grouped field
         $lastgroupfield = end($this->group_by);
 
-        switch ($this->reporter->focus->field_defs[$lastgroupfield]['type']) {
-            case "date":
-                usort($super_set, array($this, "runDateSort"));
-                break;
-            default:
-                break;
+        if (isset($this->reporter->focus->field_defs[$lastgroupfield]) &&
+            $this->reporter->focus->field_defs[$lastgroupfield]['type'] === "date") {
+            usort($super_set, array($this, "runDateSort"));
         }
     }
 

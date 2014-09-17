@@ -755,35 +755,12 @@ function handleSugarConfig() {
         $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
     }
 
-    // Setup FTS
+    // Setup FTS settings
     if (!empty($_SESSION['setup_fts_type'])) {
-
-        // Base settings
-        $ftsSettings = array(
-            'host' => $_SESSION['setup_fts_host'],
-            'port' => $_SESSION['setup_fts_port'],
-        );
-
-        // Add optional settings
-        $ftsOptional = array(
-            'curl',
-            'transport',
-            'index_settings',
-            'index_strategy',
-        );
-        foreach ($ftsOptional as $ftsOpt) {
-            $ftsConfigKey = "setup_fts_{$ftsOpt}";
-            if (!empty($_SESSION[$ftsConfigKey])) {
-                $ftsSettings[$ftsOpt] = $_SESSION[$ftsConfigKey];
-            }
-        }
-
-        // Add FTS settings to $sugar_config
         $sugar_config['full_text_engine'] = array(
-            $_SESSION['setup_fts_type'] => $ftsSettings,
+            $_SESSION['setup_fts_type'] => getFtsSettings()
         );
     }
-
 
     /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
        these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
@@ -817,6 +794,7 @@ function handleSugarConfig() {
     if(empty($sugar_config['unique_key'])){
         $sugar_config['unique_key'] = md5( create_guid() );
     }
+
     // add installed langs to config
     // entry in upgrade_history comes AFTER table creation
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && is_array($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])) {
@@ -872,6 +850,36 @@ function handleSugarConfig() {
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
+}
+
+/**
+ * Get FTS settings
+ * @return array
+ */
+function getFtsSettings()
+{
+    // Base settings
+    $ftsSettings = array(
+        'host' => $_SESSION['setup_fts_host'],
+        'port' => $_SESSION['setup_fts_port'],
+    );
+
+    // Add optional settings
+    $ftsOptional = array(
+        'curl',
+        'transport',
+        'index_settings',
+        'index_strategy',
+    );
+
+    foreach ($ftsOptional as $ftsOpt) {
+        $ftsConfigKey = "setup_fts_{$ftsOpt}";
+        if (!empty($_SESSION[$ftsConfigKey])) {
+            $ftsSettings[$ftsOpt] = $_SESSION[$ftsConfigKey];
+        }
+    }
+
+    return $ftsSettings;
 }
 
 //BEGIN SUGARCRM flav=ent ONLY

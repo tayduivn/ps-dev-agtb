@@ -1259,6 +1259,7 @@ class SugarBean
                                           ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
+                        Relationship::$relCacheInternal[$rel_name] = true;
                     }
                 }
             } else {
@@ -5728,7 +5729,7 @@ class SugarBean
         if(!empty($record))
         {
             // this copies the object into the array
-            $list[] = $template;
+            $list[] = $record;
         }
     }
 
