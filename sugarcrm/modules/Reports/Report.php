@@ -2215,7 +2215,8 @@ class Report
         $fields = array();
 
         foreach ($db_row as $key => $value) {
-            $fields[strtoupper($key)] = $value;
+            //if value is null or not set, then change to empty string.  This prevents array index errors while processing
+            $fields[strtoupper($key)] = is_null($value) ? '' : $value;
         }
 
         // here we want to make copies, so use foreach
@@ -2298,11 +2299,6 @@ class Report
                 if (isset($display_column['fields'][$field_name])) {
                     $display = $display_column['fields'][$field_name];
                 }
-            }
-
-            //if no array key (no data), then set to blank to avoid out of index error
-            if(!isset($display_column['fields'][$field_name])) {
-                $display_column['fields'][$field_name] = '';
             }
 
             if ($display_column['type'] == 'currency' && (strpos($display_column['name'], '_usdoll') !== false || !empty($display_column['group_function']))) {
