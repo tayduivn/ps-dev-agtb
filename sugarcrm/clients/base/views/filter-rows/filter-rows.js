@@ -714,7 +714,6 @@
                 this._renderField(field, fieldContainer);
             }
         }
-
         // When the value change a quicksearch should be fired to update the results
         this.listenTo(model, "change", function() {
             this._updateFilterData($row);

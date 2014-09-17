@@ -34,6 +34,10 @@ $vardefs = array(
             'link' => 'tags',
             'source' => 'non-db',
             'importable' => true,
+            'isMultiSelect' => true,
+            'dbType' => 'varchar',
+            'id_name' => 'tag',
+            'rname' => 'name',
         ),
     ),
     'relationships' => array(

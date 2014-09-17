@@ -173,13 +173,31 @@
             }
         } else if (e.removed) {
             _.each(this.value, function(record) {
-                if  (record.name === e.removed.text) {
+                if (record.name === e.removed.text) {
                     record.removed = true;
                 }
             });
         }
 
         this.model.set('tag', this.value);
+    },
+
+    /**
+     * Massage model's tag values in order to make the filter work correctly.
+     *
+     * Return the model's tag value pre-change so we can set it up correctly again after the filter does its thing
+     */
+    formatDataForFilter: function() {
+        // Turn the current array of Tag objects into a list of tag names. If a tag object has the removed flag set,
+        //it will not be added to the list.
+        var collection = _.filter(this.model.get('tag'), function(tag) {
+                if (!tag.removed) {
+                    return true;
+                }}) || [],
+            filterTags = _.pluck(collection, 'name');
+
+        this.model.set('tag', filterTags);
+        return collection;
     },
 
     /**

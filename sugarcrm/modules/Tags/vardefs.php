@@ -27,7 +27,13 @@ $dictionary['Tag'] = array(
     'unified_search_default_enabled' => true,
     'fields' => array(),
     'relationships' => array(),
-    'indices' => array(),
+    'indices' => array(
+        'name' => array(
+            'name' => 'idx_tag_name',
+            'type' => 'index',
+            'fields' => array('name'),
+        ),
+    ),
     'uses' => array(
         'basic',
         'external_source'

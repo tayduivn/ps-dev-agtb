@@ -32,6 +32,15 @@
      * {@inheritDoc}
      */
     _render: function() {
+        // If model's tag attribute is formatted for filters, unformat it
+        if (this.view.action === 'filter-rows') {
+            var unformattedTag = app.cache.get('tags:filter:unformatted');
+            if (unformattedTag) {
+                this.model.set('tag', unformattedTag, {silent: true});
+            }
+        }
+
+        // Set up tagList variable for use in the list view
         this.value = this.getFormattedValue();
         if (this.value) {
             this.tagList = _.pluck(this.value, 'name').join(', ');
@@ -39,5 +48,17 @@
 
         this._super('_render');
 
+        // Set up post-render actions for tag fields in filters
+        if (this.view.action === 'filter-rows') {
+            // Handle caching/stickiness for the filter
+            if (unformattedTag) {
+                this.formatDataForFilter();
+            }
+            // Handle filter updating
+            this.$('input.select2field').on('change', _.bind(function() {
+                //Massage model data for filter usage
+                app.cache.set('tags:filter:unformatted', this.formatDataForFilter());
+            }, this));
+        }
     }
 })
