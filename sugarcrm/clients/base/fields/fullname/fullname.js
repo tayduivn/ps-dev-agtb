@@ -26,55 +26,52 @@
     formatMap: {
         'f': 'first_name',
         'l': 'last_name',
-        's': 'salutation',
+        's': 'salutation'
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      * Sort the dependant fields by the user locale format order.
      */
     initialize: function(options) {
-    	var context = options.view.context,
-    		module = context.get("module");
-    	
-    	if(module) {
-    		var meta = app.metadata.getModule(module);
-    		if(meta && meta.nameFormat) {
-    			this.formatMap = meta.nameFormat;
-    		}
-    	}
         var formatPlaceholder = app.user.getPreference('default_locale_name_format') || '';
-        // extract fields list from format
-        options.def.fields = _.reduce(formatPlaceholder.split(''), function(fields, letter) {
-    		// only letters a-z may be significant in the format, 
-    		// everything else is translated verbatim
-        	if(letter >= 'a' && letter <= 'z' && this.formatMap[letter]) {
-        		// clone because we'd rewrite it later and we don't want to mess with actual metadata
-        		fields.push(_.clone(meta.fields[this.formatMap[letter]] || this.formatMap[letter]));
-        	}
-        	return fields;
-        }, [], this);
-        options.def.fields = app.metadata._patchFields(module, meta, options.def.fields);
-
-        this._super('initialize',[options]);
-
-        if (!app.acl.hasAccessToModel('view', this.model) && this.def) {
-            this.def.link = false;
+        this._super('initialize', [options]);
+        if (!this.module) {
+            app.logger.error('Fullname field requires a module');
+            this.dispose();
+            return;
         }
-    },
 
-    _loadTemplate: function() {
-        this._super('_loadTemplate');
+        var meta = app.metadata.getModule(this.module);
+        this.formatMap = meta.formatMap || this.formatMap;
 
-        //Bug: SP-1273 - Fixes Contacts subpanel record links to home page
-        //(where expectation was to go to the corresponding Contact record)
-        if (this.def.link) {
+        this.def.fields = _.reduce(formatPlaceholder.split(''), function(fields, letter) {
+            // only letters a-z may be significant in the format,
+            // everything else is translated verbatim
+            if (letter >= 'a' && letter <= 'z' && this.formatMap[letter]) {
+                // clone because we'd rewrite it later and we don't want to mess with actual metadata
+                fields.push(_.clone(meta.fields[this.formatMap[letter]] || this.formatMap[letter]));
+            }
+            return fields;
+        }, [], this);
+        this.def.fields = app.metadata._patchFields(this.module, meta, this.def.fields);
+
+        if (app.acl.hasAccessToModel('view', this.model) && this.def && this.def.link) {
             var action = this.def.route && this.def.route.action ? this.def.route.action : '';
             //If `this.template` resolves to `base/list.hbs`, that template expects an
             //initialized `this.href`. That's normally handled by the `base.js` controller,
             //but, in this case, since `fullname.js` is controller, we must handle here.
-            this.href = '#' + app.router.buildRoute(this.module||this.context.get('module'), this.model.id, action, this.def.bwcLink);
+            this.href = '#' + app.router.buildRoute(this.module || this.context,
+                this.model.id, action, this.def.bwcLink);
         }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
         var template = app.template.getField(
             this.type,
             this.view.name + '-' + this.tplName,
@@ -90,43 +87,10 @@
     },
 
     /**
-     * {@inheritDoc}
-     * Returns a single placeholder instead of fieldset placeholder
-     * since fullname field generates children placeholder on render.
-     */
-    getPlaceholder: function() {
-        return app.view.Field.prototype.getPlaceholder.call(this);
-    },
-
-    /**
-     * {@inheritDoc}
-     * Since fullname field generates children field components
-     * each rendering time, it should dispose the previous generated items
-     * before it renders children placeholders.
-     */
-    _render: function() {
-        _.each(this.fields, function(field) {
-            field.dispose();
-            delete this.view.fields[field.sfId];
-        }, this);
-        this.fields = [];
-
-        app.view.Field.prototype._render.call(this);
-
-        // this.fields will have been updated from the childField hbs-helper during _render
-        _.each(this.fields, function(field) {
-            field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
-            field.render();
-        }, this);
-
-        return this;
-    },
-
-    /**
-     * {@inheritDoc}
+     * @inheritDoc
      * Format name parts to current user locale.
      */
-    format: function(name) {
+    format: function() {
         return app.utils.formatNameModel(this.model.module, this.model.attributes);
     },
 
@@ -139,7 +103,7 @@
             // As detail templates don't contain Sidecar Fields,
             // we need to rerender this field in order to visualize the changes
             this.model.on("change:" + this.name, function() {
-                if (this.fields.length === 0) {
+                if (this.action !== 'edit') {
                     this.render();
                 }
             }, this);
@@ -177,5 +141,17 @@
         }
 
         return padding;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    setMode: function(mode) {
+        this._super('setMode', [mode]);
+
+        //FIXME: components (like headerpane) should listen to setMode of the fields inside of it.
+        //Triggering window resize will allow components (like headerpane) to
+        //recalculate their inner elements placement.
+        $(window).trigger('resize');
     }
 })

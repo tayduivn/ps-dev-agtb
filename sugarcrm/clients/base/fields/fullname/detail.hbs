@@ -10,6 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="ellipsis_inline"{{#if value}} data-placement="bottom" title="{{value}}"{{/if}}>
-    {{#if def.link}}<a href="#{{buildRoute model=model}}">{{value}}</a>{{else}}{{value}}{{/if}}
-</div>
+<span class="ellipsis_inline" rel="tooltip" title="{{value}}" data-placement="bottom" data-fieldname="{{name}}">
+    {{value}}
+</span>

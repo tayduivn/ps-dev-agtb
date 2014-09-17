@@ -1,6 +1,6 @@
 describe('Base.Field.Actiondropdown', function() {
 
-    var app, field, view, moduleName = 'Contacts';
+    var app, field, view, moduleName = 'Contacts', fieldDef;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -10,6 +10,8 @@ describe('Base.Field.Actiondropdown', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('actiondropdown', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('actiondropdown', 'field', 'base', 'dropdown');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
@@ -17,7 +19,7 @@ describe('Base.Field.Actiondropdown', function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
-        field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
+        fieldDef = {
             'name': 'main_dropdown',
             'type': 'actiondropdown',
             'buttons': [
@@ -30,20 +32,11 @@ describe('Base.Field.Actiondropdown', function() {
                     'name' : 'test2'
                 }
             ]
-        }, moduleName);
-        var $element = $(field.getPlaceholder().toString());
-        field.setElement($element);
-        field.render();
-
-        _.each(field.fields, function(rowaction) {
-            rowaction.setElement(field.$("span[sfuuid='" + rowaction.sfId + "']"));
-            rowaction.render();
-        });
+        };
     });
 
     afterEach(function() {
         sinon.collection.restore();
-        field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -51,46 +44,43 @@ describe('Base.Field.Actiondropdown', function() {
         field = null;
     });
 
-    it('should render button html nested on the buttons', function() {
-        expect(field.fields.length).toBe(2);
-        _.each(field.fields, function(button) {
-            var actualPlaceholderCount = field.$el.find("span[sfuuid='" + button.sfId + "']").length;
-            expect(actualPlaceholderCount).toBe(1);
+    describe('render dropdown', function() {
+        it('should render button html nested on the buttons', function() {
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+            field.renderDropdown();
+            expect(field.fields.length).toBe(2);
+            _.each(field.fields, function(button) {
+                var actualPlaceholderCount = field.$el.find("span[sfuuid='" + button.sfId + "']").length;
+                expect(actualPlaceholderCount).toBe(1);
+            });
+
+            field.dispose();
+        });
+
+        it('should have btn-group class when more than one button is visible', function() {
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+            field.renderDropdown();
+            expect(field.$el.hasClass('btn-group')).toBe(true);
+
+            field.dispose();
+        });
+
+        it('should not have btn-group class when only one button is visible', function() {
+            fieldDef.buttons.pop();
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+            expect(field.fields.length).toBe(1);
+            field.renderDropdown();
+            expect(field.$el.hasClass('btn-group')).toBe(false);
+
+            field.dispose();
         });
     });
 
-    it('should populate proper dropdown list when a nested button is hidden', function() {
-
-        expect(field.fields.length).toBeGreaterThan(1);
-
-
-        var button = field.fields[1];
-        var actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
-        expect(actualPlaceholderCount).toBe(1);
-
-        //second button should be at the primary position when the first one is hidden
-        field.fields[0].hide();
-        expect(field.fields[0].$el.is(':hidden')).toBe(true);
-        actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
-        expect(actualPlaceholderCount).toBe(0);
-
-        //the button position should be restored when the first one is shown once again
-        field.fields[0].show();
-        actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
-        expect(actualPlaceholderCount).toBe(1);
-    });
-
-    it('should have btn-group class when more than one button is visible', function() {
-        expect(field.$el.hasClass('btn-group')).toBe(true);
-    });
-
-    it('should not have btn-group class when only one button is visible', function() {
-        field.fields[0].hide();
-        expect(field.$el.hasClass('btn-group')).toBe(false);
-    });
     describe('switch_on_click', function() {
         beforeEach(function() {
-            field.dispose();
             field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
                 'name': 'main_dropdown',
                 'type': 'actiondropdown',
@@ -114,18 +104,15 @@ describe('Base.Field.Actiondropdown', function() {
                     }
                 ]
             }, moduleName);
-            var $element = $(field.getPlaceholder().toString());
-            field.setElement($element);
             field.render();
         });
         afterEach(function() {
             field.dispose();
         });
         it('should switch the selected action against the default action', function() {
-            var defaultAction = 0,
-                selectedAction = 2,
-                actualDefaultButton = field.fields[defaultAction],
-                actualSelectedButton = field.fields[selectedAction];
+            var selectedAction = 1,
+                actualDefaultButton = field.defaultActionBtn,
+                actualSelectedButton = field.dropdownFields[selectedAction];
             expect(actualDefaultButton.def.name).toBe('test1');
 
             //click dropdown toggle to display the dropdown actions
@@ -134,8 +121,9 @@ describe('Base.Field.Actiondropdown', function() {
 
             //after the dropdown action is clicked, both buttons are switched
             actualSelectedButton.$el.click();
-            expect(field.fields[defaultAction].def.name).toBe('test3');
-            expect(field.fields[selectedAction].def.name).toBe('test1');
+            field.renderDropdown();
+            expect(field.defaultActionBtn.def.name).toBe('test3');
+            expect(field.dropdownFields[selectedAction].def.name).toBe('test1');
 
             //the default button place underneath the dropdown
             var $actualDropdown = field.$('.dropdown-menu'),
@@ -158,7 +146,6 @@ describe('Base.Field.Actiondropdown', function() {
     });
     describe('no_default_action', function() {
         beforeEach(function() {
-            field.dispose();
             field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
                 'name': 'main_dropdown',
                 'type': 'actiondropdown',
@@ -193,8 +180,8 @@ describe('Base.Field.Actiondropdown', function() {
         });
         it('should place all buttons underneath the dropdown actions', function() {
             //click dropdown toggle to display the dropdown actions
-            field.$('[data-toggle=dropdown]').click();
-            var $defaultPlaceholder = field.$('[data-toggle=dropdown]').prev();
+            field.$(field.actionDropDownTag).click();
+            var $defaultPlaceholder = field.$(field.actionDropDownTag).prev();
 
             //the default placeholder has to be empty
             expect($defaultPlaceholder.length).toBe(0);
@@ -229,11 +216,12 @@ describe('Base.Field.Actiondropdown', function() {
     });
 
     describe('divider', function() {
+        var fieldDef;
         beforeEach(function() {
-            field.dispose();
-            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
+            fieldDef = {
                 'name': 'main_dropdown',
                 'type': 'actiondropdown',
+                'no_default_action': true,
                 //'switch_on_click' option must be ignored when no_default_action is enabled
                 'switch_on_click': true,
                 'buttons': [
@@ -267,19 +255,53 @@ describe('Base.Field.Actiondropdown', function() {
                         'name' : 'test4'
                     }
                 ]
-            }, moduleName);
-            var $element = $(field.getPlaceholder().toString());
-            field.setElement($element);
-            field.render();
-        });
-        afterEach(function() {
-            sinon.collection.restore();
-            field.dispose();
+            };
         });
 
         it('should contain the divider in the correct location', function() {
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+
             //click dropdown toggle to display the dropdown actions
             field.$('[data-toggle=dropdown]').click();
+            var $actualDropdown = field.$('.dropdown-menu'),
+                $firtDropdown = $actualDropdown.find('li:eq(0)'),
+                $secondDropdown = $actualDropdown.find('li:eq(1)'),
+                $thirdDropdown = $actualDropdown.find('li:eq(2)'),
+                $forthDropdown = $actualDropdown.find('li:eq(3)');
+            expect($firtDropdown.hasClass('divider')).toBe(false);
+            expect($secondDropdown.hasClass('divider')).toBe(true);
+            expect($thirdDropdown.hasClass('divider')).toBe(false);
+            expect($forthDropdown.hasClass('divider')).toBe(true);
+
+            field.dispose();
+        });
+
+        it('should not contain the divider above the first actionmenu', function() {
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+
+            //click dropdown toggle to display the dropdown actions
+            field.$('[data-toggle=dropdown]').click();
+
+            var $actualDropdown = field.$('.dropdown-menu'),
+                $divider = $actualDropdown.find('li:eq(0)');
+            expect($divider.hasClass('divider')).toBe(false);
+
+            field.dispose();
+        });
+
+        it('should re-organize the divider once button is hidden due to access fails', function() {
+            //click dropdown toggle to display the dropdown actions
+            var accessStub = sinon.collection.stub(app.acl, 'hasAccess', function(action, module) {
+                return action === 'edit' ? false : true;
+            });
+            fieldDef['buttons'][2]['acl_action'] = 'edit';
+            fieldDef['buttons'][2]['acl_module'] = moduleName;
+
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
+            field.renderDropdown();
 
             var $actualDropdown = field.$('.dropdown-menu'),
                 $firtDropdown = $actualDropdown.find('li:eq(0)'),
@@ -290,49 +312,25 @@ describe('Base.Field.Actiondropdown', function() {
             expect($secondDropdown.hasClass('divider')).toBe(true);
             expect($thirdDropdown.hasClass('divider')).toBe(false);
             expect($forthDropdown.hasClass('divider')).toBe(true);
-        });
-
-        it('should not contain the divider above the first actionmenu', function() {
-            //click dropdown toggle to display the dropdown actions
-            field.$('[data-toggle=dropdown]').click();
-
-            var $actualDropdown = field.$('.dropdown-menu'),
-                $divider = $actualDropdown.find('li:eq(0)');
-            expect($divider.hasClass('divider')).toBe(false);
-        });
-
-        it('should re-organize the divider once button is hidden due to access fails', function() {
-            //click dropdown toggle to display the dropdown actions
-            var accessStub = sinon.collection.stub(field.fields[2], 'hasAccess', function() {
-                return false;
-            });
-            field.$('[data-toggle=dropdown]').click();
-
-            var $actualDropdown = field.$('.dropdown-menu'),
-                $firtDropdown = $actualDropdown.find('li:eq(0)'),
-                $secondDropdown = $actualDropdown.find('li:eq(1)'),
-                $thirdDropdown = $actualDropdown.find('li:eq(2)'),
-                $forthDropdown = $actualDropdown.find('li:eq(3)');
-            expect($firtDropdown.hasClass('divider')).toBe(false);
-            expect($secondDropdown.hasClass('divider')).toBe(true);
-            expect($thirdDropdown.hasClass('divider')).toBe(false);
-            expect($forthDropdown.hasClass('divider')).toBe(false);
             accessStub.restore();
+
+            field.dispose();
         });
     });
 
     describe('setMode', function() {
-        var sandbox = sinon.sandbox.create(),
-            f;
+        var f;
 
         beforeEach(function() {
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
+            field.render();
             f = _.first(field.fields);
             f.def.icon = 'icon-edit';
         });
 
         afterEach(function() {
             f.def.icon = undefined;
-            sandbox.restore();
+            field.dispose();
         });
 
         it('should set action to list for first field when not in a subpanel', function() {
@@ -340,7 +338,7 @@ describe('Base.Field.Actiondropdown', function() {
             expect(f.action).toEqual('list');
         });
         it('should set the action to small for first field when in a subpanel', function() {
-            sandbox.stub(f, 'closestComponent', function() {
+            sinon.collection.stub(f, 'closestComponent', function() {
                 return true;
             });
             field.setMode('list');

@@ -10,15 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#with def}}
-    {{#each fields}}
-        <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
-            {{#unless dismiss_label}}
-                <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
-            {{/unless}}
-            <span data-fieldname="{{name}}">
-                {{field ../../view model=../../model template=../../options.viewName parent=../../this}}
-            </span>
-        </span>
-    {{/each}}
-{{/with}}
+{{#each fields}}
+    <span data-fieldname="{{name}}">
+        {{placeholder}}
+    </span>
+{{/each}}

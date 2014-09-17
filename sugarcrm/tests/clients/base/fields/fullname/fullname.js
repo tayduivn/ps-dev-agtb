@@ -19,7 +19,7 @@ describe('Base.Field.Fullname', function() {
         SugarTest.loadHandlebarsTemplate('list', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'edit');
-        SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'record-edit');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'fullname');
         SugarTest.testMetadata.set();
@@ -98,33 +98,6 @@ describe('Base.Field.Fullname', function() {
     });
 
     describe('render', function() {
-        it('Should generate children fields dynamically each rendering time', function() {
-            user.setPreference('default_locale_name_format', 'l s f');
-
-            view.render();
-            field = view.getField('full_name');
-            //one placeholder
-            expect(_.values(view.fields).length).toBe(1);
-            expect(field.fields.length).toBe(0);
-            expect(field.value).toBe(fullName);
-
-            //switches to edit mode
-            view.viewName = 'edit';
-            view.action = 'edit';
-            view.render();
-            field = view.getField('full_name');
-            //one placeholder for parent (fullname)
-            //three placeholders for children (first_name, last_name, salutation)
-            expect(_.values(view.fields).length).toBe(4);
-            expect(field.fields.length).toBe(3);
-
-            //switches to list mode
-            view.viewName = 'list';
-            view.render();
-            field = view.getField('full_name');
-            expect(_.values(view.fields).length).toBe(1);
-            expect(field.fields.length).toBe(0);
-        });
         it('should update the Full Name when First Name or Last Name changes', function() {
             user.setPreference('default_locale_name_format', 's f l');
             view.render();
@@ -143,37 +116,10 @@ describe('Base.Field.Fullname', function() {
             field.model.set('salutation', 'Dr.');
             expect(field.model.get('full_name')).toBe('Dr. FIRST LAST');
 
-            //Until now we were faking an edit template with 3 SugarFields
-            expect(renderStub).not.toHaveBeenCalled();
-
-            //Now we are faking a detail template with 0 SugarFields so the need to manually render full_name field
-            field.fields.length = 0;
-            field.model.set('first_name', 'first');
-            expect(field.model.get('full_name')).toBe('Dr. first LAST');
-
             expect(renderStub).toHaveBeenCalled();
+            expect(renderStub.calledThrice).toBeTruthy();
 
             renderStub.restore();
-        });
-    });
-
-    describe('_loadTemplate', function() {
-        it('should build this.href if def.link true', function() {
-            var expected = "#Contacts/12345";
-            view.render();
-            field = view.getField('full_name');
-            field.model.set('id', 12345);
-            field._loadTemplate();
-            expect(field.href).toEqual(expected);
-        });
-        it('should NOT build this.href if def.link is falsy', function() {
-            view.render();
-            field = view.getField('full_name');
-            field.def.link = undefined;
-            field.href = undefined;
-            field.model.set('id', 12345);
-            field._loadTemplate();
-            expect(field.href).toBeUndefined();
         });
     });
 });

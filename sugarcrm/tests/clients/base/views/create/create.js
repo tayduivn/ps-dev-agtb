@@ -10,6 +10,8 @@ describe("Create View", function() {
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('actiondropdown', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('actiondropdown', 'field', 'base', 'dropdown');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
@@ -89,6 +91,7 @@ describe("Create View", function() {
                     "type":"actiondropdown",
                     "name":"main_dropdown",
                     "primary":true,
+                    'showOn': 'create',
                     "buttons": [
                         {
                             "type":"rowaction",
@@ -97,15 +100,35 @@ describe("Create View", function() {
                         }, {
                             "type":"rowaction",
                             "name":"save_view_button",
-                            "label":"LBL_SAVE_AND_VIEW",
-                            "showOn":"create"
+                            "label":"LBL_SAVE_AND_VIEW"
                         }, {
                             "type":"rowaction",
                             "name":"save_create_button",
-                            "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                            "showOn":"create"
+                            "label":"LBL_SAVE_AND_CREATE_ANOTHER"
                         }
                     ]
+                }, {
+                    'type': 'actiondropdown',
+                    'name': 'duplicate_dropdown',
+                    'primary': true,
+                    'switch_on_click': true,
+                    'showOn': 'duplicate',
+                    'buttons': [{
+                        'type': 'rowaction',
+                        'name': 'save_button',
+                        'label': 'LBL_IGNORE_DUPLICATE_AND_SAVE'
+                    }]
+                }, {
+                    'type': 'actiondropdown',
+                    'name': 'select_dropdown',
+                    'primary': true,
+                    'switch_on_click': true,
+                    'showOn': 'select',
+                    'buttons': [{
+                        'type': 'rowaction',
+                        'name': 'save_button',
+                        'label': 'LBL_SAVE_BUTTON_LABEL'
+                    }]
                 }
             ]
         }, moduleName);
@@ -334,7 +357,7 @@ describe("Create View", function() {
     });
 
     describe('Render', function() {
-        it("Should render 6 buttons and 5 fields", function() {
+        it("Should render 5 sets of buttons and 5 fields", function() {
             sinonSandbox.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
                 // The panel grid contains references to the actual fields found in panel.fields, so the fields must
                 // be modified to include the field attributes that would be calculated during a normal render
@@ -352,28 +375,38 @@ describe("Create View", function() {
             view.render();
 
             _.each(view.fields, function(field) {
-                if (!view.buttons[field.name]) {
+                if (!view.buttons[field.name] && field.type !== 'button' && field.type !== 'rowaction') {
                     fields++;
                 }
             });
 
             expect(fields).toBe(5);
-            expect(_.values(view.buttons).length).toBe(6);
+            expect(_.values(view.buttons).length).toBe(5);
         });
     });
 
     describe('Buttons', function() {
-        it("Should hide the restore button when the form is empty", function() {
+        it("Should only show the main dropdown and the cancel button when the form is empty", function() {
             view.render();
+            _.each(view.buttons, function(button) {
+                sinonSandbox.stub(button, 'show', function() {
+                    this.isHidden = false;
+                });
+                sinonSandbox.stub(button, 'hide', function() {
+                    this.isHidden = true;
+                });
+            });
 
-            expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
+            view.setButtonStates(view.STATE.CREATE);
+
             expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
-            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeFalsy();
-            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeFalsy();
+            expect(view.buttons['main_dropdown'].isHidden).toBeFalsy();
+            expect(view.buttons['duplicate_dropdown'].isHidden).toBeTruthy();
+            expect(view.buttons['select_dropdown'].isHidden).toBeTruthy();
             expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
         });
 
-        it("Should hide all buttons except save and cancel when duplicates are found.", function() {
+        it("Should only show the cancel button and the duplicate dropdown when duplicates are found.", function() {
             var flag = false,
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     var data = {
@@ -398,11 +431,23 @@ describe("Create View", function() {
 
             runs(function() {
                 view.render();
+                _.each(view.buttons, function(button) {
+                    sinonSandbox.stub(button, 'show', function() {
+                        this.isHidden = false;
+                    });
+                    sinonSandbox.stub(button, 'hide', function() {
+                        this.isHidden = true;
+                    });
+                });
+                view.setButtonStates(view.STATE.DUPLICATE);
                 view.model.set({
                     first_name: 'First',
                     last_name: 'Last'
                 });
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -410,11 +455,10 @@ describe("Create View", function() {
             }, 'handleDuplicateFound should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
-                expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_IGNORE_DUPLICATE_AND_SAVE');
                 expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
-                expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeTruthy();
-                expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeTruthy();
+                expect(view.buttons['main_dropdown'].isHidden).toBeTruthy();
+                expect(view.buttons['duplicate_dropdown'].isHidden).toBeFalsy();
+                expect(view.buttons['select_dropdown'].isHidden).toBeTruthy();
                 expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
             });
         });
@@ -430,17 +474,24 @@ describe("Create View", function() {
             };
 
             view.render();
+            _.each(view.buttons, function(button) {
+                sinonSandbox.stub(button, 'show', function() {
+                    this.isHidden = false;
+                });
+                sinonSandbox.stub(button, 'hide', function() {
+                    this.isHidden = true;
+                });
+            });
+            view.setButtonStates(view.STATE.SELECT);
             view.model.set({
                 first_name: 'First',
                 last_name: 'Last'
             });
-            view.context.trigger('list:dupecheck-list-select-edit:fire', app.data.createBean(moduleName, data));
 
-            expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
-            expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_SAVE_BUTTON_LABEL');
             expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
-            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeTruthy();
-            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeTruthy();
+            expect(view.buttons['main_dropdown'].isHidden).toBeTruthy();
+            expect(view.buttons['duplicate_dropdown'].isHidden).toBeTruthy();
+            expect(view.buttons['select_dropdown'].isHidden).toBeFalsy();
             expect(view.buttons[view.restoreButtonName].isHidden).toBeFalsy();
         });
 
@@ -660,7 +711,10 @@ describe("Create View", function() {
             view.render();
 
             runs(function() {
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -700,7 +754,10 @@ describe("Create View", function() {
                 modelId = 123;
 
                 runs(function() {
-                    view.buttons[view.saveButtonName].getFieldElement().click();
+                    var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                        return f.name === this.saveButtonName;
+                    }, view);
+                    saveButton.getFieldElement().click();
                 });
 
                 waitsFor(function() {
@@ -732,7 +789,10 @@ describe("Create View", function() {
             view.render();
 
             runs(function() {
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -774,7 +834,10 @@ describe("Create View", function() {
             view.render();
 
             runs(function() {
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -823,7 +886,10 @@ describe("Create View", function() {
 
             runs(function() {
                 expect(view.skipDupeCheck()).toBeFalsy();
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -833,7 +899,10 @@ describe("Create View", function() {
             runs(function() {
                 flag = false;
                 expect(view.skipDupeCheck()).toBeTruthy();
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -878,7 +947,10 @@ describe("Create View", function() {
         it("Should save, clear out the form, but not close the drawer.", function() {
             modelId = 123;
             runs(function() {
-                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveAndCreateButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -920,7 +992,10 @@ describe("Create View", function() {
         it("Should save, close the modal, and navigate to the detail view.", function() {
             modelId = 123;
             runs(function() {
-                view.buttons[view.saveAndViewButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveAndViewButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
@@ -954,7 +1029,10 @@ describe("Create View", function() {
             view.render();
 
             runs(function() {
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {

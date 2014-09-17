@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#each fields}}
-    <span class="edit-cell" data-name="{{name}}" data-type="{{type}}">
-        {{placeholder}}
-    </span>
+{{#each dropdownFields}}
+    {{#eq type 'divider'}}
+        <li class="divider"></li>
+    {{else}}
+        <li>{{placeholder}}</li>
+    {{/eq}}
 {{/each}}

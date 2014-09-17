@@ -10,12 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#with def}}
-    {{#each fields}}
-        <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
-            <span data-fieldname="{{name}}">
-                {{field ../../view model=../../model template=../../options.viewName}}
-            </span>
-        </span>
-    {{/each}}
-{{/with}}
+<div class="ellipsis_inline"{{#if value}} data-placement="bottom" title="{{value}}"{{/if}}>
+    {{#if def.link}}<a href="#{{buildRoute model=model}}">{{value}}</a>{{else}}{{value}}{{/if}}
+</div>

@@ -395,15 +395,6 @@
         if (this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
                 this.registerFieldAsButton(button.name);
-                if (button.buttons) {
-                    var dropdownButton = this.getField(button.name);
-                    if (!dropdownButton) {
-                        return;
-                    }
-                    _.each(dropdownButton.fields, function(ddButton) {
-                        this.buttons[ddButton.name] = ddButton;
-                    }, this);
-                }
             }, this);
         }
     },
