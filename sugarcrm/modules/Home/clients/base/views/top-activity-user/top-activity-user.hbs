@@ -22,10 +22,10 @@
 {{#each this.collection.models}}
     <div class="news-article">
         <p>
-            <img src="{{getFieldValue this "pictureUrl"}}" class="avatar"> <a href="#{{buildRoute module='Employees' id=this.attributes.user_id}}">{{getFieldValue this "name"}}</a>
+            <img src="{{fieldValue this "pictureUrl"}}" class="avatar"> <a href="#{{buildRoute module='Employees' id=this.attributes.user_id}}">{{fieldValue this "name"}}</a>
         </p>
         <span class="details">
-            <icon class="{{getFieldValue this "icon"}} icon-large"></icon> {{getFieldValue this "label"}}
+            <icon class="{{fieldValue this "icon"}} icon-large"></icon> {{fieldValue this "label"}}
         </span>
     </div>
 {{/each}}
