@@ -129,6 +129,23 @@ class ForecastReset
         $edition = ($forecast_by === 'RevenueLineItems') ? 'ent' : 'pro';
         $columns = ForecastsDefaults::getWorksheetColumns($edition);
 
+        // we need to check the setting for best and worst
+        $settings = Forecast::getSettings(true);
+        if ($settings['show_worksheet_best'] != 1) {
+            // remove best since it's include by default
+            foreach ($columns as $i => $column) {
+                if ($column === 'best_case') {
+                    unset($columns[$i]);
+                    break;
+                }
+            }
+        }
+
+        if ($settings['show_worksheet_worst'] == 1) {
+            // add worse_Case since it's not include by default
+            $columns[] = 'worst_case';
+        }
+
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'worksheet_columns', json_encode($columns), 'base');
