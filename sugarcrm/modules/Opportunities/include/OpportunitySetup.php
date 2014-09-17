@@ -132,6 +132,9 @@ abstract class OpportunitySetup
         $this->bean = BeanFactory::getBean('Opportunities');
 
         $this->fixRevenueLineItemModule();
+
+        // r&r the opp module
+        $this->runRepairAndRebuild(array('RevenueLineItems'));
     }
 
     /**
@@ -223,13 +226,8 @@ abstract class OpportunitySetup
             }
         }
 
-        // todo, figure out BWC modules
-
         // run repair and rebuild for all the modules that were touched
         $this->runRepairAndRebuild($subpanel_modules);
-
-        // clear all the metadata for the affected modules
-        $this->refreshMetadataCache($subpanel_modules);
 
     }
 
@@ -373,10 +371,6 @@ abstract class OpportunitySetup
         $forecast_reset = new ForecastReset();
         $forecast_reset->truncateForecastData();
         $forecast_reset->setDefaultWorksheetColumns($forecast_by);
-
-        $this->runRepairAndRebuild(array('Forecasts'));
-
-        $this->refreshMetadataCache(array('Forecasts'));
 
         // reload the settings
         Forecast::getSettings(true);

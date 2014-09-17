@@ -117,9 +117,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'commit_stage' => false,
             )
         );
-
-        // refresh the metadata cache
-        $this->refreshMetadataCache();
     }
 
     /**
@@ -280,6 +277,12 @@ EOL;
      */
     public static function processOpportunityIds(array $data)
     {
+        Activity::disable();
+        // disable the fts index as well
+        /* @var $ftsSearch SugarSearchEngineElastic */
+        $ftsSearch = SugarSearchEngineFactory::getInstance();
+        $ftsSearch->setForceAsyncIndex(true);
+
         foreach ($data as $db_opp) {
             /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities', $db_opp['id']);
@@ -315,5 +318,10 @@ EOL;
                 $rli->opportunities->add($opp->id);
             }
         }
+        // set it back to the default value from the config.
+        $ftsSearch->setForceAsyncIndex(
+            SugarConfig::getInstance()->get('search_engine.force_async_index', false)
+        );
+        Activity::enable();
     }
 }

@@ -122,9 +122,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'probability' => false,
             )
         );
-
-        // refresh the metadata cache again, just to make sure everything is picked up.
-        $this->refreshMetadataCache();
     }
 
     /**
