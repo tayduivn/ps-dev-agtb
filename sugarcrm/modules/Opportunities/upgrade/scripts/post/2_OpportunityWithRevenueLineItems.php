@@ -27,7 +27,7 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
         }
         // to run this we must be coming any version of 7 before 7.6
         if (version_compare($this->from_version, '7.0', '>=') && version_compare($this->from_version, '7.6', '<')) {
-            SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItems.php');
+            SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItem.php');
 
             // in the upgrade, we only want to do the metadata conversion
             $converter = new OpportunityWithRevenueLineItem();
