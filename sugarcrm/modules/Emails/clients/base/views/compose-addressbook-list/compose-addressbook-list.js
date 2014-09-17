@@ -100,7 +100,7 @@
      */
     _renderField: function(field) {
         if (field.name == '_module') {
-            field.model.set(field.name, app.lang.get('LBL_MODULE_NAME', field.model.get(field.name)));
+            field.model.set(field.name, app.lang.getModuleName(field.model.get(field.name), {plural: true}));
         }
         this._super("_renderField", [field]);
     }

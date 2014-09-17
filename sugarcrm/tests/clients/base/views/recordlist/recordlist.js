@@ -255,7 +255,7 @@ describe('Base.View.RecordList', function() {
 
             it('should redirect the user to the targetUrl', function() {
                 var unbindSpy = sinon.collection.spy(view, 'unbindBeforeRouteDelete');
-                view._modelToDelete = new Backbone.Model();
+                view._modelToDelete = app.data.createBean(moduleName);
                 view._currentUrl = 'Accounts';
                 view._targetUrl = 'Contacts';
                 view.deleteModel();

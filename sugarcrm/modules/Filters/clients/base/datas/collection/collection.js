@@ -307,7 +307,7 @@
         var module = model.get('module_name') || this.moduleName;
 
         var fallbackLangModules = model.langModules || [module, 'Filters'];
-        var moduleName = app.lang.get('LBL_MODULE_NAME', module);
+        var moduleName = app.lang.getModuleName(module, {plural: true});
         var text = app.lang.get(name, fallbackLangModules) || '';
         return app.utils.formatString(text, [moduleName]);
     },

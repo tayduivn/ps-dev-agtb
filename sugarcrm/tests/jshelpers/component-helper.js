@@ -221,18 +221,20 @@
     test.loadFile = function(path, file, ext, parseData, dataType) {
         dataType = dataType || 'text';
 
-        var fileContent = null;
+        var fileContent = null,
+            url = path + "/" + file + "." + ext;
 
         $.ajax({
             async:    false, // must be synchronous to guarantee that a test doesn't run before the fixture is loaded
             cache:    false,
             dataType: dataType,
-            url:      path + "/" + file + "." + ext,
+            url: url,
             success:  function(data) {
                 fileContent = parseData(data);
             },
-            failure:  function() {
-                console.log('Failed to load file: ' + file);
+            error: function(error, status, errThrown) {
+                console.log(status, errThrown);
+                console.log('Failed to load: ' + url);
             }
         });
 

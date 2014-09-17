@@ -40,7 +40,7 @@
 
     _renderHtml: function() {
         var titleTemplate = Handlebars.compile(app.lang.get('LBL_SEARCH_AND_SELECT')),
-            moduleName = app.lang.get('LBL_MODULE_NAME', this.module);
+            moduleName = app.lang.getModuleName(this.module, {plural: true});
         this.title = titleTemplate({module: moduleName});
         this._super('_renderHtml');
 

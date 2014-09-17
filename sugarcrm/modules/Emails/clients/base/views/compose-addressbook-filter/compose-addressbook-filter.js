@@ -44,7 +44,10 @@
         ];
 
         _.each(allowedModules, function(module) {
-            this._moduleFilterList.push({id: module, text: app.lang.get('LBL_MODULE_NAME', module)});
+            this._moduleFilterList.push({
+                id: module,
+                text: app.lang.getModuleName(module, {plural: true})
+            });
         }, this);
     },
     /**

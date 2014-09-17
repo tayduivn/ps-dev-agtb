@@ -418,7 +418,7 @@
                 'overwrite-confirmation',
                 this.model.module),
             messages = [],
-            relatedModuleSingular = app.lang.getModuleSingular(this.def.module);
+            relatedModuleSingular = app.lang.getModuleName(this.def.module);
 
         _.each(newData, function(value, field) {
             var before = this.model.get(field),
@@ -536,16 +536,10 @@
         return app.data.getRelatedModule(this.model.module, this.def.link);
     },
     getPlaceHolder: function () {
-        var module,
-            moduleString = app.lang.getAppListStrings('moduleListSingular');
+        var searchModule = this.getSearchModule(),
+            searchModuleLower = searchModule.toLocaleLowerCase(),
+            module = app.lang.getModuleName(searchModule, {defaultValue: searchModuleLower});
 
-        if (!moduleString[this.getSearchModule()]) {
-            app.logger.error("Module '" + this.getSearchModule() + "' doesn't have singular translation.");
-            // graceful fallback
-            module = this.getSearchModule().toLocaleLowerCase();
-        } else {
-            module = moduleString[this.getSearchModule()].toLocaleLowerCase();
-        }
         return app.lang.get('LBL_SEARCH_SELECT_MODULE', this.module, {
             module: module
         });

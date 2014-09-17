@@ -61,7 +61,7 @@
                                                                    <select id="importType">
                                                                         {{#each import_enabled_modules}}
                                                                             <option value={{this}}>
-                                                                                {{str 'LBL_MODULE_NAME' this}}
+                                                                                {{getModuleName this plural=true}}
                                                                             </option>
                                                                         {{/each}}
                                                                     </select>
