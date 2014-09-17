@@ -710,6 +710,24 @@
                     var results = regex.exec(matchResults[matchResults.length - 1]);
                 }
                 return (results === undefined || results === null) ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            },
+            /**
+             * Javascript equivalent to the Sugar isTruthy utility function.
+             * Returns true if the value pass is roughly equivalent to true (in a Sugar context)
+             *
+             * @param {mixed} value
+             * @returns {boolean} true if value is Å true.
+             */
+            isTruthy : function(value) {
+                if (_.isString(value)) {
+                    value = value.toLowerCase();
+                }
+                return value === true
+                    || value === 'true'
+                    || value === 1
+                    || value === '1'
+                    || value === 'on'
+                    || value === 'yes';
             }
         });
     });
