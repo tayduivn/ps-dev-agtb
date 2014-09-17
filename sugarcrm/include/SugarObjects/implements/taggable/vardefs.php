@@ -19,20 +19,21 @@
  */
 $vardefs = array(
     'fields' => array(
-        'tags_link' => array(
-            'name' => 'tags_link',
+        'tags' => array(
+            'name' => 'tags',
             'vname' => 'LBL_TAGS_LINK',
             'type' => 'link',
             'relationship' => strtolower($module).'_tags',
             'source' => 'non-db',
             'comment' => '',
         ),
-        'tags' => array(
-            'name' => 'tags',
+        'tag' => array(
+            'name' => 'tag',
             'vname' => 'LBL_TAGS',
-            'type' => 'tags',
-            'link' => 'tags_link',
+            'type' => 'tag',
+            'link' => 'tags',
             'source' => 'non-db',
+            'importable' => true,
         ),
     ),
     'relationships' => array(
@@ -44,7 +45,7 @@ $vardefs = array(
             'rhs_table' => 'tags',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'tags_bean_rel',
+            'join_table' => 'tag_bean_rel',
             'join_key_lhs' => 'bean_id',
             'join_key_rhs' => 'tag_id',
             'relationship_role_column' => 'bean_module',

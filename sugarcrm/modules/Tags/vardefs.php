@@ -12,8 +12,8 @@
 * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
 ********************************************************************************/
 
+// Needed by VarDef manager when running the load_fields directive
 SugarAutoLoader::load('modules/Tags/TagsRelatedModulesUtilities.php');
-$fields = TagsRelatedModulesUtilities::getRelatedFields();
 
 $dictionary['Tag'] = array(
     'comment' => 'Tagging module',
@@ -25,20 +25,27 @@ $dictionary['Tag'] = array(
     'unified_search' => true,
     'full_text_search' => false,
     'unified_search_default_enabled' => true,
-    'fields' => $fields,
+    'fields' => array(),
     'relationships' => array(),
     'indices' => array(),
+    'uses' => array(
+        'basic',
+        'external_source'
+    ),
+    // This can also be a string that maps to a global function. If it's an array
+    // it should be static
+    'load_fields' => array(
+        'class' =>'TagsRelatedModulesUtilities', 
+        'method' => 'getRelatedFields',
+    ),
+    // get rid of favorites field as this is set through basic template
+    // regardless if the favorites flag is set to false
+    'unset_fields' => array(
+        'user_favorites',
+    ),
 );
 
 VardefManager::createVardef(
     'Tags',
-    'Tag',
-    array(
-        'basic',
-        'external_source'
-    )
+    'Tag'
 );
-
-// get rid of favorites field as this is set through basic template
-// regardless if the favorites flag is set to false
-unset($dictionary['Tag']['fields']['user_favorites']);

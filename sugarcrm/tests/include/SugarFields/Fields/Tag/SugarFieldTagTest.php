@@ -12,9 +12,9 @@
  * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-require_once 'include/SugarFields/Fields/Tags/SugarFieldTags.php';
+require_once 'include/SugarFields/Fields/Tag/SugarFieldTag.php';
 
-class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldTagTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * Fixtures
@@ -57,7 +57,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testParseProperties($properties, $expected, $message)
     {
-        $relateCollection = new SugarFieldTagsTestMock('tags');
+        $relateCollection = new SugarFieldTagTestMock('tag');
 
         $actual = $relateCollection->parsePropertiesTest($properties);
 
@@ -132,7 +132,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->markTestSkipped('Awaiting MT-909');
 
         // Link tag1 and tag2 to contact
-        $relName = 'tags_link';
+        $relName = 'tags';
         $this->contact->load_relationship($relName);
         $this->contact->$relName->add($this->tag1);
         $this->contact->$relName->add($this->tag2);
@@ -144,7 +144,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::unregisterBean($this->contact);
 
         // call api format for tags field
-        $tags = new SugarFieldTags('tag');
+        $tags = new SugarFieldTag('tag');
 
         $data = array();
 
@@ -164,7 +164,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->markTestSkipped('Awaiting MT-909');
 
         // Link tag1 to contact
-        $relName = 'tags_link';
+        $relName = 'tags';
         $this->contact->load_relationship($relName);
         $this->contact->$relName->add($this->tag1);
 
@@ -175,9 +175,9 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::unregisterBean($this->contact);
 
         // call api format for tags field
-        $tags = new SugarFieldTags('tag');
+        $tags = new SugarFieldTag('tag');
 
-        $params['tags'] = array(
+        $params['tag'] = array(
             // remove existing link
             array(
                 'id' => $this->tag1->id,
@@ -208,7 +208,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $tags->apiSave($this->contact, $params, 'tags', array('link' => $relName));
+        $tags->apiSave($this->contact, $params, 'tag', array('link' => $relName));
 
         // refresh contact bean
         BeanFactory::unregisterBean($this->contact);
@@ -228,7 +228,7 @@ class SugarFieldTagsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class SugarFieldTagsTestMock extends SugarFieldTags
+class SugarFieldTagTestMock extends SugarFieldTag
 {
     public function parsePropertiesTest($properties)
     {

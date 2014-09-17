@@ -67,6 +67,13 @@ class Importer
      */
     protected $currencyFieldPosition = false;
 
+    /**
+     * Flag that tells the importer whether to look for tags
+     *
+     * @var boolean
+     */
+    protected $hasTags = false;
+
     public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
@@ -103,6 +110,9 @@ class Importer
 
         // do we have a currency_id field
         $this->currencyFieldPosition = array_search('currency_id', $this->importColumns);
+
+        // Are we importing tags?
+        $this->hasTags = array_search('tags', $this->importColumns);
 
         foreach($this->importSource as $row)
         {
@@ -1110,7 +1120,7 @@ class Importer
      * Handles non-primary emails string read from CSV file
      *
      * @param mixed     $rowValue        Serialized data
-     * @param mixed     $defaultRowValue Default value in case if row value is empty 
+     * @param mixed     $defaultRowValue Default value in case if row value is empty
      * @param string    $fieldTranslated Name of CSV column
      *
      * @return array                     Collection of parsed non-primary e-mails
@@ -1170,7 +1180,7 @@ class Importer
      * Parses serialized data of non-primary email addresses
      *
      * @param string $value           Serialized data in the following format:
-     *                                email_address1[,invalid_email1[,opt_out1]][;email_address2...] 
+     *                                email_address1[,invalid_email1[,opt_out1]][;email_address2...]
      * @param string $fieldTranslated Name of CSV column
      *
      * @return array                  Collection of address properties

@@ -49,7 +49,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
      * Base fields for collection
      * @var array
      */
-    protected static $baseFields = array(
+    protected $baseFields = array(
         'id',
         'name',
     );
@@ -60,6 +60,13 @@ class SugarFieldRelatecollection extends SugarFieldBase
      * @var integer
      */
     protected static $baseLimit = -1;
+
+    /**
+     * Mode flag that tells this field whether to create a new record
+     * 
+     * @var boolean
+     */
+    protected $createMode = false;
 
     /**
      *
@@ -84,6 +91,11 @@ class SugarFieldRelatecollection extends SugarFieldBase
 
         // retrieve current linked objects
         list ($relName, $fields, $limit, $create) = $this->parseProperties($properties);
+
+        // Needed for creating new records from field params
+        $this->createMode = $create;
+
+        // Existing related records
         $currentList = $this->getLinkedRecords($bean, $relName, $fields, $limit);
 
         /*
@@ -92,35 +104,51 @@ class SugarFieldRelatecollection extends SugarFieldBase
          * present links are maintained if not explicitly defined during save.
          */
         foreach ($params[$field] as $record) {
-
-            // validate required fields
+            // Validate required fields
             if (!$this->validateRequiredFields($record)) {
                 continue;
             }
 
-            // handle (new) related records
+            // If there is no removed record request...
             if (empty($record['removed'])) {
+                // Get the related record
+                $relRecord = $this->getRelatedRecord($bean, $relName, $record);
 
-                // create new bean first if supported when no id is provided
-                if ($record['id'] === false && $create) {
-                    $new = $this->createNewBeanBeforeLink($bean, $relName, $record);
-                    if (!empty($new->id)) {
-                        $bean->$relName->add($new);
-                    }
+                // Add new link if it doesn't exist yet
+                if ($relRecord->id && !isset($currentList[$relRecord->id])) {
+                    $bean->$relName->add($relRecord);
                 }
-
-                // add new link if it doesn't exist yet
-                if ($record['id'] && !isset($currentList[$record['id']])) {
-                    $bean->$relName->add($record['id']);
-                }
-
-            // handle related records flagged for removal
             } elseif (!empty($record['removed']) && !empty($record['id'])) {
-
-                // just remove the link, Link2 will take care of the checks
+                // Handle related records flagged for removal
+                // Just remove the link, Link2 will take care of the checks
                 $bean->$relName->delete($bean->id, $record['id']);
             }
         }
+    }
+
+    /**
+     * Gets the related record id from the record array if it is available, 
+     * otherwise it creates the related bean and sends back the new id
+     * 
+     * @param SugarBean $bean The parent bean
+     * @param string $relName The link name
+     * @param array $record The related record data
+     * @return SugarBean
+     */
+    protected function getRelatedRecord($bean, $relName, $record)
+    {
+        if ($record['id'] === false) {
+            if ($this->createMode) {
+                return $this->createNewBeanBeforeLink($bean, $relName, array('name' => $record['name']));
+            }
+
+            // Send back an empty but instantiated rel bean
+            return $this->getRelatedSeedBean($bean, $relName);
+        }
+
+        $relBean = $this->getRelatedSeedBean($bean, $relName);
+        $relBean->retrieve($record['id']);
+        return $relBean;
     }
 
     /**
@@ -148,7 +176,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
      */
     protected function validateRequiredFields(array $record)
     {
-        foreach (self::$baseFields as $field) {
+        foreach ($this->baseFields as $field) {
             if (!isset($record[$field])) {
                 return false;
             }
@@ -202,9 +230,9 @@ class SugarFieldRelatecollection extends SugarFieldBase
         $link = empty($properties['link']) ? false : $properties['link'];
 
         // field list
-        $fields = self::$baseFields;
+        $fields = $this->baseFields;
         if (!empty($properties['collection_fields']) && is_array($properties['collection_fields'])) {
-            $fields = array_unique(array_merge(self::$baseFields, $properties['collection_fields']));
+            $fields = array_unique(array_merge($this->baseFields, $properties['collection_fields']));
         }
 
         // maximum related records

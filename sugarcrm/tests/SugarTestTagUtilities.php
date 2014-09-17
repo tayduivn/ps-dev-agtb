@@ -64,9 +64,9 @@ class SugarTestTagUtilities
      */
     public static function deleteM2MRelationships($moduleName, $beanId)
     {
-        $sql = 'DELETE FROM tags_bean_rel WHERE '
-            . 'bean_module = \'' . $moduleName . '\' and '
-            . ' bean_id = \'' . $beanId . '\'';
+        $sql = "DELETE FROM tag_bean_rel WHERE 
+                bean_module = '$moduleName' AND 
+                bean_id = '$beanId'";
         $GLOBALS['db']->query($sql);
     }
 }

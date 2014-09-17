@@ -40,6 +40,19 @@ class VardefManager{
             $templates = array_unique($templates);
         }
 
+        // Load up fields if there is a need for that. Introduced with the taggable
+        // template
+        if (isset($GLOBALS['dictionary'][$object]['load_fields'])) {
+            $lf = $GLOBALS['dictionary'][$object]['load_fields'];
+            if (is_string($lf) && function_exists($lf)) {
+                $GLOBALS['dictionary'][$object]['fields'] = $lf();
+            } elseif (is_array($lf) && isset($lf['class']) && isset($lf['method'])) {
+                $class = $lf['class'];
+                $method = $lf['method'];
+                $GLOBALS['dictionary'][$object]['fields'] = $class::$method();
+            }
+        }
+
         //reverse the sort order so priority goes highest to lowest;
         $templates = array_reverse($templates);
         foreach ($templates as $template)
@@ -66,6 +79,19 @@ class VardefManager{
                 // the file map and will return false if something's wrong
                 if(!empty($path) && file_exists($path)) {
                     require($path);
+                }
+            }
+        }
+
+        // Handle unsetting of fields as per the defs. Do this last to make sure
+        // all extension fields have loaded
+        if (isset($GLOBALS['dictionary'][$object]['unset_fields'])) {
+            $uf = $GLOBALS['dictionary'][$object]['unset_fields'];
+            if (is_string($uf)) {
+                unset($GLOBALS['dictionary'][$object]['fields'][$uf]);
+            } elseif (is_array($uf)) {
+                foreach ($uf as $f) {
+                    unset($GLOBALS['dictionary'][$object]['fields'][$f]);
                 }
             }
         }

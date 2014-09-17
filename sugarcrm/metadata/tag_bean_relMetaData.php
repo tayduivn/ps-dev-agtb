@@ -12,8 +12,8 @@
 * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
 ********************************************************************************/
 
-$dictionary['tags_bean_rel'] = array(
-    'table' => 'tags_bean_rel',
+$dictionary['tag_bean_rel'] = array(
+    'table' => 'tag_bean_rel',
     'indices' => array(),
     'relationships' => array(),
     'fields' => array(
