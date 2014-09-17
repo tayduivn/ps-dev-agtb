@@ -457,7 +457,11 @@ class CalendarUtils
 	static function correctRecurrences(SugarBean $bean, $beanId)
 	{
 		global $db;
-		
+
+        if (empty($beanId)) {
+            return;
+        }
+
 		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
 		$re = $db->query($qu);
 		
