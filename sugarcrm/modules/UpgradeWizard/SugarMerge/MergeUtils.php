@@ -86,21 +86,18 @@ class MergeUtils
                     continue;
                 }
                 $isAssociative = array_values($new) !== $new;
-                // This is the case for arrays of arrays
-                if (($del = array_diff($old, $new)) === array()) {
+                if (is_array($old) && is_array($new)) {
                     $del = array_udiff($old, $new, 'static::uDiffComp');
                     $add = array_udiff($new, $old, 'static::uDiffComp');
-                } else {
-                    $add = array_diff($new, $old);
-                }
-                $cst = static::removeDeletedElements($cst, $del);
-                $cst = static::addAdditionalElements($cst, $add, !$isAssociative);
-                if (!isset($oldDefs[$key]) || !is_array($oldDefs[$key])) {
-                    if (!empty($cst)) {
-                        $cst = $cst[0];
-                    } else {
-                        //Skip empty non-array values (essentially unset)
-                        continue;
+                    $cst = static::removeDeletedElements($cst, $del);
+                    $cst = static::addAdditionalElements($cst, $add, !$isAssociative);
+                    if (!isset($oldDefs[$key]) || !is_array($oldDefs[$key])) {
+                        if (!empty($cst) && is_array($cst)) {
+                            $cst = $cst[0];
+                        } else {
+                            //Skip empty non-array values (essentially unset)
+                            continue;
+                        }
                     }
                 }
                 $ret[$key] = $cst;
@@ -148,17 +145,13 @@ class MergeUtils
      */
     protected static function getUniqueIdForValue($val)
     {
-        $id = null;
-        if (is_string($val)) {
-            $id = $val;
-        } else {
-            if (is_array($val)) {
-                if (isset($val['name'])) {
-                    $id = $val['name'];
-                } else {
-                    //Use a JSON version to track for identity
-                    $id = json_encode($val);
-                }
+        $id = $val;
+        if (is_array($val)) {
+            if (isset($val['name'])) {
+                $id = $val['name'];
+            } else {
+                //Use a JSON version to track for identity
+                $id = json_encode($val);
             }
         }
 
