@@ -313,6 +313,55 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $expectedCount);
     }
+
+    /**
+     * @dataProvider normalizeLinkIdsSuccessProvider
+     */
+    public function testNormalizeLinkIdsSuccess($ids, array $expected)
+    {
+        $actual = $this->normalizeLinkIds($ids);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function normalizeLinkIdsSuccessProvider()
+    {
+        return array(
+            array(
+                array('id1', array('id' => 'id2', 'key' => 'value')),
+                array(
+                    'id1' => array(),
+                    'id2' => array('key' => 'value'),
+                ),
+            )
+        );
+    }
+
+    /**
+     * @dataProvider normalizeLinkIdsFailureProvider
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testNormalizeLinkIdsFailure($ids)
+    {
+        $this->normalizeLinkIds($ids);
+    }
+
+    public static function normalizeLinkIdsFailureProvider()
+    {
+        return array(
+            'non-array' => array('id'),
+            'no-id' => array(
+                array(
+                    array('key' => 'value'),
+                ),
+            ),
+        );
+    }
+
+    private function normalizeLinkIds($ids)
+    {
+        $api = new RelateRecordApi();
+        return SugarTestReflection::callProtectedMethod($api, 'normalizeLinkIds', array($ids));
+    }
 }
 
 class SugarBeanBeforeSaveTestHook

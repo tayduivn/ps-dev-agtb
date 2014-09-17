@@ -50,7 +50,7 @@
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MAX_SIZE"}:</td>
 	<td>
 	{if $hideLevel < 5}
-		<input type='text' name='len' value='{$vardef.len|default:255}' onchange="forceRange(this,1,255);changeMaxLength(document.getElementById('default'),this.value);">
+		<input type='text' name='len' value='{$vardef.len|default:255}' onchange="forceRange(this,1,4096);changeMaxLength(document.getElementById('default'),this.value);">
 		{literal}
 		<script>
 		function forceRange(field, min, max){

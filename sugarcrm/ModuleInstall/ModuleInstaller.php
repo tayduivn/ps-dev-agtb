@@ -2686,7 +2686,7 @@ private function dir_file_count($path){
      */
     public function getPortalConfig()
     {
-        global $sugar_config;
+        $config = SugarConfig::getInstance();
 
         $portalConfig = array(
             'appId' => 'SupportPortal',
@@ -2709,12 +2709,13 @@ private function dir_file_count($path){
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
-            'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
-            'siteUrl' => $sugar_config['site_url'],
+            'serverUrl' => $config->get('site_url') . '/rest/v10',
+            'siteUrl' => $config->get('site_url'),
             'unsecureRoutes' => array('signup', 'error'),
             'loadCss' => 'url',
             'themeName' => 'default',
             'clientID' => 'support_portal',
+            'serverTimeout' => self::getPortalTimeoutValue(),
             'maxSearchQueryResult'=>'5'
         );
         return $portalConfig;
@@ -2734,8 +2735,6 @@ private function dir_file_count($path){
      */
     public static function getBaseConfig()
     {
-        global $sugar_config;
-
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'dev',
@@ -2762,7 +2761,7 @@ private function dir_file_count($path){
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
-            'serverTimeout' => isset($sugar_config['api']['timeout']) ? $sugar_config['api']['timeout'] : 180,
+            'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",
                 "full_module_list",
@@ -2782,6 +2781,32 @@ private function dir_file_count($path){
             ),
         );
         return $sidecarConfig;
+    }
+
+    /**
+     * If the portal timeout is configured, use it, otherwise use the base
+     * timeout if it's configured, otherwise, fallback to 180 seconds.
+     *
+     * @return Integer The number of seconds before an API timeout.
+     */
+    private static function getPortalTimeoutValue()
+    {
+        $config = SugarConfig::getInstance();
+        $timeout = $config->get('portal.api.timeout', self::getBaseTimeoutValue());
+        return $timeout;
+    }
+
+    /**
+     * If the base timeout is configured, use it, otherwise fallback to 180
+     * seconds.
+     *
+     * @return Integer The number of seconds before an API timeout.
+     */
+    private static function getBaseTimeoutValue()
+    {
+        $config = SugarConfig::getInstance();
+        $timeout = $config->get('api.timeout', 180);
+        return $timeout;
     }
 
     /**

@@ -1928,15 +1928,16 @@
             var field,
             modelAttr = this[modelAttribute],
             contextAttr;
+            //get the attribute set in the context
             if (!_.isNull(contextAttribute)) {
                 contextAttr = app.controller.context.get(contextAttribute);
             }
-            if (!_.isUndefined(modelAttr)) {
+            if (!_.isUndefined(modelAttr) && !_.isNull(modelAttr)) {
                 field = modelAttr;
             } else if (!_.isUndefined(contextAttr)) {
                 field = contextAttr;
             }
-            if (!_.isUndefined(field)) {
+            if (!_.isUndefined(field) && !_.isNull(field)) {
                 if(!_.isNull(callBackParams)) {
                     callBackFunction.call(this, field, callBackParams);
                 } else {

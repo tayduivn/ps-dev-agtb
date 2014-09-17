@@ -9,21 +9,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Notifications/Notifications.php');
 
 /**
- * @deprecated Since 7.5 will be removed on 7.8
+ * Upgrades chartEngine to `nvd3` while updating to Sugar7.
  */
-class NotificationsController extends SugarController
+class SugarUpgradeFixReportCharts extends UpgradeScript
 {
-    var $action_remap = array ( ) ;
+    public $order = 8400;
 
-    /**
-     * @deprecated Since 7.5 will be removed on 7.8
-     */
-    public function __construct()
+    public $type = self::UPGRADE_CUSTOM;
+
+    public function run()
     {
-        $GLOBALS['log']->deprecated('Notifications/controller.php is deprecated');
-        parent::SugarController();
+        if (version_compare($this->from_version, '7', '<') && strtolower($this->upgrader->config['chartEngine']) == 'jit') {
+            $this->upgrader->config['chartEngine'] = 'nvd3';
+            $this->log('Chart engine changed to NVD3');
+        }
     }
 }

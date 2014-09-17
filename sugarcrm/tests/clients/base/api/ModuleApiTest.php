@@ -457,6 +457,293 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('_acl', $data, 'API response does not contain ACL data');
         $this->assertArrayNotHasKey('name', $data, 'API response contains should not contain "name" field');
     }
+
+    /**
+     * @dataProvider getRelatedRecordArgumentsSuccessProvider
+     */
+    public function testGetRelatedRecordArgumentsSuccess(array $fieldDefs, array $args, $action, array $expected)
+    {
+        $actual = $this->getRelatedRecordArguments($fieldDefs, $args, $action);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getRelatedRecordArgumentsSuccessProvider()
+    {
+        $fieldDefs = array(
+            'name' => array(
+                'type' => 'varchar',
+            ),
+            'contacts' => array(
+                'type' => 'link',
+            ),
+        );
+        $action = 'some-action';
+
+        return array(
+            'some-data' => array(
+                $fieldDefs,
+                array(
+                    'name' => array(
+                        'some-action' => array('a28c2304-f9b6-97ca-f2e6'),
+                        'some-other-action' => array(
+                            array(
+                                'first_name' => 'Max',
+                                'last_name' => 'Jensen',
+                            ),
+                        ),
+                    ),
+                    'contacts' => array(
+                        'some-action' => array(
+                            '89179177-41d7-311f-90ef',
+                            array(
+                                'id' => '473d122f-0a45-fef6-0138',
+                                'role' => 'owner',
+                            ),
+                        ),
+                        'some-other-action' => array(
+                            array(
+                                'first_name' => 'Chris',
+                                'last_name' => 'Oliver',
+                            ),
+                        ),
+                    ),
+                ),
+                $action,
+                array(
+                    'contacts' => array(
+                        '89179177-41d7-311f-90ef',
+                        array(
+                            'id' => '473d122f-0a45-fef6-0138',
+                            'role' => 'owner',
+                        ),
+                    ),
+                ),
+            ),
+            'no-data-for-action' => array(
+                $fieldDefs,
+                array(
+                    'contacts' => array(
+                        'some-other-action' => array(),
+                    ),
+                ),
+                $action,
+                array(),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getRelatedRecordArgumentsFailureProvider
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testGetRelatedRecordArgumentsFailure(array $fieldDefs, array $args, $action)
+    {
+        $this->getRelatedRecordArguments($fieldDefs, $args, $action);
+    }
+
+    public static function getRelatedRecordArgumentsFailureProvider()
+    {
+        $fieldDefs = array(
+            'contacts' => array(
+                'type' => 'link',
+            ),
+        );
+        $action = 'the-action';
+
+        return array(
+            'link-data-non-array' => array(
+                $fieldDefs,
+                array(
+                    'contacts' => 1,
+                ),
+                $action,
+            ),
+            'action-data-non-array' => array(
+                $fieldDefs,
+                array(
+                    'contacts' => array(
+                        'the-action' => 2,
+                    ),
+                ),
+                $action,
+            ),
+        );
+    }
+
+    private function getRelatedRecordArguments(array $fieldDefs, array $args, $action)
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFieldDefinitions'))
+            ->getMock();
+        $bean->expects($this->once())
+            ->method('getFieldDefinitions')
+            ->willReturn($fieldDefs);
+
+        return SugarTestReflection::callProtectedMethod(
+            $this->moduleApi,
+            'getRelatedRecordArguments',
+            array($bean, $args, $action)
+        );
+    }
+
+    public function testLinkRelatedRecords()
+    {
+        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        $api = $this->getApiWithMockedRelateRecordApi('createRelatedLinks', $relateRecordApi);
+        $bean = $this->getPrimaryBean('primary-module', 'primary-id');
+
+        $relateRecordApi->expects($this->at(0))
+            ->method('createRelatedLinks')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link1',
+                'ids' => array(
+                    'id11',
+                    array(
+                        'id' => 'id12',
+                        'field12' => 'value12',
+                    )
+                ),
+            ));
+
+        $relateRecordApi->expects($this->at(1))
+            ->method('createRelatedLinks')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link2',
+                'ids' => array('id21'),
+            ));
+
+        SugarTestReflection::callProtectedMethod(
+            $api,
+            'linkRelatedRecords',
+            array($this->serviceMock, $bean, array(
+                'link1' => array(
+                    'id11',
+                    array(
+                        'id' => 'id12',
+                        'field12' => 'value12',
+                    )
+                ),
+                'link2' => array('id21'),
+            ))
+        );
+    }
+
+    public function testUnlinkRelatedRecords()
+    {
+        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        $api = $this->getApiWithMockedRelateRecordApi('deleteRelatedLink', $relateRecordApi);
+        $bean = $this->getPrimaryBean('primary-module', 'primary-id');
+
+        $relateRecordApi->expects($this->at(0))
+            ->method('deleteRelatedLink')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link1',
+                'remote_id' => 'id1',
+            ));
+
+        $relateRecordApi->expects($this->at(1))
+            ->method('deleteRelatedLink')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link2',
+                'remote_id' => 'id2',
+            ));
+
+        SugarTestReflection::callProtectedMethod(
+            $api,
+            'unlinkRelatedRecords',
+            array($this->serviceMock, $bean, array(
+                'link1' => array('id1'),
+                'link2' => array('id2'),
+            ))
+        );
+    }
+
+    public function testCreateRelatedRecords()
+    {
+        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        $api = $this->getApiWithMockedRelateRecordApi('createRelatedRecord', $relateRecordApi);
+        $bean = $this->getPrimaryBean('primary-module', 'primary-id');
+
+        $relateRecordApi->expects($this->at(0))
+            ->method('createRelatedRecord')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link1',
+                'name' => 'Underwater Mining Inc.',
+            ));
+
+        $relateRecordApi->expects($this->at(1))
+            ->method('createRelatedRecord')
+            ->with($this->serviceMock, array(
+                'module' => 'primary-module',
+                'record' => 'primary-id',
+                'link_name' => 'link2',
+                'first_name' => 'Latanya',
+                'last_name' => 'Ollie',
+            ));
+
+        SugarTestReflection::callProtectedMethod(
+            $api,
+            'createRelatedRecords',
+            array($this->serviceMock, $bean, array(
+                'link1' => array(
+                    array('name' => 'Underwater Mining Inc.'),
+                ),
+                'link2' => array(
+                    array(
+                        'first_name' => 'Latanya',
+                        'last_name' => 'Ollie',
+                    ),
+                ),
+            ))
+        );
+    }
+
+    /**
+     * @param string $method
+     * @param PHPUnit_Framework_MockObject_MockObject $relateRecordApi
+     * @return ModuleApi|PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getApiWithMockedRelateRecordApi($method, &$relateRecordApi)
+    {
+        $relateRecordApi = $this->getMockBuilder('RelateRecordApi')
+            ->setMethods(array($method))
+            ->getMock();
+
+        $moduleApi = $this->getMockBuilder('ModuleApi')
+            ->setMethods(array('getRelateRecordApi'))
+            ->getMock();
+        $moduleApi->expects($this->any())
+            ->method('getRelateRecordApi')
+            ->willReturn($relateRecordApi);
+
+        return $moduleApi;
+    }
+
+    /**
+     * @param string $module
+     * @param string $id
+     *
+     * @return SugarBean
+     */
+    private function getPrimaryBean($module, $id)
+    {
+        $bean = new SugarBean();
+        $bean->module_name = $module;
+        $bean->id = $id;
+
+        return $bean;
+    }
 }
 
 class ModuleApiTestMock extends ModuleApi

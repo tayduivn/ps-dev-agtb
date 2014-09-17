@@ -201,8 +201,6 @@ class ChartDisplay
             $total = $this->get_total($total_row);
         }
 
-        $symbol = $this->print_currency_symbol();
-
         $mod_strings = return_module_language($current_language, 'Reports');
 
         // Use Locale values if we are not rounding to thousands
@@ -210,6 +208,14 @@ class ChartDisplay
         $precision = null;
         if ($do_thousands) {
             $round = 0;
+            $precision = 0;
+        }
+
+        //grab the currency symbol for this chart
+        $symbol = $this->print_currency_symbol();
+
+        //if there is no symbol, then precision should be 0 as this is not a currency
+        if(empty($symbol)) {
             $precision = 0;
         }
 

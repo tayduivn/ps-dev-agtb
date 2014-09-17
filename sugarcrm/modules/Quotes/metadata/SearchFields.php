@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $searchFields['Quotes'] = 
 	array (
 		'name' => array( 'query_type'=>'default'),
-		'account_name'=> array('query_type'=>'default','db_field'=>array('jt0.name')),
+		'account_name'=> array('query_type'=>'default'),
 		'date_quote_expected_closed'=> array('query_type'=>'default', 'operator'=>'='),
 		'amount'=> array('query_type'=>'default','db_field'=>array('total')),
         'quote_stage'=> array('query_type'=>'default', 'options' => 'quote_stage_dom', 'template_var' => 'QUOTE_STAGE_OPTIONS', 'options_add_blank' => true),
