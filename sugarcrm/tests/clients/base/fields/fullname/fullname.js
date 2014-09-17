@@ -1,66 +1,36 @@
 describe('Base.Field.Fullname', function() {
-    var field, model, user, fullName, app, view;
+    var app, fieldDef;
 
     beforeEach(function() {
-        app = SugarTest.App;
-        SugarTest.testMetadata.init();
-
-        SugarTest.testMetadata.addViewDefinition('list', {
-            'panels': [
-                {
-                    'fields': [{
-                        'name': 'full_name',
-                        'type': 'fullname',
-                        'link': true,
-                    }]
-                }
+        app = SugarTest.app;
+        fieldDef = {
+            'name': 'full_name',
+            'type': 'fullname',
+            'fields': [
+                'first_name',
+                'last_name',
+                'salutation'
             ]
-        }, 'Contacts');
-        SugarTest.loadHandlebarsTemplate('list', 'view', 'base');
-        SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'detail');
-        SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'edit');
-        SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'record-edit');
-        SugarTest.loadComponent('base', 'field', 'fieldset');
-        SugarTest.loadComponent('base', 'field', 'fullname');
-        SugarTest.testMetadata.set();
-        view = SugarTest.createView('base', 'Contacts', 'list', null, null);
-
-        view.collection = new Backbone.Collection();
-        view.viewName = 'list';
-
-        user = SUGAR.App.user;
-
-        var nameParts = {
-            first_name: 'firstName',
-            last_name: 'lastName',
-            salutation: 'Mr.'
         };
-
-        fullName = nameParts.last_name + ' ' + nameParts.salutation + ' ' + nameParts.first_name;
-
-        model = new Backbone.Model();
-        model.set({
-        	id: 'test-contact',
-            full_name: fullName,
-            first_name: nameParts.first_name,
-            last_name: nameParts.last_name,
-            salutation: nameParts.salutation
-        });
-        model.module = 'Contacts';
-        view.collection.add(model);
+        sinon.collection.stub(app.user, 'getPreference')
+            .withArgs('default_locale_name_format').returns('s f l');
     });
 
     afterEach(function() {
         sinon.collection.restore();
-        view.dispose();
-        if (field) {
-            field.dispose();
-        }
-        user = null;
-        SugarTest.testMetadata.dispose();
+        Handlebars.templates = {};
     });
 
     describe('initialize', function() {
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.testMetadata.set();
+        });
+
+        afterEach(function() {
+            SugarTest.testMetadata.dispose();
+        });
+
         using('available formats', [{
             format: 'f s l',
             expected: ['first_name', 'salutation', 'last_name']
@@ -87,24 +57,114 @@ describe('Base.Field.Fullname', function() {
             expected: ['last_name', 'first_name', 'salutation']
         }], function(value) {
             it('Should sort the dependant fields in order of the user preference.', function() {
-                user.setPreference('default_locale_name_format', value.format);
-                view.render();
-                field = view.getField('full_name');
+                app.user.getPreference.restore();
+                sinon.collection.stub(app.user, 'getPreference')
+                    .withArgs('default_locale_name_format').returns(value.format);
+                var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts');
                 _.each(value.expected, function(name, index) {
                     expect(field.def.fields[index].name).toBe(name);
                 });
+
+                field.dispose();
             });
+        });
+
+        using('valid values',
+            [
+                {'hasLink' : true, 'id': 12345, 'href': '#Contacts/12345' },
+                {'hasLink' : false, 'id': 12345, 'href': undefined}
+            ], function(value) {
+                it('should build this.href depending on the def.link property', function() {
+                    fieldDef.link = value.hasLink;
+                    var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts');
+                    field.model.set('id', value.id);
+
+                    field.initialize(field.options);
+                    expect(field.href).toEqual(value.href);
+                    field.dispose();
+                });
+            });
+
+        it('should not build this.href if model does not have access to view record', function() {
+            var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts');
+            fieldDef.link = true;
+            field.model.set('id', 12345);
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function() {
+                return false;
+            });
+
+            field.initialize(field.options);
+            expect(field.href).toBeUndefined();
+            field.dispose();
         });
     });
 
     describe('render', function() {
-        it('should update the Full Name when First Name or Last Name changes', function() {
-            user.setPreference('default_locale_name_format', 's f l');
-            view.render();
-            field = view.getField('full_name');
-            var renderStub = sinon.stub(field, 'render');
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('list', 'view', 'base');
+            SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'detail');
+            SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'list');
+            SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'edit');
+            SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'record-detail');
+            SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'recordlist-edit');
+            SugarTest.testMetadata.set();
+        });
 
-            field.fields.length = 3;
+        afterEach(function() {
+            SugarTest.testMetadata.dispose();
+        });
+
+        it('should render with different templates', function() {
+            //record view detail
+            var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts'),
+                template = app.template.getField('fullname', 'detail', 'Contacts');
+            field.render();
+            expect(field.template(field)).toEqual(template(field));
+
+            //record view edit
+            template = app.template.getField('fullname', 'edit', 'Contacts');
+            field.setMode('edit');
+            expect(field.template(field)).toEqual(template(field));
+            field.dispose();
+
+            //list view detail
+            field = SugarTest.createField('base', 'full_name', 'fullname', 'list', fieldDef, 'Contacts');
+            template = app.template.getField('fullname', 'list', 'Contacts');
+            field.render();
+            expect(field.template(field)).toEqual(template(field));
+
+            //list view edit
+            field.view.name = 'recordlist';
+            template = app.template.getField('fullname', 'recordlist-edit', 'Contacts');
+            field.setMode('edit');
+            expect(field.template(field)).toEqual(template(field));
+
+            field.dispose();
+        });
+    });
+
+    describe('bindDataChange', function() {
+        it('should update the Full Name when First Name or Last Name changes', function() {
+            var nameParts = {
+                    first_name: 'firstName',
+                    last_name: 'lastName',
+                    salutation: 'Mr.'
+                },
+                fullName = nameParts.salutation + ' ' + nameParts.first_name + ' ' + nameParts.last_name,
+                model = new app.data.createBean('Contacts',
+                    {
+                        id: 'test-contact',
+                        full_name: fullName,
+                        first_name: nameParts.first_name,
+                        last_name: nameParts.last_name,
+                        salutation: nameParts.salutation
+                    });
+
+            var field = SugarTest.createField('base', 'full_name', 'fullname', 'edit', fieldDef, 'Contacts', model);
+            field.model.module = 'Contacts';
+            field.render();
+
             expect(field.value).toBe('Mr. firstName lastName');
 
             field.model.set('first_name', 'FIRST');
@@ -116,10 +176,12 @@ describe('Base.Field.Fullname', function() {
             field.model.set('salutation', 'Dr.');
             expect(field.model.get('full_name')).toBe('Dr. FIRST LAST');
 
-            expect(renderStub).toHaveBeenCalled();
-            expect(renderStub.calledThrice).toBeTruthy();
+            field.setMode('detail');
 
-            renderStub.restore();
+            field.model.set('first_name', 'first');
+            expect(field.model.get('full_name')).toBe('Dr. first LAST');
+
+            field.dispose();
         });
     });
 });
