@@ -1226,6 +1226,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         }
                         $dropdown.append($option);
                     });
+                    $dropdown.change();
                     ModuleBuilder.tabPanel.get("activeTab").close();
                     ajaxStatus.hideStatus();
                 }
