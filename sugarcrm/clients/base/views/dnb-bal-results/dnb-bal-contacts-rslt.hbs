@@ -46,8 +46,8 @@
                                             <div data-dashlet="toolbar">
                                                 <div class="dashlet-header">
                                                     <h4 data-toggle="dashlet">
-                                                        {{#if dnbContactsList.count}}
-                                                            {{dnbContactsList.count}}
+                                                        {{#if listData.count}}
+                                                            {{listData.count}}
                                                         {{else}}
                                                             {{str "LBL_DNB_BAL_PREVIEW" this.module}}
                                                         {{/if}}
@@ -59,9 +59,9 @@
                                                     {{str "LBL_DNB_BAL_LOAD"}} ...
                                                 </div>
                                                 <div id="dnb-bal-result" class="hide">
-                                                    {{#if dnbContactsList.product}}
+                                                    {{#if listData.product}}
                                                         <ul class="unstyled listed" id="dnb-results-list">
-                                                            {{#each dnbContactsList.product}}
+                                                            {{#each listData.product}}
                                                                 <li>
                                                                     <div class="dnb-company-label dnb-company-list">
                                                                         <a class="{{this.contactType}}" id="{{this.principalId}}"
@@ -94,8 +94,8 @@
                                                         </ul>
                                                     {{else}}
                                                         <aside class='create-no-data'>
-                                                            {{#if dnbContactsList.errmsg}}
-                                                                <em>{{dnbContactsList.errmsg}}</em>
+                                                            {{#if listData.errmsg}}
+                                                                <em>{{listData.errmsg}}</em>
                                                             {{else}}
                                                                 <em>{{str "LBL_DNB_NO_DATA"}}</em>
                                                             {{/if}}

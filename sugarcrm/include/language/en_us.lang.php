@@ -3365,6 +3365,7 @@ $app_strings = array (
     'LBL_DNB_SRCH' => 'Search',
     'LBL_DNB_MILLION' => 'M',
     'LBL_DNB_CLEAR' => 'Clear',
+    'LBL_DNB_PAGESZ' => 'Page Size',
     'LBL_DNB_SLCT_STATE' => 'Select A State',
     'LBL_DNB_SLCT_CTRY' => 'Select A Country',
     'LBL_DNB_COMPINFO_LONG_DESC' => 'The most efficient way to gain basic marketing information about a potential prospect such as business name, address,
