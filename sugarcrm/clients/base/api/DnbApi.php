@@ -95,26 +95,18 @@ class DnbApi extends SugarApi
             return array('error' =>'ERROR_DNB_CONFIG');
         }
         $result = '';
-        if ($queryType === 'profile') {
-            $result = $extDnbApi->dnbProfile($queryParam);
-        } else if ($queryType ==='competitors') {
+        if ($queryType ==='competitors') {
             $result = $extDnbApi->dnbCompetitors($queryParam);
         } else if ($queryType ==='industry') {
             $result = $extDnbApi->dnbIndustryInfo($queryParam);
         } else if ($queryType ==='financial') {
             $result = $extDnbApi->dnbFinancialInfo($queryParam);
-        } else if ($queryType ==='firmographic') {
-            $result = $extDnbApi->dnbStandardProfile($queryParam);
-        } else if ($queryType ==='premfirmographic') {
-            $result = $extDnbApi->dnbPremiumProfile($queryParam);
         } else if ($queryType ==='findIndustry') {
             $result = $extDnbApi->dnbIndustrySearch($queryParam);
         } else if ($queryType === 'findContacts') {
             $result = $extDnbApi->dnbFindContacts($queryParam);
         } else if ($queryType === 'refreshcheck') {
             $result = $extDnbApi->dnbRefreshCheck($queryParam);
-        } else if ($queryType === 'litefirmographic') {
-            $result = $extDnbApi->dnbLiteProfile($queryParam);
         } else if ($queryType === 'news') {
             $result = $extDnbApi->dnbNews($queryParam);
         }

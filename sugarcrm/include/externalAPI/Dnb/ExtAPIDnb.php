@@ -28,11 +28,8 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbAuthURL = "rest/Authentication";
     //OrderReasonCode is a parameter required to fetch Firmographic info for all companies
     //if this is not set, API calls for companies in Germany will fail
-    private $dnbFirmographicURL = "V2.0/organizations/%s/products/%s?OrderReasonCode=6332";
-    private $dnbFirmoLiteURL = "V2/organizations/%s/products/CST_PRD_1";
-    private $dnbStandardSearch = "V2.0/organizations/%s/products/DCP_STD";
-    private $dnbPremiumSearch = "V2.0/organizations/%s/products/DCP_PREM";
-    private $dnbLiteSearchURL = "V2/organizations/%s/products/CST_PRD_1?CountryISOAlpha2Code=US";
+    private $dnbFirmographicURL = "V3.2/organizations/%s/products/%s?OrderReasonCode=6332";
+    private $dnbFirmoLiteURL = "V3.2/organizations/%s/products/DCP_BAS?OrderReasonCode=6332";
     private $dnbCompetitorsURL = "V4.0/organizations/%s/competitors";
     private $dnbIndustryURL = "V3.0/industries/industrycode-%s/IND_STD";
     private $dnbFinancialURL = "V3.0/organizations/%s/products/FIN_HGLT";
@@ -151,61 +148,6 @@ class ExtAPIDnb extends ExternalAPIBase
             return $reply;
         }
         return $reply['responseJSON'];
-    }
-
-    /**
-     * Gets Lite Company Information for a D-U-N-S
-     * @param $duns_num unique identifier for a company
-     * @return jsonarray
-     */
-    public function dnbLiteProfile($duns_num)
-    {
-        //dnb profile standard
-        $cache_key = 'dnb.prof_lite.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbLiteSearchURL, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        return $reply['responseJSON'];
-    }
-
-    /**
-     * Gets Standard Company Information for a D-U-N-S
-     * @param $duns_num unique identifier for a company
-     * @return jsonarray
-     */
-    public function dnbStandardProfile($duns_num)
-    {
-        //dnb profile standard
-        $cache_key = 'dnb.prof_std.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbStandardSearch, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        return $reply['responseJSON'];
-    }
-
-    /**
-     * Gets Premium Company Information for a D-U-N-S
-     * @param $duns_num unique identifier for a company
-     * @return jsonarray
-     */
-    public function dnbPremiumProfile($duns_num)
-    {
-        //dnb profile premium
-        $cache_key = 'dnb.prof_prem.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbPremiumSearch, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        return $reply['responseJSON'];
-    }
-
-    /**
-     * Gets Company Firmographic Information Based on DUNS number
-     * @param $duns_num
-     * @return jsonarray
-     */
-    public function dnbProfile($duns_num)
-    {
-        return $this->dnbStandardProfile($duns_num);
     }
 
     /**
@@ -514,7 +456,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $prod_code = $firmoParams['prod_code'];
         //dnb firmographic
         $cache_key = 'dnb.' . $duns_num . '.' . $prod_code;
-        if ($prod_code === 'CST_PRD_1') {
+        if ($prod_code === 'DCP_BAS') {
             $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFirmoLiteURL, $duns_num);
         } else {
             $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf(

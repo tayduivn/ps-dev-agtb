@@ -263,7 +263,7 @@
             this.template = app.template.get('dnb.dnb-company-details');
             this.render();
             this.$('div#dnb-company-details').hide();
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_COMPETITORS_LIST'), this.renderCompanyDetails);
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.lite, app.lang.get('LBL_DNB_COMPETITORS_LIST'), this.renderCompanyDetails);
         }
     }
 })

@@ -32,17 +32,13 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'primaddrctrycd' => '1',
                 'primaddrctrygrp' => '1',
                 'primaddrzip' => '1',
-                'uscensuscd' => '1',
                 'mailingaddrstreet' => '1',
                 'mailingaddrcity' => '1',
                 'mailingaddrstateabbr' => '1',
                 'mailingaddrzip' => '1',
                 'mailingaddrctrycd' => '1',
-                'long' => '1',
-                'lat' => '1',
                 'phone' => '1',
                 'fax' => '1',
-                'webpage' => '1',
                 'indempcnt' => '1',
                 'conempcnt' => '1',
                 'lob' => '1',
@@ -61,17 +57,13 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'primaddrctrycd' => '1',
                 'primaddrctrygrp' => '1',
                 'primaddrzip' => '1',
-                'uscensuscd' => '1',
                 'mailingaddrstreet' => '1',
                 'mailingaddrcity' => '1',
                 'mailingaddrstateabbr' => '1',
                 'mailingaddrzip' => '1',
                 'mailingaddrctrycd' => '1',
-                'long' => '1',
-                'lat' => '1',
                 'phone' => '1',
                 'fax' => '1',
-                'webpage' => '1',
                 'indempcnt' => '1',
                 'conempcnt' => '1',
                 'lob' => '1',
@@ -182,12 +174,6 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'type' => 'bool'
             ),
             array(
-                'name' => 'uscensuscd',
-                'label' => 'LBL_DNB_PRIM_CEN_CD',
-                'desc' => 'LBL_DNB_PRIM_CEN_CD_DESC',
-                'type' => 'bool'
-            ),
-            array(
                 'name' => 'mailingaddrstreet',
                 'label' => 'LBL_DNB_MAIL_STREET',
                 'desc' => 'LBL_DNB_PRIM_STREET_DESC',
@@ -218,19 +204,6 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'type' => 'bool'
             ),
             array(
-                'name' => 'long',
-                'label' => 'LBL_DNB_LAT',
-                'desc' => 'LBL_DNB_LAT_DESC',
-                'type' => 'bool'
-            ),
-            array(
-                'name' => 'lat',
-                'label' => 'LBL_DNB_LONG',
-                'desc' => 'LBL_DNB_LONG_DESC',
-                'last' => '1',
-                'type' => 'bool'
-            ),
-            array(
                 'name' => 'phone',
                 'label' => 'LBL_DNB_PHONE',
                 'desc' => 'LBL_DNB_PHONE_DESC',
@@ -242,12 +215,6 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'name' => 'fax',
                 'label' => 'LBL_DNB_FAX',
                 'desc' => 'LBL_DNB_FAX_DESC',
-                'type' => 'bool'
-            ),
-            array(
-                'name' => 'webpage',
-                'label' => 'LBL_DNB_WEBPAGE',
-                'desc' => 'LBL_DNB_WEBPAGE_DESC',
                 'last' => '1',
                 'type' => 'bool'
             ),

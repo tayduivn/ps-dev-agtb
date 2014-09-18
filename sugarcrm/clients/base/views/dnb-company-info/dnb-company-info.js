@@ -233,7 +233,7 @@
             this.$('div#dnb-company-detail-loading').show();
             this.$('div#dnb-company-details').hide();
             this.trigger('dnbcompinfo:duns_selected', duns_num);
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, null, this.renderCompanyDetails);
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.lite, null, this.renderCompanyDetails);
         }
     },
 

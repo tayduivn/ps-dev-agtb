@@ -241,7 +241,7 @@
             this.$('div#dnb-company-detail-loading').show();
             this.$('div#dnb-company-details').hide();
             this.$('.importDNBData').hide();
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std,
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.lite,
             app.lang.get('LBL_DNB_BACK_TO_SRCH'), this.renderCompanyDetails);
         }
     },
