@@ -1785,6 +1785,11 @@ class MetaDataManager
             $configs['inboundEmailCaseSubjectMacro'] = $caseBean->getEmailSubjectMacro();
         }
 
+        // System name setting for sidecar modules
+        if (isset($administration->settings['system_name'])) {
+            $configs['appId'] = $administration->settings['system_name'];
+        }
+
         return $configs;
     }
 
