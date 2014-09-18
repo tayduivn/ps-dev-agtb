@@ -437,6 +437,7 @@ class OracleManager extends DBManager
     protected function preparedQueryLob($sql, $data, $defs, $msg = '')
     {
         $ps = new $this->preparedStatementClass($this);
+        $ps->parseSQL($sql);
         if(!$ps->setLobs($this->getLobFields($defs))->preparePreparedStatement($msg)) {
             return false;
         }
@@ -912,17 +913,18 @@ class OracleManager extends DBManager
         $type = $this->getFieldType($fieldDef);
         $ctype = $this->getColumnType($type);
 
-        if($ctype == 'clob') {
-            return "EMPTY_CLOB()";
-        }
-
-        if($ctype == 'blob') {
-            return "EMPTY_BLOB()";
+        if (!$forPrepared) {
+            if ($ctype == 'clob') {
+                return "EMPTY_CLOB()";
+            }
+            if ($ctype == 'blob') {
+                return "EMPTY_BLOB()";
+            }
         }
 
         if($type == "date" && !empty($val)) {
             $val = explode(" ", $val); // make sure that we do not pass the time portion
-            return parent::massageValue($val[0], $fieldDef);            // get the date portion
+            return parent::massageValue($val[0], $fieldDef, $forPrepared);            // get the date portion
         }
 
         return parent::massageValue($val, $fieldDef, $forPrepared);
@@ -939,9 +941,24 @@ class OracleManager extends DBManager
 				$fieldDef['len'] = min($fieldDef['len'],38);
 			}
 		}
-
+        $type = $this->getFieldType($fieldDef);
+        if ($this->isTextType($type) && isset($fieldDef['len'])) {
+            unset($fieldDef['len']);
+        }
 		return parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
 	}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultFromDefinition($fieldDef)
+    {
+        $type = $this->getFieldType($fieldDef);
+        if ($this->isTextType($type) && isset($fieldDef['default'])) {
+            return " DEFAULT rawtohex({$this->quoted($fieldDef['default'])})";
+        }
+        return parent::getDefaultFromDefinition($fieldDef);
+    }
 
 	/**
 	 * returns true if the field is nullable
