@@ -7257,7 +7257,19 @@ class SugarBean
 
         //retrieve the sql query as an array for easier manipulation
         //note, we do nothing for email1 field in this method, it is already handled by create_new_list_query
-        $returnArray =  $this->create_new_list_query($order_by, $where, $filtered_fields, $new_list_params, 0, '', true, $this, true, true);
+        $returnArray = $this->create_new_list_query(
+            $order_by,
+            $where,
+            $filtered_fields,
+            $new_list_params,
+            0,
+            '',
+            true,
+            $this,
+            true,
+            true,
+            true
+        );
 
         //Process assigned user seperately.  They require slightly different query and should be included by default.
         if (isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])) {
