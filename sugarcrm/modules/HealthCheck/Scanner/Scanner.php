@@ -956,9 +956,15 @@ class HealthCheckScanner
         }
 
         // check custom viewdefs
-        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function($def) {
-            // CRYS-424 - exclude dashletviewdefs.php
-            return basename($def) != 'dashletviewdefs.php';
+        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function ($def) {
+            $filesToExclude = array(
+                'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
+                'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
+                'wireless.editviewdefs.php',
+                'wireless.detailviewdefs.php',
+                'wireless.listviewdefs.php',
+            );
+            return !in_array(basename($def), $filesToExclude);
         });
 
         if($module == "Connectors") {
@@ -990,8 +996,7 @@ class HealthCheckScanner
                         $defsname = "viewdefs";
                     }
                 }
-                // TODO: uncomment checkCustomCode() when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
-                // $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
+                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base", $history);
                 // For stock modules, check subpanels and also list views for non-bwc modules
                 if($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
@@ -1150,8 +1155,9 @@ class HealthCheckScanner
      * @param string $deffile Filename for definitions file
      * @param string $varname Variable to get defs from
      * @param string $original Original defs file
+     * @param array $history Studio history files
      */
-    protected function checkCustomCode($deffile, $varname, $original)
+    protected function checkCustomCode($deffile, $varname, $original, $history = array())
     {
         $this->log("Checking $deffile for custom code");
         $defs = $this->loadFromFile($deffile, $varname);
@@ -1163,10 +1169,33 @@ class HealthCheckScanner
 
         $defs_code = $this->lookupCustomCode('', $defs, array());
         $orig_code = $this->lookupCustomCode('', $origdefs, array());
+        $foundCustomCode = array();
         foreach($defs_code as $code => $places) {
             if(!isset($orig_code[$code])) {
-                $this->updateStatus("foundCustomCode", $code, join(", ", $places));
+                $foundCustomCode[$code] = $places;
             }
+        }
+
+        // We found something, do more precise check through all available history
+        if (!empty($foundCustomCode) && !empty($history)) {
+
+            $historyFiles = array_filter($history, function ($fileName) use ($deffile) {
+                return (strpos(basename($fileName), basename($deffile, '.php')) !== false);
+            });
+
+            $allHistoryCode = array();
+            foreach ($historyFiles as $file) {
+                $historyDefs = $this->loadFromFile($file, $varname);
+                $historyCode = $this->lookupCustomCode('', $historyDefs, array());
+                $allHistoryCode = array_merge($allHistoryCode, $historyCode);
+            }
+
+            $foundCustomCode = array_diff_key($foundCustomCode, $allHistoryCode);
+        }
+
+        // finally output status, if there is any
+        foreach ($foundCustomCode as $code => $places) {
+            $this->updateStatus("foundCustomCode", $code, $places);
         }
     }
 
@@ -1409,7 +1438,7 @@ class HealthCheckScanner
             }
 
             $filename = $item->getFilename();
-            if(strpos($filename, ".suback.php") !== false) {
+            if (strpos($filename, ".suback.php") !== false || strpos($filename, "_backup") !== false) {
                 // we'll ignore .suback files, they are old upgrade backups
                 continue;
             }
@@ -1423,7 +1452,8 @@ class HealthCheckScanner
                     continue;
                 }
                 $data = array_merge($data, $this->getPhpFiles($path . $filename . "/"));
-            } elseif ($extension != 'php') {
+            } elseif (!preg_match('/php(_\d+)?\b/', $extension)) {
+                // we need only php and php Studio-history (.php_{timestamp} extension) files
                 continue;
             } elseif(!in_array($path . $filename, $this->ignoredFiles)) {
                 $data[] = $path . $filename;
