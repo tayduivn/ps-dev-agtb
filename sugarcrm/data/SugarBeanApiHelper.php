@@ -378,10 +378,6 @@ class SugarBeanApiHelper
      */
     protected function getBeanCollectionApiArguments(SugarBean $bean, array $field, array $displayParams = array())
     {
-        // filter out irrelevant parameters from view parameters
-        $params = array('fields', 'max_num', 'filter', 'order_by');
-        $displayParams = array_intersect_key($displayParams, array_flip($params));
-
         $args = array_merge(array(
             // make sure "fields" argument is always passed to the API
             // since otherwise it will return all fields by default
