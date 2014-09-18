@@ -87,11 +87,6 @@ class ProductBundleNote extends SugarBean
         $this->disable_row_level_security = true;
     }
 
-    public function save_relationship_changes($is_update)
-    {
-        // empty
-    }
-
     /**
      * @deprecated
      * @param string $bundle_id

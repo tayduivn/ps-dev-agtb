@@ -225,7 +225,7 @@ EOQ3;
 //BEGIN SUGARCRM flav=pro ONLY
 $GLOBALS['sugar_config']['default_language'] = 'en_us';
 $app_list_strings = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
-$ftsTypeDropdown = "<select name='fts_type' id='fts_type'>";
+$ftsTypeDropdown = "<select name='setup_fts_type' id='setup_fts_type'>";
 $ftsTypeDropdown .= get_select_options_with_id($app_list_strings['fts_type'], '');
 $ftsTypeDropdown .= "</select>";
 
@@ -244,14 +244,14 @@ $outFTS =<<<EOQ3
         <td width='1%'><span class="required">*</span></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_HOST']}</b></td>
         <td  width='35%'nowrap align="left">
-         <input type="text" name="fts_host" id="fts_host" value="localhost" />
+         <input type="text" name="setup_fts_host" id="setup_fts_host" value="localhost" />
         </td>
 </tr>
 <tr id='fts_port_row'>
         <td width='1%'><span class="required">*</span></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_PORT']}</b></td>
         <td  width='35%'nowrap align="left">
-         <input type="text" name="fts_port" id="fts_port" maxlength="10" value="9200" />
+         <input type="text" name="setup_fts_port" id="setup_fts_port" maxlength="10" value="9200" />
         </td>
 </tr>
 </table>
@@ -397,9 +397,9 @@ EOQ4;
 
 //BEGIN SUGARCRM flav=pro ONLY
 $out4 .= <<<FTSTEST
-    postData += "&fts_type=" + $('#fts_type').val();
-    postData += "&fts_host=" + $('#fts_host').val();
-    postData += "&fts_port=" + $('#fts_port').val();
+    postData += "&setup_fts_type=" + $('#setup_fts_type').val();
+    postData += "&setup_fts_host=" + $('#setup_fts_host').val();
+    postData += "&setup_fts_port=" + $('#setup_fts_port').val();
 FTSTEST;
 //END SUGARCRM flav=pro ONLY
 

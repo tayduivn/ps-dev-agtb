@@ -62,7 +62,7 @@ class CliUpgrader extends UpgradeDriver
             );
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
-        return ($retcode == 0);
+        return ($retcode == self::STOP_SIGNAL) ? self::STOP_SIGNAL : ($retcode == 0);
     }
 
     protected static function bannerError($msg)
@@ -391,7 +391,11 @@ eoq2;
         if ($stage && $stage != 'continue') {
             // Run one step
             if ($upgrader->run($stage)) {
-                exit(0);
+                if ($upgrader->success) {
+                    exit(0);
+                } else {
+                    exit(self::STOP_SIGNAL);
+                }
             } else {
                 if (!empty($upgrader->error)) {
                     echo "ERROR: {$upgrader->error}\n";
@@ -424,6 +428,9 @@ eoq2;
                 if ($res === true) {
                     // we're done successfully
                     echo "***************         SUCCESS!\n";
+                    exit(0);
+                }
+                if ($res === self::STOP_SIGNAL) {
                     exit(0);
                 }
                 $stage = $res;
@@ -495,7 +502,8 @@ eoq2;
         if (!$scanner) {
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
-        $scanner->scan();
+        $this->state['healthcheck'] = $scanner->scan();
+        $this->saveState();
         if ($this->context['sendlog']) {
             require_once 'HealthCheckClient.php';
             require_once 'SugarSystemInfo.php';
@@ -522,8 +530,10 @@ eoq2;
                 if ($this->confirmDialog('Are you sure you want to continue?')) {
                     $this->log("User interactively confirmed {$flagLabel} flag(s) - proceeding");
                 } else {
-                    $this->log("User interactively confirmed {$flagLabel} flag(s) - aborting");
-                    return false;
+                    $this->log("User interactively disagreed {$flagLabel} flag(s) - aborting");
+                    // The step is successful but stop upgrade.
+                    $this->success = false;
+                    return true;
                 }
             }
         }

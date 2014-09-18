@@ -879,7 +879,7 @@ class SugarBean
 
         // Renaming template indexes to fit the particular audit table (removed the brittle hard coding)
         foreach($indices as $nr => $properties){
-            $indices[$nr]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $properties['name'];
+            $indices[$nr]['name'] = 'idx_' . strtolower($table_name) . '_' . $properties['name'];
         }
 
         $engine = null;
@@ -1259,6 +1259,7 @@ class SugarBean
                                           ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
+                        Relationship::$relCacheInternal[$rel_name] = true;
                     }
                 }
             } else {
@@ -5728,7 +5729,7 @@ class SugarBean
         if(!empty($record))
         {
             // this copies the object into the array
-            $list[] = $template;
+            $list[] = $record;
         }
     }
 

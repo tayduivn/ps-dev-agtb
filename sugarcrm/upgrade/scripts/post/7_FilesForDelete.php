@@ -202,6 +202,19 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'portal2/portal-ui.js';
         }
 
+        if (version_compare($this->from_version, '7.5', '<')) {
+            $files[] = 'clients/portal/fields/date';
+            $files[] = 'clients/portal/fields/datetimecombo';
+            $files[] = 'include/MVC/View/views/view.gs.php';
+            $files[] = 'include/MVC/View/views/view.wirelessdetail.php';
+            $files[] = 'include/MVC/View/views/view.wirelessedit.php';
+            $files[] = 'include/MVC/View/views/view.wirelesslist.php';
+            $files[] = 'include/MVC/View/views/view.wirelessmodule.php';
+            $files[] = 'include/MVC/View/views/view.wirelesssave.php';
+            $files[] = 'include/SugarWireless';
+            $files[] = 'modules/Notifications/Senders';
+        }
+
         if (version_compare($this->from_version, '7.6', '<')) {
             $files[] = 'clients/base/fields/fieldset-with-labels';
             $files[] = 'modules/Contacts/clients/base/views/create-actions.php';
@@ -550,7 +563,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'modules/iCals/clients',
                 'modules/vCals/clients',
                 'portal2/tests',
-                'styleguide/assets/css/nvd3.css',
                 'styleguide/content/charts/data/bubble_data.js',
                 'styleguide/content/charts/data/flare.js',
                 'styleguide/content/charts/data/funnel_data.js',
@@ -589,7 +601,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'styleguide/less/clients/portal/card.less',
                 'styleguide/less/clients/portal/drawer.less',
                 'styleguide/less/clients/portal/subnav.less',
-                'styleguide/less/modules/nvd3.less',
                 'styleguide/less/sugar-specific/breadcrumbs.less',
                 'styleguide/less/sugar-specific/editable.less',
                 'styleguide/less/sugar-specific/jquery.timepicker.less',

@@ -48,9 +48,12 @@ class ImportController extends SugarController
             }
         }
 
-        if ( !$this->bean ) {
+        if ( !$this->bean && $this->importModule != "Administration") {
             $_REQUEST['message'] = $mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'];
             $this->view = 'error';
+            if (!isset($_REQUEST['import_map_id']) && !isset($_REQUEST['delete_map_id'])) {
+                $this->_processed = true;
+            }
         }
         else
             $GLOBALS['FOCUS'] = $this->bean;

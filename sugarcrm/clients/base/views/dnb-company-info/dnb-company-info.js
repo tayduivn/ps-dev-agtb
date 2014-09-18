@@ -253,6 +253,20 @@
                 app.controller.context.set('dnb_temp_duns_num', this.duns_num);
                 this.dnbProduct.product = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
                 this.dnbProduct.product = this.getDataIndicators(this.accountsDD, this.dnbProduct.product);
+                var industryCodeArray = this.getJsonNode(companyDetails.product, this.appendSVCPaths.industry);
+                if (!_.isUndefined(industryCodeArray)) {
+                    //extracting the primary hoovers industry code and passing it on
+                    //to the industry info dashlet
+                    //25838 indicates hoovers industry code
+                    //if the DisplaySequence == 1
+                    //it indicates that the industry code is the primary hoovers industry code
+                    var industryObj = this.getPrimaryIndustry(industryCodeArray, 25838);
+                    var hooversIndustryCode = this.getJsonNode(industryObj, 'IndustryCode.$'),
+                        hooversTypeCode = industryObj['@DNBCodeValue'];
+                    if (!_.isUndefined(hooversIndustryCode) && !_.isUndefined(hooversTypeCode)) {
+                        app.controller.context.set('dnb_temp_hoovers_ind_code', hooversIndustryCode + '-' + hooversTypeCode);
+                    }
+                }
                 //check if there are any new data
                 var newDataElementsArray = _.filter(this.dnbProduct.product, function(dataElement) {
                     return dataElement.dataInd === 'new' || dataElement.dataInd === 'upd';

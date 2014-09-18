@@ -19,6 +19,9 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static $notes, $opps, $accounts, $meetings;
 
+    /** @var FilterApi */
+    private $filterApi;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');

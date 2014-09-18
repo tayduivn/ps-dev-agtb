@@ -516,7 +516,7 @@ $dictionary['Quote'] = array(
         ),
         'shipping_contact_name' => array(
             'name' => 'shipping_contact_name',
-            'rname' => 'last_name',
+            'rname' => 'full_name',
             'id_name' => 'shipping_contact_id',
             'vname' => 'LBL_SHIPPING_CONTACT_NAME',
             'type' => 'relate',
@@ -589,7 +589,7 @@ $dictionary['Quote'] = array(
         ),
         'billing_contact_name' => array(
             'name' => 'billing_contact_name',
-            'rname' => 'last_name',
+            'rname' => 'full_name',
             'group' => 'billing_address',
             'id_name' => 'billing_contact_id',
             'vname' => 'LBL_BILLING_CONTACT_NAME',

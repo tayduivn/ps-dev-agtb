@@ -230,10 +230,14 @@ class RelateRecordApi extends ModuleApi {
      * @param ServiceBase $api The API class of the request.
      * @param array $args The arguments array passed in from the API.
      * @return array Array of formatted fields.
+     * @throws SugarApiExceptionInvalidParameter If wrong arguments are passed
      * @throws SugarApiExceptionNotFound If bean can't be retrieved.
      */
     public function createRelatedLinks($api, $args)
     {
+        $this->requireArgs($args, array('ids'));
+        $ids = $this->normalizeLinkIds($args['ids']);
+
         $result = array(
             'related_records' => array(),
         );
@@ -243,13 +247,13 @@ class RelateRecordApi extends ModuleApi {
         list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
         $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
 
-        foreach ($args['ids'] as $id) {
+        foreach ($ids as $id => $additionalValues) {
             $relatedBean = BeanFactory::retrieveBean($relatedModuleName, $id);
 
             if (!$relatedBean || $relatedBean->deleted) {
                 throw new SugarApiExceptionNotFound('Could not find the related bean');
             }
-            $primaryBean->$linkName->add(array($relatedBean));
+            $primaryBean->$linkName->add(array($relatedBean), $additionalValues);
 
             $result['related_records'][] = $this->formatBean($api, $args, $relatedBean);
         }
@@ -259,6 +263,41 @@ class RelateRecordApi extends ModuleApi {
         $result['record'] = $this->formatBean($api, $args, $primaryBean);
 
         return $result;
+    }
+
+    /**
+     * Normalizes related record IDs obtained from API arguments
+     *
+     * @param mixed $ids
+     *
+     * @return array Associative array where key is record ID, value is additional link values
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function normalizeLinkIds($ids)
+    {
+        if (!is_array($ids)) {
+            throw new SugarApiExceptionInvalidParameter(
+                sprintf('Related record IDs must be array, %s given', gettype($ids))
+            );
+        }
+
+        $normalized = array();
+        foreach ($ids as $record) {
+            if (is_array($record)) {
+                if (!isset($record['id'])) {
+                    throw new SugarApiExceptionInvalidParameter('Related record ID is not specified in array notation');
+                }
+                $id = $record['id'];
+                $additionalValues = $record;
+                unset($additionalValues['id']);
+            } else {
+                $id = $record;
+                $additionalValues = array();
+            }
+            $normalized[$id] = $additionalValues;
+        }
+
+        return $normalized;
     }
 
     function updateRelatedLink($api, $args) {
@@ -280,6 +319,7 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
+        BeanFactory::registerBean($relatedBean);
 
         // updateBean may remove the relationship. see PAT-337 for details
         $id = $this->updateBean($relatedBean, $api, $args);
@@ -332,6 +372,7 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
+        BeanFactory::registerBean($relatedBean);
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
         

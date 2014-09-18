@@ -124,6 +124,11 @@ class RepairAndClear
                 $this->resetForecasting();
                 break;
             //END SUGARCRM flav=pro ONLY
+            case 'repairConfigs':
+                $this->repairBaseConfig();
+                //BEGIN SUGARCRM flav=ent ONLY
+                $this->repairPortalConfig();
+                //END SUGARCRM flav=ent ONLY
             case 'clearAll':
                 $this->clearTpls();
                 $this->clearJsFiles();
@@ -142,6 +147,7 @@ class RepairAndClear
                 $this->rebuildFileMap();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
+                $this->repairBaseConfig();
                 //BEGIN SUGARCRM flav=ent ONLY
                 $this->repairPortalConfig();
                 //END SUGARCRM flav=ent ONLY
@@ -176,6 +182,15 @@ class RepairAndClear
         $hideModuleMenu = true;
 		include_once('modules/Administration/repairDatabase.php');
 	}
+
+    /**
+     * Rebuilds the base Sidecar configuration file.
+     */
+    public function repairBaseConfig()
+    {
+        require_once 'ModuleInstall/ModuleInstaller.php';
+        ModuleInstaller::handleBaseConfig();
+    }
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**

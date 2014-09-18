@@ -1293,6 +1293,7 @@ class MetaDataManager
         if (!empty($data)) {
             $this->clearLanguagesCache();
             $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
+            $data = $this->loadSectionMetadata(self::MM_ORDEREDLABELS, $data);
             $data = $this->normalizeMetadata($data);
             $data['_hash'] = $this->hashChunk($data);
             $this->putMetadataCache($data);
@@ -2577,8 +2578,11 @@ class MetaDataManager
             // Get the hash for this lang file so we can append it to the URL.
             // This fixes issues where lang strings or list strings change but
             // don't force a metadata refresh
-            $hash = $this->getLanguageFileModified($lang);
-            $urlList[$lang] = $this->getUrlForCacheFile($file) . '?v=' . $hash;
+            $urlList[$lang] = getVersionedPath(
+                $this->getUrlForCacheFile($file),
+                $GLOBALS['sugar_config']['js_lang_version'],
+                true
+            );
         }
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
 
@@ -2599,38 +2603,6 @@ class MetaDataManager
     public function getLanguageHash($lang, $ordered = false)
     {
         return $this->getCachedLanguageHash($lang, $ordered);
-    }
-
-    /**
-     * Get the hash element of the language file properties for a language
-     *
-     * @param  string  $lang   The language to get data for
-     * @return string  The date modifed of the language file
-     */
-    protected function getLanguageFileModified($lang)
-    {
-        $ret = "";
-        $custAppPaths = array(
-            "custom/application/Ext/Language/$lang.lang.ext.php",
-            "custom/include/language/$lang.lang.php"
-        );
-        foreach($custAppPaths as $custFilePath) {
-            if (SugarAutoLoader::fileExists($custFilePath)){
-                $ret = max(filemtime($custFilePath), $ret);
-            }
-        }
-        foreach($this->getModules() as $module) {
-            $modPaths = array(
-                'custom/modules/' . $module . '/Ext/Language/' . $lang . '.lang.ext.php',
-                'custom/modules/' . $module . '/language/' . $lang . '.lang.php',
-            );
-            foreach($modPaths as $custFilePath) {
-                if (SugarAutoLoader::fileExists($custFilePath)){
-                    $ret = max(filemtime($custFilePath), $ret);
-                }
-            }
-        }
-        return $ret;
     }
 
     /**

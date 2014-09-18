@@ -756,4 +756,33 @@ class StudioModule
     public static function isMobileLayoutsSupported ($module) {
         return !in_array($module, self::$mobileNotSupportedModules);
     }
+
+    /**
+     * Removes all custom fields created in Studio
+     *
+     * @return array Names of removed fields
+     */
+    public function removeCustomFields()
+    {
+        $seed = BeanFactory::getBean($this->module);
+        $df = new DynamicField($this->module) ;
+        $df->setup($seed) ;
+
+        $module = StudioModuleFactory::getStudioModule($this->module) ;
+        $removedFields = array();
+        foreach ($seed->field_defs as $def) {
+            if (isset($def['custom_module']) && $def['custom_module'] === $this->module) {
+                $field = $df->getFieldWidget($this->module, $def['name']);
+                // the field may have already been deleted
+                if ($field) {
+                    $field->delete($df);
+                }
+
+                $module->removeFieldFromLayouts($def['name']);
+                $removedFields[] = $def['name'];
+            }
+        }
+
+        return $removedFields;
+    }
 }

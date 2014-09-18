@@ -72,30 +72,78 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
-        'Zendesk' => '2.8',
-        'Act-On Integrated Marketing Automation for SugarCRM' => '*',
-        'Pardot Marketing Automation for SugarCRM' => '*',
-        'iNetMaps' => '*',
-        'Sugar-Constant Contact Integration' => '*',
-        'Adobe EchoSign e-Signatures for SugarCRM' => '*',
-        'DocuSign for SugarCRM' => '*',
-        'FBSG SugarCRM QuickBooks Integration' => '*',
-        'JJWDesign_Google_Maps' => '*',
-        'Dashboard Manager' => '*',
-        'Fonality' => '*',
-        'inetDOCS Box' => '*',
-        'Forums, Threads, Posts Modules' => '*',
-        'Accounting' => '*',
-	    'Marketo Marketing Automation for SugarCRM' => '3.0',
-	    'SugarChimp' => '7.0.1',
-        'Calendar 2.0 V1.2 003' => '*',
-        'Sugar - MAS90 Integration' => '*',
-        'MAS90Integrator' => '*',
-        'ContactIndicators' => '*',
-        'Integral Sales' => '*',
-        'Teleseller' => '*',
-        'Freshdesk' => '*',
-        'Sugar-Sage Integration Modules' => '2.7.0-8-g74f8c47'
+        'Zendesk' => array(
+            array('version' => '2.8'),
+        ),
+        'Act-On Integrated Marketing Automation for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'Pardot Marketing Automation for SugarCRM' =>  array(
+            array('version' => '*'),
+        ),
+        'iNetMaps' => array(
+            array('version' => '*'),
+        ),
+        'Sugar-Constant Contact Integration' => array(
+            array('version' => '*'),
+        ),
+        'Adobe EchoSign e-Signatures for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'DocuSign for SugarCRM' => array(
+            array('version' => '*'),
+        ),
+        'FBSG SugarCRM QuickBooks Integration' => array(
+            array('version' => '*'),
+        ),
+        'JJWDesign_Google_Maps' => array(
+            array('version' => '*'),
+        ),
+        'Dashboard Manager' => array(
+            array('version' => '*'),
+        ),
+        'Fonality' => array(
+            array('version' => '*'),
+        ),
+        'inetDOCS Box' => array(
+            array('version' => '*'),
+        ),
+        'Forums, Threads, Posts Modules' => array(
+            array('version' => '*'),
+        ),
+        'Accounting' => array(
+            array('version' => '*', 'author' => 'CRM Online Australia Pty Ltd'),
+        ),
+        'Marketo Marketing Automation for SugarCRM' => array(
+            array('version' => '3.0'),
+        ),
+        'SugarChimp' => array(
+            array('version' => '7.0.1'),
+        ),
+        'Calendar 2.0 V1.2 003' => array(
+            array('version' => '*'),
+        ),
+        'Sugar - MAS90 Integration' => array(
+            array('version' => '*'),
+        ),
+        'MAS90Integrator' => array(
+            array('version' => '*'),
+        ),
+        'ContactIndicators' => array(
+            array('version' => '*'),
+        ),
+        'Integral Sales' => array(
+            array('version' => '*'),
+        ),
+        'Teleseller' => array(
+            array('version' => '*'),
+        ),
+        'Freshdesk' => array(
+            array('version' => '*'),
+        ),
+        'Sugar-Sage Integration Modules' => array(
+            array('version' => '2.7.0-8-g74f8c47'),
+        ),
     );
 
     /**
@@ -380,6 +428,15 @@ class HealthCheckScanner
     }
 
     /**
+     * Getter verbose (output)
+     * @return int
+     */
+    public function getVerbose()
+    {
+        return $this->verbose;
+    }
+
+    /**
      *
      * Getter flag
      * @return integer
@@ -400,6 +457,27 @@ class HealthCheckScanner
     }
 
     /**
+     * Method detects current version and flavor of installed SugarCRM and returns them
+     *
+     * @return array (version, flavor)
+     */
+    public function getVersionAndFlavor()
+    {
+        $sugar_version = '9.9.9';
+        $sugar_flavor = 'unknown';
+        include "sugar_version.php";
+        return array($sugar_version, $sugar_flavor);
+    }
+
+    /**
+     * @return PackageManager
+     */
+    public function getPackageManager()
+    {
+        return new PackageManager();
+    }
+
+    /**
      *
      * Main
      * @return void|multitype:
@@ -412,9 +490,7 @@ class HealthCheckScanner
             return $this->logMeta;
         }
 
-        $sugar_version = '9.9.9';
-        $sugar_flavor = 'unknown';
-        include "sugar_version.php";
+        list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
@@ -434,19 +510,21 @@ class HealthCheckScanner
         $this->checkVendorAndRemovedFiles();
         if(!empty($this->filesToFix))
         {
-            $files_to_fix = implode("\r\n", $this->filesToFix);
+            $files_to_fix = '';
+            foreach ($this->filesToFix as $fileToFix) {
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . var_export($fileToFix['vendors'], true) . PHP_EOL;
+            }
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
         if(!empty($this->deletedFilesReferenced))
         {
-            $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
-            $this->updateStatus("deletedFilesReferenced", $files_with_bad_includes);
+            $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/|)#";
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
         foreach($this->md5_files as $file => $sum) {
             if(preg_match($skip_prefixes, $file)) {
                 continue;
@@ -521,7 +599,7 @@ class HealthCheckScanner
         require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
         $this->log("Checking packages");
-        $pm = new PackageManager();
+        $pm = $this->getPackageManager();
         $packages = $pm->getinstalledPackages(array('module'));
         foreach ($packages as $pack) {
             if($pack['enabled'] == 'DISABLED') {
@@ -529,13 +607,29 @@ class HealthCheckScanner
                 continue;
             }
             $this->log("Package {$pack['name']} (version {$pack['version']}) detected");
-            if (array_key_exists($pack['name'], $this->packages) &&
-                (
-                    $this->packages[$pack['name']] == '*' ||
-                    version_compare($pack['version'], $this->packages[$pack['name']], '<')
-                )
-            ) {
-                $this->updateStatus("incompatIntegration", $pack['name'], $pack['version']);
+            if (array_key_exists($pack['name'], $this->packages)) {
+                $incompatible = false;
+                foreach ($this->packages[$pack['name']] as $req) {
+                    if (empty($req['version'])) {
+                        $incompatible = true;
+                    } elseif ($req['version'] == '*' || version_compare($pack['version'], $req['version'], '<')) {
+                        $incompatible = true;
+                    }
+                    if (!empty($req['author'])) {
+                        $uh = new UpgradeHistory();
+                        $uh->retrieve_by_string_fields(array('name' => $pack['name'], 'version' => $pack['version']), true, false);
+                        $manifest = unserialize(base64_decode($uh->manifest));
+                        $manifest = $manifest['manifest'];
+                        $scp = strcasecmp($manifest['author'], $req['author']);
+                        $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));
+                    }
+                    if ($incompatible) {
+                        break;
+                    }
+                }
+                if ($incompatible) {
+                    $this->updateStatus("incompatIntegration", $pack['name'], $pack['version']);
+                }
             }
         }
     }
@@ -656,6 +750,7 @@ class HealthCheckScanner
             )
             ) {
                 $vendorFileFound = false;
+                $includedVendors = array();
                 foreach ($m[1] as $value) {
                     foreach ($this->removed_directories as $directory) {
                         if (preg_match(
@@ -673,12 +768,16 @@ class HealthCheckScanner
                                 }
                             }
                             $vendorFileFound = true;
+                            $includedVendors[] = $directory;
                             break;
                         }
                     }
                 }
                 if ($vendorFileFound) {
-                    $this->filesToFix[] = $file;
+                    $this->filesToFix[] = array(
+                        'file' => $file,
+                        'vendors' => $includedVendors
+                    );
                 }
             }
             foreach ($this->removed_files AS $deletedFile) {
@@ -753,21 +852,21 @@ class HealthCheckScanner
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
         if(!$this->isMBModule($module)) {
-            $this->log("toBeRunAsBWC", $module);
+            $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
         }
 
         $objectName = $this->getObjectName($module);
         // check for subpanels since BWC subpanels can be used in non-BWC modules
-        $defs = $this->getPhpFiles("$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             foreach($defs as $deffile) {
                 $this->checkListFields($deffile, "subpanel_layout", 'list_fields', $module, $objectName);
             }
         }
 
-        $defs = $this->getPhpFiles("custom/$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("custom/modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             $this->log("$module has custom subpanels");
             foreach($defs as $deffile) {
@@ -831,7 +930,7 @@ class HealthCheckScanner
         // Check for extension files
         $extfiles = $this->getPhpFiles("custom/Extension/modules/$module/Ext");
         if(!empty($extfiles)) {
-            $this->updateStatus("hasExtensions", $module, var_export($extfiles, true));
+            $this->updateStatus("hasExtensions", $module, $extfiles);
         }
         foreach($extfiles as $phpfile) {
             $this->checkFileForOutput($phpfile, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
@@ -857,7 +956,10 @@ class HealthCheckScanner
         }
 
         // check custom viewdefs
-        $defs = $this->getPhpFiles("custom/modules/$module/metadata");
+        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function($def) {
+            // CRYS-424 - exclude dashletviewdefs.php
+            return basename($def) != 'dashletviewdefs.php';
+        });
 
         if($module == "Connectors") {
             $pos = array_search("custom/modules/Connectors/metadata/connectors.php", $defs);
@@ -888,7 +990,8 @@ class HealthCheckScanner
                         $defsname = "viewdefs";
                     }
                 }
-                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
+                // TODO: uncomment checkCustomCode() when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
+                // $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
                 // For stock modules, check subpanels and also list views for non-bwc modules
                 if($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
@@ -920,7 +1023,7 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+        foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if (!empty($extfiles)) {
@@ -1389,12 +1492,12 @@ class HealthCheckScanner
 if\s*\(\s*!\s*defined\s*\(\s*'sugarEntry'\s*\)\s*(\|\|\s*!\s*sugarEntry\s*)?\)\s*{?\s*die\s*\(\s*'Not A Valid Entry Point'\s*\)\s*;\s*}?
 ENDP;
         $contents = preg_replace("#$sePattern#i", '', $contents);
-        $fileLines = explode(PHP_EOL, $contents);
 
         $tokens = token_get_all($contents);
-        foreach ($tokens as $token) {
+        $tokens = array_filter($tokens, array($this, 'ignoreWhitespace'));
+        $tokens = array_values($tokens);
+        foreach ($tokens as $index => $token) {
             if (is_array($token)) {
-                $args = array();
                 if ($token[0] == T_INLINE_HTML) {
                     $args = array('inlineHtml', $phpfile, $token[2]);
                 } elseif ($token[0] == T_ECHO) {
@@ -1403,13 +1506,7 @@ ENDP;
                     $args = array('foundPrint', $phpfile, $token[2]);
                 } elseif ($token[0] == T_EXIT) {
                     $args = array('foundDieExit', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'print_r') {
-                    // Checks if print_r has the second parameter as 'true', according to:
-                    // When this parameter is set to TRUE, print_r() will return the information rather than print it.
-                    // Continue to scan, if has.
-                    if (preg_match('#print_r\([^\)]+,\s*true\s*\)#is', $fileLines[$token[2] - 1]) > 0) {
-                        continue;
-                    }
+                } elseif ($token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
                     $args = array('foundPrintR', $phpfile, $token[2]);
                 } elseif ($token[0] == T_STRING && $token[1] == 'var_dump') {
                     $args = array('foundVarDump', $phpfile, $token[2]);
@@ -1425,6 +1522,54 @@ ENDP;
             }
         }
     }
+
+    /**
+     * Returns false if $item is T_WHITESPACE token.
+     * @see \HealthCheckScanner::checkFileForOutput
+     * @param $item
+     * @return bool
+     */
+    protected function ignoreWhitespace($item)
+    {
+        return !(is_array($item) && $item[0] == T_WHITESPACE);
+    }
+
+    /**
+     * Checks if print_r has the second parameter as 'true', according to:
+     * When this parameter is set to TRUE, print_r() will return the information rather than print it.
+     * We cannot check if the second parameter is actually true
+     * in cases when the second parameter is a variable i.e. print_r($foo, $bar).
+     * We blindly assume that if second parameter is passed then it is true.
+     * Continue to scan, if has.
+     * @param $index int index to start traversing $tokens at
+     * @param $tokens array of tokens from token_get_all
+     * @return bool
+     */
+    protected function checkPrintR($index, $tokens)
+    {
+        $curlyBracketsCount = 0;
+        $found = false;
+        $count = count($tokens);
+        for ($i = $index + 1; $i < $count; $i++) {
+            if ($tokens[$i] === '(') {
+                $curlyBracketsCount += 1;
+            } else {
+                if ($tokens[$i] === ')') {
+                    if ($curlyBracketsCount === 1 && !$found) {
+                        return true;
+                    }
+                    $curlyBracketsCount -= 1;
+                } else {
+                    if ($tokens[$i] === ',' && $curlyBracketsCount === 1) {
+                        $next = $tokens[$i + 1];
+                        return (is_array($next) && $next[1] === 'false');
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * PHP error handler, to log PHP errors

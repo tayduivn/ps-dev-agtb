@@ -24,10 +24,10 @@
         <a href="#{{buildRoute module="Employees" id=created_by}}">{{created_by_name}}</a>
         <date class="date">
             <span class="relativetime">
-                {{#if useRelativeTime}}
-                    {{relativeTime model.attributes.date_entered class='date' rel='tooltip'}}
+                {{#if @useRelativeTime}}
+                    {{relativeTime date_entered class='date' rel='tooltip'}}
                 {{else}}
-                    {{str "LBL_ACTIVITYSTREAM_RELATIVETIME_ON"}}{{formatDate model.attributes.date_entered}}
+                    {{str "LBL_ACTIVITYSTREAM_RELATIVETIME_ON"}}{{formatDate date_entered}}
                 {{/if}}
             </span>
         </date>

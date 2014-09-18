@@ -426,6 +426,12 @@
             return;
         }
 
+        // to make sure quick filter is handled properly
+        if (_.isEmpty(query)) {
+            var filterQuicksearchView = this.getComponent('filter-quicksearch');
+            query = filterQuicksearchView && filterQuicksearchView.$el.val() || '';
+        }
+
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
         // reset the selected on filter apply

@@ -1017,6 +1017,7 @@
                     app.alert.show('success', {
                         level: 'success',
                         autoClose: true,
+                        autoCloseDelay: 10000,
                         title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                         messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
@@ -1053,6 +1054,7 @@
                     app.alert.show('success', {
                         level: 'success',
                         autoClose: true,
+                        autoCloseDelay: 10000,
                         title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                         messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });

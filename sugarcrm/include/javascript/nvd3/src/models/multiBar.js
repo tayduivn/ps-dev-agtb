@@ -50,13 +50,11 @@ nv.models.multiBar = function() {
           orientation = vertical ? 'vertical' : 'horizontal',
           dimX = vertical ? 'width' : 'height',
           dimY = vertical ? 'height' : 'width',
-          limDimX = vertical ? availableWidth : availableHeight,
-          limDimY = vertical ? availableHeight : availableWidth,
           xVal = vertical ? 'x' : 'y',
           yVal = vertical ? 'y' : 'x',
           valuePadding = 0;
 
-      baseWidth = vertical ? 72 : 48;
+      baseWidth = stacked ? vertical ? 72 : 30 : 20;
 
       if (stacked) {
         data = d3.layout.stack()
@@ -94,43 +92,56 @@ nv.models.multiBar = function() {
 
       //------------------------------------------------------------
       // Setup Scales
+      var limDimX = 0,
+          limDimY = 0,
+          seriesData = [];
 
-      // remap and flatten the data for use in calculating the scales' domains
-      var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
-            data.map(function(d) {
-              return d.values.map(function(d, i) {
-                return { x: getX(d, i), y: getY(d, i), y0: d.y0, y1: d.y1 };
-              });
-            }),
-          boundsWidth = baseWidth * 0.75 * (stacked ? 1 : data.length) + baseWidth * 0.25,
-          outerPadding = Math.max(0.25, (limDimX - data[0].values.length * boundsWidth + 16) / (2 * boundsWidth));
+      chart.resetScale = function() {
+        availableWidth = width - margin.left - margin.right;
+        availableHeight = height - margin.top - margin.bottom;
+        limDimX = vertical ? availableWidth : availableHeight;
+        limDimY = vertical ? availableHeight : availableWidth;
 
-      if (!withLine) {
-        /*TODO: used in reports to keep bars from being too wide
-          breaks pareto chart, so need to update line to adjust x position */
-        x .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
-          .rangeRoundBands([0, limDimX], 0.25, outerPadding);
-      } else {
-        x .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
-          .rangeBands([0, limDimX], 0.3);
-      }
+        // remap and flatten the data for use in calculating the scales' domains
+        seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
+          data.map(function(d) {
+            return d.values.map(function(d, i) {
+              return { x: getX(d, i), y: getY(d, i), y0: d.y0, y1: d.y1 };
+            });
+          });
 
-      y .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) {
-          var posOffset = (vertical ? 0 : d.y),
-              negOffset = (vertical ? d.y : 0);
-          return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
-        }).concat(forceY)))
-        .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+        var boundsWidth = baseWidth * 0.75 * (stacked ? 1 : data.length) + baseWidth * 0.25,
+            outerPadding = Math.max(0.25, (limDimX - data[0].values.length * boundsWidth + 16) / (2 * boundsWidth));
 
-      x0 = x0 || x;
-      y0 = y0 || y;
+        if (!withLine) {
+          /*TODO: used in reports to keep bars from being too wide
+            breaks pareto chart, so need to update line to adjust x position */
+          x .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
+            .rangeRoundBands([0, limDimX], 0.25, outerPadding);
+        } else {
+          x .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
+            .rangeBands([0, limDimX], 0.3);
+        }
 
-      var expandDomain = y.invert(y(0) + (vertical ? -4 : 4));
-      y.domain(
-        y.domain().map(function(d, i) {
-          return d += expandDomain * (d < 0 ? -1 : d > 1 ? 1 : 0 );
-        })
-      );
+        y .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) {
+            var posOffset = (vertical ? 0 : d.y),
+                negOffset = (vertical ? d.y : 0);
+            return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
+          }).concat(forceY)))
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+
+        x0 = x0 || x;
+        y0 = y0 || y;
+
+        var expandDomain = y.invert(y(0) + (vertical ? -4 : 4));
+        y.domain(
+          y.domain().map(function(d, i) {
+            return d += expandDomain * (d < 0 ? -1 : d > 1 ? 1 : 0);
+          })
+        );
+      };
+
+      chart.resetScale();
 
       //------------------------------------------------------------
       // recalculate y.range if show values

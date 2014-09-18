@@ -67,17 +67,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     /**
      *
-     * Index strategy for reading and writing per module
-     * Defaults to using unique_key if not set
-     *
-     * @see $sugar_config['search_engine']['index_strategy_settings']
-     * @see $sugar_config['search_engine']['unique_key']
-     * @var string
-     */
-    protected $indexStrategySettings;
-
-    /**
-     *
      * Index strategy object
      *
      * @var SugarSearchEngineIndexStrategy
@@ -344,12 +333,32 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         try {
             $batchedDocs = array();
             $x = 0;
+
+            $bulk = new Elastica\Bulk($this->_client);
+
+            /* If we use a single index we can put it directly in the url
+             * of our request. This will make the bulk request smaller and
+             * allows the usage of the ES security parameters
+             * "rest.action.multi.allow_explicit_index: false" to be able
+             * to perform URL based access control.
+             */
+            if ($this->useSingleIndex()) {
+                $bulk->setIndex($this->getWriteIndexName());
+                $singleIndex = true;
+            }
+
             foreach ($docs as $singleDoc) {
-                $indexName = $this->getWriteIndexForElasticaDocument($singleDoc);
-                $singleDoc->setIndex($indexName);
+
+                // Only put the index name on the document directly if we
+                // are not using a single index (see above)
+                if (empty($singleIndex)) {
+                    $indexName = $this->getWriteIndexForElasticaDocument($singleDoc);
+                    $singleDoc->setIndex($indexName);
+                }
 
                 if ($x != 0 && $x % $this->max_bulk_doc_threshold == 0) {
-                    $this->_client->addDocuments($batchedDocs);
+                    $bulk->addDocuments($batchedDocs);
+                    $bulk->send();
                     $batchedDocs = array();
                 } else {
                     $batchedDocs[] = $singleDoc;
@@ -360,7 +369,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
             //Commit the stragglers
             if (count($batchedDocs) > 0) {
-                $this->_client->addDocuments($batchedDocs);
+                $bulk->addDocuments($batchedDocs);
+                $bulk->send();
             }
         } catch (Exception $e) {
             $this->reportException("Error performing bulk update operation", $e);
@@ -372,6 +382,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
 
         return true;
+    }
+
+    /**
+     * Check if we are using a single index
+     * @return boolean
+     */
+    protected function useSingleIndex()
+    {
+        return ($this->indexStrategy instanceof SugarSearchEngineElasticIndexStrategySingle);
     }
 
     /**
@@ -735,30 +754,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->logger->info("Going to search with query $queryString");
         $results = null;
         try {
-            // trying to match everything, make a MatchAll query
-            if ($queryString == '*') {
-                $queryObj = new \Elastica\Query\MatchAll();
-
-            } else {
-                $qString = html_entity_decode($queryString, ENT_QUOTES);
-
-                // we need to escape slash for lucene query_string query
-                $qString = str_replace('/', '\\/', $qString);
-
-                $queryObj = new \Elastica\Query\QueryString($qString);
-                $queryObj->setAnalyzeWildcard(true);
-                $queryObj->setAutoGeneratePhraseQueries(false);
-
-                // set query string fields
-                $options['addSearchBoosts'] = true;
-                $fields = $this->getSearchFields($options);
-                $options['addSearchBoosts'] = false;
-                if (!empty($options['searchFields'])) {
-                    $queryObj->setFields($options['searchFields']);
-                } else {
-                    $queryObj->setFields($fields);
-                }
-            }
+            $queryObj = $this->buildQueryObject($queryString, $options);
             $s = new \Elastica\Search($this->_client);
 
             $finalTypes = array();
@@ -806,6 +802,40 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return null;
         }
         return $results;
+    }
+
+    /**
+     * @param string $queryString
+     * @param array $options
+     * @return \Elastica\Query
+     */
+    protected function buildQueryObject($queryString, $options)
+    {
+        // trying to match everything, make a MatchAll query
+        if ($queryString == '*') {
+            $queryObj = new \Elastica\Query\MatchAll();
+
+        } else {
+            $qString = html_entity_decode($queryString, ENT_QUOTES);
+
+            // we need to escape slash for lucene query_string query
+            $qString = str_replace('/', '\\/', $qString);
+
+            $queryObj = new \Elastica\Query\QueryString($qString);
+            $queryObj->setAnalyzeWildcard(true);
+            $queryObj->setAutoGeneratePhraseQueries(false);
+
+            // set query string fields
+            $options['addSearchBoosts'] = true;
+            $fields = $this->getSearchFields($options);
+            $options['addSearchBoosts'] = false;
+            if (!empty($options['searchFields'])) {
+                $queryObj->setFields($options['searchFields']);
+            } else {
+                $queryObj->setFields($fields);
+            }
+        }
+        return $queryObj;
     }
 
     /**

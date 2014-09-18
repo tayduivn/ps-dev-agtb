@@ -731,7 +731,7 @@ function get_team_name($team_id)
  * retrieve the list of teams that this user has access to.
  * add_blank -- If you would like to have a blank entry in the list (to allow no selection) pass true.
  */
-function get_team_array($add_blank = FALSE)
+function get_team_array($add_blank = false)
 {
     global $current_user;
     if (empty($current_user) || empty($current_user->id)) {
@@ -2186,7 +2186,7 @@ function xss_check_pattern($pattern, $str)
 /**
  * Designed to take a string passed in the URL as a parameter and clean all "bad" data from it
  *
- * @param string $str
+ * @param string $value
  * @param string $filter which corresponds to a regular expression to use; choices are:
  * 		"STANDARD" ( default )
  * 		"STANDARDSPACE"
@@ -2200,7 +2200,7 @@ function xss_check_pattern($pattern, $str)
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
  */
-function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
+function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
     global  $sugar_config;
 
@@ -2217,9 +2217,21 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
     "ALPHANUM"        => '#[^A-Z0-9\-]#i',
     );
 
-    if (preg_match($filters[$filter], $str)) {
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            $value[$k] = clean_string($v, $filter, $dieOnBadData);
+        }
+
+        return $value;
+    }
+
+    if (!is_string($value)) {
+        return $value;
+    }
+
+    if (preg_match($filters[$filter], $value)) {
         if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
-            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$str}");
+            $GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$value}");
         }
         if ($dieOnBadData) {
             die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2227,7 +2239,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
         return false;
     } else {
-        return $str;
+        return $value;
     }
 }
 
@@ -2257,7 +2269,7 @@ function clean_special_arguments()
     clean_superglobals('return_action');
     clean_superglobals('return_module');
 
-    return TRUE;
+    return true;
 }
 
 /**
@@ -3091,7 +3103,7 @@ function _pp($mixed)
  * This function is only intended to be used for SugarCRM internal development.
  * The pp stands for Pre Print.
  */
-function _pstack_trace($mixed=NULL)
+function _pstack_trace($mixed=null)
 {
     //BEGIN SUGARCRM flav=int ONLY
     echo "\n<pre>\n_pstack_trace: '";
@@ -5905,4 +5917,50 @@ function parseShorthandBytes($string)
     }
 
     return null;
+}
+
+
+/**
+ * Given a string with variables in the format [var], replace those variables with values pulled from $fields
+ *
+ * @param string $subject String with variables to replace
+ * @param array  $fields Key=>Value pairs for variable replacements
+ * @param bool   $use_curly If true, use {variable} syntax instead of [variable]
+ *
+ * @return String
+ */
+function replace_sugar_vars($subject, $fields, $use_curly = false)
+{
+    $lDelim = "[";
+    $rDelim = "]";
+    if ($use_curly) {
+        $lDelim = "{";
+        $rDelim = "}";
+    }
+    $matches = array();
+    $count = preg_match_all('/\\' . $lDelim . '([^\\' . $rDelim . ']*)\\' . $rDelim . '/', $subject, $matches);
+    //echo "\nfor $subject got matches \n" . print_r($matches, true) . "\nand the fields are\n" . print_r($fields, true);
+    for ($i = 0; $i < $count; $i++) {
+        $match = $matches[1][$i];
+        //List views will have fields be an array where all the keys are upper case and the values are jsut strings
+        if (!isset($fields[$match]) && isset($fields[strtoupper($match)])) {
+            $match = strtoupper($match);
+        }
+
+        $value = isset($fields[$match]) ? $fields[$match] : null;
+        if (!is_null($value)) {
+            if (is_array($value) && isset($value['value'])) {
+                $value = $value['value'];
+            }
+
+            if (isset($fields[$match]['type']) && $fields[$match]['type'] == 'enum'
+                && isset($fields[$match]['options']) && isset($fields[$match]['options'][$value])
+            ) {
+                $subject = str_replace($matches[0][$i], $fields[$match]['options'][$value], $subject);
+            } else {
+                $subject = str_replace($matches[0][$i], $value, $subject);
+            }
+        }
+    }
+    return $subject;
 }
