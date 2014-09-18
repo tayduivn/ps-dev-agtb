@@ -2986,6 +2986,10 @@ SUGAR.reports = function() {
 			if ( typeof ( qualifier_name) == 'undefined' ||  qualifier_name == '') {
 				qualifier_name='equals';
 			}
+
+			if (typeof (filter.qualifier_name) == 'undefined' ||  filter.qualifier_name == '') {
+				filter.qualifier_name = qualifier_name;
+			}
 		
 			var field_type = field.type;
 
