@@ -458,7 +458,7 @@ class CalendarUtils
 	{
 		global $db;
 
-        if (empty($beanId)) {
+        if (trim($beanId) == '') {
             return;
         }
 
