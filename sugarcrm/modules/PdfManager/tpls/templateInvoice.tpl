@@ -23,7 +23,7 @@
 </tr>
 <tr>
 <td bgcolor="#DCDCDC" width="75%">{$MOD.LBL_TPL_SALES_PERSON}</td>
-<td width="75%">{literal}{$fields.assigned_user_link.name}{/literal}</td>
+<td width="75%">{literal}{if isset($fields.assigned_user_link.name)}{$fields.assigned_user_link.name}{/if}{/literal}</td>
 </tr>
 <tr>
 <td bgcolor="#DCDCDC" width="75%">{$MOD.LBL_TPL_VALID_UNTIL}</td>
@@ -85,17 +85,20 @@
 </tr>
 <!--START_PRODUCT_LOOP-->
 <tr>
-<td width="70%">{literal}{$product.quantity}{/literal}</td>
-<td width="175%">{literal}{$product.mft_part_num}{/literal}</td>
-<td width="175%">{literal}{$product.name}{if isset($product.list_price)}<br></br>{$product.description}{/if}{/literal}</td>
-<td align="right" width="70%">{literal}{$product.list_price}{/literal}</td>
-<td align="right" width="70%">{literal}{$product.discount_price}{/literal}</td>
-<td align="right" width="70%">{literal}{$product.ext_price}{/literal}</td>
-<td align="right" width="70%">{literal}{if $product.discount_select}
-			         {sugar_number_format var=$product.discount_amount}%
-			     {else}
-			        {sugar_currency_format var=$product.discount_amount currency_id=$product.currency_id}
-			     {/if}{/literal}</td>
+<td width="70%">{literal}{if isset($product.quantity)}{$product.quantity}{/if}{/literal}</td>
+<td width="175%">{literal}{if isset($product.mft_part_num)}{$product.mft_part_num}{/if}{/literal}</td>
+<td width="175%">{literal}{if isset($product.name)}{$product.name}{/if}{if isset($product.list_price)}<br></br>{$product.description}{/if}{/literal}</td>
+<td align="right" width="70%">{literal}{if isset($product.list_price)}{$product.list_price}{/if}{/literal}</td>
+<td align="right" width="70%">{literal}{if isset($product.discount_price)}{$product.discount_price}{/if}{/literal}</td>
+<td align="right" width="70%">{literal}{if isset($product.ext_price)}{$product.ext_price}{/if}{/literal}</td>
+<td align="right" width="70%">{literal}
+    {if isset($product.discount_amount)}
+        {if !empty($product.discount_select)}
+            {sugar_number_format var=$product.discount_amount}%
+        {else}
+            {sugar_currency_format var=$product.discount_amount currency_id=$product.currency_id}
+        {/if}
+    {/if}{/literal}</td>
 </tr>
 <!--END_PRODUCT_LOOP--></tbody>
 </table>
