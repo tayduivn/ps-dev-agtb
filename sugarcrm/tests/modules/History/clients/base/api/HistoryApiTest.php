@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once('include/api/RestService.php');
 require_once("modules/History/clients/base/api/HistoryApi.php");
 
@@ -17,41 +18,48 @@ require_once("modules/History/clients/base/api/HistoryApi.php");
  */
 class HistoryApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var HistoryApi */
+    protected $filterApi = null;
+
+    /** @var RestService */
+    protected $serviceMock = null;
+
+    /** @var Account */
+    protected $account = null;
+
     public function setUp()
     {
-        $this->filterApi = new HistoryApiMock();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+
+        $this->filterApi = new HistoryApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
+        $this->account = SugarTestAccountUtilities::createAccount();
     }
 
     public function tearDown()
     {
         unset($this->filterApi);
         unset($this->serviceMock);
+        unset($this->account);
+
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestHelper::tearDown();
     }
 
     public function testFilterSetup()
     {
-        $return = $this->filterApi->filterList(
+        $return = $this->filterApi->filterModuleList(
             $this->serviceMock,
             array(
-                'module_list' => 'Notes,Tasks,Meetings',
-                'filter' => array(),
+                'module' => 'Accounts',
+                'record' => $this->account->id,
+                'module_list' => 'Calls,Emails,Meetings,Notes,Tasks',
+                'max_num' => 20,
             ),
             'list'
         );
-        $expected = array('Notes' => array(), 'Tasks' => array(), 'Meetings' => array());
-        $this->assertEquals($expected, $return);
-    }
-}
-
-class HistoryApiMock extends HistoryApi
-{
-    protected function filterModuleList(ServiceBase $api, array $args, array $moduleList, $acl = 'list')
-    {
-        return array(
-            'Notes' => array(),
-            'Tasks' => array(),
-            'Meetings' => array(),
-        );
+        $this->assertNotEmpty($return, 'HistoryAPI is broken');
     }
 }

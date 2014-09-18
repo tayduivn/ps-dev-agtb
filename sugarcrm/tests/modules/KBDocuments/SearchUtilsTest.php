@@ -138,4 +138,36 @@ class SearchUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Testing that range uses datetime instead of date format
+     * @see CRYS-454
+     */
+    public function testReturnDateFilterOnRange()
+    {
+        $db = $this->getMock(get_class(DBManagerFactory::getInstance()), array('convert'));
+        $db->expects($this->exactly(2))->method('convert')->with($this->matchesRegularExpression('/^\'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\'$/'), $this->equalTo('datetime'));
+        return_date_filter($db, 'test', 'last_30_days');
+    }
+
+    /**
+     * Testing that range uses datetime instead of date format
+     * @see CRYS-454
+     */
+    public function testReturnCannedQueryAdded()
+    {
+        $db = $this->getMock(get_class(DBManagerFactory::getInstance()), array('convert'));
+        $db->expects($this->exactly(2))->method('convert')->with($this->matchesRegularExpression('/^\'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\'$/'), $this->equalTo('datetime'));
+        return_canned_query($db, 'added');
+    }
+
+    /**
+     * Testing that range uses datetime instead of date format
+     * @see CRYS-454
+     */
+    public function testReturnCannedQueryUpdated()
+    {
+        $db = $this->getMock(get_class(DBManagerFactory::getInstance()), array('convert'));
+        $db->expects($this->exactly(2))->method('convert')->with($this->matchesRegularExpression('/^\'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\'$/'), $this->equalTo('datetime'));
+        return_canned_query($db, 'updated');
+    }
 }
