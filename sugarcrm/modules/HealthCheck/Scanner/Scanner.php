@@ -524,7 +524,7 @@ class HealthCheckScanner
 
         // check non-upgrade-safe customizations by verifying md5's
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/|)#";
         foreach($this->md5_files as $file => $sum) {
             if(preg_match($skip_prefixes, $file)) {
                 continue;
