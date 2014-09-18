@@ -3295,7 +3295,7 @@ class MetaDataManager
      *
      * @param string $moduleName The name of the module
      * @param string $view       The view name
-     * @param array $displayParams
+     * @param array $displayParams Associative array of field names and their display params on the given view
      * @return array
      */
     public function getModuleViewFields($moduleName, $view, &$displayParams = array())
@@ -3324,8 +3324,9 @@ class MetaDataManager
      * Return list of fields from view def field set and populate $displayParams with display parameters
      * of link and collection fields
      *
-     * @param array $fieldSet
-     * @param array $displayParams
+     * @param array $fieldSet The field set
+     * @param array $fieldDefs Bean field definitions
+     * @param array $displayParams Associative array of field names and their display params
      * @return array
      */
     protected function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
@@ -3348,29 +3349,26 @@ class MetaDataManager
                 switch ($type) {
                     case 'link':
                     case 'collection':
-                        if (isset($field['name'])) {
-                            $displayParams[$field['name']] = $field;
-                            unset($displayParams[$field['name']]['name']);
-                        }
                         break;
                     default:
                         // by default consider everything a fieldset
-                        if (isset($field['fields']) && is_array($field['fields'])) {
-                            $fields = array_merge($fields, $this->getFieldNames(
-                                $field['fields'],
-                                $fieldDefs,
-                                $displayParams
-                            ));
+                        $fieldAttributes = array('fields', 'related_fields');
+                        foreach ($fieldAttributes as $attribute) {
+                            if (isset($field[$attribute]) && is_array($field[$attribute])) {
+                                $fields = array_merge($fields, $this->getFieldNames(
+                                    $field[$attribute],
+                                    $fieldDefs,
+                                    $displayParams
+                                ));
+                                unset($field[$attribute]);
+                            }
                         }
                         break;
                 }
 
-                if (isset($field['related_fields']) && is_array($field['related_fields'])) {
-                    $fields = array_merge($fields, $this->getFieldNames(
-                        $field['related_fields'],
-                        $fieldDefs,
-                        $displayParams
-                    ));
+                if (isset($field['name'])) {
+                    $displayParams[$field['name']] = $field;
+                    unset($displayParams[$field['name']]['name']);
                 }
             }
         }

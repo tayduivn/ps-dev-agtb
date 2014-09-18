@@ -425,13 +425,22 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'calls',
                 ),
                 array(
+                    'first_name' => array(),
+                    'last_name' => array(),
                     'tasks' => array(
                         'fields' => array('id', 'date_due'),
                         'order_by' => 'date_due:desc',
                     ),
+                    'street' => array(),
+                    'country' => array(),
+                    'primary_address' => array(),
+                    'foo' => array(),
+                    'bar' => array(),
                     'opportunities' => array(
                         'fields' => array('id', 'name'),
                     ),
+                    'good' => array(),
+                    'karma' => array(),
                     'bugs' => array(),
                     'calls' => array(),
                 ),
