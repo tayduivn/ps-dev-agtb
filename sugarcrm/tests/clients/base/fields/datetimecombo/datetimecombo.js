@@ -331,7 +331,7 @@ describe('Base.Field.DateTimeCombo', function() {
                 $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
 
                 expect($durationDropdown.find('li').first().text()).toBe('11:00am (0 mins)');
-                expect($durationDropdown.find('li').last().text()).toBe('11:45pm (12.8 hrs)');
+                expect($durationDropdown.find('li').last().text()).toBe('11:45pm (12 hrs 45 mins)');
             });
 
             it('should not display duration if duration has not been enabled in the view definition', function() {
