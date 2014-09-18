@@ -43,45 +43,6 @@ class SqlsrvPreparedStatement extends PreparedStatement
     protected $bound_vars = array();
 
     /**
-     * SQL server type map
-     * @var unknown
-     */
-    public $typeMap = array(
-        'int'           =>  SQLSRV_SQLTYPE_INT,
-        'double'        =>  SQLSRV_SQLTYPE_FLOAT,
-        'float'         =>  SQLSRV_SQLTYPE_FLOAT,
-        'uint'          =>  SQLSRV_SQLTYPE_INT,
-        'ulong'         =>  SQLSRV_SQLTYPE_BIGINT,
-        'long'          =>  SQLSRV_SQLTYPE_BIGINT,
-        'short'         =>  SQLSRV_SQLTYPE_INT,
-        'varchar'       =>  SQLSRV_SQLTYPE_CHAR,
-        'text'          =>  SQLSRV_SQLTYPE_TEXT,
-        'longtext'      =>  SQLSRV_SQLTYPE_TEXT,
-        'date'          =>  SQLSRV_SQLTYPE_DATE,
-        'enum'          =>  SQLSRV_SQLTYPE_CHAR,
-        'relate'        =>  SQLSRV_SQLTYPE_CHAR,
-        'multienum'     =>  SQLSRV_SQLTYPE_CHAR,
-        'html'          =>  SQLSRV_SQLTYPE_TEXT,
-        'longhtml'      =>  SQLSRV_SQLTYPE_TEXT,
-        'datetime'      =>  SQLSRV_SQLTYPE_CHAR,
-        'datetimecombo' =>  SQLSRV_SQLTYPE_CHAR,
-        'time'          =>  SQLSRV_SQLTYPE_CHAR,
-        'bool'          =>  SQLSRV_SQLTYPE_BIT,
-        'tinyint'       =>  SQLSRV_SQLTYPE_TINYINT,
-        'char'          =>  SQLSRV_SQLTYPE_CHAR,
-        'blob'          =>  SQLSRV_SQLTYPE_BINARY,
-        'longblob'      =>  SQLSRV_SQLTYPE_BINARY,
-        'currency'      =>  SQLSRV_SQLTYPE_MONEY,
-        'decimal'       =>  SQLSRV_SQLTYPE_DECIMAL,
-        'decimal2'      =>  SQLSRV_SQLTYPE_DECIMAL,
-        'id'            =>  SQLSRV_SQLTYPE_CHAR,
-        'url'           =>  SQLSRV_SQLTYPE_CHAR,
-        'encrypt'       =>  SQLSRV_SQLTYPE_CHAR,
-        'file'          =>  SQLSRV_SQLTYPE_CHAR,
-        'decimal_tpl'   =>  SQLSRV_SQLTYPE_DECIMAL,
-    );
-
-    /**
      * (non-PHPdoc)
      * @see PreparedStatement::preparePreparedStatement()
      */
@@ -95,10 +56,10 @@ class SqlsrvPreparedStatement extends PreparedStatement
         $GLOBALS['log']->info('QueryPrepare: ' . $this->parsedSQL);
 
         $num_args = count($this->fieldDefs);
-        $params = $this->bound_vars = array_fill(0, $num_args, null);
-        for($i=0; $i<$num_args;$i++) {
-            $dbType = $this->fieldDefs[$i]["type"];
-            $params[] = array(&$this->bound_vars[$i], SQLSRV_PARAM_IN, null, $dbType);
+        $this->bound_vars = array_fill(0, $num_args, null);
+        $params = array();
+        for ($i = 0; $i < $num_args; $i++) {
+            $params[$i] = &$this->bound_vars[$i];
         }
         $this->stmt = sqlsrv_prepare($this->dblink, $this->parsedSQL, $params);
         if($this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $this->parsedSQL ::") || !$this->stmt) {

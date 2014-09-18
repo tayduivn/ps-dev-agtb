@@ -1035,16 +1035,11 @@ class MssqlManager extends DBManager
         }
 
         $row = mssql_fetch_assoc($result);
-        //MSSQL returns a space " " when a varchar column is empty ("") and not null.
-        //We need to iterate through the returned row array and strip empty spaces
-        if(!empty($row)){
-            foreach($row as $key => $column) {
-               //notice we only strip if one space is returned.  we do not want to strip
-               //strings with intentional spaces (" foo ")
-               if (!empty($column) && $column ==" ") {
-                   $row[$key] = '';
-               }
-            }
+        if (empty($row)) {
+            return false;
+        }
+        foreach($row as $key => $column) {
+            $row[$key] = trim($column);
         }
         return $row;
 	}
@@ -1258,7 +1253,7 @@ class MssqlManager extends DBManager
             case 'datetimecombo':
             case 'datetime': return substr($string, 0,19);
             case 'date': return substr($string, 0, 10);
-            case 'time': return substr($string, 11);
+            case 'time': return substr($string, 11, 8);
 		}
 		return $string;
     }
@@ -1408,7 +1403,7 @@ class MssqlManager extends DBManager
                             'isnull' => true,
                         ));
                         unset($tmpColumnDef['default']);
-                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename ADD " . $this->oneColumnSQLRep($tmpColumnDef, $ignoreRequired, $tablename, false) . "''';
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename ADD " . str_replace("'", "''''", $this->oneColumnSQLRep($tmpColumnDef, $ignoreRequired, $tablename, false)) . "''';
                             EXEC (@sql_$sqlVarIndex);\n";
 
                         // copy data to temporary column
@@ -1421,9 +1416,7 @@ class MssqlManager extends DBManager
 
                         // create a new origin column
                         $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename
-                                        ADD " . $this->oneColumnSQLRep(array_merge($def, array(
-                                    'isnull' => true,
-                                )), $ignoreRequired, $tablename, false) . "''';
+                                        ADD " . str_replace("'", "''''", $this->oneColumnSQLRep(array_merge($def, array('isnull' => true)), $ignoreRequired, $tablename, false)) . "''';
                             EXEC (@sql_$sqlVarIndex);\n";
 
                         // copy data into origin column from temporary column
@@ -2312,10 +2305,5 @@ EOQ;
     {
         $str = str_replace(array('['), array('[[]'), $str);
         return parent::sqlLikeString($str, $wildcard, $appendWildcard);
-    }
-
-    public function prepareStatement($sql, array $fieldDefs = array() )
-    {
-        return new MysqliPreparedStatement($this, $sql, $data);
     }
 }

@@ -94,9 +94,9 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         $correctCustomSmartyPluginsPath = 'custom/include/SugarSmarty/plugins/';
 
         if (is_dir($vendorSmartyPluginsPath)) {
-            $iter = new DirectoryIterator($vendorSmartyPluginsPath);
+            $iter = new FilesystemIterator($vendorSmartyPluginsPath, FilesystemIterator::UNIX_PATHS);
             foreach ($iter as $item) {
-                if ($item->isDot() || $item->isDir() || ($item->getExtension() != 'php')) {
+                if ($item->getFileName() == '.' || $item->getFileName() == '..' || $item->isDir() || ($item->getExtension() != 'php')) {
                     continue;
                 }
                 $filename = $item->getFilename();
@@ -107,9 +107,9 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         // Step 2: scan custom plugin directories and relocate ONLY custom plugins to correct location
         foreach ($customSmartyPluginsPaths as $customSmartyPluginsPath) {
             if (is_dir($customSmartyPluginsPath)) {
-                $iter = new DirectoryIterator($customSmartyPluginsPath);
+                $iter = new FilesystemIterator($customSmartyPluginsPath, FilesystemIterator::UNIX_PATHS);
                 foreach ($iter as $item) {
-                    if ($item->isDot() || $item->isDir() || ($item->getExtension() != 'php')) {
+                    if ($item->getFilename() == '.' || $item->getFilename() == '..' || $item->isDir() || ($item->getExtension() != 'php')) {
                         continue;
                     }
                     $file = $item->getPathname();
@@ -155,14 +155,14 @@ class SugarUpgradeRepairVendors extends UpgradeScript
     {
         if (file_exists($path)) {
 
-            $iter = new DirectoryIterator($path);
+            $iter = new FilesystemIterator($path, FilesystemIterator::UNIX_PATHS);
 
             foreach ($iter as $item) {
-                if ($item->isDot()) {
+                $filename = $item->getFilename();
+                if ($filename == '.' || $filename == '..') {
                     continue;
                 }
 
-                $filename = $item->getFilename();
                 if(strpos($filename, ".suback.php") !== false) {
                     // we'll ignore .suback files, they are old upgrade backups
                     continue;

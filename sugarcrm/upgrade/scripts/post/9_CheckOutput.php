@@ -92,7 +92,7 @@ ENDP;
     protected function getPhpFiles($path)
     {
         global $bwcModules;
-        $ds = explode(DIRECTORY_SEPARATOR, $path);
+        $ds = explode('/', $path);
 
         if (($ds[0] == 'custom') && ($ds[1] == 'modules') && in_array($ds[2], $bwcModules)) {
             return array();

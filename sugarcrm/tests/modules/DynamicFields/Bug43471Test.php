@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/database/MysqliManager.php';
+
 /**
  * @ticket 43471
  */

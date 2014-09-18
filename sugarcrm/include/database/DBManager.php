@@ -195,6 +195,7 @@ abstract class DBManager
 			'uint'     => 'int',
 			'ulong'    => 'bigint',
 			'long'     => 'bigint',
+			'bigint'   => 'bigint',
 			'short'    => 'int',
 			'date'     => 'date',
 			'datetime' => 'date',
@@ -1243,7 +1244,7 @@ protected function checkQuery($sql, $object_name = false)
 
                 } else {
                     // ok we need this field lets create it
-                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
+                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name - {$value['type']}  ROW */\n";
                     $sql .= $this->addIndexes($tableName,array($value), $execute) .  "\n";
                 }
                 $take_action = true;

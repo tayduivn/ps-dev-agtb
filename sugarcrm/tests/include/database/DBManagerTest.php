@@ -3215,7 +3215,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
             while(($row = $this->_db->fetchByAssoc($result)) != null) {
                     foreach ($data as $colKey => $col ) {
-                        $found=$row[$colKey];
+                        $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
                         $expected=$data[$colKey];
                         if (empty($expected)) { // if null then compare to the table defined default
                             $expected = $params[$colKey]['default'];
