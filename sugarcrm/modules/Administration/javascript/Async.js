@@ -22,9 +22,6 @@ var AjaxObject = {
 	},
     handleFailure : function(o) {
     	alert(SUGAR.language.get('Administration', 'LBL_ASYNC_CALL_FAILED'));
-    	//BEGIN SUGARCRM flav=int ONLY
-		debugger;
-		//END SUGARCRM flav=int ONLY
 	},
 	/**
 	 */

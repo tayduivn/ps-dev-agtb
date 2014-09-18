@@ -17,14 +17,13 @@ require_once('include/SugarSmarty/plugins/function.sugar_replace_vars.php');
 class SugarFieldLink extends SugarFieldBase {
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
     	// this is only for generated links
-    	if(isset($bean->field_defs[$fieldName]['gen']) && $bean->field_defs[$fieldName]['gen'] == 1 && !empty($bean->field_defs[$fieldName]['default'])) {
-	        $params = array(
-	            'use_curly' => true,
-	            'subject' => $bean->field_defs[$fieldName]['default'],
-                'fields' => (array) $bean,
-	            );
-			$nothing = '';
-	        $data[$fieldName] = smarty_function_sugar_replace_vars($params, $nothing);
+    	if(isset($bean->field_defs[$fieldName]['gen']) && isTruthy($bean->field_defs[$fieldName]['gen'])) {
+            $subject = $bean->field_defs[$fieldName]['default'];
+            if (!empty($subject)) {
+                $data[$fieldName] = replace_sugar_vars($subject, $bean->toArray(), true);
+            } else {
+                $data[$fieldName] = "";
+            }
 	    } else {
             parent::apiFormatField($data, $bean, $args, $fieldName, $properties);
         }
