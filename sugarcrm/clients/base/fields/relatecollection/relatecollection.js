@@ -148,6 +148,7 @@
      * @param e Event
      */
     storeValues: function(e) {
+        this.value = app.utils.deepCopy(this.value) || [];
         if (e.added) {
             this.value.push({id: e.added.id, name: e.added.text});
         } else if (e.removed) {
@@ -157,6 +158,8 @@
                 }
             });
         }
+
+        this.model.set('tag', this.value);
     },
 
     /**

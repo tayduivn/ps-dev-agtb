@@ -19,10 +19,25 @@
     // creation of new tags is always allowed
     collectionCreate: true,
 
+    plugins: ['Tooltip'],
+
     /**
      * {@inheritDoc}
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _render: function() {
+        this.value = this.getFormattedValue();
+        if (this.value) {
+            this.tagList = _.pluck(this.value, 'name').join(', ');
+        }
+
+        this._super('_render');
+
     }
 })
