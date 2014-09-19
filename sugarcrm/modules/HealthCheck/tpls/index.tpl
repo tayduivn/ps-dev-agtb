@@ -11,8 +11,10 @@
  */
 *}
 
-<link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=3"/>
-<script src='include/javascript/jquery/jquery-min.js?v=1'></script>
+<link rel="stylesheet" href="{sugar_getjspath file='modules/HealthCheck/static/css.css'}"/>
+<script src='{sugar_getjspath file='include/javascript/jquery/jquery-min.js'}'></script>
+<script src='{sugar_getjspath file='include/javascript/phpjs/get_html_translation_table.js'}'></script>
+<script src='{sugar_getjspath file='include/javascript/phpjs/htmlentities.js'}'></script>
 
 <div class="upgrade">
     <div id="alerts" class="alert-top">
@@ -161,7 +163,7 @@
                             if (displayNumber) {
                                 html.push(i + 1, ". ");
                             }
-                            html.push(item.title, "</h1><p>", item.descr);
+                            html.push(htmlentities(item.title, 'ENT_NOQUOTES'), "</h1><p>", htmlentities(item.descr, 'ENT_NOQUOTES'));
                             if (data[i].kb) {
                                 html.push("<a target='_blank' href='", data[i].kb, "'> Learn more...</a>");
                             }

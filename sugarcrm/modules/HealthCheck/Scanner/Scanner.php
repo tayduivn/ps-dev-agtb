@@ -1249,6 +1249,9 @@ class HealthCheckScanner
     {
         $layoutDefs = $this->loadFromFile($deffile, 'layout_defs');
         // get defs regardless of the module_name since it can be plural or singular, but we don't care here
+        if(!$layoutDefs) {
+            return;
+        }
         $defs = $layoutDefs[key($layoutDefs)];
         if (empty($defs['subpanel_setup'])) {
             return;
