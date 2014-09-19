@@ -97,6 +97,10 @@
         this.collection.on('add remove reset', this.render, this);
         this.before('render', function() {
             this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
+            this.viewRenderDenied = false;
+            if (app.alert.$alerts[0].innerText && app.alert.$alerts[0].innerText.substring(0, 13).toLowerCase() == "access denied") {
+                this.viewRenderDenied = true;
+            }
             var nextOffset = this.collection.next_offset || -1;
             if (this.collection.dataFetched && nextOffset === -1) {
                 this._invisible = true;

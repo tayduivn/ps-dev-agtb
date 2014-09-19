@@ -93,9 +93,9 @@
      * 403 Forbidden error handler. 
      */
     app.error.handleForbiddenError = function(error) {
-        app.alert.dismissAll();
         // If portal is not configured, return to login screen if necessary
         if(error.code == "portal_not_configured"){
+            app.alert.dismissAll();
             backToLogin(true);
         }
         app.logger.error(app.lang.get(error.message ? error.message : "LBL_RESOURCE_UNAVAILABLE"));
