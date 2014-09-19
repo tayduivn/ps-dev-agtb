@@ -62,7 +62,7 @@
         if (model.module != this.context.get('module')) {
             app.alert.show('listfromreport-warning', {
                 level: 'warning',
-                messages: app.lang.getAppString('LBL_LINK_FROM_REPORT_WRONG_MODULE'),
+                messages: app.lang.get('LBL_LINK_FROM_REPORT_WRONG_MODULE'),
                 autoClose: true
             });
             return;
@@ -71,7 +71,7 @@
         var recordListUrl = app.api.buildURL('Reports', 'record_list', {id: model.id}),
             self = this;
 
-        app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
 
         app.api.call(
             'create',
@@ -83,8 +83,8 @@
                     app.alert.dismiss('listfromreport_loading');
                     app.alert.show('server-error', {
                         level: 'error',
-                        title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-                        messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                        title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                        messages: app.lang.get('ERR_HTTP_500_TEXT')
                     });
                 }
             }
@@ -151,8 +151,8 @@
     linkErrorCallback: function(error) {
         app.alert.show('server-error', {
             level: 'error',
-            title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-            messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+            title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+            messages: app.lang.get('ERR_HTTP_500_TEXT')
         });
     },
 

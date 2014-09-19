@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#each selectOptions}}
-<option value="{{fieldValue this "id"}}" {{#eq @index 0}}selected="selected"{{/eq}}>{{fieldValue this "name"}}</option>
+{{#each dropdownFields}}
+    {{#eq type 'divider'}}
+        <li class="divider"></li>
+    {{else}}
+        <li>{{placeholder}}</li>
+    {{/eq}}
 {{/each}}
-{{#eq selectOptions.length 0}}
-<option data-empty="true">{{str "MSG_LIST_VIEW_NO_RESULTS_BASIC"}}</option>
-{{/eq}}
-<option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>

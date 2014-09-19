@@ -1,75 +1,64 @@
-describe("Handlebar.Helpers", function() {
+describe('Sugar7.View.Handlebars.helpers', function() {
     var app, savedHelpers;
 
     beforeEach(function () {
         app = SugarTest.app;
         savedHelpers = Handlebars.helpers;
-        SugarTest.loadFile("../include/javascript/sugar7", "hbs-helpers", "js", function(d) {
+        SugarTest.loadFile('../include/javascript/sugar7', 'hbs-helpers', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
         });
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
     });
 
     afterEach(function() {
         Handlebars.helpers = savedHelpers;
         app = null;
+        SugarTest.testMetadata.dispose();
+        sinon.collection.restore();
     });
 
-    describe("moduleIconLabel helper", function () {
-        beforeEach(function() {
-            sinon.stub(app.lang, "getAppListStrings", function(item) {
-                switch (item) {
-                    case 'moduleIconList':
-                        return {
-                            TestModule : 'TM'
-                        }
-                    break;
-                    case 'moduleListSingular':
-                        return {
-                            TestSingleModule : 'Single',
-                            TestMultiModule: 'Multiple Names'
-                        }
-                    break;
-                    case 'moduleList':
-                        return {
-                            TestCustomModule : 'Custom'
-                        }
-                    break;
-                }
-            })
-        });
-
-        afterEach(function() {
-            app.lang.getAppListStrings.restore();
-        });
-
-        it("should fill in the icon with value defined in the moduleIconList array", function() {
-            expect(Handlebars.helpers.moduleIconLabel('TestModule')).toEqual('TM');
-        });
-
-        it("should fill in the icon with the first two letters of singular module name", function() {
-            expect(Handlebars.helpers.moduleIconLabel('TestSingleModule')).toEqual('Si');
-        });
-
-        it("should fill in the icon with the first letter of the first two words for modules with multiple word names",
-            function() {
-                expect(Handlebars.helpers.moduleIconLabel('TestMultiModule')).toEqual('MN');
+    describe('moduleIconLabel', function() {
+        using('different values', [
+            {
+                // Exists in app_list_strings['moduleIconList']
+                module: 'Accounts',
+                expected: 'Ac'
+            },
+            {
+                // Doesn't exist in app_list_strings['moduleIconList']
+                // Has LBL_MODULE_NAME_SINGULAR defined.
+                module: 'Contacts',
+                expected: 'Co'
+            },
+            {
+                // Doesn't exist in app_list_strings['moduleIconList']
+                // Doesn't have LBL_MODULE_NAME_SINGULAR defined.
+                // Has LBL_MODULE_NAME defined.
+                module: 'Leads',
+                expected: 'Le'
+            },
+            {
+                // Doesn't exist in app_list_strings['moduleIconList']
+                // Has LBL_MODULE_NAME_SINGULAR defined.
+                // Is a multi-word module.
+                // Note: Product Templates maps to Product Catalog, hence 'PC'.
+                module: 'ProductTemplates',
+                expected: 'PC'
+            },
+            {
+                // Doesn't exist in app_list_strings['moduleIconList']
+                // Has no LBL_MODULE_NAME labels defined in mod strings.
+                module: 'FakeModule',
+                expected: 'Fa'
             }
-        );
-
-        it("should fill in the icon with the letters of the module in the module list, if it is not in the singular lists",
-            function() {
-                expect(Handlebars.helpers.moduleIconLabel('TestCustomModule')).toEqual('Cu');
-            }
-        );
-
-        it("should fill in the icon with the first letter of the module, if it doesn't exist in the module lists",
-            function() {
-                expect(Handlebars.helpers.moduleIconLabel('NonExistentModule')).toEqual('No');
-            }
-        );
-
+        ], function(options) {
+            it('should return an appropriate 2-letter icon label', function() {
+                expect(Handlebars.helpers.moduleIconLabel(options.module)).toBe(options.expected);
+            });
+        });
     });
 
     describe('sub-template helpers', function() {

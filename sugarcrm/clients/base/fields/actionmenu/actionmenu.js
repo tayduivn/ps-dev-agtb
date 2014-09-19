@@ -257,7 +257,7 @@
 
         app.alert.show('totalrecord', {
             level: 'process',
-            title: app.lang.getAppString('LBL_LOADING'),
+            title: app.lang.get('LBL_LOADING'),
             autoClose: false
         });
 
@@ -420,6 +420,15 @@
     /**
      * @inheritDoc
      */
+    _render: function() {
+        this._super('_render');
+
+        _.each(this.fields, function(field) {
+            field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
+            field.render();
+        }, this);
+    },
+
     setPlaceholder: function() {
         var index = 0;
 

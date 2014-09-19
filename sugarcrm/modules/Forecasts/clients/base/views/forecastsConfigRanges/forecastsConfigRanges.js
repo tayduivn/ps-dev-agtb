@@ -125,7 +125,7 @@
         this.model.set($.extend(true, {}, app.metadata.getModule('Forecasts', 'config')));
 
         this.updateTitleValues(this.model);
-        this.forecastByModule = app.lang.getAppListStrings('moduleList')[this.model.get('forecast_by')];
+        this.forecastByModule = app.lang.getModuleName(this.model.get('forecast_by'));
 
         // get the included commit stages
         this.includedCommitStages = this.model.get('commit_stages_included'),

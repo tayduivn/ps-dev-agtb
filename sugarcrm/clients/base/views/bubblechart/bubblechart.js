@@ -126,10 +126,10 @@
             })
             .strings({
                 legend: {
-                    close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                    open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                    close: app.lang.get('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.get('LBL_CHART_LEGEND_OPEN')
                 },
-                noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                noData: app.lang.get('LBL_CHART_NO_DATA')
             });
 
         this.on('data-changed', function() {
@@ -227,7 +227,7 @@
                 };
             }, this),
             properties: {
-                title: app.lang.getAppString('LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME'),
+                title: app.lang.get('LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME'),
                 value: data.records.length
             }
         };

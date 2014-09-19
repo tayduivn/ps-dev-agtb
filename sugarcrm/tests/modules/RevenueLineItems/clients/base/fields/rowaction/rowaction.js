@@ -55,7 +55,7 @@ describe("RevenueLineItems.Base.Fields.Rowaction", function() {
             model.set("commit_stage", "include");
             field = SugarTest.createField("base", "delete_button", "rowaction", "detail", def, moduleName, model, context, true);
             message = field.deleteCommitWarning();
-            expect(message).toEqual('WARNING_DELETED_RECORD_RECOMMIT_1<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.  WARNING_DELETED_RECORD_RECOMMIT_2<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.');
+            expect(message).toEqual('WARNING_DELETED_RECORD_RECOMMIT_1<a href="#Forecasts">Forecasts</a>.  WARNING_DELETED_RECORD_RECOMMIT_2<a href="#Forecasts">Forecasts</a>.');
         });
         
         it("should should return NULL when commit_stage != include", function() {

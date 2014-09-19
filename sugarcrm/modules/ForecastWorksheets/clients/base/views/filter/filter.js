@@ -112,7 +112,7 @@
             },
             _.bind(function(event) {
                 app.alert.show('worksheet_filtering',
-                    {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
+                    {level: 'process', title: app.lang.get('LBL_LOADING')}
                 );
                 app.user.lastState.set(this.userLastWorksheetFilterKey, event.val);
                 _.delay(function() {

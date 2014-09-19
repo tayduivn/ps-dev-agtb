@@ -182,18 +182,9 @@ describe('Base.Field.Bool', function() {
                 SugarTest.testMetadata.dispose();
             });
 
-            it('should call select2 with required params on massupdate', function() {
-                var jqueryStubReturnObj = {
-                        'select2': sinon.collection.spy(),
-                        'on': $.noop,
-                        'off': $.noop
-                    },
-                    jqueryStub = sinon.collection.stub(field, '$', function(val) {
-                        return jqueryStubReturnObj;
-                    });
+            it('should render select2 without searchbox on massupdate', function() {
                 field.render();
-                expect(jqueryStub).toHaveBeenCalledWith(field.select2fieldTag);
-                expect(jqueryStubReturnObj.select2).toHaveBeenCalledWith({'minimumResultsForSearch': -1});
+                expect(field.$('.select2-search-hidden')).not.toBeEmpty();
             });
 
             it('should fall back to the dropdown template if attempting to render the massupdate template', function() {

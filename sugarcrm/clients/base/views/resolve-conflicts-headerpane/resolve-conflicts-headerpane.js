@@ -39,7 +39,7 @@
      */
     _setTitle: function() {
         var modelToSave = this.context.get('modelToSave'),
-            titleTemplate = Handlebars.compile(app.lang.getAppString('LBL_RESOLVE_CONFLICT')),
+            titleTemplate = Handlebars.compile(app.lang.get('LBL_RESOLVE_CONFLICT')),
             name = modelToSave.get('name') || modelToSave.get('full_name');
 
         this.title = titleTemplate({

@@ -6,11 +6,20 @@ describe('Sugar7 Help Extension', function () {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         app = SugarTest.app;
+
+        sinon.collection.stub(app.metadata, 'getModuleNames').returns([
+            'Accounts',
+            'Bugs',
+            'Cases',
+            'Contacts',
+            'RevenueLineItems'
+        ]);
     });
 
     afterEach(function () {
         app.help.clearModuleLabelMap();
         SugarTest.testMetadata.dispose();
+        sinon.collection.restore();
     });
 
     describe('help.get', function() {

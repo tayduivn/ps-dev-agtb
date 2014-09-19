@@ -59,7 +59,7 @@ describe("RevenueLineItems.Base.Views.Massupdate", function() {
         
         it("should should return WARNING_DELETED_RECORD_LIST_RECOMMIT_1 and _2 combined", function() {
             message = view.deleteCommitWarning(view.getMassUpdateModel().models);
-            expect(message).toEqual('WARNING_DELETED_RECORD_LIST_RECOMMIT_1<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.  WARNING_DELETED_RECORD_LIST_RECOMMIT_2<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.');
+            expect(message).toEqual('WARNING_DELETED_RECORD_LIST_RECOMMIT_1<a href="#Forecasts">Forecasts</a>.  WARNING_DELETED_RECORD_LIST_RECOMMIT_2<a href="#Forecasts">Forecasts</a>.');
         });
     });
     

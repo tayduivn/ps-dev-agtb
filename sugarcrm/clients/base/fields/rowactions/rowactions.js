@@ -15,20 +15,11 @@
  */
 ({
     extendsFrom: 'ActiondropdownField',
-    _loadTemplate: function() {
-        app.view.Field.prototype._loadTemplate.call(this);
 
-        //override its container if it has own template
-        var template = app.template._getField(this.type, this.tplName, this.module, null, true)[1];
-
-        if(template) {
-            this.$el.attr('class', '');
-            this.$el.html(template(this));
-        }
-        if(this.view.action === 'list' && this.action === 'edit') {
-            this.$el.hide();
-        } else {
-            this.$el.show();
-        }
+    _render: function() {
+        this._super('_render');
+        //FIXME: SC-3372 Actions should not be based on `this.view.action`
+        this.view.action === 'list' && this.action === 'edit' ?
+            this.hide() : this.show();
     }
 })

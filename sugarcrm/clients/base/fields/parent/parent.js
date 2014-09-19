@@ -74,18 +74,11 @@
         return this.model.get("parent_id");
     },
     format: function(value) {
-
+        var module;
         this.def.module = this.getSearchModule();
-        var moduleString = app.lang.getAppListStrings('moduleListSingular'),
-            module;
+
         if (this.def.module) {
-            if (!moduleString[this.def.module]) {
-                app.logger.error("Module '" + this.def.module + "' doesn't have singular translation.");
-                // graceful fallback
-                module = this.def.module;
-            } else {
-                module = moduleString[this.def.module];
-            }
+            module = app.lang.getModuleName(this.def.module);
         }
 
         this.context.set('record_label', {

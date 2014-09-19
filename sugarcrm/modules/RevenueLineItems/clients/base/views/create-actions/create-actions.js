@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'CreateView',
+    extendsFrom: 'CreateActionsView',
 
     initialize: function(options) {
         this._super("initialize", [options]);

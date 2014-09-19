@@ -395,15 +395,6 @@
         if (this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
                 this.registerFieldAsButton(button.name);
-                if (button.buttons) {
-                    var dropdownButton = this.getField(button.name);
-                    if (!dropdownButton) {
-                        return;
-                    }
-                    _.each(dropdownButton.fields, function(ddButton) {
-                        this.buttons[ddButton.name] = ddButton;
-                    }, this);
-                }
             }, this);
         }
     },
@@ -706,7 +697,7 @@
         var messages = {},
             model = this.model,
             name = app.utils.getRecordName(model),
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
 
         messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
         messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);

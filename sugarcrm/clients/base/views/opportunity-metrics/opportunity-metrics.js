@@ -45,7 +45,7 @@
                     return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
                 })
                 .strings({
-                    noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                    noData: app.lang.get('LBL_CHART_NO_DATA')
                 });
     },
 
@@ -100,7 +100,7 @@
                 };
             }),
             properties: {
-                title: app.lang.getAppString('LBL_DASHLET_OPPORTUNITY_NAME'),
+                title: app.lang.get('LBL_DASHLET_OPPORTUNITY_NAME'),
                 value: 3,
                 label: total
             }

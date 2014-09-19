@@ -10,10 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#with def}}
-    {{#each fields}}
-        <span class="edit-cell" data-name="{{name}}" data-type="{{type}}">
-            {{field ../../view model=../../model template=../../options.viewName parent=../../this}}
-        </span>
-    {{/each}}
-{{/with}}
+{{#each fields}}
+    <span class="edit-cell" data-name="{{name}}" data-type="{{type}}">
+        {{placeholder}}
+    </span>
+{{/each}}

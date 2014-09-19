@@ -162,7 +162,7 @@
         if (this.module == "Activities") {
             label = app.lang.get("LBL_MODULE_ALL");
         } else {
-            label = app.lang.get('LBL_MODULE_NAME', this.module);
+            label = app.lang.getModuleName(this.module, {plural: true});
         }
         filters.push({id: 'Activities', text: label});
         return filters;
@@ -207,7 +207,7 @@
     initSelection: function(el, callback) {
         var selection, label;
         if (el.val() === "all_modules") {
-            label = (this.layout.layoutType === "record") ? app.lang.get("LBL_MODULE_ALL") : app.lang.get("LBL_MODULE_NAME", this.module);
+            label = (this.layout.layoutType === "record") ? app.lang.get("LBL_MODULE_ALL") : app.lang.getModuleName(this.module, {plural: true});
             selection = {id: "all_modules", text: label};
         } else if (_.findWhere(this.filterList, {id: el.val()})) {
             selection = _.findWhere(this.filterList, {id: el.val()});

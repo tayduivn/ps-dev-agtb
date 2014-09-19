@@ -16,7 +16,7 @@
             {{#each collection.models}}
                 <li>
                     <p>
-                        <a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a>
+                        <a href="#{{buildRoute model=this action="detail"}}">{{fieldValue this "name"}}</a>
                     </p>
                 </li>
             {{/each}}

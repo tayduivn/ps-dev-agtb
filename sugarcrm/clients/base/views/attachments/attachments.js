@@ -210,7 +210,7 @@
     unlinkClicked: function(model) {
         var self = this;
         var name = model.get('name') || '',
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
         app.alert.show(model.get('id') + ':unlink_confirmation', {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]),

@@ -89,7 +89,7 @@
                 app.view.View.prototype._render.call(self);
                 self.setHeaderpaneTitle();
             } else {
-                self.setHeaderpaneTitle(app.lang.getAppString('LNK_SEARCH_NO_RESULTS'));
+                self.setHeaderpaneTitle(app.lang.get('LNK_SEARCH_NO_RESULTS'));
             }
         });
     },

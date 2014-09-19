@@ -127,7 +127,7 @@
     showErrorMessage: function() {
         app.alert.show('close_record_error', {
             level: 'error',
-            title: app.lang.getAppString('ERR_AJAX_LOAD')
+            title: app.lang.get('ERR_AJAX_LOAD')
         });
     },
 

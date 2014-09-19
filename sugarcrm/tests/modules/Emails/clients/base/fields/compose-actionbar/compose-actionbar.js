@@ -27,7 +27,7 @@ describe("Emails.fields.compose-actionbar", function() {
             expect($result.find('span').length).toBe(0); //no field placeholders
         });
 
-        it("should return actiondropdown placeholder if an actiondropdown type is in the list", function() {
+        xit("should return actiondropdown placeholder if an actiondropdown type is in the list", function() {
             var $result;
             field.def = {
                 'buttonSections': [

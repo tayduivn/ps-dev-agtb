@@ -115,6 +115,6 @@
         return colors;
     },
     showMessage: function(messageKey) {
-        app.alert.show('themeProcessing', {level: 'process', title: app.lang.getAppString(messageKey), closeable: true, autoclose: true});
+        app.alert.show('themeProcessing', {level: 'process', title: app.lang.get(messageKey), closeable: true, autoclose: true});
     }
 })
