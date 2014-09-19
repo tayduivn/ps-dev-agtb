@@ -15,6 +15,14 @@
  */
 ({
     plugins: ['EllipsisInline'],
+
+    /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
     /**
      * @override
      * @param options
@@ -24,7 +32,7 @@
 
         this.skypeEnabled = serverInfo.system_skypeout_on ? true : false;
 
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
     },
     /**
      * @override

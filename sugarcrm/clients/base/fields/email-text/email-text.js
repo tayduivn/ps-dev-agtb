@@ -14,6 +14,13 @@
  * @extends View.Field
  */
 ({
+    /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
     // The purpose of email-text is to provide a simpler textfield email
     // when our main email widget is overkill. For example, the first time
     // login wizard uses email-text. Note that the email mutated is the
@@ -24,7 +31,8 @@
         if (_.isUndefined(options.def.link)) {
             options.def.link = true;
         }
-        app.view.Field.prototype.initialize.call(this, options);
+
+        this._super('initialize', [options]);
     },
    /**
      * Formats for display

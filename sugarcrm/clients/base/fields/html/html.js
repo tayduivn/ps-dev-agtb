@@ -17,6 +17,13 @@
     fieldSelector: '.htmlareafield', //iframe selector
 
     /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
      * {@inheritdoc}
      *
      * The html area is always a readonly field.
@@ -24,7 +31,7 @@
      */
     initialize: function(options) {
         options.def.readonly = true;
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
     },
 
     /**
