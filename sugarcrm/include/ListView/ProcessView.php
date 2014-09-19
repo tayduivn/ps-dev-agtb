@@ -1002,7 +1002,7 @@ class ProcessView {
 
     function get_js_exception_fields()
     {
-        return array("char", "varchar", "name", "phone", "email", "enum", "assigned_user_name");
+        return array("char", "varchar", "text", "name", "phone", "email", "enum", "assigned_user_name");
     }
     //end class ProcessView
 }
