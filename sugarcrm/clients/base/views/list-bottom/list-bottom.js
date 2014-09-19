@@ -98,7 +98,9 @@
         this.before('render', function() {
             this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
             this.viewRenderDenied = false;
-            if (app.alert.$alerts[0].innerText && app.alert.$alerts[0].innerText.substring(0, 13).toLowerCase() == "access denied") {
+            if (app.alert.$alerts[0].innerText &&
+                app.alert.$alerts[0].innerText.trim() == app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE') +
+                ' ' + app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[this.module])) {
                 this.viewRenderDenied = true;
             }
             var nextOffset = this.collection.next_offset || -1;
