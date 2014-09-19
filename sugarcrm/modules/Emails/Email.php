@@ -503,7 +503,7 @@ class Email extends SugarBean {
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
             
-            if ($this->type != 'draft' && $this->status != 'draft' &&
+            if (empty($this->id) && $this->type != 'draft' && $this->status != 'draft' &&
                 $this->type != 'archived' && $this->status != 'archived'
             ) {
                 $this->id = create_guid();
