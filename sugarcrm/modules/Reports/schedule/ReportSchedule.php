@@ -52,7 +52,7 @@ function save_schedule($id, $user_id, $report_id, $date_start, $interval, $activ
 		if( empty($date_start) )
 		    $date_start = $timedate->nowDb();
 
-        $next_run_date = $this->getNextRunDate($date_start, $interval);
+        $next_run_date = $this->getNextRunDate($date_start, 0);
 
         $query = <<<QUERY
 INSERT INTO {$this->table_name} (
