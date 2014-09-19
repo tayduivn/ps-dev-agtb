@@ -68,7 +68,6 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->save();
         $this->ob = $ob;
 
-        $ob->resetSystemMailerCache();
         $system = $ob->getSystemMailerSettings();
         $system->new_with_id = FALSE;
         $system->mail_smtpport = $newSystemPort;
@@ -110,7 +109,6 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->save();
         $this->ob = $ob;
 
-        $ob->resetSystemMailerCache();
         $system = $ob->getSystemMailerSettings();
         $system->new_with_id = FALSE;
         $system->mail_smtpport = $newSystemPort;

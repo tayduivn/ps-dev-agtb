@@ -337,7 +337,7 @@ class OutboundEmail {
 	 * Retrieves the system's Outbound options
 	 */
     function getSystemMailerSettings() {
-        if (is_null(self::$sysMailerCache)) {
+        if (is_null(static::$sysMailerCache)) {
             // result puts in static cache to avoid per-request repeating calls
             $q = "SELECT id FROM outbound_email WHERE type = 'system'";
             $r = $this->db->query($q);
@@ -358,19 +358,19 @@ class OutboundEmail {
                 $this->mail_smtpssl = 0;
                 $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype,$this->mail_smtpserver);
                 $this->save();
-                self::$sysMailerCache = $this;
+                static::$sysMailerCache = $this;
             } else {
-                self::$sysMailerCache = $this->retrieve($a['id']);
+                static::$sysMailerCache = $this->retrieve($a['id']);
             }
         }
 
-        if (is_object(self::$sysMailerCache)) {
-            foreach(self::$sysMailerCache as $k => $v) {
+        if (is_object(static::$sysMailerCache)) {
+            foreach(static::$sysMailerCache as $k => $v) {
                 $this->$k = $v;
             }
         }
 
-        return self::$sysMailerCache;
+        return static::$sysMailerCache;
     }
 
 	/**
@@ -602,6 +602,6 @@ class OutboundEmail {
      */
     public function resetSystemMailerCache()
     {
-        self::$sysMailerCache = null;
+        static::$sysMailerCache = null;
     }
 }
