@@ -122,9 +122,18 @@ class SugarFieldBase {
      * @param array     $args
      * @param string    $fieldName
      * @param array     $properties
+     * @param array     $fieldList
+     * @param ServiceBase $service
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
-    {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {
@@ -835,5 +844,50 @@ class SugarFieldBase {
     {
         return;
     }
-    
+
+    /**
+     * Adds field to the list of fields to be selected
+     *
+     * @param string $field
+     * @param array $fields
+     */
+    public function addFieldToQuery($field, array &$fields)
+    {
+        $fields[] = $field;
+    }
+
+    /**
+     * @param MetaDataManager $metaDataManager
+     * @param array $field
+     * @param array $fieldDefs
+     * @param array $fields
+     * @param array $displayParams
+     */
+    public function processLayoutField(
+        MetaDataManager $metaDataManager,
+        array $field,
+        array $fieldDefs,
+        array &$fields,
+        array &$displayParams
+    ) {
+        $isNamedField = isset($field['name']);
+        if ($isNamedField) {
+            $displayParams[$field['name']] = $field;
+            unset($displayParams[$field['name']]['name']);
+        }
+
+        $fieldAttributes = array('fields', 'related_fields');
+        foreach ($fieldAttributes as $attribute) {
+            if (isset($field[$attribute]) && is_array($field[$attribute])) {
+                $fields = array_merge($fields, $metaDataManager->getFieldNames(
+                    $field[$attribute],
+                    $fieldDefs,
+                    $displayParams
+                ));
+                if ($isNamedField) {
+                    unset($displayParams[$field['name']][$attribute]);
+                }
+            }
+        }
+    }
 }

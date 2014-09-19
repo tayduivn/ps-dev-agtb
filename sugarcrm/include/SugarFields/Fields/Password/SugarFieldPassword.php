@@ -30,17 +30,18 @@ class SugarFieldPassword extends SugarFieldBase
         return $value;
     }
 
-   /**
-     * This function will set any password field to true if there is
-     * a password, else null
-     * @param array $data
-     * @param SugarBean $bean
-     * @param array $args
-     * @param string $fieldName
-     * @param array $properties
+    /**
+     * {@inheritDoc}
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
-    {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         $data[$fieldName] = true;
         if(empty($bean->$fieldName)) {
             $data[$fieldName] = null;

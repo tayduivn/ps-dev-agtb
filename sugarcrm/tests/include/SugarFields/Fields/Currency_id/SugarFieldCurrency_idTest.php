@@ -28,12 +28,19 @@ class SugarFieldCurrency_idTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = '';
 
         $emptyOutput = array();
-        
-        $field->apiFormatField($emptyOutput, $bean, array(), 'currency_id', array('type'=>'currency_id','dbType'=>'currency_id'));
-        
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        $field->apiFormatField($emptyOutput, $bean, array(), 'currency_id', array(
+            'type' => 'currency_id',
+            'dbType' => 'currency_id',
+        ), array('currency_id'), $service);
+
         $filledOutput = array();
         $bean->currency_id = 'IF-YOU-LIKE-PINA-COLADAS';
-        $field->apiFormatField($filledOutput, $bean, array(), 'currency_id', array('type'=>'currency_id','dbType'=>'currency_id'));
+        $field->apiFormatField($filledOutput, $bean, array(), 'currency_id', array(
+            'type' => 'currency_id',
+            'dbType' => 'currency_id',
+        ), array('currency_id'), $service);
 
         $this->assertEquals('-99',$emptyOutput['currency_id'],"The currency id was not defaulted to -99 in the apiFormatField function");
         $this->assertEquals('IF-YOU-LIKE-PINA-COLADAS',$filledOutput['currency_id'],"The currency id was not in the apiFormatField function");

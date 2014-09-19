@@ -15,8 +15,18 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFullname extends SugarFieldBase
 {
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         global $locale;
         $data[$fieldName] = $locale->formatName($bean);
     }

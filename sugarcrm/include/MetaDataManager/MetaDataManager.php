@@ -3329,7 +3329,7 @@ class MetaDataManager
      * @param array $displayParams Associative array of field names and their display params
      * @return array
      */
-    protected function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
+    public function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
     {
         $fields = array();
         foreach ($fieldSet as $field) {
@@ -3338,7 +3338,7 @@ class MetaDataManager
                 $field = array('name' => $field);
             }
             if (is_array($field)) {
-                $type = null;
+                $type = 'base';
                 if (isset($field['name'])) {
                     $fields[] = $field['name'];
                     if (isset($fieldDefs[$field['name']]['type'])) {
@@ -3346,30 +3346,8 @@ class MetaDataManager
                     }
                 }
 
-                switch ($type) {
-                    case 'link':
-                    case 'collection':
-                        break;
-                    default:
-                        // by default consider everything a fieldset
-                        $fieldAttributes = array('fields', 'related_fields');
-                        foreach ($fieldAttributes as $attribute) {
-                            if (isset($field[$attribute]) && is_array($field[$attribute])) {
-                                $fields = array_merge($fields, $this->getFieldNames(
-                                    $field[$attribute],
-                                    $fieldDefs,
-                                    $displayParams
-                                ));
-                                unset($field[$attribute]);
-                            }
-                        }
-                        break;
-                }
-
-                if (isset($field['name'])) {
-                    $displayParams[$field['name']] = $field;
-                    unset($displayParams[$field['name']]['name']);
-                }
+                $sf = SugarFieldHandler::getSugarField($type);
+                $sf->processLayoutField($this, $field, $fieldDefs, $fields, $displayParams);
             }
         }
         return $fields;

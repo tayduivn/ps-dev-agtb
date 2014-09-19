@@ -190,8 +190,18 @@ class SugarFieldParent extends SugarFieldRelate {
     	return isset($args[$key]) ? $args[$key] : '';
     }
 
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         // API will fill in the name
         if(empty($bean->$fieldName)) {
         	$data[$fieldName] = '';

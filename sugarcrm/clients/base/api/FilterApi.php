@@ -341,14 +341,9 @@ class FilterApi extends SugarApi
 
             // fields that aren't in field defs are removed, since we don't know
             // what to do with them
-            if (!empty($seed->field_defs[$field])
-                // link and collection fields should be in API arguments but shouldn't be passed to SugarQuery
-                // since they are retrieved later
-                && !(isset($seed->field_defs[$field]['type'])
-                    && $seed->field_defs[$field]['type'] == 'link'
-                        || $seed->field_defs[$field]['type'] == 'collection')) {
-                // Set the field into the field list
-                $fields[] = $field;
+            if (isset($seed->field_defs[$field]['type'])) {
+                $sf = SugarFieldHandler::getSugarField($seed->field_defs[$field]['type']);
+                $sf->addFieldToQuery($field, $fields);
             }
         }
         $q->select($fields);

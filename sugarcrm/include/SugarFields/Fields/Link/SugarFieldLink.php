@@ -15,7 +15,19 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 require_once('include/SugarSmarty/plugins/function.sugar_replace_vars.php');
 
 class SugarFieldLink extends SugarFieldBase {
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+
+    /**
+     * {@inheritDoc}
+     */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
     	// this is only for generated links
     	if(isset($bean->field_defs[$fieldName]['gen']) && isTruthy($bean->field_defs[$fieldName]['gen'])) {
             $subject = $bean->field_defs[$fieldName]['default'];
@@ -25,7 +37,7 @@ class SugarFieldLink extends SugarFieldBase {
                 $data[$fieldName] = "";
             }
 	    } else {
-            parent::apiFormatField($data, $bean, $args, $fieldName, $properties);
+            parent::apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
         }
     }
 }

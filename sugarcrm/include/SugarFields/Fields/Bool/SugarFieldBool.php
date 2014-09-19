@@ -84,15 +84,17 @@ class SugarFieldBool extends SugarFieldBase {
     }
 
     /**
-     * Formats a field for the Sugar API
-     *
-     * @param array     $data
-     * @param SugarBean $bean
-     * @param array     $args
-     * @param string    $fieldName
-     * @param array     $properties
+     * {@inheritDoc}
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $this->normalizeBoolean($bean->$fieldName);
         } else {

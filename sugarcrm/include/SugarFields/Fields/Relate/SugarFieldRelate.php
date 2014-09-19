@@ -225,8 +225,16 @@ class SugarFieldRelate extends SugarFieldBase {
         return $this->fetch($this->findTemplate('SearchView'));
     }
 
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
-    {
+    /** {@inheritDoc} */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         /*
          * If we have a related field, use its formatter to format it
          */
@@ -246,7 +254,7 @@ class SugarFieldRelate extends SugarFieldBase {
                 $sfh = new SugarFieldHandler();
                 $field = $sfh->getSugarField($rdefs['type']);
                 $rdata = array();
-                $field->apiFormatField($rdata, $rbean, $args, $properties['rname'], $rdefs);
+                $field->apiFormatField($rdata, $rbean, $args, $properties['rname'], $rdefs, $fieldList, $service);
                 $data[$fieldName] = $rdata[$properties['rname']];
                 if(!empty($data[$fieldName])) {
                     return;

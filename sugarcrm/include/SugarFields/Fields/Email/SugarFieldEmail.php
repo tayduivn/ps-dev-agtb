@@ -18,17 +18,19 @@ class SugarFieldEmail extends SugarFieldBase
     public $needsSecondaryQuery = true;
 
     /**
-     * Formats a field for the Sugar API, unsets the email
-     * record from the data array if the user does not have access
+     * {@inheritDoc}
      *
-     * @param array $data
-     * @param SugarBean $bean
-     * @param array $args
-     * @param string $fieldName
-     * @param array $properties
-     */    
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
-    {
+     * Unsets the email record from the data array if the user does not have access
+     */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList,
+        ServiceBase $service
+    ) {
         if (empty($bean->emailAddress->hasFetched)) {
             $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
         } else {

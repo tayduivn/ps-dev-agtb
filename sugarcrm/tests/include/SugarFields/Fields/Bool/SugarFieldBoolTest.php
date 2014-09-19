@@ -15,6 +15,12 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var Meetings */
+    private $meeting;
+
+    /** @var SugarFieldBool */
+    private $sf;
+
 	public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -35,13 +41,32 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
     
 	public function testTrueBoolFieldFormatting() {
         $data = array();
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
         $this->meeting->reminder_checked = true;
         $this->meeting->email_reminder_checked = true;        
-        $this->sf->apiFormatField($data, $this->meeting, array(), 'reminder_checked',array());
-        
+        $this->sf->apiFormatField(
+            $data,
+            $this->meeting,
+            array(),
+            'reminder_checked',
+            array(),
+            array('reminder_checked'),
+            $service
+        );
+
         $this->assertTrue($data['reminder_checked']);
 
-        $this->sf->apiFormatField($data, $this->meeting, array(), 'email_reminder_checked',array());
+        $this->sf->apiFormatField(
+            $data,
+            $this->meeting,
+            array(),
+            'email_reminder_checked',
+            array(),
+            array('email_reminder_checked'),
+            $service
+        );
+
         $this->assertTrue($data['reminder_checked']);
     }
     public function testTrueBoolFieldUnformatting() {
@@ -56,13 +81,29 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
         $this->meeting->email_reminder_checked = false;
 
         $data = array();
-        $this->sf->apiFormatField($data, $this->meeting, array(), 'reminder_checked',array());
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        $this->sf->apiFormatField(
+            $data,
+            $this->meeting,
+            array(),
+            'reminder_checked',
+            array(),
+            array('reminder_checked'),
+            $service
+        );
         
         $this->assertFalse($data['reminder_checked']);
 
-        $this->sf->apiFormatField($data, $this->meeting, array(), 'email_reminder_checked',array());
+        $this->sf->apiFormatField(
+            $data,
+            $this->meeting,
+            array(),
+            'email_reminder_checked',
+            array(),
+            array('email_reminder_checked'),
+            $service
+        );
         $this->assertFalse($data['email_reminder_checked']);
-
     }
-
 }

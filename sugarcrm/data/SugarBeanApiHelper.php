@@ -49,7 +49,6 @@ class SugarBeanApiHelper
         $data = array();
         $hasAccess = empty($bean->deleted) && $bean->ACLAccess($action);
         if ($hasAccess) {
-            $beanCollectionFields = array();
             foreach ($bean->field_defs as $fieldName => $properties) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
@@ -66,23 +65,13 @@ class SugarBeanApiHelper
                 //END SUGARCRM flav=pro ONLY
 
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-
-                // don't render link and collection fields unless it's explicitly requested
-                if ($type == 'link' || $type == 'collection') {
-                    if (in_array($fieldName, $fieldList)) {
-                        $beanCollectionFields[$fieldName] = $properties;
-                    }
-                    continue;
-                }
-
                 $field = $sfh->getSugarField($type);
 
                 if(empty($field)) continue;
 
                 if (isset($bean->$fieldName)  || $type == 'relate') {
-                     $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
+                     $field->apiFormatField($data, $bean, $options, $fieldName, $properties, $fieldList, $this->api);
                 }
-
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
@@ -96,15 +85,6 @@ class SugarBeanApiHelper
                 }
             }
             //END SUGARCRM flav=pro ONLY
-
-            foreach ($beanCollectionFields as $fieldName => $properties) {
-                if (isset($options['display_params'][$fieldName])) {
-                    $displayParams = $options['display_params'][$fieldName];
-                } else {
-                    $displayParams = array();
-                }
-                $data[$fieldName] = $this->getBeanCollection($bean, $properties, $displayParams);
-            }
         } else {
             if (isset($bean->id)) {
                 $data['id'] = $bean->id;
@@ -114,7 +94,15 @@ class SugarBeanApiHelper
             } else {
                 if (isset($bean->date_modified) && !empty($bean->field_defs['date_modified'])) {
                     $field = $sfh->getSugarField($bean->field_defs['date_modified']['type']);
-                    $field->apiFormatField($data, $bean, array(), 'date_modified', $bean->field_defs['date_modified']);
+                    $field->apiFormatField(
+                        $data,
+                        $bean,
+                        array(),
+                        'date_modified',
+                        $bean->field_defs['date_modified'],
+                        $fieldList,
+                        $this->api
+                    );
                 }
             }
             if ($this->api->user->isAdmin()) {
@@ -344,86 +332,6 @@ class SugarBeanApiHelper
         if($ts_server->ts != $ts_client->ts) {
             // OOPS, edited after client TS, conflict!
             throw new SugarApiExceptionEditConflict("Edit conflict - client TS is {$timedate->asIso($ts_client)}, server TS is {$timedate->asIso($ts_server)}");
-        }
-    }
-
-    /**
-     * Return the data that should be returned for link or collection field
-     *
-     * @param SugarBean $bean Source bean
-     * @param array $field Link or collection field definition
-     * @param array $displayParams Field display parameters
-     *
-     * @return array
-     * @throws SugarApiExceptionError
-     */
-    protected function getBeanCollection(SugarBean $bean, array $field, array $displayParams)
-    {
-        $args = $this->getBeanCollectionApiArguments($bean, $field, $displayParams);
-        $api = $this->getBeanCollectionApi($field['type']);
-        $response = $api($this->api, $args);
-
-        return $response['records'];
-    }
-
-    /**
-     * Returns API arguments for underlying API for the given link or collection field
-     *
-     * @param SugarBean $bean Source bean
-     * @param array $field Field definition
-     * @param array $displayParams Field display parameters
-     *
-     * @return array
-     * @throws SugarApiExceptionError
-     */
-    protected function getBeanCollectionApiArguments(SugarBean $bean, array $field, array $displayParams = array())
-    {
-        $args = array_merge(array(
-            // make sure "fields" argument is always passed to the API
-            // since otherwise it will return all fields by default
-            'fields' => array('id', 'date_modified'),
-        ), $displayParams, array(
-            'module' => $bean->module_name,
-            'record' => $bean->id,
-        ));
-
-        switch ($field['type']) {
-            case 'link':
-                $args['link_name'] = $field['name'];
-                break;
-            case 'collection':
-                $args['collection_name'] = $field['name'];
-                break;
-        }
-
-        return $args;
-    }
-
-    /**
-     * Returns API adapter function for the given field type
-     *
-     * @param string $type
-     *
-     * @return callable
-     * @throws SugarApiExceptionError
-     */
-    protected function getBeanCollectionApi($type)
-    {
-        switch ($type) {
-            case 'link':
-                return function (ServiceBase $service, array $args) {
-                    $api = new RelateApi();
-                    return $api->filterRelated($service, $args);
-                };
-            case 'collection':
-                return function (ServiceBase $service, array $args) {
-                    $api = new CollectionApi();
-                    return $api->getCollection($service, $args);
-                };
-            default:
-                throw new SugarApiExceptionError(
-                    sprintf('Unable to locate underlying API for field type %s', $type)
-                );
         }
     }
 }
