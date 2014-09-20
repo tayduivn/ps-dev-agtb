@@ -117,13 +117,6 @@ module.exports = function(grunt) {
         if (!options.client) {
             options.client = {};
         }
-        // Allow for passing cli arguments to `client.args` using  `--grep=x`
-        var args = parseArgs(process.argv.slice(2));
-        if (_.isArray(options.client.args)) {
-            options.client.args = options.client.args.concat(args);
-        } else {
-            options.client.args = args;
-        }
 
         // Merge karma default options
         _.defaults(options.client, {
@@ -136,10 +129,12 @@ module.exports = function(grunt) {
         // Merge options onto data, with data taking precedence.
         var data = _.merge(opts, this.data);
 
-        // But override the browsers array.
-        if (data.browsers && this.data.browsers) {
-            data.browsers = this.data.browsers;
-        }
+        // Allow for passing cli arguments compatible with the ones Karma
+        // supports originally
+        var args = parseArgs(process.argv.slice(2));
+
+        // override data with supplied CLI arguments
+        data = _.merge(data, args);
 
         // Merge client.args
         if (this.data.client && _.isArray(this.data.client.args)) {
@@ -185,10 +180,23 @@ module.exports = function(grunt) {
 
 function finished(code){ return this(code === 0); }
 
-// Parse out all cli arguments in the form of `--arg=something` or
-// `-c=otherthing` and return the array.
+// Parse out all cli arguments in the form of `--arg something` and return the
+// array.
 function parseArgs(args) {
-    return _.filter(args, function (arg) {
-        return arg.match(/^--?/);
+    var params = {},
+        lastArg = '';
+
+    _.each(args, function(arg) {
+        if (arg.match(/^--/)) {
+            lastArg = arg;
+            return; // continue
+        }
+
+        if (!_.isEmpty(lastArg)) {
+            params[lastArg.substr(2)] = arg.split(',');
+            lastArg = '';
+        }
     });
+
+    return params;
 }
