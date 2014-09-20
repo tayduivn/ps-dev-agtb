@@ -409,7 +409,7 @@
                 // It will be re-rendered on request response.
                 ctx.get('collection').reset(null, { silent: true });
             });
-            this.trigger('filter:clear:quicksearch');
+            this.trigger('filter:apply');
         }
     },
     /**
