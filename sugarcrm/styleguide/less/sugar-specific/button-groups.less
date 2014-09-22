@@ -7,7 +7,6 @@
   .btn {
     letter-spacing: normal;
     margin-left: -1px;
-    .rtlFloat(@direction,none);
     // Give the line between buttons some depth
     .dropdown-toggle {
       padding-left: 8px;
@@ -28,11 +27,6 @@
     .border-bottom-left-radius(@baseBorderRadius);
     .border-top-right-radius(0);
     .border-bottom-right-radius(0);
-    .rtlBorderRadiusTopLeft(@direction,0);
-    .rtlBorderRadiusBottomLeft(@direction,0);
-    .rtlBorderRadiusTopRight(@direction,@baseBorderRadius);
-    .rtlBorderRadiusBottomRight(@direction,@baseBorderRadius);
-    .rtlMargin(@direction,0 0 0 -4px);
   }
   // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
   span:last-child .btn,
@@ -40,8 +34,6 @@
   & > .dropdown-toggle {
     .border-top-right-radius(@baseBorderRadius);
     .border-bottom-right-radius(@baseBorderRadius);
-    .rtlBorderRadiusTopLeft(@direction,@baseBorderRadius);
-    .rtlBorderRadiusBottomLeft(@direction,@baseBorderRadius);
     .icon-caret-down {
       opacity: 1;
     }

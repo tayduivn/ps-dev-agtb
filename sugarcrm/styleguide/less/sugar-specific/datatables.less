@@ -29,7 +29,6 @@
     border-right: @tableBorder;
     border-bottom: none;
     background-color: @white;
-    .rtl(@direction,ltr);
     &:last-child {
       border-right: none;
     }
@@ -107,8 +106,6 @@
     background: @white;
     border-top: none;
     border-bottom: none;
-    .rtl(@direction,ltr);
-
     &:last-child {
       border-right: 0;
     }
@@ -424,7 +421,6 @@
   td.number,
   tfoot th.number {
     text-align: right;
-    .rtlTextAlign(@direction,left);
     white-space: nowrap;
     span.edit {
       div.controls {
