@@ -621,9 +621,11 @@ class SugarFieldTeamset extends SugarFieldBase {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (empty($bean->teamList)) {
             require_once('modules/Teams/TeamSetManager.php');
             $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);

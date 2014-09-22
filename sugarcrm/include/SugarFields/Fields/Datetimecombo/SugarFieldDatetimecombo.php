@@ -246,10 +246,11 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
         global $timedate;
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
 
         if(empty($bean->$fieldName)) {
             $data[$fieldName] = null;

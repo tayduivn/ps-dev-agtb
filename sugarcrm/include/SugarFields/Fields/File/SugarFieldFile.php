@@ -253,8 +253,8 @@ class SugarFieldFile extends SugarFieldBase
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
         // Handle the parent so our current data element is set
         parent::apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);

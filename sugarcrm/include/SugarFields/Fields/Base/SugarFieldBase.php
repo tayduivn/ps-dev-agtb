@@ -131,13 +131,32 @@ class SugarFieldBase {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {
             $data[$fieldName] = '';
+        }
+    }
+
+    /**
+     * Ensures that necessary arguments of apiFormatField() are passed
+     *
+     * @param array $fieldList The $fieldList argument of apiFormatField()
+     * @param ServiceBase $service The $service argument of apiFormatField()
+     */
+    protected function ensureApiFormatFieldArguments(array $fieldList = null, ServiceBase $service = null)
+    {
+        if ($fieldList === null) {
+            trigger_error('$fieldList argument of apiFormatField() is missing', E_USER_DEPRECATED);
+        }
+
+        if ($service === null) {
+            trigger_error('$service argument of apiFormatField() is missing', E_USER_DEPRECATED);
         }
     }
 
@@ -857,11 +876,13 @@ class SugarFieldBase {
     }
 
     /**
-     * @param MetaDataManager $metaDataManager
-     * @param array $field
-     * @param array $fieldDefs
-     * @param array $fields
-     * @param array $displayParams
+     * Processes layout field by collecting its display parameters and processing nested fields
+     *
+     * @param MetaDataManager $metaDataManager Metadata manager
+     * @param array $field The field being processed
+     * @param array $fieldDefs Field definitions of the module the layout belongs to
+     * @param array $fields Resulting set of fields
+     * @param array $displayParams Resulting display parameters
      */
     public function processLayoutField(
         MetaDataManager $metaDataManager,

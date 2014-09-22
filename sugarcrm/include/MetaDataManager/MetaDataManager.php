@@ -3328,6 +3328,8 @@ class MetaDataManager
      * @param array $fieldDefs Bean field definitions
      * @param array $displayParams Associative array of field names and their display params
      * @return array
+     *
+     * @access protected Should be used only by SugarFieldBase and subclasses
      */
     public function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
     {

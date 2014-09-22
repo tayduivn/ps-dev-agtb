@@ -28,9 +28,11 @@ class SugarFieldEmail extends SugarFieldBase
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (empty($bean->emailAddress->hasFetched)) {
             $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
         } else {

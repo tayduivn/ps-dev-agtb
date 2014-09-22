@@ -23,9 +23,11 @@ class SugarFieldCurrency_id extends SugarFieldBase
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (!empty($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {

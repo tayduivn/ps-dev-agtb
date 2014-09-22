@@ -24,10 +24,12 @@ class SugarFieldFullname extends SugarFieldBase
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
         global $locale;
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         $data[$fieldName] = $locale->formatName($bean);
     }
 

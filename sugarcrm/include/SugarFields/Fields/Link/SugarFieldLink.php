@@ -25,10 +25,12 @@ class SugarFieldLink extends SugarFieldBase {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
-    	// this is only for generated links
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
+        // this is only for generated links
     	if(isset($bean->field_defs[$fieldName]['gen']) && isTruthy($bean->field_defs[$fieldName]['gen'])) {
             $subject = $bean->field_defs[$fieldName]['default'];
             if (!empty($subject)) {

@@ -36,9 +36,11 @@ class SugarFieldInt extends SugarFieldBase
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         $data[$fieldName] = isset($bean->$fieldName) && is_numeric($bean->$fieldName)
                             ? (int)$bean->$fieldName : null;
     }

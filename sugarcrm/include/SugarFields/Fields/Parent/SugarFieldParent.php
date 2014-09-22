@@ -199,9 +199,11 @@ class SugarFieldParent extends SugarFieldRelate {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         // API will fill in the name
         if(empty($bean->$fieldName)) {
         	$data[$fieldName] = '';

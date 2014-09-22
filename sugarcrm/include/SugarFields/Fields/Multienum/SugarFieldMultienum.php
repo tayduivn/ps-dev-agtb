@@ -50,9 +50,11 @@ class SugarFieldMultienum extends SugarFieldEnum
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         $data[$fieldName] = $this->getNormalizedFieldValues($bean, $fieldName);
     }
 

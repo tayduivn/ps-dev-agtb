@@ -224,12 +224,20 @@ class SugarFieldCollection extends SugarFieldBase {
         array $args,
         $fieldName,
         $properties,
-        array $fieldList,
-        ServiceBase $service
+        array $fieldList = null,
+        ServiceBase $service = null
     ) {
+        if (!is_array($fieldList)) {
+            throw new SugarApiExceptionError('$fieldList argument of apiFormatField() is missing');
+        }
+
         // don't render link fields unless it's explicitly requested
         if (!in_array($fieldName, $fieldList)) {
             return;
+        }
+
+        if (!$service) {
+            throw new SugarApiExceptionError('$service argument of apiFormatField() is missing');
         }
 
         if (isset($args['display_params'][$fieldName])) {
