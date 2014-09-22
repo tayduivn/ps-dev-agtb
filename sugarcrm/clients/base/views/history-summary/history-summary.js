@@ -95,6 +95,8 @@
         this.context.set({
             collection: this.collection
         });
+
+        $('html').addClass('print-drawer');
     },
 
     /**
@@ -222,5 +224,13 @@
         this.collection.dataFetched = false;
         this.collection.skipFetch = false;
         this.loadData(options);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        $('html').removeClass('print-drawer');
+        this._super('_dispose');
     }
 })
