@@ -458,7 +458,7 @@ class CalendarUtils
 	{
 		global $db;
 
-        if (trim($beanId) == '') {
+        if (empty($beanId) || trim($beanId) == '') {
             return;
         }
 
@@ -472,7 +472,7 @@ class CalendarUtils
 			$id = $ro['id'];
 			if($i == 0){
 				$new_parent_id = $id;
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '', recurring_source = '', date_modified = '{$date_modified}' WHERE id = '{$id}'";
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = '{$date_modified}' WHERE id = '{$id}'";
 			}else{
 				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = '{$date_modified}' WHERE id = '{$id}'";
 			}
