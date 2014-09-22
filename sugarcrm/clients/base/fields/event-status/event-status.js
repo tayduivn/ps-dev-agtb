@@ -25,7 +25,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Styles the badge.
      *
