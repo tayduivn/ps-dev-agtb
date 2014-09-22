@@ -7,24 +7,38 @@
   },
   "data": [
     {
-      "key": "Negotiation/Review",
+      "key": "Closed Won",
+      "count": 3,
+      "values": [
+        {"series": 0, "x": 0, "y": 7,  "y0": 0}
+      ]
+    },
+    {
+      "key": "Review",
       "count": 3,
       "values": [
         {"series": 0, "x": 0, "y": 75,  "y0": 0}
       ]
     },
     {
+      "key": "Negotiation",
+      "count": 5,
+      "values": [
+        {"series": 1, "x": 0, "y": 8,  "y0": 0}
+      ]
+    },
+    {
       "key": "Proposal/PriceQuote",
       "count": 5,
       "values": [
-        {"series": 1, "x": 0, "y": 5,  "y0": 0}
+        {"series": 1, "x": 0, "y": 28,  "y0": 0}
       ]
     },
     {
       "key": "Perception Analysis",
       "count": 1,
       "values": [
-        {"series": 2, "x": 0, "y": 195, "y0": 0}
+        {"series": 2, "x": 0, "y": 8, "y0": 0}
       ]
     },
     {
@@ -52,7 +66,7 @@
       "key": "Prospecting",
       "count": 10,
       "values": [
-        {"series": 6, "x": 0, "y": 110, "y0": 0}
+        {"series": 6, "x": 0, "y": 2, "y0": 0}
       ]
     }
   ]
