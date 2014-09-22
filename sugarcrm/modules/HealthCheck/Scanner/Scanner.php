@@ -512,7 +512,10 @@ class HealthCheckScanner
         {
             $files_to_fix = '';
             foreach ($this->filesToFix as $fileToFix) {
-                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . var_export($fileToFix['vendors'], true) . PHP_EOL;
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
+                foreach ($fileToFix['vendors'] as $vendor) {
+                    $files_to_fix .= " '{$vendor['directory']}' found in line {$vendor['line']}" . PHP_EOL;
+                }
             }
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
@@ -524,7 +527,7 @@ class HealthCheckScanner
 
         // check non-upgrade-safe customizations by verifying md5's
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/|)#";
         foreach($this->md5_files as $file => $sum) {
             if(preg_match($skip_prefixes, $file)) {
                 continue;
@@ -767,9 +770,22 @@ class HealthCheckScanner
                                     break 2;
                                 }
                             }
-                            $vendorFileFound = true;
-                            $includedVendors[] = $directory;
-                            break;
+
+                            $fileContentsLined = file($file);
+                            $pattern = "#$value#";
+                            $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+                            if (count($linesFound) > 0) {
+                                $foundVendor = array();
+
+                                foreach ($linesFound as $linePosition => $lineContent) {
+                                    $foundVendor['line'] = ((int)$linePosition + 1);
+                                    $foundVendor['directory'] = $directory;
+                                }
+
+                                $vendorFileFound = true;
+                                $includedVendors[] = $foundVendor;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1233,6 +1249,9 @@ class HealthCheckScanner
     {
         $layoutDefs = $this->loadFromFile($deffile, 'layout_defs');
         // get defs regardless of the module_name since it can be plural or singular, but we don't care here
+        if(!$layoutDefs) {
+            return;
+        }
         $defs = $layoutDefs[key($layoutDefs)];
         if (empty($defs['subpanel_setup'])) {
             return;

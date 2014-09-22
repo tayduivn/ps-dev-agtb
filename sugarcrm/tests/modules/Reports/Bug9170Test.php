@@ -22,24 +22,27 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->rs = new ReportSchedule();
 	}
 
-	function _testCreateScheduleProvider()
+    /**
+     * Data provider for test create schedule.
+     *
+     * @return array
+     */
+	public function testCreateScheduleProvider()
 	{
 	    global $timedate;
 
 	    $today = gmdate($timedate->get_db_date_time_format(), mktime());
-	    $tomm = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24);
-        $next_week = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24 * 7);
         $yesterday = gmdate($timedate->get_db_date_time_format(), mktime() - 3600 * 24);
 
-	    return array(
-           array($yesterday, 3600 * 24, $tomm),
-           array($yesterday, 3600 * 24 * 8, $next_week),
-           array($today, 3600 * 24, $tomm),
-           array($today, 3600 * 24 * 7, $next_week),
-	    );
+        return array(
+            array($yesterday, 3600 * 24, $yesterday),
+            array($today, 3600 * 24, $today),
+        );
 	}
+
+
 	/**
-     * @dataProvider _testCreateScheduleProvider
+     * @dataProvider testCreateScheduleProvider
      */
 	public function testCreateSchedule($start_date, $interval, $expected_date)
 	{
@@ -58,16 +61,36 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
         //Assert that the timestamps are within a minute of each other
         $this->assertTrue(($next_run_ts + 60) > $expected_date_ts && $expected_date_ts > ($next_run_ts - 60), "Unable to schedule report");
 	}
-	
-	public function testUpdateNextRun()
+
+    /**
+     * Data provider for test update schedule.
+     *
+     * @return array
+     */
+    public function testUpdateScheduleProvider()
+    {
+        global $timedate;
+
+        $today = gmdate($timedate->get_db_date_time_format(), mktime());
+        $tomorrow = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24);
+        $nextWeek = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24 * 7);
+        $yesterday = gmdate($timedate->get_db_date_time_format(), mktime() - 3600 * 24);
+
+	    return array(
+           array($yesterday, 3600 * 24, $tomorrow),
+           array($yesterday, 3600 * 24 * 8, $nextWeek),
+           array($today, 3600 * 24, $tomorrow),
+           array($today, 3600 * 24 * 7, $nextWeek),
+	    );
+    }
+
+    /**
+     * @dataProvider testUpdateScheduleProvider
+     */
+	public function testUpdateNextRun($startDate, $interval, $expectedDate)
 	{
-	    global $timedate;
-	    
 	    $reportID = uniqid();
-	    $start_ts = mktime();
-	    $start_date = gmdate($timedate->get_db_date_time_format(), $start_ts);
-	    $interval = 3600;
-	    $id = $this->rs->save_schedule("","1",$reportID,$start_date, $interval,1,'pro');
+	    $id = $this->rs->save_schedule("", "1", $reportID, $startDate, $interval,1,'pro');
 	    
 	    //Update the report schedule
 	    $results = $this->rs->get_report_schedule($reportID);
@@ -78,13 +101,16 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	    $this->rs->update_next_run_time($id,$next_run,$results[0]['time_interval'] );
 	    
 	    //Get the update
-	    $expectedRunDate = gmdate($timedate->get_db_date_time_format(), $start_ts + $interval);
 	    $updatedResults = $this->rs->get_report_schedule($reportID);
-        $next_run = '';
+        $nextRun = '';
         foreach($updatedResults as $ur){
-            $next_run = $ur['next_run'];
+            $nextRun = $ur['next_run'];
         }
-	    $this->assertEquals($expectedRunDate, $next_run, "Unable to update scheduled report.");
+        $nextRunTimestamp = strtotime($nextRun);
+        $expectedDateTimestamp = strtotime($expectedDate);
+
+        $this->assertTrue(($nextRunTimestamp + 60) > $expectedDateTimestamp &&
+            $expectedDateTimestamp > ($nextRunTimestamp - 60), "Unable to update scheduled report.");
 	}
 	
 	public function tearDown() 

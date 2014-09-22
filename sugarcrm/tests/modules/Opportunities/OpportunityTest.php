@@ -39,6 +39,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
         //END SUGARCRM flav=pro ONLY
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     public static function tearDownAfterClass()
@@ -368,6 +369,29 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::callProtectedMethod($oppMock, 'mapProbabilityFromSalesStage');
 
         $this->assertEquals($probability, $oppMock->probability);
+    }
+
+    /**
+     * Test that related RLI's Account is always updated when we change it in Opportunity.
+     * @group opportunities
+     */
+    public function testRelatedRLIUpdatesAccountChange()
+    {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $account_1 = SugarTestAccountUtilities::createAccount();
+        $opportunity->account_id = $account_1->id;
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opportunity->revenuelineitems->add($rli);
+
+        $opportunity->save();
+        $this->assertEquals($account_1->id, $rli->account_id, '1st save');
+
+        //let's change Opportunity's Account and see what happens with RLI's related Account
+        $opportunity->retrieve($opportunity->id);
+        $account_2 = SugarTestAccountUtilities::createAccount();
+        $opportunity->account_id = $account_2->id;
+        $opportunity->save();
+        $this->assertEquals($account_2->id, $rli->account_id, '2nd save');
     }
 
     public static function dataProviderMapProbabilityFromSalesStage()
