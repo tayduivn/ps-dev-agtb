@@ -707,6 +707,7 @@ $dictionary['RevenueLineItem'] = array(
             'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
             'calculated' => true,
             'enforced' => true,
+            'workflow' => false,
         ),
         'lead_source' => array(
             'name' => 'lead_source',
