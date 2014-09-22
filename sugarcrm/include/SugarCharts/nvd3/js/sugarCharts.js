@@ -95,7 +95,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                     d3ChartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
 
                     var completeCallback = function() {
-                        SUGAR.charts.renderChart(chartId);
+                        SUGAR.charts.renderChart(chartId, paretoChart, json);
                         d3.select('#' + d3ChartId)
                             .selectAll('.nv-y.nv-axis text')
                             .text(function(d) {
@@ -105,19 +105,16 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                     that.chartObject = paretoChart;
 
-                    SUGAR.charts.setChartObject(paretoChart);
-                    SUGAR.charts.setChartData(json);
-
                     if (chartConfig['ReportModule']) {
                         paretoChart.legend
                             .showAll(true);
 
-                        SUGAR.charts.trackWindowResize(paretoChart, chartId, data);
+                        SUGAR.charts.trackWindowResize(paretoChart);
 
                         if (chartConfig['imageExportType']) {
-                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType'], completeCallback);
+                            SUGAR.charts.saveImageFile(chartId, paretoChart, json, jsonFilename, chartConfig['imageExportType'], completeCallback);
                         } else {
-                            SUGAR.charts.renderChart(chartId);
+                            SUGAR.charts.renderChart(chartId, paretoChart, json);
                         }
                     } else {
                         // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
@@ -132,8 +129,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                                 return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
                             });
                     }
+
+                    SUGAR.charts.callback(callback, paretoChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
 
@@ -185,26 +183,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                     that.chartObject = barChart;
 
-                    SUGAR.charts.setChartObject(barChart);
-                    SUGAR.charts.setChartData(json);
-
                     if (chartConfig['ReportModule']) {
                         barChart.legend
                             .showAll(true);
 
-                        SUGAR.charts.trackWindowResize(barChart, chartId, data);
+                        SUGAR.charts.trackWindowResize(barChart);
 
                         if (chartConfig['imageExportType']) {
-                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                            SUGAR.charts.saveImageFile(chartId, barChart, json, jsonFilename, chartConfig['imageExportType']);
                         } else {
-                            SUGAR.charts.renderChart(chartId);
+                            SUGAR.charts.renderChart(chartId, barChart, json);
                         }
                     } else {
-                        SUGAR.charts.renderChart(chartId);
+                        SUGAR.charts.renderChart(chartId, barChart, json);
                     }
 
+                    SUGAR.charts.callback(callback, barChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
 
@@ -255,25 +250,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                     that.chartObject = lineChart;
 
-                    SUGAR.charts.setChartObject(lineChart);
-                    SUGAR.charts.setChartData(json);
-
                     if (chartConfig['ReportModule']) {
                         lineChart.legend
                             .showAll(true);
 
-                        SUGAR.charts.trackWindowResize(lineChart, chartId, data);
+                        SUGAR.charts.trackWindowResize(lineChart);
 
                         if (chartConfig['imageExportType']) {
-                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                            SUGAR.charts.saveImageFile(chartId, lineChart, json, jsonFilename, chartConfig['imageExportType']);
                         } else {
-                            SUGAR.charts.renderChart(chartId);
+                            SUGAR.charts.renderChart(chartId, lineChart, json);
                         }
                     } else {
-                        SUGAR.charts.renderChart(chartId);
+                        SUGAR.charts.renderChart(chartId, lineChart, json);
                     }
+
+                    SUGAR.charts.callback(callback, lineChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
 
@@ -299,25 +292,23 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                     that.chartObject = pieChart;
 
-                    SUGAR.charts.setChartObject(pieChart);
-                    SUGAR.charts.setChartData(json);
-
                     if (chartConfig['ReportModule']) {
                         pieChart.legend
                             .showAll(true);
 
-                        SUGAR.charts.trackWindowResize(pieChart, chartId, data);
+                        SUGAR.charts.trackWindowResize(pieChart);
 
                         if (chartConfig['imageExportType']) {
-                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                            SUGAR.charts.saveImageFile(chartId, pieChart, json, jsonFilename, chartConfig['imageExportType']);
                         } else {
-                            SUGAR.charts.renderChart(chartId);
+                            SUGAR.charts.renderChart(chartId, pieChart, json);
                         }
                     } else {
-                        SUGAR.charts.renderChart(chartId);
+                        SUGAR.charts.renderChart(chartId, pieChart, json);
                     }
+
+                    SUGAR.charts.callback(callback, pieChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
 
@@ -351,9 +342,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
 
                     that.chartObject = funnelChart;
 
-                    SUGAR.charts.setChartObject(funnelChart);
-                    SUGAR.charts.setChartData(json);
-
                     if (chartConfig['ReportModule']) {
                         funnelChart.legend
                             .showAll(true);
@@ -361,106 +349,66 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
 
                         if (chartConfig['imageExportType']) {
-                            SUGAR.charts.saveImageFile(chartId, jsonFilename, chartConfig['imageExportType']);
+                            SUGAR.charts.saveImageFile(chartId, funnelChart, json, jsonFilename, chartConfig['imageExportType']);
                         } else {
-                            SUGAR.charts.renderChart(chartId);
+                            SUGAR.charts.renderChart(chartId, funnelChart, json);
                         }
                     } else {
-                        SUGAR.charts.renderChart(chartId);
+                        SUGAR.charts.renderChart(chartId, funnelChart, json);
                     }
+
+                    SUGAR.charts.callback(callback, funnelChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
 
         case 'gaugeChart':
             SUGAR.charts.get(jsonFilename, params, function(data) {
                 if (SUGAR.charts.isDataEmpty(data)) {
-                    var properties = $jit.util.splat(data.properties)[0];
 
+                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig),
+                        maxValue = d3.max(json.data.map(function(d) { return d.y; }));
+
+                    if (maxValue === 0) {
+                        json.data[0].y = 1;
+                        maxValue = 1;
+                    }
+
+					json.data.map(function(d, i) { 
+						d.classes = 'nv-fill0' + (i + 1);
+					});
+					
                     //init Gauge Chart
-                    var gaugeChart = new $jit.GaugeChart({
-                        //id of the visualization container
-                        injectInto: chartId,
-                        //whether to add animations
-                        animate: animate,
-                        renderBackground: chartConfig['imageExportType'] == 'jpg' ? true : false,
-                        backgroundColor: 'rgb(255,255,255)',
-                        colorStop1: 'rgba(255,255,255,.8)',
-                        colorStop2: 'rgba(255,255,255,0)',
-                        labelType: properties['labels'],
-                        hoveredColor: false,
-                        Title: {
-                            text: properties['title'],
-                            size: 16,
-                            color: '#444444',
-                            offset: 20
-                        },
-                        Subtitle: {
-                            text: properties['subtitle'],
-                            size: 11,
-                            color: css['color'],
-                            offset: 5
-                        },
-                        //offsets
-                        offset: 20,
-                        gaugeStyle: {
-                            backgroundColor: '#aaaaaa',
-                            borderColor: '#999999',
-                            needleColor: 'rgba(255,0,0,.8)',
-                            borderSize: 4,
-                            positionFontSize: 24,
-                            positionOffset: 2
-                        },
-                        //slice style
-                        type: useGradients ? chartConfig['gaugeType'] + ':gradient' : chartConfig['gaugeType'],
-                        //whether to show the labels for the slices
-                        showLabels: true,
-                        Events: {
-                            enable: true,
-                            onClick: function(node) {
-                                if (!node || $jit.util.isTouchScreen()) return;
-                                if (node.link == 'undefined' || node.link === '') return;
-                                window.location.href = node.link;
-                            }
-                        },
-                        //label styling
-                        Label: {
-                            type: labelType, //Native or HTML
-                            size: 12,
-                            family: css['font-family'],
-                            color: css['color']
-                        },
-                        //enable tips
-                        Tips: {
-                            enable: true,
-                            onShow: function(tip, elem) {
-                                if (elem.link !== 'undefined' && elem.link !== '') {
-                                    drillDown = ($jit.util.isTouchScreen()) ? '<br><a href="' + elem.link + '">Click to drilldown</a>' : '<br>Click to drilldown';
-                                } else {
-                                    drillDown = '';
-                                }
-                                if (elem.valuelabel !== 'undefined' && elem.valuelabel != undefined && elem.valuelabel !== '') {
-                                    value = 'elem.valuelabel';
-                                } else {
-                                    value = 'elem.value';
-                                }
-                                eval('tip.innerHTML = "<b>" + elem.label + "</b>: " + ' + value + ' + drillDown');
-                            }
-                        }
-                    });
-                    //load JSON data.
-                    gaugeChart.loadJSON(data);
+                    var gaugeChart = nv.models.gaugeChart()
+                            .id(d3ChartId)
+                            .x(function(d) { return d.key; })
+                            .y(function(d) { return d.y; })
+                            .showLabels(true)
+                            .showTitle(true)
+                            .colorData('class')
+                            .ringWidth(50)
+                            .maxValue(maxValue)
+                            .transitionMs(4000);
 
-                    var list = SUGAR.charts.generateLegend(gaugeChart, chartId);
-
-                    //save canvas to image for pdf consumption
-                    $jit.util.saveImageTest(chartId, jsonFilename, chartConfig['imageExportType']);
-
-                    SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
                     that.chartObject = gaugeChart;
+
+                    if (chartConfig['ReportModule']) {
+                        gaugeChart.legend
+                           .showAll(true);
+
+                        SUGAR.charts.trackWindowResize(gaugeChart);
+
+                        if (chartConfig['imageExportType']) {
+                            SUGAR.charts.saveImageFile(chartId, gaugeChart, json, jsonFilename, chartConfig['imageExportType']);
+                        } else {
+                            SUGAR.charts.renderChart(chartId, gaugeChart, json);
+                        }
+                    } else {
+                        SUGAR.charts.renderChart(chartId, gaugeChart, json);
+                    }
+
+                    SUGAR.charts.callback(callback, gaugeChart);
                 }
-                SUGAR.charts.callback(callback);
             });
             break;
     }
@@ -483,35 +431,26 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
     SUGAR.charts = {
 
         chart: null,
-        json: [],
 
         /**
          * Execute callback function if specified
          *
          * @param callback function
          */
-        callback: function(callback) {
+        callback: function(callback, chart) {
             if (callback) {
                 // if the call back is fired, include the chart as the only param
-                callback(this.chart);
+                callback(chart || this.chart);
             }
         },
 
-        setChartObject: function(d3) {
-            this.chart = d3;
-        },
-
-        setChartData: function(data) {
-            this.json = data;
-        },
-
-        renderChart: function(id) {
+        renderChart: function(id, chart, json) {
             $('#d3_' + id).empty();
             d3.select('#d3_' + id)
                 .append('svg')
-                .datum(this.json)
+                .datum(json)
                 .transition().duration(500)
-                .call(this.chart);
+                .call(chart);
         },
 
         /**
@@ -626,9 +565,10 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
 
         translateDataToD3: function(json, params, chartConfig) {
             var data = [],
+                value = 0,
                 strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
 
-            if (json.values.filter(function(d) { return d.values.length; }).length) {
+            if (json.values.filter(function(d) { return d.values && d.values.length; }).length) {
 
                 switch (chartConfig['chartType']) {
 
@@ -682,6 +622,20 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                             };
                         });
                         break;
+
+                    case 'gaugeChart':
+                        value = json.values.shift().gvalue;
+                        var y0 = 0;
+
+                        data = json.values.map(function(d, i) {
+                            var values = {
+                                'key': (d.label !== '') ? d.label : strUndefined,
+                                'y': parseInt(d.values[0], 10) + y0
+                            };
+                            y0 += parseInt(d.values[0], 10);
+                            return values;
+                        });
+                        break;
                 }
             }
 
@@ -696,15 +650,18 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                             'l': (d.label !== '') ? d.label : strUndefined
                         };
                     }),
-                    'values': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
-                        json.values.map(function(d, i) {
-                        return {
-                            'group': i + 1,
-                            't': d.values.reduce(function(p, c, i, a) {
-                                return parseInt(p, 10) + parseInt(c, 10);
-                            })
-                        };
-                    })
+                    'values': chartConfig['chartType'] === 'gaugeChart' ?
+                        [{'group' : 1, 't': value}] :
+                        json.values.filter(function(d) { return d.values.length; }).length ?
+                            json.values.map(function(d, i) {
+                                return {
+                                    'group': i + 1,
+                                    't': d.values.reduce(function(p, c, i, a) {
+                                        return parseInt(p, 10) + parseInt(c, 10);
+                                    })
+                                };
+                            }) :
+                            []
                 },
                 // series data
                 'data': data
@@ -782,7 +739,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
          * @param chartId
          * @param json
          */
-        trackWindowResize: function(chart, chartId, json) {
+        trackWindowResize: function(chart) {
             var timeout,
                 delay = 500,
                 origWindowWidth = document.documentElement.scrollWidth;
@@ -827,14 +784,14 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             });
         },
 
-        saveImageFile: function(id, jsonfilename, imageExt, saveTo, complete) {
+        saveImageFile: function(id, chart, json, jsonfilename, imageExt, saveTo, complete) {
             var self = this;
             var d3ChartId = '#d3_' + id + '_print' || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165_print';
             var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
             var svgChartId = 'svg_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
 
             var completeCallback = complete || function() {
-                self.renderChart(id);
+                self.renderChart(id, chart, json);
             };
 
             d3.select(d3ChartId + ' svg').remove();
@@ -842,8 +799,8 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             d3.select(d3ChartId)
                 .append('svg')
                 .attr('id', svgChartId)
-                .datum(this.json)
-                .call(this.chart);
+                .datum(json)
+                .call(chart);
 
             d3.select(d3ChartId).selectAll('.nv-axis line')
               .style('stroke', '#DDD')

@@ -4491,6 +4491,7 @@ nv.models.gauge = function() {
             })
           , labelData = [0].concat( data.map( function(d){ return d.y; } ) )
           , prop = function(d){ return d*radius/100; }
+          , pointerValue = properties.values[0].t
           ;
 
         //------------------------------------------------------------
@@ -4640,7 +4641,7 @@ nv.models.gauge = function() {
             .attr('d', d3.svg.line().interpolate('monotone')/*function(d) { return pointerLine(d) +'Z';}*/ )
             .attr('transform', 'rotate('+ minAngle +')');
 
-        setGaugePointer(properties.value);
+        setGaugePointer(pointerValue);
 
         //------------------------------------------------------------
         // Odometer readout
@@ -4655,7 +4656,7 @@ nv.models.gauge = function() {
             .attr('x', 0)
             .attr('y', 0 )
             .attr('text-anchor', 'middle')
-            .text( valueFormat( properties.value) )
+            .text( valueFormat(pointerValue) )
             .style('stroke', 'none')
             .style('fill', 'black')
             .style('font-size', prop(0.7)+'em')

@@ -261,7 +261,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     protected function updateRelationshipDefinition($seed, $def)
     {
 
-        $files = $this->getRelationshipFiles($seed, $def['name']);
+        $files = $this->getFiles($seed, $def['name']);
         foreach ($files as $file) {
             $dictionary = array();
             include $file;
@@ -346,7 +346,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             return false;
         }
         foreach (clone($defs) as $field) {
-            if (!empty($field['link']) && $field['link']== $def['name']) {
+            if (!empty($field['link']) && is_string($field['link']) && $field['link'] == $def['name']) {
                 return true;
             }
         }
@@ -366,7 +366,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             if (empty($def) || empty($def['relationship'])) {
                 continue;
             }
-            $files = $this->getRelationshipFiles($seed, $def['relationship']);
+            $files = $this->getFiles($seed, $def['relationship'], $def['name']);
             foreach ($files as $file) {
                 $dictionary = array();
                 include $file;
@@ -395,7 +395,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     protected function deleteRelationshipFiles($seed, $rel_name)
     {
         $result = false;
-        $files = $this->getRelationshipFiles($seed, $rel_name);
+        $files = $this->getFiles($seed, $rel_name);
         foreach ($files as $file) {
             $result = $result || $this->deleteFile($file);
         }
@@ -403,17 +403,17 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     }
 
     /**
-     * Return files where relationship is defined.
+     * Return files where relationship can be defined.
      * @param SugarBean $seed
      * @param String $rel_name
      * @return array
      */
-    protected function getRelationshipFiles($seed, $rel_name)
+    protected function getAvailableFiles($seed, $rel_name)
     {
-        $result = array();
-        if (empty($rel_name)) {
-            return $result;
-        }
+        $result = array(
+            'main' => array(),
+            'addon' => array(),
+        );
         $mod = $seed->module_dir;
         if ($mod == 'Employees') {
             $mod = 'Users';
@@ -425,36 +425,81 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             'vardefs',
             'wirelesslayoutdefs'
         );
-        $fn = $rel_name ."_". $mod. ".php";
-
         $paths = array(
             "{$basepath}Vardefs/",
             "{$basepath}Layoutdefs/",
             "{$basepath}WirelessLayoutdefs/",
             "custom/Extension/application/Ext/TableDictionary/",
         );
+        if (!empty($rel_name)) {
+            $fn = $rel_name ."_". $mod. ".php";
 
-        foreach ($relationshipsDirs as $relationshipDir) {
-            array_push($paths, "{$relationshipsPath}{$relationshipDir}/");
-        }
+            foreach ($relationshipsDirs as $relationshipDir) {
+                array_push($paths, "{$relationshipsPath}{$relationshipDir}/");
+            }
 
-        $files = array(
-            "custom/metadata/{$rel_name}MetaData.php",
-            "{$relationshipsPath}relationships/{$rel_name}MetaData.php"
-        );
-        foreach ($paths as $path) {
-            array_push($files, $path . $fn);
-        }
-        //check for standard paths like `Repair and Rebuild` does.
-        foreach ($files as $file) {
-            if (file_exists($file)) {
-                array_push($result, $file);
+            $files = array(
+                "custom/metadata/{$rel_name}MetaData.php",
+                "{$relationshipsPath}relationships/{$rel_name}MetaData.php"
+            );
+            foreach ($paths as $path) {
+                array_push($files, $path . $fn);
+            }
+            //check for standard paths like `Repair and Rebuild` does.
+            foreach ($files as $file) {
+                if (file_exists($file)) {
+                    array_push($result['main'], $file);
+                }
             }
         }
         //check for non-standard paths.
         foreach ($paths as $path) {
             foreach (glob($path . "*.php") as $file) {
-                if (!in_array($file, $result) && $this->fileHasRelationDefinition($seed, $rel_name, $file)) {
+                if (!in_array($file, $result['main']) && !in_array($file, $result['addon'])) {
+                    array_push($result['addon'], $file);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Return file list with definition of relationship and/or field.
+     * @param SugarBean $seed
+     * @param string $rel_name
+     * @param string $field_name
+     * @return array
+     */
+    protected function getFiles($seed, $rel_name = '', $field_name = '')
+    {
+        if (empty($rel_name) && !empty($field_name)) {
+            $tmpRelName = $seed->getFieldDefinition($field_name);
+            $tmpRelName = isset($tmpRelName['relationship']) ? $tmpRelName['relationship'] : '';
+        } else {
+            $tmpRelName = $rel_name;
+        }
+        $availableFiles = $this->getAvailableFiles($seed, $tmpRelName);
+        $result = $availableFiles['main'];
+        $files = $availableFiles['addon'];
+        if (!empty($rel_name)) {
+            $definition = "\$dictionary['{$seed->object_name}']['relationships']['{$rel_name}']";
+            foreach ($files as $file) {
+                if ($this->fileHasDefinition($file, $definition)) {
+                    array_push($result, $file);
+                }
+            }
+            $definition = "\$dictionary['{$rel_name}']";
+            foreach ($files as $file) {
+                if ($this->fileHasDefinition($file, $definition)) {
+                    array_push($result, $file);
+                }
+            }
+        }
+
+        if (!empty($field_name)) {
+            $definition = "\$dictionary['{$seed->object_name}']['fields']['{$field_name}']";
+            foreach ($files as $file) {
+                if (!in_array($file, $result) && $this->fileHasDefinition($file, $definition)) {
                     array_push($result, $file);
                 }
             }
@@ -463,15 +508,13 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     }
 
     /**
-     * Checks if file has definition for relationship.
-     * @param SugarBean $seed
-     * @param String $rel_name
+     * Checks if file has provided definition.
      * @param String $file
+     * @param String $definition
      * @return bool
      */
-    protected function fileHasRelationDefinition($seed, $rel_name, $file)
+    protected function fileHasDefinition($file, $definition)
     {
-        $need = "\$dictionary['{$seed->object_name}']['relationships']['{$rel_name}']";
         $source = file_get_contents($file);
         $tokens = token_get_all($source);
         foreach ($tokens as $ind => $token) {
@@ -488,7 +531,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                         $res .= str_replace('"', "'", $tokens[$ind][1]);
                     }
                 }
-                if (strpos($res, $need) === 0 && !is_array($tokens[$ind]) && $tokens[$ind] == '=') {
+                if (strpos($res, $definition) === 0 && !is_array($tokens[$ind]) && $tokens[$ind] == '=') {
                     return true;
                 }
             }
@@ -621,7 +664,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     protected function removeFieldFromExt($seed, $field)
     {
         $mod = $seed->module_dir;
-        $files = glob("custom/Extension/modules/{$mod}/Ext/Vardefs/*.php");
+        $files = $this->getFiles($seed, '', $field);
         foreach ($files as $file) {
             $dictionary = array();
             include $file;
