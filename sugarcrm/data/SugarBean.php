@@ -692,9 +692,7 @@ class SugarBean
      *
      * All implementing classes must set a value for the object_name variable.
      *
-     * @param array $arr row of data fetched from the database.
-     * @return  nothing
-     *
+     * @return string
      */
     function getObjectName()
     {
