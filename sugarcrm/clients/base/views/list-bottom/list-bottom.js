@@ -97,11 +97,9 @@
         this.collection.on('add remove reset', this.render, this);
         this.before('render', function() {
             this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
-            this.viewRenderDenied = false;
-            if (app.alert.$alerts[0].innerText &&
-                app.alert.$alerts[0].innerText.trim() == app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE') +
-                ' ' + app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[this.module])) {
-                this.viewRenderDenied = true;
+            this.showLoadMsg = true;
+            if (app.alert.$alerts[0].innerText) {
+                this.showLoadMsg = false;
             }
             var nextOffset = this.collection.next_offset || -1;
             if (this.collection.dataFetched && nextOffset === -1) {
