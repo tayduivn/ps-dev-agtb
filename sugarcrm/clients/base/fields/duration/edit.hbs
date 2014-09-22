@@ -10,18 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#with def}}
-    {{#each fields}}
-        <span class="record-cell span5 nopadding" data-name="{{name}}" data-type="{{type}}">
-                {{#unless dismiss_label}}
-                    <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
-                {{/unless}}
-            <span data-fieldname="{{name}}">
-                {{field ../../view model=../../model template=../../options.viewName}}
-            </span>
+{{#each fields}}
+    <span class="record-cell span5 nopadding" data-name="{{name}}" data-type="{{type}}">
+        {{#unless dismiss_label}}
+            <div class="record-label" data-name="{{name}}">{{str label ../module}}</div>
+        {{/unless}}
+        <span data-fieldname="{{name}}">
+            {{placeholder}}
         </span>
-        {{#eq @index 0}}
-            <span class="span1 fieldset-text">{{str 'LBL_START_AND_END_DATE_TO' ../../../module}}</span>
-        {{/eq}}
-    {{/each}}
-{{/with}}
+    </span>
+    {{#eq @index 0}}
+        <span class="span1 fieldset-text">{{str 'LBL_START_AND_END_DATE_TO' ../module}}</span>
+    {{/eq}}
+{{/each}}

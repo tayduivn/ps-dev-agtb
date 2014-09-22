@@ -259,7 +259,8 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 'location',
                 array(
                     'name' => 'reminders',
-                    'type' => 'fieldset-with-labels',
+                    'type' => 'fieldset',
+                    'inline' => true,
                     'fields' => array(
                         array(
                             'name' => 'reminder_time',
@@ -309,7 +310,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'date_modified_by',
+                    'name' => 'created_by_name',
                     'readonly' => true,
                     'inline' => true,
                     'type' => 'fieldset',
@@ -328,7 +329,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'date_entered_by',
+                    'name' => 'modified_by_name',
                     'readonly' => true,
                     'inline' => true,
                     'type' => 'fieldset',

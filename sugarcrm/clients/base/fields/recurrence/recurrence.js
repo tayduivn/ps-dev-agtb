@@ -17,7 +17,7 @@
  * @extends View.Fields.Base.FieldsetWithLabelsField
  */
 ({
-    extendsFrom: 'FieldsetWithLabelsField',
+    extendsFrom: 'FieldsetField',
 
     /**
      * @inheritdoc

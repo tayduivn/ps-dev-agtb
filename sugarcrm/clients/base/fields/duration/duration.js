@@ -13,7 +13,7 @@
  * @alias SUGAR.App.view.fields.BaseDurationField
  */
 ({
-    extendsFrom: 'FieldsetWithLabelsField',
+    extendsFrom: 'FieldsetField',
 
     /**
      * {@inheritDoc}
@@ -52,46 +52,6 @@
         }, this);
 
         this._super('bindDataChange');
-    },
-
-    /**
-     * Render start date and end date fields on edit. In detail mode, render
-     * date range as a display string.
-     * {@inheritDoc}
-     * @private
-     */
-    _render: function() {
-        if (this.action === 'edit') {
-            this._super('_render');
-            if (!this.model.get('date_start')) {
-                this.setDefaultStartDateTime();
-            }
-        } else {
-            this._disposeOldFields();
-            //hate doing this but not sure what the better option is
-            app.view.Field.prototype._render.call(this);
-        }
-    },
-
-    /**
-     * Dispose and remove start date and end date fields from the view.
-     * If we do dispose these old fields, refresh the editableFields list
-     * to ensure they are also removed from that list.
-     * @private
-     */
-    _disposeOldFields: function() {
-        var fieldDisposed = false;
-        _.each(this.fields, function(field) {
-            if (this.view.fields[field.sfId]) {
-                this.view.fields[field.sfId].dispose();
-                delete this.view.fields[field.sfId];
-                fieldDisposed = true;
-            }
-        }, this);
-        if (fieldDisposed && _.isFunction(this.view.setEditableFields)) {
-            this.view.setEditableFields();
-        }
-        this.fields = [];
     },
 
     /**
