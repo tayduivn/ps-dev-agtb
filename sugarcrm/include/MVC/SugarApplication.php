@@ -545,14 +545,8 @@ EOF;
         // In the future, we'll add this feature back, in the new Sidecar Themes
         // format.
         // Backward compatibilty modules look and feel must be in accordance to
-        // Sidecar modules, thus we are only supporting 2 themes: `RacerX` and
-        // `RTL`. `RacerX` is used for LTR languages and `RTL` is used for RTL
-        // languages.
-        $theme = $GLOBALS['current_user']->getPreference('user_theme');
-
-        if (empty($theme) || ($theme !== 'RacerX' && $theme !== 'RTL')) {
-            $theme = 'RacerX';
-        }
+        // Sidecar modules, thus there is only one possible theme: `RacerX`
+        $theme = 'RacerX';
 
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
