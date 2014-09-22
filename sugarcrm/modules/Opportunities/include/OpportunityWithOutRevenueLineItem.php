@@ -181,6 +181,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     public function doDataConvert()
     {
         $this->resetForecastData('Opportunities');
+        $this->queueRevenueLineItemsForNotesOnOpportunities();
         $this->setOpportunityDataFromRevenueLineItems();
         $this->deleteRevenueLineItems();
     }
@@ -193,6 +194,92 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
         $db->query($db->truncateTableSQL('revenue_line_items'));
+    }
+
+    protected function queueRevenueLineItemsForNotesOnOpportunities()
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
+
+        $labels = array();
+
+        $fields = array(
+            'name',
+            'sales_stage',
+            'probability',
+            'date_closed',
+            'currency_id',
+            'worst_case',
+            'likely_case',
+            'best_case',
+            'opportunity_id',
+            'next_step',
+        );
+
+        // for now use the default config
+        $default_lang = $GLOBALS['sugar_config']['default_language'];
+        $mod_strings = return_module_language($default_lang, $rli->module_name);
+        $app_strings = return_application_language($default_lang);
+        foreach ($fields as $field) {
+            if ($field === 'currency_id') {
+                $vname = 'LBL_CURRENCY';
+            } else {
+                $def = $rli->getFieldDefinition($field);
+                $vname = $def['vname'];
+            }
+            if (isset($mod_strings[$vname])) {
+                $labels[$field] = str_replace(':', '', $mod_strings[$vname]);
+            } elseif (isset($app_strings[$vname])) {
+                $labels[$field] = str_replace(':', '', $app_strings[$vname]);
+            } else {
+                $labels[$field] = $vname;
+            }
+        }
+
+        // get all the rows
+        $sq = new SugarQuery();
+        $sq->select($fields);
+        $sq->from($rli)
+            ->orderBy('opportunity_id')
+            ->orderBy('date_closed');
+
+        $results = $sq->execute();
+
+        $chunk = array();
+        $max_chunk_size = 50;
+
+        foreach ($results as $row) {
+            if (!isset($chunk[$row['opportunity_id']])) {
+                if (count($chunk) === $max_chunk_size) {
+                    // schedule job here
+                    $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk);
+                    $chunk = array();
+                }
+                $chunk[$row['opportunity_id']] = array();
+            }
+            // remove the fields added by the sorting in SugarQuery
+            unset($row['revenue_line_items__opportunity_id']);
+            unset($row['revenue_line_items__date_closed']);
+            $chunk[$row['opportunity_id']][] = $row;
+        }
+
+        // schedule the last job here.
+        $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk);
+    }
+
+    private function scheduleOpportunityRevenueLineItemNoteCreate(array $labels, array $chunk)
+    {
+        /* @var $job SchedulersJob */
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->name = "Create Revenue Line Items Note On Opportunities";
+        $job->target = "class::SugarJobCreateRevenueLineItemNotes";
+        $job->data = json_encode(array('chunk' => $chunk, 'labels' => $labels));
+        $job->retry_count = 0;
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+
+        require_once('include/SugarQueue/SugarJobQueue.php');
+        $jq = new SugarJobQueue();
+        $jq->submitJob($job);
     }
 
     /**

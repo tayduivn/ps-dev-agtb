@@ -52,7 +52,7 @@ class SugarJobCreateRevenueLineItems implements RunnableSchedulerJob
         $this->job->runnable_ran = true;
 
         // use the processWorksheetDataChunk to run the code.
-        require 'modules/Opportunities/lib/OpportunityWithRevenueLineItem.php';
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItem.php');
         OpportunityWithRevenueLineItem::processOpportunityIds($args['data']);
 
         $this->job->succeedJob();
