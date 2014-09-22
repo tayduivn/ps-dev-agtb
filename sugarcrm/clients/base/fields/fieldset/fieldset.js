@@ -20,6 +20,9 @@
  * Supported properties:
  *
  * - {Array} fields List of fields that are part of the fieldset.
+ * - {boolean} show_child_labels Set to `true` to show labels on child fields in
+ * the record view.
+ * - {boolean} inline Set to `true` to render the fieldset inline.
  *
  * Example usage:
  *
@@ -62,6 +65,10 @@
          * @property {Array}
          */
         this.fields = [];
+
+        var inlineTag = this.def.inline ? '-inline' : '';
+        this.def.css_class = (this.def.css_class ? this.def.css_class + ' fieldset' :
+            'fieldset') + inlineTag;
     },
 
     /**
@@ -76,6 +83,20 @@
             return this.view.fallbackFieldTemplate;
         }
         return 'detail';
+    },
+
+    /**
+     * @inheritDoc
+     *
+     * Loads the `record-detail` template if the view is `record`.
+     * FIXME: This is a quick hack and will be fixed by SC-3364.
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'record' && this.type === 'fieldset') {
+            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
+        }
     },
 
     /**

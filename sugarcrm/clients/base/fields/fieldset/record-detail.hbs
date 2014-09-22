@@ -10,3 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
+{{#each fields}}
+    <div class="fieldset-field">
+        {{#if ../def.show_child_labels}}
+            <div class="record-label" data-name="{{name}}">{{str label ../module}}</div>
+        {{/if}}
+        {{placeholder}}
+    </div>
+{{/each}}
