@@ -230,7 +230,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
 
-    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsRecipients()
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
     {
         $contacts = array(
             SugarTestContactUtilities::createContact(),
@@ -243,8 +243,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
 
         $actual = $meeting->get_notification_recipients();
-        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
-        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
-        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+        $this->assertEmpty($actual, 'The current user should be in the list.');
     }
 }

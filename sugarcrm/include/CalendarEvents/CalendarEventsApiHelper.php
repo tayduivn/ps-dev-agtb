@@ -70,10 +70,9 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
 
         $bean->update_vcal = false;
 
-        // add existing invitees to the lists so they don't get removed
-        $bean->users_arr = $this->getUserInvitees($bean);
-        $bean->leads_arr = $this->getInvitees($bean, 'leads');
-        $bean->contacts_arr = $this->getInvitees($bean, 'contacts');
+        $bean->users_arr = $this->getUserInvitees($bean, $submittedData);
+        $bean->leads_arr = $this->getInvitees($bean, 'leads', $submittedData);
+        $bean->contacts_arr = $this->getInvitees($bean, 'contacts', $submittedData);
 
         return $data;
     }
@@ -111,15 +110,36 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
      *
      * @param SugarBean $bean
      * @param string $link The name of the link from which to load related records.
+     * @param array $submittedData The submitted data for this request
      * @return array
      */
-    protected function getInvitees(SugarBean $bean, $link)
+    protected function getInvitees(SugarBean $bean, $link, $submittedData)
     {
+        $invites = array();
         if ($bean->load_relationship($link)) {
-            return $bean->$link->get();
+            $invites = $bean->$link->get();
         }
 
-        return array();
+        if (isset($submittedData[$link]['add'])) {
+            foreach ($submittedData[$link]['add'] as $id) {
+                if (is_array($id)) {
+                    $id = $id['id'];
+                }
+                $invites[] = $id;
+            }
+        }
+
+        if (isset($submittedData[$link]['delete'])) {
+            foreach ($submittedData[$link]['delete'] as $id) {
+                if (is_array($id)) {
+                    $id = $id['id'];
+                }
+                $idx = array_search($id, $invites);
+                array_splice($invites, $idx, 1);
+            }
+        }
+
+        return $invites;
     }
 
     /**
@@ -129,11 +149,12 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
      * current user is not the assigned user.
      *
      * @param SugarBean $bean
+     * @param array $submittedData The submitted data for this request
      * @return array
      */
-    protected function getUserInvitees(SugarBean $bean)
+    protected function getUserInvitees(SugarBean $bean, $submittedData)
     {
-        $userInvitees = $this->getInvitees($bean, 'users');
+        $userInvitees = $this->getInvitees($bean, 'users', $submittedData);
         $userInvitees[] = $bean->assigned_user_id;
 
         if ($bean->assigned_user_id != $GLOBALS['current_user']->id && (empty($bean->id) || $bean->new_with_id)) {

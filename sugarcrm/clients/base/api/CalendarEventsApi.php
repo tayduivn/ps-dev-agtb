@@ -54,14 +54,6 @@ class CalendarEventsApi extends ModuleApi
                 'shortHelp' => 'This method deletes a single event record or a series of event records of the specified type',
                 'longHelp' => 'include/api/help/calendar_events_record_delete_help.html',
             ),
-            'send_invite_emails' => array(
-                'reqType' => 'PUT',
-                'path' => array($module, '?', 'send_invites'),
-                'pathVars' => array('module', 'record', ''),
-                'method' => 'sendInviteEmails',
-                'shortHelp' => 'This method sends invite emails to all event participants',
-                'longHelp' => 'include/api/help/calendar_events_send_invite_emails_put_help.html',
-            ),
             'invitee_search' => array(
                 'reqType' => 'GET',
                 'path' => array($module, 'invitee_search'),
@@ -253,29 +245,6 @@ class CalendarEventsApi extends ModuleApi
             unset($args[$fieldName]);
         }
         return $args;
-    }
-
-    /**
-     * Sends invite emails to all event participants.
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function sendInviteEmails($api, $args)
-    {
-        $bean = $this->loadBean($api, $args, 'edit');
-        // the dates need to be converted to their DB representation
-        $bean->date_start = $GLOBALS['timedate']->to_db($bean->date_start);
-        $bean->date_end = $GLOBALS['timedate']->to_db($bean->date_end);
-
-        $admin = Administration::getSettings();
-
-        foreach ($bean->get_notification_recipients() as $participant) {
-            $bean->send_assignment_notifications($participant, $admin);
-        }
-
-        return $this->getLoadedAndFormattedBean($api, $args);
     }
 
     /**

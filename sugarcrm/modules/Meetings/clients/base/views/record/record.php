@@ -19,12 +19,27 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'showOn' => 'edit',
         ),
         array(
-            'type' => 'save-and-send-invites-button',
-            'name' => 'save_button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn btn-primary',
+            'type' => 'actiondropdown',
+            'name' => 'save_dropdown',
+            'primary' => true,
+            'switch_on_click' => true,
             'showOn' => 'edit',
-            'acl_action' => 'edit',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:save_button:click',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'css_class' => 'btn btn-primary',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'save-and-send-invites-button',
+                    'name' => 'save_invite_button',
+                    'label' => 'LBL_SAVE_AND_SEND_INVITES_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
         array(
             'type' => 'actiondropdown',

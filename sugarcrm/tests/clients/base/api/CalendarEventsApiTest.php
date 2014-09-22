@@ -511,74 +511,32 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @expectedException SugarApiException
      */
      public function testUpdateRecurringCalendarEvent_UsingChildRecord_ThrowsException()
-    {
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->id = create_guid();
-        $meeting->repeat_parent_id = 'foo';
+     {
+         $meeting                   = BeanFactory::newBean('Meetings');
+         $meeting->id               = create_guid();
+         $meeting->repeat_parent_id = 'foo';
 
-        $args = array(
-            'module' => 'Meetings',
-            'record' => $meeting->id,
-            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-            'duration_hours' => '1',
-            'duration_minutes' => '30',
-        );
+         $args = array(
+             'module'           => 'Meetings',
+             'record'           => $meeting->id,
+             'date_start'       => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+             'duration_hours'   => '1',
+             'duration_minutes' => '30',
+         );
 
-        $this->calendarEventsApi = $this->getMock(
-            'CalendarEventsApi',
-            array('updateBean')
-        );
-        $this->calendarEventsApi->expects($this->never())
-            ->method('updateBean');
+         $this->calendarEventsApi = $this->getMock(
+             'CalendarEventsApi',
+             array('updateBean')
+         );
+         $this->calendarEventsApi->expects($this->never())
+             ->method('updateBean');
 
-        $this->calendarEventsApi->updateRecurringCalendarEvent($meeting, $this->api, $args);
-
-    }
-
-    public function testSendInviteEmails_SendsOneEmailPerParticipant()
-    {
-        $participants = array('foo', 'bar', 'biz', 'baz');
-
-        $meeting = $this->getMock('Meeting', array('get_notification_recipients', 'send_assignment_notifications'));
-        $meeting->expects($this->once())
-            ->method('get_notification_recipients')
-            ->will($this->returnValue($participants));
-        $meeting->expects($this->exactly(count($participants)))->method('send_assignment_notifications');
-        $meeting->id = create_guid();
-
-        $api = $this->getMock('CalendarEventsApi', array('getLoadedAndFormattedBean', 'loadBean'));
-        $api->expects($this->once())->method('getLoadedAndFormattedBean');
-        $api->expects($this->once())->method('loadBean')->will($this->returnValue($meeting));
-
-        $args = array(
-            'module' => 'Meetings',
-            'record' => $meeting->id,
-        );
-
-        $api->sendInviteEmails($this->api, $args);
-    }
-
-    public function testSendInviteEmails_ReturnsTheBean()
-    {
-        $meeting = $this->getMock('Meeting', array('get_notification_recipients'));
-        $meeting->expects($this->once())->method('get_notification_recipients')->will($this->returnValue(array()));
-        $meeting->id = create_guid();
-        BeanFactory::setBeanClass('Meetings', get_class($meeting));
-        BeanFactory::registerBean($meeting);
-
-        $api = $this->getMock('CalendarEventsApi', array('loadBean'));
-        $api->expects($this->any())->method('loadBean')->will($this->returnValue($meeting));
-
-        $args = array(
-            'module' => 'Meetings',
-            'record' => $meeting->id,
-        );
-
-        $actual = $api->sendInviteEmails($this->api, $args);
-        $this->assertEquals($meeting->id, $actual['id'], 'The returned bean should have the same ID');
-
-        BeanFactory::unregisterBean($meeting);
-    }
+         $this->calendarEventsApi->updateRecurringCalendarEvent(
+             $meeting,
+             $this->api,
+             $args
+         );
+     }
 
     public function testCreateCalendarEvent_CreateRecordFails_rebuildFBCacheNotInvoked()
     {

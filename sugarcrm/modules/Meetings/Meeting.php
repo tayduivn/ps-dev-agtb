@@ -687,26 +687,18 @@ class Meeting extends SugarBean {
 			return parent::get_notification_recipients();
 		}
 
-		$list = array();
-		if(!is_array($this->contacts_arr)) {
-			$this->contacts_arr =	array();
-		}
-
-        if (empty($this->contacts_arr) && $this->load_relationship('contacts')) {
-            $this->contacts_arr = $this->contacts->get();
+        $list = array();
+        if(!is_array($this->contacts_arr)) {
+            $this->contacts_arr = array();
         }
 
-		if(!is_array($this->users_arr)) {
-			$this->users_arr =	array();
-		}
-
-        if (empty($this->users_arr) && $this->load_relationship('users')) {
-            $this->users_arr = $this->users->get();
+        if(!is_array($this->users_arr)) {
+            $this->users_arr = array();
         }
 
         if(!is_array($this->leads_arr)) {
-			$this->leads_arr =	array();
-		}
+            $this->leads_arr = array();
+        }
 
         if (empty($this->leads_arr) && $this->load_relationship('leads')) {
             $this->leads_arr = $this->leads->get();

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Meetings/MeetingsApiHelper.php');
+require_once('include/CalendarEvents/CalendarEventsApiHelper.php');
 
 class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -80,7 +80,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_minutes = '0';
         $meeting->assigned_user_id = 1;
 
-        $helper = $this->getMock('MeetingsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
         $helper->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
@@ -101,11 +101,11 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $contacts = array_map('create_guid', array_fill(0, 5, null));
 
         $map = array(
-            array($meeting, 'users', $users),
-            array($meeting, 'leads', $leads),
-            array($meeting, 'contacts', $contacts),
+            array($meeting, 'users', array(), $users),
+            array($meeting, 'leads', array(), $leads),
+            array($meeting, 'contacts', array(), $contacts),
         );
-        $helper = $this->getMock('MeetingsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
         $helper->method('getInvitees')->will($this->returnValueMap($map));
 
         $helper->populateFromApi($meeting, array());
@@ -128,7 +128,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_minutes = '0';
         $meeting->assigned_user_id = create_guid();
 
-        $helper = $this->getMock('MeetingsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
         $helper->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
@@ -144,7 +144,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_minutes = '0';
         $meeting->assigned_user_id = create_guid();
 
-        $helper = $this->getMock('MeetingsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
         $helper->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
@@ -163,7 +163,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_hours = $hours;
         $meeting->duration_minutes = $minutes;
 
-        $helper = new MeetingsApiHelper($this->api);
+        $helper = new CalendarEventsApiHelper($this->api);
         $actual = $helper->populateFromApi($meeting, array());
         $this->assertTrue($actual, 'The happy path should have returned true');
     }
@@ -180,7 +180,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_hours = $hours;
         $meeting->duration_minutes = $minutes;
 
-        $helper = new MeetingsApiHelper($this->api);
+        $helper = new CalendarEventsApiHelper($this->api);
         $helper->populateFromApi($meeting, array());
     }
 
@@ -196,7 +196,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_hours = $hours;
         $meeting->duration_minutes = $minutes;
 
-        $helper = new MeetingsApiHelper($this->api);
+        $helper = new CalendarEventsApiHelper($this->api);
         $helper->populateFromApi($meeting, array());
     }
 
@@ -211,11 +211,76 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $contact = SugarTestContactUtilities::createContact();
         $meeting->contact_id = $contact->id;
 
-        $helper = new MeetingsApiHelper($this->api);
+        $helper = new CalendarEventsApiHelper($this->api);
         $data = $helper->formatForApi($meeting);
         $this->assertEquals($data['contact_name'], $contact->full_name, "The contact's name does not match");
 
         BeanFactory::unregisterBean($meeting);
         BeanFactory::setBeanClass('Meetings');
+    }
+
+    public function testGetInvitees_ReturnsCorrectDataForLink()
+    {
+        $meeting = $this->getMock('Meeting', array('load_relationship'));
+        $meeting->method('load_relationship')
+            ->will($this->returnValue(false));
+
+        BeanFactory::setBeanClass('Meetings', get_class($meeting));
+
+        $meeting->id = create_guid();
+        BeanFactory::registerBean($meeting);
+
+        $contactsId1 = create_guid();
+        $contactsId2 = create_guid();
+        $leadsId1    = create_guid();
+        $usersId1    = create_guid();
+
+        $submittedData = array(
+            'contacts' => array(
+                'add'    => array(
+                    $contactsId1,
+                    array(
+                        'id' => $contactsId2,
+                    )
+                ),
+            ),
+            'leads'    => array(
+                'add'    => array(
+                    $leadsId1,
+                ),
+                'delete' => array()
+            ),
+            'users'    => array(
+                'delete' => array(
+                    $usersId1,
+                )
+            )
+        );
+        $helper = new CalendarEventsApiHelperMock($this->api);
+
+        $invitees = $helper->getInvitees($meeting, 'contacts', $submittedData);
+        $this->assertCount(2, $invitees, 'Should include two contacts in the list');
+        $this->assertContains($contactsId1, $invitees);
+        $this->assertContains($contactsId2, $invitees);
+
+        $invitees = $helper->getInvitees($meeting, 'leads', $submittedData);
+        $this->assertCount(1, $invitees, 'Should include both the assigned user and current user');
+        $this->assertContains($leadsId1, $invitees);
+
+        $invitees = $helper->getInvitees($meeting, 'users', $submittedData);
+        $this->assertEmpty(0, $invitees, 'Should include both the assigned user and current user');
+
+        BeanFactory::unregisterBean($meeting);
+        BeanFactory::setBeanClass('Meetings');
+    }
+}
+/*
+ * Mock class to test protected methods
+ */
+class CalendarEventsApiHelperMock extends CalendarEventsApiHelper
+{
+    public function getInvitees(SugarBean $bean, $link, $submittedData)
+    {
+        return parent::getInvitees($bean, $link, $submittedData);
     }
 }
