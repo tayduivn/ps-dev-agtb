@@ -22,7 +22,7 @@
         if (this.view.name === 'record') {
             this.def.link = false;
         } else if (this.view.name === 'preview') {
-            this.def.link = true;
+            this.def.link = _.isUndefined(this.def.link) ? true : this.def.link;
         }
         this._super('_render');
     },
