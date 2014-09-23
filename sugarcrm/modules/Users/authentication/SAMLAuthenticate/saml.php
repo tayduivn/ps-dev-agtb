@@ -10,12 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-define('XMLSECLIBS_DIR', 'vendor/xmlseclibs/');
+define('XMLSECLIBS_DIR', 'vendor/OneLogin/php-saml/extlib/xmlseclibs/');
 require_once XMLSECLIBS_DIR . 'xmlseclibs.php';
 
-define('ONELOGIN_SAML_DIR', 'vendor/OneLogin/Saml/');
+define('ONELOGIN_SAML_DIR', 'vendor/OneLogin/php-saml/lib/Saml/');
 require_once ONELOGIN_SAML_DIR . 'AuthRequest.php';
 require_once ONELOGIN_SAML_DIR . 'Response.php';
 require_once ONELOGIN_SAML_DIR . 'Settings.php';
 require_once ONELOGIN_SAML_DIR . 'XmlSec.php';
-require_once ONELOGIN_SAML_DIR . 'LogoutRequest.php';
+require_once 'vendor/OneLogin//Saml/LogoutRequest.php';

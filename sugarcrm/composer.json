@@ -20,6 +20,7 @@
     },
     "require": {
         "ruflin/elastica" : "v1.2.1.0",
+        "onelogin/php-saml" : "2.1.0",
         "php": ">=5.3.0"
     },
     "require-dev": {

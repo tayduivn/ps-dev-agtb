@@ -24,6 +24,14 @@ class OneLogin_Saml_LogoutRequest extends OneLogin_Saml_AuthRequest
         $id = $this->_generateUniqueID();
         $issueInstant = $this->_getTimestamp();
         $nameIdValue = $this->_generateUniqueID();
+        $settings = $this->auth->getSettings();
+        $spData = $settings->getSPData();
+        $nameId = OneLogin_Saml2_Utils::generateNameId(
+                $nameIdValue,
+                $spData['entityId'],
+                $spData['NameIDFormat'],
+                ''
+        );
 
         $logoutRequest = <<<LOGOUTREQUEST
         <samlp:LogoutRequest
@@ -34,8 +42,7 @@ class OneLogin_Saml_LogoutRequest extends OneLogin_Saml_AuthRequest
             IssueInstant="{$issueInstant}"
             Destination="{$GLOBALS['sugar_config']['SAML_SLO']}">
             <saml:Issuer>{$GLOBALS['sugar_config']['site_url']}</saml:Issuer>
-            <samlp:NameID Format="{$this->_settings->requestedNameIdFormat}" SPNameQualifier="{$GLOBALS['sugar_config']['site_url']}">
-            $nameIdValue
+            $nameId
             </samlp:NameID>
         </samlp:LogoutRequest>
 LOGOUTREQUEST;
