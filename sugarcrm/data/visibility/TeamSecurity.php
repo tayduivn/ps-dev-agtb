@@ -296,4 +296,17 @@ class TeamSecurity extends SugarVisibility
         // passed in $options will win from tuning config
         return array_merge($tune, $options);
     }
+
+    /**
+     * Override getOption to make sure we use any performance tuning defined in $sugar_config.
+     * {@inheritdoc}
+     */
+    public function getOption($name, $default = null)
+    {
+        //if parameter is not defined, make sure the tuning options have been merged prior to calling parent
+        if (!isset($this->options[$name])) {
+            $this->options = $this->getTuningOptions($this->options);
+        }
+        return parent::getOption($name,$default);
+    }
 }
