@@ -141,8 +141,8 @@
                 level: 'warning',
                 title: '',
                 messages: [
-                    app.lang.getAppString('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
-                    app.lang.getAppString('LBL_ALERT_BROWSER_SUPPORT')
+                    app.lang.get('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
+                    app.lang.get('LBL_ALERT_BROWSER_SUPPORT')
                 ]
             });
         }
@@ -156,7 +156,7 @@
                 title: '',
                 messages: [
                     '',
-                    app.lang.getAppString(config.system_status.message)
+                    app.lang.get(config.system_status.message)
                 ]
             });
         }
@@ -193,7 +193,7 @@
 
                     app.alert.show(this._alertKeys.login, {
                         level: 'process',
-                        title: app.lang.getAppString('LBL_LOADING'),
+                        title: app.lang.get('LBL_LOADING'),
                         autoClose: false
                     });
 

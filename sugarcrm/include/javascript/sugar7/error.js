@@ -35,7 +35,7 @@
     function alertUser(key,title,msg) {
         app.alert.show(key, {
             level: 'error',
-            messages: app.lang.getAppString(msg),
+            messages: app.lang.get(msg),
             title: app.lang.get(title)
         });
     }

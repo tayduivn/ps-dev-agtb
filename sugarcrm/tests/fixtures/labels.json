@@ -2,6 +2,8 @@
     "mod_strings": {
         "_hash": "x3",
         "Contacts": {
+          "LBL_MODULE_NAME": "Contacts",
+          "LBL_MODULE_NAME_SINGULAR": "Contact",
           "LBL_ASSIGNED_TO_ID": "Assigned User",
           "LBL_ASSIGNED_TO_NAME": "Assigned to:",
           "LBL_TEAM": "Teams",
@@ -20,6 +22,8 @@
           "_hash": "65155e04133282acf37a51305a6ca9e6"
         },
         "Accounts": {
+            "LBL_MODULE_NAME": "Accounts",
+            "LBL_MODULE_NAME_SINGULAR": "Account",
             "LBL_HELP_RECORD_TITLE": "Accounts Help Record Title",
             "LBL_HELP_RECORD": "Accounts Help Record Body",
             "LBL_HELP_RECORDS_TITLE": "{{plural_module_name}} Help Records Title",
@@ -27,6 +31,16 @@
             "LBL_HELP_CREATE_TITLE": "My {{revenuelineitems_singular_module}}",
             "LBL_HELP_CREATE": "My {{revenuelineitems_module}}",
             "_hash": "65155e56846282acf37a51305a6ca9e6"
+        },
+        "Opportunities": {
+            "LBL_MODULE_NAME": "Opportunities"
+        },
+        "ProductTemplates": {
+            "LBL_MODULE_NAME_SINGULAR": "Product Catalog"
+        },
+        "RevenueLineItems": {
+            "LBL_MODULE_NAME": "Revenue Line Items",
+            "LBL_MODULE_NAME_SINGULAR": "Revenue Line Item"
         }
     },
     "app_list_strings": {
@@ -123,15 +137,8 @@
             "print": "Print",
             "pieWedgeName": "sections"
         },
-        "moduleListSingular": {
-            "Accounts": "Account",
-            "Contacts": "Kontact",
-            "RevenueLineItems": "Revenue Line Item"
-        },
-        "moduleList": {
-            "Accounts": "Accounts",
-            "Contacts": "Kontacts",
-            "RevenueLineItems": "Revenue Line Items"
+        "moduleIconList": {
+            "Accounts": "Ac"
         }
     },
     "app_strings": {

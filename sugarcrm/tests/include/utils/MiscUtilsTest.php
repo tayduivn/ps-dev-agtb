@@ -207,4 +207,52 @@ class MiscUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(false, number_empty($num8), "Found '10' to be empty");
         $this->assertEquals(true, number_empty($num9), "Did not find empty string to be empty");
     }
+
+    /**
+     * @param $subject
+     * @param $fields
+     * @param $use_curly
+     * @param $expected
+     *
+     * @dataProvider replaceSugarVarsProvider
+     */
+    public function testReplaceSugarVars($subject, $fields, $use_curly, $expected) {
+        $this->assertEquals($expected, replace_sugar_vars($subject, $fields, $use_curly));
+    }
+
+    public function replaceSugarVarsProvider(){
+        return array(
+            array(
+                "subject" => "",
+                "fields" => array(),
+                "use_curly" => null,
+                "expected" => "",
+            ),
+            array(
+                "subject" => "test/[foo]/cool[bars]",
+                "fields" => array(
+                    "foo" => "123"
+                ),
+                "use_curly" => false,
+                "expected" => "test/123/cool[bars]",
+            ),
+
+            array(
+                "subject" => "test/[foo]/cool[bars]",
+                "fields" => array(
+                    "foo" => "123"
+                ),
+                "use_curly" => true,
+                "expected" => "test/[foo]/cool[bars]",
+            ),
+            array(
+                "subject" => "test/{foo}/cool{bars}",
+                "fields" => array(
+                    "foo" => "123"
+                ),
+                "use_curly" => true,
+                "expected" => "test/123/cool{bars}",
+            )
+        );
+    }
 }

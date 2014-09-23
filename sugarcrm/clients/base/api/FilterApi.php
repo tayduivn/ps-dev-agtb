@@ -470,7 +470,9 @@ class FilterApi extends SugarApi
         $i = $distinctCompensation;
         foreach ($beans as $bean_id => $bean) {
             if ($i == $options['limit']) {
-                unset($beans[$bean_id]);
+                if (count($beans) > $options['limit']) {
+                    unset($beans[$bean_id]);
+                }
                 $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
                 continue;
             }

@@ -127,12 +127,12 @@ abstract class source{
 		return $fields_with_param;
  	}
 
- 	/**
- 	 * Save source's config to custom directory
- 	 */
-	public function saveConfig()
-	{
-		$config_str = "<?php\n/***CONNECTOR SOURCE***/\n";
+    /**
+     * Save source's config to custom directory
+     */
+    public function saveConfig()
+    {
+        $config_str = "<?php\n/***CONNECTOR SOURCE***/\n";
 
         // Handle encryption
         if(!empty($this->_config['encrypt_properties']) && is_array($this->_config['encrypt_properties']) && !empty($this->_config['properties'])){
@@ -144,19 +144,27 @@ abstract class source{
             }
         }
 
+        foreach($this->_config as $key => $val) {
+            if(!empty($val)){
+                $config_str .= $this->getConfigString($key, $val);
+            }
+        }
+        $dir = str_replace('_', '/', get_class($this));
 
-		foreach($this->_config as $key => $val) {
-			if(!empty($val)){
-				$config_str .= override_value_to_string_recursive2('config', $key, $val, false);
-			}
-		}
-		$dir = str_replace('_', '/', get_class($this));
+        if(!file_exists("custom/modules/Connectors/connectors/sources/{$dir}")) {
+            mkdir_recursive("custom/modules/Connectors/connectors/sources/{$dir}");
+        }
+        SugarAutoLoader::put("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str, true);
+    }
 
-	    if(!file_exists("custom/modules/Connectors/connectors/sources/{$dir}")) {
-	       mkdir_recursive("custom/modules/Connectors/connectors/sources/{$dir}");
-	    }
-	    SugarAutoLoader::put("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str, true);
- 	}
+    /**
+     * Get the config values encoded to string format to place into the custom modules directory
+     * @param $key array key
+     * @param $val array value
+     */
+    public function getConfigString($key, $val) {
+        return override_value_to_string_recursive2('config', $key, $val, false);
+    }
 
  	/**
  	 * Initialize config - decrypt encrypted fields

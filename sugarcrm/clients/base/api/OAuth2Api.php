@@ -187,6 +187,10 @@ class OAuth2Api extends SugarApi
      */
     public function bwcLogin($api, $args)
     {
+        // Set BWC theme
+        $theme = $args['rtl'] ? 'RTL' : 'RacerX';
+        $api->user->setPreference('user_theme', $theme, 0, 'global');
+
         // Send back session_name so the client can use it for other bwc functions,
         // like studio, module builder, etc when sessions expire outside of the
         // ajax calls

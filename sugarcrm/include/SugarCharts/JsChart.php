@@ -192,10 +192,10 @@ class JsChart extends SugarChart {
 	function getChartDimensions($xmlStr) {
 		if($this->getNumNodes($xmlStr) > 9 && $this->chartType != "pie chart") {
 			if($this->chartType == "horizontal group by chart" || $this->chartType == "horizontal bar chart") {
-				$height = ($this->getNumNodes($xmlStr) * 60) + 100;
+				$height = ($this->getNumNodes($xmlStr) * 40);
 				return array("width"=>$this->width, "height"=>($height));
 			} else {
-				return array("width"=>($this->width * 2), "height"=>$this->height);
+				return array("width"=>$this->width, "height"=>$this->height);
 			}
 		} else {
 			return array("width"=>"100%", "height"=>$this->height);

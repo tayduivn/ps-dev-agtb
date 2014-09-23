@@ -336,6 +336,7 @@ class VardefManager{
         //let's go save them to the cache file.
         if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
+            SugarBean::clearLoadedDef($object);
         }
         if(isset(self::$inReload[$guard_name])) {
             if(self::$inReload[$guard_name] > 1) {

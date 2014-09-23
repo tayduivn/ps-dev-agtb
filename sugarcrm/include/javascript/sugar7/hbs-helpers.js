@@ -30,9 +30,7 @@
          */
         Handlebars.registerHelper('moduleIconLabel', function(module) {
             var name = app.lang.getAppListStrings('moduleIconList')[module] ||
-                    app.lang.getAppListStrings('moduleListSingular')[module] ||
-                    app.lang.getAppListStrings('moduleList')[module] ||
-                    module,
+                    app.lang.getModuleName(module),
                 space = name.indexOf(" ");
 
             return (space != -1) ? name.substring(0 , 1) + name.substring(space + 1, space + 2) : name.substring(0, 2);
@@ -45,7 +43,7 @@
          * @param {String} module to which the icon belongs
          */
         Handlebars.registerHelper('moduleIconToolTip', function(module) {
-            return app.lang.getAppListStrings('moduleListSingular')[module] || module;
+            return app.lang.getModuleName(module);
         });
 
         /**

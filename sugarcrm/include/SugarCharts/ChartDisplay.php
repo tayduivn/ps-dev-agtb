@@ -517,8 +517,8 @@ class ChartDisplay
     {
 
         if ($is_dashlet) {
-            $height = '480';
             $width = '100%';
+            $height = '480';
             $guid = $id;
         } else {
             $width = '100%';

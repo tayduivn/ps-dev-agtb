@@ -29,7 +29,6 @@
     border-right: @tableBorder;
     border-bottom: none;
     background-color: @white;
-    .rtl(@direction,ltr);
     &:last-child {
       border-right: none;
     }
@@ -107,8 +106,6 @@
     background: @white;
     border-top: none;
     border-bottom: none;
-    .rtl(@direction,ltr);
-
     &:last-child {
       border-right: 0;
     }
@@ -432,7 +429,6 @@
   td.number,
   tfoot th.number {
     text-align: right;
-    .rtlTextAlign(@direction,left);
     white-space: nowrap;
     span.edit {
       div.controls {
@@ -511,28 +507,31 @@ FLEXLIST GENERIC */
       > span {
         position: absolute;
         display: inline-block;
-        width: 71px;
-        height: 36px;
+        width: 55px;
+        height: 28px;
         margin-top: -18px;
         left: 0;
         border-bottom: @tableBorder;
         background-color: inherit;
         overflow: visible;
         z-index: 10;
-        // single search and select
-        > input[type=radio] {
-          margin-top: 11px;
-        }
-        > span.list {
-          input[type=checkbox],
-          input[type=radio] {
-            margin: 0 8px;
-          }
-        }
-        > span.list,
-        > span.edit {
+        padding: 4px 8px;
+        .fieldset-field {
           display: inline-block;
-          margin-top: 8px;
+          padding: 0;
+        }
+        // single search and select
+        input[type=checkbox],
+        input[type=radio] {
+          margin: 8px;
+        }
+        .icon-favorite {
+          display: inline-block;
+          margin: 8px 6px;
+        }
+        span.list,
+        span.edit {
+          display: inline-block;
           white-space: nowrap;
         }
       }
@@ -544,7 +543,6 @@ FLEXLIST GENERIC */
     th:first-child {
       > span {
         border-right: @tableBorder;
-        -webkit-transform: translate3d(0,0,0);
         &:after {
           .right-shadow(43px);
         }
@@ -553,8 +551,7 @@ FLEXLIST GENERIC */
     td:first-child {
       > span {
         border-right: @tableBorder;
-        -webkit-transform: translate3d(0,0,0);
-        &:after {
+          &:after {
           .right-shadow(37px);
         }
       }
@@ -604,6 +601,10 @@ FLEXLIST GENERIC */
         overflow: visible;
         &.open {
           z-index: 999;
+        }
+        .fieldset-field {
+          display: inline-block;
+          padding: 0;
         }
         > .list:first-child {
           position: absolute;
@@ -858,19 +859,19 @@ FLEXLIST GENERIC */
 
 .touch .flex-list-view {
   /*Fix rendering of scrolled absolute spans on iPad*/
-  &.left-actions.scroll-width .dataTable,
-  &.right-actions.scroll-width .dataTable {
+  &.left-actions.scroll-width .dataTable {
     th:first-child,
     td:first-child {
       > span {
-        -webkit-transform: translate3d(0,0,0);
+        .translate3d(0,0,0);
       }
     }
   }
   &.right-actions.scroll-width .dataTable {
+    th:last-child,
     th:last-child {
       .dropdown {
-        -webkit-transform: translate3d(0,0,0);
+        .translate3d(0,0,0);
       }
     }
   }

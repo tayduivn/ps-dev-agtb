@@ -54,6 +54,8 @@ $renamedefs = array(
             array('name' => 'LBL_FORECAST_DESC', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_MANAGE_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_MANAGE_FORECASTS_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
+            array('name' => 'LBL_HISTORY_CONTACTS_EMAILS', 'type' => 'plural', 'source' => 'Contacts'),
+            array('name' => 'LBL_HISTORY_CONTACTS_EMAILS', 'type' => 'plural', 'source' => 'Emails'),
         ),
         'Bugs' => array(
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),

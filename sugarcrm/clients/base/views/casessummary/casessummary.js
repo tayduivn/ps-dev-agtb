@@ -46,7 +46,7 @@
                     return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
                 })
                 .strings({
-                    noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                    noData: app.lang.get('LBL_CHART_NO_DATA')
                 });
     },
 
@@ -108,18 +108,18 @@
         this.chartCollection = {
             data: [],
             properties: {
-                title: app.lang.getAppString('LBL_CASE_SUMMARY_CHART'),
+                title: app.lang.get('LBL_CASE_SUMMARY_CHART'),
                 value: 3,
                 label: this.total
             }
         };
         this.chartCollection.data.push({
-            key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
+            key: app.lang.get('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
             classes: 'nv-fill-green',
             value: countClosedCases
         });
         this.chartCollection.data.push({
-            key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
+            key: app.lang.get('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
             classes: 'nv-fill-red',
             value: countOpenCases
         });
@@ -189,7 +189,8 @@
             error: _.bind(function() {
                 this.displayNoData(true);
             }, this),
-            complete: options ? options.complete : null
+            complete: options ? options.complete : null,
+            limit: -1
         });
     }
 })

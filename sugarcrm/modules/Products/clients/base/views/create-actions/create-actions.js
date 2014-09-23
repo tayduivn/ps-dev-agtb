@@ -9,5 +9,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'CreateView'
+    extendsFrom: 'CreateActionsView'
 })

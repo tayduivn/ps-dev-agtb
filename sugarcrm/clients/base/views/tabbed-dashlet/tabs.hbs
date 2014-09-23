@@ -19,9 +19,9 @@
                     {{str label module}}
                 {{else}}
                     {{#eq collection.length "1"}}
-                        {{#if labels.singular}}{{str labels.singular module}}{{else}}{{str "LBL_MODULE_NAME_SINGULAR" module}}{{/if}}
+                        {{#if labels.singular}}{{str labels.singular module}}{{else}}{{getModuleName module}}{{/if}}
                     {{else}}
-                        {{#if labels.plural}}{{str labels.plural module}}{{else}}{{str "LBL_MODULE_NAME" module}}{{/if}}
+                        {{#if labels.plural}}{{str labels.plural module}}{{else}}{{getModuleName module plural=true}}{{/if}}
                     {{/eq}}
                 {{/if}}
             </a>

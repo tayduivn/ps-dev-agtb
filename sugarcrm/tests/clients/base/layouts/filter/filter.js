@@ -350,7 +350,7 @@ describe('Base.Layout.Filter', function() {
                 layout.handleFilterChange(model.get('id'), false);
                 expect(ctxt.get('collection').origFilterDef).toEqual(model.get('filter_definition'));
                 expect(triggerStub).toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:clear:quicksearch');
+                expect(triggerStub).toHaveBeenCalledWith('filter:apply');
             });
             it('shoud determine if we need to clear the collection(s) and do nothing if no', function() {
                 ctxt.get('collection').origFilterDef = model.get('filter_definition');

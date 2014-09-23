@@ -128,8 +128,8 @@
     app.error.handleRenderError = function(component, method, additionalInfo) {
         function handlePortalRenderDenied(c) {
             var title, message;
-            title = app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE');
-            message = app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            title = app.lang.get('ERR_NO_VIEW_ACCESS_TITLE');
+            message = app.utils.formatString(app.lang.get('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
             // TODO: We can later create some special case handlers if we DO wish to alert warn,
             // but since we have recursive views that's usually going to be overbearing.
             app.logger.warn(title + ":\n" + message);
@@ -163,8 +163,8 @@
 
             app.alert.show("no-sidecar-access", {
                 level: "error",
-                title: app.lang.getAppString("LBL_PORTAL_ERROR"),
-                messages: [app.lang.getAppString(msg)]
+                title: app.lang.get("LBL_PORTAL_ERROR"),
+                messages: [app.lang.get(msg)]
             });
         }
 
@@ -214,8 +214,8 @@
                 callbackAppNotAvailable = function(data) {
                     app.alert.show('appOffline', {
                         level: "error",
-                        title: app.lang.getAppString('LBL_PORTAL_ERROR'),
-                        messages: app.lang.getAppString('LBL_PORTAL_OFFLINE'),
+                        title: app.lang.get('LBL_PORTAL_ERROR'),
+                        messages: app.lang.get('LBL_PORTAL_OFFLINE'),
                         autoclose: false
                     });
                 };

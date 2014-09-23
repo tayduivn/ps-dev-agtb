@@ -9,13 +9,46 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * A fieldset is a field that contains one or more child fields.
+ * The hbs template sets the placeholders of child fields but the creation of
+ * child fields reside in the controller.
+ *
+ * Accessibility is checked against each child field as well as the fieldset.
+ * We do not hide the fieldset in the event that the fieldset is accessible and
+ * all child fields are not.
+ *
+ * Supported properties:
+ *
+ * - {Array} fields List of fields that are part of the fieldset.
+ * - {boolean} show_child_labels Set to `true` to show labels on child fields in
+ * the record view.
+ * - {boolean} inline Set to `true` to render the fieldset inline.
+ *
+ * Example usage:
+ *
+ *      array(
+ *          'name' => 'date_entered_by',
+ *          'type' => 'fieldset',
+ *          'label' => 'LBL_DATE_ENTERED',
+ *          'fields' => array(
+ *              array(
+ *                  'name' => 'date_entered',
+ *              ),
+ *              array(
+ *                  'type' => 'label',
+ *                  'default_value' => 'LBL_BY',
+ *              ),
+ *              array(
+ *                  'name' => 'created_by_name',
+ *              ),
+ *          )
+ *      )
+ *
  * @class View.Fields.Base.FieldsetField
  * @alias SUGAR.App.view.fields.BaseFieldsetField
  * @extends View.Field
  */
 ({
-    fields: null,
-
     /**
      * Initializes the fieldset field component.
      *
@@ -23,39 +56,51 @@
      *
      * @inheritDoc
      */
-    initialize: function (options) {
-        app.view.Field.prototype.initialize.call(this, options);
+    initialize: function(options) {
+        this._super('initialize', [options]);
 
+        /**
+         * Children fields that are created as part of this field.
+         *
+         * @property {Array}
+         */
         this.fields = [];
+
+        var inlineTag = this.def.inline ? '-inline' : '';
+        this.def.css_class = (this.def.css_class ? this.def.css_class + ' fieldset' :
+            'fieldset') + inlineTag;
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     *
+     * Looks for the fallback template as specified by the view. Returns the
+     * `detail` template if it's not found.
+     * FIXME: SC-3363 This should be the default behavior in `field.js`.
      */
-    getPlaceholder: function () {
-
-        var placeholder = '<span sfuuid="' + this.sfId + '">';
-        _.each(this.def.fields, function (fieldDef) {
-            if (this.def.readonly) {
-                fieldDef.readonly = true;
-            }
-            var field = app.view.createField({
-                def: fieldDef,
-                view: this.view,
-                viewName: this.options.viewName,
-                model: this.model
-            });
-            this.fields.push(field);
-            field.parent = this;
-            placeholder += field.getPlaceholder();
-        }, this);
-        placeholder += '</span>';
-
-        return new Handlebars.SafeString(placeholder);
+    _getFallbackTemplate: function() {
+        if (app.template.get('f.' + this.type + '.' + this.view.fallbackFieldTemplate)) {
+            return this.view.fallbackFieldTemplate;
+        }
+        return 'detail';
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
+     *
+     * Loads the `record-detail` template if the view is `record`.
+     * FIXME: This is a quick hack and will be fixed by SC-3364.
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'record' && this.type === 'fieldset') {
+            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
+        }
+    },
+
+    /**
+     * @inheritDoc
      *
      * If current fieldset is not readonly, it always falls back to false
      * (nodata unsupportable).
@@ -77,32 +122,82 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
-     * We only render the child fields for this fieldset and for now there is
-     * no support for templates on fieldset widgets except nodata.
-     * If fieldset is in fallbackactions, DOM will be replaced with fallback
-     * template.
+     * We set the result from `field.getPlaceholder()` into a property named
+     * `placeholder` for each of the child fields. These placeholders help us
+     * render the child fields when placed in the hbs file.
      */
     _render: function() {
-        this._loadTemplate();
+        var fields = this._getChildFields();
+        _.each(fields, function(field) {
+            field.placeholder = field.getPlaceholder();
+        }, this);
 
-        //If fieldset is in fallbackactions, dom will be replaced with fallback template
-        if (_.contains(this.fallbackActions, this.action)) {
-            this.$el.html(this.template(this) || '');
-        }
-
-        // Adds classes to the component based on the metadata.
-        if (this.def && this.def.css_class) {
-            this.getFieldElement().addClass(this.def.css_class);
-        }
         this.focusIndex = 0;
 
-        this._addViewClass(this.action);
+        this._super('_render');
+
+        _.each(fields, function(field) {
+            field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
+            field.render();
+        }, this);
 
         return this;
     },
-    focus: function () {
+
+    /**
+     * Gets the child field definitions that are defined in the metadata.
+     *
+     * @returns {Object} Metadata of the child fields.
+     * @protected
+     */
+    _getChildFieldsMeta: function() {
+        return app.utils.deepCopy(this.def.fields);
+    },
+
+    /**
+     * Creates the children fields that are specified in the definitions.
+     *
+     * @returns {Array} Children fields that are created.
+     * @protected
+     */
+    _getChildFields: function() {
+        var metaFields = this._getChildFieldsMeta();
+        if (_.isEmpty(this.fields) && metaFields) {
+            _.each(metaFields, function(fieldDef) {
+                var field = app.view.createField({
+                    def: fieldDef,
+                    view: this.view,
+                    viewName: this.options.viewName,
+                    model: this.model
+                });
+                this.fields.push(field);
+                field.parent = this;
+            }, this);
+        }
+        return this.fields;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    clearErrorDecoration: function() {
+        _.each(this.fields, function(field) {
+            field.clearErrorDecoration();
+        });
+
+        this._super('clearErrorDecoration');
+    },
+
+    /**
+     * The tab handler.
+     *
+     * Focus on the next child field. Skips disabled fields.
+     *
+     * @return {boolean} `true` if this method should be called upon the next tab.
+     */
+    focus: function() {
         // this should be zero but lets make sure
         if (this.focusIndex < 0 || !this.focusIndex) {
             this.focusIndex = 0;
@@ -123,62 +218,79 @@
             if (_.isFunction(this.fields[this.focusIndex].focus) && this.fields[this.focusIndex].focus()) {
             } else {
                 var field = this.fields[this.focusIndex];
-                var $el = field.$(field.fieldTag + ":first");
+                var $el = field.$(field.fieldTag + ':first');
                 $el.focus().val($el.val());
                 this.focusIndex++;
             }
             return true;
         }
     },
-    setDisabled: function (disable) {
+
+    /**
+     * @inheritDoc
+     */
+    setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
-        app.view.Field.prototype.setDisabled.call(this, disable);
-        _.each(this.fields, function (field) {
+        this._super('setDisabled', [disable]);
+        _.each(this.fields, function(field) {
             field.setDisabled(disable);
         }, this);
     },
 
-    setViewName: function (view) {
-        app.view.Field.prototype.setViewName.call(this, view);
-        _.each(this.fields, function (field) {
+    /**
+     * @inheritDoc
+     */
+    setViewName: function(view) {
+        this._super('setViewName', [view]);
+        _.each(this.fields, function(field) {
             field.setViewName(view);
         }, this);
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Set action name of child fields of this field set.
      * Reset current focus index to the first item when it switches to different mode.
-     * @override
      */
     setMode: function(name) {
         this.focusIndex = 0;
-        app.view.Field.prototype.setMode.call(this, name);
+
+        //Set the mode on child fields without rendering
         _.each(this.fields, function(field) {
-            field.setMode(name);
-        }, this);
+            var oldAction = field._previousAction || field.action;
+            field._removeViewClass(oldAction);
+            if (field.isDisabled()) {
+                field._previousAction = name;
+            } else {
+                field.action = name;
+            }
+            field.setViewName(name);
+        });
+
+        //The _super 'setMode' would render all child fields.
+        this._super('setMode', [name]);
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * We need this empty so it won't affect the nested fields that have the
      * same `fieldTag` of this fieldset due the usage of `find()` method.
      */
-    bindDomChange: function () {
+    bindDomChange: function() {
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * Keep empty because you cannot set a value of a type `fieldset`.
      */
-    bindDataChange: function () {
+    bindDataChange: function() {
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * We need this empty so it won't affect the nested fields that have the
      * same `fieldTag` of this fieldset due the usage of `find()` method.
@@ -186,6 +298,9 @@
     unbindDom: function() {
     },
 
+    /**
+     * @inheritDoc
+     */
     _dispose: function() {
         //fields inside fieldset need to be disposed before the fielset itself is disposed.
         _.each(this.fields, function(field) {

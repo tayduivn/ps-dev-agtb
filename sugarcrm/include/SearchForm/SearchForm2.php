@@ -1020,8 +1020,9 @@ require_once('include/EditView/EditView2.php');
                                          $first = false;
                                      }
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
-                                     // "stringify" the field value if it isn't wrapped in quotes already
-                                     if (substr($field_value, 0, 1) != "'" && substr($field_value, -1) != "'") {
+                                     // "stringify" the field value if it or 'subquery' isn't wrapped in quotes already
+                                     if (substr($field_value, 0, 1) != "'" && substr($field_value, -1) != "'" &&
+                                         !empty($parms['subquery']) && !preg_match('/\'\{0\}\'/', $parms['subquery'])) {
                                          $field_value = $GLOBALS['db']->quoted($field_value);
                                      }
                                      $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);

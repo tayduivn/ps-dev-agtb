@@ -46,16 +46,9 @@ abstract class SugarSearchEngineElasticIndexStrategyBase implements SugarSearchE
      * @see $sugar_config['unique_key']
      * @return string
      */
-    protected function getUniqueIndexName($clearCache = false)
+    protected function getUniqueIndexName()
     {
-        $config = SugarConfig::getInstance();
-
-        // adding option to be able to clear SugarConfig cache (needed by installer)
-        if ($clearCache) {
-            $config->clearCache('unique_key');
-        }
-
-        return strtolower($config->get('unique_key', ''));
+        return strtolower(SugarConfig::getInstance()->get('unique_key', 'nouniquekey'));
     }
 
     /**

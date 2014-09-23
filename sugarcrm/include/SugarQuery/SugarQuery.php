@@ -195,11 +195,10 @@ class SugarQuery
      */
     public function from(SugarBean $bean, $options = array())
     {
-        global $db;
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
 
         if (!empty($alias)) {
-            $newAlias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
+            $newAlias = $this->db->getValidDBName($alias, false, 'alias');
             if (strtolower($alias) != $newAlias) {
                 throw new SugarQueryException("From alias is more than the max allowed length for an alias");
             }
@@ -634,6 +633,17 @@ class SugarQuery
         $orderBy = new SugarQuery_Builder_Orderby($this, $direction);
         $orderBy->addRaw($expression);
         $this->order_by[] = $orderBy;
+        return $this;
+    }
+
+    /**
+     * Reset ORDER BY of query
+     *
+     * @return SugarQuery
+     */
+    public function orderByReset()
+    {
+        $this->order_by = array();
         return $this;
     }
 

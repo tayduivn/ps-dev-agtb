@@ -20,7 +20,8 @@
 
     selectors: {
         'load': '#dnb-bal-result-loading',
-        'rslt': '#dnb-bal-result'
+        'rslt': '#dnb-bal-result',
+        'rsltList': 'ul#dnb-results-list'
     },
 
     /*
@@ -37,6 +38,9 @@
         this.initDD();
         this.initDashlet();
         this.paginationCallback = this.baseAccountsBAL;
+        this.rowTmpl = app.template.getView(this.name + '.dnb-account-row', this.module);
+        this.resultTemplate = app.template.getView(this.name + '.dnb-bal-acct-rslt', this.module);
+        this.resultCountTmpl = app.lang.get('LBL_DNB_BAL_ACCT_HEADER');
     },
 
     /**
@@ -82,9 +86,9 @@
         if (this.disposed) {
             return;
         }
-        this.template = app.template.getView(this.name + '.dnb-bal-acct-rslt', this.module);
-        if (this.dnbBalRslt && this.dnbBalRslt.count) {
-            delete this.dnbBalRslt['count'];
+        this.template = this.resultTemplate;
+        if (this.listData && this.listData.count) {
+            delete this.listData['count'];
         }
         this.render();
         this.$(this.selectors.load).removeClass('hide');
@@ -97,7 +101,8 @@
      * @param {Object} dnbBalApiRsp BAL API Response
      */
     renderBAL: function(dnbBalApiRsp) {
-        var dnbBalRslt = {};
+        var dnbBalRslt = {},
+            appendRecords = false;
         if (this.resetPaginationFlag) {
             this.initPaginationParams();
         }
@@ -109,46 +114,23 @@
             //setting the api recordCount to context
             //will be used to determine if the pagination controls must be displayed
             this.recordCount = this.getJsonNode(dnbBalApiRsp.product, this.commonJSONPaths.srchCount);
-            this.paginateRecords();
-            dnbBalRslt.product = this.currentPage;
+            var nextPage = this.paginateRecords();
+            //currentPage is set to null by initPaginationParams
+            if (_.isNull(this.currentPage)) {
+                this.currentPage = nextPage;
+                dnbBalRslt.product = this.currentPage;
+            } else {
+                //this loop gets executed when api is called again to obtain more records
+                dnbBalRslt.product = nextPage;
+                appendRecords = true;
+            }
             if (this.recordCount) {
                 dnbBalRslt.count = this.recordCount;
             }
         } else if (dnbBalApiRsp.errmsg) {
             dnbBalRslt.errmsg = dnbBalApiRsp.errmsg;
         }
-        this.renderPage(dnbBalRslt);
-    },
-
-    /**
-     * Renders the currentPage
-     * @param {Object} pageData
-     */
-    renderPage: function(pageData) {
-        if (this.disposed) {
-            return;
-        }
-        this.template = this.template = app.template.getView(this.name + '.dnb-bal-acct-rslt', this.module);
-        this.dnbBalRslt = pageData;
-        //pageData count is not defined when the page is being rendered after
-        //dupe check
-        //hence using the count from the context variable
-        if (_.isUndefined(pageData.count)) {
-            pageData.count = this.recordCount;
-        }
-        //if the api returns a success response then only set the count
-        if (pageData.product) {
-            this.dnbBalRslt.count = app.lang.get('LBL_DNB_BAL_ACCT_HEADER') + " (" + this.formatSalesRevenue(pageData.count) + ")";
-        } else {
-            delete this.dnbBalRslt['count'];
-        }
-        this.render();
-        this.$(this.selectors.load).addClass('hide');
-        this.$(this.selectors.rslt).removeClass('hide');
-        //render pagination controls only if the api returns a success response
-        if (pageData.product) {
-            this.renderPaginationControl();
-        }
+        this.renderPage(dnbBalRslt, appendRecords);
     },
 
     /**
@@ -166,7 +148,7 @@
             this.render();
             this.$('div#dnb-company-details').hide();
             this.$('.importDNBData').hide();
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_BAL_LIST'), this.renderCompanyDetails);
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.lite, app.lang.get('LBL_DNB_BAL_LIST'), this.renderCompanyDetails);
         }
     },
 

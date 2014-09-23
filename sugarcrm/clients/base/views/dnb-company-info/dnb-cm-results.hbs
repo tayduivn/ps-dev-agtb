@@ -14,11 +14,11 @@
     {{str "LBL_DNB_CM_LOADING"}}
 </div>
 <div id="dnb-company-list">
-    {{#if dnbCompanyList.product}}
-        <div>
-            <ul class="unstyled listed" id="dnb_company_list">
-                {{#each dnbCompanyList.product}}
-                    <li>
+    {{#if listData.product}}
+        <ul class="unstyled listed dnb-medium-list" id="dnb-results-list">
+            {{#each listData.product}}
+                <li>
+                    <div class='dnb-company-label'>
                         <a class="dnb-company-name" id="{{this.duns_num}}">
                             {{this.companyname}}
                         </a>
@@ -27,39 +27,58 @@
                                 {{this.matchMeta.confText}}
                             </span>
                         {{/if}}
-                        <br/>
-                        <div class="record-label dnb-company-list">
-                            {{#if this.streetaddr}}
-                                {{this.streetaddr}},
-                            {{/if}}
-                            {{#if this.town}}
-                                {{this.town}},
-                            {{/if}}
-                            {{#if this.territory}}
-                                {{this.territory}},
-                            {{/if}}
-                            {{#if this.ctrycd}}
-                                {{this.ctrycd}}
-                            {{/if}}
-                            {{#if this.isDupe}}
-                                <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
-                            {{/if}}
-                        </div>
-                    </li>
-                {{/each}}
-            </ul>
+                    </div>
+                    <div class="record-label dnb-company-list">
+                        {{#if this.streetaddr}}
+                            {{this.streetaddr}},
+                        {{/if}}
+                        {{#if this.town}}
+                            {{this.town}},
+                        {{/if}}
+                        {{#if this.territory}}
+                            {{this.territory}},
+                        {{/if}}
+                        {{#if this.ctrycd}}
+                            {{this.ctrycd}}
+                        {{/if}}
+                        {{#if this.isDupe}}
+                            <span class="label label-important pull-right" data-placement="right">
+                                {{str "LBL_DNB_DUPLICATE"}}
+                            </span>
+                        {{/if}}
+                    </div>
+                </li>
+            {{/each}}
+        </ul>
+        <div class="block-footer hide" id="dnb-page-ctrl">
+            <button data-action="show-more" class="btn btn-link btn-invisible more">
+                {{str "LBL_DNB_MORE_SRCH_RES"}}
+            </button>
+            <div class="loading">
+                {{str "LBL_ALERT_TITLE_LOADING"}}
+                <i class="l1 icon-circle"></i>
+                <i class="l2 icon-circle"></i>
+                <i class="l3 icon-circle"></i>
+            </div>
+            <div>
+                <button data-action="backToImportEnrich" class="btn btn-link btn-invisible more">
+                    {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
+                </button>
+            </div>
         </div>
     {{else}}
         <aside class='create-no-data'>
-            {{#if dnbCompanyList.errmsg}}
-                <em>{{dnbCompanyList.errmsg}}</em>
+            {{#if listData.errmsg}}
+                <em>{{listData.errmsg}}</em>
             {{/if}}
-            <a id="dnb-lookup">{{str "LBL_DNB_KEYWORD_SEARCH_HINT"}}</a>
+            <a id="dnb-lookup">
+                {{str "LBL_DNB_KEYWORD_SEARCH_HINT"}}
+            </a>
         </aside>
+        <div>
+            <button data-action="backToImportEnrich" class="btn btn-link btn-invisible more">
+                {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
+            </button>
+        </div>
     {{/if}}
-    <div class="dnb-show-more">
-        <a class="backToImportEnrich">
-            {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
-        </a>
-    </div>
 </div>

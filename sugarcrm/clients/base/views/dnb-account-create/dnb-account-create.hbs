@@ -45,8 +45,8 @@
                                             <div data-dashlet="toolbar">
                                                 <div class="dashlet-header">
                                                     <h4 data-toggle="dashlet">
-                                                        {{#if dnbSrchResults.count}}
-                                                            {{dnbSrchResults.count}}
+                                                        {{#if listData.count}}
+                                                            {{listData.count}}
                                                         {{else}}
                                                             {{str "LBL_DNB_SRCH_RES"}}
                                                         {{/if}}
@@ -54,14 +54,14 @@
                                                 </div>
                                             </div>
                                             <div data-dashlet="dashlet" class="dashlet-content">
-                                                <div id="dnb-company-list-loading"class="block-footer">
+                                                <div id="dnb-company-list-loading"class="block-footer hide">
                                                     {{str "LBL_DNB_SRCH_LOAD"}} ...
                                                 </div>
-                                                <div id="dnb-search-results">
-                                                    {{#if dnbSrchResults.product}}
+                                                <div id="dnb-search-results" class="hide">
+                                                    {{#if listData.product}}
                                                     <div>
                                                         <ul class="unstyled listed" id="dnb-results-list">
-                                                            {{#each dnbSrchResults.product}}
+                                                            {{#each listData.product}}
                                                                 <li>
                                                                     <div class='dnb-company-label'>
                                                                         <a class="dnb-company-name" id="{{this.duns_num}}">
@@ -96,8 +96,8 @@
                                                     </div>
                                                 {{else}}
                                                     <aside class='create-no-data'>
-                                                        {{#if dnbSrchResults.errmsg}}
-                                                            <em>{{dnbSrchResults.errmsg}}</em>
+                                                        {{#if listData.errmsg}}
+                                                            <em>{{listData.errmsg}}</em>
                                                         {{else}}
                                                             <em>{{str "LBL_DNB_NO_DATA"}}</em>
                                                         {{/if}}

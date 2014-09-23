@@ -203,7 +203,25 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         }
 
         if (version_compare($this->from_version, '7.5', '<')) {
+            $files[] = 'clients/portal/fields/date';
+            $files[] = 'clients/portal/fields/datetimecombo';
+            $files[] = 'include/MVC/View/views/view.gs.php';
+            $files[] = 'include/MVC/View/views/view.wirelessdetail.php';
+            $files[] = 'include/MVC/View/views/view.wirelessedit.php';
+            $files[] = 'include/MVC/View/views/view.wirelesslist.php';
+            $files[] = 'include/MVC/View/views/view.wirelessmodule.php';
+            $files[] = 'include/MVC/View/views/view.wirelesssave.php';
+            $files[] = 'include/SugarWireless';
             $files[] = 'modules/Notifications/Senders';
+        }
+
+        if (version_compare($this->from_version, '7.6', '<')) {
+            $files[] = 'clients/base/fields/fieldset-with-labels';
+            $files[] = 'modules/Contacts/clients/base/views/create-actions.php';
+            $files[] = 'modules/Leads/clients/base/views/create-actions.php';
+            $files[] = 'modules/Opportunities/clients/base/views/create-actions.php';
+            $files[] = 'modules/Products/clients/base/views/create-actions.php';
+            $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions.php';
         }
 
         $this->fileToDelete($files);

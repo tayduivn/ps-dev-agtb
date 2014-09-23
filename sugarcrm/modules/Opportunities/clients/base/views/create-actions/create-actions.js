@@ -11,7 +11,7 @@
  */
 
 ({
-    extendsFrom: 'CreateView',
+    extendsFrom: 'CreateActionsView',
 
     /**
      * Used by the alert openRLICreate method

@@ -46,7 +46,7 @@
 </script>
 <div class="chartContainer">
 	<div id="sb{$chartId}" class="scrollBars">
-    	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: 100%; height: 480px;"></div>
+    	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: 100%; height: {$height}px;"></div>
     </div>
     <div id="d3_{$chartId}_print" class="nv-chart nv-chart-print nv-{$config.chartType}" style="width: 720px; height: 480px;"></div>
     <canvas id="canvas_{$chartId}" width="1440" height="960" class="nv-image-canvas"></canvas>

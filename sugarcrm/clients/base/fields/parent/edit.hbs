@@ -18,6 +18,6 @@
     </select>
 </div>
 <div class="span7">
-    <input type="hidden" name="{{name}}" class="select2 select2-parent inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">
+    <input type="hidden" name="{{name}}" class="select2 select2-parent inherit-width" value="{{value}}" data-id="{{fieldValue this.model "parent_id"}}">
 </div>
 {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

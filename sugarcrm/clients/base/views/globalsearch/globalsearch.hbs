@@ -20,7 +20,7 @@
                     <ul class="globalsearch-adv reset-width" role="menu" data-advanced="options">
                         <li><label class="active"><input data-action="select-module" data-module="all" type="checkbox" checked="checked" tabindex="-1"> {{str 'LBL_SEARCH_ALL_MODULES'}}</label></li>
                         {{#each searchModules}}
-                        <li><label><input data-action="select-module" data-module="{{this}}" type="checkbox" tabindex="-1"> {{str 'LBL_MODULE_NAME' this}}</label></li>
+                        <li><label><input data-action="select-module" data-module="{{this}}" type="checkbox" tabindex="-1"> {{getModuleName this plural=true}}</label></li>
                         {{/each}}
                     </ul>
                 </div>

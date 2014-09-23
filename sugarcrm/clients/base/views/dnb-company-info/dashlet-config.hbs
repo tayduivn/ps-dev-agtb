@@ -14,4 +14,15 @@
     <aside class='txt'>
         {{str "LBL_DASHLET_COMPANY_INFO_LONG_DESC"}}
     </aside>
+    {{#each dashletConfig.config.fields}}
+        <div class="row-fluid panel_body">
+            <div class="record-cell">
+                <div class="record-label">
+                    {{str label}}
+                </div>
+                <br/>
+                {{field ../this model=../this.settings template=../this.action}}
+            </div>
+        </div>
+    {{/each}}
 </div>

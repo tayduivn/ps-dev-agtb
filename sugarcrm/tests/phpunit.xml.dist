@@ -83,6 +83,7 @@
             <directory>./install/</directory>
             <directory>./jssource/</directory>
             <directory>./ModuleInstall/</directory>
+            <directory>./HealthCheck/</directory>
         </testsuite>
         <testsuite name="Sugar Vendor Test Suite">
             <directory>./vendor/</directory>
@@ -112,6 +113,7 @@
             <directory>./modules/Reports/</directory>
             <directory>./modules/Tasks/</directory>
             <directory>./modules/Workflow/</directory>
+            <directory>./modules/History/</directory>
             <directory>./portal2/</directory>
         </testsuite>
         <testsuite name="Sugar SP Test Suite">

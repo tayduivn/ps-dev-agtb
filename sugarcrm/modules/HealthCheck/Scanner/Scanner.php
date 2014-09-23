@@ -457,6 +457,27 @@ class HealthCheckScanner
     }
 
     /**
+     * Method detects current version and flavor of installed SugarCRM and returns them
+     *
+     * @return array (version, flavor)
+     */
+    public function getVersionAndFlavor()
+    {
+        $sugar_version = '9.9.9';
+        $sugar_flavor = 'unknown';
+        include "sugar_version.php";
+        return array($sugar_version, $sugar_flavor);
+    }
+
+    /**
+     * @return PackageManager
+     */
+    public function getPackageManager()
+    {
+        return new PackageManager();
+    }
+
+    /**
      *
      * Main
      * @return void|multitype:
@@ -469,9 +490,7 @@ class HealthCheckScanner
             return $this->logMeta;
         }
 
-        $sugar_version = '9.9.9';
-        $sugar_flavor = 'unknown';
-        include "sugar_version.php";
+        list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
@@ -493,15 +512,17 @@ class HealthCheckScanner
         {
             $files_to_fix = '';
             foreach ($this->filesToFix as $fileToFix) {
-                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . var_export($fileToFix['vendors'], true) . PHP_EOL;
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
+                foreach ($fileToFix['vendors'] as $vendor) {
+                    $files_to_fix .= " '{$vendor['directory']}' found in line {$vendor['line']}" . PHP_EOL;
+                }
             }
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
         if(!empty($this->deletedFilesReferenced))
         {
-            $files_with_bad_includes = implode("\r\n", $this->deletedFilesReferenced);
-            $this->updateStatus("deletedFilesReferenced", $files_with_bad_includes);
+            $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
@@ -581,7 +602,7 @@ class HealthCheckScanner
         require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
         $this->log("Checking packages");
-        $pm = new PackageManager();
+        $pm = $this->getPackageManager();
         $packages = $pm->getinstalledPackages(array('module'));
         foreach ($packages as $pack) {
             if($pack['enabled'] == 'DISABLED') {
@@ -749,9 +770,22 @@ class HealthCheckScanner
                                     break 2;
                                 }
                             }
-                            $vendorFileFound = true;
-                            $includedVendors[] = $directory;
-                            break;
+
+                            $fileContentsLined = file($file);
+                            $pattern = "#$value#";
+                            $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+                            if (count($linesFound) > 0) {
+                                $foundVendor = array();
+
+                                foreach ($linesFound as $linePosition => $lineContent) {
+                                    $foundVendor['line'] = ((int)$linePosition + 1);
+                                    $foundVendor['directory'] = $directory;
+                                }
+
+                                $vendorFileFound = true;
+                                $includedVendors[] = $foundVendor;
+                                break;
+                            }
                         }
                     }
                 }
@@ -834,21 +868,21 @@ class HealthCheckScanner
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
         if(!$this->isMBModule($module)) {
-            $this->log("toBeRunAsBWC", $module);
+            $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
         }
 
         $objectName = $this->getObjectName($module);
         // check for subpanels since BWC subpanels can be used in non-BWC modules
-        $defs = $this->getPhpFiles("$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             foreach($defs as $deffile) {
                 $this->checkListFields($deffile, "subpanel_layout", 'list_fields', $module, $objectName);
             }
         }
 
-        $defs = $this->getPhpFiles("custom/$module/metadata/subpanels");
+        $defs = $this->getPhpFiles("custom/modules/$module/metadata/subpanels");
         if(!empty($defs) && !empty($this->beanList[$module])) {
             $this->log("$module has custom subpanels");
             foreach($defs as $deffile) {
@@ -912,7 +946,7 @@ class HealthCheckScanner
         // Check for extension files
         $extfiles = $this->getPhpFiles("custom/Extension/modules/$module/Ext");
         if(!empty($extfiles)) {
-            $this->updateStatus("hasExtensions", $module, var_export($extfiles, true));
+            $this->updateStatus("hasExtensions", $module, $extfiles);
         }
         foreach($extfiles as $phpfile) {
             $this->checkFileForOutput($phpfile, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
@@ -938,9 +972,15 @@ class HealthCheckScanner
         }
 
         // check custom viewdefs
-        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function($def) {
-            // CRYS-424 - exclude dashletviewdefs.php
-            return basename($def) != 'dashletviewdefs.php';
+        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function ($def) {
+            $filesToExclude = array(
+                'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
+                'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
+                'wireless.editviewdefs.php',
+                'wireless.detailviewdefs.php',
+                'wireless.listviewdefs.php',
+            );
+            return !in_array(basename($def), $filesToExclude);
         });
 
         if($module == "Connectors") {
@@ -972,8 +1012,7 @@ class HealthCheckScanner
                         $defsname = "viewdefs";
                     }
                 }
-                // TODO: uncomment checkCustomCode() when CRYS-435 (BR-2018) is ready. It's only a temporarily solution.
-                // $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base");
+                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base", $history);
                 // For stock modules, check subpanels and also list views for non-bwc modules
                 if($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
@@ -1005,7 +1044,7 @@ class HealthCheckScanner
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
                 "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
         $badExts = array_flip($badExts);
-        foreach ($this->glob("custom/$module/Ext/*") as $extdir) {
+        foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if (!empty($extfiles)) {
@@ -1132,8 +1171,9 @@ class HealthCheckScanner
      * @param string $deffile Filename for definitions file
      * @param string $varname Variable to get defs from
      * @param string $original Original defs file
+     * @param array $history Studio history files
      */
-    protected function checkCustomCode($deffile, $varname, $original)
+    protected function checkCustomCode($deffile, $varname, $original, $history = array())
     {
         $this->log("Checking $deffile for custom code");
         $defs = $this->loadFromFile($deffile, $varname);
@@ -1145,10 +1185,33 @@ class HealthCheckScanner
 
         $defs_code = $this->lookupCustomCode('', $defs, array());
         $orig_code = $this->lookupCustomCode('', $origdefs, array());
+        $foundCustomCode = array();
         foreach($defs_code as $code => $places) {
             if(!isset($orig_code[$code])) {
-                $this->updateStatus("foundCustomCode", $code, join(", ", $places));
+                $foundCustomCode[$code] = $places;
             }
+        }
+
+        // We found something, do more precise check through all available history
+        if (!empty($foundCustomCode) && !empty($history)) {
+
+            $historyFiles = array_filter($history, function ($fileName) use ($deffile) {
+                return (strpos(basename($fileName), basename($deffile, '.php')) !== false);
+            });
+
+            $allHistoryCode = array();
+            foreach ($historyFiles as $file) {
+                $historyDefs = $this->loadFromFile($file, $varname);
+                $historyCode = $this->lookupCustomCode('', $historyDefs, array());
+                $allHistoryCode = array_merge($allHistoryCode, $historyCode);
+            }
+
+            $foundCustomCode = array_diff_key($foundCustomCode, $allHistoryCode);
+        }
+
+        // finally output status, if there is any
+        foreach ($foundCustomCode as $code => $places) {
+            $this->updateStatus("foundCustomCode", $code, $places);
         }
     }
 
@@ -1186,6 +1249,9 @@ class HealthCheckScanner
     {
         $layoutDefs = $this->loadFromFile($deffile, 'layout_defs');
         // get defs regardless of the module_name since it can be plural or singular, but we don't care here
+        if(!$layoutDefs) {
+            return;
+        }
         $defs = $layoutDefs[key($layoutDefs)];
         if (empty($defs['subpanel_setup'])) {
             return;
@@ -1391,7 +1457,7 @@ class HealthCheckScanner
             }
 
             $filename = $item->getFilename();
-            if(strpos($filename, ".suback.php") !== false) {
+            if (strpos($filename, ".suback.php") !== false || strpos($filename, "_backup") !== false) {
                 // we'll ignore .suback files, they are old upgrade backups
                 continue;
             }
@@ -1405,7 +1471,8 @@ class HealthCheckScanner
                     continue;
                 }
                 $data = array_merge($data, $this->getPhpFiles($path . $filename . "/"));
-            } elseif ($extension != 'php') {
+            } elseif (!preg_match('/php(_\d+)?\b/', $extension)) {
+                // we need only php and php Studio-history (.php_{timestamp} extension) files
                 continue;
             } elseif(!in_array($path . $filename, $this->ignoredFiles)) {
                 $data[] = $path . $filename;

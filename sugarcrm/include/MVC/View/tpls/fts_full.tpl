@@ -289,7 +289,6 @@ width:70%;
         },
         loadMore: function()
         {
-            debugger;
             SUGAR.FTS.currentOffset += SUGAR.FTS.limit;
             SUGAR.FTS.search(true);
         }

@@ -14,5 +14,13 @@
  * @extends View.Views.Base.CreateView
  */
 ({
-    extendsFrom: 'CreateView'
+    extendsFrom: 'CreateView',
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        options.meta = _.extend({}, app.metadata.getView(null, 'create-actions'), options.meta);
+        this._super('initialize', [options]);
+    }
 })

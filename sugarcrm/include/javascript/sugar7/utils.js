@@ -587,36 +587,38 @@
 
                 return app.bwc.buildRoute(module, id, app.bwc.getAction(action));
             },
-            
+
             /**
-             * Add bwcFrame=1 to the URL if it's not there
-             * @param {String} url
-             * @return String 
+             * Adds `bwcFrame=1` to the URL if it's not there.
+             *
+             * @param {string} url The original url.
+             * @return {string} The url with the iframe mark.
              */
             addIframeMark: function(url) {
-            	var parts = url.split("?");
-            	if(parts[1] && parts[1].indexOf('bwcFrame=1') != -1) return url;
-            	return parts[0] + "?" + (parts[1]?parts[1]+"&bwcFrame=1":"bwcFrame=1"); 
+                var parts = url.split('?');
+                if (parts[1] && parts[1].indexOf('bwcFrame=1') != -1) return url;
+                return parts[0] + '?' + (parts[1] ? parts[1] + '&bwcFrame=1' : 'bwcFrame=1');
             },
-            
+
             /**
-             * Remove bwcFrame=1 from the URL if it's not there
-             * @param {String} url
-             * @return String 
+             * Removes `bwcFrame=1` from the URL if it's there.
+             *
+             * @param {string} url The original url.
+             * @return {string} The url without the iframe mark.
              */
             rmIframeMark: function(url) {
-            	var parts = url.split("?");
-            	if(!parts[1]) {
-            		return url;
-            	}
-            	// scan and drop bwcFrame=1
-            	return parts[0]+"?"+_.reduce(parts[1].split("&"), function(acc, item) {
-            		if(item == 'bwcFrame=1') {
-            			return acc;
-            		} else {
-            			return acc?acc+"&"+item:item;
-            		}
-            	}, '');
+                var parts = url.split('?');
+                if (!parts[1]) {
+                    return url;
+                }
+                // scan and drop bwcFrame=1
+                return parts[0] + '?' + _.reduce(parts[1].split('&'), function(acc, item) {
+                    if (item == 'bwcFrame=1') {
+                        return acc;
+                    } else {
+                        return acc ? acc + '&' + item : item;
+                    }
+                }, '');
             },
 
             /**
@@ -710,6 +712,25 @@
                     var results = regex.exec(matchResults[matchResults.length - 1]);
                 }
                 return (results === undefined || results === null) ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            },
+
+            /**
+             * Javascript equivalent to the Sugar `isTruthy` utility function.
+             *
+             * @param {string|boolean} value The value to test.
+             * @return {boolean} `true` if the value to test is roughly
+             *   equivalent to `true` (in a Sugar context).
+             */
+            isTruthy: function(value) {
+                if (_.isString(value)) {
+                    value = value.toLowerCase();
+                }
+                return value === true
+                    || value === 'true'
+                    || value === 1
+                    || value === '1'
+                    || value === 'on'
+                    || value === 'yes';
             }
         });
     });

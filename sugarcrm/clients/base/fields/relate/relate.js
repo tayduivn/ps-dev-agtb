@@ -244,10 +244,9 @@
 
                     self.setValue(attributes);
                 });
-            //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
             var plugin = this.$(this.fieldTag).data('select2');
-            if (plugin) {
-                plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            if (plugin && plugin.focusser) {
+                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
             }
         } else if (this.tplName === 'disabled') {
             this.$(this.fieldTag).select2({
@@ -418,7 +417,7 @@
                 'overwrite-confirmation',
                 this.model.module),
             messages = [],
-            relatedModuleSingular = app.lang.getModuleSingular(this.def.module);
+            relatedModuleSingular = app.lang.getModuleName(this.def.module);
 
         _.each(newData, function(value, field) {
             var before = this.model.get(field),
@@ -536,16 +535,10 @@
         return app.data.getRelatedModule(this.model.module, this.def.link);
     },
     getPlaceHolder: function () {
-        var module,
-            moduleString = app.lang.getAppListStrings('moduleListSingular');
+        var searchModule = this.getSearchModule(),
+            searchModuleLower = searchModule.toLocaleLowerCase(),
+            module = app.lang.getModuleName(searchModule, {defaultValue: searchModuleLower});
 
-        if (!moduleString[this.getSearchModule()]) {
-            app.logger.error("Module '" + this.getSearchModule() + "' doesn't have singular translation.");
-            // graceful fallback
-            module = this.getSearchModule().toLocaleLowerCase();
-        } else {
-            module = moduleString[this.getSearchModule()].toLocaleLowerCase();
-        }
         return app.lang.get('LBL_SEARCH_SELECT_MODULE', this.module, {
             module: module
         });

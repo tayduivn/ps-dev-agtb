@@ -48,10 +48,9 @@
                 self.$(self.fieldTag).select2('val', '');
             });
 
-            //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
             var plugin = this.$(this.typeFieldTag).data('select2');
-            if (plugin) {
-                plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            if (plugin && plugin.focusser) {
+                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
             }
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
@@ -75,18 +74,11 @@
         return this.model.get("parent_id");
     },
     format: function(value) {
-
+        var module;
         this.def.module = this.getSearchModule();
-        var moduleString = app.lang.getAppListStrings('moduleListSingular'),
-            module;
+
         if (this.def.module) {
-            if (!moduleString[this.def.module]) {
-                app.logger.error("Module '" + this.def.module + "' doesn't have singular translation.");
-                // graceful fallback
-                module = this.def.module;
-            } else {
-                module = moduleString[this.def.module];
-            }
+            module = app.lang.getModuleName(this.def.module);
         }
 
         this.context.set('record_label', {

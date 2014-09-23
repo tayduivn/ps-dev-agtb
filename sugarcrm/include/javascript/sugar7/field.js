@@ -55,7 +55,8 @@
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;
-                    field.setMode('edit');
+                    field.parent ? field.parent.setMode('edit') : field.setMode('edit');
+
                     // As we're now "post form submission", if `no_required_placeholder`, we need to
                     // manually decorateRequired (as we only omit required on form's initial render)
                     if (!field._shouldRenderRequiredPlaceholder()) {
@@ -66,12 +67,18 @@
                     if (field.view && field.view.trigger) {
                         field.view.trigger('field:error', field, true);
                     }
-
-                    field.decorateError(errors);
                 }, this);
 
                 this.$el.off("keydown.record");
                 $(document).off("mousedown.record" + this.name);
+            },
+
+            /**
+             * Resets the properties that are put on the field by
+             * {@link #handleValidationError}.
+             */
+            removeValidationErrors: function() {
+                this._errors = {};
             },
 
             /**
@@ -185,11 +192,7 @@
              * and to add view action CSS class.
              */
             _render: function () {
-                // Tooltips are appended to body and when the field rerenders we lose control of shown tooltips.
-                this.destroyAllErrorTooltips();
-
-                var isErrorState = this.$('.add-on.error-tooltip').length > 0;
-
+                this.clearErrorDecoration();
                 this._processHelp();
 
                 _fieldProto._render.call(this);
@@ -199,8 +202,7 @@
                     this._addViewClass(this._previousAction);
                 }
                 this._addViewClass(this.action);
-                if (isErrorState) {
-                    this.clearErrorDecoration();
+                if (!_.isEmpty(this._errors)) {
                     if (this.action === 'edit') {
                         this.decorateError(this._errors);
                     }
@@ -452,7 +454,9 @@
             clearErrorDecoration: function () {
                 var ftag = this.fieldTag || '',
                     $ftag = this.$(ftag);
+
                 // Remove previous exclamation then add back.
+                this.destroyAllErrorTooltips();
                 this.$('.add-on.error-tooltip').remove();
                 var isWrapped = $ftag.parent().hasClass('input-append');
 

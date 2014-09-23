@@ -151,8 +151,8 @@
                 error: function() {
                     app.alert.show('error_while_save', {
                         level: 'error',
-                        title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-                        messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                        title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                        messages: app.lang.get('ERR_HTTP_500_TEXT')
                     });
                 }
             });
@@ -193,8 +193,8 @@
                     error: function() {
                         app.alert.show('error_while_save', {
                             level: 'error',
-                            title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
-                            messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                            title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                            messages: app.lang.get('ERR_HTTP_500_TEXT')
                         });
                     },
                     //Show alerts for this request

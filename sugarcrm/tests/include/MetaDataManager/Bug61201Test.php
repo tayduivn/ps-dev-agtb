@@ -46,7 +46,7 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         $mm->getMetadata();
         
         // Assert that there is a private base metadata file
-        $dateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $dateModified =  $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'"), 'datetime');
         $this->assertNotEmpty($dateModified);
         
         // Set the queue
@@ -66,7 +66,7 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         
         // Get the metadata again and ensure it is the same
         $mm->getMetadata();
-        $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $newDateModified =  $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'"), 'datetime');
         $this->assertEquals($dateModified, $newDateModified, "Meta Data cache has changed and it should not have");
         
         // Force a time diff
@@ -78,7 +78,7 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         // Get the metadata again and ensure it is different now
         $mm->getMetadata();
 
-        $newDateModified = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'"), 'datetime');
         
         // Test the file first
         $this->assertNotEmpty($newDateModified, "Private cache metadata was not found after refresh.");

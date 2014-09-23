@@ -189,7 +189,7 @@
                         ], function(err, activity) {
                             component.trigger('attachments:end');
                             if (err) {
-                                var errorMessage = app.lang.getAppString('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
+                                var errorMessage = app.lang.get('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
                                 app.alert.show('upload_error', errorMessage);
                             } else {
                                 self.context.reloadData({recursive: false});

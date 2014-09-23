@@ -25,6 +25,8 @@ class CheckOutputTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('files');
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
         $this->upgradeDriver->context = array();
@@ -56,7 +58,7 @@ class CheckOutputTest extends Sugar_PHPUnit_Framework_TestCase
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {
-            $script->expects($this->atLeastOnce())->method('backupFile')->with($this->equalTo('custom' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'CustomTest' . DIRECTORY_SEPARATOR . 'test.php'));
+            $script->expects($this->atLeastOnce())->method('backupFile')->with($this->equalTo('custom/modules/CustomTest/test.php'));
         }
         $script->run();
         $actual = sugar_file_get_contents($file);

@@ -138,7 +138,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $dateModified = TimeDate::getInstance()->fromDb(
-            $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'")
+            $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'"), 'datetime')
         );
 
         //Wait to ensure timestamp inscreases
@@ -149,7 +149,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Test the file first
         $newDateModified = TimeDate::getInstance()->fromDb(
-            $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'")
+            $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'"), 'datetime')
         );
         
         // Test the time on the new file

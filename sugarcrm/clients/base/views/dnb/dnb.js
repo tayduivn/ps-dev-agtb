@@ -47,7 +47,7 @@
     },
     //D&B Firmographic API product codes
     compInfoProdCD: {
-        'lite': 'CST_PRD_1',
+        'lite': 'DCP_BAS',
         'std': 'DCP_STD',
         'prem': 'DCP_PREM'
     },
@@ -492,7 +492,8 @@
         'srchRslt': 'FindCompanyResponse.FindCompanyResponseDetail.FindCandidate',
         'competitors': 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
         'industryprofile': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile',
-        'srchCount': 'FindCompanyResponse.FindCompanyResponseDetail.CandidateMatchedQuantity'
+        'srchCount': 'FindCompanyResponse.FindCompanyResponseDetail.CandidateMatchedQuantity',
+        'cmCount': 'GetCleanseMatchResponse.GetCleanseMatchResponseDetail.MatchResponseDetail.CandidateMatchedQuantity'
     },
     //common error codes with error labels
     commonErrorMap: {
@@ -772,7 +773,7 @@
     /**
      * Gets company information for a DUNS number
      * @param {String} duns_num -- duns_num of the company
-     * @param {String} prod_code -- CST_PRD_1 or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
+     * @param {String} prod_code -- DCP_BAS or DCP_STD or DCP_PREM (referring to the 3 types of comp info dashlets)
      * @param {String} backToListLabel -- label to be rendered to redirect to the previous view
      * @param {Function} renderFunction -- a function to be called to render the dnbapiresponse
      */
@@ -1831,6 +1832,7 @@
 
     /**
      * Render pagination control
+     * @param {String} componentName (Optional)
      */
     renderPaginationControl: function() {
         //it more records exist in api display pagination controls
@@ -1867,20 +1869,16 @@
      * Else invoke the
      */
     paginateRecords: function() {
-        var nextPage = this.getNextPage(this.formattedRecordSet, this.startRecord, this.endRecord);
-        if (_.isUndefined(this.currentPage) || _.isNull(this.currentPage)) {
-            this.currentPage = nextPage;
-        } else {
-            this.currentPage = this.currentPage.concat(nextPage);
-        }
+        return this.getNextPage(this.formattedRecordSet, this.startRecord, this.endRecord);
     },
 
     /**
      * Initialize pagination parameters
+     * @param {Number} pageSize
      */
-    initPaginationParams: function() {
+    initPaginationParams: function(pageSize) {
         //# of records to be displayed in the dashlet
-        this.pageSize = 10;
+        this.pageSize = !_.isUndefined(pageSize) ? pageSize : 10;
         //initial page no.
         this.pageNo = 1;
         //max # of records D&B API to return
@@ -1954,6 +1952,76 @@
             if (!this.disposed) {
                 this.render();
             }
+        }
+    },
+
+    /**
+     * Event handler for pagination controls
+     * Renders next page from context if available
+     * else invokes the D&B API to get the next page
+     * @param {Function} paginationCallBack
+     * @param {Object} apiParams Parameters for api call
+     * @param {Function} callBack
+     */
+    invokePagination: function(paginationCallBack, apiParams, callBack) {
+        this.displayPaginationLoading();
+        this.setPaginationParams();
+        //if the endRecord after pagination is greater than apiPageEndRecord
+        //we have to invoke the api with the pagination controls
+        if (this.endRecord > this.apiPageEndRecord && !_.isNull(paginationCallBack)) {
+            this.apiPageEndRecord = (this.startRecord + this.apiPageSize) - 1;
+            this.resetPaginationFlag = false;
+            //setting the apiPageOffset
+            this.apiPageOffset = this.startRecord;
+            paginationCallBack.call(this, this.setApiPaginationParams(apiParams), callBack);
+        } else {
+            var pageData = {
+                'product':  this.paginateRecords(),
+                'count': this.recordCount
+            };
+            this.renderPage(pageData, true);
+        }
+    },
+
+    /**
+     * Renders the currentPage
+     * @param {Object} pageData
+     * @param {Boolean} append boolean to indicate if records need to be appended to exsiting list
+     */
+    renderPage: function(pageData, append) {
+        if (_.isUndefined(append) || !append) {
+            if (this.disposed) {
+                return;
+            }
+            this.template = this.resultTemplate;
+            this.listData = pageData;
+            //pageData count is not defined when the page is being rendered after
+            //dupe check
+            //hence using the count from the context variable
+            if (_.isUndefined(pageData.count)) {
+                pageData.count = this.recordCount;
+            }
+            //if the api returns a success response then only set the count
+            if (pageData.product && !_.isUndefined(this.resultCountTmpl)) {
+                this.listData.count = this.resultCountTmpl + " (" + this.formatSalesRevenue(pageData.count) + ")";
+            } else {
+                delete this.listData['count'];
+            }
+            this.render();
+        } else {
+            this.currentPage = this.currentPage.concat(pageData.product);
+            _.each(pageData.product, function(listObj) {
+                //compile account row
+                var rowHtml = this.rowTmpl(listObj);
+                //append account row to exising list
+                this.$(this.selectors.rsltList).append(rowHtml);
+            }, this);
+        }
+        this.$(this.selectors.load).toggleClass('hide', true);
+        this.$(this.selectors.rslt).toggleClass('hide', false);
+        //render pagination controls only if the api returns a success response
+        if (pageData.product) {
+            this.renderPaginationControl();
         }
     }
 });

@@ -242,10 +242,10 @@
 
         if (_.isArray(stringOrArray)) {
             result = _.map(stringOrArray, function(text) {
-                return new Handlebars.SafeString(app.lang.getAppString(text));
+                return new Handlebars.SafeString(app.lang.get(text));
             });
         } else {
-            result = new Handlebars.SafeString(app.lang.getAppString(stringOrArray));
+            result = new Handlebars.SafeString(app.lang.get(stringOrArray));
         }
 
         return result;

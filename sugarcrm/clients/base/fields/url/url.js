@@ -15,6 +15,13 @@
  */
 ({
     plugins: ['EllipsisInline'],
+    initialize: function(options) {
+        this._super("initialize", arguments);
+        //Generated URL's should not be editable
+        if (app.utils.isTruthy(this.def.gen)) {
+            this.def.readonly = true;
+        }
+    },
     format:function(value){
         if (value && !value.match(/^([a-zA-Z]+):\/\//)) {
             value = "http://" + value;

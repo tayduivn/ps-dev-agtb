@@ -29,6 +29,10 @@ class ConfiguratorViewAddFontView extends SugarView {
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);  
         }
+
+        // create FontManager to load sugarpdf_config
+        $fontManager = new FontManager();
+
         $this->ss->assign("MODULE_TITLE", 
             getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_ID'], 
@@ -58,4 +62,4 @@ class ConfiguratorViewAddFontView extends SugarView {
         $this->ss->display('modules/Configurator/tpls/addFontView.tpl');
     }
 }
-    
+

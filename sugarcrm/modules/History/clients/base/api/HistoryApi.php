@@ -163,6 +163,7 @@ class HistoryApi extends RelateApi
 
             list($args, $q, $options, $linkSeed) = $this->filterRelatedSetup($api, $args);
             $q->select()->selectReset();
+            $q->orderByReset(); // ORACLE doesn't allow order by in UNION queries
             if (!empty($args['placeholder_fields'])) {
                 $newFields = array_merge($args['placeholder_fields'][$module], $fields);
             } else {
@@ -176,7 +177,8 @@ class HistoryApi extends RelateApi
                 }
                 // special case for description on emails
                 if($module == 'Emails' && $field == 'description') {
-                    $q->select()->fieldRaw("'' email_description");
+                    // ORACLE requires EMPTY_CLOB() for union queries if CLOB fields were used before
+                    $q->select()->fieldRaw(DBManagerFactory::getInstance()->emptyValue('text') . " email_description");
                 } else {
                     if (isset($args['placeholder_fields'][$module][$field])) {
                         $q->select()->fieldRaw("'' {$args['placeholder_fields'][$module][$field]}");

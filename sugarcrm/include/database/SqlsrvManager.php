@@ -244,13 +244,7 @@ class SqlsrvManager extends MssqlManager
         }
 
         foreach($row as $key => $column) {
-            // MSSQL returns a space " " when a varchar column is empty ("") and not null.
-            // We need to strip empty spaces
-            // notice we only strip if one space is returned.  we do not want to strip
-            // strings with intentional spaces (" foo ")
-            if (!empty($column) && $column == " ") {
-                $row[$key] = '';
-            }
+            $row[$key] = trim($column);
         }
 
         return $row;

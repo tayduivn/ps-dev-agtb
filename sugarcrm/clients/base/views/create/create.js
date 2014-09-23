@@ -458,7 +458,14 @@
      */
     skipDupeCheck: function (skip) {
         var skipDupeCheck,
-            saveButton = this.buttons[this.saveButtonName].getFieldElement();
+        //FIXME: SC-3337 should investigate a better way to do this.
+            saveButton = _.find(this.buttons['duplicate_dropdown'].fields, function(field) {
+                return field.name === this.saveButtonName;
+            }, this);
+        if (!saveButton) {
+            return;
+        }
+        saveButton = saveButton.getFieldElement();
 
         if (_.isUndefined(skip)) {
             skipDupeCheck = saveButton.data('skipDupeCheck');
@@ -585,27 +592,6 @@
     },
 
     /**
-     * Change the behavior of buttons depending on the state that they are in
-     * @param state
-     */
-    setButtonStates: function (state) {
-        this._super("setButtonStates", [state]);
-        var $saveButtonEl = this.buttons[this.saveButtonName];
-        if ($saveButtonEl) {
-            switch (state) {
-                case this.STATE.CREATE:
-                case this.STATE.SELECT:
-                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
-                    break;
-
-                case this.STATE.DUPLICATE:
-                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
-                    break;
-            }
-        }
-    },
-
-    /**
      * Disable buttons
      */
     disableButtons: function () {
@@ -631,6 +617,7 @@
                     button.getFieldElement().toggleClass('disabled', !enable);
                     break;
                 case 'actiondropdown':
+                    button.defaultActionBtn.getFieldElement().toggleClass('disabled', !enable);
                     button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
                     break;
             }

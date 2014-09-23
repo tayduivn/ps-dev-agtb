@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="btn-group" data-record-id="{{getFieldValue this.model 'id'}}" data-toggle="buttons-radio">
+<div class="btn-group" data-record-id="{{fieldValue this.model 'id'}}" data-toggle="buttons-radio">
     <button type="button" class="{{#eq value 'accept'}}active {{/eq}}btn btn-mini" data-action="accept"
             rel="tooltip" data-container="body"
             data-original-title="{{getDDLabel 'accept' def.options}}"><i class="icon-ok-sign"></i></button>

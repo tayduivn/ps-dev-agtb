@@ -80,7 +80,7 @@ class IBMDB2Manager  extends DBManager
 			'time'     => 'time',
 			'bool'     => 'smallint', // Per recommendation here: http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.apdv.java.doc/doc/rjvjdata.htm
 			'tinyint'  => 'smallint',
-			'char'     => 'char(1)',
+			'char'     => 'char',
 			'blob'     => 'blob(65535)',
 			'longblob' => 'blob(2000000000)',
 			'currency' => 'decimal(26,6)',
@@ -687,7 +687,14 @@ public function convert($string, $type, array $additional_parameters = array())
 		// YYYY-MM-DD HH:MM:SS
 		switch($type) {
 			case 'date': return substr($string, 0, 10);
-			case 'time': return substr($string, 11,8);
+            case 'time':
+                if (strlen($string) >= 19) {
+                    return substr($string, 11, 8);
+                } elseif (strlen($string) > 8) {
+                    return substr($string, 0, 8);
+                } else {
+                    return $string;
+                }
 			case 'timestamp':
 			case 'datetimecombo':
 		    case 'datetime': return substr($string, 0,19);
@@ -1782,7 +1789,17 @@ EOQ;
            return $massagedValue;
         }
 
-        return parent::massageValue($val, $fieldDef, $forPrepared);
+        $val = parent::massageValue($val, $fieldDef, $forPrepared);
+
+        if (!$forPrepared) {
+            switch ($type) {
+                case 'blob' :
+                case 'longblob' :
+                    $val = 'SYSIBM.BLOB(' . $val . ')';
+                    break;
+            }
+        }
+        return $val;
     }
 
 

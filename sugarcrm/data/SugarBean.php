@@ -1259,6 +1259,7 @@ class SugarBean
                                           ($column_list) values
                                           ($value_list)";
                         $db->query($insert_string, true);
+                        Relationship::$relCacheInternal[$rel_name] = true;
                     }
                 }
             } else {
@@ -4414,6 +4415,9 @@ class SugarBean
                         if(!$table_joined)
                         {
                             $ret_array['secondary_from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
+                            if (isset($relate_query['join'])) {
+                                $ret_array['secondary_from'] .= ' ' . $relate_query['join'];
+                            }
                             if (isset($data['link_type']) && $data['link_type'] == 'relationship_info' && ($parentbean instanceOf SugarBean))
                             {
                                 $ret_array['secondary_where'] = $params['join_table_link_alias'] . '.' . $join['rel_key']. "='" .$parentbean->id . "'";
@@ -5728,7 +5732,7 @@ class SugarBean
         if(!empty($record))
         {
             // this copies the object into the array
-            $list[] = $template;
+            $list[] = $record;
         }
     }
 
