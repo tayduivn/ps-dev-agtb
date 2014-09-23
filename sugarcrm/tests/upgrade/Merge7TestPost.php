@@ -35,6 +35,37 @@ class Merge7TestPost extends UpgradeTestCase
     public function mergeData()
     {
         return array(
+            // add field with out panel name, but panel label
+            array(
+                // pre
+                array(
+                    array(
+                        'label' => 'panel1',
+                        'fields' => array('email', 'phone', 'fax')
+                    )
+                ),
+                // post
+                array(
+                    array(
+                        'label' => 'panel1',
+                        'fields' => array('email', 'phone', 'fax', 'description')
+                    )
+                ),
+                // custom
+                array(
+                    array(
+                        'label' => 'panel1',
+                        'fields' => array('email', 'phone', 'fax', "custom_c")
+                    )
+                ),
+                // result
+                array(
+                    array(
+                        'label' => 'panel1',
+                        'fields' => array('email', 'phone', 'fax', "custom_c", 'description')
+                    )
+                ),
+            ),
             // add field
             array(
                 // pre
