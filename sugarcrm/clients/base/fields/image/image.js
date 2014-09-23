@@ -36,6 +36,12 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
 
+        // FIXME: This needs an API instead. SC-3369 should address this.
+        // Also, this field should extend the file field to inherit these
+        // error properties.
+        app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
+        app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
+
         if (!this.model.hasImageRequiredValidator) {
             this.model.hasImageRequiredValidator = true;
             this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
@@ -172,11 +178,19 @@
                     self.model.trigger("change", "image");
                 },
                 error: function(error) {
-                    var fieldError = {},
-                        errors = {};
-                    fieldError[error.responseText] = {};
-                    errors[self.name] = fieldError;
-                    self.model.trigger('error:validation:' + this.field, fieldError);
+                    var errors = errors || {},
+                        fieldName = self.name;
+                    errors[fieldName] = {};
+
+                    switch (error.code) {
+                        case 'request_too_large':
+                           errors[fieldName].tooBig = true;
+                           break;
+                        default:
+                            errors[fieldName].uploadFailed = true;
+                    }
+                    self.model.unset(fieldName + '_guid');
+                    self.model.trigger('error:validation:' + this.field, errors[fieldName]);
                     self.model.trigger('error:validation', errors);
                 }
             },
