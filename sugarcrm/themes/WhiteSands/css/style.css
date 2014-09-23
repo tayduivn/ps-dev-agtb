@@ -1451,7 +1451,7 @@ a.detail td a:visited
 	text-decoration:underline;
 }
 
-/* ForecastSchedule detailView Bug 30459 */
+
 .tabDetailView {
     border:2px solid #7F9DB9;
 }

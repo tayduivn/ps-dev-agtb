@@ -88,7 +88,6 @@ $md5_string = array (
   './modules/Forecasts/Forecast.php' => '2d6b8366dcf9836ed6efc0873330038f',
   './modules/Forecasts/ForecastWorksheet.php' => '1d31e8f4c926e807a2c2348edaee6d7f',
   './modules/Forecasts/ForecastManagerWorksheet.php' => '0828b0740c8c10f683583bc4b1c046d8',
-  './modules/ForecastSchedule/ForecastSchedule.php' => '79a3fedcb5b0cfb33add1f2a40f9bd32',
   './modules/Forecasts/ForecastOpportunities.php' => 'a94df38c2e8446dec4afe0e5469fb684',
   './modules/Forecasts/ForecastDirectReports.php' => '9b3b9d7c95e8ae6a8c51456116489998',
   './modules/Quotas/Quota.php' => 'cd340ad6d92771a72e45abdcfb0c9d57',

@@ -119,19 +119,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
     }
 
     /**
-     * return count of forecast schedules for user
-     *
-     * @param $user
-     * @return int
-     */
-    private function _getForecastScheduleCountForUser($user)
-    {
-        $db = DBManagerFactory::getInstance();
-        $row = $db->fetchOne("SELECT count(*) as cnt FROM forecast_schedule WHERE user_id = '".$this->_users[$user]->id."' and deleted = '0'");
-        return $row['cnt'];
-    }
-
-    /**
      * return count of quotas for user
      *
      * @param $user
@@ -223,7 +210,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
             $db = DBManagerFactory::getInstance();
             $db->query("DELETE FROM forecasts WHERE timeperiod_id = '{$this->_timeperiod->id}'");
-            $db->query("DELETE FROM forecast_schedule WHERE timeperiod_id = '{$this->_timeperiod->id}'");
             $db->query("DELETE FROM quotas WHERE timeperiod_id = '{$this->_timeperiod->id}'");
 
             unset($_SESSION['reassignRecords']);
@@ -279,8 +265,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sally');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
-        $count = $this->_getForecastScheduleCountForUser('sally');
-        $this->assertEquals(0, $count, 'ForecastSchedule are not deleted.');
         $count = $this->_getQuotasCountForUser('sally');
         $this->assertEquals(0, $count, 'Quotas are not deleted.');
 
@@ -327,8 +311,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sarah');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
-        $count = $this->_getForecastScheduleCountForUser('sarah');
-        $this->assertEquals(0, $count, 'ForecastSchedule are not deleted.');
         $count = $this->_getQuotasCountForUser('sarah');
         $this->assertEquals(0, $count, 'Quotas are not deleted.');
 
@@ -375,8 +357,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sarah');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
-        $count = $this->_getForecastScheduleCountForUser('sarah');
-        $this->assertEquals(0, $count, 'ForecastSchedule are not deleted.');
         $count = $this->_getQuotasCountForUser('sarah');
         $this->assertEquals(0, $count, 'Quotas are not deleted.');
 

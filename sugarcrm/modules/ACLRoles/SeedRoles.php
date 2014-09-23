@@ -20,7 +20,6 @@ $mlaRoles = array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
          'Forecasts'=>array('admin'=>100, 'access'=>89),
-         'ForecastSchedule'=>array('admin'=>100, 'access'=>89),
          'Leads'=>array('admin'=>100, 'access'=>89),
          'Quotes'=>array('admin'=>100, 'access'=>89),
          'Opportunities'=>array('admin'=>100, 'access'=>89),

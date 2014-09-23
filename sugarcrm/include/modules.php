@@ -156,7 +156,6 @@ $beanList['MonthTimePeriods']    = 'MonthTimePeriod';
 $beanList['Forecasts']  = 'Forecast';
 $beanList['ForecastWorksheets']  = 'ForecastWorksheet';
 $beanList['ForecastManagerWorksheets']  = 'ForecastManagerWorksheet';
-$beanList['ForecastSchedule']  = 'ForecastSchedule';
 $beanList['ForecastOpportunities']  = 'ForecastOpportunities';
 $beanList['ForecastDirectReports'] = 'ForecastDirectReports';
 $beanList['Quotas']     = 'Quota';
@@ -296,7 +295,6 @@ $beanFiles['MonthTimePeriod']    = 'modules/TimePeriods/MonthTimePeriod.php';
 $beanFiles['Forecast']      = 'modules/Forecasts/Forecast.php';
 $beanFiles['ForecastWorksheet'] = 'modules/ForecastWorksheets/ForecastWorksheet.php';
 $beanFiles['ForecastManagerWorksheet'] = 'modules/ForecastManagerWorksheets/ForecastManagerWorksheet.php';
-$beanFiles['ForecastSchedule']  = 'modules/ForecastSchedule/ForecastSchedule.php';
 $beanFiles['ForecastOpportunities']  = 'modules/Forecasts/ForecastOpportunities.php';
 $beanFiles['ForecastDirectReports'] = 'modules/Forecasts/ForecastDirectReports.php';
 $beanFiles['Quota']  = 'modules/Quotas/Quota.php';
@@ -337,7 +335,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
-    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes', 'ForecastSchedule',
+    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',

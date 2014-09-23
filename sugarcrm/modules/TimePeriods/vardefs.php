@@ -146,13 +146,6 @@ $dictionary['TimePeriod'] = array(
                 'required' => true,
                 'default' => '',
             ),
-        'forecast_schedules' =>
-            array(
-                'name' => 'forecast_schedules',
-                'type' => 'link',
-                'relationship' => 'timeperiod_forecast_schedules',
-                'source' => 'non-db',
-            ),
         'related_timeperiods' =>
             array(
                 'name' => 'related_timeperiods',
@@ -176,15 +169,6 @@ $dictionary['TimePeriod'] = array(
         array('name' => 'idx_timeperiod_end_date', 'type' => 'index', 'fields' => array('end_date')),
     ),
     'relationships' => array(
-        'timeperiod_forecast_schedules' => array(
-            'lhs_module' => 'TimePeriods',
-            'lhs_table' => 'timeperiods',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Forecasts',
-            'rhs_table' => 'forecast_schedule',
-            'rhs_key' => 'timeperiod_id',
-            'relationship_type' => 'one-to-many'
-        ),
         'related_timeperiods' => array(
             'lhs_module' => 'TimePeriods',
             'lhs_table' => 'timeperiods',

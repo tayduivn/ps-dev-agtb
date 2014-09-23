@@ -41,7 +41,6 @@ $app_list_strings = array (
     'Reports' => 'Reports',
     'Reports_1'=>'Saved Reports',
     'Forecasts' => 'Forecasts',
-    'ForecastSchedule'=>'Forecast Schedule',
     'ForecastWorksheets' => 'Forecast Worksheets',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
@@ -147,7 +146,6 @@ $app_list_strings = array (
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
-    'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'MergeRecords'=>'Merge Record',
     'Teams' => 'Team',
@@ -1061,11 +1059,6 @@ $app_list_strings = array (
         'min' => 'Minutes',
         'hour' => 'Hours',
         ),
-    'forecast_schedule_status_dom' =>
-    array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-  ),
     'forecast_type_dom' =>
     array (
     'Direct' => 'Direct',
