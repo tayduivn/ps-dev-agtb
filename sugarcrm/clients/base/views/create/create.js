@@ -190,8 +190,7 @@
         if (this.resavingAfterMetadataSync) {
             return false;
         }
-        var defaults = _.extend({}, this.model._defaults, this.model.getDefaultAttributes());
-        return this.model.isNew() && !_.isEqual(defaults, this.model.attributes);
+        return this.model.isNew() && !_.isEqual(this.model.getDefault(), this.model.attributes);
     },
 
     handleSync: function () {

@@ -380,7 +380,6 @@
         var $row = this.addRow(),
             moduleMeta = app.metadata.getModule(this.layout.currentModule),
             fieldMeta = moduleMeta.fields;
-        this.isPopulatingRow = true;
 
         _.each(rowObj, function(value, key) {
             var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
@@ -436,7 +435,6 @@
                     .trigger('change');
             });
         }, this);
-        this.isPopulatingRow = false;
     },
 
     /**
@@ -525,12 +523,6 @@
         $row.find('[data-filter=value]')
             .toggleClass('span4', !hide)
             .toggleClass('span8', hide);
-
-        //FIXME Remove this when SC-2833 gets merged
-        if (hide && !this.isPopulatingRow) {
-            var operatorField = $row.data('operatorField');
-            operatorField.$(operatorField.fieldTag).select2('val', '$equals', true);
-        }
     },
 
     /**
