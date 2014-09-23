@@ -1,16 +1,21 @@
 describe('Base.Layout.SelectionListModuleSwitch', function() {
-    var app, layout;
+    var app, layout, langGetStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
+        langGetStub = sinon.stub(app.lang, 'get', function(label, module) {
+            return module;
+        });
+
         layout = SugarTest.createLayout('base', 'Contacts', 'selection-list-module-switch');
     });
 
     afterEach(function() {
         layout.dispose();
+        langGetStub.restore();
         app.cache.cutAll();
         app.view.reset();
         SugarTest.testMetadata.dispose();
@@ -22,13 +27,13 @@ describe('Base.Layout.SelectionListModuleSwitch', function() {
 
             expect(result).toEqual([{
                 id: 'Accounts',
-                text: 'LBL_MODULE_NAME'
+                text: 'Accounts'
             }, {
                 id: 'Contacts',
-                text: 'LBL_MODULE_NAME'
+                text: 'Contacts'
             }, {
                 id: 'Leads',
-                text: 'LBL_MODULE_NAME'
+                text: 'Leads'
             }]);
         });
 
@@ -42,10 +47,10 @@ describe('Base.Layout.SelectionListModuleSwitch', function() {
 
             expect(result).toEqual([{
                 id: 'Accounts',
-                text: 'LBL_MODULE_NAME'
+                text: 'Accounts'
             }, {
                 id: 'Leads',
-                text: 'LBL_MODULE_NAME'
+                text: 'Leads'
             }]);
 
             hasAccessStub.restore();

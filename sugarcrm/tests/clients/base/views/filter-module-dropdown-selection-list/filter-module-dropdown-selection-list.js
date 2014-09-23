@@ -1,5 +1,5 @@
 describe('Base.View.FilterModuleDropdownSelectionList', function() {
-    var app, view, layout, server;
+    var app, view, layout, server, langGetStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -10,6 +10,10 @@ describe('Base.View.FilterModuleDropdownSelectionList', function() {
         SugarTest.loadHandlebarsTemplate('filter-module-dropdown', 'view', 'base', 'result-partial');
         SugarTest.loadHandlebarsTemplate('filter-module-dropdown', 'view', 'base', 'selection-partial');
         SugarTest.testMetadata.set();
+
+        langGetStub = sinon.stub(app.lang, 'get', function(label, module) {
+            return module;
+        });
 
         server = sinon.fakeServer.create();
         server.respondWith(/\/clients\/base\/layouts\/simple/, [404, {}, '']);
@@ -22,6 +26,7 @@ describe('Base.View.FilterModuleDropdownSelectionList', function() {
         server.restore();
         view.dispose();
         layout.dispose();
+        langGetStub.restore();
         app.cache.cutAll();
         app.view.reset();
         SugarTest.testMetadata.dispose();
@@ -52,7 +57,7 @@ describe('Base.View.FilterModuleDropdownSelectionList', function() {
 
             expect(view.filterNode.data('select2').opts.data).toEqual([{
                 id: 'Activities',
-                text: 'LBL_MODULE_NAME'
+                text: 'Contacts'
             }]);
         });
 
