@@ -117,15 +117,6 @@ class ForecastsConfigApi extends ConfigModuleApi
         }
         //END SUGARCRM flav=ent ONLY
 
-        if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
-            require_once('modules/UpgradeWizard/uw_utils.php');
-            updateOpportunitiesForForecasting();
-            //BEGIN SUGARCRM flav=ent ONLY
-            require_once('include/SugarQueue/jobs/SugarJobUpdateRevenueLineItems.php');
-            SugarJobUpdateRevenueLineItems::scheduleRevenueLineItemUpdateJobs(100);
-            //END SUGARCRM flav=ent ONLY
-        }
-
         // we do the double check here since the front ent will send one one value if the input is empty
         if (empty($args['worksheet_columns']) || empty($args['worksheet_columns'][0])) {
             // set the defaults
@@ -144,6 +135,23 @@ class ForecastsConfigApi extends ConfigModuleApi
 
         //reload the settings to get the current settings
         $current_forecasts_settings = parent::configSave($api, $args);
+
+        // setting are saved, reload the setting in the ForecastBean just in case.
+        Forecast::getSettings(true);
+
+        // now that we have saved the setting, we need to sync all the data if
+        // this is being upgraded or the forecast was not setup before.
+        if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
+            if ($args['forecast_by'] === 'Opportunities') {
+                SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php');
+                SugarJobUpdateOpportunities::updateOpportunitiesForForecasting();
+            // BEGIN SUGARCRM flav=ent ONLY
+            } else {
+                SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateRevenueLineItems.php');
+                SugarJobUpdateRevenueLineItems::scheduleRevenueLineItemUpdateJobs();
+            // END SUGARCRM flav=ent ONLY
+            }
+        }
 
         // did this change?
         if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columns']) {

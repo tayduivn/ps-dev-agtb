@@ -259,8 +259,8 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         }
 
         if ($this->isForecastSetup()) {
-            SugarAutoLoader::load('modules/UpgradeWizard/uw_utils.php');
-            updateOpportunitiesForForecasting(100);
+            SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php');
+            SugarJobUpdateOpportunities::updateOpportunitiesForForecasting();
         }
     }
 
