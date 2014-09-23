@@ -16,7 +16,7 @@ require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 /**
  * SugarField implementation for link fields
  */
-class SugarFieldLink2 extends SugarFieldBase
+class SugarFieldRelateLink extends SugarFieldBase
 {
     /**
      * @var RelateApi

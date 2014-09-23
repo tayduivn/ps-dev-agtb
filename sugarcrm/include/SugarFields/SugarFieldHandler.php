@@ -38,7 +38,7 @@ class SugarFieldHandler
                		$field = 'link';
                		break;
                case 'link':
-                   $field = 'link2';
+                   $field = 'relateLink';
                    break;
                case 'varchar':
                     $field = 'base';
