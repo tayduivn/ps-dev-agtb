@@ -45,7 +45,7 @@ class SubtractExpression extends NumericExpression
 			var params = this.getParameters(),
 			diff   = params[0].evaluate();
 			for (var i = 1; i < params.length; i++) {
-                diff = this.context.currencySubtract(diff, params[i].evaluate());
+                diff = this.context.subtract(diff, params[i].evaluate());
             }
 			return diff;
 JS;
