@@ -538,15 +538,7 @@ EOF;
     {
         global $theme;
 
-        // THIS IS A FIX FOR 7.1.5
-        // We no longer have multiple themes support.
-
-        // We removed the ability for the user to choose his preferred theme.
-        // In the future, we'll add this feature back, in the new Sidecar Themes
-        // format.
-        // Backward compatibilty modules look and feel must be in accordance to
-        // Sidecar modules, thus there is only one possible theme: `RacerX`
-        $theme = 'RacerX';
+        $theme = $GLOBALS['current_user']->getBWCTheme();
 
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
@@ -557,7 +549,6 @@ EOF;
 
         if (isset($GLOBALS['current_user'])) {
             $GLOBALS['gridline'] = (int)($GLOBALS['current_user']->getPreference('gridline') == 'on');
-            $GLOBALS['current_user']->setPreference('user_theme', $theme, 0, 'global');
         }
     }
 
