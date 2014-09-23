@@ -44,4 +44,10 @@
         app.date.lang(app.user.getPreference('language'));
     });
 
+    app.events.on('lang:direction:change', function() {
+        var direction = app.lang.direction,
+            isRTL = direction === 'rtl';
+        $('html').toggleClass('rtl', isRTL);
+    });
+
 })(SUGAR.App);
