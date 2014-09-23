@@ -351,6 +351,10 @@ class HealthCheckScannerMeta
             'report' => 'incompatIntegration',
             'bucket' => self::MANUAL,
         ),
+        528 => array(
+            'report' => 'vardefIncorrectDisplayDefault',
+            'bucket' => self::MANUAL,
+        ),
 
 
         // Bucket G

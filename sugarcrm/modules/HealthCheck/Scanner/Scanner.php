@@ -1888,6 +1888,13 @@ ENDP;
 
             if(!empty($value['type'])) {
                 switch($value['type']) {
+                    case 'date' :
+                    case 'datetime' :
+                    case 'time' :
+                        if (!empty($value['display_default']) && preg_match('/^\-.+\-$/', $value['display_default'])) {
+                            $this->updateStatus('vardefIncorrectDisplayDefault', $key, $module);
+                        }
+                        break;
                     case 'enum':
                     case 'multienum':
                         if(!empty($value['function']['returns']) && $value['function']['returns'] == 'html') {
