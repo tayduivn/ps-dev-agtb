@@ -12,10 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/ImportFieldSanitize.php');
-require_once('modules/Import/ImportDuplicateCheck.php');
-
+require_once 'modules/Import/ImportCacheFiles.php';
+require_once 'modules/Import/ImportFieldSanitize.php';
+require_once 'modules/Import/ImportDuplicateCheck.php';
+require_once 'include/SugarFields/SugarFieldHandler.php';
 
 class Importer
 {
@@ -112,7 +112,7 @@ class Importer
         $this->currencyFieldPosition = array_search('currency_id', $this->importColumns);
 
         // Are we importing tags?
-        $this->hasTags = array_search('tags', $this->importColumns);
+        $this->hasTags = array_search('tag', $this->importColumns);
 
         foreach($this->importSource as $row)
         {
@@ -508,6 +508,7 @@ class Importer
         if ($do_save)
         {
             $this->saveImportBean($focus, $newRecord);
+            $this->handleTagsImport($focus, $row);
             // Update the created/updated counter
             $this->importSource->markRowAsImported($newRecord);
         }
@@ -518,6 +519,39 @@ class Importer
 
     }
 
+    /**
+     * Handles importing of tags for a row
+     * 
+     * @param SugarBean $focus The parent sugar bean
+     * @param array $row The row of data being imported
+     */
+    public function handleTagsImport($focus, $row)
+    {
+        // Handle tags import - this needs to be done only when we have an 
+        // ID for the parent record as relationships don't like it when you
+        // don't have a real record to relate to
+        if ($this->hasTags !== false && $focus->isTaggable() && !empty($row[$this->hasTags])) {
+            $sfh = new SugarFieldHandler();
+
+            // Get the Tag SugarField for handling the saving
+            $sfTag = $sfh->getSugarField('tag');
+
+            // Build an argument list for this save
+            $tagFieldName = $focus->getTagField();
+            $tagField = $focus->field_defs[$tagFieldName];
+
+            // Get the tags from the row
+            $tags = explode(',', $row[$this->hasTags]);
+
+            // And read them into the params array for the field handler
+            foreach ($tags as $tag) {
+                // Clean up the tag for sending to the field handler
+                $params[$tagFieldName][] = array('name' => trim($tag));
+            }
+
+            $sfTag->apiSave($focus, $params, $tagFieldName, $tagField);
+        }
+    }
 
     protected function sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated)
     {
