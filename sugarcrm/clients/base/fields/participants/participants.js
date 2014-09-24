@@ -107,7 +107,7 @@
      * Returns the collection stored for this field.
      *
      * @throws An exception when the value is not a collection
-     * @return {LinkField}
+     * @return {CollectionAttribute}
      */
     getFieldValue: function() {
         var value = this.model.get(this.name);
@@ -534,7 +534,7 @@
      * Converts the models found in the collection to ones that can be used in
      * the templates.
      *
-     * @param {LinkField} value
+     * @param {CollectionAttribute} value
      * @return {Object} Array of models with view properties defined
      * @return {String} return.Object.accept_status The translated string
      * indicating the model's accept status
@@ -771,7 +771,7 @@
     /**
      * Format the search result for display in select2 result list
      *
-     * @param {Object} bean A bean result
+     * @param {Data.Bean} bean A bean result
      * @return {String}
      */
     formatSearchResult: function(bean) {

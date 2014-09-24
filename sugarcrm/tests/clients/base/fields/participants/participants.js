@@ -59,7 +59,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
-        SugarTest.loadPlugin('LinkField');
+        SugarTest.loadPlugin('CollectionAttribute');
         SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
         app.data.declareModelClass('Users', null, 'base', fixture);
@@ -76,12 +76,10 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 callbacks.success({});
             }
         });
-        sandbox.stub(app.metadata, 'getRHSModulesForLinks', function(lhsModule, links) {
-            return _.chain(links).reduce(function(modules, link) {
-                modules[link] = link.charAt(0).toUpperCase() + link.substr(1);
-                return modules;
-            }, {}).value();
-        });
+        sandbox.stub(app.data, 'getRelatedModule');
+        app.data.getRelatedModule.withArgs('Meetings', 'users').returns('Users');
+        app.data.getRelatedModule.withArgs('Meetings', 'contacts').returns('Contacts');
+        app.data.getRelatedModule.withArgs('Meetings', 'leads').returns('Leads');
     });
 
     afterEach(function() {

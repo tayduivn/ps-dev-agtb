@@ -20,7 +20,7 @@ describe('Plugins.SearchForMore', function() {
         {_module: 'Contacts', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', delta: 0}
     ];
 
-    fieldDef = {links: ['Users', 'Contacts', 'Leads']};
+    fieldDef = {links: ['users', 'contacts', 'leads']};
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -28,7 +28,7 @@ describe('Plugins.SearchForMore', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
-        SugarTest.loadPlugin('LinkField');
+        SugarTest.loadPlugin('CollectionAttribute');
         SugarTest.loadPlugin('SearchForMore');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
@@ -43,12 +43,10 @@ describe('Plugins.SearchForMore', function() {
                 callbacks.success({});
             }
         });
-        sandbox.stub(app.metadata, 'getRHSModulesForLinks', function(lhsModule, links) {
-            return _.chain(links).reduce(function(modules, link) {
-                modules[link] = link.charAt(0).toUpperCase() + link.substr(1);
-                return modules;
-            }, {}).value();
-        });
+        sandbox.stub(app.data, 'getRelatedModule');
+        app.data.getRelatedModule.withArgs('Meetings', 'users').returns('Users');
+        app.data.getRelatedModule.withArgs('Meetings', 'contacts').returns('Contacts');
+        app.data.getRelatedModule.withArgs('Meetings', 'leads').returns('Leads');
 
         appDrawer = app.drawer;
         app.drawer || (app.drawer = {});
@@ -149,7 +147,7 @@ describe('Plugins.SearchForMore', function() {
         var stub = sandbox.stub(app.drawer, 'open');
         field.searchForMore($el);
         expect(stub.args[0][0].layout).toEqual('selection-list-module-switch');
-        expect(stub.args[0][0].context.module).toEqual(_.first(field.def.links));
+        expect(stub.args[0][0].context.module).toEqual('Users');
         expect(stub.args[0][0].context.filterList.length).toBe(field.def.links.length);
     });
 });

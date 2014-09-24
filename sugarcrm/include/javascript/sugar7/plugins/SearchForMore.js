@@ -60,9 +60,9 @@
 
                 if (!_.isUndefined(this.def.links)) {
                     layout = 'selection-list-module-switch';
-                    modules = _.chain(app.metadata.getRHSModulesForLinks(this.module, this.def.links))
-                        .values()
-                        .value();
+                    modules = _.chain(this.def.links).map(function(link) {
+                        return app.data.getRelatedModule(this.module, link);
+                    }, this).value();
                     module = _.first(modules);
                 } else {
                     layout = 'selection-list';

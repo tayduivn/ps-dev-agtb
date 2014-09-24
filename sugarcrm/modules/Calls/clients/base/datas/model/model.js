@@ -14,5 +14,5 @@
  * @extends Model.Bean
  */
 ({
-    plugins: ['LinkField']
+    plugins: ['VirtualCollection']
 })
