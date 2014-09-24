@@ -25,6 +25,9 @@ class HealthCheckScannerCli extends HealthCheckScanner
      */
     public function parseCliArgs($argv)
     {
+        if (empty($argv) || count($argv) < 2) {
+            return false;
+        }
         for ($i = 1; $i < (count($argv) - 1); $i++) {
 
             // logfile name
@@ -56,6 +59,8 @@ class HealthCheckScannerCli extends HealthCheckScanner
 
         // instance directory
         $this->instance = $argv[count($argv) - 1];
+
+        return true;
     }
 
     /**
@@ -101,37 +106,58 @@ class HealthCheckScannerCli extends HealthCheckScanner
      */
     protected function init()
     {
-        if(!is_dir($this->instance)) {
+        if (!is_dir($this->instance)) {
             return $this->fail("{$this->instance} is not a directory");
         }
         $this->log("Initializing the environment");
         chdir($this->instance);
-        if(!file_exists("include/entryPoint.php")) {
+        if (!file_exists("include/entryPoint.php")) {
             return $this->fail("{$this->instance} is not a Sugar instance");
         }
         define('ENTRY_POINT_TYPE', 'api');
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
                $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
                $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check;
-        if(!defined('sugarEntry'))define('sugarEntry', true);
+        if (!defined('sugarEntry')) {
+            define('sugarEntry', true);
+        }
         require_once('include/entryPoint.php');
 
         $GLOBALS['current_user'] = new BlackHole();
 
         return parent::init();
     }
+
+    public function usageAndDie($script)
+    {
+        die("Use php {$script} [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
+    }
+
+    /**
+     * Runs cli scanner
+     * @param $argv
+     */
+    public static function start($argv)
+    {
+
+        $scanner = new static();
+
+        if(!$scanner->parseCliArgs($argv)) {
+            $scanner->usageAndDie();
+        }
+
+        $scanner->scan();
+
+        if ($scanner->getVerbose()) {
+            echo "VERDICT: {$scanner->getStatus()}\n";
+        }
+
+        exit($scanner->getResultCode());
+    }
 }
 
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
-
-/**
- *
- * Standalone CLI HealthCheck runner
- *
- */
-
-if (empty($argv) || empty($argc) || $argc < 2) {
-    die("Use php {$argv[0]} [-d property1=value1... property1=valueN] [-l logfile] [-v] /path/to/instance\n");
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
 }
 
 $sapi_type = php_sapi_name();
@@ -139,12 +165,6 @@ if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is a command-line only script");
 }
 
-$scanner = new HealthCheckScannerCli();
-$scanner->parseCliArgs($argv);
-$scanner->scan();
+HealthCheckScannerCli::start($argv);
 
-if ($scanner->getVerbose()) {
-    echo "VERDICT: {$scanner->getStatus()}\n";
-}
 
-exit($scanner->getResultCode());

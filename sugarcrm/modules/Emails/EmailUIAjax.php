@@ -114,8 +114,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
          */
     case "sendEmail":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: sendEmail");
-        $email->type = 'out';
-        $email->status = 'sent';
 
         if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])) {// && isset($_REQUEST['saveDraft']) && !empty($_REQUEST['saveDraft'])) {
             $email->retrieve($_REQUEST['email_id']); // uid is GUID in draft cases
@@ -124,6 +122,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         	$email->uid = $_REQUEST['uid'];
         }
 
+        $email->type = 'out';
+        $email->status = 'sent';
         $sendResult = false;
         try {
             $sendResult = $email->email2Send($_REQUEST);
