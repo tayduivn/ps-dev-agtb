@@ -1714,7 +1714,7 @@ abstract class UpgradeDriver
 
     }
 
-    const VERSION_FILE = 'upgrader_version.json';
+    const VERSION_FILE = 'version.json';
 
     /**
      * Get version and build number for this package
