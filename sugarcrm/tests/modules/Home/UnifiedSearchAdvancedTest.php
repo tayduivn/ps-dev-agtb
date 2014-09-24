@@ -17,7 +17,7 @@ require_once 'include/utils/layout_utils.php';
 /**
  * @ticket 34125
  */
-class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_contact = null;
     private $_hasUnifiedSearchModulesConfig = false;

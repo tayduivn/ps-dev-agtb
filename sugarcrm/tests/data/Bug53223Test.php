@@ -21,7 +21,7 @@ require_once 'include/SubPanel/SubPanel.php';
  *
  * @ticket 53223
  */
-class Bug53223Test extends Sugar_PHPUnit_Framework_OutputTestCase //Sugar_PHPUnit_Framework_TestCase
+class Bug53223Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var DeployedRelationships

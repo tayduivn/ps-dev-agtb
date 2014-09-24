@@ -21,7 +21,7 @@ require_once('include/SubPanel/SubPanel.php');
  * @author mgusev@sugarcrm.com
  * @ticked 54419
  */
-class Bug54419Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug54419Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var Account

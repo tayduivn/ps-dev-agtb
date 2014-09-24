@@ -21,7 +21,7 @@ require_once('modules/Leads/views/view.convertlead.php');
  * @author avucinic@sugarcrm.com
  *
  */
-class Bug50127Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug50127Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function setUp()

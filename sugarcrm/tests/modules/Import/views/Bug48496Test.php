@@ -13,7 +13,7 @@
 require_once('include/ListView/ListViewFacade.php');
 require_once('modules/Import/views/view.last.php');
 
-class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug48496Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $backup_config;
 

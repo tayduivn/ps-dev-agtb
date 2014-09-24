@@ -14,7 +14,7 @@
 require_once 'modules/Leads/views/view.editconvert.php';
 
 
-class Bug43393Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug43393Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

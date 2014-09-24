@@ -14,7 +14,7 @@
 require_once('modules/Employees/Employee.php');
 require_once('modules/Users/views/view.list.php');
 
-class Bug46473Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug46473Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

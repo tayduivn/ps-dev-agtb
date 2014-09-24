@@ -19,7 +19,7 @@
  * @ticket 43069
  * @author arymarchik@sugarcrm.com
  */
-class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug43069Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $role;
     public function setUp()

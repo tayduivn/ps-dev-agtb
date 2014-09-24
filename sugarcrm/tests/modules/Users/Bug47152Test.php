@@ -16,7 +16,7 @@ require_once 'modules/Users/User.php';
 /**
  * @ticket 47152
  */
-class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug47152Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public $_user = null;
 

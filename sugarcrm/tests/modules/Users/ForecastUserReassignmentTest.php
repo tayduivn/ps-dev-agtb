@@ -21,7 +21,7 @@ require_once('modules/Forecasts/ForecastsSeedData.php');
  *
  * @ticket sfa-219
  */
-class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCase
+class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 {
     private $_users;
     private $_users_ids;

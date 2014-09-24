@@ -20,7 +20,7 @@ require_once('tests/modules/Users/AuthenticateTest.php');
  * This tests mimics the contents of modules/Users/authentication/SAMLAuthenticate/index.php by placing it
  * in a custom directory minus the header() function call.  We can't include that because it'd just cause other issues
  */
-class Bug50936Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug50936Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $customContents;
 

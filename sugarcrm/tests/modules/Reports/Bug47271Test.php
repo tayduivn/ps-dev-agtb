@@ -15,7 +15,7 @@
 require_once('modules/Reports/views/view.buildreportmoduletree.php');
 require_once('modules/Reports//SavedReport.php');
 
-class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug47271Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $orig_name;
 
