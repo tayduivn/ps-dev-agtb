@@ -526,8 +526,10 @@ class HealthCheckScanner
         }
 
         // check non-upgrade-safe customizations by verifying md5's
+        // TODO: uncomment when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
+        /*
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/|)#";
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
         foreach($this->md5_files as $file => $sum) {
             if(preg_match($skip_prefixes, $file)) {
                 continue;
@@ -539,6 +541,7 @@ class HealthCheckScanner
                 $this->updateStatus("md5Mismatch", $file, $sum);
             }
         }
+        */
 
         foreach($this->getModuleList() as $module) {
             $this->log("Checking module $module");
