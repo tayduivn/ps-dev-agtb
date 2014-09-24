@@ -176,7 +176,7 @@ class MetadataApi extends SugarApi
         $mm = $this->getMetaDataManager($api->platform);
 
         // Get the metadata hash if there is one for eTag checking
-        $hash = $mm->getMetadataHash();
+        $hash = $mm->getMetadataHash(true);
 
         // ETag that bad boy
         if ($hash && $api->generateETagHeader($hash)) {
@@ -222,7 +222,7 @@ class MetadataApi extends SugarApi
         $mm = $this->getMetaDataManager($api->platform, true);
 
         // Get the metadata hash if there is one for eTag checking
-        $hash = $mm->getMetadataHash();
+        $hash = $mm->getMetadataHash(true);
 
         // ETag that bad boy
         if ($hash && $api->generateETagHeader($hash)) {
