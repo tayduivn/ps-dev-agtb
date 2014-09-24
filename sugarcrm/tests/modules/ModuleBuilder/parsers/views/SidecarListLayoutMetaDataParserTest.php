@@ -305,7 +305,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     }
 
     /**
-     * @covers SidecarListLayoutMetaDataParser:resetPanelFields()
+     * @covers SidecarListLayoutMetaDataParser::resetPanelFields()
      */
     public function testResetPanelFieldsRemovesAllFields()
     {
