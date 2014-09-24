@@ -176,13 +176,13 @@ $mod_strings = array(
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
 
-    'LBL_SCAN_101_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
-    'LBL_SCAN_102_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
-    'LBL_SCAN_103_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
-    'LBL_SCAN_104_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
-    'LBL_SCAN_105_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
+    'LBL_SCAN_101_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
+    'LBL_SCAN_102_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
+    'LBL_SCAN_103_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
+    'LBL_SCAN_104_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
+    'LBL_SCAN_105_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
 
-    'LBL_SCAN_201_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations have been upgraded to Sugar7.',
+    'LBL_SCAN_201_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
 
     'LBL_SCAN_301_DESCR' => 'Certain customizations were detected and were not migrated to Sugar7.  This module (%s) will continue to be available but it will be run in Backwards Compatability Mode on Sugar7.',
     'LBL_SCAN_302_DESCR' => 'Unknown file views were detected and were not migrated to Sugar7.  This module (%s) will continue to be available but it will be run in Backwards Compatability Mode on Sugar7. ',
