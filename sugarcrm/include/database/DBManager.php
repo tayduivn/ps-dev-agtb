@@ -2327,9 +2327,9 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = false)
 	{
-		$primaryField = $bean->getPrimaryFieldDefinition();
-		$columns = array();
-        $data= array();
+        $dataFields = array();
+        $dataValues = array();
+        $primaryField = $bean->getPrimaryFieldDefinition();
         $fields = $bean->getFieldDefinitions();
 		// get column names and values
 		foreach ($fields as $field => $fieldDef) {
@@ -2348,73 +2348,135 @@ protected function checkQuery($sql, $object_name = false)
     		// no need to clear deleted since we only update not deleted records anyway
     		if($fieldDef['name'] == 'deleted' && empty($bean->deleted)) continue;
 
-    		if(isset($bean->$field)) {
-    			$val = $this->decodeHTML($bean->$field);
-    		} else {
+    		if(!isset($bean->$field)) {
     			continue;
     		}
 
-    		$fieldType = $this->getFieldType($fieldDef);
-
-    		if($fieldType == 'bool'){
-    			$val = $bean->getFieldValue($field);
-    		}
-
-    		if(strlen($val) == 0) {
-    			if (!empty($fieldDef['required']) && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-    				$val = $fieldDef['default'];
-    			} else {
-    				$val = null;
-    			}
-    		}
-
-    		if(!empty($val) && !empty($fieldDef['len']) && strlen($val) > $fieldDef['len']) {
-			    $val = $this->truncate($val, $fieldDef['len']);
-			}
-
-			if(!is_null($val) || !empty($fieldDef['required'])) {
-			    $val = $this->massageValue($val, $fieldDef, $usePreparedStatements);
-			} elseif($this->isNullable($fieldDef)) {
-			    $val = $usePreparedStatements?null:'NULL';
-			} else {
-			    $val = $this->emptyValue($fieldType, $usePreparedStatements);
-			}
-
-			if ($usePreparedStatements) {
-			    $columns[] = "{$fieldDef['name']}=".$this->convert("?$fieldType", $fieldType);
-			    $data[] = $val;
-			} else {
-			    $columns[] = "{$fieldDef['name']}=$val";
-			}
+            $dataValues[$field] = $bean->$field;
+            $dataFields[$field] = $fieldDef;
 		}
 
-		if (empty($columns)) {
+		if (empty($dataValues)) {
 			return ""; // no columns set
 		}
 
         // build where clause
 		$where_data = $this->updateWhereArray($bean, $where, $usePreparedStatements);
-		$where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+        if (isset($fields['deleted'])) {
+            $where_data['deleted'] = "0";
+        }
+        foreach ($where_data as $field => $value) {
+            $dataFields[$field] = $fields[$field];
+        }
 
-        if(isset($fields['deleted'])) {
-            $where .= " AND deleted=0";
+        return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data, null, false, $usePreparedStatements);
+	}
+
+    /**
+     * Update data in table by parameter definition
+     *
+     * @param string $table Table name
+     * @param array $field_defs Definitions in vardef-like format
+     * @param array $data Key/value for update
+     * @param array $where Key/value for where
+     * @param array $field_map Fields map from SugarBean
+     * @param bool $execute Execute or return query?
+     * @param bool $usePreparedStatements
+     *
+     * @return bool|string|array|PreparedStatement query result
+     */
+    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePreparedStatements = false)
+    {
+        $values = array();
+        foreach ($field_defs as $field => $fieldDef) {
+            if (!array_key_exists($field, $data)) {
+                continue;
+            }
+            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db') {
+                continue;
+            }
+            //custom fields handle their save separately
+            if (!empty($field_map) && !empty($field_map[$field]['custom_type'])) {
+                continue;
+            }
+
+            $fieldType = $this->getFieldType($fieldDef);
+            $val = $this->decodeHTML($data[$field]);
+
+            if (strlen($val) == 0) {
+                if (!empty($fieldDef['required']) && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+                    $val = $fieldDef['default'];
+                } else {
+                    $val = null;
+                }
+            }
+
+            if ($fieldType == 'bool') {
+                $val = (int)$val;
+            }
+
+            //handle auto increment values here - we may have to do something like nextval for oracle
+            if (!empty($fieldDef['auto_increment'])) {
+                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+                if (!empty($auto)) {
+                    $values[$field] = $auto;
+                }
+            } elseif (!is_null($val) || !empty($fieldDef['required'])) {
+                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+            } elseif ($this->isNullable($fieldDef)) {
+                $values[$field] = $usePreparedStatements ? null : 'NULL';
+            } else {
+                $values[$field] = $this->emptyValue($fieldType, $usePreparedStatements);
+            }
+        }
+
+        if (empty($values)) {
+            return $execute ? true : ''; // no columns set
+        }
+
+        if ($usePreparedStatements) {
+            $types = array();
+            foreach ($where as $field => $value) {
+                $types[$field] = '?' . $field_defs[$field]['type'];
+            }
+            $whereString = $this->getColumnWhereClause($table, $types, true);
+        } else {
+            $whereString = $this->getColumnWhereClause($table, $where);
+        }
+        if (!empty($whereString)) {
+            $whereString = ' WHERE ' . $whereString;
         }
 
         if (!$usePreparedStatements) {
-            return "UPDATE ".$bean->getTableName()."
-					SET ".implode(",", $columns)."
-					$where";
-        }
-        else {  //Prepared Statement
-            $data = array_merge($data, array_values($where_data));
-            $query = "UPDATE ".$bean->getTableName()."
-					 SET ".implode(",", $columns)."
-					 $where";
-            return array($query, $data);
-        }
+            $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
+            $sep = ' ';
+            foreach ($values as $field => $value) {
+                $query .= $sep . $field . '=' . $value;
+                $sep = ', ';
+            }
+            $query .= "\n\t\t\t\t\t" . $whereString;
 
+            if (!$execute) {
+                return $query;
+            }
+            return $this->query($query);
+        } else { //Prepared Statement
+            $data = array_merge(array_values($values), array_values($where));
+            $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
+            $sep = ' ';
+            foreach ($values as $field => $value) {
+                $type = $this->getFieldType($field_defs[$field]);
+                $query .= $sep . $field . '=' . $this->convert("?$type", $type);
+                $sep = ', ';
+            }
+            $query .= "\n\t\t\t\t\t" . $whereString;
 
-	}
+            if (!$execute) {
+                return array($query, $data);
+            }
+            return $this->preparedQuery($query, $data);
+        }
+    }
 
 	/**
 	 * This method returns a where array so that it has id entry if
