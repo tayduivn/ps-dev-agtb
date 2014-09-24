@@ -371,7 +371,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Test to make sure that when num_grp_sep is passed with out a sugarDefaultConfig Name it returns null if not set
      *
-     * @covers getPrecedentPreference
+     * @covers Localization::getPrecedentPreference
      */
     public function testGetPrecedentPreferenceReturnsNullForNumGrpSep()
     {
@@ -382,7 +382,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
      * Test to make sure that the proper value is returned from getPrecedentPreference for num_grp_sep
      * when the user has one
      *
-     * @covers getPrecedentPreference
+     * @covers Localization::getPrecedentPreference
      */
     public function testGetPrecedentPreferenceReturnsValueForNumGrpSep()
     {
