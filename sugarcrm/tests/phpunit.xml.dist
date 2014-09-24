@@ -33,6 +33,9 @@
     </php>
 
     <testsuites>
+        <testsuite name="SugarLogic">
+            <directory>./include/Expressions/Expression</directory>
+        </testsuite>
         <testsuite name="Sugar Customization Test Suite">
             <directory>../custom/tests/</directory>
         </testsuite>

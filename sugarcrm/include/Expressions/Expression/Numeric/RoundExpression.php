@@ -9,21 +9,25 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
- * <b>floor(Number n)</b><br>
- * Returns <i>n</i> rounded down to the next integer.<br/>
- * ex: <i>floor(5.73)</i> = 5
+ * <b>round(Number n, Number p)</b><br/>
+ * Returns </i>n</i> to the <i>p</i> precision.<br/>
+ * ex: <i>round('3.666666', 2)</i> = 3.67
  */
-class FloorExpression extends NumericExpression
+class RoundExpression extends NumericExpression
 {
     /**
-     * Returns the negative of the expression that it contains.
+     * Rounds the first param down into a specific precision
      */
     public function evaluate()
     {
-        return floor($this->getParameters()->evaluate());
+        $params = $this->getParameters();
+
+        $base = $params[0]->evaluate();
+        $precision = $params[1]->evaluate();
+
+        return SugarMath::init($base, $precision)->result();
     }
 
     /**
@@ -31,9 +35,14 @@ class FloorExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-			return Math.floor( this.getParameters().evaluate() );
-EOQ;
+        return <<<JS
+			var params = this.getParameters();
+
+			var base = params[0].evaluate();
+			var precision = params[1].evaluate();
+
+			return this.context.round(base, precision);
+JS;
     }
 
     /**
@@ -42,7 +51,7 @@ EOQ;
      */
     public static function getOperationName()
     {
-        return "floor";
+        return array('round');
     }
 
     /**
@@ -50,6 +59,6 @@ EOQ;
      */
     public static function getParamCount()
     {
-        return 1;
+        return 2;
     }
 }

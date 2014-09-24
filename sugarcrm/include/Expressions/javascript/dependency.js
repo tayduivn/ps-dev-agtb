@@ -933,45 +933,101 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
     getElement : function(variable) {
         return AH.getElement(variable, this.formName);
     },
+
     /**
-     * Used to Add Currency Values
+     * Do math calculations in javascript,
+     * sans floating point errors.
      *
-     * @param {String} start        What we are starting with
-     * @param {String} add          What we want to add to the value
-     * @return {String}
+     * ex. $10.52 is really 1052 cents. Think of currency as
+     * cents and apply math that way (as integers)  and this should
+     * help keep floating point issues out of the picture.
+     *
+     * @param {String} operator
+     * @param {Number} n1
+     * @param {Number|undefined} n2
+     * @param {Number|undefined} (decimals)
+     * @param {boolean|undefined} (fixed) return value as fixed string
+     * @return {Number|String} rounded amount
      */
-    currencyAdd: function(start, add) {
-        return (parseFloat(start) + parseFloat(add)).toFixed(6);
+    _math: function(operator, n1, n2, decimals, fixed) {
+        decimals = (_.isFinite(decimals) && decimals >= 0) ? parseInt(decimals) : 6;
+        fixed = fixed || false;
+        var result;
+        var divisor = Math.pow(10, decimals);
+        var r1 = parseFloat(n1) * divisor;
+        var r2 = !_.isUndefined(n2) ? (parseFloat(n2) * divisor) : undefined;
+        switch (operator) {
+            case 'round':
+                result = Math.round(r1) / divisor;
+                break;
+            case 'add':
+                result = (r1 + r2) / divisor;
+                break;
+            case 'sub':
+                result = (r1 - r2) / divisor;
+                break;
+            case 'mul':
+                result = this.round(r1 * r2 / divisor / divisor, decimals, fixed);
+                break;
+            case 'div':
+                result = this.round(r1 / r2, decimals, fixed);
+                break;
+            default:
+                // no valid operator, just return number
+                return n1;
+                break;
+        }
+        return (fixed && !_.isString(result)) ? result.toFixed(decimals) : result;
     },
     /**
-     * Used to Subtract Currency Values
+     * Used to Add Values
      *
-     * @param {String} start        What we are starting with
-     * @param {String} subtract          What we want to subtract from the value
+     * @param {String|Number} start        What we are starting with
+     * @param {String|Number} add          What we want to add to the value
      * @return {String}
      */
-    currencySubtract: function(start, subtract) {
-        return (parseFloat(start) - parseFloat(subtract)).toFixed(6);
+    add: function(start, add) {
+        return this._math('add', start, add, 6, true);
     },
     /**
-     * Used to Multiply Currency Values
+     * Used to Subtract Values
      *
-     * @param {String} start        What we are starting with
-     * @param {String} multiply     What we want to multipy by
+     * @param {String|Number} start        What we are starting with
+     * @param {String|Number} subtract          What we want to subtract from the value
      * @return {String}
      */
-    currencyMultiply: function(start, multiply) {
-        return (parseFloat(start) * parseFloat(multiply)).toFixed(6);
+    subtract: function(start, subtract) {
+        return this._math('sub', start, subtract, 6, true);
     },
     /**
-     * Used to Divide Currency Values
+     * Used to Multiply Values
      *
-     * @param {String} start        What we are starting with
-     * @param {String} divide       What we want to divide the currency value by
+     * @param {String|Number} start        What we are starting with
+     * @param {String|Number} multiply     What we want to multipy by
      * @return {String}
      */
-    currencyDivide: function(start, divide) {
-        return (parseFloat(start) / parseFloat(divide)).toFixed(6);
+    multiply: function(start, multiply) {
+        return this._math('mul', start, multiply, 6, true);
+    },
+    /**
+     * Used to Divide Values
+     *
+     * @param {String|Number} start        What we are starting with
+     * @param {String|Number} divide       What we want to divide the currency value by
+     * @return {String}
+     */
+    divide: function(start, divide) {
+        return this._math('div', start, divide, 6, true);
+    },
+    /**
+     * Used to Round Values
+     *
+     * @param {String|Number} start        What we are starting with
+     * @param {String|Number} divide       What we want to divide the currency value by
+     * @return {String}
+     */
+    round: function(start, precision) {
+        return this._math('round', start, precision, true);
     }
 });
 

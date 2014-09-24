@@ -9,10 +9,31 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Parser/Parser.php");
 
-class Bug63681Test extends Sugar_PHPUnit_Framework_TestCase
+class AddExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @dataProvider dataProviderTestEvaluate
+     */
+    public function testEvaluate($test, $expected)
+    {
+        $result = Parser::evaluate($test)->evaluate();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderTestEvaluate()
+    {
+        return array(
+            array('add(1, 1, "1")', '3'),
+            array('add("33.333333", "33.333333")', '66.666666'),
+        );
+    }
+
+    /**
+     *
+     * @bug 63681
+     * @throws Exception
+     */
     public function testValueOfEmptyString()
     {
         $expr = 'add(number(""), number("1"))';
@@ -20,3 +41,4 @@ class Bug63681Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $result);
     }
 }
+

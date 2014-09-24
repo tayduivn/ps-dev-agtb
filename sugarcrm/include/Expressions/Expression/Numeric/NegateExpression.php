@@ -23,7 +23,7 @@ class NegateExpression extends NumericExpression
      */
     public function evaluate()
     {
-        return -1 * $this->getParameters()->evaluate();
+        return SugarMath::init('-1')->mul($this->getParameters()->evaluate())->result();
     }
 
     /**
@@ -32,12 +32,12 @@ class NegateExpression extends NumericExpression
     public static function getJSEvaluate()
     {
         return <<<EOQ
-			return -1 * this.getParameters().evaluate();
+			return this.context.multiply('-1', this.getParameters().evaluate());
 EOQ;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()

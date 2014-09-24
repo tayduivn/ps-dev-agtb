@@ -20,7 +20,10 @@ require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 class SumRelatedExpression extends NumericExpression
 {
     /**
-     * Returns the entire enumeration bare.
+     * Finds any related records based on the `link` then takes the `field` and adds all the values up and returns
+     * the sum.
+     *
+     * @return String
      */
     public function evaluate()
     {
@@ -29,15 +32,41 @@ class SumRelatedExpression extends NumericExpression
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
 
-        $ret = 0;
+        $ret = '0';
 
         if (!is_array($linkField) || empty($linkField)) {
             return $ret;
         }
 
+        if (!isset($this->context)) {
+            //If we don't have a context provided, we have to guess. This can be a large performance hit.
+            $this->setContext();
+        }
+        $toRate = isset($this->context->base_rate) ? $this->context->base_rate : null;
+
+        $checkedTypeForCurrency = false;
+        $relFieldIsCurrency = false;
+
+        $precision = 6;
+
         foreach ($linkField as $bean) {
+            // only check the target field once to see if it's a currency field.
+            if ($checkedTypeForCurrency === false) {
+                $checkedTypeForCurrency = true;
+                $relFieldIsCurrency = $this->isCurrencyField($bean, $relfield);
+                if (!$relFieldIsCurrency) {
+                    // only get the precision when we are not on a currency field, as currency should always be 6
+                    $precision = $this->getFieldPrecision($bean, $relfield);
+                }
+            }
             if (!empty($bean->$relfield)) {
-                $ret += $bean->$relfield;
+                $value = $bean->$relfield;
+                // if we have a currency field, it needs to convert the value into the rate of the row it's
+                // being returned to.
+                if ($relFieldIsCurrency) {
+                    $value = SugarCurrency::convertWithRate($value, $bean->base_rate, $toRate);
+                }
+                $ret = SugarMath::init($ret, $precision)->add($value)->result();
             }
         }
 
@@ -68,12 +97,12 @@ EOQ;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return array("rollupSum");
+        return array("rollupSum", "rollupCurrencySum");
     }
 
     /**

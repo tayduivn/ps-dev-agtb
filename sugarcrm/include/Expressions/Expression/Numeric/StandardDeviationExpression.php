@@ -33,20 +33,19 @@ class StandardDeviationExpression extends NumericExpression
         foreach ($params as $param) {
             $value = $param->evaluate();
             $values[] = $value;
-            $sum += $value;
+            $sum = SugarMath::init($sum)->add($value)->result();
         }
-        $mean = $sum / $count;
+        $mean = SugarMath::init($sum)->div($count)->result();
 
         // find the summation of deviations
         $deviation_sum = 0;
         foreach ($values as $value) {
-            $deviation_sum += pow($value - $mean, 2);
+            $deviation_sum = SugarMath::init($value)->sub($mean)->pow(2)->add($deviation_sum)->result();
         }
 
         // find the std dev
-        $variance = (1 / $count) * $deviation_sum;
+        return SugarMath::init()->exp('((1/?)*?)', array($count, $deviation_sum))->sqrt()->result();
 
-        return sqrt($variance);
     }
 
     /**
@@ -64,24 +63,24 @@ class StandardDeviationExpression extends NumericExpression
 			for (var i = 0; i < params.length; i++) {
 				value = params[i].evaluate();
 				values[values.length] = value;
-				sum += value;
+				sum = this.context.add(sum, value);
 			}
-			var mean = sum / count;
+			var mean = this.context.divide(sum, count);
 
 			// find the summation of deviations
 			var deviation_sum = 0;
 			for ( var i = 0; i < values.length; i++ )
-				deviation_sum += Math.pow(values[i] - mean, 2);
+				deviation_sum += Math.pow(this.context.subtract(values[i], mean), 2);
 
 			// find the std dev
-			var variance = (1/count)*deviation_sum;
+			var variance = this.context.multiply(this.context.divide(1, count), deviation_sum);
 
 			return Math.sqrt(variance);
 EOQ;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()

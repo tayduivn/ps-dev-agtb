@@ -19,42 +19,45 @@ require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 class SubtractExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @returns string
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $params = $this->getParameters();
         $diff = $params[0]->evaluate();
         for ($i = 1; $i < sizeof($params); $i++) {
-            $diff -= $params[$i]->evaluate();
+            $diff = SugarMath::init($diff, 6)->sub($params[$i]->evaluate())->result();
         }
 
-        return $diff;
+        return (string)$diff;
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-			var params = this.getParameters();
-			var diff   = params[0].evaluate();
+        return <<<JS
+			var params = this.getParameters(),
+			diff   = params[0].evaluate();
 			for (var i = 1; i < params.length; i++) {
-				diff -= params[i].evaluate();
-			}
+                diff = this.context.subtract(diff, params[i].evaluate());
+            }
 			return diff;
-EOQ;
+JS;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return "subtract";
+        return array('subtract', 'currencySubtract', 'sub');
     }
 
     /**
