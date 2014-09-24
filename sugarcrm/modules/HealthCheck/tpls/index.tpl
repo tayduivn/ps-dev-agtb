@@ -11,7 +11,7 @@
  */
 *}
 
-<link rel="stylesheet" href="{sugar_getjspath file='modules/HealthCheck/static/css.css'}"/>
+<link rel="stylesheet" href="{sugar_getjspath file='styleguide/assets/css/upgrade.css'}"/>
 <script src='{sugar_getjspath file='include/javascript/jquery/jquery-min.js'}'></script>
 <script src='{sugar_getjspath file='include/javascript/phpjs/get_html_translation_table.js'}'></script>
 <script src='{sugar_getjspath file='include/javascript/phpjs/htmlentities.js'}'></script>
@@ -91,7 +91,7 @@
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible" href="index.php">Cancel</a>
+            <a class="btn btn-invisible btn-link" href="index.php">Cancel</a>
             <a class="btn btn-primary" href="#2" name="next_button">Next</a>
           </span>
         </div>
@@ -121,9 +121,9 @@
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible" href="index.php">Cancel</a>
-            <a class="btn btn-invisible send-logs" href="javascript:void(0);">Send Log to Sugar</a>
-            <a class="btn btn-invisible" href="index.php?module=HealthCheck&action=export">Export Log</a>
+            <a class="btn btn-invisible btn-link" href="index.php">Cancel</a>
+            <a class="btn btn-invisible btn-link send-logs" href="javascript:void(0);">Send Log to Sugar</a>
+            <a class="btn btn-invisible btn-link" href="index.php?module=HealthCheck&action=export">Export Log</a>
               {if isset($smarty.get.referrer)}
                   <a class="btn btn-primary disabled" href="index.php?module=HealthCheck&action=confirm"
                      name="next_button">Confirm</a>
