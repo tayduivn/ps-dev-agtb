@@ -210,11 +210,22 @@ class RenameModules
     }
 
     /**
+     * Manually set the changedModules when running this code outside the browser.
+     */
+    public function setChangedModules($modules)
+    {
+        if (!empty($modules)) {
+	        $this->changedModules = $modules;
+        }
+    }
+
+    /**
      * Changes module names in related module strings
      *
      * @return RenameModules
      */
-    protected function changeStringsInRelatedModules()
+
+    public function changeStringsInRelatedModules()
     {
         $this->setRenameDefs();
         if (isset($this->renameDefs['modules']) && is_array($this->renameDefs['modules'])) {
