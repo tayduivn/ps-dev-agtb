@@ -215,13 +215,6 @@ $dictionary['KBDocument'] = array(
     'reportable'=>false,
     'audited'=>true,
   ),
-  'case_kbdocuments' => array (
-    'name' => 'case_kbdocuments',
-    'type' => 'link',
-    'relationship' => 'kbdocument_revisions',
-    'source' => 'non-db',
-    'vname' => 'LBL_CASES',
-  ),
   'cases' => array (
     'name' => 'cases',
     'type' => 'link',
@@ -505,6 +498,7 @@ $dictionary['KBDocument'] = array(
         'module'          => 'Cases',
         'massupdate'      => false,
         'duplicate_merge' => 'disabled',
+        'reportable'      => false,
     ),
 
     'case_name' => array(
@@ -512,7 +506,7 @@ $dictionary['KBDocument'] = array(
         'rname'           => 'name',
         'vname'           => 'LBL_CASE',
         'type'            => 'relate',
-        'link'            => 'case_kbdocuments',
+        'link'            => 'revisions',
         'isnull'          => 'true',
         'reportable'      => false,
         'source'          => 'non-db',
