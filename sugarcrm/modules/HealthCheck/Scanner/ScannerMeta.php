@@ -205,10 +205,10 @@ class HealthCheckScannerMeta
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
         ),
-//        523 => array(
-//            'report' => 'byRefInHookFile',
-//            'bucket' => self::MANUAL,
-//        ),
+        523 => array(
+            'report' => 'byRefInHookFile',
+            'bucket' => self::MANUAL,
+        ),
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
