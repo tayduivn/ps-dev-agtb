@@ -46,6 +46,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DATE',
           'enabled' => true,
           'default' => true,
+          'readonly' => true,
         ),
         array(
           'name' => 'date_end',

@@ -45,6 +45,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_start',
+          'readonly' => true,
         ),
         array(
           'label' => 'LBL_DATE_END',

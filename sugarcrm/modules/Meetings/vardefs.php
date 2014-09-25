@@ -157,7 +157,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
     'studio' => array('recordview' => false),
-	'readonly' => true,
   ),
 
   'date_end' =>

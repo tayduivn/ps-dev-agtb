@@ -67,7 +67,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
     'studio' => array('recordview' => false),
-    'readonly' => true,
   ),
 
   'date_end' =>
