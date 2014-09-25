@@ -713,6 +713,9 @@
     display: table;
     min-height: 0;
     width: 100%;
+    .calcWidth(~"100% + 2px");
+  }
+  .record-cell:not(.span12) .normal > .fieldset-inline {
     .calcWidth(~"100% + 16px");
   }
   .fieldset-inline {
@@ -724,6 +727,7 @@
         min-height: 18px;
         margin: -2px 0 2px;
         display: block;
+        white-space: nowrap;
         &:empty {
           display: none;
           &+ .edit {
@@ -742,8 +746,14 @@
       }
     }
     &.edit {
-      .fieldset-field:not(:last-child) {
-        padding-right: 16px;
+      .fieldset-field {
+        &[data-type="label"] {
+          padding: 0 12px 0 4px;
+          text-align: center;
+        }
+        //&:not(:last-child) {
+        // padding-right: 8px;
+        //}
       }
     }
   }
