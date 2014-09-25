@@ -14,13 +14,29 @@ describe('View.Fields.Base.ParticipantsField', function() {
     module = 'Meetings';
 
     participants = [
-        {_module: 'Users', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept', delta: 0},
-        {_module: 'Users', id: '2', name: 'Will Weston', accept_status_meetings: 'decline', delta: 0},
-        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative', delta: 0},
-        {_module: 'Leads', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', delta: 0}
+        {_module: 'Users', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept'},
+        {_module: 'Users', id: '2', name: 'Will Weston', accept_status_meetings: 'decline'},
+        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative'},
+        {_module: 'Leads', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none'}
     ];
 
-    fieldDef = {links: ['users', 'contacts', 'leads']};
+    fieldDef = {
+        name: 'invitees',
+        source: 'non-db',
+        type: 'collection',
+        vname: 'LBL_INVITEES',
+        links: ['contacts', 'leads', 'users'],
+        order_by: 'name:asc',
+        fields: [
+            {
+                name: 'name',
+                type: 'name',
+                label: 'LBL_SUBJECT'
+            },
+            'accept_status_meetings',
+            'picture'
+        ]
+    };
 
     fixture = {
         _hash: '12345678910',
@@ -59,7 +75,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
-        SugarTest.loadPlugin('CollectionAttribute');
+        SugarTest.loadPlugin('VirtualCollection');
         SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
         app.data.declareModelClass('Users', null, 'base', fixture);
@@ -100,7 +116,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -109,16 +125,15 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 context
             );
             // skip rendering
-            field.model.off('change:invitees');
+            field.model.off('change:' + field.name);
         });
 
         it('should return the collection', function() {
-            field.model.get('invitees').reset(participants);
+            field.model.set(field.name, participants);
             expect(field.getFieldValue().length).toBe(participants.length);
         });
 
-        it('should throw an exception when the field value is the wrong type', function() {
-            field.model.set('invitees', 'foo');
+        it('should throw an exception when the field value has not been set', function() {
             expect(function() {
                 var value = field.getFieldValue();
             }).toThrow();
@@ -127,15 +142,11 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
     describe('when creating a new meeting', function() {
         it('should add the current user to the collection', function() {
-            var currentUser = app.data.createBean('Users', {_module: 'Users', id: '1', name: 'Jim Brennan'});
-            sandbox.stub(currentUser, 'fetch', function() {
-                this.trigger('sync', this);
-            });
-            sandbox.stub(app.data, 'createBean').returns(currentUser);
+            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
             sandbox.stub(model, 'isNew').returns(true);
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'edit',
                 fieldDef,
@@ -144,6 +155,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 context
             );
             expect(field.getFieldValue().length).toBe(1);
+            app.user.attributes = {};
         });
     });
 
@@ -152,7 +164,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -160,7 +172,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 model,
                 context
             );
-            field.getFieldValue().reset(participants);
+            field.model.set(field.name, participants);
         });
 
         it('should render one row for each participant', function() {
@@ -185,7 +197,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'edit',
                 fieldDef,
@@ -194,7 +206,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 context
             );
             field.action = 'edit';
-            field.getFieldValue().reset(participants);
+            field.model.set(field.name, participants);
         });
 
         it('should hide the select initially', function() {
@@ -329,7 +341,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub(model, 'isNew').returns(false);
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -340,49 +352,50 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should return an empty array when an exception is thrown', function() {
-            field.getFieldValue().reset(participants);
+            field.model.set(field.name, participants);
             sandbox.stub(field, 'getFieldValue').throws();
             expect(field.format(undefined).length).toBe(0);
         });
 
-        it('should only return participants whose deltas are greater than -1', function() {
-            var collection = field.getFieldValue();
-            collection.reset(participants);
+        it('should only return an array of 4 participants', function() {
+            var collection;
+            field.model.set(field.name, participants);
+            collection = field.getFieldValue();
             collection.add([
                 {_module: 'Contacts', id: '5', name: 'George Walton'},
                 {_module: 'Contacts', id: '6', name: 'Jim Long'}
             ]);
             collection.remove(['2', '4']);
-            expect(collection.length).toBe(participants.length + 2);
-            expect(field.format(undefined).length).toBe(participants.length);
+            expect(field.format(field.model.get(field.name)).length).toBe(4);
         });
 
         it('should set the last property to true for only the final participant', function() {
             var isLast;
-            field.getFieldValue().reset(participants);
-            isLast = _.findWhere(field.format(undefined), {last: true});
+            field.model.set(field.name, participants);
+            isLast = _.findWhere(field.format(field.model.get(field.name)), {last: true});
             expect(isLast.name).toEqual('Sallie Talmadge');
         });
 
         it('should only include an avatar property when the participant has a picture field', function() {
             var hasAvatar;
             sandbox.stub(field, '_render');
-            field.getFieldValue().reset([
+            field.model.set(field.name, [
                 {_module: 'Contacts', id: '5', name: 'George Walton', picture: '5'},
                 {_module: 'Contacts', id: '6', name: 'Jim Long'}
             ]);
-            hasAvatar = _.filter(field.format(undefined), function(participant) {
+            hasAvatar = _.filter(field.format(field.model.get(field.name)), function(participant) {
                 return !_.isUndefined(participant.avatar);
             });
             expect(hasAvatar.length).toBe(1);
         });
 
         it('should set the accept status appropriately', function() {
-            var collection, formatted;
-            collection = field.getFieldValue();
-            collection.reset(participants);
-            collection.add([{_module: 'Contacts', id: '5', name: 'George Walton', accept_status_meetings: ''}]);
-            formatted = field.format(undefined);
+            var formatted;
+            field.model.set(field.name, participants);
+            field.getFieldValue().add([
+                {_module: 'Contacts', id: '5', name: 'George Walton', accept_status_meetings: ''}
+            ]);
+            formatted = field.format(field.model.get(field.name));
             expect(formatted[0].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_ACCEPT');
             expect(formatted[0].accept_status.css_class).toEqual('success');
             expect(formatted[1].accept_status.label).toEqual('LBL_CALENDAR_EVENT_RESPONSE_DECLINE');
@@ -400,7 +413,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         beforeEach(function() {
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -408,8 +421,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 model,
                 context
             );
+            field.model.set(field.name, participants);
             field.model.off();
-            field.getFieldValue().reset(participants);
             field.model.set('date_start', '2014-08-27T08:45');
             field.model.set('date_end', '2014-08-27T10:15');
 
@@ -488,7 +501,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         beforeEach(function() {
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -586,7 +599,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         beforeEach(function() {
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,
@@ -640,7 +653,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         beforeEach(function() {
             field = SugarTest.createField(
                 'base',
-                'invitees',
+                fieldDef.name,
                 'participants',
                 'detail',
                 fieldDef,

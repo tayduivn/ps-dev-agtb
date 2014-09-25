@@ -46,14 +46,7 @@
      * View.Fields.Base.ParticipantsField#search methods so that these event
      * handlers do not execute too frequently.
      *
-     * Initializes the participants collection on the {@link Bean model} and
-     * fetches the collection if the model is not new.
-     *
-     * The current user is added to the collection if the model is new. The
-     * delta for this model is set to 0 because the server will automatically
-     * link the current user anyway. Setting the delta to 0 allows
-     * {@link Bean#revertAttributes} and {@link Bean#changedAttributes} to
-     * behave as if this initialization did not dirty the collection.
+     * The current user is added to the collection if the model is new.
      */
     initialize: function(options) {
         var currentUser;
@@ -68,25 +61,9 @@
         this.previewRow = _.debounce(this.previewRow, 200);
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
 
-        this.model.trigger('collection:initialize', this.name, {links: this.def.links});
-
         if (this.model.isNew()) {
-            currentUser = app.data.createBean('Users', {id: app.user.id});
-            currentUser.once('sync', function(model) {
-                try {
-                    model.set('delta', 0);
-                    this.getFieldValue().add(model);
-                } catch (e) {
-                    app.logger.warn(e);
-                }
-            }, this);
-            currentUser.fetch();
-        } else {
-            try {
-                this.getFieldValue().fetch();
-            } catch (e) {
-                app.logger.warn(e);
-            }
+            currentUser = _.extend({_module: 'Users'}, app.utils.deepCopy(app.user));
+            this.model.set(this.name, [currentUser]);
         }
 
         // get template for timeline header
@@ -107,7 +84,7 @@
      * Returns the collection stored for this field.
      *
      * @throws An exception when the value is not a collection
-     * @return {CollectionAttribute}
+     * @return {VirtualCollection}
      */
     getFieldValue: function() {
         var value = this.model.get(this.name);
@@ -534,7 +511,7 @@
      * Converts the models found in the collection to ones that can be used in
      * the templates.
      *
-     * @param {CollectionAttribute} value
+     * @param {VirtualCollection} value
      * @return {Object} Array of models with view properties defined
      * @return {String} return.Object.accept_status The translated string
      * indicating the model's accept status
@@ -552,7 +529,7 @@
      * the model when hovering over the preview button
      */
     format: function(value) {
-        var acceptStatus, acceptStatusFieldName, deletable, i, participants, preview, rows, self;
+        var acceptStatus, acceptStatusFieldName, deletable, i, preview, rows, self;
 
         self = this;
 
@@ -623,13 +600,9 @@
         };
 
         try {
-            participants = this.getFieldValue().filter(function(participant) {
-                return participant.get('delta') > -1;
-            });
-
             i = 1;
-            rows = participants.length;
-            participants = participants.map(function(participant) {
+            rows = value.length;
+            value = value.map(function(participant) {
                 var attributes;
 
                 attributes = {
@@ -652,10 +625,10 @@
             });
         } catch (e) {
             app.logger.warn(e);
-            participants = [];
+            value = [];
         }
 
-        return participants;
+        return value;
     },
 
     /**
@@ -680,11 +653,14 @@
      * @param {Event} event
      */
     removeRow: function(event) {
-        var id = $(event.currentTarget).data('id');
+        var id, participants;
+
+        id = $(event.currentTarget).data('id');
 
         if (id) {
             try {
-                this.getFieldValue().remove(id);
+                participants = this.getFieldValue();
+                participants.remove(participants.get(id));
             } catch (e) {
                 app.logger.warn(e);
             }
@@ -724,7 +700,7 @@
      * [Select2](http://ivaynberg.github.io/select2/) for documentation on
      * using the query function.
      *
-     * The search is limited to ten results and pagination is disabled.
+     * Pagination is disabled.
      *
      * @param {Object} query
      * @param {String} query.term The search term
@@ -743,7 +719,7 @@
             result.each(function(record) {
                 var participant = participants.get(record.id);
 
-                if (participant && participant.get('delta') > -1) {
+                if (participant) {
                     app.logger.debug(record.module + '/' + record.id + ' is already in the collection');
                 } else {
                     record.text = record.get('name');
@@ -755,9 +731,10 @@
         try {
             participants = this.getFieldValue();
             participants.search({
-                limit: 10,
                 query: query.term,
                 success: success,
+                search_fields: ['first_name', 'last_name', 'email', 'account_name'],
+                fields: ['id', 'full_name', 'email', 'account_name'],
                 complete: function() {
                     query.callback(data);
                 }

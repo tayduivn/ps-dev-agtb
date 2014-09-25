@@ -14,13 +14,29 @@ describe('Plugins.SearchForMore', function() {
     module = 'Meetings';
 
     participants = [
-        {_module: 'Contacts', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept', delta: 0},
-        {_module: 'Contacts', id: '2', name: 'Will Weston', accept_status_meetings: 'decline', delta: 0},
-        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative', delta: 0},
-        {_module: 'Contacts', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', delta: 0}
+        {_module: 'Contacts', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept'},
+        {_module: 'Contacts', id: '2', name: 'Will Weston', accept_status_meetings: 'decline'},
+        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative'},
+        {_module: 'Contacts', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none'}
     ];
 
-    fieldDef = {links: ['users', 'contacts', 'leads']};
+    fieldDef = {
+        name: 'invitees',
+        source: 'non-db',
+        type: 'collection',
+        vname: 'LBL_INVITEES',
+        links: ['contacts', 'leads', 'users'],
+        order_by: 'name:asc',
+        fields: [
+            {
+                name: 'name',
+                type: 'name',
+                label: 'LBL_SUBJECT'
+            },
+            'accept_status_meetings',
+            'picture'
+        ]
+    };
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -28,7 +44,7 @@ describe('Plugins.SearchForMore', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
-        SugarTest.loadPlugin('CollectionAttribute');
+        SugarTest.loadPlugin('VirtualCollection');
         SugarTest.loadPlugin('SearchForMore');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
@@ -47,6 +63,7 @@ describe('Plugins.SearchForMore', function() {
         app.data.getRelatedModule.withArgs('Meetings', 'users').returns('Users');
         app.data.getRelatedModule.withArgs('Meetings', 'contacts').returns('Contacts');
         app.data.getRelatedModule.withArgs('Meetings', 'leads').returns('Leads');
+        sandbox.stub(model, 'isNew').returns(false);
 
         appDrawer = app.drawer;
         app.drawer || (app.drawer = {});
@@ -55,7 +72,7 @@ describe('Plugins.SearchForMore', function() {
 
         field = SugarTest.createField(
             'base',
-            'invitees',
+            fieldDef.name,
             'participants',
             'edit',
             fieldDef,
@@ -64,7 +81,7 @@ describe('Plugins.SearchForMore', function() {
             context
         );
         field.action = 'edit';
-        field.getFieldValue().reset(participants);
+        field.model.set(field.name, participants);
         field.render();
         field.$('button[data-action=addRow]').click();
         $el = field.getFieldElement();
@@ -147,7 +164,7 @@ describe('Plugins.SearchForMore', function() {
         var stub = sandbox.stub(app.drawer, 'open');
         field.searchForMore($el);
         expect(stub.args[0][0].layout).toEqual('selection-list-module-switch');
-        expect(stub.args[0][0].context.module).toEqual('Users');
+        expect(stub.args[0][0].context.module).toEqual('Contacts');
         expect(stub.args[0][0].context.filterList.length).toBe(field.def.links.length);
     });
 });
