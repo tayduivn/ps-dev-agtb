@@ -667,6 +667,7 @@ EOF;
         if ($dieIfInvalid) {
             if($inBWC) {
                 if(!empty($this->controller->module)) {
+                    SugarApplication::appendErrorMessage('<b>'.$GLOBALS['app_strings']['ERR_GENERIC_TITLE'].':</b> '.$GLOBALS['app_strings']['LBL_NO_ACTION']);
                     header("Location: index.php?module={$this->controller->module}&action=index");
                 } else {
                     header("Location: index.php?module=Home&action=index");
