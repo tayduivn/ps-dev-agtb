@@ -4382,7 +4382,7 @@ class SugarBean
                         }
 
                         $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
-                        if ($relate_query['select']) {
+                        if ($relate_query['select'] && !isset($data['relationship_fields'])) {
                             $ret_array['secondary_select'] .= ', ' . $relate_query['select'];
                         }
 
