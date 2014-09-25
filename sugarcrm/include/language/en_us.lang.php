@@ -109,6 +109,7 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
     'Tags' => 'Tags',
+    'Categories' => 'Categories',
   ),
 
     'moduleIconList' =>

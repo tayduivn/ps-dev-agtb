@@ -388,13 +388,41 @@ class TreeApi extends FilterApi
      * This method returns formatted tree for selected root.
      * @param Object $api api object
      * @param Array $args arguments passed from api
-     * @return array hierarchy of nodes
+     * @return array formatted collection
      */
     public function tree($api, $args)
     {
         $this->requireArgs($args, array('module', 'root'));
         $seed = $this->retrieveBean($args['module'], $args['root']);
-        return $seed->getTree();
+        return $this->formatTree($api, $args, $seed->getTree());
+    }
+
+    /**
+     * This method format tree data to sugar api collection object.
+     * @param ServiceBase $api api object
+     * @param array $args arguments passed from api
+     * @param array $tree hierarchy of nodes
+     * @return array formatted collection
+     */
+    public function formatTree(ServiceBase $api, array $args, array $tree)
+    {
+        $this->requireArgs($args, array('module'));
+        $data = $emptySet = array(
+            'next_offset' => -1,
+            'records' => array(),
+        );
+
+        foreach ($tree as $node) {
+            if ($node['children']) {
+                $node['children'] = $this->formatTree($api, $args, $node['children']);
+            } else {
+                $node['children'] = $emptySet;
+            }
+
+            $data['records'][] = $node;
+        }
+
+        return $data;
     }
 
     /**
