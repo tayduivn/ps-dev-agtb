@@ -270,17 +270,6 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public function handleSave()
     {
-        if (isset($this->sidecarViewdefs['override_subpanel_list_view']['view']) && isset($this->sidecarViewdefs['override_subpanel_list_view']['link'])) {
-            $subpanelView = $this->sidecarViewdefs['override_subpanel_list_view']['view'];
-            $subpanelLink = self::$supanelData[$this->module][$this->sidecarViewdefs['override_subpanel_list_view']['link']];
-            
-            $fileName = "custom/modules/{$subpanelLink['module']}/clients/{$this->client}/views/{$subpanelView}/{$subpanelView}.php";
-            if (!file_exists($fileName)) {
-                unset($this->sidecarViewdefs);
-                return true;
-            }
-        }
-        
         if($this->collection) {
             $allviewdefs = $this->sidecarViewdefs;
 
