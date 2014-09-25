@@ -12,7 +12,10 @@
 
 class S_501_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
+    // TODO: unskip when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
+    public $skip = true;
+
     public $md5_files = array(
-        'path/to/fake/file.php' => 'fakeMD5'
+        './path/to/fake/file.php' => 'fakeMD5'
     );
 }

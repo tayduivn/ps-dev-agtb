@@ -326,6 +326,14 @@
     },
 
     /**
+     * Determine whether or not the recipient pills should be locked.
+     * @returns {boolean}
+     */
+    recipientsLocked: function() {
+        return this.def.readonly || false;
+    },
+
+    /**
      * Synchronize the recipient field value with the model and setup tooltips for email pills.
      */
     bindDomChange: function() {
@@ -461,6 +469,7 @@
                 id:     recipient.get('id') || formattedRecipient.id || recipient.get('email'),
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || formattedRecipient.module,
                 email:  recipient.get('email') || formattedRecipient.email,
+                locked: this.recipientsLocked(),
                 name:   recipient.get('name') || recipient.get('full_name') || formattedRecipient.name
             };
             // don't bother with the recipient unless an id is present
@@ -475,7 +484,7 @@
                 }
                 // drop any values that are empty or non-compliant
                 _.each(formattedRecipient, function(val, key) {
-                    if (_.isEmpty(formattedRecipient[key]) || !_.isString(formattedRecipient[key])) {
+                    if ((_.isEmpty(formattedRecipient[key]) || !_.isString(formattedRecipient[key])) && !_.isBoolean(formattedRecipient[key])) {
                         delete formattedRecipient[key];
                     }
                 });

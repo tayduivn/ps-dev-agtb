@@ -20,8 +20,8 @@ require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
 class SugarHeartbeatClientTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @covers SugarHeartBeat::sugarHome
-     * @covers SugarHeartBeat::encode
+     * @covers SugarHeartbeatClient::sugarHome
+     * @covers SugarHeartbeatClient::encode
      * @group unit
      */
     public function testSugarHome()
@@ -41,7 +41,7 @@ class SugarHeartbeatClientTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SugarHeartBeat::sugarPing
+     * @covers SugarHeartbeatClient::sugarPing
      * @group unit
      */
     public function testSugarPing()
