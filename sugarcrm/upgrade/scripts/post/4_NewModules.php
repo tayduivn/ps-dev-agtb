@@ -41,7 +41,9 @@ class SugarUpgradeNewModules extends UpgradeScript
                 continue;
             }
             $app_list_strings = array();
-            include "include/language/$langKey.lang.php";
+            if (file_exists("include/language/$langKey.lang.php")) {
+                include "include/language/$langKey.lang.php";
+            }
             $orig_lang_strings = $app_list_strings;
             $all_strings = return_app_list_strings_language($langKey);
             $addModStrings = array();
