@@ -73,6 +73,18 @@ class Quota extends SugarBean
     }
 
     /**
+     * Get summary text
+     */
+    public function get_summary_text()
+    {
+        /**
+         * @var TimePeriod
+         */
+        $timeperiod = BeanFactory::retrieveBean("TimePeriods", $this->timeperiod_id);
+        return "$timeperiod->name -- $this->user_full_name";
+    }
+
+    /**
      * function create_list_query
      *
      * @param $order_by
