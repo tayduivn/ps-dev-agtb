@@ -1926,7 +1926,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             return;
         }
         $names = join('\s*,\s*',$names_i);
-        $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID' AND deleted=0/is", $sql, "Bad sql: $sql");
+        $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID'\s+AND\s+$name\.deleted\s*=\s*'0'/is", $sql, "Bad sql: $sql");
     }
 
      /**
