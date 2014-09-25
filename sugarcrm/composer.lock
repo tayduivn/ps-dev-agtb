@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5d0553ee26be40359866e84a1ebd240a",
+    "hash": "f4270b0f9b7834d09fa0584bcd539ab5",
     "packages": [
         {
             "name": "onelogin/php-saml",
-            "version": "2.1.0",
+            "version": "2.1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "76a5560672089ef5c122ff5afb43057e5d058737"
+                "url": "https://github.com/sugarcrm/php-saml.git",
+                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/76a5560672089ef5c122ff5afb43057e5d058737",
-                "reference": "76a5560672089ef5c122ff5afb43057e5d058737",
+                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
                 "shasum": ""
             },
             "require": {
@@ -26,6 +26,7 @@
             "require-dev": {
                 "pdepend/pdepend": "1.1.0",
                 "phploc/phploc": "*",
+                "phpunit/phpunit": "3.7.31",
                 "satooshi/php-coveralls": "dev-master",
                 "sebastian/phpcpd": "*",
                 "squizlabs/php_codesniffer": "*"
@@ -43,18 +44,22 @@
                     "lib/Saml2"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "OneLogin PHP SAML Toolkit",
             "homepage": "https://onelogin.zendesk.com/hc/en-us/sections/200245634-SAML-Toolkits",
             "keywords": [
-                "SAML2",
                 "onelogin",
-                "saml"
+                "saml",
+                "saml2"
             ],
-            "time": "2014-07-03 19:23:00"
+            "support": {
+                "email": "sixto.garcia@onelogin.com",
+                "issues": "https://github.com/onelogin/php-saml/issues",
+                "source": "https://github.com/onelogin/php-saml/"
+            },
+            "time": "2014-09-27 00:00:51"
         },
         {
             "name": "ruflin/elastica",

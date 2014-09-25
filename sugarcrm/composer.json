@@ -16,11 +16,12 @@
         "notify-on-install" : false,
         "discard-changes" : true,
         "preferred-install" : "dist",
+	"minimum-stability": "dev",
         "use-include-path" : false
     },
     "require": {
         "ruflin/elastica" : "v1.2.1.0",
-        "onelogin/php-saml" : "2.1.0",
+        "onelogin/php-saml" : "2.1.0.1",
         "php": ">=5.3.0"
     },
     "require-dev": {
@@ -30,6 +31,11 @@
         {
             "type" : "git",
             "url" : "https://github.com/sugarcrm/Elastica"
+        },
+        {
+            "type" : "vcs",
+            "url" : "https://github.com/sugarcrm/php-saml"
         }
+
     ]
 }
