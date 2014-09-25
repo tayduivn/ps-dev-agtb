@@ -69,7 +69,7 @@ describe('Calls.View.Preview', function() {
                 durationMetadata = {
                     name: 'duration',
                     type: 'duration',
-                    detail_view_label: 'foo',
+                    label: 'foo',
                     dismiss_label: true,
                     fields: ['date_start','date_end']
                 };

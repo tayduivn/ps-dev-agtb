@@ -15,6 +15,22 @@
 ({
     extendsFrom: 'FieldsetField',
 
+    plugins: ['EllipsisInline'],
+
+    /**
+     * Set default start date time if date_start has not been set.
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        if (this.model.isNew() && (!this.model.get('date_start'))) {
+            this.setDefaultStartDateTime();
+            this.modifyEndDateToRetainDuration();
+            this.updateDurationHoursAndMinutes();
+        }
+    },
+
     /**
      * {@inheritDoc}
      */
@@ -26,12 +42,9 @@
         // In detail mode, re-render the field if either start or end date changes.
         this.model.on('change:date_start change:date_end', function(model) {
             var dateStartField,
-                dateEndField,
-                diff;
+                dateEndField;
 
-            diff = app.date(model.get('date_end')).diff(model.get('date_start'));
-            model.set('duration_hours', Math.floor(app.date.duration(diff).asHours()));
-            model.set('duration_minutes', app.date.duration(diff).minutes());
+            this.updateDurationHoursAndMinutes();
 
             if (this.action === 'edit') {
                 dateStartField = this.view.getField('date_start');
@@ -110,6 +123,15 @@
         }
 
         this.model.set('date_start', defaultDateTime.formatServer());
+    },
+
+    /**
+     * Set duration_hours and duration_minutes based upon date_start and date_end.
+     */
+    updateDurationHoursAndMinutes: function() {
+        var diff = app.date(this.model.get('date_end')).diff(this.model.get('date_start'));
+        this.model.set('duration_hours', Math.floor(app.date.duration(diff).asHours()));
+        this.model.set('duration_minutes', app.date.duration(diff).minutes());
     },
 
     /**

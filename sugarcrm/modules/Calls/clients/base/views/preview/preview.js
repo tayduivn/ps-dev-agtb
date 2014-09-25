@@ -34,7 +34,6 @@
                         panel.fields.splice(index, 1, field.fields[0], field.fields[1]);
                         break;
                     case 'duration':
-                        field.label = field.detail_view_label;
                         field.dismiss_label = false;
                         break;
                     case 'recurrence':

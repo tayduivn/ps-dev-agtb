@@ -51,6 +51,18 @@
     },
 
     /**
+     * Inherit fieldset templates
+     * @inheritdoc
+     * @private
+     */
+    _loadTemplate: function() {
+        var originalType = this.type;
+        this.type = 'fieldset';
+        this._super('_loadTemplate');
+        this.type = originalType;
+    },
+
+    /**
      * @inheritdoc
      *
      * Prepare the recurrence fields based on the value of `repeat_type`
@@ -95,6 +107,7 @@
         if (this.action === 'edit') {
             this._showField('repeat_count');
             this._showField('repeat_until');
+            this._getFieldRecordCellByType('label').show();
         } else {
             if (repeatUntil && (repeatUntil.length > 0)) {
                 this._hideField('repeat_count');
@@ -103,6 +116,7 @@
                 this._showField('repeat_count');
                 this._hideField('repeat_until');
             }
+            this._getFieldRecordCellByType('label').hide();
         }
     },
 
@@ -145,7 +159,7 @@
      * @private
      */
     _showField: function(fieldName) {
-        this._getFieldRecordCell(fieldName).removeClass('hide');
+        this._getFieldRecordCellByName(fieldName).show();
     },
 
     /**
@@ -155,18 +169,30 @@
      * @private
      */
     _hideField: function(fieldName) {
-        this._getFieldRecordCell(fieldName).addClass('hide');
+        this._getFieldRecordCellByName(fieldName).hide();
     },
 
     /**
      * Returns the field cell for a given field name
      *
      * @param {String} fieldName Name of the field to select
-     * @returns {Object} jQuery selected record cell
+     * @returns {jQuery} jQuery selected record cell
      * @private
      */
-    _getFieldRecordCell: function(fieldName) {
-        var selector = '.record-cell[data-name="' + fieldName + '"]';
+    _getFieldRecordCellByName: function(fieldName) {
+        var selector = '.fieldset-field[data-name="' + fieldName + '"]';
+        return this.$(selector);
+    },
+
+    /**
+     * Returns the field cell for a given field type
+     *
+     * @param {String} fieldType Type of the field to select
+     * @returns {jQuery} jQuery selected record cell
+     * @private
+     */
+    _getFieldRecordCellByType: function(fieldType) {
+        var selector = '.fieldset-field[data-type="' + fieldType + '"]';
         return this.$(selector);
     },
 

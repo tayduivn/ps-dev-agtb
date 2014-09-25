@@ -97,6 +97,7 @@ describe('Base.Field.Duration', function() {
 
     describe('modifyEndDateToRetainDuration()', function() {
         it('should set the end date to be an hour from the start date if the end date is empty', function() {
+            field.model.unset('date_end');
             field.model.set('date_start', '2014-07-17T09:00');
             field.modifyEndDateToRetainDuration();
             expect(field.model.get('date_end')).toMatch('2014-07-17T10:00');
@@ -142,6 +143,8 @@ describe('Base.Field.Duration', function() {
         });
 
         it('should not modify the end date if start date is empty', function() {
+            field.model.unset('date_start');
+            field.model.unset('date_end');
             field.modifyEndDateToRetainDuration();
             expect(field.model.get('date_end')).toBeUndefined();
         });

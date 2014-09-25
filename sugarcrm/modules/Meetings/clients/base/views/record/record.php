@@ -184,9 +184,8 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 array(
                     'name' => 'duration',
                     'type' => 'duration',
-                    'label' => 'LBL_CALENDAR_DURATION',
+                    'label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'dismiss_label' => true,
-                    'detail_view_label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'fields' => array(
                         array(
                             'name' => 'date_start',
@@ -225,6 +224,8 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'recurrence',
                     'type' => 'recurrence',
                     'span' => 12,
+                    'inline' => true,
+                    'show_child_labels' => true,
                     'fields' => array(
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_INTERVAL',
@@ -232,7 +233,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                             'type' => 'enum',
                             'options' => 'repeat_interval_number',
                             'required' => true,
-                            'span' => 2,
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_DOW',
@@ -240,19 +240,20 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                             'type' => 'repeat-dow',
                             'options' => 'dom_cal_day_short',
                             'isMultiSelect' => true,
-                            'span' => 4,
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
                             'name' => 'repeat_until',
                             'type' => 'date',
-                            'span' => 3,
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_LOWER_OR'
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_COUNT',
                             'name' => 'repeat_count',
                             'type' => 'repeat-count',
-                            'span' => 3,
                         ),
                     ),
                 ),
@@ -261,15 +262,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'reminders',
                     'type' => 'fieldset',
                     'inline' => true,
+                    'show_child_labels' => true,
                     'fields' => array(
-                        array(
-                            'name' => 'reminder_time',
-                            'span' => 6,
-                        ),
-                        array(
-                            'name' => 'email_reminder_time',
-                            'span' => 6,
-                        ),
+                        'reminder_time',
+                        'email_reminder_time',
                     ),
                 ),
                 array(
@@ -310,7 +306,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'created_by_name',
+                    'name' => 'date_created_by',
                     'readonly' => true,
                     'inline' => true,
                     'type' => 'fieldset',
@@ -329,7 +325,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'modified_by_name',
+                    'name' => 'date_modified_by',
                     'readonly' => true,
                     'inline' => true,
                     'type' => 'fieldset',
