@@ -1075,4 +1075,47 @@ class ExtAPIDnb extends ExternalAPIBase
         }
         return $list;
     }
+
+    /**
+     * Bulk imports D&B data
+     * @param $module String (Accounts)
+     * @param $bulkArray
+     * @return array
+     */
+    public function dnbBulkImport($module, $bulkArray)
+    {
+        if($module !== 'Accounts') {
+            return array('error' => 'ERROR_INVALID_MODULE_NAME');
+        }
+        $importSuccess = 0;
+        $duplicates = 0;
+        $results = null;
+        //loop through the array of dnbObjects to be imported
+        foreach($bulkArray as $dnbObj) {
+            $bean = BeanFactory::getBean($module);
+            //set bean data
+            foreach($dnbObj as $key => $value) {
+                $bean->{$key} = $dnbObj[$key];
+            }
+            //check for duplicates
+            //retrieve possible duplicates
+            $results = $bean->findDuplicates();
+            $duplicateRecordCount = 0;
+            if (isset($results)) {
+                $duplicateRecordCount = count($results->records);
+            }
+            if ($duplicateRecordCount === 0) {
+                $bean->save();
+                $importSuccess++;
+            } else {
+                //counter for duplicates
+                $duplicates++;
+            }
+        }
+        //importInforrmation contains info about count of records succesfully imported
+        // and # of duplicates imported
+        return array('importSuccess' => $importSuccess,
+            'duplicates' => $duplicates
+        );
+    }
 }

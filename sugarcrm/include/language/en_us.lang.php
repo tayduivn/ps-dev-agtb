@@ -3374,6 +3374,16 @@ $app_strings = array (
                                      D&B® D-U-N-S® Number, fax, phone and trade style.
                                      Includes business intelligence such as executive names and titles, financials, number of employees,
                                      import or export code, branch indicator, and more. Requires D&B Subscription.',
+    /* For bulk import*/
+    'LBL_DNB_BI_YOU_ADD' => 'You added ',
+    'LBL_DNB_BI_NEW_ACCT' => ' new accounts.',
+    'LBL_DNB_VIEW_ACCT' => 'View Accounts',
+    'LBL_DNB_BI_DUP_MSG' => ' accounts were duplicates and not added',
+    'LBL_DNB_BI_LOADING' => 'Importing D&B Accounts',
+    'LBL_DNB_BI_REC_LIMIT' => 'Maximum of 20 records can be selected to import',
+    'LBL_DNB_BI_ERR' => 'No records were imported.',
+    'LBL_DNB_BI_API_ERR' => 'Error importing records.',
+    'LBL_DNB_BI_NO_SLCT' => 'No Records Selected.',
 
     /*DNB Errors */
     'LBL_DNB_ERROR_CURL_RESOLVE_PROXY' => 'Could not resolve proxy. The given proxy host could not be resolved. Please check proxy settings.',
@@ -4244,6 +4254,7 @@ $app_strings = array (
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
 
     'LBL_SUCCESS' => 'Success',
+    'LBL_ERROR' => 'Error',
 
     //Merge Duplicates
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',

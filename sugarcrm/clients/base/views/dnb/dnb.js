@@ -1020,7 +1020,6 @@
                     }
                 }
             }, this);
-            frmtSrchRsltObj.isChecked = true;
             formattedSrchRslts.push(frmtSrchRsltObj);
         }, this);
         return formattedSrchRslts;
@@ -2023,5 +2022,88 @@
         if (pageData.product) {
             this.renderPaginationControl();
         }
+    },
+
+    /**
+     * Bulk Import D&B Objects
+     * @param {Array} bulkArray
+     * @param {String} module
+     * @param {Function} callBack
+     */
+    invokeBulkImport: function(bulkArray, module, callBack) {
+        //display loading message
+        app.alert.show('bulkImport', {
+            level: 'process',
+            title: app.lang.getAppString('LBL_DNB_BI_LOADING'),
+            autoClose: false
+        });
+        //hide previous
+        var bulkImportURL = app.api.buildURL('connector/dnb/' + module + '/bulkimport', '', {},{}),
+            self = this;
+        app.api.call('create', bulkImportURL, {'bulkdata': bulkArray}, {
+            success: function(data) {
+                //dismiss loading symbol
+                app.alert.dismiss('bulkImport');
+                var newAccounts = data.importSuccess,
+                    duplicates = data.duplicates,
+                    title, level, message;
+                var viewAccountsMsg = "<a href='#{{buildRoute module=module}}' data-route='#{{buildRoute module=module}}'>{{str 'LBL_DNB_VIEW_ACCT'}}</a>";
+                var viewAcctsHTML = Handlebars.compile(viewAccountsMsg)({'module': self.module});
+
+                if (newAccounts > 0 && duplicates === 0) {
+                    level = 'success';
+                    title = app.lang.get('LBL_SUCCESS');
+                    message = app.lang.get('LBL_DNB_BI_YOU_ADD') + newAccounts + app.lang.get('LBL_DNB_BI_NEW_ACCT');
+                } else if (newAccounts > 0 && duplicates > 0) {
+                    level = 'warning',
+                    title = app.lang.get('LBL_WARNING');
+                    message = app.lang.get('LBL_DNB_BI_YOU_ADD') + newAccounts + app.lang.get('LBL_DNB_BI_NEW_ACCT');
+                    message += duplicates + app.lang.get('LBL_DNB_BI_DUP_MSG');
+                } else if (newAccounts === 0) {
+                    level = 'error',
+                    title = app.lang.get('LBL_ERROR');
+                    message = app.lang.get('LBL_DNB_BI_ERR');
+                }
+                if (newAccounts !== 0) {
+                    message += viewAcctsHTML;
+                }
+                app.alert.show('dnb-import', {
+                    level: level,
+                    title: title + ':',
+                    messages: message,
+                    autoClose: true,
+                    autoCloseDelay: 10000
+                });
+                callBack.call(self);
+            },
+            error: function(xhr, status, error) {
+                app.alert.dismiss('bulkImport');
+                var errorMessage,
+                    errorCode = xhr.code;
+                if(!_.isUndefined(errorCode)) {
+                    errorMessage = app.lang.get(this.commonErrorMap[errorCode]);
+                }
+                if(_.isUndefined(errorMessage)) {
+                    errorMessage = this.commonErrorMap['ERROR_DNB_UNKNOWN'];
+                }
+                app.alert.show('dnb-import', {
+                    level: 'error',
+                    title: app.lang.get('LBL_ERROR'),
+                    messages: errorMessage,
+                    autoClose: true,
+                    autoCloseDelay: 10000
+                });
+            }
+        });
+    },
+
+    /**
+     * Toggle the button between enabled and disabled states
+     * @param {Boolean} isDisabled
+     * @param {String} selector
+     */
+    toggleButton: function(isDisabled, selector) {
+        this.$(selector).toggleClass('disabled', isDisabled);
+        this.$(selector).prop('disabled', isDisabled);
     }
 });
