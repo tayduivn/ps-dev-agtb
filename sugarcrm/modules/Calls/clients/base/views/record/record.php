@@ -283,11 +283,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'type' => 'participants',
                     'label' => 'LBL_INVITEES',
                     'span' => 12,
-                    'links' => array(
-                        'users',
-                        'contacts',
-                        'leads',
-                    ),
+                    'fields' => array('name', 'accept_status_calls', 'picture'),
                 ),
                 'assigned_user_name',
                 'team_name',

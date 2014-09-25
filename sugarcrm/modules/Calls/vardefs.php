@@ -503,7 +503,19 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not to send out invites (Meta-data only)',
     'massupdate' => false,
-   ),  
+   ),
+        'invitees' => array(
+            'name' => 'invitees',
+            'source' => 'non-db',
+            'type' => 'collection',
+            'vname' => 'LBL_INVITEES',
+            'links' => array(
+                'contacts',
+                'leads',
+                'users',
+            ),
+            'order_by' => 'name:asc',
+        ),
 ),
 'indices' => array (
 	array(
