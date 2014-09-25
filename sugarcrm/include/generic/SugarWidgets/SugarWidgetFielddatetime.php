@@ -1,17 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * Copyright (C) SugarCRM Inc. All rights reserved.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
  */
-
-
 
 class SugarWidgetFieldDateTime extends SugarWidgetReportField
 {
@@ -98,37 +98,29 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	function queryFilterBefore($layout_def)
 	{
         $column = $this->_get_column_select($layout_def);
-        if ($this->isDateTimeField($layout_def['type'])) {
-            $column = $this->reporter->db->convert($column, 'add_tz_offset');
-        }
 
         $begin = $this->expandDate($layout_def['input_name0']);
+
         return $this->queryDateOp($column, $begin, '<', "datetime");
 	}
 
 	function queryFilterAfter($layout_def)
 	{
         $column = $this->_get_column_select($layout_def);
-        if ($this->isDateTimeField($layout_def['type'])) {
-            $column = $this->reporter->db->convert($column, 'add_tz_offset');
-        }
 
         $begin = $this->expandDate($layout_def['input_name0'], true);
+
         return $this->queryDateOp($column, $begin, '>', "datetime");
 	}
 
 	function queryFilterBetween_Dates($layout_def)
 	{
-        $column = $this->_get_column_select($layout_def);
-        if ($this->isDateTimeField($layout_def['type'])) {
-            $column = $this->reporter->db->convert($column, 'add_tz_offset');
-        }
-
         $begin = $this->expandDate($layout_def['input_name0']);
      	$end = $this->expandDate($layout_def['input_name1'], true);
 
-	    return "(".$this->queryDateOp($column, $begin, ">=", "datetime")." AND ".
-            $this->queryDateOp($column, $end, "<=", "datetime").")\n";
+        $query = $this->get_start_end_date_filter($layout_def, $begin, $end);
+
+        return $query;
 	}
 
     /**
@@ -276,25 +268,30 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         return $begin;
 	}
 
-	/**
-	 * Get filter string for a date field.
-	 * @param array layout_def field def for field being filtered
-	 * @param string $begin start date value (in DB format)
-	 * @param string $end End date value (in DB format)
-	 */
-	function get_start_end_date_filter(& $layout_def, $begin,$end)
-	{
-	    if (isset ($layout_def['rel_field'])) {
-	        $field_name = $this->reporter->db->convert(
-	            $this->reporter->db->convert($this->_get_column_select($layout_def), 'date_format', '%Y-%m-%d'),
-	            "CONCAT",
-	            array("' '", $this->reporter->db->convert($layout_def['rel_field'], 'time_format'))
-	        );
-	    } else {
-	       $field_name = $this->_get_column_select($layout_def);
-	    }
-	    return $field_name.">=".$this->reporter->db->quoted($begin)." AND ".$field_name."<=".$this->reporter->db->quoted($end)."\n";
-	}
+    /**
+     * Get start/end filter string for 'datetime' field
+     *
+     * @param array layout_def field def for field being filtered
+     * @param SugarDateTime $begin Start DateTime object
+     * @param SugarDateTime $end End DateTime object
+     */
+    public function get_start_end_date_filter($layout_def, $begin, $end)
+    {
+        if (isset($layout_def['rel_field'])) {
+            $field_name = $this->reporter->db->convert(
+                $this->reporter->db->convert($this->_get_column_select($layout_def), 'date_format', '%Y-%m-%d'),
+                "CONCAT",
+                array("' '", $this->reporter->db->convert($layout_def['rel_field'], 'time_format'))
+            );
+        } else {
+            $field_name = $this->_get_column_select($layout_def);
+        }
+
+        $query = $field_name . " >= " . $this->reporter->db->quoted($this->formatDate($begin)) . " AND " .
+            $field_name . " <= " . $this->reporter->db->quoted($this->formatDate($end)) . "\n";
+
+        return $query;
+    }
 
 	/**
 	 * Create query for binary operation of field of certain type
@@ -334,24 +331,21 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     {
         $begin = $day->get_day_begin();
         $end = $day->get_day_end();
-        return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
     }
 
 	function queryFilterTP_yesterday($layout_def)
 	{
-		global $timedate;
 		return $this->queryDay($layout_def, $this->now()->get("-1 day"));
 	}
 
 	function queryFilterTP_today($layout_def)
 	{
-		global $timedate;
 		return $this->queryDay($layout_def, $this->now());
 	}
 
-	function queryFilterTP_tomorrow(& $layout_def)
+	function queryFilterTP_tomorrow($layout_def)
 	{
-		global $timedate;
 		return $this->queryDay($layout_def, $this->now()->get("+1 day"));
 	}
 
@@ -362,7 +356,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $begin = $this->now()->get("-$days days")->get_day_begin();
         $end = $this->now()->get_day_end();
 
-        return $this->get_start_end_date_filter($layout_def, $begin->asDb(), $end->asDb());
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
     }
 
     function queryFilterTP_next_n_days($layout_def)
@@ -372,7 +366,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $begin = $this->now()->get_day_begin();
         $end = $this->now()->get("+$days days")->get_day_end();
 
-        return $this->get_start_end_date_filter($layout_def, $begin->asDb(), $end->asDb());
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
     }
 
 	function queryFilterTP_last_7_days($layout_def)
@@ -409,25 +403,22 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $begin = $month->setTime(0, 0, 0);
         $end = clone($begin);
 		$end->setDate($begin->year, $begin->month, $begin->days_in_month)->setTime(23, 59, 59);
-        return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
     }
 
     function queryFilterTP_last_month($layout_def)
 	{
-		global $timedate;
 		$month = $this->now();
 		return $this->queryMonth($layout_def, $month->setDate($month->year, $month->month-1, 1));
 	}
 
 	function queryFilterTP_this_month($layout_def)
 	{
-		global $timedate;
 		return $this->queryMonth($layout_def, $this->now()->get_day_by_index_this_month(0));
 	}
 
 	function queryFilterTP_next_month($layout_def)
 	{
-		global $timedate;
 		$month = $this->now();
 		return $this->queryMonth($layout_def, $month->setDate($month->year, $month->month+1, 1));
 	}
@@ -471,7 +462,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         $end = $end->get("-1 day")->setTime(23, 59, 59);
 
-        return $this->get_start_end_date_filter($layout_def, $begin->asDb($convert), $end->asDb($convert));
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
     }
 
     /**
@@ -507,35 +498,41 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         return $this->getQuarterFilter($layout_def, '+3 month');
     }
 
-	function queryFilterTP_last_year($layout_def)
-	{
-		global $timedate;
-		$begin = $this->now();
-		$begin->setDate($begin->year-1, 1, 1)->setTime(0, 0);
-		$end = clone $begin;
-		$end->setDate($end->year, 12, 31)->setTime(23, 59, 59);
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+    /**
+     * Returns part of query for select
+     *
+     * @param $layout_def - Filter layout_def
+     * @param string $modifyFilter - Modification to start/end date, used to select previous/next year
+     */
+    protected function queryYear($layout_def, $modifyFilter)
+    {
+        $begin = $this->now();
+        $begin->setDate($begin->year, 1, 1)->setTime(0, 0);
 
-	function queryFilterTP_this_year($layout_def)
-	{
-		global $timedate;
-		$begin = $this->now();
-		$begin->setDate($begin->year, 1, 1)->setTime(0, 0);
-		$end = clone $begin;
-		$end->setDate($end->year, 12, 31)->setTime(23, 59, 59);
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+        if (!empty($modifyFilter)) {
+            $begin->modify($modifyFilter);
+        }
 
-	function queryFilterTP_next_year(& $layout_def)
-	{
-		global $timedate;
-		$begin = $this->now();
-		$begin->setDate($begin->year+1, 1, 1)->setTime(0, 0);
-		$end = clone $begin;
-		$end->setDate($end->year, 12, 31)->setTime(23, 59, 59);
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+        $end = clone $begin;
+        $end->setDate($end->year, 12, 31)->setTime(23, 59, 59);
+
+        return $this->get_start_end_date_filter($layout_def, $begin, $end);
+    }
+
+    public function queryFilterTP_last_year($layout_def)
+    {
+        return $this->queryYear($layout_def, '-1 year');
+    }
+
+    public function queryFilterTP_this_year($layout_def)
+    {
+        return $this->queryYear($layout_def, '');
+    }
+
+    public function queryFilterTP_next_year($layout_def)
+    {
+        return $this->queryYear($layout_def, '+1 year');
+    }
 
 	function queryGroupBy($layout_def)
 	{
@@ -783,14 +780,9 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         if (!empty($modifyEnd)) {
             $end->modify($modifyEnd);
         }
+        $end->modify('-1 seconds');
 
-        $column = $this->_get_column_select($layout_def);
-
-        $startTime = $start->asDb($convert);
-        $endTime = $end->asDb($convert);
-
-        $query = "(" . $this->queryDateOp($column, $startTime, ">=", "datetime")
-            . " AND " . $this->queryDateOp($column, $endTime, "<", "datetime") . ")\n";
+        $query = $this->get_start_end_date_filter($layout_def, $start, $end);
 
         return $query;
     }
@@ -1110,4 +1102,14 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         return strlen(trim($date)) < 11 ? false : true;
     }
 
+    /**
+     * Formats a DateTime object as string for given widget
+     *
+     * @param SugarDateTime $date - Date to be formatted for widget
+     * @return string date formatted for widget type
+     */
+    protected function formatDate($date)
+    {
+        return $date->asDb();
+    }
 }

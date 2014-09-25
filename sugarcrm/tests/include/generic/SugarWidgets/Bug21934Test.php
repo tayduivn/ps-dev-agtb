@@ -83,9 +83,9 @@ class Bug21934Test extends PHPUnit_Framework_TestCase
         $start->setDate($start->year, $start->month-1, 1);
 
         $expect = array();
-        array_push($expect, $start->asDbDate());
+        array_push($expect, clone($start));
         $start->setDate($start->year, $start->month, $start->days_in_month);
-        array_push($expect, $start->asDbDate());
+        array_push($expect, clone($start));
 
         $result = $widget->queryFilterTP_last_month($_layoutDef);
         $this->assertEquals($expect, $result);
