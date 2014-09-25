@@ -59,6 +59,9 @@ class PackCliTest extends PHPUnit_Framework_TestCase
             "Use " . __DIR__ . "/../../../modules/UpgradeWizard/pack_cli.php name (no zip or phar extension) [sugarVersion [buildNumber]]",
             $result
         );
+        if (ini_get('phar.readonly')) {
+            $this->markTestSkipped('Disable phar.readonly to run this test');
+        }
         $zip = tempnam('/tmp', 'test');
         exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php ' . $zip);
         $this->assertTrue(file_exists($zip . '.zip'));
