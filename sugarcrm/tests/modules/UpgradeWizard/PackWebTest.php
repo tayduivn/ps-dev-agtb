@@ -72,8 +72,8 @@ class PackWebTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('copy', $installdefs);
         $this->assertArrayHasKey('beans', $installdefs);
         $this->assertArrayHasKey(0, $installdefs['copy']);
-        $this->assertEquals($installdefs['copy'][0]['from'], '<basepath>/include/SugarSystemInfo/SugarSystemInfo.php');
-        $this->assertEquals($installdefs['copy'][0]['to'], 'include/SugarSystemInfo/SugarSystemInfo.php');
+        $this->assertEquals($installdefs['copy'][0]['from'], '<basepath>/modules/HealthCheck/Scanner/Scanner.php');
+        $this->assertEquals($installdefs['copy'][0]['to'], 'modules/HealthCheck/Scanner/Scanner.php');
         unlink($versionFile);
     }
 
