@@ -250,7 +250,7 @@ $mod_strings = array(
     'LBL_SCAN_515_DESCR' => 'The checking script failed, which means the instaScannerMeta.phpnce probably contains bad PHP code that the script tried to load.',
     'LBL_SCAN_517_DESCR' => 'Package detected which has been blacklisted as not supported in Sugar 7',
     'LBL_SCAN_526_DESCR' => "This List contains Item Name values that prevent the upgrade.",
-    'LBL_SCAN_528_DESCR' => 'Date/Datetime/Time field with incorrect display_default value like -blablabla-',
+    'LBL_SCAN_528_DESCR' => 'Date/Datetime/Time field with incorrect display_default value like -none-',
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
