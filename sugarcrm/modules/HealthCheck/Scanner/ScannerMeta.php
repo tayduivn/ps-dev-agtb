@@ -195,7 +195,7 @@ class HealthCheckScannerMeta
         ),
         413 => array(
             'report' => 'unknownWidgetClass',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
 //        414 => array(
 //            'report' => 'unknownField',
