@@ -303,9 +303,11 @@ class TeamSecurity extends SugarVisibility
      */
     public function getOption($name, $default = null)
     {
-        //if parameter is not defined, make sure the tuning options have been merged prior to calling parent
+        //if parameter is not defined, make sure the tuning options have been loaded prior to calling parent
         if (!isset($this->options[$name])) {
-            $this->options = $this->getTuningOptions($this->options);
+            //send in the defined options or a blank array.
+            $options = !empty($this->options) ? $this->options : array();
+            $this->options = $this->getTuningOptions($options);
         }
         return parent::getOption($name,$default);
     }
