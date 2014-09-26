@@ -66,7 +66,14 @@
 
     initialize: function(options) {
         _.bindAll(this);
+        /**
+         * @inheritDoc
+         * @property {Object} meta
+         * @property {boolean} meta.hashSync Set to `true` to update URL
+         *   consistently with the view state (`edit` or `detail`)
+         */
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
+        options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
         this.createMode = this.context.get('create') ? true : false;
@@ -183,10 +190,12 @@
     /**
      * Called each time a validation pass is completed on the model.
      *
+     * Enables the action button and calls {@link #handleSave} if the model is
+     * valid.
+     *
      * @param {boolean} isValid TRUE if model is valid.
      */
     validationComplete: function(isValid) {
-        // Enable the action buttons.
         this.toggleButtons(true);
         if (isValid) {
             this.handleSave();
@@ -230,13 +239,18 @@
 
         this.toggleHeaderLabels(this.createMode);
         this.initButtons();
-        this.setButtonStates(this.STATE.VIEW);
         this.setEditableFields();
 
-        if (this.createMode) {
-            // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-            // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
-            this.toggleFields(this.editableFields, true);
+        if (this.context.get('action') === 'edit') {
+            this.setButtonStates(this.STATE.EDIT);
+            this.toggleEdit(true);
+        } else {
+            this.setButtonStates(this.STATE.VIEW);
+            if (this.createMode) {
+                // RecordView starts with action as detail; once this.editableFields has been set (e.g.
+                // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
+                this.toggleFields(this.editableFields, true);
+            }
         }
 
         // initialize tab view only if the component is attached to DOM,
@@ -254,7 +268,7 @@
      */
     _initTabsAndPanels: function() {
         this.meta.firstPanelIsTab = this.checkFirstPanel();
-        this.meta.lastPanelIndex = this.meta.panels.length-1;
+        this.meta.lastPanelIndex = this.meta.panels.length - 1;
 
         _.each(this.meta.panels, function(panel, i) {
             if (panel.header) {
@@ -481,6 +495,7 @@
     editClicked: function() {
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
+        this.setRoute('edit');
     },
 
     saveClicked: function() {
@@ -493,6 +508,8 @@
         this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
+        this.setRoute();
+        this.unsetContextAction();
     },
 
     deleteClicked: function() {
@@ -600,8 +617,13 @@
         }
         this._saveModel();
         this.$('.record-save-prompt').hide();
-        this.setButtonStates(this.STATE.VIEW);
-        this.render();
+
+        if (!this.disposed) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.setRoute();
+            this.unsetContextAction();
+            this.render();
+        }
     },
 
     _saveModel: function() {
@@ -836,7 +858,7 @@
             this.$('.more[data-moreless]').trigger('click');
             app.user.lastState.set(this.SHOW_MORE_KEY, this.$('.less[data-moreless]'));
         }
-        else if(field.$el.closest('.panel_hidden.hide').length > 0) {
+        else if (field.$el.closest('.panel_hidden.hide').length > 0) {
             this.toggleMoreLess(this.MORE_LESS_STATUS.MORE, true);
         }
     },
@@ -912,7 +934,7 @@
                 var keys = _.keys(field);
 
                 // Make filler fields readonly
-                if (keys.length === 1 && keys[0] === 'span')  {
+                if (keys.length === 1 && keys[0] === 'span') {
                     field.readonly = true;
                 }
 
@@ -973,7 +995,7 @@
      * @param {String} actionType
      * @private
      */
-    _doPaginate: function(model, actionType){
+    _doPaginate: function(model, actionType) {
         var list = this.context.get('listCollection');
         switch (actionType) {
             case 'next':
@@ -1003,6 +1025,29 @@
             var el = this.$el.find('[data-action=scroll][data-action-type=' + actionType + ']');
             this._disablePagination(el);
         }
+    },
+
+    /**
+     * Updates url without triggering the router.
+     *
+     * @param {string} action Action to pass when building the route
+     *   with {@link Core.Router#buildRoute}.
+     */
+    setRoute: function(action) {
+        if (!this.meta.hashSync) {
+            return;
+        }
+        app.router.navigate(app.router.buildRoute(this.module, this.model.id, action), {trigger: false});
+    },
+
+    /**
+     * Unsets the `action` attribute from the current context.
+     *
+     * Once 'action' is unset, the action is 'detail' and the view will render
+     * next in detail mode.
+     */
+    unsetContextAction: function() {
+            this.context.unset('action');
     },
 
     /**

@@ -5,8 +5,6 @@ describe("Record View", function () {
         sinonSandbox,
         view,
         createListCollection,
-        buildRouteStub,
-        oRouter,
         buildGridsFromPanelsMetadataStub;
 
     beforeEach(function () {
@@ -108,17 +106,6 @@ describe("Record View", function () {
         app = SugarTest.app;
         sinonSandbox = sinon.sandbox.create();
 
-        oRouter = SugarTest.app.router;
-        SugarTest.app.router = {
-            buildRoute: $.noop,
-            navigate: $.noop,
-            hasAccessToModule: $.noop,
-            bwcRedirect: $.noop
-        };
-        buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function (module, id, action, params) {
-            return module + '/' + id;
-        });
-
         view = SugarTest.createView("base", moduleName, "record", null, null);
 
         buildGridsFromPanelsMetadataStub = sinon.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
@@ -143,13 +130,12 @@ describe("Record View", function () {
     });
 
     afterEach(function () {
-        buildGridsFromPanelsMetadataStub.restore();
-        view.dispose();
-        SugarTest.testMetadata.dispose();
-        SugarTest.app.view.reset();
-        SugarTest.app.router = oRouter;
         sinonSandbox.restore();
         sinon.collection.restore();
+        buildGridsFromPanelsMetadataStub.restore();
+        SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
+        view.dispose();
         view = null;
     });
 
@@ -292,6 +278,11 @@ describe("Record View", function () {
             expect(editableFields).toBe(3);
             expect(_.size(view.editableFields)).toBe(3);
         });
+
+        it('Should define view `hashSync` settings `true` by default', function() {
+            view.render();
+            expect(view.meta.hashSync).toBeTruthy();
+        });
     });
 
     describe('Edit', function () {
@@ -335,18 +326,94 @@ describe("Record View", function () {
             });
         });
 
-        it("Should ask the model to revert if cancel clicked", function () {
+        it('Should ask the model to revert if cancel clicked', function() {
             view.render();
-            view.model.revertAttributes = function () {
-            };
-            var revertSpy = sinon.spy(view.model, 'revertAttributes');
+            var revertStub = sinon.collection.stub(view.model, 'revertAttributes');
+
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
             });
 
             view.$('a[name=cancel_button]').click();
-            expect(revertSpy).toHaveBeenCalled();
+            expect(revertStub).toHaveBeenCalled();
+        });
+
+        describe('Hash synchronisation with record/button state', function() {
+            var navigateStub;
+
+            beforeEach(function() {
+                navigateStub = sinon.collection.stub(app.router, 'navigate');
+                view.model.set('id', 'my-case-id');
+            });
+
+            it('Should enter in edit mode if typed url is like /:record/edit', function() {
+                var toggleStub = sinon.collection.stub(view, 'toggleEdit'),
+                    setButtonStatesStub = sinon.collection.stub(view, 'setButtonStates');
+                view.context.set('action', 'edit');
+                view.render();
+
+                expect(toggleStub).toHaveBeenCalledWith(true);
+                expect(setButtonStatesStub).toHaveBeenCalledWith(view.STATE.EDIT);
+            });
+
+            using('different hashSync settings',
+                [true, false],
+                function(hashSyncValue) {
+
+                    it('Should handle the url properly if edit button is clicked', function() {
+                        view.render();
+                        view.meta.hashSync = hashSyncValue;
+                        view.context.trigger('button:edit_button:click');
+
+                        if (view.meta.hashSync) {
+                            expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id/edit', {trigger: false});
+                        } else {
+                            expect(navigateStub).not.toHaveBeenCalled();
+                        }
+                    });
+
+                    it('Should handle the url properly if cancel button is clicked', function() {
+                        view.render();
+                        view.meta.hashSync = hashSyncValue;
+                        view.context.trigger('button:edit_button:click');
+                        view.$('a[name=cancel_button]').click();
+
+                        if (view.meta.hashSync) {
+                            expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id', {trigger: false});
+                        } else {
+                            expect(navigateStub).not.toHaveBeenCalled();
+                        }
+                    });
+
+                    it('Should handle the url properly if save button is clicked', function() {
+                        view.render();
+                        view.meta.hashSync = hashSyncValue;
+                        view.context.trigger('button:edit_button:click');
+                        view.context.trigger('button:save_button:click');
+
+                        if (view.meta.hashSync) {
+                            expect(navigateStub).toHaveBeenCalled();
+                        } else {
+                            expect(navigateStub).not.toHaveBeenCalled();
+                        }
+                        expect(view.context.get('action')).toBeUndefined();
+                    });
+
+                    it('Should unset the context action after edit if it exists', function() {
+                        view.render();
+                        view.meta.hashSync = hashSyncValue;
+                        view.context.trigger('button:edit_button:click');
+                        view.context.trigger('button:save_button:click');
+
+                        if (view.meta.hashSync) {
+                            expect(navigateStub).toHaveBeenCalled();
+                        } else {
+                            expect(navigateStub).not.toHaveBeenCalled();
+                        }
+
+                    });
+                });
         });
     });
 
@@ -918,7 +985,7 @@ describe("Record View", function () {
             view.meta.panels = [];
         });
         afterEach(function() {
-             view.meta = tempMeta;
+            view.meta = tempMeta;
         });
 
         it('should return true when calling checkFirstPanel with header', function() {
