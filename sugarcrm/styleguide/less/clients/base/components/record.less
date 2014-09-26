@@ -84,7 +84,7 @@
       padding-left: 0;
     }
     .record-cell {
-      input[type="text"],
+      input[type="text"]:not(.select2-input),
       textarea,
       .uneditable-input,
       .select2-container {
@@ -186,7 +186,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    input[type="text"],
+    input[type="text"]:not(.select2-input),
     input[type="password"],
     textarea,
     .uneditable-input {
@@ -722,7 +722,7 @@
     .fieldset-field {
       display: table-cell;
       padding-right: 8px;
-      vertical-align: bottom;
+      vertical-align: top;
       .record-label {
         min-height: 18px;
         margin: -2px 0 2px;
@@ -740,7 +740,7 @@
     .fieldset-field:last-child {
       padding-right: 0;
     }
-    &:not(.edit) {
+    &:not(.edit):not(.fieldset-equal) {
       .fieldset-field:last-child {
         width: 100%;
       }
@@ -748,7 +748,7 @@
     &.edit {
       .fieldset-field {
         &[data-type="label"] {
-          padding: 0 12px 0 4px;
+          padding: 18px 12px 0 4px;
           text-align: center;
         }
         //&:not(:last-child) {
