@@ -1,9 +1,8 @@
 <?php
 
-require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
-require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
-require_once 'modules/HealthCheck/HealthCheckClient.php';
-
+/**
+ * Class HealthCheckHelper
+ */
 class HealthCheckHelper
 {
     protected static $instance;

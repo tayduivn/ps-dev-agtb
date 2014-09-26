@@ -556,6 +556,18 @@ eoq2;
     }
 
     /**
+     * @return HealthCheckHelper
+     */
+    protected function getHelper()
+    {
+        require_once 'SugarSystemInfo.php';
+        require_once 'SugarHeartbeatClient.php';
+        require_once 'HealthCheckClient.php';
+        require_once 'HealthCheckHelper.php';
+        return HealthCheckHelper::getInstance();
+    }
+
+    /**
      *
      * Verify if health check module is available
      * @return boolean

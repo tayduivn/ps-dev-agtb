@@ -135,6 +135,9 @@ class HealthCheckController extends SugarController
      */
     protected function getHelper()
     {
+        require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
+        require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
+        require_once 'modules/HealthCheck/HealthCheckClient.php';
         return HealthCheckHelper::getInstance();
     }
 }

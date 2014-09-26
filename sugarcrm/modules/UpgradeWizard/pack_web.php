@@ -55,6 +55,7 @@ $files=array(
     'modules/HealthCheck/views/view.index.php',
     'modules/HealthCheck/controller.php',
     'modules/HealthCheck/HealthCheck.php',
+    'modules/HealthCheck/HealthCheckHelper.php',
     'modules/HealthCheck/HealthCheckClient.php',
     'modules/HealthCheck/vardefs.php',
 

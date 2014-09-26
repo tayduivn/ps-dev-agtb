@@ -1755,14 +1755,6 @@ abstract class UpgradeDriver
     }
 
     /**
-     * @return HealthCheckHelper
-     */
-    protected function getHelper()
-    {
-        return HealthCheckHelper::getInstance();
-    }
-
-    /**
      *
      * Run HealthCheck - This is implementation specific
      *
