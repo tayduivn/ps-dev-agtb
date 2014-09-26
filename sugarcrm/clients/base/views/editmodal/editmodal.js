@@ -29,7 +29,7 @@
                 app.$contentEl.attr('aria-hidden', true);
                 $('.modal-backdrop').insertAfter($('.modal'));
                 this.context.get('createModel').on('error:validation', function() {
-                    this.resetButton();
+                    this.disableButtons(false);
                 }, this);
             }, this);
         }

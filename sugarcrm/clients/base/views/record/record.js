@@ -186,8 +186,9 @@
      * @param {boolean} isValid TRUE if model is valid.
      */
     validationComplete: function(isValid) {
+        // Enable the action buttons.
+        this.toggleButtons(true);
         if (isValid) {
-            this.setButtonStates(this.STATE.VIEW);
             this.handleSave();
         }
     },
@@ -439,6 +440,21 @@
         }, this);
     },
 
+    /**
+     * Enables or disables the action buttons. Toggles the `.disabled` class by
+     * default.
+     *
+     * @param {boolean} [enable=false] Whether to enable or disable the action
+     *   buttons. Defaults to `false`.
+     */
+    toggleButtons: function(enable) {
+        var state = !_.isUndefined(enable) ? !enable : false;
+
+        _.each(this.buttons, function(button) {
+            button.setDisabled(state);
+        });
+    },
+
     duplicateClicked: function() {
         var self = this,
             prefill = app.data.createBean(this.model.module);
@@ -468,6 +484,8 @@
     },
 
     saveClicked: function() {
+        // Disable the action buttons.
+        this.toggleButtons(false);
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 
@@ -577,25 +595,13 @@
     },
 
     handleSave: function() {
-        var self = this;
-        self.inlineEditMode = false;
-
-        app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function(response) {
-                    if (response.record && response.record.date_modified) {
-                        self.model.set('date_modified', response.record.date_modified);
-                    }
-                    self._saveModel();
-                }
-            }, {
-                deleteIfFails: false
-            }
-        );
-
-        self.$('.record-save-prompt').hide();
-        if (!self.disposed) {
-            self.render();
+        if (this.disposed) {
+            return;
         }
+        this._saveModel();
+        this.$('.record-save-prompt').hide();
+        this.setButtonStates(this.STATE.VIEW);
+        this.render();
     },
 
     _saveModel: function() {

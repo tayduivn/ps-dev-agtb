@@ -12,22 +12,15 @@
     extendsFrom: 'EditmodalView',
 
     /**
-     * overload baseeditmodalview and remove the 'file' type fields to prevent an issue with portal users
-     * being unable to upload notes
-     * @param {object} model
+     * @inheritDoc
+     *
+     * Sets the `portal_flag` attribute to `true` on the model.
      */
     processModel: function(model) {
         this._super('processModel', [model]);
 
         if (model) {
             model.set('portal_flag', true);
-
-            // remove all fields with type 'file'
-            _.each(model.fields, function(field) {
-                if (field.type === 'file') {
-                    model.unset(field.name);
-                }
-            });
         }
     }
 })

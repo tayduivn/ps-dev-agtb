@@ -165,11 +165,14 @@ class SugarFieldFile extends SugarFieldBase
         }
 
         if ($move) {
+            $temp = !empty($params['temp']);
             // Added checking of final move to capture errors that might occur
-            if ($upload_file->final_move($bean->id)) {
-                // This fixes an undefined index warning being thrown
-                $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
-                $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
+            if ($upload_file->final_move($bean->id, $temp)) {
+                if (!$temp) {
+                    // This fixes an undefined index warning being thrown
+                    $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
+                    $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
+                }
             } else {
                 // Reset the bean back to original, but only if we had set them.
                 $bean->$field = $originalvals['value'];

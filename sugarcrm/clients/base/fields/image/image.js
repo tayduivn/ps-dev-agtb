@@ -36,6 +36,12 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
 
+        // FIXME: This needs an API instead. SC-3369 should address this.
+        // Also, this field should extend the file field to inherit these
+        // error properties.
+        app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
+        app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
+
         if (!this.model.hasImageRequiredValidator) {
             this.model.hasImageRequiredValidator = true;
             this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
@@ -152,20 +158,39 @@
                         id: 'temp',
                         field: self.name,
                         fileId: fileId
-                    });
+                    }, {keep: true});
                     // show image
                     var image = $('<img>').addClass('hide').attr('src', url).on('load', $.proxy(self.resizeWidget, self));
                     self.$('.image_preview').html(image);
+
+                    // Add the guid to the list of fields to set on the model.
+                    if (fileId) {
+                        if (!self.model.fields[self.name + '_guid']) {
+                            self.model.fields[self.name + '_guid'] = {
+                                type: 'file_temp',
+                                group: self.name
+                            };
+                        }
+                        self.model.set(self.name + '_guid', fileId);
+                    }
 
                     //Trigger a change event with param "image" so the view can detect that the dom changed.
                     self.model.trigger("change", "image");
                 },
                 error: function(error) {
-                    var fieldError = {},
-                        errors = {};
-                    fieldError[error.responseText] = {};
-                    errors[self.name] = fieldError;
-                    self.model.trigger('error:validation:' + this.field, fieldError);
+                    var errors = errors || {},
+                        fieldName = self.name;
+                    errors[fieldName] = {};
+
+                    switch (error.code) {
+                        case 'request_too_large':
+                           errors[fieldName].tooBig = true;
+                           break;
+                        default:
+                            errors[fieldName].uploadFailed = true;
+                    }
+                    self.model.unset(fieldName + '_guid');
+                    self.model.trigger('error:validation:' + this.field, errors[fieldName]);
                     self.model.trigger('error:validation', errors);
                 }
             },
@@ -316,19 +341,20 @@
         }
     },
 
-    /****
-     * Custom requiredValidator for image field because we need to check if the input inside the view is empty or not.
+    /**
+     * Custom requiredValidator for image field because we need to check if the
+     * input inside the view is empty or not.
      *
-     + @param {Object} fields Hash of field definitions to validate.
-     + @param {Object} errors Error validation errors
-     + @param {Function} callback Async.js waterfall callback
+     * @param {Object} fields Hash of field definitions to validate.
+     * @param {Object} errors Error validation errors.
+     * @param {Function} callback Async.js waterfall callback.
      */
     _doValidateImageField: function(fields, errors, callback) {
-        var $input = this.$('input[type=file]');
-        if (this.def.required && (_.isEmpty($input) || _.isEmpty($input.val()))) {
+        if (this.def.required && !this.model.get(this.name + '_guid')) {
             errors[this.name] = errors[this.name] || {};
             errors[this.name].required = true;
         }
+
         callback(null, fields, errors);
     },
 

@@ -262,7 +262,7 @@ class FileApi extends SugarApi {
                     // Note, that although the code earlier in this method (where attachment too large) handles
                     // if file > php.ini upload_maxsize, we still may have a file > sugarcrm maxsize
                     $this->deleteIfFails($bean, $args);
-                    throw new SugarApiExceptionError($sf->error);
+                    throw new SugarApiExceptionRequestTooLarge($sf->error);
                 }
 
                 // Prep our return

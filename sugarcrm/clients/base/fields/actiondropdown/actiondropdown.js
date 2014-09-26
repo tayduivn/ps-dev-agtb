@@ -310,7 +310,7 @@
         }
         //FIXME: SC-3365 Should not need to check for 'disabled' in css_class
         var caretEnabled = _.some(this.dropdownFields, function(field) {
-            if (field.hasAccess()) {
+            if (_.isFunction(field.hasAccess) && field.hasAccess()) {
                 if (field.def.css_class && field.def.css_class.indexOf('disabled') > -1) {
                     //If action disabled in metadata
                     return false;
