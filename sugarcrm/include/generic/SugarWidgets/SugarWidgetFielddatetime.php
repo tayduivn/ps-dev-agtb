@@ -287,8 +287,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
             $field_name = $this->_get_column_select($layout_def);
         }
 
-        $query = $field_name . " >= " . $this->reporter->db->quoted($this->formatDate($begin)) . " AND " .
-            $field_name . " <= " . $this->reporter->db->quoted($this->formatDate($end)) . "\n";
+        $query = $field_name . " >= " . $this->reporter->db->convert($this->reporter->db->quoted($this->formatDate($begin)), $layout_def['type']) . " AND " .
+            $field_name . " <= " . $this->reporter->db->convert($this->reporter->db->quoted($this->formatDate($end)), $layout_def['type']) . "\n";
 
         return $query;
     }
