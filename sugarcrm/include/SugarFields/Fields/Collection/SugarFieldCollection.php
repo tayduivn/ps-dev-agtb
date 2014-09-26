@@ -301,6 +301,7 @@ class SugarFieldCollection extends SugarFieldBase {
     protected function getCollectionApi()
     {
         if (!$this->collectionApi) {
+            require_once 'clients/base/api/CollectionApi.php';
             $this->collectionApi = new CollectionApi();
         }
 

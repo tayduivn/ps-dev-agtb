@@ -118,6 +118,7 @@ class SugarFieldRelateLink extends SugarFieldBase
     protected function getRelateApi()
     {
         if (!$this->relateApi) {
+            require_once 'clients/base/api/RelateApi.php';
             $this->relateApi = new RelateApi();
         }
 
