@@ -19,6 +19,11 @@ require_once 'upgrade/scripts/post/4_ClearSubpanels.php';
 class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @var string
+     */
+    protected $module = 'Accounts';
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -27,9 +32,8 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
-        $bean = $this->getMock('SugarBean');
         $beanList = array(
-            'PreScript' => get_class($bean),
+            $this->module => 'Account',
         );
     }
 
@@ -47,10 +51,11 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
      * @param string $layout
      * @param string $file
      * @param array $expectedLayout
+     * @param array $state
      *
      * @dataProvider provider
      */
-    public function testRun($def, $layout, $file, $expectedLayout)
+    public function testRun($def, $layout, $file, $expectedLayout, $state = array())
     {
         $path = sugar_cached(__CLASS__);
         SugarAutoLoader::ensureDir($path . DIRECTORY_SEPARATOR . 'custom');
@@ -63,6 +68,7 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
         $upgradeDriver->context = array(
             'source_dir' => $path
         );
+        $upgradeDriver->state = $state;
 
         $script = $this->getMock(
             'SugarUpgradeClearSubpanels',
@@ -77,8 +83,7 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getDefFiles')
             ->will($this->returnValue(array($fpath)));
         $script->expects($this->once())
-            ->method('rebuildExtensions')
-            ->with(array('' => ''));
+            ->method('rebuildExtensions');
         $script->expects($this->once())
             ->method('updateFile')
             ->with($fpath, $expectedLayout);
@@ -114,7 +119,7 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
     ),
     'c' => array (
       'vname' => 'c',
-      'widget_class' => 'SomeClass',
+      'widget_class' => 'SubPanelDetailViewLink',
     ),
     'd' => array (
       'vname' => 'd',
@@ -129,7 +134,7 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
   ),
 );
 EOL
-                ,
+            ,
                 'tst.php',
                 array(
                     'top_buttons' => array(),
@@ -143,7 +148,7 @@ EOL
                         ),
                         'c' => array (
                             'vname' => 'c',
-                            'widget_class' => 'SomeClass',
+                            'widget_class' => 'SubPanelDetailViewLink',
                         ),
                         'd' => array (
                             'vname' => 'd',
@@ -178,9 +183,9 @@ EOL
                 ),
                 <<<EOL
 <?php
-\$layout_defs[""]["subpanel_setup"]["c"] = array (
+\$layout_defs["{$this->module}"]["subpanel_setup"]["c"] = array (
   'order' => 100,
-  'module' => 'PreScript',
+  'module' => '{$this->module}',
   'subpanel_name' => 'default',
   'sort_order' => 'asc',
   'sort_by' => 'id',
@@ -193,21 +198,68 @@ EOL
             ,
                 'tst2.php',
                 array(
-                    '' => array(
+                    $this->module => array(
                         'subpanel_setup' => array (
                             'a' => array (
                                 'order' => 100,
-                                'module' => 'PreScript',
+                                'module' => $this->module,
                                 'subpanel_name' => 'default',
                                 'sort_order' => 'asc',
                                 'sort_by' => 'id',
                                 'title_key' => 'LBL',
                                 'get_subpanel_data' => 'a',
                                 'top_buttons' =>
-                                array (),
+                                    array (),
                             )
                         ),
                     )
+                ),
+            ),
+            array(
+                array(
+                    'a' => array(
+                        'name' => 'a',
+                        'type' => 'text',
+                    ),
+                    'b' => array(
+                        'name' => 'b',
+                        'type' => 'text',
+                    ),
+                ),
+                <<<EOL
+<?php
+\$subpanel_layout = array(
+    'list_fields' => array(
+        'a' => array(
+            'vname' => 'a',
+        ),
+        'b' => array(
+            'vname' => 'b',
+            'widget_class' => 'WrongWidgetClass',
+        ),
+    ),
+);
+EOL
+            ,
+                'tst3.php',
+                array(
+                    'list_fields' => array(
+                        'a' => array(
+                            'vname' => 'a',
+                        ),
+                    ),
+                ),
+                array(
+                    'healthcheck' => array(
+                        array(
+                            'report' => 'unknownWidgetClass',
+                            'params' => array(
+                                'WrongWidgetClass',
+                                'b',
+                                $this->module,
+                            ),
+                        ),
+                    ),
                 ),
             ),
         );
