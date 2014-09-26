@@ -78,6 +78,7 @@ $mod_strings = array(
     'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_526_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s'",
     'LBL_SCAN_527_LOG' => "Table name in bean %s does not match the table attribute in the %s/vardefs.php",
+    'LBL_SCAN_528_LOG' => 'Field %s of %s module has incorrect display_default value',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -172,6 +173,7 @@ $mod_strings = array(
     'LBL_SCAN_515_TITLE' => 'Script failure: %s',
     'LBL_SCAN_517_TITLE' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_526_TITLE' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s'",
+    'LBL_SCAN_528_TITLE' => 'Field %s of %s module has incorrect display_default value',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
@@ -248,6 +250,7 @@ $mod_strings = array(
     'LBL_SCAN_515_DESCR' => 'The checking script failed, which means the instaScannerMeta.phpnce probably contains bad PHP code that the script tried to load.',
     'LBL_SCAN_517_DESCR' => 'Package detected which has been blacklisted as not supported in Sugar 7',
     'LBL_SCAN_526_DESCR' => "This List contains Item Name values that prevent the upgrade.",
+    'LBL_SCAN_528_DESCR' => 'Date/Datetime/Time field with incorrect display_default value like -none-',
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
