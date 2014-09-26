@@ -1,0 +1,62 @@
+.jstree-sugar {
+  &.tree-component {
+    color: #47484a !important;
+    ul {
+      li {
+        border-bottom: 1px solid #eeeeee;
+        padding-top: 2px;
+        &:nth-child(1) {
+          border-top: 1px solid #eeeeee;
+        }
+        &:nth-last-child(1) {
+          border-bottom: none;
+        }
+      }
+    }
+    li > a {
+      padding: 0px;
+      display: inline-table;
+      color: #47484a !important;
+    }
+    ins {
+      &.jstree-icon {
+        padding: 5px;
+        color: #47484a !important;
+      }
+    }
+    a {
+      &.jstree-clicked {
+        color: #003366 !important;
+      }
+      &.btn {
+        &.jstree-contextmenu,
+        &.jstree-addnode {
+          padding: 2px;
+          margin: 2px;
+        }
+      }
+      .jstree-icon {
+        &:before {
+          content: "\f114";
+        }
+      }
+    }
+  }
+}
+
+#vakata-contextmenu {
+  border-radius: 3px;
+  li {
+    a {
+      color: #47484a !important;
+      ul {
+        background: #ffffff;
+        border-radius: 3px;
+      }
+    }
+  }
+  ul {
+    background: #ffffff;
+    border-radius: 3px;
+  }
+}
