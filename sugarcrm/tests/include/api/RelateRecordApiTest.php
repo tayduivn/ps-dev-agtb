@@ -39,6 +39,60 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
+    public function testCreateRelatedRecord()
+    {
+        $relateApiArgs = array('param1' => 'value1');
+        $moduleApiArgs = array('param2' => 'value2');
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        $link = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $link->expects($this->any())
+            ->method('getRelatedModuleName')
+            ->willReturn('TestModule');
+
+        $primaryBean = new SugarBean();
+        $primaryBean->testLink = $link;
+
+        $relatedBean = new SugarBean();
+        $relatedBean->field_defs = array();
+        $moduleApi = $this->getMockBuilder('ModuleApi')
+            ->setMethods(array('createBean'))
+            ->getMock();
+        $moduleApi->expects($this->once())
+            ->method('createBean')
+            ->with($service, $moduleApiArgs)
+            ->willReturn($relatedBean);
+
+        /** @var RelateRecordApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('RelateRecordApi')
+            ->setMethods(array(
+                'loadBean',
+                'checkRelatedSecurity',
+                'getModuleApi',
+                'getModuleApiArgs',
+                'formatNearAndFarRecords',
+            ))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('loadBean')
+            ->willReturn($primaryBean);
+        $api->expects($this->any())
+            ->method('checkRelatedSecurity')
+            ->willReturn(array('testLink'));
+        $api->expects($this->once())
+            ->method('getModuleApi')
+            ->with($service, 'TestModule')
+            ->willReturn($moduleApi);
+        $api->expects($this->once())
+            ->method('getModuleApiArgs')
+            ->with($relateApiArgs, 'TestModule')
+            ->willReturn($moduleApiArgs);
+
+        $api->createRelatedRecord($service, $relateApiArgs);
+    }
+
     public function testCreateRelatedNote() {
         $contact = BeanFactory::getBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
@@ -131,9 +185,6 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $mockAPI->expects(self::once())
             ->method("loadBean")
             ->will(self::returnValue($prospectList));
-        $mockAPI->expects(self::once())
-            ->method("requireArgs")
-            ->will(self::returnValue(true));
 
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];

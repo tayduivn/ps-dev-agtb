@@ -132,7 +132,39 @@ class ModuleApi extends SugarApi {
         return $value;
     }
 
-    public function createRecord($api, $args) {
+    /**
+     * Creates new record of the given module and returns its formatted representation
+     *
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     *
+     * @return array Formatted representation of the bean
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionMissingParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function createRecord(ServiceBase $api, array $args)
+    {
+        $bean = $this->createBean($api, $args);
+        $data = $this->formatBeanAfterSave($api, $args, $bean);
+
+        return $data;
+    }
+
+    /**
+     * Creates new bean of the given module
+     *
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     * @param array $additionalProperties Additional properties to be set on the bean
+     *
+     * @return SugarBean
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionMissingParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
+    {
         $api->action = 'save';
         $this->requireArgs($args,array('module'));
 
@@ -171,6 +203,10 @@ class ModuleApi extends SugarApi {
         $bean->id = $args['id'];
         $bean->new_with_id = true;
 
+        foreach ($additionalProperties as $property => $value) {
+            $bean->$property = $value;
+        }
+
         // If we uploaded files during the record creation, move them from
         // the temporary folder to the configured upload folder.
         // FIXME Moving temporary files will be handled better in BR-2059.
@@ -187,7 +223,7 @@ class ModuleApi extends SugarApi {
 
         $this->processAfterCreateOperations($args, $bean);
 
-        return $this->getLoadedAndFormattedBean($api, $args);
+        return $this->reloadBean($api, $args);
     }
 
     public function updateRecord($api, $args) {
@@ -356,20 +392,51 @@ class ModuleApi extends SugarApi {
     }
 
     /**
-     * Shared method from create and update process that handles records that 
+     * Shared method from create and update process that handles records that
      * might not pass visibility checks. This method assumes the API has validated
      * the authorization to create/edit records prior to this point.
-     * 
+     *
      * @param ServiceBase $api The service object
      * @param array $args Request arguments
      * @return array Array of formatted fields
      */
     protected function getLoadedAndFormattedBean($api, $args)
     {
+        $bean = $this->reloadBean($api, $args);
+        $data = $this->formatBeanAfterSave($api, $args, $bean);
+
+        return $data;
+    }
+
+    /**
+     * Reloads the bean defined by arguments bypassing cache
+     *
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     *
+     * @return SugarBean
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function reloadBean(ServiceBase $api, array $args)
+    {
         // Load the bean fresh to ensure the cache entry from the create process
         // doesn't get in the way of visibility checks
-        $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
+        return $this->loadBean($api, $args, 'view', array('use_cache' => false));
+    }
 
+    /**
+     * Formats the bean which was previously saved with admission that the bean may be not accessible
+     * to the current user anymore
+     *
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     * @param SugarBean $bean The saved bean
+     *
+     * @return array Formatted representation of the bean
+     */
+    protected function formatBeanAfterSave(ServiceBase $api, array $args, SugarBean $bean)
+    {
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean, array(
             'display_acl' => true,

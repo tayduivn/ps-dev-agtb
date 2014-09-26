@@ -549,7 +549,7 @@ class Link2 {
      * the function also allows for setting of values for additional field in the table being
      * updated to save the relationship, in case of many-to-many relationships this would be the join table.
      *
-     * @param array $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
+     * @param string|SugarBean|string[]|SugarBean[] $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
      * @param array $additional_values the values should be passed as key value pairs with column name as the key name and column value as key value.
      *
      * @return boolean|array          Return true if all relationships were added.  Return an array with the failed keys if any of them failed.
