@@ -320,11 +320,14 @@ class VardefManager{
             $df = new DynamicField ($module) ;
             $df->buildCache($module, false);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields'])) {
+
+        // if we are currently rebuilding the relationships, we don't want `updateRelCFModules` to be called
+        // as it will fail when trying to look up relationships as they my have not been loaded into the
+        // cache yet
+        $rebuildingRelationships = (isset($GLOBALS['buildingRelCache']) && $GLOBALS['buildingRelCache'] === true);
+        if (empty($params['ignore_rel_calc_fields']) && $rebuildingRelationships === false) {
             self::updateRelCFModules($module, $object);
         }
-        //END SUGARCRM flav=pro ONLY
 
         // Put ACLStatic into vardefs for beans supporting ACLs
         if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
@@ -333,8 +336,8 @@ class VardefManager{
         }
 
         //great! now that we have loaded all of our vardefs.
-        //let's go save them to the cache file.
-        if(!empty($dictionary[$object])) {
+        //let's go save them to the cache file but only when we are not ignore related calculated fields
+        if(!empty($dictionary[$object]) && empty($params['ignore_rel_calc_fields'])) {
             VardefManager::saveCache($module, $object);
             SugarBean::clearLoadedDef($object);
         }

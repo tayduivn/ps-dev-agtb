@@ -179,13 +179,15 @@ class SugarRelationshipFactory {
             MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
         }
 
+        // set the variable back to false, as we are now going to rebuild the vardefs since we have all the
+        // relationships are loaded
+        $buildingRelCache = false;
+
         //Now load all vardefs a second time populating the rel_calc_fields
         foreach ($beanList as $moduleName => $beanName) {
             // need to refresh the vardef so that the related calc fields are loaded
             VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName), true);
         }
-
-        $buildingRelCache = false;
     }
 
     /**
