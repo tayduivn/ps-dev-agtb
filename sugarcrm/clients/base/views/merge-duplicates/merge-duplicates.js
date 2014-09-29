@@ -1187,27 +1187,32 @@
     _setRelatedFields: function(fieldName, model, synced) {
         synced = synced || false;
 
-        var fieldDefs = this.getFields(),
+        var fieldDefs = app.metadata.getModule(this.module).fields;
             defs = fieldDefs[fieldName],
-            syncedAttributes = synced ? model.getSyncedAttributes() : {};
+            syncedAttributes = synced ? model.getSyncedAttributes() : {},
+            fields = _.union(defs.populate_list, defs.related_fields);
+
+        _.each(this.relatedFieldsMap, function(field) {
+            if (!_.isUndefined(defs[field]) && !_.isUndefined(fieldDefs[defs[field]].name)) {
+                fields.push(fieldDefs[defs[field]].name);
+            };
+        });
 
         // FIXME: populate_list is only available on related fields plus
         // related_fields is only available on fieldsets, so this logic should
         // be implemented on field side thus calling a method like
-        // this.fields[fieldName].revertTo(model); here
-        _.each([defs.populate_list, defs.related_fields], function(fields) {
-            _.each(fields, function(relatedField) {
-                if (_.isUndefined(fieldDefs[relatedField])) {
-                    return;
-                }
+        // this.fields[fieldName].revertTo(model); here SC-3467
+        _.each(fields, function(relatedField) {
+            if (_.isUndefined(fieldDefs[relatedField])) {
+                return;
+            }
 
-                this.primaryRecord.set(
-                    relatedField,
-                    !_.isUndefined(syncedAttributes[relatedField]) ?
-                        syncedAttributes[relatedField] :
-                        model.get(relatedField)
-                );
-            }, this);
+            this.primaryRecord.set(
+                relatedField,
+                !_.isUndefined(syncedAttributes[relatedField]) ?
+                    syncedAttributes[relatedField] :
+                    model.get(relatedField)
+            );
         }, this);
     },
 

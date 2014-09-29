@@ -207,6 +207,9 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
 		$_POST['email_reminder_checked'] = 1;
 	}
+    if (isset($_POST['repeat_parent_id']) && trim($_POST['repeat_parent_id']) == '') {
+        unset($_POST['repeat_parent_id']);
+    }
 
 	// don't allow to set recurring_source from a form
 	unset($_POST['recurring_source']);

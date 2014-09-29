@@ -34,7 +34,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                         ),
                         array(
                             'name' => 'dnb_bal_job_fn',
-                            'type' => 'enum',
+                            'type' => 'dnbenum',
                             'options' => 'dnb_job_codes',
                             'cell_css_class' => 'span3'
                         )
@@ -99,7 +99,7 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                         ),
                         array(
                             'name' => 'dnb_bal_ctry',
-                            'type' => 'enum',
+                            'type' => 'dnbenum',
                             'isMultiSelect' => true,
                             'options' => 'dnb_countries_iso',
                             'cell_css_class' => 'span3'

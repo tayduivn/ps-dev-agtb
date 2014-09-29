@@ -233,6 +233,7 @@ $mod_strings = array (
     'LBL_COMMITTED_HISTORY_BEST_SAME' => 'best stayed the same',
     'LBL_COMMITTED_HISTORY_WORST_SAME' => 'worst stayed the same',
 
+
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
 
