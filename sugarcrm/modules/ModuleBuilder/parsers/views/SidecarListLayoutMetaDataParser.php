@@ -82,10 +82,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                         $field['enabled'] = true;
                     }
                     if (!empty($field['name'])) {
-                        if (
-                            !empty($field['default']) && !empty($field['enabled']) &&
-                            (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] != 'false'))
-                        ) {
+                        if ($this->isDefaultField($field)) {
                             if (isset($this->_fielddefs[$field['name']])) {
                                 $defaultFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
                                 if (!empty($field['label'])) {
@@ -101,6 +98,19 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         }
 
         return $defaultFields ;
+    }
+
+    /**
+     * Detects if the field should be displayed in "Default" list
+     *
+     * @param array $field Field view definition
+     * @return bool
+     */
+    protected function isDefaultField(array $field)
+    {
+        return (!isset($field['default']) || $field['default'])
+            && (!isset($field['enabled']) || $field['enabled'])
+            && (!isset($field['studio']) || isTruthy($field['studio']));
     }
 
     /**
@@ -126,7 +136,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                             continue;
                         }
 
-                        if (empty($field['default']) && (!isset($field['enabled']) || $field['enabled'])) {
+                        if ($this->isAdditionalField($field)) {
                             if (isset($this->_fielddefs[$field['name']])) {
                                 $additionalFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
                             } else {
@@ -139,6 +149,18 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         }
 
         return $additionalFields ;
+    }
+
+    /**
+     * Detects if the field should be displayed in "Available" list
+     *
+     * @param array $field Field view definition
+     * @return bool
+     */
+    protected function isAdditionalField(array $field)
+    {
+        return isset($field['default']) && !$field['default']
+            && (!isset($field['enabled']) || $field['enabled']);
     }
 
     /**

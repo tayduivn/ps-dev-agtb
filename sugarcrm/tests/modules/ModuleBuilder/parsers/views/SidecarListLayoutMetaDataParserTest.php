@@ -362,4 +362,73 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         );
     }
     //END SUGARCRM flav=ent ONLY
+
+    /**
+     * @dataProvider isDefaultFieldProvider
+     */
+    public function testIsDefaultField(array $field, $expected)
+    {
+        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isDefaultField', array($field));
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function isDefaultFieldProvider()
+    {
+        return array(
+            'true-by-default' => array(
+                array(),
+                true,
+            ),
+            'must-be-enabled' => array(
+                array(
+                    'enabled' => false,
+                ),
+                false,
+            ),
+            'must-be-default' => array(
+                array(
+                    'default' => false,
+                ),
+                false,
+            ),
+            'must-be-enabled-for-studio' => array(
+                array(
+                    'studio' => false,
+                ),
+                false,
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider isAdditionalFieldProvider
+     */
+    public function testIsAdditionalField(array $field, $expected)
+    {
+        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isAdditionalField', array($field));
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function isAdditionalFieldProvider()
+    {
+        return array(
+            'false-by-default' => array(
+                array(),
+                false,
+            ),
+            'must-be-non-default' => array(
+                array(
+                    'default' => false,
+                ),
+                true,
+            ),
+            'must-be-enabled' => array(
+                array(
+                    'default' => false,
+                    'enabled' => false,
+                ),
+                false,
+            ),
+        );
+    }
 }
