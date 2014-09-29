@@ -52,6 +52,14 @@ class DnbApi extends SugarApi
                 'shortHelp' => 'Invoke BAL For Contacts',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
             ),
+            'dnbBulkImport' => array(
+                'reqType' => 'POST',
+                'path' => array('connector', 'dnb', '?', 'bulkimport'),
+                'pathVars' => array('connector', 'dnb', 'module', 'bulkimport'),
+                'method' => 'dnbBulkImport',
+                'shortHelp' => 'Bulk Import D&B Objects',
+                'longHelp' => 'include/api/help/dnb_bulkimport_help.html',
+            ),
         );
     }
 
@@ -195,6 +203,28 @@ class DnbApi extends SugarApi
         }
         $queryData = $args['qdata']; //data posted
         $result = $extDnbApi->dnbBALContacts($queryData);
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
+        }
+        return $result;
+    }
+
+    /**
+     * Bulk Imports D&B Objects
+     * @param $api
+     * @param $args
+     * @return mixed
+     * @throws SugarApiExceptionRequestMethodFailure
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function dnbBulkImport($api,$args) {
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $extDnbApi['error']);
+        }
+        $bulkImportData = $args['bulkdata']; //data posted
+        $module = $args['module'];
+        $result = $extDnbApi->dnbBulkImport($module, $bulkImportData);
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, array(), null, 424, $result['error']);
         }
