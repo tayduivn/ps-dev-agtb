@@ -55,6 +55,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'timeline-header.partial');
+        SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'search-result.partial');
         SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
@@ -660,6 +661,59 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
         it('should return an empty object if module and id has not been found', function() {
             expect(field.parseModuleAndIdFromUrl('/v10/freebusy')).toEqual({});
+        });
+    });
+
+    describe('formatSearchResult', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'invitees',
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+        });
+
+        it('should only show module and name when no highlighted field', function() {
+            var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
+                result = app.data.createBean('Baz', {
+                    full_name: 'Foo Bar'
+                });
+            result.module = 'Baz';
+            result.searchInfo = {};
+            field.formatSearchResult(result);
+            expect(searchResultTemplateStub.lastCall.args).toEqual([{
+                module: 'Baz',
+                name: 'Foo Bar'
+            }]);
+        });
+
+        it('should show module, name, and highlighted field when highlighted field is given', function() {
+            var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
+                result = app.data.createBean('Baz', {
+                    full_name: 'Foo Bar'
+                });
+
+            result.module = 'Baz';
+            result.searchInfo = {
+                highlighted: [{
+                    label: 'LBL_ACCOUNT_NAME',
+                    module: 'Baz',
+                    text: 'Bar Enterprises Inc.'
+                }]
+            };
+
+            field.formatSearchResult(result);
+            expect(searchResultTemplateStub.lastCall.args).toEqual([{
+                module: 'Baz',
+                name: 'Foo Bar',
+                field_name: 'LBL_ACCOUNT_NAME',
+                field_value: 'Bar Enterprises Inc.'
+            }]);
         });
     });
 });

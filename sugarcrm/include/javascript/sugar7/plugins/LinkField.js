@@ -429,15 +429,17 @@
              * @return {SUGAR.HttpRequest} AJAX request
              */
             search: function(options) {
-                //TODO: might not be using elastic search when users is used... look at AS to optimize for this use case
-                var callbacks, params;
+                var url, callbacks, params;
 
                 params = {};
                 options || (options = {});
 
                 params.q = options.query;
-                params.max_mum = options.limit;
-
+                // TODO: Invitee Search will return 30 for now, but leaving this in here
+                // for when we move to using Unified Search which supports max_num
+                params.max_num = options.limit;
+                params.search_fields = 'first_name,last_name,email,account_name';
+                params.fields = 'id,full_name,email,account_name';
                 if (this.links) {
                     params.module_list = _.values(this.links).join(',');
                 }
@@ -460,7 +462,8 @@
                     }
                 };
 
-                return app.api.search(params, callbacks);
+                url = app.api.buildURL(this.parent.module, 'invitee_search', null, params);
+                return app.api.call('read', url, null, callbacks);
             }
         });
 

@@ -91,6 +91,9 @@
 
         // get template for timeline header
         this.timelineHeaderTemplate = app.template.getField(this.type, 'timeline-header.partial', this.module);
+
+        // get template for search result formatting
+        this.searchResultTemplate = app.template.getField(this.type, 'search-result.partial', this.module);
     },
 
     /**
@@ -170,6 +173,7 @@
             allowClear: false,
             formatInputTooShort: '',
             formatSearching: app.lang.get('LBL_LOADING', this.module),
+            formatResult: _.bind(this.formatSearchResult, this),
             minimumInputLength: 1,
             query: _.bind(this.search, this),
             selectOnBlur: false
@@ -742,11 +746,8 @@
                 if (participant && participant.get('delta') > -1) {
                     app.logger.debug(record.module + '/' + record.id + ' is already in the collection');
                 } else {
-                    data.results.push({
-                        id: record.id,
-                        text: record.get('name'),
-                        attributes: record.attributes
-                    });
+                    record.text = record.get('name');
+                    data.results.push(record);
                 }
             });
         };
@@ -765,5 +766,25 @@
             app.logger.warn(e);
             query.callback(data);
         }
+    },
+
+    /**
+     * Format the search result for display in select2 result list
+     *
+     * @param {Object} bean A bean result
+     * @return {String}
+     */
+    formatSearchResult: function(bean) {
+        var result = {
+            module: bean.module,
+            name: app.utils.getRecordName(bean)
+        };
+
+        _.each(bean.searchInfo.highlighted, function(field) {
+            result.field_name = app.lang.get(field.label, field.module);
+            result.field_value = field.text;
+        });
+
+        return this.searchResultTemplate(result);
     }
 })
