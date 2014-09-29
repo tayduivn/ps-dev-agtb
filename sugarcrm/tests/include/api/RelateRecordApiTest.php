@@ -93,6 +93,56 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->createRelatedRecord($service, $relateApiArgs);
     }
 
+    /**
+     * @dataProvider getModuleApiProvider
+     */
+    public function testGetModuleApi($module, $expected)
+    {
+        $api = new RelateRecordApi();
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApi', array($service, $module));
+        $this->assertInstanceOf($expected, $actual);
+    }
+
+    public static function getModuleApiProvider()
+    {
+        return array(
+            'module-specific' => array('Users', 'UsersApi'),
+            'generic' => array('UnknownModule', 'ModuleApi'),
+        );
+    }
+
+    /**
+     * @dataProvider getModuleApiArgsProvider
+     */
+    public function testGetModuleApiArgs(array $args, $module, array $expected)
+    {
+        $api = new RelateRecordApi();
+        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApiArgs', array($args, $module));
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getModuleApiArgsProvider()
+    {
+        return array(
+            array(
+                array(
+                    'module' => 'PrimaryModule',
+                    'record' => 'PrimaryRecord',
+                    'link_name' => 'LinkName',
+                    'property' => 'value',
+                ),
+                'RelateModule',
+                array(
+                    'relate_module' => 'PrimaryModule',
+                    'relate_record' => 'PrimaryRecord',
+                    'module' => 'RelateModule',
+                    'property' => 'value',
+                ),
+            ),
+        );
+    }
+
     public function testCreateRelatedNote() {
         $contact = BeanFactory::getBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
