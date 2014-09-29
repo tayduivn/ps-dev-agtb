@@ -188,5 +188,20 @@
         }
 
         return isValid;
+    },
+
+    /**
+     * Inherit fieldset templates for edit.
+     * FIXME: Will be refactored by SC-3471.
+     * @inheritdoc
+     * @private
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions')
+            && (this.action === 'edit')) {
+            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
+        }
     }
 })

@@ -23,6 +23,8 @@
  * - {boolean} show_child_labels Set to `true` to show labels on child fields in
  * the record view.
  * - {boolean} inline Set to `true` to render the fieldset inline.
+ * - {boolean} equal_spacing When in inline mode, setting `true` will make the
+ * fields inside fieldsets to have equal spacing, rather than being left aligned.
  *
  * Example usage:
  *
@@ -69,6 +71,10 @@
         var inlineTag = this.def.inline ? '-inline' : '';
         this.def.css_class = (this.def.css_class ? this.def.css_class + ' fieldset' :
             'fieldset') + inlineTag;
+
+        if (this.def.equal_spacing && this.def.inline) {
+            this.def.css_class += ' fieldset-equal';
+        }
     },
 
     /**

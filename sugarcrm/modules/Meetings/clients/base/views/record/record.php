@@ -186,6 +186,8 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'type' => 'duration',
                     'label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'dismiss_label' => true,
+                    'inline' => true,
+                    'show_child_labels' => true,
                     'fields' => array(
                         array(
                             'name' => 'date_start',
@@ -194,6 +196,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                                 'step' => 15,
                             ),
                             'readonly' => false,
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_START_AND_END_DATE_TO',
                         ),
                         array(
                             'name' => 'date_end',
@@ -262,6 +268,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'name' => 'reminders',
                     'type' => 'fieldset',
                     'inline' => true,
+                    'equal_spacing' => true,
                     'show_child_labels' => true,
                     'fields' => array(
                         'reminder_time',

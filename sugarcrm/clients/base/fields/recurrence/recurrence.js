@@ -52,6 +52,7 @@
 
     /**
      * Inherit fieldset templates
+     * FIXME: Will be refactored by SC-3471.
      * @inheritdoc
      * @private
      */
