@@ -278,6 +278,7 @@ class ListViewDisplay {
 		foreach ( $this->actionsMenuExtraItems as $item )
 		    $menuItems[] = $item;
 
+        $menuItems = array_filter($menuItems); // delete possible empty values - they are needless
         $link = array(
             'class' => 'clickMenu selectActions fancymenu',
             'id' => 'selectActions',
