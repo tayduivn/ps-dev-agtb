@@ -36,28 +36,25 @@ class RemoveInlineHTMLTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Test asserts correct removal of inline HTML
      *
-     * @param string $content
-     * @param string $expected
-     *
      * @dataProvider getContents
      */
     public function testRun($content, $expected)
     {
         $path = sugar_cached(__CLASS__);
-        $file = 'custom/' . rand(1000, 9999) . '/test.php';
+        $file = $path . DIRECTORY_SEPARATOR . 'custom' . DIRECTORY_SEPARATOR . 'test.php';
         $this->upgradeDriver->context['source_dir'] = $path;
-        SugarAutoLoader::ensureDir($path . '/custom');
+        SugarAutoLoader::ensureDir($path . DIRECTORY_SEPARATOR . 'custom');
         SugarTestHelper::saveFile($file);
-        sugar_file_put_contents($path . '/' . $file, $content);
+        sugar_file_put_contents($file, $content);
 
         $script = $this->getMock('SugarUpgradeRemoveInlineHTML', array('backupFile') , array($this->upgradeDriver));
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {
-            $script->expects($this->once())->method('backupFile')->with($this->equalTo($file));
+            $script->expects($this->once())->method('backupFile')->with($this->equalTo('custom' . DIRECTORY_SEPARATOR . 'test.php'));
         }
         $script->run();
-        $actual = sugar_file_get_contents($path . '/' . $file);
+        $actual = sugar_file_get_contents($file);
         $this->assertEquals($expected, $actual, 'File trimmed incorrectly');
     }
 
