@@ -1014,6 +1014,18 @@ EOQ;
 			$indices[$name]['fields'][]=strtolower($row['colname']);
 		}
 
+        $result = $this->query('SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = ' . $this->quoted($this->schema) . ' AND TABNAME=' . $this->quoted($tablename));
+        while ($row = $this->fetchByAssoc($result)) {
+            $index_type = 'fulltext';
+            $name = strtolower($row['indname']);
+            $indices[$name]['name'] = $name;
+            $indices[$name]['type'] = $index_type;
+            $indices[$name]['fields'] = explode(',', strtolower($row['colname']));
+            if (!empty($index['language'])) {
+                $indices[$name]['message_locale'] = $row['language'];
+            }
+        }
+
 		return $indices;
 	}
 	private static $indexTypeMap = array('D' => 'index', 'P' => 'primary', 'U' => 'unique');
@@ -1219,6 +1231,25 @@ EOQ;
 		return $return;
 	}
 
+    /**
+     * Drops the table associated with a bean
+     *
+     * @param SugarBean $bean SugarBean instance
+     *
+     * @return bool query result
+     */
+    public function dropTable(SugarBean $bean)
+    {
+        // If we want drop table then we have to drop all FTS indexes if they are present
+        foreach ($this->get_indices($bean->getTableName()) as $index) {
+            if ($index['type'] == 'fulltext') {
+                $this->dropIndexes($bean->getTableName(), array($index), true);
+            }
+        }
+
+        return parent::dropTable($bean);
+    }
+
 	/**+
 	 * Truncate table
 	 * @param  $name
@@ -1227,34 +1258,6 @@ EOQ;
 	public function truncateTableSQL($name)
 	{
 		return "TRUNCATE TABLE " . strtoupper($name) . " IMMEDIATE";
-	}
-
-
-	public function dropIndexes($tablename, $indexes, $execute = true)
-	{
-		$sql = array();
-		foreach ($indexes as $index) {
-			$name =$index['name'];
-			if($execute) {
-			unset(self::$index_descriptions[$tablename][$name]);
-			}
-			if ($index['type'] == 'primary') {
-                $sql[] = "ALTER TABLE {$tablename} DROP PRIMARY KEY";
-			} else {
-				$sql[] = "DROP INDEX $name";
-			}
-		}
-		if (!empty($sql)) {
-            if ($execute) {
-                foreach ($sql as $q) {
-                    $this->query($q);
-                }
-            }
-            $sql = implode(";", $sql);
-		} else {
-			$sql = '';
-		}
-		return $sql;
 	}
 
 	/**

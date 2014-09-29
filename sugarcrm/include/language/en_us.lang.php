@@ -4575,7 +4575,7 @@ $app_strings = array (
     'LBL_MOBILE_PROCESSING_FILE' => 'Preparing file...',
     'LNK_THIRD_PARTY_SOFTWARE' => 'Third Party Software',
     'LNK_TERMS_OF_USE' => 'Terms of Use',
-    'LNK_PRIVACY_POLICY' => 'Privacy Policy',     
+    'LNK_PRIVACY_POLICY' => 'Privacy Policy',
     'LBL_EXTERNAL_LOGIN_BUTTON_TITLE' => 'Single Sign-On',
     'LBL_RECENTS' => 'Recents',
 
@@ -4670,7 +4670,7 @@ $app_strings = array (
     'LBL_MOBILE_TUTORIAL_DETAIL_INTRO_TITLE' => 'Detail View',
     'LBL_MOBILE_TUTORIAL_DETAIL_INTRO_TEXT' => 'The detail view opens on the right side of your screen.',
     'LBL_MOBILE_TUTORIAL_CONTROL_PANEL' => 'Use the arrows below for a quick tour through the key components of this menu.',
-    
+
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
 

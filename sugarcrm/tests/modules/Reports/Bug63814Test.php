@@ -44,13 +44,13 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider filterDataProvider
      */
-    public function testDateTimeFiscalQueryFilter($date, $type, $modifyFilter, $expectedStart, $expectedEnd, $timezone)
+    public function testDateTimeFiscalQueryFilter($date, $type, $class, $modifyFilter, $expectedStart, $expectedEnd, $timezone)
     {
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
 
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
-        $SWFDT = new SugarWidgetFielddatetime63814Test($layoutManager);
+        $SWFDT = new $class($layoutManager);
         $layoutDef = array(
             'qualifier_name' => 'quarter',
             'type' => $type
@@ -68,49 +68,55 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 '2013-05-05',
                 'datetime',
+                'SugarWidgetFielddatetime63814Test',
                 '',
-                ">='2013-04-01 07:00:00'",
-                "<='2013-07-01 06:59:59'",
+                ">= '2013-04-01 07:00:00'",
+                "<= '2013-07-01 06:59:59'",
                 'America/Los_Angeles'
             ),
             array(
                 '1987-01-01',
                 'datetime',
+                'SugarWidgetFielddatetime63814Test',
                 '+3 month',
-                ">='1987-03-31 21:00:00'",
-                "<='1987-06-30 20:59:59'",
+                ">= '1987-03-31 21:00:00'",
+                "<= '1987-06-30 20:59:59'",
                 'Europe/Helsinki'
             ),
             array(
                 '2013-09-08',
                 'datetime',
+                'SugarWidgetFielddatetime63814Test',
                 '-3 month',
-                ">='2013-04-01 00:00:00'",
-                "<='2013-06-30 23:59:59'",
+                ">= '2013-04-01 00:00:00'",
+                "<= '2013-06-30 23:59:59'",
                 'UTC'
             ),
             array(
                 '2013-05-05',
                 'date',
+                'SugarWidgetFielddate63814Test',
                 '',
-                ">='2013-04-01 00:00:00'",
-                "<='2013-06-30 23:59:59'",
+                ">= '2013-04-01'",
+                "<= '2013-06-30'",
                 'America/Los_Angeles'
             ),
             array(
                 '1987-01-01',
                 'date',
+                'SugarWidgetFielddate63814Test',
                 '+3 month',
-                ">='1987-04-01 00:00:00'",
-                "<='1987-06-30 23:59:59'",
+                ">= '1987-04-01'",
+                "<= '1987-06-30'",
                 'Europe/Helsinki'
             ),
             array(
                 '2013-09-08',
                 'date',
+                'SugarWidgetFielddate63814Test',
                 '-3 month',
-                ">='2013-04-01 00:00:00'",
-                "<='2013-06-30 23:59:59'",
+                ">= '2013-04-01'",
+                "<= '2013-06-30'",
                 'UTC'
             ),
         );
@@ -121,6 +127,17 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
  * Helper class for testing getQuarterFilter() method
  */
 class SugarWidgetFielddatetime63814Test extends SugarWidgetFielddatetime
+{
+    public function getQuarterFilter($layout_def, $modifyFilter, $date = '')
+    {
+        return parent::getQuarterFilter($layout_def, $modifyFilter, $date);
+    }
+}
+
+/**
+ * Helper class for testing getQuarterFilter() method
+ */
+class SugarWidgetFielddate63814Test extends SugarWidgetFielddate
 {
     public function getQuarterFilter($layout_def, $modifyFilter, $date = '')
     {

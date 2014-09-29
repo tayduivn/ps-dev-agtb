@@ -37,6 +37,65 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Testing that FTS index dropped if dropTable had been called for its table
+     * @ticket CRYS-463
+     */
+    public function testFTSIndexDropWhileTableDropping()
+    {
+        $table = create_guid();
+
+        $indexOk = array(
+            'name' => create_guid(),
+            'type' => 'fulltext',
+            'fields' => array('description'),
+            'message_locale' => 'EN_US',
+        );
+        $indexBad = array(
+            'name' => create_guid(),
+            'type' => 'index',
+            'fields' => array('id'),
+        );
+
+        $account = $this->getMock('Account');
+        $account->expects($this->any())->method('getTableName')->will($this->returnValue($table));
+
+        $db = $this->getMock(get_class($this->_db), array('get_indices', 'dropIndexes', 'dropTableName'));
+        $db->expects($this->once())->method('get_indices')->with($this->equalTo($table))->will($this->returnValue(array(
+            $indexOk['name'] => $indexOk,
+            $indexBad['name'] => $indexBad,
+        )));
+        $db->expects($this->once())->method('dropIndexes')->with($this->equalTo($table), $this->equalTo(array($indexOk)), $this->equalTo(true));
+        // stop parent::dropTable call
+        $db->expects($this->any())->method('dropTableName');
+
+        $db->dropTable($account);
+    }
+
+    /**
+     * Testing that get_indices selects FTS indices too
+     * @ticket CRYS-463
+     */
+    public function testGetIndices()
+    {
+        $queries = array();
+        $db = $this->getMock(get_class($this->_db), array('query', 'fetchByAssoc'));
+        $db->expects($this->any())->method('query')->will($this->returnCallback(function($query) use (&$queries) {
+            $queries[] = $query;
+        }));
+        $db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(array()));
+        $db->get_indices('mytable');
+
+        $isFound = false;
+        foreach ($queries as $query) {
+            if ($query == 'SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = \'\' AND TABNAME=\'MYTABLE\'') {
+                $isFound = true;
+            }
+        }
+
+        $this->assertTrue($isFound, 'FTS indexes were not selected');
+    }
+
+    /**
      * @ticket PAT-389
      */
     public function testAddColumnSQL()
