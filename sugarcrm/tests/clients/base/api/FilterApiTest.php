@@ -889,6 +889,23 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         ), $where, $q);
     }
+
+    public function testGetQueryObjectDoesNotSelectLinkFields()
+    {
+        $seed = BeanFactory::getBean('Accounts');
+        /** @var SugarQuery $query */
+        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
+            $seed,
+            array(
+                'select' => array('name', 'contacts'),
+                'order_by' => array(),
+                'limit' => null,
+                'offset' => 0,
+            ),
+        ));
+        $this->assertTrue($query->select->checkField('name', $seed->getTableName()));
+        $this->assertFalse($query->select->checkField('contacts', $seed->getTableName()));
+    }
 }
 
 class FilterApiMock extends FilterApi

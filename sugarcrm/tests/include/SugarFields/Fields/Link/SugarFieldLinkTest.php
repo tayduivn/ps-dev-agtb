@@ -56,9 +56,10 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testLinkField() {
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $sf = SugarFieldHandler::getSugarField('link');
+        $sf = SugarFieldHandler::getSugarField('url');
         $data = array();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $sf->apiFormatField($data, $this->note, array(), 'testurl_c', array(), array('testurl_c'), $service);
         $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
     }
     /**
@@ -67,7 +68,8 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
     public function testURLField() {
         $sf = SugarFieldHandler::getSugarField('url');
         $data = array();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c1',array());
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $sf->apiFormatField($data, $this->note, array(), 'testurl_c1', array(), array('testurl_c1'), $service);
         $this->assertEquals('www.sugarcrm.com', $data['testurl_c1']);
     }
 
@@ -76,9 +78,10 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->lead->name = 'John Doe';
 
         /** @var SugarFieldLink $sf */
-        $sf = SugarFieldHandler::getSugarField('link');
+        $sf = SugarFieldHandler::getSugarField('url');
         $data = array();
-        $sf->apiFormatField($data, $this->lead, array(), 'test_c', array());
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $sf->apiFormatField($data, $this->lead, array(), 'test_c', array(), array('test_c'), $service);
         $this->assertEquals('http://test/John Doe', $data['test_c']);
     }
 }
