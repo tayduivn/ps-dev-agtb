@@ -1021,7 +1021,7 @@ EOQ;
             $indices[$name]['name'] = $name;
             $indices[$name]['type'] = $index_type;
             $indices[$name]['fields'] = explode(',', strtolower($row['colname']));
-            if (!empty($index['language'])) {
+            if (!empty($row['language'])) {
                 $indices[$name]['message_locale'] = $row['language'];
             }
         }
