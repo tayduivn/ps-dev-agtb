@@ -136,7 +136,7 @@ class OAuth2Api extends SugarApi
         // For reauth requests we need to send back the session cookie as well to
         // keep the client in sync if there was a session cookie to begin with
         if (isset($_COOKIE[session_name()]) && !empty($args['grant_type']) && $args['grant_type'] == 'refresh_token' && !empty($args['refresh'])) {
-            $this->killSessionCookie();
+            $this->sendSessionCookie();
         }
         return $authData;
     }
