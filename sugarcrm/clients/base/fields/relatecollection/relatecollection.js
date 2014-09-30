@@ -69,7 +69,7 @@
             multiple: true,
             closeOnSelect: false,
             width: '100%',
-            containerCssClass: 'select2-choices-pills-close select2-choices-pills-square',
+            containerCssClass: 'select2-choices-pills-close',
 
             initSelection: function(element, callback) {
                 var data = self.parseRecords(self.value);
