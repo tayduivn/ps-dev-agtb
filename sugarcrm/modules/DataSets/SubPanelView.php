@@ -52,7 +52,13 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='record' value=''>\n";
 $button .= "<input type='hidden' name='action'>\n";
-$button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
+
+if (SugarACL::checkAccess('DataSets', 'create')) {
+    $button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']
+        . "' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  "
+        . $mod_strings['LBL_NEW_BUTTON_LABEL'] . "  '>\n";
+}
+
 $button .= "<input title='".$mod_strings['LBL_ADD_BUTTON_TITLE']."' class='button' onclick='return window.open(\"index.php?module=DataSets&action=Popup&form=AddDataSetEditView&form_submit=true\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");' type='button' name='button' value='  ".$mod_strings['LBL_ADD_BUTTON_LABEL']."  '>\n";
 $button .= "</td></tr></form></table>\n";
 
@@ -72,7 +78,6 @@ $ListView->setQuery("", "", "list_order_y  ASC", "DATA_SET", false);
 
 //need to pass the main id to have the dataset subpanel href properly
 if(!empty($focus->id)) $ListView->xTemplateAssign("RECORD", $focus->id);
-$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_EDIT']));
 
 $ListView->processListView($focus_list, "main", "DATA_SET");
 ?>
