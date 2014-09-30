@@ -14,6 +14,7 @@ require_once 'modules/HealthCheck/Scanner/Scanner.php';
 
 class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
+    public $not = false;
     public $skip = false;
     public $md5_files = array();
     public $bwcModulesHash = array();
