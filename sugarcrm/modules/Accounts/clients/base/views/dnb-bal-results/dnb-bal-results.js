@@ -226,18 +226,19 @@
             return;
         }
         var formattedFirmographics, dnbFirmo = {};
-        //if there are no company details hide the import button
+        dnbFirmo.backToListLabel = companyDetails.backToListLabel;
+        //if there are no company details then get the erroe message
         if (companyDetails.errmsg) {
-            this.$('.importDNBData').hide();
+            dnbFirmo.errmsg = companyDetails.errmsg;
         } else if (companyDetails.product) {
-            this.$('.importDNBData').show();
             formattedFirmographics = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
             dnbFirmo.product = formattedFirmographics;
-            dnbFirmo.backToListLabel = companyDetails.backToListLabel;
             this.currentCompany = companyDetails.product;
         }
         this.dnbFirmo = dnbFirmo;
         this.render();
+        // hide / show importDNBData button
+        this.$('.importDNBData').toggleClass('hide', !_.isUndefined(this.dnbFirmo.errmsg));
         this.$('div#dnb-company-detail-loading').hide();
         this.$('div#dnb-company-details').show();
     },
