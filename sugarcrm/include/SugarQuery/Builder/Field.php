@@ -135,6 +135,10 @@ class SugarQuery_Builder_Field
             $this->table = $this->query->getFromAlias();
             $def = $bean->field_defs[$this->field];
             $this->moduleName = $bean->module_name;
+        }
+        else if ($bean && ($bean->getTableName().'_cstm') == $this->table && !empty($bean->field_defs[$this->field])) {
+            $def = $bean->field_defs[$this->field];
+            $this->moduleName = $bean->module_name;
         } else {
             $bean = $this->query->getTableBean($this->table);
 
@@ -229,6 +233,16 @@ class SugarQuery_Builder_Field
                 }
             }
             if (!empty($this->def['link']) && !$this->query->getJoinAlias($this->def['link'])) {
+                if (isset($this->def['id_name']) && $this->def['id_name'] != $this->def['name']) {
+                    //Custom relate fields may have the id field on the custom table, need to check for that.
+                    $idField = new SugarQuery_Builder_Field($this->def['id_name'], $this->query);
+                    $idField->setupField($this->query);
+                    $idField->checkCustomField();
+                    if ($idField->custom) {
+                        $this->custom = true;
+                        $this->query->joinCustomTable($this->query->getFromBean());
+                    }
+                }
                 if ($this instanceof SugarQuery_Builder_Field_Select) {
                     $params['team_security'] = false;
                 }
