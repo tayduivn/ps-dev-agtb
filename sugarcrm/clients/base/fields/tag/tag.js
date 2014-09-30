@@ -34,7 +34,7 @@
     _render: function() {
         // If model's tag attribute is formatted for filters, unformat it
         if (this.view.action === 'filter-rows') {
-            var unformattedTag = app.cache.get('tags:filter:unformatted');
+            var unformattedTag = app.cache.get('tags:filter:' + this.module);
             if (unformattedTag) {
                 this.model.set('tag', unformattedTag, {silent: true});
             }
@@ -57,7 +57,7 @@
             // Handle filter updating
             this.$('input.select2field').on('change', _.bind(function() {
                 //Massage model data for filter usage
-                app.cache.set('tags:filter:unformatted', this.formatDataForFilter());
+                app.cache.set('tags:filter:' + this.module, this.formatDataForFilter());
             }, this));
         }
     }

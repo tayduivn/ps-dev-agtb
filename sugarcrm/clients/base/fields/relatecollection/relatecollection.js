@@ -46,7 +46,7 @@
      */
     _render: function() {
         app.view.Field.prototype._render.call(this);
-        if (!$('.select2-container').hasClass('select2field')) {
+        if (!this.$el.hasClass('select2field')) {
             this.initializeSelect2();
         }
 
