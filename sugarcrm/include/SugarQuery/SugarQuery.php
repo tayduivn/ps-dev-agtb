@@ -111,6 +111,12 @@ class SugarQuery
      */
     protected $table_beans = array();
 
+    /**
+     * If an rname_link field is used, this is the join alias
+     * @var bool|string
+     */
+    public $rname_link = false;
+
     public $joinTableToKey = array();
 
     public $joinLinkToKey = array();
@@ -431,6 +437,20 @@ class SugarQuery
         $this->links[$link_name] = $this->join[$alias];
 
         return $this->join[$alias];
+    }
+
+
+    /**
+     * Add a join-on if there is an rname_link in use
+     *
+     * @param array $options
+     *
+     */
+    public function setJoinOn($options = array())
+    {
+        if ($this->rname_link !== false && !empty($options['baseBean']) && !empty($options['baseBeanId'])) {
+            $this->join[$this->rname_link]->on()->addRaw("{$options['baseBean']}_id = '{$options['baseBeanId']}'");
+        }        
     }
 
 
