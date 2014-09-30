@@ -336,8 +336,8 @@ class VardefManager{
         }
 
         //great! now that we have loaded all of our vardefs.
-        //let's go save them to the cache file but only when we are not ignore related calculated fields
-        if(!empty($dictionary[$object]) && empty($params['ignore_rel_calc_fields'])) {
+        //let's go save them to the cache file
+        if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
             SugarBean::clearLoadedDef($object);
         }
