@@ -116,6 +116,7 @@ $app_list_strings = array (
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
         'Notes' => 'Nt',
+        'Quotas' => 'Fo',
         'Tasks' => 'Ts'
     ),
 
