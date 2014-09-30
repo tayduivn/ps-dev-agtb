@@ -2776,6 +2776,11 @@ private function dir_file_count($path){
                 "logo_url",
             ),
         );
+
+        $config = SugarConfig::getInstance();
+        $jsConfig = $config->get('additional_js_config', array());
+        $sidecarConfig = array_merge($sidecarConfig, $jsConfig);
+
         return $sidecarConfig;
     }
 
