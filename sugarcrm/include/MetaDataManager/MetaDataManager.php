@@ -1983,7 +1983,7 @@ class MetaDataManager
         $data = $this->getMetadataCache();
 
         //If we failed to load the metadata from cache, load it now the hard way.
-        if (empty($data)) {
+        if (empty($data) || !$this->verifyJSSource($data)) {
             // Allow more time for private metadata builds since it is much heavier
             if (!$this->public) {
                 ini_set('max_execution_time', 0);
@@ -2022,6 +2022,18 @@ class MetaDataManager
         }
 
         return $this->getFromCacheTable($this->getCachedMetadataHashKey());
+    }
+
+    /**
+     * @param (array) $data
+     *
+     * @return bool true if the js-component file for this metadata call exists, false otherwise
+     */
+    protected function verifyJSSource($data) {
+        if (!empty($data['jssource']) && !SugarAutoLoader::fileExists($data['jssource'])) {
+            //The jssource file is invalid, we need to invalidate the hash as well.
+            return false;
+        }
     }
 
     /**
@@ -3120,12 +3132,23 @@ class MetaDataManager
      * Public accessor that gets the hash for a metadata file cache. This is a
      * wrapper to {@see getCachedMetadataHash}
      *
+     * @param bool $verifyDataExists if true, the javascript component files
+     * will be verified as a part of the hash check
+     *
      * @return string A metadata cache file hash or false if not found
      */
-    public function getMetadataHash()
+    public function getMetadataHash($verifyDataExists = false)
     {
         // Start with the known has if there is one
         $hash = $this->getCachedMetadataHash();
+
+        if ($verifyDataExists) {
+            $data = $this->getMetadataCache(true);
+            if (!$this->verifyJSSource($data)) {
+                //The jssource file is invalid, we need to invalidate the hash as well.
+                return false;
+            }
+        }
 
         if ($hash) {
             // We need to see if we need to send any warnings down to the user
