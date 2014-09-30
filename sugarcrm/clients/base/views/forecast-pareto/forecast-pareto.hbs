@@ -25,11 +25,13 @@
                 {{field ../this model=../this.settings}}
             {{/with}}
         </div>
+        {{#if dashletConfig.show_dataset}}
         <div class="span3">
             {{#with dashletConfig.dataset}}
                 {{field ../this model=../this.settings}}
             {{/with}}
         </div>
+        {{/if}}
         {{#if isManager}}
         <div id="{{cid}}-mgr-toggle" class="pull-right">
             <div class="btn-group dashlet-group" data-toggle="buttons-radio">
