@@ -59,9 +59,9 @@ $viewdefs['Project']['DetailView'] = array(
                         'name="Delete" id="delete_button" value="{$APP.LBL_DELETE_BUTTON_LABEL}"'.
                         'onclick="'.
                         '{if $IS_TEMPLATE}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\') )  this.form.submit(); '.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\') )  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
                         '{else}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\'))  this.form.submit(); '.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\'))  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
                         '{/if}"'.
                         '/>',
                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
@@ -76,9 +76,9 @@ $viewdefs['Project']['DetailView'] = array(
                             'class' => 'button',
                             'onclick' =>
                                 '{if $IS_TEMPLATE}'.
-                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) this.form.submit();'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim}'.
                                 '{else}'.
-                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) this.form.submit();'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim}'.
                                 '{/if}',
                         ),
 
