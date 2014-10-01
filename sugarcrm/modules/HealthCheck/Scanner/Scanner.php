@@ -1214,7 +1214,7 @@ class HealthCheckScanner
 
         // finally output status, if there is any
         foreach ($foundCustomCode as $code => $places) {
-            $this->updateStatus("foundCustomCode", $code, $places);
+            $this->updateStatus("foundCustomCode", $code, $places, $deffile);
         }
     }
 
@@ -1332,7 +1332,7 @@ class HealthCheckScanner
             $key = strtolower($key);
             if(!empty($data['widget_class']) && !in_array($data['widget_class'], $this->knownWidgetClasses)) {
                 if(!file_exists("include/generic/SugarWidgets/SugarWidget{$data['widget_class']}.php")) {
-                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key, $module);
+                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key, $module, $deffile);
                 }
             }
             // Unknown fields handled by CRYS-36, so no more checks here
