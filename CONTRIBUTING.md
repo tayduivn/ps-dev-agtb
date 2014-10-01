@@ -297,7 +297,7 @@ Before submitting a [patch](#submitting-a-patch) for inclusion, you need to run 
 
 ### PHPUnit
 
-To run the SugarCRM test suite, install the several flavors of Sugar (CE, PRO, ENT) and run install on each one.
+To run the SugarCRM test suite, install the several flavors of Sugar (PRO, ENT) and run install on each one.
 
 Then, run the test suite from the `tests` root directory of the installed instance with the following command:
 
@@ -327,6 +327,70 @@ Check the code coverage by opening the generated `cov/index.html` page in a brow
 
 > The code coverage only works if you have XDebug enabled and all dependencies installed.
 
+### Client side test suite
+
+The SugarCRM client side test suite is composed of three different tools: [Karma test runner], [Jasmine] and [Grunt the Javascript task runner].
+
+#### How to install
+
+First you need to have [NodeJS] running on your local machine. Then, you need to build the several flavors of Sugar (PRO, ENT) and install all the dependent packages for each:
+
+```bash
+$ cd <sugarcrm>
+$ npm install
+```
+
+```bash
+$ cd <sugarcrm/sidecar>
+$ npm install
+```
+
+#### Tasks
+
+After the installation process finishes you're ready to check the impact of your modifications, by running the tasks bellow:
+
+##### karma:ci
+
+This task is pre-configured with CI settings and is ideal to use before submitting your pull requests thus detecting any major problems before they happen.
+
+```bash
+$ cd <sugarcrm>
+$ ./node_modules/grunt-cli/bin/grunt karma:ci
+```
+
+```bash
+$ cd <sugarcrm/sidecar>
+$ ./node_modules/grunt-cli/bin/grunt karma:ci
+```
+
+##### karma:ci-coverage
+
+This task is pre-configured with CI settings and is responsible for generating CI code coverage reports. Also, this task notifies you about the impact your pull requests might have on the end result of the tests.
+
+```bash
+$ cd <sugarcrm>
+$ ./node_modules/grunt-cli/bin/grunt karma:ci-coverage [--path <path>]
+```
+
+```bash
+$ cd <sugarcrm/sidecar>
+$ ./node_modules/grunt-cli/bin/grunt karma:ci-coverage [--path <path>]
+```
+
+If the `--path` option isn't supplied, the coverage reports are generated into a temporary folder. Its path is printed to the terminal while the task is executed.
+
+#### Exclusive tests
+
+If you want to reduce the scope of each test run, you can use exclusive tests.
+
+Exclusive tests are source based, which means that you have to edit the source code to do it and specifically state which suites/specs should run:
+
+* `ddescribe` states that only specs within these test suites will run.
+* `iit` states that only these specific specs will run.
+
+Beware that `iit` has precedence over `ddescribe`, so it’s important to understand that this is level independent. It doesn't matter what “hierarchy” of ddescribes you might have, if an `iit` is defined that is the spec that is going to run.
+
+
 [SugarCRM Mango repo]: https://github.com/sugarcrm/Mango
 [SugarCRM bug tracker]: http://www.sugarcrm.com/support/bugs.html
 
@@ -338,3 +402,8 @@ Check the code coverage by opening the generated `cov/index.html` page in a brow
 [GitHub interactive rebase]: https://help.github.com/articles/interactive-rebase
 
 [Composer install]: https://getcomposer.org/doc/00-intro.md
+
+[Grunt the Javascript task runner]: http://gruntjs.com/
+[Jasmine]: http://jasmine.github.io/
+[Karma test runner]: http://karma-runner.github.io/
+[NodeJS]: http://nodejs.org/
