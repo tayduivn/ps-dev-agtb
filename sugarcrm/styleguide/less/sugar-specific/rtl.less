@@ -580,8 +580,15 @@ html.rtl {
         margin-left: 0;
     }
 
-    .preview-data .row-fluid .span5 {
-        text-align: left;
+    .preview-data .row-fluid {
+        .span5 {
+            text-align: left;
+        }
+        .span7 {
+            [dir=ltr] {
+                text-align: right;
+            }
+        }
     }
 
     .btn-toolbar {
