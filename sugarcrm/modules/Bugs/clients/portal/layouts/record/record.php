@@ -10,8 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['KBDocuments']['portal']['layout']['record'] = array (
+$viewdefs['Bugs']['portal']['layout']['record'] = array (
   'components' => array (
     array (
       'layout' => array (
@@ -21,6 +20,18 @@ $viewdefs['KBDocuments']['portal']['layout']['record'] = array (
               'components' => array (
                 array (
                   'view' => 'record',
+                ),
+                array (
+                  'view' => 'activity',
+                  'context' => array (
+                    'link' => 'notes',
+                  ),
+                ),
+                array (
+                  'view' => 'editmodal',
+                  'context' => array (
+                    'link' => 'notes',
+                  ),
                 ),
               ),
               'type' => 'simple',
