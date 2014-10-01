@@ -575,7 +575,7 @@
         /**
          *
          */
-        app.plugins.register('NestedSetCollection', ['view'], {
+        app.plugins.register('NestedSetCollection', ['view', 'field'], {
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     this.collection = new app.NestedSetCollection();
