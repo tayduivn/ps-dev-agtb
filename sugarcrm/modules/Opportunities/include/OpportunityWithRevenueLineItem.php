@@ -29,7 +29,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'audited' => false,
             'calculated' => true,
             'enforced' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "likely_case")',
+            'formula' => 'rollupConditionalSum($revenuelineitems, "likely_case", "sales_stage", forecastSalesStages(true, false))',
             'readonly' => true,
             'massupdate' => false,
             'importable' => true,
@@ -37,7 +37,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
         'best_case' => array(
             'calculated' => true,
             'enforced' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "best_case")',
+            'formula' => 'rollupConditionalSum($revenuelineitems, "best_case", "sales_stage", forecastSalesStages(true, false))',
             'audited' => false,
             'readonly' => true,
             'massupdate' => false,
@@ -45,7 +45,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
         'worst_case' => array(
             'calculated' => true,
             'enforced' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "worst_case")',
+            'formula' => 'rollupConditionalSum($revenuelineitems, "worst_case", "sales_stage", forecastSalesStages(true, false))',
             'audited' => false,
             'readonly' => true,
             'massupdate' => false,
