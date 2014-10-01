@@ -166,37 +166,47 @@ class DashletsDialog {
     function getReportCharts($category){
     	global $current_user;
 
-    	//require_once('modules/Reports/Report.php');
-
     	$chartsList = array();
-    	$focus = BeanFactory::getBean('Reports');
-    	$focus->disable_row_level_security = false;
+        require_once('modules/Reports/SavedReport.php');
+        $sq = new SugarQuery();
+        $savedReportBean = BeanFactory::getBean('Reports');
+        $sq->from($savedReportBean);
+
+        // Make sure the user isn't seeing reports they don't have access to
+        $modules = array_keys(getACLDisAllowedModules());
+        if(count($modules)) {
+            $sq->where()->notIn('module', $modules);
+        }
+
+        //create the $where statement(s)
+        $sq->where()->notEquals('chart_type', 'none');
     	switch($category){
     		case 'global':
 		    	// build global where string
-		    	$where = "AND saved_reports.team_set_id='1'";
+                $sq->where()->equals('saved_reports.team_set_id', '1');
     	    	break;
 
     		case 'myTeams':
 		    	// build myTeams where string
 		    	$myTeams = $current_user->get_my_teams();
-		    	$where = '';
+		    	$teamWhere = '';
 		    	foreach($myTeams as $team_id=>$team_name){
 		    		if ($team_id != '1' && $team_id != $current_user->getPrivateTeamID()){
-			    		if ($where == ''){
-			    			$where .= 'AND ';
+			    		if ($teamWhere == ''){
+                            $teamWhere .= ' ';
 			    		}
 			    		else{
-			    			$where .= 'OR ';
+                            $teamWhere .= 'OR ';
 			    		}
-		    			$where .= "saved_reports.team_set_id='".$team_id. "' ";
+                        $teamWhere .= "saved_reports.team_set_id='".$team_id. "' ";
 		    		}
 		    	}
+                $sq->whereRaw($teamWhere);
 		    	break;
 
     		case 'mySaved':
 		    	// build mySaved where string
-		    	$where = "AND saved_reports.team_set_id='".$current_user->getPrivateTeamID()."'";
+                $sq->where()->equals('saved_reports.team_set_id',$current_user->getPrivateTeamID());
 		    	break;
 
 		    case 'myFavorites':
@@ -207,10 +217,11 @@ class DashletsDialog {
                 foreach ((array)$current_favorites_beans as $key=>$val) {
                     array_push($current_favorites,$val->record_id);
                 }
-                if(is_array($current_favorites) && !empty($current_favorites))
-                    $where = ' AND saved_reports.id IN (\'' . implode("','", array_values($current_favorites)) . '\')';
-                else
-                    $where = ' AND saved_reports.id IN (\'-1\')';
+                if(is_array($current_favorites) && !empty($current_favorites)) {
+                    $sq->where()->in('saved_reports.id',  array_values($current_favorites));
+                }else{
+                    $sq->where()->in('saved_reports.id',  array('-1'));
+                }
                 break;
 
 
@@ -218,7 +229,8 @@ class DashletsDialog {
     			break;
     	}
 
-    	$savedReports = $focus->get_full_list(""," chart_type != 'none' " . $where);
+        //retrieve array of reports
+        $savedReports = $savedReportBean->fetchFromQuery($sq);
 
 		$chartsList = array();
 		if (!empty($savedReports)){
