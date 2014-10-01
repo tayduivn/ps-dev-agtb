@@ -403,7 +403,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         if (empty($defs[$field])) {
             return false;
         }
-        return true;
+
+        return AbstractMetaDataParser::validField($defs[$field], $this->viewtype, $this->client);
     }
 
 
