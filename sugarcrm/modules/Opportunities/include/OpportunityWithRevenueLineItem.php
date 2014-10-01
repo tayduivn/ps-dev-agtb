@@ -87,6 +87,12 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
         ),
         'date_closed_timestamp' => array(
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")'
+        ),
+        'closed_revenue_line_items' => array(
+            'reportable' => true,
+        ),
+        'total_revenue_line_items' => array(
+            'reportable' => true,
         )
     );
 
@@ -214,6 +220,12 @@ EOL;
     public function doDataConvert()
     {
         $this->resetForecastData('RevenueLineItems');
+
+        // fix the reports
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityReports.php');
+        $reports = new OpportunityReports();
+        $reports->migrateToRevenueLineItems();
+
         $this->createRevenueLineItems();
     }
 

@@ -91,6 +91,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         ),
         'date_closed_timestamp' => array(
             'formula' => 'timestamp($date_closed)'
+        ),
+        'closed_revenue_line_items' => array(
+            'reportable' => false,
+        ),
+        'total_revenue_line_items' => array(
+            'reportable' => false,
         )
     );
 
@@ -181,6 +187,14 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     public function doDataConvert()
     {
         $this->resetForecastData('Opportunities');
+        
+        // fix the reports
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityReports.php');
+        $reports = new OpportunityReports();
+        $reports->migrateToOpportunities();
+        // soft delete all the RLI Reports
+        $reports->deleteAllRevenueLineItemReports();
+
         $this->queueRevenueLineItemsForNotesOnOpportunities();
         $this->setOpportunityDataFromRevenueLineItems();
         $this->deleteRevenueLineItems();
