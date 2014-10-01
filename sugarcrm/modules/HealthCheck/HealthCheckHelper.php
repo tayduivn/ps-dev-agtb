@@ -45,7 +45,7 @@ class HealthCheckHelper
     public function getScanner($type)
     {
         if (isset($this->registry[$type])) {
-            list($file, $class) = $this->registry[$type]['file'];
+            list($file, $class) = $this->registry[$type];
             require_once $file;
             return new $class();
         }
