@@ -55,7 +55,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array (
-                    'name'  => 'email1',
+                    'name'  => 'email',
                     'label' => 'LBL_LIST_EMAIL_ADDRESS',
                     'enabled' => true,
                     'default' => true,
