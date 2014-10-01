@@ -9,17 +9,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on("app:init", function() {
+    app.events.on('app:init', function() {
 
         /**
          * This plugin disallows mass-deleting for closed won/lost items (for use in Opps and Products)
          */
-        app.plugins.register('DisableMassDelete', ["view"], {
+        app.plugins.register('DisableMassDelete', ['view'], {
             /**
              * Attach code for when the plugin is registered on a view
              *
-             * @param component
-             * @param plugin
+             * @param {Object} component
+             * @param {Mixed} plugin
              */
             onAttach: function(component, plugin) {
                 this.once('init', function() {
@@ -34,51 +34,49 @@
              * override of parent deleteModels. Removes closed lost/won items from the list to be deleted, and
              * throws a warning if it removes anything
              *
-             * @return string message
+             * @return {String} message
              */
             _warnDelete: function() {
-                
-                var closedModels = [],
-                    sales_stage_won = null,
-                    sales_stage_lost = null,
+                var sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won,
+                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost,
                     closed_RLI_count = 0,
+                    label_key = '_STAGE',
                     message = null,
                     status = null,
                     massUpdateModel = this.getMassUpdateModel(this.module),
-                    progressView = this.getProgressView();
+                    progressView = this.getProgressView(),
+                    opp_view_by = app.metadata.getModule('Opportunities', 'config').opps_view_by,
+                    closedModels = _.filter(massUpdateModel.models, function(model) {
+                        status = null;
+                        //BEGIN SUGARCRM flav=ent ONLY
+                        if (opp_view_by === 'RevenueLineItems') {
+                            //ENT allows sales_status, so we need to check to see if this module has it and use it
+                            status = model.get('sales_status');
 
-                sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
-                sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
+                            //grab the closed RLI count (when on opps)
+                            closed_RLI_count = model.get('closed_revenue_line_items');
+                            if (_.isNull(closed_RLI_count)) {
+                                closed_RLI_count = 0;
+                            }
+                            label_key = '_STATUS';
+                        }
+                        //END SUGARCRM flav=ent ONLY
+                        if (_.isEmpty(status)) {
+                            status = model.get('sales_stage');
+                        }
 
-                closedModels = _.filter(massUpdateModel.models, function(model) {
-                    status = null;
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    //ENT allows sales_status, so we need to check to see if this module has it and use it
-                    status = model.get("sales_status");
+                        if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
+                            message = app.lang.get('WARNING_NO_DELETE_SELECTED' + label_key);
+                            return true;
+                        }
 
-                    //grab the closed RLI count (when on opps)
-                    closed_RLI_count = model.get("closed_revenue_line_items");
-                    if (_.isNull(closed_RLI_count)) {
-                        closed_RLI_count = 0;
-                    }
+                        if (closed_RLI_count > 0) {
+                            message = app.lang.get('WARNING_NO_DELETE_CLOSED_SELECTED' + label_key, 'Opportunities');
+                            return true;
+                        }
 
-                    //END SUGARCRM flav=ent ONLY
-                    if (_.isEmpty(status)) {
-                        status = model.get("sales_stage");
-                    }
-
-                    if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
-                        message = app.lang.get("WARNING_NO_DELETE_SELECTED");
-                        return true;
-                    }
-
-                    if (closed_RLI_count > 0) {
-                        message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
-                        return true;
-                    }
-
-                    return false;
-                });
+                        return false;
+                    });
 
                 if (closedModels.length > 0) {
                     // get the mass_collection from actionmenu.js
@@ -86,10 +84,10 @@
                     // remove the closed models from the massCollection
                     massCollection.remove(closedModels);
 
-                    //uncheck items
-                    _.each(closedModels, function(item){
-                        var id = item.module + "_" + item.id;
-                        $("[name='" + id + "'] input").attr("checked", false);
+                    // uncheck items
+                    _.each(closedModels, function(item) {
+                        var id = item.module + '_' + item.id;
+                        $("[name='" + id + "'] input").attr('checked', false);
                     });
                     app.alert.show('delete_warning', {
                         level: 'warning',

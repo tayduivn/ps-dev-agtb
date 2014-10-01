@@ -2475,21 +2475,11 @@ $app_strings = array (
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
 
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales stage.',
-    //END SUGARCRM flav!=ent ONLY
+    'NOTICE_NO_DELETE_CLOSED_STAGE' => 'You cannot delete records that have a closed sales stage.',
+    'NOTICE_NO_DELETE_CLOSED_STATUS' => 'You cannot delete records that have a closed sales status.',
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
-    //END SUGARCRM flav=ent ONLY
-
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
-    //END SUGARCRM flav!=ent ONLY
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
-    //END SUGARCRM flav=ent ONLY
+    'WARNING_NO_DELETE_SELECTED_STAGE' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
+    'WARNING_NO_DELETE_SELECTED_STATUS' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
