@@ -191,9 +191,16 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     protected function deleteRevenueLineItems()
     {
+        $rli = BeanFactory::getBean('RevenueLineItems');
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
-        $db->query($db->truncateTableSQL('revenue_line_items'));
+        $db->query($db->truncateTableSQL($rli->getTableName()));
+
+        $cstm_table = $rli->getTableName() . '_cstm';
+
+        if ($db->tableExists($cstm_table)) {
+            $db->query($db->truncateTableSQL($cstm_table));
+        }
     }
 
     protected function queueRevenueLineItemsForNotesOnOpportunities()
