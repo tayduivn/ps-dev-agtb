@@ -29,17 +29,9 @@ class TrackerQuery extends SugarBean {
     var $acltype = 'TrackerQuery';
     var $acl_category = 'TrackerQueries';
     var $disable_custom_fields = true;
-
-    public function __construct() {
-        global $dictionary;
-        if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
-            require('metadata/tracker_queriesMetaData.php');
-        }
-        parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
-    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     function bean_implements($interface){
         switch($interface){
