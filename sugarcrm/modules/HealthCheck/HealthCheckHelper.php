@@ -34,7 +34,7 @@ class HealthCheckHelper
             'HealthCheckScannerWeb'
         ),
         'cli' => array(
-            'modules/HealthCheck/Scanner/ScannerCli.php',
+            'Scanner/ScannerCli.php',
             'HealthCheckScannerCli'
         )
     );
