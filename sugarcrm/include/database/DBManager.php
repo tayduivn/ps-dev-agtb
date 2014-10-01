@@ -669,7 +669,12 @@ protected function checkQuery($sql, $object_name = false)
 
 			if(isset($data[$field])) {
 				// clean the incoming value..
-				$val = $this->decodeHTML($data[$field]);
+				if ($usePreparedStatements) {
+				    $val = $this->decodeHTML($data[$field]);
+				} else {
+				    // if it's not for prep, massageValue will decode it
+				    $val = $data[$field];
+				}
 			} else {
 				if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
 					$val = $fieldDef['default'];
@@ -2348,8 +2353,8 @@ protected function checkQuery($sql, $object_name = false)
     		// no need to clear deleted since we only update not deleted records anyway
     		if($fieldDef['name'] == 'deleted' && empty($bean->deleted)) continue;
 
-    		if(!isset($bean->$field)) {
-    			continue;
+            if (!isset($bean->$field)) {
+                continue;
     		}
 
             $dataValues[$field] = $bean->$field;
@@ -2401,7 +2406,13 @@ protected function checkQuery($sql, $object_name = false)
             }
 
             $fieldType = $this->getFieldType($fieldDef);
-            $val = $this->decodeHTML($data[$field]);
+            if ($usePreparedStatements) {
+                $val = $this->decodeHTML($data[$field]);
+            } else {
+                // BR-2052: if it's not for prep, massageValue will decode it
+                $val = $data[$field];
+            }
+
 
             if (strlen($val) == 0) {
                 if (!empty($fieldDef['required']) && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
