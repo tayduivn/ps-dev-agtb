@@ -423,6 +423,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->removeField($fieldName)" ) ;
 
         $result = false ;
+        if (!is_array($this->_viewdefs['panels'])) {
+            return $result;
+        }
         reset ( $this->_viewdefs ) ;
         $firstPanel = each ( $this->_viewdefs [ 'panels' ] ) ;
         $firstPanelID = $firstPanel [ 'key' ] ;

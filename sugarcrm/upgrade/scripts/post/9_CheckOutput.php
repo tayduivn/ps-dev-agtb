@@ -65,7 +65,7 @@ ENDP;
                     $replace = preg_replace('#([^_])\b(print_r|var_dump|exit|die)\b([^_])#is', '\\1sugar_upgrade_\\2\\3', $pattern);
 
                     if (!empty($pattern) && !empty($replace)) {
-                        $changedContents = preg_replace("#" . preg_quote($pattern) . "#is", $replace, $changedContents);
+                        $changedContents = preg_replace("#" . preg_quote($pattern, '#') . "#is", $replace, $changedContents);
                         $changedContentsFlag = true;
                     }
 

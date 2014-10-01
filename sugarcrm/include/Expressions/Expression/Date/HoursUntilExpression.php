@@ -41,9 +41,17 @@ class HoursUntilExpression extends NumericExpression
     public static function getJSEvaluate()
     {
         return <<<EOQ
-            var then = SUGAR.util.DateUtils.parse(this.getParameters().evaluate());
+            var value = this.getParameters().evaluate();
+            var then = SUGAR.util.DateUtils.parse(value);
+
             if (!then && then !== 0) return false;
             var now = new Date();
+
+            // If we have a date field
+            if (typeof value == 'string' && value.indexOf(' ') == -1 && value.indexOf('T') == -1) {
+                now.setHours(0, 0, 0, 0);
+            }
+
             var diff = then - now;
 
             return ~~(diff / 3600000);
