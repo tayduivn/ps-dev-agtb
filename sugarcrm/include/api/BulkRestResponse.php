@@ -55,6 +55,7 @@ class BulkRestResponse extends RestResponse
         'body' => 'contents',
         'headers' => 'headers',
         'code' => 'status',
+        'statusText' => 'status_text',
     );
 
     /**
@@ -85,12 +86,16 @@ class BulkRestResponse extends RestResponse
             $this->code = 200;
         }
 
+        $this->statusText = static::responseCodeAsText($this->code);
+
         foreach($this->fieldMap as $prop => $data) {
-            $this->results[$this->reqName][$data] = $this->$prop;
-            if(is_array($this->$prop)) {
-                $this->$prop = array();
-            } else {
-                $this->$prop = null;
+            if (isset($this->$prop)) {
+                $this->results[$this->reqName][$data] = $this->$prop;
+                if(is_array($this->$prop)) {
+                    $this->$prop = array();
+                } else {
+                    $this->$prop = null;
+                }
             }
         }
         // reset type for next one

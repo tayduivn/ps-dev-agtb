@@ -448,13 +448,13 @@
                     self._getCollectionFilters(index),
                     self._getFilters(index)
                 );
-                tab.collection.fetch({
+                tab.collection.fetch(_.extend(options, {
                     relate: tab.relate,
                     complete: function() {
                         tab.collection.dataFetched = true;
                         callback(null);
                     }
-                });
+                }));
             });
         }, this);
         if (!_.isEmpty(loadDataRequests)) {
