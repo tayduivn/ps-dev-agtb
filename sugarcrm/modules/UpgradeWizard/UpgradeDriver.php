@@ -18,7 +18,7 @@ abstract class UpgradeDriver
 {
     const STATE_FILE = "upgrade_state.php";
 
-    const DEFAULT_HEALTHCHECK_PATH =  '/../HealthCheck';
+    const DEFAULT_HEALTHCHECK_PATH = '/../HealthCheck';
 
     // Stops upgrade process despite step result.
     const STOP_SIGNAL = 23;
@@ -167,10 +167,10 @@ abstract class UpgradeDriver
             return false;
         }
 
-        $zip_from_dir = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
+        $zip_from_dir = $this->context['extract_dir'] . "/" . $this->manifest['copy_files']['from_dir'];
         $target_dir = $this->context['source_dir'];
         $files = $this->findFiles($zip_from_dir);
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $this->log("Copying $file");
             $this->ensureDir(dirname("$target_dir/$file"));
 
@@ -213,7 +213,7 @@ abstract class UpgradeDriver
      */
     protected function saveState()
     {
-        $data = "<?php \$state = ".var_export($this->state, true).";";
+        $data = "<?php \$state = " . var_export($this->state, true) . ";";
         file_put_contents($this->context['state_file'], $data);
     }
 
@@ -263,7 +263,7 @@ abstract class UpgradeDriver
 
     /**
      * Write a test-file to determine if the file-system is case-insensitive.
-    */
+     */
 
     public function testFilesystemCaseInsensitive()
     {
@@ -307,9 +307,12 @@ abstract class UpgradeDriver
         $this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
         $this->context['extract_dir'] = $this->context['temp_dir'];
         $this->ensureDir($this->context['temp_dir']);
-        $this->context['state_file'] = $this->cacheDir('upgrades/').self::STATE_FILE;
+        $this->context['state_file'] = $this->cacheDir('upgrades/') . self::STATE_FILE;
         $this->loadState();
-        $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
+        $this->context['backup_dir'] = $this->config['upload_dir'] . "/upgrades/backup/" . pathinfo(
+                $this->context['zip'],
+                PATHINFO_FILENAME
+            ) . "-restore";
         if (isset($this->context['script_mask'])) {
             $this->script_mask &= $this->context['script_mask'];
         }
@@ -330,7 +333,7 @@ abstract class UpgradeDriver
     {
         $this->log("ERROR: $msg");
         if ($setError) {
-            $this->error = ($this->error? $this->error."\n".$msg:$msg);
+            $this->error = ($this->error ? $this->error . "\n" . $msg : $msg);
         }
         $this->fail();
         return false;
@@ -352,7 +355,7 @@ abstract class UpgradeDriver
             die("Cannot open logfile: {$this->context['log']}");
         }
 
-        fwrite($this->fp, date('r').' [Upgrader] - '.$msg."\n");
+        fwrite($this->fp, date('r') . ' [Upgrader] - ' . $msg . "\n");
     }
 
     /**
@@ -381,7 +384,7 @@ abstract class UpgradeDriver
     public function cleanDir($dir)
     {
         $files = $this->findFiles($dir);
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $this->unlink("$dir/$file");
         }
     }
@@ -399,7 +402,7 @@ abstract class UpgradeDriver
         } else {
             $this->ensureDir($pathto);
             $status = true;
-            $d = dir( $path );
+            $d = dir($path);
             if ($d === false) {
                 return false;
             }
@@ -407,7 +410,7 @@ abstract class UpgradeDriver
                 if ($f == "." || $f == "..") {
                     continue;
                 }
-                $status &= $this->copyDir( "$path/$f", "$pathto/$f" );
+                $status &= $this->copyDir("$path/$f", "$pathto/$f");
             }
             $d->close();
             return $status;
@@ -434,10 +437,10 @@ abstract class UpgradeDriver
      */
     public function removeDir($path)
     {
-        if (is_file( $path)) {
+        if (is_file($path)) {
             return $this->unlink($path);
         }
-        if (!is_dir($path)){
+        if (!is_dir($path)) {
             $this->log("Directory does not exist: $path, ignoring delete request");
             return false;
         }
@@ -446,8 +449,8 @@ abstract class UpgradeDriver
 
         $d = dir($path);
 
-        while (($f = $d->read()) !== false){
-            if ($f == "." || $f == ".."){
+        while (($f = $d->read()) !== false) {
+            if ($f == "." || $f == "..") {
                 continue;
             }
             if (is_file("$path/$f")) {
@@ -460,7 +463,7 @@ abstract class UpgradeDriver
             }
         }
         $d->close();
-        if (@rmdir($path) === FALSE){
+        if (@rmdir($path) === false) {
             $this->log("Failed to remove directory: $path");
             return false;
         }
@@ -473,13 +476,13 @@ abstract class UpgradeDriver
     protected function loadConfig()
     {
         $sugar_config = array();
-        if (!is_readable($this->context['source_dir']."/config.php")) {
+        if (!is_readable($this->context['source_dir'] . "/config.php")) {
             $this->error("{$this->context['source_dir']}/config.php can not be loaded!", true);
             return;
         }
-        include($this->context['source_dir']."/config.php");
-        if (is_readable($this->context['source_dir']."/config_override.php")) {
-            include($this->context['source_dir']."/config_override.php");
+        include($this->context['source_dir'] . "/config.php");
+        if (is_readable($this->context['source_dir'] . "/config_override.php")) {
+            include($this->context['source_dir'] . "/config_override.php");
         }
         $GLOBALS['sugar_config'] = $sugar_config;
         // by-ref so we can modify it
@@ -492,7 +495,9 @@ abstract class UpgradeDriver
      */
     protected function loadVersion($dir = "")
     {
-        if (!defined('sugarEntry')) define('sugarEntry', true);
+        if (!defined('sugarEntry')) {
+            define('sugarEntry', true);
+        }
         if ($dir) {
             include "$dir/sugar_version.php";
         } else {
@@ -509,7 +514,7 @@ abstract class UpgradeDriver
      */
     public function cacheDir($dir)
     {
-        return rtrim($this->config['cache_dir'], '/')."/".$dir;
+        return rtrim($this->config['cache_dir'], '/') . "/" . $dir;
     }
 
     /**
@@ -548,13 +553,19 @@ abstract class UpgradeDriver
     protected function preflightPHPSettings()
     {
         if (ini_get("zend.ze1_compatibility_mode")) {
-            return $this->error('PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further.', true);
+            return $this->error(
+                'PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further.',
+                true
+            );
         }
         if (ini_get('magic_quotes_gpc') || ini_get('magic_quotes_runtime')
             || (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
             || (function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
         ) {
-            return $this->error("Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php", true);
+            return $this->error(
+                "Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php",
+                true
+            );
         }
         return true;
     }
@@ -569,14 +580,19 @@ abstract class UpgradeDriver
             return true;
         }
         $server_software = $_SERVER['SERVER_SOFTWARE'];
-        if (strpos($server_software,'Microsoft-IIS') !== false && preg_match_all('/^.*\/(\d+\.?\d*)$/',  $server_software, $out)) {
+        if (strpos($server_software, 'Microsoft-IIS') !== false && preg_match_all(
+                '/^.*\/(\d+\.?\d*)$/',
+                $server_software,
+                $out
+            )
+        ) {
             $iis_version = $out[1][0];
         }
         if (empty($iis_version)) {
             return true;
         }
         if (version_compare($iis_version, "6.0", '<')) {
-            return $this->error($this->translate('ERR_CHECKSYS_IIS_INVALID_VER')." ".$iis_version, true);
+            return $this->error($this->translate('ERR_CHECKSYS_IIS_INVALID_VER') . " " . $iis_version, true);
         }
         if (ini_get('fastcgi.logging')) {
             return $this->error($this->translate('ERR_CHECKSYS_FASTCGI_LOGGING'), true);
@@ -667,7 +683,7 @@ abstract class UpgradeDriver
             array_unshift($check, $this->translate($error));
             return $this->error(call_user_func_array('sprintf', $check), true);
         }
-        $tablename = "uptest".uniqid();
+        $tablename = "uptest" . uniqid();
         if (!$this->db->query("CREATE TABLE $tablename(a int, b int)")) {
             $fail = "Table creation";
         } elseif (!$this->db->query("INSERT INTO $tablename(a,b) VALUES(1,2)")) {
@@ -726,14 +742,14 @@ abstract class UpgradeDriver
     );
 
     protected $preflightChecksAfterInit = array(
-            "IIS" => true, // check IIS version
-            "PHPModules" => true, // check PHP modules
-            "PHPSettings" => true, // check php settings
-            "WriteUnzip" => true, // check if zip dir is writeable
-            "WriteSugar" => true, // check if Sugar directory is writable
-            "WriteCustom" => true, // check if Sugar custom directory is writable
-            "DB" => true, // check DB permissions
-            "DuplicateUpgrade" => true, // check if we already seen this upgrade
+        "IIS" => true, // check IIS version
+        "PHPModules" => true, // check PHP modules
+        "PHPSettings" => true, // check php settings
+        "WriteUnzip" => true, // check if zip dir is writeable
+        "WriteSugar" => true, // check if Sugar directory is writable
+        "WriteCustom" => true, // check if Sugar custom directory is writable
+        "DB" => true, // check DB permissions
+        "DuplicateUpgrade" => true, // check if we already seen this upgrade
     );
 
     /**
@@ -743,8 +759,10 @@ abstract class UpgradeDriver
      */
     public function preflight($checks)
     {
-        foreach($checks as $check => $enabled) {
-            if (!$enabled) continue;
+        foreach ($checks as $check => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
             $checkfunc = "preflight$check";
             if (is_callable(array($this, $checkfunc))) {
                 $this->log("Checking preflight: $check");
@@ -772,12 +790,28 @@ abstract class UpgradeDriver
         $zip = new ZipArchive;
         $res = $zip->open($this->context['zip']);
         if ($res !== true) {
-            return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
+            return $this->error(
+                sprintf(
+                    "ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)",
+                    $res,
+                    $zip->status,
+                    $this->context['zip'],
+                    $unzip_dir
+                )
+            );
         }
         $this->log("Starting extracting {$this->context['zip']} to $unzip_dir");
         $res = $zip->extractTo($unzip_dir);
         if ($res !== true) {
-            return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
+            return $this->error(
+                sprintf(
+                    "ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)",
+                    $res,
+                    $zip->status,
+                    $this->context['zip'],
+                    $unzip_dir
+                )
+            );
         }
         unset($zip);
 
@@ -807,7 +841,9 @@ abstract class UpgradeDriver
             return false;
         }
         // Check the user
-        if (empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->id) || !$GLOBALS['current_user']->isAdmin()) {
+        if (empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->id) || !$GLOBALS['current_user']->isAdmin(
+            )
+        ) {
             return $this->error("{$this->context['admin']} is not a valid admin user");
         }
 
@@ -816,7 +852,7 @@ abstract class UpgradeDriver
         }
 
         // load manifest
-        if (!file_exists($this->context['extract_dir']."/manifest.php")) {
+        if (!file_exists($this->context['extract_dir'] . "/manifest.php")) {
             if ($this->clean_on_fail) {
                 $this->cleanDir($this->context['extract_dir']);
             }
@@ -850,7 +886,7 @@ abstract class UpgradeDriver
         }
         $tokens = @token_get_all(file_get_contents($file));
         $checkFunction = false;
-        foreach($tokens as $index=>$token) {
+        foreach ($tokens as $index => $token) {
             if (is_string($token)) {
                 if ($token == "`") {
                     return $this->error("Backtick is not allowed");
@@ -858,12 +894,13 @@ abstract class UpgradeDriver
                 if ($checkFunction && $token == '(') {
                     return $this->error("Functions are not allowed");
                 }
-                if ($token == '$' && !empty($tokens[$index+1][0]) &&  $tokens[$index+1][0] == T_VARIABLE) {
+                if ($token == '$' && !empty($tokens[$index + 1][0]) && $tokens[$index + 1][0] == T_VARIABLE) {
                     return $this->error("Variable vars are not allowed");
                 }
             } else {
-                switch($token[0]) {
-                    case T_WHITESPACE: continue;
+                switch ($token[0]) {
+                    case T_WHITESPACE:
+                        continue;
                     case T_EVAL:
                     case T_EXIT:
                         return $this->error("{$token[1]}() is not allowed");
@@ -952,18 +989,20 @@ abstract class UpgradeDriver
 
         if (!empty($this->context['new_source_dir'])) {
             // add install strings if they are available, since some DB routines rely on it
-            $langdirs[] = $this->context['new_source_dir']."/install/language";
-            $langdirs[] = $this->context['new_source_dir']."/modules/UpgradeWizard/language";
-            $langdirs[] = $this->context['new_source_dir']."/custom/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['new_source_dir'] . "/install/language";
+            $langdirs[] = $this->context['new_source_dir'] . "/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['new_source_dir'] . "/custom/modules/UpgradeWizard/language";
         } elseif (!empty($this->context['source_dir'])) {
-            $langdirs[] = $this->context['source_dir']."/install/language";
-            $langdirs[] = $this->context['source_dir']."/modules/UpgradeWizard/language";
-            $langdirs[] = $this->context['source_dir']."/custom/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['source_dir'] . "/install/language";
+            $langdirs[] = $this->context['source_dir'] . "/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['source_dir'] . "/custom/modules/UpgradeWizard/language";
         }
-        $langdirs[] = dirname(__FILE__)."/language";
+        $langdirs[] = dirname(__FILE__) . "/language";
 
-        foreach($langdirs as $langdir) {
-            if (!file_exists($langdir)) continue;
+        foreach ($langdirs as $langdir) {
+            if (!file_exists($langdir)) {
+                continue;
+            }
 
             $mod_strings = array_merge($mod_strings, $this->loadLangFile($langdir, $lang));
         }
@@ -996,31 +1035,31 @@ abstract class UpgradeDriver
             return sprintf($this->mod_strings['ERROR_PACKAGE_TYPE'], $manifest['type']);
         }
 
-        if(version_compare($manifest['version'], '7.0', '<')) {
+        if (version_compare($manifest['version'], '7.0', '<')) {
             return sprintf("Can not upgrade to version %s with 7.x upgrader", $manifest['version']);
         }
 
-        if(isset($manifest['acceptable_sugar_versions'])) {
-        	$version_ok = false;
-        	$matches_empty = true;
-        	if(!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
-        		$matches_empty = false;
-        		foreach($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
+        if (isset($manifest['acceptable_sugar_versions'])) {
+            $version_ok = false;
+            $matches_empty = true;
+            if (!empty($manifest['acceptable_sugar_versions']['exact_matches'])) {
+                $matches_empty = false;
+                foreach ($manifest['acceptable_sugar_versions']['exact_matches'] as $match) {
                     if ($this->implodeVersion($match, 4) == $this->implodeVersion($this->from_version, 4)) {
-        				$version_ok = true;
-        				break;
-        			}
-        		}
-        	}
-        	if(!$version_ok && !empty($manifest['acceptable_sugar_versions']['regex_matches'])) {
-        		$matches_empty = false;
-        		foreach($manifest['acceptable_sugar_versions']['regex_matches'] as $match) {
-        			if(preg_match("/$match/i", $this->from_version)) {
-        				$version_ok = true;
-        				break;
-        			}
-        		}
-        	}
+                        $version_ok = true;
+                        break;
+                    }
+                }
+            }
+            if (!$version_ok && !empty($manifest['acceptable_sugar_versions']['regex_matches'])) {
+                $matches_empty = false;
+                foreach ($manifest['acceptable_sugar_versions']['regex_matches'] as $match) {
+                    if (preg_match("/$match/i", $this->from_version)) {
+                        $version_ok = true;
+                        break;
+                    }
+                }
+            }
 
             if (!$matches_empty && !$version_ok) {
                 return sprintf($this->mod_strings['ERROR_VERSION_INCOMPATIBLE'], $this->from_version);
@@ -1029,7 +1068,7 @@ abstract class UpgradeDriver
 
         if (!empty($manifest['acceptable_sugar_flavors'])) {
             $flavor_ok = false;
-            foreach($manifest['acceptable_sugar_flavors'] as $match) {
+            foreach ($manifest['acceptable_sugar_flavors'] as $match) {
                 if (strtolower($match) == $this->from_flavor) {
                     $flavor_ok = true;
                     break;
@@ -1064,7 +1103,10 @@ abstract class UpgradeDriver
     protected function getUser()
     {
         $user = BeanFactory::getBean('Users');
-        $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
+        $user_id = $this->db->getOne(
+            "select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']),
+            false
+        );
         // Disable logic hooks.
         $user->processed = true;
         $user->retrieve($user_id);
@@ -1085,7 +1127,9 @@ abstract class UpgradeDriver
             $this->cleanCaches();
         }
 
-        if (!defined('sugarEntry')) define('sugarEntry', true);
+        if (!defined('sugarEntry')) {
+            define('sugarEntry', true);
+        }
         $this->log("Initializig SugarCRM environment");
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
                $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
@@ -1097,7 +1141,7 @@ abstract class UpgradeDriver
         if (empty($GLOBALS['current_language'])) {
             $GLOBALS['current_language'] = 'en_us';
         }
-        $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
+        $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
         $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
@@ -1115,7 +1159,7 @@ abstract class UpgradeDriver
         // Load user
         $GLOBALS['current_user'] = $this->getUser();
         // Prepare DB
-        if ($this->config['dbconfig']['db_type'] == 'mysql'){
+        if ($this->config['dbconfig']['db_type'] == 'mysql') {
             //Change the db wait_timeout for this session
             $now_timeout = $this->db->getOne("select @@wait_timeout");
             $this->db->query("set wait_timeout=28800");
@@ -1157,43 +1201,60 @@ abstract class UpgradeDriver
     protected function getScripts($dir, $stage)
     {
         $dirs = array("$dir/upgrade/scripts/", "$dir/custom/upgrade/scripts/");
-        foreach(array("$dir/modules/", "$dir/custom/modules/") as $moduledir) {
-            if (!is_dir($moduledir)) continue;
+        foreach (array("$dir/modules/", "$dir/custom/modules/") as $moduledir) {
+            if (!is_dir($moduledir)) {
+                continue;
+            }
             try {
-                foreach (new FilesystemIterator($moduledir, FilesystemIterator::KEY_AS_FILENAME|FilesystemIterator::SKIP_DOTS) as $filename => $fileInfo) {
-                    if (!$fileInfo->isDir()) continue;
-                    if (file_exists($moduledir.$filename."/upgrade/scripts/")) {
-                        $dirs[] = $moduledir.$filename."/upgrade/scripts/";
+                foreach (new FilesystemIterator(
+                             $moduledir,
+                             FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::SKIP_DOTS
+                         ) as $filename => $fileInfo) {
+                    if (!$fileInfo->isDir()) {
+                        continue;
+                    }
+                    if (file_exists($moduledir . $filename . "/upgrade/scripts/")) {
+                        $dirs[] = $moduledir . $filename . "/upgrade/scripts/";
                     }
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 // ignore Iterator exceptions
-                $this->log("FilesystemIterator: ".$e->getMessage());
+                $this->log("FilesystemIterator: " . $e->getMessage());
             }
         }
         $results = array();
-        $this->log("Checking for scripts: ".var_export($dirs, true));
-        foreach($dirs as $dirname) {
-            if (!file_exists($dirname.$stage)) continue;
+        $this->log("Checking for scripts: " . var_export($dirs, true));
+        foreach ($dirs as $dirname) {
+            if (!file_exists($dirname . $stage)) {
+                continue;
+            }
             try {
-                foreach(new FilesystemIterator($dirname.$stage, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
-                    if (!$fileInfo->isFile() || $fileInfo->getExtension() != "php") continue;
+                foreach (new FilesystemIterator($dirname . $stage, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
+                    if (!$fileInfo->isFile() || $fileInfo->getExtension() != "php") {
+                        continue;
+                    }
 
                     include_once $fileInfo->getPathName();
                     $scriptname = $fileInfo->getBasename(".php");
-                    $classname = "SugarUpgrade".preg_replace('/^\d+_/', "", $scriptname); // strip numeric prefix, add SugarUpgrade
-                    if (!class_exists($classname)) continue;
-                     $newscript = new $classname($this);
-                     if ($newscript->type & $this->script_mask) {
-                         // add class to results if it fits current mask
-                         $results[$scriptname] = $newscript;
-                     } else {
-                         $this->log("Bypassing script $scriptname due to script mask");
-                     }
+                    $classname = "SugarUpgrade" . preg_replace(
+                            '/^\d+_/',
+                            "",
+                            $scriptname
+                        ); // strip numeric prefix, add SugarUpgrade
+                    if (!class_exists($classname)) {
+                        continue;
+                    }
+                    $newscript = new $classname($this);
+                    if ($newscript->type & $this->script_mask) {
+                        // add class to results if it fits current mask
+                        $results[$scriptname] = $newscript;
+                    } else {
+                        $this->log("Bypassing script $scriptname due to script mask");
+                    }
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 // ignore Iterator exceptions
-                $this->log("FilesystemIterator: ".$e->getMessage());
+                $this->log("FilesystemIterator: " . $e->getMessage());
             }
         }
         $cnt = count($results);
@@ -1212,11 +1273,17 @@ abstract class UpgradeDriver
         if (!file_exists($dir)) {
             return array();
         }
-        $dirlen = strlen(rtrim($dir, '/'))+1;
+        $dirlen = strlen(rtrim($dir, '/')) + 1;
         $names = array();
-        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir,
-                FilesystemIterator::SKIP_DOTS)) as $pathname => $fileInfo) {
-            if (!$fileInfo->isFile()) continue;
+        foreach (new RecursiveIteratorIterator(
+                     new RecursiveDirectoryIterator(
+                         $dir,
+                         FilesystemIterator::SKIP_DOTS
+                     )
+                 ) as $pathname => $fileInfo) {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
             // strip dir/ from the name
             $names[] = substr($pathname, $dirlen);
         }
@@ -1247,13 +1314,13 @@ abstract class UpgradeDriver
         if ($this->isWindows()) {
             return true;
         }
-        if (!empty($this->config['default_permissions']['file_mode'])){
+        if (!empty($this->config['default_permissions']['file_mode'])) {
             chmod($path, $this->config['default_permissions']['file_mode']);
         }
-        if (!empty($this->config['default_permissions']['user'])){
+        if (!empty($this->config['default_permissions']['user'])) {
             chown($path, $this->config['default_permissions']['user']);
         }
-        if (!empty($this->config['default_permissions']['group'])){
+        if (!empty($this->config['default_permissions']['group'])) {
             chgrp($path, $this->config['default_permissions']['group']);
         }
         return true;
@@ -1271,22 +1338,22 @@ abstract class UpgradeDriver
         return file_put_contents($filename, $data);
     }
 
-/**
- * Implodes some parts of version with specified delimiter, beta & rc parts are removed all time
- *
- * @example ('6.5.6') returns 656
- * @example ('6.5.6beta2') returns 656
- * @example ('6.5.6rc3') returns 656
- * @example ('6.6.0.1') returns 6601
- * @example ('6.5.6', 3, 'x') returns 65x
- * @example ('6', 3, '', '.') returns 6.0.0
- *
- * @param string $version like 6, 6.2, 6.5.0beta1, 6.6.0rc1, 6.5.7 (separated by dot)
- * @param int $size number of the first parts of version which are requested
- * @param string $lastSymbol replace last part of version by some string
- * @param string $delimiter delimiter for result
- * @return string
- */
+    /**
+     * Implodes some parts of version with specified delimiter, beta & rc parts are removed all time
+     *
+     * @example ('6.5.6') returns 656
+     * @example ('6.5.6beta2') returns 656
+     * @example ('6.5.6rc3') returns 656
+     * @example ('6.6.0.1') returns 6601
+     * @example ('6.5.6', 3, 'x') returns 65x
+     * @example ('6', 3, '', '.') returns 6.0.0
+     *
+     * @param string $version like 6, 6.2, 6.5.0beta1, 6.6.0rc1, 6.5.7 (separated by dot)
+     * @param int $size number of the first parts of version which are requested
+     * @param string $lastSymbol replace last part of version by some string
+     * @param string $delimiter delimiter for result
+     * @return string
+     */
     public function implodeVersion($version, $size = 0, $lastSymbol = '', $delimiter = '')
     {
         preg_match('/^\d+(\.\d+)*/', $version, $parsedVersion);
@@ -1359,8 +1426,8 @@ abstract class UpgradeDriver
         ob_start();
         try {
             $script->run($this);
-        } catch(Exception $e) {
-            $this->error("Exception: ".$e->getMessage());
+        } catch (Exception $e) {
+            $this->error("Exception: " . $e->getMessage());
         }
         $out = ob_get_clean();
         if ($out) {
@@ -1381,21 +1448,23 @@ abstract class UpgradeDriver
             return false;
         }
         if (!empty($this->manifest['copy_files']['from_dir'])) {
-            $this->context['new_source_dir'] = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
+            $this->context['new_source_dir'] = $this->context['extract_dir'] . "/" . $this->manifest['copy_files']['from_dir'];
         }
         $scripts = $this->getScripts($this->context['new_source_dir'], $stage);
         $this->state['script_count'][$stage] = count($scripts);
         $this->to_version = $this->manifest['version'];
         if (!empty($this->manifest['flavor'])) {
             $this->to_flavor = strtolower($this->manifest['flavor']);
-        } else if (!empty($this->context['new_source_dir'])) {
-            list($to_version, $to_flavor) = $this->loadVersion($this->context['new_source_dir']);
-            $this->to_flavor = $to_flavor;
         } else {
-            $this->to_flavor = $this->from_flavor;
+            if (!empty($this->context['new_source_dir'])) {
+                list($to_version, $to_flavor) = $this->loadVersion($this->context['new_source_dir']);
+                $this->to_flavor = $to_flavor;
+            } else {
+                $this->to_flavor = $this->from_flavor;
+            }
         }
 
-        foreach($scripts as $name => $script) {
+        foreach ($scripts as $name => $script) {
             if (!empty($this->state['scripts'][$stage][$name]) && $this->state['scripts'][$stage][$name] == 'done') {
                 $this->log("Skipping script $name - already done");
                 continue;
@@ -1428,7 +1497,7 @@ abstract class UpgradeDriver
      */
     protected function isFlavor($is, $flav)
     {
-        switch(strtolower($flav)) {
+        switch (strtolower($flav)) {
             case 'pro':
                 if ($is == 'pro') {
                     return true;
@@ -1476,7 +1545,7 @@ abstract class UpgradeDriver
     public function saveConfig()
     {
         ksort($this->config);
-        write_array_to_file("sugar_config", $this->config, $this->context['source_dir']."/config.php");
+        write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
     }
 
     protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
@@ -1490,8 +1559,8 @@ abstract class UpgradeDriver
     {
         if ($stage == 'continue') {
             if (!empty($this->state['stage'])) {
-                foreach($this->stages as $stage) {
-                    if (empty($this->state['stage'][$stage]) ||  $this->state['stage'][$stage] != 'done') {
+                foreach ($this->stages as $stage) {
+                    if (empty($this->state['stage'][$stage]) || $this->state['stage'][$stage] != 'done') {
                         break;
                     }
                 }
@@ -1534,7 +1603,7 @@ abstract class UpgradeDriver
      */
     public function run($stage)
     {
-        ini_set('memory_limit',-1);
+        ini_set('memory_limit', -1);
         ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
         ini_set('max_execution_time', 0);
         $this->log("Stage $stage starting");
@@ -1542,7 +1611,7 @@ abstract class UpgradeDriver
             $this->current_stage = $stage;
             $this->state['stage'][$stage] = 'started';
             $this->saveState();
-            switch($stage) {
+            switch ($stage) {
                 case "healthcheck":
                     if (!$this->healthcheck()) {
                         return false;
@@ -1598,8 +1667,8 @@ abstract class UpgradeDriver
                     $this->error("Wrong stage: $stage");
                     return false;
             }
-        } catch(Exception $e) {
-            $this->error("Exception: ".$e->getMessage());
+        } catch (Exception $e) {
+            $this->error("Exception: " . $e->getMessage());
             return false;
         }
         $this->state['stage'][$stage] = 'done';
@@ -1631,7 +1700,7 @@ abstract class UpgradeDriver
             // backup disabled by option
             return true;
         }
-        $target = $this->context['backup_dir']  . '/'. $file;
+        $target = $this->context['backup_dir'] . '/' . $file;
         $path = pathinfo($target, PATHINFO_DIRNAME);
         if (!empty($path)) {
             $this->ensureDir($path);
@@ -1655,7 +1724,7 @@ abstract class UpgradeDriver
     {
         $version = self::$version;
         $build = self::$build;
-        $vfile = dirname(__FILE__)."/".self::VERSION_FILE;
+        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
         if (file_exists($vfile)) {
             $data = json_decode(file_get_contents($vfile), true);
             if (empty($data)) {
@@ -1669,36 +1738,6 @@ abstract class UpgradeDriver
             }
         }
         return array($version, $build);
-    }
-
-    /**
-     *
-     * Verify if health check module is available
-     * @return boolean
-     */
-    protected function isHealthCheckInstalled()
-    {
-        set_include_path(__DIR__ . DIRECTORY_SEPARATOR . realpath($this->context['health_check_path']) . PATH_SEPARATOR . get_include_path());
-        $file = 'Scanner/ScannerCli.php';
-        return stream_resolve_include_path($file);
-    }
-
-    /**
-     *
-     * Get Scanner object
-     * @return HealthCheckScannerCli
-     */
-    protected function  getHealthCheckScanner()
-    {
-        if ($this->isHealthCheckInstalled()) {
-            require_once 'Scanner/ScannerCli.php';
-            $scanner = new HealthCheckScannerCli();
-            $scanner->setVerboseLevel(0);
-            $scanner->setLogFilePointer($this->fp);
-            $scanner->setInstanceDir($this->context['source_dir']);
-            return $scanner;
-        }
-        return false;
     }
 
     /**

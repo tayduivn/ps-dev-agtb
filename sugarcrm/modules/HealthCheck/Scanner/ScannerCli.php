@@ -143,7 +143,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
         $scanner = new static();
 
         if(!$scanner->parseCliArgs($argv)) {
-            $scanner->usageAndDie();
+            $scanner->usageAndDie($argv[0]);
         }
 
         $scanner->scan();

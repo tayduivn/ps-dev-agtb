@@ -9,14 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
+}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is command-line only script");
 }
 
-if(empty($argv[1])) {
+if (empty($argv[1])) {
     die("Use $argv[0] name (no zip or phar extension)\n");
 }
 
@@ -28,8 +30,8 @@ if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip
     $name = $argv[1];
 }
 
-chdir(dirname(__FILE__)."/../..");
-$files=array(
+chdir(dirname(__FILE__) . "/../..");
+$files = array(
     "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
     "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
     "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
@@ -40,6 +42,8 @@ $files=array(
     'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php',
     'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
     'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
+    'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
+    'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
 );
 
 $phar = new Phar($name . '.phar');
