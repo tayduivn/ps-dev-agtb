@@ -529,8 +529,8 @@ class HealthCheckScanner
         $this->log("Comparing md5 sums");
         $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log)#";
         $skip_files = array(
-            './styleguide/less/bootstrap-mobile.less',
-            './styleguide/less/bootstrap.less',
+            './styleguide/less/bootstrap-mobile.less copy',
+            './styleguide/less/bootstrap.less copy',
         );
         foreach($this->md5_files as $file => $sum) {
             if (in_array($file, $skip_files)) {
