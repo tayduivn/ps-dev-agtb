@@ -118,9 +118,10 @@ $app_list_strings = array (
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
         'Notes' => 'Nt',
-        'Tasks' => 'Ts',
         'KBLocalizations' => 'Lo',
         'KBRevisions' => 'Re',
+        'Quotas' => 'Fo',
+        'Tasks' => 'Ts'
     ),
 
   'moduleListSingular' =>
@@ -3109,6 +3110,8 @@ $app_strings = array (
     'ERROR_NUMBER' => 'Error. This field requires a valid number.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'ERROR_ACCESS_MODULE' => 'You do not have access to this module.',
+    'ERROR_MAX_FILESIZE_EXCEEDED' => 'Error. The attachment is too large.',
+    'ERROR_UPLOAD_FAILED' => 'Error. The file failed to upload.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
@@ -3377,6 +3380,16 @@ $app_strings = array (
                                      D&B® D-U-N-S® Number, fax, phone and trade style.
                                      Includes business intelligence such as executive names and titles, financials, number of employees,
                                      import or export code, branch indicator, and more. Requires D&B Subscription.',
+    /* For bulk import*/
+    'LBL_DNB_BI_YOU_ADD' => 'You added ',
+    'LBL_DNB_BI_NEW_ACCT' => ' new accounts.',
+    'LBL_DNB_VIEW_ACCT' => 'View Accounts',
+    'LBL_DNB_BI_DUP_MSG' => ' accounts were duplicates and not added',
+    'LBL_DNB_BI_LOADING' => 'Importing D&B Accounts',
+    'LBL_DNB_BI_REC_LIMIT' => 'Maximum of 20 records can be selected to import',
+    'LBL_DNB_BI_ERR' => 'No records were imported.',
+    'LBL_DNB_BI_API_ERR' => 'Error importing records.',
+    'LBL_DNB_BI_NO_SLCT' => 'No Records Selected.',
 
     /*DNB Errors */
     'LBL_DNB_ERROR_CURL_RESOLVE_PROXY' => 'Could not resolve proxy. The given proxy host could not be resolved. Please check proxy settings.',
@@ -4255,6 +4268,7 @@ $app_strings = array (
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
 
     'LBL_SUCCESS' => 'Success',
+    'LBL_ERROR' => 'Error',
 
     //Merge Duplicates
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
@@ -4586,7 +4600,7 @@ $app_strings = array (
     'LBL_MOBILE_PROCESSING_FILE' => 'Preparing file...',
     'LNK_THIRD_PARTY_SOFTWARE' => 'Third Party Software',
     'LNK_TERMS_OF_USE' => 'Terms of Use',
-    'LNK_PRIVACY_POLICY' => 'Privacy Policy',     
+    'LNK_PRIVACY_POLICY' => 'Privacy Policy',
     'LBL_EXTERNAL_LOGIN_BUTTON_TITLE' => 'Single Sign-On',
     'LBL_RECENTS' => 'Recents',
 
@@ -4681,7 +4695,7 @@ $app_strings = array (
     'LBL_MOBILE_TUTORIAL_DETAIL_INTRO_TITLE' => 'Detail View',
     'LBL_MOBILE_TUTORIAL_DETAIL_INTRO_TEXT' => 'The detail view opens on the right side of your screen.',
     'LBL_MOBILE_TUTORIAL_CONTROL_PANEL' => 'Use the arrows below for a quick tour through the key components of this menu.',
-    
+
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
 

@@ -11,10 +11,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/ModuleApi.php');
+require_once('include/api/SugarApi.php');
 require_once('include/RecordListFactory.php');
 
-class RelateRecordApi extends ModuleApi {
+class RelateRecordApi extends SugarApi
+{
     public function registerApiRest() {
         return array(
             'fetchRelatedRecord' => array(
@@ -85,11 +86,12 @@ class RelateRecordApi extends ModuleApi {
      * @param $securityTypeLocal string What ACL to check on the near side of the link
      * @param $securityTypeRemote string What ACL to check on the far side of the link
      * @return array Two elements: The link name, and the SugarBean of the far end
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
      */
-    protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
-        if ( empty($primaryBean) ) {
-            throw new SugarApiExceptionNotFound('Could not find the primary bean');
-        }
+    protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view')
+    {
+        $this->requireArgs($args, array('link_name'));
         if ( ! $primaryBean->ACLAccess($securityTypeLocal) ) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeLocal.' records for module: '.$args['module']);
         }
@@ -190,28 +192,35 @@ class RelateRecordApi extends ModuleApi {
         
     }
 
-    function createRelatedRecord($api, $args) {
+    /**
+     * Creates a record and relates it to a primary record.
+     *
+     * @param ServiceBase $api The API class of the request.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
+     */
+    public function createRelatedRecord($api, $args)
+    {
         $primaryBean = $this->loadBean($api, $args);
+        list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','create');
 
-        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','create');
-
-        if ( isset($args['id']) ) {
-            $relatedBean->new_with_id = true;
-        }
-
-        // Set rel data for $relatedBean->save() to create the link
-        $relatedBean->not_use_rel_in_req = true;
-        $relatedBean->new_rel_id = $primaryBean->id;
-        $relatedBean->new_rel_relname = $primaryBean->$linkName->getLinkForOtherSide();
-
-        $id = $this->updateBean($relatedBean, $api, $args);
+        /** @var Link2 $link */
+        $link = $primaryBean->$linkName;
+        $module = $link->getRelatedModuleName();
+        $moduleApi = $this->getModuleApi($api, $module);
+        $moduleApiArgs = $this->getModuleApiArgs($args, $module);
+        $relatedBean = $moduleApi->createBean($api, $moduleApiArgs, array(
+            'not_use_rel_in_req' => true,
+            'new_rel_id' => $primaryBean->id,
+            'new_rel_relname' => $link->getLinkForOtherSide(),
+        ));
 
         $args['remote_id'] = $relatedBean->id;
 
         // This forces a re-retrieval of the bean from the database
         BeanFactory::unregisterBean($relatedBean);
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
+        return $this->formatNearAndFarRecords($api, $args, $primaryBean);
     }
 
     function createRelatedLink($api, $args) {
@@ -429,5 +438,44 @@ class RelateRecordApi extends ModuleApi {
         $result['record'] = $this->formatBean($api, $args, $primaryBean);
 
         return $result;
+    }
+
+    /**
+     * Returns arguments for internal call to Module API
+     *
+     * @param ServiceBase $api
+     * @param string $module Relate module name
+     *
+     * @return ModuleApi Module API implementation
+     */
+    protected function getModuleApi(ServiceBase $api, $module)
+    {
+        $file = sprintf('modules/%1$s/clients/%2$s/api/%1$sApi.php', $module, $api->platform);
+        if (file_exists($file)) {
+            require_once $file;
+            $class = sprintf('%sApi', $module);
+            return new $class;
+        }
+
+        require_once 'clients/base/api/ModuleApi.php';
+        return new ModuleApi();
+    }
+
+    /**
+     * Returns arguments for internal call to Module API
+     *
+     * @param array $args RelateRecord API arguments
+     * @param string $module Relate module name
+     * @return array Module API arguments
+     */
+    protected function getModuleApiArgs(array $args, $module)
+    {
+        $args['relate_module'] = $args['module'];
+        $args['relate_record'] = $args['record'];
+        $args['module'] = $module;
+        unset($args['record']);
+        unset($args['link_name']);
+
+        return $args;
     }
 }

@@ -17,6 +17,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 global $mod_strings;
+
+if (!is_admin($current_user)) {
+    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+}
+
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
 

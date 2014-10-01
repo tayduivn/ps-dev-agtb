@@ -551,6 +551,138 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = $this->getMockForAbstractClass('SugarApi');
         return SugarTestReflection::callProtectedMethod($api, 'getOrderByFromArgs', array($args, $bean));
     }
+
+    /**
+     * @dataProvider normalizeFieldsSuccessProvider
+     */
+    public function testNormalizeFieldsSuccess($input, $expectedFields, $expectedDisplayParams)
+    {
+        $fields = $this->normalizeFields($input, $displayParams);
+        $this->assertEquals($expectedFields, $fields);
+        $this->assertEquals($expectedDisplayParams, $displayParams);
+    }
+
+    public static function normalizeFieldsSuccessProvider()
+    {
+        return array(
+            'from-string' => array(
+                'id,name',
+                array('id', 'name'),
+                array(),
+            ),
+            'from-array' => array(
+                array('first_name', 'last_name'),
+                array('first_name', 'last_name'),
+                array(),
+            ),
+            'from-string-with-display-params' => array(
+                'id,{"name":"opportunities","fields":["id","name","sales_status"],"order_by":"date_closed:desc"}',
+                array('id', 'opportunities'),
+                array(
+                    'opportunities' => array(
+                        'fields' => array('id', 'name', 'sales_status'),
+                        'order_by' => 'date_closed:desc',
+                    ),
+                ),
+            ),
+            'from-array-with-display-params' => array(
+                array(
+                    'id', array(
+                        'name' => 'contacts',
+                        'fields' => array('first_name', 'last_name'),
+                        'order_by' => 'last_name',
+                    ),
+                ),
+                array('id', 'contacts'),
+                array(
+                    'contacts' => array(
+                        'fields' => array('first_name', 'last_name'),
+                        'order_by' => 'last_name',
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider normalizeFieldsFailureProvider
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testNormalizeFieldsFailure($fields)
+    {
+        $this->normalizeFields($fields, $displayParams);
+    }
+
+    public static function normalizeFieldsFailureProvider()
+    {
+        return array(
+            'non-array-or-string' => array(false),
+            'name-not-specified' => array(
+                array(
+                    array('order_by' => 'name'),
+                ),
+            ),
+        );
+    }
+
+    private function normalizeFields($fields, &$displayParams)
+    {
+        $api = $this->getMockForAbstractClass('SugarApi');
+        return SugarTestReflection::callProtectedMethod($api, 'normalizeFields', array($fields, &$displayParams));
+    }
+
+    /**
+     * @dataProvider parseFieldsSuccessProvider
+     */
+    public function testParseFieldsSuccess($fields, array $expected)
+    {
+        $actual = $this->parseFields($fields);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function parseFieldsSuccessProvider()
+    {
+        return array(
+            'normal' => array(
+                'name,{"name":"opportunities","fields":["id","name","sales_status"]}',
+                array(
+                    'name',
+                    array(
+                        'name' => 'opportunities',
+                        'fields' => array('id', 'name', 'sales_status'),
+                    ),
+                ),
+            ),
+            'whitespaces' => array(
+                'id , name',
+                array('id', 'name'),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider parseFieldsFailureProvider
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testParseFieldsFailure($fields)
+    {
+        $this->parseFields($fields);
+    }
+
+    public static function parseFieldsFailureProvider()
+    {
+        return array(
+            'invalid-json' => array(
+                '{"name":',
+            ),
+        );
+    }
+
+    private function parseFields($fields)
+    {
+        $api = $this->getMockForAbstractClass('SugarApi');
+        return SugarTestReflection::callProtectedMethod($api, 'parseFields', array($fields));
+    }
 }
 
 
@@ -569,9 +701,14 @@ class SugarApiMock extends SugarApi
         return parent::loadBean($api, $args);
     }
 
-    public function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
-    {
-        return parent::getFieldsFromArgs($api, $args, $bean, $viewName);
+    public function getFieldsFromArgs(
+        ServiceBase $api,
+        array $args,
+        SugarBean $bean = null,
+        $viewName = 'view',
+        &$displayParams = array()
+    ) {
+        return parent::getFieldsFromArgs($api, $args, $bean, $viewName, $displayParams);
     }
 }
 

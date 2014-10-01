@@ -15,10 +15,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
-
-
-
-
+if (!is_admin($current_user)) {
+    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+}
 
 $focus = BeanFactory::getBean('ReportMaker', $_POST['record']);
 
@@ -39,6 +38,12 @@ foreach($focus->additional_column_fields as $field)
 		$focus->$field = $value;
 		
 	}
+}
+
+// replace currently assigned teams with the one from request
+// since the UI doesn't allow to specify multiple teams
+if ($focus->load_relationship('teams')) {
+    $focus->teams->replace(array($focus->team_id));
 }
 
 $focus->save();

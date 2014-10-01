@@ -11,17 +11,27 @@
  */
 --}}
 <li>
-    <div class="dnb-bal-rslt">
-        <a class="dnb-company-name" id="{{this.duns_num}}">
-            {{this.name}}
-        </a>
+    <div class='dnb-rslt-chkbox'>
+        <input type="checkbox" name="{{this.duns_num}}" id="{{this.duns_num}}"
+               class="dnb_checkbox dnb-bi-chk" {{#if this.isSelected}}checked{{/if}}
+            {{#if this.isDupe}}disabled{{/if}}/>
+    </div>
+    <div class='dnb-bal-rslt'>
         {{#if this.locationtype}}
             <span class="label pull-right" data-placement="right">
                 {{this.locationtype}}
             </span>
         {{/if}}
+        <a class="dnb-company-name" id="{{this.duns_num}}">
+            {{this.name}}
+        </a>
     </div>
     <div class="record-label dnb-bal-list">
+        {{#if this.isDupe}}
+            <span class="label label-important pull-right" data-placement="right">
+                {{str "LBL_DNB_DUPLICATE"}}
+            </span>
+        {{/if}}
         {{#if this.billing_address_city}}
             {{this.billing_address_city}},
         {{/if}}
@@ -30,11 +40,6 @@
         {{/if}}
         {{#if this.billing_address_country}}
             {{this.billing_address_country}}
-        {{/if}}
-        {{#if this.isDupe}}
-            <span class="label label-important pull-right" data-placement="right">
-                {{str "LBL_DNB_DUPLICATE"}}
-            </span>
         {{/if}}
     </div>
 </li>

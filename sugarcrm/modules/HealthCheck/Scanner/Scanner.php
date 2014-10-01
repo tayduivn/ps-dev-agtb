@@ -526,8 +526,10 @@ class HealthCheckScanner
         }
 
         // check non-upgrade-safe customizations by verifying md5's
+        // TODO: uncomment when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
+        /*
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/|)#";
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
         foreach($this->md5_files as $file => $sum) {
             if(preg_match($skip_prefixes, $file)) {
                 continue;
@@ -539,6 +541,7 @@ class HealthCheckScanner
                 $this->updateStatus("md5Mismatch", $file, $sum);
             }
         }
+        */
 
         foreach($this->getModuleList() as $module) {
             $this->log("Checking module $module");
@@ -1329,7 +1332,7 @@ class HealthCheckScanner
             $key = strtolower($key);
             if(!empty($data['widget_class']) && !in_array($data['widget_class'], $this->knownWidgetClasses)) {
                 if(!file_exists("include/generic/SugarWidgets/SugarWidget{$data['widget_class']}.php")) {
-                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key);
+                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key, $module);
                 }
             }
             // Unknown fields handled by CRYS-36, so no more checks here
@@ -1888,6 +1891,13 @@ ENDP;
 
             if(!empty($value['type'])) {
                 switch($value['type']) {
+                    case 'date' :
+                    case 'datetime' :
+                    case 'time' :
+                        if (!empty($value['display_default']) && preg_match('/^\-.+\-$/', $value['display_default'])) {
+                            $this->updateStatus('vardefIncorrectDisplayDefault', $key, $module);
+                        }
+                        break;
                     case 'enum':
                     case 'multienum':
                         if(!empty($value['function']['returns']) && $value['function']['returns'] == 'html') {

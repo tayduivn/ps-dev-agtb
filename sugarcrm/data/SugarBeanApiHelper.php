@@ -65,19 +65,13 @@ class SugarBeanApiHelper
                 //END SUGARCRM flav=pro ONLY
 
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-                if ($type == 'link') {
-                    // There is a different API to fetch linked records, don't try to encode all of the related data.
-                    continue;
-                }
-
                 $field = $sfh->getSugarField($type);
 
                 if(empty($field)) continue;
 
                 if (isset($bean->$fieldName)  || $type == 'relate') {
-                     $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
+                     $field->apiFormatField($data, $bean, $options, $fieldName, $properties, $fieldList, $this->api);
                 }
-
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
@@ -100,7 +94,15 @@ class SugarBeanApiHelper
             } else {
                 if (isset($bean->date_modified) && !empty($bean->field_defs['date_modified'])) {
                     $field = $sfh->getSugarField($bean->field_defs['date_modified']['type']);
-                    $field->apiFormatField($data, $bean, array(), 'date_modified', $bean->field_defs['date_modified']);
+                    $field->apiFormatField(
+                        $data,
+                        $bean,
+                        array(),
+                        'date_modified',
+                        $bean->field_defs['date_modified'],
+                        $fieldList,
+                        $this->api
+                    );
                 }
             }
             if ($this->api->user->isAdmin()) {

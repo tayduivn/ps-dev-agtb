@@ -122,13 +122,41 @@ class SugarFieldBase {
      * @param array     $args
      * @param string    $fieldName
      * @param array     $properties
+     * @param array     $fieldList
+     * @param ServiceBase $service
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
-    {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList = null,
+        ServiceBase $service = null
+    ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {
             $data[$fieldName] = '';
+        }
+    }
+
+    /**
+     * Ensures that necessary arguments of apiFormatField() are passed
+     *
+     * @param array $fieldList The $fieldList argument of apiFormatField()
+     * @param ServiceBase $service The $service argument of apiFormatField()
+     */
+    protected function ensureApiFormatFieldArguments(array $fieldList = null, ServiceBase $service = null)
+    {
+        if ($fieldList === null) {
+            trigger_error('$fieldList argument of apiFormatField() is missing', E_USER_DEPRECATED);
+        }
+
+        if ($service === null) {
+            trigger_error('$service argument of apiFormatField() is missing', E_USER_DEPRECATED);
         }
     }
 
@@ -835,5 +863,52 @@ class SugarFieldBase {
     {
         return;
     }
-    
+
+    /**
+     * Adds field to the list of fields to be selected
+     *
+     * @param string $field
+     * @param array $fields
+     */
+    public function addFieldToQuery($field, array &$fields)
+    {
+        $fields[] = $field;
+    }
+
+    /**
+     * Processes layout field by collecting its display parameters and processing nested fields
+     *
+     * @param MetaDataManager $metaDataManager Metadata manager
+     * @param array $field The field being processed
+     * @param array $fieldDefs Field definitions of the module the layout belongs to
+     * @param array $fields Resulting set of fields
+     * @param array $displayParams Resulting display parameters
+     */
+    public function processLayoutField(
+        MetaDataManager $metaDataManager,
+        array $field,
+        array $fieldDefs,
+        array &$fields,
+        array &$displayParams
+    ) {
+        $isNamedField = isset($field['name']);
+        if ($isNamedField) {
+            $displayParams[$field['name']] = $field;
+            unset($displayParams[$field['name']]['name']);
+        }
+
+        $fieldAttributes = array('fields', 'related_fields');
+        foreach ($fieldAttributes as $attribute) {
+            if (isset($field[$attribute]) && is_array($field[$attribute])) {
+                $fields = array_merge($fields, $metaDataManager->getFieldNames(
+                    $field[$attribute],
+                    $fieldDefs,
+                    $displayParams
+                ));
+                if ($isNamedField) {
+                    unset($displayParams[$field['name']][$attribute]);
+                }
+            }
+        }
+    }
 }

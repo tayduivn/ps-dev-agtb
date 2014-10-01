@@ -382,10 +382,6 @@ class MetaDataManager
         // Load up the metadata sections
         $this->loadSections($public);
 
-        // Load the hacks object
-        $className = SugarAutoLoader::customClass('MetaDataHacks');
-        $this->metaDataHacks = new $className();
-
         $this->db = DBManagerFactory::getInstance();
     }
 
@@ -770,7 +766,7 @@ class MetaDataManager
     /**
      * Gets vardef info for a given module.
      *
-     * @param $moduleName The name of the module to collect vardef information about.
+     * @param string $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
     public function getVarDef($moduleName)
@@ -800,7 +796,7 @@ class MetaDataManager
 
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         if (!empty($data['fields'])) {
-            $data['fields'] = $this->metaDataHacks->normalizeFieldDefs($data);
+            $data['fields'] = $this->getMetaDataHacks()->normalizeFieldDefs($data);
         }
 
         if (!isset($data['relationships'])) {
@@ -877,7 +873,7 @@ class MetaDataManager
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-                $fieldsAcl = $this->metaDataHacks->fixAcls($fieldsAcl);
+                $fieldsAcl = $this->getMetaDataHacks()->fixAcls($fieldsAcl);
                 foreach ($fieldsAcl as $field => $fieldAcl) {
                     switch ($fieldAcl['acl']) {
                         case SugarACL::ACL_READ_WRITE:
@@ -1987,7 +1983,7 @@ class MetaDataManager
         $data = $this->getMetadataCache();
 
         //If we failed to load the metadata from cache, load it now the hard way.
-        if (empty($data)) {
+        if (empty($data) || !$this->verifyJSSource($data)) {
             // Allow more time for private metadata builds since it is much heavier
             if (!$this->public) {
                 ini_set('max_execution_time', 0);
@@ -2026,6 +2022,18 @@ class MetaDataManager
         }
 
         return $this->getFromCacheTable($this->getCachedMetadataHashKey());
+    }
+
+    /**
+     * @param (array) $data
+     *
+     * @return bool true if the js-component file for this metadata call exists, false otherwise
+     */
+    protected function verifyJSSource($data) {
+        if (!empty($data['jssource']) && !SugarAutoLoader::fileExists($data['jssource'])) {
+            //The jssource file is invalid, we need to invalidate the hash as well.
+            return false;
+        }
     }
 
     /**
@@ -3124,12 +3132,23 @@ class MetaDataManager
      * Public accessor that gets the hash for a metadata file cache. This is a
      * wrapper to {@see getCachedMetadataHash}
      *
+     * @param bool $verifyDataExists if true, the javascript component files
+     * will be verified as a part of the hash check
+     *
      * @return string A metadata cache file hash or false if not found
      */
-    public function getMetadataHash()
+    public function getMetadataHash($verifyDataExists = false)
     {
         // Start with the known has if there is one
         $hash = $this->getCachedMetadataHash();
+
+        if ($verifyDataExists) {
+            $data = $this->getMetadataCache(true);
+            if (!$this->verifyJSSource($data)) {
+                //The jssource file is invalid, we need to invalidate the hash as well.
+                return false;
+            }
+        }
 
         if ($hash) {
             // We need to see if we need to send any warnings down to the user
@@ -3299,31 +3318,25 @@ class MetaDataManager
      *
      * @param string $moduleName The name of the module
      * @param string $view       The view name
+     * @param array $displayParams Associative array of field names and their display params on the given view
      * @return array
      */
-    public function getModuleViewFields($moduleName, $view)
+    public function getModuleViewFields($moduleName, $view, &$displayParams = array())
     {
+        $displayParams = array();
         $viewData = $this->getModuleView($moduleName, $view);
         if (!isset($viewData['meta']) || !isset($viewData['meta']['panels'])) {
             return array();
         }
 
-        // flatten fields
         $fields = array();
+        $varDefs = $this->getVarDef($moduleName);
+        $fieldDefs = $varDefs['fields'];
 
+        // flatten fields
         foreach ($viewData['meta']['panels'] as $panel) {
             if (isset($panel['fields']) && is_array($panel['fields'])) {
-                $fields = array_merge($fields, $this->getFieldNames($panel['fields']));
-                foreach ($panel['fields'] as $field) {
-                    if (is_array($field)) {
-                        if (isset($field['fields']) && is_array($field['fields'])) {
-                            $fields = array_merge($fields, $this->getFieldNames($field['fields']));
-                        }
-                        if (isset($field['related_fields']) && is_array($field['related_fields'])) {
-                            $fields = array_merge($fields, $this->getFieldNames($field['related_fields']));
-                        }
-                    }
-                }
+                $fields = array_merge($fields, $this->getFieldNames($panel['fields'], $fieldDefs, $displayParams));
             }
         }
 
@@ -3331,23 +3344,52 @@ class MetaDataManager
     }
 
     /**
+     * Return list of fields from view def field set and populate $displayParams with display parameters
+     * of link and collection fields
      *
-     * Return list of fields from view def field set
-     *
-     * @param array $fieldSet
+     * @param array $fieldSet The field set
+     * @param array $fieldDefs Bean field definitions
+     * @param array $displayParams Associative array of field names and their display params
      * @return array
+     *
+     * @access protected Should be used only by SugarFieldBase and subclasses
      */
-    protected function getFieldNames(array $fieldSet)
+    public function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
     {
         $fields = array();
         foreach ($fieldSet as $field) {
-            if (is_array($field) && isset($field['name'])) {
-                $fields[] = $field['name'];
-            } elseif (is_string($field)) {
+            if (is_string($field)) {
                 // direct field name
-                $fields[] = $field;
+                $field = array('name' => $field);
+            }
+            if (is_array($field)) {
+                $type = 'base';
+                if (isset($field['name'])) {
+                    $fields[] = $field['name'];
+                    if (isset($fieldDefs[$field['name']]['type'])) {
+                        $type = $fieldDefs[$field['name']]['type'];
+                    }
+                }
+
+                $sf = SugarFieldHandler::getSugarField($type);
+                $sf->processLayoutField($this, $field, $fieldDefs, $fields, $displayParams);
             }
         }
         return $fields;
+    }
+
+    /**
+     * Lazily loads metadata hacks instance
+     *
+     * @return MetaDataHacks
+     */
+    protected function getMetaDataHacks()
+    {
+        if (!$this->metaDataHacks) {
+            $className = SugarAutoLoader::customClass('MetaDataHacks');
+            $this->metaDataHacks = new $className();
+        }
+
+        return $this->metaDataHacks;
     }
 }

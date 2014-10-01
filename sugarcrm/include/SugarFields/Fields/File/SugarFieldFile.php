@@ -165,11 +165,14 @@ class SugarFieldFile extends SugarFieldBase
         }
 
         if ($move) {
+            $temp = !empty($params['temp']);
             // Added checking of final move to capture errors that might occur
-            if ($upload_file->final_move($bean->id)) {
-                // This fixes an undefined index warning being thrown
-                $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
-                $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
+            if ($upload_file->final_move($bean->id, $temp)) {
+                if (!$temp) {
+                    // This fixes an undefined index warning being thrown
+                    $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
+                    $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
+                }
             } else {
                 // Reset the bean back to original, but only if we had set them.
                 $bean->$field = $originalvals['value'];
@@ -242,18 +245,20 @@ class SugarFieldFile extends SugarFieldBase
     }
 
     /**
-     * Formats a field for the Sugar API
-     *
-     * @param array     $data
-     * @param SugarBean $bean
-     * @param array     $args
-     * @param string    $fieldName
-     * @param array     $properties
+     * {@inheritDoc}
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList = null,
+        ServiceBase $service = null
+    ) {
         // Handle the parent so our current data element is set
-        parent::apiFormatField($data, $bean, $args, $fieldName, $properties);
-        
+        parent::apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
+
         // Get fields related to this field but only if the current field is empty
         // If the current field is empty, set it to the related field(s) until it 
         // isn't empty. This happens in the case of upload file fields in File 

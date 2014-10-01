@@ -222,7 +222,7 @@
 
         $field.on('focus', _.bind(this.handleFocus, this));
 
-        $('.main-pane, .flex-list-view-content').on('scroll', _.bind(function() {
+        $('.main-pane, .flex-list-view-content').on('scroll.' + this.cid, _.bind(function() {
             $field.datepicker('place');
         }, this));
     },
@@ -233,7 +233,7 @@
     unbindDom: function() {
         this._super('unbindDom');
 
-        $('.main-pane, .flex-list-view-content').off();
+        $('.main-pane, .flex-list-view-content').off('scroll.' + this.cid);
 
         var $field = this.$(this.fieldTag),
             datePicker = $field.data('datepicker');

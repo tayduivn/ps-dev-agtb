@@ -632,6 +632,8 @@ $mod_strings = array (
 
     'LBL_REBUILD_JS_FILES_TITLE' => 'Rebuild JS Compressed Files',
     'LBL_REBUILD_JS_FILES_DESC_SHORT' => 'Copies original Full JS Source files and replaces existing compressed JS files',
+    'LBL_REBUILD_SIDECAR_FILES_TITLE' => 'Rebuild Sidecar Files',
+    'LBL_REBUILD_SIDECAR_FILES_DESC_SHORT' => 'Copies original Sidecar Full JS Source files and replaces existing compressed JS files',
     'LBL_REBUILD_CONCAT_JS_FILES_TITLE' => 'Rebuild JS Grouping Files',
     'LBL_REBUILD_CONCAT_JS_FILES_DESC_SHORT' => 'Re-concatenates and overwrites existing group files with latest versions of group files',
     'LBL_REBUILD_JS_MINI_FILES_TITLE' => 'Rebuild Minified JS Files',

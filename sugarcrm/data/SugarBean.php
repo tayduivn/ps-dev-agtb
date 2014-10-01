@@ -692,9 +692,7 @@ class SugarBean
      *
      * All implementing classes must set a value for the object_name variable.
      *
-     * @param array $arr row of data fetched from the database.
-     * @return  nothing
-     *
+     * @return string
      */
     function getObjectName()
     {
@@ -913,17 +911,26 @@ class SugarBean
     }
 
     /**
-     * Returns field definitions for the implementing module.
+     * Returns an array of field definitions for this bean's module.
      *
-     * The definitions were loaded in the constructor.
+     * Optionally, you can filter the returned list of field definitions by
+     * field type, name, etc (any property).
      *
-     * @return Array Field definitions.
-     *
-     * Internal function, do not override.
+     * @param string $property Field def property to filter by (e.g. type).
+     * @param array $filter An array of values to filter the returned
+     *   field definitions.
+     * @return array Field definitions.
      */
-    function getFieldDefinitions()
+    public function getFieldDefinitions($property = '', $filter = array())
     {
-        return $this->field_defs;
+        if (empty($property) || empty($filter)) {
+            return $this->field_defs;
+        }
+
+        $fields = array_filter($this->field_defs, function($def) use ($property, $filter) {
+            return in_array($def[$property], $filter);
+        });
+        return $fields;
     }
 
     /**
@@ -4382,7 +4389,7 @@ class SugarBean
                         }
 
                         $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
-                        if ($relate_query['select']) {
+                        if ($relate_query['select'] && !isset($data['relationship_fields'])) {
                             $ret_array['secondary_select'] .= ', ' . $relate_query['select'];
                         }
 
@@ -7260,7 +7267,19 @@ class SugarBean
 
         //retrieve the sql query as an array for easier manipulation
         //note, we do nothing for email1 field in this method, it is already handled by create_new_list_query
-        $returnArray =  $this->create_new_list_query($order_by, $where, $filtered_fields, $new_list_params, 0, '', true, $this, true, true);
+        $returnArray = $this->create_new_list_query(
+            $order_by,
+            $where,
+            $filtered_fields,
+            $new_list_params,
+            0,
+            '',
+            true,
+            $this,
+            true,
+            true,
+            true
+        );
 
         //Process assigned user seperately.  They require slightly different query and should be included by default.
         if (isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])) {

@@ -28,7 +28,7 @@ class PowerExpression extends NumericExpression
         $base = $params[0]->evaluate();
         $power = $params[1]->evaluate();
 
-        return pow($base, $power);
+        return SugarMath::init($base)->pow($power)->result();
     }
 
     /**
@@ -47,7 +47,7 @@ EOQ;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()

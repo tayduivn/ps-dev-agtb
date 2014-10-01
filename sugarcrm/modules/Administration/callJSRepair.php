@@ -31,6 +31,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             //concatenate mode, call the files that will concatenate javascript group files
             $_REQUEST['js_rebuild_concat'] = 'rebuild';
             require_once('jssource/minify.php');
+
+        } else if ($_REQUEST['js_admin_repair'] === 'sidecar') {
+
+            $dir = getcwd();
+
+            chdir('sidecar');
+            shell_exec('php -f build.php p');
+            chdir($dir);
+
         }else{
             $_REQUEST['root_directory'] = getcwd();
             require_once('jssource/minify.php');

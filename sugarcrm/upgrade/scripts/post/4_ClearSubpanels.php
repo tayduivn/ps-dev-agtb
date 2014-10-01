@@ -46,11 +46,28 @@ class SugarUpgradeClearSubpanels extends UpgradeScript
     {
         $files = $this->getDefFiles($seed->module_dir);
         $defs = $this->getBeanDefs($seed);
+
+        $healthCheck = array();
+        if (!empty($this->state['healthcheck'])) {
+            foreach ($this->state['healthcheck'] as $healthMeta) {
+                if ($healthMeta['report'] == 'unknownWidgetClass' && $healthMeta['params'][2] == $seed->module_dir) {
+                    $healthCheck[] = $healthMeta['params'][1];
+                }
+            }
+        }
+
         foreach ($files as $file) {
             $subpanel_layout = $layout_defs = array();
             include $file;
             $changed = $this->checkWidgetClass($subpanel_layout);
             $changed = $this->checkListFields($subpanel_layout, $defs) || $changed;
+            foreach($healthCheck as $key) {
+                if (isset($subpanel_layout['list_fields'][$key])) {
+                    unset($subpanel_layout['list_fields'][$key]);
+                    $this->log('Field ' . $key . ' has been removed from $subpanel_layout[\'list_fields\'] in ' . $file);
+                    $changed = true;
+                }
+            }
             if ($changed) {
                 $this->updateFile($file, $subpanel_layout, 'subpanel_layout');
                 $this->updatedModules[$seed->module_dir] = $seed->module_dir;

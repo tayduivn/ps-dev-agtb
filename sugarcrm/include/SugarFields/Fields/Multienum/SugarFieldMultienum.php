@@ -41,7 +41,20 @@ class SugarFieldMultienum extends SugarFieldEnum
         return $this->$displayTypeFunc($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
 
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+    /**
+     * {@inheritDoc}
+     */
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList = null,
+        ServiceBase $service = null
+    ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         $data[$fieldName] = $this->getNormalizedFieldValues($bean, $fieldName);
     }
 

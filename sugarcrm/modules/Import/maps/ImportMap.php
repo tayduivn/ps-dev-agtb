@@ -382,7 +382,7 @@ class ImportMap extends SugarBean
     protected function convertFromCsv($csvString)
     {
         $mapping = array();
-        $pairs = str_getcsv($csvString, $this->delimiter, $this->enclosure);
+        $pairs = str_getcsv(trim($csvString), $this->delimiter, $this->enclosure);
         foreach ($pairs as $pair) {
             list($name, $value) = explode('=', $pair);
             $mapping[trim($name)] = $value;

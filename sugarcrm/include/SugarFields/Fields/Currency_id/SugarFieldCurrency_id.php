@@ -15,12 +15,19 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 class SugarFieldCurrency_id extends SugarFieldBase
 {
     /**
-     * Formats a field for the Sugar API
-     *
-     * @see SugarFieldBase::apiFormatField
+     * {@inheritDoc}
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
-    {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList = null,
+        ServiceBase $service = null
+    ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (!empty($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {

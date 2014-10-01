@@ -242,6 +242,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'bar' => array(
                 'name' => 'bar',
+                'audited' => true,
                 'activity_enabled' => true,
             ),
             'baz' => array(
@@ -254,6 +255,20 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'quux' => array(
                 'name' => 'quux',
                 'audited' => true,
+            ),
+            'qir' => array(
+                'name' => 'qir',
+                'audited' => false,
+                'activity_enabled' => true,
+            ),
+            'qiir' => array(
+                'name' => 'qiir',
+                'audited' => true,
+                'activity_enabled' => false,
+            ),
+            'biiru' => array(
+                'name' => 'biiru',
+                'activity_enabled' => true,
             ),
         );
 
@@ -288,6 +303,24 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'data_type'  => 'varchar',
                     'before'     => 'quux1',
                     'after'      => 'quux2',
+                ),
+                'qir' => array(
+                    'field_name' => 'qir',
+                    'data_type'  => 'varchar',
+                    'before'     => 'qirval1',
+                    'after'      => 'qirval2',
+                ),
+                'qiir' => array(
+                    'field_name' => 'qiir',
+                    'data_type'  => 'varchar',
+                    'before'     => 'qiirval1',
+                    'after'      => 'qiirval2',
+                ),
+                'biiru' => array(
+                    'field_name' => 'biiru',
+                    'data_type'  => 'varchar',
+                    'before'     => 'biiryval1',
+                    'after'      => 'biiruval2',
                 ),
             ),
         );

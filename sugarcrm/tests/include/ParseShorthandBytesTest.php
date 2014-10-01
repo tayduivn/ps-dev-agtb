@@ -11,7 +11,7 @@
  */
 
 /**
- * @covers parseShorthandBytes
+ * @covers ::parseShorthandBytes
  */
 class ParseShorthandBytesTest extends Sugar_PHPUnit_Framework_TestCase
 {

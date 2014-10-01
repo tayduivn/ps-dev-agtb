@@ -241,6 +241,7 @@ class SugarQuery_Builder_Field
 
             if (!empty($this->def['rname_link'])) {
                 $jta = $this->query->getJoinAlias($this->def['link']);
+                $this->query->rname_link = $jta;
                 $this->table = !empty($this->query->join[$jta]->relationshipTableAlias) ? $this->query->join[$jta]->relationshipTableAlias : $jta;
             }
         }

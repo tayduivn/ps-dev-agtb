@@ -15,6 +15,7 @@ require_once 'modules/Import/ImportFieldSanitize.php';
 
 class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var SugarFieldPassword */
     protected $fieldObj;
     protected $contactBean;
     protected $currentPassword;
@@ -56,14 +57,16 @@ class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array();
         $fieldName = 'user_hash';
         $properties = array();
+        $fieldList = array($fieldName);
+        $service = SugarTestRestUtilities::getRestServiceMock();
         // no bean password set, so it returns empty string
-        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
+        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
         $this->assertEquals('', $data['user_hash']);
         $this->assertEquals('awesome', $data['id']);
 
         $bean->user_hash = 'this-is-my-password';
         // bean password set so it returns value_setvalue_setvalue_set
-        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
+        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
         $this->assertEquals(true, $data['user_hash']);
         $this->assertEquals('awesome', $data['id']);
     }

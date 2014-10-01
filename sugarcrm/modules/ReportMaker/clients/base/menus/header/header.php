@@ -30,7 +30,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'route'=>'#bwc/index.php?module=CustomQueries&action=EditView&return_module=CustomQueries&return_action=DetailView',
         'label' =>'LNK_NEW_CUSTOMQUERY',
         'acl_action'=>'admin',
-        'acl_module'=>'',
+        'acl_module'=>'CustomQueries',
         'icon' => 'icon-plus',
     ),
     array(
@@ -59,8 +59,8 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=DataSets&action=EditView&return_module=DataSets&return_action=DetailView',
         'label' =>'LNK_NEW_DATASET',
-        'acl_action'=>'',
-        'acl_module'=>'',
+        'acl_action'=>'admin',
+        'acl_module'=>'DataSets',
         'icon' => 'icon-plus',
     ),
     array(

@@ -195,7 +195,7 @@ class HealthCheckScannerMeta
         ),
         413 => array(
             'report' => 'unknownWidgetClass',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
 //        414 => array(
 //            'report' => 'unknownField',
@@ -205,10 +205,10 @@ class HealthCheckScannerMeta
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
         ),
-//        523 => array(
-//            'report' => 'byRefInHookFile',
-//            'bucket' => self::MANUAL,
-//        ),
+        523 => array(
+            'report' => 'byRefInHookFile',
+            'bucket' => self::MANUAL,
+        ),
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
@@ -349,6 +349,10 @@ class HealthCheckScannerMeta
         ),
         517 => array(
             'report' => 'incompatIntegration',
+            'bucket' => self::MANUAL,
+        ),
+        528 => array(
+            'report' => 'vardefIncorrectDisplayDefault',
             'bucket' => self::MANUAL,
         ),
 

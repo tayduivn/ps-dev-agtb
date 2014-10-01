@@ -69,7 +69,6 @@ class FileTempApi extends FileApi {
      *
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
-     * @return array
      */
     public function getTempImage($api, $args)
     {
@@ -99,6 +98,11 @@ class FileTempApi extends FileApi {
             require_once "include/download_file.php";
             $dl = new DownloadFileApi($api);
             $dl->outputFile(false, $info);
+
+            if (!empty($args['keep'])) {
+                return;
+            }
+
             register_shutdown_function(
                 function () use($filepath) {
                     if (is_file($filepath)) {

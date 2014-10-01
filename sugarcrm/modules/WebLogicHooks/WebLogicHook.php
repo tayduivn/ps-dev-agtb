@@ -182,11 +182,12 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
                 'bean' => $bean
             ));
 
+            $service = new RestService();
             foreach ($fieldList as $fieldName => $properties) {
                 $fieldType = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 $field = $sfh->getSugarField($fieldType);
                 if ('link' !== $fieldType && !empty($field) && (isset($bean->$fieldName)  || 'relate' === $fieldType)) {
-                    $field->apiFormatField($data, $bean, array(), $fieldName, $properties);
+                    $field->apiFormatField($data, $bean, array(), $fieldName, $properties, array(), $service);
                 }
             }
         }

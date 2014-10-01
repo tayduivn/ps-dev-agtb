@@ -147,13 +147,9 @@ function checkDBSettings($silent=false) {
                 } else {
                     if($db_selected) {
                         installLog("DB Selected, will reuse {$_SESSION['setup_db_database_name']}");
-                        if($db->tableExists('config') && !$_SESSION['setup_db_drop_tables']) {
-                           include('sugar_version.php');
-                           $versions = $db->getOne("SELECT COUNT(*) FROM config WHERE category='info' AND name='sugar_version' AND VALUE LIKE '$sugar_db_version'");
-                           if($versions != 1 && $silent==false) {
-                               $errors['ERR_DB_EXISTS_WITH_CONFIG'] = $mod_strings['ERR_DB_EXISTS_WITH_CONFIG'];
-                               installLog("ERROR:: {$errors['ERR_DB_EXISTS_WITH_CONFIG']}");
-                           }
+                        if($silent == false && $db->tableExists('config')) {
+                            $errors['ERR_DB_EXISTS_WITH_CONFIG'] = $mod_strings['ERR_DB_EXISTS_WITH_CONFIG'];
+                            installLog("ERROR:: {$errors['ERR_DB_EXISTS_WITH_CONFIG']}");
                         }
                     } else {
                         installLog("DB not selected, will create {$_SESSION['setup_db_database_name']}");

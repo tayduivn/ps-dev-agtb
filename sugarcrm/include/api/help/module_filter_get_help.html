@@ -81,9 +81,15 @@
             String
         </td>
         <td>
-            Comma delimited list of fields to return. The field date_modified will always be returned.
+            Comma delimited list of fields to return. Each field may be represented either by string, or by map
+            containing field name and additional field parameters (applicable to link and collection fields).
+            The fields <code>id</code> and <code>date_modified</code> will always be returned.
             <br>
-            Example: <code>name,account_type,description</code>
+            Example: <code>name,account_type,description,{"name":"opportunities","fields":["id","name","sales_status"],"order_by":"date_closed:desc"}</code>
+            <br>
+            For more details on additional field parameters, see
+            <a href="module_record_link_link_name_filter_get_help.html">Relate API</a> and
+            <a href="module_record_collection_collection_name_get_help.html">Collection API</a>.
         </td>
         <td>
             False
@@ -388,228 +394,38 @@ There are four types of filters:
       {
          "id":"fa300a0e-0ad1-b322-9601-512d0983c19a",
          "name":"Dale Spivey",
-         "date_entered":"2013-02-26T19:12:00+00:00",
          "date_modified":"2013-02-28T05:03:00+00:00",
-         "modified_user_id":"1",
-         "modified_by_name":"Administrator",
-         "created_by":"1",
-         "created_by_name":"Administrator",
          "description":"",
-         "img":"",
-         "deleted":false,
-         "assigned_user_id":"seed_sally_id",
-         "assigned_user_name":"Sally Bronsen",
-         "team_name":[
+         "opportunities": [
             {
-               "id":"East",
-               "name":"East",
-               "name_2":"",
-               "primary":false
+               _module: "Opportunities",
+               "id": "b0701501-1fab-8ae7-3942-540da93f5017",
+               "name": "360 Vacations - 228 Units",
+               "date_modified": "2014-09-08T16:05:00+03:00",
+               "sales_status": "New"
             },
-            {
-               "id":1,
-               "name":"Global",
-               "name_2":"",
-               "primary":false
-            },
-            {
-               "id":"West",
-               "name":"West",
-               "name_2":"",
-               "primary":true
-            }
          ],
-         "salutation":"",
-         "first_name":"Dale",
-         "last_name":"Spivey",
-         "full_name":"Dale Spivey",
-         "title":"VP Operations",
-         "linkedin":"",
-         "facebook":"",
-         "twitter":"",
-         "googleplus":"",
-         "department":"",
-         "do_not_call":false,
-         "phone_home":"(523) 825-4311",
-         "email":[
-            {
-               "email_address":"sugar.dev.sugar@example.co.jp",
-               "opt_out":"0",
-               "invalid_email":"0",
-               "primary_address":"1"
-            },
-            {
-               "email_address":"the.support@example.biz",
-               "opt_out":"0",
-               "invalid_email":"0",
-               "primary_address":"0"
-            }
-         ],
-         "phone_mobile":"(373) 861-0757",
-         "phone_work":"(212) 542-9596",
-         "phone_other":"",
-         "phone_fax":"",
-         "email1":"sugar.dev.sugar@example.co.jp",
-         "email2":"the.support@example.biz",
-         "invalid_email":false,
-         "email_opt_out":false,
-         "primary_address_street":"345 Sugar Blvd.",
-         "primary_address_street_2":"",
-         "primary_address_street_3":"",
-         "primary_address_city":"Denver",
-         "primary_address_state":"CA",
-         "primary_address_postalcode":"87261",
-         "primary_address_country":"USA",
-         "alt_address_street":"",
-         "alt_address_street_2":"",
-         "alt_address_street_3":"",
-         "alt_address_city":"",
-         "alt_address_state":"",
-         "alt_address_postalcode":"",
-         "alt_address_country":"",
-         "assistant":"",
-         "assistant_phone":"",
-         "picture":"",
-         "email_and_name1":"",
-         "lead_source":"Campaign",
-         "account_name":"Smallville Resources Inc",
-         "account_id":"d5db6292-5c24-eb61-e202-512d09f0134e",
-         "opportunity_role_fields":"",
-         "opportunity_role_id":"",
-         "opportunity_role":"",
-         "reports_to_id":"",
-         "report_to_name":"",
-         "portal_name":"DaleSpivey97",
-         "portal_active":true,
-         "portal_password":"$1$yKMAONHM$Y5S.8CY.WZCZCwfGD1a1Q\/",
-         "portal_password1":"",
-         "portal_app":"",
-         "preferred_language":"en_us",
-         "campaign_id":"",
-         "campaign_name":"",
-         "c_accept_status_fields":"",
-         "m_accept_status_fields":"",
-         "accept_status_id":"",
-         "accept_status_name":"",
-         "sync_contact":"",
-         "my_favorite":false,
-         "_acl":{
-            "fields":{
-
+         "_acl": {
+            "fields": {
             }
          }
       },
       {
          "id":"95e17367-9b3d-0e26-22dc-512d0961fedf",
          "name":"Florence Haddock",
-         "date_entered":"2013-02-26T19:12:00+00:00",
          "date_modified":"2013-02-26T19:12:00+00:00",
-         "modified_user_id":"1",
-         "modified_by_name":"Administrator",
-         "created_by":"1",
-         "created_by_name":"Administrator",
          "description":"",
-         "img":"",
-         "deleted":false,
-         "assigned_user_id":"seed_sally_id",
-         "assigned_user_name":"Sally Bronsen",
-         "team_name":[
+         "opportunities": [
             {
-               "id":"East",
-               "name":"East",
-               "name_2":"",
-               "primary":false
+               _module: "Opportunities"
+               date_modified: "2014-09-08T16:05:00+03:00"
+               id: "9ce7c088-8ee4-7cd3-18f1-540da944d4c0"
+               name: "360 Vacations - 312 Units"
+               sales_status: "New"
             },
-            {
-               "id":1,
-               "name":"Global",
-               "name_2":"",
-               "primary":false
-            },
-            {
-               "id":"West",
-               "name":"West",
-               "name_2":"",
-               "primary":true
-            }
          ],
-         "salutation":"",
-         "first_name":"Florence",
-         "last_name":"Haddock",
-         "full_name":"Florence Haddock",
-         "title":"Director Sales",
-         "linkedin":"",
-         "facebook":"",
-         "twitter":"",
-         "googleplus":"",
-         "department":"",
-         "do_not_call":false,
-         "phone_home":"(729) 845-3137",
-         "email":[
-            {
-               "email_address":"dev.vegan@example.de",
-               "opt_out":"1",
-               "invalid_email":"0",
-               "primary_address":"0"
-            },
-            {
-               "email_address":"section71@example.it",
-               "opt_out":"0",
-               "invalid_email":"0",
-               "primary_address":"1"
-            }
-         ],
-         "phone_mobile":"(246) 233-1382",
-         "phone_work":"(565) 696-6981",
-         "phone_other":"",
-         "phone_fax":"",
-         "email1":"section71@example.it",
-         "email2":"dev.vegan@example.de",
-         "invalid_email":false,
-         "email_opt_out":false,
-         "primary_address_street":"111 Silicon Valley Road",
-         "primary_address_street_2":"",
-         "primary_address_street_3":"",
-         "primary_address_city":"Denver",
-         "primary_address_state":"CA",
-         "primary_address_postalcode":"79900",
-         "primary_address_country":"USA",
-         "alt_address_street":"",
-         "alt_address_street_2":"",
-         "alt_address_street_3":"",
-         "alt_address_city":"",
-         "alt_address_state":"",
-         "alt_address_postalcode":"",
-         "alt_address_country":"",
-         "assistant":"",
-         "assistant_phone":"",
-         "picture":"",
-         "email_and_name1":"",
-         "lead_source":"Support Portal User Registration",
-         "account_name":"Smallville Resources Inc",
-         "account_id":"d5db6292-5c24-eb61-e202-512d09f0134e",
-         "opportunity_role_fields":"",
-         "opportunity_role_id":"",
-         "opportunity_role":"",
-         "reports_to_id":"",
-         "report_to_name":"",
-         "portal_name":"FlorenceHaddock169",
-         "portal_active":true,
-         "portal_password":"$1$nWFhTbK6$JF9BCGSqL\/NCrbhueX5ia0",
-         "portal_password1":"",
-         "portal_app":"",
-         "preferred_language":"en_us",
-         "campaign_id":"",
-         "campaign_name":"",
-         "c_accept_status_fields":"",
-         "m_accept_status_fields":"",
-         "accept_status_id":"",
-         "accept_status_name":"",
-         "sync_contact":"",
-         "my_favorite":false,
-         "_acl":{
-            "fields":{
-
+         "_acl": {
+            "fields": {
             }
          }
       }

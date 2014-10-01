@@ -25,6 +25,7 @@ class SugarUpgradeRenameModules extends UpgradeScript
 
         $klass = new RenameModules();
         $languages = get_languages();
+        $renamedList = array();
 
         foreach ($languages as $langKey => $langName) {
             //get list strings for this language
@@ -41,6 +42,10 @@ class SugarUpgradeRenameModules extends UpgradeScript
                 }
                 //Keep only renamed modules
                 $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
+
+                if (count($renamedModules) > 0) {
+                    $renamedList[$langKey] = array();
+                }
 
                 foreach ($renamedModules as $moduleId => $moduleName) {
                     if(isset($app_list_strings['moduleListSingular'][$moduleId])) {
@@ -62,10 +67,18 @@ class SugarUpgradeRenameModules extends UpgradeScript
                             'key_plural' => $moduleId,
                             'key_singular' => $klass->getModuleSingularKey($moduleId)
                         );
+
                         $klass->changeModuleModStrings($moduleId, $replacementLabels);
+                        $klass->setChangedModules(array($moduleId => $replacementLabels));
+                        $klass->changeStringsInRelatedModules();
+
+                        $renamedModules = $klass->getRenamedModules();
+                        $renamedList[$langKey] = array_merge($renamedList[$langKey], $renamedModules);
                     }
                 }
             }
         }
+
+        return($renamedList);
     }
 }

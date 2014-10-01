@@ -192,7 +192,7 @@ class FilterApi extends SugarApi
         }
 
         //Set the list of fields to be used in the select.
-        $options['select'] = $this->getFieldsFromArgs($api, $args, $seed);
+        $options['select'] = $this->getFieldsFromArgs($api, $args, $seed, 'view', $options['display_params']);
 
         //Force id and date_modified into the select
         $options['select'] = array_unique(
@@ -341,9 +341,9 @@ class FilterApi extends SugarApi
 
             // fields that aren't in field defs are removed, since we don't know
             // what to do with them
-            if (!empty($seed->field_defs[$field])) {
-                // Set the field into the field list
-                $fields[] = $field;
+            if (isset($seed->field_defs[$field]['type'])) {
+                $sf = SugarFieldHandler::getSugarField($seed->field_defs[$field]['type']);
+                $sf->addFieldToQuery($field, $fields);
             }
         }
         $q->select($fields);

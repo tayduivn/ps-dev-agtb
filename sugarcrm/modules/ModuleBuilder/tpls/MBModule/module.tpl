@@ -25,7 +25,8 @@
 			<input type='button' name='viewfieldsbtn' value='{$mod_strings.LBL_BTN_VIEW_FIELDS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewFields);">
 			<input type='button' name='viewrelsbtn' value='{$mod_strings.LBL_BTN_VIEW_RELATIONSHIPS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewRelationships);">
 			<input type='button' name='viewlayoutsbtn' value='{$mod_strings.LBL_BTN_VIEW_LAYOUTS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewLayouts);">
-			&nbsp;<input type='button' name='deletebtn' value='{$mod_strings.LBL_BTN_DELETE}' class='button' onclick="ModuleBuilder.moduleDelete('{$package->name}', '{$module->name}');">{/if}</td></tr>
+			<input type='button' name='viewmobilelayoutsbtn' value='{$mod_strings.LBL_BTN_VIEW_MOBILE_LAYOUTS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewMobileLayouts);">
+			<input type='button' name='deletebtn' value='{$mod_strings.LBL_BTN_DELETE}' class='button' onclick="ModuleBuilder.moduleDelete('{$package->name}', '{$module->name}');">{/if}</td></tr>
 	<tr>
 		<td height='100%'>&nbsp;</td><td>&nbsp;</td>
 	</tr>

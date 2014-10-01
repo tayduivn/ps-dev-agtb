@@ -47,11 +47,10 @@ class QuotesApiHelper extends SugarBeanApiHelper
         // valid relate modules
         $valid_relate_modules = array('Contacts', 'Accounts');
         // Bug #57888 : REST API: Create related quote must populate billing/shipping contact and account
-        if (isset($submittedData['module']) &&
-            in_array($submittedData['module'], $valid_relate_modules) &&
-            isset($submittedData['record'])
+        if (isset($submittedData['relate_module'], $submittedData['relate_record']) &&
+            in_array($submittedData['relate_module'], $valid_relate_modules)
         ) {
-            $this->setAddressFromBean($submittedData['module'], $submittedData['record'], $quote);
+            $this->setAddressFromBean($submittedData['relate_module'], $submittedData['relate_record'], $quote);
         } else {
             // we are not on a related record, so lets check the field and fill in the data correctly
             $hasBillingAccountId = (isset($quote->billing_account_id) && !empty($quote->billing_account_id));

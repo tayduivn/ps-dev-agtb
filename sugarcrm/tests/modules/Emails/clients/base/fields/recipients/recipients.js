@@ -328,6 +328,26 @@ describe("Emails.fields.recipients", function() {
                 expect(field.getFieldElement().select2('data').length).toBe(recipients.length);
             });
         });
+
+        describe('recipient field pills should reflect locked state', function() {
+            afterEach(function() {
+                field.def.readonly = false;
+            });
+            it('should be locked if field is readonly', function() {
+                field.def.readonly = true;
+                var recipient = new Backbone.Model({module: 'Contacts', name: 'Will Westin', email: 'will@example.com'});
+                var actual = field._formatRecipient(recipient);
+                var expected = {id: 'will@example.com', module: 'Contacts', email: 'will@example.com', locked: true, name: 'Will Westin'};
+                expect(actual).toEqual(expected);
+            });
+
+            it('should be unlocked if field is not readonly', function() {
+                var recipient = new Backbone.Model({module: 'Contacts', name: 'Will Westin', email: 'will@example.com'});
+                var actual = field._formatRecipient(recipient);
+                var expected = {id: 'will@example.com', module: 'Contacts', email: 'will@example.com', locked: false, name: 'Will Westin'};
+                expect(actual).toEqual(expected);
+            });
+        });
     });
 
     describe('format recipients to get a consistent object to work with', function() {
@@ -417,12 +437,12 @@ describe("Emails.fields.recipients", function() {
             {
                 message:   'should return an object without an email when the recipient has an id and no email',
                 recipient: new Backbone.Model({id: 'abcd', module: 'Contacts', name: 'Will Westin'}),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin'}
             },
             {
                 message:   'should return an object with the email for an id when the recipient has an email and no id',
                 recipient: new Backbone.Model({module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}),
-                expected:  {id: 'will@example.com', module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'will@example.com', module: 'Contacts', locked: false, name: 'Will Westin', email: 'will@example.com'}
             },
             {
                 message:   'should find the primary email address when the recipient has an more than one email',
@@ -443,7 +463,7 @@ describe("Emails.fields.recipients", function() {
                         ]
                     }
                 ),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin', email: 'will@example.com'}
             },
             {
                 message:   'should not find the primary email address when the recipient has an more than one email but no primary address',
@@ -464,7 +484,7 @@ describe("Emails.fields.recipients", function() {
                         ]
                     }
                 ),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin'}
             },
             {
                 message:   'should return an object with all properties when the recipient has an id, module, name, and email',
@@ -476,7 +496,7 @@ describe("Emails.fields.recipients", function() {
                         email:  'will@example.com'
                     }
                 ),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin', email: 'will@example.com'}
             },
             {
                 message:   'should return an object with all properties when the recipient has an id, module, full_name, and email',
@@ -488,7 +508,7 @@ describe("Emails.fields.recipients", function() {
                         email:     'will@example.com'
                     }
                 ),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin', email: 'will@example.com'}
             },
             {
                 message:   'should prioritize the recipient attributes when the recipient has a bean',
@@ -508,7 +528,7 @@ describe("Emails.fields.recipients", function() {
                         )
                     }
                 ),
-                expected:  {id: 'abcd', module: 'Contacts', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'abcd', module: 'Contacts', locked: false, name: 'Will Westin', email: 'will@example.com'}
             },
             {
                 message:   'should fall back to the bean attributes when the recipient is lacking any data',
@@ -526,7 +546,7 @@ describe("Emails.fields.recipients", function() {
                         )
                     }
                 ),
-                expected:  {id: 'efgh', module: 'Leads', name: 'Will Westin', email: 'will@example.com'}
+                expected:  {id: 'efgh', module: 'Leads', locked: false, name: 'Will Westin', email: 'will@example.com'}
             }
         ];
         _.each(dataProvider, function(data) {

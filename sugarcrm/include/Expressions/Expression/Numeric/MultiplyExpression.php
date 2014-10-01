@@ -19,39 +19,44 @@ require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 class MultiplyExpression extends NumericExpression
 {
     /**
-     * Returns itself when evaluating.
+     * The Logic for running in PHP, this uses SugarMath as to avoid potential floating-point errors
+     *
+     * @return String
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
-        $product = 1;
+        $product = '1';
         foreach ($this->getParameters() as $expr) {
-            $product *= $expr->evaluate();
+            $product = SugarMath::init($product, 6)->mul($expr->evaluate())->result();
         }
 
-        return $product;
+        return (string)$product;
     }
 
     /**
-     * Returns the JS Equivalent of the evaluate function.
+     * Returns the JS Equivalent of the evaluate function, When in sidecar it uses SugarMath, but when outside of
+     * sidecar it uses a custom method to convert the values to a float and then back into a fixed `string` with a
+     * precision of 6
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-			var params = this.getParameters();
-			var product = 1;
-			for ( var i = 0; i < params.length; i++ )	product *= params[i].evaluate();
+        return <<<JS
+			var params = this.getParameters(),
+			product = '1';
+			for (var i = 0; i < params.length; i++) {
+                product = this.context.multiply(product, params[i].evaluate());
+            }
 			return product;
-EOQ;
+JS;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return "multiply";
+        return array('multiply', 'currencyMultiply', 'mul');
     }
 
     /**

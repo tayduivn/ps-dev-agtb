@@ -510,7 +510,7 @@ class Email extends SugarBean {
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
             
-            if ($this->type != 'draft' && $this->status != 'draft' &&
+            if (empty($this->id) && $this->type != 'draft' && $this->status != 'draft' &&
                 $this->type != 'archived' && $this->status != 'archived'
             ) {
                 $this->id = create_guid();
@@ -2207,10 +2207,32 @@ class Email extends SugarBean {
 	}
 
 
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false) {
+    public function create_new_list_query(
+        $order_by,
+        $where,
+        $filter = array(),
+        $params = array(),
+        $show_deleted = 0,
+        $join_type = '',
+        $return_array = false,
+        $parentbean = null,
+        $singleSelect = false,
+        $ifListForExport = false
+    ) {
 
 		if ($return_array) {
-			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
+            return parent::create_new_list_query(
+                $order_by,
+                $where,
+                $filter,
+                $params,
+                $show_deleted,
+                $join_type,
+                $return_array,
+                $parentbean,
+                $singleSelect,
+                $ifListForExport
+            );
 		}
         $custom_join = $this->getCustomJoin();
 

@@ -79,6 +79,21 @@ abstract class NumericExpression extends AbstractExpression
         }
 
         return $is_currency;
+    }
 
+    protected function getFieldPrecision($bean, $field)
+    {
+        $precision = '0';
+        $def = $bean->getFieldDefinition($field);
+        if (is_array($def)) {
+            if (isset($def['len']) && strpos($def['len'], ",") !== false) {
+                list($len, $precision) = explode(",", $def['len']);
+            }
+            if (isset($def['precision'])) {
+                $precision = $def['precision'];
+            }
+        }
+
+        return $precision;
     }
 }

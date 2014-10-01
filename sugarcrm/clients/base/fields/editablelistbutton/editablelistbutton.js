@@ -51,21 +51,7 @@
             return;
         }
 
-        var self = this,
-            successCallback = function() {
-                self._save();
-            };
-
-        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
-            app.file.checkFileFieldsAndProcessUpload(view, {
-                success: function(response) {
-                    if (response.record && response.record.date_modified) {
-                        self.model.set('date_modified', response.record.date_modified);
-                    }
-                    callback.call();
-                }
-            }, {deleteIfFails: false }, true);
-        }, successCallback);
+        this._save();
     },
 
     _save: function() {

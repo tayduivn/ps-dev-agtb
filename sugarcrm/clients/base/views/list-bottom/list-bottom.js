@@ -97,6 +97,10 @@
         this.collection.on('add remove reset', this.render, this);
         this.before('render', function() {
             this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
+            this.showLoadMsg = true;
+            if (app.alert.$alerts[0].innerText) {
+                this.showLoadMsg = false;
+            }
             var nextOffset = this.collection.next_offset || -1;
             if (this.collection.dataFetched && nextOffset === -1) {
                 this._invisible = true;

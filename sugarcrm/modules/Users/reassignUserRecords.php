@@ -284,7 +284,7 @@ else if(!isset($_GET['execute'])){
 	$teamSet = BeanFactory::getBean('TeamSets');
 	$team_set_id = $teamSet->addTeams($team_ids);
 
-	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
+	$toteamname = TeamSetManager::getCommaDelimitedTeams($team_set_id,$team_id,true);
 	//END SUGARCRM flav=pro ONLY
     echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";

@@ -1,4 +1,4 @@
-describe("Create View", function() {
+describe('Base.View.Create', function() {
     var app,
         moduleName = 'Contacts',
         viewName = 'create',
@@ -406,63 +406,6 @@ describe("Create View", function() {
             expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
         });
 
-        it("Should only show the cancel button and the duplicate dropdown when duplicates are found.", function() {
-            var flag = false,
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
-                    var data = {
-                        "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
-                        "first_name":"Foo",
-                        "last_name":"Bar",
-                        "phone_work":"1234567890",
-                        "email1":"foobar@test.com",
-                        "full_name":"Mr Foo Bar"
-                    },
-                        model = app.data.createBean(moduleName, data),
-                        collection = app.data.createBeanCollection(moduleName, model);
-
-                    checkForDuplicateStub.restore();
-                    success(collection);
-                }),
-                handleDuplicateFoundStub = sinon.stub(view, 'handleDuplicateFound', function(collection) {
-                    handleDuplicateFoundStub.restore();
-                    view.handleDuplicateFound(collection);
-                    flag = true;
-                });
-
-            runs(function() {
-                view.render();
-                _.each(view.buttons, function(button) {
-                    sinonSandbox.stub(button, 'show', function() {
-                        this.isHidden = false;
-                    });
-                    sinonSandbox.stub(button, 'hide', function() {
-                        this.isHidden = true;
-                    });
-                });
-                view.setButtonStates(view.STATE.DUPLICATE);
-                view.model.set({
-                    first_name: 'First',
-                    last_name: 'Last'
-                });
-                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
-                    return f.name === this.saveButtonName;
-                }, view);
-                saveButton.getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'handleDuplicateFound should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
-                expect(view.buttons['main_dropdown'].isHidden).toBeTruthy();
-                expect(view.buttons['duplicate_dropdown'].isHidden).toBeFalsy();
-                expect(view.buttons['select_dropdown'].isHidden).toBeTruthy();
-                expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
-            });
-        });
-
         it("Should show restore button, along with save and cancel, when a duplicate is selected to edit.", function() {
             var data = {
                 "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
@@ -556,10 +499,6 @@ describe("Create View", function() {
                 ajaxSpy = sinon.spy($, 'ajax');
 
             bean = dm.createBean(moduleName, { id: "1234" });
-
-            sinonSandbox.stub(app.file, 'checkFileFieldsAndProcessUpload', function(success) {
-                success();
-            });
             var getCustomSaveOptionsStub = sinonSandbox.stub(view, 'getCustomSaveOptions', function() {
                 return {'params': {'param1': true, 'param2': false}};
             });
@@ -592,10 +531,7 @@ describe("Create View", function() {
 
             bean = dm.createBean(moduleName, { id: "1234" });
 
-            var checkFileStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function(success) {
-                    success();
-                }),
-                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
+            var getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
 
             view.render();
             view.model = bean;
@@ -611,7 +547,6 @@ describe("Create View", function() {
 
             SugarTest.server.respond();
             expect(getCustomSaveOptionsStub.calledOnce).toBeTruthy();
-            checkFileStub.restore();
             getCustomSaveOptionsStub.restore();
 
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
@@ -848,72 +783,6 @@ describe("Create View", function() {
                 expect(validateStub.calledOnce).toBeTruthy();
                 expect(checkForDuplicateStub.calledOnce).toBeTruthy();
                 expect(saveModelStub.called).toBeFalsy();
-            });
-        });
-    });
-
-    describe('Ignore Duplicate and Save', function() {
-        it("Should save data and not run duplicate check when ignore duplicate and save button is clicked.", function() {
-            var flag = false,
-                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
-                    callback(null);
-                }),
-                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
-                    flag = true;
-
-                    var data = {
-                            "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
-                            "first_name":"Foo",
-                            "last_name":"Bar",
-                            "phone_work":"1234567890",
-                            "email1":"foobar@test.com",
-                            "full_name":"Mr Foo Bar"
-                        },
-                        model = app.data.createBean(moduleName, data),
-                        collection = app.data.createBeanCollection(moduleName, model);
-
-                    success(collection);
-                }),
-                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
-                    success();
-                }),
-                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
-                    flag = true;
-                    return;
-                });
-
-            view.render();
-
-            runs(function() {
-                expect(view.skipDupeCheck()).toBeFalsy();
-                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
-                    return f.name === this.saveButtonName;
-                }, view);
-                saveButton.getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'checkForDuplicate should have been called but timeout expired', 1000);
-
-            runs(function() {
-                flag = false;
-                expect(view.skipDupeCheck()).toBeTruthy();
-                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
-                    return f.name === this.saveButtonName;
-                }, view);
-                saveButton.getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'close should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(validateStub.calledTwice).toBeTruthy();
-                expect(checkForDuplicateStub.calledOnce).toBeTruthy();
-                expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(drawerCloseStub.calledOnce).toBeTruthy();
             });
         });
     });

@@ -156,7 +156,9 @@
             timeFormat: this.getUserTimeFormat(),
             // FIXME: add metadata driven support for the following properties
             scrollDefaultNow: true,
-            step: 15
+            step: 15,
+            className: 'prevent-mousedown',
+            appendTo: this.view.$el
         });
     },
 

@@ -28,6 +28,129 @@
     plugins: ['File', 'FieldDuplicate', 'EllipsisInline'],
 
     /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        // FIXME: This needs an API instead. SC-3369 should address this.
+        app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
+        app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
+
+        if (this.model) {
+            this.model.addValidationTask('file_upload_' + this.cid, _.bind(this._doValidateFile, this));
+        }
+    },
+
+    /**
+     * Validator for the file field. If the field is required and has no value,
+     * it will fail validation prior to performing a file upload. If there is a
+     * value, it will perform a file upload to the temporary folder (required in
+     * order to test uploads for files that are potentially larger than
+     * `upload_max_filesize` in php.ini).
+     *
+     * @param {Object} fields The list of fields to validate.
+     * @param {Object} errors The errors object during this validation task.
+     * @param {Function} callback The callback function to continue validation.
+     */
+    _doValidateFile: function(fields, errors, callback) {
+        var fieldName = this.name,
+            $field = this.$(this.fieldTag),
+            val = $field.val();
+
+        if (_.isEmpty(val)) {
+            if (this.def.required) {
+                errors[fieldName] = errors[fieldName] || {};
+                errors[fieldName].required = true;
+            }
+            callback(null, fields, errors);
+            return;
+        }
+
+        var ajaxParams = {
+                temp: true,
+                iframe: true,
+                deleteIfFails: false
+            };
+
+        app.alert.show('upload', {
+            level: 'process',
+            title: app.lang.get('LBL_UPLOADING'),
+            autoclose: false
+        });
+
+        this.model.uploadFile(fieldName, $field, {
+            success:_.bind(this._doValidateFileSuccess, this, fields, errors, callback),
+            error:_.bind(this._doValidateFileError, this, fields, errors, callback)
+        }, ajaxParams);
+    },
+
+    /**
+     * Success callback for the {@link #_doValidateFile} function.
+     *
+     * @param {Object} fields The list of fields to validate.
+     * @param {Object} errors The errors object during this validation task.
+     * @param {Function} callback The callback function to continue validation.
+     * @param {Object} data File data returned from the successful file upload.
+     */
+    _doValidateFileSuccess: function(fields, errors, callback, data) {
+        app.alert.dismiss('upload');
+
+        var guid = data.record.id;
+        if (!guid) {
+            app.logger.error('Temporary file uploaded has no GUID.');
+            callback(null, fields, errors);
+            return;
+        }
+
+        var fieldName = this.name;
+        // Add the guid to the list of fields to set on the model.
+        if (!this.model.fields[fieldName + '_guid']) {
+            this.model.fields[fieldName + '_guid'] = {
+                type: 'file_temp',
+                group: fieldName
+            };
+        }
+        this.model.set(fieldName + '_guid', guid);
+        callback(null, fields, errors);
+    },
+
+    /**
+     * Error callback for the {@link #_doValidateFile} function.
+     *
+     * @param {Object} fields The list of fields to validate.
+     * @param {Object} errors The errors object during this validation task.
+     * @param {Function} callback The callback function to continue validation.
+     * @param {Object} error Error object returned from the API.
+     */
+    _doValidateFileError: function(fields, errors, callback, error) {
+        app.alert.dismiss('upload');
+
+        var errors = errors || {},
+            fieldName = this.name;
+        errors[fieldName] = {};
+
+        switch (error.code) {
+            case 'request_too_large':
+               errors[fieldName].tooBig = true;
+               break;
+            default:
+                errors[fieldName].uploadFailed = true;
+        }
+        this.model.unset(fieldName + '_guid');
+        callback(null, fields, errors);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        // Remove specific validation task from the model.
+        this.model._validationTasks = _.omit(this.model._validationTasks, 'file_upload_' + this.cid);
+        this._super('_dispose');
+    },
+
+    /**
      * Handler for delete file control
      *
      * Calls api to remove attached file from the model and
@@ -84,6 +207,26 @@
                 app.api.file('delete', data, null, callbacks, {htmlJsonFormat: false});
             }
         });
+    },
+
+    /**
+     * @inheritDoc
+     */
+    setMode: function(name) {
+        var attrs = this.model.getSyncedAttributes();
+
+        if (!_.isEmpty(this._errors)) {
+            if (this.action === 'edit') {
+                this.clearErrorDecoration();
+                this.decorateError(this._errors);
+            }
+        }
+
+        if (attrs[this.name] !== this.model.get(this.name)) {
+            return;
+        }
+
+        this._super('setMode', [name]);
     },
 
     /**
@@ -193,7 +336,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * Overrides `change` event for file field.
      * We should call `render` method when change event is triggered if:
@@ -208,6 +351,9 @@
             return;
         }
         this.model.on('change:' + this.name, function() {
+            // Clear any errors on the field if we are changing the value.
+            this._errors = {};
+            this.clearErrorDecoration();
             if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
                 this.render();
             }

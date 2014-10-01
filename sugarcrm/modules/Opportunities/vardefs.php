@@ -338,6 +338,7 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'enforced' => true,
             //END SUGARCRM flav!=ent ONLY
+            'workflow' => false,
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',

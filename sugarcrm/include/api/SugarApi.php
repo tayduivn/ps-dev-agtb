@@ -42,7 +42,7 @@ abstract class SugarApi {
         if ((empty($args['fields']) && !empty($args['view'])) ||
             (!empty($args['fields']) && !is_array($args['fields']))
         ) {
-            $args['fields'] = $this->getFieldsFromArgs($api, $args, $bean);
+            $args['fields'] = $this->getFieldsFromArgs($api, $args, $bean, 'view', $options['display_params']);
         }
 
         if (!empty($args['fields'])) {
@@ -352,19 +352,25 @@ abstract class SugarApi {
      * Determine field list from arguments base both "fields" and "view" parameter.
      * The final result is a merger of both.
      *
-     * @param ServiceBase $api      The API request object
-     * @param array       $args     The arguments passed in from the API
-     * @param SugarBean   $bean     Bean context
-     * @param string      $viewName The argument used to determine the view name, defaults to view
+     * @param ServiceBase $api           The API request object
+     * @param array       $args          The arguments passed in from the API
+     * @param SugarBean   $bean          Bean context
+     * @param string      $viewName      The argument used to determine the view name, defaults to view
+     * @param array       $displayParams Display parameters for some fields
      * @return array
      */
-    protected function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
-    {
-        $fields = array();
-
+    protected function getFieldsFromArgs(
+        ServiceBase $api,
+        array $args,
+        SugarBean $bean = null,
+        $viewName = 'view',
+        &$displayParams = array()
+    ) {
         // Try to get the fields list if explicitly defined.
         if (!empty($args['fields'])) {
-            $fields = explode(",", $args['fields']);
+            $fields = $this->normalizeFields($args['fields'], $displayParams);
+        } else {
+            $fields = array();
         }
 
         // When a view name is specified and a seed is available, also include those fields
@@ -373,7 +379,7 @@ abstract class SugarApi {
                 array_merge(
                     $fields,
                     $this->getMetaDataManager($api->platform)
-                         ->getModuleViewFields($bean->module_name, $args[$viewName])
+                         ->getModuleViewFields($bean->module_name, $args[$viewName], $displayParams)
                 )
             );
 
@@ -411,6 +417,101 @@ abstract class SugarApi {
         }
 
         return $fields;
+    }
+
+    /**
+     * Normalizes the value of fields argument. Returns plain array of field names and associative array
+     * of display parameters (if specified) by reference
+     *
+     * @param string|array $fields Original value from API arguments
+     * @param array $displayParams Display parameters
+     *
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function normalizeFields($fields, &$displayParams)
+    {
+        $displayParams = array();
+        if (is_string($fields)) {
+            $fields = $this->parseFields($fields);
+        }
+
+        if (!is_array($fields)) {
+            throw new SugarApiExceptionInvalidParameter(
+                sprintf('Fields must be string or array, %s is given', gettype($fields))
+            );
+        }
+
+        $normalized = array();
+        foreach ($fields as $field) {
+            if (is_string($field)) {
+                $name = $field;
+            } else {
+                if (!isset($field['name'])) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        sprintf('Fields must be specified in array notation')
+                    );
+                }
+
+                $name = $field['name'];
+                unset($field['name']);
+
+                if ($field) {
+                    $displayParams[$name] = $field;
+                }
+            }
+
+            $normalized[] = $name;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Parses mixed comma-separated-JSON format of fields argument
+     *
+     * Example input:
+     * <code>$fields = 'name,{"name":"opportunities","fields":["id","name","sales_status"]}';</code>
+     *
+     * Resulting output:
+     * <code>
+     * array(
+     *     'name',
+     *     array(
+     *         'name' => 'opportunities',
+     *         'fields' => array('id', 'name', 'sales_status'),
+     *     ),
+     * );
+     * </code>
+     *
+     * @param $fields string Original value from API arguments
+     *
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function parseFields($fields)
+    {
+        $chunks = explode(',', $fields);
+        $formatted = array();
+        foreach ($chunks as $chunk) {
+            $chunk = trim($chunk);
+            if (strpos($chunk, '"') === false) {
+                $formatted[] = '"' . $chunk . '"';
+            } else {
+                $formatted[] = $chunk;
+            }
+        }
+
+        $json = '[' . implode(',', $formatted) . ']';
+        $decoded = json_decode($json, true);
+
+        if ($decoded === null) {
+            throw new SugarApiExceptionInvalidParameter(
+                'Unable to parse fields'
+            );
+        }
+
+        return $decoded;
     }
 
     /**

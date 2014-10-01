@@ -28,12 +28,6 @@ global $export_module;
 
 $export_module='CustomQueries';
 
-if (!is_admin($current_user))
-{
-   sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
-}
-
-
 $focus = BeanFactory::getBean('CustomQueries');
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_TITLE']), true); 
 $is_edit = false;
@@ -83,6 +77,11 @@ $ListView->setHeaderText($button);
 
 //Temporary until we upgrade the export feature to multi
 $ListView->show_export_button = false;
+
+if (!is_admin($current_user)) {
+    $ListView->show_select_menu = false;
+    $ListView->show_delete_button = false;
+}
 
 $ListView->setQuery("", "", "name", "CUSTOMQUERY");
 $ListView->processListView($focus, "main", "CUSTOMQUERY");

@@ -119,11 +119,16 @@ class DashboardListApi extends FilterApi
      *
      * @see SugarApi::getFieldsFromArgs()
      */
-    protected function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
-    {
+    protected function getFieldsFromArgs(
+        ServiceBase $api,
+        array $args,
+        SugarBean $bean = null,
+        $viewName = 'view',
+        &$displayParams = array()
+    ) {
         if (isset($args['view'])) {
             unset($args['view']);
         }
-        return parent::getFieldsFromArgs($api, $args, $bean, $viewName);
+        return parent::getFieldsFromArgs($api, $args, $bean, $viewName, $displayParams);
     }
 }

@@ -32,6 +32,70 @@
     restoreButtonName: 'restore_button',
 
     /**
+     * An array of the {@link #alerts alert} names in this view.
+     *
+     * @protected
+     * @type {Array}
+     */
+    _viewAlerts: [],
+
+    /**
+     * A collection of alert messages to be used in this view. The alert methods
+     * should be invoked by Function.prototype.call(), passing in an instance of
+     * a sidecar view. For example:
+     *
+     *     // ...
+     *     this.alerts.showInvalidModel.call(this);
+     *     // ...
+     *
+     * FIXME: SC-3451 will refactor this `alerts` structure.
+     * @property {Object}
+     */
+    alerts: {
+        showInvalidModel: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'invalid-data';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'error',
+                messages: 'ERR_RESOLVE_ERRORS'
+            });
+        },
+        showServerError: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'server-error';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'error',
+                messages: 'ERR_GENERIC_SERVER_ERROR'
+            });
+        },
+        showSuccessButDeniedAccess: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'invalid-data';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'warning',
+                messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
+                autoClose: true,
+                autoCloseDelay: 9000
+            });
+        }
+    },
+
+    /**
      * Initialize the view and prepare the model with default button metadata
      * for the current layout.
      */
@@ -95,8 +159,9 @@
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
         }
 
-        this.model.on("error:validation", function(){
-            this.alerts.showInvalidModel();
+        this.model.on('error:validation', function() {
+            this.alerts.showInvalidModel.call(this);
+            this.enableButtons();
         }, this);
 
         // need to reset the default attributes because the plugin may have
@@ -186,6 +251,7 @@
         this.$el.off();
         if(app.drawer){
             app.drawer.close(this.context);
+            this._dismissAllAlerts();
         }
     },
 
@@ -278,7 +344,7 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError();
+                    this.alerts.showServerError.call(this);
                     callback(true);
                 }
             }, this);
@@ -299,9 +365,10 @@
                 if (!_.isEmpty(acls) && acls.access === 'no' && acls.view === 'no') {
                     //This happens when the user creates a record he won't have access to.
                     //In this case the POST request returns a 200 code with empty response and acls set to no.
-                    this.alerts.showSuccessButDeniedAccess();
+                    this.alerts.showSuccessButDeniedAccess.call(this);
                     callback(false);
                 } else {
+                    this._dismissAllAlerts();
                     app.alert.show('create-success', {
                         level: 'success',
                         messages: this.buildSuccessMessage(this.model),
@@ -318,7 +385,7 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError();
+                    this.alerts.showServerError.call(this);
                     callback(true);
                 }
             }, this);
@@ -380,15 +447,6 @@
     saveModel: function (success, error) {
         var self = this,
             options;
-        success = _.wrap(success, function (func, model) {
-            app.file.checkFileFieldsAndProcessUpload(self, {
-                    success: function () {
-                        func();
-                    }
-                },
-                {deleteIfFails: true}
-            );
-        });
         options = {
             success: success,
             error: error,
@@ -605,25 +663,6 @@
         this.toggleButtons(true);
     },
 
-    /**
-     * Enable or disable buttons
-     * @param {boolean} enable
-     */
-    toggleButtons: function(enable) {
-        _.each(this.buttons, function(button) {
-            switch (button.type) {
-                case 'button':
-                case 'rowaction':
-                    button.getFieldElement().toggleClass('disabled', !enable);
-                    break;
-                case 'actiondropdown':
-                    button.defaultActionBtn.getFieldElement().toggleClass('disabled', !enable);
-                    button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
-                    break;
-            }
-        });
-    },
-
     registerShortcuts: function() {
         this._super('registerShortcuts');
 
@@ -642,27 +681,17 @@
         }, this, true);
     },
 
-    alerts: {
-        showInvalidModel: function () {
-            app.alert.show('invalid-data', {
-                level: 'error',
-                messages: 'ERR_RESOLVE_ERRORS'
-            });
-        },
-        showServerError: function () {
-            app.alert.show('server-error', {
-                level: 'error',
-                messages: 'ERR_GENERIC_SERVER_ERROR'
-            });
-        },
-        showSuccessButDeniedAccess: function() {
-            app.alert.show('invalid-data', {
-                level: 'warning',
-                messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
-                autoClose: true,
-                autoCloseDelay: 9000
-            });
+    /**
+     * Dismisses all {@link #_viewAlerts alerts} defined in this view.
+     *
+     * @private
+     */
+    _dismissAllAlerts: function() {
+        if (_.isEmpty(this._viewAlerts)) {
+            return;
         }
+        _.each(_.uniq(this._viewAlerts), function(alert) {
+            app.alert.dismiss(alert);
+        });
     }
-
 })

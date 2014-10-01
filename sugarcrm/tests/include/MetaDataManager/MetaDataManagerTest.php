@@ -299,8 +299,9 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers MetaDataManager::getFieldNames
      * @group unit
      */
-    public function testGetModuleViewFields($module, $view, $viewData, $fields)
+    public function testGetModuleViewFields($module, $view, $viewData, $expectedFields, $expectedDisplayParams)
     {
+        /** @var MetaDataManager|PHPUnit_Framework_MockObject_MockObject $mm */
         $mm = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()
             ->setMethods(array('getModuleView'))
@@ -311,7 +312,9 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($this->equalTo($module), $this->equalTo($view))
             ->will($this->returnValue($viewData));
 
-        $this->assertEquals($fields, $mm->getModuleViewFields($module, $view));
+        $fields = $mm->getModuleViewFields($module, $view, $displayParams);
+        $this->assertEquals($expectedFields, $fields);
+        $this->assertEquals($expectedDisplayParams, $displayParams);
     }
 
     public function providerTestGetModuleViewFields()
@@ -321,6 +324,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'Contacts',
                 'record',
+                array(),
                 array(),
                 array(),
             ),
@@ -340,6 +344,13 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                     // array based field def
                                     array(
                                         'name' => 'last_name',
+                                    ),
+
+                                    // link field
+                                    array(
+                                        'name' => 'tasks',
+                                        'fields' => array('id', 'date_due'),
+                                        'order_by' => 'date_due:desc',
                                     ),
 
                                     // array based invalid field
@@ -368,6 +379,12 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                             array(
                                                 'name' => 'bar',
                                             ),
+
+                                            // link field inside field set
+                                            array(
+                                                'name' => 'opportunities',
+                                                'fields' => array('id', 'name'),
+                                            ),
                                         ),
                                     ),
 
@@ -378,8 +395,15 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                                 'name' => 'good',
                                             ),
                                             'karma',
+
+                                            // link field inside related fields
+                                            array(
+                                                'name' => 'bugs',
+                                            ),
                                         )
                                     ),
+                                    // link field as string
+                                    'calls',
                                 ),
                             ),
                         ),
@@ -388,13 +412,37 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'first_name',
                     'last_name',
+                    'tasks',
                     'primary_address',
                     'street',
                     'country',
                     'foo',
                     'bar',
+                    'opportunities',
                     'good',
                     'karma',
+                    'bugs',
+                    'calls',
+                ),
+                array(
+                    'first_name' => array(),
+                    'last_name' => array(),
+                    'tasks' => array(
+                        'fields' => array('id', 'date_due'),
+                        'order_by' => 'date_due:desc',
+                    ),
+                    'street' => array(),
+                    'country' => array(),
+                    'primary_address' => array(),
+                    'foo' => array(),
+                    'bar' => array(),
+                    'opportunities' => array(
+                        'fields' => array('id', 'name'),
+                    ),
+                    'good' => array(),
+                    'karma' => array(),
+                    'bugs' => array(),
+                    'calls' => array(),
                 ),
             ),
         );

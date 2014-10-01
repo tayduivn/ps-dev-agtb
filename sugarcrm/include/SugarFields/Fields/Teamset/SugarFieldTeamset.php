@@ -613,14 +613,19 @@ class SugarFieldTeamset extends SugarFieldBase {
     /**
      * This function will pull out the various teams in this teamset and return them in a collection
      *
-     * @param array     $data
-     * @param SugarBean $bean
-     * @param array     $args
-     * @param string    $fieldName
-     * @param array     $properties
+     * {@inheritDoc}
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
-    {
+    public function apiFormatField(
+        array &$data,
+        SugarBean $bean,
+        array $args,
+        $fieldName,
+        $properties,
+        array $fieldList = null,
+        ServiceBase $service = null
+    ) {
+        $this->ensureApiFormatFieldArguments($fieldList, $service);
+
         if (empty($bean->teamList)) {
             require_once('modules/Teams/TeamSetManager.php');
             $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);

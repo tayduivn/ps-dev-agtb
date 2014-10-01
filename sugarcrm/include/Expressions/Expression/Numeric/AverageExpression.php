@@ -23,17 +23,16 @@ class AverageExpression extends NumericExpression
      */
     public function evaluate()
     {
-        // TODO: add caching of return values
         $sum = 0;
         $count = 0;
         foreach ($this->getParameters() as $expr) {
-            $sum += $expr->evaluate();
+            $sum = SugarMath::init($sum)->add($expr->evaluate())->result();
             $count++;
         }
 
         // since Expression guarantees at least 1 parameter
         // we can safely assume / by 0 will not happen
-        return ($sum / $count);
+        return SugarMath::init($sum)->div($count)->result();
     }
 
     /**
@@ -41,27 +40,27 @@ class AverageExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
+        return <<<JS
 			var sum   = 0;
 			var count = 0;
 			var params = this.getParameters();
 			for (var i = 0; i < params.length; i++) {
-				sum += params[i].evaluate();
+			    sum = this.context.add(sum, params[i].evaluate());
 				count++;
 			}
 			// since Expression guarantees at least 1 parameter
 			// we can safely assume / by 0 will not happen
-			return ( sum / count );
-EOQ;
+			return this.context.divide(sum, count);
+JS;
     }
 
     /**
-     * Returns the opreation name that this Expression should be
+     * Returns the operation name that this Expression should be
      * called by.
      */
     public static function getOperationName()
     {
-        return "average";
+        return array('average', 'avg');
     }
 
     /**

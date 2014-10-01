@@ -41,12 +41,13 @@ class Comment extends Basic
         $this->retrieve();
         $sfh = new SugarFieldHandler();
         $data = array();
+        $service = new RestService();
         foreach ($this->field_defs as $fieldName => $properties) {
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
 
             $field = $sfh->getSugarField($type);
             if ($field != null && isset($this->$fieldName)) {
-                $field->apiFormatField($data, $this, array(), $fieldName, $properties);
+                $field->apiFormatField($data, $this, array(), $fieldName, $properties, array(), $service);
             }
         }
         return json_encode($data);
