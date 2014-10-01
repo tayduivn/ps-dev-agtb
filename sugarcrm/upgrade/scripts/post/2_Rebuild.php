@@ -86,5 +86,8 @@ class SugarUpgradeRebuild extends UpgradeScript
         include('modules/ACL/install_actions.php');
         $this->log('Done rebuilding relationships');
         unset($GLOBALS['reload_vardefs']);
+
+        // enable metadata caching once the database schema has been rebuilt
+        MetaDataManager::enableCache();
     }
 }

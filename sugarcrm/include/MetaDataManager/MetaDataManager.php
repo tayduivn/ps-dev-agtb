@@ -332,6 +332,13 @@ class MetaDataManager
     protected static $cacheTable = "metadata_cache";
 
     /**
+     * Flag indicating that metadata caching is enabled
+     *
+     * @var bool
+     */
+    protected static $isCacheEnabled = true;
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -2767,8 +2774,8 @@ class MetaDataManager
     protected function getFromCacheTable($key) {
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
-        if (!empty($this->db)) {
-            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+        if (self::$isCacheEnabled && !empty($this->db)) {
+            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type='{$key}'");
             if (!empty($cacheResult)) {
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
@@ -2792,7 +2799,7 @@ class MetaDataManager
      */
     protected function storeToCacheTable($key, $data) {
         //During install/setup, this function might get called before the DB is setup.
-        if (!empty($this->db)) {
+        if (self::$isCacheEnabled && !empty($this->db)) {
             try {
                 $encoded = base64_encode(gzdeflate(serialize($data)));
             } catch (Exception $e) {
@@ -2859,7 +2866,11 @@ class MetaDataManager
      */
     protected function removeFromCacheTable($key)
     {
-        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+        if (!self::$isCacheEnabled) {
+            return true;
+        }
+
+        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type=" . $this->db->quoted($key));
     }
 
     /**
@@ -2867,6 +2878,10 @@ class MetaDataManager
      */
     protected static function clearCacheTable()
     {
+        if (!self::$isCacheEnabled) {
+            return true;
+        }
+
         $db = DBManagerFactory::getInstance();
         $db->commit();
         $db->query($db->truncateTableSQL(static::$cacheTable));
@@ -3427,5 +3442,34 @@ class MetaDataManager
         }
 
         return $this->metaDataHacks;
+    }
+
+    /**
+     * Checks if metadata cache is operable with current database schema
+     *
+     * This check should be made during upgrades when the source code has been upgraded by the moment,
+     * but database schema hasn't yet.
+     *
+     * @return bool
+     */
+    public static function isCacheOperable()
+    {
+        return DBManagerFactory::getInstance()->tableExists(static::$cacheTable);
+    }
+
+    /**
+     * Enables metadata caching after it was temporarily disabled
+     */
+    public static function enableCache()
+    {
+        self::$isCacheEnabled = true;
+    }
+
+    /**
+     * Temporarily disables metadata caching
+     */
+    public static function disableCache()
+    {
+        self::$isCacheEnabled = false;
     }
 }
