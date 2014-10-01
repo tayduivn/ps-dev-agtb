@@ -111,9 +111,10 @@ class One2MBeanRelationship extends One2MRelationship
             $rhs->$field = $val;
         }
         //Update role fields
-        if (!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"])) {
-            $roleField = $this->def["relationship_role_column"];
-            $rhs->$roleField = $this->def["relationship_role_column_value"];
+        foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+            if (!empty($value)) {
+                $rhs->$column = $value;
+            }
         }
     }
 
@@ -143,7 +144,7 @@ class One2MBeanRelationship extends One2MRelationship
             // in mass updating and mass deleting
             $nullValue = $rhs->db->massageValue(null, $rhs->field_defs[$rhsID]);
 
-            $sql = "UPDATE {$rhs->table_name} 
+            $sql = "UPDATE {$rhs->table_name}
                     SET {$rhsID} = $nullValue
                     WHERE id = '{$rhs->id}'";
             $rhs->db->query($sql);
@@ -213,17 +214,18 @@ class One2MBeanRelationship extends One2MRelationship
             )->$lhsKey}' AND {$rhsTable}.deleted=$deleted";
 
             //Check for role column
-            if (!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"])) {
-                $roleField = $this->def["relationship_role_column"];
-                $roleValue = $this->def["relationship_role_column_value"];
-                $where .= " AND $rhsTable.$roleField = '$roleValue'";
+            $db = DBManagerFactory::getInstance();
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                if (!empty($value)) {
+                    $where .= " AND $rhsTable.$column = ".$db->quoted($value);
+                }
             }
 
             //Add any optional where clause
             if (!empty($params['where'])) {
                 $relatedSeed = BeanFactory::getBean($this->getRHSModule());
-                $add_where = is_string($params['where']) ? 
-                             $params['where'] : 
+                $add_where = is_string($params['where']) ?
+                             $params['where'] :
                              $this->getOptionalWhereClause($params['where'], $rhsTable, $relatedSeed);
 
                 if (!empty($add_where)) {
@@ -354,11 +356,10 @@ class One2MBeanRelationship extends One2MRelationship
 
         $relTable =  $linkIsLHS ? $jta : $startingTable;
 
-        if (empty($options['ignoreRole']) && !empty($this->def["relationship_role_column"])
-            && !empty($this->def["relationship_role_column_value"])) {
-            $sugar_query->where()->equals(
-                "{$relTable}.{$this->def["relationship_role_column"]}",
-                $this->def["relationship_role_column_value"]);
+        if (empty($options['ignoreRole'])) {
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                $sugar_query->where()->equals("{$relTable}.$column", $value);
+            }
         }
 
         $this->addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $jta);

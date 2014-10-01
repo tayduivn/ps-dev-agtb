@@ -1250,6 +1250,12 @@ class SugarBean
                         foreach($keys as $key) {
                             if ($key == "id") {
                                 $toInsert[$key] = create_guid();
+                            } else if ($key == 'relationship_role_columns') {
+                                if (!empty($rel_def['relationship_role_columns'])) {
+                                    $toInsert[$key] = json_encode($rel_def['relationship_role_columns']);
+                                } else {
+                                    $toInsert[$key] = '';
+                                }
                             } else if ($key == "relationship_name") {
                                 $toInsert[$key] = $rel_name;
                             } else if (isset($rel_def[$key])) {
@@ -1257,15 +1263,7 @@ class SugarBean
                             }
                             //todo specify defaults if meta not defined.
                         }
-
-                        $column_list = implode(",", array_keys($toInsert));
-                        $value_list = "'" . implode("','", array_values($toInsert)) . "'";
-
-                        // Create the record.
-                        $insert_string = "INSERT into relationships
-                                          ($column_list) values
-                                          ($value_list)";
-                        $db->query($insert_string, true);
+                        DBManagerFactory::getInstance()->insertParams('relationships', $seed->field_defs, $toInsert);
                         Relationship::$relCacheInternal[$rel_name] = true;
                     }
                 }
@@ -2571,10 +2569,10 @@ class SugarBean
                     {
                         if (!empty($ldef['type']) && $ldef['type'] == "link" && !empty($ldef['relationship']))
                         {
-                            $relDef = SugarRelationshipFactory::getInstance()->getRelationshipDef($ldef['relationship']);
-                            if (!empty($relDef['relationship_role_column']) && $relDef['relationship_role_column'] == $typeField)
-                            {
-                                $parentLinks[$relDef['lhs_module']] = $ldef;
+                            $rel = SugarRelationshipFactory::getInstance()->getRelationship($ldef['relationship']);
+                            $relColumns = $rel->getRelationshipRoleColumns();
+                            if (isset($relColumns[$typeField])) {
+                                $parentLinks[$rel->getLHSModule()] = $ldef;
                             }
                         }
                     }

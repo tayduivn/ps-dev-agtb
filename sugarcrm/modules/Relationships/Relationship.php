@@ -22,21 +22,22 @@ class Relationship extends SugarBean
     public $new_schema = true;
     public $table_name = 'relationships';
 
-    public $id;
-    public $relationship_name;
-    public $lhs_module;
-    public $lhs_table;
-    public $lhs_key;
-    public $rhs_module;
-    public $rhs_table;
-    public $rhs_key;
-    public $join_table;
-    public $join_key_lhs;
-    public $join_key_rhs;
-    public $relationship_type;
-    public $relationship_role_column;
-    public $relationship_role_column_value;
-    public $reverse;
+	public $id;
+	public $relationship_name;
+	public $lhs_module;
+	public $lhs_table;
+	public $lhs_key;
+	public $rhs_module;
+	public $rhs_table;
+	public $rhs_key;
+	public $join_table;
+	public $join_key_lhs;
+	public $join_key_rhs;
+	public $relationship_type;
+	public $relationship_role_column;
+	public $relationship_role_column_value;
+	public $reverse;
+	public $relationship_role_columns;
 
     public $_self_referencing;
 
@@ -89,9 +90,9 @@ class Relationship extends SugarBean
      * @param DBManager $db A DBManager object
      * @return boolean
      */
-    function exists($relationship_name, &$db)
+    function exists($relationship_name, $db)
     {
-        // Cache the list of relationships internally to prevent an insane 
+        // Cache the list of relationships internally to prevent an insane
         // number of queries from running
         if (empty(self::$relCacheInternal)) {
             $query = "SELECT relationship_name FROM relationships WHERE deleted=0";
@@ -142,27 +143,41 @@ class Relationship extends SugarBean
         //end function get_other_module
     }
 
-    function retrieve_by_sides($lhs_module, $rhs_module, &$db)
-    {
+	/**
+	 * (non-PHPdoc)
+	 * @see SugarBean::convertRow()
+	 */
+	public function convertRow($row)
+	{
+	    $row = parent::convertRow($row);
+	    if (!empty($row['relationship_role_columns'])) {
+	        $row['relationship_role_columns'] = json_decode($row['relationship_role_columns']);
+	    }
+	    return $row;
+	}
+
+    /**
+	 * Return the module name on the other side of the relationship
+	 * @param string $lhs_module Left side module
+	 * @param string $rhs_module Right side module
+	 * @param DBManager $db
+	 * @return string|null
+	 */
+    public function retrieve_by_sides($lhs_module, $rhs_module, $db)
+	{
         //give it the relationship_name and base module
         //it will return the module name on the other side of the relationship
-
-        $query = "SELECT * FROM relationships WHERE deleted=0 AND lhs_module = '" . $lhs_module . "' AND rhs_module = '" . $rhs_module . "'";
-        $result = $db->query($query, true, " Error searching relationships table..");
-        $row = $db->fetchByAssoc($result);
-        if ($row != null) {
-
-            return $row;
-
-        }
+		$query = "SELECT * FROM relationships WHERE deleted=0 AND lhs_module = '" . $lhs_module."' AND rhs_module = '" . $rhs_module . "'";
+		$result = $db->query($query, true, " Error searching relationships table.");
+		$row  =  $db->fetchByAssoc($result);
+		if ($row != null) {
+			return $this->convertRow($row);
+		}
 
         return null;
-
-
-        //end function retrieve_by_sides
     }
 
-    function retrieve_by_modules($lhs_module, $rhs_module, &$db, $type = '')
+    public function retrieve_by_modules($lhs_module, $rhs_module, $db, $type = '')
     {
         //give it the relationship_name and base module
         //it will return the module name on the other side of the relationship
@@ -228,11 +243,12 @@ class Relationship extends SugarBean
         $result = $this->db->query($query);
 
         $relationships = array();
-        while (($row = $this->db->fetchByAssoc($result)) != null) {
-            $relationships[$row['relationship_name']] = $row;
-        }
+		while (($row = $this->db->fetchByAssoc($result)) != null) {
+		    $row = $this->convertRow($row);
+			$relationships[$row['relationship_name']] = $row;
+		}
 
-        sugar_mkdir($this->cache_file_dir(), null, true);
+		sugar_mkdir($this->cache_file_dir(), null, true);
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
         sugar_file_put_contents_atomic(
             Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only(),
@@ -295,15 +311,14 @@ class Relationship extends SugarBean
             return $rel_module1_bean;
         }
 
-        //end function trace_relationship_module
-    }
+	//end function trace_relationship_module
+	}
 
-    public function rebuild_relationship_cache()
-    {
-        self::delete_cache();
-        $this->load_relationship_meta();
-    }
-
+	public function rebuild_relationship_cache()
+	{
+		self::delete_cache();
+		$this->load_relationship_meta();
+	}
 
     /**
      * @see SugarBean::bean_implements
