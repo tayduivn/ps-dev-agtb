@@ -44,7 +44,7 @@ $divCounter = 0;
 while (( $row = $reporter->get_summary_next_row()) != 0 ) {
 	$got_row = 1;                                                                                   
 	$startTable = true;
-	$indexOfGroupByStart = whereToStartGroupByRow($reporter, $count, $header_row, $previousRow, $row);
+	$indexOfGroupByStart = whereToStartGroupByRowSummaryCombo($reporter, $count, $previousRow, $row);
 	if ($indexOfGroupByStart != 0) {
 		$startTable = false;
 	} // if
