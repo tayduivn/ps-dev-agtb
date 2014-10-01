@@ -308,6 +308,7 @@
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=ent ONLY
+                    'include/javascript/sugar7/plugins/NestedSetCollection.js'  => 'include/javascript/sugar_sidecar.min.js',                    
                     'include/javascript/sugar7/plugins/DirtyCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Chart.js'  => 'include/javascript/sugar_sidecar.min.js',
