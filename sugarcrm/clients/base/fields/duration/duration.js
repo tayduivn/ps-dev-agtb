@@ -28,6 +28,10 @@
             this.setDefaultStartDateTime();
             this.modifyEndDateToRetainDuration();
             this.updateDurationHoursAndMinutes();
+
+            // Values for date_start, date_end, duration_hours, and duration_minutes
+            // should be set as the default on the model.
+            this.model.setDefaultAttributes(this.model.attributes);
         }
     },
 
