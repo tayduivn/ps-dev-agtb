@@ -60,17 +60,24 @@ class Bug60372Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function filterDataProvider()
     {
+        $db = DBManagerFactory::getInstance();
         return array(
             array(
                 'queryFilterTP_last_n_days',
                 5,
-                "* >= '2014-01-26 00:00:00' AND * <= '2014-01-30 23:59:59",
+                "* >= " .
+                $db->convert($db->quoted('2014-01-26 00:00:00'), 'datetime') .
+                " AND * <= " .
+                $db->convert($db->quoted('2014-01-30 23:59:59'), 'datetime'),
                 '2014-01-30 08:00:00'
             ),
             array(
                 'queryFilterTP_next_n_days',
                 2,
-                "* >= '2014-02-15 00:00:00' AND * <= '2014-02-16 23:59:59'",
+                "* >= " .
+                $db->convert($db->quoted('2014-02-15 00:00:00'), 'datetime') .
+                " AND * <= " .
+                $db->convert($db->quoted('2014-02-16 23:59:59'), 'datetime'),
                 '2014-02-15 07:00:00'
             ),
         );

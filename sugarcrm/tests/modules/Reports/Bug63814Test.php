@@ -64,14 +64,15 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function filterDataProvider()
     {
+        $db = DBManagerFactory::getInstance();
         return array(
             array(
                 '2013-05-05',
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '',
-                ">= '2013-04-01 07:00:00'",
-                "<= '2013-07-01 06:59:59'",
+                ">= {$db->convert($db->quoted('2013-04-01 07:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-07-01 06:59:59'), 'datetime')}",
                 'America/Los_Angeles'
             ),
             array(
@@ -79,8 +80,8 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '+3 month',
-                ">= '1987-03-31 21:00:00'",
-                "<= '1987-06-30 20:59:59'",
+                ">= {$db->convert($db->quoted('1987-03-31 21:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('1987-06-30 20:59:59'), 'datetime')}",
                 'Europe/Helsinki'
             ),
             array(
@@ -88,8 +89,8 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '-3 month',
-                ">= '2013-04-01 00:00:00'",
-                "<= '2013-06-30 23:59:59'",
+                ">= {$db->convert($db->quoted('2013-04-01 00:00:00'), 'datetime')}",
+                "<= {$db->convert($db->quoted('2013-06-30 23:59:59'), 'datetime')}",
                 'UTC'
             ),
             array(
@@ -97,8 +98,8 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '',
-                ">= '2013-04-01'",
-                "<= '2013-06-30'",
+                ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
                 'America/Los_Angeles'
             ),
             array(
@@ -106,8 +107,8 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '+3 month',
-                ">= '1987-04-01'",
-                "<= '1987-06-30'",
+                ">= {$db->convert($db->quoted('1987-04-01'), 'date')}",
+                "<= {$db->convert($db->quoted('1987-06-30'), 'date')}",
                 'Europe/Helsinki'
             ),
             array(
@@ -115,8 +116,8 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '-3 month',
-                ">= '2013-04-01'",
-                "<= '2013-06-30'",
+                ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
+                "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
                 'UTC'
             ),
         );

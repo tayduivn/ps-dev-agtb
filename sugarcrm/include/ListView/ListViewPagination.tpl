@@ -30,8 +30,11 @@
 
 						{sugar_action_menu id=$link_action_id params=$actionsLink}
 
-                        { if $actionDisabledLink ne "" }<div class='selectActionsDisabled' id='select_actions_disabled_{$action_menu_location}'>{$actionDisabledLink}<span class='ab'></span></div>{/if}
-						&nbsp;{$selectedObjectsSpan}		
+                        {if $actionDisabledLink ne ""}<div class='selectActionsDisabled' id='select_actions_disabled_{$action_menu_location}'>
+                            {$actionDisabledLink}
+                            {if $actionsLink.buttons|@count gt 1}<span class='ab'></span>{else}&nbsp;{/if}
+                        {/if}
+                        {$selectedObjectsSpan}
 					</td>
 					<td  nowrap='nowrap' width='1%' align="right" class='paginationChangeButtons'>
 						{if $pageData.urls.startPage}
