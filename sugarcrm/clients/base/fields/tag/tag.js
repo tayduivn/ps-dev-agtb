@@ -36,15 +36,9 @@
 
         this._super('_render');
 
-        if (!this.$el.hasClass('select2field')) {
-            this.initializeSelect2();
-        }
-
-        if (this.$select2) {
-            this.$select2.on('change', _.bind(this.storeValues, this));
-            this.$select2.on('select2-selecting', this.handleNewSelection);
-        }
-
+        this.initializeSelect2();
+        this.$select2.on('change', _.bind(this.storeValues, this));
+        this.$select2.on('select2-selecting', this.handleNewSelection);
     },
 
     /**
@@ -54,7 +48,7 @@
     handleNewSelection: function(e) {
         // For new tags, look for New Tag indicator and remove it if it's there
         if (e.object.newTag) {
-            var newTagIdx = e.object.text.lastIndexOf(' (New Tag)');
+            var newTagIdx = e.object.text.lastIndexOf(' ' + app.lang.get('LBL_TAG_NEW_TAG'));
             e.object.text = e.object.text.substr(0, newTagIdx);
         }
     },
@@ -86,15 +80,20 @@
                     return false;
                 }
 
-                var selectedRecord = _.filter(self.filterResults.models, function(record) {
+                var selectedRecord = self.filterResults.find(function(record) {
                     return term == record.get('name');
                 });
-                if (selectedRecord.length !== 0) {
+                if (selectedRecord) {
                     // Search term exists
-                    return self.parseRecords(selectedRecord);
+                    return self.parseRecords([selectedRecord]);
                 } else {
                     // Search term is new
-                    return {id: term, text: term + ' (New Tag)', locked: false, newTag: true};
+                    return {
+                        id: term,
+                        text: term + ' ' + app.lang.get('LBL_TAG_NEW_TAG'),
+                        locked: false,
+                        newTag: true
+                    };
                 }
             },
 
@@ -113,9 +112,10 @@
                         query.callback(shortlist);
                     },
                     error: function() {
-                        app.alert.show('collections_error',
-                            {level: 'error',
-                                messages: 'There was an issue retrieving the collection.'});
+                        app.alert.show('collections_error', {
+                            level: 'error',
+                            messages: 'LBL_TAG_FETCH_ERROR'
+                        });
                     }
                 });
             }, 300),
@@ -126,7 +126,7 @@
             }
         });
 
-        records = _.pluck(this.value, 'name').join();
+        var records = _.pluck(this.value, 'name').join();
         if (records.length) {
             this.$select2.select2('val', records);
         }
@@ -214,10 +214,9 @@
 
     /**
      * {@inheritDoc}
-     * @override
      */
     unbindDom: function() {
-        this.$(this.fieldTag).select2('destroy');
-        app.view.Field.prototype.unbindDom.call(this);
+        this.$('.select2field').select2('destroy');
+        this._super('unbindDom');
     }
 })
