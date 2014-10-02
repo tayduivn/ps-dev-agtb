@@ -20,12 +20,6 @@
              */
             _duplicateBeanId: null,
 
-            /**
-             * Contains module of {Data.Bean} from which field should be duplicated.
-             *
-             * @property {String} _duplicateBeanModule
-             * @protected
-             */
             _duplicateBeanModule: null,
 
             /**
@@ -36,6 +30,13 @@
              */
             duplicateFromModel: function(id, module) {
                 this._duplicateBeanId = id;
+
+                /**
+                 * Contains module of {@link Data.Bean} from which field should be duplicated.
+                 *
+                 * @property {String}
+                 * @protected
+                 */
                 this._duplicateBeanModule = module;
             },
 
@@ -47,8 +48,12 @@
              * @private
              */
             _onFieldDuplicate: function(model) {
-                var id = (model instanceof Backbone.Model) ? model.get('id') : null;
-                var module = (model instanceof Backbone.Model) ? model.module : null;
+                var id = null, module = null;
+
+                if (model instanceof Backbone.Model) {
+                    id = model.get('id');
+                    module = model.module;
+                }
 
                 this.duplicateFromModel(
                     (this.model && this.model.get('id') === id) ? null : id,
