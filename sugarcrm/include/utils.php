@@ -1014,19 +1014,22 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
  * This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
  *
  * @param string $language specific language to load
+ * @param bool $useCache optional use cache for store language data array
  * @return array lang strings
  */
-function return_app_list_strings_language($language)
+function return_app_list_strings_language($language, $useCache = true)
 {
     global $app_list_strings;
     global $sugar_config;
 
-    $cache_key = 'app_list_strings.'.$language;
-
-    // Check for cached value
-    $cache_entry = sugar_cache_retrieve($cache_key);
-    if (!empty($cache_entry)) {
-        return $cache_entry;
+    //$useCache added to fix CRYS-459 memory limit
+    if ($useCache) {
+        $cache_key = 'app_list_strings.' . $language;
+        // Check for cached value
+        $cache_entry = sugar_cache_retrieve($cache_key);
+        if (!empty($cache_entry)) {
+            return $cache_entry;
+        }
     }
 
     $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
@@ -1089,7 +1092,9 @@ function return_app_list_strings_language($language)
     //Add to the app_list_strings the list of language available in the application.
     $return_value['available_language_dom'] = get_languages();
 
-    sugar_cache_put($cache_key, $return_value);
+    if ($useCache) {
+        sugar_cache_put($cache_key, $return_value);
+    }
 
     return $return_value;
 }
