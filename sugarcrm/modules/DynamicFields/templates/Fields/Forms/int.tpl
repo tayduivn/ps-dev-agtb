@@ -19,7 +19,11 @@ formsWithFieldLogic=null;
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}:</td><td>
 	{if $hideLevel < 5}
 		<input type='text' name='default' id='int_default' value='{$vardef.default}'>
-		<script>addToValidate('popup_form', 'default', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}' );</script>
+		{if isset($field_range_value)}
+            <script>addToValidateRange('popup_form', 'default', 'int', false, '{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}',{$field_range_value.min},{$field_range_value.max});</script>
+        {else}
+            <script>addToValidate('popup_form', 'default', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}' );</script>
+        {/if}
 	{else}
 		<input type='hidden' name='default' id='int_default' value='{$vardef.default}'>{$vardef.default}
 	{/if}
@@ -30,7 +34,11 @@ formsWithFieldLogic=null;
 	<td>
 	{if $hideLevel < 5}
 		<input type='text' name='min' id='int_min' value='{$vardef.validation.min}'>
-		<script>addToValidate('popup_form', 'min', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MIN_VALUE"}' );</script>
+		{if isset($field_range_value)}
+            <script>addToValidateRange('popup_form', 'min', 'int', false, '{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MIN_VALUE"}',{$field_range_value.min},{$field_range_value.max});</script>
+        {else}
+            <script>addToValidate('popup_form', 'min', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MIN_VALUE"}' );</script>
+        {/if}
 	{else}
 		<input type='hidden' name='min' id='int_min' value='{$vardef.validation.min}'>{$vardef.range.min}
 	{/if}
@@ -41,7 +49,11 @@ formsWithFieldLogic=null;
 	<td>
 	{if $hideLevel < 5}
 		<input type='text' name='max' id='int_max' value='{$vardef.validation.max}'>
-		<script>addToValidate('popup_form', 'max', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MAX_VALUE"}' );</script>
+		{if isset($field_range_value)}
+            <script>addToValidateRange('popup_form', 'max', 'int', false, '{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MAX_VALUE"}',{$field_range_value.min},{$field_range_value.max});</script>
+        {else}
+            <script>addToValidate('popup_form', 'max', 'int', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MAX_VALUE"}' );</script>
+        {/if}
 	{else}
 		<input type='hidden' name='max' id='int_max' value='{$vardef.validation.max}'>{$vardef.range.max}
 	{/if}
