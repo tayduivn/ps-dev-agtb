@@ -27,7 +27,14 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
-        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(MB_PORTALRECORDVIEW, 'Leads', null, null, MB_PORTAL) ;
+
+        require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php';
+        $implementation = $this->getMockForAbstractClass('AbstractMetaDataImplementation');
+        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(
+            MB_PORTALRECORDVIEW,
+            'Leads',
+            $implementation
+        );
     }
 
     public function tearDown()
@@ -329,7 +336,8 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMetaDataParser
 {
     // dummy constructor for now
-    public function __construct($view, $moduleName) {
+    public function __construct($view, $moduleName, $implementation)
+    {
         $view = strtolower ( $view ) ;
 
         $this->FILLER = array ( 'name' => MBConstants::$FILLER['name'] , 'label' => translate ( MBConstants::$FILLER['label'] ) ) ;
@@ -341,6 +349,7 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
         $this->module_dir = $module->seed->module_dir;
         $this->_fielddefs = $module->getFields();
         $this->_standardizeFieldLabels( $this->_fielddefs );
+        $this->implementation = $implementation;
     }
 
     public function testInstallPreviousViewdefs($viewdefs) {
