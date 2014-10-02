@@ -725,7 +725,7 @@ function buildInstall($path){
     function getCustomModules($module=false){
         global $mod_strings;
         $path='custom/modules/';
-		$extPath = 'custom/Extension/modules/';
+        $extPath = 'custom/Extension/modules/';
         if(!file_exists($path) || !is_dir($path)){
             return array($mod_strings['LBL_EC_NOCUSTOM'] => "");
         }
@@ -750,6 +750,7 @@ function buildInstall($path){
                 return array($mod_strings['LBL_EC_NOCUSTOM'] => "");
             }
             if ($module == false ){
+                $return = array();
                 foreach ($dirlisting as $value){
                 	if(!SugarAutoLoader::existingCustomOne("modules/{$value}/metadata/studio.php"))
                 		continue;

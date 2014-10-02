@@ -1316,6 +1316,23 @@ function validate_form(formname, startsWith){
 								   }
 							   }
 						       break;
+						case 'checkboxset':
+							var validation_passed = false;
+							var input_elements = YAHOO.util.Selector.query('input[name="'+validate[formname][i][nameIndex]+'"]', document.getElementById(formname));
+    
+							for (t in input_elements) {
+							    if (input_elements[t].type && input_elements[t].type == 'checkbox' && input_elements[t].checked == true) {
+							        validation_passed = true;
+							        break;
+							    }
+							}
+
+							if (!validation_passed) {
+							    isError = true;
+							    var elements = $(input_elements).closest('.checkboxset').find('input');
+							    add_error_style(formname, elements[0], requiredTxt + " " + validate[formname][i][msgIndex]);
+							}
+							break;
 					    case 'error':
 							isError = true;
                             add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex]);
