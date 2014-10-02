@@ -70,6 +70,19 @@ class SugarFieldTag extends SugarFieldRelatecollection
     /**
      * {inheritdoc}
      */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    {
+        if (is_array($value)) {
+            foreach($value as &$tag) {
+                $tag = $tag['name'];
+            }
+        }
+        return true;
+    }
+
+    /**
+     * {inheritdoc}
+     */
     protected function getOrderBy() {
         return array(
             'fieldName' => 'name',
