@@ -26,6 +26,7 @@ $viewdefs['KBSContents']['base']['layout']['list-dashboard'] = array(
                                 'type' => 'dashlet-nestedset-list',
                                 'label' => 'LBL_TOPICS',
                                 'module' => 'Categories',
+                                'data_provider' => 'Categories',
                                 'config_provider' => 'KBSDocuments',
                                 'root_name' => 'category_root',
                                 'link_field' => 'topic_id',
