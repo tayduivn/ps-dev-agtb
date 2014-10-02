@@ -1,9 +1,10 @@
-describe("Plugins.EditAllRecurrences", function() {
+describe('Plugins.EditAllRecurrences', function() {
     var moduleName = 'Meetings',
         view,
         pluginsBefore,
         app,
-        sandbox;
+        sandbox,
+        navigateStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -11,14 +12,16 @@ describe("Plugins.EditAllRecurrences", function() {
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.set();
+        sandbox = sinon.sandbox.create();
 
+        navigateStub = sandbox.stub(app.router, 'navigate');
         view = SugarTest.createView('base', moduleName, 'record');
         pluginsBefore = view.plugins;
         view.plugins = ['EditAllRecurrences'];
         SugarTest.loadPlugin('EditAllRecurrences');
         SugarTest.app.plugins.attach(view, 'view');
+
         view.trigger('init');
-        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -32,20 +35,16 @@ describe("Plugins.EditAllRecurrences", function() {
         view = null;
     });
 
-    it("should turn on all recurrence mode when all_recurrences:edit event is fired from parent", function() {
+    it('should turn on all recurrence mode when all_recurrences:edit event is fired from parent', function() {
         view.model.set('repeat_parent_id', '');
         view.allRecurrencesMode = false;
         view.context.trigger('all_recurrences:edit');
         expect(view.allRecurrencesMode).toEqual(true);
     });
 
-    it("should redirect to parent when all_recurrences:edit event is fired from child", function() {
-        var repeatParentId = '123',
-            navigateStub = sandbox.stub(app.router, 'navigate');
+    it('should redirect to parent when all_recurrences:edit event is fired from child', function() {
+        var repeatParentId = '123';
 
-        sandbox.stub(app.alert, 'show', function(alertName, options) {
-            options.onConfirm();
-        });
         view.model.set('repeat_parent_id', repeatParentId);
         view.allRecurrencesMode = false;
         view.context.trigger('all_recurrences:edit');
@@ -53,30 +52,28 @@ describe("Plugins.EditAllRecurrences", function() {
         expect(navigateStub.lastCall.args[0]).toEqual('#Meetings/123/edit/all-recurrences');
     });
 
-    it("should turn off all recurrence mode on initial render", function() {
+    it('should init all recurrence mode to false if not coming from all_recurrence route', function() {
         view.allRecurrencesMode = true;
-        view.render();
+        view.trigger('init');
         expect(view.allRecurrencesMode).toEqual(false);
     });
 
-    it("should turn go into edit all recurrence mode when rendering with all_recurrences in the context and edit button initialized", function() {
-        var button = SugarTest.createField('base', 'button', 'button');
+    it('should go into edit all recurrence mode when all_recurrences from a route', function() {
+        view.allRecurrencesMode = undefined;
         view.context.set('all_recurrences', true);
-        view.buttons.edit_recurrence_button = button;
-        view.render();
+        view.trigger('init');
         expect(view.allRecurrencesMode).toEqual(true);
-        //clear out all_recurrences so next render will not do this
+        // all_recurrences should be cleared out too
         expect(view.context.get('all_recurrences')).toBeUndefined();
-        button.dispose();
     });
 
-    it("should turn off all recurrence mode when the cancel button is clicked", function() {
+    it('should turn off all recurrence mode when the cancel button is clicked', function() {
         view.allRecurrencesMode = true;
         view.cancelClicked();
         expect(view.allRecurrencesMode).toEqual(false);
     });
 
-    it("should add all_recurrences flag to save options when in all recurrence mode", function() {
+    it('should add all_recurrences flag to save options when in all recurrence mode', function() {
         var actual,
             expected = {
                 params: {
@@ -88,14 +85,14 @@ describe("Plugins.EditAllRecurrences", function() {
         expect(actual).toEqual(expected);
     });
 
-    it("should prevent toggling out of all recurrence mode when there is no recurrence", function() {
+    it('should prevent toggling out of all recurrence mode when there is no recurrence', function() {
         view.allRecurrencesMode = true;
         view.model.set('repeat_type', '');
         view.toggleAllRecurrencesMode(false);
         expect(view.allRecurrencesMode).toEqual(true);
     });
 
-    it("should update noEditFields when toggling all recurrence mode", function() {
+    it('should update noEditFields when toggling all recurrence mode', function() {
         view.toggleAllRecurrencesMode(true);
         expect(view.noEditFields).toEqual([]);
         view.toggleAllRecurrencesMode(false);
@@ -107,5 +104,12 @@ describe("Plugins.EditAllRecurrences", function() {
             'repeat_until',
             'repeat_count'
         ]);
+    });
+
+    it('should show a /edit/all_recurrences route when editing all recurrences', function() {
+        view.allRecurrencesMode = true;
+        view.model.id = 'foo_id';
+        view.editClicked();
+        expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit/all_recurrences', {trigger: false});
     });
 });

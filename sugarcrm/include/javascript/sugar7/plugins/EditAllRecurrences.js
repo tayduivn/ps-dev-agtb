@@ -29,13 +29,10 @@
                 this.on('init', function() {
                     // listen for edit all recurrences event on the context
                     this.context.on('all_recurrences:edit', this.editAllRecurrences, this);
-                });
 
-                this.on('render', function() {
-                    // TODO: This solution is temporary until SC-3244 which will provide a cleaner way into edit mode
-                    // if context has all_recurrences flag, go directly into editing all
-                    if (this.context.get('all_recurrences') === true && this.buttons.edit_recurrence_button) {
-                        this.editAllRecurrences();
+                    // coming from a /edit/all_recurrences route
+                    if (this.context.get('all_recurrences') === true) {
+                        this.toggleAllRecurrencesMode(true);
                         this.context.unset('all_recurrences');
                     } else {
                         this.toggleAllRecurrencesMode(false); // default to off
@@ -46,6 +43,29 @@
                 // turn off all recurrences mode on cancel
                 this.cancelClicked = _.wrap(this.cancelClicked, function(_super, event) {
                     _super.call(this, event);
+                    this.toggleAllRecurrencesMode(false);
+                });
+
+                // override {@link View.Views.Base.RecordView#setEditableFields}
+                // check flag to determine if recurrence fields should be made editable
+                this.setEditableFields = _.wrap(this.setEditableFields, function(_super) {
+                    this.toggleEditRecurrenceFields(this.allRecurrencesMode);
+                    _super.call(this);
+                });
+
+                // override {@link View.Views.Base.RecordView#setRoute}
+                // add all_recurrences to action if in 'all recurrences' mode
+                this.setRoute = _.wrap(this.setRoute, function(_super, action) {
+                    if (this.allRecurrencesMode && action === 'edit') {
+                        action = 'edit/all_recurrences';
+                    }
+                    _super.call(this, action);
+                });
+
+                // override {@link View.Views.Base.RecordView#handleSave}
+                // after saving, turn off all recurrences mode
+                this.handleSave = _.wrap(this.handleSave, function(_super) {
+                    _super.call(this);
                     this.toggleAllRecurrencesMode(false);
                 });
 
@@ -69,13 +89,7 @@
             editAllRecurrences: function() {
                 var parentId = this.model.get('repeat_parent_id');
                 if (!_.isEmpty(parentId) && parentId !== this.model.id) {
-                    app.alert.show('recurrence_parent_route_confirmation', {
-                        level: 'confirmation',
-                        messages: 'LBL_CALENDAR_CONFIRM_ROUTE_TO_PARENT',
-                        onConfirm: _.bind(function() {
-                            this.editAllRecurrencesFromParent(parentId);
-                        }, this)
-                    });
+                    this.editAllRecurrencesFromParent(parentId);
                 } else {
                     this.toggleAllRecurrencesMode(true);
                     this.context.trigger('button:edit_button:click');
@@ -94,7 +108,7 @@
                 }
 
                 this.allRecurrencesMode = enabled;
-                this.toggleEditRecurrenceFields(enabled);
+                this.setEditableFields();
             },
 
             /**
@@ -104,7 +118,7 @@
              */
             toggleEditRecurrenceFields: function(editable) {
                 var getEditLink = function(fieldName) {
-                    return this.$("span.record-edit-link-wrapper[data-name=" + fieldName + "]");
+                    return this.$('span.record-edit-link-wrapper[data-name="' + fieldName + '"]');
                 };
 
                 _.each([
@@ -125,8 +139,6 @@
                         getEditLink(field).hide();
                     }
                 }, this);
-
-                this.setEditableFields();
             },
 
             /**
@@ -143,7 +155,7 @@
              * event or all recurrences of the event.
              *
              * @param {Object} options
-             * @returns {Object} Options to be added on top of other save options
+             * @return {Object} Options to be added on top of other save options
              */
             addRecurrenceOptionsForSave: function(options) {
                 options = options || {};

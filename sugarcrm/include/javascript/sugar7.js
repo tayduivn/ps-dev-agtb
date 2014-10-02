@@ -245,6 +245,7 @@
                     app.controller.loadView({
                         module: module,
                         layout: 'record',
+                        action: 'edit',
                         modelId: id,
                         all_recurrences: true
                     });

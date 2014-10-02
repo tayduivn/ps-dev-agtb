@@ -5203,7 +5203,6 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
     'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
     'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
-    'LBL_CALENDAR_CONFIRM_ROUTE_TO_PARENT' => 'In order to edit all recurrences, you will be routed to the first record in the series.',
 
     'ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD' => 'Recurrence changes must be made using the first record in the series.',
 
