@@ -1031,7 +1031,7 @@ class HealthCheckScanner
                 return basename($def) != 'view.sidequickcreate.php';
             });
             if(!empty($defs)) {
-                $this->updateStatus("hasCustomViews", $module);
+                $this->updateStatus("hasCustomViews", $module, $defs);
             }
             $md5 = $this->md5_files; // work around 5.3 missing $this in closures
             $defs = array_filter($this->getPhpFiles("modules/$module/views"), function($def) use($md5) {
@@ -1039,7 +1039,7 @@ class HealthCheckScanner
                 return basename($def) != 'view.sidequickcreate.php' && !isset($md5["./".$def]);
             });
             if(!empty($defs)) {
-                $this->updateStatus("hasCustomViewsModDir", $module);
+                $this->updateStatus("hasCustomViewsModDir", $module, $defs);
             }
         }
 
@@ -1852,7 +1852,6 @@ ENDP;
         // get names of 'stock' fields, that are defined in original vardefs.php
         $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
         $stockFields = array_keys($stockFields[$seed->object_name]['fields']);
-
 
         foreach($fieldDefs as $key => $value) {
             if(!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
