@@ -335,14 +335,14 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
             // adding to header is wrong
             if(!empty($panel['header'])) continue;
             foreach($panel['fields'] as $field) {
-                // look for ID
-                if($field == 'id'  || (!empty($field['name']) && $field['name'] == 'id')) {
+                // look for description field
+                if ($field == 'description' || (!empty($field['name']) && $field['name'] == 'description')) {
                     $idfield = $field;
                     break 2;
                 }
             }
         }
-        $this->assertNotEmpty($idfield, "ID field not found in merged view");
+        $this->assertNotEmpty($idfield, "Description field not found in merged view");
     }
 
     public function _sidecarRecordProvider()

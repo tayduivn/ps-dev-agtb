@@ -43,6 +43,14 @@
 
     _attachImageSelector: 'img[data-note-id]',
 
+    /**
+     * Modules placed in this array will have links to the module removed from the display
+     * e.g. Quotas isn't a real module, has no record view, shouldn't have a link
+     */
+    blacklistModules: [
+        'Quotas'
+    ],
+
     initialize: function(options) {
         this.opts = {params: {}};
         this.readonly = !!options.readonly;
@@ -342,6 +350,13 @@
      */
     formatAllTagsAndLinks: function() {
         var post = this.model.get('data');
+
+        // Check to see if the post's module is in the blacklist, if so, delete
+        // the module property from the object so it will not create a link to the record
+        if (post.object && post.object.module && _.contains(this.blacklistModules, post.object.module)) {
+            delete post.object.module;
+        }
+
         this.unformatAllTagsAndLinks();
 
         if (post) {

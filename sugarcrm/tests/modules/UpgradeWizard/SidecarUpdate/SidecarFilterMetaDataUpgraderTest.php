@@ -82,8 +82,14 @@ class SidecarFilterMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'name' => array('name' => 'name'),
-                    'account_name' => array('name' => 'account_name'),
+                    'name' => array(
+                        'name' => 'name',
+                        'type' => 'varchar',
+                    ),
+                    'account_name' => array(
+                        'name' => 'account_name',
+                        'type' => 'relate',
+                    ),
                 ),
                 array(
                     'name' => array(),

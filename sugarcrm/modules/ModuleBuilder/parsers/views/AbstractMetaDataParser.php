@@ -119,8 +119,8 @@ abstract class AbstractMetaDataParser
 			&& ( isset ( $def [ 'name' ] ) && strcmp ( $def [ 'name' ] , 'deleted' ) != 0 )
 		  ) // db and custom fields that aren't ID fields
           ||
-		  // exclude fields named *_name regardless of their type...just convention
-          (isset ( $def [ 'name' ] ) && substr ( $def [ 'name' ], -5 ) === '_name' ) ) ;
+          // exclude fields named *_name (just convention) and email1 regardless of their type
+          (isset($def['name']) && ($def['name'] === 'email1' || substr($def['name'], -5) === '_name')));
     }
 
 	protected function _standardizeFieldLabels ( &$fielddefs )
