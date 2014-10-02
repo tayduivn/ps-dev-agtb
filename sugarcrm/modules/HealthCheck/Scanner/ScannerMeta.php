@@ -167,11 +167,11 @@ class HealthCheckScannerMeta
 //        ),
         406 => array(
             'report' => 'hasCustomViews',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
         407 => array(
             'report' => 'hasCustomViewsModDir',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
         519 => array(
             'report' => 'extensionDir',
