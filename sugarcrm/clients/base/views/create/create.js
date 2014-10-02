@@ -192,13 +192,18 @@
     /**
      * Handle click on save and create another link
      */
-    saveAndCreate: function () {
+    saveAndCreate: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
-        this.initiateSave(_.bind(function () {
+        this.initiateSave(_.bind(
+            function() {
                 this.clear();
-                this.model.set(this.model.relatedAttributes);
+                // set the default attributes and the relatedAttributes back
+                // on the model since it's been cleared out
+                this.model.set(_.extend(this.model.getDefaultAttributes(), this.model.relatedAttributes));
                 this.resetDuplicateState();
-        }, this));
+            },
+            this
+        ));
     },
 
     /**
