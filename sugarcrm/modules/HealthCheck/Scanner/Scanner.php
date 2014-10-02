@@ -1495,9 +1495,9 @@ class HealthCheckScanner
     /**
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
-     * @param array &$hook_files
+     * @param array &$hooks_array
      */
-    protected function extractHooks($hookfile, &$hook_array)
+    protected function extractHooks($hookfile, &$hooks_array)
     {
         $hook_array = array();
         if(!is_readable($hookfile)) {
@@ -1519,6 +1519,7 @@ class HealthCheckScanner
                 }
             }
         }
+        $hooks_array = array_merge($hooks_array, $hook_array);
     }
 
     /**
