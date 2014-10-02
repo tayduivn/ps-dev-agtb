@@ -295,9 +295,11 @@
 
         this.callBulkApi(requests, {
             success: function(data) {
-                _.each(data, function(response) {
-                    self.fillInFreeBusyInformation(response.contents);
-                });
+                if (!self.disposed) {
+                    _.each(data, function(response) {
+                        self.fillInFreeBusyInformation(response.contents);
+                    });
+                }
             },
             error: function() {
                 app.logger.warn('Error received from server while retrieving free/busy information.');
@@ -309,7 +311,7 @@
             },
             complete: function(request) {
                 var data;
-                if (request.params.data) {
+                if (!self.disposed && request.params.data) {
                     data = JSON.parse(request.params.data);
                     _.each(data.requests, function(requestData) {
                         var moduleAndId = self.parseModuleAndIdFromUrl(requestData.url);
