@@ -80,6 +80,10 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
 
         $rows = $sq->execute();
 
+        if (empty($rows)) {
+            return false;
+        }
+
         $chunks = array_chunk($rows, $perJob);
 
         $jobs = array();

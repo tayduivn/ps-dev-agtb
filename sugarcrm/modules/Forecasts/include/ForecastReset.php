@@ -117,7 +117,6 @@ class ForecastReset
         }
     }
 
-    // BEGIN SUGARCRM flav=ent ONLY
     /**
      * Handle setting the default worksheet_columns back into the db.
      *
@@ -150,8 +149,10 @@ class ForecastReset
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'worksheet_columns', json_encode($columns), 'base');
 
+        // BEGIN SUGARCRM flav=ent ONLY
         // update the metadata
         $this->updateConfigWorksheetColumnsMetadata($forecast_by);
+        // END SUGARCRM flav=ent ONLY
 
         // now write out the correct list view
         $this->setWorksheetColumns('base', $columns, $forecast_by);
@@ -244,6 +245,7 @@ class ForecastReset
     }
 
 
+    // BEGIN SUGARCRM flav=ent ONLY
     /**
      * Update the metadata depending on what we are forecasting on
      *
@@ -269,6 +271,7 @@ class ForecastReset
 
         MetaDataManager::refreshModulesCache('Forecasts');
     }
+    // END SUGARCRM flav=ent ONLY
 
     public function runRebuildExtensions(array $modules = array('Forecasts'))
     {
@@ -279,6 +282,4 @@ class ForecastReset
         $rac->clearVardefs();
         $rac->rebuildExtensions($modules);
     }
-
-    // END SUGARCRM flav=ent ONLY
 }
