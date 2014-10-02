@@ -1225,23 +1225,7 @@ protected function checkQuery($sql, $object_name = false)
                         break;
                     }
                 }
-                if ($found) {
-                    // do not rename primary indices since they are nameless in most supported databases
-                    if ($value['type'] === 'primary') {
-                        continue;
-                    }
-
-                    $sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
-                    $rename = $this->renameIndexDefs($ex_value, $value, $tableName);
-                    if($execute) {
-                        $rename = is_array($rename) ? $rename : array($rename);
-                        foreach ($rename as $q) {
-                            $this->query($q, true, "Cannot rename index");
-                            $sql .= $q . "\n";
-                        }
-                    }
-
-                } else {
+                if (!$found) {
                     // ok we need this field lets create it
                     $sql .=	 "/*MISSING INDEX IN DATABASE - $name - {$value['type']}  ROW */\n";
                     $sql .= $this->addIndexes($tableName,array($value), $execute) .  "\n";
