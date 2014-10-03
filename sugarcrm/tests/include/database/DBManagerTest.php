@@ -1157,6 +1157,122 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->dropTableName($tablename2);
     }
 
+    public function providerRepairIndexes()
+    {
+        return array(
+        // create PK
+            array(
+                array(),
+                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
+                'ADD {"name":"pkey","type":"primary","fields":["id"]}',
+            ),
+        // PK name change
+            array(
+                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
+                array(array('name' => 'pkey2', 'type' => 'primary', 'fields' => array('id'))),
+                '',
+            ),
+        // PK removal
+            array(
+                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
+                array(),
+                '',
+            ),
+        // Index add
+            array(
+                array(),
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                'ADD {"name":"mykey","type":"index","fields":["foo","bar"]}',
+            ),
+        // Index remove
+            array(
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                array(),
+                '',
+            ),
+        // Index change
+            array(
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo'))),
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                'ADD {"name":"mykey","type":"index","fields":["foo","bar"]}',
+            ),
+        // Index change 2
+            array(
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo'))),
+                array(array('name' => 'mykeynew', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                'ADD {"name":"mykeynew","type":"index","fields":["foo","bar"]}',
+            ),
+        // Index rename
+            array(
+                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                array(array('name' => 'mykeynew', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+                '',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider providerRepairIndexes
+     * @param array $current
+     * @param array $new
+     * @param string $query
+     */
+    public function testRepairIndexes($current, $new, $query)
+    {
+        $tablename1 = 'test23_' . mt_rand();
+        $dbmock = $this->getMock(get_class($this->_db), array('get_columns', 'get_indices', 'add_drop_constraint'));
+        if (!($dbmock instanceof DBManager)) {
+            // Failed to instantiate the driver, skip it
+            $this->markTestSkipped("Could not load DB driver");
+        }
+        $db_columns = array(
+                'id' => array(
+                    'name' => 'id',
+                    'type' => 'id',
+                ),
+                'foo' => array (
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                'bar' => array (
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                'foobar' => array (
+                    'name' => 'foobar',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+        );
+
+
+        $dbmock->expects($this->any())
+        ->method('get_columns')
+        ->will($this->returnValue($db_columns));
+
+        $dbmock->expects($this->any())
+        ->method('get_indices')
+        ->will($this->returnValue($current));
+
+        $dbmock->expects($this->any())
+        ->method('add_drop_constraint')
+        ->will($this->returnCallback(
+            function ($table, $definition, $drop = false) {
+                return "ALTER TABLE $table ". ($drop?"DROP":"ADD") . " ". json_encode($definition);
+            }
+        ));
+
+        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableIndices', array($tablename1, $new, false));
+        if (!empty($query)) {
+            $this->assertContains("ALTER TABLE $tablename1", $sql);
+            $this->assertContains($query, $sql);
+        } else {
+            $this->assertNotContains("ALTER TABLE $tablename1", $sql);
+        }
+    }
+
     public function testAddColumn()
     {
         $tablename1 = 'test23_' . mt_rand();

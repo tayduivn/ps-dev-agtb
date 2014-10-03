@@ -1225,13 +1225,13 @@ protected function checkQuery($sql, $object_name = false)
                         break;
                     }
                 }
-                if (!$found) {
+                if ($found === false) {
                     // ok we need this field lets create it
                     $sql .=	 "/*MISSING INDEX IN DATABASE - $name - {$value['type']}  ROW */\n";
                     $sql .= $this->addIndexes($tableName,array($value), $execute) .  "\n";
+                    $take_action = true;
+                    $correctedIndexes[$name] = true;
                 }
-                $take_action = true;
-                $correctedIndexes[$name] = true;
             } elseif ( !$this->compareVarDefs($compareIndices[$name],$value) ) {
                 // fields are different lets alter it
                 $sql .=	"/*INDEX MISMATCH WITH DATABASE - $name -  ROW ";
