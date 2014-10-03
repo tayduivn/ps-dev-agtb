@@ -486,36 +486,18 @@ class User extends Person {
     /**
      * Gets the BWC theme for this user.
      *
-     * If the theme isn't available in the user preferences, it will reset it.
-     * @see resetTheme()
+     * There are only 2 supported themes at this time: `RTL` and `RacerX`.
+     * `RTL` is returned if the current language is an RTL language, `RacerX` is
+     * returned otherwise.
      *
      * @return string The theme currently set to this user.
      */
     public function getBWCTheme()
     {
-        $theme = $this->getPreference('user_theme');
-
-        static $supportedThemes = array('RacerX', 'RTL');
-
-        if (!empty($theme) && in_array($theme, $supportedThemes)) {
-            return $theme;
-        }
-
-        return $this->resetBWCTheme();
-    }
-
-    /**
-     * Resets the BWC theme of this user based on the preferred language.
-     *
-     * @return string The theme that it was reset to.
-     */
-    public function resetBWCTheme()
-    {
         //FIXME: SC-3358 Should be getting the RTL languages from metadata.
         static $rtlLanguages = array('he_IL');
-
-        $theme = in_array($this->preferred_language, $rtlLanguages) ? 'RTL' : 'RacerX';
-        $this->setPreference('user_theme', $theme, 0, 'global');
+        $language = !empty($this->preferred_language) ? $this->preferred_language : $GLOBALS['current_language'];
+        $theme = in_array($language, $rtlLanguages) ? 'RTL' : 'RacerX';
 
         return $theme;
     }
@@ -600,11 +582,6 @@ class User extends Person {
         }
 
 		//END SUGARCRM flav=pro ONLY
-
-        // Reset the theme if the preferred language is about to change.
-        if ($this->fetched_row['preferred_language'] !== $this->preferred_language) {
-            $this->resetBWCTheme();
-        }
 
         // track the current reports to id to be able to use it if it has changed
         $old_reports_to_id = isset($this->fetched_row['reports_to_id']) ? $this->fetched_row['reports_to_id'] : '';

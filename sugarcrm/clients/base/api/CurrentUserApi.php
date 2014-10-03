@@ -64,8 +64,6 @@ class CurrentUserApi extends SugarApi
                 'shortHelp' => 'Updates current user',
                 'longHelp' => 'include/api/help/me_put_help.html',
                 'ignoreMetaHash' => true,
-                //FIXME This is required due to language and theme sync (BWC)
-                'keepSession' => true,
             ),
             'updatePassword' =>  array(
                 'reqType' => 'PUT',
