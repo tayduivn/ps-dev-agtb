@@ -36,7 +36,7 @@ $files=array(
     'modules/HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/Scanner/ScannerWeb.php',
     'modules/HealthCheck/Scanner/ScannerCli.php',
-    'modules/HealthCheck/static/css.css',
+    'styleguide/assets/css/upgrade.css',
     'styleguide/assets/font/fontawesome-webfont.eot',
     'styleguide/assets/font/fontawesome-webfont.svg',
     'styleguide/assets/font/fontawesome-webfont.ttf',
