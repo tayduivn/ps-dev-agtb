@@ -34,6 +34,8 @@ function packUpgradeWizardCli($phar, $params) {
         "modules/UpgradeWizard/version.json" => 'version.json',
         'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
         'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
+        'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
+        'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
     );
 
     foreach ($files as $file => $inArchive) {

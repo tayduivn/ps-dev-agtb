@@ -59,21 +59,21 @@ class PackTest extends PHPUnit_Framework_TestCase
         $manifest = array();
         $zip = $this->getMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/HealthCheck/Scanner/version.json';
-        $zip->expects($this->exactly(20))->method('addFile');
+        $zip->expects($this->exactly(21))->method('addFile');
         $zip->expects($this->exactly(3))->method('addFromString');
         $installdefs = array();
         list($zip, $manifest, $installdefs) = packHealthCheck($zip, $manifest, $installdefs, $params);
 
         $this->assertEquals(json_encode($expect), file_get_contents($versionFile));
         $this->assertArrayHasKey('version', $manifest);
-        $this->assertEquals($manifest['version'], $expect['version']);
+        $this->assertEquals($expect['version'], $manifest['version']);
         $this->assertArrayHasKey('acceptable_sugar_versions', $manifest);
-        $this->assertEquals($manifest['acceptable_sugar_versions'], array($expect['from']));
+        $this->assertEquals(array($expect['from']), $manifest['acceptable_sugar_versions']);
         $this->assertArrayHasKey('copy', $installdefs);
         $this->assertArrayHasKey('beans', $installdefs);
         $this->assertArrayHasKey(0, $installdefs['copy']);
-        $this->assertEquals($installdefs['copy'][0]['from'], '<basepath>/include/SugarSystemInfo/SugarSystemInfo.php');
-        $this->assertEquals($installdefs['copy'][0]['to'], 'include/SugarSystemInfo/SugarSystemInfo.php');
+        $this->assertEquals('<basepath>/modules/HealthCheck/Scanner/Scanner.php', $installdefs['copy'][0]['from']);
+        $this->assertEquals('modules/HealthCheck/Scanner/Scanner.php', $installdefs['copy'][0]['to']);
         unlink($versionFile);
     }
 
