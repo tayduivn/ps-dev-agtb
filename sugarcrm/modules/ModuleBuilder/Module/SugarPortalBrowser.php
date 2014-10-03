@@ -24,7 +24,7 @@ class SugarPortalBrowser
         foreach(SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
             // strip modules/ from name
             $mname = substr($mdir, 8);
-            if(SugarAutoLoader::fileExists("$mdir/metadata/studio.php")  && $this->isPortalModule($mname)) {
+            if(SugarAutoLoader::existingCustomOne("modules/{$mname}/metadata/studio.php")  && $this->isPortalModule($mname)) {
                 $this->modules[$mname] = new SugarPortalModule($mname);
             }
         }
