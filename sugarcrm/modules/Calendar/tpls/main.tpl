@@ -292,7 +292,8 @@ YAHOO.util.Event.onDOMReady(function(){
 <style type="text/css">
 {literal}
 	#cal-grid div.col, #cal-grid div.left_col{
-		border-top: 1px solid silver;	
+		border-top: 1px solid silver;
+		border-bottom: 1px solid silver;
 	}
 {/literal}
 </style>
