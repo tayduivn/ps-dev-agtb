@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Walking through custom directory and trim spaces in php files
  */
-class SugarUpgradeRemoveInlineHTML extends UpgradeScript
+class SugarUpgradeRemoveInlineHTMLSpacing extends UpgradeScript
 {
     public $order = 500;
     public $type = self::UPGRADE_CUSTOM;

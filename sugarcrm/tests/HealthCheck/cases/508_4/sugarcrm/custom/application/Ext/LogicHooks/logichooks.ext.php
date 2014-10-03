@@ -1,5 +1,3 @@
-
-
 <?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -12,5 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$data = 'foo';
-?>
+$hook_array['after_ui_frame'][] = array(1, 'fake', 'custom/hook.php', 'fake', 'fake');
