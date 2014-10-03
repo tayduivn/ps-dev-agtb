@@ -654,7 +654,7 @@
     },
 
     /**
-     * Searches for related field
+     * Searches for related field.
      * @param event
      */
     search: _.debounce(function (query) {

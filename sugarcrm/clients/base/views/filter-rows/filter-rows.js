@@ -751,7 +751,7 @@
                 field.$('.input-append').removeClass('date');
                 field.$('input, textarea').on('keyup',_.debounce(_.bind(_keyUpCallback, field), 400));
             });
-            if (fieldDef.type === 'relate' && $row.data('value')) {
+            if (fieldDef.type === 'relate' && !_.isEmpty($row.data('value'))) {
                 var self = this,
                     findRelatedName = app.data.createBeanCollection(fieldDef.module);
                 findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': {'$in': $row.data('value')}}]},
