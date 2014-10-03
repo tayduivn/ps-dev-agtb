@@ -1672,11 +1672,6 @@ function get_admin_modules_for_user($user)
         return $workflow_admin_modules;
     }
     $actions = ACLAction::getUserActions($user->id);
-    //check for ForecastSchedule because it doesn't exist in $workflow_mod_list
-    if (isset($actions['ForecastSchedule']['module']['admin']['aclaccess']) && ($actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_DEV ||
-        $actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)) {
-        $workflow_admin_modules['Forecasts'] = 'Forecasts';
-    }
     foreach ($workflow_mod_list as $key=>$val) {
         if(!in_array($val, $workflow_admin_modules) && ($val!='iFrames' && $val!='Feeds' && $val!='Home' && $val!='Dashboard'
             && $val!='Calendar' && $val!='Activities' && $val!='Reports') &&

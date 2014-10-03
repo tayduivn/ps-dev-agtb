@@ -23,7 +23,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
     private $opportunityClosed;
     private $quota;
     private $forecast;
-    //private $forecastSchedule;
 
     public static function setUpBeforeClass()
     {
@@ -65,10 +64,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         // currency is always base, set by forecast save()
         $this->forecast->save();
 
-        /*$this->forecastSchedule = SugarTestForecastScheduleUtilities::createForecastSchedule($timeperiod, $current_user);
-        $this->forecastSchedule->currency_id = $this->currency->id;
-        $this->forecastSchedule->save();*/
-
     }
 
     public function tearDown()
@@ -77,7 +72,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
-        //SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
@@ -97,7 +91,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $oppUsDollarClosedPreJob = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
         $quotaBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
         $forecastBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
-        //$forecastScheduleBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
         // change the conversion rate
         $this->currency->conversion_rate = '2.345';
@@ -119,7 +112,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $oppUsDollarClosed = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
         $quotaBaseRate = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
         $forecastBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
-        //$forecastScheduleBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
         $this->assertNotEquals($oppBaseRatePreJob, $oppBaseRate, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
         $this->assertNotEquals($oppUsDollarPreJob, $oppUsDollar, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob',2);
@@ -127,7 +119,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($oppUsDollarClosedPreJob, $oppUsDollarClosed, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob for closed opportunity',2);
         $this->assertNotEquals($quotaBaseRatePreJob, $quotaBaseRate, 'quotas.base_rate was not modified by CurrencyRateSchedulerJob');
         $this->assertEquals($forecastBaseRatePreJob, $forecastBaseRate, 'forecasts.base_rate was modified by CurrencyRateSchedulerJob');
-        //$this->assertNotEquals($forecastScheduleBaseRatePreJob, $forecastScheduleBaseRate, 'forecast_schedule.base_rate modified by CurrencyRateSchedulerJob');
     }
 
     /**

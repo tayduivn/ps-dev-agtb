@@ -44,8 +44,6 @@ class ForecastsSeedData
         foreach ($timeperiods as $timeperiod_id => $timeperiod) {
 
             foreach ($commit_order as $commit_type_array) {
-                //create forecast schedule for this timeperiod record and user.
-                //create forecast schedule using this record because there will be one
                 //direct entry per user, and some user will have a Rollup entry too.
 
                 $ratio = array('.8', '1', '1.2', '1.4');

@@ -1116,7 +1116,6 @@ $mod_strings = array (
 	'Expressions'  => 'Expression',
 	'Feeds'          => 'Feed',
 	'ForecastOpportunities'  => 'ForecastOpportunities',
-	'ForecastSchedule'  => 'ForecastSchedule',
 	'Groups' => 'Group',
 	'Holidays' => 'Holiday',
 	'Import_1'       => 'ImportMap',

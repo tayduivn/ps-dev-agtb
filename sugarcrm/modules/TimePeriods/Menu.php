@@ -22,7 +22,7 @@ global $mod_strings;
 global $current_user;
 
 $module_menu=Array();
-if((is_admin($current_user)|| is_admin_for_module($current_user,'Forecasts')|| is_admin_for_module($current_user,'ForecastSchedule')))
+if((is_admin($current_user)|| is_admin_for_module($current_user,'Forecasts')))
 {
 $module_menu = Array(
 	Array("index.php?module=TimePeriods&action=EditView&return_module=TimePeriods&return_action=DetailView", $mod_strings['LNK_NEW_TIMEPERIOD'],"CreateTimePeriods"),

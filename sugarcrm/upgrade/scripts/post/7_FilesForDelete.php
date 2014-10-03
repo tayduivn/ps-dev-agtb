@@ -227,6 +227,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Opportunities/clients/base/views/create-actions.php';
             $files[] = 'modules/Products/clients/base/views/create-actions.php';
             $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions.php';
+            $files[] = 'modules/ForecastSchedule';
         }
 
         $this->fileToDelete($files);

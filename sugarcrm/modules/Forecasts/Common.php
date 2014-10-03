@@ -147,36 +147,11 @@ class Common {
 	//using the forecast_schedule table find all the timeperiods the
 	//logged in user needs to forecast for.
     //todo add date format for sqlserver.
+    /**
+     * @deprecated
+     */
 	function get_my_timeperiods() {
-
-        $nowdate = $this->db->quoted(TimeDate::getInstance()->nowDbDate());
-        //current system date must fall between forecast start date (forecast schedule) and end date (time period)
-        //not checking systemdate against the time period start date because users may  want to start forecasting before the actual
-        //time period begins.
-        $query = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy"
-            . " FROM forecast_schedule a, timeperiods b"
-            . " WHERE a.timeperiod_id = b.id"
-            . " AND b.start_date <= {$nowdate} "
-            . " AND b.end_date >= {$nowdate} "
-            . " AND a.deleted = 0"
-            . " AND b.deleted = 0"
-            . " AND a.status = 'Active'"
-            . " ORDER BY b.start_date, b.end_date";
-        //check whether the logged in user needs to forecast for this period or not.
-        //for all the rows returned make sure that user_id is the logged in user
-        //or someone this user report's to.
-        $result = $this->db->query($query,false," Error filling in list of timeperiods to be forecasted: ");
-
-        while (($row = $this->db->fetchByAssoc($result)) != null) {
-
-            if ($row['user_id'] == $this->current_user || ( $row['cascade_hierarchy'] == '1' && in_array($row['user_id'],$this->my_managers)))  {
-
-                if (!(array_key_exists($row['timeperiod_id'],$this->my_timeperiods))) {
-
-                    $this->my_timeperiods[$row['timeperiod_id']]=$row['name'];
-                }
-            }
-        }
+         $this->my_timeperiods = array();
     }
 
 	//returns a list of timeperiods that users has committed forecasts for.

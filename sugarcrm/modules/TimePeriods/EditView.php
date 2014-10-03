@@ -34,7 +34,7 @@ $focus = BeanFactory::getBean('TimePeriods');
 
 if (!isset($_REQUEST['record'])) $_REQUEST['record'] = "";
 
-if (!is_admin($current_user) && !is_admin_for_module($current_user,'Forecasts')&& !is_admin_for_module($current_user,'ForecastSchedule') && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
+if (!is_admin($current_user) && !is_admin_for_module($current_user,'Forecasts') && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

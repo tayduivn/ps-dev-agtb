@@ -239,7 +239,6 @@ class ForecastsDefaults
                     $amount_usdollar = 'discount_amount_usdollar';
                     break;
                 case 'forecasts':
-                case 'forecast_schedule':
                     $isUsDollar = false;
                     break;
                 case 'quotes':

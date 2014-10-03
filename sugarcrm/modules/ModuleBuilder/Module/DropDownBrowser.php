@@ -25,7 +25,6 @@ class DropDownBrowser
         'commit_stage_binary_dom',
         'forecasts_config_ranges_options_dom',
         'forecasts_timeperiod_types_dom',
-        'forecast_schedule_status_dom',
         'forecasts_chart_options_group',
         'forecasts_config_worksheet_layout_forecast_by_options_dom',
         'forecasts_timeperiod_options_dom',
