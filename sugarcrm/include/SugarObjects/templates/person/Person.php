@@ -193,6 +193,7 @@ class Person extends Basic
         global $timedate;
         $vcalBean = BeanFactory::getBean('vCals');
         $vcalData = $vcalBean->get_vcal_freebusy($this, true);
+        $vcalData = str_replace("\r\n", "\n", $vcalData);
         $lines = explode("\n", $vcalData);
         $utc = new DateTimeZone("UTC");
 
