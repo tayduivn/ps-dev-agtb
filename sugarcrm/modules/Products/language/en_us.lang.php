@@ -140,6 +140,7 @@ $mod_strings = array(
     'LBL_PROBABILITY' => 'Probability (%)',
     'LBL_SALES_STAGE' => 'Sales Stage',
     'LBL_SALES_STATUS' => 'Revenue Line Status',
+    'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
 
     'LBL_CONVERT_TO_QUOTE_ERROR' => 'Error:',
     'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Quoted Line Item to a Quote',

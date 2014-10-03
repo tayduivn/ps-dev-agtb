@@ -206,7 +206,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'include/Expressions/Expression/Numeric/CurrencyDivideExpression.php';
             $files[] = 'include/Expressions/Expression/Numeric/CurrencySumRelatedExpression.php';
         }
-
+        
         if (version_compare($this->from_version, '7.5', '<')) {
             $files[] = 'clients/portal/fields/date';
             $files[] = 'clients/portal/fields/datetimecombo';
@@ -228,6 +228,12 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Products/clients/base/views/create-actions.php';
             $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions.php';
             $files[] = 'modules/ForecastSchedule';
+        }
+
+        if (version_compare($this->from_version, '7.6', '<=')) {
+            $files[] = 'modules/RevenueLineItems/clients/base/api/RevenueLineItemsPipelineChartApi.php';
+            $files[] = 'modules/Products/clients/base/api/ProductsPipelineChartApi.php';
+            $files[] = 'modules/Opportunities/clients/base/api/OpportunitiesPipelineChartApi.php';
         }
 
         $this->fileToDelete($files);

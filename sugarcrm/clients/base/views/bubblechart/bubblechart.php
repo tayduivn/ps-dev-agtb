@@ -17,7 +17,7 @@ $viewdefs['base']['view']['bubblechart'] = array(
             'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
             'description' => 'LBL_TOP10_OPPORTUNITIES_CHART_DESC',
             'config' => array(
-                'filter_duration' => '0',
+                'filter_duration' => 'current',
             ),
             'preview' => array(),
             'filter' => array(
@@ -46,8 +46,9 @@ $viewdefs['base']['view']['bubblechart'] = array(
                 array(
                     'name' => 'filter_duration',
                     'label' => 'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS',
-                    'type' => 'enum',
-                    'options' => 'top10_opportunities_duration_options',
+                    'type' => 'timeperiod',
+                    'options' => 'generic_timeperiod_options',
+                    'use_generic_timeperiods' => true,
                     'enum_width' => 'auto',
                 ),
                 array(
@@ -64,8 +65,9 @@ $viewdefs['base']['view']['bubblechart'] = array(
         array(
             'name' => 'filter_duration',
             'label' => 'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS',
-            'type' => 'enum',
-            'options' => 'top10_opportunities_duration_options',
+            'type' => 'timeperiod',
+            'options' => 'generic_timeperiod_options',
+            'use_generic_timeperiods' => true,
             'enum_width' => 'auto',
         ),
     ),

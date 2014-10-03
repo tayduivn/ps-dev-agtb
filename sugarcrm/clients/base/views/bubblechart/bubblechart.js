@@ -41,7 +41,6 @@
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
         this._super('initialize', [options]);
-
         this.forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities';
 
         var fields = [
@@ -83,6 +82,10 @@
      */
     initDashlet: function(view) {
         var self = this;
+
+        if (this.settings.get('filter_duration') == 0) {
+            this.settings.set({'filter_duration':'current'}, {'silent':true});
+        }
 
         this.setDateRange();
 
@@ -278,10 +281,16 @@
      */
     setDateRange: function() {
         var now = new Date(),
-            duration = parseInt(this.settings.get('filter_duration'), 10),
+            mapping = {
+                'current' : 0,
+                'next' : 3,
+                'year' : 12
+            },
+            duration = mapping[this.settings.get('filter_duration')],
             startMonth = Math.floor(now.getMonth() / 3) * 3,
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
             endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
+
         this.dateRange = {
             'begin': app.date.format(startDate, 'Y-m-d'),
             'end': app.date.format(endDate, 'Y-m-d')
