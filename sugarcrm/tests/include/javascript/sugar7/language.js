@@ -4,22 +4,22 @@ describe('Sugar7 Language', function() {
         app = SugarTest.app;
     });
     afterEach(function() {
-        app.cache.cutAll();
         sinon.collection.restore();
     });
-    describe('Language select', function() {
-        it('should toggle rtl class based on language changes', function() {
+    describe('direction change', function() {
+        it('should toggle rtl class based on language direction', function() {
             sinon.collection.stub(app.lang, 'setLanguage', function(lang) {
-                app.cache.set('lang', lang);
-                app.user.setPreference('lang', lang);
-                app.events.trigger('app:locale:change');
+                app.lang.direction = lang === 'he_IL' ? 'rtl' : 'ltr';
+                app.events.trigger('lang:direction:change');
             });
             app.lang.setLanguage('en_us');
             expect($('html').hasClass('rtl')).toBeFalsy();
 
-            //Only enable the rtl class when Hebrew is selected
+            //Only enable the rtl class when the direction is `rtl`
             app.lang.setLanguage('he_IL');
             expect($('html').hasClass('rtl')).toBeTruthy();
+
+            $('html').removeClass('rtl');
         });
     });
 });

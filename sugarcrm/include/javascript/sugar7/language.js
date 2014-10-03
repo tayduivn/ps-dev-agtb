@@ -44,14 +44,10 @@
         app.date.lang(app.user.getPreference('language'));
     });
 
-    /**
-     * Enable RTL for certain language packs.
-     */
-    app.events.on('app:init app:locale:change app:sync:complete', function() {
-        var language = app.user.getPreference('language') || app.cache.get('lang'),
-        //FIXME: SC-3358 Should be getting the RTL languages from metadata.
-            rtlLanguages = ['he_IL'],
-            rtlClass = _.contains(rtlLanguages, language);
-        $('html').toggleClass('rtl', rtlClass);
+    app.events.on('lang:direction:change', function() {
+        var direction = app.lang.direction,
+            isRTL = direction === 'rtl';
+        $('html').toggleClass('rtl', isRTL);
     });
+
 })(SUGAR.App);

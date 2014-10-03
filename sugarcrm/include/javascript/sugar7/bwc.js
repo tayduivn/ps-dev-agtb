@@ -36,9 +36,8 @@
          * @return {Void}
          */
         login: function(redirectUrl, callback) {
-            var url = app.api.buildURL('oauth2', 'bwc/login'),
-                rtl = $('html').hasClass('rtl');
-            return app.api.call('create', url, {'rtl': rtl }, {
+            var url = app.api.buildURL('oauth2', 'bwc/login');
+            return app.api.call('create', url, {}, {
                 success: function(data) {
                     // Set the session name into the cache so that certain bwc
                     // modules can access it as needed (studio)
