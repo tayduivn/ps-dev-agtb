@@ -19,10 +19,16 @@
         {{#if isManager}}
         <div class="span6">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}" data-action="visibility-switcher" rel="tooltip" data-placement="bottom" value="user" title="{{{str "LBL_DASHLET_MY_PIPELINE" this.model.module this.context}}}" track="click:viewMyUserPipeline">
+                <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}"
+                        data-action="visibility-switcher" rel="tooltip" data-placement="bottom" value="user"
+                        title="{{{str "LBL_DASHLET_MY_PIPELINE" 'Forecasts' this.context}}}"
+                        track="click:viewMyUserPipeline">
                     <i class="icon-user"></i>
                 </button>
-                <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}" data-action="visibility-switcher" rel="tooltip" data-placement="bottom" value="group" title="{{{str "LBL_DASHLET_MY_TEAMS_PIPELINE" this.model.module this.context}}}" track="click:viewMyTeamsPipeline">
+                <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}"
+                        data-action="visibility-switcher" rel="tooltip" data-placement="bottom"
+                        value="group" title="{{{str "LBL_DASHLET_MY_TEAMS_PIPELINE" 'Forecasts' this.context}}}"
+                        track="click:viewMyTeamsPipeline">
                     <i class="icon-group"></i>
                 </button>
             </div>
