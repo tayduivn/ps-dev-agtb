@@ -147,5 +147,8 @@ $viewdefs['base']['filter']['operators'] = array(
     'radioenum' => array(
         '$equals' => 'LBL_OPERATOR_IS',
         '$not_equals' => 'LBL_OPERATOR_IS_NOT',
-    )
+    ),
+    'parent' => array(
+        '$equals' => 'LBL_OPERATOR_IS',
+    ),
 );
