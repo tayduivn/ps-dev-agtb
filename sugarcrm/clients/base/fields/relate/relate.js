@@ -72,6 +72,7 @@
     minChars: 1,
     fieldTag: 'input.select2',
     plugins: ['QuickSearchFilter', 'EllipsisInline'],
+    separator: '|',
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -209,17 +210,26 @@
 
             var inList = _.contains(this.view.name === 'recordlist'),
                 relatedModuleField = this.getRelatedModuleField();
-
             this.$(this.fieldTag).select2({
                 width: inList?'off':'100%',
                 dropdownCssClass: _.bind(this.createCssClasses, this),
                 multiple : !!this.def.isMultiSelect,
                 containerCssClass: _.bind(this.createCssClasses, this),
+                separator: self.separator,
+//                tokenSeparators: [self.separator],
                 initSelection: function (el, callback) {
                     var $el = $(el),
-                        id = $el.data('id'),
-                        text = $el.val();
-                    callback({id: id, text: text});
+                        id = $el.val(),
+                        text = $el.data('rname');
+
+                    if (!self.def.isMultiSelect) {
+                        return callback({id: id, text: text});
+                    }
+                    id = id.split(self.separator);
+                    text = text.split(self.separator);
+                    callback(_.map(id, function(value, index) {
+                        return {id: value, text: text[index]};
+                    }));
                 },
                 formatInputTooShort: function () {
                     return '';
@@ -255,15 +265,15 @@
                     }
                     var id = e.val,
                         plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find('span').text() : $(this).data('id'),
+                        value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
                         collection = plugin.context,
                         attributes = {};
                     if (_.isUndefined(id)) {
                         return;
                     }
-                    // Update the source element or else reverting back to the
-                    // original value will not trigger a change event.
-                    plugin.opts.element.data('id', id);
+
+                    //Update the source element or else reverting back to the original value will not trigger a change event.
+                    plugin.opts.element.data('rname', id);
                     if (collection && !_.isEmpty(id)) {
                         // if we have search results use that to set new values
                         var model = collection.get(id);
@@ -291,8 +301,8 @@
                 width: '100%',
                 initSelection: function(el, callback) {
                     var $el = $(el),
-                        id = $el.data('id'),
-                        text = $el.val();
+                        id = $el.val(),
+                        text = $el.data('rname');
                     callback({id: id, text: text});
                 },
                 formatInputTooShort: function() {
@@ -381,6 +391,14 @@
         }
 
         this._buildRoute();
+
+        if (_.isArray(value)) {
+            this.formattedRname = value.join(this.separator);
+            this.formattedIds = this.model.get(this.def.id_name).join(this.separator);
+        } else {
+            this.formattedRname = value;
+            this.formattedIds = this.model.get(this.def.id_name);
+        }
         return value;
     },
 
@@ -717,7 +735,7 @@
     unbindDom: function() {
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
-    },
+    }
 
 
 })
