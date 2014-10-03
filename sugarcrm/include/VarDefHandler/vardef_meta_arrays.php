@@ -87,6 +87,7 @@ $vardef_meta_array = array(
         'exclusion' => array(
             'type' => array('id', 'link', 'team_list', 'time'),
             'custom_type' => array('id', 'link', 'team_list', 'time'),
+            'workflow' => array(false),
             'name' => array(
                 'parent_type',
                 'team_name',
@@ -178,6 +179,7 @@ $vardef_meta_array = array(
                 'Products',
                 'CampaignLog',
             ),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -201,6 +203,7 @@ $vardef_meta_array = array(
         ),
         'exclusion' => array(
             'name' => array('direct_reports', 'accept_status'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -238,6 +241,7 @@ $vardef_meta_array = array(
         ),
         'exclusion' => array(
             'name' => array('direct_reports', 'accept_status'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -343,6 +347,7 @@ $vardef_meta_array = array(
         ),
         'exclusion' => array(
             'name' => array('direct_reports', 'accept_status'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(

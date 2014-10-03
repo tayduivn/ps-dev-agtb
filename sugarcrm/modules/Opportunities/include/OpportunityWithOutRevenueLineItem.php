@@ -92,11 +92,13 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         'date_closed_timestamp' => array(
             'formula' => 'timestamp($date_closed)'
         ),
-        'closed_revenue_line_items' => array(
-            'reportable' => false,
-        ),
         'total_revenue_line_items' => array(
             'reportable' => false,
+            'workflow' => false
+        ),
+        'closed_revenue_line_items' => array(
+            'reportable' => false,
+            'workflow' => false
         )
     );
 
@@ -175,10 +177,19 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             SugarAutoLoader::unlink($this->rliStudioFile);
         }
 
+        // hide the RLI module in workflows
+        $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(false);
+
+        // hide the mega menu tab
         $this->setRevenueLineItemModuleTab(false);
 
         // disable the ACLs on RevenueLineItems
         ACLAction::removeActions('RevenueLineItems');
+
+        // add the RLI module
+        $affected_modules[] = 'RevenueLineItems';
+
+        return $affected_modules;
     }
 
     /**
@@ -381,5 +392,148 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         } else {
             $this->dateClosedMigration = 'max';
         }
+    }
+
+    /**
+     * Lets make sure the WorkFlows are cleaned up
+     */
+    protected function processWorkFlows()
+    {
+        $this->deleteRevenueLineItemsWorkFlows();
+        $this->deleteRevenueLineItemsRelatedActions();
+        $this->deleteRevenueLineItemsRelatedAlerts();
+        $this->deleteRevenueLineItemsRelatedTriggers();
+        $this->deleteRevenueLineItemWorkFlowEmailTemplates();
+
+        parent::processWorkFlows();
+    }
+
+    /**
+     * Lets delete all the RevenueLineItem WorkFlows
+     *
+     * @throws SugarQueryException
+     */
+    private function deleteRevenueLineItemsWorkFlows()
+    {
+        /* @var $workFlow WorkFlow */
+        $workFlow = BeanFactory::getBean('WorkFlow');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from($workFlow);
+        $sq->where()
+            ->equals('base_module', 'RevenueLineItems');
+
+        $rows = $sq->execute();
+
+        // now delete all the workflows that were found
+        // this will also delete all the related items
+        foreach ($rows as $row) {
+            $workFlow->mark_deleted($row['id']);
+        }
+
+    }
+
+    /**
+     * Delete all the Actions that do something on the RevenueLineItems Module
+     *
+     * @throws SugarQueryException
+     */
+    private function deleteRevenueLineItemsRelatedActions()
+    {
+        // get the action shells
+        $actionShells = BeanFactory::getBean('WorkFlowActionShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($actionShells);
+        $sq->where()
+            ->queryOr()
+                ->equals('rel_module', 'revenuelineitems')
+                ->equals('action_module', 'revenuelineitems');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $actionShells->retrieve($row['id']);
+            $actionShells->check_for_child_bridge(true);
+
+            mark_delete_components($actionShells->get_linked_beans('actions', 'WorkFlowAction'));
+            mark_delete_components($actionShells->get_linked_beans('rel1_action_fil', 'Expression'));
+            $actionShells->mark_deleted($row['id']);
+            $actionShells->get_workflow_object()->write_workflow();
+        }
+    }
+
+    /**
+     * Delete all the Alerts that do something on the RevenueLineItems Module
+     *
+     * @throws SugarQueryException
+     */
+    private function deleteRevenueLineItemsRelatedAlerts()
+    {
+        // get the action shells
+        $alertShells = BeanFactory::getBean('WorkFlowAlertShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($alertShells);
+        $sq->where()
+            ->queryOr()
+            ->equals('rel_module2', 'revenuelineitems')
+            ->equals('rel_module2', 'revenuelineitems');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $alertShells->retrieve($row['id']);
+
+            //mark delete alert components and sub expression components
+            $alert_object_list = $alertShells->get_linked_beans('alert_components', 'WorkFlowAlert');
+
+            foreach ($alert_object_list as $alert_object) {
+                mark_delete_components($alert_object->get_linked_beans('expressions', 'Expression'));
+                mark_delete_components($alert_object->get_linked_beans('rel1_alert_fil', 'Expression'));
+                mark_delete_components($alert_object->get_linked_beans('rel2_alert_fil', 'Expression'));
+                $alert_object->mark_deleted($alert_object->id);
+            }
+
+            $alertShells->mark_deleted($row['id']);
+            $alertShells->get_workflow_object()->write_workflow();
+        }
+    }
+
+    /**
+     * Delete all the Triggers that are triggered by the RLI Module
+     *
+     * @throws SugarQueryException
+     */
+    private function deleteRevenueLineItemsRelatedTriggers()
+    {
+        // get the action shells
+        $triggerShells = BeanFactory::getBean('WorkFlowTriggerShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($triggerShells);
+        $sq->where()
+            ->equals('rel_module', 'revenuelineitems');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $triggerShells->mark_deleted($row['id']);
+        }
+    }
+
+    /**
+     * Delete all the Email Templates for the Revenue Line Items Module
+     */
+    private function deleteRevenueLineItemWorkFlowEmailTemplates()
+    {
+        $db = DBManagerFactory::getInstance();
+        $sql = 'UPDATE email_templates SET deleted = 1 WHERE base_module = ' . $db->quoted('RevenueLineItems');
+
+        $db->query($sql);
     }
 }

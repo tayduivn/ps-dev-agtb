@@ -88,11 +88,13 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
         'date_closed_timestamp' => array(
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")'
         ),
-        'closed_revenue_line_items' => array(
-            'reportable' => true,
-        ),
         'total_revenue_line_items' => array(
             'reportable' => true,
+            'workflow' => true
+        ),
+        'closed_revenue_line_items' => array(
+            'reportable' => true,
+            'workflow' => true
         )
     );
 
@@ -138,7 +140,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
 
         $file_contents = <<<EOL
 <?php
-
+\$dictionary['Opportunity']['fields']['revenuelineitems']['workflow'] = true;
 \$dictionary['Opportunity']['duplicate_check']['FilterDuplicateCheck']['filter_template'][0]['\$and'][1] = array('sales_status' => array('\$not_equals' => 'Closed Lost'));
 \$dictionary['Opportunity']['duplicate_check']['FilterDuplicateCheck']['filter_template'][0]['\$and'][2] = array('sales_status' => array('\$not_equals' => 'Closed Won'));
 EOL;
@@ -206,11 +208,18 @@ EOL;
         // enable the ACLs on RevenueLineItems
         ACLAction::addActions('RevenueLineItems');
 
+        // show the rli module in WorkFlows
+        $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(true);
+
         // show the rli module in the mega menu
         $this->setRevenueLineItemModuleTab(true);
 
         // place the studio file
         sugar_touch($this->rliStudioFile);
+
+        $affected_modules[] = 'RevenueLineItems';
+
+        return $affected_modules;
     }
 
 

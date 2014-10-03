@@ -131,10 +131,13 @@ abstract class OpportunitySetup
 
         $this->bean = BeanFactory::getBean('Opportunities');
 
-        $this->fixRevenueLineItemModule();
+        $rnr_modules = $this->fixRevenueLineItemModule();
 
-        // r&r the opp module
-        $this->runRepairAndRebuild(array('RevenueLineItems'));
+        // lets fix the workflows module
+        $this->processWorkFlows();
+
+        // r&r the rli + related modules
+        $this->runRepairAndRebuild($rnr_modules);
     }
 
     /**
@@ -434,6 +437,174 @@ abstract class OpportunitySetup
                 AND (platform = 'base' OR platform IS NULL OR platform = '')";
             $db->query($sql);
         }
+    }
+
+    /**
+     * Process WorkFlows
+     *
+     * This will mark any WorkFlows based on the Opportunity Module as Inactive so they don't run and potentially blow
+     * up after the convert.
+     *
+     * @throws SugarQueryException
+     */
+    protected function processWorkFlows()
+    {
+        $this->markWorkFlowsWithOppActionShellsInactive();
+        $this->markWorkFlowsWithOppAlertShellsInactive();
+        $this->markWorkFlowsWithOppTriggerShellsInactive();
+
+        // mark all WorkFlows with their base of opportunities as status '0' (Inactive)
+        /* @var $workFlow WorkFlow */
+        $workFlow = BeanFactory::getBean('WorkFlow');
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from($workFlow);
+        $sq->where()
+            ->equals('status', 1)
+            ->equals('base_module', $this->bean->module_name);
+
+        $rows = $sq->execute();
+
+        // now mark all the WorkFlows that were found as In-Active (status = 0)
+        foreach ($rows as $row) {
+            $workFlow->retrieve($row['id']);
+            $workFlow->status = 0;
+            $workFlow->save(false);
+            $workFlow->write_workflow();
+        }
+    }
+
+    /**
+     * Find any Action Shells for the Opportunity Module and mark it's related workflow inactive
+     *
+     * @throws SugarQueryException
+     */
+    private function markWorkFlowsWithOppActionShellsInactive()
+    {
+        // get the action shells
+        $actionShells = BeanFactory::getBean('WorkFlowActionShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($actionShells);
+        $sq->where()
+            ->queryOr()
+                ->equals('rel_module', 'opportunities')
+                ->equals('action_module', 'opportunities');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $actionShells->retrieve($row['id']);
+            $workflow = $actionShells->get_workflow_object();
+            $workflow->status = 0;
+            $workflow->save();
+            $workflow->write_workflow();
+        }
+    }
+
+    /**
+     * Find any Alert Shells for the Opportunity Module and Mark it's related workflow inactive
+     *
+     * @throws SugarQueryException
+     */
+    private function markWorkFlowsWithOppAlertShellsInactive()
+    {
+        // get the action shells
+        $alertShells = BeanFactory::getBean('WorkFlowAlertShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($alertShells);
+        $sq->where()
+            ->queryOr()
+            ->equals('rel_module2', 'opportunities')
+            ->equals('rel_module2', 'opportunities');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $alertShells->retrieve($row['id']);
+            $workflow = $alertShells->get_workflow_object();
+            $workflow->status = 0;
+            $workflow->save();
+            $workflow->write_workflow();
+        }
+    }
+
+    /**
+     * Find any Trigger Shells for the Opportunity Module and Mark it's related workflow inactive
+     *
+     * @throws SugarQueryException
+     */
+    private function markWorkFlowsWithOppTriggerShellsInactive()
+    {
+        // get the action shells
+        $triggerShells = BeanFactory::getBean('WorkFlowTriggerShells');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'parent_id'));
+        $sq->from($triggerShells);
+        $sq->where()
+            ->equals('rel_module', 'opportunities');
+
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $triggerShells->retrieve($row['id']);
+            $workflow = $triggerShells->get_workflow_object();
+            $workflow->status = 0;
+            $workflow->save();
+            $workflow->write_workflow();
+        }
+    }
+
+    protected function toggleRevenueLineItemsLinkInWorkFlows($show = false)
+    {
+        // make sure all the links are visible in workflows
+        /* @var $rli_bean = RevenueLineItem */
+        $rli_bean  = BeanFactory::getBean('RevenueLineItems');
+        $rli_links = $rli_bean->get_linked_fields();
+
+        $rnr_modules = array();
+
+        foreach($rli_links as $name => $link) {
+            if ($rli_bean->load_relationship($name) && $rli_bean->$name instanceof Link2) {
+                $rel_module = $rli_bean->$name->getRelatedModuleName();
+                $rel_bean = BeanFactory::getBeanName($rel_module);
+                $rel_name = $rli_bean->$name->getRelatedModuleLinkName();
+
+                // if for some reason we didn't find a rli_name on the other side of the link
+                // we should just ignore it
+                if (empty($rel_name)) {
+                    continue;
+                }
+
+                $file = 'rli_link_workflow.php';
+                $folder = "custom/Extension/modules/{$rel_module}/Ext";
+
+                SugarAutoLoader::ensureDir($folder . '/Vardefs');
+
+                if ($show === true) {
+                    $file_contents = <<<EOL
+<?php
+\$dictionary['{$rel_bean}']['fields']['{$rel_name}']['workflow'] = true;
+EOL;
+
+                    sugar_file_put_contents($folder . '/Vardefs/' . $file, $file_contents);
+                } else {
+                    if (SugarAutoLoader::fileExists($folder . '/Vardefs/' . $file)) {
+                        // since we don't what to show it, just remove the file as it defaults
+                        // to false out of the box.
+                        SugarAutoLoader::unlink($folder . '/Vardefs/' . $file);
+                    }
+                }
+
+                $rnr_modules[] = $rel_module;
+            }
+        }
+
+        return $rnr_modules;
     }
 
     abstract public function doDataConvert();

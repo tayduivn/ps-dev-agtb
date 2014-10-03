@@ -255,6 +255,7 @@ $dictionary['Account'] = array(
             'module' => 'RevenueLineItems',
             'bean_name' => 'RevenueLineItem',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'forecastworksheets' =>  array(
             'name' => 'forecastworksheets',

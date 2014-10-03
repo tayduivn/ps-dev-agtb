@@ -390,6 +390,7 @@ $dictionary['Email'] = array(
             'module' => 'RevenueLineItems',
             'bean_name' => 'RevenueLineItem',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'products' => array(
             'name' => 'products',

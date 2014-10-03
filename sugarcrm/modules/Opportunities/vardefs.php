@@ -346,6 +346,7 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'enforced' => true,
             'studio' => false,
+            'workflow' => false,
             'reportable' => false
         ),
         'closed_revenue_line_items' => array(
@@ -356,6 +357,7 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'enforced' => true,
             'studio' => false,
+            'workflow' => false,
             'reportable' => false
         ),
         //END SUGARCRM flav=ent ONLY
@@ -521,6 +523,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_RLI',
             'relationship' => 'opportunities_revenuelineitems',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'forecastworksheets' =>  array(
             'name' => 'forecastworksheets',
