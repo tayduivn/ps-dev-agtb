@@ -117,7 +117,7 @@
     _toggleVisibility: function(visible) {
         this.$('.main-pane').toggleClass('span12', !visible).toggleClass('span8', visible);
 
-        this.$('.side').css('visibility', visible ? 'visible' : 'hidden');
+        this.$('.side').toggleClass('side-collapsed', !visible);
 
         $(window).trigger('resize');
 
