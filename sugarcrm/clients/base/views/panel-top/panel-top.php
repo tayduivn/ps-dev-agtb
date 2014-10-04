@@ -41,4 +41,10 @@ $viewdefs['base']['view']['panel-top'] = array(
             ),
         ),
     ),
+    'fields' => array(
+        array(
+            'name' => 'count',
+            'type' => 'count',
+        ),
+    ),
 );

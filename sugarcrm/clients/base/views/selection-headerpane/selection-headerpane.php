@@ -20,6 +20,10 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'type' => 'label',
             'default_value' => 'LBL_SEARCH_AND_SELECT',
         ),
+        array(
+            'name' => 'count',
+            'type' => 'count',
+        ),
     ),
     'buttons' => array(
         array(

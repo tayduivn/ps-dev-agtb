@@ -39,11 +39,20 @@
     plugins: ['LinkedModel'],
 
     /**
-     * @override
-     * @param opts
+     * @inheritDoc
      */
-    initialize: function(opts) {
-        app.view.View.prototype.initialize.call(this, opts);
+    initialize: function(options) {
+        // FIXME: SC-3594 will address having child views extending metadata
+        // from its parent.
+        options.meta = _.extend(
+            {},
+            app.metadata.getView(null, 'panel-top'),
+            app.metadata.getView(options.module, 'panel-top'),
+            options.meta
+        );
+
+        this._super('initialize', [options]);
+
         var context = this.context;
         // This is in place to get the lang strings from the right module. See
         // if there is a better way to do this later.

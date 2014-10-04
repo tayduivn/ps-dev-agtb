@@ -10,14 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="label label-module label-{{module}} pull-left">{{moduleIconLabel module}}</div> <h4 class="pull-left">{{str layout.label parentModule}}</h4>
-{{#each meta.fields}}
-<span class="pull-left panel-field">
-    {{field ../this model=../model}}
-</span>
-{{/each}}
-<div class="subpanel-controls btn-toolbar pull-right">
-    {{#each meta.buttons}}
-        {{field ../this}}
-    {{/each}}
-</div>
+{{#if collection.dataFetched}}
+{{#if countLabel}}
+<span class="count">({{countLabel}})</span>
+{{/if}}
+{{/if}}
