@@ -686,13 +686,22 @@
          * {@link Data.Bean} has changed.
          */
         BeanOverrides.prototype.hasChanged = function(attr) {
-            var changed = false;
-
-            if (attr == null || _.contains(this.model.getCollectionFieldNames(), attr)) {
-                changed = this.model.get(attr).hasChanged();
+            if (attr == null) {
+                // test all collection fields
+                attr = this.model.getCollectionFieldNames();
+            } else if (_.contains(this.model.getCollectionFieldNames(), attr)) {
+                // only test one collection field
+                attr = [attr];
+            } else {
+                // don't test any collection fields
+                attr = [];
             }
 
-            return changed;
+            return _.some(attr, function(attribute) {
+                var collection = this.get(attribute);
+
+                return (collection && collection.hasChanged());
+            }, this.model);
         };
 
         /**
@@ -709,7 +718,7 @@
             _.each(this.model.getCollectionFieldNames(), function(attr) {
                 var collection = this.get(attr);
 
-                if (collection.hasChanged()) {
+                if (collection && collection.hasChanged()) {
                     changed[attr] = collection;
                 }
             }, this.model);

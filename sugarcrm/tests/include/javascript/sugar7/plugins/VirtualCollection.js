@@ -424,15 +424,30 @@ describe('Plugins.VirtualCollection', function() {
             });
         });
 
-        describe('has a collection field changed?', function() {
-            it('should return false', function() {
-                expect(model.hasChanged(attribute)).toBe(false);
+        describe('has the bean changed?', function() {
+            using('attribute names', [undefined, attribute], function(attr) {
+                it('should return true when the collection has changed but no other attributes have', function() {
+                    model.get(attribute).remove([2]);
+
+                    expect(model.hasChanged(attr)).toBe(true);
+                });
             });
 
-            it('should return true', function() {
-                model.get(attribute).remove([2]);
+            using('attribute names', [undefined, 'foo'], function(attr) {
+                it('should return true when the collection has not changed but another attribute has', function() {
+                    model.set('foo', 'bar');
 
-                expect(model.hasChanged(attribute)).toBe(true);
+                    expect(model.hasChanged(attr)).toBe(true);
+                });
+            });
+
+            using('attribute names', [undefined, attribute, 'foo'], function(attr) {
+                it('should return false', function() {
+                    model.set('foo', 'bar');
+                    delete model.changed.foo;
+
+                    expect(model.hasChanged(attr)).toBe(false);
+                });
             });
         });
 
