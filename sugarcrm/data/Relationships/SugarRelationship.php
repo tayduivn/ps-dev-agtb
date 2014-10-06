@@ -319,6 +319,21 @@ abstract class SugarRelationship
     }
 
     /**
+     * Get role columns array for the defs
+     * @return array
+     */
+    public function getRelationshipRoleColumns($def = null)
+    {
+        if (!empty($this->def['relationship_role_columns']) && is_array($this->def['relationship_role_columns'])) {
+            return $this->def['relationship_role_columns'];
+        }
+        if (!empty($this->def['relationship_role_column']) && !empty($this->def["relationship_role_column_value"])) {
+            return array($this->def['relationship_role_column'] => $this->def["relationship_role_column_value"]);
+        }
+        return array();
+    }
+
+    /**
      * Gets the relationship role column check for the where clause
      *
      * @param string $table
@@ -332,25 +347,29 @@ abstract class SugarRelationship
         if (empty ($table)) {
             $table = $this->getRelationshipTable();
         }
-        if (!empty($this->def['relationship_role_column']) && !empty($this->def["relationship_role_column_value"]) && !$ignore_role_filter) {
-            if (empty($table)) {
-                $roleCheck = " AND $this->relationship_role_column";
-            } else {
-                $roleCheck = " AND $table.{$this->relationship_role_column}";
-            }
-            //role column value.
-            if (empty($this->def['relationship_role_column_value'])) {
-                $roleCheck .= ' IS NULL';
-            } else {
-                $roleCheck .= " = '$this->relationship_role_column_value'";
+
+        if (!$ignore_role_filter) {
+            $db = DBManagerFactory::getInstance();
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                if (empty($table)) {
+                    $roleCheck = " AND $column";
+                } else {
+                    $roleCheck = " AND $table.$column";
+                }
+                //role column value.
+                if (empty($value)) {
+                    $roleCheck .= ' IS NULL';
+                } else {
+                    $roleCheck .= " = ".$db->quoted($value);
+                }
             }
         }
-        if (!empty($this->def['primary_flag_column']) 
+        if (!empty($this->def['primary_flag_column'])
             && !empty($this->primaryOnly)
             && !$ignore_role_filter) {
 
             $field = $table.'.'.$this->def['primary_flag_column'];
-            
+
             $roleCheck .= " AND {$field} = 1 ";
         }
 
@@ -378,18 +397,11 @@ abstract class SugarRelationship
             $table = $this->getRelationshipTable();
         }
 
-        if (!empty($this->def['relationship_role_column']) &&
-            !empty($this->def["relationship_role_column_value"]) &&
-            !$ignore_role_filter
-        ) {
-            if (empty($table)) {
-                $field = $this->relationship_role_column;
-            } else {
-                $field = "$table.{$this->relationship_role_column}";
-            }
-            //role column value.
-            if (!empty($table)) {
-                if (empty($this->def['relationship_role_column_value'])) {
+        if (!$ignore_role_filter && !empty($table)) {
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                //role column value.
+                $field = "$table.$column";
+                if (empty($value)) {
                     if (isset($sugar_query->join[$table])) {
                         $sugar_query->join[$table]->on()->isNull($field);
                     } else {
@@ -397,21 +409,15 @@ abstract class SugarRelationship
                     }
                 } else {
                     if (isset($sugar_query->join[$table])) { // i.e. Accounts joining Notes
-                        $sugar_query->join[$table]->on()->equals(
-                            $field,
-                            $this->relationship_role_column_value
-                        );
+                        $sugar_query->join[$table]->on()->equals($field, $value);
                     } else { // i.e. Notes joining Accounts
-                        $sugar_query->where()->equals(
-                            $field,
-                            $this->relationship_role_column_value
-                        );
+                        $sugar_query->where()->equals($field, $value);
                     }
                 }
             }
         }
 
-        if (!empty($this->def['primary_flag_column']) 
+        if (!empty($this->def['primary_flag_column'])
             && !empty($this->primaryOnly)
             && !$ignore_role_filter) {
 
@@ -555,7 +561,7 @@ abstract class SugarRelationship
 
     /**
      * Gets the correct table to select a custom where from
-     * 
+     *
      * @param string $whereTable Existing whereTable
      * @param SugarBean $relatedBean The related bean
      * @param string $fieldName The field name to check for a custom where table
@@ -566,7 +572,7 @@ abstract class SugarRelationship
         // Its just easier to work on a shorter variable
         $defs = $relatedBean->field_defs;
 
-        // If the field is sourced from custom fields, get the custom table it 
+        // If the field is sourced from custom fields, get the custom table it
         // belongs to
         if ($fieldName && isset($defs[$fieldName]['source']) && $defs[$fieldName]['source'] === 'custom_fields') {
             $whereTable = $relatedBean->get_custom_table_name();
@@ -577,7 +583,7 @@ abstract class SugarRelationship
 
     /**
      * Gets an optional where clause
-     * 
+     *
      * @param $optional_array List of conditionals to apply to a custom where
      * @param string $whereTable The existing where table to select from
      * @param SugarBean $relatedBean

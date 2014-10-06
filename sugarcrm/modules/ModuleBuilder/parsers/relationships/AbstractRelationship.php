@@ -58,6 +58,7 @@ class AbstractRelationship
         'relationship_type' ,
         'relationship_role_column' ,
         'relationship_role_column_value' ,
+        'relationship_role_columns' ,
         'reverse' ) ;
 
     /*
@@ -138,7 +139,7 @@ class AbstractRelationship
     {
         $this->deleted = $this->definition [ 'deleted' ] = true ;
     }
-    
+
     public function getFromStudio()
     {
         return $this->from_studio;
