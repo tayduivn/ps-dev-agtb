@@ -16,7 +16,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Multibar Vertical Chart - Color Options</title>
+  <title>Multibar Chart - Color Options</title>
   <link rel="stylesheet/less" type="text/css" href="less/styles.less" />
   <script src="js/less-1.3.3.min.js" type="text/javascript"></script>
 </head>
@@ -25,7 +25,7 @@
     <section id="colors">
 
       <div class="page-header">
-        <h2>Multibar Vertical Chart - Color Options</h2>
+        <h2>Multibar Chart - Color Options</h2>
       </div>
 
       <div class="row-fluid">
@@ -100,8 +100,13 @@
 <script src="../../../include/javascript/nvd3/src/models/multiBarChart.js"></script>
 
 <script>
-  d3.json("data/multibar_data.json", function(chartData) {
+  var orientationParam = window.location.href.match(/(\?|&)orientation=(vertical||horizontal)(&|$)/);
+  var orientation = orientationParam ? orientationParam[2] : 'vertical';
+  var vertical = (orientation === 'horizontal') ? false : true;
+
+  d3.json('data/multibar_data.json', function(chartData) {
     var chart1 = nv.models.multiBarChart()
+          .vertical(vertical)
           .tooltips(false)
           .colorData('default');
     chart1.xAxis
@@ -114,8 +119,9 @@
       .call(chart1);
 
     var chart2 = nv.models.multiBarChart()
+          .vertical(vertical)
           .tooltips(false)
-          .colorData('default', {gradient:true, orientation:'horizontal', position:'base'});
+          .colorData('default', {gradient: true, orientation: orientation, position: 'base'});
     chart2.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
     chart2.yAxis
@@ -126,8 +132,9 @@
       .call(chart2);
 
     var chart3 = nv.models.multiBarChart()
+          .vertical(vertical)
           .tooltips(false)
-          .colorData('class', {step:2});
+          .colorData('class', {step: 2});
     chart3.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart3.yAxis
@@ -138,6 +145,7 @@
       .call(chart3);
 
     var chart7 = nv.models.multiBarChart()
+          .vertical(vertical)
           .tooltips(false)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length});
     chart7.xAxis
@@ -150,6 +158,7 @@
       .call(chart7);
 
     var chart8 = nv.models.multiBarChart()
+          .vertical(vertical)
           .tooltips(false)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length, gradient: true});
     chart8.xAxis
@@ -163,8 +172,9 @@
   });
 
 
-  d3.json("data/multibar_data_color.json", function(chartData) {
+  d3.json('data/multibar_data_color.json', function(chartData) {
     var chart4 = nv.models.multiBarChart()
+          .vertical(vertical)
           .stacked(false)
           .tooltips(false)
           .colorData('default');
@@ -178,6 +188,7 @@
       .call(chart4);
 
     var chart5 = nv.models.multiBarChart()
+          .vertical(vertical)
           .stacked(false)
           .tooltips(false)
           .colorData('default', {gradient: true});
@@ -191,6 +202,7 @@
       .call(chart5);
 
     var chart6 = nv.models.multiBarChart()
+          .vertical(vertical)
           .stacked(false)
           .tooltips(false)
           .colorData('class', {step: 2});

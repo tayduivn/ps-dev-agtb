@@ -110,7 +110,9 @@ nv.utils.getColor = function (color) {
 // Default color chooser uses the index of an object as before.
 nv.utils.defaultColor = function () {
     var colors = d3.scale.category20().range();
-    return function (d, i) { return d.color || colors[i % colors.length]; };
+    return function (d, i) {
+      return d.color || colors[i % colors.length];
+    };
 };
 
 
@@ -333,4 +335,21 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
     });
   _container.select('.tmp-text-strings').remove();
   return maxLength;
+};
+
+nv.utils.getTextContrast = function(c, i, callback) {
+    var back = c,
+        backLab = d3.lab(back),
+        backLumen = backLab.l,
+        textLumen = backLumen > 50 ?
+          backLab.darker(3 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
+          backLab.brighter(3 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
+        textLab = d3.lab(textLumen, 0, 0),
+        text = textLab.toString();
+
+    if (callback) {
+      callback(backLab, textLab);
+    }
+
+    return text;
 };
