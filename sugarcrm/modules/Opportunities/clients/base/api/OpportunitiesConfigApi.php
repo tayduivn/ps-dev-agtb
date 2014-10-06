@@ -94,8 +94,8 @@ class OpportunitiesConfigApi extends ConfigModuleApi
             // then do data
             $converter->doDataConvert();
 
-            // we need to refresh the cache
-            MetaDataManager::clearAPICache();
+            // we need to refresh the cache but do it in the shutdown for this process
+            register_shutdown_function(array('MetaDataManager', 'refreshCache'));
         }
 
         return $settings;
