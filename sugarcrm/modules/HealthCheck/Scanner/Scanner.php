@@ -1627,9 +1627,6 @@ ENDP;
                 } else {
                     continue;
                 }
-                if ($status == HealthCheckScannerMeta::CUSTOM) {
-                    $args[0] = $args[0] . 'Custom';
-                }
                 call_user_func_array(array($this, 'updateStatus'), $args);
             }
         }
