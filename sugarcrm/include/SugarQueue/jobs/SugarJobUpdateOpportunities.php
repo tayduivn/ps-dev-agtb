@@ -1,6 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,7 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/SchedulersJobs/SchedulersJob.php');
+require_once 'modules/SchedulersJobs/SchedulersJob.php';
+require_once 'include/SugarQueue/jobs/AbstractJobNotification.php';
 
 /**
  * SugarJobUpdateOpportunities.php
@@ -20,12 +19,41 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  * Class to run a job which should upgrade every old opp with commit stage, date_closed_timestamp,
  * best/worst cases and related product
  */
-class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
+class SugarJobUpdateOpportunities extends JobNotification implements RunnableSchedulerJob {
 
     /**
      * @var SchedulersJob
      */
     protected $job;
+
+
+    /**
+     * The Label that will be used for the subject line
+     *
+     * @var string
+     */
+    protected $subjectLabel = 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT';
+
+    /**
+     * The Label that will be used for the body of the notification and email
+     *
+     * @var string
+     */
+    protected $bodyLabel = 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY';
+
+    /**
+     * Include the help link
+     *
+     * @var bool
+     */
+    protected $includeHelpLink = true;
+
+    /**
+     * What module is the help link for
+     *
+     * @var string
+     */
+    protected $helpModule = 'Opportunities';
 
     /**
      * @param SchedulersJob $job
@@ -62,6 +90,7 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
         Activity::enable();
 
         $this->job->succeedJob();
+        $this->notifyAssignedUser();
         return true;
     }
 
@@ -93,10 +122,13 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
         // run the first job
         $self = new self();
         $self->setJob($job);
+        $self->sendNotifications = false;
         $self->run($job->data);
 
+        $job_group = md5(microtime());
+
         for ($i = 1; $i < count($chunks); $i++) {
-            $jobs[] = static::createJob($chunks[$i]);
+            $jobs[] = static::createJob($chunks[$i], false, $job_group);
         }
 
         // if only one job was created, just return that id
@@ -110,9 +142,10 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
     /**
      * @param array $data The data for the Job
      * @param bool $returnJob When `true` the job will be returned, otherwise the job id will be returned
+     * @param string|null $job_group The Group that this job belongs to
      * @return SchedulersJob|String
      */
-    public static function createJob(array $data, $returnJob = false)
+    public static function createJob(array $data, $returnJob = false, $job_group = null)
     {
         global $current_user;
 
@@ -123,6 +156,9 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
         $job->data = json_encode($data);
         $job->retry_count = 0;
         $job->assigned_user_id = $current_user->id;
+        if (!is_null($job_group)) {
+            $job->job_group = $job_group;
+        }
         require_once('include/SugarQueue/SugarJobQueue.php');
         $job_queue = new SugarJobQueue();
         $job_queue->submitJob($job);

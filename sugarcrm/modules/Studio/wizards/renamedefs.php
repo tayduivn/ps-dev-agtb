@@ -1106,6 +1106,23 @@ $renamedefs = array(
         array('name' => 'LBL_PREVIOUS_TIMEPERIOD', 'type' => 'singular', 'source' => 'TimePeriods'),
         array('name' => 'LBL_NEXT_TIMEPERIOD', 'type' => 'singular', 'source' => 'TimePeriods'),
         array('name' => 'LBL_TOUR_FORECASTS_TIMEPERIODS', 'type' => 'singular', 'source' => 'TimePeriods'),
+
+        // Job Notifications
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_SUBJECT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'singular', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_DOC_LINK_TEXT', 'type' => 'plural', 'source' => 'Opportunities'),
+
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT', 'type' => 'plural', 'source' => 'Forecasts'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'Forecasts'),
     )
 );
-

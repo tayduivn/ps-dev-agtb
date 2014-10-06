@@ -254,9 +254,11 @@ EOL;
         // process the first chunk
         $this->processOpportunityIds($bean_chunks[0]);
 
+        $job_group = md5(microtime());
+
         // process any remaining in the background
         for ($x = 1; $x < count($bean_chunks); $x++) {
-            $this->createRevenueLineItemJob($bean_chunks[$x]);
+            $this->createRevenueLineItemJob($bean_chunks[$x], $job_group);
         }
     }
 
@@ -264,8 +266,9 @@ EOL;
      * Create a job for the Scheduler to create the RLI's for.
      *
      * @param array $data
+     * @param string $job_group
      */
-    protected function createRevenueLineItemJob(array $data)
+    protected function createRevenueLineItemJob(array $data, $job_group)
     {
         /* @var $job SchedulersJob */
         $job = BeanFactory::getBean('SchedulersJobs');
@@ -274,6 +277,7 @@ EOL;
         $job->data = json_encode(array('data' => $data));
         $job->retry_count = 0;
         $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->job_group = $job_group;
 
         require_once('include/SugarQueue/SugarJobQueue.php');
         $jq = new SugarJobQueue();

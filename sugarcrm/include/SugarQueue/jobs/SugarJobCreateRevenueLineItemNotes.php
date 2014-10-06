@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/SchedulersJobs/SchedulersJob.php');
+require_once 'modules/SchedulersJobs/SchedulersJob.php';
+require_once 'include/SugarQueue/jobs/AbstractJobNotification.php';
 
 /**
  * SugarJobCreateRevenueLineItemNotes
@@ -18,7 +19,7 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  * Class to run a job which will create the Revenue Line Items for all the Opportunities.
  *
  */
-class SugarJobCreateRevenueLineItemNotes implements RunnableSchedulerJob
+class SugarJobCreateRevenueLineItemNotes extends JobNotification implements RunnableSchedulerJob
 {
 
     /**
@@ -27,13 +28,40 @@ class SugarJobCreateRevenueLineItemNotes implements RunnableSchedulerJob
     protected $job;
 
     /**
+     * The Label that will be used for the subject line
+     *
+     * @var string
+     */
+    protected $subjectLabel = 'LBL_JOB_NOTIFICATION_RLI_NOTE_SUBJECT';
+
+    /**
+     * The Label that will be used for the body of the notification and email
+     *
+     * @var string
+     */
+    protected $bodyLabel = 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY';
+
+    /**
+     * Include the help link
+     *
+     * @var bool
+     */
+    protected $includeHelpLink = true;
+
+    /**
+     * What module is the help link for
+     *
+     * @var string
+     */
+    protected $helpModule = 'Opportunities';
+
+    /**
      * @param SchedulersJob $job
      */
     public function setJob(SchedulersJob $job)
     {
         $this->job = $job;
     }
-
 
     /**
      * @param string $data The job data set for this particular Scheduled Job instance
@@ -104,6 +132,7 @@ class SugarJobCreateRevenueLineItemNotes implements RunnableSchedulerJob
         Activity::enable();
 
         $this->job->succeedJob();
+        $this->notifyAssignedUser();
         return true;
     }
 }

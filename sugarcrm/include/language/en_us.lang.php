@@ -2948,6 +2948,27 @@ $app_strings = array (
     'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2014 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
 
 
+    // GENERIC JOB NOTIFICATIONS LABELS
+    'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
+    'LBL_JOB_NOTIFICATION_BODY_GENERIC' => 'The Scheduled Job has successfully ran',
+
+    'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT' => 'Revenue Line Items Are Now Enabled in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY' => 'Revenue Line Items are now enabled in your Sugar instance, and all existing Opportunity data has been processed. Your instance is now ready to be used with Revenue Line Items. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT' => 'Forecasts Module is Now Ready for Use With Opportunities in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY' => 'The Forecasts module in your Sugar instance is now available for use with opportunities. All previous Revenue Line Item forecast commit data has been removed, and the instance is ready for forecasts to be created and committed with opportunities. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_RLI_NOTE_SUBJECT' => 'Revenue Line Items Are Now Disabled in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY' => 'Revenue line Items are now disabled in your Sugar instance, and all existing Revenue Line Item data has been processed. Your instance is now ready to be used with Opportunities. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_DOC_LINK_TEXT' => 'Opportunities Configuration documentation',
+
     // LOGIN PAGE STRINGS
     'LBL_LOGIN_BUTTON_KEY' => 'L',
     'LBL_LOGIN_BUTTON_TITLE' => 'Log In',

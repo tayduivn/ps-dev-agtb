@@ -269,11 +269,13 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $chunk = array();
         $max_chunk_size = 50;
 
+        $job_group = md5(microtime());
+
         foreach ($results as $row) {
             if (!isset($chunk[$row['opportunity_id']])) {
                 if (count($chunk) === $max_chunk_size) {
                     // schedule job here
-                    $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk);
+                    $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk, $job_group);
                     $chunk = array();
                 }
                 $chunk[$row['opportunity_id']] = array();
@@ -285,10 +287,10 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         }
 
         // schedule the last job here.
-        $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk);
+        $this->scheduleOpportunityRevenueLineItemNoteCreate($labels, $chunk, $job_group);
     }
 
-    private function scheduleOpportunityRevenueLineItemNoteCreate(array $labels, array $chunk)
+    private function scheduleOpportunityRevenueLineItemNoteCreate(array $labels, array $chunk, $job_group)
     {
         /* @var $job SchedulersJob */
         $job = BeanFactory::getBean('SchedulersJobs');
@@ -297,6 +299,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $job->data = json_encode(array('chunk' => $chunk, 'labels' => $labels));
         $job->retry_count = 0;
         $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->job_group = $job_group;
 
         require_once('include/SugarQueue/SugarJobQueue.php');
         $jq = new SugarJobQueue();
