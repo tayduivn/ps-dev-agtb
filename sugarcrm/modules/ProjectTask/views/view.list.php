@@ -177,10 +177,31 @@ class ProjectTaskViewList extends ViewList
 			return;
         }
 
-         /*
-         * Bug 50575 - related search columns not inluded in query in a proper way
-         */
-         $lv->searchColumns = $searchForm->searchColumns;
+        /*
+        * Bug 50575 - related search columns not inluded in query in a proper way
+        */
+        $lv->searchColumns = $searchForm->searchColumns;
+
+        if (isset($GLOBALS['mod_strings']['LBL_MODULE_NAME_SINGULAR'])) {
+            $seed->module_title = $GLOBALS['mod_strings']['LBL_MODULE_NAME_SINGULAR'];
+        }
+
+        if (!$lv->data) {
+            $seed->module_dir = 'Project';
+
+            if (isset($GLOBALS['mod_strings']['LBL_LIST_PARENT_NAME'])) {
+                $seed->parent_title = $GLOBALS['mod_strings']['LBL_LIST_PARENT_NAME'];
+            }
+
+            $project = new Project();
+            $project_query = new SugarQuery();
+            $project_query->from($project);
+            $project_list = $project->fetchFromQuery($project_query);
+
+            if (count($project_list)) {
+                $seed->show_link = true;
+            }
+        }
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
             //Bug 58841 - mass update form was not displayed for non-admin users that should have access
