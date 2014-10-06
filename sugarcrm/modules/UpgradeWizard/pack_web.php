@@ -9,6 +9,76 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+require_once __DIR__ . '/../../modules/HealthCheck/pack.php';
+
+function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
+
+    $defaults = array(
+        'version' => '7.5.0.0',
+        'build' => '998',
+        'from' => '6.5.17',
+    );
+
+    $params = array_merge($defaults, $params);
+
+    list($zip, $manifest, $installdefs) = packHealthCheck($zip, $manifest, $installdefs, $params);
+
+    file_put_contents(__DIR__ . '/version.json', json_encode($params, true));
+
+    $chdir = dirname(__FILE__) . "/../..";
+
+    $files = array(
+        // UW
+        "UpgradeWizard.php",
+        "modules/UpgradeWizard/UpgradeDriver.php",
+        "modules/UpgradeWizard/WebUpgrader.php",
+        "modules/UpgradeWizard/upgrade_screen.php",
+        "modules/UpgradeWizard/version.json",
+        'modules/UpgradeWizard/language/en_us.lang.php',
+        "sidecar/lib/jquery/jquery.iframe.transport.js",
+    );
+
+    $manifest = array_merge($manifest, array(
+        'author' => 'SugarCRM, Inc.',
+        'description' => 'SugarCRM Upgrader 2.0',
+        'icon' => '',
+        'is_uninstallable' => 'true',
+        'name' => 'SugarCRM Upgrader 2.0',
+        'published_date' => date("Y-m-d H:i:s"),
+        'type' => 'module',
+    ));
+
+    foreach ($files as $file) {
+        $zip->addFile($chdir . '/' . $file, $file);
+        $installdefs['copy'][] = array("from" => "<basepath>/$file", "to" => $file);
+    }
+
+    unset($installdefs['copy'][5]);
+    $installdefs['copy'][] = array(
+        "from" => "<basepath>/modules/UpgradeWizard/language/en_us.lang.php",
+        "to" => "custom/modules/UpgradeWizard/language/en_us.lang.php"
+    );
+
+// administration menu entry
+    $installdefs['copy'][] = array(
+        "from" => "<basepath>/upgrader2.php",
+        "to" => "custom/Extension/modules/Administration/Ext/Administration/upgrader2.php"
+    );
+    $zip->addFromString(
+        "upgrader2.php",
+        "<?php\n\$admin_group_header[2][3]['Administration']['upgrade_wizard']= array('Upgrade','LBL_UPGRADE_WIZARD_TITLE','LBL_UPGRADE_WIZARD','./UpgradeWizard.php');"
+    );
+
+    $cont = sprintf(
+        "<?php\n\$manifest = %s;\n\$installdefs = %s;\n",
+        var_export($manifest, true),
+        var_export($installdefs, true)
+    );
+    $zip->addFromString("manifest.php", $cont);
+
+    return array($zip, $manifest, $installdefs);
+}
+
 if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
     return;
 }
@@ -19,102 +89,30 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use $argv[0] name.zip");
+    die("Use $argv[0] name.zip [sugarVersion [buildNumber [from]]]");
 }
 
 $name = $argv[1];
 
-chdir(dirname(__FILE__)."/../..");
-$files=array(
-    // UW
-    "UpgradeWizard.php",
-    "modules/UpgradeWizard/UpgradeDriver.php",
-    "modules/UpgradeWizard/WebUpgrader.php",
-    "modules/UpgradeWizard/upgrade_screen.php",
-    "modules/UpgradeWizard/upgrader_version.json",
-    'modules/UpgradeWizard/language/en_us.lang.php',
-    "sidecar/lib/jquery/jquery.iframe.transport.js",
+$params = array();
 
-    // misc
-    'include/SugarSystemInfo/SugarSystemInfo.php',
-    'include/SugarHeartbeat/SugarHeartbeatClient.php',
-
-    // healtcheck module
-    'modules/HealthCheck/language/en_us.lang.php',
-    'modules/HealthCheck/Scanner/Scanner.php',
-    'modules/HealthCheck/Scanner/ScannerMeta.php',
-    'modules/HealthCheck/Scanner/ScannerWeb.php',
-    'modules/HealthCheck/Scanner/ScannerCli.php',
-    'styleguide/assets/css/upgrade.css',
-    'styleguide/assets/font/fontawesome-webfont.eot',
-    'styleguide/assets/font/fontawesome-webfont.svg',
-    'styleguide/assets/font/fontawesome-webfont.ttf',
-    'styleguide/assets/font/fontawesome-webfont.woff',
-    'styleguide/assets/font/FontAwesome.otf',
-    'modules/HealthCheck/tpls/index.tpl',
-    'modules/HealthCheck/views/view.index.php',
-    'modules/HealthCheck/controller.php',
-    'modules/HealthCheck/HealthCheck.php',
-    'modules/HealthCheck/HealthCheckHelper.php',
-    'modules/HealthCheck/HealthCheckClient.php',
-    'modules/HealthCheck/vardefs.php',
-
-);
-
-$manifest = array(
-    'author' => 'SugarCRM, Inc.',
-    'description' => 'SugarCRM Upgrader 2.0',
-    'icon' => '',
-    'is_uninstallable' => 'true',
-    'name' => 'SugarCRM Upgrader 2.0',
-    'published_date' => date("Y-m-d H:i:s"),
-    'type' => 'module',
-);
-if (file_exists("modules/UpgradeWizard/upgrader_version.json")) {
-    $v = json_decode(file_get_contents('modules/UpgradeWizard/upgrader_version.json'), true);
-    if (!empty($v['upgrader_version'])) {
-        $manifest['version'] = $v['upgrader_version'];
-    }
-    if (!empty($v['from'])) {
-        $manifest['acceptable_sugar_versions'] = (array)$v['from'];
-    }
+if(isset($argv[2])) {
+    $params['version'] = $argv[2];
+}
+if(isset($argv[3])) {
+    $params['build'] = $argv[3];
+}
+if(isset($argv[4])) {
+    $params['from'] = $argv[4];
 }
 
-
-$installdefs = array("id" => "upgrader".time(), "copy" => array());
 $zip = new ZipArchive();
 $zip->open($name, ZipArchive::CREATE);
 
-foreach ($files as $file) {
-    $zip->addFile($file);
-    $installdefs['copy'][] = array("from" => "<basepath>/$file", "to" => $file);
-}
-
-// register HealthCheck bean
-$installdefs['beans'] = array(
-    array(
-        'module' => 'HealthCheck',
-        'class' => 'HealthCheck',
-        'path' => 'modules/HealthCheck/HealthCheck.php',
-        'tab' => false,
-    ),
-);
-
-unset($installdefs['copy'][5]);
-$installdefs['copy'][] = array("from" => "<basepath>/modules/UpgradeWizard/language/en_us.lang.php", "to" => "custom/modules/UpgradeWizard/language/en_us.lang.php");
-
-// administration menu entry
-$installdefs['copy'][] = array("from" => "<basepath>/upgrader2.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/upgrader2.php");
-$zip->addFromString("upgrader2.php", "<?php\n\$admin_group_header[2][3]['Administration']['upgrade_wizard']= array('Upgrade','LBL_UPGRADE_WIZARD_TITLE','LBL_UPGRADE_WIZARD','./UpgradeWizard.php');");
-
-$installdefs['copy'][] = array("from" => "<basepath>/healthcheck.php", "to" => "custom/Extension/modules/Administration/Ext/Administration/healthcheck.php");
-$zip->addFromString("healthcheck.php", "<?php\n\$admin_group_header[2][3]['Administration']['health_check']= array('Repair','LBL_HEALTH_CHECK_TITLE','LBL_HEALTH_CHECK','./index.php?module=HealthCheck');");
-
-$installdefs['copy'][] = array("from" => "<basepath>/en_us.HealthCheck.php", "to" => "custom/Extension/application/Ext/Language/en_us.HealthCheck.php");
-$zip->addFromString("en_us.HealthCheck.php", "<?php\n\$app_strings['LBL_HEALTH_CHECK_TITLE'] = 'Health Check';\$app_strings['LBL_HEALTH_CHECK'] = 'A tool that checks if the system is upgradable.';");
-
-$cont = sprintf("<?php\n\$manifest = %s;\n\$installdefs = %s;\n", var_export($manifest, true), var_export($installdefs, true));
-$zip->addFromString("manifest.php", $cont);
+packUpgradeWizardWeb($zip,
+    array(),
+    array("id" => "upgrader" . time(), "copy" => array()),
+    $params);
 
 $zip->close();
 exit(0);

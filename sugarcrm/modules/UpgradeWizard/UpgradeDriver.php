@@ -1714,7 +1714,7 @@ abstract class UpgradeDriver
 
     }
 
-    const VERSION_FILE = 'upgrader_version.json';
+    const VERSION_FILE = 'version.json';
 
     /**
      * Get version and build number for this package
@@ -1724,17 +1724,17 @@ abstract class UpgradeDriver
     {
         $version = self::$version;
         $build = self::$build;
-        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
+        $vfile = __DIR__ . "/" . self::VERSION_FILE;
         if (file_exists($vfile)) {
             $data = json_decode(file_get_contents($vfile), true);
             if (empty($data)) {
                 return array($version, $build);
             }
-            if (!empty($data['upgrader_version'])) {
-                $version = $data['upgrader_version'];
+            if (!empty($data['version'])) {
+                $version = $data['version'];
             }
-            if (!empty($data['sugar_build'])) {
-                $build = $data['sugar_build'];
+            if (!empty($data['build'])) {
+                $build = $data['build'];
             }
         }
         return array($version, $build);

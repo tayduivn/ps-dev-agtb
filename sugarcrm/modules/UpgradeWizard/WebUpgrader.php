@@ -92,7 +92,7 @@ class WebUpgrader extends UpgradeDriver
      * @var array
      */
     protected $upgradeFiles = array('WebUpgrader.php', 'UpgradeDriver.php',
-        'upgrade_screen.php', 'upgrader_version.json');
+        'upgrade_screen.php', 'version.json');
 
     /**
      * Start upgrade process

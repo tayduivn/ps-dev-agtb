@@ -591,7 +591,7 @@ class HealthCheckScannerMeta
         if(isset($GLOBALS['current_language'])) {
             $this->locale = $GLOBALS['current_language'];
         } else {
-            $lang = explode(getenv("LANG"), '.');
+            $lang = explode('.', getenv("LANG"));
             if($lang) {
                 $this->locale = $lang[0];
             }

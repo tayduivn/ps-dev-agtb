@@ -9,9 +9,41 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
-    return;
+
+require_once __DIR__ . '/../../modules/HealthCheck/pack_sortinghat.php';
+
+function packUpgradeWizardCli($phar, $params) {
+
+    $defaults = array(
+        'version' => '7.5.0.0',
+        'build' => '998'
+    );
+
+    packSortingHat($phar, $params);
+
+    $params = array_merge($defaults, $params);
+
+    file_put_contents(__DIR__ . '/version.json', json_encode($params, true));
+
+    $chdir =  __DIR__ ."/../..";
+
+    $files=array(
+        "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
+        "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
+        "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
+        "modules/UpgradeWizard/version.json" => 'version.json',
+        'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
+        'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
+        'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
+        'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
+    );
+
+    foreach ($files as $file => $inArchive) {
+        $phar->addFile($chdir . '/' . $file, $inArchive);
+    }
 }
+
+if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
@@ -19,7 +51,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use $argv[0] name (no zip or phar extension)\n");
+    die("Use $argv[0] name (no zip or phar extension) [sugarVersion [buildNumber]]\n");
 }
 
 $pathinfo = pathinfo($argv[1]);
@@ -30,27 +62,17 @@ if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip
     $name = $argv[1];
 }
 
-chdir(dirname(__FILE__) . "/../..");
-$files = array(
-    "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
-    "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
-    "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
-    "modules/UpgradeWizard/upgrader_version.json" => 'upgrader_version.json',
-    'modules/HealthCheck/Scanner/Scanner.php' => 'Scanner/Scanner.php',
-    'modules/HealthCheck/Scanner/ScannerCli.php' => 'Scanner/ScannerCli.php',
-    'modules/HealthCheck/Scanner/ScannerMeta.php' => 'Scanner/ScannerMeta.php',
-    'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php',
-    'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
-    'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
-    'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
-    'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
-);
+$params = array();
+if(isset($argv[2])) {
+    $params['version'] = $argv[2];
+}
+if(isset($argv[3])) {
+    $params['build'] = $argv[3];
+}
 
 $phar = new Phar($name . '.phar');
 
-foreach ($files as $file => $inArchive) {
-    $phar->addFile($file, $inArchive);
-}
+packUpgradeWizardCli($phar, $params);
 
 $stub = <<<'STUB'
 <?php
@@ -63,9 +85,7 @@ $phar->setStub($stub);
 $zip = new ZipArchive();
 $zip->open($name . '.zip', ZipArchive::CREATE);
 
-foreach ($files as $file => $local) {
-    $zip->addFile($file, $local);
-}
+packUpgradeWizardCli($zip, $params);
 
 $zip->close();
 
