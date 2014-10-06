@@ -29,7 +29,7 @@
 {include file='modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl'}
 {* //END SUGARCRM flav=pro ONLY *}
 
-{if $vardef.type != 'bool'}
+{if $vardef.type != 'bool' && !$hideRequired}
 <tr ><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REQUIRED_OPTION"}:</td><td><input type="checkbox" name="required" value="1" {if !empty($vardef.required)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="required" value="{$vardef.required}">{/if}</td></tr>
 {/if}
 {* //BEGIN SUGARCRM flav=pro ONLY*}
