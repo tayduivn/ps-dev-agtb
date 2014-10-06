@@ -107,6 +107,15 @@ class IBMDB2Manager  extends DBManager
         "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
         "recursive_query" => true,
         "prepared_statements" => true,
+
+        /* DB2 has stable order stability if no heavy insert/deletes are
+         * happening. With this capability enabled, the ORDER BY clauses
+         * will not get an additional id (unique) column added to ensure
+         * orderby stability in the query. Using this has negative impact
+         * on performance. Therefor for DB2 we rely on the default order
+         * stability of DB2 itself.
+         */
+        "order_stability" => true,
 	);
 
 	public $preparedStatementClass = 'IBMDB2PreparedStatement';

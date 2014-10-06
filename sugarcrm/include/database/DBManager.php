@@ -225,6 +225,11 @@ abstract class DBManager
 	 * collation		Supports setting collations
 	 * disable_keys     Supports temporarily disabling keys (for upgrades, etc.)
      * recursive_query  Supports recursive queries
+     *
+     * order_stability  Supports stable order on SELECTs without the need for
+     *                  unique column usage in the `ORDER BY` clause when no
+     *                  huge insert/delete operations are happening on the
+     *                  SELECTed tables.
 	 *
 	 * @abstract
 	 * Special cases:

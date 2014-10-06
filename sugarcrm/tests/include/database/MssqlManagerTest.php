@@ -524,4 +524,13 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
         $this->assertEquals(1, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
     }
+
+    /**
+     * Test order_stability capability BR-2097
+     */
+    public function testOrderStability()
+    {
+        $msg = 'MssqlManager cannot have order_stability capability';
+        $this->assertFalse($this->_db->supports('order_stability'), $msg);
+    }
 }

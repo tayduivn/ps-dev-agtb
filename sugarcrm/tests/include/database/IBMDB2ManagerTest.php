@@ -197,4 +197,13 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * Test order_stability capability BR-2097
+     */
+    public function testOrderStability()
+    {
+        $msg = 'IBMDB2Manager is missing order_stability capability';
+        $this->assertTrue($this->_db->supports('order_stability'), $msg);
+    }
 }
