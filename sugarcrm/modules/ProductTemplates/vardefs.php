@@ -214,6 +214,8 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
 	),
 	'discount_price' =>
 	array (
@@ -229,6 +231,8 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
 	),
 	'list_price' =>
 	array (
@@ -244,6 +248,8 @@ $dictionary['ProductTemplate'] = array(
             'currency_id',
             'base_rate'
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
 	),
 	'cost_usdollar' =>
     array (
