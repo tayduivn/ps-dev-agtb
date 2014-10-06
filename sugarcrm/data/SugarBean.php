@@ -1997,6 +1997,20 @@ class SugarBean
                     $data_changes = $this->db->getDataChanges($this);
                     $changed_fields = array_keys($data_changes);
 
+                    // loop over the influencing_fields to check if any are calculated and enforced formulas
+                    // if they are we need to add them to the changed_fields as they could have been
+                    // changed from another save that was done` before this one since we don't roll up more than one
+                    // level at a time a rollup on a rollup field would never update the parent unless the parent is
+                    // saved explicitly
+                    foreach($influencing_fields as $field) {
+                        $def = $this->getFieldDefinition($field);
+
+                        if (isset($def['calculated']) && isTruthy($def['calculated']) &&
+                            isset($def['enforced']) && isTruthy($def['enforced'])) {
+                            $changed_fields[] = $field;
+                        }
+                    }
+
                     // if fetched_row is empty we have a new record, so don't check for changed_fields
                     // if deleted is 1, we need to update all related items
                     // the only time we want to check if any of the influcenceing fields have changed is when, it's a, non-deleted record
