@@ -247,6 +247,13 @@
                 var userPreferredCurrencyId = app.user.getPreference('currency_id');
                 if (userPreferredCurrencyId !== transactionalCurrencyId) {
                     convertedCurrencyId = userPreferredCurrencyId;
+
+                    // when we are displaying in the user preferred currency, the transactional
+                    // amount should equal the row amount
+                    this.transactionValue = app.currency.formatAmountLocale(
+                        this.model.get(this.name) || 0,
+                        transactionalCurrencyId
+                    );
                     value = app.currency.convertWithRate(
                         value,
                         '1.0',

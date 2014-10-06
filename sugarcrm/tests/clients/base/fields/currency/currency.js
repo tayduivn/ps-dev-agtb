@@ -497,6 +497,34 @@ describe('Base.Fields.Currency', function() {
             expect(field.transactionValue).toEqual('');
         });
 
+        describe('when user currency_show_preferred', function() {
+            describe('is true', function() {
+                beforeEach(function() {
+                    app.user.setPreference('currency_id', 'abc123');
+                    app.user.setPreference('currency_show_preferred', true);
+                });
+
+                afterEach(function() {
+                    app.user.setPreference('currency_show_preferred', false);
+                });
+
+                it('and record has a different currency transactional amount should be set', function() {
+                    model = app.data.createBean(moduleName, {
+                        amount: 123456789.12,
+                        currency_id: '-99',
+                        base_rate: 1.0
+                    });
+                    field.model = model;
+
+                    field.def.convertToBase = true;
+                    field.def.showTransactionalAmount = true;
+                    field.render();
+                    expect(field.transactionValue).toEqual('$123,456,789.12');
+                    expect(field.value).toEqual('€111,111,110.21');
+                });
+            });
+        });
+
         it('should convert value to different currency', function() {
 
             var sandbox = sinon.sandbox.create();
