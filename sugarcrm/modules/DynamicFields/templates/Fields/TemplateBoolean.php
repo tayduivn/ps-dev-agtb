@@ -16,7 +16,7 @@ class TemplateBoolean extends TemplateField{
     var $default = '0';
 	var $type = 'bool';
 
-	//BEGIN BACKWARDS COMPATABILITY
+	//BEGIN BACKWARDS COMPATIBILITY
 function get_xtpl_edit(){
         $name = $this->name;
         $returnXTPL = array();
