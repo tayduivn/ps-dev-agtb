@@ -558,14 +558,8 @@ class HealthCheckScanner
         // Check global hooks
         $this->log("Checking global hooks");
         $hook_files = array();
-        $this->extractHooks("custom/modules/logic_hooks.php", $hook_files);
-        $this->extractHooks("custom/application/Ext/LogicHooks/logichooks.ext.php", $hook_files);
-        if (!empty($hook_files['after_ui_footer'])) {
-            $this->updateStatus("logicHookAfterUIFooter");
-        }
-        if (!empty($hook_files['after_ui_frame'])) {
-            $this->updateStatus("logicHookAfterUIFrame");
-        }
+        $this->extractHooks("custom/modules/logic_hooks.php", $hook_files, true);
+        $this->extractHooks("custom/application/Ext/LogicHooks/logichooks.ext.php", $hook_files, true);
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
@@ -1547,8 +1541,9 @@ class HealthCheckScanner
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
      * @param array &$hooks_array
+     * @param bool $detectAfterUiHooks should we log after_ui_footer & after_ui_frame hooks if they are present in file
      */
-    protected function extractHooks($hookfile, &$hooks_array)
+    protected function extractHooks($hookfile, &$hooks_array, $detectAfterUiHooks = false)
     {
         $hook_array = array();
         if (!is_readable($hookfile)) {
@@ -1559,6 +1554,12 @@ class HealthCheckScanner
         ob_end_clean();
         if (empty($hook_array)) {
             return;
+        }
+        if ($detectAfterUiHooks && !empty($hook_array['after_ui_footer'])) {
+            $this->updateStatus("logicHookAfterUIFooter", $hookfile);
+        }
+        if ($detectAfterUiHooks && !empty($hook_array['after_ui_frame'])) {
+            $this->updateStatus("logicHookAfterUIFrame", $hookfile);
         }
         foreach ($hook_array as $hooks) {
             foreach ($hooks as $hook) {
