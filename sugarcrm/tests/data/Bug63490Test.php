@@ -51,6 +51,16 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
             $field_map
         );
         $this->assertContains($expected, $actual);
+
+        // Test order stability column
+        $stability = $suppress_table_name ? 'id' : 'bean.id';
+        if (!self::$bean->db->supports('order_stability')) {
+            $msg = 'Missing ORDER BY stability column';
+            $this->assertContains($stability, $actual, $msg);
+        } else {
+            $msg = 'Unexpected ORDER BY stability column';
+            $this->assertNotContains($stability, $actual, $msg);
+        }
     }
 
     /**

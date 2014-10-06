@@ -3626,18 +3626,26 @@ class SugarBean
             }
 
             if ($is_valid) {
+
+                // Determine order by direction. Will be the same for multiple columns.
+                $order = isset($list_column[1]) ? $list_column[1] : '';
+
                 if (isset($field_map[$list_column_name])) {
-                    $columns = array();
-                    $order = array_slice($list_column, 1);
                     foreach ($field_map[$list_column_name] as $field) {
-                        $columns[] = array_merge(array($field), $order);
+                        $valid_elements[$field] = $field . ' ' .$order;
                     }
                 } else {
-                    $columns = array($list_column);
+                    $valid_elements[$list_column[0]] = implode(' ', $list_column);
                 }
 
-                foreach ($columns as $column) {
-                    $valid_elements[] = implode(' ', $column);
+                // Apply `ORDER BY` stability if not implied by db backend
+                if (!$this->db->supports('order_stability')) {
+                    if ($suppress_table_name) {
+                        $stableCol = 'id';
+                    } else {
+                        $stableCol = $bean_queried->getTableName() . '.id';
+                    }
+                    $valid_elements[$stableCol] = "{$stableCol} {$order}";
                 }
             }
         }
