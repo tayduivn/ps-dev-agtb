@@ -39,6 +39,10 @@ class FieldViewer{
             $this->ss->assign('hideDuplicatable', 'true');
         }
 
+        if ($fieldRangeValue = DynamicField::getFieldRangeValueByType($vardef['type'])) {
+            $this->ss->assign('field_range_value', $fieldRangeValue);
+        }
+
 		$GLOBALS['log']->debug('FieldViewer.php->getLayout() = '.$vardef['type']);
 		switch($vardef['type']){
 			case 'address':
