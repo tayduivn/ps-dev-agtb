@@ -15,7 +15,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['EditAllRecurrences']);
+        this.plugins = _.union(this.plugins || [], ['EditAllRecurrences', 'AddAsInvitee']);
         this._super('initialize', [options]);
     }
 })

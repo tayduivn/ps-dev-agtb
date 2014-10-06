@@ -580,6 +580,13 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
             ),
             'order_by' => 'name:asc',
         ),
+    'auto_invite_parent' => array(
+        'name' => 'auto_invite_parent',
+        'type' => 'bool',
+        'source' => 'non-db',
+        'comment' => 'Flag to allow for turning off auto invite of parent record -  (Meta-data only)',
+        'massupdate' => false,
+    ),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>

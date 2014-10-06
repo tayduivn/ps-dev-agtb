@@ -173,9 +173,7 @@
 
         if ((this.getTimelineBlocks().length > 0) && (!_.isEmpty(startAndEndDates))) {
             this.renderTimelineHeader();
-            this.getFieldValue().each(function(participant) {
-                this.markStartAndEnd(participant.module, participant.get('id'));
-            }, this);
+            this.markStartAndEnd();
             this.fetchFreeBusyInformation();
         }
     },
@@ -612,7 +610,8 @@
                     deletable: deletable(participant),
                     last: (rows === i++),
                     name: app.utils.getRecordName(participant),
-                    preview: preview(participant)
+                    preview: preview(participant),
+                    module: participant.module
                 };
 
                 if (!_.isEmpty(participant.get('picture'))) {

@@ -119,6 +119,10 @@
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
+
+        //inherit base create metadata for purpose of initialization
+        options.meta = _.extend({}, app.metadata.getView(null, 'create'), options.meta);
+
         this._super("initialize", [options]);
         this.model.off("change", null, this);
 

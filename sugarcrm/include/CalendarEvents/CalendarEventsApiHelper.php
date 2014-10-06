@@ -82,7 +82,8 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
      *
      * Adds the contact's name if one is related.
      *
-     * `send_invites` is an internal processing flag and should never be returned as a field.
+     * `send_invites` and `auto_invite_parent` are internal processing flags and should never be
+     * returned as fields.
      *
      * @param SugarBean $bean
      * @param array $fieldList
@@ -101,6 +102,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         }
 
         unset($data['send_invites']);
+        unset($data['auto_invite_parent']);
 
         return $data;
     }

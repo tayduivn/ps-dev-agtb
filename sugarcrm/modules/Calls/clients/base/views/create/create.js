@@ -9,13 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'RecordView',
+    extendsFrom: 'CreateView',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['EditAllRecurrences', 'AddAsInvitee']);
+        this.plugins = _.union(this.plugins || [], ['AddAsInvitee']);
         this._super('initialize', [options]);
     }
 })
