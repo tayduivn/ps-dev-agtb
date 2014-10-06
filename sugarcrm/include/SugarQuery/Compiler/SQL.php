@@ -235,19 +235,17 @@ class SugarQuery_Compiler_SQL
     /**
      * Create an Order By Statement
      *
-     * @param array $orderBy
-     * @param boolean $orderById (optional) Indicates if column id should be
-     *     added to orderBy. Default value is `true`.
+     * @param SugarQuery_Builder_Orderby[] $orderBy
+     * @param boolean $orderStability Apply order stability if not supported by db
      * @return string
      */
-    protected function compileOrderBy($orderBy, $orderById = false)
+    protected function compileOrderBy($orderBy, $orderStability = true)
     {
         $return = array();
-        // order by ID
-        if ($orderById) {
-            $orderId = new SugarQuery_Builder_Orderby($this->sugar_query);
-            $orderId->addField('id');
-            $orderBy[] = $orderId;
+
+        // Apply order stability if not implied by the db backend
+        if ($orderStability && !$this->db->supports('order_stability')) {
+            $orderBy = $this->applyOrderByStability($orderBy);
         }
 
         foreach ($orderBy as $order) {
@@ -269,6 +267,21 @@ class SugarQuery_Compiler_SQL
         return implode(',', $return);
     }
 
+    /**
+     * Add additional column to `ORDER BY` clause for order stability, defaults
+     * to using the `id` column.
+     *
+     * @param SugarQuery_Builder_Orderby[] $orderBy List of already existing `ORDER BY` defs
+     * @param string $column Unique column to add, defaults to `id`
+     * @return SugarQuery_Builder_Orderby[]
+     */
+    protected function applyOrderByStability(array $orderBy, $column = 'id')
+    {
+        $uniqueCol = new SugarQuery_Builder_Orderby($this->sugar_query);
+        $uniqueCol->addField($column);
+        $orderBy[] = $uniqueCol;
+        return $orderBy;
+    }
 
     /**
      * Create a select statement
