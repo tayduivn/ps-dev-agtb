@@ -82,7 +82,7 @@
     handleYes: function(event) {
         var invitees = this.model.get('invitees');
 
-        if (invitees && invitees.isDirty()) {
+        if (invitees && invitees.hasChanged()) {
             invitees.once('sync', function() {
                 var url = app.api.buildURL(this.module, 'send_invites', {id: this.id});
                 app.api.call('update', url);

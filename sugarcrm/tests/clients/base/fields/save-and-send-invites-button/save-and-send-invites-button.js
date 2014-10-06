@@ -65,7 +65,7 @@ describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
             });
 
             it('should set send_invites=true and trigger the event when the invitees field is not dirty', function() {
-                field.model.set('invitees', {isDirty: sandbox.stub().returns(false)});
+                field.model.set('invitees', {hasChanged: sandbox.stub().returns(false)});
                 field.handleYes(event);
                 expect(field.model.get('send_invites')).toBe(true);
                 expect(spy).toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
 
                 // just need an object with Backbone events
                 invitees = app.data.createBean('Contacts', {name: 'Foo Bar'});
-                invitees.isDirty = sandbox.stub().returns(true);
+                invitees.hasChanged = sandbox.stub().returns(true);
                 field.model.set('invitees', invitees);
             });
 
