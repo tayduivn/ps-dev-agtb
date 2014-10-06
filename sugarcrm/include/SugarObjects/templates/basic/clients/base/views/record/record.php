@@ -56,7 +56,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 array(
                     'name' => 'tag',
                     'span' => 12,
-                )
+                ),
             ),
         ),
         array(
