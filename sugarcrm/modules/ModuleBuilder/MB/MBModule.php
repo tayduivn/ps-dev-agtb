@@ -884,11 +884,13 @@ class MBModule
 
         if (! empty ( $_REQUEST [ 'label' ] ))
         {
-            $this->config [ 'label' ] = $_REQUEST [ 'label' ] ;
+            // this has been encoded, but since this is a label that will go into language files,
+            // decode it first
+            $this->config['label'] = htmlspecialchars_decode($_REQUEST['label'], ENT_QUOTES);
         }
 
         if (!empty($_REQUEST['label_singular'])) {
-            $this->config['label_singular'] = $_REQUEST['label_singular'];
+            $this->config['label_singular'] = htmlspecialchars_decode($_REQUEST['label_singular'], ENT_QUOTES);
         }
 
         $this->config [ 'importable' ] = ! empty( $_REQUEST[ 'importable' ] ) ;
