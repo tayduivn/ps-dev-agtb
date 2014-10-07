@@ -102,10 +102,10 @@
     </tr>
     {{/each}}
     </tbody>
-</table>
-<span class="scrollbar-landmark"></span>
+    </table>
+    {{#if ../meta.scroll_helper}}<span class="scrollbar-landmark"></span>{{/if}}
 </div>
-<div class="uxs-scroll-bar" data-scroll-spy="flex-list-view-content"><div>&nbsp;</div></div>
+{{#if ../meta.scroll_helper}}<div class="uxs-scroll-bar" data-scroll-spy="flex-list-view-content"><div>&nbsp;</div></div>{{/if}}
 {{#if ../collection.dataFetched}}
     {{#unless ../../collection.length}}
         <div class="block-footer">
