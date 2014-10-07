@@ -58,7 +58,7 @@ $contents = <<<EOQ
                 // this function should be modified to return the SAML settings for the current use
                 \$settings = new SamlSettings();
                 // when using Service Provider Initiated SSO (starting at index.php), this URL asks the IdP to authenticate the user.
-                \$settings->idp_sso_target_url = 'www.sugarcrm.com';
+                \$settings->idp_sso_target_url = 'http://www.sugarcrm.com/';
 
                 // the certificate for the users account in the IdP
                 \$settings->x509certificate = \$GLOBALS['sugar_config']['SAML_X509Cert'];

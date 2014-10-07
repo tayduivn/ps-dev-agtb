@@ -23,10 +23,10 @@ class SamlLogoutTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $sugar_config;
 
-        $sugar_config['SAML_loginurl'] = 'loginURL';
+        $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';
         $sugar_config['SAML_X509Cert'] = 'TestCert';
         $sugar_config['SAML_issuer'] = 'testIssuer';
-        $sugar_config['SAML_SLO'] = 'logoutURL';
+        $sugar_config['SAML_SLO'] = 'http://logoutURL.example.com/';
 
         $authc = new AuthenticationController('SAMLAuthenticate');
         $logout = $authc->getLogoutUrl();

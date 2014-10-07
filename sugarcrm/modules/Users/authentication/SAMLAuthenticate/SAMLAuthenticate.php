@@ -69,13 +69,18 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
         return $authrequest->getRedirectUrl();
     }
 
+    /**
+     * Get URL to follow to get logged out
+     * @return string
+     */
     public function getLogoutUrl()
     {
         if(empty($GLOBALS['sugar_config']['SAML_SLO'])) {
             return;
         }
-        $req = new OneLogin_Saml_LogoutRequest(SAMLAuthenticate::loadSettings());
-        return $req->getLogoutUrl();
+        $auth = new OneLogin_Saml2_Auth(SAMLAuthenticate::loadSettings());
+        $req = new OneLogin_Saml2_LogoutRequest($auth->getSettings());
+        return $GLOBALS['sugar_config']['SAML_SLO'] . "?SAMLRequest=" . urlencode($req->getRequest());
     }
 
     /**
