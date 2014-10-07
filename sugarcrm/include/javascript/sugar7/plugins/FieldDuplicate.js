@@ -143,7 +143,7 @@
                                 options.params[this.name + '_duplicateBeanId'] = this._duplicateBeanId;
                             }
                         }, this);
-                        this.model.on('lead:convert-save', function(model) {
+                        this.model.on('duplicate:field:prepare:save', function(model) {
                             if (this.model.get(this.name)) {
                                 model[this.name + '_duplicateBeanId'] = this._duplicateBeanId;
                             }

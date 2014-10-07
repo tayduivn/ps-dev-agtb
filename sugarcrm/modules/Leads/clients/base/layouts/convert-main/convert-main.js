@@ -227,7 +227,7 @@
         // Set field_duplicateBeanId for fields implementing FieldDuplicate
         _.each(this.convertPanels, function(view, module) {
             if (view && view.createView && convertModel.get('modules')[module]) {
-                view.createView.model.trigger('lead:convert-save', convertModel.get('modules')[module]);
+                view.createView.model.trigger('duplicate:field:prepare:save', convertModel.get('modules')[module]);
             }
         }, this);
 
