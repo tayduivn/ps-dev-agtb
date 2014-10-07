@@ -694,6 +694,11 @@
          */
         this.$helper = this.$('[data-scroll-spy]');
 
+        // if no helper was found, just go about our way and not produce any javascript errors
+        if (this.$helper.length === 0) {
+            return;
+        }
+
         /**
          * The `spy` is the list container element.
          *
@@ -751,6 +756,9 @@
      * @private
      */
     _updateHelperWidth: function() {
+        if (this.$helper.length === 0) {
+            return;
+        }
         this.$helper.toggleClass('dash-collapsed', $('.side.sidebar-content').css('visibility') === 'hidden');
     },
 
@@ -792,7 +800,7 @@
         var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
 
-        if (this.$helper) {
+        if (this.$helper && this.$helper.length > 0) {
             this.$helper.find('div').width(this.$spy.get(0).scrollWidth);
             this.$helper.scrollLeft(this.$spy.scrollLeft());
             this._toggleScrollHelper();
