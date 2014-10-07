@@ -53,11 +53,12 @@ function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
         $installdefs['copy'][] = array("from" => "<basepath>/$file", "to" => $file);
     }
 
-    unset($installdefs['copy'][5]);
-    $installdefs['copy'][] = array(
-        "from" => "<basepath>/modules/UpgradeWizard/language/en_us.lang.php",
-        "to" => "custom/modules/UpgradeWizard/language/en_us.lang.php"
-    );
+    foreach ($installdefs['copy'] as $k => $fileData) {
+        if ($fileData['from'] == '<basepath>/modules/UpgradeWizard/language/en_us.lang.php') {
+            $installdefs['copy'][$k]['to'] = "custom/modules/UpgradeWizard/language/en_us.lang.php";
+            break;
+        }
+    }
 
 // administration menu entry
     $installdefs['copy'][] = array(
