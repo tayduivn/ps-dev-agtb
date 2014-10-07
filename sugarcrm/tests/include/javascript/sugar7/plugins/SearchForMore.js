@@ -83,9 +83,11 @@ describe('Plugins.SearchForMore', function() {
         field.action = 'edit';
         field.model.set(field.name, participants);
         field.render();
-        field.$('button[data-action=addRow]').click();
+
         $el = field.getFieldElement();
-        $(document.body).append($el);
+        $(document.body).append(field.$el);
+
+        field.$('button[data-action=addRow]').click();
     });
 
     afterEach(function() {
@@ -115,13 +117,11 @@ describe('Plugins.SearchForMore', function() {
     });
 
     it('should add the search for more button to the select widget when the widget is opened', function() {
-        $el.select2('open');
         expect($el.select2('dropdown').find('[name=search_for_more]').length).not.toBe(0);
     });
 
     it('should open the selection-list when the button is clicked', function() {
         var stub = sandbox.stub(field, 'searchForMore');
-        $el.select2('open');
         $el.select2('dropdown').find('[name=search_for_more]').mousedown();
         expect(stub).toHaveBeenCalled();
     });

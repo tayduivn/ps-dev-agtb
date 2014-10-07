@@ -642,6 +642,7 @@
      */
     addRow: function(event) {
         this.$('[name=newRow]').css('display', 'table');
+        this.getFieldElement().select2('open');
         $(event.currentTarget).hide();
     },
 

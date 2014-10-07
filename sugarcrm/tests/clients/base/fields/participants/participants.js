@@ -220,6 +220,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should show the select and hide the plus button when the plus button is clicked', function() {
+            sandbox.stub($.fn, 'select2');
             field.render();
             field.$('button[data-action=addRow]').click();
             expect(field.$('[name=newRow]').css('display')).toEqual('table');
@@ -227,6 +228,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it("should hide the select and show the plus button when the select row's minus button is clicked", function() {
+            sandbox.stub($.fn, 'select2');
             field.render();
             field.$('button[data-action=addRow]').click();
             field.$('button[data-action=removeRow]').last().click();
