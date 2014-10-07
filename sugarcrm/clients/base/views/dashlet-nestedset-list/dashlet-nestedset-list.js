@@ -23,7 +23,7 @@
      * ID of tree item which is in active state (currently selected).
      *
      * @property {String}
-     */ 
+     */
     active: null,
 
     /**
@@ -45,36 +45,39 @@
      */
     initDashlet: function() {
         this.dataProvider = this.settings.get('data_provider');
-        this.config = app.metadata.getModule(this.settings.get('config_provider'), 'config');
-        this.root = !_.isUndefined(this.config.category_root) ? this.config.category_root : null;
+        this.config = app.metadata.getModule(
+            this.settings.get('config_provider'),
+            'config'
+        );
+        this.root = !_.isUndefined(this.config.category_root) ?
+            this.config.category_root :
+            null;
     },
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
-    bindDataChange: function(){
+    bindDataChange: function() {
         if (this.model) {
             this.model.on('change', this.loadData, this);
         }
     },
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     loadData: function(options) {
         if (this.disposed || !this.dataProvider || !this.root) {
             return;
         }
 
-        this.collection.module = this.dataProvider;
-        this.collection.root = this.root;
         this.collection.tree({
             success: _.bind(this.render, this)
         });
     },
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     _render: function() {
         this._super('_render');

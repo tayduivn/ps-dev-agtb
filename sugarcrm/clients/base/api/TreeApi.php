@@ -115,7 +115,7 @@ class TreeApi extends FilterApi
                 'path' => array('<module>', '?', 'movefirst', '?'),
                 'pathVars' => array('module', 'record', 'movefirst', 'target'),
                 'method' => 'moveFirst',
-                'shortHelp' => 'This method record as as first child of target',
+                'shortHelp' => 'This method record as first child of target',
                 'longHelp' => 'include/api/help/tree_put_movefirst_help.html',
             ),
             'movelast' => array(
@@ -123,7 +123,7 @@ class TreeApi extends FilterApi
                 'path' => array('<module>', '?', 'movelast', '?'),
                 'pathVars' => array('module', 'record', 'movelast', 'target'),
                 'method' => 'moveLast',
-                'shortHelp' => 'This method record as as last child of target',
+                'shortHelp' => 'This method record as last child of target',
                 'longHelp' => 'include/api/help/tree_put_movelast_help.html',
             ),
             'append' => array(
@@ -316,7 +316,7 @@ class TreeApi extends FilterApi
     }
 
     /**
-     * This method record as previous sibling of target.
+     * This method moves record as previous sibling of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
@@ -330,7 +330,7 @@ class TreeApi extends FilterApi
     }
 
     /**
-     * This method record as next sibling of target.
+     * This method moves record as next sibling of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
@@ -344,7 +344,7 @@ class TreeApi extends FilterApi
     }
 
     /**
-     * This method record as as first child of target.
+     * This method moves record as first child of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
@@ -358,7 +358,7 @@ class TreeApi extends FilterApi
     }
 
     /**
-     * This method record as as last child of target.
+     * This method moves record as last child of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
      * @return array An array version of the SugarBean
@@ -381,7 +381,7 @@ class TreeApi extends FilterApi
     {
         $this->requireArgs($args, array('module'));
         $seed = $this->retrieveBean($args['module']);
-        return $seed->getRoots();
+        return $this->formatTree($api, $args, $seed->getRoots());
     }
 
     /**
@@ -413,7 +413,7 @@ class TreeApi extends FilterApi
         );
 
         foreach ($tree as $node) {
-            if ($node['children']) {
+            if (!empty($node['children'])) {
                 $node['children'] = $this->formatTree($api, $args, $node['children']);
             } else {
                 $node['children'] = $emptySet;
@@ -435,7 +435,7 @@ class TreeApi extends FilterApi
     {
         $this->requireArgs($args, array('module', 'record'));
         $record = $this->retrieveBean($args['module'], $args['record']);
-        return $record->getСhildren(1);
+        return $this->formatTree($api, $args, $record->getСhildren(1));
     }
 
     /**
