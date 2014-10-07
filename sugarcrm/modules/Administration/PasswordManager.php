@@ -39,20 +39,26 @@ $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
 $focus = BeanFactory::getBean('Administration');
 $configurator->parseLoggerSettings();
-$valid_public_key= true;
-if(!empty($_POST['saveConfig'])){
-    if ($_POST['captcha_on'] == '1'){
-		$handle = @fopen("http://api.recaptcha.net/challenge?k=".$_POST['captcha_public_key']."&cachestop=35235354", "r");
-		$buffer ='';
-		if ($handle) {
-		    while (!feof($handle)) {
-		        $buffer .= fgets($handle, 4096);
-		    }
-		    fclose($handle);
-		}
-		$valid_public_key= substr($buffer, 1, 4) == 'var '? true : false;
-	}
-	if ($valid_public_key){
+$config_strings = return_module_language($GLOBALS['current_language'], 'Configurator');
+$valid_public_key = true;
+if (!empty($_POST['saveConfig'])) {
+    do {
+        if ($_POST['captcha_on'] == '1') {
+    		$handle = @fopen("http://api.recaptcha.net/challenge?k=".$_POST['captcha_public_key']."&cachestop=35235354", "r");
+    		$buffer ='';
+    		if ($handle) {
+    		    while (!feof($handle)) {
+    		        $buffer .= fgets($handle, 4096);
+    		    }
+    		    fclose($handle);
+    		}
+    		if (substr($buffer, 1, 4) != 'var ') {
+    		    // skip save and go to display form
+    		    $valid_public_key = false;
+    		    break;
+    		}
+    	}
+
 		if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
 			$_POST['system_ldap_enabled'] = 1;
 		}
@@ -87,8 +93,32 @@ if(!empty($_POST['saveConfig'])){
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
-		$configurator->saveConfig();
+		// Check SAML settings
+		if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'SAMLAuthenticate') {
+            if (empty($_POST['SAML_loginurl'])) {
+                $configurator->addError($config_strings['ERR_EMPTY_SAML_LOGIN']);
+                break;
+            } else {
+                $_POST['SAML_loginurl'] = trim($_POST['SAML_loginurl']);
+                if (!filter_var($_POST['SAML_loginurl'], FILTER_VALIDATE_URL)) {
+                    $configurator->addError($config_strings['ERR_SAML_LOGIN_URL']);
+                    break;
+                }
+            }
+            if (!empty($_POST['SAML_SLO'])) {
+                $_POST['SAML_SLO'] = trim($_POST['SAML_SLO']);
+                if (!filter_var($_POST['SAML_SLO'], FILTER_VALIDATE_URL)) {
+                    $configurator->addError($config_strings['ERR_SAML_SLO_URL']);
+                    break;
+                }
+            }
+            if (empty($_POST['SAML_X509Cert'])) {
+                $configurator->addError($config_strings['ERR_EMPTY_SAML_CERT']);
+                break;
+            }
+		}
 
+		$configurator->saveConfig();
 		$focus->saveConfig();
 
 		// Clean API cache since we may have changed the authentication settings
@@ -101,7 +131,10 @@ if(!empty($_POST['saveConfig'])){
             app.router.navigate('#bwc/index.php?module=Administration&action=index', {trigger:true, replace:true});
             </script>"
         );
-	}
+	} while (false);
+
+	// We did not succeed saving, but we still want to load data from post to display it
+	$configurator->populateFromPost();
 }
 
 $focus->retrieveSettings();
@@ -113,7 +146,6 @@ $sugar_smarty = new Sugar_Smarty();
 // if no IMAP libraries available, disable Save/Test Settings
 if(!function_exists('imap_open')) $sugar_smarty->assign('IE_DISABLED', 'DISABLED');
 
-$config_strings=return_module_language($GLOBALS['current_language'],'Configurator');
 $sugar_smarty->assign('CONF', $config_strings);
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
