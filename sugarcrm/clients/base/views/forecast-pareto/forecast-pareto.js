@@ -131,6 +131,12 @@
             app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'best_case')) {
             this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
         }
+
+        // Hide dataset drop-down if there is only one option.
+        this.dashletConfig.show_dataset = true;
+        if (_.size(this.dashletConfig.dataset.options) <= 1) {
+            this.dashletConfig.show_dataset = false;
+        }
     },
 
     /**
