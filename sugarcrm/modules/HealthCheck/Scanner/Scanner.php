@@ -1929,7 +1929,7 @@ ENDP;
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey" . $custom, $key, $value['name']);
+                $this->updateStatus("badVardefsKey", $key, $value['name']);
                 continue;
             }
 
@@ -1947,7 +1947,7 @@ ENDP;
 
             if ($key == 'team_name') {
                 if (empty($value['module'])) {
-                    $this->updateStatus("badVardefsRelate" . $custom, $key);
+                    $this->updateStatus("badVardefsRelate", $key);
                 }
                 // this field is really weird, let's leave it alone for now
                 continue;
@@ -2028,9 +2028,8 @@ ENDP;
                             }
                         }
                         if ((empty($value['link_type']) || $value['link_type'] != 'relationship_info') &&
-                            empty($value['module'])
-                        ) {
-                            $this->updateStatus("badVardefsRelate" . $custom, $key);
+                            empty($value['module'])) {
+                            $this->updateStatus("badVardefsRelate", $key);
                         }
                         break;
                 }
