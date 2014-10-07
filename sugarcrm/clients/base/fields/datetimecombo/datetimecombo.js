@@ -162,7 +162,9 @@
             step: this.def.time.step || 15,
             disableTextInput: _.isUndefined(this.def.time.disable_text_input) ?
                 false :
-                !!this.def.time.disable_text_input
+                !!this.def.time.disable_text_input,
+            className: this.def.time.css_class || 'prevent-mousedown',
+            appendTo: this.view.$el
         };
 
         this._enableDuration(options);
