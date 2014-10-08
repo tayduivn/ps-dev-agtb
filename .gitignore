@@ -35,3 +35,5 @@ sugarcrm/vendor/bin/
 sugarcrm/vendor/phpunit/
 sugarcrm/vendor/sebastian/
 sugarcrm/vendor/symfony/
+sugarcrm/vendor/ocramius/
+sugarcrm/vendor/onelogin/
