@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Categories']['base']['view']['treeview-headerpane'] = array(
+$viewdefs['Categories']['base']['view']['nested-set-headerpane'] = array(
     'template' => 'headerpane',
     'buttons' => array(
         array(

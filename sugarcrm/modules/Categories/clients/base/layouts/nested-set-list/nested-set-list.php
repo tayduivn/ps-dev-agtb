@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Categories']['base']['layout']['treeview-list'] = array(
+$viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -19,7 +19,7 @@ $viewdefs['Categories']['base']['layout']['treeview-list'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'view' => 'treeview-headerpane',
+                                    'view' => 'nested-set-headerpane',
                                 ),
                                 array(
                                     'view' => 'tree'
@@ -69,7 +69,7 @@ $viewdefs['Categories']['base']['layout']['treeview-list'] = array(
             ),
         ),
     ),
-    'type' => 'treeview-list',
+    'type' => 'nested-set-list',
     'name' => 'base',
     'span' => 12,
 );

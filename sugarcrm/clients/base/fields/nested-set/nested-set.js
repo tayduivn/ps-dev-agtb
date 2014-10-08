@@ -264,7 +264,7 @@
             isDrawer: true
         };
         app.drawer.open({
-            layout: 'treeview-list',
+            layout: 'nested-set-list',
             context: {
                 module: 'Categories',
                 parent: this.context,
