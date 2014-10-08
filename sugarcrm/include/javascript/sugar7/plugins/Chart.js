@@ -71,7 +71,11 @@
                     }
                 }, this);
 
-                this.on('render', this.renderChart, this);
+                this.on('render', function() {
+                    // This on click event is required to dismiss the dropdown legend
+                    this.$('.nv-chart').on('click', _.bind(this.chart.dispatch.chartClick, this));
+                    this.renderChart();
+                }, this);
             },
 
             /**

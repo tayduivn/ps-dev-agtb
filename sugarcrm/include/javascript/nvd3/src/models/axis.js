@@ -18,6 +18,7 @@ nv.models.axis = function() {
       reduceXTicks = false, // if false a tick will show for every data point
       rotateYLabel = true,
       isOrdinal = false,
+      textAnchor = null,
       ticks = null,
       axisLabelDistance = 8; //The larger this number is, the closer the axis label is to the axis.
 
@@ -250,7 +251,7 @@ nv.models.axis = function() {
             x: axis.tickPadding(),
             y: 0,
             rotate: '',
-            anchor: 'start'
+            anchor: textAnchor ? textAnchor : 'start'
           };
         }
         break;
@@ -277,7 +278,7 @@ nv.models.axis = function() {
             x: -axis.tickPadding(),
             y: 0,
             rotate: '',
-            anchor: 'end'
+            anchor: textAnchor ? textAnchor : 'end'
           };
         }
 
@@ -288,6 +289,15 @@ nv.models.axis = function() {
       // Axis label
 
       var axisLabel = g.selectAll('text.nv-axislabel').data([axisLabelText]);
+
+      if (textAnchor) {
+        g.selectAll('g.tick') // the g's wrapping each tick
+          .each(function(d, i) {
+            d3.select(this).select('text')
+              .style('text-anchor', textAnchor);
+          });
+      }
+
       axisLabel.exit().remove();
       axisLabel.enter().append('text').attr('class', 'nv-axislabel');
 
@@ -548,6 +558,14 @@ nv.models.axis = function() {
       return maxTickWidth;
     }
     maxTickWidth = _;
+    return chart;
+  };
+
+  chart.textAnchor = function(_) {
+    if (!arguments.length) {
+      return textAnchor;
+    }
+    textAnchor = _;
     return chart;
   };
 

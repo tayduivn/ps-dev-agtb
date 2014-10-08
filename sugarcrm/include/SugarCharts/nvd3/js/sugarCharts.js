@@ -317,6 +317,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
         case 'funnelChart':
             SUGAR.charts.get(jsonFilename, params, function(data) {
                 if (SUGAR.charts.isDataEmpty(data)) {
+
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
                     var funnelChart = nv.models.funnelChart()
@@ -326,11 +327,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
-                                '<p>' + e.value + '</p>';
+                                '<p>' + (e.label || e.value) + '</p>';
                         })
                         .colorData(params.colorData)
                         .fmtValueLabel(function(d) {
-                            return d.value;
+                            return d.label || d.value || d;
                         })
                         .clipEdge(false)
                         .delay(1)
@@ -376,10 +377,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         maxValue = 1;
                     }
 
-					json.data.map(function(d, i) { 
+					json.data.map(function(d, i) {
 						d.classes = 'nv-fill0' + (i + 1);
 					});
-					
+
                     //init Gauge Chart
                     var gaugeChart = nv.models.gaugeChart()
                             .id(d3ChartId)
@@ -609,7 +610,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         data = json.values.reverse().map(function(d, i) {
                             return {
                                 'key': (d.label[0] !== '') ? d.label[0] : strUndefined,
-                                'values': [{ 'series': i, 'x': 0, 'y': (parseInt(d.values[0], 10) || 0), y0: 0 }]
+                                'values': [{ 'series': i, 'label': (d.valuelabels[0] ? d.valuelabels[0] : d.values[0]), 'x': 0, 'y': (parseInt(d.values[0], 10) || 0), y0: 0 }]
                             };
                         });
                         break;

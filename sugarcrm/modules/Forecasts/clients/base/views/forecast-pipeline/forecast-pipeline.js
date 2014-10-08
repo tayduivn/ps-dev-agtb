@@ -74,7 +74,6 @@
                 complete: view.options ? view.options.complete : null
             });
         }
-        var currencySymbol = SUGAR.App.currency.getCurrencySymbol(SUGAR.App.currency.getBaseCurrencyId());
         this.chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(true)
@@ -88,7 +87,8 @@
             })
             .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
-                return d.label;
+                var y = d.label || d;
+                return app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId()).replace(/\,00|\.00$/,'');
             })
             .strings({
                 legend: {

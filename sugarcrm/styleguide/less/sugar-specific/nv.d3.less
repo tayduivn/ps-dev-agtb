@@ -207,7 +207,8 @@ body.full-screen {
   stroke-opacity: .75;
 }
 
-.nv-axis line {
+.nv-axis line,
+.nv-axis polyline {
   fill: none;
   stroke: @chartTickColor;
   stroke-width: @chartTickWidth;
@@ -471,6 +472,12 @@ body.full-screen {
 .nv-funnelChart {
   .nv-y path {
     stroke: none;
+  }
+  .nv-inactive polygon {
+    fill-opacity: 0.5;
+  }
+  .nv-inactive:hover polygon {
+    fill-opacity: 0.75;
   }
 }
 
