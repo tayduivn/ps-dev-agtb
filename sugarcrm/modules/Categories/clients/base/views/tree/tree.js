@@ -43,5 +43,16 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this._initSettings();
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _renderHtml: function(ctx, options) {
+        this._super('_renderHtml', [ctx, options]);
+        this._renderTree($('.tree-block'), this._settings, {
+            'onToggle': this.jstreeToggle,
+            'onSelect': this.jstreeSelect
+        });
     }
 })

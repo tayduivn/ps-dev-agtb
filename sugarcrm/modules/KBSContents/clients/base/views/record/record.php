@@ -255,6 +255,13 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 ),
                 'topic_name' => array(
                     'name' => 'topic_name',
+                    'type' => 'relate',
+                ),
+                'category_name' => array(
+                    'name' => 'category_name',
+                    'type' => 'nested-set',
+                    'config_provider' => 'KBSDocuments',
+                    'data_provider' => 'Categories',
                     'label' => 'LBL_TOPIC_NAME',
                 ),
                 'team_name' => array(
