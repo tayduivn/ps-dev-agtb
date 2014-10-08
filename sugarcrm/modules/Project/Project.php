@@ -261,6 +261,7 @@ class Project extends SugarBean {
 
 		$i=0;
 		$userResourceArr = "var userResourceArr = document.getElementById('person_id').options;\n";
+        //set the dropdown to '-none', or retrieve User Resources
         if(empty($userResources)){
                 $userResourceOptions .= "var userResource$i = new Option('".$GLOBALS['app_strings']['LBL_NONE']."', '');\n";
                 $userResourceOptions .= "userResourceArr[userResourceArr.length] = userResource$i;\n";
@@ -273,6 +274,7 @@ class Project extends SugarBean {
         }
 		$i=0;
 		$contactResourceArr = "var contactResourceArr = document.getElementById('person_id').options;\n";
+        //set the dropdown to '-none', or retrieve Contact Resources
         if(empty($contactResources)){
                 $contactResourceOptions .= "var contactResource$i = new Option('".$GLOBALS['app_strings']['LBL_NONE']."', '');\n";
                 $contactResourceOptions .= "contactResourceArr[contactResourceArr.length] = contactResource$i;\n";
