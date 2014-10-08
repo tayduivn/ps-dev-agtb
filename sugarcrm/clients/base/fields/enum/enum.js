@@ -78,6 +78,21 @@
     _keysOrder: null,
 
     /**
+     * @inheritDoc
+     *
+     * Returns the direction of the field depending on the nature of the first
+     * option when the language direction is `rtl`.
+     */
+    direction: function() {
+        if (_.isEmpty(this.items) || app.lang.direction !== 'rtl') {
+            return;
+        }
+
+        var firstOption = _.values(this.items)[0];
+        return app.utils.isDirectionRTL(firstOption) ? 'rtl' : 'ltr';
+    },
+
+    /**
      * Bind the additional keydown handler on select2
      * search element (affected by version 3.4.3).
      *
@@ -176,6 +191,12 @@
             if (this.tplName === 'edit' || this.tplName === 'list-edit' || this.tplName === 'massupdate') {
                 $el.select2(select2Options);
                 var plugin = $el.data('select2');
+
+                if (this.dir) {
+                    plugin.container.attr('dir', this.dir);
+                    plugin.results.attr('dir', this.dir);
+                }
+
                 if (plugin && plugin.focusser) {
                     plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
                 }
