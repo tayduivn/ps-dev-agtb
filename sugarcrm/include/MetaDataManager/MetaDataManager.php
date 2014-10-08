@@ -2034,6 +2034,8 @@ class MetaDataManager
             //The jssource file is invalid, we need to invalidate the hash as well.
             return false;
         }
+
+        return true;
     }
 
     /**
