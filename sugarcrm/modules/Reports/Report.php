@@ -1449,7 +1449,7 @@ class Report
                         $do_id = 1;
                     }
                     // Bug 45019: don't add ID column if this column is the ID column
-                    if (($field_list_name != 'total_select_fields' && $field_list_name != 'summary_select_fields') && $do_id) {
+                    if ($field_list_name != 'total_select_fields' && $do_id) {
                         $id_column['name'] = 'id';
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
