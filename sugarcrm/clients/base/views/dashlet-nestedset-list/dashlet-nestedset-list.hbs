@@ -10,8 +10,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 }}
-{{#if collection.length}}
-    <div class="nested-list-widget scroll"></div>
-{{else}}
-    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE" this.module}}</div>
-{{/if}}
+<div class="nested-list-widget scroll" data-place="dashlet-tree">
+</div>

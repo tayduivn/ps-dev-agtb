@@ -10,76 +10,50 @@
  */
 ({
 
-    plugins: ['Dashlet', 'NestedSetCollection'],
+    plugins: ['Dashlet', 'NestedSetCollection', 'JSTree'],
 
-    /**
-     * List of tree nodes.
-     *
-     * @property {Object}
-     */
-    nodes: null,
-
-    /**
-     * ID of tree item which is in active state (currently selected).
-     *
-     * @property {String}
-     */
-    active: null,
 
     /**
      * Module name that provides an netedset data
      *
      * @property {String}
      */
-    dataProvider: null,
+    moduleRoot: null,
 
     /**
-     * Dashlet configuration parameters
-     *
-     * @property {Object}
+     * Root ID of a shown NestedSet.
+     * @property {String}
      */
-    config: {},
+    categoryRoot: null,
 
     /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
-        this.dataProvider = this.settings.get('data_provider');
-        this.config = app.metadata.getModule(
-            this.settings.get('config_provider'),
+        var config = app.metadata.getModule(
+            this.meta.config_provider,
             'config'
         );
-        this.root = !_.isUndefined(this.config.category_root) ?
-            this.config.category_root :
+        this.moduleRoot = this.settings.get('data_provider');
+        this.categoryRoot = !_.isUndefined(config.category_root) ?
+            config.category_root :
             null;
     },
 
     /**
      * {@inheritDoc}
      */
-    bindDataChange: function() {
-        if (this.model) {
-            this.model.on('change', this.loadData, this);
-        }
-    },
-
-    /**
-     * {@inheritDoc}
-     */
-    loadData: function(options) {
-        if (this.disposed || !this.dataProvider || !this.root) {
-            return;
-        }
-
-        this.collection.tree({
-            success: _.bind(this.render, this)
-        });
-    },
+    bindDataChange: function() {},
 
     /**
      * {@inheritDoc}
      */
     _render: function() {
-        this._super('_render');
+        var treeOptions = {
+            category_root: this.categoryRoot,
+            module_root: this.moduleRoot
+        };
+        this._super('_render', []);
+        this._renderTree($('[data-place=dashlet-tree]'), treeOptions, {});
     }
 })
