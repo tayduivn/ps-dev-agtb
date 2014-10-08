@@ -30,23 +30,34 @@
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
+
     hiddenPanelExists: false,
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'detail';
-        app.events.on('preview:open', this.openPreview,  this);
-        app.events.on("preview:render", this._renderPreview, this);
-        app.events.on("preview:collection:change", this.updateCollection, this);
-        app.events.on("preview:close", this.closePreview,  this);
-
-        // TODO: Remove when pagination on activity streams is fixed.
-        app.events.on("preview:module:update", this.updatePreviewModule,  this);
-
-        if(this.layout){
-            this.layout.on("preview:pagination:fire", this.switchPreview, this);
-        }
+        this._delegateEvents();
         this.collection = app.data.createBeanCollection(this.module);
     },
+
+    /**
+     * Add event listeners
+     *
+     * @private
+     */
+    _delegateEvents: function() {
+        app.events.on('preview:render', this._renderPreview, this);
+        app.events.on('preview:collection:change', this.updateCollection, this);
+        app.events.on('preview:close', this.closePreview, this);
+
+        // TODO: Remove when pagination on activity streams is fixed.
+        app.events.on('preview:module:update', this.updatePreviewModule, this);
+
+        if (this.layout) {
+            this.layout.on('preview:pagination:fire', this.switchPreview, this);
+        }
+    },
+
     updateCollection: function(collection) {
         if( this.collection ) {
             this.collection.reset(collection.models);
@@ -213,7 +224,7 @@
                 this.layout.trigger("preview:pagination:update");
             }
             // Open the preview panel
-            app.events.trigger("preview:open",this);
+            app.events.trigger('preview:open', this);
             // Highlight the row
             app.events.trigger("list:preview:decorate", this.model, this);
         }
@@ -291,16 +302,6 @@
         }
     },
 
-    /**
-     * Make sure the side pane is open.
-     */
-    openPreview: function() {
-        var defaultLayout = this.closestComponent('sidebar');
-        if (defaultLayout) {
-            defaultLayout.trigger('sidebar:toggle', true);
-        }
-    },
-
     closePreview: function() {
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             this.switching = false;
@@ -309,6 +310,7 @@
             this.$el.empty();
         }
     },
+
     bindDataChange: function() {
         if(this.collection) {
             this.collection.on("reset", this.filterCollection, this);
