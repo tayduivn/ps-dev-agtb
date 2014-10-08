@@ -53,11 +53,11 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        var collectionParams = {limit: 100};
+        var collectionParams = {limit: 100, params: {}};
         this._super('initialize', [options]);
 
         if (this.def.use_generic_timeperiods) {
-            collectionParams.use_generic_timeperiods = true;
+            collectionParams.params.use_generic_timeperiods = true;
         }
 
         // get timeperiods list
