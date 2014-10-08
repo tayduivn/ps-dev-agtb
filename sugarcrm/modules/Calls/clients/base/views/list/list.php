@@ -40,10 +40,12 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                         ),
                 ),
                 array(
+                    'name' => 'date_start',
                     'label' => 'LBL_LIST_DATE',
+                    'type' => 'datetimecombo-colorcoded',
+                    'completed_status_value' => 'Held',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'date_start',
                     'readonly' => true,
                 ),
                 array(
