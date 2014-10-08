@@ -48,7 +48,10 @@ class FieldViewer{
         }
 
         if ((isset($vardef['name']) && in_array($vardef['name'], self::$fieldNameNoRequired))) {
-            $this->ss->assign('hideRequired', 'true');
+            $this->ss->assign('hideRequired', true);
+        }
+        else {
+            $this->ss->assign('hideRequired', false);
         }
 
 		$GLOBALS['log']->debug('FieldViewer.php->getLayout() = '.$vardef['type']);
