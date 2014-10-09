@@ -46,8 +46,8 @@ $mod_strings = array(
 
     'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_LOG' => 'Bad module %s - not in beanList and not in filesystem',
-    'LBL_SCAN_520_LOG' => 'Logic hook after_ui_frame detected',
-    'LBL_SCAN_521_LOG' => 'Logic hook after_ui_footer detected',
+    'LBL_SCAN_520_LOG' => 'Logic hook after_ui_frame detected in %s',
+    'LBL_SCAN_521_LOG' => 'Logic hook after_ui_footer detected in %s',
 //    'LBL_SCAN_405_LOG' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_406_LOG' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
     'LBL_SCAN_407_LOG' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
@@ -125,8 +125,8 @@ $mod_strings = array(
 
     'LBL_SCAN_401_TITLE' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_TITLE' => 'Bad module %s - not in beanList and not in filesystem',
-    'LBL_SCAN_520_TITLE' => 'Logic hook after_ui_frame detected',
-    'LBL_SCAN_521_TITLE' => 'Logic hook after_ui_footer detected',
+    'LBL_SCAN_520_TITLE' => 'Logic hook after_ui_frame detected in %s',
+    'LBL_SCAN_521_TITLE' => 'Logic hook after_ui_footer detected in %s',
 //    'LBL_SCAN_405_TITLE' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_406_TITLE' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
     'LBL_SCAN_407_TITLE' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
