@@ -1514,8 +1514,8 @@
         app.alert.show('create-option-alert', {
             level: 'warning',
             autoClose: true,
-            autoCloseDelay: 9000,
-            title: '',
+            autoCloseDelay: 15000,
+            title: ' ',
             messages: app.lang.get('LBL_CREATING_NEW_ACTIVITY', 'Calendar'),
             onLinkClick: function(event) {
                 var action = $(event.currentTarget).data('action'),
