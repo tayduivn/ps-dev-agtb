@@ -169,7 +169,29 @@
                     this._loadedHandler($container);
                 }, this))
                 .on('select_node.jstree', _.bind(this._selectNodeHandler, this))
-                .on('create.jstree', _.bind(this._createHandler, this));
+                .on('create.jstree', _.bind(this._createHandler, this))
+                .on('move_node.jstree', _.bind(this._moveHandler, this))
+                .on('rename_node.jstree', _.bind(this._renameHandler, this));
+            },
+
+            /**
+             * Drag-and-Drop handler when node move is finished.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _moveHandler: function(event, data) {
+                /* @todo: handler for dnd move - wbi */
+            },
+
+            /**
+             * Rename node handler.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _renameHandler: function(event, data) {
+                /* @todo: handler for rename node - wbi */
             },
 
             /**
@@ -183,19 +205,32 @@
                 var self = this;
                 if (settings.showMenu === true) {
                     return {
+                        edit: {
+                            separator_before: false,
+                            separator_after: true,
+                            _disabled: false,
+                            label: app.lang.get('LBL_CONTEXTMENU_EDIT', self.module),
+                            action: function(obj) {
+                                this.rename(obj);
+                                /*
+                                 // @todo: waiting for edit implementation on backend
+                                 */
+                            }
+                        },
                         moveup: {
                             separator_before: false,
                             separator_after: true,
                             _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEUP', self.module),
                             action: function(obj) {
-                                var that = this;
-                                if (this._get_node() && this._get_prev()) {
+                                var currentNode = this._get_node(obj),
+                                    prevNode = this._get_prev(obj, true);
+                                if (currentNode && prevNode) {
                                     self.moveNode(
-                                        this._get_node().data('id'),
-                                        this._get_prev().data('id'),
+                                        currentNode.data('id'),
+                                        prevNode.data('id'),
                                         function() {
-                                            $(that._get_prev()).before($(that._get_node()));
+                                            $(currentNode).after($(prevNode));
                                         });
                                 }
                             }
@@ -206,13 +241,14 @@
                             _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEDOWN', self.module),
                             action: function(obj) {
-                                var that = this;
-                                if (this._get_node() && this._get_next()) {
+                                var currentNode = this._get_node(obj),
+                                    nextNode = this._get_next(obj, true);
+                                if (currentNode && nextNode) {
                                     self.moveNode(
-                                        this._get_next().data('id'),
-                                        this._get_node().data('id'),
+                                        currentNode.data('id'),
+                                        nextNode.data('id'),
                                         function() {
-                                            $(that._get_next()).after($(that._get_node()));
+                                            $(nextNode).after($(currentNode));
                                         });
                                 }
                             }
@@ -258,8 +294,16 @@
                         separator_after: false,
                         label: entry.get('name'),
                         action: function(obj) {
-                            self.moveTo(obj.data('id'), entry.id, function() {
-                                // @todo: move node on client
+                            self.moveTo(obj.data('id'), entry.id, function(idRecord, idTarget) {
+                                self.jsTree.jstree(
+                                    'move_node',
+                                    self.jsTree.jstree('get_instance')
+                                        .get_container_ul()
+                                        .find('li[data-id=' + idRecord + ']'),
+                                    self.jsTree.jstree('get_instance')
+                                        .get_container_ul()
+                                        .find('li[data-id=' + idTarget + ']')
+                                );
                             });
                         }
                     };
@@ -446,11 +490,13 @@
              * @param {Function} callback
              */
             moveTo: function(idRecord, idTarget, callback) {
+                var self = this;
                 this.collection.moveLast({
                     record: idRecord,
                     target: idTarget,
                     success: function(data, response) {
-                        callback(data, response);
+                        self.collection.remove(idRecord);
+                        callback(idRecord, idTarget);
                     }
                 });
             }

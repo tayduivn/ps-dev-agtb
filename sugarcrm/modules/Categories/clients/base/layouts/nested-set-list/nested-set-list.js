@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.TreeviewListLayout
- * @alias SUGAR.App.view.layouts.BaseTreeviewListLayout
+ * @class View.Layouts.Base.NestedSetListLayout
+ * @alias SUGAR.App.view.layouts.BaseNestedSetListLayout
  * @extends View.Layout
  */
 ({

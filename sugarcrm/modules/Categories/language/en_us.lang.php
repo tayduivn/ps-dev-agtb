@@ -19,6 +19,7 @@ $mod_strings = array(
     'LNK_CATEGORIES' => 'Categories',
     'LBL_CATEGORY_NAME' => 'Category Name',
     'LBL_PARENT_NAME' => 'Parent Category',
+    'LBL_CONTEXTMENU_EDIT' => 'Edit',
     'LBL_CONTEXTMENU_MOVEUP' => 'Move Up',
     'LBL_CONTEXTMENU_MOVEDOWN' => 'Move Down',
     'LBL_CONTEXTMENU_MOVETO' => 'Move To',
