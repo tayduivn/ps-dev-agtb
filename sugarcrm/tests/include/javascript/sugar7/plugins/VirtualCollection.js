@@ -39,7 +39,7 @@ describe('Plugins.VirtualCollection', function() {
                 source: 'non-db',
                 type: 'collection',
                 vname: 'LBL_INVITEES',
-                links: ['contacts', 'leads', 'users'],
+                links: ['contacts', 'accounts'],
                 order_by: 'name:asc',
                 fields: [
                     {
@@ -50,15 +50,36 @@ describe('Plugins.VirtualCollection', function() {
                     'accept_status_meetings',
                     'picture'
                 ]
+            },
+            related_cases: {
+                name: 'related_cases',
+                source: 'non-db',
+                type: 'collection',
+                links: ['cases']
+            },
+            contacts: {
+                name: 'contacts',
+                type: 'link',
+                source: 'non-db'
+            },
+            accounts: {
+                name: 'accounts',
+                type: 'link',
+                source: 'non-db'
+            },
+            cases: {
+                name: 'cases',
+                type: 'link',
+                source: 'non-db'
             }
         };
         attribute = model.fields.invitees.name;
 
         sandbox = sinon.sandbox.create();
         sandbox.stub(app.data, 'getRelatedModule');
-        app.data.getRelatedModule.withArgs('Meetings', 'users').returns('Users');
         app.data.getRelatedModule.withArgs('Meetings', 'contacts').returns('Contacts');
-        app.data.getRelatedModule.withArgs('Meetings', 'leads').returns('Leads');
+        app.data.getRelatedModule.withArgs('Meetings', 'accounts').returns('Accounts');
+        app.data.getRelatedModule.withArgs('Meetings', 'cases').returns('Cases');
     });
 
     afterEach(function() {
@@ -354,14 +375,92 @@ describe('Plugins.VirtualCollection', function() {
             sandbox.spy(collection, '_triggerChange');
         });
 
-        it('should produce a JSON string with the relevant fields plucked from the links', function() {
-            var contactsJSON;
+        describe('calling toJSON() on the model', function() {
+            it('should return an object with links when only the link fields are specified', function() {
+                collection.add(_.rest(contacts, 4));
+                collection.remove([3]);
+                collection.add({_module: 'Accounts', id: '10', name: 'Foo Bar'});
 
-            collection.add(_.rest(contacts, 4));
-            collection.remove([3]);
+                expect(model.toJSON({
+                    fields: ['contacts', 'accounts']
+                })).toEqual({
+                    contacts: {
+                        add: ['5','6'],
+                        delete: ['3']
+                    },
+                    accounts: {
+                        add: ['10']
+                    }
+                });
+            });
 
-            contactsJSON = JSON.parse(JSON.stringify(model))['contacts'];
-            expect(JSON.stringify(contactsJSON)).toEqual('{"add":["5","6"],"delete":["3"]}');
+            it('should not return links that have not been specified', function() {
+                collection.add(_.rest(contacts, 4));
+                collection.remove([3]);
+                collection.add({_module: 'Accounts', id: '10', name: 'Foo Bar'});
+
+                expect(model.toJSON({
+                    fields: ['accounts']
+                })).toEqual({
+                    accounts: {
+                        add: ['10']
+                    }
+                });
+            });
+
+            it('should only return the collection if only the collection name is specified', function() {
+                var result;
+
+                collection.add(_.rest(contacts, 4));
+                collection.remove([3]);
+                collection.add({_module: 'Accounts', id: '10', name: 'Foo Bar'});
+
+                result = model.toJSON({
+                    fields: ['invitees']
+                });
+
+                expect(_.size(result)).toBe(1);
+                expect(_.size(result.invitees)).toBe(6);
+            });
+
+            it('should return all collections by default', function() {
+                var result;
+
+                model.set('related_cases', [{
+                    _module: 'Cases',
+                    id: '11',
+                    name: 'foo'
+                }, {
+                    _module: 'Cases',
+                    id: '12',
+                    name: 'bar'
+                }]);
+
+                result = model.toJSON();
+
+                expect(_.size(result)).toBe(2);
+                expect(_.size(result.invitees)).toBe(4);
+                expect(_.size(result.related_cases)).toBe(2);
+            });
+
+            it('should return no collections and links if specifically not included in options.fields', function() {
+                var result;
+
+                model.set('id', '123');
+                model.set('related_cases', [{
+                    _module: 'Cases',
+                    id: '11',
+                    name: 'foo'
+                }, {
+                    _module: 'Cases',
+                    id: '12',
+                    name: 'bar'
+                }]);
+
+                result = model.toJSON({fields:['id']});
+
+                expect(result).toEqual({id: '123'});
+            });
         });
 
         describe('copying a model with a collection field', function() {
@@ -485,6 +584,7 @@ describe('Plugins.VirtualCollection', function() {
         describe('getting the names of the collection fields', function() {
             it('should return an empty array', function() {
                 delete model.fields[attribute];
+                delete model.fields['related_cases'];
 
                 expect(model.getCollectionFieldNames().length).toBe(0);
             });
@@ -492,8 +592,8 @@ describe('Plugins.VirtualCollection', function() {
             it('should return an array with the collection field names', function() {
                 var fields = model.getCollectionFieldNames();
 
-                expect(fields.length).toBe(1);
-                expect(fields).toContain(attribute);
+                expect(fields.length).toBe(2);
+                expect(fields).toEqual(['invitees','related_cases']);
             });
         });
     });

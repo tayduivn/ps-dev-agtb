@@ -235,10 +235,12 @@
             initialize: function(models, options) {
                 options || (options = {});
 
-                app.MixedBeanCollection.prototype.initialize.call(this, models, options);
-
                 this.parent = options.parent;
+                delete options.parent;
+
                 this.fieldName = options.fieldName;
+                delete options.fieldName;
+
                 this.relatedModules = {};
                 this.links = _.reduce(options.links, function(memo, link) {
                     var module, options;
@@ -254,12 +256,15 @@
 
                     return memo;
                 }, {}, this);
+                delete options.links;
 
                 this.parent.on('sync', function() {
                     _.each(this.links, function(link) {
                         link.clearAndUpdateDefaults();
                     });
                 }, this);
+
+                app.MixedBeanCollection.prototype.initialize.call(this, models, options);
             },
 
             /**
@@ -597,20 +602,31 @@
          *         //...
          *     }
          */
-        BeanOverrides.prototype.toJSON = function(options) {
-            return _.reduce(this.model.getCollectionFieldNames(), function(json, attribute) {
-                var field = this.get(attribute) || {};
+        BeanOverrides.prototype.toJSON = function(collections, links, options) {
+            var json = {},
+                fields = _.unique(_.union(collections, _.keys(links)));
 
-                _.each(field.links, function(link, name) {
-                    var actions = link.transpose();
+            _.each(fields, function(attribute) {
+                var field = this.get(attribute);
+
+                if (!field) {
+                    return;
+                }
+
+                if (_.contains(collections, attribute)) {
+                    json[attribute] = field.toJSON(options);
+                }
+
+                _.each(links[attribute], function(link) {
+                    var actions = field.links[link].transpose();
 
                     if (actions.add || actions.delete) {
-                        json[name] = actions;
+                        json[link] = actions;
                     }
                 });
+            }, this.model);
 
-                return json;
-            }, {}, this.model);
+            return json;
         };
 
         /**
@@ -717,7 +733,6 @@
 
             _.each(this.model.getCollectionFieldNames(), function(attr) {
                 var collection = this.get(attr);
-
                 if (collection && collection.hasChanged()) {
                     changed[attr] = collection;
                 }
@@ -734,7 +749,10 @@
          */
         BeanOverrides.prototype.revertAttributes = function(options) {
             _.each(this.model.getCollectionFieldNames(), function(attr) {
-                this.get(attr).revert(options);
+                var collection = this.get(attr);
+                if (collection) {
+                    collection.revert(options);
+                }
             }, this.model);
         };
 
@@ -753,8 +771,11 @@
         BeanOverrides.prototype.getSyncedAttributes = function() {
             var syncedAttributes = {};
 
-            _.reduce(this.model.getCollectionFieldNames(), function(attributes, field) {
-                attributes[field] = this.get(field);
+            _.reduce(this.model.getCollectionFieldNames(), function(memo, attr) {
+                var collection = this.get(attr);
+                if (collection) {
+                    memo[attr] = collection;
+                }
             }, syncedAttributes, this.model);
 
             return syncedAttributes;
@@ -791,7 +812,40 @@
                  * of the model.
                  */
                 this.toJSON = _.wrap(this.toJSON, function(_super, options) {
-                    return _.extend(_super.call(this, options), overrides.toJSON(options));
+                    var attrs, fields, collectionFieldNames, collections, links, nonAttrFields, collectionsToJSON, attrToJSON;
+
+                    fields = (options && options.fields) ? options.fields : _.keys(this.attributes);
+
+                    // names of all fields that are collection type
+                    collectionFieldNames = this.getCollectionFieldNames();
+
+                    // names of collection type fields to be included
+                    collections = _.intersection(collectionFieldNames, fields);
+
+                    links = {}; // names of links fields to be included
+                    nonAttrFields = _.clone(collections); // names of collection type fields and link fields to be included
+
+                    _.each(collectionFieldNames, function(fieldName) {
+                        var field = this.get(fieldName);
+                        if (_.isObject(field) && field.links) {
+                            _.each(field.links, function(link) {
+                                if (_.contains(fields, link.link.name)) {
+                                    (links[fieldName] || (links[fieldName] = [])).push(link.link.name);
+                                    nonAttrFields.push(link.link.name);
+                                }
+                            });
+                        }
+                    }, this);
+
+                    // names of included fields that are not collection type
+                    attrs = _.difference(fields, _.unique(nonAttrFields));
+
+                    collectionsToJSON = overrides.toJSON(collections, links, options);
+                    attrToJSON = _super.call(this, _.extend({}, options, {
+                        fields: attrs
+                    }));
+
+                    return _.extend(attrToJSON, collectionsToJSON);
                 });
 
                 /**
