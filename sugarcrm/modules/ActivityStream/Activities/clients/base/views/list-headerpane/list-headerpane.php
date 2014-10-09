@@ -11,7 +11,6 @@
  */
 $viewdefs['Activities']['base']['view']['list-headerpane'] = array(
     'type' => 'headerpane',
-    'title' => 'LBL_MODULE_NAME',
     'buttons' => array(
         array(
             'name' => 'sidebar_toggle',

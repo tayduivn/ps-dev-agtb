@@ -14,6 +14,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['base']['view']['selection-headerpane'] = array(
     'template' => 'headerpane',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_SEARCH_AND_SELECT',
+        ),
+    ),
     'buttons' => array(
         array(
             'name' => 'close',

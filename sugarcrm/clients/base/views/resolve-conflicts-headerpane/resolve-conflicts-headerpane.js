@@ -28,23 +28,17 @@
 
         this._super('initialize', [options]);
 
-        this._setTitle();
-
         this.context.on("change:selection_model", this.enableSelectButton, this);
     },
 
     /**
-     * Set header pane title.
-     * @private
+     * @inheritDoc
      */
-    _setTitle: function() {
+    _formatTitle: function(title) {
         var modelToSave = this.context.get('modelToSave'),
-            titleTemplate = Handlebars.compile(app.lang.getAppString('LBL_RESOLVE_CONFLICT')),
             name = modelToSave.get('name') || modelToSave.get('full_name');
 
-        this.title = titleTemplate({
-            name: name
-        });
+        return app.lang.get(title, this.module, {name: name});
     },
 
     /**

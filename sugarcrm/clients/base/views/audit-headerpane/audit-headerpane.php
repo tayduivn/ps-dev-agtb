@@ -11,7 +11,13 @@
  */
 $viewdefs['base']['view']['audit-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => 'LBL_AUDIT_TITLE',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_AUDIT_TITLE',
+        ),
+    ),
     'buttons' => array(
         array(
             'name' => 'close_button',

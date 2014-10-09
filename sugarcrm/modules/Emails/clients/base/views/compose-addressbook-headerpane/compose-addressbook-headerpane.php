@@ -11,7 +11,13 @@
  */
 $viewdefs['Emails']['base']['view']['compose-addressbook-headerpane'] = array(
     'template' => 'headerpane',
-    'title'    => 'LBL_COMPOSE_ADDRESSBOOK',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_COMPOSE_ADDRESSBOOK',
+        ),
+    ),
     'buttons'  => array(
         array(
             'name'      => 'cancel_button',
