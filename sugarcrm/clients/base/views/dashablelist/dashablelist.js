@@ -82,6 +82,18 @@
     moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates'],
 
     /**
+     * Module Additions
+     *
+     * When a specific module is allowed, we should add these other modules that are
+     * not first class modules.
+     *
+     * @property {Array}
+     */
+    additionalModules: {
+        'Project': ['ProjectTask']
+    },
+
+    /**
      * Cache of the modules a user is allowed to see.
      *
      * The keys are the module names and the values are the module names after
@@ -522,6 +534,12 @@
             var allowedModules = _.difference(
                 app.metadata.getModuleNames({filter: 'visible', access: 'read', alphaSort: true}), this.moduleBlacklist
             );
+
+            _.each(this.additionalModules, function(extraModules, module) {
+                if (_.contains(allowedModules, module)) {
+                    allowedModules = _.sortBy(_.union(allowedModules, extraModules), function(name) {return name});
+                }
+            });
             _.each(allowedModules, function(module) {
                 var hasListView = !_.isEmpty(this.getFieldMetaForView(app.metadata.getView(module, 'list')));
                 if (hasListView) {
