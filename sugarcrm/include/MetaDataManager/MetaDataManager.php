@@ -2859,7 +2859,7 @@ class MetaDataManager
      */
     protected function removeFromCacheTable($key)
     {
-        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type=" . $this->db->quoted($key));
+        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
     }
 
     /**
