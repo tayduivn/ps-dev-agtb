@@ -23,19 +23,20 @@ class SugarUpgradeRemoveInlineHTML extends UpgradeScript
     {
         /** @var $node SplFileInfo */
         $this->log("**** Removal of inline HTML started");
-        $directory = new RecursiveDirectoryIterator($this->context['source_dir'] . DIRECTORY_SEPARATOR . 'custom');
-        $offset = strlen(rtrim(realpath($this->context['source_dir']), DIRECTORY_SEPARATOR)) + 1;
+        $directory = new RecursiveDirectoryIterator($this->context['source_dir'] . '/custom', FilesystemIterator::UNIX_PATHS);
+        $offset = strlen($this->context['source_dir']) + 1;
         $iterator = new RecursiveIteratorIterator($directory);
         foreach ($iterator as $node) {
             if (!$node->isFile()) {
                 continue;
             }
-            if (pathinfo($node->getFilename(), PATHINFO_EXTENSION) != 'php') {
+
+            if (pathinfo($node->getPathname(), PATHINFO_EXTENSION) != 'php') {
                 continue;
             }
 
             // initializing variables
-            $content = file_get_contents($node->getRealPath());
+            $content = file_get_contents($node->getPathname());
             $length = strlen($content);
             $start = 0;
             $end = $length;
@@ -81,10 +82,10 @@ class SugarUpgradeRemoveInlineHTML extends UpgradeScript
 
             // if something was detected then trimming file
             if ($start != 0 || $end != $length) {
-                $this->backupFile(substr($node->getRealPath(), $offset));
+                $this->backupFile(substr($node->getPathname(), $offset));
                 $content = substr($content, $start, $end - $start);
-                file_put_contents($node->getRealPath(), $content);
-                $this->log($node->getPath() . DIRECTORY_SEPARATOR . $node->getFilename() . " has been trimmed");
+                file_put_contents($node->getPathname(), $content);
+                $this->log($node->getPathname() . " has been trimmed");
             }
         }
         $this->log("**** Removal of inline HTML ended");

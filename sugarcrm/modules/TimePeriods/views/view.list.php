@@ -45,8 +45,7 @@ class TimePeriodsViewList extends ViewList
  	    global $current_user;
         
         if ( !is_admin($current_user) 
-                && !is_admin_for_module($current_user,'Forecasts')
-                && !is_admin_for_module($current_user,'ForecastSchedule') )
+                && !is_admin_for_module($current_user,'Forecasts'))
             sugar_die("Unauthorized access to administration.");
  	    
  		$this->lv = new ListViewSmarty();

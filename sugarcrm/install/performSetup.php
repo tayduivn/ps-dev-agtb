@@ -290,6 +290,9 @@ echo "<br>";
         SugarBean::createRelationshipMeta($rel_name,$db,$table,$rel_dictionary,'');
     }
 
+    // Setup the relationship cache and build out the initial vardef cache
+    SugarRelationshipFactory::rebuildCache();
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START CREATE DEFAULTS
     echo "<br>";
@@ -481,15 +484,6 @@ $sse->setForceAsyncIndex(true);
     $endTime = microtime(true);
     $deltaTime = $endTime - $startTime;
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    // Force the RevenueLineItem and Opportunity Vardef Cache to update,  This is needed since for some reason the related_calc_fields
-    // don't get set during the install.  Something is off in VardefManager but not sure what yet.
-    // See ENGRD-171 for more details as why this is there.
-    $rli_bean = new RevenueLineItem();
-    $opp_bean = new Opportunity();
-    VardefManager::loadVardef($rli_bean->module_dir, $rli_bean->object_name, true, array("bean" => $rli_bean));
-    VardefManager::loadVardef($opp_bean->module_dir, $opp_bean->object_name, true, array("bean" => $opp_bean));
-
     //////////////////////////////////////////
     /// PERFORM OFFLINE CLIENT INSTALL
     /////////////////////////////////////////
@@ -503,7 +497,6 @@ $sse->setForceAsyncIndex(true);
 	installLog($oc_result);
 	echo $oc_result;
     }
-    //END SUGARCRM flav=pro ONLY
 
 
 ///////////////////////////////////////////////////////////////////////////

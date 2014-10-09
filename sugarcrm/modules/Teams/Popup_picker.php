@@ -69,7 +69,8 @@ class Popup_Picker
 		if(!empty($_REQUEST['custom_method'])) {
 		   if(!empty($_REQUEST['user_id'])) {
 		   	  $where .= !empty($where) ? ' and' : '';
-		   	  $where .= " teams.id in (select team_id from team_memberships where user_id = '" . $_REQUEST['user_id'] . "')";
+		   	  // deleted=0 added to fix CRYS-470.
+		   	  $where .= " teams.id in (select team_id from team_memberships where user_id = '" . $_REQUEST['user_id'] . "' and deleted=0)";
 		   } else {
 		   	  $where .= !empty($where) ? ' and teams.private = 0' : ' teams.private = 0';
 		   }

@@ -333,6 +333,7 @@
     },
 
     addTeam: function () {
+        this.value.push({});
         this._currentIndex++;
         this._updateAndTriggerChange(this.value);
     },

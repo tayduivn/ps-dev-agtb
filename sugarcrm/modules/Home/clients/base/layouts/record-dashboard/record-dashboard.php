@@ -87,7 +87,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             array(
                                 'type' => 'bubblechart',
                                 'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
-                                'filter_duration' => 0,
+                                'filter_duration' => 'current',
                                 'visibility' => 'user',
                             ),
                             'width' => 12,

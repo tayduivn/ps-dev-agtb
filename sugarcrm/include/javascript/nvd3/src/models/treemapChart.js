@@ -42,7 +42,6 @@ nv.models.treemapChart = function() {
   //------------------------------------------------------------
 
   var showTooltip = function(e, offsetElement) {
-    //console.log(e.pos)
     var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
         top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
         content = tooltipContent(e.point);

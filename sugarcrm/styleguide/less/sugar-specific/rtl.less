@@ -148,6 +148,11 @@ html.rtl {
     div.record div.record-cell {
         padding-right: 15px;
         padding-left: 0;
+        &:hover {
+            .record-edit-link .icon-pencil {
+                right: 0;
+            }
+        }
     }
 
     .more, .less {
@@ -521,6 +526,15 @@ html.rtl {
         padding-right: 0;
     }
 
+    .dashboard .dashlets .dashlet-row .rows.well > .btn {
+        left: 0;
+        right: auto;
+    }
+
+    .dashboard .dashlets .dashlet-row .rows.well > .btn:not(:nth-child(1)) {
+        left: 20px;
+    }
+
     .side .dashlets > li:last-child {
         padding-left: 0;
     }
@@ -582,8 +596,15 @@ html.rtl {
         margin-right: 8px;
     }
 
-    .select2-container .select2-choice {
-        padding: 0 0 0 21px;
+    .extend {
+        .filter-actions {
+            left: 0;
+            right: auto;
+        }
+
+        .filter-body > .row-fluid {
+            padding-right: 0
+        }
     }
 
     /* BUTTON GROUPS

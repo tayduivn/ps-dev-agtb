@@ -49,6 +49,11 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSAMLEncoding()
     {
+        global $sugar_config;
+        $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';
+        $sugar_config['SAML_X509Cert'] = 'TestCert';
+        $sugar_config['SAML_issuer'] = 'testIssuer';
+
         if(SugarAutoLoader::fileExists($this->customSAMLSettings)) {
             // if custom file settings exists then remove it.
             SugarAutoLoader::unlink($this->customSAMLSettings);

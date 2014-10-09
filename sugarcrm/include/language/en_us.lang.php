@@ -41,7 +41,6 @@ $app_list_strings = array (
     'Reports' => 'Reports',
     'Reports_1'=>'Saved Reports',
     'Forecasts' => 'Forecasts',
-    'ForecastSchedule'=>'Forecast Schedule',
     'ForecastWorksheets' => 'Forecast Worksheets',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
@@ -151,7 +150,6 @@ $app_list_strings = array (
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
-    'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'MergeRecords'=>'Merge Record',
     'Teams' => 'Team',
@@ -1066,11 +1064,6 @@ $app_list_strings = array (
         'min' => 'Minutes',
         'hour' => 'Hours',
         ),
-    'forecast_schedule_status_dom' =>
-    array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-  ),
     'forecast_type_dom' =>
     array (
     'Direct' => 'Direct',
@@ -2658,7 +2651,7 @@ $app_strings = array (
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
     'LBL_SHOW_LESS_RECENTS' => '...Less recents',
-    'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
+    'TPL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -3148,7 +3141,7 @@ $app_strings = array (
     'LBL_SEARCH_FOR' => 'Search for ',
     'LBL_SEARCH_FOR_MORE' => 'Search for more...',
     'LBL_SEARCH_SELECT' => 'Select...',
-    'LBL_SEARCH_SELECT_MODULE' => 'Select {{module}}...',
+    'LBL_SEARCH_SELECT_MODULE' => 'Select {{{module}}}...',
     'LBL_DETAILVIEW'=>'Detail View',
     'LBL_LISTVIEW'=>'List View',
     'LBL_EDITVIEW'=>'Edit View',
@@ -5213,13 +5206,12 @@ $app_list_strings['list_visibility_options'] = array(
     '0' => 'No',
 );
 
-//top 10 opportunites chart config options
-// see sugarcrm/clients/base/views/bubblechart/bubblechart.php
-$app_list_strings['top10_opportunities_duration_options'] = array (
-    0 => 'This Quarter',
-    3 => 'Next Quarter',
-    12 => 'This Year',
+$app_list_strings['generic_timeperiod_options'] = array (
+    'current' => 'This Quarter',
+    'next' => 'Next Quarter',
+    'year' => 'This Year',
 );
+
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
 $app_list_strings['top10_opportunities_visibility_options'] = array (
     //BEGIN SUGARCRM flav=ent ONLY

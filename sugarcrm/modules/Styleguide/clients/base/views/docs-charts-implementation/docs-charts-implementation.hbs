@@ -152,14 +152,26 @@
    <tr>
      <td>tooltip</td>
      <td>function</td>
-     <td><code>function(key, x, y, e, graph) { return '&lt;h3&gt;' + key + ' - ' + x + '&lt;/h3&gt;' + '&lt;p&gt;' +  y + '&lt;/p&gt;'}</code></td>
+     <td><code><pre>function(key, x, y, e, graph) {
+  return '&lt;h3&gt;' + key + ' - ' + x + '&lt;/h3&gt;' + '&lt;p&gt;' +  y + '&lt;/p&gt;'
+}</pre></code></td>
      <td>function that returns an html formated string</td>
    </tr>
    <tr>
-     <td>noData</td>
-     <td>string</td>
-     <td>"No Data Available."</td>
+     <td>strings</td>
+     <td>map</td>
+     <td><code><pre>{
+  legend: {close: 'Hide legend', open: 'Show legend'},
+  controls: {close: 'Hide controls', open: 'Show controls'},
+  noData: 'No Data Available.'
+}</pre></code></td>
      <td>message to display when no data is available</td>
+   </tr>
+   <tr>
+     <td>hideEmptyGroups</td>
+     <td>boolean</td>
+     <td>true</td>
+     <td>collapse multibar group when group total is zero</td>
    </tr>
   </tbody>
 </table>

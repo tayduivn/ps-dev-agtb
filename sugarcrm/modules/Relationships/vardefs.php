@@ -13,7 +13,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $dictionary['Relationship'] =
-
     array(
         'table' => 'relationships',
         'fields' => array(
@@ -166,9 +165,7 @@ $dictionary['Relationship'] =
                     'reportable' => false,
                     'default' => '0'
                 ),
-
         ),
-
         'indices' => array(
             array('name' => 'relationshippk', 'type' => 'primary', 'fields' => array('id')),
             array('name' => 'idx_rel_name', 'type' => 'index', 'fields' => array('relationship_name')),

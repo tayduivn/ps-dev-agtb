@@ -57,7 +57,7 @@ foreach ($admin_group_header as $key=>$values) {
         if(
         //BEGIN SUGARCRM flav=pro ONLY
         (in_array($mod_val, $access) || (is_admin($current_user) && ($mod_val=='Administration')) ||
-        $mod_val=='studio'||($mod_val=='Forecasts' && in_array('ForecastSchedule', $access))) &&
+        $mod_val=='studio'||($mod_val=='Forecasts')) &&
         //END SUGARCRM flav=pro ONLY
         (!isset($addedHeaderGroups[$values[0]]))) {
             $admin_group_header_tab[]=$values;

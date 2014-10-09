@@ -18,6 +18,10 @@ class FieldViewer{
         'password'
     );
 
+    public static $fieldNameNoRequired = array(
+        'date_entered', 'date_modified'
+    );
+
 	public function FieldViewer(){
         self::__construct();
     }
@@ -37,6 +41,17 @@ class FieldViewer{
         if ((isset($vardef['name']) && in_array($vardef['name'], self::$fieldNameBlacklist))
         || (isset($vardef['type']) && in_array($vardef['type'], self::$fieldTypeBlacklist))) {
             $this->ss->assign('hideDuplicatable', 'true');
+        }
+
+        if ($fieldRangeValue = DynamicField::getFieldRangeValueByType($vardef['type'])) {
+            $this->ss->assign('field_range_value', $fieldRangeValue);
+        }
+
+        if ((isset($vardef['name']) && in_array($vardef['name'], self::$fieldNameNoRequired))) {
+            $this->ss->assign('hideRequired', true);
+        }
+        else {
+            $this->ss->assign('hideRequired', false);
         }
 
 		$GLOBALS['log']->debug('FieldViewer.php->getLayout() = '.$vardef['type']);

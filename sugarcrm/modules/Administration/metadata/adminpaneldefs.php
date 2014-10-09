@@ -226,7 +226,7 @@ foreach ($admin_group_header as $key=>$values) {
 		if (is_admin($current_user) ||
 			in_array($mod_val, $access) ||
 		    $mod_val=='studio'||
-		    ($mod_val=='Forecasts' && in_array('ForecastSchedule', $access)) ||
+		    ($mod_val=='Forecasts') ||
 		    ($mod_val =='any')
 		   ) {
 		   	    if(!is_admin($current_user)&& isset($values[3]['Administration'])){

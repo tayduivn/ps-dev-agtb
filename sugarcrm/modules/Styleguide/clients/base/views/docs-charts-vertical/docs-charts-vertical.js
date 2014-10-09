@@ -12,26 +12,24 @@
   className: 'container-fluid',
 
   // charts vertical
-  _renderHtml: function () {
+  _renderHtml: function() {
     this._super('_renderHtml');
 
     // Vertical Bar Chart without Line
 
-    d3.json("styleguide/content/charts/data/multibar_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/multibar_data.json', function(data) {
 
       nv.addGraph(function() {
         var chart = nv.models.multiBarChart()
               .showTitle(false)
               .tooltips(true)
               .showControls(false)
-              .colorData( 'default' )
-              .tooltipContent( function(key, x, y, e, graph) {
+              .colorData('default')
+              .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Stage: <b>' + key + '</b></p>' +
-                         '<p>Amount: <b>$' +  parseInt(y, 10) + 'K</b></p>' +
-                         '<p>Percent: <b>' +  x + '%</b></p>';
-                  })
-              //.forceY([0,400]).forceX([0,6]);
-            ;
+                         '<p>Amount: <b>$' + parseInt(y, 10) + 'K</b></p>' +
+                         '<p>Percent: <b>' + x + '%</b></p>';
+              });
 
         d3.select('#vert1 svg')
             .datum(data)
@@ -45,7 +43,7 @@
     });
 
     //Vertical Bar Chart with Line
-    d3.json("styleguide/content/charts/data/pareto_data_salesrep.json", function(data) {
+    d3.json('styleguide/content/charts/data/pareto_data_salesrep.json', function(data) {
       nv.addGraph({
         generate: function() {
             var chart = nv.models.paretoChart()
@@ -55,9 +53,9 @@
                 .showControls(false)
                 .stacked(true)
                 .clipEdge(false)
-                .colorData( 'default' )
-                .yAxisTickFormat(function(d){ return '$' + d3.format(',.2s')(d); })
-                .quotaTickFormat(function(d){ return '$' + d3.format(',.3s')(d); });
+                .colorData('default')
+                .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
+                .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
                 // override default barClick function
                 // .barClick( function(data,e,selection) {
                 //     //if only one bar series is disabled

@@ -5,27 +5,26 @@ nv.models.funnel = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0}
-    , width = 960
-    , height = 500
-    , x = d3.scale.ordinal()
-    , y = d3.scale.linear()
-    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
-    , getX = function(d) { return d.x; }
-    , getY = function(d) { return d.height; }
-    , getV = function(d) { return d.value; }
-    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , clipEdge = true
-    , xDomain
-    , yDomain
-    , delay = 0
-    , durationMs = 0
-    , fmtValueLabel = function (d) { return d.value; }
-    , color = nv.utils.defaultColor()
-    , fill = color
-    , classes = function (d,i) { return 'nv-bar positive'; }
-    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
-    ;
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+      width = 960,
+      height = 500,
+      x = d3.scale.ordinal(),
+      y = d3.scale.linear(),
+      id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
+      getX = function(d) { return d.x; },
+      getY = function(d) { return d.height; },
+      getV = function(d) { return d.value; },
+      forceY = [0], // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
+      clipEdge = true,
+      xDomain,
+      yDomain,
+      delay = 0,
+      durationMs = 0,
+      fmtValueLabel = function(d) { return d.value; },
+      color = nv.utils.defaultColor(),
+      fill = color,
+      classes = function(d, i) { return 'nv-bar positive'; },
+      dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
   //============================================================
 
@@ -34,36 +33,35 @@ nv.models.funnel = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var x0, y0 //used to store previous scales
-      ;
+  var x0,
+      y0; //used to store previous scales
 
   //============================================================
 
   function chart(selection) {
     selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right
-        , availableHeight = height - margin.top - margin.bottom
-        , container = d3.select(this)
-        , labelBoxWidth = 20
-        , funnelTotal = 0
-        , funnelArea = 0
-        , funnelBase = 0
-        , funnelShift = 0
-        , funnelMinHeight = 8;
+      var availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          container = d3.select(this),
+          labelBoxWidth = 20,
+          funnelTotal = 0,
+          funnelArea = 0,
+          funnelBase = 0,
+          funnelShift = 0,
+          funnelMinHeight = 8;
 
-      var w = Math.min(availableHeight/1.1, availableWidth-40) //width
-        , r = 0.3 // ratio of width to height (or slope)
-        , c = availableWidth / 2 //center
-        ;
+      var w = Math.min(availableHeight / 1.1, availableWidth - 40), //width
+          r = 0.3, // ratio of width to height (or slope)
+          c = availableWidth / 2; //center
 
-      function pointsTrapezoid(y0,y1,h) {
-        var w0 = w / 2 - r * y0
-          , w1 = w / 2 - r * y1;
+      function pointsTrapezoid(y0, y1, h) {
+        var w0 = w / 2 - r * y0,
+            w1 = w / 2 - r * y1;
         return (
-          (c - w0) +','+  (y0 * h) +' '+
-          (c - w1) +','+  (y1 * h) +' '+
-          (c + w1) +','+  (y1 * h) +' '+
-          (c + w0) +','+  (y0 * h)
+          (c - w0) + ',' + (y0 * h) + ' ' +
+          (c - w1) + ',' + (y1 * h) + ' ' +
+          (c + w1) + ',' + (y1 * h) + ' ' +
+          (c + w0) + ',' + (y0 * h)
         );
       }
 
@@ -80,39 +78,39 @@ nv.models.funnel = function() {
       // h + b/r/2 = Math.sqrt(v/r + b/r/2*b/r/2);
       // h  = Math.abs(Math.sqrt(v/r + b/r/2*b/r/2)) - b/r/2;
 
-      function heightTrapezoid(a,b) {
+      function heightTrapezoid(a, b) {
         var x = b / r / 2;
         return Math.abs(Math.sqrt(a / r + x * x)) - x;
       }
 
-      function areaTrapezoid (h,w) {
+      function areaTrapezoid(h, w) {
         return h * (w - h * r);
       }
 
-      funnelArea = areaTrapezoid(availableHeight,w);
-      funnelBase = w - 2*r*availableHeight;
+      funnelArea = areaTrapezoid(availableHeight, w);
+      funnelBase = w - 2 * r * availableHeight;
 
       //add series index to each data point for reference
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
           point.series = i;
-            // if value is undefined, not a legitimate 0 value, use point.y
-            if(typeof point.value == "undefined") {
-                point.value = point.y;
-            }
+          // if value is undefined, not a legitimate 0 value, use point.y
+          if (typeof point.value == 'undefined') {
+            point.value = point.y;
+          }
           funnelTotal += point.value;
           return point;
         });
         return series;
       });
 
-      //add percent of total for each data point for reference
+      //adjust points for relative size of slice
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
-            point.height = 0;
-            if(funnelTotal > 0) {
-                point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
-            }
+          point.height = 0;
+          if (funnelTotal > 0) {
+            point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
+          }
           if (point.height < funnelMinHeight) {
             funnelShift += point.height - funnelMinHeight;
             point.height = funnelMinHeight;
@@ -120,7 +118,7 @@ nv.models.funnel = function() {
             point.height += funnelShift;
             funnelShift = 0;
           }
-          funnelBase += 2*r*point.height;
+          funnelBase += 2 * r * point.height;
           return point;
         });
         return series;
@@ -128,9 +126,8 @@ nv.models.funnel = function() {
 
       data = d3.layout.stack()
                .offset('zero')
-               .values(function(d){ return d.values; })
-               .y(getY)
-               (data);
+               .values(function(d) { return d.values; })
+               .y(getY)(data);
 
       //------------------------------------------------------------
       // Setup Scales
@@ -138,16 +135,16 @@ nv.models.funnel = function() {
       // remap and flatten the data for use in calculating the scales' domains
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
-              return d.values.map(function(d,i) {
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0 };
+              return d.values.map(function(d, i) {
+                return { x: getX(d, i), y: getY(d, i), y0: d.y0 };
               });
             });
 
-      x   .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
-          .rangeBands([0, availableWidth], 0.1);
+      x .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x; }))
+        .rangeBands([0, availableWidth], 0.1);
 
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + d.y0; }).concat(forceY)))
-          .range([availableHeight, 0]);
+      y .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + d.y0; }).concat(forceY)))
+        .range([availableHeight, 0]);
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -165,8 +162,8 @@ nv.models.funnel = function() {
       var g = wrap.select('g');
 
       //set up the gradient constructor function
-      chart.gradient = function(d,i,p) {
-        return nv.utils.colorLinearGradient( d, id+'-'+i, p, color(d,i), wrap.select('defs') );
+      chart.gradient = function(d, i, p) {
+        return nv.utils.colorLinearGradient(d, id + '-' + i, p, color(d, i), wrap.select('defs'));
       };
 
       gEnter.append('g').attr('class', 'nv-groups');
@@ -177,24 +174,25 @@ nv.models.funnel = function() {
       // Clip Path
 
       defsEnter.append('clipPath')
-          .attr('id', 'nv-edge-clip-' + id)
-        .append('rect');
+        .attr('id', 'nv-edge-clip-' + id)
+          .append('rect');
       wrap.select('#nv-edge-clip-' + id + ' rect')
-          .attr('width', availableWidth)
-          .attr('height', availableHeight);
+        .attr('width', availableWidth)
+        .attr('height', availableHeight);
       g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
       //------------------------------------------------------------
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-          .data(function(d) { return d; }, function(d) { return d.key; });
+            .data(function(d) { return d; }, function(d) { return d.key; });
 
       groups.enter().append('g')
-          .attr('class', function(d, i) { return this.getAttribute('class') || 'nv-group nv-series-' + i; });
+          .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, i); })
+          .attr('fill', function(d, i) { return this.getAttribute('fill') || fill(d, i); });
 
       groups.exit().transition().duration(durationMs)
         .selectAll('polygon.nv-bar')
-        .delay(function(d,i) { return i * delay / data[0].values.length; })
+        .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
               return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
             })
@@ -202,49 +200,114 @@ nv.models.funnel = function() {
 
       groups.exit().transition().duration(durationMs)
         .selectAll('g.nv-label-value')
-        .delay(function(d,i) { return i * delay / data[0].values.length; })
+        .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
-          .style('fill-opacity', 1e-6)
           .attr('transform', 'translate(' + c + ',0)')
+          .style('fill-opacity', 1e-6)
           .remove();
 
       groups.exit().transition().duration(durationMs)
         .selectAll('text.nv-label-group')
-        .delay(function(d,i) { return i * delay / data[0].values.length; })
+        .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
-          .style('fill-opacity', 1e-6)
           .attr('transform', 'translate(' + availableWidth + ',0)')
+          .style('fill-opacity', 1e-6)
           .remove();
 
+      groups
+          .classed('hover', function(d) { return d.hover; })
+          .classed('nv-active', function(d) { return d.active === 'active'; })
+          .classed('nv-inactive', function(d) { return d.active === 'inactive'; });
 
       //------------------------------------------------------------
       // Polygons
 
       var funs = groups.selectAll('polygon.nv-bar')
           .data(function(d, i) {
-            d.values.map(function(v) {
-              v.series = d.series;
-            });
             return d.values;
           });
 
       var funsEnter = funs.enter()
-          .append('polygon')
-            .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, d.series); })
-            .attr('points', function(d) {
-              return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
-            })
-            .classed('hover', function(d) { return d.hover; })
-            .attr('fill', function(d, i) { return this.getAttribute('fill') || fill(d, d.series); })
-            .style('stroke', '#ffffff')
-            .style('stroke-width', 3)
-            .style('stroke-opacity', 1)
-            .style('fill-opacity', 1);
+            .append('polygon')
+              .attr('class', function(d, i) { return 'nv-bar positive'; })
+              .attr('points', function(d) {
+                return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
+              })
+              .style('stroke', '#ffffff')
+              .style('stroke-width', 3)
+              .style('stroke-opacity', 1);
 
       funs.transition().duration(durationMs)
-          .delay(function(d, i) { var ms = i * delay / data[0].values.length; return ms; })
+          .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
-            return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 1);
+            var _points;
+            if (d.active && d.active === 'active') {
+              w = w * 1.05;
+              _points = pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 1);
+              w = w / 1.05;
+            } else {
+              _points = pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 1);
+            }
+            return _points;
+          });
+
+      //------------------------------------------------------------
+
+      funs
+          .on('mouseover', function(d, i) { //TODO: figure out why j works above, but not here
+            d3.select(this).classed('hover', true);
+            dispatch.elementMouseover({
+              value: getV(d, i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d, i)) + (x.rangeBand() * (data.length / 2) / data.length), y(getY(d, i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+          })
+          .on('mouseout', function(d, i) {
+            d3.select(this).classed('hover', false);
+            dispatch.elementMouseout({
+              value: getV(d, i),
+              point: d,
+              series: data[d.series],
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+          })
+          .on('mousemove', function(d, i) {
+            dispatch.elementMousemove({
+              point: d,
+              pointIndex: i,
+              pos: [d3.event.pageX, d3.event.pageY],
+              id: id
+            });
+          })
+          .on('click', function(d, i) {
+            dispatch.elementClick({
+              value: getV(d, i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d, i)) + (x.rangeBand() * (data.length / 2) / data.length), y(getY(d, i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+            d3.event.stopPropagation();
+          })
+          .on('dblclick', function(d, i) {
+            dispatch.elementDblClick({
+              value: getV(d, i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d, i)) + (x.rangeBand() * (data.length / 2) / data.length), y(getY(d, i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+            d3.event.stopPropagation();
           });
 
       //------------------------------------------------------------
@@ -258,6 +321,7 @@ nv.models.funnel = function() {
               .attr('class', 'nv-label-value')
               .attr('transform', 'translate(' + c + ',0)');
 
+      // KEEP: to be used in case you want rect behind text
       // lblValueEnter.append('rect')
       //     .attr('x', -labelBoxWidth/2)
       //     .attr('y', -20)
@@ -278,21 +342,28 @@ nv.models.funnel = function() {
           .style('font-size', '15px')
           .style('fill', '#fff')
           .style('stroke', 'none')
-          .style('pointer-events', 'none');
+          .style('pointer-events', 'none')
+          .style('fill', function(d, i, j) {
+            var backColor = d3.select(this.parentNode).style('fill'),
+                textColor = nv.utils.getTextContrast(backColor, i);
+            return textColor;
+          });
 
-      // lblValue.selectAll('text').each(function(d,i){
+      // KEEP: to be used in case you want rect behind text
+      // lblValue.selectAll('text').each(function(d, i){
       //       var width = this.getBBox().width + 20;
       //       if(width > labelBoxWidth) {
       //         labelBoxWidth = width;
       //       }
       //     });
-      // lblValue.selectAll('rect').each(function(d,i){
+      // lblValue.selectAll('rect').each(function(d, i){
       //       d3.select(this)
       //         .attr('width', labelBoxWidth)
       //         .attr('x', -labelBoxWidth/2);
       //     });
 
       lblValue.transition().duration(durationMs)
+          .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('transform', function(d) { return 'translate(' + c + ',' + (y(d.y0 + d.y / 2)) + ')'; });
 
       //------------------------------------------------------------
@@ -314,77 +385,18 @@ nv.models.funnel = function() {
             .attr('dx', -10)
             .attr('dy', 5)
             .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(' + availableWidth + ',0)')
             .text(function(d) { return d.count; })
             .style('stroke', 'none')
             .style('fill', 'black')
             .style('fill-opacity', 1e-6)
             .style('font-size', '15px')
-            .style('font-weight', 'bold')
-            .attr('transform', 'translate(' + availableWidth + ',0)');
+            .style('font-weight', 'bold');
 
       lblGroup.transition().duration(durationMs)
           .delay(function(d, i) { return i * delay / data[0].values.length; })
-          .style('fill-opacity', 1)
-          .attr('transform', function(d) { return 'translate(' + availableWidth + ',' + (y(d.y0 + d.y / 2)) + ')'; });
-
-      //------------------------------------------------------------
-
-      funs
-          .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
-            d3.select(this).classed('hover', true);
-            dispatch.elementMouseover({
-              value: getV(d,i),
-              point: d,
-              series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (data.length / 2) / data.length ), y(getY(d,i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
-              pointIndex: i,
-              seriesIndex: d.series,
-              e: d3.event
-            });
-          })
-          .on('mouseout', function(d,i) {
-            d3.select(this).classed('hover', false);
-            dispatch.elementMouseout({
-              value: getV(d,i),
-              point: d,
-              series: data[d.series],
-              pointIndex: i,
-              seriesIndex: d.series,
-              e: d3.event
-            });
-          })
-          .on('mousemove', function(d,i){
-            dispatch.elementMousemove({
-              point: d,
-              pointIndex: i,
-              pos: [d3.event.pageX, d3.event.pageY],
-              id: id
-            });
-          })
-          .on('click', function(d,i) {
-            dispatch.elementClick({
-              value: getV(d,i),
-              point: d,
-              series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (data.length / 2) / data.length ), y(getY(d,i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
-              pointIndex: i,
-              seriesIndex: d.series,
-              e: d3.event
-            });
-            d3.event.stopPropagation();
-          })
-          .on('dblclick', function(d,i) {
-            dispatch.elementDblClick({
-              value: getV(d,i),
-              point: d,
-              series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (data.length / 2) / data.length ), y(getY(d,i) + d.y0)],  // TODO: Figure out why the value appears to be shifted
-              pointIndex: i,
-              seriesIndex: d.series,
-              e: d3.event
-            });
-            d3.event.stopPropagation();
-          });
+          .attr('transform', function(d) { return 'translate(' + availableWidth + ',' + (y(d.y0 + d.y / 2)) + ')'; })
+          .style('fill-opacity', 1);
 
 
       //store old scales for use in transitions on update
@@ -509,7 +521,6 @@ nv.models.funnel = function() {
   };
 
   //============================================================
-
 
   return chart;
 }

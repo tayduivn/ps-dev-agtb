@@ -20,6 +20,22 @@ class DynamicField {
     var $use_existing_labels = false; // this value is set to true by install_custom_fields() in ModuleInstaller.php; everything else expects it to be false
     var $base_path = "";
 
+    const TYPE_SIGNED = 'signed';
+    const TYPE_UNSIGNED = 'unsigned';
+
+    public static $fieldTypeRangeValue = array(
+        'int32' => array(
+            self::TYPE_SIGNED  => array(
+                'max' => 2147483647,
+                'min' => -2147483648,
+            ),
+            self::TYPE_UNSIGNED => array(
+                'max' => 4294967295,
+                'min' => 0,
+            ),
+        ),
+    );
+
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
@@ -915,6 +931,28 @@ class DynamicField {
             }
         }
 
+    }
+
+    /**
+     * Get maximum system value based on type
+     * @param $type
+     * @param $signed
+     * @param string $bits
+     * @return value or false
+     */
+    public static function getFieldRangeValueByType($type, $signed=self::TYPE_SIGNED, $bits='32') {
+        $fieldType = $type.$bits;
+        $types = self::$fieldTypeRangeValue;
+
+        if (!isset($types[$fieldType])) {
+            return false;
+        }
+
+        if (isset($types[$fieldType][$signed])) {
+            return $types[$fieldType][$signed];
+        }
+        
+        return false;
     }
 
     /////////////////////////BACKWARDS COMPATABILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\

@@ -51,7 +51,7 @@ $dictionary['User'] = array(
             'name' => 'user_hash',
             'vname' => 'LBL_USER_HASH',
             'type' => 'password',
-            'dbType' => 'varchar',            
+            'dbType' => 'varchar',
             'len' => '255',
             'reportable' => false,
             'importable' => 'false',
@@ -664,7 +664,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_REPORTS_TO',
             'reportable' => false,
         ) ,
-       'email1' => 
+       'email1' =>
         array(
             'name'      => 'email1',
             'vname'     => 'LBL_EMAIL_ADDRESS',
@@ -679,7 +679,7 @@ $dictionary['User'] = array(
             'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
             'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
             'exportable'=>true,
-        ), 
+        ),
         'email'=> array(
             'name' => 'email',
             'type' => 'email',
@@ -986,8 +986,7 @@ $dictionary['User'] = array(
 		        'rhs_module'=> 'EmailAddresses', 'rhs_table'=> 'email_addresses', 'rhs_key' => 'id',
 		        'relationship_type'=>'many-to-many',
 		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id',
-		        'relationship_role_column'=>'primary_address',
-		        'relationship_role_column_value'=>'1'
+		        'relationship_role_columns'=>array('primary_address' => '1', 'bean_module' => 'Users'),
 		    ),
 		//BEGIN SUGARCRM flav=pro ONLY
 		'users_team_count_relationship' =>

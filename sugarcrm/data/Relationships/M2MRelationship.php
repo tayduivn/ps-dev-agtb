@@ -213,9 +213,10 @@ class M2MRelationship extends SugarRelationship
         );
 
 
-        if (!empty($this->def['relationship_role_column']) && !empty($this->def['relationship_role_column_value']) && !$this->ignore_role_filter )
-        {
-            $row[$this->relationship_role_column] = $this->relationship_role_column_value;
+        if (!$this->ignore_role_filter) {
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                $row[$column] = $value;
+            }
         }
 
         if (!empty($this->def['fields']))
@@ -362,7 +363,7 @@ class M2MRelationship extends SugarRelationship
      */
     protected function setNewPrimary($rowData)
     {
-        if (empty($this->def['primary_flag_column']) 
+        if (empty($this->def['primary_flag_column'])
             || empty($this->def['primary_flag_default'])) {
             // No primary flag, don't need to worry about a new primary record
             return;
@@ -400,7 +401,7 @@ class M2MRelationship extends SugarRelationship
                 // No other relationships to set as primary
                 return;
             }
-            
+
             $query = "UPDATE {$this->getRelationshipTable()} SET {$this->def['primary_flag_column']} = 1 WHERE id = '".$db->quote($row['id'])."'";
             $db->query($query);
         }
@@ -469,8 +470,8 @@ class M2MRelationship extends SugarRelationship
         //Add any optional where clause
         if (!empty($params['where']) && !empty($whereTable)){
             // Build up the where clause
-            $add_where = is_string($params['where']) ? 
-                         $params['where'] : 
+            $add_where = is_string($params['where']) ?
+                         $params['where'] :
                          $this->getOptionalWhereClause($params['where'], $whereTable, $relatedSeed);
 
             if (!empty($add_where)) {
@@ -584,7 +585,7 @@ class M2MRelationship extends SugarRelationship
 
     /**
      * Build a Join using an existing SugarQuery Object
-     * @param Link2 $link 
+     * @param Link2 $link
      * @param SugarQuery $sugar_query
      * @param Array $options array of additional paramters. Possible parameters include
      *  - 'myAlias' String name of starting table alias
@@ -600,7 +601,7 @@ class M2MRelationship extends SugarRelationship
         if (!empty($options['reverse'])) {
             $linkIsLHS = !$linkIsLHS;
         }
-        
+
         $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
         if (!empty($options['myAlias'])) {
             $startingTable = $options['myAlias'];
@@ -713,23 +714,24 @@ class M2MRelationship extends SugarRelationship
     protected function getRoleFilterForJoin()
     {
         $ret = "";
-        if (!empty($this->relationship_role_column) && !$this->ignore_role_filter)
-        {
-            $ret .= " AND ".$this->getRelationshipTable().'.'.$this->relationship_role_column;
-            //role column value.
-            if (empty($this->relationship_role_column_value))
-            {
-                $ret.=' IS NULL';
-            } else {
-                $ret.= "='".$this->relationship_role_column_value."'";
+        if (!$this->ignore_role_filter) {
+            $db = DBManagerFactory::getInstance();
+            foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+                $ret .= " AND {$this->getRelationshipTable()}.$column";
+                //role column value.
+                if (empty($value)) {
+                    $ret.=' IS NULL';
+                } else {
+                    $ret .= "=" . $db->quoted($value);
+                }
             }
             $ret.= "\n";
         }
-        if (!empty($this->def['primary_flag_column']) 
+        if (!empty($this->def['primary_flag_column'])
             && !empty($this->primaryOnly)) {
 
             $field = $this->getRelationshipTable().'.'.$this->def['primary_flag_column'];
-            
+
             $ret .= " AND {$field} = 1 ";
         }
 
@@ -760,9 +762,8 @@ class M2MRelationship extends SugarRelationship
         $fields = array($this->join_key_lhs, $this->join_key_rhs);
 
         //Roles can allow for multiple links between two records with different roles
-        if (!empty($this->def['relationship_role_column']) && !$this->ignore_role_filter)
-        {
-            $fields[] = $this->relationship_role_column;
+        if (!$this->ignore_role_filter) {
+            $fields = array_merge($fields, $this->getRelationshipRoleColumns());
         }
 
         return $fields;
@@ -785,7 +786,8 @@ class M2MRelationship extends SugarRelationship
         return $this->getStandardFields();
     }
 
-    protected function getStandardFields(){
+    protected function getStandardFields()
+    {
         $fields = array(
             "id" => array('name' => 'id'),
             'date_modified' => array('name' => 'date_modified'),
@@ -794,9 +796,8 @@ class M2MRelationship extends SugarRelationship
             $this->def['join_key_lhs'] => array('name' => $this->def['join_key_lhs']),
             $this->def['join_key_rhs'] => array('name' => $this->def['join_key_rhs'])
         );
-        if (!empty($this->def['relationship_role_column']))
-        {
-            $fields[$this->def['relationship_role_column']] = array("name" => $this->def['relationship_role_column']);
+        foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+            $fields[$column] = array("name" => $column);
         }
         $fields['deleted'] = array('name' => 'deleted');
 

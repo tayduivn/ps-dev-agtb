@@ -25,7 +25,7 @@ nv.models.funnelChart = function () {
         controls: {close: 'Hide controls', open: 'Show controls'},
         noData: 'No Data Available.'
       },
-      dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
+      dispatch = d3.dispatch('chartClick', 'elementClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
   // Private Variables
@@ -39,17 +39,21 @@ nv.models.funnelChart = function () {
         .align('center');
 
   var showTooltip = function (e, offsetElement, properties) {
-      var xVal = 0;
-      // defense against the dark divide-by-zero arts
-      if (properties.total > 0) {
-        xVal = (e.point.value * 100 / properties.total).toFixed(1);
-      }
-      var left = e.pos[0],
-          top = e.pos[1],
-          x = xVal,
-          y = e.point.value,
-          content = tooltipContent(e.series.key, x, y, e, chart);
-      tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    var xVal = 0;
+    // defense against the dark divide-by-zero arts
+    if (properties.total > 0) {
+      xVal = (e.point.value * 100 / properties.total).toFixed(1);
+    }
+    var left = e.pos[0],
+        top = e.pos[1],
+        x = xVal,
+        y = e.point.value,
+        content = tooltipContent(e.series.key, x, y, e, chart);
+    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+  };
+
+  var seriesClick = function (data, e) {
+    return;
   };
 
   //============================================================
@@ -70,6 +74,38 @@ nv.models.funnelChart = function () {
 
       chart.update = function () {
         container.transition().duration(durationMs).call(chart);
+      };
+
+      chart.dataSeriesActivate = function (e) {
+        var series = e.series;
+
+        series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive' ;
+        series.values[0].active = series.active;
+
+        // if you have activated a data series, inactivate the rest
+        if (series.active === 'active') {
+          data.filter(function (d) {
+            return d.active !== 'active';
+          }).map(function (d) {
+            d.values[0].active = 'inactive';
+            d.active = 'inactive';
+            return d;
+          });
+        }
+
+        // if there are no active data series, activate them all
+        if (!data.filter(function (d) {
+          return d.active === 'active';
+        }).length) {
+          data.map(function (d) {
+            d.active = '';
+            d.values[0].active = '';
+            container.selectAll('.nv-series').classed('nv-inactive', false);
+            return d;
+          });
+        }
+
+        container.call(chart);
       };
 
       chart.container = this;
@@ -295,6 +331,10 @@ nv.models.funnelChart = function () {
         }
       });
 
+      funnel.dispatch.on('elementClick', function (e) {
+        seriesClick(data, e);
+      });
+
     });
 
     return chart;
@@ -316,6 +356,7 @@ nv.models.funnelChart = function () {
     dispatch.tooltipMove(e);
   });
 
+
   //============================================================
   // Expose Public Variables
   //------------------------------------------------------------
@@ -334,7 +375,7 @@ nv.models.funnelChart = function () {
           return nv.utils.defaultColor()(d, i);
         },
         classes = function (d, i) {
-          return 'nv-bar positive';
+          return 'nv-group nv-series-' + i;
         },
         type = arguments[0],
         params = arguments[1] || {};
@@ -354,7 +395,7 @@ nv.models.funnelChart = function () {
         };
         classes = function (d, i) {
           var iClass = (i * (params.step || 1)) % 14;
-          return 'nv-bar positive ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
+          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
         };
         break;
     }
@@ -473,6 +514,14 @@ nv.models.funnelChart = function () {
         strings[prop] = _[prop];
       }
     }
+    return chart;
+  };
+
+  chart.seriesClick = function (_) {
+    if (!arguments.length) {
+      return seriesClick;
+    }
+    seriesClick = _;
     return chart;
   };
 

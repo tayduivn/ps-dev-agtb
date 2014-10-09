@@ -40,6 +40,9 @@ class ModuleInstaller{
 	var $modulesInPackage = array();
 	public $disabled_path = DISABLED_PATH;
 
+    /** @var array */
+    public $installdefs;
+
 	/**
 	 * List of install sections and modules affected by installation in each
 	 * sections. This is used to handle post install cleanup prior to a complete
@@ -704,6 +707,30 @@ class ModuleInstaller{
             return false;
         }
         return true;
+    }
+
+    /**
+     * Uninstalls module filters
+     */
+    protected function uninstall_filters()
+    {
+        if (empty($this->installdefs['beans'])) {
+            return;
+        }
+
+        $modules = array();
+        foreach ($this->installdefs['beans'] as $definition) {
+            $modules[] = $definition['module'];
+        }
+
+        $filter = BeanFactory::getBean('Filters');
+        $query = new SugarQuery();
+        $query->select('id');
+        $query->from($filter)->where()->in('module_name', $modules);
+        $data = $query->execute();
+        foreach ($data as $row) {
+            $filter->mark_deleted($row['id']);
+        }
     }
 
     /**
@@ -1681,6 +1708,7 @@ class ModuleInstaller{
 			'uninstall_layoutfields',
 		    'uninstall_extensions',
 		    'uninstall_global_search',
+            'uninstall_filters',
 			'disable_manifest_logichooks',
 			'post_uninstall',
 		);
@@ -2780,6 +2808,11 @@ private function dir_file_count($path){
                 "logo_url",
             ),
         );
+
+        $config = SugarConfig::getInstance();
+        $jsConfig = $config->get('additional_js_config', array());
+        $sidecarConfig = array_merge($sidecarConfig, $jsConfig);
+
         return $sidecarConfig;
     }
 

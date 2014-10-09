@@ -575,6 +575,9 @@
      * @return {Array} The filter definition.
      */
     buildFilterDefinition: function(searchTerm) {
+        if (!app.metadata.getModule('Filters') || !this.filters) {
+            return [];
+        }
         var filterBeanClass = app.data.getBeanClass('Filters').prototype,
             filterOptions = this.getFilterOptions() || {},
             filter = this.filters.collection.get(filterOptions.initial_filter),

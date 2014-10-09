@@ -86,7 +86,8 @@ class TeamSetManager {
 					}//end while
 				}//fi
 			}else{
-				$query = "SELECT count(*) count FROM $module_table_name WHERE team_set_id = '$team_set_id'";
+                $query = "SELECT count(*) count FROM $module_table_name WHERE"
+                . " team_set_id = '$team_set_id' AND deleted = 0";
 				$result = $teamSetModule->db->query($query);
 
 	    		if($row = $teamSetModule->db->fetchByAssoc($result))
@@ -129,7 +130,8 @@ class TeamSetManager {
 	public static function save(){
 		//if this entry is set in the config file, then store the set
 		//and modules in the team_set_modules table
-		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
+        if (!isset($GLOBALS['sugar_config']['enable_team_module_save'])
+            || !empty($GLOBALS['sugar_config']['enable_team_module_save'])) {
 			foreach(self::$_setHash as $team_set_id => $table_names){
 				$teamSetModule = BeanFactory::getBean('TeamSetModules');
 				$teamSetModule->team_set_id = $team_set_id;
@@ -153,7 +155,8 @@ class TeamSetManager {
 	public static function saveTeamSetModule($teamSetId, $tableName){
 		//if this entry is set in the config file, then store the set
 		//and modules in the team_set_modules table
-		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
+        if (!isset($GLOBALS['sugar_config']['enable_team_module_save'])
+            || !empty($GLOBALS['sugar_config']['enable_team_module_save'])) {
 			$teamSetModule = BeanFactory::getBean('TeamSetModules');
 			$teamSetModule->team_set_id = $teamSetId;
 			$teamSetModule->module_table_name = $tableName;

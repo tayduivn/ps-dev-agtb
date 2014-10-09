@@ -27,7 +27,10 @@ class TimestampExpression extends DateExpression
         if (!$params) {
             return false;
         }
-        if (!DateExpression::hasTime($date)) {
+
+        // if the date expression doesn't have a time on it or the def is type of 'date' then force
+        // the time to be midnight on that day
+        if (!DateExpression::hasTime($date) || (isset($date->def) && $date->def['type'] === 'date')) {
             $params->setTime(0, 0, 0);
         }
         return $params->getTimestamp();

@@ -32,7 +32,7 @@ global $app_list_strings;
 global $current_user;
 
 //exit if the logged in user does not have admin rights.
-if (!is_admin($current_user) && !is_admin_for_module($current_user,'Forecasts')&& !is_admin_for_module($current_user,'ForecastSchedule')) sugar_die("Unauthorized access to administration.");
+if (!is_admin($current_user) && !is_admin_for_module($current_user,'Forecasts')) sugar_die("Unauthorized access to administration.");
 
 global $focus;
 $focus = BeanFactory::getBean('TimePeriods');
@@ -82,29 +82,3 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 }
 $xtpl->parse("main");
 $xtpl->out("main");
-
-
-/*
-echo "<BR>\n";
-$sub_xtpl = $xtpl;
-
-$old_contents = ob_get_contents();
-ob_end_clean();
-if($sub_xtpl->var_exists('subpanel', 'FORECASTSCHEDULE')){
-
-ob_start();
-
-include('modules/ForecastSchedule/SubPanelViewForecastSchedule.php');
-
-$forecastschedulepanel = ob_get_contents();
-ob_end_clean();
-}
-ob_start();
-
-echo $old_contents;
-if(!empty($forecastschedulepanel))$sub_xtpl->assign('FORECASTSCHEDULE', $forecastschedulepanel);
-
-$sub_xtpl->parse("subpanel");
-$sub_xtpl->out("subpanel");
-*/
-?>

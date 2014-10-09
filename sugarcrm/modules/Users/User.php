@@ -483,6 +483,25 @@ class User extends Person {
         return $where;
     }
 
+    /**
+     * Gets the BWC theme for this user.
+     *
+     * There are only 2 supported themes at this time: `RTL` and `RacerX`.
+     * `RTL` is returned if the current language is an RTL language, `RacerX` is
+     * returned otherwise.
+     *
+     * @return string The theme currently set to this user.
+     */
+    public function getBWCTheme()
+    {
+        //FIXME: SC-3358 Should be getting the RTL languages from metadata.
+        static $rtlLanguages = array('he_IL');
+        $language = !empty($this->preferred_language) ? $this->preferred_language : $GLOBALS['current_language'];
+        $theme = in_array($language, $rtlLanguages) ? 'RTL' : 'RacerX';
+
+        return $theme;
+    }
+
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 

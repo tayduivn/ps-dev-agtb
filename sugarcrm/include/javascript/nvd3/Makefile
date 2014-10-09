@@ -5,6 +5,7 @@ JS_FILES = \
 	src/utils.js \
 	src/models/axis.js \
 	src/models/legend.js \
+	src/models/scroll.js \
 	src/models/scatter.js \
 	src/models/bubbleChart.js \
 	src/models/funnel.js \
@@ -16,7 +17,6 @@ JS_FILES = \
 	src/models/lineWithFocusChart.js \
 	src/models/multiBar.js \
 	src/models/multiBarChart.js \
-	src/models/multiBarHorizontalChart.js \
 	src/models/paretoChart.js \
 	src/models/pie.js \
 	src/models/pieChart.js \

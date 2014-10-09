@@ -161,7 +161,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
                  'Accounts'=>array('admin'=>ACL_ALLOW_DEV),
                  'Contacts'=>array('admin'=>ACL_ALLOW_DEV),
                  'Forecasts'=>array('admin'=>ACL_ALLOW_DEV),
-                 'ForecastSchedule'=>array('admin'=>ACL_ALLOW_DEV),
                  'Leads'=>array('admin'=>ACL_ALLOW_DEV),
                  'Opportunities'=>array('admin'=>ACL_ALLOW_DEV),
                  'Quotes'=>array('admin'=>ACL_ALLOW_DEV),

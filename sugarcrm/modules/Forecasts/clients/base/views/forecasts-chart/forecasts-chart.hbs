@@ -17,11 +17,13 @@
                 {{field ../this model=../this.values}}
             {{/with}}
         </div>
+        {{#if dashletConfig.show_dataset}}
         <div class="span3">
             {{#with dashletConfig.dataset}}
                 {{field ../this model=../this.values}}
             {{/with}}
         </div>
+        {{/if}}
     </div>
 </div>
 {{#with dashletConfig.chart}}

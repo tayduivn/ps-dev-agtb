@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user;
 
-if (!is_admin($current_user)&& !is_admin_for_module($current_user,'Forecasts')&& !is_admin_for_module($current_user,'ForecastSchedule')) {
+if (!is_admin($current_user)&& !is_admin_for_module($current_user,'Forecasts')) {
     sugar_die("Unauthorized access to administration.");
 }
 

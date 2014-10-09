@@ -12,29 +12,27 @@
   className: 'container-fluid',
 
   // charts horizontal
-  _renderHtml: function () {
+  _renderHtml: function() {
     this._super('_renderHtml');
 
     // Multibar Horizontal Chart
-    d3.json("styleguide/content/charts/data/opportunities_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/multibar_data_opportunities.json', function(data) {
       nv.addGraph({
         generate: function() {
           nv.addGraph(function() {
-            var chart = nv.models.multiBarHorizontalChart()
-                  .x(function(d) { return d.label })
-                  .y(function(d) { return d.value })
-                  .margin({top: 10, right: 10, bottom: 20, left: 90})
+            var chart = nv.models.multiBarChart()
+                  .vertical(false)
+                  .margin({top: 10, right: 10, bottom: 10, left: 10})
                   .showValues(true)
                   .showTitle(false)
                   .tooltips(true)
                   .stacked(true)
                   .showControls(false)
-                  .tooltipContent( function(key, x, y, e, graph) {
+                  .tooltipContent(function(key, x, y, e, graph) {
                     return '<p>Outcome: <b>' + key + '</b></p>' +
-                           '<p>Lead Source: <b>' +  x + '</b></p>' +
-                           '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-                    })
-                ;
+                           '<p>Lead Source: <b>' + x + '</b></p>' +
+                           '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
+                    });
 
             chart.yAxis
                 .tickFormat(d3.format(',.2f'));
@@ -43,6 +41,8 @@
                 .datum(data)
               .transition().duration(500)
                 .call(chart);
+
+            nv.utils.windowResize(chart.update);
 
             return chart;
           });
@@ -54,25 +54,23 @@
     });
 
     // Multibar Horizontal Chart with Baseline
-    d3.json("styleguide/content/charts/data/horizbar_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/multibar_data_negative.json', function(data) {
       nv.addGraph({
         generate: function() {
           nv.addGraph(function() {
-            var chart = nv.models.multiBarHorizontalChart()
-                  .x(function(d) { return d.label })
-                  .y(function(d) { return d.value })
-                  .margin({top: 10, right: 10, bottom: 20, left: 80})
+            var chart = nv.models.multiBarChart()
+                  .vertical(false)
+                  .margin({top: 10, right: 10, bottom: 10, left: 10})
                   .showValues(true)
                   .showTitle(false)
                   .tooltips(true)
                   .showControls(false)
                   .stacked(false)
-                  .tooltipContent( function(key, x, y, e, graph) {
+                  .tooltipContent(function(key, x, y, e, graph) {
                     return '<p>Outcome: <b>' + key + '</b></p>' +
-                           '<p>Lead Source: <b>' +  x + '</b></p>' +
-                           '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-                  })
-                ;
+                           '<p>Lead Source: <b>' + x + '</b></p>' +
+                           '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
+                  });
 
             chart.yAxis
                 .tickFormat(d3.format(',.2f'));
@@ -81,6 +79,8 @@
                 .datum(data)
               .transition().duration(500)
                 .call(chart);
+
+            nv.utils.windowResize(chart.update);
 
             return chart;
           });

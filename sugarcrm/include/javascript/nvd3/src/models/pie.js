@@ -149,8 +149,14 @@ nv.models.pie = function() {
             });
 
       var paths = ae.append('path')
-            .each(function(d) { this._current = d; });
-            //.attr('d', arc);
+            .each(function(d) {
+              this._current = d;
+            });
+
+      slices
+        .classed('nv-active', function(d) { return d.data.active === 'active'; })
+        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; });
+
 
       slices.select('path')
         .style('fill', function(d, i) { return fill(d.data, d.data.series); })
@@ -159,7 +165,7 @@ nv.models.pie = function() {
         .style('stroke-opacity', 1);
 
       slices.select('path').transition().duration(durationMs)
-        .attr('d', arc)
+        .attr('d', arcData)
         .attrTween('d', arcTween);
 
       if (showLabels) {
@@ -258,11 +264,11 @@ nv.models.pie = function() {
 
           if (!pieLabelsOutside && !donutLabelsOutside) {
             var textBox = slice.select('text').node().getBBox();
-            slice.select(".nv-label rect")
-              .attr("width", textBox.width + 10)
-              .attr("height", textBox.height + 10)
-              .attr("transform", function() {
-                return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
+            slice.select('.nv-label rect')
+              .attr('width', textBox.width + 10)
+              .attr('height', textBox.height + 10)
+              .attr('transform', function() {
+                return 'translate(' + [textBox.x - 5, textBox.y - 5] + ')';
               });
           }
         });
@@ -274,12 +280,28 @@ nv.models.pie = function() {
         return a > 90 ? a - 180 : a;
       }
 
-      function arcTween(a) {
-        if (!donut) a.innerRadius = 0;
-        var i = d3.interpolate(this._current, a);
+      function arcData(d) {
+        var _arc;
+        if (typeof d.data.active !== 'undefined' && d.data.active === 'active') {
+          arc.outerRadius(arcRadius + 16);
+          _arc = arc(d);
+          arc.outerRadius(arcRadius);
+        } else {
+          _arc = arc(d);
+        }
+        return _arc;
+      }
+
+      function arcTween(d) {
+        if (!donut) {
+          d.innerRadius = 0;
+        }
+        var i = d3.interpolate(this._current, d);
         this._current = i(0);
+
         return function(t) {
-          return arc(i(t));
+          var iData = i(t);
+          return arcData(iData);
         };
       }
 
@@ -287,7 +309,7 @@ nv.models.pie = function() {
         b.innerRadius = 0;
         var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
         return function(t) {
-            return arc(i(t));
+          return arc(i(t));
         };
       }
 
