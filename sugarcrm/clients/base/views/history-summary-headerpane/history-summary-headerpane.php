@@ -10,7 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['history-summary-headerpane'] = array(
-    'title' => 'TPL_HISTORICAL_SUMMARY',
+    'template' => 'headerpane',
+    'fields' => array(
+        array(
+            'name' => 'picture',
+            'type' => 'avatar',
+            'size' => 'large',
+            'dismiss_label' => true,
+            'readonly' => true,
+        ),
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'TPL_HISTORICAL_SUMMARY',
+        ),
+    ),
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

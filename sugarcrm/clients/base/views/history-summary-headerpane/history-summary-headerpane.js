@@ -24,44 +24,21 @@
      * @inheritDoc
      */
     initialize: function(options) {
-        /**
-         * Metadata for the module icon field.
-         *
-         * @type {Array}
-         */
-        this.avatarFieldMetadata = this._getMetadataForModuleIconField();
-
         this._super('initialize', [options]);
+
+        this.model = this.context.parent && this.context.parent.get('model') || this.model;
     },
 
     /**
      * @override
      */
-    formatTitle: function(title) {
+    _formatTitle: function(title) {
         var parent = this._getParentModel();
         var recordName = this._getParentModelName();
         if (parent && recordName) {
             return app.lang.get(title, parent.module, {name: recordName});
         }
         return title;
-    },
-
-    /**
-     * Gets the metadata for the module icon field displayed in the headerpane.
-     *
-     * @return {Array} An array containing the field definition.
-     * @private
-     */
-    _getMetadataForModuleIconField: function() {
-        return [
-            {
-                'name': 'picture',
-                'type': 'avatar',
-                'size': 'large',
-                'dismiss_label': true,
-                'readonly': true
-            }
-        ];
     },
 
     /**
