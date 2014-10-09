@@ -14,6 +14,10 @@
  * @extends View.View
  */
 ({
+    events: {
+        'shown.bs.tab a[data-toggle="tab"]': 'resize',
+    },
+
     plugins: ['Dashlet', 'Chart', 'EllipsisInline'],
     className: 'cases-summary-wrapper',
 
@@ -48,6 +52,7 @@
                 .strings({
                     noData: app.lang.getAppString('LBL_CHART_NO_DATA')
                 });
+
     },
 
     /**
