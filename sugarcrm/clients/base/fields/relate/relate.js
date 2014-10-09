@@ -379,8 +379,20 @@
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
+        if (value) {
+            this._valueSetOnce = true;
+        }
 
-        if (setFromCtx) {
+        if (!this._valueSetOnce && setFromCtx) {
+            /**
+             * Flag to indicate that the value has been set from the context once,
+             * so if later the value is unset, we don't set it again on
+             * {@link #format}.
+             *
+             * @type {boolean}
+             * @private
+             */
+            this._valueSetOnce = true;
             var model = parentCtx.get('model');
             // FIXME we need a method to prevent us from doing this
             this.def.auto_populate = true;

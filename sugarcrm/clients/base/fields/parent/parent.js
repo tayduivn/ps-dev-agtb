@@ -89,7 +89,11 @@
             _.contains(_.keys(app.lang.getAppListStrings(this.def.parent_type)), parentCtx.get('module')) &&
             this.module !== this.def.module;
 
-        if (setFromCtx) {
+        if (value) {
+            this._valueSetOnce = true;
+        }
+        if (!this._valueSetOnce && setFromCtx) {
+            this._valueSetOnce = true;
             var model = parentCtx.get('model');
             // FIXME we need a method to prevent us from doing this
             // FIXME the setValue receives a model but not a backbone model...
