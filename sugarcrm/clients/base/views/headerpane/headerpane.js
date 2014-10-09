@@ -20,12 +20,24 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        if (this.meta && this.meta.title) {
-            this.title = this.meta.title;
-        }
+        this.meta = _.extend({}, app.metadata.getView(null, 'headerpane'), this.meta);
+
+        /**
+         * The label used for the title. This is the raw label.
+         *
+         * @deprecated 7.5 and will be removed in 7.7. We recommend to set the
+         * title by defining a `fields` array, containing a field named `title`,
+         * in the metadata. You should not define the title with `meta.title`.
+         * Note that you can extend {@link #formatTitle} if the string used is a
+         * template and you wish to pass a context.
+         *
+         * @type {string}
+         * @private
+         */
+        this._title = this.meta.title;
 
         this.context.on('headerpane:title', function(title) {
-            this.title = title;
+            this._title = title;
             if (!this.disposed) this.render();
         }, this);
 
@@ -53,12 +65,24 @@
      */
     _renderHtml: function() {
         /**
-         * The title being rendered in the headerpane.
+         * The title being rendered in the headerpane. This is the formatted
+         * label.
+         *
+         * @deprecated 7.5 and will be removed in 7.7. We recommend to set the
+         * title by defining a `fields` array, containing a field named `title`,
+         * in the metadata. You should not define the title with `meta.title`.
+         * Note that you can extend {@link #formatTitle} if the string used is a
+         * template and you wish to pass a context.
          *
          * @type {string}
          */
-        this.title = this.formatTitle(this.title || this.module);
-
+        this.title = !_.isUndefined(this._title) ? this._formatTitle(this._title) : this.title;
+        this.meta.fields = _.map(this.meta.fields, function(field) {
+            if (field.name === 'title') {
+                field['formatted_value'] = this.title || this._formatTitle(field['default_value']);
+            }
+            return field;
+        }, this);
         this._super('_renderHtml');
     },
 
@@ -67,8 +91,12 @@
      *
      * @param {string} title The unformatted title.
      * @return {string} The formatted title.
+     * @protected
      */
-    formatTitle: function(title) {
+    _formatTitle: function(title) {
+        if (!title) {
+            return '';
+        }
         return app.lang.get(title, this.module);
     }
 })
