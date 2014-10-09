@@ -156,6 +156,10 @@
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
             self._cloneBodyClasses(this.contentWindow);
+
+            $('html', this.contentWindow.document).on('click.bwc.sugarcrm', function() {
+                app.bwc.trigger('clicked');
+            });
         });
     },
 
@@ -530,6 +534,7 @@
 
         this.confirmMemLeak(bwcWindow.document);
         $('a', bwcWindow.document).off('.bwc.sugarcrm');
+        $('html', bwcWindow.document).off('.bwc.sugarcrm');
     },
 
     confirmMemLeak: function(target) {
