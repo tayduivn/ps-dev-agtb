@@ -2065,7 +2065,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $str .= $basestr;
             $size = strlen($str);
-            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
+            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str), null, true, true);
 
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
@@ -2977,7 +2977,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
         $sql = "INSERT INTO {$tableName}(id,col1,col2, col3) VALUES(?int, ?, ?text, ?date)";
-        $ps = $this->_db->preparedQuery($sql, $data);
+        $ps = $this->_db->preparedQuery($sql, $data, array('col2'));
         $this->assertNotEmpty($ps, "Prepare failed");
 
         $result = $this->_db->query("SELECT * FROM $tableName");
@@ -3049,7 +3049,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $tableName = $dataStructure['tableName'];
 
         $sql = "INSERT INTO {$tableName} (id, col1, col2, col3) VALUES (?int, ?, ?text, ?date)";
-        $ps = $this->_db->prepareStatement($sql);
+        $ps = $this->_db->prepareStatement($sql, array('col2'));
         $this->assertNotEmpty($ps, 'Prepare failed');
 
         $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -3092,20 +3092,33 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id   = 'test' . mt_rand();
+        $bean->description = 'description' . mt_rand();
         $bean->new_with_id = true;
         $this->_db->insert($bean);
 
-        $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
+        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
+        $this->assertEquals($bean->description, $row['description'], 'description failed');
         $this->assertEquals($bean->id, $row['id'],'id failed');
 
         // update test
         $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
+        $bean->description = 'newdescription' . mt_rand();
         $this->_db->update($bean, array('id'=>$bean->id));
-        $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
+        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
+        $this->assertEquals($bean->description, $row['description'], 'description failed');
+        $this->assertEquals($bean->id, $row['id'], 'id failed');
+
+        // retrieve test
+        // we can't use lob fields in where, because of that we try to retrieve bean by last_name
+        $this->_db->retrieve($bean, array('last_name' => $bean->last_name));
+        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
+        $row = $this->_db->fetchByAssoc($result);
+        $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
+        $this->assertEquals($bean->description, $row['description'], 'description failed');
         $this->assertEquals($bean->id, $row['id'], 'id failed');
 
         // delete test
@@ -3349,6 +3362,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDecodeHTML()
     {
+        if ($this->_db instanceof OracleManager) {
+            $this->markTestSkipped('Description is lob field and oracle uses prepared statement for that in AltlobExecute method');
+        }
         $this->_db->usePreparedStatements = false;
         $acc = BeanFactory::getBean('Accounts');
         $this->_db->setEncode(true);

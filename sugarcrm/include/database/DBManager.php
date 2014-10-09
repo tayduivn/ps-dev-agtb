@@ -611,9 +611,9 @@ protected function checkQuery($sql, $object_name = false)
 		$tablename =  $bean->getTableName();
 		$msg = "Error inserting into table: $tablename:";
 	    if ($this->usePreparedStatements) {
-	        list($sql, $data) = $this->insertSQL($bean, true);
+	        list($sql, $data, $clob) = $this->insertSQL($bean, true);
 	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, $msg);
+	        return $this->preparedQuery($sql, $data, $clob, $msg);
 	    } else {
 	       $sql = $this->insertSQL($bean);
 	       return $this->query($sql,true,$msg);
@@ -709,19 +709,26 @@ protected function checkQuery($sql, $object_name = false)
             return $execute?$this->query($query):$query;
         } else {  //Prepared Statement
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
-            $types = $data_values = array();
+            $lobs = $types = $data_values = array();
             foreach($values as $valueKey => $value) {
-                $type = $this->getFieldType($field_defs[$valueKey]);
-                $types[] = $this->convert("?$type", $type);
-                $data_values[] = $value;
+                if (!empty($field_defs[$valueKey]) && !empty($field_defs[$valueKey]['auto_increment'])) {
+                    $types[] = $value;
+                } else {
+                    $type = $this->getFieldType($field_defs[$valueKey]);
+                    $types[] = $this->convert("?$type", $type);
+                    $data_values[] = $value;
+                    if ($this->isTextType($type)) {
+                        $lobs[] = $valueKey;
+                    }
+                }
             }
             $query .= join(",", $types).")";
 
             if (!$execute)
-                return array($query, $data_values);
+                return array($query, $data_values, $lobs);
 
             // Prepare and execute the statement
-            return $this->preparedQuery($query, $data_values);
+            return $this->preparedQuery($query, $data_values, $lobs);
         }
 
 	}
@@ -741,9 +748,9 @@ protected function checkQuery($sql, $object_name = false)
 		$tablename = $bean->getTableName();
 		$msg = "Error updating table: $tablename:";
 	    if($this->usePreparedStatements) {
-            list($sql, $data) = $this->updateSQL($bean, $where, true);
+            list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
             // Prepare and execute the statement
-            return $this->preparedQuery($sql, $data, $msg);
+            return $this->preparedQuery($sql, $data, $lobs, $msg);
 	    } else {
 	        $sql = $this->updateSQL($bean, $where);
 	        return $this->query($sql,true,$msg);
@@ -766,7 +773,7 @@ protected function checkQuery($sql, $object_name = false)
 	    if($this->usePreparedStatements) {
 	        list($sql, $data) = $this->deleteSQL($bean, $where, true);
 	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, $msg);
+	        return $this->preparedQuery($sql, $data, array(), $msg);
 	    } else {
 	        $sql = $this->deleteSQL($bean, $where);
 	        return $this->query($sql,true,$msg);
@@ -790,7 +797,7 @@ protected function checkQuery($sql, $object_name = false)
 	    if($this->usePreparedStatements) {
 	        list($sql, $data) = $this->retrieveSQL($bean, $where, true);
 	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, $msg);
+	        return $this->preparedQuery($sql, $data, array(), $msg);
 	    } else {
 	        $sql = $this->retrieveSQL($bean, $where);
 	        return $this->query($sql,true,$msg);
@@ -823,13 +830,14 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Run query throuh prepared statement
 	 * @param string $sql SQL query
+	 * @param array $lobs names of clob and blob fields from query
 	 * @param string $data Data for SQL
 	 * @param string $msg Error message
 	 * @return boolean
 	 */
-	public function preparedQuery($sql, $data, $msg = '')
+	public function preparedQuery($sql, $data, array $lobs = array(), $msg = '')
 	{
-	    $ps = $this->prepareStatement($sql);
+	    $ps = $this->prepareStatement($sql, $lobs);
 	    if(!$ps) {
 	        return false;
 	    }
@@ -2426,12 +2434,9 @@ protected function checkQuery($sql, $object_name = false)
                 $val = (int)$val;
             }
 
-            //handle auto increment values here - we may have to do something like nextval for oracle
+            // we should care about auto_increment in update query
             if (!empty($fieldDef['auto_increment'])) {
-                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-                if (!empty($auto)) {
-                    $values[$field] = $auto;
-                }
+                continue;
             } elseif (!is_null($val) || !empty($fieldDef['required'])) {
                 $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
             } elseif ($this->isNullable($fieldDef)) {
@@ -2474,18 +2479,22 @@ protected function checkQuery($sql, $object_name = false)
         } else { //Prepared Statement
             $data = array_merge(array_values($values), array_values($where));
             $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
+            $lobs = array();
             $sep = ' ';
             foreach ($values as $field => $value) {
                 $type = $this->getFieldType($field_defs[$field]);
                 $query .= $sep . $field . '=' . $this->convert("?$type", $type);
                 $sep = ', ';
+                if ($this->isTextType($type)) {
+                    $lobs[] = $field;
+                }
             }
             $query .= "\n\t\t\t\t\t" . $whereString;
 
             if (!$execute) {
-                return array($query, $data);
+                return array($query, $data, $lobs);
             }
-            return $this->preparedQuery($query, $data);
+            return $this->preparedQuery($query, $data, $lobs);
         }
     }
 
@@ -4216,10 +4225,11 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Create prepared statement from query
 	 * @param string $sql SQL Query
+	 * @param array $lobs names of clob and blob fields from query
 	 * @param string $msg Error message
 	 * @return false|PreparedStatement
 	 */
-	public function prepareStatement($sql, $msg = '')
+	public function prepareStatement($sql, array $lobs = array(), $msg = '')
 	{
 	    if(empty($this->capabilities['prepared_statements']) || empty($this->preparedStatementClass)) {
 	       $this->registerError($msg, "Prepared statements not supported");
@@ -4228,7 +4238,7 @@ protected function checkQuery($sql, $object_name = false)
 	    if(!$ps) {
 	        return false;
 	    }
-	    return $ps->prepareStatement($sql, $msg);
+	    return $ps->prepareStatement($sql, $lobs, $msg);
 	}
 
 
