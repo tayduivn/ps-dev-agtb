@@ -1280,7 +1280,7 @@
 			}
 		},
 		_fn : {
-			_show_input : function (obj, callback) {
+			_show_input : function (obj, mode, callback) {
 				obj = this._get_node(obj);
 				var rtl = this._get_settings().core.rtl,
 					w = this._get_settings().crrm.input_width_limit,
@@ -1291,6 +1291,7 @@
 					h2 = obj.css("position","relative").append(
 					$("<input />", { 
 						"value" : t,
+						"rel" : mode || "add",
 						"class" : "jstree-rename-input",
 						// "size" : t.length,
 						"css" : {
@@ -1307,6 +1308,10 @@
 						"blur" : $.proxy(function () {
 							var i = obj.children(".jstree-rename-input"),
 								v = i.val();
+							if ($(i).attr('rel') === 'delete') {
+								this.remove(obj);
+								return false;
+							}
 							if(v === "") { v = t; }
 							h1.remove();
 							i.remove(); // rollback purposes
@@ -1317,7 +1322,11 @@
 						}, this),
 						"keyup" : function (event) {
 							var key = event.keyCode || event.which;
-							if(key == 27) { this.value = t; this.blur(); return; }
+							if(key == 27) {
+								$(this).attr('rel') === 'add' ? $(this).attr('rel', 'delete') : this.value = t;
+								this.blur();
+								return;
+							}
 							else if(key == 13) { this.blur(); return; }
 							else {
 								h2.width(Math.min(h1.text("pW" + this.value).width(),w));
@@ -1346,7 +1355,7 @@
 				obj = this._get_node(obj);
 				this.__rollback();
 				var f = this.__callback;
-				this._show_input(obj, function (obj, new_name, old_name) { 
+				this._show_input(obj, 'edit', function (obj, new_name, old_name) { 
 					f.call(this, { "obj" : obj, "new_name" : new_name, "old_name" : old_name });
 				});
 			},
@@ -1361,7 +1370,7 @@
 					if(callback) { callback.call(this, t); }
 					if(p.length && p.hasClass("jstree-closed")) { this.open_node(p, false, true); }
 					if(!skip_rename) { 
-						this._show_input(t, function (obj, new_name, old_name) {
+						this._show_input(t, 'add', function (obj, new_name, old_name) {
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });
 						});
 					}
