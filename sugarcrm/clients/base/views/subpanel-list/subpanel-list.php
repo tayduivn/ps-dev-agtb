@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['subpanel-list'] = array(
     'template' => 'recordlist',
     'favorite' => true,
-    'scroll_helper' => true,
     'rowactions' => array(
         'actions' => array(
             array(

@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['recordlist'] = array(
     'favorite' => true,
     'following' => true,
-    'scroll_helper' => true,
     'selection' => array(
         'type' => 'multi',
         'actions' => array(

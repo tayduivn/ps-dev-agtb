@@ -667,9 +667,9 @@
     _render: function() {
         this._super('_render');
 
-        // FIXME Testing `this.closestComponent('sidebar')` is required to make
-        // unit tests pass. SC-3484 will remote this.
-        if (this.meta.scroll_helper && this.closestComponent('sidebar')) {
+        // FIXME SC-3484 Testing `this.closestComponent('sidebar')` is required
+        // to make unit tests pass.
+        if (this.closestComponent('sidebar') && !(app.drawer.count())) {
                 this._setHelperScrollBar();
         }
     },
