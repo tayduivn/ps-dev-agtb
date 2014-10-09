@@ -16,8 +16,11 @@
     {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
     <ul data-menu="dropdown" class="dropdown-menu" role="menu">
     <li class="st">
+        <div class="input-append">
             <input type="text" data-role="secondinput"/>
-        </li>
+            <span class="add-on" data-role="secondinputaddon">&nbsp;</span>
+        </div>
+    </li>
     <li class="tree">
         <div class="list" data-place="tree">
         </div>

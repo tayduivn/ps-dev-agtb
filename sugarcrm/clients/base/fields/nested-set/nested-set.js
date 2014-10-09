@@ -71,7 +71,8 @@
      * {@inheritDoc}
      */
     _render: function() {
-        var treeOptions = {};
+        var treeOptions = {},
+            self = this;
         this._super('_render', []);
         if (this.$(this.ddEl).length !== 0 && this.action === 'edit') {
             this.$(this.ddEl).dropdown();
@@ -83,7 +84,17 @@
                 category_root: this.categoryRoot,
                 module_root: this.moduleRoot
             };
-            this._renderTree($('[data-place=tree]'), treeOptions, {'onSelect': _.bind(this.selectedNode, this)});
+            this._renderTree(
+                $('[data-place=tree]'),
+                treeOptions,
+                {
+                    'onSelect': _.bind(this.selectedNode, this),
+                    'onLoad': function () {
+                        self.toggleSearchIcon(false);
+                    }
+                }
+            );
+            this.toggleSearchIcon(true);
         }
     },
 
@@ -120,6 +131,17 @@
     },
 
     /**
+     * Toggle icon in search field while loading tree.
+     * @param {Bool} hide
+     */
+    toggleSearchIcon: function(hide) {
+        this.$('[data-role=secondinputaddon]')
+            .toggleClass('icon-search', !hide)
+            .toggleClass('icon-spinner', hide)
+            .toggleClass('icon-spin', hide);
+    },
+
+    /**
      * Handle global dropdown clicks.
      * @param evt Triggered mouse event.
      */
@@ -146,7 +168,7 @@
      */
     confirmInput: function() {
         var val = this.$('[data-role=secondinput]').val();
-        this.SearchNode(val);
+        this.searchNode(val);
     },
 
     /**

@@ -36,6 +36,18 @@
             jsTreeCallbacks: null,
 
             /**
+             * JQuery container with empty label
+             * @property {Object} $noData
+             */
+            $noData: null,
+
+            /**
+             * JQuery container with empty label
+             * @property {Object} $treeContainer
+             */
+            $treeContainer: null,
+
+            /**
              * @param {View.Component} component The component this plugin is
              *   attached to.
              */
@@ -92,6 +104,7 @@
              * @param {String} settings.category_root Root parameter to build a collection (required).
              * @param {Object} callbacks
              * @param {Object} callbacks.onToggle Callback on expand/collapse a tree branch.
+             * @param {Object} callbacks.onLoad Callback on tree loaded.
              * @param {Object} callbacks.onShowContextmenu Callback on show a context menu.
              * @param {Object} callbacks.onAdd Callback on add a new node.
              * @param {Object} callbacks.onSelect Callback on select a node.
@@ -103,20 +116,41 @@
                 this.jsTreeSettings = settings || {};
                 this.jsTreeCallbacks = callbacks || {};
 
+                this.$noData = $('<div />', {'data-type': 'jstree-no-data', class: 'block-footer'})
+                    .html(app.lang.get('LBL_NO_DATA_AVAILABLE', this.module));
+                this.$treeContainer = $('<div />', '');
+
                 this.dataProvider = this.jsTreeSettings.module_root || null;
                 this.root = this.jsTreeSettings.category_root || null;
 
                 if (!this.dataProvider || !this.root) {
                     return;
                 }
-
+                $container.empty();
+                $container.append(this.$noData).append(this.$treeContainer);
+                this._toggleVisibility(true);
                 this.collection.module = this.dataProvider;
                 this.collection.root = this.root;
                 this.collection.tree({
                     success: _.bind(function(data) {
-                        this.createTree(data.jsonTree, $container);
+                        this.createTree(data.jsonTree, this.$treeContainer);
                     }, this)
                 });
+            },
+
+            /**
+             * Hide tree if there is no data, show otherwise.
+             * @param {Bool} hide Hide tree if true, show otherwise.
+             * @private
+             */
+            _toggleVisibility: function (hide) {
+                if (hide === true) {
+                    this.$treeContainer.hide();
+                    this.$noData.show();
+                } else {
+                    this.$treeContainer.show();
+                    this.$noData.hide();
+                }
             },
 
             /**
@@ -125,13 +159,13 @@
              * @param {Object} $container
              */
             createTree: function(data, $container) {
+                this._toggleVisibility(data.length === 0);
                 // make sure we're using an array
                 // if the data coming from the endpoint is an array with one element
                 // it gets converted to a JS object in the process of getting here
                 if (!_.isArray(data)) {
                     data = [data];
                 }
-
                 var treeData = this._recursiveReplaceHTMLChars(data, this),
                     fn = function(el) {
                         if (!_.isEmpty(el.children)) {
@@ -269,7 +303,9 @@
                             action: function(obj) {
                                 /*
                                  // @todo: waiting for remove implementation on backend
+                                 // @todo: hide tree if it's empty
                                  this.remove(this.is_selected(obj) ? obj : null);
+                                 self._toggleVisibility(data.length === 0);
                                 */
                             }
                         }
@@ -320,6 +356,9 @@
                 $container
                     .addClass('jstree-sugar')
                     .addClass('tree-component');
+                if (this.jsTreeCallbacks.onLoad) {
+                    this.jsTreeCallbacks.onLoad.apply();
+                }
             },
 
             /**
@@ -380,13 +419,15 @@
                     node = {
                         title: data.rslt.name,
                         position: data.rslt.position
-                    };
+                    },
+                    self = this;
 
                 this.collection.append({
                     target: parentId,
                     data: {name: node.title},
                     success: function(id) {
                         newNode.attr('data-id', id);
+                        self._toggleVisibility(false);
                     },
                     error: function() {
                         //@todo: remove node - will be implemented
