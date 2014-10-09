@@ -35,6 +35,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        MetaDataManager::enableCache();
+
         // Restore changed config stuff
         $GLOBALS['sugar_config']['languages'] = $this->configBackup['languages'];
         if (isset($this->configBackup['disabled_languages'])) {
@@ -517,6 +519,102 @@ PLATFORMS;
                 ),
             ),
         );
+    }
+
+    /**
+     * @dataProvider cacheStaticProvider
+     */
+    public function testEnableCacheStatic($method, array $arguments, $dbMethod)
+    {
+        $db = $this->getCacheEnabledDatabaseMock($dbMethod);
+        $this->callCacheStatic($db, $method, $arguments);
+    }
+
+    /**
+     * @dataProvider cacheStaticProvider
+     */
+    public function testDisableCacheStatic($method, array $arguments, $dbMethod)
+    {
+        MetaDataManager::disableCache();
+        $db = $this->getCacheDisabledDatabaseMock($dbMethod);
+        $this->callCacheStatic($db, $method, $arguments);
+    }
+
+    private function callCacheStatic(DBManager $db, $method, array $arguments)
+    {
+        SugarTestHelper::setUp('mock_db', $db);
+        SugarTestReflection::callProtectedMethod('MetaDataManager', $method, $arguments);
+    }
+
+    public static function cacheStaticProvider()
+    {
+        return array(
+            array('clearCacheTable', array(), 'query'),
+        );
+    }
+
+    /**
+     * @dataProvider cacheNonStaticProvider
+     */
+    public function testEnableCacheNonStatic($method, array $arguments, $dbMethod)
+    {
+        $db = $this->getCacheEnabledDatabaseMock($dbMethod);
+        $this->callCacheNonStatic($db, $method, $arguments);
+    }
+
+    /**
+     * @dataProvider cacheNonStaticProvider
+     */
+    public function testDisableCacheNonStatic($method, array $arguments, $dbMethod)
+    {
+        MetaDataManager::disableCache();
+        $db = $this->getCacheDisabledDatabaseMock($dbMethod);
+        $this->callCacheNonStatic($db, $method, $arguments);
+    }
+
+    private function callCacheNonStatic(DBManager $db, $method, array $arguments)
+    {
+        $this->mm->db = $db;
+        SugarTestReflection::callProtectedMethod($this->mm, $method, $arguments);
+    }
+
+    public static function cacheNonStaticProvider()
+    {
+        return array(
+            array(
+                'getFromCacheTable',
+                array('some-key'),
+                'limitQuery',
+            ),
+            array(
+                'storeToCacheTable',
+                array('some-key', 'some-data'),
+                'query',
+            ),
+            array(
+                'removeFromCacheTable',
+                array('some-key'),
+                'query',
+            )
+        );
+    }
+
+    private function getCacheEnabledDatabaseMock($method)
+    {
+        $db = $this->getMockForAbstractClass('DBManager');
+        $db->expects($this->atLeastOnce())
+            ->method($method);
+
+        return $db;
+    }
+
+    private function getCacheDisabledDatabaseMock($method)
+    {
+        $db = $this->getMockForAbstractClass('DBManager');
+        $db->expects($this->never())
+            ->method($method);
+
+        return $db;
     }
 }
 
