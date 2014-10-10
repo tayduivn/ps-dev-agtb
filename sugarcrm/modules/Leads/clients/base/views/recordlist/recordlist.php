@@ -114,6 +114,7 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
             ),
             array(
                 'type' => 'rowaction',
+                'name' => 'delete_button',
                 'icon' => 'icon-trash',
                 'event' => 'list:deleterow:fire',
                 'label' => 'LBL_DELETE_BUTTON',
