@@ -37,6 +37,13 @@
                     } else {
                         this.toggleAllRecurrencesMode(false); // default to off
                     }
+
+                    this.model.on('sync', function() {
+                        // when the data is loaded, force 'all recurrence' mode if not recurring
+                        if (!this._isRecurringEvent(this.model)) {
+                            this.toggleAllRecurrencesMode(true);
+                        }
+                    }, this);
                 });
 
                 // override {@link View.Views.Base.RecordView#cancelClicked}
@@ -98,12 +105,13 @@
 
             /**
              * Toggle edit all recurrences mode on/off
+             * If event is not recurring, it will remain in all recurrence mode
+             * since there is only one meeting to edit
              *
              * @param {Boolean} enabled True turns edit all recurrence mode on
              */
             toggleAllRecurrencesMode: function(enabled) {
-                // if no recurrence - should always be editable
-                if (this.model.get('repeat_type') === '') {
+                if (!this._isRecurringEvent(this.model)) {
                     enabled = true;
                 }
 
@@ -166,6 +174,18 @@
                 }
 
                 return options;
+            },
+
+            /**
+             * Check to see if event is recurring
+             * Event is recurring when the repeat type is not blank
+             *
+             * @param {Object} model
+             * @return {boolean}
+             * @private
+             */
+            _isRecurringEvent: function(model) {
+                return (model.get('repeat_type') !== '');
             }
         });
     });

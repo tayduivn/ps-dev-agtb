@@ -16,6 +16,7 @@ describe('Plugins.EditAllRecurrences', function() {
 
         navigateStub = sandbox.stub(app.router, 'navigate');
         view = SugarTest.createView('base', moduleName, 'record');
+        view.model.set('repeat_type', 'Daily');
         pluginsBefore = view.plugins;
         view.plugins = ['EditAllRecurrences'];
         SugarTest.loadPlugin('EditAllRecurrences');
@@ -85,10 +86,17 @@ describe('Plugins.EditAllRecurrences', function() {
         expect(actual).toEqual(expected);
     });
 
-    it('should prevent toggling out of all recurrence mode when there is no recurrence', function() {
+    it('should prevent toggling out of all recurrence mode when repeat_type is blank', function() {
         view.allRecurrencesMode = true;
         view.model.set('repeat_type', '');
         view.toggleAllRecurrencesMode(false);
+        expect(view.allRecurrencesMode).toEqual(true);
+    });
+
+    it('should force into all recurrence mode when repeat_type is blank on sync', function() {
+        view.allRecurrencesMode = false;
+        view.model.set('repeat_type', '');
+        view.model.trigger('sync');
         expect(view.allRecurrencesMode).toEqual(true);
     });
 
