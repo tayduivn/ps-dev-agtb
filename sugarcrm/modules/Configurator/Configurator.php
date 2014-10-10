@@ -315,14 +315,18 @@ class Configurator {
 
 	}
 
-
-//BEGIN SUGARCRM flav=pro ONLY
 	function saveCompanyQuoteLogo($path) {
 		$path = $this->checkTempImage($path);
 		copy($path, 'modules/Quotes/layouts/company.jpg');
 	}
-//END SUGARCRM flav=pro ONLY
 
+	/**
+	 * Add error message
+	 * @param string errstr Error message
+	 */
+	public function addError($errstr)
+	{
+	    $this->errors['main'] .= $errstr."<br>";
+	}
 
 }
-?>

@@ -432,7 +432,12 @@ To configure additional system settings, click <a href="index.php?module=Adminis
 	'LBL_LOGO' => 'Logo' /*for 508 compliance fix*/,
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the SugarCRM and Sugar Mobile native clients',
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION2' => '* The Reports module is not available for the browser-based mobile view.',
+
+// Password settings
+    'ERR_EMPTY_SAML_LOGIN' => 'SAML Login URL can not be empty',
+    'ERR_EMPTY_SAML_CERT' => 'SAML certificate can not be empty',
+    'ERR_SAML_LOGIN_URL' => 'SAML Login URL is not valid',
+    'ERR_SAML_SLO_URL' => 'SAML SLO URL is not valid',
 );
 
 
-?>
