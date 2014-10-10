@@ -244,7 +244,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'phone_alternate',
-                    'label' => 'LBL_OTHER_PHONE',
+                    'label' => 'LBL_PHONE_ALT',
                 ),
                 'email',
                 'phone_fax',
