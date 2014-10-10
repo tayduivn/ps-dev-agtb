@@ -737,11 +737,14 @@ class SugarTestHelper
     /**
      * Setup the mock db helper,
      *
+     * @param DBManager $mock
      * @return SugarTestDatabaseMock
      */
-    protected static function setUp_mock_db()
+    protected static function setUp_mock_db($mock = null)
     {
-        $mock = new SugarTestDatabaseMock();
+        if (!$mock) {
+            $mock = new SugarTestDatabaseMock();
+        }
 
         self::$systemVars['db'] = DBManagerFactory::$instances;
         self::$registeredVars['mock_db'] = $mock;

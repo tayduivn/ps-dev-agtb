@@ -287,6 +287,17 @@ describe('Base.View.Dashablelist', function() {
                 });
             });
 
+            it('should return additional modules', function() {
+                view._availableModules = {};
+                stubGetFieldMetaForView.returns(sampleFieldMetadata);
+                stubAppUserGet.restore();
+                stubAppUserGet = sinon.collection.stub(app.metadata, 'getModuleNames', function() {
+                    return ['Project'];
+                });
+                var modules = view._getAvailableModules();
+                expect(modules).toEqual({Project: 'Project', ProjectTask: 'ProjectTask'});
+            });
+
             it('should cache and return the approved modules', function() {
                 view._availableModules = {};
                 stubGetFieldMetaForView.returns(sampleFieldMetadata);

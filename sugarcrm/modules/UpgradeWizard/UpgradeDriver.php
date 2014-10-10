@@ -237,7 +237,16 @@ abstract class UpgradeDriver
         $this->cleanDir($this->cacheDir("Expressions"));
         $this->cleanDir($this->cacheDir("themes"));
         $this->cleanDir($this->cacheDir("include/api"));
-        MetaDataManager::clearAPICache(true, true);
+
+        // as far as database schema hasn't been rebuilt yet, it's needed to check
+        // if metadata manager is operable
+        if (MetaDataManager::isCacheOperable()) {
+            MetaDataManager::clearAPICache(true, true);
+        } else {
+            // otherwise, disable it until the schema has been rebuilt
+            MetaDataManager::disableCache();
+        }
+
         $this->log("Cache cleaned");
     }
 
@@ -1802,4 +1811,3 @@ abstract class UpgradeScript
         throw new Exception("Can not call unknown method $name");
     }
 }
-
