@@ -186,8 +186,17 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                     that.chartObject = barChart;
 
                     if (chartConfig['ReportModule']) {
-                        barChart.legend
-                            .showAll(true);
+
+                        if (chartConfig['orientation'] === 'vertical') {
+                          barChart.legend
+                              .rowsCount(5);
+                          barChart.legend
+                              .showAll(false);
+                        }
+                        else {
+                          barChart.legend
+                              .showAll(true);
+                        }
 
                         SUGAR.charts.trackWindowResize(barChart);
 
@@ -792,8 +801,13 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
             var d3ChartId = '#d3_' + id + '_print' || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165_print';
             var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
             var svgChartId = 'svg_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
+            var legendShowState = chart.legend.showAll();
+            chart.legend
+                .showAll(true); //set showAll legend property for images
 
             var completeCallback = complete || function() {
+                chart.legend
+                    .showAll(legendShowState); //restore showAll state for web render
                 self.renderChart(id, chart, json);
             };
 

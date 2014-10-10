@@ -1419,6 +1419,7 @@ nv.models.legend = function () {
       gutter = 10,
       equalColumns = true,
       showAll = false,
+      rowsCount = 2, //number of rows to display if showAll = false
       enabled = false,
       strings = {close: 'Hide legend', type: 'Show legend'},
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
@@ -1717,7 +1718,7 @@ nv.models.legend = function () {
 
         }
 
-        if (showAll || rows < 3) {
+        if (showAll || rows < rowsCount + 1) {
 
           legendOpen = 0;
 
@@ -1963,6 +1964,14 @@ nv.models.legend = function () {
   legend.showAll = function(_) {
     if (!arguments.length) { return showAll; }
     showAll = _;
+    return legend;
+  };
+
+  legend.rowsCount = function (_) {
+    if (!arguments.length) {
+      return rowsCount;
+    }
+    rowsCount = _;
     return legend;
   };
 
