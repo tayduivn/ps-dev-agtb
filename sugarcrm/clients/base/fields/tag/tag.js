@@ -12,7 +12,7 @@
  */
 
 ({
-    plugins: ['Tooltip'],
+    plugins: ['EllipsisInline'],
 
     /**
      * {@inheritDoc}

@@ -46,7 +46,7 @@
     }
   }
   .select2-choices {
-    padding: 2px 4px 2px 0;
+    padding: 2px 4px 2px 2px;
     min-height: 22px;
     border: @inputBorder;
     background-image: none;
@@ -198,6 +198,9 @@
         input {
           padding: 6px 4px;
           margin: -6px 0 0;
+          &.select2-active {
+            background: transparent !important;
+          }
         }
       }
     }
@@ -565,16 +568,19 @@
   .clearfix();
   .tag-wrapper {
       display: inline-block;
-      padding: 3px 6px 3px;
+      padding: 3px 6px 2px;
       background: @gray;
       top: 3px;
       left: 3px;
+      max-width: 100px;
       .border-radius(3px);
       margin-right: 4px;
-      margin-top: 2px;
+      margin-bottom: 4px;
       float: left;
+      border-radius: 9px;
       .tag-name {
-        font-size: @baseFontSize;
+        font-size: @fontSizeSmall;
+        line-height: 12px;
         color: @white;
         font-weight: 600;
       }
