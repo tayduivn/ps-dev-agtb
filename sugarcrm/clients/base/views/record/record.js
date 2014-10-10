@@ -447,8 +447,8 @@
     },
 
     /**
-     * Enables or disables the action buttons. Toggles the `.disabled` class by
-     * default.
+     * Enables or disables the action buttons that are currently shown on the
+     * page. Toggles the `.disabled` class by default.
      *
      * @param {boolean} [enable=false] Whether to enable or disable the action
      *   buttons. Defaults to `false`.
@@ -457,8 +457,11 @@
         var state = !_.isUndefined(enable) ? !enable : false;
 
         _.each(this.buttons, function(button) {
-            button.setDisabled(state);
-        });
+            var showOn = button.def.showOn;
+            if (_.isUndefined(showOn) || this.currentState === showOn) {
+                button.setDisabled(state);
+            }
+        }, this);
     },
 
     duplicateClicked: function() {
