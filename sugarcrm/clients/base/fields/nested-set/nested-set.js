@@ -78,8 +78,6 @@
             this.$(this.ddEl).dropdown();
             this.$(this.ddEl).data('dropdown').opened = false;
             this.$(this.ddEl).off('click.bs.dropdown');
-            $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
-            $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
             treeOptions = {
                 category_root: this.categoryRoot,
                 module_root: this.moduleRoot
@@ -108,6 +106,11 @@
         this.categoryRoot = this.def.category_root || config.category_root || '';
         this.moduleRoot = this.def.data_provider || module;
         this.dropdownCallback = _.bind(this.handleGlobalClick, this);
+        this.emptyLabel = app.lang.get(
+            'LBL_SEARCH_SELECT_MODULE',
+            this.module,
+            {module: app.lang.get(this.options.def.label, this.module)}
+        );
     },
 
     /**
@@ -118,6 +121,7 @@
         if (this.action === 'edit') {
             var dropdown = this.$(this.ddEl).data('dropdown');
             if (dropdown.opened === false) {
+                $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
                 evt.stopPropagation();
                 evt.preventDefault();
                 _.defer(function (dropdown, self) {
@@ -271,6 +275,8 @@
                 this.switchCreate();
             }
             dropdown.opened = false;
+            $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
+            this.clearSelection();
             return true;
         }
         return false;
