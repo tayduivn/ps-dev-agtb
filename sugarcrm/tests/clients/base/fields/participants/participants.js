@@ -729,4 +729,73 @@ describe('View.Fields.Base.ParticipantsField', function() {
             }]);
         });
     });
+
+    describe('paging for more participants', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'invitees',
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+            field.model.set(field.name, participants);
+        });
+
+        it('should render the show more button', function() {
+            sandbox.stub(model, 'isNew').returns(false);
+            sandbox.stub(field.getFieldValue(), 'hasMore').returns(true);
+            field.render();
+
+            expect(field.$('[data-action=show-more]').css('display')).not.toEqual('none');
+        });
+
+        it('should hide the show more button during create', function() {
+            sandbox.stub(model, 'isNew').returns(true);
+            sandbox.stub(field.getFieldValue(), 'hasMore').returns(true);
+            field.render();
+
+            expect(field.$('[data-action=show-more]').css('display')).toEqual('none');
+        });
+
+        it('should hide the show more button when there are no more records to fetch', function() {
+            sandbox.stub(model, 'isNew').returns(false);
+            sandbox.stub(field.getFieldValue(), 'hasMore').returns(false);
+            field.render();
+
+            expect(field.$('[data-action=show-more]').css('display')).toEqual('none');
+        });
+
+        it('should hide the show more button when `sync` is triggered on the model and there are no more records to fetch', function() {
+            sandbox.stub(model, 'isNew').returns(false);
+            field.render();
+
+            expect(field.$('[data-action=show-more]').css('display')).not.toEqual('none');
+
+            sandbox.stub(field.getFieldValue(), 'hasMore').returns(false);
+            field.model.trigger('sync:' + field.name);
+
+            expect(field.$('[data-action=show-more]').css('display')).toEqual('none');
+        });
+
+        it('should paginate when the show more button is clicked', function() {
+            var args, collection;
+
+            sandbox.stub(model, 'isNew').returns(false);
+
+            collection = field.getFieldValue();
+            sandbox.stub(collection, 'hasMore').returns(true);
+            sandbox.stub(collection, 'paginate');
+
+            field.render();
+            field.$('[data-action=show-more]').click();
+            args = collection.paginate.lastCall.args[0];
+
+            expect(args.fields).toEqual(['id', 'full_name', 'email', 'picture', 'accept_status_' + module.toLowerCase()]);
+            expect(args.order_by).toEqual('full_name:asc');
+        });
+    });
 });

@@ -21,7 +21,8 @@
     events: {
         'click button[data-action=addRow]': 'addRow',
         'click button[data-action=removeRow]:not(.disabled)': 'removeRow',
-        'click button[data-action=previewRow]:not(.disabled)': 'previewRow'
+        'click button[data-action=previewRow]:not(.disabled)': 'previewRow',
+        'click button[data-action=show-more]': 'showMore'
     },
 
     placeholder: 'LBL_SEARCH_SELECT',
@@ -71,6 +72,9 @@
 
         // get template for search result formatting
         this.searchResultTemplate = app.template.getField(this.type, 'search-result.partial', this.module);
+
+        // caches the string "More {{field label}}..." for use in the template
+        this.showMoreTemplate = app.lang.get('LBL_SHOW_MORE_GENERIC', this.module, {name: this.label});
     },
 
     /**
@@ -97,18 +101,24 @@
     },
 
     /**
-     * Overrides Field#bindDataChange to render the field anytime the
-     * collection is changed.
+     * @inheritdoc
+     *
+     * Renders the field anytime the collection is changed. Updates the
+     * scheduler UI anytime the start date or end date changes on the model.
+     * Attempts to hide the show more button anytime the collection is
+     * synchronized.
      */
     bindDataChange: function() {
         this.model.on('change:' + this.name, this.render, this);
         this.model.on('change:date_start', this.renderTimelineInfo, this);
         this.model.on('change:date_end', this.markStartAndEnd, this);
+        this.model.on('sync:' + this.name, this.hideShowMoreButton, this);
     },
 
     /**
-     * Overrides Field#bindDomChange to add the selected record to the
-     * collection.
+     * @inheritdoc
+     *
+     * Adds the selected record to the collection.
      */
     bindDomChange: function() {
         var onChange = _.bind(function(event) {
@@ -161,6 +171,8 @@
 
         this.renderTimelineInfo();
 
+        this.hideShowMoreButton();
+
         return this;
     },
 
@@ -208,7 +220,7 @@
 
     /**
      * Get the time display format for timeline header.
-     * @returns {string}
+     * @return {string}
      */
     getTimeFormat: function() {
         var timeFormat = app.date.getUserTimeFormat();
@@ -388,7 +400,7 @@
     /**
      * Get timeline start and end datetime and meeting start and end datetimes.
      * Returns empty object if the meeting start and end datetimes are invalid.
-     * @returns {Object}
+     * @return {Object}
      */
     getStartAndEndDates: function() {
         var dateStartString = this.model.get('date_start'),
@@ -419,7 +431,7 @@
      * not specified, return timeslots for all timelines.
      * @param {string} moduleName (optional)
      * @param {string} id (optional)
-     * @returns {jQuery}
+     * @return {jQuery}
      */
     getTimelineBlocks: function(moduleName, id) {
         var selector;
@@ -455,7 +467,7 @@
      * Get free/busy data from cache.
      * @param {string} moduleName
      * @param {string} id
-     * @returns {Object}
+     * @return {Object}
      */
     getFreeBusyInformationFromCache: function(moduleName, id) {
         return _.findWhere(this._freeBusyCache, {
@@ -491,7 +503,7 @@
     /**
      * Get module name and ID from URL.
      * @param {string} url
-     * @returns {Object}
+     * @return {Object}
      */
     parseModuleAndIdFromUrl: function(url) {
         var moduleAndId = {},
@@ -692,6 +704,44 @@
                 showAlerts: true,
                 success: success
             });
+        }
+    },
+
+    /**
+     * Loads the next set of participants.
+     *
+     * The new participants will be rendered once they are added to the
+     * collection.
+     *
+     * @param {Event} event
+     */
+    showMore: function(event) {
+        var options;
+
+        options = {
+            fields: ['id', 'full_name', 'email', 'picture', 'accept_status_' + this.module.toLowerCase()],
+            order_by: 'full_name:asc'
+        };
+
+        try {
+            this.getFieldValue().paginate(options);
+        } catch (e) {
+            app.logger.warn(e);
+        }
+    },
+
+    /**
+     * Hides the pagination button if creating a new record -- because there is
+     * no need for it -- or if the virtual collection indicates that there are
+     * no additional participants to fetch.
+     */
+    hideShowMoreButton: function() {
+        try {
+            if (this.model.isNew() || !this.getFieldValue().hasMore()) {
+                this.$('[data-action=show-more]').hide();
+            }
+        } catch (e) {
+            app.logger.warn(e);
         }
     },
 
