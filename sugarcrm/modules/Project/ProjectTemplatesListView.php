@@ -137,8 +137,6 @@ $where .= 'is_template = 1 ';
 
 //_pp($mod_strings);
 
-$seedProject->create_action = 'ProjectTemplatesEditView';
-
 // awu: Bug 11452 - removing export for non-admin users without a mass update form
 if (!is_admin($current_user)){
 	$params = array( 'massupdate' => false );
