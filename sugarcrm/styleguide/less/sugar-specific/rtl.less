@@ -74,9 +74,13 @@ html.rtl {
     /* END RESET */
 
 
-    .dropdown-menu {
+    .dropdown-menu:not(.datepicker) {
         right: 0;
         left: auto;
+    }
+
+    .dropdown-menu.datepicker {
+        margin-left: -140px;
     }
 
     .label-module {
