@@ -11,34 +11,39 @@
 *
 * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
 ********************************************************************************/
-require_once 'include/SugarFields/Fields/Relatecollection/SugarFieldRelatecollection.php';
+require_once 'include/SugarFields/Fields/Multienum/SugarFieldMultienum.php';
 
-class SugarFieldTag extends SugarFieldRelatecollection
+class SugarFieldTag extends SugarFieldMultienum
 {
     /**
-     *
-     * Base fields for collection
-     * @var array
+     * Override of parent apiSave to force the custom save to be run from API
+     * @param SugarBean $bean
+     * @param array     $params
+     * @param string    $field
+     * @param array     $properties
      */
-    protected $baseFields = array(
-        'name',
-    );
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        if (empty($params[$field]) || !is_array($params[$field])) {
+            return;
+        }
 
-    /**
-     * {inheritdoc}
-     */
-    protected function parseProperties(array $properties)
-    {
-        // force specific tag properties
-        $properties['collection_create'] = true;
-        $properties['collection_fields'] = array('id', 'name');
-        return parent::parseProperties($properties);
+        foreach ($params[$field] as $key => &$record) {
+            // First create tag bean if it needs to be created
+            $this->getTagBean($record);
+
+            // If there is no removed record request...
+            if (empty($record['removed'])) {
+                $record = $record['name'];
+            } else {
+                unset($params[$field][$key]);
+            }
+        }
+
+        // Then save tags as a field on current bean
+        return $this->save($bean, $params, $field, $properties);
     }
 
-    /**
-     * {inheritdoc}
-     */
-    protected function getRelatedRecord($bean, $relName, $record)
+    protected function getTagBean($record)
     {
         // We'll need this no matter what
         $tagBean = BeanFactory::getBean('Tags');
@@ -68,25 +73,46 @@ class SugarFieldTag extends SugarFieldRelatecollection
     }
 
     /**
-     * {inheritdoc}
+     *
+     * Return a new SugarQuery object.
+     * @return SugarQuery
+     */
+    protected function getSugarQuery()
+    {
+        return new SugarQuery();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+        if ($bean->$fieldName) {
+            $tags = $this->getNormalizedFieldValues($bean, $fieldName);
+            foreach ($tags as &$tag) {
+                $tag = array('name' => "$tag");
+            }
+            // Sort tags in alphabetical order before returning them
+            sort($tags);
+            $data[$fieldName] = $tags;
+        } else {
+            $data[$fieldName] = '';
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
     {
         if (is_array($value)) {
-            foreach($value as &$tag) {
-                $tag = $tag['name'];
+            foreach($value as $key => &$tag) {
+                if (empty($tag['removed'])) {
+                    $tag = $tag['name'];
+                } else {
+                    unset($value[$key]);
+                }
             }
         }
         return true;
-    }
-
-    /**
-     * {inheritdoc}
-     */
-    protected function getOrderBy() {
-        return array(
-            'fieldName' => 'name',
-            'order' => 'ASC'
-        );
     }
 }

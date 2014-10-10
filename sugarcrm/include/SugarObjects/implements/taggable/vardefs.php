@@ -31,14 +31,8 @@ $vardefs = array(
             'name' => 'tag',
             'vname' => 'LBL_TAGS',
             'type' => 'tag',
-            'link' => 'tags',
-            'source' => 'non-db',
-            'importable' => true,
-            'isMultiSelect' => true,
-            'dbType' => 'varchar',
-            'id_name' => 'tag',
-            'rname' => 'name',
-        ),
+            'dbType' => 'text',
+        )
     ),
     'relationships' => array(
         strtolower($module).'_tags' => array(
