@@ -343,6 +343,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             $sql = 'UPDATE opportunities SET date_closed = ' . $db->quoted($result['date_closed']) . ',
                 date_closed_timestamp = ' . $db->quoted($result['date_closed_timestamp']) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
+                probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
                 sales_status = "", commit_stage = ""
                 WHERE id = ' . $db->quoted($result['opportunity_id']) . ';';
 
