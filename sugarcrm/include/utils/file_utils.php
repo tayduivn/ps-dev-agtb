@@ -33,6 +33,34 @@ function clean_path( $path )
     return( $appendpath.$path );
 }
 
+/**
+ * Checks if the given path is a valid destination for package files
+ *
+ * @param string $path
+ * @return bool
+ */
+function isValidCopyPath($path)
+{
+    $path = str_replace('\\', '/', $path);
+
+    // check if path is absolute
+    if ($path === '' || $path[0] === '/') {
+        return false;
+    }
+
+    // additionally check if path starts with a drive letter for Windows
+    if (is_windows() && preg_match('/^[a-z]:/i', $path)) {
+        return false;
+    }
+
+    // check if path contains reference to parent directory
+    if (preg_match('/(^|\/)\.\.(\/|$)/', $path)) {
+        return false;
+    }
+
+    return true;
+}
+
 function create_cache_directory($file)
 {
     $paths = explode('/',$file);
