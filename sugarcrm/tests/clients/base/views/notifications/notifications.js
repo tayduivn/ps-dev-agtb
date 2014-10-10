@@ -63,7 +63,10 @@ describe('Notifications', function() {
                     'is_read',
                     'name',
                     'severity'
-                ]
+                ],
+                apiOptions: {
+                    skipMetadataHash: true
+                }
             });
         });
     });
@@ -120,7 +123,10 @@ describe('Notifications', function() {
                     'is_read',
                     'name',
                     'severity'
-                ]
+                ],
+                apiOptions: {
+                    skipMetadataHash: true
+                }
             });
         });
     });

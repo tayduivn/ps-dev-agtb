@@ -146,25 +146,15 @@
                 'is_read',
                 'name',
                 'severity'
-            ]
+            ],
+            apiOptions: {
+                skipMetadataHash: true
+            }
         };
 
         this.collection.filterDef = [{
             is_read: {$equals: false}
         }];
-
-        this.collection.sync = _.wrap(
-            this.collection.sync,
-            function(sync, method, model, options) {
-                options = options || {};
-                options.endpoint = function(method, model, options, callbacks) {
-                    var url = app.api.buildURL(model.module, 'pull', {}, options.params);
-                    return app.api.call('read', url, {}, callbacks);
-                };
-
-                sync(method, model, options);
-            }
-        );
 
         return this;
     },
