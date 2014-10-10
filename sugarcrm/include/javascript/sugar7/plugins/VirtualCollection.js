@@ -152,6 +152,7 @@
              *
              * @param {Array} [models] Array of model ID's. If empty, then the
              * ID's of the models currently in the collection will be used.
+             * @chainable
              */
             setDefaults: function(models) {
                 var undos = [];
@@ -165,6 +166,8 @@
                 }, this);
 
                 _.each(undos, this.undo, this);
+
+                return this;
             },
 
             /**
@@ -172,6 +175,7 @@
              *
              * Models that were linked are added to the default set. Models
              * that were unlinked are removed from the default set.
+             * @chainable
              */
             clearAndUpdateDefaults: function() {
                 var linked, unlinked;
@@ -181,6 +185,24 @@
 
                 this.setDefaults(_.union(this.defaults, _.pluck(linked, 'id')));
                 this.setDefaults(_.difference(this.defaults, _.pluck(unlinked, 'id')));
+
+                return this;
+            },
+
+            /**
+             * Sets a model as a default.
+             *
+             * If the model was set to be linked or unlinked, then that change
+             * will be undone.
+             *
+             * @param {Data.Bean} model
+             * @chainable
+             */
+            addDefault: function(model) {
+                this.defaults.push(model.id);
+                this.undo(model);
+
+                return this;
             }
         }, false);
 
@@ -211,9 +233,14 @@
             constructor: function(models, options) {
                 app.MixedBeanCollection.prototype.constructor.call(this, models, options);
 
+                this.offsets = {};
+
                 _.each(this.links, function(link) {
                     // don't want change actions for the initial set
                     link.setDefaults();
+
+                    // set the initial offset for this link for use during pagination
+                    this.offsets[link.link.name] = link.defaults.length;
                 }, this);
             },
 
@@ -506,6 +533,154 @@
             },
 
             /**
+             * Returns TRUE if it is believed that there are more records that
+             * can be fetched from the server.
+             *
+             * @return {boolean}
+             */
+            hasMore: function() {
+                return _.some(this.offsets, function(offset) {
+                    return (offset > -1);
+                });
+            },
+
+            /**
+             * @inheritdoc
+             *
+             * Fetches more records from the CollectionApi. The caller should
+             * use a success callback to capture the returned records. Any
+             * modifications to the collection should be made from within the
+             * callback, as `fetch` will not do it for you.
+             *
+             * @fires sync Triggered after all success callbacks have been
+             * executed.
+             */
+            fetch: function(options) {
+                var callbacks, complete, error, params, success, url;
+
+                options || (options = {});
+
+                params = {};
+                params.fields = options.fields ? options.fields : ['name'];
+                params.order_by = options.order_by || this.parent.fields[this.fieldName].order_by;
+
+                if (!_.isArray(params.order_by)) {
+                    params.order_by = [params.order_by];
+                }
+
+                // any fields in order_by must be in fields
+                _.each(params.order_by, function(sort) {
+                    var field = sort.split(':')[0];
+
+                    if (!_.contains(params.fields, field)) {
+                        params.fields.push(field);
+                    }
+                });
+
+                params.module_list = _.keys(this.relatedModules).join(',');
+                params.fields = params.fields.join(',');
+                params.order_by = params.order_by.join(',');
+                params.max_num = options.limit || app.config.maxQueryResult;
+
+                if (options.offset) {
+                    params.offset = options.offset;
+                }
+
+                callbacks = {};
+                success = options.success;
+                error = options.error;
+                complete = options.complete;
+
+                callbacks.success = _.bind(function(data, request) {
+                    if (success) {
+                        success(data, request);
+                    }
+
+                    this.parent.trigger('sync:' + this.fieldName, this, data, options, request);
+                }, this);
+
+                if (error) {
+                    callbacks.error = error;
+                }
+
+                if (complete) {
+                    callbacks.complete = complete;
+                }
+
+                //TODO: refactor when an app.api.collection convenience method becomes available
+                // build the url since there is no convenience method for
+                // hitting the Collection API; taken from sugarapi.js
+                url = [app.api.serverUrl, this.parent.module, this.parent.id, 'collection', this.fieldName].join('/');
+
+                _.each(params, function(value, key) {
+                    if (value === null || value === undefined) {
+                        delete params[key];
+                    }
+                });
+
+                params = $.param(params);
+
+                if (params.length > 0) {
+                    url += '?' + params;
+                }
+
+                return app.api.call('read', url, null, callbacks);
+            },
+
+            /**
+             * @inheritdoc
+             *
+             * Upon success...
+             *
+             * 1. The offsets for the collection are updated with the values
+             * returned by the server. The offsets are updated before adding
+             * the records in case any event handlers, like rendering, are
+             * dependent on them.
+             *
+             * 2. All returned records are merged into the collection. Merging
+             * forces the events to be triggered even if all of the records
+             * already exist in the collection. The change events will only be
+             * triggered on the parent model once.
+             *
+             * 3. Each of the returned records will be added as a default for
+             * their respective links.
+             */
+            paginate: function(options) {
+                var success;
+
+                options || (options = {});
+                options.offset = this.offsets;
+
+                success = options.success;
+                options.success = _.bind(function(data, request) {
+                    var offsets, records;
+
+                    data || (data = {});
+                    records = data.records || [];
+                    offsets = data.next_offset || {};
+
+                    _.each(offsets, function(offset, link) {
+                        this.offsets[link] = offset;
+                    }, this);
+
+                    this.add(records, {merge: true});
+
+                    _.each(records, function(record) {
+                        var model;
+
+                        model = this._prepareModel(record);
+                        this.links[model.link.name].addDefault(model);
+                    }, this);
+
+                    if (success) {
+                        success(data, request);
+                    }
+                }, this);
+
+                this.fetch(options);
+            },
+
+            /**
              * Searches for records found within this collection's modules.
              *
              * @param {Object} [options] See {@link Data.DataManager#sync} for
@@ -532,23 +707,21 @@
                     }).join(',');
                 }
 
-                callbacks = {
-                    success: function(data, request) {
-                        if (options.success) {
-                            options.success(app.data.createMixedBeanCollection(data.records), request);
-                        }
-                    },
-                    error: function(e) {
-                        if (options.error) {
-                            options.error(e);
-                        }
-                    },
-                    complete: function(request) {
-                        if (options.complete) {
-                            options.complete(request);
-                        }
+                callbacks = {};
+
+                callbacks.success = function(data, request) {
+                    if (options.success) {
+                        options.success(app.data.createMixedBeanCollection(data.records), request);
                     }
                 };
+
+                if (options.error) {
+                    callbacks.error = options.error;
+                }
+
+                if (options.complete) {
+                    callbacks.complete = options.complete;
+                }
 
                 url = app.api.buildURL(this.parent.module, 'invitee_search', null, params);
                 return app.api.call('read', url, null, callbacks);

@@ -33,6 +33,7 @@ describe('Plugins.VirtualCollection', function() {
         context = app.context.getContext({module: module});
         context.prepare(true);
         model = context.get('model');
+        model.id = 1;
         model.fields = {
             invitees: {
                 name: 'invitees',
@@ -365,6 +366,191 @@ describe('Plugins.VirtualCollection', function() {
 
         it('should return false', function() {
             expect(collection.hasChanged()).toBe(false);
+        });
+    });
+
+    describe('supporting pagination', function() {
+        beforeEach(function() {
+            model.set(attribute, _.first(contacts, 4));
+            collection = model.get(attribute);
+        });
+
+        describe('are there more records to fetch?', function() {
+            it('should return true', function() {
+                expect(collection.hasMore()).toBe(true);
+            });
+
+            it('should return false', function() {
+                _.each(collection.offsets, function(offset, link) {
+                    collection.offsets[link] = -1;
+                });
+
+                expect(collection.hasMore()).toBe(false);
+            });
+
+            it('should return true even if some offsets are -1', function() {
+                var first = true;
+
+                _.each(collection.offsets, function(offset, link) {
+                    if (first) {
+                        collection.offsets[link] = 4;
+                    } else {
+                        collection.offsets[link] = -1;
+                    }
+                });
+
+                expect(collection.hasMore()).toBe(true);
+            });
+        });
+
+        describe('fetching more records', function() {
+            beforeEach(function() {
+                sandbox.stub(app.api, 'call');
+            });
+
+            it('should make a request to the Collections API', function() {
+                collection.fetch();
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*\/rest\/v10\/Meetings\/1\/collection\/invitees.*/);
+            });
+
+            it('should use the related modules for the links from the field definition', function() {
+                collection.fetch();
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts&.*/);
+            });
+
+            it('should default to `name` for the fields', function() {
+                collection.fetch();
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=name&.*/);
+            });
+
+            it('should use the specified fields', function() {
+                var options;
+
+                options = {
+                    fields: ['foo', 'bar'],
+                    // set order_by to one of the above fields to avoid "name"
+                    // from being included
+                    order_by: 'foo:asc'
+                };
+                collection.fetch(options);
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=foo%2Cbar&.*/);
+            });
+
+            it('should default to the order_by from the field definition', function() {
+                collection.fetch();
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&order_by=name%3Aasc&.*/);
+            });
+
+            it('should use the specified order_by', function() {
+                var options;
+
+                options = {
+                    fields: ['foo', 'bar'],
+                    order_by: ['foo:asc', 'bar:desc']
+                };
+                collection.fetch(options);
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&order_by=foo%3Aasc%2Cbar%3Adesc&.*/);
+            });
+
+            it('should add any fields to the request that are to be used for sorting', function() {
+                var options;
+
+                options = {
+                    fields: ['foo', 'bar'],
+                    // name and biz should be added; foo is already in fields
+                    order_by: ['name:asc', 'biz:asc', 'foo:asc']
+                };
+                collection.fetch(options);
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=foo%2Cbar%2Cname%2Cbiz&.*/);
+            });
+
+            it('should include the offset for the links', function() {
+                collection.fetch({offset: collection.offsets});
+
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&offset%5Bcontacts%5D=4&offset%5Baccounts%5D=0.*/);
+            });
+
+            it('should not include the offset for the links', function() {
+                collection.fetch();
+
+                expect(app.api.call.lastCall.args[1]).not.toMatch(/.*&offset%5B.*/);
+            });
+
+            it('should trigger `sync:fieldname` on the parent model when successful', function() {
+                app.api.call.restore();
+                sandbox.stub(app.api, 'call', function(method, url, data, callbacks, options) {
+                    callbacks.success(data);
+                });
+
+                sandbox.spy(collection.parent, 'trigger');
+                collection.fetch();
+
+                expect(collection.parent.trigger).toHaveBeenCalledWith('sync:' + attribute);
+            });
+        });
+
+        it('should specify the offsets', function() {
+            sandbox.stub(collection, 'fetch');
+            collection.paginate();
+
+            expect(collection.fetch.lastCall.args[0].offset).toEqual(collection.offsets);
+        });
+
+        describe('handling a successful pagination request', function() {
+            var records;
+
+            beforeEach(function() {
+                sandbox.stub(collection, 'fetch', function(options) {
+                    var response;
+
+                    response = {
+                        records: records,
+                        next_offset: {
+                            contacts: -1,
+                            accounts: 7
+                        }
+                    };
+                    options.success(response);
+                });
+                sandbox.spy(collection, '_triggerChange');
+            });
+
+            using('fetched records', [0, 3], function(num) {
+                it('should merge the fetched records', function() {
+                    records = _.last(contacts, num);
+                    sandbox.spy(collection, 'add');
+                    collection.paginate();
+
+                    expect(collection.add.lastCall.args[0].length).toBe(num);
+                    expect(collection.add.lastCall.args[1].merge).toBe(true);
+                });
+            });
+
+            it('should add the fetched records as defaults for their links', function() {
+                expect(collection.links.contacts.defaults.length).toBe(4);
+
+                records = _.last(contacts, 2);
+                collection.paginate();
+
+                expect(collection.links.contacts.defaults.length).toBe(4 + records.length);
+            });
+
+            it('should update the offsets', function() {
+                expect(collection.offsets.contacts).toBe(4);
+                expect(collection.offsets.accounts).toBe(0);
+
+                collection.paginate();
+
+                expect(collection.offsets.contacts).toBe(-1);
+                expect(collection.offsets.accounts).toBe(7);
+            });
         });
     });
 
