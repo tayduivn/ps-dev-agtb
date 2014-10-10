@@ -622,7 +622,8 @@
             this.setButtonStates(this.STATE.VIEW);
             this.setRoute();
             this.unsetContextAction();
-            this.render();
+            this.toggleEdit(false);
+            this.inlineEditMode = false;
         }
     },
 
@@ -640,7 +641,8 @@
                 });
                 if (this.createMode) {
                     app.navigate(this.context, this.model);
-                } else if (!this.disposed) {
+                } else if (!this.disposed && !app.acl.hasAccessToModel('edit', this.model)) {
+                    //re-render the view if the user does not have edit access after save.
                     this.render();
                 }
             }, this);
