@@ -220,6 +220,15 @@ class HealthCheckScanner
     );
 
     /**
+     * Array of files which will not be scanned for output
+     * @var array
+     */
+    protected $ignoreOutputCheckFiles = array(
+        'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php',
+        'modules/Connectors/connectors/sources/ext/rest/inbox25/InboxViewLogicHook.php',
+    );
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -1596,6 +1605,9 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile, $status)
     {
+        if (in_array($phpfile, $this->ignoreOutputCheckFiles)) {
+            return;
+        }
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
