@@ -81,7 +81,10 @@ module.exports = function(grunt) {
                     'include/javascript/sugar7/{*,plugins/*}.js',
                     'modules/*/clients/**/*.js',
                     'sidecar/src/**/*.js',
-                    'sidecar/lib/sugarapi/sugarapi.js'
+                    'sidecar/lib/sugaraccessibility/*.js',
+                    'sidecar/lib/sugaranalytics/*.js',
+                    'sidecar/lib/sugarapi/sugarapi.js',
+                    'sidecar/lib/sugarlogic/*.js'
                 ],
 
                 dest: 'docs',
@@ -91,7 +94,7 @@ module.exports = function(grunt) {
                     'color': true,
                     'head-html': '<link rel="stylesheet" href="../styleguide/assets/css/jsduck.css" type="text/css">',
                     'builtin-classes': true,
-                    'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib/sugarapi']
+                    'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib']
                 }
             }
         }
