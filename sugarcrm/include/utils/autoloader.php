@@ -100,6 +100,7 @@ class SugarAutoLoader
         "include/SugarSearchEngine/",
         "include/",
         "modules/Mailer/",
+        "include/api/",
     );
 
     /**
