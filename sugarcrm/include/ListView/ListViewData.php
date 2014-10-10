@@ -438,42 +438,51 @@ class ListViewData {
                     }
                     $pageData['additionalDetails'][$dataIndex] = $ar['string'];
                     $pageData['additionalDetails']['fieldToAddTo'] = $ar['fieldToAddTo'];
-				}
-				next($rows);
-			}
-		}
-		$nextOffset = -1;
-		$prevOffset = -1;
-		$endOffset = -1;
-		if($count > $limit) {
-			$nextOffset = $offset + $limit;
-		}
+                }
+                next($rows);
+            }
+        }
+        $nextOffset = -1;
+        $prevOffset = -1;
+        $endOffset = -1;
+        if($count > $limit) {
+            $nextOffset = $offset + $limit;
+        }
 
-		if($offset > 0) {
-			$prevOffset = $offset - $limit;
-			if($prevOffset < 0)$prevOffset = 0;
-		}
-		$totalCount = $count + $offset;
+        if($offset > 0) {
+            $prevOffset = $offset - $limit;
+            if($prevOffset < 0)$prevOffset = 0;
+        }
+        $totalCount = $count + $offset;
 
-		if( $count >= $limit && $totalCounted){
-			$totalCount  = $this->getTotalCount($main_query);
-		}
-		SugarVCR::recordIDs($this->seed->module_dir, array_keys($idIndex), $offset, $totalCount);
+        if( $count >= $limit && $totalCounted){
+            $totalCount  = $this->getTotalCount($main_query);
+        }
+        SugarVCR::recordIDs($this->seed->module_dir, array_keys($idIndex), $offset, $totalCount);
         $module_names = array(
             'Prospects' => 'Targets'
         );
-		$endOffset = (floor(($totalCount - 1) / $limit)) * $limit;
-		$pageData['ordering'] = $order;
-		$pageData['ordering']['sortOrder'] = $this->getReverseSortOrder($pageData['ordering']['sortOrder']);
+        $endOffset = (floor(($totalCount - 1) / $limit)) * $limit;
+        $pageData['ordering'] = $order;
+        $pageData['ordering']['sortOrder'] = $this->getReverseSortOrder($pageData['ordering']['sortOrder']);
         //get url parameters as an array
         $pageData['queries'] = $this->generateQueries($pageData['ordering']['sortOrder'], $offset, $prevOffset, $nextOffset,  $endOffset, $totalCounted);
         //join url parameters from array to a string
         $pageData['urls'] = $this->generateURLS($pageData['queries']);
-		$pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
-		$pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir, 'moduleName' => strtr($seed->module_dir, $module_names), 'importable' => $seed->importable);
+        $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
+        $pageData['bean'] = array(
+            'objectName' => $seed->object_name,
+            'moduleDir' => $seed->module_dir,
+            'moduleName' => strtr($seed->module_dir, $module_names),
+            'moduleTitle' => isset($seed->module_title) ? $seed->module_title : null,
+            'parentTitle' => isset($seed->parent_title) ? $seed->parent_title : null,
+            'createAction' => isset($seed->create_action) ? $seed->create_action : 'EditView',
+            'showLink' => isset($seed->show_link) ? $seed->show_link : null,
+            'importable' => $seed->importable
+        );
         $pageData['stamp'] = $this->stamp;
         $pageData['access'] = array('view' => $this->seed->ACLAccess('DetailView'), 'edit' => $this->seed->ACLAccess('EditView'));
-		$pageData['idIndex'] = $idIndex;
+        $pageData['idIndex'] = $idIndex;
         if(!$seedACL['ListView']) {
             $pageData['error'] = 'ACL restricted access';
         }
