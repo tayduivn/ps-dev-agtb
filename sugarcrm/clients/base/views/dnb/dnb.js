@@ -1830,6 +1830,7 @@
     },
 
     /**
+     * TODO: refactor this to remove the logic
      * Render pagination control
      * @param {String} componentName (Optional)
      */
