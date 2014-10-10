@@ -2765,7 +2765,7 @@ private function dir_file_count($path){
     {
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
-            'env' => 'dev',
+            'env' => 'prod',
             'platform' => 'base',
             'additionalComponents' => array(
                 'header' => array(
