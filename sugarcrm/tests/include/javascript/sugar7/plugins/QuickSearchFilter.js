@@ -1,134 +1,241 @@
-describe("Plugins.Quicksearchfilter", function () {
+describe('Plugins.Quicksearchfilter', function() {
 
     var app, field;
 
-    beforeEach(function () {
+    var getFilterMetaData = function(field, priority) {
+        return {
+            filters: {
+                default: {
+                    meta: {
+                        quicksearch_field: field,
+                        quicksearch_priority: priority
+                    }
+                }
+            }
+        };
+    };
+
+    beforeEach(function() {
         app = SugarTest.app;
     });
 
-    afterEach(function () {
+    afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
     });
 
     describe('Building the filter definition', function() {
-        var quicksearch_field,
-            searchTerm = 'John F Kennedy',
-            metadataStub,
-            filterDef;
+        var quicksearch_field, filterDef;
+        var searchTerm = 'John F Kennedy';
 
         beforeEach(function() {
-            field = SugarTest.createField("base", "account_name", "relate", "edit");
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit');
             field._moduleQuickSearchMeta = {};
         });
+
         afterEach(function() {
-            metadataStub.restore();
             filterDef = null;
         });
 
-        it('should search if one field starts with one term', function() {
-            quicksearch_field = ['name'];
-            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    filters: {
-                        _default: {
-                            meta: {
-                                quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1
-                            }
-                        }
-                    }
-                };
+        using('various inputs to search for a contact "Luis Filipe Madeira Caeiro Figo"', [{
+                case: 'First part of first name',
+                searchValue: 'Luis',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Luis'}}
+                    ]
+                }]
+            }, {
+                case: 'First 2 parts of first name',
+                searchValue: 'Luis Filipe',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Luis Filipe'}}
+                    ]
+                }]
+            }, {
+                case: 'First name',
+                searchValue: 'Luis Filipe Madeira',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
+                    ]
+                }]
+            }, {
+                case: 'First part of last name',
+                searchValue: 'Caeiro',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Caeiro'}}
+                    ]
+                }]
+            }, {
+                case: 'Last name',
+                searchValue: 'Caeiro Figo',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {first_name: {$starts: 'Figo'}},
+                        {last_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Figo'}},
+                        {first_name: {$starts: 'Caeiro Figo'}},
+                        {last_name: {$starts: 'Caeiro Figo'}}
+                    ]
+                }]
+            }, {
+                case: 'Last name then first name',
+                searchValue: 'Caeiro Figo Luis',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {first_name: {$starts: 'Figo Luis'}},
+                        {last_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Figo Luis'}},
+                        {first_name: {$starts: 'Caeiro Figo'}},
+                        {first_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Caeiro Figo'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Caeiro Figo Luis'}},
+                        {last_name: {$starts: 'Caeiro Figo Luis'}}
+                    ]
+                }]
+            }],
+            function(data) {
+                var tokens = data.searchValue.split(' ');
+                // Expected number of filters according to our algorithm
+                var expectedNumFilters = (tokens.length + tokens.length - 1) * 2;
+
+                it('should search by ' + data.case, function() {
+                    quicksearch_field = [['first_name', 'last_name']];
+                    sinon.collection.stub(app.metadata, 'getModule', function() {
+                        return getFilterMetaData(quicksearch_field, 1);
+                    });
+                    filterDef = field.getFilterDef('Contacts', data.searchValue);
+
+                    expect(filterDef[0].$or.length).toEqual(expectedNumFilters);
+                    expect(filterDef).toEqual(data.expectedFilter);
+                });
             });
-            filterDef = field.getFilterDef('Contacts', searchTerm);
-            expect(filterDef).toEqual([
-                { name: { $starts: searchTerm } }
-            ]);
-        });
-        it('should search if any field starts with the term if multiple fields but only one term', function() {
-            quicksearch_field = ['first_name', 'last_name'];
-            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    filters: {
-                        _default: {
-                            meta: {
-                                quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1
-                            }
-                        }
+
+        using('various quicksearch_field metadata', [
+            {
+                case: '1 Simple Field',
+                meta: ['simpleField1'],
+                expectedFilter: [{'simpleField1': {'$starts': 'Foo'}}]
+            }, {
+                case: '2 Simple Fields',
+                meta: ['simpleField1', 'simpleField2'],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'simpleField1': {'$starts': 'Foo'}},
+                            {'simpleField2': {'$starts': 'Foo'}}
+                        ]
                     }
-                };
-            });
-            filterDef = field.getFilterDef('Contacts', 'John');
-            expect(filterDef).toEqual([
-                { $or: [
-                    { first_name: { $starts: 'John' } },
-                    { last_name: { $starts: 'John' } }
-                ] }
-            ]);
-        });
-        it('should search if first field starts with first term and second field starts with other terms if quicksearch_split_terms is true', function() {
-            quicksearch_field = ['first_name', 'last_name'];
-            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    filters: {
-                        _default: {
-                            meta: {
-                                quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1,
-                                quicksearch_split_terms: true
-                            }
-                        }
+                ]
+            }, {
+                case: '1 Split Term Field',
+                meta: [['splitField1']],
+                expectedFilter: [{'splitField1': {'$starts': 'Foo'}}]
+            }, {
+                case: '1 Split Term Field composed of 2 Fields',
+                meta: [['splitField1', 'splitField2']],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'splitField1': {'$starts': 'Foo'}},
+                            {'splitField2': {'$starts': 'Foo'}}
+                        ]
                     }
-                };
+                ]
+            }, {
+                case: '1 Simple Field, 1 Split Term Field',
+                meta: ['simpleField1', ['splitField1']],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'simpleField1': {'$starts': 'Foo'}},
+                            {'splitField1': {'$starts': 'Foo'}}
+                        ]
+                    }
+                ]
+            }, {
+                case: '1 Simple Field, 1 Split Term Field composed of 2 Fields',
+                meta: ['simpleField1', ['splitField1', 'splitField2']],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'simpleField1': {'$starts': 'Foo'}},
+                            {
+                                '$or': [
+                                    {'splitField1': {'$starts': 'Foo'}},
+                                    {'splitField2': {'$starts': 'Foo'}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }, {
+                case: '2 Split Term Fields',
+                meta: [['splitField1', 'splitField2'], ['splitField3', 'splitField4']],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'splitField1': {'$starts': 'Foo'}},
+                            {'splitField2': {'$starts': 'Foo'}}
+                        ]
+                    }
+                ]
+            }, {
+                case: '1 Split Term Field composed of 3 Fields',
+                meta: [['splitField1', 'splitField2', 'splitField3']],
+                expectedFilter: []
+            }
+        ], function(test) {
+            var searchTerm = 'Foo';
+
+            it('should be valid with ' + test.case, function() {
+                quicksearch_field = test.meta;
+                sinon.collection.stub(app.metadata, 'getModule', function() {
+                    return getFilterMetaData(quicksearch_field, 1);
+                });
+                filterDef = field.getFilterDef('Accounts', searchTerm);
+
+                expect(filterDef).toEqual(test.expectedFilter);
             });
-            filterDef = field.getFilterDef('Contacts', searchTerm);
-            expect(filterDef).toEqual([
-                { $and: [
-                    { first_name: { $starts: 'John' } },
-                    { last_name: { $starts: 'F Kennedy' } }
-                ] }
-            ]);
         });
 
-        it('should search if either field starts with full search string when quicksearch_split_terms is false', function() {
-            quicksearch_field = ['name', 'bug_number'];
-            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    filters: {
-                        _default: {
-                            meta: {
-                                quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1,
-                                quicksearch_split_terms: false
-                            }
-                        }
-                    }
-                };
+        it('should return empty for a complex filter with more than two fields', function() {
+            quicksearch_field = [['first_name', 'last_name', 'additional_field']];
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return getFilterMetaData(quicksearch_field, 1);
             });
-            filterDef = field.getFilterDef('Bugs', searchTerm);
-            expect(filterDef).toEqual([
-                { $or: [
-                    { name: { $starts: searchTerm } },
-                    { bug_number: { $starts: searchTerm } }
-                ] }
-            ]);
+            filterDef = field.getFilterDef('Contacts', searchTerm);
+            expect(filterDef).toEqual([]);
         });
 
         it('should search if either field starts with full search string when quicksearch_split_terms not specified', function() {
             quicksearch_field = ['name', 'bug_number'];
-            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    filters: {
-                        _default: {
-                            meta: {
-                                quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1
-                            }
-                        }
-                    }
-                };
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return getFilterMetaData(quicksearch_field, 1);
             });
             filterDef = field.getFilterDef('Bugs', searchTerm);
             expect(filterDef).toEqual([
@@ -140,52 +247,53 @@ describe("Plugins.Quicksearchfilter", function () {
         });
     });
 
-    it("Highest priority filter should be selected among the multiple quick search filters", function () {
-        field = SugarTest.createField("base", "account_name", "relate", "edit");
+    it('Highest priority filter should be selected among the multiple quick search filters', function() {
+        field = SugarTest.createField('base', 'account_name', 'relate', 'edit');
         field._moduleQuickSearchMeta = {};
 
         var expectedFilterFields = [
                 'first_name',
                 'last_name'
-            ],
-            unexpectedFilterFields = [
+            ];
+        var unexpectedFilterFields = [
                 'document_name',
                 'bazooka'
-            ],
-            expectedSearchTerm = "Blah",
-            metadataStub = sinon.stub(app.metadata, 'getModule', function () {
-                return {
-                    filters: {
-                        basic: {
-                            meta: {
-                                quicksearch_field: [
-                                    'name'
-                                ]
-                            },
-                            quicksearch_priority: 1
+            ];
+        var expectedSearchTerm = 'Blah';
+
+        sinon.collection.stub(app.metadata, 'getModule', function() {
+            return {
+                filters: {
+                    basic: {
+                        meta: {
+                            quicksearch_field: [
+                                'name'
+                            ]
                         },
-                        person: {
-                            meta: {
-                                quicksearch_field: expectedFilterFields,
-                                quicksearch_priority: 10 //Higer priority filter will be populated
-                            }
-                        },
-                        _default: {
-                            meta: {
-                                quicksearch_field: unexpectedFilterFields,
-                                quicksearch_priority: 2
-                            }
+                        quicksearch_priority: 1
+                    },
+                    person: {
+                        meta: {
+                            quicksearch_field: expectedFilterFields,
+                            quicksearch_priority: 10 //Higer priority filter will be populated
+                        }
+                    },
+                    _default: {
+                        meta: {
+                            quicksearch_field: unexpectedFilterFields,
+                            quicksearch_priority: 2
                         }
                     }
-                };
-            });
+                }
+            };
+        });
 
         var actualFilter = field.getFilterDef(field.getSearchModule(), expectedSearchTerm);
-        _.each(actualFilter, function (filter) {
+        _.each(actualFilter, function(filter) {
             expect(filter['$or']).toBeDefined();
             expect(filter['$or'].length).toBe(expectedFilterFields.length);
-            _.each(filter['$or'], function (search_filter) {
-                _.each(search_filter, function (term, field) {
+            _.each(filter['$or'], function(search_filter) {
+                _.each(search_filter, function(term, field) {
                     expect(_.indexOf(expectedFilterFields, field) >= 0).toBeTruthy();
                     expect(_.indexOf(unexpectedFilterFields, field) >= 0).toBeFalsy();
                     var actualTerm = term['$starts'];
@@ -194,12 +302,11 @@ describe("Plugins.Quicksearchfilter", function () {
                 });
             });
         }, this);
-        metadataStub.restore();
     });
 
-    it('should get the highest priority field for search', function () {
+    it('should get the highest priority field for search', function() {
         var layout = SugarTest.createLayout('base', 'Accounts', 'filter', {}, false, false, {layout: new Backbone.View()});
-        var metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+        sinon.collection.stub(app.metadata, 'getModule', function() {
             return {
                 filters: {
                     'meta1': {
@@ -221,12 +328,11 @@ describe("Plugins.Quicksearchfilter", function () {
                         }
                     }
                 }
-            }
+            };
         });
 
         var field = layout.getModuleQuickSearchFields('Accounts');
 
         expect(field).toEqual('test2');
-        metadataStub.restore();
     });
 });

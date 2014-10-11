@@ -76,10 +76,14 @@
     getFieldLabels: function(moduleName, fields) {
         var moduleMeta = app.metadata.getModule(moduleName);
         var labels = [];
-        _.each(fields, function(fieldName) {
+
+        _.each(_.flatten(fields), function(fieldName) {
             var fieldMeta = moduleMeta.fields[fieldName];
-            labels.push(app.lang.get(fieldMeta.vname, moduleName).toLowerCase());
+            if (fieldMeta) {
+                labels.push(app.lang.get(fieldMeta.vname, moduleName).toLowerCase());
+            }
         });
+
         return labels;
     },
 
