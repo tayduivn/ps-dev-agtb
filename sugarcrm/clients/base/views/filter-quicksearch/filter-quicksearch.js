@@ -55,7 +55,6 @@
         this.setElement(this.$('input'));
         this._lastQuicksearchKey = this._getLastQuicksearchKey();
         this.$el.val(app.user.lastState.get(this._lastQuicksearchKey));
-        this.applyQuickSearch();
     },
 
     /**
