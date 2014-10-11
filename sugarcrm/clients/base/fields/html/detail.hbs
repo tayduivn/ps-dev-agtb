@@ -10,4 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<span class="htmlareafield">{{#if value}}{{{value}}}{{else}}{{{def.default_value}}}{{/if}}</span>
+<span class="htmlareafield"{{#if dir}} dir="{{dir}}"{{/if}}>{{#if value}}{{{value}}}{{else}}{{{def.default_value}}}{{/if}}</span>

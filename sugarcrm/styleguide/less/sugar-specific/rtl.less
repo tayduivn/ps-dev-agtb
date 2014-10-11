@@ -153,6 +153,24 @@ html.rtl {
                 right: 0;
             }
         }
+        div.record-cell {
+            padding-right: 15px;
+            padding-left: 0;
+            &[data-type="fieldset"] {
+              .normal > .fieldset {
+                &:not(.edit) .fieldset-field {
+                  .address_city,
+                  .address_state {
+                    float: right;
+                    margin-right: 0;
+                  }
+                }
+              }
+            }
+            [dir=ltr] {
+                text-align: right;
+            }
+        }
     }
 
     .more, .less {
@@ -562,8 +580,15 @@ html.rtl {
         margin-left: 0;
     }
 
-    .preview-data .row-fluid .span5 {
-        text-align: left;
+    .preview-data .row-fluid {
+        .span5 {
+            text-align: left;
+        }
+        .span7 {
+            [dir=ltr] {
+                text-align: right;
+            }
+        }
     }
 
     .btn-toolbar {

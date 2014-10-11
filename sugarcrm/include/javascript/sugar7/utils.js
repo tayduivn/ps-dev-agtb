@@ -19,12 +19,22 @@
                  * @returns {jQuery}
                  */
                 initialize: function($elements, options) {
+                    options = options || {};
                     var self = this;
                     $elements.each(function() {
                         var data, $element;
                         if (!self.has(this)) {
                             $element = $(this);
                             data = $element.data();
+
+                            //Override the tooltip template to have a `dir`
+                            //attribute if it is present in the element.
+                            var dir = $element.attr('dir'),
+                                tooltipTemplate = Handlebars.compile('<div class="tooltip"' +
+                                    '{{#if dir}} dir="{{dir}}"{{/if}}' +
+                                    '><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>');
+                            options.template = tooltipTemplate({dir: dir});
+
                             $element.tooltip(_.extend({
                                 container: 'body',
                                 trigger: 'hover' //show tooltip on hover only (not on focus)

@@ -46,6 +46,13 @@
 
     /**
      * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
+     * @inheritDoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
