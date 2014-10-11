@@ -731,14 +731,18 @@
     /**
      * Toggles the helper scroll bar.
      *
-     * If the spy's `width` is greater than his `scrollWidth`, we hide the
-     * helper scrollbar. Also, we hide it if the top `offset` of the landmark
-     * element (bottom of the list) is lower than the footer's one.
+     * If the spy's `width` is greater than its `scrollWidth` (the screen is
+     * large enough) OR if the footer is higher than the table (the table is not
+     * visible on the screen), we hide the helper scrollbar.
+     * Also, we hide it if the bottom of the table is higher than the footer
+     * (the natural scroll bar is present).
      *
      * @private
      */
     _toggleScrollHelper: function() {
-        if (this.$spy.get(0).scrollWidth < this.$spy.width()) {
+        if (this.$spy.get(0).scrollWidth <= this.$spy.width() ||
+            this.$('tbody').offset().top + this.$helper.height() > $('footer').offset().top
+        ) {
             this.$helper.toggle(false);
             return;
         }
@@ -759,7 +763,7 @@
         if (this.$helper.length === 0) {
             return;
         }
-        this.$helper.toggleClass('dash-collapsed', $('.side.sidebar-content').css('visibility') === 'hidden');
+        this.$helper.toggleClass('dash-collapsed', !$('.side.sidebar-content').is(':visible'));
     },
 
     /**
