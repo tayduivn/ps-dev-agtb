@@ -57,6 +57,14 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             ),
         ),
         array(
+            'name' => 'select_button',
+            'type' => 'button',
+            'label' => 'LBL_SELECT_BUTTON_LABEL',
+            'events' => array(
+                'click' => 'selection:select:fire',
+            ),
+        ),
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),
