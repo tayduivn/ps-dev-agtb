@@ -26,6 +26,22 @@
         this.exposeDataTransfer();
 
         this.context.on("activitystream:post:prepend", this.prependPost, this);
+
+        // Remove active state from all preview buttons
+        app.events.on('preview:close', function() {
+            this.clearRowDecorations();
+        }, this);
+    },
+
+    /**
+     * Removes highlighted styling from stream activities.
+     */
+    clearRowDecorations: function() {
+        if (_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)) {
+            var activities = this.$('.activitystream-posts-comments-container');
+            activities.removeClass('highlighted');
+            activities.find('.preview-btn').removeClass('active');
+        }
     },
 
     /**

@@ -279,6 +279,9 @@
             module = data.module,
             id = data.id;
 
+        // Remove highlighted styling from all activities
+        this.layout.clearRowDecorations();
+
         // If module/id data attributes don't exist, this user
         // doesn't have access to that record due to team security.
         if (module && id) {
@@ -286,11 +289,20 @@
                 collection = this.context.get("collection");
 
             model.set("id", id);
+            this.decorateRow();
             app.events.trigger("preview:module:update", this.context.get("module"));
             app.events.trigger("preview:render", model, collection, true, this.cid);
         }
 
         event.preventDefault();
+    },
+
+    /**
+     * Handles highlighting of current activity item and active state of preview button.
+     */
+    decorateRow: function() {
+        this.$el.addClass('highlighted');
+        this.$('.preview-btn').addClass('active');
     },
 
     _renderHtml: function(model) {
