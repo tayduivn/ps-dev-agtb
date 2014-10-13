@@ -4,10 +4,7 @@
     ul {
       li {
         border-bottom: 1px solid #eeeeee;
-        padding: 4px 0 2px 0;
-        &:nth-child(1) {
-          border-top: 1px solid #eeeeee;
-        }
+        padding: 5px 0;
         &:nth-last-child(1) {
           border-bottom: none;
         }
@@ -17,7 +14,6 @@
       padding: 0px;
       display: inline-table;
       color: #47484a !important;
-      border-top: none;
     }
     ins {
       &.jstree-icon {
@@ -47,6 +43,9 @@
         }
       }
     }
+    &.btn-group {
+      padding-right: 6px;
+    }
     a {
       &.jstree-clicked {
         color: #003366 !important;
@@ -54,8 +53,7 @@
       &.btn {
         &.jstree-contextmenu,
         &.jstree-addnode {
-          padding: 2px;
-          margin: 2px;
+          padding: 4px;
         }
       }
       .jstree-icon {

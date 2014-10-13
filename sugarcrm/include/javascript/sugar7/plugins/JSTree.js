@@ -143,7 +143,7 @@
              * @param {Bool} hide Hide tree if true, show otherwise.
              * @private
              */
-            _toggleVisibility: function (hide) {
+            _toggleVisibility: function(hide) {
                 if (hide === true) {
                     this.$treeContainer.hide();
                     this.$noData.show();
@@ -206,7 +206,8 @@
                 .on('create.jstree', _.bind(this._createHandler, this))
                 .on('move_node.jstree', _.bind(this._moveHandler, this))
                 .on('remove.jstree', _.bind(this._removeHandler, this))
-                .on('rename_node.jstree', _.bind(this._renameHandler, this));
+                .on('rename_node.jstree', _.bind(this._renameHandler, this))
+                .on('search.jstree', _.bind(this._searchHandler, this));
             },
 
             /**
@@ -238,6 +239,16 @@
             _renameHandler: function(event, data) {
                 /* @todo: handler for rename node - wbi */
                 /* @todo: update this.collection */
+            },
+
+            /**
+             * Search node handler.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _searchHandler: function(event, data) {
+                /* @todo: handler for search node - wbi */
             },
 
             /**
@@ -560,19 +571,25 @@
              * @param {String} title
              * @param {String|Number} position
              */
-            addNode: function(title, position) {
+            addNode: function(title, position, editable) {
                 var selectedNode = this.jsTree.jstree('get_selected'),
-                    pos = position || 'last';
-                if (!_.isUndefined(title)) {
-                    this.jsTree.jstree('create', selectedNode, pos, {data: title}, function(obj) {
-                    }, true);
-                }
+                    pos = position || 'last',
+                    isEdit = !_.isUndefined(editable);
+
+                this.jsTree.jstree(
+                    'create',
+                    selectedNode,
+                    pos,
+                    {data: !_.isUndefined(title) ? title : 'New item'},
+                    function(obj) {},
+                    isEdit
+                );
             },
 
             /**
              * Clear selected nodes.
              */
-            clearSelection: function () {
+            clearSelection: function() {
                 this.jsTree.jstree('deselect_all');
             },
 

@@ -10,4 +10,23 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="tree-block"></div>
+
+<div class="search-filter">
+    <div class="control-group">
+        <div class="filter controls controls-two btn-group-fit">
+            <div class="filter-view search" data-container="filter-view-search">
+                <div class="full-width">
+                    <input type="text" data-name="search" class="search-name" placeholder="{{str 'LBL_SEARCH_TREE' this.module}}">
+                </div>
+            </div>
+            <div class="toggle-actions actions">
+                <div class="btn-group">
+                    <button class="btn" data-original-title="{{str 'LBL_ADD_NEW' this.module}}" data-name="addnode"><span class="icon-plus"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main-content">
+    <div class="tree-block"></div>
+</div>
