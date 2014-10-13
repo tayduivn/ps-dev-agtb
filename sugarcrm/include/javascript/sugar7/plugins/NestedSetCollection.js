@@ -50,6 +50,12 @@
                 ) {
                     this.children = this.collection.clone();
                     this.children.module = this.collection.module;
+
+                    this.children.rootCollection =
+                        this.collection.rootCollection ?
+                            this.collection.rootCollection :
+                            this.collection;
+
                     this.children.reset(data.children.records);
                     data = _.omit(data, 'children');
                 }
@@ -316,6 +322,82 @@
             sync: function(method, model, options) {
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
                 app.api.call(method, this.url, options, callbacks);
+            },
+
+            /**
+             * Reset _childsById property and remove models from root collection.
+             *
+             * {@inheritDoc}
+             */
+            _reset: function() {
+                if (this.length && !_.isEmpty(this.rootCollection)) {
+                    _.each(this.models, function(model) {
+                        model = this.rootCollection.getChild(model);
+                        if (model) {
+                            delete this.rootCollection._childsById[model.id];
+                            delete this.rootCollection._childsById[model.cid];
+                        }
+                    },this);
+                }
+
+                this._childsById = {};
+
+                app.BeanCollection.prototype._reset.apply(this, arguments);
+                return this;
+            },
+
+            /**
+             * Generate _childsById property for root collection.
+             *
+             * {@inheritDoc}
+             */
+            add: function(models, options) {
+                app.BeanCollection.prototype.add.apply(this, arguments);
+                if (this.length) {
+                    var rootCollection = this.rootCollection || this;
+                    _.each(this.models, function(model) {
+                        rootCollection._childsById[model.cid] = model;
+                        if (model.id != null) rootCollection._childsById[model.id] = model;
+                    });
+                }
+            },
+
+            /**
+             * Remove models from root collection.
+             *
+             * {@inheritDoc}
+             */
+            remove: function(models, options) {
+                var rootCollection = this.rootCollection || this,
+                    i, l, model;
+
+                for (i = 0, l = models.length; i < l; i++) {
+                    model = rootCollection.getChild(models[i]);
+                    if (!model) continue;
+                    delete rootCollection._childsById[model.id];
+                    delete rootCollection._childsById[model.cid];
+                }
+
+                app.BeanCollection.prototype.remove.apply(this, arguments);
+                return this;
+            },
+
+            /**
+             * Get a model from all children by id.
+             * @param {Backbone.Model|String} obj Object to get.
+             * @return {Data.Bean}
+             */
+            getChild: function(obj) {
+                if (obj == null) return void 0;
+
+                var rootCollection = this.rootCollection || this;
+
+                rootCollection._idAttr ||
+                    (rootCollection._idAttr = rootCollection.model.prototype.idAttribute);
+
+                return rootCollection._childsById[
+                    obj.id || obj.cid || obj[rootCollection._idAttr] || obj
+                ];
             },
 
             /**
