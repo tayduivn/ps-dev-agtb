@@ -515,7 +515,7 @@
                         self._toggleVisibility(false);
                     },
                     error: function() {
-                        //@todo: remove node - will be implemented
+                        // @todo: remove node - will be implemented
                     }
                 });
             },
