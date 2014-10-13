@@ -12,6 +12,7 @@
 
 class S_501_2_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
+    public $skip = true;
     public $not = true;
     public $md5_files = array(
         './styleguide/less/bootstrap-mobile.less copy' => 'fakeMD5',
