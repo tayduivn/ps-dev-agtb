@@ -156,7 +156,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 'assigned_user_name',
                 'parent_name',
                 array(
-                    'name' => 'tags',
+                    'name' => 'tag',
                     'span' => '12',
                 ),
             ),
