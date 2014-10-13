@@ -205,6 +205,7 @@
                 .on('select_node.jstree', _.bind(this._selectNodeHandler, this))
                 .on('create.jstree', _.bind(this._createHandler, this))
                 .on('move_node.jstree', _.bind(this._moveHandler, this))
+                .on('remove.jstree', _.bind(this._removeHandler, this))
                 .on('rename_node.jstree', _.bind(this._renameHandler, this));
             },
 
@@ -219,6 +220,16 @@
             },
 
             /**
+             * Remove node handler.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _removeHandler: function(event, data) {
+                /* @todo: remove handler - wbi */
+            },
+
+            /**
              * Rename node handler.
              * @param {Event} event
              * @param {Object} data
@@ -226,6 +237,7 @@
              */
             _renameHandler: function(event, data) {
                 /* @todo: handler for rename node - wbi */
+                /* @todo: update this.collection */
             },
 
             /**

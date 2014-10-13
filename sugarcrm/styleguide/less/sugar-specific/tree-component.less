@@ -4,7 +4,7 @@
     ul {
       li {
         border-bottom: 1px solid #eeeeee;
-        padding-top: 2px;
+        padding: 4px 0 2px 0;
         &:nth-child(1) {
           border-top: 1px solid #eeeeee;
         }
@@ -23,6 +23,28 @@
       &.jstree-icon {
         padding: 5px;
         color: #47484a !important;
+      }
+    }
+    li {
+      &.jstree-leaf {
+        a {
+          ins {
+            &.jstree-icon {
+              padding-right: 8px;
+            }
+          }
+        }
+      }
+      &.jstree-open,
+      &.jstree-closed,
+      &.jstree-leaf {
+        input {
+          &.jstree-rename-input {
+            top: 6px !important;
+            left: 34px !important;
+            padding-left: 5px !important;
+          }
+        }
       }
     }
     a {
