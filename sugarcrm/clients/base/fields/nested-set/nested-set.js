@@ -307,7 +307,7 @@
      */
     addNew: function(evt) {
         var name = $(evt.target).val().trim();
-        this.addNode(name);
+        this.addNode(name, 'last', true);
         this.switchCreate();
     },
 
