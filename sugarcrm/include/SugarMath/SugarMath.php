@@ -305,7 +305,7 @@ class SugarMath
         }
         if (false !== ($pos = strpos($value, '.')) && (strlen($value) - $pos - 1) > $scale) {
             $zeros = str_repeat("0", $scale);
-            return bcadd($value, "0.{$zeros}5", $scale);
+            return bcadd($value, (($value < 0) ? '-' : '') . "0.{$zeros}5", $scale);
         } else {
             return bcadd($value, 0, $scale);
         }
