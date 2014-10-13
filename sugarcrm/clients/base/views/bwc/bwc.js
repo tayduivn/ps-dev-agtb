@@ -533,19 +533,20 @@
         }
 
         this.confirmMemLeak(bwcWindow.document);
+
         $('a', bwcWindow.document).off('.bwc.sugarcrm');
         $('html', bwcWindow.document).off('.bwc.sugarcrm');
     },
 
     confirmMemLeak: function(target) {
-        if (app.logger.getLevel() === app.logger.levels.DEBUG) {
-
+        app.logger.debug(function() {
             var registered = _.reduce($('a', target), function(memo, el) {
                 var events = $._data(el, 'events');
                 return memo + _.where(_.flatten(events), {namespace: 'bwc.sugarcrm'}).length;
             }, 0);
-            app.logger.debug('Clear ' + registered + ' event(s) in `bwc.sugarcrm`.');
-        }
+
+            return 'Clear ' + registered + ' event(s) in `bwc.sugarcrm`.'
+        });
     },
 
     /**
