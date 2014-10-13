@@ -54,6 +54,10 @@
                     data = _.omit(data, 'children');
                 }
                 app.Bean.prototype.set.apply(this, arguments);
+
+                this.module = data['_module'] || this.collection.module;
+                this.fields = app.metadata.getModule(this.module).fields;
+                return this;
             },
 
             /**
@@ -278,9 +282,20 @@
              */
             _initCallback: function(options) {
                 var callback = {};
-                callback.success = options.success || null;
                 callback.complete = options.complete || null;
                 callback.error = options.error || null;
+
+                // sync collection with backend on success
+                callback.success = _.bind(function(data, response) {
+                    this.tree({
+                        success: _.bind(function() {
+                            if (_.isFunction(options.success)) {
+                                options.success(data, response);
+                            }
+                        }, this)
+                    });
+                }, this);
+
                 return callback;
             },
 
