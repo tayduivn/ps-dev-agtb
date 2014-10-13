@@ -519,9 +519,8 @@
     _getAvailableModules: function() {
         if (_.isEmpty(this._availableModules) || !_.isObject(this._availableModules)) {
             this._availableModules = {};
-            var allowedModules = _.difference(
-                app.metadata.getModuleNames({filter: 'visible', access: 'read', alphaSort: true}), this.moduleBlacklist
-            );
+            var visibleModules = app.metadata.getModuleNames({filter: 'visible', access: 'read'}),
+                allowedModules = _.difference(visibleModules, this.moduleBlacklist);
             _.each(allowedModules, function(module) {
                 var hasListView = !_.isEmpty(this.getFieldMetaForView(app.metadata.getView(module, 'list')));
                 if (hasListView) {
