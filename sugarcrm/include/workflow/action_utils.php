@@ -109,6 +109,11 @@ function process_action_update($focus, $action_array){
 		execute_special_logic($field, $focus);
 	}
     $focus->in_workflow = true;
+
+    if (!empty($focus->email1_set_in_workflow)) {
+        $focus->emailAddress->dontLegacySave = false;
+        $focus->emailAddress->handleLegacySave($focus);
+    }
 //end function process_action_update
 }
 
