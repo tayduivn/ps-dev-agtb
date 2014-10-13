@@ -62,14 +62,5 @@ class HolidaysViewEdit extends ViewEdit
         }
 		
  		echo $this->ev->display();
-
-        //echo the javascript that will validate the form
-        $javascript = new javascript();
-        $javascript->setFormName("EditView");
-        $javascript->addFieldGeneric('holiday_date', '', 'LBL_HOLIDAY_DATE' ,'true');
-        $javascript->addFieldGeneric('person_type', '', 'LBL_PERSON_TYPE' ,'true');
-        //note that the person type and person id labels are use the resource name label on purpose for a clearer UI
-        $javascript->addToValidateBinaryDependency('person_id', 'alpha', 'LBL_RESOURCE_NAME', 'true', '', 'person_type');
-        echo $javascript->getScript();
  	}
 }
