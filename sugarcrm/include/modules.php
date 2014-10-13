@@ -443,7 +443,6 @@ $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
     'KBSDocuments' => 'KBSContents',
     'KBSArticles' => 'KBSContents',
-    'KBSTopics' => 'KBSContents',
     'KBSContentTemplates' => 'KBSContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
@@ -680,10 +679,6 @@ $modInvisList[] = 'KBSArticles';
 $beanList['KBSContentTemplates'] = 'KBSContentTemplate';
 $beanFiles['KBSContentTemplate'] = 'modules/KBSContentTemplates/KBSContentTemplate.php';
 $moduleList[] = 'KBSContentTemplates';
-
-$beanList['KBSTopics'] = 'KBSTopic';
-$beanFiles['KBSTopic'] = 'modules/KBSTopics/KBSTopic.php';
-$modInvisList[] = 'KBSTopics';
 
 $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';

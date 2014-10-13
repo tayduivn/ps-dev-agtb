@@ -23,13 +23,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
-        'route' => "#KBSTopics/create",
-        'label' => 'LNK_NEW_TOPIC',
-        'acl_action' => 'admin',
-        'acl_module' => 'KBSTopics',
-        'icon' => 'icon-plus',
-    ),
-    array(
         'route' => "#KBSContentTemplates/create",
         'label' => 'LNK_NEW_KBSCONTENT_TEMPLATE',
         'acl_action' => 'admin',
@@ -41,13 +34,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' => 'LBL_LIST_ARTICLES',
         'acl_action' => 'list',
         'acl_module' => $module_name,
-        'icon' => 'icon-reorder',
-    ),
-    array(
-        'route' => "#KBSTopics",
-        'label' => 'LNK_TOPIC_LIST',
-        'acl_action' => 'admin',
-        'acl_module' => 'KBSTopics',
         'icon' => 'icon-reorder',
     ),
     array(

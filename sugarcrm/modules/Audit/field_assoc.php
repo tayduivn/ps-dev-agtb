@@ -65,11 +65,6 @@ $moduleAssocFieldsArray = array(
         ),
     ),
     'KBSContent' => array(
-        'topic_id' => array(
-            'table_name' => 'kbstopics',
-            'select_field_name' => 'name',
-            'select_field_join' => 'id',
-        ),
         'kbsarticle_id' => array(
             'table_name' => 'kbsarticles',
             'select_field_name' => 'name',
