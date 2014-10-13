@@ -117,6 +117,7 @@ class HealthCheckScannerMeta
         308 => array(
             'report' => 'vardefHtmlFunction',
             'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Vardef_HTML_Function/'
         ),
         309 => array(
             'report' => 'badMd5',
@@ -125,10 +126,12 @@ class HealthCheckScannerMeta
         310 => array(
             'report' => 'unknownFile',
             'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Is_Not_MB_Module/'
         ),
         311 => array(
             'report' => 'vardefHtmlFunctionName',
-            'bucket' => self::STUDIO_MB_BWC
+            'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Vardef_HTML_Function_Module_Field/'
         ),
         312 => array(
             'report' => 'badVardefsName',
@@ -188,6 +191,7 @@ class HealthCheckScannerMeta
         522 => array(
             'report' => 'subPanelWithFunction',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Get_Subpanel_Data_With_Function/'
         ),
         412 => array(
             'report' => 'badSubpanelLink',
@@ -204,6 +208,7 @@ class HealthCheckScannerMeta
         415 => array(
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Bad_Hook_File/'
         ),
         523 => array(
             'report' => 'byRefInHookFile',
@@ -244,6 +249,7 @@ class HealthCheckScannerMeta
         425 => array(
             'report' => 'foundEcho',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Echo/'
         ),
         426 => array(
             'report' => 'foundPrint',
@@ -252,6 +258,7 @@ class HealthCheckScannerMeta
         427 => array(
             'report' => 'foundDieExit',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_DieExit/'
         ),
         428 => array(
             'report' => 'foundPrintR',
@@ -260,6 +267,7 @@ class HealthCheckScannerMeta
         429 => array(
             'report' => 'foundVarDump',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Var_Dump/'
         ),
 //        430 => array(
 //            'report' => 'foundOutputBufferingCustom',
@@ -298,6 +306,7 @@ class HealthCheckScannerMeta
         504 => array(
             'report' => 'fieldTypeMissing',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Field_Type_Missing/'
         ),
         505 => array(
             'report' => 'typeChange',
@@ -314,6 +323,7 @@ class HealthCheckScannerMeta
         508 => array(
             'report' => 'inlineHtml',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Inline_HTML_Found/'
         ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
@@ -352,6 +362,7 @@ class HealthCheckScannerMeta
         517 => array(
             'report' => 'incompatIntegration',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         528 => array(
             'report' => 'vardefIncorrectDisplayDefault',
