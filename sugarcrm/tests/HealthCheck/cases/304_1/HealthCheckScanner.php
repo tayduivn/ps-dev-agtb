@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class S_304_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
+class S_304_1_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     public function init()
     {
