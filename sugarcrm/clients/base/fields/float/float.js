@@ -15,6 +15,13 @@
  */
 ({
     /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
      * {@inheritDoc}
      *
      * Unformats the float based on userPreferences (grouping/decimal separator).

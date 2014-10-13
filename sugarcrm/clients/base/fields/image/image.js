@@ -31,6 +31,13 @@
     plugins: ['File', 'FieldDuplicate'],
 
     /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
      * @override
      */
     initialize: function(options) {

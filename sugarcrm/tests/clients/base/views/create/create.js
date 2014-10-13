@@ -635,6 +635,9 @@ describe('Base.View.Create', function() {
                 validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
+                validateSubpanelsStub = sinonSandbox.stub(view, 'validateSubpanelModelsWaterfall', function(callback) {
+                    callback(null);
+                }),
                 checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
                     success(app.data.createBeanCollection(moduleName));
                 }),
@@ -657,6 +660,7 @@ describe('Base.View.Create', function() {
             }, 'Save should have been called but timeout expired', 1000);
 
             runs(function() {
+                expect(validateSubpanelsStub.calledOnce).toBeTruthy();
                 expect(validateStub.calledOnce).toBeTruthy();
                 expect(checkForDuplicateStub.calledOnce).toBeTruthy();
                 expect(saveModelStub.calledOnce).toBeTruthy();
@@ -706,6 +710,44 @@ describe('Base.View.Create', function() {
             });
         });
 
+        it("Should not save data when save button is clicked but subpanel models data are invalid", function() {
+            var flag = false,
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
+                    flag = true;
+                    callback(true);
+                }),
+                validateSubpanelsStub = sinonSandbox.stub(view, 'validateSubpanelModelsWaterfall', function(callback) {
+                    flag = true;
+                    callback(true);
+                }),
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                    flag = true;
+                    success(app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
+                    return;
+                });
+
+            view.render();
+
+            runs(function() {
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'validateModelWaterfall should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(validateSubpanelsStub.calledOnce).toBeTruthy();
+                expect(validateStub.calledOnce).toBeFalsy();
+                expect(checkForDuplicateStub.called).toBeFalsy();
+                expect(saveModelStub.called).toBeFalsy();
+            });
+        });
 
         it("Should not save data when save button is clicked but form data are invalid", function() {
             var flag = false,

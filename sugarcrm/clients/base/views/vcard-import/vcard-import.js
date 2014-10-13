@@ -14,56 +14,80 @@
  * @extends View.View
  */
 ({
+    /**
+     * {@inheritDoc}
+     * Imports a vcf file and creates a record based on person type
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.context.off("vcard:import:finish", null, this);
-        this.context.on("vcard:import:finish", this.importVCard, this);
+        this.context.on('vcard:import:finish', this.importVCard, this);
+        this.on('render', this._setFileField, this);
     },
 
     /**
-     * {@inheritdocs}
-     *
      * Sets up the file field to edit mode
      *
      * @param {View.Field} field
      * @private
      */
-    _renderField: function(field) {
-        app.view.View.prototype._renderField.call(this, field);
-        if (field.name === 'vcard_import') {
-            field.setMode('edit');
-        }
+    _setFileField: function() {
+        var field = this.getField('vcard_import');
+        field.setMode('edit');
     },
 
+    /**
+     * Event to trigger the uploading of the vcf and record creation
+     */
     importVCard: function() {
-        var self = this,
-            vcardFile = $('[name=vcard_import]');
+        var vcardFieldName = 'vcard_import',
+            $vcardFile = this.$('[name=vcard_import]');
 
-        if (_.isEmpty(vcardFile.val())) {
+        if (_.isEmpty($vcardFile.val())) {
             app.alert.show('error_validation_vcard', {
                 level: 'error',
                 messages: 'LBL_EMPTY_VCARD'
             });
         } else {
-            app.file.checkFileFieldsAndProcessUpload(self, {
-                    success: function (data) {
-                        var route = app.router.buildRoute(self.module, data.vcard_import);
-                        app.router.navigate(route, {trigger: true});
-                        app.alert.show('vcard-import-saved', {
-                            level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', self.module),
-                            autoClose: true
-                        });
-                    },
-                    error: function(error) {
-                        app.alert.show('error_validation_vcard', {
-                            level: 'error',
-                            messages: app.lang.get('TPL_IMPORT_VCARD_FAILURE', self.module, {module: self.module})
-                        });
-                    }
+            var ajaxParams = {
+                    temp: false,
+                    deleteIfFails: false
                 },
-                {deleteIfFails: true, htmlJsonFormat: true}
-            );
+                fields = {},
+                field = this.getField(vcardFieldName);
+
+            fields[vcardFieldName] = field.def;
+
+            this.model.uploadFile(vcardFieldName, $vcardFile, {
+                success: _.bind(this._doValidateFileSuccess, this),
+                error: _.bind(this._doValidateFileError, this)
+            }, ajaxParams);
         }
+    },
+
+    /**
+     * Success callback for the {@link #importVCard} function.
+     *
+     * @param {Object} data File data returned from the successful file upload.
+     */
+    _doValidateFileSuccess: function(data) {
+        var route = app.router.buildRoute(this.module, data.vcard_import);
+        app.router.navigate(route, {trigger: true});
+        app.alert.show('vcard-import-saved', {
+            level: 'success',
+            messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', this.module),
+            autoClose: true
+        });
+    },
+
+    /**
+     * Error callback for the {@link #importVCard} function.
+     *
+     * @param {Object} error Error object returned from the API.
+     */
+    _doValidateFileError: function(error) {
+        app.alert.show('error_validation_vcard', {
+            level: 'error',
+            messages: app.lang.get('TPL_IMPORT_VCARD_FAILURE', this.module, {module: this.module})
+        });
     }
 })

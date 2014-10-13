@@ -36,6 +36,13 @@
 
     /**
      * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
+     * @inheritDoc
      */
     initialize: function(options) {
         // FIXME: Remove this when SIDECAR-517 gets in

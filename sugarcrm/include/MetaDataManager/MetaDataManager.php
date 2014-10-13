@@ -2041,6 +2041,8 @@ class MetaDataManager
             //The jssource file is invalid, we need to invalidate the hash as well.
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -2775,7 +2777,9 @@ class MetaDataManager
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
         if (self::$isCacheEnabled && !empty($this->db)) {
-            $cacheResult =  $this->db->getOne("SELECT data FROM " . static::$cacheTable . " WHERE type='{$key}'");
+            $cacheResult = $this->db->getOne(
+                "SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)
+            );
             if (!empty($cacheResult)) {
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
@@ -2870,7 +2874,7 @@ class MetaDataManager
             return true;
         }
 
-        return $this->db->query("DELETE FROM " . static::$cacheTable . "WHERE type=" . $this->db->quoted($key));
+        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
     }
 
     /**

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
+    'type' => 'subpanels',
+    'span' => 12,
     'components' => array(
         array(
             'layout' => 'subpanel',
@@ -108,6 +110,4 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
             )
         )
     ),
-    'type' => 'subpanels',
-    'span' => 12,
 );

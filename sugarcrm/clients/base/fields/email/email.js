@@ -29,6 +29,13 @@
     plugins: ['Tooltip', 'ListEditable', 'EmailClientLaunch'],
 
     /**
+     * @inheritDoc
+     *
+     * The direction for this field should always be `ltr`.
+     */
+    direction: 'ltr',
+
+    /**
      * @inheritdoc
      * @param options
      */

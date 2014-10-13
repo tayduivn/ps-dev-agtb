@@ -11,5 +11,5 @@
  */
 --}}
 {{#if value}}
-    <a class="ellipsis_inline" data-placement="bottom" title="{{value}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{value}}">{{value}}</a>
+    <a class="ellipsis_inline" data-placement="bottom" title="{{value}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{value}}"{{#if dir}} dir="{{dir}}"{{/if}}>{{value}}</a>
 {{/if}}

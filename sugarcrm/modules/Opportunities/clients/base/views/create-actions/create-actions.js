@@ -52,7 +52,11 @@
 
         var success = _.bind(function(model) {
             this.originalSuccess(model);
-            if (options.lastSaveAction != 'saveAndCreate') {
+
+            // check to see if we added RLIs during create
+            var addedRLIs = this.model.get('revenuelineitems') || false;
+            addedRLIs =  (addedRLIs && addedRLIs.create && addedRLIs.create.length);
+            if (!addedRLIs && options.lastSaveAction != 'saveAndCreate') {
                 this.showRLIWarningMessage(this.listContext.get('module'));
             }
         }, this);

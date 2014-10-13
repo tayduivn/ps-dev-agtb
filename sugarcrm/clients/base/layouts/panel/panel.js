@@ -93,7 +93,11 @@
      * @param {Component} component
      */
     _hideComponent: function(component, show) {
-        if (!component.$el.hasClass('subpanel-header')) {
+        var isCreate = this.context.get('isCreateSubpanel') || false;
+        // if this is on a create subpanel, show the panel
+        if (isCreate) {
+            component.show();
+        } else if (!component.$el.hasClass('subpanel-header')) {
             if (show) {
                 component.show();
             } else {
