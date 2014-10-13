@@ -567,17 +567,13 @@
   margin: 0;
   .clearfix();
   .tag-wrapper {
-      display: inline-block;
-      padding: 3px 6px 2px;
-      background: @gray;
-      top: 3px;
-      left: 3px;
-      max-width: 100px;
-      .border-radius(3px);
-      margin-right: 4px;
-      margin-bottom: 4px;
       float: left;
-      border-radius: 9px;
+      max-width: 100%;
+      padding: 3px 6px 2px;
+      margin: 0 4px 4px 0;
+      background: @gray;
+      .box-sizing(border-box);
+      .border-radius(9px);
       .tag-name {
         font-size: @fontSizeSmall;
         line-height: 12px;
