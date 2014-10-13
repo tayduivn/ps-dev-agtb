@@ -28,6 +28,10 @@ $viewdefs['KBSContents']['base']['layout']['list-dashboard'] = array(
                                 'data_provider' => 'Categories',
                                 'config_provider' => 'KBSDocuments',
                                 'root_name' => 'category_root',
+                                'extra_provider' => array(
+                                    'module' => 'KBSContents',
+                                    'field' => 'category_id',
+                                ),
                             ),
                             'context' =>
                             array(

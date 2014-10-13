@@ -105,6 +105,7 @@
              * @param {Object} callbacks
              * @param {Object} callbacks.onToggle Callback on expand/collapse a tree branch.
              * @param {Object} callbacks.onLoad Callback on tree loaded.
+             * @param {Object} callbacks.onLeaf Callback on leaf click.
              * @param {Object} callbacks.onShowContextmenu Callback on show a context menu.
              * @param {Object} callbacks.onAdd Callback on add a new node.
              * @param {Object} callbacks.onSelect Callback on select a node.
@@ -464,15 +465,26 @@
                 if (!_.isUndefined(data.args[0])) {
                     var selectedNode = {
                         id: data.rslt.obj.data('id'),
-                        name: data.rslt.obj.find('a:first').text().trim()
-                    };
-                    switch ($(data.args[0]).data('action')) {
+                        name: data.rslt.obj.find('a:first').text().trim(),
+                        type: data.rslt.obj.data('type') || 'folder'
+                        },
+                        action = $(data.args[0]).data('action');
+                    if (action === 'jstree-toggle' && data.rslt.obj.hasClass('jstree-leaf')) {
+                        action = 'jstree-leaf-click';
+                    }
+                    switch (action) {
                         case 'jstree-toggle':
                             if (this.jsTreeCallbacks.onToggle &&
                                 !this.jsTreeCallbacks.onToggle.apply(this, [event, data])) {
                                 return false;
                             }
                             this._jstreeToggle(event, data);
+                            break;
+                        case 'jstree-leaf-click':
+                            if (this.jsTreeCallbacks.onLeaf &&
+                                !this.jsTreeCallbacks.onLeaf.apply(this, [selectedNode])) {
+                                return false;
+                            }
                             break;
                         case 'jstree-contextmenu':
                             if (this.jsTreeCallbacks.onShowContextmenu &&
@@ -514,17 +526,19 @@
                     },
                     self = this;
 
-                this.collection.append({
-                    target: parentId,
-                    data: {name: node.title},
-                    success: function(id) {
-                        newNode.attr('data-id', id);
-                        self._toggleVisibility(false);
-                    },
-                    error: function() {
+                if (data.args[2] === undefined || data.args[2].id === undefined) {
+                    this.collection.append({
+                        target: parentId,
+                        data: {name: node.title},
+                        success: function(id) {
+                            newNode.attr('data-id', id);
+                            self._toggleVisibility(false);
+                        },
+                        error: function() {
                         // ToDo: remove node - will be implemented
-                    }
-                });
+                        }
+                    });
+                }
             },
 
             /**
@@ -597,6 +611,21 @@
                     },
                     isEdit
                 );
+            },
+
+            /**
+             * Insert node into tree.
+             * @param {Object} data
+             * @param {String} parent_id
+             * @param {String} type
+             */
+            insertNode: function(data, parent_id, type) {
+                var selectedNode = this.jsTree.find('[data-id=' + parent_id +']');
+                this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id:data.id}, function(obj) {
+                    debugger;
+                    $(obj).data('id', data.id).data('type', type || 'folder');
+                    $(obj).find('ins:first').addClass('leaf');
+                }, true);
             },
 
             /**
