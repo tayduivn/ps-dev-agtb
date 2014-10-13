@@ -493,6 +493,8 @@ $dictionary['Project'] = array(
             'rhs_table'         => 'holidays',
             'rhs_key'           => 'related_module_id',
             'relationship_type' => 'one-to-many',
+            'relationship_role_column'=>'related_module',
+            'relationship_role_column_value'=>'Project',
         ),
         //END SUGARCRM flav=pro ONLY
 
