@@ -496,6 +496,13 @@
             },
 
             /**
+             * Clear selected nodes.
+             */
+            clearSelection: function () {
+                this.jsTree.jstree('deselect_all');
+            },
+
+            /**
              * Search action.
              * @param {String} searchString
              */
