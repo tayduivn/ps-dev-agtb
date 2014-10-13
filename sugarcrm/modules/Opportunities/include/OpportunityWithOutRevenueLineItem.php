@@ -119,7 +119,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $this->fixListViews(
             array(
                 'sales_status' => 'sales_stage',
-                'probability' => false,
+                'probability' => true,
             )
         );
     }

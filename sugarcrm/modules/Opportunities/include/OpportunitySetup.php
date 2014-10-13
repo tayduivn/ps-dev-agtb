@@ -319,10 +319,24 @@ abstract class OpportunitySetup
                             // instead of a name being passed in, false was, so we should remove that field.
                             $addField = false;
                         }
+
+                        unset($fieldMap[$name]);
                     }
 
                     if ($addField) {
                         $listParser->addField($name, $additionalDefs);
+                    }
+                }
+            }
+        }
+
+        // make sure that the field map is empty, if it's not process any remaining fields
+        if (!empty($fieldMap)) {
+            foreach($fieldMap as $field => $trigger) {
+                if($trigger === true) {
+                    $defs = $this->bean->getFieldDefinition($field);
+                    if ($defs) {
+                        $listParser->addField($field, array());
                     }
                 }
             }
