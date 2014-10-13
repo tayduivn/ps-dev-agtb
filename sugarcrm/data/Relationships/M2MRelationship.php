@@ -619,7 +619,7 @@ class M2MRelationship extends SugarRelationship
         $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable);
+        $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable, false, false);
         $targetTable_alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $targetTable;
 
         $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type, 'linkingTable' => true,))
