@@ -413,13 +413,15 @@ class TreeApi extends FilterApi
         );
 
         foreach ($tree as $node) {
+            $nodeBean = BeanFactory::getBean($args['module'], $node['id']);
+            $nodeBean = $this->formatBean($api, $args, $nodeBean);
             if (!empty($node['children'])) {
-                $node['children'] = $this->formatTree($api, $args, $node['children']);
+                $nodeBean['children'] = $this->formatTree($api, $args, $node['children']);
             } else {
-                $node['children'] = $emptySet;
+                $nodeBean['children'] = $emptySet;
             }
 
-            $data['records'][] = $node;
+            $data['records'][] = $nodeBean;
         }
 
         return $data;

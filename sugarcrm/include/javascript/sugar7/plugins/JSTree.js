@@ -313,18 +313,80 @@
                             _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
-                                /*
-                                 // @todo: waiting for remove implementation on backend
-                                 // @todo: hide tree if it's empty
-                                 this.remove(this.is_selected(obj) ? obj : null);
-                                 self._toggleVisibility(data.length === 0);
-                                */
+                                // TODO: create method to get node from collection
+                                var bean = self.collection.get(obj.data('id'));
+                                if (!_.isUndefined(bean)) {
+                                    self.warnDelete({
+                                        model: bean,
+                                        success: _.bind(function() {
+                                            this.remove(this.is_selected(obj) ? obj : null);
+                                            self._toggleVisibility(self.collection.length === 0);
+                                        }, this)
+                                    });
+                                }
                             }
                         }
                     };
                 } else {
                     return {};
                 }
+            },
+
+            /**
+             * Popup dialog message to confirm delete action.
+             * @param {Object} options
+             * @param {Data.Bean} options.model Model to delete.
+             * @param {Function} options.success Calback on success.
+             */
+            warnDelete: function(options) {
+                options = options || {};
+                if (_.isEmpty(options.model)) {
+                    return;
+                }
+
+                app.alert.show('delete_confirmation', {
+                    level: 'confirmation',
+                    messages: app.utils.formatString(
+                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'),
+                        [app.lang.getModuleName(options.model.module).toLowerCase() +
+                            ' ' + app.utils.getRecordName(options.model).trim()]
+                    ),
+                    onConfirm: _.bind(function() {
+                        this.deleteModel(options);
+                    }, this),
+                    onCancel: function() {
+
+                    }
+                });
+            },
+
+            /**
+             * Delete the model once the user confirms the action.
+             * @param {Object} options
+             * @param {Data.Bean} options.model Model to delete.
+             * @param {Function} options.success Calback on success.
+             */
+            deleteModel: function(options) {
+                options = options || {};
+                options.success = options.success || null;
+                if (_.isEmpty(options.model)) {
+                    return;
+                }
+
+                options.model.destroy({
+                    //Show alerts for this request
+                    showAlerts: {
+                        'process': true,
+                        'success': {
+                            messages: app.utils.formatString(
+                                app.lang.get('NTC_DELETE_SUCCESS'),
+                                [app.lang.getModuleName(options.model.module).toLowerCase() +
+                                    ' ' + app.utils.getRecordName(options.model).trim()]
+                            )
+                        }
+                    },
+                    success: options.success
+                });
             },
 
             /**
