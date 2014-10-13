@@ -173,13 +173,6 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_KBSCONTENTS',
         ),
-        'kbstopics' => array(
-            'name' => 'kbstopics',
-            'type' => 'link',
-            'relationship' => 'kbstopic_activities',
-            'source' => 'non-db',
-            'vname' => 'LBL_KBSTOPICS',
-        ),
 
         // Add table columns.
         'parent_id' => array(

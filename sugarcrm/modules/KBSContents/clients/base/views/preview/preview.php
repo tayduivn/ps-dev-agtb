@@ -68,10 +68,6 @@ $viewdefs['KBSContents']['base']['view']['preview'] = array(
             'label' => 'LBL_SHOW_MORE',
             'hide' => true,
             'fields' => array(
-                array(
-                    'name' => 'topic_name',
-                    'label' => 'LBL_TOPIC_NAME',
-                ),
                 'revision',
                 'created_by_name',
                 'date_entered',

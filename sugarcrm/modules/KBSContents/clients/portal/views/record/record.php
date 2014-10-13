@@ -38,10 +38,6 @@ $viewdefs['KBSContents']['portal']['view']['record'] = array(
                     'module' => 'KBSDocuments',
                     'key' => 'languages',
                 ),
-                'topic_name' => array(
-                    'name' => 'topic_name',
-                    'label' => 'LBL_TOPIC_NAME',
-                ),
             ),
         ),
         array(

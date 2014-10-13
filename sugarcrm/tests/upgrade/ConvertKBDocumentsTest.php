@@ -288,43 +288,6 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
     }
 
     /**
-     * Convert tags to topics.
-     */
-    public function testConvertTopics()
-    {
-        $this->script = $this->getMockBuilder('SugarUpgradeConvertKBDocuments')
-            ->setConstructorArgs(array($this->upgrader))
-            ->setMethods(array('getOldDocuments', 'getOldTags'))
-            ->getMock();
-
-        $this->script->expects($this->any())->method('getOldDocuments')
-            ->will($this->returnValue(array(array('id' => $this->document->id))));
-
-        $this->script->expects($this->once())->method('getOldTags')
-            ->will($this->returnValue(
-                    array(
-                        array('kbtag_id' => $this->tagChild->id),
-                    )
-                )
-            );
-
-        $this->script->run();
-
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
-
-        $actualTopic = BeanFactory::getBean('KBSTopics', $newDocument->topic_id);
-        $actualTopicName = $actualTopic->name;
-        $actualParentTopic = BeanFactory::getBean('KBSTopics', $actualTopic->parent_id);
-        $actualParentTopicName = $actualParentTopic->name;
-
-        $actualParentTopic->mark_deleted($actualParentTopic->id);
-        $actualTopic->mark_deleted($actualTopic->id);
-
-        $this->assertEquals($this->tagChild->tag_name, $actualTopicName);
-        $this->assertEquals($this->tagParent->tag_name, $actualParentTopicName);
-    }
-
-    /**
      * Returns first KBSContent record by name.
      *
      * @param string $name Name field value.
