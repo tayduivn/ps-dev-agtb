@@ -230,7 +230,10 @@
         $field.on('focus', _.bind(this.handleFocus, this));
 
         $('.main-pane, .flex-list-view-content').on('scroll.' + this.cid, _.bind(function() {
-            $field.datepicker('place');
+            // make sure the dom element exists before trying to place the datepicker
+            if ($(this._getAppendToTarget()).length) {
+                $field.datepicker('place');
+            }
         }, this));
     },
 
