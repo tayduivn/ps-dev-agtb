@@ -83,14 +83,6 @@
         this.preview = this.getPreviewData();
         var data = this.model.get('data');
         var activity_type = this.model.get('activity_type');
-        // FIXME: disable tag link for now until INT-650 goes through
-        if (data.object && data.object.type === 'Tag') {
-            data.object.disableLink = true;
-        }
-        if (data.subject && data.subject.type === 'Tag') {
-            data.subject.disableLink = true;
-        }
-        this.model.set('data', data);
 
         this.tpl = "TPL_ACTIVITY_" + activity_type.toUpperCase();
 
