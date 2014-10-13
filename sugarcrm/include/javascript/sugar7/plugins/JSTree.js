@@ -314,7 +314,7 @@
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
                                 // TODO: create method to get node from collection
-                                var bean = self.collection.get(obj.data('id'));
+                                var bean = self.collection.getChild(obj.data('id'));
                                 if (!_.isUndefined(bean)) {
                                     self.warnDelete({
                                         model: bean,
@@ -617,7 +617,6 @@
                     record: idRecord,
                     target: idTarget,
                     success: function(data, response) {
-                        self.collection.remove(idRecord);
                         callback(idRecord, idTarget);
                     }
                 });
