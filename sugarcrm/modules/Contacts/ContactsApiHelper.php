@@ -27,8 +27,14 @@ class ContactsApiHelper extends SugarBeanApiHelper
         global $current_user;
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
-        if ($data && isset($submittedData['sync_contact'])) {
-            $bean->sync_contact = $submittedData['sync_contact'];
+        if ($data) {
+            if (!empty($bean->emailAddress)) {
+                $bean->emailAddress->populateLegacyFields($bean);
+            }
+
+            if (isset($submittedData['sync_contact'])) {
+                $bean->sync_contact = $submittedData['sync_contact'];
+            }
         }
 
         return $data;
