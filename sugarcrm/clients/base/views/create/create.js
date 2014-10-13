@@ -303,6 +303,20 @@
             this.model.set(this._origAttributes);
             this.model.isCopied = true;
         }
+
+        // reset subpanels
+        if (this.hasSubpanelModels) {
+            // loop through subpanels and call resetCollection on create subpanels
+            _.each(this.context.children, function(child) {
+                if (child.get('isCreateSubpanel')) {
+                    this.context.trigger('subpanel:resetCollection:' + child.get('link'), true);
+                }
+            }, this);
+
+            // reset the hasSubpanelModels flag
+            this.hasSubpanelModels = false;
+        }
+        
         this.createMode = true;
         if (!this.disposed) {
             this.render();
