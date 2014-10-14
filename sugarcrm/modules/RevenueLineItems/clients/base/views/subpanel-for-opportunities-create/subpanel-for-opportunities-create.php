@@ -41,7 +41,10 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
                     'default' => true
                 ),
                 'sales_stage',
-                'probability',
+                array(
+                    'name' => 'probability',
+                    'readonly' => true
+                ),
                 'date_closed',
                 'commit_stage',
                 array(
