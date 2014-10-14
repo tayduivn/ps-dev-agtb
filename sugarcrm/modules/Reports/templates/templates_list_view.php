@@ -1024,7 +1024,7 @@ function whereToStartGroupByRow(&$reporter, $count, $rowsAndColumnsData, $row) {
 		return -1;
 	} // if
 	$group_def_array = $reporter->report_def['group_defs'];
-	
+
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
 		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
 		for ($j = 0 ; $j < count($rowsAndColumnsData) ; $j++)
@@ -1037,6 +1037,34 @@ function whereToStartGroupByRow(&$reporter, $count, $rowsAndColumnsData, $row) {
 	} // for
     return -1;
 } // fn
+
+/**
+ * Gets starting index for next group in summary with details report
+ *
+ * @param $reporter - Report object
+ * @param $count - row count
+ * @param $previous_row - previous row data
+ * @param $row - current row data
+ * @return int - starting index for next group
+ */
+function whereToStartGroupByRowSummaryCombo($reporter, $count, $previous_row, $row)
+{
+    $toStart = 0;
+    if ($count == 0 || empty($previous_row)) {
+        return $toStart;
+    }
+    $group_def_array = $reporter->report_def['group_defs'];
+
+    for ($i = 0; $i < count($group_def_array); $i++) {
+        $key = $reporter->group_defs_Info[$group_def_array[$i]['name'] . "#" . $group_def_array[$i]['table_key']]['index'];
+
+        if ($previous_row['cells'][$key] != $row['cells'][$key]) {
+            $toStart = $i;
+            break;
+        }
+    }
+    return $toStart;
+}
 
 function setGroupCount($header_row, $row, &$groupCountArray, $groupString, $countKeyIndex) {
 	if ($countKeyIndex != -1) {
