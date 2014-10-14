@@ -517,8 +517,9 @@
                     }
                     switch (action) {
                         case 'jstree-toggle':
+                            selectedNode.open = data.rslt.obj.hasClass('jstree-closed') ? true : false;
                             if (this.jsTreeCallbacks.onToggle &&
-                                !this.jsTreeCallbacks.onToggle.apply(this, [event, data])) {
+                                !this.jsTreeCallbacks.onToggle.apply(this, [selectedNode])) {
                                 return false;
                             }
                             this._jstreeToggle(event, data);
@@ -665,10 +666,10 @@
             insertNode: function(data, parent_id, type) {
                 var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']');
                 this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
-                    debugger;
                     $(obj).data('id', data.id).data('type', type || 'folder');
                     $(obj).find('ins:first').addClass('leaf');
                 }, true);
+                this.jsTree.jstree('toggle_node', selectedNode);
             },
 
             /**

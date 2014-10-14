@@ -35,6 +35,18 @@
     extraModule: null,
 
     /**
+     * Cache to store loaded leafs to prevent extra loading.
+     * @property {Object}
+     */
+    loadedLeafs: null,
+
+    /**
+     * Lifetime for data cache.
+     * @property {Number}
+     */
+    cacheLifetime: 300000,
+
+    /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
@@ -47,6 +59,7 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || null;
+        this.loadedLeafs = {};
     },
 
     /**
@@ -63,10 +76,46 @@
             module_root: this.moduleRoot
         },
             callbacks = {
-                onLeaf: _.bind(this.leafClicked, this)
+                onLeaf: _.bind(this.leafClicked, this),
+                onToggle: _.bind(this.folderToggled, this),
+                onLoad: _.bind(this.treeLoaded, this)
             };
         this._super('_render', []);
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+    },
+
+    /**
+     * Handle tree loaded. Load additional leafs for the tree.
+     * @return {Boolean} Always true.
+     */
+    treeLoaded: function() {
+        _.each(this.collection.models, function(item) {
+            this.loadAdditionalLeaf(item.id);
+        }, this);
+        return true;
+    },
+
+    /**
+     * Handle toggle of tree folder.
+     * @param {Object} data
+     * @return {Boolean}
+     */
+    folderToggled: function (data) {
+        if (data.open) {
+            var model = this.collection.getChild(data.id),
+                items = [];
+            if (!model.id) {
+                return true;
+            }
+            items = model.children.models;
+            if (items.length === 0) {
+                return true;
+            }
+            _.each(items, function(item) {
+                this.loadAdditionalLeaf(item.id);
+            }, this);
+        }
+        return true;
     },
 
     /**
@@ -85,10 +134,14 @@
      * @param id
      */
     loadAdditionalLeaf: function(id) {
+        if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id] < Date.now() - this.cacheLifetime) {
+            delete this.loadedLeafs[id];
+        }
         if (_.isEmpty(this.extraModule)
             || id === undefined
             || _.isEmpty(this.extraModule.module)
             || _.isEmpty(this.extraModule.field)
+            || !_.isUndefined(this.loadedLeafs[id])
         ) {
             return;
         }
@@ -115,6 +168,7 @@
                     };
                     this.insertNode(insData, id, 'document');
                 }, self);
+                self.loadedLeafs[id] = Date.now();
             }
         });
     },
