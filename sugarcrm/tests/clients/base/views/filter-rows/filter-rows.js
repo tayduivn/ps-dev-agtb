@@ -263,6 +263,18 @@ describe('Base.View.FilterRows', function() {
             filter: $('<div>').data({ name: 'abc', operator: '$between', value: ['11', 22]}),
             // FIXME: This is a temporary fix because some fields do not set a true number (see SC-3138).
             expected: true
+        }, {
+            filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
+                value: {'parent_id': '', 'parent_type': ''}}),
+            expected: false
+        }, {
+            filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
+                value: {'parent_id': '', 'parent_type': 'Contacts'}}),
+            expected: false
+        }, {
+            filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
+                value: {'parent_id': '12345', 'parent_type': 'Accounts'}}),
+            expected: true
         }], function(value) {
             it('should validate a filter correctly', function() {
                 expect(view.validateRows(value.filter)).toBe(value.expected);
@@ -347,6 +359,29 @@ describe('Base.View.FilterRows', function() {
             expect(_rowObj.data.firstCall.args).toEqual(['value', '12']);
         });
 
+        it('should store both the `id` and the `type` in the row data for flex relate fields', function() {
+            view.fieldList = {
+                parent: {
+                    name: 'parent',
+                    id_name: 'parent_id',
+                    type_name: 'parent_type'
+                }
+            };
+            view.populateRow({
+                '$and': [
+                    {'parent_type': 'Accounts'},
+                    {'parent_id': '12345'}
+                ]
+            });
+
+            expect(_select2Obj.select2.firstCall.args).toEqual(['val', 'parent']);
+            expect(_select2Obj.select2.secondCall.args).toEqual(['val', '$equals']);
+            expect(_rowObj.data.firstCall.args).toEqual(['value', {
+                'parent_id': '12345',
+                'parent_type': 'Accounts'
+            }]);
+        });
+
         it('should populate because it is a valid predefined filter', function() {
             view.fieldList = {
                 '$favorite': {
@@ -414,6 +449,17 @@ describe('Base.View.FilterRows', function() {
             expect(applyFilterStub).toHaveBeenCalled();
             expect($row.data('isPredefinedFilter')).toBeTruthy();
         });
+
+        it('should hide flex-relate operator', function() {
+            var $valueField = $('<div data-filter="value">').appendTo($row);
+            view.fieldList['relatedTo'] = {'type' : 'parent'};
+            view.filterOperatorMap['parent'] = {'$equals': 'is'};
+            $filterField.val('relatedTo');
+            view.handleFieldSelected({currentTarget: $filterField});
+
+            expect($operatorField.hasClass('hide')).toBeTruthy();
+            expect($valueField.hasClass('span8')).toBeTruthy();
+        });
     });
 
     describe('handleOperatorSelected', function() {
@@ -440,6 +486,11 @@ describe('Base.View.FilterRows', function() {
                 team_name: {
                     type: 'teamset',
                     'id_name': 'team_id'
+                },
+                flex_relate: {
+                    type: 'parent',
+                    'id_name': 'parent_id',
+                    'type_name': 'parent_type'
                 }
             };
             view.moduleName = 'Cases';
@@ -553,13 +604,14 @@ describe('Base.View.FilterRows', function() {
                     expect(data.action).toEqual('detail');
                 });
             });
-            describe('teamset and relate field', function() {
+            describe('teamset, relate, and flex-relate fields', function() {
                 var fetchStub;
                 beforeEach(function() {
-                    sinon.collection.stub($.fn, 'select2').returns('team_name'); //return `team_name` as field
+                     //return `team_name` as field
                     fetchStub = sinon.collection.stub(Backbone.Collection.prototype, 'fetch');
                 });
                 it('should convert teamset field to a relate field and fetch name like other relate fields', function() {
+                    sinon.collection.stub($.fn, 'select2').returns('team_name');
                     $row.data('value', 'West');
                     view.handleOperatorSelected({currentTarget: $operatorField});
                     expect(createFieldSpy).toHaveBeenCalled();
@@ -574,6 +626,7 @@ describe('Base.View.FilterRows', function() {
                     expect(fetchStub).toHaveBeenCalled();
                 });
                 it('should convert teamset field to a relate field but not fetch because no value set', function() {
+                    sinon.collection.stub($.fn, 'select2').returns('team_name');
                     view.handleOperatorSelected({currentTarget: $operatorField});
                     expect(createFieldSpy).toHaveBeenCalled();
                     expect(createFieldSpy.lastCall.args[1]).toEqual({
@@ -586,7 +639,32 @@ describe('Base.View.FilterRows', function() {
                     expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(fetchStub).not.toHaveBeenCalled();
                 });
+                it('should use the `parent_type` module when fetching name according to `parent_id`', function() {
+                    sinon.collection.stub($.fn, 'select2').returns('flex_relate');
+                    sinon.collection.spy(app.data, 'createBeanCollection');
+                    $row.data('value', {'parent_type': 'My_Module', 'parent_id': '12345'});
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+
+                    expect(createFieldSpy).toHaveBeenCalled();
+                    expect(createFieldSpy.lastCall.args[1]).toEqual({
+                        name: 'flex_relate',
+                        type: 'parent',
+                        id_name: 'parent_id',
+                        type_name: 'parent_type',
+                        required: false,
+                        readonly: false
+                    });
+                    expect(app.data.createBeanCollection).toHaveBeenCalledWith('My_Module');
+                    expect(fetchStub).toHaveBeenCalled();
+                });
+                it('should not fetch when `parent_id` is not selected', function() {
+                    sinon.collection.stub($.fn, 'select2').returns('flex_relate');
+                    $row.data('value', {'parent_type': 'My_Module', 'parent_id': ''});
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+                    expect(fetchStub).not.toHaveBeenCalled();
+                });
             });
+
             describe('date type fields', function() {
 
                 it('should create a value field when the operator is not a date range', function() {
@@ -703,6 +781,12 @@ describe('Base.View.FilterRows', function() {
                 date_created: {
                     name: 'date_created',
                     type: 'datetimecombo'
+                },
+                flex_relate: {
+                    name: 'relatedTo',
+                    type: 'parent',
+                    id_name: 'parent_id',
+                    type_name: 'parent_type'
                 }
             };
         });
@@ -870,6 +954,31 @@ describe('Base.View.FilterRows', function() {
             filter = view.buildRowFilterDef($row, true);
             expected = {
                 assigned_user_id: 'seed_sarah_id'
+            };
+            expect(filter).toEqual(expected);
+        });
+
+        it('should use $and for flex-relate fields', function() {
+            var filterModel = new Backbone.Model();
+            filterModel.set({'parent_id': '12345', 'parent_type': 'My_Module'});
+            var fieldMock = {model: filterModel};
+            $row = $('<div>').data({
+                name: 'relatedTo',
+                id_name: 'parent_id',
+                type_name: 'parent_type',
+                operator: '$equals',
+                isFlexRelate: true,
+                valueField: fieldMock
+            });
+            sinon.collection.stub(view, 'validateRow').returns(true);
+
+            view._updateFilterData($row);
+            filter = view.buildRowFilterDef($row, true);
+            expected = {
+                $and: [
+                    {parent_id: '12345'},
+                    {parent_type: 'My_Module'}
+                ]
             };
             expect(filter).toEqual(expected);
         });
