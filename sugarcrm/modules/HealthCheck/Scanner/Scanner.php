@@ -1576,20 +1576,6 @@ class HealthCheckScanner
     }
 
     /**
-     * Check logic hook file for by-ref parameters
-     * NOTE: not currently used
-     * @param string $filename
-     */
-    protected function checkHookByRef($filename)
-    {
-        $cont = file_get_contents($filename);
-        $matches = array();
-        if (preg_match('#function\s+(\w+)\s*\(\s*&\$bean\s*,#i', $cont, $matches)) {
-            $this->updateStatus("byRefInHookFile", $filename, $matches[1]);
-        }
-    }
-
-    /**
      * Check PHP file for output constructs.
      * Set $status if it happens.
      * @param string $phpfile
