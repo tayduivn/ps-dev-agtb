@@ -59,7 +59,6 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || null;
-        this.loadedLeafs = {};
     },
 
     /**
@@ -161,6 +160,7 @@
         collection.filterDef[0][this.extraModule.field] = {$equals: id};
         collection.fetch({
             success: function(data) {
+                self.removeChildrens(id, 'document');
                 _.each(data.models, function(value) {
                     var insData = {
                         id: value.id,
@@ -168,6 +168,7 @@
                     };
                     this.insertNode(insData, id, 'document');
                 }, self);
+                self.showChildNodes(id);
                 self.loadedLeafs[id] = Date.now();
             }
         });
@@ -177,6 +178,7 @@
      * {@inheritDoc}
      */
     loadData: function(options) {
+        this.loadedLeafs = {};
         if (options && options.complete) {
             this._render();
             options.complete();

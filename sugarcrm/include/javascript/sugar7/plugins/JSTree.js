@@ -668,8 +668,35 @@
                 this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
                     $(obj).data('id', data.id).data('type', type || 'folder');
                     $(obj).find('ins:first').addClass('leaf');
+                    obj.hide();
                 }, true);
                 this.jsTree.jstree('toggle_node', selectedNode);
+            },
+
+            /**
+             * Show child nodes which were added by insertNode.
+             * @param {String} id
+             */
+            showChildNodes: function(id) {
+                var selectedNode = this.jsTree.find('[data-id=' + id +']');
+                selectedNode.children("ul:eq(0)").children("li").show();
+            },
+
+            /**
+             * Removes children with provided type for the node.
+             * @param {String} id
+             * @param {String} type
+             */
+            removeChildrens: function (id, type) {
+                var currentNode = this.jsTree.find('[data-id=' + id +']'),
+                    childrens = currentNode.children("ul:eq(0)").children("li");
+                type = type || 'folder';
+                _.each(childrens, function(child) {
+                    if ($(child).data('type') === type) {
+                        this.jsTree.jstree('delete_node', child);
+                    }
+                }, this);
+
             },
 
             /**
