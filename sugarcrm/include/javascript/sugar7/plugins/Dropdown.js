@@ -21,24 +21,8 @@
 
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    app.events.on('app:view:change', this.bindIframeListener, this);
+                    this.listenTo(app.bwc, 'clicked', this.closeDropdown);
                     app.routing.before('route', this.closeDropdown, this, true);
-                });
-            },
-
-            /**
-             * Bind the mouse click listener on bwc iframe elements.
-             */
-            bindIframeListener: function() {
-                var view = app.controller.layout.getComponent('bwc'),
-                    self = this;
-                if (!view) {
-                    return;
-                }
-
-                view.$el.load(function() {
-                    $(this.contentWindow.document).children('html')
-                        .on('click.dropdown', _.bind(self.closeDropdown, self));
                 });
             },
 
@@ -211,10 +195,6 @@
              * Unbind beforeHandlers.
              */
             onDetach: function() {
-                var view = app.controller.layout && app.controller.layout.getComponent('bwc');
-                if (view) {
-                    $(view.$el.contentWindow.document).children('html').off('click.dropdown');
-                }
                 app.events.off('app:view:change', null, this);
                 app.routing.offBefore('route', this.closeDropdown, this);
                 this.unbindBeforeHandler();
