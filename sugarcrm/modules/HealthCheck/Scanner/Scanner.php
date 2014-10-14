@@ -1591,26 +1591,10 @@ class HealthCheckScanner
                 if (!file_exists($hook[2])) {
                     // putting it as custom since LogicHook checks file_exists
                     $this->updateStatus("badHookFile", $hookfile, $hook[2]);
-                } else {
-                    $this->checkHookByRef($hook[2]);
                 }
             }
         }
         $hooks_array = array_merge($hooks_array, $hook_array);
-    }
-
-    /**
-     * Check logic hook file for by-ref parameters
-     * NOTE: not currently used
-     * @param string $filename
-     */
-    protected function checkHookByRef($filename)
-    {
-        $cont = file_get_contents($filename);
-        $matches = array();
-        if (preg_match('#function\s+(\w+)\s*\(\s*&\$bean\s*,#i', $cont, $matches)) {
-            $this->updateStatus("byRefInHookFile", $filename, $matches[1]);
-        }
     }
 
     /**
