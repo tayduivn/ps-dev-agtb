@@ -153,7 +153,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_REMINDER_TIME',
+    'vname' => 'LBL_POPUP_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',

@@ -65,6 +65,7 @@ $mod_strings = array (
     'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
     'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
+    'LBL_POPUP_REMINDER_TIME' => 'Popup Reminder Time',
     'LBL_SEND_BUTTON_TITLE'=>'Save & Send Invites [Alt+I]',
     'LBL_SEND_BUTTON_KEY'=>'I',
     'LBL_SEND_BUTTON_LABEL'=>'Save & Send Invites',
