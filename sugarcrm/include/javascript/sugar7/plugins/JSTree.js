@@ -48,12 +48,48 @@
             $treeContainer: null,
 
             /**
-             * @param {View.Component} component The component this plugin is
-             *   attached to.
+             * {@inheritDoc}
+             */
+            onAttach: function(component, plugin) {
+                this.on('init', function() {
+                    app.events.on(
+                        'app:nestedset:sync:complete',
+                        this.onNestedSetSyncComplete,
+                        this
+                    );
+                });
+            },
+
+            /**
+             * @param {View.Component} component The component this plugin is attached to.
              */
             onDetach: function(component) {
                 if (!_.isEmpty(this.jsTree)) {
                     this.jsTree.off();
+                }
+                app.events.off(
+                    'app:nestedset:sync:complete',
+                    this.onNestedSetSyncComplete,
+                    this
+                );
+            },
+
+            /**
+             * Handler on sync NestedSetCollection.
+             *
+             * Re-render all nested set views that display same category root.
+             *
+             * @param {Data.NestedSetCollection} collection Synced collection.
+             */
+            onNestedSetSyncComplete: function(collection) {
+                if (this.disposed || _.isUndefined(this.collection) ||
+                    this.collection.root !== collection.root
+                ) {
+                    return;
+                }
+
+                if (this.collection !== collection) {
+                    this.render();
                 }
             },
 
