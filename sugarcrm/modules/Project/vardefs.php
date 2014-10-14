@@ -322,7 +322,7 @@ $dictionary['Project'] = array(
         'assigned_user_name' =>
         array (
         	'name' => 'assigned_user_name',
-        	'rname' => 'user_name',
+        	'rname' => 'full_name',
         	'id_name' => 'assigned_user_id',
         	'vname' => 'LBL_ASSIGNED_USER_NAME',
         	'type' => 'relate',
@@ -333,6 +333,7 @@ $dictionary['Project'] = array(
         	'len' => '255',
         	'source'=>'non-db',
             'exportable'=> true,
+            'sort_on' => array('last_name'),
         	),
         'cases' =>
             array (

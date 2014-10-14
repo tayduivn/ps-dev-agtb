@@ -176,6 +176,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Meetings/clients/mobile/api/MobileMeetingsApi.php',
             // BR-1574 Move Elastica library to composer (new path vendor/ruflin/elastica)
             'vendor/Elastica/',
+            'modules/EmailMan/Save.php',
         );
 
         // must be upgrading from between 710 to 722
@@ -525,8 +526,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'modules/Accounts/clients/base/views/edit',
                 'modules/Administration/templates/ConfigureAjaxUI.tpl',
                 'modules/Audit/clients/base/menus',
-                'modules/Bugs/clients/portal/layouts',
-                'modules/Cases/clients/portal/layouts',
+                'modules/Bugs/clients/portal/layouts/edit',
+                'modules/Cases/clients/portal/layouts/edit',
                 'modules/Charts/clients',
                 'modules/Connectors/connectors/formatters/ext/rest/dnb/dnb.jpg',
                 'modules/EAPM/clients',

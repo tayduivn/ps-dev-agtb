@@ -24,6 +24,10 @@ class SugarUpgradePortalSettings extends UpgradeScript
             return;
         }
 
+        // Grabs the portal config setting.
+        $query = "SELECT value FROM config WHERE category='portal' AND name='on'";
+        $portalEnabled = (bool) $this->db->getOne($query);
+
         if (version_compare($this->from_version, '7.5', '<')) {
             // Remove `portal_on` with platform equals to NULL or platform equals to empty string
             $query = "DELETE FROM config WHERE category='portal' AND name='on' AND (platform IS NULL OR platform='')";
@@ -52,6 +56,10 @@ class SugarUpgradePortalSettings extends UpgradeScript
         // Remove `fieldsToDisplay` (# of fields displayed in detail view - not used anymore in 7.0)
         $query = "DELETE FROM config WHERE category='portal' AND name='fieldsToDisplay' AND platform='support'";
         $this->db->query($query);
+
+        // Enables portal if it is set to true.
+        // TODO: category should be `support`, platform should be `portal`
+        $admin->saveSetting('portal', 'on', $portalEnabled, 'support');
     }
 
     /**

@@ -2215,7 +2215,8 @@ class Report
         $fields = array();
 
         foreach ($db_row as $key => $value) {
-            $fields[strtoupper($key)] = $value;
+            //if value is null or not set, then change to empty string.  This prevents array index errors while processing
+            $fields[strtoupper($key)] = is_null($value) ? '' : $value;
         }
 
         // here we want to make copies, so use foreach

@@ -17,7 +17,7 @@ $step = isset($_REQUEST['confirm_id']) ? 2 : 0;
 <title>SugarCRM Upgrader</title>
 <meta name="viewport" content="initial-scale=1.0">
 <meta name="viewport" content="user-scalable=no, width=device-width">
-<link rel="stylesheet" href="modules/HealthCheck/static/css.css?v=1"/>
+<link rel="stylesheet" href="styleguide/assets/css/upgrade.css?v=1"/>
 <script src='include/javascript/jquery/jquery-min.js'></script>
 <script src='sidecar/lib/jquery/jquery.iframe.transport.js'></script>
 
@@ -327,8 +327,8 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible btn-primary" href="index.php">Cancel</a>
-            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>:
+            <a class="btn btn-invisible btn-link" href="index.php">Cancel</a>
+            <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>
           </span>
         </div>
     </div>

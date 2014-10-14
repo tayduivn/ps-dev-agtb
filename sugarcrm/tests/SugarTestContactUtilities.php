@@ -67,7 +67,9 @@ class SugarTestContactUtilities
     public static function removeAllCreatedContacts()
     {
         $contact_ids = self::getCreatedContactIds();
-        $GLOBALS['db']->query('DELETE FROM contacts WHERE id IN (\'' . implode("', '", $contact_ids) . '\')');
+        if ($contact_ids) {
+            $GLOBALS['db']->query('DELETE FROM contacts WHERE id IN (\'' . implode("', '", $contact_ids) . '\')');
+        }
     }
 
     /**
@@ -78,16 +80,26 @@ class SugarTestContactUtilities
      * @static
      * @return void
      */
-    public static function removeCreatedContactsEmailAddresses(){
-    	$contact_ids = self::getCreatedContactIds();
-        $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\'))');
-        $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\')');
-        $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\')');
+    public static function removeCreatedContactsEmailAddresses()
+    {
+        $contact_ids = self::getCreatedContactIds();
+        if ($contact_ids) {
+            $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Contacts\' AND bean_id IN (\'' .
+                implode("', '", $contact_ids) . '\'))');
+            $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Contacts\' AND bean_id IN (\'' .
+                implode("', '", $contact_ids) . '\')');
+            $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Contacts\' AND bean_id IN (\'' .
+                implode("', '", $contact_ids) . '\')');
+        }
     }
 
-    public static function removeCreatedContactsUsersRelationships(){
-    	$contact_ids = self::getCreatedContactIds();
-        $GLOBALS['db']->query('DELETE FROM contacts_users WHERE contact_id IN (\'' . implode("', '", $contact_ids) . '\')');
+    public static function removeCreatedContactsUsersRelationships()
+    {
+        $contact_ids = self::getCreatedContactIds();
+        if ($contact_ids) {
+            $GLOBALS['db']->query('DELETE FROM contacts_users WHERE contact_id IN (\'' . implode("', '", $contact_ids) .
+                '\')');
+        }
     }
 
     public static function getCreatedContactIds()

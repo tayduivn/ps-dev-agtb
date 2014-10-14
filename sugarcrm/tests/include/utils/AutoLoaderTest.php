@@ -141,9 +141,7 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function providerTestGetFilenameForFQCN()
     {
-        // platform dependent baseDir, used for path normalization tests
         $ds = DIRECTORY_SEPARATOR;
-        $baseDir = realpath(dirname(__FILE__) . '/../../..') . $ds;
 
         return array(
 
@@ -242,14 +240,14 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'psr0',
                 'Foo\\Bar',
-                $baseDir . 'vendor'.$ds.'Foo'.$ds.'Bar'.$ds.'src',
+                SUGAR_BASE_DIR . $ds . 'vendor'.$ds.'Foo'.$ds.'Bar'.$ds.'src',
                 'Foo\\Bar\\Deer',
                 'vendor/Foo/Bar/src/Foo/Bar/Deer.php',
             ),
             array(
                 'psr4',
                 'Acme\\Factory',
-                $baseDir . 'vendor'.$ds.'figures',
+                SUGAR_BASE_DIR . $ds . 'vendor'.$ds.'figures',
                 'Acme\\Factory\\Roadrunner',
                 'vendor/figures/Roadrunner.php',
             ),

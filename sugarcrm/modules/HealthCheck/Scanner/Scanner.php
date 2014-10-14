@@ -20,6 +20,8 @@ require_once __DIR__ . '/ScannerMeta.php';
  */
 class HealthCheckScanner
 {
+    const VERSION_FILE = 'version.json';
+
     // failure status
     const FAIL = 99;
 
@@ -78,7 +80,7 @@ class HealthCheckScanner
         'Act-On Integrated Marketing Automation for SugarCRM' => array(
             array('version' => '*'),
         ),
-        'Pardot Marketing Automation for SugarCRM' =>  array(
+        'Pardot Marketing Automation for SugarCRM' => array(
             array('version' => '*'),
         ),
         'iNetMaps' => array(
@@ -203,7 +205,7 @@ class HealthCheckScanner
     protected $healthCheckModule = array(
         'bean' => 'HealthCheck',
         'file' => 'modules/HealthCheck/HealthCheck.php',
-        'md5'  => './modules/HealthCheck/HealthCheck.php'
+        'md5' => './modules/HealthCheck/HealthCheck.php'
     );
 
 
@@ -215,6 +217,15 @@ class HealthCheckScanner
     protected $ignoredFiles = array(
         'custom/Extension/modules/Administration/Ext/Administration/upgrader2.php',
         'custom/Extension/modules/Administration/Ext/Administration/healthcheck.php'
+    );
+
+    /**
+     * Array of files which will not be scanned for output
+     * @var array
+     */
+    protected $ignoreOutputCheckFiles = array(
+        'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php',
+        'modules/Connectors/connectors/sources/ext/rest/inbox25/InboxViewLogicHook.php',
     );
 
     /**
@@ -239,10 +250,10 @@ class HealthCheckScanner
     {
         $fmsg = sprintf("[%s] %s %s\n", date('c'), $tag, $msg);
 
-        if(empty($this->fp)) {
+        if (empty($this->fp)) {
             $this->fp = @fopen($this->logfile, 'a+');
         }
-        if(empty($this->fp)) {
+        if (empty($this->fp)) {
             throw new RuntimeException("Cannot open logfile: $this->logfile");
         }
 
@@ -301,14 +312,14 @@ class HealthCheckScanner
         }
 
         $status = $scanMeta['bucket'];
-        $code   = $scanMeta['id'];
+        $code = $scanMeta['id'];
         $report = $scanMeta['report'];
         $this->logMeta[] = $scanMeta;
         $issueNo = count($this->logMeta);
 
         $reason = "[Issue $issueNo][$report][$code][" . vsprintf($scanMeta['log'], $params) . ']';
 
-        $this->log($reason, 'CHECK-'.$status);
+        $this->log($reason, 'CHECK-' . $status);
         $this->logReason($status, $code, $reason);
 
 
@@ -485,8 +496,8 @@ class HealthCheckScanner
     public function scan()
     {
         set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
-        $this->log("Starting scanning $this->instance");
-        if(!$this->init()) {
+        $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $this->getVersion()));
+        if (!$this->init()) {
             return $this->logMeta;
         }
 
@@ -494,13 +505,13 @@ class HealthCheckScanner
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
-        if(version_compare($sugar_version, '7.0', '>')) {
+        if (version_compare($sugar_version, '7.0', '>')) {
             $this->updateStatus("alreadyUpgraded");
             $this->log("Instance already upgraded to 7");
             return $this->logMeta;
         }
 
-        if($GLOBALS['sugar_config']['site_url']) {
+        if ($GLOBALS['sugar_config']['site_url']) {
             $this->ping(array("instance" => $GLOBALS['sugar_config']['site_url'], "version" => $sugar_version));
         }
 
@@ -508,8 +519,7 @@ class HealthCheckScanner
         $this->checkPackages();
         $this->checkLanguageFiles();
         $this->checkVendorAndRemovedFiles();
-        if(!empty($this->filesToFix))
-        {
+        if (!empty($this->filesToFix)) {
             $files_to_fix = '';
             foreach ($this->filesToFix as $fileToFix) {
                 $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
@@ -520,30 +530,39 @@ class HealthCheckScanner
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
-        if(!empty($this->deletedFilesReferenced))
-        {
+        if (!empty($this->deletedFilesReferenced)) {
             $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
 
         // check non-upgrade-safe customizations by verifying md5's
-        // TODO: uncomment when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
         /*
         $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log|/language/)#";
-        foreach($this->md5_files as $file => $sum) {
-            if(preg_match($skip_prefixes, $file)) {
+        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log)#";
+        $skip_files = array(
+            './styleguide/less/bootstrap-mobile.less copy',
+            './styleguide/less/bootstrap.less copy',
+        );
+        foreach ($this->md5_files as $file => $sum) {
+            if (in_array($file, $skip_files)) {
                 continue;
             }
-            if(!file_exists($file)) {
+            if (preg_match($skip_prefixes, $file)) {
+                continue;
+            }
+            if (!file_exists($file)) {
                 $this->updateStatus("missingFile", $file);
             }
-            if(md5_file($file) !== $sum) {
+            // TODO: uncomment when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
+            /*
+            if (md5_file($file) !== $sum) {
                 $this->updateStatus("md5Mismatch", $file, $sum);
             }
+            */
+        /*
         }
         */
 
-        foreach($this->getModuleList() as $module) {
+        foreach ($this->getModuleList() as $module) {
             $this->log("Checking module $module");
             $this->scanModule($module);
         }
@@ -551,30 +570,24 @@ class HealthCheckScanner
         // Check global hooks
         $this->log("Checking global hooks");
         $hook_files = array();
-        $this->extractHooks("custom/modules/logic_hooks.php", $hook_files);
-        $this->extractHooks("custom/application/Ext/LogicHooks/logichooks.ext.php", $hook_files);
-        if(!empty($hook_files['after_ui_footer'])) {
-            $this->updateStatus("logicHookAfterUIFooter");
-        }
-        if(!empty($hook_files['after_ui_frame'])) {
-            $this->updateStatus("logicHookAfterUIFrame");
-        }
-        foreach($hook_files as $hookname => $hooks) {
-            foreach($hooks as $hook_data) {
+        $this->extractHooks("custom/modules/logic_hooks.php", $hook_files, true);
+        $this->extractHooks("custom/application/Ext/LogicHooks/logichooks.ext.php", $hook_files, true);
+        foreach ($hook_files as $hookname => $hooks) {
+            foreach ($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
                 $this->checkFileForOutput($hook_data[2], HealthCheckScannerMeta::CUSTOM);
             }
         }
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
-        if($GLOBALS['sugar_config']['site_url']) {
+        if ($GLOBALS['sugar_config']['site_url']) {
             $this->ping(array("instance" => $GLOBALS['sugar_config']['site_url'], "verdict" => $this->status));
         }
 
         ksort($this->status_log);
-        foreach($this->status_log as $status => $items) {
-            $this->log("=> $status: ".count($items)." total", 'BUCKET');
-            foreach($items as $item) {
+        foreach ($this->status_log as $status => $items) {
+            $this->log("=> $status: " . count($items) . " total", 'BUCKET');
+            foreach ($items as $item) {
                 $this->log(sprintf("=> %s: %s", $status, $item['reason']), 'BUCKET');
             }
         }
@@ -608,7 +621,7 @@ class HealthCheckScanner
         $pm = $this->getPackageManager();
         $packages = $pm->getinstalledPackages(array('module'));
         foreach ($packages as $pack) {
-            if($pack['enabled'] == 'DISABLED') {
+            if ($pack['enabled'] == 'DISABLED') {
                 $this->log("Disabled package {$pack['name']} (version {$pack['version']}) detected");
                 continue;
             }
@@ -623,7 +636,11 @@ class HealthCheckScanner
                     }
                     if (!empty($req['author'])) {
                         $uh = new UpgradeHistory();
-                        $uh->retrieve_by_string_fields(array('name' => $pack['name'], 'version' => $pack['version']), true, false);
+                        $uh->retrieve_by_string_fields(
+                            array('name' => $pack['name'], 'version' => $pack['version']),
+                            true,
+                            false
+                        );
                         $manifest = unserialize(base64_decode($uh->manifest));
                         $manifest = $manifest['manifest'];
                         $scp = strcasecmp($manifest['author'], $req['author']);
@@ -645,17 +662,18 @@ class HealthCheckScanner
      * @param $module
      * @return bool
      */
-    protected function checkTableName($module) {
+    protected function checkTableName($module)
+    {
         $object = $this->getObjectName($module);
 
         VardefManager::loadVardef($module, $object);
-        if(empty($GLOBALS['dictionary'][$object]['table'])) {
+        if (empty($GLOBALS['dictionary'][$object]['table'])) {
             $this->log("Failed to load vardefs for $module:$object");
             return false;
         }
 
         $seed = BeanFactory::getBean($module);
-        if(empty($seed)) {
+        if (empty($seed)) {
             $this->log("Failed to instantiate bean for $module, not checking table");
             return false;
         }
@@ -672,8 +690,10 @@ class HealthCheckScanner
     {
         $uh = new UpgradeHistory();
         $ulist = $uh->getList("SELECT * FROM {$uh->table_name} WHERE type='patch'");
-        if(empty($ulist)) return;
-        foreach($ulist as $urecord) {
+        if (empty($ulist)) {
+            return;
+        }
+        foreach ($ulist as $urecord) {
             $this->log("Detected patch: {$urecord->name} version {$urecord->version} status {$urecord->status}");
         }
     }
@@ -683,21 +703,21 @@ class HealthCheckScanner
      * @var array
      */
     protected $removed_directories = array(
-            'include/HTMLPurifier',
-            'include/HTTP_WebDAV_Server',
-            'include/Pear',
-            'include/Smarty',
-            'XTemplate',
-            'Zend',
-            'include/lessphp',
-            'log4php',
-            'include/nusoap',
-            'include/oauth2-php',
-            'include/pclzip',
-            'include/reCaptcha',
-            'include/tcpdf',
-            'include/ytree',
-            'include/SugarSearchEngine/Elastic/Elastica',
+        'include/HTMLPurifier',
+        'include/HTTP_WebDAV_Server',
+        'include/Pear',
+        'include/Smarty',
+        'XTemplate',
+        'Zend',
+        'include/lessphp',
+        'log4php',
+        'include/nusoap',
+        'include/oauth2-php',
+        'include/pclzip',
+        'include/reCaptcha',
+        'include/tcpdf',
+        'include/ytree',
+        'include/SugarSearchEngine/Elastic/Elastica',
     );
     /**
      * dirs or files that have been deleted
@@ -716,9 +736,9 @@ class HealthCheckScanner
     );
 
     protected $excludedScanDirectories = array(
-            'backup',
-            'tmp',
-            'temp',
+        'backup',
+        'tmp',
+        'temp',
     );
     protected $filesToFix = array();
 
@@ -730,7 +750,9 @@ class HealthCheckScanner
         $this->log('*** START HEALTHCHECK ISSUES ***');
         foreach ($this->getLogMeta() as $key => $entry) {
             $issueNo = $key + 1;
-            $this->log(" => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}");
+            $this->log(
+                " => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}"
+            );
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
@@ -741,7 +763,7 @@ class HealthCheckScanner
      * This method checks for directories/files that have been moved/removed that are referenced
      * in custom code
      * @return bool
-    */
+     */
     protected function checkVendorAndRemovedFiles()
     {
         $this->log("Checking for bad includes");
@@ -800,7 +822,11 @@ class HealthCheckScanner
                 }
             }
             foreach ($this->removed_files AS $deletedFile) {
-                if (preg_match("#(include|require|require_once|include_once)[\s('\"]*({$deletedFile})#",$fileContents) > 0) {
+                if (preg_match(
+                        "#(include|require|require_once|include_once)[\s('\"]*({$deletedFile})#",
+                        $fileContents
+                    ) > 0
+                ) {
                     $this->log("Found $deletedFile in $file");
                     $this->deletedFilesReferenced[] = $file;
                 }
@@ -815,7 +841,7 @@ class HealthCheckScanner
      */
     protected function scanModule($module)
     {
-        if(empty($this->beanList[$module])) {
+        if (empty($this->beanList[$module])) {
             // absent from module list, not an actual module
             // TODO: we may still want to check for extensions here?
             // TODO: check for view defs for modules not in BeanList?
@@ -832,7 +858,7 @@ class HealthCheckScanner
             $this->checkTableName($module);
         }
 
-        if($this->isNewModule($module)) {
+        if ($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
             // not a stock module, check if it's working at least with BWC
             $this->checkMBModule($module);
@@ -848,10 +874,10 @@ class HealthCheckScanner
      */
     protected function getObjectName($module)
     {
-        if(!empty($this->objectList[$module])) {
+        if (!empty($this->objectList[$module])) {
             return $this->objectList[$module];
         }
-        if(!empty($this->beanList[$module])) {
+        if (!empty($this->beanList[$module])) {
             return $this->beanList[$module];
         }
         return null;
@@ -863,14 +889,14 @@ class HealthCheckScanner
      */
     protected function checkMBModule($module)
     {
-        if(!empty($this->newModules[$module])) {
+        if (!empty($this->newModules[$module])) {
             // we have a name clash
             $this->updateStatus("sameModuleName", $module);
         }
 
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
-        if(!$this->isMBModule($module)) {
+        if (!$this->isMBModule($module)) {
             $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
@@ -879,17 +905,17 @@ class HealthCheckScanner
         $objectName = $this->getObjectName($module);
         // check for subpanels since BWC subpanels can be used in non-BWC modules
         $defs = $this->getPhpFiles("modules/$module/metadata/subpanels");
-        if(!empty($defs) && !empty($this->beanList[$module])) {
-            foreach($defs as $deffile) {
+        if (!empty($defs) && !empty($this->beanList[$module])) {
+            foreach ($defs as $deffile) {
                 $this->checkListFields($deffile, "subpanel_layout", 'list_fields', $module, $objectName);
             }
         }
 
         $defs = $this->getPhpFiles("custom/modules/$module/metadata/subpanels");
-        if(!empty($defs) && !empty($this->beanList[$module])) {
+        if (!empty($defs) && !empty($this->beanList[$module])) {
             $this->log("$module has custom subpanels");
-            foreach($defs as $deffile) {
-                $this->checkCustomCode($deffile, "subpanel_layout", "modules/$module/metadata/".basename($deffile));
+            foreach ($defs as $deffile) {
+                $this->checkCustomCode($deffile, "subpanel_layout", "modules/$module/metadata/" . basename($deffile));
                 $this->checkListFields($deffile, "subpanel_layout", 'list_fields', $module, $objectName);
             }
         }
@@ -935,117 +961,135 @@ class HealthCheckScanner
         $bwc = $this->isStockBWCModule($module);
 
         $history = $this->getPhpFiles("custom/history/modules/$module");
-        if(!empty($history)) {
+        if (!empty($history)) {
             $this->updateStatus("hasStudioHistory", $module);
         }
 
         $objectName = $this->getObjectName($module);
 
         // check vardefs for HTML and bad names
-        if(!$bwc && $objectName) {
+        if (!$bwc && $objectName) {
             $this->checkVardefs($module, $objectName, true, HealthCheckScannerMeta::CUSTOM);
         }
 
         // Check for extension files
         $extfiles = $this->getPhpFiles("custom/Extension/modules/$module/Ext");
-        if(!empty($extfiles)) {
+        if (!empty($extfiles)) {
             $this->updateStatus("hasExtensions", $module, $extfiles);
         }
-        foreach($extfiles as $phpfile) {
-            $this->checkFileForOutput($phpfile, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
+        foreach ($extfiles as $phpfile) {
+            $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
         }
 
         // Check custom vardefs
         $defs = $this->getPhpFiles("custom/Extension/modules/$module/Ext/Vardefs");
-        if(!empty($defs)) {
+        if (!empty($defs)) {
             $this->updateStatus("hasCustomVardefs", $module);
-            foreach($defs as $deffile) {
+            foreach ($defs as $deffile) {
                 $this->checkCustomCode($deffile, "dictionary", "modules/$module/vardefs.php");
             }
         }
 
         // check layout defs
         $defs = $this->getPhpFiles("custom/Extension/modules/$module/Ext/Layoutdefs");
-        if(!empty($defs)) {
+        if (!empty($defs)) {
             $this->updateStatus("hasCustomLayoutdefs", $module);
-            foreach($defs as $deffile) {
+            foreach ($defs as $deffile) {
                 $this->checkCustomCode($deffile, "layout_defs", "modules/$module/metadata/subpaneldefs.php");
                 $this->checkSubpanelLayoutDefs($module, $objectName, $deffile);
             }
         }
 
         // check custom viewdefs
-        $defs = array_filter($this->getPhpFiles("custom/modules/$module/metadata"), function ($def) {
-            $filesToExclude = array(
-                'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
-                'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
-                'wireless.editviewdefs.php',
-                'wireless.detailviewdefs.php',
-                'wireless.listviewdefs.php',
-            );
-            return !in_array(basename($def), $filesToExclude);
-        });
+        $defs = array_filter(
+            $this->getPhpFiles("custom/modules/$module/metadata"),
+            function ($def) {
+                $filesToExclude = array(
+                    'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
+                    'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
+                    'wireless.editviewdefs.php',
+                    'wireless.detailviewdefs.php',
+                    'wireless.listviewdefs.php',
+                );
+                return !in_array(basename($def), $filesToExclude);
+            }
+        );
 
-        if($module == "Connectors") {
+        if ($module == "Connectors") {
             $pos = array_search("custom/modules/Connectors/metadata/connectors.php", $defs);
-            if($pos !== false) {
+            if ($pos !== false) {
                 unset($defs[$pos]);
                 // TODO: any checks for connectors.php?
             }
             $pos = array_search("custom/modules/Connectors/metadata/display_config.php", $defs);
-            if($pos !== false) {
+            if ($pos !== false) {
                 unset($defs[$pos]);
                 // TODO: any checks for display_config.php?
             }
         }
 
         // check viewdefs
-        if(!empty($defs)) {
+        if (!empty($defs)) {
             $this->updateStatus("hasCustomViewdefs", $module);
-            foreach($defs as $deffile) {
-                if(strpos($deffile, "/subpanels/") !== false) {
+            foreach ($defs as $deffile) {
+                if (strpos($deffile, "/subpanels/") !== false) {
                     // special case for subpanels, since subpanels are special
-                    $base = basename(dirname($deffile))."/".basename($deffile);
+                    $base = basename(dirname($deffile)) . "/" . basename($deffile);
                     $defsname = 'subpanel_layout';
                 } else {
                     $base = basename($deffile);
-                    if(!empty($this->vardefnames[$base])) {
+                    if (!empty($this->vardefnames[$base])) {
                         $defsname = $this->vardefnames[$base];
                     } else {
                         $defsname = "viewdefs";
                     }
                 }
-                $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base", $history);
+                if (!$bwc) {
+                    $this->checkCustomCode($deffile, $defsname, "modules/$module/metadata/$base", $history);
+                }
                 // For stock modules, check subpanels and also list views for non-bwc modules
-                if($defsname == 'subpanel_layout') {
+                if ($defsname == 'subpanel_layout') {
                     // checking also BWC since Sugar 7 module can have subpanel for BWC module
                     $this->checkListFields($deffile, $defsname, 'list_fields', $module, $objectName);
                 }
             }
         }
 
-        if(!$bwc) {
+        if (!$bwc) {
             // check for custom views
-            $defs = array_filter($this->getPhpFiles("custom/modules/$module/views"), function($def) {
-                // ENGRD-248 - exclude view.sidequickcreate.php
-                return basename($def) != 'view.sidequickcreate.php';
-            });
-            if(!empty($defs)) {
-                $this->updateStatus("hasCustomViews", $module);
+            $defs = array_filter(
+                $this->getPhpFiles("custom/modules/$module/views"),
+                function ($def) {
+                    // ENGRD-248 - exclude view.sidequickcreate.php
+                    return basename($def) != 'view.sidequickcreate.php';
+                }
+            );
+            if (!empty($defs)) {
+                $this->updateStatus("hasCustomViews", $module, $defs);
             }
             $md5 = $this->md5_files; // work around 5.3 missing $this in closures
-            $defs = array_filter($this->getPhpFiles("modules/$module/views"), function($def) use($md5) {
-                // ENGRD-248 - exclude view.sidequickcreate.php
-                return basename($def) != 'view.sidequickcreate.php' && !isset($md5["./".$def]);
-            });
-            if(!empty($defs)) {
-                $this->updateStatus("hasCustomViewsModDir", $module);
+            $defs = array_filter(
+                $this->getPhpFiles("modules/$module/views"),
+                function ($def) use ($md5) {
+                    // ENGRD-248 - exclude view.sidequickcreate.php
+                    return basename($def) != 'view.sidequickcreate.php' && !isset($md5["./" . $def]);
+                }
+            );
+            if (!empty($defs)) {
+                $this->updateStatus("hasCustomViewsModDir", $module, $defs);
             }
         }
 
         // Check custom extensions which aren't Studio
-        $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
-                "FileAccessControlMap", "WirelessModuleRegistry", "JSGroupings");
+        $badExts = array(
+            "ActionViewMap",
+            "ActionFileMap",
+            "ActionReMap",
+            "EntryPointRegistry",
+            "FileAccessControlMap",
+            "WirelessModuleRegistry",
+            "JSGroupings"
+        );
         $badExts = array_flip($badExts);
         foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
@@ -1058,7 +1102,7 @@ class HealthCheckScanner
         }
 
         // check logic hooks for module
-        $this->checkHooks($module, $bwc?HealthCheckScannerMeta::CUSTOM:HealthCheckScannerMeta::MANUAL);
+        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
     }
 
     /**
@@ -1067,7 +1111,8 @@ class HealthCheckScanner
      * @param $pattern
      * @return array
      */
-    protected function glob($pattern) {
+    protected function glob($pattern)
+    {
         $dirs = glob($pattern);
         return ($dirs ? $dirs : array());
     }
@@ -1085,7 +1130,7 @@ class HealthCheckScanner
      */
     protected function checkVardefTypeChange($module, $object)
     {
-        if(!file_exists("modules/$module/vardefs.php")) {
+        if (!file_exists("modules/$module/vardefs.php")) {
             // can't find original vardefs, don't mess with it
             return;
         }
@@ -1097,25 +1142,25 @@ class HealthCheckScanner
         $original_vardefs = $GLOBALS['dictionary'][$object];
         // return vardefs back to old state
         $GLOBALS['dictionary'][$object] = $full_vardefs;
-        foreach($original_vardefs['fields'] as $name => $def) {
-            if(empty($def['type']) || empty($def['name'])) {
+        foreach ($original_vardefs['fields'] as $name => $def) {
+            if (empty($def['type']) || empty($def['name'])) {
                 continue;
             }
-            if(!empty($def['source']) && $def['source'] != 'db') {
+            if (!empty($def['source']) && $def['source'] != 'db') {
                 continue;
             }
             $real_type = $this->db->getFieldType($full_vardefs['fields'][$name]);
             $original_type = $this->db->getFieldType($def);
-            if(empty($real_type)) {
+            if (empty($real_type)) {
                 // If we can't find the type, this is some serious breakage
                 $this->updateStatus("fieldTypeMissing", $module, $name);
                 continue;
             }
-            if(!in_array($real_type, $this->blob_types)) {
+            if (!in_array($real_type, $this->blob_types)) {
                 // Per ENGRD-263, we are only interested in changes to blob type
                 continue;
             }
-            if(!in_array($original_type, $this->blob_types)) {
+            if (!in_array($original_type, $this->blob_types)) {
                 // We have changed from non-blob type to blob type, not good
                 $this->updateStatus("typeChange", $module, $name, $original_type, $real_type);
             }
@@ -1130,16 +1175,16 @@ class HealthCheckScanner
      */
     protected function loadFromFile($deffile, $varname)
     {
-        if(!file_exists($deffile)) {
+        if (!file_exists($deffile)) {
             return array();
         }
         $l = new FileLoaderWrapper();
         $res = $l->loadFile($deffile, $varname);
-        if(is_null($res)) {
+        if (is_null($res)) {
             $this->log("Weird, loaded $deffile but no $varname there");
             return array();
         }
-        if($res === false) {
+        if ($res === false) {
             $this->updateStatus("thisUsage", $deffile);
         }
         return $res;
@@ -1159,11 +1204,11 @@ class HealthCheckScanner
      */
     protected function lookupCustomCode($path, $defs, $codes)
     {
-        foreach($defs as $key => $value) {
-            if($key === 'customCode' && !empty($value)) {
+        foreach ($defs as $key => $value) {
+            if ($key === 'customCode' && !empty($value)) {
                 $codes[$value][] = $path;
-            } elseif(is_array($value)) {
-                $codes = $this->lookupCustomCode($path.$key.':', $value, $codes);
+            } elseif (is_array($value)) {
+                $codes = $this->lookupCustomCode($path . $key . ':', $value, $codes);
             }
         }
         return $codes;
@@ -1180,7 +1225,7 @@ class HealthCheckScanner
     {
         $this->log("Checking $deffile for custom code");
         $defs = $this->loadFromFile($deffile, $varname);
-        if(empty($defs)) {
+        if (empty($defs)) {
             return;
         }
 
@@ -1189,8 +1234,8 @@ class HealthCheckScanner
         $defs_code = $this->lookupCustomCode('', $defs, array());
         $orig_code = $this->lookupCustomCode('', $origdefs, array());
         $foundCustomCode = array();
-        foreach($defs_code as $code => $places) {
-            if(!isset($orig_code[$code])) {
+        foreach ($defs_code as $code => $places) {
+            if (!isset($orig_code[$code])) {
                 $foundCustomCode[$code] = $places;
             }
         }
@@ -1198,13 +1243,38 @@ class HealthCheckScanner
         // We found something, do more precise check through all available history
         if (!empty($foundCustomCode) && !empty($history)) {
 
-            $historyFiles = array_filter($history, function ($fileName) use ($deffile) {
-                return (strpos(basename($fileName), basename($deffile, '.php')) !== false);
-            });
+            $historyFiles = array_filter(
+                $history,
+                function ($fileName) use ($deffile) {
+                    return (strpos(basename($fileName), basename($deffile, '.php')) !== false);
+                }
+            );
 
             $allHistoryCode = array();
             foreach ($historyFiles as $file) {
+                //for history files check internal functions and replace them with random names CRYS-498
+                $tmpName = tempnam(sys_get_temp_dir(), $file);
+                if ($tmpName && is_writable($tmpName) && file_exists($file)) {
+                    $tmpContents = file_get_contents($file);
+                    $matches = array();
+                    if (preg_match_all('/function\s+(\w+)\s*\(/', $tmpContents, $matches) && isset($matches[1])) {
+
+                        $tmpContents = str_replace($matches[1], array_map(function ($value) use ($tmpName) {
+                            return $value . md5($tmpName);
+                        }, $matches[1]), $tmpContents);
+
+                        if (file_put_contents($tmpName, $tmpContents)) {
+                            $file = $tmpName;
+                        }
+                    }
+                }
+
                 $historyDefs = $this->loadFromFile($file, $varname);
+
+                if ($tmpName) {
+                    @unlink($tmpName);
+                }
+
                 $historyCode = $this->lookupCustomCode('', $historyDefs, array());
                 $allHistoryCode = array_merge($allHistoryCode, $historyCode);
             }
@@ -1214,7 +1284,7 @@ class HealthCheckScanner
 
         // finally output status, if there is any
         foreach ($foundCustomCode as $code => $places) {
-            $this->updateStatus("foundCustomCode", $code, $places);
+            $this->updateStatus("foundCustomCode", $code, $places, $deffile);
         }
     }
 
@@ -1227,17 +1297,18 @@ class HealthCheckScanner
      */
     protected function isValidLink($module, $object, $link)
     {
-        if(empty($GLOBALS['dictionary'][$object]['fields'])) {
+        if (empty($GLOBALS['dictionary'][$object]['fields'])) {
             VardefManager::loadVardef($module, $object);
         }
-        if(empty($GLOBALS['dictionary'][$object]['fields'])) {
+        if (empty($GLOBALS['dictionary'][$object]['fields'])) {
             // weird, we could not load vardefs for this link
             $this->log("Failed to load vardefs for $module:$object");
             return false;
         }
-        if(empty($GLOBALS['dictionary'][$object]['fields'][$link]) ||
+        if (empty($GLOBALS['dictionary'][$object]['fields'][$link]) ||
             empty($GLOBALS['dictionary'][$object]['fields'][$link]['type']) ||
-            $GLOBALS['dictionary'][$object]['fields'][$link]['type'] != 'link') {
+            $GLOBALS['dictionary'][$object]['fields'][$link]['type'] != 'link'
+        ) {
             return false;
         }
         return true;
@@ -1252,7 +1323,7 @@ class HealthCheckScanner
     {
         $layoutDefs = $this->loadFromFile($deffile, 'layout_defs');
         // get defs regardless of the module_name since it can be plural or singular, but we don't care here
-        if(!$layoutDefs) {
+        if (!$layoutDefs) {
             return;
         }
         $defs = $layoutDefs[key($layoutDefs)];
@@ -1262,8 +1333,9 @@ class HealthCheckScanner
         $this->log("Checking subpanel file $deffile");
         // check 'get_subpanel_data' contains not applicable in Sidecar 'function:...' value
         foreach ($defs['subpanel_setup'] as $panel) {
-            if(!empty($panel['module']) && ($panel['module'] == 'Activities' || $panel['module'] == 'History')
-                && isset($panel['collection_list'])) {
+            if (!empty($panel['module']) && ($panel['module'] == 'Activities' || $panel['module'] == 'History')
+                && isset($panel['collection_list'])
+            ) {
                 // skip activities/history, upgrader will take care of them
                 continue;
             }
@@ -1276,14 +1348,24 @@ class HealthCheckScanner
             if (!empty($panel['get_subpanel_data']) && strpos($panel['get_subpanel_data'], 'function:') !== false) {
                 $this->updateStatus("subPanelWithFunction", $deffile);
             }
-            if (!empty($panel['get_subpanel_data']) && !$this->isValidLink($module, $object, $panel['get_subpanel_data'])) {
+            if (!empty($panel['get_subpanel_data']) && !$this->isValidLink(
+                    $module,
+                    $object,
+                    $panel['get_subpanel_data']
+                )
+            ) {
                 $this->updateStatus("badSubpanelLink", $panel['get_subpanel_data'], $deffile);
             }
         }
     }
 
-    protected $knownWidgetClasses = array('SubPanelDetailViewLink', 'SubPanelEmailLink',
-        'SubPanelEditButton', 'SubPanelRemoveButton', 'SubPanelIcon', 'SubPanelDeleteButton',
+    protected $knownWidgetClasses = array(
+        'SubPanelDetailViewLink',
+        'SubPanelEmailLink',
+        'SubPanelEditButton',
+        'SubPanelRemoveButton',
+        'SubPanelIcon',
+        'SubPanelDeleteButton',
     );
 
     /**
@@ -1297,42 +1379,41 @@ class HealthCheckScanner
      */
     protected function checkListFields($deffile, $varname, $subvarname, $module, $object)
     {
-        if(!$object) {
+        if (!$object) {
             return true;
         }
 
         $this->log("Checking $deffile for bad list fields");
 
-        if(empty($GLOBALS['dictionary'][$object])) {
+        if (empty($GLOBALS['dictionary'][$object])) {
             VardefManager::loadVardef($module, $object);
         }
 
-        if(empty($GLOBALS['dictionary'][$object]['fields'])) {
+        if (empty($GLOBALS['dictionary'][$object]['fields'])) {
             // weird module, no fields, skip
             return true;
         }
         $vardefs = $GLOBALS['dictionary'][$object]['fields'];
 
         $defs = $this->loadFromFile($deffile, $varname);
-        if(empty($defs)) {
+        if (empty($defs)) {
             return true;
         }
-        if($subvarname) {
-            if(empty($defs[$subvarname])) {
+        if ($subvarname) {
+            if (empty($defs[$subvarname])) {
                 return true;
             }
             $defs = $defs[$subvarname];
         }
-        foreach($defs as $key => $data)
-        {
-            if(!empty($data['usage'])) {
+        foreach ($defs as $key => $data) {
+            if (!empty($data['usage'])) {
                 // it's a query field, skip it, converter will take care of them
                 continue;
             }
             $key = strtolower($key);
-            if(!empty($data['widget_class']) && !in_array($data['widget_class'], $this->knownWidgetClasses)) {
-                if(!file_exists("include/generic/SugarWidgets/SugarWidget{$data['widget_class']}.php")) {
-                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key, $module);
+            if (!empty($data['widget_class']) && !in_array($data['widget_class'], $this->knownWidgetClasses)) {
+                if (!file_exists("include/generic/SugarWidgets/SugarWidget{$data['widget_class']}.php")) {
+                    $this->updateStatus("unknownWidgetClass", $data['widget_class'], $key, $module, $deffile);
                 }
             }
             // Unknown fields handled by CRYS-36, so no more checks here
@@ -1351,8 +1432,8 @@ class HealthCheckScanner
         $this->extractHooks("custom/modules/$module/logic_hooks.php", $hook_files);
         $this->extractHooks("custom/modules/$module/Ext/LogicHooks/logichooks.ext.php", $hook_files);
 
-        foreach($hook_files as $hookname => $hooks) {
-            foreach($hooks as $hook_data) {
+        foreach ($hook_files as $hookname => $hooks) {
+            foreach ($hooks as $hook_data) {
                 $this->log("Checking module hook $hookname:{$hook_data[1]}");
                 $this->checkFileForOutput($hook_data[2], $status);
             }
@@ -1373,7 +1454,12 @@ class HealthCheckScanner
 
         $this->setupHealthCheckModule();
 
-        return array_map(function ($m) { return substr($m, 8); /* cut off modules/ */ }, glob("modules/*", GLOB_ONLYDIR));
+        return array_map(
+            function ($m) {
+                return substr($m, 8); /* cut off modules/ */
+            },
+            glob("modules/*", GLOB_ONLYDIR)
+        );
     }
 
 
@@ -1396,7 +1482,7 @@ class HealthCheckScanner
         $this->db = DBManagerFactory::getInstance();
 
         $md5_string = array();
-        if(!file_exists('files.md5')) {
+        if (!file_exists('files.md5')) {
             return $this->fail("files.md5 not found");
         }
 
@@ -1414,18 +1500,18 @@ class HealthCheckScanner
     protected function isNewModule($module)
     {
         $object = $this->beanList[$module];
-        if(empty($this->beanFiles[$object])) {
+        if (empty($this->beanFiles[$object])) {
             // no bean file - check directly
-            foreach($this->glob("modules/$module/*") as $file) {
+            foreach ($this->glob("modules/$module/*") as $file) {
                 // if any file from this dir mentioned in md5 - not a new module
-                if(!empty($this->md5_files["./$file"])) {
+                if (!empty($this->md5_files["./$file"])) {
                     return false;
                 }
             }
             return true;
         }
 
-        if(empty($this->md5_files["./".$this->beanFiles[$object]])) {
+        if (empty($this->md5_files["./" . $this->beanFiles[$object]])) {
             // no mention of the bean in files.md5 - new module
             return true;
         }
@@ -1435,10 +1521,10 @@ class HealthCheckScanner
 
     public function getResultCode()
     {
-        if($this->exit_status == self::FAIL) {
+        if ($this->exit_status == self::FAIL) {
             return self::FAIL;
         }
-        return ord($this->status)-ord(HealthCheckScannerMeta::VANILLA);
+        return ord($this->status) - ord(HealthCheckScannerMeta::VANILLA);
     }
 
     /**
@@ -1449,10 +1535,10 @@ class HealthCheckScanner
     protected function getPhpFiles($path)
     {
         $data = array();
-        if(!is_dir($path)) {
+        if (!is_dir($path)) {
             return array();
         }
-        $path = rtrim($path, "/")."/";
+        $path = rtrim($path, "/") . "/";
         $iter = new DirectoryIterator("./" . $path);
         foreach ($iter as $item) {
             if ($item->isDot()) {
@@ -1469,7 +1555,7 @@ class HealthCheckScanner
             if ($item->isDir() && in_array($filename, $this->excludedScanDirectories)) {
                 continue;
             } elseif ($item->isDir()) {
-                if(strtolower($filename) == 'disable' || strtolower($filename) == 'disabled') {
+                if (strtolower($filename) == 'disable' || strtolower($filename) == 'disabled') {
                     // skip disable dirs
                     continue;
                 }
@@ -1477,7 +1563,7 @@ class HealthCheckScanner
             } elseif (!preg_match('/php(_\d+)?\b/', $extension)) {
                 // we need only php and php Studio-history (.php_{timestamp} extension) files
                 continue;
-            } elseif(!in_array($path . $filename, $this->ignoredFiles)) {
+            } elseif (!in_array($path . $filename, $this->ignoredFiles)) {
                 $data[] = $path . $filename;
             }
         }
@@ -1488,44 +1574,36 @@ class HealthCheckScanner
     /**
      * Extract hook filenames from logic hook file and put them into hook files list
      * @param string $hookfile
-     * @param array &$hook_files
+     * @param array &$hooks_array
+     * @param bool $detectAfterUiHooks should we log after_ui_footer & after_ui_frame hooks if they are present in file
      */
-    protected function extractHooks($hookfile, &$hook_array)
+    protected function extractHooks($hookfile, &$hooks_array, $detectAfterUiHooks = false)
     {
         $hook_array = array();
-        if(!is_readable($hookfile)) {
+        if (!is_readable($hookfile)) {
             return;
         }
         ob_start();
         include $hookfile;
         ob_end_clean();
-        if(empty($hook_array)) {
+        if (empty($hook_array)) {
             return;
         }
-        foreach($hook_array as $hooks) {
-            foreach($hooks as $hook) {
-                if(!file_exists($hook[2])) {
+        if ($detectAfterUiHooks && !empty($hook_array['after_ui_footer'])) {
+            $this->updateStatus("logicHookAfterUIFooter", $hookfile);
+        }
+        if ($detectAfterUiHooks && !empty($hook_array['after_ui_frame'])) {
+            $this->updateStatus("logicHookAfterUIFrame", $hookfile);
+        }
+        foreach ($hook_array as $hooks) {
+            foreach ($hooks as $hook) {
+                if (!file_exists($hook[2])) {
                     // putting it as custom since LogicHook checks file_exists
                     $this->updateStatus("badHookFile", $hookfile, $hook[2]);
-                } else {
-                    $this->checkHookByRef($hook[2]);
                 }
             }
         }
-    }
-
-    /**
-     * Check logic hook file for by-ref parameters
-     * NOTE: not currently used
-     * @param string $filename
-     */
-    protected function checkHookByRef($filename)
-    {
-        $cont = file_get_contents($filename);
-        $matches = array();
-        if(preg_match('#function\s+(\w+)\s*\(\s*&\$bean\s*,#i', $cont, $matches)) {
-            $this->updateStatus("byRefInHookFile", $filename, $matches[1]);
-        }
+        $hooks_array = array_merge($hooks_array, $hook_array);
     }
 
     /**
@@ -1536,8 +1614,11 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile, $status)
     {
+        if (in_array($phpfile, $this->ignoreOutputCheckFiles)) {
+            return;
+        }
         $contents = file_get_contents($phpfile);
-        if(!empty($this->md5_files["./".$phpfile]) && $this->md5_files["./".$phpfile] === md5($contents)) {
+        if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
             return;
         }
@@ -1553,7 +1634,8 @@ ENDP;
         foreach ($tokens as $index => $token) {
             if (is_array($token)) {
                 if ($token[0] == T_INLINE_HTML) {
-                    $args = array('inlineHtml', $phpfile, $token[2]);
+                    $inlineHTMLStatus = (strlen(trim($token[1])) != 0) ? 'inlineHtml' : 'inlineHtmlSpacing';
+                    $args = array($inlineHTMLStatus, $phpfile, $token[2]);
                 } elseif ($token[0] == T_ECHO) {
                     $args = array('foundEcho', $phpfile, $token[2]);
                 } elseif ($token[0] == T_PRINT) {
@@ -1568,9 +1650,6 @@ ENDP;
                     $args = array('inlineHtml', $token[1], $phpfile, $token[2]);
                 } else {
                     continue;
-                }
-                if($status == HealthCheckScannerMeta::CUSTOM) {
-                    $args[0] = $args[0] . 'Custom';
                 }
                 call_user_func_array(array($this, 'updateStatus'), $args);
             }
@@ -1638,7 +1717,15 @@ ENDP;
         $this->log("PHP: [$errno] $errstr in $errfile at $errline", 'ERROR');
     }
 
-    public $names = array('Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin', 'Death Eater', 'Voldemort', 'Dumbledore');
+    public $names = array(
+        'Gryffindor',
+        'Hufflepuff',
+        'Ravenclaw',
+        'Slytherin',
+        'Death Eater',
+        'Voldemort',
+        'Dumbledore'
+    );
 
     /* Copypaste from 6_ScanModules */
 
@@ -1650,12 +1737,12 @@ ENDP;
     protected function isMBModule($module_name)
     {
         $module_dir = "modules/$module_name";
-        if(empty($this->beanList[$module_name])) {
+        if (empty($this->beanList[$module_name])) {
             // if this is not a deployed one, don't bother
             return false;
         }
         $bean = $this->beanList[$module_name];
-        if(empty($this->beanFiles[$bean])) {
+        if (empty($this->beanFiles[$bean])) {
             return false;
         }
 
@@ -1664,7 +1751,7 @@ ENDP;
 
         $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients", "workflow");
         $mbFiles[] = basename($this->beanFiles[$bean]);
-        $mbFiles[] = pathinfo($this->beanFiles[$bean], PATHINFO_FILENAME)."_sugar.php";
+        $mbFiles[] = pathinfo($this->beanFiles[$bean], PATHINFO_FILENAME) . "_sugar.php";
 
         // to make checks faster
         $mbFiles = array_flip($mbFiles);
@@ -1673,8 +1760,8 @@ ENDP;
         $this->extractHooks("custom/$module_dir/logic_hooks.php", $hook_files);
         $this->extractHooks("custom/$module_dir/Ext/LogicHooks/logichooks.ext.php", $hook_files);
         $hook_files_list = array();
-        foreach($hook_files as $hookname => $hooks) {
-            foreach($hooks as $hook_data) {
+        foreach ($hook_files as $hookname => $hooks) {
+            foreach ($hooks as $hook_data) {
                 $hook_files_list[] = $hook_data[2];
             }
         }
@@ -1683,14 +1770,14 @@ ENDP;
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
-        foreach($this->glob("$module_dir/*") as $file) {
-            if(isset($hook_files[$file])) {
+        foreach ($this->glob("$module_dir/*") as $file) {
+            if (isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
             }
-            if(basename($file) == "views") {
+            if (basename($file) == "views") {
                 // check views separately because of file template that has view.edit.php
-                if(!$this->checkViewsDir("$module_dir/views")) {
+                if (!$this->checkViewsDir("$module_dir/views")) {
                     $this->updateStatus("unknownFileViews", $module_name);
                     return false;
                 } else {
@@ -1704,7 +1791,7 @@ ENDP;
                 }
                 continue;
             }
-            if(!isset($mbFiles[basename($file)])) {
+            if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
                 $this->updateStatus("isNotMBModule", $file, $module_name);
                 return false;
@@ -1715,25 +1802,31 @@ ENDP;
         $mbFiles['logic_hooks.php'] = true;
 
         // now check custom/ for unknown files
-        foreach($this->glob("custom/$module_dir/*") as $file) {
-            if(isset($hook_files[$file])) {
+        foreach ($this->glob("custom/$module_dir/*") as $file) {
+            if (isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
             }
-            if(!isset($mbFiles[basename($file)])) {
+            if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
                 $this->updateStatus("isNotMBModule", $file, $module_name);
                 return false;
             }
         }
-        $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
-                "FileAccessControlMap", "WirelessModuleRegistry");
+        $badExts = array(
+            "ActionViewMap",
+            "ActionFileMap",
+            "ActionReMap",
+            "EntryPointRegistry",
+            "FileAccessControlMap",
+            "WirelessModuleRegistry"
+        );
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
-        foreach($this->glob("custom/$module_dir/Ext/*") as $extdir) {
-            if(isset($badExts[basename($extdir)])) {
+        foreach ($this->glob("custom/$module_dir/Ext/*") as $extdir) {
+            if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
-                if(!empty($extfiles)) {
+                if (!empty($extfiles)) {
                     $this->updateStatus("extensionDirDetected", $extdir, $module_name);
                     return false;
                 }
@@ -1751,15 +1844,15 @@ ENDP;
      */
     protected function checkViewsDir($view_dir)
     {
-        foreach($this->glob("$view_dir/*") as $file) {
+        foreach ($this->glob("$view_dir/*") as $file) {
             // for now we allow only view.edit.php
-            if(basename($file) != 'view.edit.php') {
+            if (basename($file) != 'view.edit.php') {
                 $this->updateStatus("unknownFile", $view_dir, $file);
                 return false;
             }
             $data = file_get_contents($file);
             // start with first {
-            $data= substr($data, strpos($data, '{'));
+            $data = substr($data, strpos($data, '{'));
             // drop function names
             $data = preg_replace('/function\s[<>_\w]+/', '', $data);
             // drop whitespace
@@ -1768,7 +1861,7 @@ ENDP;
              * {(){parent::ViewEdit();}(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}?>
             * md5 is: c8251f6b50e3e814135c936f6b5292eb
             */
-            if(md5($data) !== 'c8251f6b50e3e814135c936f6b5292eb') {
+            if (md5($data) !== 'c8251f6b50e3e814135c936f6b5292eb') {
                 $this->updateStatus("badMd5", $file);
                 return false;
             }
@@ -1799,7 +1892,7 @@ ENDP;
     protected function checkFields($key, $fields, $fieldDefs, $custom = '')
     {
         foreach ($fields as $subField) {
-            if(empty($fieldDefs[$subField])) {
+            if (empty($fieldDefs[$subField])) {
                 $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
             }
         }
@@ -1827,22 +1920,22 @@ ENDP;
     protected function checkVardefs($module, $object, $stock = false, $status = HealthCheckScannerMeta::STUDIO_MB_BWC)
     {
         $custom = '';
-        if($status == HealthCheckScannerMeta::CUSTOM) {
+        if ($status == HealthCheckScannerMeta::CUSTOM) {
             $custom = 'Custom';
         }
 
-        if($module == 'DynamicFields') {
+        if ($module == 'DynamicFields') {
             // this one is an odd one
             return true;
         }
         $this->log("Checking vardefs for $module");
         VardefManager::loadVardef($module, $object);
-        if(empty($GLOBALS['dictionary'][$object]['fields'])) {
+        if (empty($GLOBALS['dictionary'][$object]['fields'])) {
             $this->log("Failed to load vardefs for $module:$object");
             return true;
         }
         $seed = BeanFactory::getBean($module);
-        if(empty($seed)) {
+        if (empty($seed)) {
             $this->log("Failed to instantiate bean for $module, not checking vardefs");
             return true;
         }
@@ -1853,13 +1946,12 @@ ENDP;
         $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
         $stockFields = array_keys($stockFields[$seed->object_name]['fields']);
 
-
-        foreach($fieldDefs as $key => $value) {
-            if(!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
+        foreach ($fieldDefs as $key => $value) {
+            if (!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
                 continue;
             }
-            if(empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey" . $custom, $key, $value['name']);
+            if (empty($value['name']) || $key != $value['name']) {
+                $this->updateStatus("badVardefsKey", $key, $value['name']);
                 continue;
             }
 
@@ -1875,9 +1967,9 @@ ENDP;
                 }
             }
 
-            if($key == 'team_name') {
+            if ($key == 'team_name') {
                 if (empty($value['module'])) {
-                    $this->updateStatus("badVardefsRelate" . $custom, $key);
+                    $this->updateStatus("badVardefsRelate", $key);
                 }
                 // this field is really weird, let's leave it alone for now
                 continue;
@@ -1886,13 +1978,16 @@ ENDP;
             if (!empty($value['function']['returns']) &&    // there is function in vardefs
                 $value['function']['returns'] == 'html' &&  // that returns html
                 !isset($this->templateFields[$key]) &&      // and field isn't in white-list
-                (!$stock || !in_array($key, $stockFields))  // and it is non-stock module or it is stock module but field is non-stock
+                (!$stock || !in_array(
+                        $key,
+                        $stockFields
+                    ))  // and it is non-stock module or it is stock module but field is non-stock
             ) {
                 $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $key);
             }
 
-            if(!empty($value['type'])) {
-                switch($value['type']) {
+            if (!empty($value['type'])) {
+                switch ($value['type']) {
                     case 'date' :
                     case 'datetime' :
                     case 'time' :
@@ -1902,7 +1997,7 @@ ENDP;
                         break;
                     case 'enum':
                     case 'multienum':
-                        if(!empty($value['function']['returns']) && $value['function']['returns'] == 'html') {
+                        if (!empty($value['function']['returns']) && $value['function']['returns'] == 'html') {
                             // found html functional field
                             $this->updateStatus("vardefHtmlFunction" . $custom, $key);
                         }
@@ -1910,7 +2005,8 @@ ENDP;
                         // Check option-list multienum fields
                         if ($value['type'] == 'multienum'
                             && !empty($value['options'])
-                            && !empty($GLOBALS['app_list_strings'][$value['options']])) {
+                            && !empty($GLOBALS['app_list_strings'][$value['options']])
+                        ) {
 
                             $optionKeys = array_keys($GLOBALS['app_list_strings'][$value['options']]);
                             // Strip all valid characters in dropdown keys - a-zA-Z0-9. and spaces
@@ -1927,40 +2023,41 @@ ENDP;
                         break;
                     case 'link':
                         $seed->load_relationship($key);
-                        if(empty($seed->$key)) {
+                        if (empty($seed->$key)) {
                             $this->updateStatus("badVardefsLink", $key);
                         }
                         break;
                     case 'relate':
-                        if(!empty($value['link'])) {
+                        if (!empty($value['link'])) {
                             $lname = $value['link'];
-                            if(empty($fieldDefs[$lname])) {;
+                            if (empty($fieldDefs[$lname])) {
+                                ;
                                 $this->updateStatus("badVardefsKey", $key, $lname);
                                 break;
                             }
                             $seed->load_relationship($lname);
-                            if(empty($seed->$lname)) {
+                            if (empty($seed->$lname)) {
                                 $this->updateStatus("badVardefsRelate", $key);
                                 break;
                             }
                             $relatedModuleName = $seed->$lname->getRelatedModuleName();
-                            if(empty($relatedModuleName)) {
+                            if (empty($relatedModuleName)) {
                                 break;
                             }
                             $relatedBean = BeanFactory::newBean($relatedModuleName);
-                            if(empty($relatedBean)) {
+                            if (empty($relatedBean)) {
                                 break;
                             }
                         }
                         if ((empty($value['link_type']) || $value['link_type'] != 'relationship_info') &&
                             empty($value['module'])) {
-                            $this->updateStatus("badVardefsRelate" . $custom, $key);
+                            $this->updateStatus("badVardefsRelate", $key);
                         }
                         break;
                 }
             }
 
-            if(empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
+            if (empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
                     $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
@@ -1970,8 +2067,8 @@ ENDP;
                     $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
                 }
                 // check sort_on
-                if(!empty($value['sort_on'])) {
-                    if(is_array($value['sort_on'])) {
+                if (!empty($value['sort_on'])) {
+                    if (is_array($value['sort_on'])) {
                         $sort = $value['sort_on'];
                     } else {
                         $sort = array($value['sort_on']);
@@ -1993,7 +2090,7 @@ ENDP;
      */
     protected function ping($data)
     {
-        $url = $this->ping_url."?".http_build_query($data);
+        $url = $this->ping_url . "?" . http_build_query($data);
         @file_get_contents($url);
     }
 
@@ -2001,25 +2098,101 @@ ENDP;
      * List of standard BWC modules
      * @var array
      */
-    protected $bwcModules = array('ACLFields','ACLRoles','ACLActions',
-            'Administration','Audit','Calendar','Calls','CampaignLog','Campaigns',
-            'CampaignTrackers','Charts','Configurator','Contracts','ContractTypes',
-            'Connectors','Currencies','CustomQueries','DataSets','DocumentRevisions',
-            'Documents','EAPM','EmailAddresses','EmailMarketing','EmailMan','Emails',
-            'EmailTemplates','Employees','Exports','Expressions','Groups','History',
-            'Holidays','iCals','Import','InboundEmail','KBContents','KBDocuments',
-            'KBDocumentRevisions','KBTags','KBDocumentKBTags','KBContents',
-            'Manufacturers','Meetings','MergeRecords','ModuleBuilder','MySettings',
-            'OAuthKeys','OptimisticLock','OutboundEmailConfiguration','PdfManager',
-            'ProductBundleNotes','ProductBundles','ProductTypes','Project',
-            'ProjectResources','ProjectTask','Quotes','QueryBuilder','Relationships',
-            'Releases','ReportMaker','Reports','Roles','SavedSearch','Schedulers',
-            'SchedulersJobs','Shippers','SNIP','Studio','SugarFavorites','TaxRates',
-            'Teams','TeamMemberships','TeamSets','TeamSetModules','TeamNotices',
-            'TimePeriods','Trackers','TrackerSessions','TrackerPerfs',
-            'TrackerQueries','UserPreferences','UserSignatures','Users','vCals',
-            'vCards','Versions','WorkFlow','WorkFlowActions','WorkFlowActionShells',
-            'WorkFlowAlerts','WorkFlowAlertShells','WorkFlowTriggerShells', 'HealthCheck',
+    protected $bwcModules = array(
+        'ACLFields',
+        'ACLRoles',
+        'ACLActions',
+        'Administration',
+        'Audit',
+        'Calendar',
+        'Calls',
+        'CampaignLog',
+        'Campaigns',
+        'CampaignTrackers',
+        'Charts',
+        'Configurator',
+        'Contracts',
+        'ContractTypes',
+        'Connectors',
+        'Currencies',
+        'CustomQueries',
+        'DataSets',
+        'DocumentRevisions',
+        'Documents',
+        'EAPM',
+        'EmailAddresses',
+        'EmailMarketing',
+        'EmailMan',
+        'Emails',
+        'EmailTemplates',
+        'Employees',
+        'Exports',
+        'Expressions',
+        'Groups',
+        'History',
+        'Holidays',
+        'iCals',
+        'Import',
+        'InboundEmail',
+        'KBContents',
+        'KBDocuments',
+        'KBDocumentRevisions',
+        'KBTags',
+        'KBDocumentKBTags',
+        'KBContents',
+        'Manufacturers',
+        'Meetings',
+        'MergeRecords',
+        'ModuleBuilder',
+        'MySettings',
+        'OAuthKeys',
+        'OptimisticLock',
+        'OutboundEmailConfiguration',
+        'PdfManager',
+        'ProductBundleNotes',
+        'ProductBundles',
+        'ProductTypes',
+        'Project',
+        'ProjectResources',
+        'ProjectTask',
+        'Quotes',
+        'QueryBuilder',
+        'Relationships',
+        'Releases',
+        'ReportMaker',
+        'Reports',
+        'Roles',
+        'SavedSearch',
+        'Schedulers',
+        'SchedulersJobs',
+        'Shippers',
+        'SNIP',
+        'Studio',
+        'SugarFavorites',
+        'TaxRates',
+        'Teams',
+        'TeamMemberships',
+        'TeamSets',
+        'TeamSetModules',
+        'TeamNotices',
+        'TimePeriods',
+        'Trackers',
+        'TrackerSessions',
+        'TrackerPerfs',
+        'TrackerQueries',
+        'UserPreferences',
+        'UserSignatures',
+        'Users',
+        'vCals',
+        'vCards',
+        'Versions',
+        'WorkFlow',
+        'WorkFlowActions',
+        'WorkFlowActionShells',
+        'WorkFlowAlerts',
+        'WorkFlowAlertShells',
+        'WorkFlowTriggerShells',
+        'HealthCheck',
     );
 
     /**
@@ -2027,15 +2200,42 @@ ENDP;
      * @var array
      */
     protected $newModules = array(
-                    'Comments' => 'Comments',
-                    'Filters' => 'Filters',
-                    'RevenueLineItems' => 'Revenue Line Items',
-                    'Styleguide' => 'Styleguide',
-                    'Subscriptions' => 'Subscriptions',
-                    'UserSignatures' => 'User Signatures',
-                    'WebLogicHooks' => 'Web Logic Hooks',
-                    'Words' => 'Words',
+        'Comments' => 'Comments',
+        'Filters' => 'Filters',
+        'RevenueLineItems' => 'Revenue Line Items',
+        'Styleguide' => 'Styleguide',
+        'Subscriptions' => 'Subscriptions',
+        'UserSignatures' => 'User Signatures',
+        'WebLogicHooks' => 'Web Logic Hooks',
+        'Words' => 'Words',
     );
+
+    /**
+     * Returns array that contains build and version
+     */
+    public function getVersion()
+    {
+        global $sugar_version, $sugar_build;
+        $version = array(
+            'version' => 'N/A',
+            'build' => 'N/A'
+        );
+        if (file_exists(__DIR__ . '/' . self::VERSION_FILE)) {
+            $json = file_get_contents(__DIR__ . '/' . self::VERSION_FILE);
+            $data = json_decode($json, true);
+            $version = array_merge($version, $data);
+        } elseif ($sugar_version && $sugar_build) {
+            $version = array_merge(
+                $version,
+                array(
+                    'version' => $sugar_version,
+                    'build' => $sugar_build
+                )
+            );
+        }
+        return array($version['version'], $version['build']);
+
+    }
 }
 
 /**
@@ -2045,8 +2245,18 @@ ENDP;
 class BlackHole
 {
     protected $called;
-    public function __get($v) { $this->called = true; return null; }
-    public function __call($n, $a) { $this->called = true; return null; }
+
+    public function __get($v)
+    {
+        $this->called = true;
+        return null;
+    }
+
+    public function __call($n, $a)
+    {
+        $this->called = true;
+        return null;
+    }
 }
 
 /**
@@ -2058,14 +2268,15 @@ class BlackHole
  */
 class FileLoaderWrapper extends BlackHole
 {
-    public function loadFile($deffile, $varname) {
+    public function loadFile($deffile, $varname)
+    {
         ob_start();
         @include $deffile;
         ob_end_clean();
-        if($this->called) {
+        if ($this->called) {
             return false;
         }
-        if(empty($$varname)) {
+        if (empty($$varname)) {
             return null;
         }
         return $$varname;
