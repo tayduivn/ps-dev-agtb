@@ -300,6 +300,16 @@
 		</td>
 
 	</tr>
+    <tr>
+        <td  scope="row">{$MOD.LBL_NO_PRIVATE_TEAM_UPDATE}: </td>
+        {if !empty($config.noPrivateTeamUpdate)}
+            {assign var='noPrivateTeamUpdateChecked' value='CHECKED'}
+        {else}
+            {assign var='noPrivateTeamUpdateChecked' value=''}
+        {/if}
+        <td ><input type='hidden' name='noPrivateTeamUpdate' value='false'><input name='noPrivateTeamUpdate'  type="checkbox" value='true' {$noPrivateTeamUpdateChecked}></td>
+    </tr>
+
 
 
 
