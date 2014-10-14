@@ -526,6 +526,7 @@ class HealthCheckScanner
         }
 
         // check non-upgrade-safe customizations by verifying md5's
+        /*
         $this->log("Comparing md5 sums");
         $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log)#";
         $skip_files = array(
@@ -548,7 +549,9 @@ class HealthCheckScanner
                 $this->updateStatus("md5Mismatch", $file, $sum);
             }
             */
+        /*
         }
+        */
 
         foreach ($this->getModuleList() as $module) {
             $this->log("Checking module $module");
