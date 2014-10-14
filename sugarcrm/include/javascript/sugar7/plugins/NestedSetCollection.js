@@ -27,6 +27,21 @@
             children: null,
 
             /**
+             * {@inheritDoc}
+             */
+            initialize: function(models, options) {
+                app.BeanCollection.prototype.initialize.call(this, models, options);
+                this.on('sync', function(model, data, options, request) {
+                    if (!_.isUndefined(model.children.rootCollection)) {
+                        app.events.trigger(
+                            'app:nestedset:sync:complete',
+                            model.children.rootCollection
+                        );
+                    }
+                });
+            },
+
+            /**
              * Create callback object.
              * @param {Object} options
              * @return {Object} Callbacks.
