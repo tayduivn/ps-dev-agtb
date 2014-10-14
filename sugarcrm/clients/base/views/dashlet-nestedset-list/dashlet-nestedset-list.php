@@ -21,6 +21,10 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
                 'data_provider' => 'Categories',
                 'config_provider' => 'KBSDocuments',
                 'root_name' => 'category_root',
+                'extra_provider' => array(
+                    'module' => 'KBSContents',
+                    'field' => 'category_id',
+                ),
             ),
             'preview' => array(
                 'data_provider' => 'Categories',
@@ -31,7 +35,6 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
                 'module' => array(
                     'KBSContents',
                     'KBSContentTemplates',
-                    'KBSContentTemplates',
                 ),
                 'view' => array(
                     'record',
@@ -39,30 +42,6 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
                 ),
             ),
         )
-    ),
-    'custom_toolbar' => array(
-        'buttons' => array(
-            array(
-                'dropdown_buttons' => array(
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'editClicked',
-                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
-                    ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'toggleClicked',
-                        'label' => 'LBL_DASHLET_MINIMIZE',
-                        'event' => 'minimize',
-                    ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'removeClicked',
-                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
-                    ),
-                ),
-            ),
-        ),
     ),
     'config' => array (
     ),

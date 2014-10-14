@@ -8,6 +8,16 @@
         &:nth-last-child(1) {
           border-bottom: none;
         }
+        &.jstree-leaf > ins {
+          &:before {
+            content: "\f114";
+          }
+          &.leaf:before {
+            content: "\f006";
+          }
+
+
+        }
       }
     }
     li > a {
@@ -54,11 +64,6 @@
         &.jstree-contextmenu,
         &.jstree-addnode {
           padding: 4px;
-        }
-      }
-      .jstree-icon {
-        &:before {
-          content: "\f114";
         }
       }
     }
