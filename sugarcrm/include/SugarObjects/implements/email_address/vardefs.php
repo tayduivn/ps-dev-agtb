@@ -70,6 +70,7 @@ $vardefs = array(
 		    'studio' => 'false',
             'duplicate_on_record_copy' => 'always',
             'importable' => false,
+            'workflow' => false,
 		),
         'invalid_email' => array(
 			'name'		=> 'invalid_email',

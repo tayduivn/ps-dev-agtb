@@ -261,30 +261,19 @@ class Project extends SugarBean {
 
 		$i=0;
 		$userResourceArr = "var userResourceArr = document.getElementById('person_id').options;\n";
-        //set the dropdown to '-none', or retrieve User Resources
-        if(empty($userResources)){
-                $userResourceOptions .= "var userResource$i = new Option('".$GLOBALS['app_strings']['LBL_NONE']."', '');\n";
-                $userResourceOptions .= "userResourceArr[userResourceArr.length] = userResource$i;\n";
-        }else{
-            foreach($userResources as $userResource){
-                $userResourceOptions .= "var userResource$i = new Option('$userResource->full_name', '$userResource->id');\n";
-                $userResourceOptions .= "userResourceArr[userResourceArr.length] = userResource$i;\n";
-                $i = $i+1;
-            }
-        }
+		foreach($userResources as $userResource){
+			$userResourceOptions .= "var userResource$i = new Option('$userResource->full_name', '$userResource->id');\n";
+			$userResourceOptions .= "userResourceArr[userResourceArr.length] = userResource$i;\n";
+			$i = $i+1;
+		}
+
 		$i=0;
 		$contactResourceArr = "var contactResourceArr = document.getElementById('person_id').options;\n";
-        //set the dropdown to '-none', or retrieve Contact Resources
-        if(empty($contactResources)){
-                $contactResourceOptions .= "var contactResource$i = new Option('".$GLOBALS['app_strings']['LBL_NONE']."', '');\n";
-                $contactResourceOptions .= "contactResourceArr[contactResourceArr.length] = contactResource$i;\n";
-        }else{
-            foreach($contactResources as $contactResource){
-                $contactResourceOptions .= "var contactResource$i = new Option('$contactResource->full_name', '$contactResource->id');\n";
-                $contactResourceOptions .= "contactResourceArr[contactResourceArr.length] = contactResource$i;\n";
-                $i = $i+1;
-            }
-        }
+		foreach($contactResources as $contactResource){
+			$contactResourceOptions .= "var contactResource$i = new Option('$contactResource->full_name', '$contactResource->id');\n";
+			$contactResourceOptions .= "contactResourceArr[contactResourceArr.length] = contactResource$i;\n";
+			$i = $i+1;
+		}
 
 		return "
 function showResourceSelect(){
@@ -296,7 +285,7 @@ function showResourceSelect(){
 	}
 	else{
 		if (document.getElementById('person_id') != null){
-			document.getElementById('resourceSelector').removeChild(document.getElementById('person_id'));
+			document.getElementById('resourceSelect').removeChild(document.getElementById('person_id'));
 		}
 	}
 }

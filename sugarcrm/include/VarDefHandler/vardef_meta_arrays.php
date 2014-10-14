@@ -46,7 +46,7 @@ $vardef_meta_array = array(
         ),
         'inc_override' => array(
             'type' => array('team_list', 'assigned_user_name'),
-            'name' => array('email1', 'email2', 'assigned_user_id'),
+            'name' => array('email1', 'assigned_user_id'),
             //end inc_override
         ),
         'ex_override' => array(
@@ -70,7 +70,7 @@ $vardef_meta_array = array(
         ),
         'inc_override' => array(
             'type' => array('team_list', 'assigned_user_name'),
-            'name' => array('email1', 'email2', 'assigned_user_id'),
+            'name' => array('email1', 'assigned_user_id'),
             //end inc_override
         ),
         'ex_override' => array(
@@ -141,7 +141,6 @@ $vardef_meta_array = array(
                 'time_start',
                 'date_start',
                 'email1',
-                'email2',
                 'date_due',
                 'is_optout'
             ),
@@ -300,7 +299,6 @@ $vardef_meta_array = array(
                 'created_by_name',
                 'full_name',
                 'email1',
-                'email2',
                 'team_name',
                 'shipper_name'
             ),
