@@ -11,9 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
-require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
-require_once 'modules/HealthCheck/HealthCheckClient.php';
+require_once 'modules/HealthCheck/HealthCheckHelper.php';
+
 
 /**
  *
@@ -23,14 +22,12 @@ require_once 'modules/HealthCheck/HealthCheckClient.php';
 class HealthCheckController extends SugarController
 {
     /**
-     *
      * @see SugarController::$action_remap
      * @var array
      */
     protected $action_remap = array();
 
     /**
-     *
      * Default action "index"
      */
     public function action_index()
@@ -39,7 +36,6 @@ class HealthCheckController extends SugarController
     }
 
     /**
-     *
      * Execute scan - returns json data
      */
     public function action_scan()
@@ -47,10 +43,10 @@ class HealthCheckController extends SugarController
         $this->view = 'ajax';
 
         // initialize scanner
-        $scanner = $this->getWebScanner();
+        $scanner = $this->getHelper()->getScanner('web');
         $scanner->setInstanceDir(__DIR__ . '/../..');
 
-        $hc = BeanFactory::getBean('HealthCheck')->run($scanner);
+        $hc = $this->bean->run($scanner);
         if (!empty($hc->error)) {
             echo json_encode(array('error' => $hc->error));
         } else {
@@ -58,37 +54,11 @@ class HealthCheckController extends SugarController
             echo $hc->logmeta;
         }
 
-        if($this->pingHeartbeat($hc)) {
+        if ($this->getHelper()->pingHeartbeat(array('bucket' => $hc->bucket, 'flag' => $hc->flag))) {
             $GLOBALS['log']->info("HealthCheck: Heartbeat server has been pinged successfully.");
         } else {
             $GLOBALS['log']->error("HealthCheck: Unable to ping Heartbeat server.");
         }
-    }
-
-    /**
-     * Notifies heartbeat server about the fact that heath check has been run.
-     * Sends the licence key, the bucket and and the flag
-     *
-     * @param $hc
-     * @return bool
-     */
-    protected function pingHeartbeat($hc)
-    {
-        $client = new SugarHeartbeatClient();
-
-        $client->sugarPing();
-
-        if (!$client->getError()) {
-            $data = $this->getSystemInfo()->getInfo();
-            $data['bucket'] = $hc->bucket;
-            $data['flag'] = $hc->flag;
-            $client->sugarHome($data['license_key'], $data);
-            return $client->getError() == false;
-        } else {
-            $GLOBALS['log']->error("HealthCheck: " . $client->getError());
-        }
-
-        return false;
     }
 
     /**
@@ -99,7 +69,8 @@ class HealthCheckController extends SugarController
     {
         $this->view = 'ajax';
 
-        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
+        $hc = $this->bean->getLastRun();
+        if ($hc) {
             $file = $hc->getLogFileName();
             if ($file && file_exists($file)) {
                 $this->streamFileToBrowser($file);
@@ -114,16 +85,15 @@ class HealthCheckController extends SugarController
     public function action_send()
     {
         $this->view = 'ajax';
+        $hc = $this->bean->getLastRun();
 
-        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
-            $client = new HealthCheckClient();
-            if ($client->send($this->getSystemInfo()->getLicenseKey(), $hc->getLogFileName())) {
-                $GLOBALS['log']->info("HealthCheck: Logs have been successfully sent to HealthCheck server.");
+        if ($hc->getLastRun()) {
+            if ($this->getHelper()->sendLog($hc->getLogFileName())) {
                 echo json_encode(array('status' => 'ok'));
                 sugar_cleanup(true);
             }
         }
-        $GLOBALS['log']->error("HealthCheck: Unable to send logs to HealthCheck server.");
+
         echo json_encode(array('status' => 'error'));
         sugar_cleanup(true);
     }
@@ -137,7 +107,8 @@ class HealthCheckController extends SugarController
         $this->view = 'ajax';
         $url = SugarConfig::getInstance()->get('site_url');
         $redirect = "{$url}/UpgradeWizard.php";
-        if ($hc = BeanFactory::getBean('HealthCheck')->getLastRun()) {
+        $hc = $this->bean->getLastRun();
+        if ($hc) {
             $redirect .= "?confirm_id={$hc->id}";
         }
         $this->set_redirect($redirect);
@@ -152,25 +123,21 @@ class HealthCheckController extends SugarController
     protected function streamFileToBrowser($file)
     {
         header('Content-Type: application/text');
-        header('Content-Disposition: attachment; filename='.basename($file));
+        header('Content-Disposition: attachment; filename=' . basename($file));
         header('Content-Length: ' . filesize($file));
         ob_clean();
         flush();
         readfile($file);
     }
 
-    protected function getSystemInfo()
-    {
-        return SugarSystemInfo::getInstance();
-    }
-
     /**
-     *
-     * @return HealthCheckScannerWeb
+     * @return HealthCheckHelper
      */
-    protected function getWebScanner()
+    protected function getHelper()
     {
-        require_once 'modules/HealthCheck/Scanner/ScannerWeb.php';
-        return new HealthCheckScannerWeb();
+        require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
+        require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
+        require_once 'modules/HealthCheck/HealthCheckClient.php';
+        return HealthCheckHelper::getInstance();
     }
 }

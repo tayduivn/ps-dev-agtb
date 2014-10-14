@@ -97,7 +97,8 @@
      */
     checkIfNeedsCommit: function() {
         // if the initial_total is an empty string (default value) don't run this
-        if (!_.isEqual(this.initial_total, '') && !_.isEqual(+this.total, +this.initial_total)) {
+        if (!_.isEqual(this.initial_total, '') && app.math.isDifferentWithPrecision(this.total, this.initial_total)) {
+
             this.context.trigger('forecasts:worksheet:needs_commit', null);
         }
     },

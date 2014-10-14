@@ -19,7 +19,7 @@ class SugarUpgradeQuoteRecalculateDiscountAmount extends UpgradeScript
     {
         // lets make sure the hotfix is not installed
         // the id_name is the key from the package
-        $sql = "SELECT name, date_entered FROM upgrade_history WHERE id_name = '1407215153'";
+        $sql = 'select name, date_entered from upgrade_history where id_name = ' . $this->db->quoted('1407215153');
         $result = $this->db->fetchOne($sql);
 
         if ($result !== false) {

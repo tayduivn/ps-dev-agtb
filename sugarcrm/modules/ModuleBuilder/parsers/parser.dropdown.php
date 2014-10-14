@@ -128,7 +128,7 @@ class ParserDropDown extends ModuleBuilderParser
         $allLanguages =  get_languages();
         foreach ($allLanguages as $lang => $langName) {
             if ($lang != $selected_lang) {
-                $listStrings = return_app_list_strings_language($lang);
+                $listStrings = return_app_list_strings_language($lang, false);
                 $langDropDown = array();
                 if (isset($listStrings[$dropdown_name]) && is_array($listStrings[$dropdown_name])) {
                      $langDropDown = $this->synchDDKeys($dropdown, $listStrings[$dropdown_name]);

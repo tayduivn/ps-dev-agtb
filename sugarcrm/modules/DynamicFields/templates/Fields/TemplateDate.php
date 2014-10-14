@@ -45,7 +45,7 @@ function get_db_default($modify=false){
 		return '';
 }
 
-//BEGIN BACKWARDS COMPATABILITY
+//BEGIN BACKWARDS COMPATIBILITY
 function get_xtpl_edit(){
 		global $timedate;
 		$name = $this->name;

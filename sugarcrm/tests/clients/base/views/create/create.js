@@ -876,6 +876,30 @@ describe('Base.View.Create', function() {
                 expect(alertStub.called).toBeFalsy();
             });
         });
+        it('should save, and reset the defaults on the the model', function() {
+            modelId = 123;
+            sinonSandbox.stub(view.model, 'getDefaultAttributes', function() {
+                return {
+                    'quantity': 1
+                };
+            });
+            runs(function() {
+                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'clear should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.called).toBeFalsy();
+                expect(clearStub.calledOnce).toBeTruthy();
+                expect(navigateStub.called).toBeFalsy();
+                expect(alertStub.called).toBeFalsy();
+                expect(view.model.get('quantity')).toEqual(1);
+            });
+        });
     });
 
     describe('Save and View', function() {

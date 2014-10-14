@@ -5860,20 +5860,9 @@ d3 = function() {
       firstWalk(root);
       secondWalk(root, -root._tree.prelim);
       var left = d3_layout_treeSearch(root, d3_layout_treeLeftmost), right = d3_layout_treeSearch(root, d3_layout_treeRightmost), deep = d3_layout_treeSearch(root, d3_layout_treeDeepest), x0 = left.x - separation(left, right) / 2, x1 = right.x + separation(right, left) / 2, y1 = deep.depth || 1;
-      // d3_layout_treeVisitAfter(root, function(node) {
-      //   node.x = (node.x - x0) / (x1 - x0) * size[0];
-      //   node.y = node.depth / y1 * size[1];
-      //   delete node._tree;
-      // });
       d3_layout_treeVisitAfter(root, function(node) {
-        if(size === undefined || size == null) {
-          node.x = (node.x - x0) * elementsize[0];
-          node.y = node.depth * elementsize[1];
-        }
-        else {
-          node.x = (node.x - x0) / (x1 - x0) * size[0];
-          node.y = node.depth / y1 * size[1];
-        }
+        node.x = (node.x - x0) / (x1 - x0) * size[0];
+        node.y = node.depth / y1 * size[1];
         delete node._tree;
       });
       return nodes;
@@ -7339,8 +7328,6 @@ d3 = function() {
       var inherit = d3_transitionInherit, inheritId = d3_transitionInheritId;
       d3_transitionInheritId = id;
       d3_selection_each(this, function(node, i, j) {
-        //console.log(node)
-        //console.log(node.__transition__)
         d3_transitionInherit = node.__transition__[id];
         type.call(node, node.__data__, i, j);
       });

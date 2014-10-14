@@ -68,6 +68,7 @@ class ViewPortalConfig extends SugarView
         $admin = Administration::getSettings();
 
         $portalConfig = $admin->getConfigForModule('portal','support', true);
+        $portalConfig['appStatus'] = !empty($portalConfig['on']) ? 'online' : 'offline';
         $smarty = new Sugar_Smarty();
         $smarty->assign('disabledDisplayModulesList', $disabledModules);
         $smarty->assign('disabledDisplayModules', $disabledModulesFlag);

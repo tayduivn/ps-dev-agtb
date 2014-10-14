@@ -149,6 +149,8 @@ class MergeUtils
         if (is_array($val)) {
             if (isset($val['name'])) {
                 $id = $val['name'];
+            } elseif (isset($val['label'])) {
+                $id = $val['label'];
             } else {
                 //Use a JSON version to track for identity
                 $id = json_encode($val);

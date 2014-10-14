@@ -73,12 +73,6 @@
         this.on('list:save:laststate', this.saveCurrentState, this);
     },
 
-    // fn to turn off all event listeners and reenable tooltips
-    resetAllDelegates: function() {
-        $(this).parents('.main-pane').off('scroll.right-actions');
-        this.$('.flex-list-view .actions').trigger('resetDropdownDelegate.right-actions');
-    },
-
     // fn to turn off event listeners and reenable tooltips
     resetDropdownDelegate: function(e) {
         var $b = this.$(e.currentTarget).first();
@@ -641,7 +635,10 @@
         }
     },
 
-    _renderHtml: function (ctx, options) {
+    /**
+     * @inheritDoc
+     */
+    _renderHtml: function() {
         this.colSpan = this._fields.visible.length || 0;
         if (this.leftColumns.length) {
             this.colSpan++;
@@ -652,7 +649,7 @@
         if (this.colSpan < 2) {
             this.colSpan = null;
         }
-        this._super('_renderHtml', [ctx, options]);
+        this._super('_renderHtml');
 
         if (this.leftColumns.length) {
             this.$el.addClass('left-actions');
@@ -663,16 +660,139 @@
 
         this.resize();
     },
+
+    /**
+     * @inheritDoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        // FIXME SC-3484 Testing `this.closestComponent('sidebar')` is required
+        // to make unit tests pass.
+        if (this.closestComponent('sidebar') && !(app.drawer.count())) {
+                this._setHelperScrollBar();
+        }
+    },
+
+    /**
+     * Sets up the helper scrollbar.
+     *
+     * It first sets the helper `scrollWidth` and `width`. Then it adds
+     * listeners on the spy and helper scrollbars to make them follow each
+     * other.
+     * Then it adds a listener on the vertical scrolling to watch when the
+     * bottom of the table is visible, and when it is, to hide the helper since
+     * the scrollbar at the bottom of the table is visible.
+     *
+     * @private
+     */
+    _setHelperScrollBar: function() {
+        /**
+         * The 'helper' scrollbar is the horizontal scrollbar fixed to the
+         * bottom of the screen.
+         *
+         * @property {jQuery}
+         */
+        this.$helper = this.$('[data-scroll-spy]');
+
+        // if no helper was found, just go about our way and not produce any javascript errors
+        if (this.$helper.length === 0) {
+            return;
+        }
+
+        /**
+         * The `spy` is the list container element.
+         *
+         * @property {jQuery}
+         */
+        this.$spy = this.$('.' + this.$helper.data('scrollSpy'));
+
+        this.$helper.find('div').width(this.$spy.get(0).scrollWidth);
+        this._updateHelperWidth();
+        this.listenTo(this.closestComponent('sidebar'), 'sidebar:toggle', _.bind(this._updateHelperWidth, this));
+
+        this.$helper.on('scroll.' + this.cid, _.bind(function() {
+            this.$spy.scrollLeft(this.$helper.scrollLeft());
+        }, this));
+        this.$spy.on('scroll.' + this.cid, _.bind(function() {
+            this.$helper.scrollLeft(this.$spy.scrollLeft());
+        }, this));
+
+        // `#content` is the scrolling element in responsive view.
+        $('#content').on('scroll.' + this.cid, _.bind(function() {
+            this._toggleScrollHelper();
+        }, this));
+
+        // `.main-pane` is the scrolling element in desktop view.
+        $('.main-pane').on('scroll.' + this.cid, _.bind(function() {
+            this._toggleScrollHelper();
+        }, this));
+    },
+
+    /**
+     * Toggles the helper scroll bar.
+     *
+     * If the spy's `width` is greater than its `scrollWidth` (the screen is
+     * large enough) OR if the footer is higher than the table (the table is not
+     * visible on the screen), we hide the helper scrollbar.
+     * Also, we hide it if the bottom of the table is higher than the footer
+     * (the natural scroll bar is present).
+     *
+     * @private
+     */
+    _toggleScrollHelper: function() {
+        if (this.$spy.get(0).scrollWidth <= this.$spy.width() ||
+            this.$('tbody').offset().top + this.$helper.height() > $('footer').offset().top
+        ) {
+            this.$helper.toggle(false);
+            return;
+        }
+
+        this.$helper.toggle(!(this.$('.scrollbar-landmark').offset().top < $('footer').offset().top));
+        if (this.$helper.css('display') !== 'none') {
+            this.$helper.scrollLeft(this.$spy.scrollLeft());
+        }
+    },
+
+    /**
+     * Updates the helper scrollbar width depending on whether dashboard is
+     * open or not.
+     *
+     * @private
+     */
+    _updateHelperWidth: function() {
+        if (this.$helper.length === 0) {
+            return;
+        }
+        this.$helper.toggleClass('dash-collapsed', !$('.side.sidebar-content').is(':visible'));
+    },
+
+    /**
+     * @inheritDoc
+     */
     unbind: function() {
-        $(window).off("resize.flexlist-" + this.cid);
-        this._super("unbind");
+        $('#content, .main-pane').off('scroll.' + this.cid);
+        $(this).parents('.main-pane').off('scroll.right-actions');
+        this.$('.flex-list-view .actions').trigger('resetDropdownDelegate.right-actions');
+        $(window).off('resize.flexlist-' + this.cid);
+
+        if (this.$helper) {
+            this.$helper.off('scroll.' + this.cid);
+        }
+        if (this.$spy) {
+            this.$spy.off('scroll.' + this.cid);
+        }
+
+        this._super('unbind');
     },
 
     bindResize: function() {
         $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
     },
+
     /**
-     * Updates the class of this flex list as scrollable or not.
+     * Updates the class of this flex list as scrollable or not, and
+     * adjusts/toggles the scroll helper.
      */
     resize: function() {
         if (this.disposed) {
@@ -684,11 +804,11 @@
         }
         var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
-    },
 
-    _dispose: function() {
-        // remove all right action dropdown delegates
-        this.resetAllDelegates();
-        this._super('_dispose');
+        if (this.$helper && this.$helper.length > 0) {
+            this.$helper.find('div').width(this.$spy.get(0).scrollWidth);
+            this.$helper.scrollLeft(this.$spy.scrollLeft());
+            this._toggleScrollHelper();
+        }
     }
 })

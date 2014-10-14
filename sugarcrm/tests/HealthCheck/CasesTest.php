@@ -84,7 +84,11 @@ class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
         $detectedStatuses = array_unique($detectedStatuses);
-        $this->assertContains($code, $detectedStatuses, 'Requested status is not detected');
+        if ($this->scanner->not) {
+            $this->assertNotContains($code, $detectedStatuses, 'Requested status is not detected');
+        } else {
+            $this->assertContains($code, $detectedStatuses, 'Requested status is not detected');
+        }
     }
 
     /**

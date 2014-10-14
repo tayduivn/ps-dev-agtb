@@ -30,6 +30,17 @@
     width: inherit;
 }
 
+/* SC-3435: temporary 6.5 fix _only_; to be removed in forthcoming releases */
+.dataTable th:not(:first-child):not(:last-child) {
+  width: 82px;
+  padding-right: 10px;
+}
+
+.dataTable th:not(:first-child):not(:last-child) > div > div > span {
+  padding-right: 10px;
+}
+/* /SC-3435 */
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;
