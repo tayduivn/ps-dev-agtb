@@ -145,15 +145,15 @@ nv.models.legend = function () {
         seriesEnter.append('circle')
           .attr('r', radius)
           .style('stroke-width', 2);
-        series.select('circle')
+        series.selectAll('circle')
           .attr('class', function (d, i) {
-            return classes(d, i);
+            return classes(d, d.series);
           })
           .attr('fill', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           })
           .attr('stroke', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           });
 
         seriesEnter.append('text')
@@ -165,47 +165,34 @@ nv.models.legend = function () {
 
         seriesEnter.append('circle')
           .style('stroke-width', 0);
-        series.select('circle')
-          .attr('r', function (d, i) {
-            return d.type === 'dash' ? 0 : radius;
-          })
-          .attr('class', function (d, i) {
-            return classes(d, i);
-          })
-          .attr('fill', function (d, i) {
-            return color(d, i);
-          })
-          .attr('stroke', function (d, i) {
-            return color(d, i);
-          });
-
         seriesEnter.append('line')
           .attr('x0', 0)
           .attr('y0', 0)
           .attr('y1', 0)
           .style('stroke-width', '4px');
-        series.select('line')
-          .attr('class', function (d, i) {
-            return classes(d, i);
-          })
-          .attr('stroke', function (d, i) {
-            return color(d, i);
-          });
-
         seriesEnter.append('circle')
           .style('stroke-width', 0);
-        series.select('circle')
+
+        series.select('line')
+          .attr('class', function (d, i) {
+            return classes(d, d.series);
+          })
+          .attr('stroke', function (d, i) {
+            return color(d, d.series);
+          });
+
+        series.selectAll('circle')
           .attr('r', function (d, i) {
             return d.type === 'dash' ? 0 : radius;
           })
           .attr('class', function (d, i) {
-            return classes(d, i);
+            return classes(d, d.series);
           })
           .attr('fill', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           })
           .attr('stroke', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           });
 
         seriesEnter.append('text')
