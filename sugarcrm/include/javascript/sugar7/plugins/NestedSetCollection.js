@@ -287,7 +287,9 @@
              * @return {Object} Callbacks.
              */
             _initCallback: function(options) {
-                var callback = {};
+                var self = this,
+                    callback = {};
+
                 callback.complete = options.complete || null;
                 callback.error = options.error || null;
 
@@ -298,6 +300,7 @@
                             if (_.isFunction(options.success)) {
                                 options.success(data, response);
                             }
+                            app.events.trigger('app:nestedset:sync:complete', self);
                         }, this)
                     });
                 }, this);
