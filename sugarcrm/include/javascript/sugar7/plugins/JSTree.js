@@ -245,8 +245,15 @@
              * @private
              */
             _renameHandler: function(event, data) {
-                /* ToDo: handler for rename node - wbi */
-                /* ToDo: update this.collection */
+                if (!_.isUndefined(data.rslt.obj.data('id'))) {
+                    var bean = this.collection.getChild(data.rslt.obj.data('id'));
+                    if (!_.isUndefined(bean)) {
+                        if (bean.get('name') !== data.rslt.name) {
+                            bean.set('name', data.rslt.name);
+                            bean.save();
+                        }
+                    }
+                }
             },
 
             /**
@@ -620,8 +627,8 @@
              * @param {String} type
              */
             insertNode: function(data, parent_id, type) {
-                var selectedNode = this.jsTree.find('[data-id=' + parent_id +']');
-                this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id:data.id}, function(obj) {
+                var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']');
+                this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
                     debugger;
                     $(obj).data('id', data.id).data('type', type || 'folder');
                     $(obj).find('ins:first').addClass('leaf');
