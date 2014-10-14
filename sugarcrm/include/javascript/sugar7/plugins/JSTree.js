@@ -681,6 +681,14 @@
                 var selectedNode = this.jsTree.find('[data-id=' + id +']');
                 selectedNode.children("ul:eq(0)").children("li").show();
             },
+            /**
+             * Hide child nodes to prevent open/close folder.
+             * @param {String} id
+             */
+            hideChildNodes: function(id) {
+                var selectedNode = this.jsTree.find('[data-id=' + id +']');
+                selectedNode.children("ul:eq(0)").children("li").hide();
+            },
 
             /**
              * Removes children with provided type for the node.

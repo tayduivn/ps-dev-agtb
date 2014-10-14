@@ -161,6 +161,10 @@
         collection.fetch({
             success: function(data) {
                 self.removeChildrens(id, 'document');
+                if (data.length === 0) {
+                    return;
+                }
+                self.hideChildNodes(id);
                 _.each(data.models, function(value) {
                     var insData = {
                         id: value.id,
