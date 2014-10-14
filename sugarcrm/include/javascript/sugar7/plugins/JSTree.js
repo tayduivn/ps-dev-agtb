@@ -140,7 +140,7 @@
 
             /**
              * Hide tree if there is no data, show otherwise.
-             * @param {Bool} hide Hide tree if true, show otherwise.
+             * @param {Boolean} hide Hide tree if true, show otherwise.
              * @private
              */
             _toggleVisibility: function(hide) {
@@ -217,7 +217,14 @@
              * @private
              */
             _moveHandler: function(event, data) {
-                /* @todo: handler for dnd move - wbi */
+                /**
+                 * Catch Drag-And-Drop move_node
+                 */
+                if ($.vakata.dnd.is_drag && $.vakata.dnd.user_data.jstree) {
+                    if (!_.isUndefined(data.rslt.o) && !_.isUndefined(data.rslt.r)) {
+                        this.moveNode(data.rslt.o.data('id'), data.rslt.r.data('id'), data.rslt.p, function() {});
+                    }
+                }
             },
 
             /**
@@ -227,7 +234,7 @@
              * @private
              */
             _removeHandler: function(event, data) {
-                /* @todo: remove handler - wbi */
+                /* ToDo: remove handler - wbi */
             },
 
             /**
@@ -237,8 +244,8 @@
              * @private
              */
             _renameHandler: function(event, data) {
-                /* @todo: handler for rename node - wbi */
-                /* @todo: update this.collection */
+                /* ToDo: handler for rename node - wbi */
+                /* ToDo: update this.collection */
             },
 
             /**
@@ -248,7 +255,7 @@
              * @private
              */
             _searchHandler: function(event, data) {
-                /* @todo: handler for search node - wbi */
+                /* ToDo: handler for search node - wbi */
             },
 
             /**
@@ -269,9 +276,7 @@
                             label: app.lang.get('LBL_CONTEXTMENU_EDIT', self.module),
                             action: function(obj) {
                                 this.rename(obj);
-                                /*
-                                 // @todo: waiting for edit implementation on backend
-                                 */
+                                 // ToDo: waiting for edit implementation on backend
                             }
                         },
                         moveup: {
@@ -286,6 +291,7 @@
                                     self.moveNode(
                                         currentNode.data('id'),
                                         prevNode.data('id'),
+                                        'before',
                                         function() {
                                             $(currentNode).after($(prevNode));
                                         });
@@ -304,6 +310,7 @@
                                     self.moveNode(
                                         currentNode.data('id'),
                                         nextNode.data('id'),
+                                        'after',
                                         function() {
                                             $(nextNode).after($(currentNode));
                                         });
@@ -324,7 +331,7 @@
                             _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
-                                // TODO: create method to get node from collection
+                                // ToDo: create method to get node from collection
                                 var bean = self.collection.getChild(obj.data('id'));
                                 if (!_.isUndefined(bean)) {
                                     self.warnDelete({
@@ -415,7 +422,7 @@
                         separator_after: false,
                         label: entry.get('name'),
                         action: function(obj) {
-                            self.moveTo(obj.data('id'), entry.id, function(idRecord, idTarget) {
+                            self.moveNode(obj.data('id'), entry.id, 'last', function(idRecord, idTarget) {
                                 self.jsTree.jstree(
                                     'move_node',
                                     self.jsTree.jstree('get_instance')
@@ -515,7 +522,7 @@
                         self._toggleVisibility(false);
                     },
                     error: function() {
-                        // @todo: remove node - will be implemented
+                        // ToDo: remove node - will be implemented
                     }
                 });
             },
@@ -570,18 +577,24 @@
              * Add action.
              * @param {String} title
              * @param {String|Number} position
+             * @param {Boolean} position
              */
             addNode: function(title, position, editable) {
-                var selectedNode = this.jsTree.jstree('get_selected'),
+                var self = this,
+                    selectedNode = this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
-                    isEdit = !_.isUndefined(editable);
+                    isEdit = editable || !_.isUndefined(editable);
 
                 this.jsTree.jstree(
                     'create',
                     selectedNode,
                     pos,
                     {data: !_.isUndefined(title) ? title : 'New item'},
-                    function(obj) {},
+                    function(obj) {
+                        if (self.collection.length === 0) {
+                            self._toggleVisibility(false);
+                        }
+                    },
                     isEdit
                 );
             },
@@ -607,36 +620,24 @@
             },
 
             /**
-             * Move up/down action.
+             * Move action.
              * @param {String} idRecord
              * @param {String} idTarget
+             * @param {String} position
              * @param {Function} callback
              */
-            moveNode: function(idRecord, idTarget, callback) {
-                this.collection.moveBefore({
-                    record: idRecord,
-                    target: idTarget,
-                    success: function(data, response) {
-                        callback(data, response);
-                    }
-                });
-            },
-
-            /**
-             * Move to action.
-             * @param {String} idRecord
-             * @param {String} idTarget
-             * @param {Function} callback
-             */
-            moveTo: function(idRecord, idTarget, callback) {
-                var self = this;
-                this.collection.moveLast({
-                    record: idRecord,
-                    target: idTarget,
-                    success: function(data, response) {
-                        callback(idRecord, idTarget);
-                    }
-                });
+            moveNode: function(idRecord, idTarget, position, callback) {
+                var pos = position || 'last',
+                    method = 'move' + pos.charAt(0).toUpperCase() + pos.substring(1).toLowerCase();
+                if (_.isFunction(this.collection[method])) {
+                    this.collection[method]({
+                        record: idRecord,
+                        target: idTarget,
+                        success: function(data, response) {
+                            callback(data, response);
+                        }
+                    });
+                }
             }
         });
     });
