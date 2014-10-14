@@ -1569,8 +1569,6 @@ class HealthCheckScanner
                 if (!file_exists($hook[2])) {
                     // putting it as custom since LogicHook checks file_exists
                     $this->updateStatus("badHookFile", $hookfile, $hook[2]);
-                } else {
-                    $this->checkHookByRef($hook[2]);
                 }
             }
         }
