@@ -265,24 +265,26 @@
      * `Return` will Confirm
      */
     bindCancelAndReturn: function() {
-        $(document).on('keydown.' + this.cid, _.bind(function(event) {
-            var keyReturn = 13, keyEsc = 27;
-            if (_.indexOf([keyReturn, keyEsc], event.which) > -1) {
-                event.preventDefault();
-                if (event.which === keyReturn) {
-                    this.$('[data-action=confirm]').click();
-                } else {
-                    this.$('[data-action=cancel]').click();
-                }
-            }
-        }, this));
+        app.shortcuts.saveSession();
+        app.shortcuts.createSession([
+            'Alert:Confirm',
+            'Alert:Cancel'
+        ], this);
+
+        app.shortcuts.register('Alert:Confirm', ['enter'], function() {
+            this.$('[data-action=confirm]').click();
+        }, this);
+
+        app.shortcuts.register('Alert:Cancel', ['esc'], function() {
+            this.$('[data-action=cancel]').click();
+        }, this);
     },
 
     /**
      * Unbind keydown event
      */
     unbindCancelAndReturn: function() {
-        $(document).off('keydown.' + this.cid);
+        app.shortcuts.restoreSession();
     },
 
     /**
