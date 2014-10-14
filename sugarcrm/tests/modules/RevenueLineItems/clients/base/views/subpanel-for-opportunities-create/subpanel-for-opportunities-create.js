@@ -31,6 +31,8 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
 
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
+        SugarTest.seedMetadata();
+
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent('base', 'view', 'subpanel-list');
@@ -55,9 +57,15 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
             }
         });
 
+        sinon.sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                is_setup: 1
+            }
+        });
+
         sinon.sandbox.stub(app.lang, 'getAppListStrings', function() {
             return {
-                'Prospecting': 10
+                Prospecting: 10
             }
         });
 
@@ -71,22 +79,17 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
     });
 
     describe('_addCustomFieldsToBean()', function() {
-        var bean,
-            result;
+        var result;
         beforeEach(function() {
-            bean = app.data.createBean(this.module, {
-                id: 'test-bean-hash-id'
-            });
-            bean._module = this.module;
             view.model.set({
                 sales_stage: 'Prospecting'
             });
 
-            result = view._addCustomFieldsToBean(bean);
+            view._addBeanToList(true);
+            result = view.collection.models[0];
         });
 
         afterEach(function() {
-            bean = null;
             result = null;
         });
 
@@ -99,11 +102,6 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
             it('should have currency_id', function() {
                 expect(result.has('currency_id')).toBeTruthy();
                 expect(result.get('currency_id')).toBe('-99');
-            });
-
-            it('should have base_rate', function() {
-                expect(result.has('base_rate')).toBeTruthy();
-                expect(result.get('base_rate')).toBe('1');
             });
 
             it('should have quantity', function() {
