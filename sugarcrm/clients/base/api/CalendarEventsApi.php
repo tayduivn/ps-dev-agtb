@@ -34,7 +34,7 @@ class CalendarEventsApi extends ModuleApi
                 'reqType' => 'POST',
                 'path' => array($module),
                 'pathVars' => array('module'),
-                'method' => 'createCalendarEvent',
+                'method' => 'createRecord',
                 'shortHelp' => 'This method creates a single event record or a series of event records of the specified type',
                 'longHelp' => 'include/api/help/calendar_events_record_create_help.html',
             ),
@@ -73,23 +73,18 @@ class CalendarEventsApi extends ModuleApi
      * @param $args
      * @return array
      */
-    public function createCalendarEvent($api, $args)
+    public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
     {
-        $createResult = $this->createRecord($api, $args);
-
-        if (!empty($createResult['id'])) {
-            $loadArgs = array(
-                'module' => $args['module'],
-                'record' => $createResult['id'],
-            );
-            $bean = $this->loadBean($api, $loadArgs, 'view', array('use_cache' => false));
+        $bean = parent::createBean($api,$args, $additionalProperties);
+        if (!empty($bean->id)) {
             if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
             } else {
                 $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         }
-        return $createResult;
+
+        return $bean;
     }
 
     /**
@@ -116,7 +111,7 @@ class CalendarEventsApi extends ModuleApi
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary
-            $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
+            $bean = $this->reloadBean($api, $args);
             if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
             } else {

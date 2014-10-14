@@ -178,21 +178,21 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $dateStart = $this->dateTimeAsISO('2014-08-01 14:30:00');
         return array(
             array(
-                "createCalendarEvent",
+                "createRecord",
                 array(
                     'duration_hours' => '9',
                     'duration_minutes' => '9',
                 ),
             ),
             array(
-                "createCalendarEvent",
+                "createRecord",
                 array(
                     'date_start' => $dateStart,
                     'duration_minutes' => '9',
                 ),
             ),
             array(
-                "createCalendarEvent",
+                "createRecord",
                 array(
                     'date_start' => $dateStart,
                     'duration_hours' => '9',
@@ -251,49 +251,44 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_minutes' => '30',
         );
 
-        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $this->calendarEventsApi->createRecord($this->api, $args);
     }
 
     public function testCreateRecord_RecurringMeeting_CallsGenerateRecurringCalendarEventsMethod()
     {
-        $meeting = SugarTestMeetingUtilities::createMeeting('', $this->api->user);
-
-        $meeting->name = 'Test Meeting';
-        $meeting->repeat_type = 'Daily';
-        $meeting->date_start = '2014-08-01 13:00:00';
-        $meeting->date_end = '2014-08-01 14:30:00';
-        $meeting->duration_hours = 1;
-        $meeting->duration_minutes = 30;
-        $meeting->save();
+        $id = create_guid();
+        $this->meetingIds[] = $id;
 
         $args = array();
         $args['module'] = 'Meetings';
-        $args['name'] = $meeting->name;
-        $args['repeat_type'] = $meeting->repeat_type;
-        $args['date_start'] = $meeting->date_start;
-        $args['date_end'] = $meeting->date_end;
-        $args['duration_hours'] = $meeting->duration_hours;
-        $args['duration_minutes'] = $meeting->date_end;
+        $args['id'] = $id;
+        $args['name'] = 'Test Meetings';
+        $args['repeat_type'] = 'Daily';
+        $args['date_start'] = $this->dateTimeAsISO('2014-12-25 13:00:00');
+        $args['date_end'] = $this->dateTimeAsISO('2014-12-25 14:30:00');
+        $args['duration_hours'] = 1;
+        $args['duration_minutes'] = 30;
 
         $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApi',
-            array('createRecord', 'generateRecurringCalendarEvents')
+            array('generateRecurringCalendarEvents')
         );
-        $calendarEventsApiMock->expects($this->once())
-            ->method('createRecord')
-            ->will($this->returnValue($meeting->toArray()));
         $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
         $this->calendarEventsApi = $calendarEventsApiMock;
-
-        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $result = $this->calendarEventsApi->createBean($this->api, $args);
+        $this->meetingIds[] = $result->id;
     }
 
     public function testCreateRecord_RecurringMeeting_ScheduleMeetingSeries_OK()
     {
+        $id = create_guid();
+        $this->meetingIds[] = $id;
+
         $args = array();
         $args['module'] = 'Meetings';
+        $args['id'] = $id;
         $args['name'] = 'Test Meeting';
         $args['repeat_type'] = 'Daily';
         $args['repeat_interval'] = '1';
@@ -307,10 +302,9 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['duration_minutes'] = 30;
 
         $GLOBALS['calendarEvents'] = new CalendarEventsApiTest_CalendarEvents();
-        $result = $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $result = $this->calendarEventsApi->createBean($this->api, $args);
 
-        $this->assertFalse(empty($result['id']), "createRecord API Failed to Create Meeting");
-        $this->meetingIds[] = $result['id'];
+        $this->assertFalse(empty($result->id), "createRecord API Failed to Create Meeting");
 
         $eventsCreated = $GLOBALS['calendarEvents']->getEventsCreated();
         $this->meetingIds = array_merge($this->meetingIds, array_keys($eventsCreated));
@@ -538,7 +532,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
          );
      }
 
-    public function testCreateCalendarEvent_CreateRecordFails_rebuildFBCacheNotInvoked()
+    public function testCreateRecord_CreateRecordFails_rebuildFBCacheNotInvoked()
     {
         $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApi',
@@ -555,15 +549,15 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $this->calendarEventsApi->createRecord($this->api, $args);
     }
 
-    public function testCreateCalendarEvent_NotRecurring_rebuildFBCacheInvoked()
+    public function testCreateRecord_NotRecurring_rebuildFBCacheInvoked()
     {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $meetingRecord = array('id' => $meeting->id);
+        $this->meetingIds[] = $meeting->id;
 
         $GLOBALS['calendarEvents'] = $this->getMock(
             'CalendarEvents',
@@ -577,11 +571,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApi',
-            array('createRecord', 'loadBean', 'generateRecurringCalendarEvents')
+            array('loadBean', 'generateRecurringCalendarEvents')
         );
-        $calendarEventsApiMock->expects($this->once())
-            ->method('createRecord')
-            ->will($this->returnValue($meetingRecord));
         $calendarEventsApiMock->expects($this->once())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
@@ -595,15 +586,15 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $this->calendarEventsApi->createRecord($this->api, $args);
     }
 
-    public function testCreateCalendarEvent_Recurring_rebuildFBCacheNotInvoked()
+    public function testCreateRecord_Recurring_rebuildFBCacheNotInvoked()
     {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $meetingRecord = array('id' => $meeting->id);
+        $this->meetingIds[] = $meeting->id;
 
         $GLOBALS['calendarEvents'] = $this->getMock(
             'CalendarEvents',
@@ -617,11 +608,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApi',
-            array('createRecord', 'loadBean', 'generateRecurringCalendarEvents')
+            array('loadBean', 'generateRecurringCalendarEvents')
         );
-        $calendarEventsApiMock->expects($this->once())
-            ->method('createRecord')
-            ->will($this->returnValue($meetingRecord));
         $calendarEventsApiMock->expects($this->once())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
@@ -635,7 +623,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createCalendarEvent($this->api, $args);
+        $this->calendarEventsApi->createRecord($this->api, $args);
     }
 
     /**
