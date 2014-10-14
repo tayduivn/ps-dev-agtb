@@ -2481,8 +2481,16 @@ function getVersionedPath($path, $additional_attrs='', $time_modified=false)
         $GLOBALS['js_version_key'] = get_js_version_key();
     }
 
-    if ((inDeveloperMode() || $time_modified) && file_exists($path)) {
-        $dev = md5(filemtime($path));
+    if (inDeveloperMode() || $time_modified) {
+        if (file_exists($path)) {
+            $timestamp = filemtime($path);
+        } else {
+            // if the file doesn't exists, it means it was deleted during cache rebuild
+            // and will be regenerated in future.
+            // we need to invalidate client side cache in order to make the client request the resource from server
+            $timestamp = create_guid();
+        }
+        $dev = md5($timestamp);
     } else {
         $dev = '';
     }
