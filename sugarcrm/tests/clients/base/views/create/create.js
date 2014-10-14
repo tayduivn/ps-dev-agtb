@@ -884,7 +884,10 @@ describe('Base.View.Create', function() {
                 };
             });
             runs(function() {
-                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveAndCreateButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
             });
 
             waitsFor(function() {
