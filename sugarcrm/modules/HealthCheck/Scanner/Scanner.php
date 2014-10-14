@@ -1243,7 +1243,29 @@ class HealthCheckScanner
 
             $allHistoryCode = array();
             foreach ($historyFiles as $file) {
+                //for history files check internal functions and replace them with random names CRYS-498
+                $tmpName = tempnam(sys_get_temp_dir(), $file);
+                if ($tmpName && is_writable($tmpName) && file_exists($file)) {
+                    $tmpContents = file_get_contents($file);
+                    $matches = array();
+                    if (preg_match_all('/function\s+(\w+)\s*\(/', $tmpContents, $matches) && isset($matches[1])) {
+
+                        $tmpContents = str_replace($matches[1], array_map(function ($value) use ($tmpName) {
+                            return $value . md5($tmpName);
+                        }, $matches[1]), $tmpContents);
+
+                        if (file_put_contents($tmpName, $tmpContents)) {
+                            $file = $tmpName;
+                        }
+                    }
+                }
+
                 $historyDefs = $this->loadFromFile($file, $varname);
+
+                if ($tmpName) {
+                    @unlink($tmpName);
+                }
+
                 $historyCode = $this->lookupCustomCode('', $historyDefs, array());
                 $allHistoryCode = array_merge($allHistoryCode, $historyCode);
             }
