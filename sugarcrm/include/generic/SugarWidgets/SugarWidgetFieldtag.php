@@ -18,28 +18,27 @@ class SugarWidgetFieldTag extends SugarWidgetFieldVarchar {
     /**
      * Handles formatting of a Tag field for rendering on report list views
      * 
-     * @param array $layout_def The defs if the field from the report
+     * @param array $layout_def The defs of the field from the report
      * @return string
      */
     function displayList(&$layout_def)
     {
-        if(!empty($layout_def['column_key'])){
-            $field_def = $this->reporter->all_fields[$layout_def['column_key']];
-        }else if(!empty($layout_def['fields'])){
-            $field_def = $layout_def['fields'];
-        }
-        $cell = $this->displayListPlain($layout_def);
+        // Get the value of the field
+        $value = $this->displayListPlain($layout_def);
         
-        // $cell should be ^..^,^..^
-        // No, that isn't an emotibatman
-        $data = implode(', ', explode('^,^', trim($cell, '^')));
+        // $value should be something like ^..^,^..^
+        // No, that isn't an emotibatman parade
+        // 
+        // This logic removes outer ^ characters, explodes on ^,^ and then glues
+        // back together on ', '
+        $data = implode(', ', explode('^,^', trim($value, '^')));
         return $data;
     }
 
     /**
      * Handles WHERE query building for CONTAINS requests
      * 
-     * @param array $layout_def The defs if the field from the report
+     * @param array $layout_def The defs of the field from the report
      * @return string
      */
     function queryFilterContains(&$layout_def)
@@ -57,7 +56,7 @@ class SugarWidgetFieldTag extends SugarWidgetFieldVarchar {
     /**
      * Handles WHERE query building for NOT CONTAINS requests
      * 
-     * @param array $layout_def The defs if the field from the report
+     * @param array $layout_def The defs of the field from the report
      * @return string
      */
     function queryFilterNot_Contains(&$layout_def)
