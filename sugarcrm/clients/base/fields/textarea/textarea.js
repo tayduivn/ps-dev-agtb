@@ -153,5 +153,12 @@
     toggleCollapsed: function() {
         this.collapsed = !this.collapsed;
         this.render();
+    },
+
+    /**
+     * Overrides default implementation so that whitespaces won't be stripped.
+     */
+    unformat: function(value) {
+        return value;
     }
 })
