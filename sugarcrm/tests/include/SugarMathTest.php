@@ -415,6 +415,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function testRoundProvider() {
         return array(
+            array('-500.000000', '-500.0000000',6),
             array('3.354999999','3.354999999',9),
             array('3.35500000','3.354999999',8),
             array('3.3550000','3.354999999',7),
