@@ -26,7 +26,7 @@ ensureJSCacheFilesExist();
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        <link rel="stylesheet" href="./assets/loading.css" type="text/css">
+        <link rel="stylesheet" href="../themes/default/css/loading.css" type="text/css">
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
         <script src="../include/javascript/modernizr.js"></script>
 
