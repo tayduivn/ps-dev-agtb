@@ -12,11 +12,11 @@
 --}}
 <div class="dashlet-options">
     <div class="row-fluid">
-        <div class="span6">{{#each dashletConfig.timeperiod}}
+        <div class="span4">{{#each dashletConfig.timeperiod}}
             {{field ../this model=../this.settings template="edit"}}
         {{/each}}</div>
         {{#if isManager}}
-        <div class="span6">
+        <div class="span8">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
                 <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}"
                         data-action="visibility-switcher" rel="tooltip" data-placement="bottom" value="user"
