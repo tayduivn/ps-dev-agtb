@@ -16,14 +16,11 @@
 ({
     extendsFrom: 'HeaderpaneView',
     /**
-     * {@inheritDoc}
+     * @override
      *
-     * Override the title to pass the context with the server info.
+     * Formats the title with the current server info.
      */
-    _renderHtml: function() {
-        var title = this.title || this.module;
-        this.title = app.lang.get(title, this.module, app.metadata.getServerInfo());
-
-        app.view.View.prototype._renderHtml.call(this);
+    _formatTitle: function(title) {
+        return app.lang.get(title, this.module, app.metadata.getServerInfo());
     }
 })

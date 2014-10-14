@@ -12,9 +12,15 @@
 --}}
 <div class="headerpane">
     <h1>
-        <div class="record-cell">
-            <span class="module-title">{{{title}}}</span>
-        </div>
+        {{#each meta.fields}}
+            <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                <span class="table-cell-wrapper">
+                    <span class="index" data-fieldname="{{name}}" data-index="">
+                        {{field ../this model=../this.model}}
+                    </span>
+                </span>
+            </span>
+        {{/each}}
         <div class="btn-toolbar pull-right dropdown">
             {{#each meta.buttons}}
                 {{field ../this}}
