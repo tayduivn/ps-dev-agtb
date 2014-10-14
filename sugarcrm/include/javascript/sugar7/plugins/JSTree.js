@@ -9,11 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-
-    if (!$.fn.jstree) {
-        return;
-    }
-
     app.events.on('app:init', function() {
         app.plugins.register('JSTree', ['view', 'field'], {
 
