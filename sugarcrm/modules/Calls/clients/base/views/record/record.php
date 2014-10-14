@@ -177,14 +177,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'dropdown_class' => 'select2-menu-only',
                     'container_class' => 'select2-menu-only',
                 ),
-                array(
-                    'name' => 'direction',
-                    'type' => 'badge-select',
-                    'enum_width' => 'auto',
-                    'dropdown_width' => 'auto',
-                    'dropdown_class' => 'select2-menu-only',
-                    'container_class' => 'select2-menu-only',
-                ),
             ),
         ),
         array(
@@ -276,7 +268,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'parent_name',
+                'direction',
                 array(
                     'name' => 'reminders',
                     'type' => 'fieldset',
@@ -293,6 +285,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'span' => 12,
                     'rows' => 3,
                 ),
+                'parent_name',
                 array(
                     'name' => 'invitees',
                     'type' => 'participants',
