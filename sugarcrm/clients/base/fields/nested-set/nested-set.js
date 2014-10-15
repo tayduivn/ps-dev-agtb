@@ -315,8 +315,8 @@
      * Create and hide input for new element.
      */
     switchCreate: function() {
-        var $a = $('[data-action=create-new]'),
-            $el = $('[data-role=add-item]');
+        var $a = this.$('[data-action=create-new]'),
+            $el = this.$('[data-role=add-item]');
         if (this.inCreation === false) {
             $el = $('<input />', {'data-role': 'add-item', 'style': 'width: 80%;', 'type': 'text'});
             $a.hide();

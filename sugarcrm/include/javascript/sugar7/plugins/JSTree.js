@@ -202,9 +202,8 @@
                     fn = function(el) {
                         if (!_.isEmpty(el.children)) {
                             _.each(el.children.records, fn);
+                            el.children = el.children.records;
                         }
-
-                        el.children = el.children.records;
                         el.data = el.name;
                         el.metadata = {id: el.id};
                         el.attr = {'data-id': el.id, 'data-level': el.level};
