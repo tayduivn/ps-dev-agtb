@@ -26,29 +26,28 @@ h4.merge-interface-header {
 }
 
 .merge-interface {
-	height:auto;
-	margin: 10px 0 0;
+  height:auto;
+  margin: 10px 0 0;
 
-	.fluid-div,
-	.fixed-div {
-		padding-bottom: 4px;
-	}
+  .fluid-div,
+  .fixed-div {
+    padding-bottom: 4px;
+  }
 
-	.fixed-div {
-		width: 140px;
-	}
+  .fixed-div {
+    width: 140px;
+  }
 
+  .fixed-div aside,
+  .fixed-div label {
+    font-size: 11px;
+  }
 
-	.fixed-div aside,
-	.fixed-div label {
-		font-size: 11px;
-	}
+  .fixed-div aside a:hover {
+    text-decoration: none;
+  }
 
-	.fixed-div aside a:hover {
-		text-decoration: none;
-	}
-
-	.fluid-div {
+  .fluid-div {
     .calcWidth(~"100% - 150px");
     display: inline-block;
     white-space: nowrap;
@@ -62,13 +61,12 @@ h4.merge-interface-header {
     }
     &.num-cols-3 {
      .col {
-          .calcWidth(~"33.3% - 20px");
+        .calcWidth(~"33.3% - 20px");
       }
     }
     &.num-cols-4 {
       .col {
         .calcWidth(~"25% - 18px");
-
       }
     }
     &.num-cols-5 {
@@ -76,7 +74,7 @@ h4.merge-interface-header {
         .calcWidth(~"20% - 18px");
       }
     }
-	}
+  }
 
   .input-append.date {
     top: 4px;
@@ -99,13 +97,14 @@ h4.merge-interface-header {
     }
   }
 
-	.col {
-		min-width: 130px;
-		width: 130px;
-		height: 100%;
-		display: inline-block;
-		margin: 2px 0px 0px 10px;
-		.primary-lbl {
+  .col {
+    min-width: 130px;
+    width: 130px;
+    height: 100%;
+    display: inline-block;
+    margin: 2px 0px 0px 10px;
+    float: left;
+    .primary-lbl {
       cursor: move;
       height: 20px;
       margin: 0 0 5px 0;
@@ -116,7 +115,7 @@ h4.merge-interface-header {
         .border-radius(4px);
         background: #E9E9E9;
         text-align: center;
-        font-size:11px;
+        font-size: 11px;
         text-shadow: -1px -1px 1px @white;
       }
       span.primary-lbl-placeholder-span {
@@ -130,7 +129,7 @@ h4.merge-interface-header {
       button {
         position: relative;
       }
-		}
+    }
     &.pull-left {
       margin-right: 5px;
     }
@@ -148,64 +147,61 @@ h4.merge-interface-header {
         font-family: 'FontAwesome';
       }
     }
-		.box {
-			border-radius: 3px;
-		        .box-shadow(0 0 1px #aaaaaa);
-                        overflow: hidden;
-			.merge-edit {
-				display: none;
-			}
-			.merge-view {
-				display: block;
-			}
-		}
+    .box {
+      border-radius: 3px;
+      .box-shadow(0 0 1px #aaaaaa);
+      overflow: hidden;
+      .merge-edit {
+        display: none;
+      }
+      .merge-view {
+        display: block;
+      }
+    }
     button.icon-remove-sign {
       margin-top: 1px;
       line-height: 8px;
     }
-	}
+  }
 
-	.col.primary-edit-mode { /* PRIMARY */
-    overflow-x: hidden;
-    top: 2px;
-    position: relative;
-		.box {
-			background: #F7F7F7;
-			border:1px solid #CECECE;
-			.merge-row {
-				&.even,
-				&.odd {
-					background: none;
-				}
+  .col.primary-edit-mode { /* PRIMARY */
+    .box {
+      background: #F7F7F7;
+      border:1px solid #CECECE;
+      .merge-row {
+        &.even,
+        &.odd {
+          background: none;
+        }
         .controls > label {
           .calcWidth(~"100% - 34px");
         }
-			}
-			.merge-edit {
-				display: block;
-			}
-			.merge-view {
-				display: none;
-			}
-		}
-	}
+      }
+      .merge-edit {
+        display: block;
+      }
+      .merge-view {
+        display: none;
+      }
+    }
+  }
 
-	.label-div {
-		.col {
-			margin-top: 30px;
-		}
-		aside {
-			margin-left: 10px;
-			line-height: 32px;
-			a:hover i {
-				text-decoration: none;
-			}
-		}
-	}
+  .label-div {
+    .col {
+      margin-top: 30px;
+    }
+    aside {
+      margin-left: 10px;
+      line-height: 32px;
+      a:hover i {
+        text-decoration: none;
+      }
+    }
+  }
 
-	input[type=text] {
-		width: 98%;
-	}
+  input[type=text] {
+    width: 98%;
+  }
   input[type=password] {
     width: 98%;
   }
@@ -226,24 +222,24 @@ h4.merge-interface-header {
     height: (@mergeFieldHeight + 5);
     padding: 0 5px;
     white-space: nowrap;
-	&.odd {
-	    background: #FEFBF4;
-	}
-	&.even {
-	    background: #FDF9EA;
-	}
-	.ellipsis_inline {
-		display: inline-block !important;
-		width: 90%;
-	}
-	.select2-container {
-    .calcWidth(~"100% + 10px") !important;
-	}
-	textarea {
-		height: 18px;
-		width: 98%;
-          resize: none;
-	}
+    &.odd {
+      background: #FEFBF4;
+    }
+    &.even {
+      background: #FDF9EA;
+    }
+    .ellipsis_inline {
+      display: inline-block !important;
+      width: 90%;
+    }
+    .select2-container {
+      .calcWidth(~"100% + 10px") !important;
+    }
+    textarea {
+      height: 18px;
+      width: 98%;
+      resize: none;
+    }
     .controls {
       width: 100%;
       height: @mergeFieldHeight;
@@ -347,7 +343,7 @@ h4.merge-interface-header {
         position: relative;
       }
     }
-	}
+  }
 }
 
 .record-merge-interface {
