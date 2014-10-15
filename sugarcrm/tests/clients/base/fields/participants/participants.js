@@ -336,6 +336,21 @@ describe('View.Fields.Base.ParticipantsField', function() {
             field.search(query);
             expect(query.callback.getCall(0).args[0].results.length).toBe(0);
         });
+
+        it('should request the picture field so that an avatar can be shown upon selection', function() {
+            var collection, query;
+
+            collection = field.getFieldValue();
+            query = {
+                term: 'Jim',
+                callback: sandbox.spy()
+            };
+
+            sandbox.stub(collection, 'search');
+            field.search(query);
+
+            expect(collection.search.getCall(0).args[0].fields).toContain('picture');
+        });
     });
 
     describe('formatting the view model for render', function() {

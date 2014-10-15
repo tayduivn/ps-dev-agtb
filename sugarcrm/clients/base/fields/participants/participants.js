@@ -786,7 +786,7 @@
                 query: query.term,
                 success: success,
                 search_fields: ['first_name', 'last_name', 'email', 'account_name'],
-                fields: ['id', 'full_name', 'email', 'account_name'],
+                fields: ['id', 'full_name', 'email', 'account_name', 'picture'],
                 complete: function() {
                     query.callback(data);
                 }
