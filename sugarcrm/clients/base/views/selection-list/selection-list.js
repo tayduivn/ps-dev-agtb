@@ -22,10 +22,6 @@
         options.context.set('skipFetch', true);
         options.meta = options.meta || {};
 
-        this.oneToMany = options.context.get('recLink') ?
-                app.data.canHaveMany(app.controller.context.get('module'), options.context.get('recLink')) :
-                false;
-
         //One to Multi relationship; allow multi linking
         if (this.oneToMany) {
             options.meta.selection = {
@@ -45,22 +41,22 @@
         this.events = _.extend({}, this.events, {
             'click .search-and-select .single': 'triggerCheck'
         });
-
-        if (this.oneToMany) {
-            //Set up mass linker component
-            var pageComponent = this.layout.getComponent('mass-link');
-            if (!pageComponent) {
-                pageComponent = app.view.createView({
-                    context: this.context,
-                    name: 'mass-link',
-                    module: this.module,
-                    primary: false,
-                    layout: this.layout
-                });
-                this.layout.addComponent(pageComponent);
-            }
-            pageComponent.render();
-        }
+//
+//        if (this.oneToMany) {
+//            //Set up mass linker component
+//            var pageComponent = this.layout.getComponent('mass-link');
+//            if (!pageComponent) {
+//                pageComponent = app.view.createView({
+//                    context: this.context,
+//                    name: 'mass-link',
+//                    module: this.module,
+//                    primary: false,
+//                    layout: this.layout
+//                });
+//                this.layout.addComponent(pageComponent);
+//            }
+//            pageComponent.render();
+//        }
         this.initializeEvents();
     },
 

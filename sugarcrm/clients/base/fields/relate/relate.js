@@ -423,100 +423,111 @@
     unformat: function(value) {
         return this.model.get(this.def.id_name);
     },
-    setValue: function (model) {
-        if (!model) {
-            return;
-        }
-        var silent = model.silent || false,
-            values = {};
-        values[this.def.id_name] = model.id;
-        values[this.def.name] = model[this.getRelatedModuleField()] || model.value;
-        this.model.set(values, {silent: silent});
 
-        // TODO: move this to SidecarExpressionContext
-        // check if link field is currently populated
-        if (this.model.get(this.def.link)) {
-            // unset values of related bean fields in order to make the model load
-            // the values corresponding to the currently selected bean
-            this.model.unset(this.def.link);
-        } else {
-            // unsetting what is not set won't trigger "change" event,
-            // we need to trigger it manually in order to notify subscribers
-            // that another related bean has been chosen.
-            // the actual data will then come asynchronously
-            this.model.trigger("change:" + this.def.link);
-        }
+    setValue: function(models) {
 
-        var newData = {},
-            self = this;
-        _.each(this.def.populate_list, function(target, source) {
-            source = _.isNumber(source) ? target : source;
-            if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                var before = this.model.get(target),
-                    after = model[source];
+            if (!models) {
+                return;
+            }
 
-                if (before !== after) {
-                    newData[target] = model[source];
+       models = _.isArray(models) ? models : [models];
+
+            var silent = models.silent || false,
+                values = {};
+            values[this.def.id_name] = [];
+            values[this.def.name] = [];
+
+            _.each(models, _.bind(function(model) {
+            values[this.def.id_name].push(model.id);
+            values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
+            }, this));
+
+            this.model.set(values, {silent: silent});
+
+            // TODO: move this to SidecarExpressionContext
+            // check if link field is currently populated
+            if (this.model.get(this.def.link)) {
+                // unset values of related bean fields in order to make the model load
+                // the values corresponding to the currently selected bean
+                this.model.unset(this.def.link);
+            } else {
+                // unsetting what is not set won't trigger "change" event,
+                // we need to trigger it manually in order to notify subscribers
+                // that another related bean has been chosen.
+                // the actual data will then come asynchronously
+                this.model.trigger("change:" + this.def.link);
+            }
+
+            var newData = {},
+                self = this;
+            _.each(this.def.populate_list, function(target, source) {
+                source = _.isNumber(source) ? target : source;
+                if (!_.isUndefined(models[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
+                    var before = this.model.get(target),
+                        after = models[source];
+
+                    if (before !== after) {
+                        newData[target] = models[source];
+                    }
                 }
+            }, this);
+
+            if (_.isEmpty(newData)) {
+                return;
             }
-        }, this);
 
-        if (_.isEmpty(newData)) {
-            return;
-        }
-
-        // if this.def.auto_populate is true set new data and doesn't show alert message
-        if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
-            // if we have a currency_id, set it first to trigger the currency conversion before setting
-            // the values to the model, this prevents double conversion from happening
-            if (!_.isUndefined(newData.currency_id)) {
-                this.model.set({currency_id: newData.currency_id});
-                delete newData.currency_id;
-            }
-            this.model.set(newData);
-            return;
-        }
-
-        // load template key for confirmation message from defs or use default
-        var messageTplKey = this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM',
-            messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
-            fieldMessageTpl = app.template.getField(
-                this.type,
-                'overwrite-confirmation',
-                this.model.module),
-            messages = [],
-            relatedModuleSingular = app.lang.getModuleName(this.def.module);
-
-        _.each(newData, function(value, field) {
-            var before = this.model.get(field),
-                after = value;
-
-            if (before !== after) {
-                var def = this.model.fields[field];
-                messages.push(fieldMessageTpl({
-                    before: before,
-                    after: after,
-                    field_label: app.lang.get(def.label || def.vname || field, this.module)
-                }));
-            }
-        }, this);
-
-        app.alert.show('overwrite_confirmation', {
-            level: 'confirmation',
-            messages: messageTpl({
-                values: new Handlebars.SafeString(messages.join(', ')),
-                moduleSingularLower: relatedModuleSingular.toLowerCase()
-            }),
-            onConfirm: function() {
+            // if this.def.auto_populate is true set new data and doesn't show alert message
+            if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
                 // if we have a currency_id, set it first to trigger the currency conversion before setting
                 // the values to the model, this prevents double conversion from happening
                 if (!_.isUndefined(newData.currency_id)) {
-                    self.model.set({currency_id: newData.currency_id});
+                    this.model.set({currency_id: newData.currency_id});
                     delete newData.currency_id;
                 }
-                self.model.set(newData);
+                this.model.set(newData);
+                return;
             }
-        });
+
+            // load template key for confirmation message from defs or use default
+            var messageTplKey = this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM',
+                messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
+                fieldMessageTpl = app.template.getField(
+                    this.type,
+                    'overwrite-confirmation',
+                    this.model.module),
+                messages = [],
+                relatedModuleSingular = app.lang.getModuleName(this.def.module);
+
+            _.each(newData, function(value, field) {
+                var before = this.model.get(field),
+                    after = value;
+
+                if (before !== after) {
+                    var def = this.model.fields[field];
+                    messages.push(fieldMessageTpl({
+                        before: before,
+                        after: after,
+                        field_label: app.lang.get(def.label || def.vname || field, this.module)
+                    }));
+                }
+            }, this);
+
+            app.alert.show('overwrite_confirmation', {
+                level: 'confirmation',
+                messages: messageTpl({
+                    values: new Handlebars.SafeString(messages.join(', ')),
+                    moduleSingularLower: relatedModuleSingular.toLowerCase()
+                }),
+                onConfirm: function() {
+                    // if we have a currency_id, set it first to trigger the currency conversion before setting
+                    // the values to the model, this prevents double conversion from happening
+                    if (!_.isUndefined(newData.currency_id)) {
+                        self.model.set({currency_id: newData.currency_id});
+                        delete newData.currency_id;
+                    }
+                    self.model.set(newData);
+                }
+            });
     },
 
     /**
@@ -540,11 +551,12 @@
      */
     openSelectDrawer: function() {
         app.drawer.open({
-            layout: 'selection-list',
+            layout: 'selection-list-filter',
             context: {
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
-                filterOptions: this.getFilterOptions()
+                filterOptions: this.getFilterOptions(),
+                multiple: this.def.isMultiSelect
             }
         }, _.bind(this.setValue, this));
     },
