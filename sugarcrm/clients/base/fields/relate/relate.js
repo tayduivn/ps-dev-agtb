@@ -556,7 +556,7 @@
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
-                multiple: this.def.isMultiSelect
+                multiSelect: this.def.isMultiSelect
             }
         }, _.bind(this.setValue, this));
     },

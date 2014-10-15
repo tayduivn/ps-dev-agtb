@@ -17,15 +17,15 @@
     extendsFrom: 'SelectionListView',
 
     initialize: function(options) {
-        this.oneToMany = options.context.get('multiple');
+        this.multiSelect = options.context.get('multiSelect');
         this._super('initialize', [options]);
     },
 
     /**
-     * Override to setup events for subclasses
+     * Sets up events.
      */
     initializeEvents: function() {
-        if (this.oneToMany) {
+        if (this.multiSelect) {
             this.context.on('selection:select:fire', this._selectMultipleAndClose, this);
         } else {
             this.context.on('change:selection_model', this._selectAndClose, this);
@@ -33,7 +33,8 @@
     },
 
     /**
-     * Select multiple models to link and fire the mass link event
+     * Selects multiple records and closes the drawer.
+     *
      * @private
      */
     _selectMultipleAndClose: function() {
@@ -43,6 +44,11 @@
         }
     },
 
+    /**
+     * Selects multiple records and closes the drawer.
+     *
+     * @private
+     */
     _getCollectionAttributes: function(collection) {
         var attributes = [];
         _.each(collection.models, _.bind(function(model) {

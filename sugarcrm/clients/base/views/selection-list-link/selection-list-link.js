@@ -17,34 +17,11 @@
     extendsFrom: 'SelectionListView',
 
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
-        //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
-        options.context.set('skipFetch', true);
-        options.meta = options.meta || {};
-
         this.oneToMany = options.context.get('recLink') ?
                 app.data.canHaveMany(app.controller.context.get('module'), options.context.get('recLink')) :
                 false;
 
-        //One to Multi relationship; allow multi linking
-        if (this.oneToMany) {
-            options.meta.selection = {
-                type: 'multi',
-                isLinkAction: true
-            };
-        } else {
-            options.meta.selection = {
-                type: 'single',
-                label: 'LBL_LINK_SELECT',
-                isLinkAction: true
-            };
-        }
-
         this._super('initialize', [options]);
-
-        this.events = _.extend({}, this.events, {
-            'click .search-and-select .single': 'triggerCheck'
-        });
 
         if (this.oneToMany) {
             //Set up mass linker component
@@ -61,29 +38,10 @@
             }
             pageComponent.render();
         }
-        this.initializeEvents();
     },
 
     /**
-     * check the checkbox when the row is clicked
-     * @param {object} event
-     */
-    triggerCheck: function(event) {
-        //Ignore inputs and links/icons, because those already have defined effects
-        if (!($(event.target).is('a,i,input'))) {
-            if (this.oneToMany) {
-                //simulate click on the input for this row
-                var checkbox = $(event.currentTarget).find('input[name="check"]');
-                checkbox[0].click();
-            } else {
-                var radioButton = $(event.currentTarget).find('.selection[type="radio"]');
-                radioButton[0].click();
-            }
-        }
-    },
-
-    /**
-     * Override to setup events for subclasses
+     * Sets up events
      */
     initializeEvents: function() {
         if (this.oneToMany) {
@@ -96,7 +54,9 @@
     },
 
     /**
-     * After a model is selected, refresh the list view and add the model to selections
+     * After a model is selected, refresh the list view and add the model to
+     * selections.
+     *
      * @private
      */
     _refreshList: function(model) {
@@ -124,7 +84,8 @@
     },
 
     /**
-     * Close drawer and then refresh record page with new links
+     * Closes the drawer and then refreshes record page with new links.
+     *
      * @private
      */
     _closeDrawer: function(model, data, response) {
@@ -169,20 +130,6 @@
     },
 
     /**
-     * Selected from list. Close the drawer.
-     *
-     * @param {object} context
-     * @param {object} selectionModel
-     * @private
-     */
-    _selectAndClose: function(context, selectionModel) {
-        if (selectionModel) {
-            this.context.unset('selection_model', {silent: true});
-            app.drawer.close(this._getModelAttributes(selectionModel));
-        }
-    },
-
-    /**
      * Select the given model and close the drawer immediately.
      *
      * @param {object} model
@@ -191,47 +138,6 @@
     _selectAndCloseImmediately: function(model) {
         if (model) {
             app.drawer.closeImmediately(this._getModelAttributes(model));
-        }
-    },
-
-    /**
-     * Return attributes given a model with ACL check
-     *
-     * @param {object} model
-     * @return {object} attributes
-     * @private
-     */
-    _getModelAttributes: function(model) {
-        var attributes = {
-            id: model.id,
-            value: model.get('name')
-        };
-
-        //only pass attributes if the user has view access
-        _.each(model.attributes, function(value, field) {
-            if (app.acl.hasAccessToModel('view', model, field)) {
-                attributes[field] = attributes[field] || model.get(field);
-            }
-        }, this);
-
-        return attributes;
-    },
-
-    /**
-     * Add Preview button on the actions column on the right.
-     */
-    addActions: function() {
-        this._super('addActions');
-        if (this.meta.showPreview !== false) {
-            this.rightColumns.push({
-                type: 'preview-button',
-                css_class: 'btn',
-                tooltip: 'LBL_PREVIEW',
-                event: 'list:preview:fire',
-                icon: 'icon-eye-open'
-            });
-        } else {
-            this.rightColumns.push({});
         }
     }
 })
