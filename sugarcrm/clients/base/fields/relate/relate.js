@@ -556,6 +556,7 @@
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
+                modelsId: this.model.get(this.def.id_name),
                 multiSelect: this.def.isMultiSelect
             }
         }, _.bind(this.setValue, this));

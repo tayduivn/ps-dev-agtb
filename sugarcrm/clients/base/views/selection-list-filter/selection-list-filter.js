@@ -18,6 +18,7 @@
 
     initialize: function(options) {
         this.multiSelect = options.context.get('multiSelect');
+
         this._super('initialize', [options]);
     },
 

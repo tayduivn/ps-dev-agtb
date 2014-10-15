@@ -426,6 +426,11 @@
             field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
             field.render();
         }, this);
+
+        if (_.contains(this.options.context.get('modelsId'), this.model.id)) {
+            this.$(this.fieldTag).prop('checked', true);
+            this.check();
+        }
     },
 
     setPlaceholder: function() {
