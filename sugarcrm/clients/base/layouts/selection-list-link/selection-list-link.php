@@ -114,7 +114,7 @@ $viewdefs['base']['layout']['selection-list-link'] = array(
             ),
         ),
     ),
-    'type' => 'selection-list',
+    'type' => 'selection-list-link',
     'name' => 'base',
     'span' => 12,
 );

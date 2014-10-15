@@ -24,7 +24,7 @@
 
     /**
      * Event handler for the select button that opens a
-     * {@link View.Layouts.Base.SelectionListLayout} in  a drawer for linking
+     * {@link View.Layouts.Base.SelectionListLinkLayout} in  a drawer for linking
      * an existing record.
      */
     openSelectDrawer: function() {
@@ -41,7 +41,7 @@
         }
 
         app.drawer.open({
-            layout: 'selection-list',
+            layout: 'selection-list-link',
             context: {
                 module: 'Reports',
                 filterOptions: filterOptions.format(),
