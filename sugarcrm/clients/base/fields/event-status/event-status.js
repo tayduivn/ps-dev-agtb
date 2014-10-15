@@ -57,6 +57,9 @@
                 case 'Not Held':
                     $label.addClass('label-important');
                     break;
+                case 'Planned':
+                    $label.addClass('label-pending');
+                    break;
                 default:
                     break;
             }
