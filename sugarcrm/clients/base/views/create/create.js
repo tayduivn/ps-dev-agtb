@@ -263,11 +263,14 @@
     /**
      * Handle click on save and create another link
      */
-    saveAndCreate: function () {
+    saveAndCreate: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
-        this.initiateSave(_.bind(function () {
+        this.initiateSave(_.bind(
+            function() {
                 this.clear();
-                this.model.set(this.model.relatedAttributes);
+                // set the default attributes and the relatedAttributes back
+                // on the model since it's been cleared out
+                this.model.set(_.extend(this.model.getDefaultAttributes(), this.model.relatedAttributes));
                 this.resetDuplicateState();
 
                 if (this.hasSubpanelModels) {
@@ -303,6 +306,20 @@
             this.model.set(this._origAttributes);
             this.model.isCopied = true;
         }
+
+        // reset subpanels
+        if (this.hasSubpanelModels) {
+            // loop through subpanels and call resetCollection on create subpanels
+            _.each(this.context.children, function(child) {
+                if (child.get('isCreateSubpanel')) {
+                    this.context.trigger('subpanel:resetCollection:' + child.get('link'), true);
+                }
+            }, this);
+
+            // reset the hasSubpanelModels flag
+            this.hasSubpanelModels = false;
+        }
+        
         this.createMode = true;
         if (!this.disposed) {
             this.render();

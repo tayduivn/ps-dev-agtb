@@ -1,3 +1,5 @@
+
+
 <?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -10,4 +12,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-ob_start();
+$data = 'foo';
+?>

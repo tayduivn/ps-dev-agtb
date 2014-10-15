@@ -9,5 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+?>
 
-ob_start();
+

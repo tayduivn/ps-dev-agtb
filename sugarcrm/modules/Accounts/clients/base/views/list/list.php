@@ -63,7 +63,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'email1',
+                    'name' => 'email',
                     'width' => '15%',
                     'label' => 'LBL_EMAIL_ADDRESS',
                     'enabled' => true,

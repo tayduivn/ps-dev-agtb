@@ -308,13 +308,18 @@
      * TODO we should receive the data only and be jQuery agnostic.
      */
     validateRow: function(row) {
-
         var $row = $(row),
             data = $row.data();
 
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
             return true;
+        } else if (data.isFlexRelate) {
+            return data.value ?
+                _.reduce(data.value, function(memo, val) {
+                    return memo && !_.isEmpty(val);
+                }, true) :
+                false;
         }
 
         //Special case for between operators where 2 values are needed
@@ -375,11 +380,12 @@
         var $row = this.addRow(),
             moduleMeta = app.metadata.getModule(this.layout.currentModule),
             fieldMeta = moduleMeta.fields;
+        this.isPopulatingRow = true;
 
         _.each(rowObj, function(value, key) {
             var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
 
-            if (key === "$or") {
+            if (key === '$or') {
                 var keys = _.reduce(value, function(memo, obj) {
                     return memo.concat(_.keys(obj));
                 }, []);
@@ -392,6 +398,16 @@
 
                 // Predicates are identical, so we just use the first.
                 value = _.values(value[0])[0];
+            } else if (key === '$and') {
+                var values = _.reduce(value, function(memo, obj) {
+                        return _.extend(memo, obj);
+                    }, {}),
+                    def = _.find(this.fieldList, function(fieldDef) {
+                        return _.has(values, fieldDef.id_name);
+                    }, this);
+
+                key = def ? def.name : key;
+                value = {'$equals': values};
             } else if (!fieldMeta[key] && !isPredefinedFilter) {
                 $row.remove();
                 return;
@@ -420,6 +436,7 @@
                     .trigger('change');
             });
         }, this);
+        this.isPopulatingRow = false;
     },
 
     /**
@@ -444,6 +461,8 @@
         }
         // For relate fields
         data.id_name = this.fieldList[fieldName].id_name;
+        // For flex-relate fields
+        data.type_name = this.fieldList[fieldName].type_name;
 
         //Predefined filters don't need operators and value field
         if (this.fieldList[fieldName].predefined_filter === true) {
@@ -457,7 +476,9 @@
             payload = {},
             types = _.keys(this.filterOperatorMap[fieldType]);
 
-        $fieldWrapper.removeClass('hide').empty();
+        fieldType === 'parent' ?
+            $fieldWrapper.addClass('hide').empty() :
+            $fieldWrapper.removeClass('hide').empty();
         $row.find('[data-filter=value]').addClass('hide').empty();
 
         // If the user is editing a filter, clear the operator.
@@ -485,6 +506,31 @@
         data['operatorField'] = field;
 
         this._renderField(field, $field);
+
+        var hide = fieldType === 'parent';
+        this._hideOperator(hide, $row);
+    },
+
+    /**
+     * Shows or hides the operator field of the filter row specified.
+     *
+     * Automatically populates the operator field to have value `$equals` if it
+     * is not in midst of populating the row.
+     *
+     * @param {boolean} hide Set to `true` to hide the operator field.
+     * @param {jQuery} $row The filter row of interest.
+     * @private
+     */
+    _hideOperator: function(hide, $row) {
+        $row.find('[data-filter=value]')
+            .toggleClass('span4', !hide)
+            .toggleClass('span8', hide);
+
+        //FIXME Remove this when SC-2833 gets merged
+        if (hide && !this.isPopulatingRow) {
+            var operatorField = $row.data('operatorField');
+            operatorField.$(operatorField.fieldTag).select2('val', '$equals', true);
+        }
     },
 
     /**
@@ -557,6 +603,9 @@
             case 'relate':
                 fieldDef.auto_populate = true;
                 break;
+            case 'parent':
+                data.isFlexRelate = true;
+                break;
         }
         fieldDef.required = false;
         fieldDef.readonly = false;
@@ -610,6 +659,36 @@
                 });
                 this._renderField(field, fieldContainer);
             }, this);
+        } else if (data.isFlexRelate) {
+            _.each($row.data('value'), function(value, key) {
+                model.set(key, value);
+            }, this);
+
+            var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
+                fieldContainer = $(field.getPlaceholder().string),
+                findRelatedName = app.data.createBeanCollection(model.get('parent_type'));
+            data['valueField'] = field;
+            $fieldValue.append(fieldContainer);
+
+            if (model.get('parent_id')) {
+                findRelatedName.fetch({
+                    params: {filter: [{'id': model.get('parent_id')}]},
+                    complete: _.bind(function() {
+                        if (!this.disposed) {
+                            if (findRelatedName.first()) {
+                                model.set(fieldName,
+                                    findRelatedName.first().get(field.getRelatedModuleField()),
+                                    {silent: true});
+                            }
+                            if (!field.disposed) {
+                                this._renderField(field, fieldContainer);
+                            }
+                        }
+                    }, this)
+                });
+            } else {
+                this._renderField(field, fieldContainer);
+            }
         } else {
             model.set(fieldDef.id_name || fieldName, $row.data('value'));
             // Render the value field
@@ -800,7 +879,15 @@
                 });
                 filter['$or'] = subfilters;
             } else {
-                if (operator === '$equals') {
+                if (data.isFlexRelate) {
+                    var valueField = data['valueField'],
+                        idFilter = {},
+                        typeFilter = {};
+
+                    idFilter[data.id_name] = valueField.model.get(data.id_name);
+                    typeFilter[data.type_name] = valueField.model.get(data.type_name);
+                    filter['$and'] = [idFilter, typeFilter];
+                } else if (operator === '$equals') {
                     filter[name] = value;
                 } else if (data.isDateRange) {
                     //Once here the value is actually a key of date_range_selector_dom and we need to build a real
@@ -893,6 +980,7 @@
         data.isDate = false;
         data.isDateRange = false;
         data.isPredefinedFilter = false;
+        data.isFlexRelate = false;
         $row.data(data);
         this.fireSearch();
     }

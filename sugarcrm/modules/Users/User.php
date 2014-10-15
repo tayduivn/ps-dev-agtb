@@ -598,7 +598,7 @@ class User extends Person {
                     $team = BeanFactory::getBean('Teams');
                     $team->new_user_created($this);
                 }
-            }else{
+            } else if (empty($GLOBALS['sugar_config']['noPrivateTeamUpdate'])) {
                 //if this is an update, then we need to ensure we keep the user's
                 //private team name and name_2 in sync with their name.
                 $team_id = $this->getPrivateTeamID();

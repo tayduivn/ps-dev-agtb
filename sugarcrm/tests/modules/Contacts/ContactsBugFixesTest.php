@@ -34,6 +34,10 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->contacts AS $contact) {
             $contact->mark_deleted($contact->id);
         }
+
+        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
         SugarTestHelper::tearDown();
     }
 
@@ -81,7 +85,24 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->retrieve($contact->id);
         $this->assertEmpty($contact->sync_contact);
         $contact->mark_deleted($contact->id);
-    }    
+    }
+
+    public function testCRYS461Fix()
+    {
+        $contactApi = new ContactsApiHelper(new ContactsBugFixesServiceMockup());
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->retrieve($contact->id);
+        $this->assertEquals($contact->email1, $contact->fetched_row['email1']);
+
+        $submittedData = array(
+            'email' => array(
+                array('email_address' => 'testnew@example.com', 'primary_address' => true),
+                array('email_address' => 'test2@example.com', 'primary_address' => false)
+            )
+        );
+        $contactApi->populateFromApi($contact, $submittedData);
+        $this->assertNotEquals($contact->email1, $contact->fetched_row['email1']);
+    }
 }
 
 class ContactsBugFixesServiceMockup extends ServiceBase {

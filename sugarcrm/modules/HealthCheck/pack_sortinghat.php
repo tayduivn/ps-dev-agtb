@@ -20,6 +20,36 @@
  *
  */
 
+function packSortingHat($archive, $params, $installdefs = null, $internalPath = '')
+{
+    $defaults = array(
+        'version' => '7.5.0.0',
+        'build' => '998'
+    );
+
+    $params = array_merge($defaults, $params);
+
+    file_put_contents(__DIR__ . '/Scanner/version.json', json_encode($params, true));
+
+    $files = array(
+        'Scanner/Scanner.php',
+        'Scanner/ScannerCli.php',
+        'Scanner/ScannerWeb.php',
+        'Scanner/ScannerMeta.php',
+        'Scanner/version.json',
+        'language/en_us.lang.php',
+    );
+
+    foreach ($files as $file) {
+        $archive->addFile(__DIR__ . '/' . $file, $internalPath . $file);
+        if(is_array($installdefs)) {
+            $installdefs['copy'][] = array("from" => "<basepath>/$internalPath$file", "to" => $internalPath . $file);
+        }
+    }
+
+    return array($archive, $installdefs);
+}
+
 if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
     return;
 }
@@ -30,23 +60,20 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 
 if (empty($argv[1])) {
-    die("Use $argv[0] healthcheck.phar\n");
+    die("Use $argv[0] healthcheck.phar [sugarVersion [buildNumber]]\n");
 }
-
-$zipFile = $argv[1];
-
-$files = array(
-    'Scanner/Scanner.php',
-    'Scanner/ScannerCli.php',
-    'Scanner/ScannerMeta.php',
-    'language/en_us.lang.php',
-);
 
 $phar = new Phar($argv[1]);
 
-foreach ($files as $file) {
-    $phar->addFile($file, $file);
+$params = array();
+if(isset($argv[2])) {
+    $params['version'] = $argv[2];
 }
+if(isset($argv[3])) {
+    $params['build'] = $argv[3];
+}
+
+packSortingHat($phar, $params);
 
 $stub = <<<'STUB'
 <?php 

@@ -272,5 +272,5 @@
             view.revertBwcModel();
         }
     };
-    app.augment('bwc', Bwc, false);
+    app.augment('bwc', _.extend(Bwc, Backbone.Events), false);
 })(SUGAR.App);

@@ -625,6 +625,22 @@ describe('Base.View.Create', function() {
         });
     });
 
+    describe('restoreModel()', function() {
+        it('should trigger resetCollection on any child create subpanels', function() {
+            var triggerSpy = sinonSandbox.spy(view.context, 'trigger'),
+                child = new Backbone.Model({
+                    isCreateSubpanel: true,
+                    link: 'testLink'
+                });
+            view.context.children.push(child);
+            view.hasSubpanelModels = true;
+
+            view.restoreModel();
+
+            expect(triggerSpy).toHaveBeenCalledWith('subpanel:resetCollection:testLink');
+        });
+    });
+    
     describe('Save', function() {
         beforeEach(function() {
             SugarTest.clock.restore();
@@ -874,6 +890,33 @@ describe('Base.View.Create', function() {
                 expect(clearStub.calledOnce).toBeTruthy();
                 expect(navigateStub.called).toBeFalsy();
                 expect(alertStub.called).toBeFalsy();
+            });
+        });
+        it('should save, and reset the defaults on the the model', function() {
+            modelId = 123;
+            sinonSandbox.stub(view.model, 'getDefaultAttributes', function() {
+                return {
+                    'quantity': 1
+                };
+            });
+            runs(function() {
+                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
+                    return f.name === this.saveAndCreateButtonName;
+                }, view);
+                saveButton.getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'clear should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.called).toBeFalsy();
+                expect(clearStub.calledOnce).toBeTruthy();
+                expect(navigateStub.called).toBeFalsy();
+                expect(alertStub.called).toBeFalsy();
+                expect(view.model.get('quantity')).toEqual(1);
             });
         });
     });

@@ -49,7 +49,12 @@ class CliUpgrader extends UpgradeDriver
      * @var array
      */
     protected $stageExitCodes = array(
-        'healthcheck' => 6, 'unpack' => 1, 'pre' => 2, 'commit' => 3, 'post' => 4, 'cleanup' => 5
+        'healthcheck' => 6,
+        'unpack' => 1,
+        'pre' => 2,
+        'commit' => 3,
+        'post' => 4,
+        'cleanup' => 5
     );
 
     /*
@@ -179,7 +184,7 @@ eoq2;
             $context['zip'] = realpath($context['zip']);
         }
         $context['zip_as_dir'] = false;
-        if(is_dir($context['zip'])) {
+        if (is_dir($context['zip'])) {
             $context['zip_as_dir'] = true;
             $this->clean_on_fail = false;
         }
@@ -210,7 +215,7 @@ eoq2;
             $this->context['autoconfirm'] = false;
         }
         $this->context['sendlog'] = !empty($this->context['sendlog']);
-        if($this->context['zip_as_dir']) {
+        if ($this->context['zip_as_dir']) {
             $this->context['extract_dir'] = $this->context['zip'];
         }
     }
@@ -221,7 +226,7 @@ eoq2;
      */
     protected function preflightWriteUnzip()
     {
-        if($this->context['zip_as_dir']) {
+        if ($this->context['zip_as_dir']) {
             // if we're using extracted zip, we don't need it to be writable
             return true;
         }
@@ -234,7 +239,7 @@ eoq2;
      */
     protected function extractZip($zip)
     {
-        if($this->context['zip_as_dir'] && is_dir($zip)) {
+        if ($this->context['zip_as_dir'] && is_dir($zip)) {
             // pre-extracted
             if (!file_exists("$zip/manifest.php")) {
                 return $this->error("$zip does not contain manifest.php");
@@ -367,7 +372,7 @@ eoq2;
      */
     protected function getStageCode($stage)
     {
-        if(isset($this->stageExitCodes[$stage])) {
+        if (isset($this->stageExitCodes[$stage])) {
             return $this->stageExitCodes[$stage];
         }
         return 99;
@@ -504,16 +509,9 @@ eoq2;
         }
         $this->state['healthcheck'] = $scanner->scan();
         $this->saveState();
+        $this->getHelper()->pingHeartbeat(array('bucket' => $scanner->getStatus(), 'flag' => $scanner->getFlag()));
         if ($this->context['sendlog']) {
-            require_once 'HealthCheckClient.php';
-            require_once 'SugarSystemInfo.php';
-            $scanner->dumpMeta();
-            $client = new HealthCheckClient();
-            $client->send(
-                SugarSystemInfo::getInstance()->getLicenseKey(),
-                $this->context['log']
-            );
-            $this->log('HealthCheck log was sent to sugarcrm.com');
+            $this->getHelper()->sendLog($this->context['log']);
         }
         $scanner->dumpMeta();
         if ($scanner->isFlagRed()) {
@@ -538,6 +536,51 @@ eoq2;
             }
         }
         return true;
+    }
+
+    /**
+     *
+     * Get Scanner object
+     * @return HealthCheckScannerCli
+     */
+    protected function  getHealthCheckScanner()
+    {
+        if ($this->isHealthCheckInstalled()) {
+            $scanner = $this->getHelper()->getScanner('cli');
+            $scanner->setVerboseLevel(0);
+            $scanner->setLogFilePointer($this->fp);
+            $scanner->setInstanceDir($this->context['source_dir']);
+            return $scanner;
+        }
+        return false;
+    }
+
+    /**
+     * @return HealthCheckHelper
+     */
+    protected function getHelper()
+    {
+        require_once 'SugarSystemInfo.php';
+        require_once 'SugarHeartbeatClient.php';
+        require_once 'HealthCheckClient.php';
+        require_once 'HealthCheckHelper.php';
+        return HealthCheckHelper::getInstance();
+    }
+
+    /**
+     *
+     * Verify if health check module is available
+     * @return boolean
+     */
+    protected function isHealthCheckInstalled()
+    {
+        set_include_path(
+            __DIR__ . DIRECTORY_SEPARATOR . realpath(
+                $this->context['health_check_path']
+            ) . PATH_SEPARATOR . get_include_path()
+        );
+        $file = 'Scanner/ScannerCli.php';
+        return stream_resolve_include_path($file);
     }
 
     /**

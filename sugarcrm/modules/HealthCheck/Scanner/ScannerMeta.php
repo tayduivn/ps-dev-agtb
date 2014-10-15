@@ -117,6 +117,7 @@ class HealthCheckScannerMeta
         308 => array(
             'report' => 'vardefHtmlFunction',
             'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Vardef_HTML_Function/'
         ),
         309 => array(
             'report' => 'badMd5',
@@ -125,10 +126,12 @@ class HealthCheckScannerMeta
         310 => array(
             'report' => 'unknownFile',
             'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Is_Not_MB_Module/'
         ),
         311 => array(
             'report' => 'vardefHtmlFunctionName',
-            'bucket' => self::STUDIO_MB_BWC
+            'bucket' => self::STUDIO_MB_BWC,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Vardef_HTML_Function_Module_Field/'
         ),
         312 => array(
             'report' => 'badVardefsName',
@@ -167,11 +170,11 @@ class HealthCheckScannerMeta
 //        ),
         406 => array(
             'report' => 'hasCustomViews',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
         407 => array(
             'report' => 'hasCustomViewsModDir',
-            'bucket' => self::MANUAL,
+            'bucket' => self::CUSTOM,
         ),
         519 => array(
             'report' => 'extensionDir',
@@ -188,6 +191,7 @@ class HealthCheckScannerMeta
         522 => array(
             'report' => 'subPanelWithFunction',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Get_Subpanel_Data_With_Function/'
         ),
         412 => array(
             'report' => 'badSubpanelLink',
@@ -204,11 +208,12 @@ class HealthCheckScannerMeta
         415 => array(
             'report' => 'badHookFile',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Bad_Hook_File/'
         ),
-        523 => array(
-            'report' => 'byRefInHookFile',
-            'bucket' => self::MANUAL,
-        ),
+//         523 => array(
+//             'report' => 'byRefInHookFile',
+//             'bucket' => self::MANUAL,
+//         ),
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
@@ -238,28 +243,31 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM,
         ),
         424 => array(
-            'report' => 'inlineHtmlCustom',
-            'bucket' => self::MANUAL,
-        ),
-        425 => array(
-            'report' => 'foundEchoCustom',
+            'report' => 'inlineHtmlSpacing',
             'bucket' => self::CUSTOM,
         ),
+        425 => array(
+            'report' => 'foundEcho',
+            'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Echo/'
+        ),
         426 => array(
-            'report' => 'foundPrintCustom',
+            'report' => 'foundPrint',
             'bucket' => self::CUSTOM,
         ),
         427 => array(
-            'report' => 'foundDieExitCustom',
+            'report' => 'foundDieExit',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_DieExit/'
         ),
         428 => array(
-            'report' => 'foundPrintRCustom',
+            'report' => 'foundPrintR',
             'bucket' => self::CUSTOM,
         ),
         429 => array(
-            'report' => 'foundVarDumpCustom',
+            'report' => 'foundVarDump',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Var_Dump/'
         ),
 //        430 => array(
 //            'report' => 'foundOutputBufferingCustom',
@@ -298,6 +306,7 @@ class HealthCheckScannerMeta
         504 => array(
             'report' => 'fieldTypeMissing',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Field_Type_Missing/'
         ),
         505 => array(
             'report' => 'typeChange',
@@ -314,27 +323,30 @@ class HealthCheckScannerMeta
         508 => array(
             'report' => 'inlineHtml',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Inline_HTML_Found/'
         ),
-        509 => array(
-            'report' => 'foundEcho',
-            'bucket' => self::MANUAL,
-        ),
-        510 => array(
-            'report' => 'foundPrint',
-            'bucket' => self::MANUAL,
-        ),
-        511 => array(
-            'report' => 'foundDieExit',
-            'bucket' => self::MANUAL,
-        ),
-        512 => array(
-            'report' => 'foundPrintR',
-            'bucket' => self::MANUAL,
-        ),
-        513 => array(
-            'report' => 'foundVarDump',
-            'bucket' => self::MANUAL,
-        ),
+
+        //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
+//        509 => array(
+//            'report' => 'foundEcho',
+//            'bucket' => self::MANUAL,
+//        ),
+//        510 => array(
+//            'report' => 'foundPrint',
+//            'bucket' => self::MANUAL,
+//        ),
+//        511 => array(
+//            'report' => 'foundDieExit',
+//            'bucket' => self::MANUAL,
+//        ),
+//        512 => array(
+//            'report' => 'foundPrintR',
+//            'bucket' => self::MANUAL,
+//        ),
+//        513 => array(
+//            'report' => 'foundVarDump',
+//            'bucket' => self::MANUAL,
+//        ),
 //        514 => array(
 //            'report' => 'foundOutputBuffering',
 //            'bucket' => self::MANUAL,
@@ -350,6 +362,7 @@ class HealthCheckScannerMeta
         517 => array(
             'report' => 'incompatIntegration',
             'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         528 => array(
             'report' => 'vardefIncorrectDisplayDefault',
@@ -589,7 +602,7 @@ class HealthCheckScannerMeta
         if(isset($GLOBALS['current_language'])) {
             $this->locale = $GLOBALS['current_language'];
         } else {
-            $lang = explode(getenv("LANG"), '.');
+            $lang = explode('.', getenv("LANG"));
             if($lang) {
                 $this->locale = $lang[0];
             }

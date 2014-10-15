@@ -955,8 +955,8 @@ class DynamicField {
         return false;
     }
 
-    /////////////////////////BACKWARDS COMPATABILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    ////////////////////////////END BACKWARDS COMPATABILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /////////////////////////BACKWARDS COMPATIBILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    ////////////////////////////END BACKWARDS COMPATIBILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     /**
      *
@@ -1044,7 +1044,7 @@ class DynamicField {
         return $results;
     }
 
-    ////////////////////////////END BACKWARDS COMPATABILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    ////////////////////////////END BACKWARDS COMPATIBILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 }
 
 ?>

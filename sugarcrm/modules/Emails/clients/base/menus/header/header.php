@@ -17,7 +17,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_VIEW_MY_INBOX',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'icon-reorder',
     ),
     array(
         'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',

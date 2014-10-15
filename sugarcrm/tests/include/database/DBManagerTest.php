@@ -27,7 +27,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var bool Backup for DBManager::usePreparedStatements.
      */
-    protected $usePStates;
+    protected $usePStates, $dbEncode;
 
     static public function setUpBeforeClass()
     {
@@ -49,6 +49,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->_db = DBManagerFactory::getInstance();
             $this->usePStates = $this->_db->usePreparedStatements;
+            $this->dbEncode = $this->_db->getEncode();
         }
         $this->created = array();
 
@@ -57,6 +58,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->_db->usePreparedStatements = $this->usePStates;
+        $this->_db->setEncode($this->dbEncode);
         foreach($this->created as $table => $dummy) {
             $this->_db->dropTableName($table);
         }
@@ -3343,5 +3345,21 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $ps->preparedStatementClose();
 
+    }
+
+    public function testDecodeHTML()
+    {
+        $this->_db->usePreparedStatements = false;
+        $acc = BeanFactory::getBean('Accounts');
+        $this->_db->setEncode(true);
+        $testString = 'Test <test> &gt;TEST&lt; <br><p>Test&more test';
+        $acc->description = $this->_db->encodeHTML($testString);
+
+        $isql = $this->_db->insertSQL($acc);
+        $this->assertContains($testString, $isql);
+
+        $acc->id = create_guid();
+        $usql = $this->_db->updateSQL($acc);
+        $this->assertContains($testString, $usql);
     }
 }

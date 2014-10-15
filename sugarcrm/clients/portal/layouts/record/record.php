@@ -22,18 +22,6 @@ $viewdefs['portal']['layout']['record'] = array (
                 array (
                   'view' => 'record',
                 ),
-                array (
-                  'view' => 'activity',
-                  'context' => array (
-                    'link' => 'notes',
-                  ),
-                ),
-                array (
-                  'view' => 'editmodal',
-                  'context' => array (
-                    'link' => 'notes',
-                  ),
-                ),
               ),
               'type' => 'simple',
               'name' => 'main-pane',

@@ -70,7 +70,8 @@
         var ajaxParams = {
                 temp: true,
                 iframe: true,
-                deleteIfFails: false
+                deleteIfFails: false,
+                htmlJsonFormat: true
             };
 
         app.alert.show('upload', {
@@ -96,10 +97,10 @@
     _doValidateFileSuccess: function(fields, errors, callback, data) {
         app.alert.dismiss('upload');
 
-        var guid = data.record.id;
+        var guid = data.record && data.record.id;
         if (!guid) {
             app.logger.error('Temporary file uploaded has no GUID.');
-            callback(null, fields, errors);
+            this._doValidateFileError(fields, errors, callback, data);
             return;
         }
 
@@ -121,16 +122,16 @@
      * @param {Object} fields The list of fields to validate.
      * @param {Object} errors The errors object during this validation task.
      * @param {Function} callback The callback function to continue validation.
-     * @param {Object} error Error object returned from the API.
+     * @param {Object} resp Error object returned from the API.
      */
-    _doValidateFileError: function(fields, errors, callback, error) {
+    _doValidateFileError: function(fields, errors, callback, resp) {
         app.alert.dismiss('upload');
 
         var errors = errors || {},
             fieldName = this.name;
         errors[fieldName] = {};
 
-        switch (error.code) {
+        switch (resp.error) {
             case 'request_too_large':
                errors[fieldName].tooBig = true;
                break;

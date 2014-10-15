@@ -16,6 +16,7 @@ $viewdefs['Tasks']['base']['filter']['default'] = array(
     'fields' => array(
         'name' => array(),
         'contact_name' => array(),
+        'parent_name' => array(),
         'status' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
