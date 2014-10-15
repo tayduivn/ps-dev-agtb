@@ -184,12 +184,12 @@
                     //Trigger a change event with param "image" so the view can detect that the dom changed.
                     self.model.trigger("change", "image");
                 },
-                error: function(error) {
+                error: function(resp) {
                     var errors = errors || {},
                         fieldName = self.name;
                     errors[fieldName] = {};
 
-                    switch (error.code) {
+                    switch (resp.error) {
                         case 'request_too_large':
                            errors[fieldName].tooBig = true;
                            break;

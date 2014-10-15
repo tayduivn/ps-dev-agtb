@@ -376,16 +376,13 @@ class RestService extends ServiceBase
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
         // For edge cases when an HTML response is needed as a wrapper to JSON
-        if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json' && $httpError == 200) {
-            $this->response->setContent($this->getHXRReturnArray($message, $httpError));
+        if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             $this->response->setType(RestResponse::JSON_HTML, true);
-            $this->response->setStatus(200);
-
-            return;
+        } else {
+            // Send proper headers
+            $this->response->setType(RestResponse::JSON, true);
         }
 
-        // Send proper headers
-        $this->response->setType(RestResponse::JSON, true);
         $this->response->setHeader("Cache-Control", "no-store");
 
         $replyData = array(
