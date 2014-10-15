@@ -129,7 +129,7 @@ class ContactsApi extends ListApi
         return array(
             "module" => $bean->module_name,
             "id" => $bean->id,
-            "freebusy" => $bean->getFreeBusySchedule(),
+            "freebusy" => $bean->getFreeBusySchedule($args),
         );
     }
 

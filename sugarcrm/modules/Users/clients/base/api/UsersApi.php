@@ -81,7 +81,7 @@ class UsersApi extends ModuleApi
         return array(
             "module" => $bean->module_name,
             "id" => $bean->id,
-            "freebusy" => $bean->getFreeBusySchedule(),
+            "freebusy" => $bean->getFreeBusySchedule($args),
         );
     }
 }
