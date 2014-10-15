@@ -1626,15 +1626,15 @@ nv.models.legend = function () {
         seriesEnter.append('circle')
           .attr('r', radius)
           .style('stroke-width', 2);
-        series.select('circle')
+        series.selectAll('circle')
           .attr('class', function (d, i) {
-            return classes(d, i);
+            return classes(d, d.series);
           })
           .attr('fill', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           })
           .attr('stroke', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           });
 
         seriesEnter.append('text')
@@ -1646,47 +1646,34 @@ nv.models.legend = function () {
 
         seriesEnter.append('circle')
           .style('stroke-width', 0);
-        series.select('circle')
-          .attr('r', function (d, i) {
-            return d.type === 'dash' ? 0 : radius;
-          })
-          .attr('class', function (d, i) {
-            return classes(d, i);
-          })
-          .attr('fill', function (d, i) {
-            return color(d, i);
-          })
-          .attr('stroke', function (d, i) {
-            return color(d, i);
-          });
-
         seriesEnter.append('line')
           .attr('x0', 0)
           .attr('y0', 0)
           .attr('y1', 0)
           .style('stroke-width', '4px');
-        series.select('line')
-          .attr('class', function (d, i) {
-            return classes(d, i);
-          })
-          .attr('stroke', function (d, i) {
-            return color(d, i);
-          });
-
         seriesEnter.append('circle')
           .style('stroke-width', 0);
-        series.select('circle')
+
+        series.select('line')
+          .attr('class', function (d, i) {
+            return classes(d, d.series);
+          })
+          .attr('stroke', function (d, i) {
+            return color(d, d.series);
+          });
+
+        series.selectAll('circle')
           .attr('r', function (d, i) {
             return d.type === 'dash' ? 0 : radius;
           })
           .attr('class', function (d, i) {
-            return classes(d, i);
+            return classes(d, d.series);
           })
           .attr('fill', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           })
           .attr('stroke', function (d, i) {
-            return color(d, i);
+            return color(d, d.series);
           });
 
         seriesEnter.append('text')
@@ -9060,7 +9047,7 @@ nv.models.multiBarChart = function() {
 
   return chart;
 };
-nv.models.paretoChart = function () {
+nv.models.paretoChart = function() {
   //'use strict';
   //============================================================
   // Public Variables with Default Settings
@@ -9069,27 +9056,27 @@ nv.models.paretoChart = function () {
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = null,
       height = null,
-      getX = function (d) { return d.x; },
-      getY = function (d) { return d.y; },
+      getX = function(d) { return d.x; },
+      getY = function(d) { return d.y; },
       showTitle = false,
       showLegend = true,
       tooltip = null,
       tooltips = true,
-      tooltipBar = function (key, x, y, e, graph) {
+      tooltipBar = function(key, x, y, e, graph) {
         return '<p><b>' + key + '</b></p>' +
           '<p><b>' + y + '</b></p>' +
           '<p><b>' + x + '%</b></p>';
       },
-      tooltipLine = function (key, x, y, e, graph) {
+      tooltipLine = function(key, x, y, e, graph) {
         return '<p><p>' + key + ': <b>' + y + '</b></p>';
       },
-      tooltipQuota = function (key, x, y, e, graph) {
+      tooltipQuota = function(key, x, y, e, graph) {
         return '<p>' + e.key + ': <b>' + y + '</b></p>';
       },
-      yAxisTickFormat = function (d) {
+      yAxisTickFormat = function(d) {
         return d3.format(',.2s')(d);
       },
-      quotaTickFormat = function (d) {
+      quotaTickFormat = function(d) {
         return d3.format(',.3s')(d);
       },
       x,
@@ -9121,7 +9108,7 @@ nv.models.paretoChart = function () {
         .wrapTicks(true)
         .highlightZero(false)
         .showMaxMin(false)
-        .tickFormat(function (d) { return d; }),
+        .tickFormat(function(d) { return d; }),
       yAxis = nv.models.axis()
         .orient('left')
         .tickPadding(7)
@@ -9133,7 +9120,7 @@ nv.models.paretoChart = function () {
         .align('right')
         .position('middle');
 
-  var showTooltip = function (e, offsetElement, dataGroup) {
+  var showTooltip = function(e, offsetElement, dataGroup) {
     var left = e.pos[0],
         top = e.pos[1],
         per = (e.point.y * 100 / dataGroup[e.pointIndex].t).toFixed(1),
@@ -9143,7 +9130,7 @@ nv.models.paretoChart = function () {
     tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
   };
 
-  var showQuotaTooltip = function (e, offsetElement) {
+  var showQuotaTooltip = function(e, offsetElement) {
     var left = e.pos[0],
         top = e.pos[1],
         amt = d3.format(',.2s')(e.val),
@@ -9152,26 +9139,26 @@ nv.models.paretoChart = function () {
     tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
   };
 
-  var barClick = function (data, e, container) {
+  var barClick = function(data, e, container) {
     var d = e.series,
         selectedSeries = e.seriesIndex;
 
     d.disabled = !d.disabled;
 
     if (!chart.stacked()) {
-      data.filter(function (d) {
+      data.filter(function(d) {
         return d.series === selectedSeries && d.type === 'line';
-      }).map(function (d) {
+      }).map(function(d) {
         d.disabled = !d.disabled;
         return d;
       });
     }
 
     // if there are no enabled data series, enable them all
-    if (!data.filter(function (d) {
+    if (!data.filter(function(d) {
       return !d.disabled && d.type === 'bar';
     }).length) {
-      data.map(function (d) {
+      data.map(function(d) {
         d.disabled = false;
         container.selectAll('.nv-series').classed('disabled', false);
         return d;
@@ -9181,7 +9168,7 @@ nv.models.paretoChart = function () {
     container.call(chart);
   };
 
-  var getAbsoluteXY = function (element) {
+  var getAbsoluteXY = function(element) {
     var viewportElement = document.documentElement,
         box = element.getBoundingClientRect(),
         scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft,
@@ -9189,14 +9176,14 @@ nv.models.paretoChart = function () {
         x = box.left + scrollLeft,
         y = box.top + scrollTop;
 
-    return {"x": x, "y": y};
+    return {'x': x, 'y': y};
   };
 
   //============================================================
 
   function chart(selection) {
 
-    selection.each(function (chartData) {
+    selection.each(function(chartData) {
 
       var properties = chartData.properties,
           data = chartData.data,
@@ -9211,7 +9198,7 @@ nv.models.paretoChart = function () {
           maxLineLegendWidth = 0,
           widthRatio = 0;
 
-      chart.update = function () {
+      chart.update = function() {
         container.call(chart);
       };
 
@@ -9220,7 +9207,7 @@ nv.models.paretoChart = function () {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function (d) {
+      if (!data || !data.length || !data.filter(function(d) {
         return d.values.length;
       }).length) {
         var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
@@ -9233,7 +9220,7 @@ nv.models.paretoChart = function () {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function (d) {
+          .text(function(d) {
             return d;
           });
 
@@ -9245,10 +9232,10 @@ nv.models.paretoChart = function () {
       //------------------------------------------------------------
       // Process data
 
-      var dataBars = data.filter(function (d) {
+      var dataBars = data.filter(function(d) {
             return !d.disabled && (!d.type || d.type === 'bar');
           }),
-          dataLines = data.filter(function (d) {
+          dataLines = data.filter(function(d) {
             return !d.disabled && d.type === 'line';
           }).map(function(lineData) {
             if (!multibar.stacked()) {
@@ -9279,7 +9266,7 @@ nv.models.paretoChart = function () {
           targetQuotaValue = properties.targetQuota || 0,
           targetQuotaLabel = properties.targetQuotaLabel || '';
 
-      dataBars = dataBars.length ? dataBars : [{values:[]}];
+      dataBars = dataBars.length ? dataBars : [{values: []}];
       dataLines = dataLines.length ? dataLines : [{values: []}];
 
       // line legend data
@@ -9288,16 +9275,16 @@ nv.models.paretoChart = function () {
         lineLegendData.push({'key': targetQuotaLabel, 'type': 'dash', 'color': '#777', 'values': {'series': 0, 'x': 0, 'y': 0}});
       }
 
-      var seriesX = data.filter(function (d) {
+      var seriesX = data.filter(function(d) {
             return !d.disabled;
-          }).map(function (d) {
-            return d.valuesOrig.map(function (d, i) {
+          }).map(function(d) {
+            return d.valuesOrig.map(function(d, i) {
               return getX(d, i);
             });
           });
 
-      var seriesY = data.map(function (d) {
-            return d.valuesOrig.map(function (d, i) {
+      var seriesY = data.map(function(d) {
+            return d.valuesOrig.map(function(d, i) {
               return getY(d, i);
             });
           });
@@ -9316,7 +9303,7 @@ nv.models.paretoChart = function () {
 
       if (dataGroup.length) {
         xAxis
-          .tickFormat(function (d, i) {
+          .tickFormat(function(d, i) {
             return dataGroup[i] ? dataGroup[i].l : 'asfd';
           });
       }
@@ -9327,14 +9314,14 @@ nv.models.paretoChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarWithLegend').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -9389,7 +9376,7 @@ nv.models.paretoChart = function () {
           .height(availableHeight - innerMargin.top);
         barLegendWrap
           .datum(
-            data.filter(function (d) {
+            data.filter(function(d) {
               return d.type === 'bar';
             })
           )
@@ -9404,7 +9391,7 @@ nv.models.paretoChart = function () {
           .height(availableHeight - innerMargin.top);
         lineLegendWrap
           .datum(
-            data.filter(function (d) {
+            data.filter(function(d) {
               return d.type === 'line';
             }).concat(lineLegendData)
           )
@@ -9462,7 +9449,7 @@ nv.models.paretoChart = function () {
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
-        .size(function(){ return Math.pow(6,2) * Math.PI; })
+        .size(function() { return Math.pow(6, 2) * Math.PI; })
         .id('foreground_' + chart.id());
       linesWrap1
         .datum(dataLines)
@@ -9525,7 +9512,7 @@ nv.models.paretoChart = function () {
           .style('stroke-dasharray', '8, 8');
 
         quotaWrap.append('line')
-          .datum({key:quotaLabel, val:quotaValue})
+          .datum({key: quotaLabel, val: quotaValue})
           .attr('class', 'nv-quotaLine nv-quotaLineBackground')
           .attr('x1', 0)
           .attr('y1', 0)
@@ -9574,7 +9561,7 @@ nv.models.paretoChart = function () {
           .style('stroke-dasharray', '8, 8');
 
         quotaWrap.append('line')
-          .datum({key:targetQuotaLabel, val:targetQuotaValue})
+          .datum({key: targetQuotaLabel, val: targetQuotaValue})
           .attr('class', 'nv-quotaLineTarget nv-quotaLineBackground')
           .attr('x1', 0)
           .attr('y1', 0)
@@ -9611,7 +9598,7 @@ nv.models.paretoChart = function () {
       }
 
       quotaWrap.selectAll('line.nv-quotaLineBackground')
-        .on('mouseover', function (d) {
+        .on('mouseover', function(d) {
           var e = {
             pos: [d3.event.pageX, d3.event.pageY],
             val: d.val,
@@ -9619,10 +9606,10 @@ nv.models.paretoChart = function () {
           };
           showQuotaTooltip(e, that.parentNode);
         })
-        .on('mouseout', function () {
+        .on('mouseout', function() {
           dispatch.tooltipHide();
         })
-        .on('mousemove', function () {
+        .on('mousemove', function() {
           dispatch.tooltipMove({
             pos: [d3.event.pageX, d3.event.pageY]
           });
@@ -9672,24 +9659,24 @@ nv.models.paretoChart = function () {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      barLegend.dispatch.on('legendClick', function (d, i) {
+      barLegend.dispatch.on('legendClick', function(d, i) {
         var selectedSeries = d.series;
         //swap bar disabled
         d.disabled = !d.disabled;
         //swap line disabled for same series
         if (!chart.stacked()) {
-          data.filter(function (d) {
+          data.filter(function(d) {
             return d.series === selectedSeries && d.type === 'line';
-          }).map(function (d) {
+          }).map(function(d) {
             d.disabled = !d.disabled;
             return d;
           });
         }
         // if there are no enabled data series, enable them all
-        if (!data.filter(function (d) {
+        if (!data.filter(function(d) {
           return !d.disabled && d.type === 'bar';
         }).length) {
-          data.map(function (d) {
+          data.map(function(d) {
             d.disabled = false;
             g.selectAll('.nv-series').classed('disabled', false);
             return d;
@@ -9698,25 +9685,25 @@ nv.models.paretoChart = function () {
         container.call(chart);
       });
 
-      dispatch.on('tooltipShow', function (e) {
+      dispatch.on('tooltipShow', function(e) {
         if (tooltips) {
           showTooltip(e, that.parentNode, dataGroup);
         }
       });
 
-      dispatch.on('tooltipHide', function () {
+      dispatch.on('tooltipHide', function() {
         if (tooltips) {
           nv.tooltip.cleanup();
         }
       });
 
-      dispatch.on('tooltipMove', function (e) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
           nv.tooltip.position(tooltip, e.pos, 's');
         }
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function(e) {
         if (barLegend.enabled()) {
           barLegend.dispatch.closeMenu(e);
         }
@@ -9725,7 +9712,7 @@ nv.models.paretoChart = function () {
         }
       });
 
-      multibar.dispatch.on('elementClick', function (e) {
+      multibar.dispatch.on('elementClick', function(e) {
         barClick(data, e, container);
       });
 
@@ -9738,27 +9725,27 @@ nv.models.paretoChart = function () {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  lines2.dispatch.on('elementMouseover.tooltip', function (e) {
+  lines2.dispatch.on('elementMouseover.tooltip', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  lines2.dispatch.on('elementMouseout.tooltip', function (e) {
+  lines2.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
-  lines2.dispatch.on('elementMousemove', function (e) {
+  lines2.dispatch.on('elementMousemove', function(e) {
     dispatch.tooltipMove(e);
   });
 
-  multibar.dispatch.on('elementMouseover.tooltip', function (e) {
+  multibar.dispatch.on('elementMouseover.tooltip', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  multibar.dispatch.on('elementMouseout.tooltip', function (e) {
+  multibar.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
-  multibar.dispatch.on('elementMousemove', function (e) {
+  multibar.dispatch.on('elementMousemove', function(e) {
     dispatch.tooltipMove(e);
   });
 
@@ -9781,37 +9768,37 @@ nv.models.paretoChart = function () {
   d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
-  chart.colorData = function (_) {
-    var colors = function (d, i) {
-          return nv.utils.defaultColor()(d, i);
+  chart.colorData = function(_) {
+    var colors = function(d, i) {
+          return nv.utils.defaultColor()(d, d.series);
         },
-        classes = function (d, i) {
-          return 'nv-group nv-series-' + i;
+        classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
         },
         type = arguments[0],
         params = arguments[1] || {};
 
     switch (type) {
     case 'graduated':
-      var c1 = params.c1
-        , c2 = params.c2
-        , l = params.l;
-      colors = function (d, i) {
+      var c1 = params.c1,
+          c2 = params.c2,
+          l = params.l;
+      colors = function(d, i) {
         return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(i / l);
       };
       break;
     case 'class':
-      colors = function () {
+      colors = function() {
         return 'inherit';
       };
-      classes = function (d, i) {
+      classes = function(d, i) {
         var iClass = (i * (params.step || 1)) % 14;
         return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
       };
       break;
     }
 
-    var fill = (!params.gradient) ? colors : function (d, i) {
+    var fill = (!params.gradient) ? colors : function(d, i) {
       var p = {orientation: params.orientation || 'vertical', position: params.position || 'middle'};
       return multibar.gradient(d, i, p);
     };
@@ -9820,13 +9807,13 @@ nv.models.paretoChart = function () {
     multibar.fill(fill);
     multibar.classes(classes);
 
-    lines1.color(function (d, i) { return '#FFF'; });
-    lines1.fill(function (d, i) { return '#FFF'; });
+    lines1.color(function(d, i) { return '#FFF'; });
+    lines1.fill(function(d, i) { return '#FFF'; });
 
-    lines2.color(function (d, i) {
+    lines2.color(function(d, i) {
       return d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
     });
-    lines2.fill(function (d, i) {
+    lines2.fill(function(d, i) {
       return d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
     });
     lines2.classes(classes);
@@ -9834,7 +9821,7 @@ nv.models.paretoChart = function () {
     barLegend.color(colors);
     barLegend.classes(classes);
 
-    lineLegend.color(function (d, i) {
+    lineLegend.color(function(d, i) {
       return d.color || d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
     });
     lineLegend.classes(classes);
@@ -9842,7 +9829,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.x = function (_) {
+  chart.x = function(_) {
     if (!arguments.length) {
       return getX;
     }
@@ -9852,7 +9839,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.y = function (_) {
+  chart.y = function(_) {
     if (!arguments.length) {
       return getY;
     }
@@ -9862,7 +9849,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.margin = function (_) {
+  chart.margin = function(_) {
     if (!arguments.length) {
       return margin;
     }
@@ -9874,7 +9861,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.width = function (_) {
+  chart.width = function(_) {
     if (!arguments.length) {
       return width;
     }
@@ -9882,7 +9869,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.height = function (_) {
+  chart.height = function(_) {
     if (!arguments.length) {
       return height;
     }
@@ -9890,7 +9877,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.showTitle = function (_) {
+  chart.showTitle = function(_) {
     if (!arguments.length) {
       return showTitle;
     }
@@ -9898,7 +9885,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.showLegend = function (_) {
+  chart.showLegend = function(_) {
     if (!arguments.length) {
       return showLegend;
     }
@@ -9906,14 +9893,14 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.showControls = function (_) {
+  chart.showControls = function(_) {
     if (!arguments.length) {
       return false;
     }
     return chart;
   };
 
-  chart.tooltipBar = function (_) {
+  chart.tooltipBar = function(_) {
     if (!arguments.length) {
       return tooltipBar;
     }
@@ -9921,7 +9908,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.tooltipLine = function (_) {
+  chart.tooltipLine = function(_) {
     if (!arguments.length) {
       return tooltipLine;
     }
@@ -9929,7 +9916,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.tooltipQuota = function (_) {
+  chart.tooltipQuota = function(_) {
     if (!arguments.length) {
       return tooltipQuota;
     }
@@ -9937,7 +9924,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.tooltip = function (_) {
+  chart.tooltip = function(_) {
     if (!arguments.length) {
       return tooltip;
     }
@@ -9945,7 +9932,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.tooltips = function (_) {
+  chart.tooltips = function(_) {
     if (!arguments.length) {
       return tooltips;
     }
@@ -9953,7 +9940,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.tooltipContent = function (_) {
+  chart.tooltipContent = function(_) {
     if (!arguments.length) {
       return tooltipContent;
     }
@@ -9961,7 +9948,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.barClick = function (_) {
+  chart.barClick = function(_) {
     if (!arguments.length) {
       return barClick;
     }
@@ -9969,11 +9956,11 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.colorFill = function (_) {
+  chart.colorFill = function(_) {
     return chart;
   };
 
-  chart.yAxisTickFormat = function (_) {
+  chart.yAxisTickFormat = function(_) {
     if (!arguments.length) {
       return yAxisTickFormat;
     }
@@ -9981,7 +9968,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.quotaTickFormat = function (_) {
+  chart.quotaTickFormat = function(_) {
     if (!arguments.length) {
       return quotaTickFormat;
     }
@@ -9989,7 +9976,7 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.strings = function (_) {
+  chart.strings = function(_) {
     if (!arguments.length) {
       return strings;
     }
