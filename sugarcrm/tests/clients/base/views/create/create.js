@@ -625,6 +625,22 @@ describe('Base.View.Create', function() {
         });
     });
 
+    describe('restoreModel()', function() {
+        it('should trigger resetCollection on any child create subpanels', function() {
+            var triggerSpy = sinonSandbox.spy(view.context, 'trigger'),
+                child = new Backbone.Model({
+                    isCreateSubpanel: true,
+                    link: 'testLink'
+                });
+            view.context.children.push(child);
+            view.hasSubpanelModels = true;
+
+            view.restoreModel();
+
+            expect(triggerSpy).toHaveBeenCalledWith('subpanel:resetCollection:testLink');
+        });
+    });
+    
     describe('Save', function() {
         beforeEach(function() {
             SugarTest.clock.restore();
