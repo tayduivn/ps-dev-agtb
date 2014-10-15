@@ -19,10 +19,11 @@
     initialize: function(options) {
         var moduleMeta = app.metadata.getModule(options.module),
             isBwcEnabled = (moduleMeta && moduleMeta.isBwcEnabled),
+            multiSelectFilter = options.context.get('multiSelect'),
             buttonsToRemove = [],
             additionalEvents = {};
 
-        if (isBwcEnabled) {
+        if (isBwcEnabled || multiSelectFilter) {
             buttonsToRemove.push('create_button');
         } else {
             additionalEvents['click [name=create_button]'] = 'createAndSelect';
@@ -32,6 +33,9 @@
         this.isMultiLink = options.context.has('recLink');
         if (!this.isMultiLink) {
             buttonsToRemove.push('link_button');
+        }
+        if (!multiSelectFilter) {
+            buttonsToRemove.push('select_button');
         }
 
         this._super('initialize', [options]);
