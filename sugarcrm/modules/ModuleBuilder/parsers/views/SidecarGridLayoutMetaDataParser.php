@@ -363,6 +363,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     protected function _convertToCanonicalForm($panels , $fielddefs)
     {
+        $previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewdefs());
         $canonicalPanels = array();
 
         // reset any span info already in the fields, we're going to figure it out again
@@ -449,7 +450,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     else {
                         // field => add the field def.
                         $fieldName = is_array($cell) ? $cell['name'] : $cell;
-                        if (isset($this->_originalViewDef[$fieldName]))  {
+                        if (isset($previousViewDef[$fieldName])) {
+                            $source = $previousViewDef[$fieldName];
+                        } elseif (isset($this->_originalViewDef[$fieldName])) {
                             $source = $this->_originalViewDef[$fieldName];
                         }
                         elseif (isset($fielddefs[$fieldName])) {
