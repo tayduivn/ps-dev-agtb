@@ -13,6 +13,7 @@ describe('Plugins.NestedSetCollection', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'nested-set');
         SugarTest.loadPlugin('NestedSetCollection');
+        SugarTest.loadPlugin('JSTree');
         SugarTest.loadHandlebarsTemplate('nested-set', 'field', 'base', 'edit');
 
         SugarTest.testMetadata.set();
@@ -43,6 +44,7 @@ describe('Plugins.NestedSetCollection', function() {
         field._loadTemplate = null;
         field = null;
         delete app.plugins.plugins['field']['NestedSetCollection'];
+        delete app.plugins.plugins['field']['JSTree'];
         sinonSandbox.restore();
         SugarTest.testMetadata.dispose();
     });

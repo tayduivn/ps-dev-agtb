@@ -13,6 +13,7 @@ describe('Plugins.JSTree', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'nested-set');
         SugarTest.loadPlugin('JSTree');
+        SugarTest.loadPlugin('NestedSetCollection');
         SugarTest.loadHandlebarsTemplate('nested-set', 'field', 'base', 'edit');
 
         SugarTest.testMetadata.set();
@@ -30,6 +31,7 @@ describe('Plugins.JSTree', function() {
         field._loadTemplate = null;
         field = null;
         delete app.plugins.plugins['field']['JSTree'];
+        delete app.plugins.plugins['field']['NestedSetCollection'];
         sinonSandbox.restore();
     });
 
@@ -103,22 +105,20 @@ describe('Plugins.JSTree', function() {
         expect(jstreeStub).toHaveBeenCalledWith('search');
     });
 
-    it('Move Node.', function() {
+    it('Move Node should call different collection methods.', function() {
         field.render();
-        var collectionSpy = sinonSandbox.spy(field.collection, 'moveBefore');
+        var collectionMoveBeforeStub = sinonSandbox.stub(field.collection, 'moveBefore', function() {}),
+            collectionMoveLastStub = sinonSandbox.stub(field.collection, 'moveLast', function() {});
 
-        field.moveNode(1, 2, function() {});
+        field.moveNode(1, 2, 'before');
+        expect(collectionMoveBeforeStub).toHaveBeenCalled();
 
-        expect(collectionSpy).toHaveBeenCalled();
-    });
+        field.moveNode(1, 2, 'last');
+        expect(collectionMoveLastStub).toHaveBeenCalled();
 
-    it('Move To.', function() {
-        field.render();
-        var collectionSpy = sinonSandbox.spy(field.collection, 'moveLast');
-
-        field.moveTo(1, 2, function() {});
-
-        expect(collectionSpy).toHaveBeenCalled();
+        collectionMoveLastStub.reset();
+        field.moveNode(1, 2);
+        expect(collectionMoveLastStub).toHaveBeenCalled();
     });
 
 });
