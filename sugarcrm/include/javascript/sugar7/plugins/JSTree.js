@@ -165,7 +165,7 @@
                 this.collection.root = this.root;
                 this.collection.tree({
                     success: _.bind(function(data) {
-                        this.createTree(data.jsonTree, this.$treeContainer);
+                        this.createTree(data.jsonTree, this.$treeContainer, this.loadPluginsList());
                     }, this)
                 });
             },
@@ -186,11 +186,27 @@
             },
 
             /**
+             * Load JSTree plugins list.
+             */
+            loadPluginsList: function() {
+                var defaultPlugins = ['json_data', 'ui', 'crrm', 'types', 'themes', 'search'];
+                if (!_.isUndefined(this.jsTreeSettings.plugins)) {
+                    defaultPlugins = _.union(defaultPlugins, this.jsTreeSettings.plugins);
+                }
+                return defaultPlugins;
+            },
+
+            /**
              * Create JSTree.
              * @param {Object} data
              * @param {Object} $container
+             * @plugins {Array} plugins
+             * @example List of available plugins, based on common jstree list.
+             * ```
+             * ['json_data', 'dnd', 'ui', 'crrm', 'types', 'themes', 'contextmenu', 'search']
+             * ```
              */
-            createTree: function(data, $container) {
+            createTree: function(data, $container, plugins) {
                 this._toggleVisibility(data.length === 0);
                 // make sure we're using an array
                 // if the data coming from the endpoint is an array with one element
@@ -219,7 +235,7 @@
                         html_titles: true
                     },
                     settings: this.jsTreeSettings,
-                    plugins: ['json_data', 'dnd', 'ui', 'crrm', 'types', 'themes', 'contextmenu', 'search'],
+                    plugins: _.isEmpty(plugins) ? this.loadPluginsList() : plugins,
                     json_data: {
                         'data': treeData
                     },
