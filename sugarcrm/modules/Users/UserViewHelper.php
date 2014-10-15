@@ -277,7 +277,9 @@ class UserViewHelper {
         }
 
         // If new regular user without system generated password or new portal user
-        if(((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $this->usertype!='GROUP') || $this->usertype =='PORTAL_ONLY') && empty($this->bean->id)) {
+        if (((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $this->usertype!='GROUP') ||
+        $this->usertype =='PORTAL_ONLY') && (empty($this->bean->id) || (isset($_REQUEST['Duplicate']) &&
+        $_REQUEST['Duplicate'] == "Copy"))) {
             $this->ss->assign('REQUIRED_PASSWORD','1');
         } else {
             $this->ss->assign('REQUIRED_PASSWORD','0');
