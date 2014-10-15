@@ -60,7 +60,7 @@
              */
             set: function(data, options) {
                 if (_.isObject(data) &&
-                    !_.isUndefined(data.children) &&
+                    !_.isEmpty(data.children) &&
                     _.isNull(this.children)
                 ) {
                     this.children = this.collection.clone();
