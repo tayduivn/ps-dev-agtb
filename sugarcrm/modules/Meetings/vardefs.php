@@ -617,6 +617,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
        array('name' =>'idx_meet_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),
        array('name' => 'idx_meet_date_start', 'type' => 'index', 'fields'=> array('date_start')),
+       array('name' => 'idx_meet_date_start_end_del', 'type' => 'index', 'fields'=> array('date_start', 'date_end', 'deleted')),
        // due to pulls from client side to check if there are reminders to handle.
        array('name' => 'idx_meet_date_start_reminder', 'type' => 'index', 'fields'=> array('date_start', 'reminder_time')),
 
