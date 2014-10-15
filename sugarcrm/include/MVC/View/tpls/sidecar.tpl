@@ -55,7 +55,7 @@
             </div>
         </div>
         <!-- App Scripts -->
-        {if !empty($developerMode)}
+        {if empty($shouldResourcesBeMinified)}
             {sugar_getscript file="sidecar/minified/sidecar.js"}
         {else}
             {sugar_getscript file="sidecar/minified/sidecar.min.js"}

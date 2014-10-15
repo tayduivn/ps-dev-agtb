@@ -2311,7 +2311,7 @@ class MetaDataManager
         $js .= "}})(SUGAR.App);";
         $hash = md5($js);
         //If we are going to be using uglify to minify our JS, we should minify the entire file rather than each component separately.
-        if (!inDeveloperMode() && SugarMin::isMinifyFast()) {
+        if (shouldResourcesBeMinified() && SugarMin::isMinifyFast()) {
             $js = SugarMin::minify($js);
         }
         $path = "cache/javascript/$platform/components_$hash.js";
