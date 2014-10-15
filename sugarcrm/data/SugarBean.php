@@ -4413,10 +4413,10 @@ class SugarBean
                         foreach($used_join_key as $used_key) {
                             if($used_key == $join['rel_key']) $count_used++;
                         }
-                        if ($count_used <= 1 && !isset($fields[$join['rel_key']])) {
+                        if ($count_used <= 1) {
                             //27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
                             // add rel_key only if it was not aready added
-                            if(!$singleSelect)
+                            if(!$singleSelect && !isset($fields[$join['rel_key']]))
                             {
                                 $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
                             }
