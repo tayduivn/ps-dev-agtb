@@ -112,6 +112,12 @@ class VardefManager{
     }
 
     static function addTemplate($module, $object, $template, $object_name=false){
+        // Remove the taggable template from BWC modules
+        // Yes, this is a hack, but it makes the most sense at the moment
+        if (isModuleBWC($module) && $template === 'taggable') {
+            return;
+        }
+
         if($template == 'default')$template = 'basic';
         // The ActivityStream has subdirectories but this code doesn't expect it
         // let's fix it up here
