@@ -281,7 +281,7 @@ $mod_strings = array (
 	'LBL_LIST_TITLE_MY_DRAFTS'	=> 'My Drafts',
 	'LBL_LIST_TITLE_MY_INBOX'	=> 'My Inbox',
 	'LBL_LIST_TITLE_MY_SENT'	=> 'My Sent Email',
-	'LBL_LIST_TITLE_MY_ARCHIVES'=> 'My Archived Emails',
+	'LBL_LIST_TITLE_MY_ARCHIVES'=> 'My Archived Email',
     'LBL_ACTIVITIES_REPORTS' 	=> 'Activities Report',
 
 	'LNK_CHECK_MY_INBOX'		=> 'Check My Mail',
