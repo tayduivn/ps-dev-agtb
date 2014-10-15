@@ -58,7 +58,7 @@
      * @returns {String}  The default language as the default value
      */
     _getDefaultOption: function(optionsKeys) {
-        return app.lang.defaultLanguage;
+        return app.lang.getDefaultLanguage();
     },
 
     /**
