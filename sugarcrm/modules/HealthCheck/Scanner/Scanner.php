@@ -1803,7 +1803,7 @@ ENDP;
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
         foreach ($this->glob("$module_dir/*") as $file) {
-            if (isset($hook_files[$file])) {
+            if (in_array($file, $hook_files)) {
                 // logic hook files are OK
                 continue;
             }
@@ -1835,7 +1835,7 @@ ENDP;
 
         // now check custom/ for unknown files
         foreach ($this->glob("custom/$module_dir/*") as $file) {
-            if (isset($hook_files[$file])) {
+            if (in_array($file, $hook_files)) {
                 // logic hook files are OK
                 continue;
             }
