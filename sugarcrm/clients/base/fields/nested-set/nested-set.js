@@ -289,6 +289,7 @@
         var treeOptions = {
             category_root: this.categoryRoot,
             module_root: this.moduleRoot,
+            plugins: ['dnd', 'contextmenu'],
             isDrawer: true
         };
         app.drawer.open({
