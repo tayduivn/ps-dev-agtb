@@ -36,6 +36,11 @@
     collapsed: false,
 
     /**
+     * Throttled Set Server Data call to prevent it from firing multiple times right in a row.
+     */
+    throttledSetServerData: false,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -47,7 +52,7 @@
 
         // we need this if because Jasmine breaks with out as you can't define a view with a layout in Jasmine Test
         // @see BR-1217
-        if(this.view.layout) {
+        if (this.view.layout) {
             // we need to listen to the context on the layout for this view for when it collapses
             this.view.layout.on('dashlet:collapse', this.handleDashletCollapse, this);
             this.view.layout.context.on('dashboard:collapse:fire', this.handleDashletCollapse, this);
@@ -55,6 +60,8 @@
             // because the size of the dashlet can change in the dashboard.
             this.view.layout.context.on('dashlet:draggable:stop', this.handleDashletCollapse, this);
         }
+
+        this.throttledSetServerData = _.throttle(this._setServerData, 1000);
     },
 
     /**
@@ -365,18 +372,21 @@
                 },
                 'data': []
             },
+            disabledKeys = this.getDisabledChartKeys(),
             barData = [dataset, dataset + '_adjusted'].map(function(ds, seriesIdx) {
                 var vals = records.map(function(rec, recIdx) {
-                    return {
-                        series: seriesIdx,
-                        x: recIdx + 1,
-                        y: parseFloat(rec[ds]),
-                        y0: 0
-                    };
-                });
+                        return {
+                            series: seriesIdx,
+                            x: recIdx + 1,
+                            y: parseFloat(rec[ds]),
+                            y0: 0
+                        };
+                    }),
+                    label = this._serverData.labels['dataset'][ds];
 
                 return {
-                    key: this._serverData.labels['dataset'][ds],
+                    disabled: (_.contains(disabledKeys, label)),
+                    key: label,
                     series: seriesIdx,
                     type: 'bar',
                     values: vals,
@@ -385,22 +395,23 @@
             }, this),
             lineData = [dataset, dataset + '_adjusted'].map(function(ds, seriesIdx) {
                 var vals = records.map(function(rec, recIdx) {
-                    return {
-                        series: seriesIdx,
-                        x: recIdx + 1,
-                        y: parseFloat(rec[ds])
-                    };
-                });
+                        return {
+                            series: seriesIdx,
+                            x: recIdx + 1,
+                            y: parseFloat(rec[ds])
+                        };
+                    }),
+                    addToLine = 0,
+                    label = this._serverData.labels['dataset'][ds];
 
-                // fix the vals
-                var addToLine = 0;
                 _.each(vals, function(val, i, list) {
                     list[i].y += addToLine;
                     addToLine = list[i].y;
                 });
 
                 return {
-                    key: this._serverData.labels['dataset'][ds],
+                    disabled: (_.contains(disabledKeys, label)),
+                    key: label,
                     series: seriesIdx,
                     type: 'line',
                     values: vals,
@@ -469,7 +480,8 @@
             records = this._serverData.data,
             data = (!_.isEmpty(ranges)) ? records.filter(function(rec) {
                 return _.contains(ranges, rec.forecast);
-            }) : records;
+            }) : records,
+            disabledKeys = this.getDisabledChartKeys();
 
         _.each(this._serverData.labels[type], function(label, value) {
             var td = data.filter(function(d) {
@@ -484,7 +496,7 @@
 
                 // loop though all the data and map it to the correct x series
                 _.each(td, function(record) {
-                    for(var y = 0; y < axis.length; y++) {
+                    for (var y = 0; y < axis.length; y++) {
                         if (record.date_closed_timestamp >= axis[y].start_timestamp &&
                             record.date_closed_timestamp <= axis[y].end_timestamp) {
                             // add the value
@@ -498,6 +510,7 @@
                 }, this);
 
                 barData.push({
+                    disabled: (_.contains(disabledKeys, label)),
                     key: label,
                     series: seriesIdx,
                     type: 'bar',
@@ -526,6 +539,24 @@
         }
 
         this.d3Data = chartData;
+    },
+
+    /**
+     * Look at the current chart if it exists and return the keys that are currently
+     * disabled they can still be disabled when the chart is re-rendered
+     *
+     * @return {Array}
+     */
+    getDisabledChartKeys: function() {
+        var currentChartData = d3.select('#' + this.chartId + ' svg').data(),
+            disabledBars = (!_.isUndefined(currentChartData[0])) ?
+                _.filter(currentChartData[0].data, function(d) {
+                    return (!_.isUndefined(d.disabled) && d.disabled === true);
+                }) : [];
+
+        return (!_.isEmpty(disabledBars)) ? _.map(disabledBars, function(d) {
+            return d.key;
+        }) : [];
     },
 
     /**
@@ -560,12 +591,22 @@
      * @param {Boolean} [adjustLabels]
      */
     setServerData: function(data, adjustLabels) {
+        this.throttledSetServerData(data, adjustLabels);
+    },
+
+    /**
+     * This method is called by the _.throttle call in initialize
+     *
+     * @param {Object} data
+     * @param {Boolean} [adjustLabels]
+     * @private
+     */
+    _setServerData: function(data, adjustLabels) {
         this._serverData = data;
 
         if (adjustLabels === true) {
             this.adjustProbabilityLabels();
         }
-
         this.renderDashletContents();
     },
 
