@@ -12,11 +12,14 @@
 
 class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $calendarEventsService;
+
     protected $meetingIds = array();
 
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        $this->calendarEventsService = new CalendarEvents();
         $this->meetingIds = array();
     }
 
@@ -37,7 +40,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->repeat_type = null;
         $meeting->date_start = '2014-12-25 18:00:00';
 
-        $result = $GLOBALS['calendarEvents']->isEventRecurring($meeting);
+        $result = $this->calendarEventsService->isEventRecurring($meeting);
 
         $this->assertFalse($result, "Expected Meeting Event to be Non-Recurring");
     }
@@ -48,7 +51,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->repeat_type = 'Daily';
         $meeting->date_start = null;
 
-        $result = $GLOBALS['calendarEvents']->isEventRecurring($meeting);
+        $result = $this->calendarEventsService->isEventRecurring($meeting);
 
         $this->assertFalse($result, "Expected Meeting Event to be Non-Recurring");
     }
@@ -59,7 +62,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->repeat_type = 'Daily';
         $meeting->date_start = '2014-12-25 18:00:00';
 
-        $result = $GLOBALS['calendarEvents']->isEventRecurring($meeting);
+        $result = $this->calendarEventsService->isEventRecurring($meeting);
 
         $this->assertTrue($result, "Expected Meeting Event to be recognized as Recurring");
     }
@@ -70,7 +73,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCalendarEvents_Account_EventRecurring_UnsupportedCalendarEventModule()
     {
         $account = BeanFactory::newBean('Accounts');
-        $GLOBALS['calendarEvents']->isEventRecurring($account);
+        $this->calendarEventsService->isEventRecurring($account);
     }
 
     public function testCalendarEvents_SaveRecurringEvents_EventsSaved()

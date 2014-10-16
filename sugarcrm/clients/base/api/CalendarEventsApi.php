@@ -13,7 +13,20 @@
 class CalendarEventsApi extends ModuleApi
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * Instantiates the CalendarEvents service and places it in $GLOBALS if it hasn't already been instantiated.
+     * $GLOBALS is used as a service locator.
+     */
+    public function __construct()
+    {
+        if (!isset($GLOBALS['calendarEvents'])) {
+            $GLOBALS['calendarEvents'] = new CalendarEvents();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function registerApiRest()
     {
