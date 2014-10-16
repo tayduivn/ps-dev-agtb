@@ -1,4 +1,3 @@
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -25,20 +24,6 @@
         ]);
 
         this._super('initialize', [options]);
-    },
-
-    /**
-     * {@inheritDoc}
-     *
-     * Show the load template button only in edit mode.
-     */
-    toggleViewButtons: function(isEdit) {
-        this._super('toggleViewButtons', [isEdit]);
-
-        var templateButton = this.getField('template');
-        if (templateButton) {
-            templateButton.$el.toggle(isEdit);
-        }
     }
 
 })
