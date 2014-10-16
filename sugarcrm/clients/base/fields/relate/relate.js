@@ -431,9 +431,18 @@
                 return;
             }
 
-       models = _.isArray(models) ? models : [models];
+        var updateRelatedFields = true;
+        if (_.isArray(models)) {
+            // Does not make sense to update related fields if we selected
+            // multiple models
+            updateRelatedFields = false;
+        } else {
+            models = [models];
+        }
 
-            var silent = models.silent || false,
+        // Handling the `parent` field case (the parent field calls `setValue`
+        // with only one model and expect `model.set` to be silent).
+        var silent = models[0].silent || false,
                 values = {};
             values[this.def.id_name] = [];
             values[this.def.name] = [];
@@ -445,6 +454,7 @@
 
             this.model.set(values, {silent: silent});
 
+        if (updateRelatedFields) {
             // TODO: move this to SidecarExpressionContext
             // check if link field is currently populated
             if (this.model.get(this.def.link)) {
@@ -456,79 +466,85 @@
                 // we need to trigger it manually in order to notify subscribers
                 // that another related bean has been chosen.
                 // the actual data will then come asynchronously
-                this.model.trigger("change:" + this.def.link);
+                this.model.trigger('change:' + this.def.link);
             }
+            this.updateRelatedFields(models);
+        }
+    },
 
-            var newData = {},
-                self = this;
-            _.each(this.def.populate_list, function(target, source) {
-                source = _.isNumber(source) ? target : source;
-                if (!_.isUndefined(models[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                    var before = this.model.get(target),
-                        after = models[source];
+    updateRelatedFields: function(model) {
+        var model = model[0];
+        var newData = {},
+            self = this;
+        _.each(this.def.populate_list, function(target, source) {
+            source = _.isNumber(source) ? target : source;
+            if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
+                var before = this.model.get(target),
+                    after = model[source];
 
-                    if (before !== after) {
-                        newData[target] = models[source];
-                    }
+                if (before !== after) {
+                    newData[target] = model[source];
                 }
-            }, this);
-
-            if (_.isEmpty(newData)) {
-                return;
             }
+        }, this);
 
-            // if this.def.auto_populate is true set new data and doesn't show alert message
-            if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
+        if (_.isEmpty(newData)) {
+            return;
+        }
+
+        // if this.def.auto_populate is true set new data and doesn't show alert message
+        if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
+            // if we have a currency_id, set it first to trigger the currency conversion before setting
+            // the values to the model, this prevents double conversion from happening
+            if (!_.isUndefined(newData.currency_id)) {
+                this.model.set({currency_id: newData.currency_id});
+                delete newData.currency_id;
+            }
+            this.model.set(newData);
+            return;
+        }
+
+        // load template key for confirmation message from defs or use default
+        var messageTplKey = this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM',
+            messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
+            fieldMessageTpl = app.template.getField(
+                this.type,
+                'overwrite-confirmation',
+                this.model.module),
+            messages = [],
+            relatedModuleSingular = app.lang.getModuleName(this.def.module);
+
+        _.each(newData, function(value, field) {
+            var before = this.model.get(field),
+                after = value;
+
+            if (before !== after) {
+                var def = this.model.fields[field];
+                messages.push(fieldMessageTpl({
+                    before: before,
+                    after: after,
+                    field_label: app.lang.get(def.label || def.vname || field, this.module)
+                }));
+            }
+        }, this);
+
+        app.alert.show('overwrite_confirmation', {
+            level: 'confirmation',
+            messages: messageTpl({
+                values: new Handlebars.SafeString(messages.join(', ')),
+                moduleSingularLower: relatedModuleSingular.toLowerCase()
+            }),
+            onConfirm: function() {
                 // if we have a currency_id, set it first to trigger the currency conversion before setting
                 // the values to the model, this prevents double conversion from happening
                 if (!_.isUndefined(newData.currency_id)) {
-                    this.model.set({currency_id: newData.currency_id});
+                    self.model.set({currency_id: newData.currency_id});
                     delete newData.currency_id;
                 }
-                this.model.set(newData);
-                return;
+                self.model.set(newData);
             }
+        });
 
-            // load template key for confirmation message from defs or use default
-            var messageTplKey = this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM',
-                messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
-                fieldMessageTpl = app.template.getField(
-                    this.type,
-                    'overwrite-confirmation',
-                    this.model.module),
-                messages = [],
-                relatedModuleSingular = app.lang.getModuleName(this.def.module);
-
-            _.each(newData, function(value, field) {
-                var before = this.model.get(field),
-                    after = value;
-
-                if (before !== after) {
-                    var def = this.model.fields[field];
-                    messages.push(fieldMessageTpl({
-                        before: before,
-                        after: after,
-                        field_label: app.lang.get(def.label || def.vname || field, this.module)
-                    }));
-                }
-            }, this);
-
-            app.alert.show('overwrite_confirmation', {
-                level: 'confirmation',
-                messages: messageTpl({
-                    values: new Handlebars.SafeString(messages.join(', ')),
-                    moduleSingularLower: relatedModuleSingular.toLowerCase()
-                }),
-                onConfirm: function() {
-                    // if we have a currency_id, set it first to trigger the currency conversion before setting
-                    // the values to the model, this prevents double conversion from happening
-                    if (!_.isUndefined(newData.currency_id)) {
-                        self.model.set({currency_id: newData.currency_id});
-                        delete newData.currency_id;
-                    }
-                    self.model.set(newData);
-                }
-            });
     },
 
     /**
