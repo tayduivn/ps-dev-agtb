@@ -177,12 +177,20 @@ html.rtl {
         padding-right: 0;
     }
 
-    .record .record-cell input[type="text"],
-    .record .record-cell input[type="password"],
-    .record .record-cell textarea,
-    .record .record-cell .uneditable-input {
-        margin-right: -7px;
-        margin-left: 0;
+    .record {
+        .record-cell input[type="text"],
+        .record-cell input[type="password"],
+        .record-cell textarea,
+        .record-cell .uneditable-input {
+            margin-right: -7px;
+            margin-left: 0;
+        }
+        .record-cell[data-type="language"] .select2-container .select2-choice,
+        .record-cell[data-type="enum"] .select2-container .select2-choice,
+        .record-cell[data-type="relate"] .select2-container .select2-choice {
+            padding-left: 0;
+            padding-right: 6px;
+        }
     }
 
     div .record .record-cell .select2-container {
@@ -799,9 +807,31 @@ html.rtl {
         }
     }
 
-    .input-append.error .add-on {
-        right: -26px;
-        left: auto;
+    .input-append {
+        &.error .add-on {
+            right: -26px;
+            left: auto;
+        }
+
+        &.date.error .add-on.error-tooltip,
+        &.datetime.error .add-on.error-tooltip {
+            right: -42px;
+            left: auto;
+        }
+
+
+        &.date.error .add-on.error-tooltip + .add-on,
+        &.datetime.error .add-on.error-tooltip + .add-on {
+            right: -50px;
+            left: auto;
+        }
+    }
+
+    .record .record-cell[data-type="language"] .input-append.error .add-on.error-tooltip,
+    .record .record-cell[data-type="enum"] .input-append.error .add-on.error-tooltip,
+    .record .record-cell[data-type="relate"] .input-append.error .add-on.error-tooltip {
+        left: 24px;
+        right: auto;
     }
 
     .resource-info {
