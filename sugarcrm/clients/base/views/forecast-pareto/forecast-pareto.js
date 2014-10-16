@@ -184,9 +184,11 @@
 
     _render: function() {
         this.settings.set('display_manager', this.isDisplayManager());
+        this.spanSize = this.displayTimeperiodPivot && this.dashletConfig.show_dataset ? 'span4' : 'span6';
         this._super("_render");
 
         var chartField = this.getField('paretoChart');
+
         if (!_.isUndefined(chartField)) {
             chartField.renderChart();
             chartField.once('chart:pareto:rendered', function() {

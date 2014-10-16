@@ -68,7 +68,6 @@ $viewdefs['base']['view']['bubblechart'] = array(
             'type' => 'timeperiod',
             'options' => 'generic_timeperiod_options',
             'use_generic_timeperiods' => true,
-            'enum_width' => 'auto',
         ),
     ),
 );
