@@ -401,8 +401,9 @@
             // FIXME we need to iterate over the populated_ that is causing
             // unsaved warnings when doing the auto populate.
         }
-
+        if (!this.def.isMultiSelect) {
         this._buildRoute();
+        }
 
         if (_.isArray(value)) {
             this.formattedRname = value.join(this.separator);
@@ -761,6 +762,5 @@
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
     }
-
 
 })
