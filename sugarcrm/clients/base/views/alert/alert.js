@@ -63,7 +63,6 @@
         this.onCancel = options.onCancel;
         this.onLinkClick = options.onLinkClick;
         this.onClose = options.onClose;
-        this.alertLevel = options.level;
         this.templateOptions = options.templateOptions;
         this.name = 'alert';
     },
@@ -284,7 +283,9 @@
      * Unbind keydown event
      */
     unbindCancelAndReturn: function() {
-        app.shortcuts.restoreSession();
+        if (this.level === 'confirmation') {
+            app.shortcuts.restoreSession();
+        }
     },
 
     /**

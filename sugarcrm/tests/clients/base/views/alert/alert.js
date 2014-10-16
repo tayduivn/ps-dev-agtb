@@ -110,4 +110,59 @@ describe("Alert View", function() {
         expect(calledLast).toEqual('onConfirm');
 
     });
+
+    describe('Key bindings', function() {
+        var oldShortcuts;
+
+        beforeEach(function() {
+            oldShortcuts = app.shortcuts;
+            app.shortcuts = {
+                saveSession: sinon.stub(),
+                createSession: sinon.stub(),
+                register: sinon.stub(),
+                restoreSession: sinon.stub()
+            };
+        });
+
+        afterEach(function() {
+            app.shortcuts = oldShortcuts;
+        });
+
+        it('Should create a new shortcut session and register new keys for confirmation alerts', function() {
+            view.render({
+                level: 'confirmation'
+            });
+
+            expect(app.shortcuts.createSession.calledOnce).toBe(true);
+            expect(app.shortcuts.register.called).toBe(true);
+        });
+
+        it('Should not create a new shortcut session for other alerts', function() {
+            view.render({
+                level: 'warning'
+            });
+
+            expect(app.shortcuts.createSession.called).toBe(false);
+        });
+
+        it('Should restore previous shortcut session when confirmation alert is closed', function() {
+            view.level = 'confirmation';
+            view.render({
+                level: 'confirmation'
+            });
+            view.close();
+
+            expect(app.shortcuts.restoreSession.calledOnce).toBe(true);
+        });
+
+        it('Should not restore previous shortcut session when other alerts are closed', function() {
+            view.level = 'warning';
+            view.render({
+                level: 'warning'
+            });
+            view.close();
+
+            expect(app.shortcuts.restoreSession.called).toBe(false);
+        });
+    });
 });
