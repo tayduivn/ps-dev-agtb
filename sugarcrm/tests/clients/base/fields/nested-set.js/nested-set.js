@@ -87,7 +87,7 @@ describe('Base.Field.Nested-set', function() {
         var aSel = '[data-action=create-new]',
             iSel = '[data-role=add-item]',
             dSel = '[data-role=treeinput]';
-        sinonSandbox.stub(field, '_renderTree', function () {});
+        sinonSandbox.stub(field, '_renderTree', function() {});
         field.action = 'edit';
         field.render();
         field.$(dSel).click();
