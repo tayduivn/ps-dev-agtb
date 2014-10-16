@@ -1218,6 +1218,10 @@ class ModuleInstaller{
 		$from = clean_path($from);
 		$to = clean_path($to);
 
+        if (!isValidCopyPath($to)) {
+            sugar_die('Invalid destination path: ' . $to);
+        }
+
 		$dir = dirname($to);
 		//there are cases where if we need to create a directory in the root directory
 		if($dir == '.' && is_dir($from)){
