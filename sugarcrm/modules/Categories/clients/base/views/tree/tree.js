@@ -21,9 +21,14 @@
 
     /**
      * Default settings.
+     *
+     * @property {Object} _defaultSettings
+     * @property {Boolean} _defaultSettings.showMenu Display menu or not.
+     * @property {Number} _defaultSettings.liHeight Height (pixels) of row.
      */
     _defaultSettings: {
-        showMenu: true
+        showMenu: true,
+        liHeight: 37
     },
 
     /**
