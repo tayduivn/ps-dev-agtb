@@ -57,7 +57,8 @@
      * Initialize select2 jquery widget
      */
     initializeSelect2: function() {
-        var self = this;
+        var self = this,
+            escapeChars = '!\"#$%&\'()*+,./:;<=>?@[\]^`{|}~';
 
         this.$select2 = this.$('.select2field').select2({
             placeholder: '',
@@ -126,7 +127,15 @@
             }
         });
 
-        var records = _.pluck(this.value, 'name').join();
+        var records = _.map(this.value, function(record) {
+            // If a special character is the first character of a tag, it breaks select2 and jquery and everything
+            // So escape that character if it's the first char
+            if (escapeChars.indexOf(record.name.charAt(0)) >= 0) {
+                return '\\\\' + record.name;
+            }
+            return record.name;
+        });
+
         if (records.length) {
             this.$select2.select2('val', records);
         }
