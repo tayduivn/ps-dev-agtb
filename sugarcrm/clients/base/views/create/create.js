@@ -593,8 +593,12 @@
      * @return {*}
      */
     skipDupeCheck: function (skip) {
-        var skipDupeCheck,
         //FIXME: SC-3337 should investigate a better way to do this.
+        if (!this.buttons['duplicate_dropdown']) {
+            return;
+        }
+
+        var skipDupeCheck,
             saveButton = _.find(this.buttons['duplicate_dropdown'].fields, function(field) {
                 return field.name === this.saveButtonName;
             }, this);
