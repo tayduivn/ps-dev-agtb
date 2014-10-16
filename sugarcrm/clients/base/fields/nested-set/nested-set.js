@@ -16,6 +16,10 @@
  */
 ({
     /**
+     * {@inheritDoc}
+     */
+    fieldTag: 'div',
+    /**
      * Root ID of a shown NestedSet.
      * @property {String}
      */
