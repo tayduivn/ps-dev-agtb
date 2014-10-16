@@ -189,11 +189,10 @@
              * Load JSTree plugins list.
              */
             loadPluginsList: function() {
-                var defaultPlugins = ['json_data', 'ui', 'crrm', 'types', 'themes', 'search'];
-                if (!_.isUndefined(this.jsTreeSettings.plugins)) {
-                    defaultPlugins = _.union(defaultPlugins, this.jsTreeSettings.plugins);
-                }
-                return defaultPlugins;
+                return _.union(
+                    ['json_data', 'ui', 'crrm', 'types', 'themes', 'search'], // default plugins
+                    !_.isUndefined(this.jsTreeSettings.plugins) ? this.jsTreeSettings.plugins : []
+                );
             },
 
             /**
