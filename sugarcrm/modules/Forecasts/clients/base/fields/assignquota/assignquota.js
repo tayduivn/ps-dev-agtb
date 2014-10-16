@@ -61,8 +61,7 @@
         // only set field as disabled if it's actually rendered into the dom
         // otherwise it will cause problems and not show correctly when disabled
         if (this.getFieldElement().length > 0) {
-                this.setDisabled(this.disableButton);
-            }
+            this.setDisabled(this.disableButton);
         }
     },
 
