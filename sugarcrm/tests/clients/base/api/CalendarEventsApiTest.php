@@ -441,10 +441,10 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->calendarEventsApi = $this->getMock(
             'CalendarEventsApi',
-            array('updateBean', 'getLoadedAndFormattedBean')
+            array('updateRecord', 'getLoadedAndFormattedBean')
         );
         $this->calendarEventsApi->expects($this->once())
-            ->method('updateBean');
+            ->method('updateRecord');
         $this->calendarEventsApi->expects($this->once())
             ->method('getLoadedAndFormattedBean')
             ->will($this->returnValue(array()));
@@ -478,10 +478,10 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->calendarEventsApi = $this->getMock(
             'CalendarEventsApi',
-            array('updateBean', 'deleteRecurrences', 'getLoadedAndFormattedBean')
+            array('updateRecord', 'deleteRecurrences', 'getLoadedAndFormattedBean')
         );
         $this->calendarEventsApi->expects($this->once())
-            ->method('updateBean');
+            ->method('updateRecord');
         $this->calendarEventsApi->expects($this->once())
             ->method('deleteRecurrences');
         $this->calendarEventsApi->expects($this->once())
@@ -520,10 +520,10 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
          $this->calendarEventsApi = $this->getMock(
              'CalendarEventsApi',
-             array('updateBean')
+             array('updateRecord')
          );
          $this->calendarEventsApi->expects($this->never())
-             ->method('updateBean');
+             ->method('updateRecord');
 
          $this->calendarEventsApi->updateRecurringCalendarEvent(
              $meeting,

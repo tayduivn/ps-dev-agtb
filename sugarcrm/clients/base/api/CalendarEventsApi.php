@@ -181,7 +181,7 @@ class CalendarEventsApi extends ModuleApi
         }
 
         $api->action = 'save';
-        $this->updateBean($bean, $api, $args);
+        $this->updateRecord($api, $args);
 
         try {
             // if event is still recurring after update, save recurring events
