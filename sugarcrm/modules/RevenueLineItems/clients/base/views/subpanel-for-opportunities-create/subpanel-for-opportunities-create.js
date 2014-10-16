@@ -26,14 +26,12 @@
      * @override
      */
     _addCustomFieldsToBean: function(bean) {
-        var fields = app.metadata.getModule('RevenueLineItems', 'fields'),
-            val = (fields.commit_stage && fields.commit_stage.default) ? fields.commit_stage.default : 'exclude';
-
-        bean.set({
-            commit_stage: val,
-            currency_id: app.user.getCurrency().currency_id,
-            base_rate: app.currency.getBaseCurrency().conversion_rate
-        });
+        if (bean.has('sales_stage')) {
+            var dom = app.lang.getAppListStrings('sales_probability_dom');
+            bean.set({
+                probability: dom[bean.get('sales_stage')]
+            });
+        }
 
         return bean;
     },

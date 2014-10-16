@@ -327,8 +327,73 @@
                     }
                 }
             }
+        },
+        "RevenueLineItems": {
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "required": true
+                },
+                "account_name": {
+                    "name": "account_name",
+                    "rname": "name",
+                    "id_name": "account_id",
+                    "vname": "LBL_ACCOUNT_NAME",
+                    "type": "relate",
+                    "table": "accounts",
+                    "join_name": "accounts",
+                    "isnull": "true",
+                    "module": "Accounts",
+                    "dbType": "varchar",
+                    "link": "accounts",
+                    "len": 20,
+                    "source": "non-db",
+                    "unified_search": true,
+                    "importable": "required"
+                },
+                "account_id": {
+                    "name": "account_id",
+                    "vname": "LBL_ACCOUNT_ID",
+                    "type": "id",
+                    "source": "non-db",
+                    "audited": true
+                },
+                "commit_stage": {
+                    "name": "commit_stage",
+                    "type": "enum",
+                    "vname": "LBL_COMMIT_STAGE_FORECAST",
+                    "default": "exclude"
+                },
+                "currency_id": {
+                    "name": "currency_id",
+                    "type": "currency_id",
+                    "vname": "LBL_CURRENCY_ID",
+                    "default": "-99"
+                },
+                "base_rate": {
+                    "name": "base_rate",
+                    "type": "decimal",
+                    "vname": "LBL_CURRENCY_RATE"
+                },
+                "quantity": {
+                    "name": "quantity",
+                    "type": "decimal",
+                    "vname": "LBL_QUANTITY",
+                    "default": 1.0
+                },
+                "probability": {
+                    "name": "probability",
+                    "type": "int",
+                    "vname": "LBL_PROBABILITY"
+                },
+                "sales_stage": {
+                    "name": "sales_stage",
+                    "type": "enum",
+                    "vname": "LBL_SALES_STAGE",
+                    "default": "Prospecting"
+                }
+            }
         }
-
     },
     "_hash": "hash"
 }

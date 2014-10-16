@@ -236,10 +236,11 @@
     _addBeanToList: function(hasValidModels) {
         if (hasValidModels) {
             var beanId = app.utils.generateUUID(),
-                bean = app.data.createBean(this.module, {
-                    id: beanId
-                });
+                bean = app.data.createBean(this.module);
 
+            bean.set({
+                id: beanId
+            });
             bean._module = this.module;
 
             // check the parent record to see if an assigned user ID/name has been set
