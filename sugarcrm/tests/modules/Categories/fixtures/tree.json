@@ -16,7 +16,7 @@
         "rgt": "9",
         "level": "1",
         "data": "First",
-        "_module": "KBSContents",
+        "_module": "Categories",
         "metadata": {"id": "1"},
         "attr": {"data-id": "1", "data-level": "1"},
         "children": {
@@ -38,10 +38,13 @@
                     "rgt": "10",
                     "level": "1",
                     "data": "Third",
-                    "_module": "KBSContents",
+                    "_module": "Categories",
                     "metadata": {"id": "3"},
                     "attr": {"data-id": "3", "data-level": "2"},
-                    "children": []
+                    "children": {
+                        "next_offset": -1,
+                        "records": []
+                    }
                 },
                 {
                     "id": "4",
@@ -60,12 +63,16 @@
                     "rgt": "12",
                     "level": "1",
                     "data": "Fourth",
-                    "_module": "KBSContents",
+                    "_module": "Categories",
                     "metadata": {"id": "4"},
                     "attr": {"data-id": "4", "data-level": "2"},
-                    "children": []
+                    "children": {
+                        "next_offset": -1,
+                        "records": []
+                    }
                 }
-            ]
+            ],
+            "next_offset": -1
         }
     },
     {
@@ -84,9 +91,12 @@
         "lft": "10",
         "rgt": "11",
         "level": "1",
-        "children": [],
+        "children": {
+            "next_offset": -1,
+            "records": []
+        },
         "data": "Second",
-        "_module": "KBSContents",
+        "_module": "Categories",
         "metadata": {"id": "2"},
         "attr": {"data-id": "2", "data-level": "1"}
     }
