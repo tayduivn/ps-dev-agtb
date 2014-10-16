@@ -253,7 +253,7 @@ class HealthCheckScannerMeta
         ),
         426 => array(
             'report' => 'foundPrint',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         427 => array(
             'report' => 'foundDieExit',
