@@ -178,9 +178,9 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'fields' => array(
                         array(
                             'name' => 'template',
-                            'type' => 'button',
+                            'type' => 'template-button',
                             'icon' => 'icon-file-alt',
-                            'css_class' => 'btn pull-right load-template',
+                            'css_class' => 'pull-right load-template',
                             'label' => 'LBL_TEMPLATES',
                         ),
                         array(
