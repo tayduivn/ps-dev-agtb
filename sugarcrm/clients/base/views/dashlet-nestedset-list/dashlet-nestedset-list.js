@@ -77,10 +77,29 @@
             callbacks = {
                 onLeaf: _.bind(this.leafClicked, this),
                 onToggle: _.bind(this.folderToggled, this),
-                onLoad: _.bind(this.treeLoaded, this)
+                onLoad: _.bind(this.treeLoaded, this),
+                onSelect: _.bind(this.openRecord, this)
             };
         this._super('_render', []);
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+    },
+
+    /**
+     * Handle tree selection.
+     * @param data
+     */
+    openRecord: function(data) {
+        switch (data.type) {
+            case 'document':
+                if (_.isEmpty(this.extraModule.module)) {
+                    break;
+                }
+                var route = app.router.buildRoute(this.extraModule.module, data.id, 'record');
+                app.router.navigate(route, {trigger: true});
+                break;
+            case 'folder':
+                break;
+        }
     },
 
     /**
