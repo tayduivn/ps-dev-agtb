@@ -568,7 +568,7 @@
      */
     openSelectDrawer: function() {
         app.drawer.open({
-            layout: 'selection-list-filter',
+            layout: 'selection-list',
             context: {
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),

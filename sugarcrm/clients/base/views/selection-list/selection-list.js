@@ -17,6 +17,7 @@
     extendsFrom: 'FlexListView',
 
     initialize: function(options) {
+        this.multiSelect = options.context.get('multiSelect');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
@@ -67,19 +68,26 @@
     /**
      * Sets up events.
      *
-     * Override this method to setup events for subclasses.
      */
     initializeEvents: function() {
+        if (this.multiSelect) {
+            this.context.on('selection:select:fire', this._selectMultipleAndClose, this);
+        } else {
+            this.context.on('change:selection_model', this._selectAndClose, this);
+        }
     },
 
     /**
      * Selects multiple records and closes the drawer.
      *
-     * Override this method in subclasses.
      *
      * @protected
      */
     _selectMultipleAndClose: function() {
+        var selections = this.context.get('mass_collection');
+        if (selections) {
+            app.drawer.close(this._getCollectionAttributes(selections));
+        }
     },
 
     /**
@@ -117,6 +125,20 @@
                 attributes[field] = attributes[field] || model.get(field);
             }
         }, this);
+
+        return attributes;
+    },
+
+    /**
+     * Selects multiple records and closes the drawer.
+     *
+     * @private
+     */
+    _getCollectionAttributes: function(collection) {
+        var attributes = [];
+        _.each(collection.models, _.bind(function(model) {
+            attributes.push(this._getModelAttributes(model));
+        }, this));
 
         return attributes;
     },
