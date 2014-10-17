@@ -17,6 +17,7 @@
          * an 'All Recurrences' mode for record view. When the mode is off,
          * only the single event record is updated. When the mode is on, all
          * event records in the series are updated.
+         *
          * This plugin also handles switching from a child record in the series
          * to the parent record (since we require the parent record to control
          * the recurrence information).
@@ -38,7 +39,10 @@
                         this.toggleAllRecurrencesMode(false); // default to off
                     }
 
-                    this.model.on('sync', function() {
+                    this.model.on('sync', function(model, data, options) {
+                        if (options && options.refetch_list_collection) {
+                            this._refetchListCollection();
+                        }
                         // when the data is loaded, force 'all recurrence' mode if not recurring
                         if (!this._isRecurringEvent(this.model)) {
                             this.toggleAllRecurrencesMode(true);
@@ -46,22 +50,31 @@
                     }, this);
                 });
 
-                // override {@link View.Views.Base.RecordView#cancelClicked}
-                // turn off all recurrences mode on cancel
+                /**
+                 * override {@link View.Views.Base.RecordView#cancelClicked}
+                 *
+                 * turn off all recurrences mode on cancel
+                 */
                 this.cancelClicked = _.wrap(this.cancelClicked, function(_super, event) {
                     _super.call(this, event);
                     this.toggleAllRecurrencesMode(false);
                 });
 
-                // override {@link View.Views.Base.RecordView#setEditableFields}
-                // check flag to determine if recurrence fields should be made editable
+                /**
+                 * override {@link View.Views.Base.RecordView#setEditableFields}
+                 *
+                 * check flag to determine if recurrence fields should be made editable
+                 */
                 this.setEditableFields = _.wrap(this.setEditableFields, function(_super) {
                     this.toggleEditRecurrenceFields(this.allRecurrencesMode);
                     _super.call(this);
                 });
 
-                // override {@link View.Views.Base.RecordView#setRoute}
-                // add all_recurrences to action if in 'all recurrences' mode
+                /**
+                 * override {@link View.Views.Base.RecordView#setRoute}
+                 *
+                 * add all_recurrences to action if in 'all recurrences' mode
+                 */
                 this.setRoute = _.wrap(this.setRoute, function(_super, action) {
                     if (this.allRecurrencesMode && action === 'edit') {
                         action = 'edit/all_recurrences';
@@ -69,14 +82,20 @@
                     _super.call(this, action);
                 });
 
-                // override {@link View.Views.Base.RecordView#handleSave}
-                // after saving, turn off all recurrences mode
+                /**
+                 * override {@link View.Views.Base.RecordView#handleSave}
+                 */
                 this.handleSave = _.wrap(this.handleSave, function(_super) {
                     _super.call(this);
-                    this.toggleAllRecurrencesMode(false);
+                    this._doAfterSave();
                 });
 
-                // override {@link View.Views.Base.RecordView#getCustomSaveOptions}
+                /**
+                 * override {@link View.Views.Base.RecordView#getCustomSaveOptions}
+                 *
+                 * Add recurrence options and set flag to refresh list collection
+                 * if editing all recurring meetings.
+                 */
                 this.getCustomSaveOptions = _.wrap(this.getCustomSaveOptions,
                     _.bind(function(_super, options) {
                         return _.extend(
@@ -151,6 +170,8 @@
 
             /**
              * Route to parent record in edit all recurrences mode
+             *
+             * @param {String} parentId
              */
             editAllRecurrencesFromParent: function(parentId) {
                 var route = app.router.buildRoute(this.module, parentId, 'edit/all-recurrences');
@@ -171,6 +192,7 @@
                 if (this.allRecurrencesMode) {
                     options.params = options.params || {};
                     options.params.all_recurrences = true;
+                    options.refetch_list_collection = true;
                 }
 
                 return options;
@@ -180,12 +202,77 @@
              * Check to see if event is recurring
              * Event is recurring when the repeat type is not blank
              *
-             * @param {Object} model
-             * @return {boolean}
+             * @param {Data.Bean} model
+             * @return {Boolean}
              * @private
              */
             _isRecurringEvent: function(model) {
                 return (model.get('repeat_type') !== '');
+            },
+
+            /**
+             * After saving:
+             *
+             * 1. Turn off all recurrences mode
+             *
+             * 2. Disable next/prev buttons if editing all recurrences
+             * because this will delete/recreate recurring meetings
+             * which may be surrounding the meeting being saved
+             */
+            _doAfterSave: function() {
+                if (this.allRecurrencesMode) {
+                    this._disableNextPrevButtons();
+                }
+                this.toggleAllRecurrencesMode(false);
+            },
+
+            /**
+             * Disable the next/prev buttons
+             *
+             * @private
+             */
+            _disableNextPrevButtons: function() {
+                var $nextPrevButtons = this.$('.btn-group-previous-next');
+                $nextPrevButtons.find('.next-row').addClass('disabled');
+                $nextPrevButtons.find('.previous-row').addClass('disabled');
+            },
+
+            /**
+             * Enable the next/prev buttons if there are next & previous records
+             *
+             * @param {Data.BeanCollection} listCollection
+             * @private
+             */
+            _enableNextPrevButtons: function(listCollection) {
+                var $nextPrevButtons = this.$('.btn-group-previous-next');
+
+                if (listCollection.hasNextModel(this.model)) {
+                    $nextPrevButtons.find('.next-row').removeClass('disabled');
+                }
+                if (listCollection.hasPreviousModel(this.model)) {
+                    $nextPrevButtons.find('.previous-row').removeClass('disabled');
+                }
+            },
+
+            /**
+             * Re-fetch the list collection that is used for the next/previous buttons
+             * in the header of the record view. This is needed because updating all
+             * recurrences of a meeting will delete and recreate all child meetings, so
+             * the list now needs to be updated.
+             *
+             * @private
+             */
+            _refetchListCollection: function() {
+                var self = this,
+                    listCollection = this.context.get('listCollection');
+
+                if (listCollection && listCollection.models && listCollection.models.length > 1) {
+                    listCollection.fetch({
+                        success: function() {
+                            self._enableNextPrevButtons(listCollection);
+                        }
+                    });
+                }
             }
         });
     });

@@ -16,7 +16,7 @@ describe('Plugins.EditAllRecurrences', function() {
 
         navigateStub = sandbox.stub(app.router, 'navigate');
         view = SugarTest.createView('base', moduleName, 'record');
-        view.model.set('repeat_type', 'Daily');
+        view.model.set({'id': '456', 'repeat_type': 'Daily'});
         pluginsBefore = view.plugins;
         view.plugins = ['EditAllRecurrences'];
         SugarTest.loadPlugin('EditAllRecurrences');
@@ -75,15 +75,10 @@ describe('Plugins.EditAllRecurrences', function() {
     });
 
     it('should add all_recurrences flag to save options when in all recurrence mode', function() {
-        var actual,
-            expected = {
-                params: {
-                    all_recurrences: true
-                }
-            };
+        var options;
         view.allRecurrencesMode = true;
-        actual = view.getCustomSaveOptions();
-        expect(actual).toEqual(expected);
+        options = view.getCustomSaveOptions();
+        expect(options.params.all_recurrences).toEqual(true);
     });
 
     it('should prevent toggling out of all recurrence mode when repeat_type is blank', function() {
@@ -119,5 +114,95 @@ describe('Plugins.EditAllRecurrences', function() {
         view.model.id = 'foo_id';
         view.editClicked();
         expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit/all_recurrences', {trigger: false});
+    });
+
+    describe('Next/Previous Button Behavior', function() {
+        var listCollection;
+
+        beforeEach(function() {
+            listCollection = app.data.createBeanCollection(moduleName);
+            sandbox.stub(listCollection, 'fetch', function(options) {
+                options.success();
+            });
+            view.context.set('listCollection', listCollection);
+
+            view.$el = $('<div><div class="btn-group-previous-next">' +
+                '<div class="next-row"></div><div class="previous-row"></div>' +
+                '</div></div>');
+        });
+
+        it('should disable next/prev buttons when saving all recurrences of an event', function() {
+            view.allRecurrencesMode = true;
+            view._doAfterSave();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(true);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(true);
+        });
+
+        it('should not disable next/prev buttons when saving one occurrence of a repeating event', function() {
+            view.allRecurrencesMode = false;
+            view._doAfterSave();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(false);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(false);
+        });
+
+        it('should attempt to re-fetch the list collection after all recurrences of a meeting are saved', function() {
+            var saveOptions,
+                refetchListCollectionStub = sandbox.stub(view, '_refetchListCollection');
+
+            view.allRecurrencesMode = true;
+            saveOptions = view.getCustomSaveOptions();
+            //trigger sync to mimic what happens after the model is saved - passing through the custom save options
+            view.model.trigger('sync', view.model, view.model.attributes, saveOptions);
+
+            expect(refetchListCollectionStub).toHaveBeenCalled();
+        });
+
+        it('should not re-fetch the list collection after editing one occurrence of a recurring meeting', function() {
+            var saveOptions,
+                refetchListCollectionStub = sandbox.stub(view, '_refetchListCollection');
+
+            view.allRecurrencesMode = false;
+            saveOptions = view.getCustomSaveOptions();
+            //trigger sync to mimic what happens after the model is saved - passing through the custom save options
+            view.model.trigger('sync', view.model, view.model.attributes, saveOptions);
+
+            expect(refetchListCollectionStub).not.toHaveBeenCalled();
+        });
+
+        it('should not enable next/prev buttons after fetch if collection is empty', function() {
+            view._disableNextPrevButtons();
+            view._refetchListCollection();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(true);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(true);
+        });
+
+        it('should only enable next button after fetch if there is a next model in the collection', function() {
+            listCollection.add(view.model);
+            listCollection.add(app.data.createBean(moduleName, {id: 'next_record'}));
+            view._disableNextPrevButtons();
+            view._refetchListCollection();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(false);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(true);
+        });
+
+        it('should only enable previous button after fetch if there is a previous model in the collection', function() {
+            listCollection.add(app.data.createBean(moduleName, {id: 'prev_record'}));
+            listCollection.add(view.model);
+            view._disableNextPrevButtons();
+            view._refetchListCollection();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(true);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(false);
+        });
+
+        it('should enable both next/prev after fetch if there are next/prev models in the collection', function() {
+            listCollection.add(app.data.createBean(moduleName, {id: 'prev_record'}));
+            listCollection.add(view.model);
+            listCollection.add(app.data.createBean(moduleName, {id: 'next_record'}));
+            view._disableNextPrevButtons();
+            view._refetchListCollection();
+            expect(view.$('.next-row').hasClass('disabled')).toBe(false);
+            expect(view.$('.previous-row').hasClass('disabled')).toBe(false);
+        });
+
     });
 });
