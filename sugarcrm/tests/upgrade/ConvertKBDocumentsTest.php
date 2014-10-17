@@ -22,17 +22,27 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
     /**
      * @var KBTag
      */
-    protected $tagParent;
+    protected $tagRoot1;
 
     /**
      * @var KBTag
      */
-    protected $tagChild;
+    protected $tagRoot2;
 
     /**
      * @var KBTag
      */
-    protected $tagRoot;
+    protected $tagChild1Level1;
+
+    /**
+     * @var KBTag
+     */
+    protected $tagChild2Level1;
+
+    /**
+     * @var KBTag
+     */
+    protected $tagChild1Level2;
 
     /**
      * @var SugarUpgradeConvertKBDocuments
@@ -72,18 +82,32 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
         $this->document->kbdocument_revision_id = $this->revision->id;
         $this->document->save();
 
-        $this->tagRoot = BeanFactory::getBean('KBTags');
-        $this->tagRoot->tag_name = 'single_root_tag';
-        $this->tagRoot->save();
+        $this->tagRoot1 = BeanFactory::getBean('KBTags');
+        $this->tagRoot1->tag_name = 'root_tag1';
+        $this->tagRoot1->save();
 
-        $this->tagParent = BeanFactory::getBean('KBTags');
-        $this->tagParent->tag_name = 'parent_tag';
-        $this->tagParent->save();
+        $this->tagRoot2 = BeanFactory::getBean('KBTags');
+        $this->tagRoot2->tag_name = 'root_tag2';
+        $this->tagRoot2->save();
 
-        $this->tagChild = BeanFactory::getBean('KBTags');
-        $this->tagChild->tag_name = 'child_tag';
-        $this->tagChild->parent_tag_id = $this->tagParent->id;
-        $this->tagChild->save();
+        $this->tagChild1Level1 = BeanFactory::getBean('KBTags');
+        $this->tagChild1Level1->tag_name = 'child_tag1_level1';
+        $this->tagChild1Level1->parent_tag_id = $this->tagRoot1->id;
+        $this->tagChild1Level1->save();
+
+        $this->tagChild2Level1 = BeanFactory::getBean('KBTags');
+        $this->tagChild2Level1->tag_name = 'child_tag2_level1';
+        $this->tagChild2Level1->parent_tag_id = $this->tagRoot1->id;
+        $this->tagChild2Level1->save();
+
+        $this->tagChild1Level2 = BeanFactory::getBean('KBTags');
+        $this->tagChild1Level2->tag_name = 'child_tag1_level2';
+        $this->tagChild1Level2->parent_tag_id = $this->tagChild1Level1->id;
+        $this->tagChild1Level2->save();
+
+        // New root for tests.
+        $KBSContent = BeanFactory::getBean('KBSContents');
+        $KBSContent->setupCategoryRoot();
 
         $this->upgrader->setVersions(6.7, 'ult', 7.5, 'ult');
 
@@ -104,14 +128,31 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
         $this->document->mark_deleted($this->document->id);
         $this->revision->mark_deleted($this->revision->id);
         $this->content->mark_deleted($this->content->id);
-        $this->tagRoot->mark_deleted($this->tagRoot->id);
-        $this->tagParent->mark_deleted($this->tagParent->id);
-        $this->tagChild->mark_deleted($this->tagChild->id);
+        $this->tagRoot1->mark_deleted($this->tagRoot1->id);
+        $this->tagRoot2->mark_deleted($this->tagRoot2->id);
+        $this->tagChild1Level1->mark_deleted($this->tagChild1Level1->id);
+        $this->tagChild2Level1->mark_deleted($this->tagChild2Level1->id);
+        $this->tagChild1Level2->mark_deleted($this->tagChild1Level2->id);
 
         $kbscontent = $this->getKBSContentBeanByName($this->document->name);
         if ($kbscontent) {
+            if ($kbscontent->load_relationship('tags_link')) {
+                $tags = $kbscontent->tags_link->getBeans();
+                foreach ($tags as $tag) {
+                    $tag->mark_deleted($tag->id);
+                }
+            }
             $kbscontent->mark_deleted($kbscontent->id);
         }
+        $names = array(
+            $this->tagRoot1->tag_name,
+            $this->tagRoot2->tag_name,
+            $this->tagChild1Level1->tag_name,
+            $this->tagChild2Level1->tag_name,
+            $this->tagChild1Level2->tag_name,
+        );
+        $category = BeanFactory::newBean('Categories');
+        $GLOBALS['db']->query("DELETE FROM {$category->table_name} WHERE name IN ('" . implode("', '", $names) . "')");
 
         SugarTestHelper::tearDown();
         parent::tearDown();
@@ -239,12 +280,11 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
 
     /**
      * Convert tags to KBS tags.
+     * Use every last child from each entry, the set "p1->c1", "p2->p3->c2", "p4"
+     * should be converted to "c1, c2, p4".
      */
     public function testConvertTags()
     {
-//        FIXME: temp disabled - needs to be retested when doing MT-909.
-        $this->markTestSkipped('Awaiting MT-909');
-
         $this->script = $this->getMockBuilder('SugarUpgradeConvertKBDocuments')
             ->setConstructorArgs(array($this->upgrader))
             ->setMethods(array('getOldDocuments', 'getOldTags'))
@@ -253,18 +293,29 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
         $this->script->expects($this->any())->method('getOldDocuments')
             ->will($this->returnValue(array(array('id' => $this->document->id))));
 
+        /*
+         * tagRoot1->tagChild1Level1->tagChild1Level2
+         * tagRoot1->tagChild2Level1
+         * tagRoot2
+         */
         $this->script->expects($this->once())->method('getOldTags')
-            ->will($this->returnValue(
+            ->will(
+                $this->returnValue(
                     array(
-                        array('kbtag_id' => $this->tagRoot->id),
-                        array('kbtag_id' => $this->tagChild->id),
+                        array('kbtag_id' => $this->tagChild1Level2->id),
+                        array('kbtag_id' => $this->tagChild2Level1->id),
+                        array('kbtag_id' => $this->tagRoot2->id),
                     )
                 )
             );
 
+        /*
+         * The tags "tagRoot1" and "tagChild1Level1" should be skipped.
+         */
         $expectedTagNames = array(
-            $this->tagChild->tag_name,
-            $this->tagRoot->tag_name,
+            $this->tagChild1Level2->tag_name,
+            $this->tagChild2Level1->tag_name,
+            $this->tagRoot2->tag_name,
         );
 
         $this->script->run();
@@ -280,11 +331,52 @@ class ConvertKBDocumentsTest extends UpgradeTestCase
             $newTags
         );
 
-        foreach($newTags as $tag) {
-            $tag->mark_deleted($tag->id);
-        }
-
         $this->assertEquals($expectedTagNames, array_values($actualTagNames), '', 0, 10, true);
+    }
+
+    /**
+     * Convert KBTag tree to Categories.
+     */
+    public function testConvertTagsToCategories()
+    {
+        $this->script = $this->getMockBuilder('SugarUpgradeConvertKBDocuments')
+            ->setConstructorArgs(array($this->upgrader))
+            ->setMethods(array('getOldDocuments', 'getOldTags'))
+            ->getMock();
+
+        $this->script->expects($this->any())->method('getOldDocuments')
+            ->will($this->returnValue(array(array('id' => $this->document->id))));
+
+        /*
+         * root_tag1->child_tag1_level1->child_tag1_level2
+         * root_tag1->child_tag2_level1
+         * root_tag2
+         */
+        $this->script->expects($this->once())->method('getOldTags')
+            ->will(
+                $this->returnValue(
+                    array(
+                        array('kbtag_id' => $this->tagChild1Level2->id),
+                        array('kbtag_id' => $this->tagChild2Level1->id),
+                        array('kbtag_id' => $this->tagRoot2->id),
+                    )
+                )
+            );
+
+        $this->script->run();
+
+        $rootCat = BeanFactory::getBean(
+            'Categories',
+            BeanFactory::getBean('KBSContents')->getCategoryRoot(),
+            array('use_cache' => false)
+        );
+        $catTree = $rootCat->getTree();
+
+        $this->assertEquals('root_tag1', $catTree[0]['name']);
+        $this->assertEquals('child_tag1_level1', $catTree[0]['children'][0]['name']);
+        $this->assertEquals('child_tag1_level2', $catTree[0]['children'][0]['children'][0]['name']);
+        $this->assertEquals('child_tag2_level1', $catTree[0]['children'][1]['name']);
+        $this->assertEquals('root_tag2', $catTree[1]['name']);
     }
 
     /**
