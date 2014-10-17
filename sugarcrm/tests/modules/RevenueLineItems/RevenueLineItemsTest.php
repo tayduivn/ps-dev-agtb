@@ -27,35 +27,32 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('RevenueLineItems'));
-        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public function setUp()
     {
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_by' => 'RevenueLineItems'
+            )
+        );
+        SugarTestConfigUtilities::setConfig('Opportunities', 'opps_view_by', 'RevenueLineItems');
         parent::setUp();
-        SugarTestForecastUtilities::setUpForecastConfig();
         $this->revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
     }
 
     public function tearDown()
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
+        SugarTestConfigUtilities::setConfig('Opportunities', 'opps_view_by', 'Opportunities');
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
 
         parent::tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        SugarTestForecastUtilities::tearDownForecastConfig();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     /**
@@ -139,6 +136,9 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         $admin->saveSetting('Forecasts', 'is_setup', 0, 'base');
+
+        // reload the settings
+        Forecast::getSettings(true);
 
         /* @var $revenuelineitem RevenueLineItem */
         $revenuelineitem = BeanFactory::getBean('RevenueLineItems');
