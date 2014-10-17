@@ -15,15 +15,17 @@ describe('Base.View.FilterModuleDropdownSelectionList', function() {
             return module;
         });
 
+        //faking out server so we can use 'simple' layout which doesn't really exist
+        //simple layout is a way to use the plain sidecar layout
         server = sinon.fakeServer.create();
-        server.respondWith(/\/clients\/base\/layouts\/simple/, [404, {}, '']);
-
+        server.respondWith(/\/clients\/base\/layouts\/simple/, [200, {}, '']);
         layout = SugarTest.createLayout('base', 'Contacts', 'simple');
+        server.restore();
+
         view = SugarTest.createView('base', 'Contacts', 'filter-module-dropdown-selection-list', {}, null, null, layout);
     });
 
     afterEach(function() {
-        server.restore();
         view.dispose();
         layout.dispose();
         langGetStub.restore();
