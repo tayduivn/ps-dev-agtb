@@ -99,6 +99,11 @@
         // toggle the fields in the list to be in edit mode
         _.each(this.collection.models, function(model) {
             this.toggleFields(this.rowFields[model.get('id')], isEdit)
+            if (isEdit) {
+                // this is a subpanel specific logic: when the subpanel is back to edit mode,
+                // manually fire the dependency trigger on all its models
+                this.context.trigger("list:editrow:fire", model, {def: {}});
+            }
         }, this);
     },
 
