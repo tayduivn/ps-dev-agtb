@@ -13,6 +13,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $viewdefs['Leads']['base']['view']['convert-headerpane'] = array(
     'template' => 'headerpane',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_CONVERTLEAD',
+        ),
+    ),
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

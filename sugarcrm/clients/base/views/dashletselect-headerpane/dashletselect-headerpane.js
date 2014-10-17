@@ -11,16 +11,20 @@
 /**
  * @class View.Views.Base.DashletselectHeaderpaneView
  * @alias SUGAR.App.view.views.BaseDashletselectHeaderpaneView
- * @extends View.View
+ * @extends View.Views.Base.HeaderpaneView
  */
 ({
+    extendsFrom: 'HeaderpaneView',
+
     events: {
         "click a[name=cancel_button]": "close"
     },
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this.title = app.lang.get(this.meta.title, this.module);
+        this._super('initialize', [options]);
 
         //shortcut keys
         app.shortcuts.register('Dashlet:Select:Cancel', ['esc','ctrl+alt+l'], function() {
@@ -31,6 +35,9 @@
         }, this, true);
     },
 
+    /**
+     * Closes the drawer.
+     */
     close: function() {
         app.drawer.close();
     }

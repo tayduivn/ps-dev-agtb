@@ -13,6 +13,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['base']['view']['headerpane'] = array(
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_MODULE_NAME',
+        ),
+    ),
     'buttons' => array(
         array(
             'name'    => 'create_button',
@@ -23,7 +30,6 @@ $viewdefs['base']['view']['headerpane'] = array(
             'route' => array(
                 'action'=>'create'
             )
-
         ),
         array(
             'name' => 'sidebar_toggle',

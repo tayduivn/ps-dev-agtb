@@ -38,10 +38,10 @@
         this._super('initialize', [options]);
     },
 
+    /**
+     * @inheritDoc
+     */
     _renderHtml: function() {
-        var titleTemplate = Handlebars.compile(app.lang.get('LBL_SEARCH_AND_SELECT')),
-            moduleName = app.lang.getModuleName(this.module, {plural: true});
-        this.title = titleTemplate({module: moduleName});
         this._super('_renderHtml');
 
         this.layout.on('selection:closedrawer:fire', _.once(_.bind(function() {
@@ -54,6 +54,14 @@
                 this.context.trigger('selection-list:link:multi');
             });
         }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _formatTitle: function(title) {
+        var moduleName = app.lang.get('LBL_MODULE_NAME', this.module);
+        return app.lang.get(title, this.module, {module: moduleName});
     },
 
     /**

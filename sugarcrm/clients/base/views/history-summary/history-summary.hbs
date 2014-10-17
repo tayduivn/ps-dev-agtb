@@ -23,7 +23,7 @@
         </th>
         {{/each}}
         {{#each ../_fields.visible}}
-            <th class="{{css_class}} {{#if isSortable}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/if}}"
+            <th class="{{#if css_class}}{{css_class}}{{else}}cell-medium{{/if}} {{#if isSortable}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/if}}"
             {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
                 {{#has "ReorderableColumns" ../../plugins}}
                 {{! Insert a <div> around all the inner element of the column.

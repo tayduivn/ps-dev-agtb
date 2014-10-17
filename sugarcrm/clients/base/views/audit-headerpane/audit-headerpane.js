@@ -11,16 +11,20 @@
 /**
  * @class View.Views.Base.AuditHeaderpaneView
  * @alias SUGAR.App.view.views.BaseAuditHeaderpaneView
- * @extends View.View
+ * @extends View.Views.Base.HeaderpaneView
  */
 ({
+    extendsFrom: 'HeaderpaneView',
+
     events: {
         'click a[name=close_button]': 'close'
     },
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this.title = app.lang.get(this.meta.title, this.module);
+        this._super('initialize', [options]);
 
         //shortcut keys
         app.shortcuts.register('AuditHeaderPanel:Close', ['esc','ctrl+alt+l'], function() {
@@ -31,6 +35,9 @@
         }, this, true);
     },
 
+    /**
+     * Closes the drawer.
+     */
     close: function() {
         app.drawer.close();
     }

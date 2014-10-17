@@ -49,7 +49,7 @@
      */
     bindDataChange: function() {
         this.context.on('change:selectedUser', function(model, changed) {
-            this.title = changed.full_name;
+            this._title = changed.full_name;
             if (!this.disposed) {
                 this.render();
             }
@@ -111,7 +111,7 @@
      */
     _renderHtml: function() {
         var user = this.context.get('selectedUser') || app.user.toJSON();
-        this.title = this.title || user.full_name;
+        this._title = this._title || user.full_name;
 
         this._super("_renderHtml");
     }

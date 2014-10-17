@@ -41,6 +41,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'label' => 'LBL_MODULE',
                     'type' => 'enum',
                     'span' => 12,
+                    'sort_alpha' => true,
                 ),
                 array(
                     'name' => 'display_columns',

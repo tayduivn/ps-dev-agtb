@@ -12,7 +12,13 @@
  */
 $viewdefs["base"]["view"]["dashletselect-headerpane"] = array(
     'template' => 'headerpane',
-    "title"   => "LBL_DASHLET_ADD",
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_DASHLET_ADD',
+        ),
+    ),
     "buttons" => array(
         array(
             "name"      => "cancel_button",

@@ -95,6 +95,31 @@
         this.context.set({
             collection: this.collection
         });
+
+        $('html').addClass('print-drawer');
+    },
+
+    /**
+     * @override
+     *
+     * This view doesn't use the regular {@link Utils.Utils#isSortable} to check
+     * whether the field is sortable.
+     */
+    _initOrderBy: function() {
+        var lastStateOrderBy = app.user.lastState.get(this.orderByLastStateKey) || {},
+            lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
+
+        if (_.isEmpty(lastOrderedFieldMeta) || !lastOrderedFieldMeta.isSortable) {
+            lastStateOrderBy = {};
+        }
+
+        return _.extend({
+                field: '',
+                direction: 'desc'
+            },
+            this.meta.orderBy,
+            lastStateOrderBy
+        );
     },
 
     /**
@@ -199,5 +224,13 @@
         this.collection.dataFetched = false;
         this.collection.skipFetch = false;
         this.loadData(options);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        $('html').removeClass('print-drawer');
+        this._super('_dispose');
     }
 })
