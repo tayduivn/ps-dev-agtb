@@ -21,10 +21,10 @@
      *
      * @property {number}
      */
-    _maxSelectedRecords: 3,
 
     initialize: function(options) {
         this.multiSelect = options.context.get('multiSelect');
+        this.maxSelectedRecords = options.context.get('maxSelectedRecords');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
@@ -93,7 +93,7 @@
     _selectMultipleAndClose: function() {
         var selections = this.context.get('mass_collection');
         if (selections) {
-            if (selections.length > this._maxSelectedRecords) {
+            if (selections.length > this.maxSelectedRecords) {
                 this._showMaxSelectedRecordsAlert();
                 return;
             }
@@ -110,7 +110,7 @@
     _showMaxSelectedRecordsAlert: function() {
         var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
             {
-                maxRecords: this._maxSelectedRecords
+                maxRecords: this.maxSelectedRecords
             }
         );
         app.alert.show('too-many-selected-records', {

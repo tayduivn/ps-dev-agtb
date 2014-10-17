@@ -73,6 +73,7 @@
     fieldTag: 'input.select2',
     plugins: ['QuickSearchFilter', 'EllipsisInline'],
     separator: '|',
+    maxSelectedRecords: 20,
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -240,6 +241,7 @@
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
+                maximumSelectionSize: this.maxSelectedRecords,
                 query: _.bind(this.search, this)
             }).on("select2-open", function () {
                     var plugin = $(this).data('select2');
@@ -580,7 +582,8 @@
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
                 modelsId: this.model.get(this.def.id_name),
-                multiSelect: this.def.isMultiSelect
+                multiSelect: this.def.isMultiSelect,
+                maxSelectedRecords: this.maxSelectedRecords
             }
         }, _.bind(this.setValue, this));
     },
