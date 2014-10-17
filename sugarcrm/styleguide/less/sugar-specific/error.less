@@ -22,9 +22,14 @@
   input {
     margin-bottom: 0;
     &:focus {
-      z-index: 3;
       border-color: @errorText !important;
       border-width: 1px !important;
+      &+ .add-on {
+        display: none;
+        &+ .add-on {
+          display: none;
+        }
+      }
     }
   }
   /* On fieldset/email, only the input that has an error must be decorate */
