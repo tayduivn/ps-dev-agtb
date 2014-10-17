@@ -98,7 +98,7 @@
         this.before('render', function() {
             this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
             this.showLoadMsg = true;
-            if (app.alert.$alerts[0].innerText) {
+            if (app.alert.$alerts[0].innerText || !app.acl.hasAccessToModel('list', this.model)) {
                 this.showLoadMsg = false;
             }
             var nextOffset = this.collection.next_offset || -1;
