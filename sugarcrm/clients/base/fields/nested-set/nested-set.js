@@ -83,8 +83,11 @@
             this.$(this.ddEl).data('dropdown').opened = false;
             this.$(this.ddEl).off('click.bs.dropdown');
             treeOptions = {
-                category_root: this.categoryRoot,
-                module_root: this.moduleRoot
+                settings: {
+                    category_root: this.categoryRoot,
+                    module_root: this.moduleRoot
+                },
+                options: {}
             };
             this._renderTree(
                 $('[data-place=tree]'),

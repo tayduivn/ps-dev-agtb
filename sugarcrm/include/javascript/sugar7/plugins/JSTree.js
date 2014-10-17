@@ -31,6 +31,12 @@
             jsTreeCallbacks: null,
 
             /**
+             * JSTree options
+             * @property {Object}
+             */
+            jsTreeOptions: null,
+
+            /**
              * JQuery container with empty label
              * @property {Object} $noData
              */
@@ -131,21 +137,22 @@
              * Render JSTree.
              * @param {Object} $container
              * @param {Object} settings
-             * @param {String} settings.module_root Module parameter to build a collection (required).
-             * @param {String} settings.category_root Root parameter to build a collection (required).
+             * @param {String} settings.settings.module_root Module parameter to build a collection (required).
+             * @param {String} settings.settings.category_root Root parameter to build a collection (required).
              * @param {Object} callbacks
              * @param {Object} callbacks.onToggle Callback on expand/collapse a tree branch.
              * @param {Object} callbacks.onLoad Callback on tree loaded.
              * @param {Object} callbacks.onLeaf Callback on leaf click.
              * @param {Object} callbacks.onShowContextmenu Callback on show a context menu.
              * @param {Object} callbacks.onAdd Callback on add a new node.
+             * @param {Object} callbacks.onLoadState Callback on load state.
              * @param {Object} callbacks.onSelect Callback on select a node.
              * @private
              */
             _renderTree: function($container, settings, callbacks) {
-                var options = {};
 
-                this.jsTreeSettings = settings || {};
+                this.jsTreeSettings = settings.settings || {};
+                this.jsTreeOptions = settings.options || {};
                 this.jsTreeCallbacks = callbacks || {};
 
                 this.$noData = $('<div />', {'data-type': 'jstree-no-data', class: 'block-footer'})
@@ -199,7 +206,7 @@
              * Create JSTree.
              * @param {Object} data
              * @param {Object} $container
-             * @plugins {Array} plugins
+             * @param {Array} plugins
              * @example List of available plugins, based on common jstree list.
              * ```
              * ['json_data', 'dnd', 'ui', 'crrm', 'types', 'themes', 'contextmenu', 'search']
@@ -221,30 +228,32 @@
                         }
                         el.data = el.name;
                         el.metadata = {id: el.id};
-                        el.attr = {'data-id': el.id, 'data-level': el.level};
-                    };
-
+                        el.attr = {'data-id': el.id, 'data-level': el.level, 'id': el.id};
+                    },
+                    jsTreeOptions = {
+                        core: {
+                            html_titles: true
+                        },
+                        settings: this.jsTreeSettings,
+                        plugins: _.isEmpty(plugins) ? this.loadPluginsList() : plugins,
+                        json_data: {
+                            'data': treeData
+                        },
+                        contextmenu: {
+                            items: this._loadContextMenu(this.jsTreeSettings),
+                            show_at_node: false
+                        },
+                        search: {
+                            case_insensitive: true
+                        }
+                    },
+                    self = this;
+                jsTreeOptions = _.extend({}, jsTreeOptions, this.jsTreeOptions);
                 treeData.ctx = this.context;
 
                 _.each(treeData, fn);
 
-                this.jsTree = $container.jstree({
-                    core: {
-                        html_titles: true
-                    },
-                    settings: this.jsTreeSettings,
-                    plugins: _.isEmpty(plugins) ? this.loadPluginsList() : plugins,
-                    json_data: {
-                        'data': treeData
-                    },
-                    contextmenu: {
-                        items: this._loadContextMenu(this.jsTreeSettings),
-                        show_at_node: false
-                    },
-                    search: {
-                        case_insensitive: true
-                    }
-                })
+                this.jsTree = $container.jstree(jsTreeOptions)
                 .on('loaded.jstree', _.bind(function() {
                     this._loadedHandler($container);
                 }, this))
@@ -253,6 +262,7 @@
                 .on('move_node.jstree', _.bind(this._moveHandler, this))
                 .on('remove.jstree', _.bind(this._removeHandler, this))
                 .on('rename_node.jstree', _.bind(this._renameHandler, this))
+                .on('load_state.jstree', _.bind(this._loadedStateHandler, this))
                 .on('search.jstree', _.bind(this._searchHandler, this));
             },
 
@@ -270,6 +280,31 @@
                     if (!_.isUndefined(data.rslt.o) && !_.isUndefined(data.rslt.r)) {
                         this.moveNode(data.rslt.o.data('id'), data.rslt.r.data('id'), data.rslt.p, function() {});
                     }
+                }
+            },
+
+            /**
+             * Hadle load state of tree.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _loadedStateHandler: function (event, data) {
+                if (this.jsTreeCallbacks.onLoadState) {
+                    _.each(data.rslt, function(val, ind) {
+                        _.each(val, function(v, i) {
+                            var id = v,
+                                node = this.jsTree.find('[data-id=' + id +']'),
+                                selectedNode = {
+                                    id: id,
+                                    name: node.find('a:first').text().trim(),
+                                    type: node.data('type') || 'folder'
+                                };
+                            val[i] = selectedNode;
+                        }, this);
+                        data.rslt[ind] = val;
+                    }, this);
+                    this.jsTreeCallbacks.onLoadState(data.rslt);
                 }
             },
 
@@ -644,7 +679,7 @@
              * Add action.
              * @param {String} title
              * @param {String|Number} position
-             * @param {Boolean} position
+             * @param {Boolean} editable
              * @param {Boolean} addToRoot
              */
             addNode: function(title, position, editable, addToRoot) {
@@ -681,6 +716,24 @@
                     obj.hide();
                 }, true);
                 this.jsTree.jstree('toggle_node', selectedNode);
+            },
+
+            /**
+             * Save state of tree.
+             */
+            saveJSTreeState: function () {
+                _.defer(function(jstree) {
+                    jstree.jstree('save_state');
+                }, this.jsTree);
+            },
+
+            /**
+             * Load state of tree.
+             */
+            loadJSTreeState: function () {
+                _.defer(function(jstree) {
+                    jstree.jstree('load_state');
+                }, this.jsTree);
             },
 
             /**

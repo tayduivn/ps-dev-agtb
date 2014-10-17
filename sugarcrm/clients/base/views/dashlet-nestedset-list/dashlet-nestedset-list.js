@@ -71,17 +71,46 @@
      */
     _render: function() {
         var treeOptions = {
-            category_root: this.categoryRoot,
-            module_root: this.moduleRoot
-        },
+            settings: {
+                category_root: this.categoryRoot,
+                module_root: this.moduleRoot,
+                plugins: ['state']
+            },
+            options: {
+                state: {
+                    save_selected: false,
+                    auto_save: false,
+                    save_opened: 'jstree_open',
+                    options: {},
+                    storage: this._getStorage()
+
+                }
+            }},
             callbacks = {
                 onLeaf: _.bind(this.leafClicked, this),
                 onToggle: _.bind(this.folderToggled, this),
                 onLoad: _.bind(this.treeLoaded, this),
-                onSelect: _.bind(this.openRecord, this)
+                onSelect: _.bind(this.openRecord, this),
+                onLoadState:  _.bind(this.stateLoaded, this)
             };
         this._super('_render', []);
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+    },
+
+    /**
+     * Return storage for tree state.
+     * @return {Function}
+     * @private
+     */
+    _getStorage: function () {
+        var self = this;
+        return function(key, value, options) {
+            var intKey = app.user.lastState.buildKey(self.categoryRoot, self.moduleRoot, self.module);
+            if (!_.isUndefined(value)) {
+                app.user.lastState.set(intKey, value);
+            }
+            return app.user.lastState.get(intKey);
+        };
     },
 
     /**
@@ -107,8 +136,23 @@
      * @return {Boolean} Always true.
      */
     treeLoaded: function() {
-        _.each(this.collection.models, function(item) {
-            this.loadAdditionalLeaf(item.id);
+        var self = this;
+        async.forEach(this.collection.models, function(model, callback) {
+            self.loadAdditionalLeaf(model.id, callback);
+        }, function() {
+            self.loadJSTreeState();
+        });
+        return true;
+    },
+
+    /**
+     * Handle load state of tree.
+     * @param {Object} data
+     */
+    stateLoaded: function(data) {
+        _.each(data.open, function(value) {
+            value.open = true;
+            this.folderToggled(value);
         }, this);
         return true;
     },
@@ -133,6 +177,7 @@
                 this.loadAdditionalLeaf(item.id);
             }, this);
         }
+        this.saveJSTreeState();
         return true;
     },
 
@@ -149,9 +194,10 @@
 
     /**
      * Load extra data for tree.
-     * @param id
+     * @param {String} id
+     * @param {Function} callback Async callback to use with async.js
      */
-    loadAdditionalLeaf: function(id) {
+    loadAdditionalLeaf: function(id, callback) {
         if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id] < Date.now() - this.cacheLifetime) {
             delete this.loadedLeafs[id];
         }
@@ -193,6 +239,9 @@
                 }, self);
                 self.showChildNodes(id);
                 self.loadedLeafs[id] = Date.now();
+                if (_.isFunction(callback)) {
+                    callback.call();
+                }
             }
         });
     },

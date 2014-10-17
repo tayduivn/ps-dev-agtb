@@ -250,6 +250,7 @@
                    'include/javascript/sugar7/plugins/Select2.js'  => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.jstree.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jstree.state.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
