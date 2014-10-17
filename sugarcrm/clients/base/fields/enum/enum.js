@@ -407,15 +407,17 @@
     },
 
     /**
-     * Sort the dropdown items in the order defined in the metadata.
+     * Sort the dropdown items.
+     *
+     * - If `def.sort_alpha` is `true`, return the dropdown items sorted
+     * alphabetically.
+     * - If {@link Core.Language#getAppListKeys} is defined for
+     * `this.def.options`, return the items in this order.
+     * - Otherwise, fall back to the default behavior and just return the
+     * `results`.
      *
      * This method is the implementation of the select2 `sortResults` option.
      * See {@link http://ivaynberg.github.io/select2/ official documentation}.
-     *
-     * The sorting that is done is based on the `app_list_keys` entry that
-     * contains the order of keys within this dropdown. If such an entry is not
-     * found, the script will fall back to its default behavior and just return
-     * the `results`.
      *
      * @param {Array} results The list of results `{id: *, text: *}.`
      * @param {jQuery} container jQuery wrapper of the node that should contain
@@ -427,6 +429,14 @@
      */
     _sortResults: function(results, container, query) {
         var keys, sortedResults;
+
+        if (this.def.sort_alpha) {
+            sortedResults = _.sortBy(results, function(item) {
+                return item.text;
+            });
+            return sortedResults;
+        }
+
         if (!this._keysOrder) {
             this._keysOrder = {};
             keys = _.map(app.lang.getAppListKeys(this.def.options), function(key) {

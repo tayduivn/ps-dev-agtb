@@ -11,7 +11,20 @@
  */
 $viewdefs['base']['view']['history-summary-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => 'LBL_HISTORICAL_SUMMARY',
+    'fields' => array(
+        array(
+            'name' => 'picture',
+            'type' => 'avatar',
+            'size' => 'large',
+            'dismiss_label' => true,
+            'readonly' => true,
+        ),
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'TPL_HISTORICAL_SUMMARY',
+        ),
+    ),
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

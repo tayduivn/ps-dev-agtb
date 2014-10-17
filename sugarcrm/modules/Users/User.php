@@ -1158,16 +1158,13 @@ EOQ;
 	}
 
 	function get_list_view_data() {
-
-		global $mod_strings;
-
 		$user_fields = parent::get_list_view_data();
 
 		if ($this->is_admin)
-			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
+			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif', translate('LBL_CHECKMARK', 'Users'));
 		elseif (!$this->is_admin) $user_fields['IS_ADMIN'] = '';
 		if ($this->is_group)
-			$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
+			$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif', translate('LBL_CHECKMARK', 'Users'));
 		else
 			$user_fields['IS_GROUP_IMAGE'] = '';
 

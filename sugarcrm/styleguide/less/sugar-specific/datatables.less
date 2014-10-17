@@ -22,13 +22,42 @@
   TABLE HEADER CELL (specific) */
   th {
     line-height: 26px;
-    min-width: 20px;
+    min-width: @cell-medium;
+    max-width: @cell-medium;
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
     border-right: @tableBorder;
     border-bottom: none;
     background-color: @white;
+    &.cell-xxsmall {
+      min-width: @cell-xxsmall;
+      max-width: @cell-xxsmall;
+    }
+    &.cell-xsmall {
+      min-width: @cell-xsmall;
+      max-width: @cell-xsmall;
+    }
+    &.cell-small {
+      min-width: @cell-small;
+      max-width: @cell-small;
+    }
+    &.cell-medium {
+      min-width: @cell-medium;
+      max-width: @cell-medium;
+    }
+    &.cell-large {
+      min-width: @cell-large;
+      max-width: @cell-large;
+    }
+    &.cell-xlarge {
+      min-width: @cell-xlarge;
+      max-width: @cell-xlarge;
+    }
+    &.cell-xxlarge {
+      min-width: @cell-xxlarge;
+      max-width: @cell-xxlarge;
+    }
     &:last-child {
       border-right: none;
     }
@@ -97,12 +126,12 @@
   TABLE BODY CELL (specific) */
   td {
     height: 28px;
+    max-width: 21px;
     padding: 4px 8px;
     white-space: nowrap;
     word-break: break-word;
     vertical-align: middle;
     text-overflow: ellipsis;
-    max-width: 82px;
     background: @white;
     border-top: none;
     border-bottom: none;
@@ -110,7 +139,7 @@
       border-right: 0;
     }
     &[data-type="currency"] {
-      min-width: 132px;
+      min-width: 132px !important;
       max-width: 100% !important;
       .list {
         width: 100%;
@@ -119,7 +148,6 @@
       }
     }
     &[data-type="bool"] {
-      width: 80px;
       text-align: center;
       .input-append.error .add-on {
         //margin-left: -2px;
@@ -127,12 +155,6 @@
       .list {
         overflow-y: hidden;
       }
-    }
-    &[data-type="severity"] {
-      width: 80px;
-    }
-    &[data-type="phone"] {
-      max-width: 86px;
     }
     &[data-type="datetimecombo"] {
       input[type="text"] {
@@ -885,7 +907,7 @@ FLEXLIST GENERIC */
   padding-right: 18px;
   span {
     position: relative;
-    margin-right: 16px;
+    //margin-right: 16px;
   }
   span:after {
     color: @grayLight;
@@ -896,7 +918,7 @@ FLEXLIST GENERIC */
     white-space: pre;
     position: absolute;
     top: 7px;
-    right: 1px;
+    right: 0px;
     float: right;
     content: "\f0d8\A\f0d7";
     font-weight: normal;
@@ -936,6 +958,35 @@ table th.nosort span:after {
 
 .dataTable th:active {
   outline: none;
+}
+
+.cell-xxsmall {
+  min-width: @cell-xxsmall;
+  max-width: @cell-xxsmall;
+}
+.cell-xsmall {
+  min-width: @cell-xsmall;
+  max-width: @cell-xsmall;
+}
+.cell-small {
+  min-width: @cell-small;
+  max-width: @cell-small;
+}
+.cell-medium {
+  min-width: @cell-medium;
+  max-width: @cell-medium;
+}
+.cell-large {
+  min-width: @cell-large;
+  max-width: @cell-large;
+}
+.cell-xlarge {
+  min-width: @cell-xlarge;
+  max-width: @cell-xlarge;
+}
+.cell-xxlarge {
+  min-width: @cell-xxlarge;
+  max-width: @cell-xxlarge;
 }
 
 .morecol {
@@ -992,6 +1043,7 @@ table th.nosort span:after {
     tbody tr td:last-child > span
     {
       margin-right: 0;
+      padding-right: 0;
     }
 
     thead tr th:last-child { /* two rules below necessary because sort icons run into text on <th> */

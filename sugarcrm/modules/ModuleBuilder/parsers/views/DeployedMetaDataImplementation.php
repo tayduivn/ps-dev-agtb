@@ -218,7 +218,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		// Set the original Viewdefs - required to ensure we don't lose fields from the base layout
 		// Check the base location first, then if nothing is there (which for example, will be the case for some QuickCreates, and some mobile layouts - see above)
 		// we need to check the custom location where the derived layouts will be
-		foreach ( array ( MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION ) as $type )
+		foreach ( array ( MB_BASEMETADATALOCATION , MB_CUSTOMMETADATALOCATION ) as $type )
 		{
 			$sourceFilename = $this->getFileName ( $view, $moduleName, $type ) ;
 			if($view == MB_POPUPSEARCH || $view == MB_POPUPLIST){

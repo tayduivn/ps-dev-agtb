@@ -56,21 +56,7 @@
 
         this.attachEvents();
         this.orderByLastStateKey = app.user.lastState.key('order-by', this);
-        //If the last user state is no longer valid, ignore it.
-        var lastStateOrderBy = app.user.lastState.get(this.orderByLastStateKey) || {},
-            lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
-        if (_.isEmpty(lastOrderedFieldMeta) || !app.utils.isSortable(options.module, lastOrderedFieldMeta)) {
-            lastStateOrderBy = {};
-        }
-
-        this.orderBy = _.extend({
-                field : '',
-                direction : 'desc'
-            },
-            listViewMeta.orderBy,
-            lastStateOrderBy
-        );
-
+        this.orderBy = this._initOrderBy();
         if(this.collection) {
             this.collection.orderBy = this.orderBy;
         }
@@ -80,6 +66,35 @@
         this.metaFields = this.meta.panels ? _.first(this.meta.panels).fields : [];
 
         this.registerShortcuts();
+    },
+
+    /**
+     * Initializes the {@link #orderBy} property.
+     *
+     * Retrieves the last state from the local storage and verifies the field
+     * is still sortable.
+     *
+     * @return {Object}
+     * @return {string} return.field The field name to sort by.
+     * @return {string} return.direction The direction to sort by (either `asc`
+     *   or `desc`).
+     * @protected
+     */
+    _initOrderBy: function() {
+        var lastStateOrderBy = app.user.lastState.get(this.orderByLastStateKey) || {},
+            lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
+
+        if (_.isEmpty(lastOrderedFieldMeta) || !app.utils.isSortable(this.module, lastOrderedFieldMeta)) {
+            lastStateOrderBy = {};
+        }
+
+        return _.extend({
+                field : '',
+                direction : 'desc'
+            },
+            this.meta.orderBy,
+            lastStateOrderBy
+        );
     },
 
     /**

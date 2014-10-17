@@ -11,24 +11,30 @@
 ({
     extendsFrom: 'HeaderpaneView',
 
-    events:{
+    events: {
         'click [name=save_button]:not(".disabled")': 'initiateSave',
         'click [name=cancel_button]': 'initiateCancel'
     },
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         this._super("initialize", [options]);
         this.context.on('lead:convert-save:toggle', this.toggleSaveButton, this);
     },
 
     /**
-     * Grab the lead's name and set the title to Convert: Name
+     * @override
+     *
+     * Grabs the lead's name and format the title such as `Convert: <name>`.
      */
-    _renderHtml: function() {
-        var leadsModel = this.context.get('leadsModel');
-        var name = !_.isUndefined(leadsModel.get('name')) ? leadsModel.get('name') : leadsModel.get('first_name') + ' ' + leadsModel.get('last_name');
-        this.title = app.lang.get("LBL_CONVERTLEAD", this.module) + ': ' + name;
-        this._super("_renderHtml");
+    _formatTitle: function(title) {
+        var leadsModel = this.context.get('leadsModel'),
+            name = !_.isUndefined(leadsModel.get('name')) ?
+                leadsModel.get('name') :
+                leadsModel.get('first_name') + ' ' + leadsModel.get('last_name');
+        return app.lang.get(title, this.module) + ': ' + name;
     },
 
     /**

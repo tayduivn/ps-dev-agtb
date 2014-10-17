@@ -13,6 +13,13 @@
 
 $viewdefs['base']['view']['resolve-conflicts-headerpane'] = array(
     'template' => 'headerpane',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'LBL_RESOLVE_CONFLICT',
+        ),
+    ),
     'buttons' => array(
         array(
             'name' => 'cancel_button',

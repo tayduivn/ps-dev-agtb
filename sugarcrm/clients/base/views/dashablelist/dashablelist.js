@@ -531,10 +531,9 @@
     _getAvailableModules: function() {
         if (_.isEmpty(this._availableModules) || !_.isObject(this._availableModules)) {
             this._availableModules = {};
-            var allowedModules = _.difference(
-                app.metadata.getModuleNames({filter: 'visible', access: 'read', alphaSort: true}), this.moduleBlacklist
-            );
-
+            var visibleModules = app.metadata.getModuleNames({filter: 'visible', access: 'read'}),
+                allowedModules = _.difference(visibleModules, this.moduleBlacklist);
+            
             _.each(this.additionalModules, function(extraModules, module) {
                 if (_.contains(allowedModules, module)) {
                     allowedModules = _.sortBy(_.union(allowedModules, extraModules), function(name) {return name});

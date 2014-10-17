@@ -27,19 +27,26 @@ $viewdefs['base']['view']['history-summary'] = array(
         array(
             'fields' => array(
                 array(
+                    'name' => 'picture',
+                    'type' => 'avatar',
+                    'align' => 'tcenter',
+                    'label' => 'LBL_MODULE_TYPE',
+                    'dismiss_label' => true,
+                    'readonly' => true,
+                    'enabled' => true,
+                    'default' => true,
+                    'isSortable' => true,
+                    'css_class' => 'cell-small',
+                ),
+                array(
                     'name' => 'name',
                     'label' => 'LBL_SUBJECT',
+                    'type' => 'name',
                     'enabled' => true,
                     'default' => true,
                     'link' => true,
-                    'isSortable' => true
-                ),
-                array(
-                    'name' => 'module',
-                    'label' => 'LBL_MODULE_TYPE',
-                    'enabled' => true,
-                    'default' => true,
-                    'isSortable' => true
+                    'isSortable' => true,
+                    'css_class' => 'cell-large',
                 ),
                 array(
                     'name' => 'status',
@@ -49,20 +56,12 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'default' => true
                 ),
                 array(
-                    'name' => 'related_contact',
-                    'label' => 'LBL_RELATED_CONTACT',
-                    'enabled' => true,
-                    'default' => true,
-                    'type' => 'related-contact',
-                    'link' => true
-                ),
-                array(
                     'name' => 'description',
                     'type' => 'textarea',
                     'label' => 'LBL_DESCRIPTION',
                     'enabled' => true,
                     'default' => true,
-                    'css_class' => 'description_col'
+                    'css_class' => 'cell-xlarge'
                 ),
                 array(
                     'name' => 'to_addrs',
@@ -79,13 +78,20 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
-
+                array(
+                    'name' => 'related_contact',
+                    'label' => 'LBL_RELATED_CONTACT',
+                    'enabled' => true,
+                    'default' => true,
+                    'type' => 'related-contact',
+                    'link' => true
+                ),
                 array(
                     'name' => 'date_entered',
                     'label' => 'LBL_LIST_DATE_ENTERED',
                     'type' => 'datetimecombo',
                     'enabled' => true,
-                    'default' => true,
+                    'default' => false,
                     'isSortable' => true,
                 ),
                 array(
@@ -95,6 +101,18 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
+                ),
+                array (
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'id_name' => 'assigned_user_id',
+                    'link' => 'assigned_user_link',
+                    'module' => 'Users',
+                    'rname'=> 'full_name',
+                    'type' => 'relate',
+                    'isSortable' => false,
+                    'enabled' => true,
+                    'default' => false,
                 ),
             )
         )
