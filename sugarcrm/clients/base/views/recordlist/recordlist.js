@@ -558,6 +558,12 @@
      * Register keyboard shortcuts.
      */
     registerShortcuts: function() {
+        var clickButton = function($button) {
+            if ($button.is(':visible') && !$button.hasClass('disabled')) {
+                $button.click();
+            }
+        };
+
         this._super('registerShortcuts');
 
         app.shortcuts.register('List:Inline:Edit', 'e', function() {
@@ -578,17 +584,25 @@
             }
         }, this);
 
-        app.shortcuts.register('List:Inline:Cancel', ['esc','ctrl+alt+l'], function() {
-            var $cancelButton = this.$('.selected [name=inline-cancel]');
-            if (($cancelButton.length > 0) && $cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
+        app.shortcuts.register('List:Inline:Cancel', ['esc','ctrl+alt+l'], function(event) {
+            var $cancelButton = this.$('.selected [name=inline-cancel]'),
+                $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
+
+            if ($cancelButton.length > 0) {
+                clickButton($cancelButton);
+            } else if ($focusedInlineEditRow.length > 0) {
+                clickButton($focusedInlineEditRow.find('[name=inline-cancel]'));
             }
         }, this, true);
 
-        app.shortcuts.register('List:Inline:Save', ['ctrl+s','ctrl+alt+a'], function() {
-            var $saveButton = this.$('.selected [name=inline-save]');
-            if (($saveButton.length > 0) && $saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                $saveButton.click();
+        app.shortcuts.register('List:Inline:Save', ['ctrl+s','ctrl+alt+a'], function(event) {
+            var $saveButton = this.$('.selected [name=inline-save]'),
+                $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
+
+            if ($saveButton.length > 0) {
+                clickButton($saveButton);
+            } else if ($focusedInlineEditRow.length > 0) {
+                clickButton($focusedInlineEditRow.find('[name=inline-save]'));
             }
         }, this, true);
 
@@ -602,10 +616,7 @@
         }, this);
 
         app.shortcuts.register('List:Preview', 'p', function() {
-            var $preview = this.$('.selected [data-event="list:preview:fire"]:visible');
-            if ($preview.is(':visible') && !$preview.hasClass('disabled')) {
-                $preview.click();
-            }
+            clickButton(this.$('.selected [data-event="list:preview:fire"]:visible'));
         }, this);
 
         app.shortcuts.register('List:Select', 'x', function() {

@@ -225,11 +225,18 @@
      * @param event
      */
     shortcuts: function(event) {
-        var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
+        var activeDrawerLayout = app.drawer.getActiveDrawerLayout(),
+            $shortcutButton = this.$('[data-action=shortcuts]');
+
         if (activeDrawerLayout.type !== 'shortcuts') {
+            $shortcutButton.addClass('active');
             app.drawer.open({
                 layout: 'shortcuts'
+            }, function() {
+                $shortcutButton.removeClass('active');
             });
+        } else {
+            app.drawer.close();
         }
     },
 
