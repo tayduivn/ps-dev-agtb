@@ -4373,6 +4373,9 @@ Sincerely, SugarCRM',
         'Are you sure you want to remove this record from merge?',
     'LBL_MERGE_DUPLICATES_REMOVE_TOOLTIP'  => 'Remove record from merge',
 
+    //Filters
+    'TPL_FILTER_MAX_NUMBER_RECORDS' => 'The maximum number of selected records is {{maxRecords}}.',
+
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
     'LBL_INVALID_CREDS_TITLE' => 'Invalid Credentials',

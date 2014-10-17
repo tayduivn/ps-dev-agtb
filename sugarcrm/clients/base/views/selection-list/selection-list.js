@@ -16,6 +16,13 @@
 ({
     extendsFrom: 'FlexListView',
 
+    /**
+     * Maximum number of records a user can select.
+     *
+     * @property {number}
+     */
+    _maxSelectedRecords: 3,
+
     initialize: function(options) {
         this.multiSelect = options.context.get('multiSelect');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
@@ -86,8 +93,31 @@
     _selectMultipleAndClose: function() {
         var selections = this.context.get('mass_collection');
         if (selections) {
+            if (selections.length > this._maxSelectedRecords) {
+                this._showMaxSelectedRecordsAlert();
+                return;
+            }
             app.drawer.close(this._getCollectionAttributes(selections));
         }
+    },
+
+    /**
+     * Displays error message since the number of selected records exceeds the
+     * maximum allowed.
+     *
+     * @private
+     */
+    _showMaxSelectedRecordsAlert: function() {
+        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
+            {
+                maxRecords: this._maxSelectedRecords
+            }
+        );
+        app.alert.show('too-many-selected-records', {
+            level: 'error',
+            messages: msg,
+            autoClose: true
+        });
     },
 
     /**

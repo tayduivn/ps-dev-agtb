@@ -442,8 +442,8 @@
 
         // Handling the `parent` field case (the parent field calls `setValue`
         // with only one model and expect `model.set` to be silent).
-        var silent = models[0].silent || false,
-                values = {};
+        var silent = models[0] ? models[0].silent || false : false;
+            values = {};
             values[this.def.id_name] = [];
             values[this.def.name] = [];
 
