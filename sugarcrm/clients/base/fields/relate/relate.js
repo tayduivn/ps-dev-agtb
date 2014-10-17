@@ -452,6 +452,12 @@
             values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
             }, this));
 
+        // If there is only one value, we get rid of the array before setting
+        // the value.
+        if (values[this.def.id_name].length === 1) {
+            values[this.def.id_name] = values[this.def.id_name][0];
+            values[this.def.name] = values[this.def.name][0];
+        }
             this.model.set(values, {silent: silent});
 
         if (updateRelatedFields) {
