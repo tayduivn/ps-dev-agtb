@@ -507,8 +507,9 @@ class Importer
 
         if ($do_save)
         {
-            $this->saveImportBean($focus, $newRecord);
+            // handleTagsImport() needs to be called before saveImportBean()
             $this->handleTagsImport($focus, $row);
+            $this->saveImportBean($focus, $newRecord);
             // Update the created/updated counter
             $this->importSource->markRowAsImported($newRecord);
         }
@@ -541,7 +542,7 @@ class Importer
             $tagField = $focus->field_defs[$tagFieldName];
 
             // Get the tags from the row
-            $tags = explode(',', $row[$this->hasTags]);
+            $tags = explode('^,^', trim($row[$this->hasTags], '^'));
 
             // And read them into the params array for the field handler
             foreach ($tags as $tag) {

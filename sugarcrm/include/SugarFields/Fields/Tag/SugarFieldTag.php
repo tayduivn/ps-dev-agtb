@@ -115,4 +115,13 @@ class SugarFieldTag extends SugarFieldMultienum
         }
         return true;
     }
+
+    /**
+     * @inheritDoc
+     * Override multienum in order to preserve "^,^" as delimiter
+     */
+    public function exportSanitize($value, $vardef, $focus, $row=array())
+    {
+        return $value;
+    }
 }
