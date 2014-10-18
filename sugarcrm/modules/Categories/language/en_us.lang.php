@@ -25,5 +25,6 @@ $mod_strings = array(
     'LBL_CONTEXTMENU_MOVETO' => 'Move To',
     'LBL_CONTEXTMENU_DELETE' => 'Delete',
     'LBL_SEARCH_TREE' => 'Search by title...',
+    'LBL_DEFAULT_TITLE' => 'Default title',
     'LBL_ADD_NEW' => 'Add'
 );

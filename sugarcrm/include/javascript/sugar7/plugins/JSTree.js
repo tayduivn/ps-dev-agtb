@@ -645,12 +645,13 @@
              * @param {String} title
              * @param {String|Number} position
              * @param {Boolean} position
+             * @param {Boolean} addToRoot
              */
-            addNode: function(title, position, editable) {
+            addNode: function(title, position, editable, addToRoot) {
                 var self = this,
-                    selectedNode = this.jsTree.jstree('get_selected'),
+                    selectedNode = (addToRoot === true) ? [] : this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
-                    isEdit = editable || !_.isUndefined(editable);
+                    isEdit = editable || false;
 
                 this.jsTree.jstree(
                     'create',
