@@ -475,15 +475,15 @@
                         separator_after: false,
                         label: entry.get('name'),
                         action: function(obj) {
-                            self.moveNode(obj.data('id'), entry.id, 'last', function(idRecord, idTarget) {
+                            self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
                                 self.jsTree.jstree(
                                     'move_node',
                                     self.jsTree.jstree('get_instance')
                                         .get_container_ul()
-                                        .find('li[data-id=' + idRecord + ']'),
+                                        .find('li[data-id=' + obj.data('id') + ']'),
                                     self.jsTree.jstree('get_instance')
                                         .get_container_ul()
-                                        .find('li[data-id=' + idTarget + ']')
+                                        .find('li[data-id=' + entry.id + ']')
                                 );
                             });
                         }
@@ -751,7 +751,9 @@
                         record: idRecord,
                         target: idTarget,
                         success: function(data, response) {
-                            callback(data, response);
+                            if (!_.isUndefined(callback)) {
+                                callback(data, response);
+                            }
                         }
                     });
                 }
