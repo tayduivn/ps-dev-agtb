@@ -13,5 +13,11 @@
 
 $viewdefs['Home']['base']['view']['about-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => 'TPL_ABOUT',
+    'fields' => array(
+        array(
+            'name' => 'title',
+            'type' => 'label',
+            'default_value' => 'TPL_ABOUT',
+        ),
+    ),
 );

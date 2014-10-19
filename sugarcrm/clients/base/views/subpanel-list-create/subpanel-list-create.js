@@ -79,16 +79,28 @@
     render: function() {
         this._super('render');
 
-        // toggle the fields in the list to be in edit mode
-        _.each(this.collection.models, function(model) {
-            this.toggleFields(this.rowFields[model.get('id')], true)
-        }, this);
+        // toggle fields to edit view
+        this._toggleFields(true);
 
         _.defer(_.bind(function() {
             this.checkButtons();
         }, this));
     },
 
+    /**
+     * Handles toggling collection fields to edit or detail
+     *
+     * @param {Boolean} isEdit If we're toggling fields TO Edit view or not
+     * @private
+     */
+    _toggleFields: function(isEdit) {
+        isEdit = isEdit || false;
+
+        // toggle the fields in the list to be in edit mode
+        _.each(this.collection.models, function(model) {
+            this.toggleFields(this.rowFields[model.get('id')], isEdit)
+        }, this);
+    },
 
     /**
      * Checks the -/+ buttons to enable/disable
@@ -224,10 +236,11 @@
     _addBeanToList: function(hasValidModels) {
         if (hasValidModels) {
             var beanId = app.utils.generateUUID(),
-                bean = app.data.createBean(this.module, {
-                    id: beanId
-                });
+                bean = app.data.createBean(this.module);
 
+            bean.set({
+                id: beanId
+            });
             bean._module = this.module;
 
             // check the parent record to see if an assigned user ID/name has been set

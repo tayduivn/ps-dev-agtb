@@ -5014,6 +5014,7 @@ $app_strings = array (
 
     // Historical Summary
     'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
+    'TPL_HISTORICAL_SUMMARY' => 'Historical Summary for {{name}}',
     'LBL_MORE_HISTORY' => 'More history...',
     'LBL_RELATED_CONTACT' => 'Related Contact',
     'LBL_MODULE_TYPE' => 'Type',
@@ -5138,6 +5139,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_CANCEL' => 'Close mass update',
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
     'LBL_CREATE_CATEGORY' => 'Create category',
+    'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
+    'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
 );
 
 $app_list_strings['interactions_options'] = array (

@@ -19,8 +19,8 @@ describe('Resolve Conflicts Headerpane View', function() {
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
-        appLangGetStub = sinon.stub(app.lang, 'get', function() {
-            return 'foo {{name}}'
+        appLangGetStub = sinon.stub(app.lang, '_get', function(type, key, module, context) {
+            return Handlebars.compile('foo {{name}}')(context)
         });
 
         context = app.context.getContext();
@@ -43,12 +43,10 @@ describe('Resolve Conflicts Headerpane View', function() {
         Handlebars.templates = {};
     });
 
-    describe('_setTitle', function() {
+    describe('_formatTitle', function() {
         it('should set the title for the headerpane', function() {
             context.get('modelToSave').set('name', 'bar');
-            view._setTitle();
-
-            expect(view.title).toBe('foo bar');
+            expect(view._formatTitle()).toBe('foo bar');
         });
     });
 

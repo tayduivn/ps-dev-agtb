@@ -327,12 +327,4 @@ describe("Base.View.Preview", function() {
             expect(currModule).toEqual(models[0].module);
         });
     });
-
-    it('should trigger ("sidebar:toggle", true) on "preview:open"', function() {
-        var defaultLayout = new Backbone.View();
-        sinon.collection.stub(preview, 'closestComponent').withArgs('sidebar').returns(defaultLayout);
-        var triggerStub = sinon.collection.stub(defaultLayout, 'trigger');
-        app.events.trigger('preview:open');
-        expect(triggerStub).toHaveBeenCalledWith('sidebar:toggle', true);
-    });
 });

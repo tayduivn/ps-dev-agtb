@@ -194,7 +194,7 @@
             this.settings.on('change:module', function(model, moduleName) {
                 var label = (model.get('filter_id') === 'assigned_to_me') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
                 model.set('label', app.lang.get(label, moduleName, {
-                    module: app.lang.getModuleName(module, {plural: true})
+                    module: app.lang.getModuleName(moduleName, {plural: true})
                 }));
 
                 // Re-initialize the filterpanel with the new module.
@@ -531,10 +531,9 @@
     _getAvailableModules: function() {
         if (_.isEmpty(this._availableModules) || !_.isObject(this._availableModules)) {
             this._availableModules = {};
-            var allowedModules = _.difference(
-                app.metadata.getModuleNames({filter: 'visible', access: 'read', alphaSort: true}), this.moduleBlacklist
-            );
-
+            var visibleModules = app.metadata.getModuleNames({filter: 'visible', access: 'read'}),
+                allowedModules = _.difference(visibleModules, this.moduleBlacklist);
+            
             _.each(this.additionalModules, function(extraModules, module) {
                 if (_.contains(allowedModules, module)) {
                     allowedModules = _.sortBy(_.union(allowedModules, extraModules), function(name) {return name});

@@ -235,6 +235,26 @@ describe('Base.Fields.ForecastParetoChart', function() {
             field.convertManagerDataToChartData();
             expect(field.d3Data.properties.quota).toEqual(5);
         });
+
+        it('should disable the bar and line if they are disabled', function() {
+            sandbox.stub(field, 'getDisabledChartKeys', function() {
+                return ['Likely'];
+            });
+
+            field.convertManagerDataToChartData();
+            expect(field.d3Data.data.length).toEqual(4);
+
+            // the first two should be bars
+            var b = field.d3Data.data.slice(0, 2);
+            // she second two should be lines
+            var l = field.d3Data.data.slice(2);
+
+            expect(b[0].disabled).toEqual(true);
+            expect(b[1].disabled).toEqual(false);
+
+            expect(l[0].disabled).toEqual(true);
+            expect(l[1].disabled).toEqual(false);
+        });
     });
 
     describe('convertRepDataToChartData', function() {
@@ -333,6 +353,17 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
             expect(field.d3Data.data[0].type).toEqual('bar');
             expect(field.d3Data.data[1].type).toEqual('line');
+        });
+
+        it('bar should be disabled', function() {
+            sandbox.stub(field, 'getDisabledChartKeys', function() {
+                return ['Included'];
+            });
+            field.convertRepDataToChartData('forecast');
+            expect(field.d3Data.data.length).toEqual(2);
+
+            expect(field.d3Data.data[0].disabled).toEqual(true);
+
         });
         it('should contain 3 x-axis groups', function() {
             field.convertRepDataToChartData('forecast');
@@ -534,6 +565,43 @@ describe('Base.Fields.ForecastParetoChart', function() {
             field.disposed = true;
 
             expect(field.isDashletVisible()).toBeFalsy();
+        });
+    });
+
+    describe('getDisabledChartKeys', function() {
+        it('should return empty', function() {
+            sandbox.stub(d3, 'select', function() {
+                return {
+                    data: function() {
+                        return [];
+                    }
+                };
+            });
+
+            expect(field.getDisabledChartKeys()).toEqual([]);
+        });
+        it('should return one key', function() {
+            sandbox.stub(d3, 'select', function() {
+                return {
+                    data: function() {
+                        return [{
+                            data: [{
+                                disabled: true,
+                                key: 'disabled'
+                            }, {
+                                disabled: false,
+                                key: 'not disabled'
+                            }, {
+                                key: 'no disabled key'
+                            }]
+                        }];
+                    }
+                };
+            });
+
+            var keys = field.getDisabledChartKeys();
+            expect(keys.length).toEqual(1);
+            expect(keys[0]).toEqual('disabled');
         });
     });
 });

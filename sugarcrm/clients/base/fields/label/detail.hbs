@@ -10,4 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{str def.default_value}}
+{{#if def.formatted_value}}
+    {{def.formatted_value}}
+{{else}}
+    {{str def.default_value this.module}}
+{{/if}}

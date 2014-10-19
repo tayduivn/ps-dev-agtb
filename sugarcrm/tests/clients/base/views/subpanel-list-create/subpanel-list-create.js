@@ -81,12 +81,12 @@ describe('Base.View.SubpanelListCreate', function() {
     describe('render', function() {
         beforeEach(function() {
             sinon.sandbox.stub(view, '_super', function() {});
-            sinon.sandbox.stub(view, 'toggleFields', function() {});
+            sinon.sandbox.stub(view, '_toggleFields', function() {});
         });
 
         it('should call toggleFields', function() {
             view.render();
-            expect(view.toggleFields).toHaveBeenCalled();
+            expect(view._toggleFields).toHaveBeenCalledWith(true);
         });
     });
 });

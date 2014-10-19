@@ -1094,9 +1094,13 @@ class HealthCheckScanner
         foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
+                foreach ($extfiles as $k => $file) {
+                    if ($this->isEmptyFile($file)) {
+                        unset($extfiles[$k]);
+                    }
+                }
                 if (!empty($extfiles)) {
                     $this->updateStatus("extensionDir", $extdir);
-                    break;
                 }
             }
         }
@@ -1668,6 +1672,34 @@ ENDP;
     }
 
     /**
+     * Checking PHP file content and returning true if there was no code found.
+     * 
+     * @param string $file path to file
+     * @return bool is file empty or not
+     */
+    protected function isEmptyFile($file)
+    {
+        $content = file_get_contents($file);
+        if (empty($content)) {
+            return true;
+        }
+        $tokens = token_get_all($content);
+        foreach ($tokens as $token) {
+            switch ($token[0]) {
+                case T_CLOSE_TAG :
+                case T_COMMENT :
+                case T_DOC_COMMENT :
+                case T_OPEN_TAG :
+                case T_WHITESPACE :
+                    break;
+                default :
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks if print_r has the second parameter as 'true', according to:
      * When this parameter is set to TRUE, print_r() will return the information rather than print it.
      * We cannot check if the second parameter is actually true
@@ -1822,18 +1854,24 @@ ENDP;
             "WirelessModuleRegistry"
         );
         $badExts = array_flip($badExts);
-        // Check Ext for any "dangerous" extentsions
+        // Check Ext for any "dangerous" extensions
+        $return = true;
         foreach ($this->glob("custom/$module_dir/Ext/*") as $extdir) {
             if (isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
+                foreach ($extfiles as $k => $file) {
+                    if ($this->isEmptyFile($file)) {
+                        unset($extfiles[$k]);
+                    }
+                }
                 if (!empty($extfiles)) {
                     $this->updateStatus("extensionDirDetected", $extdir, $module_name);
-                    return false;
+                    $return = false;
                 }
             }
         }
 
-        return true;
+        return $return;
     }
 
     /**

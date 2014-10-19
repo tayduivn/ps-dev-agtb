@@ -248,7 +248,7 @@ class HealthCheckScannerMeta
         ),
         425 => array(
             'report' => 'foundEcho',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Echo/'
         ),
         426 => array(

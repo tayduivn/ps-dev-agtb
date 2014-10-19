@@ -230,7 +230,19 @@
         this._initializeMergeCollection(this._prepareRecords());
 
         this.action = 'list';
+        this._delegateEvents();
+    },
+
+    /**
+     * Add event listeners
+     *
+     * @private
+     */
+    _delegateEvents: function() {
         this.layout.on('mergeduplicates:save:fire', this.triggerSave, this);
+
+        app.events.on('preview:open', _.bind(this.onPreviewToggle, this, true), this);
+        app.events.on('preview:close', _.bind(this.onPreviewToggle, this, false), this);
     },
 
     /**
@@ -714,6 +726,16 @@
     },
 
     /**
+     * Event listeners for `preview:open` and `preview:close` events
+     *
+     * @param {boolean} open Flag indicating the desired state of the preview
+     */
+    onPreviewToggle: function(open) {
+        this.isPreviewOpen = open;
+        this.$('[data-mode=preview]').toggleClass('on', open);
+    },
+
+    /**
      * Toggles a Preview for the primary record.
      *
      * @param {Event} evt Mouse click event.
@@ -724,8 +746,6 @@
         } else {
             this.updatePreviewRecord(this.primaryRecord);
         }
-        this.isPreviewOpen = !this.isPreviewOpen;
-        $(evt.currentTarget).toggleClass('on', this.isPreviewOpen);
     },
 
     /**

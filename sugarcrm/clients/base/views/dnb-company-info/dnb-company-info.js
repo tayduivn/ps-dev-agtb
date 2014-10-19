@@ -235,6 +235,13 @@
      */
     renderPage: function(pageData, appendRecords) {
         this._super('renderPage', [pageData, appendRecords]);
+        //if the pagination controls are not displayed then
+        //display the back to import enrich link for cleanse match and for keyword search
+        if (this.recordCount <= this.endRecord) {
+            this.$('#dnb-page-ctrl').toggleClass('hide', false);
+            this.$('[data-action="show-more"]').addClass('hide');
+            this.$('.loading').hide();
+        }
         this.toggleImportBtn(false, 'dnb_import');
     },
 

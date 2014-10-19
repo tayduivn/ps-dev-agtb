@@ -24,15 +24,14 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
-     * Gets the selected duplicates from the context
-     * and defines the title based on the number of selected records.
+     * Gets the selected duplicates from the context and defines the title based
+     * on the number of selected records.
      */
-    initialize: function(options) {
-        this._super("initialize", [options]);
-        var records = options.context.get('selectedDuplicates');
-        this.title = app.lang.get('TPL_MERGING_RECORDS', this.module, {mergeCount: records.length});
+    _formatTitle: function(title) {
+        var records = this.context.get('selectedDuplicates');
+        return app.lang.get(title, this.module, {mergeCount: records.length});
     },
 
     /**
