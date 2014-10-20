@@ -217,6 +217,7 @@ class HealthCheckScannerMeta
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         418 => array(
             'report' => 'subpanelLinkNonExistModule',
@@ -362,7 +363,6 @@ class HealthCheckScannerMeta
         517 => array(
             'report' => 'incompatIntegration',
             'bucket' => self::MANUAL,
-            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         528 => array(
             'report' => 'vardefIncorrectDisplayDefault',
