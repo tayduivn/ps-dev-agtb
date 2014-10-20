@@ -703,6 +703,15 @@
             },
 
             /**
+             * Select node in tree.
+             * @param {String} id
+             */
+            selectNode: function(id) {
+                var node = this.jsTree.find('[data-id=' + id + ']');
+                this.jsTree.jstree('select_node', node);
+            },
+
+            /**
              * Insert node into tree.
              * @param {Object} data
              * @param {String} parent_id

@@ -47,6 +47,12 @@
     cacheLifetime: 300000,
 
     /**
+     * Flag which indicate, if we need to use saved states.
+     * @property {Boolean}
+     */
+    useStates: true,
+
+    /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
@@ -59,6 +65,9 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || null;
+        if (this.context.get('module') === this.extraModule.module && this.context.get('action') === 'detail') {
+            this.useStates = false;
+        }
     },
 
     /**
@@ -74,17 +83,10 @@
             settings: {
                 category_root: this.categoryRoot,
                 module_root: this.moduleRoot,
-                plugins: ['state']
+                plugins: [],
+                liHeight: 14
             },
             options: {
-                state: {
-                    save_selected: false,
-                    auto_save: false,
-                    save_opened: 'jstree_open',
-                    options: {},
-                    storage: this._getStorage()
-
-                }
             }},
             callbacks = {
                 onLeaf: _.bind(this.leafClicked, this),
@@ -93,6 +95,16 @@
                 onSelect: _.bind(this.openRecord, this),
                 onLoadState:  _.bind(this.stateLoaded, this)
             };
+        if (this.useStates === true) {
+            treeOptions.settings.plugins.push('state');
+            treeOptions.options.state = {
+                save_selected: false,
+                auto_save: false,
+                save_opened: 'jstree_open',
+                options: {},
+                storage: this._getStorage()
+            };
+        }
         this._super('_render', []);
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
@@ -140,9 +152,27 @@
         async.forEach(this.collection.models, function(model, callback) {
             self.loadAdditionalLeaf(model.id, callback);
         }, function() {
-            self.loadJSTreeState();
+            if (self.useStates) {
+                self.loadJSTreeState();
+            } else {
+                self.openCurrentParent();
+            }
         });
         return true;
+    },
+
+    /**
+     * Open category, which is parent to current record.
+     */
+    openCurrentParent: function() {
+        if (_.isEmpty(this.extraModule)
+            || _.isEmpty(this.extraModule.module)
+            || _.isEmpty(this.extraModule.field)
+            ) {
+            return;
+        }
+        var id = this.context.get('model').get(this.extraModule.field);
+        this.selectNode(id);
     },
 
     /**
@@ -177,7 +207,9 @@
                 this.loadAdditionalLeaf(item.id);
             }, this);
         }
-        this.saveJSTreeState();
+        if (this.useStates) {
+            this.saveJSTreeState();
+        }
         return true;
     },
 
@@ -226,19 +258,18 @@
         collection.fetch({
             success: function(data) {
                 self.removeChildrens(id, 'document');
-                if (data.length === 0) {
-                    return;
+                if (data.length !== 0) {
+                    self.hideChildNodes(id);
+                    _.each(data.models, function(value) {
+                        var insData = {
+                            id: value.id,
+                            name: value.get('name')
+                        };
+                        this.insertNode(insData, id, 'document');
+                    }, self);
+                    self.showChildNodes(id);
+                    self.loadedLeafs[id] = Date.now();
                 }
-                self.hideChildNodes(id);
-                _.each(data.models, function(value) {
-                    var insData = {
-                        id: value.id,
-                        name: value.get('name')
-                    };
-                    this.insertNode(insData, id, 'document');
-                }, self);
-                self.showChildNodes(id);
-                self.loadedLeafs[id] = Date.now();
                 if (_.isFunction(callback)) {
                     callback.call();
                 }

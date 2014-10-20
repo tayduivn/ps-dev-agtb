@@ -1,3 +1,20 @@
+@smallTreeFont: 13px;
+@smallTreeHeight: 14px;
+//mixin
+.smallTreeLi {
+  margin-left: 18px;
+  padding: 1px 0px 1px 0px;
+  line-height: @smallTreeHeight;
+  min-height: @smallTreeHeight;
+  font-size: @smallTreeFont;
+}
+.smallTreeA {
+  line-height: @smallTreeHeight;
+  height: @smallTreeHeight;
+  min-height: @smallTreeHeight;
+  font-size: @smallTreeFont;
+}
+//.mixin
 .jstree-sugar {
   &.tree-component {
     color: #47484a !important;
@@ -178,7 +195,20 @@ div.icon-fullscreen[data-action=full-screen] {
         .tree-component {
           ul {
             li{
-              margin-left: 18px;
+              .smallTreeLi;
+              >ins {
+                margin-right: 0px !important;
+                height: @smallTreeHeight;
+                &.jstree-icon {
+                  padding: 2px 2px 2px 0px;
+                }
+                &:before {
+                  font-size: @smallTreeFont;
+                }
+              }
+              > a {
+                .smallTreeA;
+              }
             }
           }
           > ul > li {
@@ -221,6 +251,34 @@ div.icon-fullscreen[data-action=full-screen] {
           height: 25px !important;
           line-height: 25px !important;
         }
+      }
+    }
+  }
+}
+
+.dashlet-cell {
+  .jstree {
+    &.tree-component {
+      ul {
+        li{
+          .smallTreeLi;
+          >ins {
+            margin-right: 0px !important;
+            height: @smallTreeHeight;
+            &.jstree-icon {
+              padding: 2px 2px 2px 0px;
+            }
+            &:before {
+              font-size: @smallTreeFont;
+            }
+          }
+          > a {
+            .smallTreeA;
+          }
+        }
+      }
+      > ul > li {
+        margin-left: 0;
       }
     }
   }
