@@ -204,6 +204,17 @@ class SugarApiExceptionClientOutdated extends SugarApiException
 }
 
 /**
+ * When used as a proxy, this means that our API made a call and got a response
+ * it couldn't handle
+ */
+class SugarApiExceptionConnectorResponse extends SugarApiException
+{
+    public $httpCode = 502;
+    public $errorLabel = 'bad_gateway';
+    public $messageLabel = 'EXCEPTION_CONNECTOR_RESPONSE';
+}
+
+/**
  * We're in the maintenance mode
  */
 class SugarApiExceptionMaintenance extends SugarApiException
