@@ -20,6 +20,15 @@ class VardefManager{
     public static $inReload = array();
 
     /**
+     * List of templates to ignore for BWC modules when adding templates
+     * 
+     * @var array
+     */
+    public static $ignoreBWCTemplates = array(
+        'taggable' => true,
+    );
+
+    /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
      * It is meant to load the vardefs from the SugarObject.
      */
@@ -111,20 +120,38 @@ class VardefManager{
         }
     }
 
+    /**
+     * Checks to see if the template for a module should be skipped. Used by 
+     * addTemplate to see if certain templates should be added by BWC modules.
+     * 
+     * @param string $module The name of the module to check
+     * @param string $template The template to check for the module
+     * @return boolean
+     */
+    public static function ignoreBWCTemplate($module, $template)
+    {
+        // Add logic as needed here... starting with BWC modules not being taggable
+        return isModuleBWC($module) && !empty(self::$ignoreBWCTemplates[$template]);
+    }
+
     static function addTemplate($module, $object, $template, $object_name=false){
-        // Remove the taggable template from BWC modules
-        // Yes, this is a hack, but it makes the most sense at the moment
-        if (isModuleBWC($module) && $template === 'taggable') {
-            return;
+        // Normalize the template name
+        if ($template == 'default') {
+            $template = 'basic';
         }
 
-        if($template == 'default')$template = 'basic';
         // The ActivityStream has subdirectories but this code doesn't expect it
         // let's fix it up here
         if (strpos($module,'/') !== false) {
             $tmp = explode('/',$module);
             $module = array_pop($tmp);
         }
+
+        // Verify that we should use this template for BWC modules
+        if (self::ignoreBWCTemplate($module, $template)) {
+            return;
+        }
+
         $templates = array();
         $fields = array();
         if(empty($object_name))$object_name = $object;
