@@ -2026,7 +2026,7 @@ ENDP;
                         $stockFields
                     ))  // and it is non-stock module or it is stock module but field is non-stock
             ) {
-                $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $key);
+                $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $module, $key);
             }
 
             if (!empty($value['type'])) {

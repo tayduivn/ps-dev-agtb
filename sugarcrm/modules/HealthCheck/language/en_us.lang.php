@@ -74,7 +74,7 @@ $mod_strings = array(
     'LBL_SCAN_428_LOG' => 'Found "print_r" in %s on line %s',
     'LBL_SCAN_429_LOG' => 'Found "var_dump" in %s on line %s',
     'LBL_SCAN_430_LOG' => 'Found output buffering (%s) in %s on line %s',
-    'LBL_SCAN_524_LOG' => 'Vardef HTML function %s in $module module for field %s',
+    'LBL_SCAN_524_LOG' => 'Vardef HTML function %s in %s module for field %s',
     'LBL_SCAN_432_LOG' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_526_LOG' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s'",
     'LBL_SCAN_527_LOG' => "Table name in bean %s does not match the table attribute in the %s/vardefs.php",
@@ -153,7 +153,7 @@ $mod_strings = array(
     'LBL_SCAN_428_TITLE' => 'Found "print_r" in %s on line %s',
     'LBL_SCAN_429_TITLE' => 'Found "var_dump" in %s on line %s',
     'LBL_SCAN_430_TITLE' => 'Found output buffering (%s) in %s on line %s',
-    'LBL_SCAN_524_TITLE' => 'Vardef HTML function %s in $module module for field %s',
+    'LBL_SCAN_524_TITLE' => 'Vardef HTML function %s in %s module for field %s',
     'LBL_SCAN_432_TITLE' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
 
     'LBL_SCAN_501_TITLE' => 'Missing file: %s',
