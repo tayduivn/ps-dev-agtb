@@ -14,4 +14,5 @@
 
 $mod_strings = array (
     'LBL_GENERIC_LINK' => 'Related objects',
+    'LBL_NAME_LOWER' => 'Lowercase Tag Name',
 );

@@ -82,8 +82,10 @@
                 }
 
                 var selectedRecord = self.filterResults.find(function(record) {
-                    return term == record.get('name');
+                    // To ensure sameness of search, make both values lowercase
+                    return term.toLowerCase() == record.get('name').toLowerCase();
                 });
+
                 if (selectedRecord) {
                     // Search term exists
                     return self.parseRecords([selectedRecord]);
@@ -103,7 +105,7 @@
 
                 self.filterResults.filterDef = {
                     'filter': [{
-                        'name': { '$starts': query.term }
+                        'name_lower': { '$starts': query.term.toLowerCase() }
                     }]
                 };
 

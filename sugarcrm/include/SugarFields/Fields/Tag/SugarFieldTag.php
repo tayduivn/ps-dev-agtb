@@ -57,7 +57,8 @@ class SugarFieldTag extends SugarFieldMultienum
         $q = $this->getSugarQuery();
         $q->select(array('id', 'name'));
         $q->from($tagBean);
-        $q->where()->equals('name', $record['name']);
+        // Get the tag from the lowercase version of the name
+        $q->where()->equals('name_lower', strtolower($record['name']));
         $result = $q->execute();
 
         // If there is a result for this tag name, send back the bean for it

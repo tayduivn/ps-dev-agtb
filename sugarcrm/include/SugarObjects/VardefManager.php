@@ -53,12 +53,27 @@ class VardefManager{
         // template
         if (isset($GLOBALS['dictionary'][$object]['load_fields'])) {
             $lf = $GLOBALS['dictionary'][$object]['load_fields'];
+
+            // Make sure we actually have a fields array to work with
+            if (empty($GLOBALS['dictionary'][$object]['fields'])) {
+                $GLOBALS['dictionary'][$object]['fields'] = array();
+            }
+
             if (is_string($lf) && function_exists($lf)) {
-                $GLOBALS['dictionary'][$object]['fields'] = $lf();
+                // Merge fields from the function onto the known fields
+                $GLOBALS['dictionary'][$object]['fields'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['fields'],
+                    $lf()
+                );
             } elseif (is_array($lf) && isset($lf['class']) && isset($lf['method'])) {
                 $class = $lf['class'];
                 $method = $lf['method'];
-                $GLOBALS['dictionary'][$object]['fields'] = $class::$method();
+
+                // Merge fields from the method call onto the known fields
+                $GLOBALS['dictionary'][$object]['fields'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['fields'],
+                    $class::$method()
+                );
             }
         }
 

@@ -25,13 +25,29 @@ $dictionary['Tag'] = array(
     'unified_search' => true,
     'full_text_search' => false,
     'unified_search_default_enabled' => true,
-    'fields' => array(),
+    'fields' => array(
+        'name_lower' => array(
+            'name' => 'name_lower',
+            'vname' => 'LBL_NAME_LOWER',
+            'type' => 'varchar',
+            'len' => 255,
+            'unified_search' => true,
+            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'required' => true,
+            'reportable' => false,
+        ),
+    ),
     'relationships' => array(),
     'indices' => array(
         'name' => array(
             'name' => 'idx_tag_name',
             'type' => 'index',
             'fields' => array('name'),
+        ),
+        'name_lower' => array(
+            'name' => 'idx_tag_name_lower',
+            'type' => 'index',
+            'fields' => array('name_lower'),
         ),
     ),
     'uses' => array(
