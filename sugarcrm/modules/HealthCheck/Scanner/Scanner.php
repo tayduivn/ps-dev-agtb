@@ -1618,14 +1618,13 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile, $status)
     {
-        if (in_array($phpfile, $this->ignoreOutputCheckFiles)) {
-            return;
-        }
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
             return;
         }
+        $processOutput = !in_array($phpfile, $this->ignoreOutputCheckFiles);
+
         // remove sugarEntry check
         $sePattern = <<<ENDP
 if\s*\(\s*!\s*defined\s*\(\s*'sugarEntry'\s*\)\s*(\|\|\s*!\s*sugarEntry\s*)?\)\s*{?\s*die\s*\(\s*'Not A Valid Entry Point'\s*\)\s*;\s*}?
@@ -1640,15 +1639,15 @@ ENDP;
                 if ($token[0] == T_INLINE_HTML) {
                     $inlineHTMLStatus = (strlen(trim($token[1])) != 0) ? 'inlineHtml' : 'inlineHtmlSpacing';
                     $args = array($inlineHTMLStatus, $phpfile, $token[2]);
-                } elseif ($token[0] == T_ECHO) {
+                } elseif ($processOutput && $token[0] == T_ECHO) {
                     $args = array('foundEcho', $phpfile, $token[2]);
-                } elseif ($token[0] == T_PRINT) {
+                } elseif ($processOutput && $token[0] == T_PRINT) {
                     $args = array('foundPrint', $phpfile, $token[2]);
                 } elseif ($token[0] == T_EXIT) {
                     $args = array('foundDieExit', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
+                } elseif ($processOutput && $token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
                     $args = array('foundPrintR', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'var_dump') {
+                } elseif ($processOutput && $token[0] == T_STRING && $token[1] == 'var_dump') {
                     $args = array('foundVarDump', $phpfile, $token[2]);
                 } elseif ($token[0] == T_STRING && strpos($token[1], 'ob_') === 0) {
                     $args = array('inlineHtml', $token[1], $phpfile, $token[2]);
