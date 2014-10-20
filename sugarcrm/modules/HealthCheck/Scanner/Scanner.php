@@ -74,6 +74,12 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
+        'SugarSMS' => array(
+            array('version' => '*'),
+        ),
+        'GoogleSalesMap' => array(
+            array('version' => '3.0.2'),
+        ),
         'Zendesk' => array(
             array('version' => '2.8'),
         ),
