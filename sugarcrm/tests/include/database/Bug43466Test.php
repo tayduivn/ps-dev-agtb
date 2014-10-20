@@ -398,7 +398,7 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 					)
 				),
 				true
-			),
+ 			),
 			array(
 				"calls",
 				$fieldDefs,
@@ -419,7 +419,7 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 						'fields' => array('date_start'),
 					)
 				),
-				false
+				true,
 			),
 			array(
 				"calls",
@@ -463,8 +463,30 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 						'fields' => array('date_start'),
 					)
 				),
-				false
-			)
+				true
+			),
+		    array(
+		        "calls",
+		        $fieldDefs,
+		        array(
+		                array(
+		                        'name' => 'idx_call_name2',
+		                        'type' => 'index',
+		                        'fields'=> array('name', 'status'),
+		                ),
+		                array(
+		                        'name' => 'idx_status',
+		                        'type' => 'index',
+		                        'fields'=> array('status'),
+		                ),
+		                array(
+		                        'name' => 'idx_calls_date_start',
+		                        'type' => 'index',
+		                        'fields' => array('date_start'),
+		                )
+		        ),
+		        false
+		    )
 
 		);
         return $returnArray;
@@ -491,10 +513,10 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
     {
 
 		if ( $expectedResult ) {
-            $this->assertTrue($this->isEmpty($this->_db->repairTableParams($tablename, $fielddefs, $indices, false)));
+            $this->assertEquals(trim($this->_db->repairTableParams($tablename, $fielddefs, $indices, false)), "", "Expected empty result");
         }
         else {
-            $this->assertFalse($this->isEmpty($this->_db->repairTableParams($tablename, $fielddefs, $indices, false)));
+            $this->assertNotEquals(trim($this->_db->repairTableParams($tablename, $fielddefs, $indices, false)), "", "Expected not empty result");
         }
     }
 
