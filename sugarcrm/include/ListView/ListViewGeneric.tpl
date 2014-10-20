@@ -42,15 +42,21 @@
 	<div class="list view listViewEmpty">
     {if $displayEmptyDataMesssages}
         {if strlen($query) == 0}
-                {capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
-                {capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
+                {if $pageData.bean.parentModuleDir}
+                    {assign var="currentModule" value = $pageData.bean.parentModuleDir}
+                {/if}
+                {capture assign="createLink"}<a href="?module={$currentModule}&action={$pageData.bean.createAction}&return_module={$currentModule}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
+                {capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$currentModule}&return_module={$currentModule}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
+                {capture assign="viewLink"}<a href="?module={$currentModule}&action=index">{$APP.LBL_VIEW_BUTTON_LABEL}</a>{/capture}
                 {capture assign="helpLink"}<a target="_blank" href='?module=Administration&action=SupportPortal&view=documentation&version={$sugar_info.sugar_version}&edition={$sugar_info.sugar_flavor}&lang=&help_module={$currentModule}&help_action=&key='>{$APP.LBL_CLICK_HERE}</a>{/capture}
                 <p class="msg">
-                    {if $pageData.bean.importable == true}
+                    {if $pageData.bean.showLink == true}
+                        {$APP.MSG_EMPTY_LIST_VIEW_GO_TO_PARENT|replace:"<item1>":$pageData.bean.moduleTitle|replace:"<item2>":$pageData.bean.parentTitle|replace:"<item3>":$viewLink}
+                    {elseif $pageData.bean.importable == true}
                         {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS|replace:"<item2>":$createLink|replace:"<item3>":$importLink}
                     {else}
-						{$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT|replace:"<item2>":$createLink}
-					{/if}
+                        {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT|replace:"<item1>":$pageData.bean.parentTitle|replace:"<item2>":$createLink}
+                    {/if}
                 </p>
         {elseif $query == "-advanced_search"}
             <p class="msg">
@@ -62,7 +68,7 @@
                 {$APP.MSG_LIST_VIEW_NO_RESULTS|replace:"<item1>":$quotedQuery}
             </p>
             <p class = "submsg">
-                <a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">
+                <a href="?module={$currentModule}&action=EditView&return_module={$currentModule}&return_action=DetailView">
                     {$APP.MSG_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
                 </a>
 

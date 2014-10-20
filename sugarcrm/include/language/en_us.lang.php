@@ -3150,11 +3150,12 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_START' => 'starting',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "Click OK to view this Call or click Cancel to dismiss this message.",
     'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "Click OK to view this Meeting or click Cancel to dismiss this message.",
- 	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
-	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
- 	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
-	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
-	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no records saved. <item2> one now.",
+    'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
+    'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
+    'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
+    'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no <item1> records saved. <item2> or <item3> one now.",
+    'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no <item1> records saved. <item2> one now.",
+    'MSG_EMPTY_LIST_VIEW_GO_TO_PARENT' => "You can create <item1> from a <item2>. <item3> <item2> list.",
 
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
