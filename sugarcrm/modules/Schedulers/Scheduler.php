@@ -952,6 +952,45 @@ class Scheduler extends SugarBean {
         $sched16->modified_user_id   = '1';
         $sched16->catch_up           = '0';
         $sched16->save();
+
+        // Remove temporary uploaded files
+        $sched17 = BeanFactory::getBean('Schedulers');
+        $sched17->name               = $mod_strings['LBL_OOTB_REMOVE_TMP_FILES'];
+        $sched17->job                = 'class::SugarJobRemoveTmpFiles';
+        $sched17->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched17->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched17->job_interval       = '0::4::*::*::*';
+        $sched17->status             = 'Active';
+        $sched17->created_by         = '1';
+        $sched17->modified_user_id   = '1';
+        $sched17->catch_up           = '1';
+        $sched17->save();
+
+        // Remove diagnostic tool files
+        $sched18 = BeanFactory::getBean('Schedulers');
+        $sched18->name               = $mod_strings['LBL_OOTB_REMOVE_DIAGNOSTIC_FILES'];
+        $sched18->job                = 'class::SugarJobRemoveDiagnosticFiles';
+        $sched18->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched18->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched18->job_interval       = '0::4::*::*::0';
+        $sched18->status             = 'Active';
+        $sched18->created_by         = '1';
+        $sched18->modified_user_id   = '1';
+        $sched18->catch_up           = '1';
+        $sched18->save();
+
+        // Remove temporary PDF files
+        $sched19 = BeanFactory::getBean('Schedulers');
+        $sched19->name               = $mod_strings['LBL_OOTB_REMOVE_PDF_FILES'];
+        $sched19->job                = 'class::SugarJobRemovePdfFiles';
+        $sched19->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched19->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched19->job_interval       = '0::4::*::*::*';
+        $sched19->status             = 'Active';
+        $sched19->created_by         = '1';
+        $sched19->modified_user_id   = '1';
+        $sched19->catch_up           = '1';
+        $sched19->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS
