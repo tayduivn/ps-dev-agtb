@@ -118,7 +118,7 @@
      * Custom add handler.
      */
     addNodeHandler: function() {
-        this.addNode();
+        this.addNode(app.lang.get('LBL_DEFAULT_TITLE', this.module), 'last', false, true);
     },
 
     /**
