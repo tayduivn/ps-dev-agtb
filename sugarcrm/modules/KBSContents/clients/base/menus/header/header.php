@@ -44,6 +44,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-reorder',
     ),
     array(
+        'event' => 'tree:list:fire',
+        'label' => 'LNK_LIST_KBSTOPICS',
+        'acl_action' => 'list',
+        'acl_module' => $module_name,
+        'icon' => 'icon-reorder',
+        'target' => 'view',
+    ),
+    array(
         'route' => "#{$module_name}/config",
         'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
         'acl_action' => 'admin',
