@@ -175,15 +175,6 @@
             }
         });
 
-        //Prevent enter on search-query from performing the wrong functionality
-        this.$('.search-query').keypress(_.bind(function(e) {
-            // If enter key is pressed
-            if (e.which === 13 || e.keyCode === 13) {
-                e.preventDefault();
-                this.showResults(e);
-            }
-        }, this));
-
         // Prevent the form from being submitted
         this.$('.navbar-search').submit(function() {
             return false;
