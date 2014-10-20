@@ -680,9 +680,9 @@ class SugarFieldTeamset extends SugarFieldBase {
 
         $bean->team_id = $primaryTeamId;
 
-        $bean->load_relationship('teams');
-        $method = 'replace';
-        $bean->teams->replace($teamIds, array(), false);
+        if ($bean->load_relationship('teams')) {
+            $bean->teams->replace($teamIds, array(), false);
+        };
     }
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {

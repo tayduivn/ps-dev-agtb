@@ -1280,4 +1280,28 @@ $mod_strings = array (
     'LBL_CONVERT_DISC_CLIENT_SYNC_SUBMIT' => 'Clicking Submit will synchronize you with the master server.',
     'LBL_OFFLINE_ENABLED' => 'Offline enabled',
     'LBL_OFFLINE_SETTINGS' => 'Offline Settings',
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PMSE_ADMIN_TITLE_SETTINGS' => 'ProcessMaker Settings',
+    'LBL_PMSE_ADMIN_DESC_SETTINGS' => 'The ProcessMaker Settings can be accessed here.',
+    
+    'LBL_PMSE_ADMIN_TITLE_ENGINELOGS' => 'ProcessMaker Log Viewer',
+    'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'The ProcessMaker Logs can be accessed here.',
+    
+    'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Cases List',
+    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'The ProcessMaker Cases List can be accessed here.',
+    
+    'LBL_PMSE_ADMIN_TITLE_GROUPS' => 'ProcessMaker Groups',
+    'LBL_PMSE_ADMIN_DESC_GROUPS' => 'ProcessMaker replacement for Teams in CE.',
+    
+    'LBL_PMSE_ADMIN_TITLE_LICENSEMANAGER' => 'License Manager',
+    'LBL_PMSE_ADMIN_DESC_LICENSEMANAGER' => 'In this section you can manage the ProcessMaker licensing.',
+    
+    'LBL_PMSE_ADMIN_TITLE_ABOUT' => 'About ProcessMaker',
+    'LBL_PMSE_ADMIN_DESC_ABOUT' => 'Found information related with this module.',
+    
+    'LBL_PMSE_ADMIN_TITLE_MODULE' => 'ProcessMaker SugarCRM Edition',
+    'LBL_PMSE_ADMIN_DESC_MODULE' => 'The ProcessMaker SugarCRM Edition conforms a standard compliant BPM suite that can improve your SugarCRM processes.',
+    //END SUGARCRM flav=ent ONLY
+    
 );

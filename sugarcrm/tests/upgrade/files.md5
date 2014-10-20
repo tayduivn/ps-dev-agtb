@@ -130,4 +130,7 @@ $md5_string = array (
   './modules/Dashboards/Dashboard.php' => 'e2e857dd1543c0d19bff0138df33ab03',
   './modules/PdfManager/PdfManager.php' => '41f4084f6c4b623f776c9ff2d0af5a11',
   './modules/Tags/Tag.php' => '95fede414784866f663a6acb1d161305',
+  './modules/pmse_Business_Rules/pmse_Business_Rules.php' => 'e8511aebd73ce510d7098271d172e672',
+  './modules/pmse_Inbox/pmse_Inbox.php' => 'a1101f88f292d07f0f9a68a46e3f8bdd',
+  './modules/pmse_Project/pmse_Project.php' => '27cb2906aa3bfd4cc79cfe8b3b73e391',
 );
