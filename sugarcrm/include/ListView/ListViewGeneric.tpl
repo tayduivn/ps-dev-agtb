@@ -67,12 +67,14 @@
                 {capture assign="quotedQuery"}"{$query}"{/capture}
                 {$APP.MSG_LIST_VIEW_NO_RESULTS|replace:"<item1>":$quotedQuery}
             </p>
-            <p class = "submsg">
-                <a href="?module={$currentModule}&action=EditView&return_module={$currentModule}&return_action=DetailView">
-                    {$APP.MSG_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
-                </a>
+            {if $displaySubMessage}
+                <p class = "submsg">
+                    <a href="?module={$currentModule}&action=EditView&return_module={$currentModule}&return_action=DetailView">
+                        {$APP.MSG_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
+                    </a>
 
-            </p>
+                </p>
+            {/if}
         {/if}
     {else}
         <p class="msg">
