@@ -21,23 +21,15 @@ class DaysUntilExpression extends NumericExpression
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = DateExpression::parse($this->getParameters()->evaluate());
+        $params = DateExpression::parse($this->getParameters()->evaluate());
         if(!$params) {
             return false;
         }
         $now = TimeDate::getInstance()->getNow();
         //set the time to 0, as we are returning an integer based on the date.
-        $now->setTime(0, 0, 0);
-        $params->setTime(1, 0, 0);
+        $params->setTime(0, 0, 0); // this will be the timestamp delimiter of the day.
         $tsdiff = $params->ts - $now->ts;
-        $diff = (int)floor($tsdiff/86400);
-        $extrasec = $tsdiff%86400;
-        if($extrasec != 0) {
-            $extra = $params->get(sprintf("%+d seconds", $extrasec));
-            if($extra->day_of_year != $params->day_of_year) {
-                $diff++;
-            }
-        }
+        $diff = (int)ceil($tsdiff/86400);
         return $diff;
 	}
 
@@ -49,19 +41,11 @@ class DaysUntilExpression extends NumericExpression
 		return <<<EOQ
             var then = SUGAR.util.DateUtils.parse(this.getParameters().evaluate(), 'user');
 			var now = new Date();
-			now.setHours(0);
-			now.setMinutes(0);
-			now.setSeconds(0);
-			then.setHours(1);
+			then.setHours(0);
 			then.setMinutes(0);
 			then.setSeconds(0);
 			var diff = then - now;
-			var days = Math.floor(diff / 86400000);
-			var extrasec = diff % 86400000;
-			var extra = new Date();
-			extra.setTime(then.getTime() + extrasec);
-			if (extra.getDate() != then.getDate())
-			    days++;
+			var days = Math.ceil(diff / 86400000);
 
 			return days;
 EOQ;
