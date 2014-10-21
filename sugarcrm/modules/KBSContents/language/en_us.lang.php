@@ -61,8 +61,6 @@ $mod_strings = array (
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
     'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
     'LBL_MORE_MOST_USEFUL_ARTICLES' => 'More most useful knowledge base articles...',
-    'LBL_USEFUL' => 'Useful',
-    'LBL_NOT_USEFUL' => 'Not Useful',
     'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
     'LBL_DASHLET_USEFULNESS_DESC' => 'Usefulness for Articles Description',
     'LBL_KBSLOCALIZATIONS' => 'Localizations',
@@ -87,6 +85,7 @@ $mod_strings = array (
     'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
     'LNK_NEW_KBSCONTENT_TEMPLATE' => 'Create Template',
     'LNK_LIST_KBSCONTENT_TEMPLATES' => 'View Templates',
+    'LNK_LIST_KBSTOPICS' => 'Knowledge Base Topics',
     'LBL_TEMPLATES' => 'Templates',
     'LBL_TEMPATE_LOAD_MESSAGE' => 'The template will overwrite all contents.' .
         ' Are you sure you want to use this template?',

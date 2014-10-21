@@ -33,8 +33,15 @@
 
     /**
      * Aggregated settings.
+     * @property {Object} _settings
      */
-    _settings: {},
+    _settings: null,
+
+    /**
+     * List of overridden callbacks.
+     * @property {Object} _callbacks
+     */
+    _callbacks: null,
 
     /**
      * Initialize _settings object.
@@ -52,6 +59,19 @@
     },
 
     /**
+     * Initialize _callbacks object.
+     * @return {Object}
+     * @private
+     */
+    _initCallbacks: function() {
+        this._callbacks = _.extend({},
+            this.context.get('treecallbacks') || {},
+            this.def && this.def.callbacks || {}
+        );
+        return this;
+    },
+
+    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
@@ -63,6 +83,7 @@
         }, this);
         this._super('initialize', [options]);
         this._initSettings();
+        this._initCallbacks();
     },
 
     /**
@@ -85,10 +106,7 @@
      */
     _renderHtml: function(ctx, options) {
         this._super('_renderHtml', [ctx, options]);
-        this._renderTree($('.tree-block'), this._settings, {
-            onToggle: this.jstreeToggle,
-            onSelect: this.jstreeSelect
-        });
+        this._renderTree($('.tree-block'), this._settings, this._callbacks);
     },
 
     /**
