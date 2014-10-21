@@ -253,6 +253,10 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'revision',
                     'readonly' => true,
                 ),
+                'active_rev' => array(
+                    'name' => 'active_rev',
+                    'type' => 'bool',
+                ),
                 'category_name' => array(
                     'name' => 'category_name',
                     'type' => 'nested-set',

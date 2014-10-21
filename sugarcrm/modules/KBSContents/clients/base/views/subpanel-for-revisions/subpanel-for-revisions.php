@@ -63,6 +63,14 @@ $viewdefs['KBSContents']['base']['view']['subpanel-for-revisions'] = array(
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'active_rev',
+                    'label' => 'LBL_ACTIVE_REV',
+                    'type' => 'bool',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
