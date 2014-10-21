@@ -188,6 +188,7 @@ $dictionary['KBSContent'] = array(
                 'type' => 'bool',
             ),
             'studio' => false,
+            'readonly' => true,
         ),
         'kbsarticles_kbscontents' => array(
             'name' => 'kbsarticles_kbscontents',
