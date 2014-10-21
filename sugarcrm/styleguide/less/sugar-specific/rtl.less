@@ -383,6 +383,33 @@ html.rtl {
             margin-left: 0;
             margin-right: 4px;
         }
+
+        .select2-container.select2-container-multi.select2-choices-pills-close {
+            &.search-filter .select2-search-choice a.select2-search-choice-close {
+                left: 10px;
+                right: auto;
+            }
+        }
+
+        .select2-container.select2-container-multi.select2-choices-pills-close {
+            .select2-search-choice a.select2-choice-filter {
+                padding-left: 20px;
+                padding-right: 6px;
+                .border-radius(10px 0 0 10px);
+            }
+        }
+        .select2-container.select2-container-multi {
+            .select2-choices {
+                li {
+                    float: right;
+                }
+            }
+        }
+    }
+
+    .select2-drop.select2-drop-multi.search-filter-dropdown {
+        right: 9px;
+        left: auto !important;
     }
 
     .search-filter-dropdown .select2-result .select2-no-icon {
@@ -656,13 +683,19 @@ html.rtl {
         right: auto;
     }
 
-    .select2-container .select2-choice .select2-arrow {
-        right: auto;
-        left: -3px;
-    }
+    .select2-container {
+        .select2-choice {
+            padding-left: 20px;
 
-    .select2-container .select2-choice .select2-chosen {
-        margin-right: 8px;
+            .select2-arrow {
+                right: auto;
+                left: -3px;
+            }
+
+            .select2-chosen {
+                margin-right: 8px;
+            }
+        }
     }
 
     .extend {
@@ -808,6 +841,91 @@ html.rtl {
         div.record div.record-cell:not(:first-child) {
             margin-left: 2.12%;
             margin-right: 0;
+        }
+    }
+
+    // Forecasts ... Column RTL
+    .forecast-worksheet,
+    .forecast-manager-worksheet {
+        &.right-actions .dataTable {
+            td:last-child,
+            th:last-child {
+                .dropdown,
+                > span {
+                    position: relative;
+                }
+            }
+        }
+    }
+
+    // Forecasts Editable pencil icon
+    .forecast-worksheet .dataTable td.editableColumn span.isEditable:hover .edit-icon {
+        position: absolute;
+        right: -4px;
+        top: 7px;
+    }
+
+    // Forecasts Included Commit Stage
+    .flex-list-view {
+        &.forecast-worksheet .dataTable {
+            tr.included td {
+                &.commit_stage_field {
+                    > span.list:before {
+                        display: none;
+                    }
+                    > span.list:after {
+                        width: 6px;
+                        background-color: @blue;
+                        position: absolute;
+                        height: 30px;
+                        right: -1px;
+                        content: "";
+                        top: -2px;
+                    }
+                    > span:hover:after {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+
+    // Forecasts Datapoints/Info/Timeperiod
+    .topline {
+        .controls {
+            float: right;
+        }
+
+        .datapoint {
+            float: left;
+            padding-left: 10px;
+            border-left: @borderWidgetLight;
+            border-right: 0;
+        }
+
+        .span4 {
+            padding: 10px 15px 0 0;
+
+            &:before {
+                right: 5px;
+            }
+        }
+    }
+
+    .info {
+        .last-commit {
+            .span8 {
+                margin-left: 0;
+            }
+        }
+    }
+
+    .datapoints {
+        text-align: left;
+        float: left !important;
+
+        .pull-left {
+            float: left;
         }
     }
 }
