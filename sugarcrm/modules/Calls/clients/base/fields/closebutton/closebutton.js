@@ -24,7 +24,7 @@
     closedStatus: 'Held',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     showSuccessMessage: function() {
         var options = app.metadata.getModule(this.module).fields.status.options,

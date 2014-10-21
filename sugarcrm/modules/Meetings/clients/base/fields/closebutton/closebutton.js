@@ -8,10 +8,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.Meetings.ClosebuttonField
+ * @alias SUGAR.App.view.fields.BaseMeetingsClosebuttonField
+ * @extends View.Fields.Base.ClosebuttonField
+ */
 ({
     extendsFrom: 'ClosebuttonField',
 
-    closedStatus: 'Held', //status indicating that the it is closed or complete
+    /**
+     * Status indicating that the meeting is closed or complete.
+     *
+     * @type {String}
+     */
+    closedStatus: 'Held',
 
     /**
      * @inheritdoc

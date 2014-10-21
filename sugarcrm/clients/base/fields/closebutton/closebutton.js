@@ -9,19 +9,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.CloseButtonField
- * @alias SUGAR.App.view.fields.BaseCloseButtonField
- * @extends View.Fields.Base.Rowaction
+ * @class View.Fields.Base.ClosebuttonField
+ * @alias SUGAR.App.view.fields.BaseClosebuttonField
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     extendsFrom: 'RowactionField',
 
-    closedStatus: 'Completed', //status indicating that the record is closed or complete
+    /**
+     * Status indicating that the record is closed or complete
+     *
+     * @type {string}
+     */
+    closedStatus: 'Completed',
 
     /**
-     * Setup event handlers.
+     * Setup click event handlers.
      * @inheritdoc
-     * @param options
+     *
+     * @param {Object} options
      */
     initialize: function(options) {
         this.events = _.extend({}, this.events, options.def.events, {
@@ -29,13 +35,14 @@
             'click [name="record-close-new"]': 'closeNewClicked'
         });
 
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
         this.type = 'rowaction';
     },
 
     /**
      * Handle record close event.
-     * @param event
+     *
+     * @param {Event} event The click event for the close button
      */
     closeClicked: function(event) {
         this._close(false);
@@ -43,39 +50,45 @@
 
     /**
      * Handle record close and create new event.
-     * @param event
+     *
+     * @param {Event} event The click event for the close and create new button
      */
     closeNewClicked: function(event) {
         this._close(true);
     },
 
     /**
-     * Should not show button to close a record if the record is already closed.
      * @inheritdoc
-     * @returns {Boolean} true if it has aclAccess and status is not closed
+     *
+     * Button should be hidden if record displayed is already closed
      */
-    hasAccess: function() {
-        var acl = this._super("hasAccess");
-        return acl && this.model.get('status') !== this.closedStatus;
+    _render: function() {
+        if (this.model.get('status') === this.closedStatus) {
+            this.hide();
+        } else {
+            this._super('_render');
+        }
     },
 
     /**
      * Close the record by setting the appropriate status on the record.
-     * @param {boolean} createNew - Open a new drawer to create a record after close.
+     *
+     * @param {boolean} createNew Whether to open a new drawer to create a
+     *   record after close.
      * @private
      */
-    _close: function (createNew) {
+    _close: function(createNew) {
         var self = this;
 
         this.model.set('status', this.closedStatus);
         this.model.save({}, {
-            success: function () {
+            success: function() {
                 self.showSuccessMessage();
                 if (createNew) {
                     self.openDrawerToCreateNewRecord();
                 }
             },
-            error: function (error) {
+            error: function(error) {
                 self.showErrorMessage();
                 app.logger.error('Record failed to close. ' + error);
 
@@ -134,9 +147,9 @@
     /**
      * Re-render the field when the status on the record changes.
      */
-    bindDataChange: function () {
+    bindDataChange: function() {
         if (this.model) {
-            this.model.on("change:status", this.render, this);
+            this.model.on('change:status', this.render, this);
         }
     }
 })
