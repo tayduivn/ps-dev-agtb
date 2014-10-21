@@ -253,16 +253,16 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'revision',
                     'readonly' => true,
                 ),
-                'active_rev' => array(
-                    'name' => 'active_rev',
-                    'type' => 'bool',
-                ),
                 'category_name' => array(
                     'name' => 'category_name',
                     'type' => 'nested-set',
                     'config_provider' => 'KBSDocuments',
                     'data_provider' => 'Categories',
                     'label' => 'LBL_TOPIC_NAME',
+                ),
+                'active_rev' => array(
+                    'name' => 'active_rev',
+                    'type' => 'bool',
                 ),
                 'team_name' => array(
                     'name' => 'team_name',
