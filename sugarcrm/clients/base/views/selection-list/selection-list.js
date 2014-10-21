@@ -114,7 +114,7 @@
             }
         );
         app.alert.show('too-many-selected-records', {
-            level: 'error',
+            level: 'warning',
             messages: msg,
             autoClose: true
         });

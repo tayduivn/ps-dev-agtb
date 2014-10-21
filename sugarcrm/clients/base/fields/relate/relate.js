@@ -74,6 +74,7 @@
     plugins: ['QuickSearchFilter', 'EllipsisInline'],
     separator: '|',
     maxSelectedRecords: 20,
+    maxDisplayedItems: 3,
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -209,16 +210,14 @@
         //FIXME remove check for tplName SC-2608
         if (this.tplName === 'edit' || this.tplName === 'massupdate') {
 
-            var inList = _.contains(this.view.name === 'recordlist'),
-                relatedModuleField = this.getRelatedModuleField();
+            var inList = _.contains(this.view.name === 'recordlist');
             this.$(this.fieldTag).select2({
-                width: inList?'off':'100%',
+                width: inList ? 'off' : '100%',
                 dropdownCssClass: _.bind(this.createCssClasses, this),
-                multiple : !!this.def.isMultiSelect,
+                multiple: !!this.def.isMultiSelect,
                 containerCssClass: _.bind(this.createCssClasses, this),
                 separator: self.separator,
-//                tokenSeparators: [self.separator],
-                initSelection: function (el, callback) {
+                initSelection: function(el, callback) {
                     var $el = $(el),
                         id = $el.val(),
                         text = $el.data('rname');
@@ -226,78 +225,107 @@
                     if (!self.def.isMultiSelect) {
                         return callback({id: id, text: text});
                     }
-                    id = id.split(self.separator);
+                    ids = id.split(self.separator);
+                    displayedItems = ids.slice(0, self.maxDisplayedItems);
                     text = text.split(self.separator);
-                    callback(_.map(id, function(value, index) {
+                    callback(_.map(displayedItems, function(value, index) {
                         return {id: value, text: text[index]};
                     }));
+                    if (ids.length > self.maxDisplayedItems) {
+                        self.moreItems = true;
+                        var howManyMore = ids.length - self.maxDisplayedItems;
+                        var $more = $('<li class="select2-search-choice more">' +
+                            '<div>' + howManyMore + ' more...</div>' +
+                            '</li>').insertBefore('.select2-search-field');
+                        $more.click(function() {
+                            plugin.opts.element.trigger($.Event('searchmore'));
+                        });
+                    }
                 },
-                formatInputTooShort: function () {
+                formatInputTooShort: function() {
                     return '';
                 },
-                formatSearching: function () {
-                    return app.lang.get("LBL_LOADING", self.module);
+                formatSearching: function() {
+                    return app.lang.get('LBL_LOADING', self.module);
                 },
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
-                maximumSelectionSize: this.maxSelectedRecords,
                 query: _.bind(this.search, this)
-            }).on("select2-open", function () {
-                    var plugin = $(this).data('select2');
-                    if (!plugin.searchmore) {
-                        var $content = $('<li class="select2-result">').append(
-                                $('<div/>').addClass('select2-result-label')
-                                    .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
-                            ).mousedown(function () {
-                                plugin.opts.element.trigger($.Event("searchmore"));
-                                plugin.close();
-                            });
-                        plugin.searchmore = $('<ul class="select2-results">').append($content);
-                        plugin.dropdown.append(plugin.searchmore);
-                    }
-                }).on('searchmore', function() {
-                    $(this).select2('close');
-                    self.openSelectDrawer();
-                }).on('change', function(e) {
-
-                    if (self.def.isMultiSelect) {
-                        self.model.set(self.def.id_name, e.val);
-                        return;
-                    }
-                    var id = e.val,
-                        plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
-                        collection = plugin.context,
-                        attributes = {};
-                    if (_.isUndefined(id)) {
-                        return;
-                    }
-
-                    //Update the source element or else reverting back to the original value will not trigger a change event.
-                    plugin.opts.element.data('rname', id);
-                    if (collection && !_.isEmpty(id)) {
-                        // if we have search results use that to set new values
-                        var model = collection.get(id);
-                        attributes.id = model.id;
-                        attributes.value = model.get('name');
-                        _.each(model.attributes, function(value, field) {
-                            if (app.acl.hasAccessToModel('view', model, field)) {
-                                attributes[field] = attributes[field] || model.get(field);
-                            }
+            }).on('select2-open', function() {
+                var plugin = $(this).data('select2');
+                if (!plugin.searchmore) {
+                    var $content = $('<li class="select2-result">').append(
+                            $('<div/>').addClass('select2-result-label')
+                                .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
+                        ).mousedown(function() {
+                            plugin.opts.element.trigger($.Event('searchmore'));
+                            plugin.close();
                         });
-                    } else if (e.currentTarget.value && value) {
-                        // if we have previous values keep them
-                        attributes.id = value;
-                        attributes.value = e.currentTarget.value;
-                    } else {
-                        // default to empty
-                        attributes.id = '';
-                        attributes.value = '';
-                    }
-                    self.setValue(attributes);
-                }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+                    plugin.searchmore = $('<ul class="select2-results">').append($content);
+                    plugin.dropdown.append(plugin.searchmore);
+                }
+            }).on('searchmore', function() {
+                $(this).select2('close');
+                self.openSelectDrawer();
+            }).on('change', function(e) {
+                var plugin = $(this).data('select2'),
+                    id = e.val;
 
+                if (self.def.isMultiSelect) {
+                    var dataRname = plugin.opts.element.data('rname').split(self.separator),
+                        dataRname = dataRname[0] !== '' ? dataRname : [];
+                        ids = $(this).select2('val');
+
+                    if (e.added) {
+                        dataRname.push(e.added.text);
+                    } else if (e.removed) {
+                        dataRname = _.without(dataRname, e.removed.text);
+                    } else {
+                        return;
+                    }
+                    plugin.opts.element.data('rname', dataRname.join(self.separator));
+                    var models = _.map(ids, function(id, index) {
+                        return {id: id, value: dataRname[index]};
+                    });
+
+                    self.setValue(models);
+                    return;
+                }
+                if (_.isUndefined(id)) {
+                    return;
+                }
+                var value = (id) ? plugin.selection.find("span").text() : $(this).data('rname'),
+                    collection = plugin.context,
+                    attributes = {};
+                //Update the source element or else reverting back to the original value will not trigger a change event.
+                plugin.opts.element.data('rname', id);
+                if (collection && !_.isEmpty(id)) {
+                    // if we have search results use that to set new values
+                    var model = collection.get(id);
+                    attributes.id = model.id;
+                    attributes.value = model.get('name');
+                    _.each(model.attributes, function (value, field) {
+                        if (app.acl.hasAccessToModel('view', model, field)) {
+                            attributes[field] = attributes[field] || model.get(field);
+                        }
+                    });
+                } else if (e.currentTarget.value && value) {
+                    // if we have previous values keep them
+                    attributes.id = value;
+                    attributes.value = e.currentTarget.value;
+                } else {
+                    // default to empty
+                    attributes.id = '';
+                    attributes.value = '';
+                }
+
+                self.setValue(attributes);
+            });
+            var plugin = this.$(this.fieldTag).data('select2');
+            if (plugin && plugin.focusser) {
+                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            }
         } else if (this.tplName === 'disabled') {
             this.$(this.fieldTag).select2({
                 width: '100%',
@@ -404,7 +432,7 @@
             // unsaved warnings when doing the auto populate.
         }
         if (!this.def.isMultiSelect) {
-        this._buildRoute();
+            this._buildRoute();
         }
 
         if (_.isArray(value)) {
@@ -429,9 +457,9 @@
 
     setValue: function(models) {
 
-            if (!models) {
-                return;
-            }
+        if (!models) {
+            return;
+        }
 
         var updateRelatedFields = true;
         if (_.isArray(models)) {
@@ -444,15 +472,15 @@
 
         // Handling the `parent` field case (the parent field calls `setValue`
         // with only one model and expect `model.set` to be silent).
-        var silent = models[0] ? models[0].silent || false : false;
+        var silent = models[0] ? models[0].silent || false : false,
             values = {};
-            values[this.def.id_name] = [];
-            values[this.def.name] = [];
+        values[this.def.id_name] = [];
+        values[this.def.name] = [];
 
-            _.each(models, _.bind(function(model) {
+        _.each(models, _.bind(function(model) {
             values[this.def.id_name].push(model.id);
             values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
-            }, this));
+        }, this));
 
         // If there is only one value, we get rid of the array before setting
         // the value.
@@ -460,7 +488,7 @@
             values[this.def.id_name] = values[this.def.id_name][0];
             values[this.def.name] = values[this.def.name][0];
         }
-            this.model.set(values, {silent: silent});
+        this.model.set(values, {silent: silent});
 
         if (updateRelatedFields) {
             // TODO: move this to SidecarExpressionContext
@@ -709,6 +737,12 @@
      * @param event
      */
     search: _.debounce(function (query) {
+        var plugin = this.$(this.fieldTag).data('select2');
+        var ids = this.$(this.fieldTag).val().split('|');
+        if (ids.length >= this.maxSelectedRecords) {
+            this._showMaxSelectedRecordsAlert();
+            plugin.close();
+        }
         var term = query.term || '',
             self = this,
             searchModule = this.getSearchModule(),
@@ -762,6 +796,25 @@
             }
         });
     }, app.config.requiredElapsed || 500),
+
+    /**
+     * Displays error message since the number of selected records exceeds the
+     * maximum allowed.
+     *
+     * @private
+     */
+    _showMaxSelectedRecordsAlert: function() {
+        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
+            {
+                maxRecords: this.maxSelectedRecords
+            }
+        );
+        app.alert.show('too-many-selected-records', {
+            level: 'warning',
+            messages: msg,
+            autoClose: true
+        });
+    },
 
     /**
      * {@inheritDoc}

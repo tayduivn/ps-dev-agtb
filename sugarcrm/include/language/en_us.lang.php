@@ -4374,7 +4374,7 @@ Sincerely, SugarCRM',
     'LBL_MERGE_DUPLICATES_REMOVE_TOOLTIP'  => 'Remove record from merge',
 
     //Filters
-    'TPL_FILTER_MAX_NUMBER_RECORDS' => 'The maximum number of selected records is {{maxRecords}}.',
+    'TPL_FILTER_MAX_NUMBER_RECORDS' => 'Invalid number of records passed. The valid range is from 1 to {{maxRecords}} records.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
