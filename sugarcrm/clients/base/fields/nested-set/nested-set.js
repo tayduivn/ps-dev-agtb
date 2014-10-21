@@ -323,15 +323,17 @@
      * Create and hide input for new element.
      */
     switchCreate: function() {
-        var $a = this.$('[data-action=create-new]'),
+        var $a = this.$('[data-action=create-label-cover]'),
             $el = this.$('[data-role=add-item]');
         if (this.inCreation === false) {
-            $el = $('<input />', {'data-role': 'add-item', 'style': 'width: 80%;', 'type': 'text'});
+            $el = $('<input />', {'data-role': 'add-item', 'type': 'text'});
             $a.hide();
             $el.insertAfter($a);
+            $('<div />', {class: 'icon-folder-open', 'data-role': 'pseudo'}).html('&nbsp;').insertBefore($el);
             $el.focus();
         } else {
             $el.remove();
+            this.$('[data-role=pseudo]').remove();
             $a.show();
         }
         this.inCreation = !this.inCreation;

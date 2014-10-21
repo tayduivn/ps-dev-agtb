@@ -5149,7 +5149,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_REMOVE' => 'Remove row',
     'LBL_SHORTCUT_MASS_UPDATE_CANCEL' => 'Close mass update',
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
-    'LBL_CREATE_CATEGORY' => 'Create category',
+    'LBL_CREATE_CATEGORY' => 'Create a <div class="btn-link" data-action="create-new">category</div>',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
 );
