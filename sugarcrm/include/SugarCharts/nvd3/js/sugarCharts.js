@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callback) {
+function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, callback) {
     this.chartObject = '';
 
     // get chartId from params or use the default for sugar
@@ -33,7 +33,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
          */
         minColumnWidth = 40;
 
-    params = _.extend({
+    var params = _.extend({
         show_title: true,
         show_legend: true,
         show_controls: false,
@@ -42,15 +42,19 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
         y_axis_label: '',
         show_x_label: false,
         x_axis_label: '',
-        rotateTicks: 0,
         vertical: true,
+        wrapTicks: true,
         staggerTicks: false,
+        rotateTicks: 0,
         reduceXTicks: false,
         allowScroll: false,
         overflowHandler: false,
+        showValues: false,
+        hideEmptyGroups: true,
+        stacked: true,
         colorData: 'default',
         margin: {top: 10, right: 10, bottom: 10, left: 10}
-    }, params);
+    }, chartParams);
 
     contentEl = params.contentEl || contentEl;
     minColumnWidth = params.minColumnWidth || minColumnWidth;
@@ -162,9 +166,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, params, callbac
                         .rotateTicks(params.rotateTicks)
                         .reduceXTicks(params.reduceXTicks)
                         .colorData(params.colorData)
-                        .stacked(chartConfig.barType === 'stacked' ? true : true)
+                        .stacked(params.stacked)
                         .allowScroll(params.allowScroll)
                         .overflowHandler(params.overflowHandler)
+                        .showValues(params.showValues)
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
