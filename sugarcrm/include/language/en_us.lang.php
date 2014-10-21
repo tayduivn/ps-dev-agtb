@@ -3889,6 +3889,7 @@ Sincerely, SugarCRM',
     'LBL_DNB_BAL_TITLE' => 'Title',
     'LBL_DNB_BAL_BIO' => 'Bio',
     'LBL_DNB_BAL_BOTH' => 'Both',
+    'LBL_DNB_BAL_CNTCT_TYPE' => 'Contact Type',
     'LBL_DNB_BAL_PRESCREEN_SCORE' => 'D&B Prescreen Score',
     'LBL_DNB_BAL_LOW' => 'Low',
     'LBL_DNB_BAL_MED' => 'Medium',
@@ -6346,6 +6347,11 @@ $app_list_strings['dnb_countries_radius_iso'] = array(
 $app_list_strings['dnb_sic_naics_code'] = array(
     "3599" => "SIC Code",
     "700" => "NAICS Code"
+);
+
+$app_list_strings['dnb_bal_cntct_type'] = array(
+    "all" => "All Contacts",
+    "prem" => "Premium Only"
 );
 
 $app_list_strings['dnb_contact_types'] = array(
