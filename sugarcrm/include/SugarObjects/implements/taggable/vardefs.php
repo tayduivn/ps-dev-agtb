@@ -32,6 +32,10 @@ $vardefs = array(
             'vname' => 'LBL_TAGS',
             'type' => 'tag',
             'dbType' => 'text',
+            'studio' => array(
+                'mobile' => false,
+                'portal' => false,
+            ),
         )
     ),
     'relationships' => array(
