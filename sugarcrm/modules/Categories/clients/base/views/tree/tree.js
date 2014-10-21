@@ -42,11 +42,12 @@
      * @private
      */
     _initSettings: function() {
-        this._settings = _.extend({},
-            this._defaultSettings,
-            this.context.get('treeoptions') || {},
-            this.def && this.def.settings || {}
-        );
+        this._settings = {
+            settings: _.extend({},
+                this._defaultSettings,
+                this.context.get('treeoptions') || {},
+                this.def && this.def.settings || {}
+            )};
         return this;
     },
 

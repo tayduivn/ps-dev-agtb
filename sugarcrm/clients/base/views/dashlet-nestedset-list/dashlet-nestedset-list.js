@@ -47,6 +47,12 @@
     cacheLifetime: 300000,
 
     /**
+     * Flag which indicate, if we need to use saved states.
+     * @property {Boolean}
+     */
+    useStates: true,
+
+    /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
@@ -59,6 +65,9 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || null;
+        if (this.context.get('module') === this.extraModule.module && this.context.get('action') === 'detail') {
+            this.useStates = false;
+        }
     },
 
     /**
@@ -71,17 +80,49 @@
      */
     _render: function() {
         var treeOptions = {
-            category_root: this.categoryRoot,
-            module_root: this.moduleRoot
-        },
+            settings: {
+                category_root: this.categoryRoot,
+                module_root: this.moduleRoot,
+                plugins: [],
+                liHeight: 14
+            },
+            options: {
+            }},
             callbacks = {
                 onLeaf: _.bind(this.leafClicked, this),
                 onToggle: _.bind(this.folderToggled, this),
                 onLoad: _.bind(this.treeLoaded, this),
-                onSelect: _.bind(this.openRecord, this)
+                onSelect: _.bind(this.openRecord, this),
+                onLoadState:  _.bind(this.stateLoaded, this)
             };
+        if (this.useStates === true) {
+            treeOptions.settings.plugins.push('state');
+            treeOptions.options.state = {
+                save_selected: false,
+                auto_save: false,
+                save_opened: 'jstree_open',
+                options: {},
+                storage: this._getStorage()
+            };
+        }
         this._super('_render', []);
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+    },
+
+    /**
+     * Return storage for tree state.
+     * @return {Function}
+     * @private
+     */
+    _getStorage: function () {
+        var self = this;
+        return function(key, value, options) {
+            var intKey = app.user.lastState.buildKey(self.categoryRoot, self.moduleRoot, self.module);
+            if (!_.isUndefined(value)) {
+                app.user.lastState.set(intKey, value);
+            }
+            return app.user.lastState.get(intKey);
+        };
     },
 
     /**
@@ -107,8 +148,41 @@
      * @return {Boolean} Always true.
      */
     treeLoaded: function() {
-        _.each(this.collection.models, function(item) {
-            this.loadAdditionalLeaf(item.id);
+        var self = this;
+        async.forEach(this.collection.models, function(model, callback) {
+            self.loadAdditionalLeaf(model.id, callback);
+        }, function() {
+            if (self.useStates) {
+                self.loadJSTreeState();
+            } else {
+                self.openCurrentParent();
+            }
+        });
+        return true;
+    },
+
+    /**
+     * Open category, which is parent to current record.
+     */
+    openCurrentParent: function() {
+        if (_.isEmpty(this.extraModule)
+            || _.isEmpty(this.extraModule.module)
+            || _.isEmpty(this.extraModule.field)
+            ) {
+            return;
+        }
+        var id = this.context.get('model').get(this.extraModule.field);
+        this.selectNode(id);
+    },
+
+    /**
+     * Handle load state of tree.
+     * @param {Object} data
+     */
+    stateLoaded: function(data) {
+        _.each(data.open, function(value) {
+            value.open = true;
+            this.folderToggled(value);
         }, this);
         return true;
     },
@@ -133,6 +207,9 @@
                 this.loadAdditionalLeaf(item.id);
             }, this);
         }
+        if (this.useStates) {
+            this.saveJSTreeState();
+        }
         return true;
     },
 
@@ -149,9 +226,10 @@
 
     /**
      * Load extra data for tree.
-     * @param id
+     * @param {String} id
+     * @param {Function} callback Async callback to use with async.js
      */
-    loadAdditionalLeaf: function(id) {
+    loadAdditionalLeaf: function(id, callback) {
         if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id] < Date.now() - this.cacheLifetime) {
             delete this.loadedLeafs[id];
         }
@@ -180,19 +258,21 @@
         collection.fetch({
             success: function(data) {
                 self.removeChildrens(id, 'document');
-                if (data.length === 0) {
-                    return;
+                if (data.length !== 0) {
+                    self.hideChildNodes(id);
+                    _.each(data.models, function(value) {
+                        var insData = {
+                            id: value.id,
+                            name: value.get('name')
+                        };
+                        this.insertNode(insData, id, 'document');
+                    }, self);
+                    self.showChildNodes(id);
+                    self.loadedLeafs[id] = Date.now();
                 }
-                self.hideChildNodes(id);
-                _.each(data.models, function(value) {
-                    var insData = {
-                        id: value.id,
-                        name: value.get('name')
-                    };
-                    this.insertNode(insData, id, 'document');
-                }, self);
-                self.showChildNodes(id);
-                self.loadedLeafs[id] = Date.now();
+                if (_.isFunction(callback)) {
+                    callback.call();
+                }
             }
         });
     },
