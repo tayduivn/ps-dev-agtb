@@ -394,13 +394,12 @@ abstract class SugarQuery_Builder_Where
                 $type = $bean->getFieldDefinition($field);
                 $type = !empty($type['type']) ? $type['type'] : '';
             }
-            //We don't want `asDb` to set timezone since we've already set up our "from/to" dates
             if (!$type) {
-                $where->lte($field, $timeDate->asDb($dates[1], false), $bean);
-                $where->gte($field, $timeDate->asDb($dates[0], false), $bean);
+                $where->lte($field, $timeDate->asDb($dates[1], true), $bean);
+                $where->gte($field, $timeDate->asDb($dates[0], true), $bean);
             } else {
-                $where->lte($field, $timeDate->asDbType($dates[1], $type, false), $bean);
-                $where->gte($field, $timeDate->asDbType($dates[0], $type, false), $bean);
+                $where->lte($field, $timeDate->asDbType($dates[1], $type, true), $bean);
+                $where->gte($field, $timeDate->asDbType($dates[0], $type, true), $bean);
             }
         }
         return $this;
