@@ -270,6 +270,23 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public function handleSave()
     {
+        if (isset($this->sidecarViewdefs['override_subpanel_list_view']['view'])
+            && isset($this->sidecarViewdefs['override_subpanel_list_view']['link'])
+            && isset(self::$supanelData[$this->module][$this->sidecarViewdefs['override_subpanel_list_view']['link']])
+        ) {
+            $subpanelView = $this->sidecarViewdefs['override_subpanel_list_view']['view'];
+            $subpanelLink = self::$supanelData[$this->module][$this->sidecarViewdefs['override_subpanel_list_view']['link']];
+            
+            $fileName = "modules/{$subpanelLink['module']}/clients/{$this->client}/views/{$subpanelView}/{$subpanelView}.php";
+            $subpanelFile = "modules/{$subpanelLink['module']}/metadata/subpanels/{$subpanelLink['override_subpanel_name']}.php";
+
+            //If no file can be found for either the bwc or sidecar version of override subpanel name, do not save the override
+            if (!SugarAutoLoader::existingCustomOne($fileName, $subpanelFile)) {
+                unset($this->sidecarViewdefs);
+                return true;
+            }
+        }
+        
         if($this->collection) {
             $allviewdefs = $this->sidecarViewdefs;
 
