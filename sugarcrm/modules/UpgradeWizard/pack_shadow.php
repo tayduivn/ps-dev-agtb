@@ -9,15 +9,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+
+require_once __DIR__ . '/pack_cli.php';
+
+$files = array(
+    "modules/UpgradeWizard/ShadowUpgrader.php" => 'ShadowUpgrader.php'
+);
+
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
+}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is command-line only script");
 }
 
-if(empty($argv[1])) {
-    die("Use $argv[0] name (no zip or phar extension)\n");
+if (empty($argv[1])) {
+    die("Use $argv[0] name (no zip or phar extension) [sugarVersion [buildNumber]]\n");
 }
 
 $pathinfo = pathinfo($argv[1]);
@@ -28,23 +37,18 @@ if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip
     $name = $argv[1];
 }
 
-chdir(dirname(__FILE__)."/../..");
-$files=array(
-    "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
-    "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
-    "modules/UpgradeWizard/ShadowUpgrader.php" => 'ShadowUpgrader.php',
-    "modules/UpgradeWizard/upgrader_version.json" => 'upgrader_version.json',
-    'modules/HealthCheck/Scanner/Scanner.php' => 'Scanner/Scanner.php',
-    'modules/HealthCheck/Scanner/ScannerCli.php' => 'Scanner/ScannerCli.php',
-    'modules/HealthCheck/Scanner/ScannerMeta.php' => 'Scanner/ScannerMeta.php',
-    'modules/HealthCheck/language/en_us.lang.php' => 'language/en_us.lang.php'
-);
+$params = array();
+if (isset($argv[2])) {
+    $params['version'] = $argv[2];
+}
+if (isset($argv[3])) {
+    $params['build'] = $argv[3];
+}
+
 
 $phar = new Phar($name . '.phar');
 
-foreach ($files as $file => $inArchive) {
-    $phar->addFile($file, $inArchive);
-}
+packUpgradeWizardCli($phar, $params, $files);
 
 $stub = <<<'STUB'
 <?php
@@ -57,9 +61,7 @@ $phar->setStub($stub);
 $zip = new ZipArchive();
 $zip->open($name . '.zip', ZipArchive::CREATE);
 
-foreach ($files as $file => $local) {
-    $zip->addFile($file, $local);
-}
+packUpgradeWizardCli($zip, $params, $files);
 
 $zip->close();
 
