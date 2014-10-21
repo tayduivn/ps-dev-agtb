@@ -294,11 +294,6 @@
             return;
         }
 
-        // set time zone if specified
-        if (value._tzm) {
-            value.parseZone();
-        }
-
         if (this.action === 'edit' || this.action === 'massupdate') {
             value = {
                 'date': value.format(app.date.convertFormat(this.getUserDateFormat())),

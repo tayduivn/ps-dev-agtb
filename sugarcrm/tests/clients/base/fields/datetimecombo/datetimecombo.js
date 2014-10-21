@@ -68,14 +68,6 @@ describe('Base.Field.DateTimeCombo', function() {
 
             field.dispose();
         });
-
-        it('should honor user time zone preference', function() {
-            var field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'detail');
-
-            expect(field.format('1984-01-15T19:20:42+10:00')).toEqual('15/01/1984 7:20pm');
-
-            field.dispose();
-        });
     });
 
     describe('unformat', function() {
