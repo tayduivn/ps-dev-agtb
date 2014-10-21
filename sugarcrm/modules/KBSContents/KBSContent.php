@@ -14,11 +14,24 @@
 class KBSContent extends SugarBean {
 
     const DEFAULT_STATUS = 'draft';
+    const ST_DRAFT = 'draft';
+    const ST_IN_REVIEW = 'in-review';
+    const ST_APPROVED = 'approved';
+    const ST_PUBLISHED = 'published';
+    const ST_PUBLISHED_IN = 'published-in';
+    const ST_PUBLISHED_EX = 'published-ex';
+    const ST_EXPIRED = 'expired';
 
     public $table_name = "kbscontents";
     public $object_name = "KBSContent";
     public $new_schema = true;
     public $module_dir = 'KBSContents';
+
+    public $status;
+    public $active_rev;
+    public $internal_rev;
+    public $active_date;
+    public $exp_date;
 
     /**
      * Return root id for KB categories.

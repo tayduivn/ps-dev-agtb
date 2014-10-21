@@ -264,6 +264,10 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'active_rev',
                     'type' => 'bool',
                 ),
+                'internal_rev' => array(
+                    'name' => 'internal_rev',
+                    'type' => 'bool',
+                ),
                 'team_name' => array(
                     'name' => 'team_name',
                 ),
