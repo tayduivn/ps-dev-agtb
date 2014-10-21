@@ -31,12 +31,8 @@ class SugarFieldTag extends SugarFieldMultienum
             // First create tag bean if it needs to be created
             $this->getTagBean($record);
 
-            // If there is no removed record request...
-            if (empty($record['removed'])) {
-                $record = $record['name'];
-            } else {
-                unset($params[$field][$key]);
-            }
+            // Format tag to look more like a multienum field
+            $record = $record['name'];
         }
 
         // Then save tags as a field on current bean
@@ -107,11 +103,7 @@ class SugarFieldTag extends SugarFieldMultienum
     {
         if (is_array($value)) {
             foreach($value as $key => &$tag) {
-                if (empty($tag['removed'])) {
-                    $tag = $tag['name'];
-                } else {
-                    unset($value[$key]);
-                }
+                $tag = $tag['name'];
             }
         }
         return true;

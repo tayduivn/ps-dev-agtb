@@ -175,15 +175,8 @@
         this.value = app.utils.deepCopy(this.value) || [];
         if (e.added) {
             // Check to see if the tag we're adding has already been added.
-            // If it already does, and it's been flagged for removal, remove the removal flag
-            var valFound = false;
-            _.each(this.value, function(vals) {
-                if (vals.name === e.added.text) {
-                    valFound = true;
-                    if (vals.removed) {
-                        delete vals.removed;
-                    }
-                }
+            var valFound = _.find(this.value, function(vals) {
+                return (vals.name === e.added.text);
             });
 
             if (!valFound) {
@@ -192,18 +185,10 @@
                 this.value.push({id: id, name: e.added.text});
             }
         } else if (e.removed) {
-            // Straight up delete the tag if we're using the tag to filter
-            if (this.view.action === 'filter-rows') {
-                this.value = _.reject(this.value, function(record) {
-                    return record.name === e.removed.text;
-                });
-            } else {
-                _.each(this.value, function(record) {
-                    if (record.name === e.removed.text) {
-                        record.removed = true;
-                    }
-                });
-            }
+            // Remove the tag
+            this.value = _.reject(this.value, function(record) {
+                return record.name === e.removed.text;
+            });
         }
 
         this.model.set('tag', this.value);
