@@ -709,6 +709,7 @@
             selectNode: function(id) {
                 var node = this.jsTree.find('[data-id=' + id + ']');
                 this.jsTree.jstree('select_node', node);
+                node.addClass('jstree-clicked');
             },
 
             /**
@@ -721,6 +722,7 @@
                 var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']');
                 this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
                     $(obj).data('id', data.id).data('type', type || 'folder');
+                    $(obj).attr('data-id', data.id);
                     $(obj).find('ins:first').addClass('leaf');
                     obj.hide();
                 }, true);
