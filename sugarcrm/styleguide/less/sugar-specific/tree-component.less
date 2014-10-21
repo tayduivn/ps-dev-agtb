@@ -1,4 +1,4 @@
-@smallTreeFont: 13px;
+@smallTreeFont: 12px;
 @smallTreeHeight: 14px;
 //mixin
 .smallTreeLi {
@@ -203,7 +203,7 @@ div.icon-fullscreen[data-action=full-screen] {
                   padding: 2px 2px 2px 0px;
                 }
                 &:before {
-                  font-size: @smallTreeFont;
+                  font-size: @smallTreeFont + 2;
                 }
               }
               > a {
@@ -269,11 +269,18 @@ div.icon-fullscreen[data-action=full-screen] {
               padding: 2px 2px 2px 0px;
             }
             &:before {
-              font-size: @smallTreeFont;
+              font-size: @smallTreeFont + 2;
             }
           }
           > a {
             .smallTreeA;
+            color: @blue !important;
+          }
+          &.jstree-open {
+            > a {
+              font-weight: bold;
+              color: @textColor !important;
+            }
           }
         }
       }
