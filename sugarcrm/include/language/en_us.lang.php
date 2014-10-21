@@ -2445,6 +2445,7 @@ $app_strings = array (
     'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
     'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
+    'EXCEPTION_CONNECTOR_RESPONSE'      => 'A connector or an integration request resulted in a failed response.',
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
@@ -2465,6 +2466,7 @@ $app_strings = array (
     'EXCEPTION_INVALID_PARAMETER_DESC'     => 'Indicates a parameter sent in the request is invalid.',
     'EXCEPTION_REQUEST_FAILURE_DESC'       => 'The request failed to complete.',
     'EXCEPTION_CLIENT_OUTDATED_DESC'       => 'Indicates the client consuming the API is out of date and must be updated before further consumption of the API can take place.',
+    'EXCEPTION_CONNECTOR_RESPONSE_DESC'    => 'Indicates that a request made through the API to another service, endpoint or URI  has failed or could not be handled by the server.',
     'EXCEPTION_MAINTENANCE_DESC'           => 'The instance of SugarCRM that is serving the API is in maintenance mode. Access to the API is restricted to administrators only.',
 
     //Lotus Live specific error messages
@@ -3153,11 +3155,12 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_START' => 'starting',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "Click OK to view this Call or click Cancel to dismiss this message.",
     'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "Click OK to view this Meeting or click Cancel to dismiss this message.",
- 	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
-	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
- 	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
-	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
-	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no records saved. <item2> one now.",
+    'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
+    'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
+    'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
+    'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no <item1> records saved. <item2> or <item3> one now.",
+    'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no <item1> records saved. <item2> one now.",
+    'MSG_EMPTY_LIST_VIEW_GO_TO_PARENT' => "You can create <item1> from a <item2>. <item3> <item2> list.",
 
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
@@ -4854,6 +4857,14 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    // RSS Feed dashlet
+    'LBL_RSS_FEED_DASHLET' => 'RSS Feed',
+    'LBL_RSS_FEED_DASHLET_DESCRIPTION' => 'Stay current by adding an external RSS or Blog Feed.',
+    'LBL_RSS_FEED_URL' => 'Feed URL',
+    'LBL_RSS_FEED_AUTHOR' => 'Author:',
+    'LBL_RSS_FEED_ENTRIES_COUNT' => 'Number of entries to show',
+    'LBL_ERR_LOADING_RSS_FEED' => 'Failed loading RSS Feed',
 
     // tabbed dashlet
     'TPL_TABBED_DASHLET_USER_BUTTON_LABEL' => 'My Items',

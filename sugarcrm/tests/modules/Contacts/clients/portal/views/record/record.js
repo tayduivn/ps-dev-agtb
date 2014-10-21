@@ -36,14 +36,14 @@ describe("PortalContacts.Views.Record", function() {
         });
 
         it("should set new app language if the preferred language changed", function() {
-            app.lang.currentLanguage = oldLang;
+            app.lang.setCurrentLanguage(oldLang);
             view.model.set("preferred_language", newLang);
             view._setPreferredLanguage();
             expect(langStub.called).toBe(true);
         });
 
         it("should not change app language if the preferred language is unchanged", function() {
-            app.lang.currentLanguage = oldLang;
+            app.lang.setCurrentLanguage(oldLang);
             view.model.set("preferred_language", oldLang);
             view._setPreferredLanguage();
             expect(langStub.called).toBe(false);

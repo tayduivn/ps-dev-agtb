@@ -74,9 +74,13 @@ html.rtl {
     /* END RESET */
 
 
-    .dropdown-menu {
+    .dropdown-menu:not(.datepicker) {
         right: 0;
         left: auto;
+    }
+
+    .dropdown-menu.datepicker {
+        margin-left: -140px;
     }
 
     .label-module {
@@ -153,23 +157,19 @@ html.rtl {
                 right: 0;
             }
         }
-        div.record-cell {
-            padding-right: 15px;
-            padding-left: 0;
-            &[data-type="fieldset"] {
-              .normal > .fieldset {
-                &:not(.edit) .fieldset-field {
-                  .address_city,
-                  .address_state {
-                    float: right;
-                    margin-right: 0;
-                  }
-                }
+        &[data-type="fieldset"] {
+          .normal > .fieldset {
+            &:not(.edit) .fieldset-field {
+              .address_city,
+              .address_state {
+                float: right;
+                margin-right: 0;
               }
             }
-            [dir=ltr] {
-                text-align: right;
-            }
+          }
+        }
+        [dir=ltr] {
+            text-align: right;
         }
     }
 
@@ -203,6 +203,10 @@ html.rtl {
     .select2-container .select2-choice abbr {
         left: 18px;
         right: auto;
+    }
+
+    .select2-container, .select2-results {
+        text-align: right;
     }
 
     .record .record-cell[data-type="language"] .select2-container .select2-choice,
@@ -493,7 +497,12 @@ html.rtl {
             }
         }
     }
-
+    .table-striped {
+        th,
+        td {
+            text-align: right;
+        }
+    }
     .main-content .more.padded.btn-link {
         text-align: right;
     }

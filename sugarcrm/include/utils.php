@@ -480,13 +480,16 @@ function get_sugar_config_defaults()
             'merge_relate_update_timeout' => 90000,
             'merge_relate_max_attempt' => 3,
         ),
-       'hide_history_contacts_emails' => array (
+        'hide_history_contacts_emails' => array(
             'Cases' => false,
             'Accounts' => false,
             'Opportunities' => true
         ),
         'enable_mobile_redirect' => true,
         'additional_js_config' => array(),
+        'tmp_file_max_lifetime' => 86400,
+        'diagnostic_file_max_lifetime' => 604800,
+        'pdf_file_max_lifetime' => 86400,
     );
 
     if (empty($locale)) {
