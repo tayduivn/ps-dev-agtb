@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro && flav!=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -99,7 +98,7 @@ $dependencies['Opportunities']['likely_case_copy_when_closed'] = array(
     'hooks' => array("edit"),
     //Trigger formula for the dependency. Defaults to 'true'.
     'trigger' => 'true',
-    'triggerFields' => array('$amount'),
+    'triggerFields' => array('amount'),
     'onload' => true,
     //Actions is a list of actions to fire when the trigger is true
     'actions' => array(

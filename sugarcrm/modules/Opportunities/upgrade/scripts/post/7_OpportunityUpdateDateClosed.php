@@ -34,6 +34,12 @@ class SugarUpgradeOpportunityUpdateDateClosed extends UpgradeScript
     {
         if (version_compare($this->from_version, '7.0.0', '<') && ($this->toFlavor('ent') || $this->toFlavor('ult'))) {
 
+            $settings = Opportunity::getSettings();
+            if ($settings['opps_view_by'] !== 'RevenueLineItems') {
+                $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
+                return;
+            }
+
             $filename = 'custom/Extension/modules/Opportunities/Ext/Vardefs/sugarfield_date_closed.php';
 
             if(!is_file($filename)) {

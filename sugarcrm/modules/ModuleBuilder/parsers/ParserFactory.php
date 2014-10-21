@@ -44,7 +44,7 @@ class ParserFactory
     }
     //END SUGARCRM flav=ent ONLY
 
-    /*
+    /**
      * Create a new parser
      *
      * @param string $view          The view, for example EditView or ListView. For search views, use advanced_search or basic_search
@@ -53,7 +53,6 @@ class ParserFactory
      * @param string $client        The view client (e.g. portal, wireless, etc.)
      * @return AbstractMetaDataParser
      */
-
     public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = '' )
     {
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;

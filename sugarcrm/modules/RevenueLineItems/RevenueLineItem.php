@@ -262,10 +262,8 @@ class RevenueLineItem extends SugarBean
      */
     protected function saveProductWorksheet()
     {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if ($settings['is_setup']) {
+        $settings = Forecast::getSettings();
+        if ($settings['is_setup'] && $settings['forecast_by'] === $this->module_name) {
             // save the a draft of each product
             /* @var $worksheet ForecastWorksheet */
             $worksheet = BeanFactory::getBean('ForecastWorksheets');
@@ -325,9 +323,19 @@ class RevenueLineItem extends SugarBean
      */
     public function bean_implements($interface)
     {
-        switch ($interface) {
-            case 'ACL':
-                return true;
+        // if we are installing, we want to return false, really hacky, but OOB default on ENT and ULT is to not
+        // have RevenueLineItems ACLed
+        if (isset($GLOBALS['installing']) && $GLOBALS['installing'] === true) {
+            return false;
+        }
+
+        // if we are using opportunities with RLI's we should return true, otherwise return false
+        $settings = Opportunity::getSettings();
+        if (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems') {
+            switch ($interface) {
+                case 'ACL':
+                    return true;
+            }
         }
         return false;
     }

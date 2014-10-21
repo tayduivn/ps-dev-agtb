@@ -24,6 +24,14 @@ class SugarUpgradeRevenueLineItemCreateForecastWorksheetRecords extends UpgradeS
 
     public function run()
     {
+        // are we going to 7.6 or newer?
+        // if we are and we are not using RLI's this can be skipped
+        $settings = Opportunity::getSettings();
+        if (version_compare($this->to_version, '7.6', '>=') && $settings['opps_view_by'] !== 'RevenueLineItems') {
+            $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
+            return;
+        }
+
         $q = "SELECT '' as id,
                      rli.name,
                      rli.id as parent_id,

@@ -139,6 +139,10 @@
             this.renderChart();
         }, this);
         this.settings.on('change:filter_duration', this.changeFilter, this);
+
+        this.layout.on('render', function() {
+            this.layout.setTitle(app.lang.get(this.meta.label, this.forecastBy));
+        }, this);
     },
 
     /**

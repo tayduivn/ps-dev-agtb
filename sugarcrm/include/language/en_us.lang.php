@@ -2477,21 +2477,11 @@ $app_strings = array (
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
 
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales stage.',
-    //END SUGARCRM flav!=ent ONLY
+    'NOTICE_NO_DELETE_CLOSED_STAGE' => 'You cannot delete records that have a closed sales stage.',
+    'NOTICE_NO_DELETE_CLOSED_STATUS' => 'You cannot delete records that have a closed sales status.',
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
-    //END SUGARCRM flav=ent ONLY
-
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
-    //END SUGARCRM flav!=ent ONLY
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
-    //END SUGARCRM flav=ent ONLY
+    'WARNING_NO_DELETE_SELECTED_STAGE' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
+    'WARNING_NO_DELETE_SELECTED_STATUS' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -2959,6 +2949,27 @@ $app_strings = array (
     'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
     'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2014 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
 
+
+    // GENERIC JOB NOTIFICATIONS LABELS
+    'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
+    'LBL_JOB_NOTIFICATION_BODY_GENERIC' => 'The Scheduled Job has successfully ran',
+
+    'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT' => 'Revenue Line Items Are Now Enabled in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY' => 'Revenue Line Items are now enabled in your Sugar instance, and all existing Opportunity data has been processed. Your instance is now ready to be used with Revenue Line Items. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT' => 'Forecasts Module is Now Ready for Use With Opportunities in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY' => 'The Forecasts module in your Sugar instance is now available for use with opportunities. All previous Revenue Line Item forecast commit data has been removed, and the instance is ready for forecasts to be created and committed with opportunities. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_RLI_NOTE_SUBJECT' => 'Revenue Line Items Are Now Disabled in Your Sugar Instance',
+    'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY' => 'Revenue line Items are now disabled in your Sugar instance, and all existing Revenue Line Item data has been processed. Your instance is now ready to be used with Opportunities. For more information about the changes which have been made, please refer to the {{doc_url}}.
+
+Sincerely, SugarCRM',
+
+    'LBL_JOB_NOTIFICATION_DOC_LINK_TEXT' => 'Opportunities Configuration documentation',
 
     // LOGIN PAGE STRINGS
     'LBL_LOGIN_BUTTON_KEY' => 'L',
@@ -4946,18 +4957,11 @@ $app_strings = array (
     'LBL_DASHLET_CASESSUMMARY_OPEN_CASES' => 'Open Cases',
 
     //top 10 opportunities chart
-    //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
-    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Revenue Line Items in a bubble chart.',
-    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Revenue Line Items',
-    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Revenue Line Items",
-    //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav!=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
-    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Opportunities in a bubble chart.',
-    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
-    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
-    //END SUGARCRM flav!=ent ONLY
+    // these are the generic ones, the module specific ones are in the modules language files
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten sales in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Items',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Items",
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
 
@@ -5134,6 +5138,15 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
+
+    // config drawer
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',
+    'LBL_CONFIG_MODULE_SETTINGS_SAVED' => '{{module}} configuration settings have been saved.',
+    'LBL_CONFIG_BLOCKED_TITLE' => '{{module}} Configuration Error',
+    'LBL_CONFIG_BLOCKED_DESC_NO_CONFIG_METADATA' => '{{module}} does not have any configuration settings',
+    'LBL_CONFIG_BLOCKED_DESC_USER_ACCESS' => 'User does not have access to {{module}}',
+    'LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS' => 'User does not have access to configure {{module}} settings',
+    'LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS' => 'Database settings for {{module}} need to be fixed',
 );
 
 $app_list_strings['interactions_options'] = array (
@@ -5226,6 +5239,16 @@ $app_list_strings['forecast_pipeline_visibility_options'] = array (
 $app_list_strings['forecast_pareto_visibility_options'] = array (
     'user' => 'My Forecast',
     'group' => 'My Team\'s Forecast',
+);
+
+$app_list_strings['opps_config_view_by_options_dom'] = array(
+    'Opportunities' => 'Opportunities',
+    'RevenueLineItems' => 'Revenue Line Items'
+);
+
+$app_list_strings['opps_config_view_by_closedate_rollup_dom'] = array(
+    'latest' => 'Latest Close Date',
+    'earliest' => 'Earliest Close Date'
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

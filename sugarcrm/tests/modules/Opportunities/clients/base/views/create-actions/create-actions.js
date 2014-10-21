@@ -10,17 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Opportunities.Base.Views.CreateActions", function() {
-    var app, view, options, sinonSandbox;
+describe('Opportunities.Base.Views.CreateActions', function() {
+    var app, view, options;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sinonSandbox = sinon.sandbox.create();
         options = {
             meta: {
                 panels: [{
                     fields: [{
-                        name: "name"
+                        name: 'name'
                     }]
                 }]
             }
@@ -38,7 +37,7 @@ describe("Opportunities.Base.Views.CreateActions", function() {
     });
 
     afterEach(function() {
-        sinonSandbox.restore();
+        sinon.sandbox.restore();
     });
 
     describe('getCustomSaveOptions', function() {
@@ -75,10 +74,10 @@ describe("Opportunities.Base.Views.CreateActions", function() {
                 account_name: 'parent account name',
                 assigned_user_name: 'admin'
             }),
-            createBeanStub = sinonSandbox.stub(app.data, 'createRelatedBean', function() {
+            createBeanStub = sinon.sandbox.stub(app.data, 'createRelatedBean', function() {
                return new Backbone.Model();
             }),
-            relateFieldStub = sinonSandbox.stub(app.data, 'getRelateFields', function() {
+            relateFieldStub = sinon.sandbox.stub(app.data, 'getRelateFields', function() {
                 return [{
                     name: 'product_template_name',
                     rname: 'name',
@@ -112,6 +111,4 @@ describe("Opportunities.Base.Views.CreateActions", function() {
             expect(newModel.relatedAttributes['user_name']).toBe(parentModel.get('assigned_user_name'));
         });
     });
-
-
 });

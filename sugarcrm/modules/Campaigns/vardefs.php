@@ -344,7 +344,8 @@ $dictionary['Campaign'] = array (
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'campaign_id',
-            'relationship_type' => 'one-to-many'
+            'relationship_type' => 'one-to-many',
+            'workflow' => false
         ),
 
         'campaign_leads' => array (

@@ -56,6 +56,11 @@ $renamedefs = array(
             array('name' => 'LBL_MANAGE_FORECASTS_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_HISTORY_CONTACTS_EMAILS', 'type' => 'plural', 'source' => 'Contacts'),
             array('name' => 'LBL_HISTORY_CONTACTS_EMAILS', 'type' => 'plural', 'source' => 'Emails'),
+            array('name' => 'LBL_OPPORTUNITIES_DESC', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITIES_DESC', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITIES_DESC', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_MANAGE_OPPORTUNITIES_TITLE', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_MANAGE_OPPORTUNITIES_DESC', 'type' => 'plural', 'source' => 'Opportunities'),
         ),
         'Bugs' => array(
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),
@@ -440,6 +445,7 @@ $renamedefs = array(
             array('name' => 'LBL_FORECAST_HISTORY', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LNK_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LNK_ACCOUNTS', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_TIMEPERIOD_NAME', 'type' => 'singular', 'source' => 'TimePeriods'),
@@ -636,6 +642,16 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTE_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
             array('name' => 'LBL_OPPORTUNITY_ROLE', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),
+            array('name' => 'LBL_CONFIG_TITLE_OPPS_SETTINGS', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_LABEL', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_FIELD_TEXT', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_WARNING_FIELD_TEXT', 'type' => 'singular', 'source' => 'Forecasts'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_WARNING_FIELD_TEXT', 'type' => 'plural', 'source' => 'Forecasts'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT', 'type' => 'singular', 'source' => 'Forecasts'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT', 'type' => 'plural', 'source' => 'Opportunities'),
         ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
@@ -1090,6 +1106,23 @@ $renamedefs = array(
         array('name' => 'LBL_PREVIOUS_TIMEPERIOD', 'type' => 'singular', 'source' => 'TimePeriods'),
         array('name' => 'LBL_NEXT_TIMEPERIOD', 'type' => 'singular', 'source' => 'TimePeriods'),
         array('name' => 'LBL_TOUR_FORECASTS_TIMEPERIODS', 'type' => 'singular', 'source' => 'TimePeriods'),
+
+        // Job Notifications
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_SUBJECT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_BODY', 'type' => 'singular', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_RLI_NOTE_BODY', 'type' => 'plural', 'source' => 'Opportunities'),
+        array('name' => 'LBL_JOB_NOTIFICATION_DOC_LINK_TEXT', 'type' => 'plural', 'source' => 'Opportunities'),
+
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_SUBJECT', 'type' => 'plural', 'source' => 'Forecasts'),
+        array('name' => 'LBL_JOB_NOTIFICATION_OPP_FORECAST_SYNC_BODY', 'type' => 'plural', 'source' => 'Forecasts'),
     )
 );
-

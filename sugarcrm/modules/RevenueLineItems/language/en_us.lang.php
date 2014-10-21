@@ -40,7 +40,7 @@ $mod_strings = array(
     'LBL_LIST_DATE_CLOSED' => 'Expected Close Date',
     'LBL_LIST_COMMIT_STAGE' => 'Commit Stage',
     'LBL_LIST_PRODUCT_TEMPLATE' => 'Product Template:',
-    'LBL_NAME' => 'Revenue Line Item:',
+    'LBL_NAME' => 'Revenue Line Item',
     'LBL_URL' => 'Product URL:',
     'LBL_QUOTE_NAME' => 'Quote Name:',
     'LBL_ASSOCIATED_QUOTE' => 'Associated Quote:',
@@ -200,4 +200,9 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.
  - Choose "Save and view" to open the new {{module_name}} in record view.
  - Choose "Save and create new" to immediately create another new {{module_name}}.',
+
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Revenue Line Items in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Revenue Line Items',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Revenue Line Items",
 );

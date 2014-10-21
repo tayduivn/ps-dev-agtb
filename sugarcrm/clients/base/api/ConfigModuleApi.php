@@ -14,6 +14,14 @@ require_once('clients/base/api/ModuleApi.php');
 
 class ConfigModuleApi extends ModuleApi
 {
+
+    /**
+     * Set this to true in a subclass if this is being handled by the subclass in additional scripts
+     *
+     * @var bool
+     */
+    protected $skipMetadataRefresh = false;
+
     /**
      * Setup the endpoint that belong to this API EndPoint
      *
@@ -132,7 +140,9 @@ class ConfigModuleApi extends ModuleApi
             }
         }
 
-        MetaDataManager::refreshModulesCache(array($module));
+        if ($this->skipMetadataRefresh === false) {
+            MetaDataManager::refreshModulesCache(array($module));
+        }
 
         return $admin->getConfigForModule($module, $api->platform, true);
     }

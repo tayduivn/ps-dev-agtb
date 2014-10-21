@@ -90,7 +90,6 @@ $dictionary['Opportunity'] = array(
             'table' => 'campaigns',
             'isnull' => true,
             'module' => 'Campaigns',
-            //'dbType' => 'char',
             'reportable' => false,
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
@@ -126,28 +125,15 @@ $dictionary['Opportunity'] = array(
         'amount' => array(
             'name' => 'amount',
             'vname' => 'LBL_LIKELY',
-            //'function'=>array('vname'=>'getCurrencyType'),
             'type' => 'currency',
-            //'disable_num_format' => true,
             'dbType' => 'currency',
             'comment' => 'Unconverted amount of the opportunity',
             'importable' => 'required',
             'duplicate_merge' => '1',
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'required' => true,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => true,
-            //BEGIN SUGARCRM flav=ent ONLY
-            'readonly' => true,
-            'calculated' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "likely_case")',
-            'enforced' => true,
-            'massupdate' => false,
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
-            //END SUGARCRM flav!=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0),
             'related_fields' => array(
                 'currency_id',
@@ -244,21 +230,11 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_DATE_CLOSED',
             'type' => 'date',
             'comment' => 'Expected or actual date the oppportunity will close',
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'audited' => true,
             'importable' => 'required',
             'required' => true,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
-            //BEGIN SUGARCRM flav=ent ONLY
-            'readonly' => true,
-            'importable' => true,
-            'massupdate' => false,
-            'calculated' => true,
-            'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
-            'enforced' => true,
-            //END SUGARCRM flav=ent ONLY
             'related_fields' => array(
                 'date_closed_timestamp'
             )
@@ -273,12 +249,7 @@ $dictionary['Opportunity'] = array(
             'massupdate' => false,
             'enforced' => true,
             'calculated' => true,
-            //BEGIN SUGARCRM flav=ent ONLY
-            'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'formula' => 'timestamp($date_closed)',
-            //END SUGARCRM flav=pro && flav!=ent ONLY
         ),
         'next_step' => array(
             'name' => 'next_step',
@@ -299,16 +270,8 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Indication of progression towards closure',
             'merge_filter' => 'enabled',
             'importable' => 'required',
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'audited' => true,
             'required' => true,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=ent ONLY
-            'studio' => false,
-            'massupdate' => false,
-            'reportable' => false,
-            'workflow' => false,
-            //END SUGARCRM flav=ent ONLY
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -318,35 +281,22 @@ $dictionary['Opportunity'] = array(
             'len' => '255',
             'readonly' => true,
             'duplicate_merge' => 'disabled',
-            //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
             'reportable' => false,
-            //END SUGARCRM flav!=ent ONLY
-            //BEGIN SUGARCRM flav=ent ONLY
-            'audited' => true,
-            'massupdate' => false,
-            //END SUGARCRM flav=ent ONLY
         ),
         'probability' => array(
             'name' => 'probability',
             'vname' => 'LBL_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
-            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
             'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
             'calculated' => true,
             'enforced' => true,
-            //END SUGARCRM flav!=ent ONLY
             'workflow' => false,
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
-            //BEGIN SUGARCRM flav=ent ONLY
-            'reportable' => false,
-            'studio' => false,
-            'massupdate' => false,
-            //END SUGARCRM flav=ent ONLY
         ),
         'best_case' => array(
             'name' => 'best_case',
@@ -355,16 +305,7 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
-            //BEGIN SUGARCRM flav=ent ONLY
-            'readonly' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "best_case")',
-            'calculated' => true,
-            'enforced' => true,
-            'massupdate' => false,
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
-            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -379,16 +320,7 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
-            //BEGIN SUGARCRM flav=ent ONLY
-            'readonly' => true,
-            'formula' => 'rollupCurrencySum($revenuelineitems, "worst_case")',
-            'calculated' => true,
-            'enforced' => true,
-            'massupdate' => false,
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
-            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -404,12 +336,6 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
             'function' => 'getCommitStageDropdown',
             'function_bean' => 'Forecasts',
-            //BEGIN SUGARCRM flav=ent ONLY
-            'massupdate' => false,
-            'studio' => false,
-            'reportable' => false,
-            'workflow' => false
-            //END SUGARCRM flav=ent ONLY
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         'total_revenue_line_items' => array(
@@ -420,6 +346,8 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'enforced' => true,
             'studio' => false,
+            'workflow' => false,
+            'reportable' => false
         ),
         'closed_revenue_line_items' => array(
             'name' => 'closed_revenue_line_items',
@@ -429,6 +357,8 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'enforced' => true,
             'studio' => false,
+            'workflow' => false,
+            'reportable' => false
         ),
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
@@ -593,6 +523,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_RLI',
             'relationship' => 'opportunities_revenuelineitems',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'forecastworksheets' =>  array(
             'name' => 'forecastworksheets',
@@ -768,12 +699,7 @@ $dictionary['Opportunity'] = array(
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
-            //BEGIN SUGARCRM flav!=ent ONLY
-            'relationship_type' => 'one-to-one',
-            //END SUGARCRM  flav!=ent ONLY
-            //BEGIN SUGARCRM flav=ent ONLY
             'relationship_type' => 'one-to-many',
-            //END SUGARCRM flav=ent ONLY
         ),
     ),
     'duplicate_check' => array(
@@ -783,17 +709,8 @@ $dictionary['Opportunity'] = array(
                 array(
                     '$and' => array(
                         array('name' => array('$starts' => '$name')),
-
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        array('sales_status' => array('$not_equals' => 'Closed Lost')),
-                        array('sales_status' => array('$not_equals' => 'Closed Won')),
-                        //END SUGARCRM flav=ent ONLY
-
-                        //BEGIN SUGARCRM flav!=ent ONLY
                         array('sales_stage' => array('$not_equals' => 'Closed Lost')),
                         array('sales_stage' => array('$not_equals' => 'Closed Won')),
-                        //END SUGARCRM flav!=ent ONLY
-
                         array('accounts.id' => array('$equals' => '$account_id')),
                     )
                 ),

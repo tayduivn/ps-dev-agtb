@@ -154,6 +154,19 @@ $mod_strings = array(
 
     'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',
 
+    // Config
+    'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'View Opportunities By',
+    'LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT' => 'Opportunities can be viewed in two ways; as the Opportunity only, or as '
+        . 'the Opportunity with individual Revenue Line Items. Set the "View Opportunities By" setting to '
+        . '"Opportunities" if you want to ignore individual Revenue Line Items. Set the "View Opportunities By" '
+        . 'setting to "Revenue Line Items" if you want to view an Opportunity as a sum of the Revenue Line Items '
+        . 'linked to it.',
+    'LBL_OPPS_CONFIG_VIEW_BY_FIELD_TEXT' => 'Choose which way to view Opportunities',
+    'LBL_OPPS_CONFIG_VIEW_BY_WARNING_FIELD_TEXT' => 'Forecasts has already been configured. Changing this setting will ERASE all Forecast data!',
+    'LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT' => 'By clicking Confirm, you will be erasing ALL Forecast data. If you wish to erase all Forecast data and change your Opportunities View By settings, click Confirm. If not, click cancel to return to previous settings.',
+
+    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'How Should Date Closed Be Rolled Up?',
+
     //Dashlet
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
 
@@ -220,4 +233,9 @@ To create an {{module_name}}:
     //Marketo
     'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',
     'LBL_MKTO_ID' => 'Marketo Lead ID',
+
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Opportunities in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
 );

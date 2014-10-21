@@ -392,6 +392,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
             'bean_name' => 'RevenueLineItem',
             'source' => 'non-db',
             'vname' => 'LBL_REVENUELINEITEMS',
+            'workflow' => false
         ),
         'products' => array(
             'name' => 'products',

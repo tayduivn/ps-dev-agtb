@@ -31,7 +31,11 @@ describe('Base.Views.ForecastPareto', function() {
         context.parent.set('module', 'Forecasts');
         context.parent.children = [];
 
-        getViewStub = sandbox.stub(app.metadata, 'getView', function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
+
+        sandbox.stub(app.metadata, 'getView', function() {
             return {
                 'chart': {
                     'name': 'paretoChart',
@@ -58,17 +62,7 @@ describe('Base.Views.ForecastPareto', function() {
                     'view': 'edit',
                     'options': 'forecasts_options_dataset'
                 }
-            }
-        });
-
-        sandbox.stub(app.metadata, 'getModule', function() {
-            return {
-                'forecast_by': 'RevenueLineItems',
-                'is_setup': 1,
-                'show_worksheet_worst': 0,
-                'show_worksheet_likely': 1,
-                'show_worksheet_best': 1
-            }
+            };
         });
 
         sandbox.stub(app.utils, 'checkForecastConfig', function() {
@@ -77,16 +71,15 @@ describe('Base.Views.ForecastPareto', function() {
 
         sandbox.stub(app.lang, 'getAppListStrings', function() {
             return {
-                'worst': 1,
                 'best': 1,
                 'likely': 1
-            }
+            };
         });
 
         var meta = {
                 config: false
             },
-            layout = SugarTest.createLayout("base", 'Forecasts', "list", null, context.parent),
+            layout = SugarTest.createLayout('base', 'Forecasts', 'list', null, context.parent),
             initCallback = {
                 defaultSelections: {
                     timeperiod_id: {

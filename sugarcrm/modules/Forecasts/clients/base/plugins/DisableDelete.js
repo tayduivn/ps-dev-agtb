@@ -34,49 +34,52 @@
             removeDelete: function() {
                 var sales_stage_won = null,
                     sales_stage_lost = null,
+                    label_key = '_STAGE',
                     closed_RLI_count = 0,
                     message = null,
                     status = null,
                     button = null;
 
                 if (_.contains(["list:deleterow:fire", "button:delete_button:click"], this.def.event)) {
-                    sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
-                    sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
+                    sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won;
+                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost;
                     //BEGIN SUGARCRM flav=ent ONLY
-                    //ENT allows sales_status, so we need to check to see if this module has it and use it
-                    status = this.model.get("sales_status");
+                    if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
+                        //ENT allows sales_status, so we need to check to see if this module has it and use it
+                        status = this.model.get('sales_status');
 
-                    //grab the closed RLI count (when on opps)
-                    closed_RLI_count = this.model.get("closed_revenue_line_items");
-                    if (_.isNull(closed_RLI_count)) {
-                        closed_RLI_count = 0;
+                        //grab the closed RLI count (when on opps)
+                        closed_RLI_count = this.model.get('closed_revenue_line_items');
+                        if (_.isNull(closed_RLI_count)) {
+                            closed_RLI_count = 0;
+                        }
+                        label_key = '_STATUS';
                     }
-
                     //END SUGARCRM flav=ent ONLY
                     if (_.isEmpty(status)) {
-                        status = this.model.get("sales_stage");
+                        status = this.model.get('sales_stage');
                     }
 
                     //if we have closed RLIs, set the message here
                     if (closed_RLI_count > 0) {
-                        message = app.lang.get("NOTICE_NO_DELETE_CLOSED_RLIS", "Opportunities");
+                        message = app.lang.get('NOTICE_NO_DELETE_CLOSED_RLIS', 'Opportunities');
                     }
 
                     //if this item has a closed status, this message wins, so set it accordingly
                     if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
-                        message = app.lang.get("NOTICE_NO_DELETE_CLOSED");
+                        message = app.lang.get('NOTICE_NO_DELETE_CLOSED' + label_key);
                     }
 
                     //if we have a message, disable the button.
                     if (!_.isEmpty(message)) {
                         button = this.getFieldElement();
-                        button.addClass("disabled");
-                        button.attr("data-event", "");
+                        button.addClass('disabled');
+                        button.attr('data-event', '');
                         button.tooltip({title: message});
                     }
                 }
                 return message;
             }
-        })
-    })
+        });
+    });
 })(SUGAR.App);

@@ -23,6 +23,14 @@ class SugarUpgradeRevenueLineItemAccountSync extends UpgradeScript
             return;
         }
 
+        // are we going to 7.6 or newer?
+        // if we are and we are not using RLI's this can be skipped
+        $settings = Opportunity::getSettings();
+        if (version_compare($this->to_version, '7.6', '>=') && $settings['opps_view_by'] !== 'RevenueLineItems') {
+            $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
+            return;
+        }
+
         $this->log('Syncing Accounts to RLI Table');
 
         $sql = "UPDATE revenue_line_items rli

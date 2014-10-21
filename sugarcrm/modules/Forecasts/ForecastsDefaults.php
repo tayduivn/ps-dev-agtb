@@ -1,7 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -79,12 +76,7 @@ class ForecastsDefaults
             // this is used to indicate whether any user has made commits since the forecasts module has been set up.
             'has_commits' => 0,
             // indicates how data is displayed in the worksheet
-            //BEGIN SUGARCRM flav=ent ONLY
-            'forecast_by' => 'RevenueLineItems', // options: 'RevenueLineItems' or 'Opportunities'
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'forecast_by' => 'Opportunities', // options: 'RevenueLineItems' or 'Opportunities'
-            //END SUGARCRM flav=pro && flav!=ent ONLY
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
@@ -146,22 +138,18 @@ class ForecastsDefaults
             // whether or not to show the commit warnings
             'show_forecasts_commit_warnings' => 1,
             // default enabled worksheet columns
-            //BEGIN SUGARCRM flav=ent ONLY
-            'worksheet_columns' => self::getWorksheetColumns('ent'),
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'worksheet_columns' =>self::getWorksheetColumns('pro'),
-            //END SUGARCRM  flav=pro && flav!=ent ONLY
+            'worksheet_columns' => self::getWorksheetColumns('pro'),
         );
     }
 
     /**
      * Given a flavor, returns the proper worksheet columns in an array
      *
-     * @param $flav ent/ult/pro/corp
+     * @param string $flav ent/ult/pro/corp
      * @return array of fields and column names for the worksheet to use
      */
-    public static function getWorksheetColumns($flav) {
+    public static function getWorksheetColumns($flav)
+    {
         $cols = array();
         switch($flav) {
             case 'ent':

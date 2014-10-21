@@ -44,6 +44,10 @@ class AdministrationController extends SugarController
             if (!in_array('project', $disabledTabsKeyArray) && in_array('Project', $modInvisList)) {
                 $disabledTabsKeyArray[] = 'project';
             }
+            // if RLI is hidden, always hide the RLI subpanel.
+            if (!in_array('revenuelineitems', $disabledTabsKeyArray) && in_array('RevenueLineItems', $modInvisList)) {
+                $disabledTabsKeyArray[] = 'revenuelineitems';
+            }
             SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
         }
         

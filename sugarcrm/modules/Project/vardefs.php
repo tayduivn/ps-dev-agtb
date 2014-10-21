@@ -369,6 +369,7 @@ $dictionary['Project'] = array(
             'relationship' => 'projects_revenuelineitems',
             'source'=>'non-db',
             'vname'=>'LBL_REVENUELINEITEMS',
+            'workflow' => false
         ),
         //BEGIN SUGARCRM flav=pro ONLY
 		'user_resources' =>
