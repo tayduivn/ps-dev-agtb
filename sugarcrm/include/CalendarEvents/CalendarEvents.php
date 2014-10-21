@@ -16,9 +16,9 @@ class CalendarEvents
      * Schedulable calendar events (modules) supported
      */
     public static $calendarEventModules = array(
-        "Meetings",
-        "Calls",
-        "Tasks",
+        'Meetings',
+        'Calls',
+        'Tasks',
     );
 
     /**
@@ -29,9 +29,9 @@ class CalendarEvents
     public function isEventRecurring(SugarBean $bean)
     {
         if (!in_array($bean->module_name, static::$calendarEventModules)) {
-            $logmsg = "Recurring Calendar Event - Module Unexpected: " . $bean->module_name;
+            $logmsg = 'Recurring Calendar Event - Module Unexpected: ' . $bean->module_name;
             $GLOBALS['log']->error($logmsg);
-            throw new SugarException("LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED", array($bean->module_name));
+            throw new SugarException('LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED', array($bean->module_name));
         }
 
         return (!empty($bean->repeat_type) && !empty($bean->date_start));
@@ -56,48 +56,44 @@ class CalendarEvents
 
     /**
      * @param SugarBean $parentBean
-     * @param bool $checkLimit
      * @return array events saved
      * @throws SugarException
      */
-    public function saveRecurringEvents(SugarBean $parentBean, $checkLimit = true)
+    public function saveRecurringEvents(SugarBean $parentBean)
     {
         global $timedate;
 
         if (!$this->isEventRecurring($parentBean)) {
-            $logmsg = "SaveRecurringEvents() : Event is not a Recurring Event";
+            $logmsg = 'SaveRecurringEvents() : Event is not a Recurring Event';
             $GLOBALS['log']->error($logmsg);
-            throw new SugarException("LBL_CALENDAR_EVENT_NOT_A_RECURRING_EVENT", array($parentBean->object_name));
+            throw new SugarException('LBL_CALENDAR_EVENT_NOT_A_RECURRING_EVENT', array($parentBean->object_name));
         }
 
         if (!empty($parentBean->repeat_parent_id)) {
-            $logmsg = "SaveRecurringEvents() : Event received is not the Parent Occcurrence";
+            $logmsg = 'SaveRecurringEvents() : Event received is not the Parent Occcurrence';
             $GLOBALS['log']->error($logmsg);
-            throw new SugarException("LBL_CALENDAR_EVENT_IS_NOT_A_PARENT_OCCURRENCE", array($parentBean->object_name));
+            throw new SugarException('LBL_CALENDAR_EVENT_IS_NOT_A_PARENT_OCCURRENCE', array($parentBean->object_name));
         }
 
-        $dateStart = $this->formatDateTime("datetime", $parentBean->date_start, "user");
+        $dateStart = $this->formatDateTime('datetime', $parentBean->date_start, 'user');
 
         $params = array();
         $params['type'] = $parentBean->repeat_type;
         $params['interval'] = $parentBean->repeat_interval;
         $params['count'] = $parentBean->repeat_count;
-        $params['until'] = $this->formatDateTime("date", $parentBean->repeat_until, "user");
+        $params['until'] = $this->formatDateTime('date', $parentBean->repeat_until, 'user');
         $params['dow'] = $parentBean->repeat_dow;
 
         $repeatDateTimeArray = $this->buildRecurringSequence($dateStart, $params);
 
-        if ($checkLimit) {
-            $limit = $this->getRecurringLimit();
-            if (count($repeatDateTimeArray) > ($limit - 1)) {
-                $logMessage = sprintf(
-                    "Calendar Events (%d) exceed Event Limit: (%d)",
-                    count($repeatDateTimeArray),
-                    $limit
-                );
-                $GLOBALS['log']->warning($logMessage);
-                throw new SugarException("LBL_CALENDAR_EVENT_LIMIT_EXCEEDED", array($parentBean->object_name));
-            }
+        $limit = $this->getRecurringLimit();
+        if (count($repeatDateTimeArray) > ($limit - 1)) {
+            $logMessage = sprintf(
+                'Calendar Events (%d) exceed Event Limit: (%d)',
+                count($repeatDateTimeArray),
+                $limit
+            );
+            $GLOBALS['log']->warning($logMessage);
         }
 
         $this->markRepeatDeleted($parentBean);
@@ -105,7 +101,7 @@ class CalendarEvents
     }
 
     /**
-     * Mark recurring meeting deleted
+     * Generate the Start and End Dates for each event occurrence.
      * @param string Start Date
      * @param array  Repeat Occurrence Fields: 'type', 'interval', 'count' 'until' 'dow'
      * @return array Start DateTimes
@@ -116,7 +112,7 @@ class CalendarEvents
     }
 
     /**
-     * Mark recurring meeting deleted
+     * Mark recurring event deleted
      * @param SugarBean parent Bean
      */
     protected function markRepeatDeleted(SugarBean $parentBean)
@@ -136,9 +132,9 @@ class CalendarEvents
 
     /**
      * Convert A Date, Time  or DateTime String from one format to Another
-     * @param string type of the second argument : one of "date", "time", "datetime", "datetimecombo"
+     * @param string type of the second argument : one of 'date', 'time', 'datetime', 'datetimecombo'
      * @param string formatted date, time or datetime field in DB, ISO, or User Format
-     * @param string output format - one of: "db", "iso" or "user"
+     * @param string output format - one of: 'db', 'iso' or 'user'
      * @return string formatted result
      */
     public function formatDateTime($type, $dtm, $toFormat)
@@ -153,7 +149,7 @@ class CalendarEvents
 
     /**
      * Return a SugarDateTime Object given any Date to Time Format
-     * @param string type of the second argument : one of "date", "time", "datetime", "datetimecombo"
+     * @param string type of the second argument : one of 'date', 'time', 'datetime', 'datetimecombo'
      * @param string  formatted date, time or datetime field in DB, ISO, or User Format
      * @return SugarDateTime
      */
@@ -168,12 +164,10 @@ class CalendarEvents
             }
             if (empty($sugarDateTime)) {
                 switch($type) {
-                    case "date":
-                        $sugarDateTime = $timedate->fromIso($dtm);
-                        break;
                     case 'time':
                         $sugarDateTime = $timedate->fromIsoTime($dtm);
                         break;
+                    case 'date':
                     case 'datetime':
                     case 'datetimecombo':
                     default:
