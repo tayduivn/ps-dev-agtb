@@ -429,6 +429,8 @@ html.rtl {
             border-right: none;
             .dropdown,
             > span {
+                left: 0;
+                right: auto;
                 border-right: @tableBorder;
                 border-left: 0;
                 &:before {
@@ -441,6 +443,8 @@ html.rtl {
         &.right-actions.scroll-width .dataTable td:last-child > span {
             border-right: @tableBorder;
             border-left: 0;
+            left: 0;
+            right: auto;
             &:before {
                 right: -5px;
                 left: auto;
