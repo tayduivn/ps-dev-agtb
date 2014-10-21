@@ -171,8 +171,13 @@
             ) {
             return;
         }
-        var id = this.context.get('model').get(this.extraModule.field);
-        this.selectNode(id);
+        var id = this.context.get('model').get(this.extraModule.field),
+            self = this;
+        this.loadAdditionalLeaf(id, function() {
+            _.defer(function() {
+                self.selectNode(self.context.get('model').id)
+            });
+        });
     },
 
     /**
