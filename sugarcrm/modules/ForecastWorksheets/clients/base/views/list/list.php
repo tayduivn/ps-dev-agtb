@@ -37,7 +37,13 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'type' => 'parent',
-                    'readonly' => true
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'parent_id',
+                        'parent_type',
+                        'parent_deleted',
+                        'name'
+                    )
                 ),
                 array(
                     'name' => 'account_name'
@@ -64,7 +70,10 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
-                    'click_to_edit' => true
+                    'click_to_edit' => true,
+                    'related_fields' => array(
+                        'probability'
+                    )
                 ),
                 array(
                     'name' => 'probability',
@@ -75,7 +84,10 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'maxValue' => 100,
                     'minValue' => 0,
                     'align' => 'right',
-                    'width' => '7%'
+                    'width' => '7%',
+                    'related_fields' => array(
+                        'sales_stage'
+                    )
                 ),
                 array(
                     'name' => 'likely_case',
@@ -88,7 +100,13 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'skip_preferred_conversion' => true,
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%'
+                    'width' => '22%',
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id',
+                        'best_case',
+                        'worst_case'
+                    ),
                 ),
                 array(
                     'name' => 'best_case',
@@ -101,7 +119,12 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'skip_preferred_conversion' => true,
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%'
+                    'width' => '22%',
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id',
+                        'likely_case',
+                    ),
                 )
             )
         )
