@@ -68,26 +68,54 @@
  * @extends View.Field
  */
 ({
-    allow_single_deselect: true,
-    minChars: 1,
     fieldTag: 'input.select2',
     plugins: ['QuickSearchFilter', 'EllipsisInline'],
-    separator: '|',
-    maxSelectedRecords: 20,
-    maxDisplayedItems: 3,
+
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
      */
-    initialize: function (options) {
-        this.minChars = options.def.minChars || this.minChars;
+    initialize: function(options) {
+        /**
+         * Boolean used for the 'allowClear' select2 option.
+         *
+         * @property {boolean}
+         */
+        this.allow_single_deselect = true;
+        /**
+         * Minimum input characters to trigger the search. Used for
+         * `minimumInputLength` select2 option.
+         *
+         * @property {number}
+         */
+        this.minChars = options.def.minChars || 1;
+        /**
+         * Separator used by select2 to separate values. Used for `separator`
+         * select2 option.
+         *
+         * @property {string}
+         */
+        this.separator = '|';
+        /**
+         * Maximum number of records the user can select.
+         *
+         * @property {number}
+         */
+        this.maxSelectedRecords = 20;
+        /**
+         * Maximum number of items we display in the field. If the user selects
+         * more records, we display a 'xx more...' pill.
+         *
+         * @property {number}
+         */
+        this.maxDisplayedItems = 3;
         app.view.Field.prototype.initialize.call(this, options);
         var populateMetadata = app.metadata.getModule(this.getSearchModule());
 
         if (_.isEmpty(populateMetadata)) {
             return;
         }
-        _.each(this.def.populate_list, function (target, source) {
+        _.each(this.def.populate_list, function(target, source) {
             if (_.isUndefined(populateMetadata.fields[source])) {
                 app.logger.error('Fail to populate the related attributes: attempt to access undefined key - ' +
                     this.getSearchModule() + '::' + source);
@@ -179,7 +207,13 @@
         }
     },
 
-    createCssClasses: function() {
+    /**
+     * Creates the css classes to set to the select2 plugin.
+     *
+     * @return {string}
+     * @private
+     */
+    _buildCssClasses: function() {
         var cssClasses = [];
         if (this.view.name === 'recordlist') {
             cssClasses.push('select2-narrow');
@@ -196,7 +230,7 @@
     /**
      * Renders relate field
      */
-    _render: function () {
+    _render: function() {
         var self = this,
             searchModule = this.getSearchModule();
 
@@ -213,9 +247,9 @@
             var inList = _.contains(this.view.name === 'recordlist');
             this.$(this.fieldTag).select2({
                 width: inList ? 'off' : '100%',
-                dropdownCssClass: _.bind(this.createCssClasses, this),
+                dropdownCssClass: _.bind(this._buildCssClasses, this),
                 multiple: !!this.def.isMultiSelect,
-                containerCssClass: _.bind(this.createCssClasses, this),
+                containerCssClass: _.bind(this._buildCssClasses, this),
                 separator: self.separator,
                 initSelection: function(el, callback) {
                     var $el = $(el),
@@ -272,6 +306,14 @@
                 var plugin = $(this).data('select2'),
                     id = e.val;
 
+                if (_.isUndefined(id)) {
+                    return;
+                }
+
+                // For multiselect fields, we update the data-rname attributes
+                // so it stays in sync with the id list, and allows us to use
+                // 'setValue' method. The use of 'setValue' method is required
+                // to re-render the field and update the 'xx more...' pill.
                 if (self.def.isMultiSelect) {
                     var dataRname = plugin.opts.element.data('rname').split(self.separator),
                         dataRname = dataRname[0] !== '' ? dataRname : [];
@@ -292,9 +334,7 @@
                     self.setValue(models);
                     return;
                 }
-                if (_.isUndefined(id)) {
-                    return;
-                }
+
                 var value = (id) ? plugin.selection.find("span").text() : $(this).data('rname'),
                     collection = plugin.context,
                     attributes = {};
@@ -410,18 +450,18 @@
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
         if (value) {
+            /**
+             * Flag to indicate that the value has been set from the context
+             * once, so if later the value is unset, we don't set it again on
+             * {@link #format}.
+             *
+             * @type {boolean}
+             * @protected
+             */
             this._valueSetOnce = true;
         }
 
         if (!this._valueSetOnce && setFromCtx) {
-            /**
-             * Flag to indicate that the value has been set from the context once,
-             * so if later the value is unset, we don't set it again on
-             * {@link #format}.
-             *
-             * @type {boolean}
-             * @private
-             */
             this._valueSetOnce = true;
             var model = parentCtx.get('model');
             // FIXME we need a method to prevent us from doing this
@@ -445,23 +485,13 @@
         return value;
     },
 
-    /**
-     * Relate takes care of its unformating
-     * stub this to return the unformated value off the model
-     * @param {String} value
-     * @returns {String} value off the model
-     */
-    unformat: function(value) {
-        return this.model.get(this.def.id_name);
-    },
-
     setValue: function(models) {
 
         if (!models) {
             return;
         }
-
-        var updateRelatedFields = true;
+        var updateRelatedFields = true,
+            values = {};
         if (_.isArray(models)) {
             // Does not make sense to update related fields if we selected
             // multiple models
@@ -470,10 +500,6 @@
             models = [models];
         }
 
-        // Handling the `parent` field case (the parent field calls `setValue`
-        // with only one model and expect `model.set` to be silent).
-        var silent = models[0] ? models[0].silent || false : false,
-            values = {};
         values[this.def.id_name] = [];
         values[this.def.name] = [];
 
@@ -488,7 +514,7 @@
             values[this.def.id_name] = values[this.def.id_name][0];
             values[this.def.name] = values[this.def.name][0];
         }
-        this.model.set(values, {silent: silent});
+        this.model.set(values);
 
         if (updateRelatedFields) {
             // TODO: move this to SidecarExpressionContext
@@ -504,12 +530,15 @@
                 // the actual data will then come asynchronously
                 this.model.trigger('change:' + this.def.link);
             }
-            this.updateRelatedFields(models);
+            this.updateRelatedFields(models[0]);
         }
     },
 
+    /**
+     * Handles update of related fields.
+     * @param {Object} model
+     */
     updateRelatedFields: function(model) {
-        var model = model[0];
         var newData = {},
             self = this;
         _.each(this.def.populate_list, function(target, source) {
@@ -736,10 +765,10 @@
      * Searches for related field.
      * @param event
      */
-    search: _.debounce(function (query) {
-        var plugin = this.$(this.fieldTag).data('select2');
-        var ids = this.$(this.fieldTag).val().split('|');
-        if (ids.length >= this.maxSelectedRecords) {
+    search: _.debounce(function(query) {
+        var plugin = this.$(this.fieldTag).data('select2'),
+            ids = this.$(this.fieldTag).select2('val');
+        if (_.isArray(ids) && ids.length >= this.maxSelectedRecords) {
             this._showMaxSelectedRecordsAlert();
             plugin.close();
         }
