@@ -64,7 +64,7 @@
         this.categoryRoot = !_.isUndefined(config.category_root) ?
             config.category_root :
             null;
-        this.extraModule = this.meta.extra_provider || null;
+        this.extraModule = this.meta.extra_provider || {};
         if (this.context.get('module') === this.extraModule.module && this.context.get('action') === 'detail') {
             this.useStates = false;
         }
