@@ -116,6 +116,7 @@ $dictionary['Activity'] = array(
             'relationship' => 'revenuelineitem_activities',
             'source' => 'non-db',
             'vname' => 'LBL_REVENUELINEITEMS',
+            'workflow' => false
         ),
         'quotes' => array(
             'name' => 'quotes',

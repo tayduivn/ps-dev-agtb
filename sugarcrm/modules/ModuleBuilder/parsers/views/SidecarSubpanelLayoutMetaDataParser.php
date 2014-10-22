@@ -60,6 +60,21 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         // extensions for a subpanel are built.
     }
 
+    /**
+     * Return a specific panel if it exists, if it does not exist, `false` will be returned instead
+     *
+     * @param int $panel What panel are we looking for?
+     * @return array|bool
+     */
+    protected function getPanel($panel)
+    {
+        if (isset($this->_paneldefs[$panel])) {
+            return $this->_paneldefs[$panel];
+        }
+
+        return false;
+    }
+
     /*
      * Removes a field from the SubPanel Layout
      *

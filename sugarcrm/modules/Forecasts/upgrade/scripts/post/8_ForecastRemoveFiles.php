@@ -143,6 +143,35 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
             );
         }
 
+        if (version_compare($this->from_version, '7.6', '<')
+            && version_compare($this->from_version, '6.7.0', '>='))
+        {
+            $newFiles = array(
+                'modules/Forecasts/clients/base/layouts/config',
+                'modules/Forecasts/clients/base/layouts/config-main',
+                'modules/Forecasts/clients/base/views/forecastsConfigForecastBy',
+                'modules/Forecasts/clients/base/views/forecastsConfigHeaderButtoms',
+                'modules/Forecasts/clients/base/views/forecastsConfigHelpers',
+                'modules/Forecasts/clients/base/views/forecastsConfigRanges',
+                'modules/Forecasts/clients/base/views/forecastsConfigScenarios',
+                'modules/Forecasts/clients/base/views/forecastsConfigTimeperiods',
+                'modules/Forecasts/clients/base/views/forecastsConfigVariables',
+                'modules/Forecasts/clients/base/views/forecastsConfigWorksheetColumns',
+                'tests/modules/Forecasts/clients/base/layouts/config',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigForecastBy',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigHeaderButtoms',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigRanges',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigTimeperiods',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigVariables',
+                'tests/modules/Forecasts/clients/base/views/forecastsConfigWorksheetColumns',
+            );
+            $files = array_merge($files, $newFiles);
+        }
+
+        if (version_compare($this->to_version, '7.6', '<=')) {
+            $files[] = 'modules/Forecasts/upgrade/scripts/post/2_ForecastsChangeForecastBy.php';
+        }
+
         if (!empty($files)) {
             $this->fileToDelete($files);
         }

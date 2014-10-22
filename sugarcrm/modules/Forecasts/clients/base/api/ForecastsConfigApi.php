@@ -89,7 +89,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             $db = DBManagerFactory::getInstance();
             // check if we need to upgrade opportunities when coming from version below 6.7.x.
             $upgraded = $db->getOne(
-                "SELECT count(id) as total FROM upgrade_history
+                "SELECT count(id) AS total FROM upgrade_history
                     WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'"
             );
             if ($upgraded == 1) {
@@ -117,15 +117,6 @@ class ForecastsConfigApi extends ConfigModuleApi
         }
         //END SUGARCRM flav=ent ONLY
 
-        if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
-            require_once('modules/UpgradeWizard/uw_utils.php');
-            updateOpportunitiesForForecasting();
-            //BEGIN SUGARCRM flav=ent ONLY
-            require_once('include/SugarQueue/jobs/SugarJobUpdateRevenueLineItems.php');
-            SugarJobUpdateRevenueLineItems::scheduleRevenueLineItemUpdateJobs(100);
-            //END SUGARCRM flav=ent ONLY
-        }
-
         // we do the double check here since the front ent will send one one value if the input is empty
         if (empty($args['worksheet_columns']) || empty($args['worksheet_columns'][0])) {
             // set the defaults
@@ -145,6 +136,23 @@ class ForecastsConfigApi extends ConfigModuleApi
         //reload the settings to get the current settings
         $current_forecasts_settings = parent::configSave($api, $args);
 
+        // setting are saved, reload the setting in the ForecastBean just in case.
+        Forecast::getSettings(true);
+
+        // now that we have saved the setting, we need to sync all the data if
+        // this is being upgraded or the forecast was not setup before.
+        if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
+            if ($args['forecast_by'] === 'Opportunities') {
+                SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php');
+                SugarJobUpdateOpportunities::updateOpportunitiesForForecasting();
+            // BEGIN SUGARCRM flav=ent ONLY
+            } else {
+                SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateRevenueLineItems.php');
+                SugarJobUpdateRevenueLineItems::scheduleRevenueLineItemUpdateJobs();
+            // END SUGARCRM flav=ent ONLY
+            }
+        }
+
         // did this change?
         if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columns']) {
             $this->setWorksheetColumns($api, $args['worksheet_columns'], $current_forecasts_settings['forecast_by']);
@@ -161,8 +169,8 @@ class ForecastsConfigApi extends ConfigModuleApi
     /**
      * Compares two sets of forecasting settings to see if the primary timeperiods settings are the same
      *
-     * @param array $priorSettings              The Prior Settings
-     * @param array $currentSettings            The New Settings Coming from the Save
+     * @param array $priorSettings The Prior Settings
+     * @param array $currentSettings The New Settings Coming from the Save
      *
      * @return boolean
      */
@@ -220,75 +228,9 @@ class ForecastsConfigApi extends ConfigModuleApi
      */
     public function setWorksheetColumns(ServiceBase $api, $worksheetColumns, $forecastBy)
     {
-        if (!is_array($worksheetColumns)) {
-            return false;
-        }
+        SugarAutoLoader::load('modules/Forecasts/include/ForecastReset.php');
 
-        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
-        $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'ForecastWorksheets', null, null, $api->platform);
-        $listDefsParser->resetPanelFields();
-
-        // get the proper order from the admin panel, where we defined what is displayed, in the order that we want it
-        $mm = MetadataManager::getManager();
-        $views = $mm->getModuleViews('Forecasts');
-        $fields = $views['forecastsConfigWorksheetColumns']['meta']['panels'][0]['fields'];
-
-        $cteable = array(
-            'commit_stage',
-            'worst_case',
-            'likely_case',
-            'best_case',
-            'date_closed',
-            'sales_stage'
-        );
-
-        $currency_fields = array(
-            'worst_case',
-            'likely_case',
-            'best_case',
-            'list_price',
-            'cost_price',
-            'discount_price',
-            'discount_amount',
-            'total_amount'
-        );
-
-        foreach ($fields as $field) {
-            if (!in_array($field['name'], $worksheetColumns)) {
-                continue;
-            }
-
-            $column = $field['name'];
-            $additionalDefs = array();
-
-            // set the label for the parent_name field, depending on what we are forecasting by
-            if ($column == 'parent_name') {
-                $label = $forecastBy == 'Opportunities' ? 'LBL_OPPORTUNITY_NAME' : 'LBL_REVENUELINEITEM_NAME';
-                $additionalDefs = array_merge(
-                    $additionalDefs,
-                    array('label' => $label)
-                );
-            }
-
-            if (in_array($column, $cteable)) {
-                $additionalDefs = array_merge(
-                    $additionalDefs,
-                    array('click_to_edit' => true)
-                );
-            }
-            if (in_array($column, $currency_fields)) {
-                $additionalDefs = array_merge(
-                    $additionalDefs,
-                    array(
-                        'convertToBase' => true,
-                        'showTransactionalAmount' => true
-                    )
-                );
-            }
-            $listDefsParser->addField($column, $additionalDefs);
-        }
-
-        // save the file, but we don't need to load the the $_REQUEST, so pass false
-        $listDefsParser->handleSave(false);
+        $fr = new ForecastReset();
+        $fr->setWorksheetColumns($api->platform, $worksheetColumns, $forecastBy);
     }
 }

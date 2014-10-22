@@ -59,7 +59,7 @@ class WhereTest extends Sugar_PHPUnit_Framework_TestCase
         /** @var TimeDate|PHPUnit_Framework_MockObject_MockObject $timeDate */
         $timeDate = $this->getMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
         $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
-        $timeDate->expects($this->exactly(2))->method('asDbType')->with($this->equalTo($dateTime), $this->equalTo($type), $this->equalTo(false))->will($this->returnValue(3));
+        $timeDate->expects($this->exactly(2))->method('asDbType')->with($this->equalTo($dateTime), $this->equalTo($type), $this->equalTo(true))->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDb');
 
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */

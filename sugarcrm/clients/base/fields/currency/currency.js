@@ -134,25 +134,22 @@
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
             // convert the value to new currency on the model
             if (model.has(this.name)) {
-                // if user has removed currency value and hit enter, saving an empty string to the model
-                // make sure we make that value 0 so it doesn't NaN in the next model set
                 var val = model.get(this.name);
-                if(val === '') {
-                    val = 0;
+                if (val) {
+                    this.model.set(
+                        this.name,
+                        app.currency.convertAmount(
+                            val,
+                            this._lastCurrencyId,
+                            currencyId
+                        ),
+                        // we don't want to affect other bindings like sugar logic
+                        // when updating a value upon a currency_id change,
+                        // so set the model silently, then update the field value
+                        // directly (see next func call)
+                        { silent: true }
+                    );
                 }
-                this.model.set(
-                    this.name,
-                    app.currency.convertAmount(
-                        val,
-                        this._lastCurrencyId,
-                        currencyId
-                    ),
-                    // we don't want to affect other bindings like sugar logic
-                    // when updating a value upon a currency_id change,
-                    // so set the model silently, then update the field value
-                    // directly (see next func call)
-                    { silent: true }
-                );
                 // now defer changes to the end of the thread to avoid conflicts
                 // with other events (from SugarLogic, etc.)
                 var self = this;

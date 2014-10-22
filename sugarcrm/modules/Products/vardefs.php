@@ -637,6 +637,7 @@ $dictionary['Product'] = array(
             'relationship' => 'products_revenuelineitems',
             'vname' => 'LBL_REVENUELINEITEM',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'date_closed' => array(
             'name' => 'date_closed',

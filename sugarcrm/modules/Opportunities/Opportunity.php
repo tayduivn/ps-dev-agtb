@@ -82,6 +82,13 @@ class Opportunity extends SugarBean
     var $mkto_sync;
     var $mkto_id;
 
+    /**
+     * holds the settings for the Forecast Module
+     *
+     * @var array
+     */
+    public static $settings = array();
+
     public $importable = true;
     public $object_name = "Opportunity";
 
@@ -586,6 +593,17 @@ class Opportunity extends SugarBean
         if (isset($prob_arr[$this->sales_stage])) {
             $this->probability = $prob_arr[$this->sales_stage];
         }
+    }
+
+    public static function getSettings($reload = false)
+    {
+        /* @var $admin Administration */
+        if (empty(static::$settings) || $reload === true) {
+            $admin = BeanFactory::getBean('Administration');
+            static::$settings = $admin->getConfigForModule('Opportunities');
+        }
+
+        return static::$settings;
     }
 }
 

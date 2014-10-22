@@ -22,4 +22,12 @@ class SugarQuery_Builder_Field_Raw extends SugarQuery_Builder_Field
     {
         $this->field = $field;
     }
+
+    /**
+     * @param SugarQuery $query
+     */
+    public function setupField($query)
+    {
+        $this->query = $query;
+    }
 }

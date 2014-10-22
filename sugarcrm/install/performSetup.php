@@ -317,22 +317,15 @@ echo "<br>";
 
   //END SUGARCRM lic=sub ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //Install forecasts configuration
     require_once('modules/Forecasts/ForecastsDefaults.php');
     $forecast_config = ForecastsDefaults::setupForecastSettings();
 
-    // setup the forecast columns based on the config
-    require_once('include/api/RestService.php');
-    $api = new RestService();
-    $api->user = $GLOBALS['current_user'];
-    $api->platform = 'base';
-    require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
-    $client = new ForecastsConfigApi();
-    $client->setWorksheetColumns($api, $forecast_config['worksheet_columns'], $forecast_config['forecast_by']);
+    //Install Opportunities configuration
+    require_once('modules/Opportunities/OpportunitiesDefaults.php');
+    $opps_config = OpportunitiesDefaults::setupOpportunitiesSettings();
 
-    unset($api, $client, $forecast_config);
-    //END SUGARCRM flav=pro ONLY
+    unset($opps_config);
 
     $KBSContent = new KBSContent();
     $KBSContent->setupPrimaryLanguage();
@@ -418,6 +411,7 @@ $disabledTabs = array(
     "bugs",
     "products",
     "contracts",
+    "revenuelineitems"
     );
 
 installerHook('pre_setHiddenSubpanels');
@@ -625,7 +619,6 @@ FP;
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
     //BEGIN SUGARCRM flav=ent ONLY
-    $enabled_tabs[] = 'RevenueLineItems';
 
     if ($_SESSION['demoData'] != 'no') {
         $enabled_tabs[] = 'KBDocuments';

@@ -105,8 +105,12 @@ class ViewConfiguretabs extends SugarView
         //now create array of subpanels to hide for use in Drag and Drop widget
         $disabled = array();
         foreach ($hidpanels_arr as $key) {
-            if(empty($key)) continue;
+            if (empty($key)) continue;
             $key = strtolower($key);
+            // we need this here for with RLI's are disabled as they shouldn't be seen in the list
+            if ($key == 'revenuelineitems' && in_array('RevenueLineItems', $GLOBALS['modInvisList'])) {
+                continue;
+            }
             $disabled[] =  array("module" => $key, "label" => $mod_list_strings_key_to_lower[$key]);
         }
         

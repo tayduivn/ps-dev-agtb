@@ -193,13 +193,18 @@ $admin_group_header[]= array('LBL_PRICE_LIST_TITLE','',false,$admin_option_defs,
 $admin_option_defs=array();
 $admin_option_defs['Bugs']['bug_tracker']= array('Releases','LBL_MANAGE_RELEASES','LBL_RELEASE','./index.php?module=Releases&action=index');
 $admin_group_header[]= array('LBL_BUG_TITLE','',false,$admin_option_defs, 'LBL_BUG_DESC');
-//BEGIN SUGARCRM flav=pro ONLY
+
 //Forecasting
-
 $admin_option_defs=array();
-$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/config", {trigger: true});');
-$admin_group_header[]= array('LBL_FORECAST_TITLE','',false,$admin_option_defs, 'LBL_FORECAST_DESC');
+$admin_option_defs['Forecasts']['forecast_setup'] = array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE', 'LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/config", {trigger: true});');
+$admin_group_header[]= array('LBL_FORECAST_TITLE', '', false, $admin_option_defs, 'LBL_FORECAST_DESC');
 
+//BEGIN SUGARCRM flav=ent ONLY
+//Opportunities
+$admin_option_defs=array();
+$admin_option_defs['Opportunities']['opportunities_setup'] = array('Opportunities','LBL_MANAGE_OPPORTUNITIES_TITLE', 'LBL_MANAGE_OPPORTUNITIES_DESC', 'javascript:parent.SUGAR.App.router.navigate("Opportunities/config", {trigger: true});');
+$admin_group_header[]= array('LBL_MANAGE_OPPORTUNITIES_TITLE', '', false, $admin_option_defs, 'LBL_OPPORTUNITIES_DESC');
+//END SUGARCRM flav=ent ONLY
 
 //Contracts
 $admin_option_defs=array();
@@ -208,7 +213,6 @@ $admin_option_defs['Contracts']['contract_type_management']= array('Contracts','
 // fetch "Contracts" module name from localization data (bug #46740)
 $admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',false,$admin_option_defs, 'LBL_CONTRACT_DESC');
 
-//END SUGARCRM flav=pro ONLY
 
 
 
@@ -262,6 +266,17 @@ foreach ($admin_group_header as $key=>$values) {
                 {
                     unset($admin_group_header[$key][3][$mod_val]);
                 }
+
+                //BEGIN SUGARCRM flav=ent ONLY
+                // Maintain same access for Opps as we have for Forecasts
+                // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
+                if($mod_val == 'Opportunities'
+                    && !($current_user->isAdmin() || $current_user->isDeveloperForModule('Opportunities'))
+                    && isset($values[3]['Opportunities']))
+                {
+                    unset($admin_group_header[$key][3][$mod_val]);
+                }
+                //END SUGARCRM flav=ent ONLY
 
         } else {
         	//hide the link

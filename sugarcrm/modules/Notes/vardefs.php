@@ -275,6 +275,7 @@ $dictionary['Note'] = array(
     'relationship' => 'revenuelineitem_notes',
     'source'=>'non-db',
     'vname'=>'LBL_REVENUELINEITEMS',
+    'workflow' => false
   ),
   'quotes' =>
   array (

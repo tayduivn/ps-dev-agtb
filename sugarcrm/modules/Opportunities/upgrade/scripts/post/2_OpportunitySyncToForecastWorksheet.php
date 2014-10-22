@@ -23,8 +23,9 @@ class SugarUpgradeOpportunitySyncToForecastWorksheet extends UpgradeScript
             return;
         }
 
-        // we need to anything other than ENT and ULT
-        if (!$this->fromFlavor('pro')) {
+        $settings = Opportunity::getSettings();
+        if ($settings['opps_view_by'] !== 'Opportunities') {
+            $this->log('Not using Opportunities; Skipping Upgrade Script');
             return;
         }
 

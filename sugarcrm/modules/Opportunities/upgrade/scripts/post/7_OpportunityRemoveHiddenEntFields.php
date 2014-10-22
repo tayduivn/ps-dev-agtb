@@ -35,6 +35,13 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
     public function run()
     {
         if (version_compare($this->from_version, '7.0.0', '<') && $this->toFlavor('ent')) {
+
+            $settings = Opportunity::getSettings();
+            if ($settings['opps_view_by'] !== 'RevenueLineItems') {
+                $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
+                return;
+            }
+
             $fields = array(
                 'sales_stage',
                 'probability',

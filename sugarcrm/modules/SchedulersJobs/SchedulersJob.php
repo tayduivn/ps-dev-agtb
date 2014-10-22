@@ -48,6 +48,13 @@ class SchedulersJob extends Basic
     public $execute_time_db;
     public $percent_complete; // how much of the job is done
 
+    /**
+     * The group that the job belongs to
+     *
+     * @var String
+     */
+    public $job_group;
+
 	// standard SugarBean child attrs
 	var $table_name		= "job_queue";
 	var $object_name		= "SchedulersJob";

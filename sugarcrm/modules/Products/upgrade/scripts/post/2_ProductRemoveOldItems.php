@@ -30,5 +30,4 @@ class SugarUpgradeProductRemoveOldItems extends UpgradeScript
         $this->db->query($sql);
         $this->log('Done removing Products that were moved.');
     }
-
 }

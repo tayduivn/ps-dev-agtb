@@ -312,6 +312,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'relationship' => 'documents_revenuelineitems',
             'source' => 'non-db',
             'vname' => 'LBL_RLI_SUBPANEL_TITLE',
+            'workflow' => false
         ),
         //END SUGARCRM flav=pro ONLY
         'related_doc_id' =>

@@ -287,6 +287,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
             'bean_name' => 'RevenueLineItem',
             'source' => 'non-db',
             'vname' => 'LBL_REVENUELINEITEMS',
+            'workflow' => false
         ),
         'products' => array(
             'name' => 'products',

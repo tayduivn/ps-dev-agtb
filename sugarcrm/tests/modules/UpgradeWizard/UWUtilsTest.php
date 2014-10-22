@@ -128,27 +128,4 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
         // END SUGARCRM flav=pro && flav!=ent ONLY
     }
-
-    /**
-     * @group opportunities
-     * @group forecasts
-     */
-    public function testMultipleJobsCreatedForUpgradeOpportunities()
-    {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        // create 5 opportunities
-        for ($x=0; $x<= 5; $x++) {
-            $opp = SugarTestOpportunityUtilities::createOpportunity();
-            $opp->assigned_user_id = $GLOBALS['current_user']->id;
-            $opp->probability = '';
-            $opp->commit_stage = '';
-            $opp->save();
-        }
-
-        $jobs = updateOpportunitiesForForecasting(3);
-
-        SugarTestJobQueueUtilities::setCreatedJobs($jobs);
-
-        $this->assertEquals(2, count($jobs));
-    }
 }

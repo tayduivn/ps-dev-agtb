@@ -669,6 +669,7 @@ $dictionary['Quote'] = array(
             'relationship' => 'quote_revenuelineitems',
             'vname' => 'LBL_REVENUELINEITEMS',
             'source' => 'non-db',
+            'workflow' => false
         ),
         'shipping_accounts' => array(
             'name' => 'shipping_accounts',

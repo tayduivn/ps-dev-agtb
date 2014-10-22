@@ -23,6 +23,12 @@ class SugarUpgradeOpportunityFixCalculatedFields extends UpgradeScript
             return;
         }
 
+        $settings = Opportunity::getSettings();
+        if ($settings['opps_view_by'] !== 'RevenueLineItems') {
+            $this->log('Not using Revenue Line Items; Skipping Upgrade Script');
+            return;
+        }
+
         // get the get_widget helper and the StandardField Helper
         require_once('modules/DynamicFields/FieldCases.php');
         require_once('modules/ModuleBuilder/parsers/StandardField.php');

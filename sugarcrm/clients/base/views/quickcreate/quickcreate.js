@@ -40,7 +40,9 @@
         }
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if (app.isSynced) {
-            this.createMenuItems = this._getMenuMeta(app.metadata.getModuleNames({filter: 'quick_create', access: 'create'}));
+            this.createMenuItems = this._getMenuMeta(
+                app.metadata.getModuleNames({filter: ['visible', 'quick_create'], access: 'create'})
+            );
             app.view.View.prototype._renderHtml.call(this);
         }
     },

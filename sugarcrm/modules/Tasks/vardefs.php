@@ -196,6 +196,7 @@ $dictionary['Task'] = array(
             'relationship' => 'revenuelineitem_tasks',
             'source' => 'non-db',
             'vname' => 'LBL_REVENUELINEITEMS',
+            'workflow' => false
         ),
         'cases' => array(
             'name' => 'cases',

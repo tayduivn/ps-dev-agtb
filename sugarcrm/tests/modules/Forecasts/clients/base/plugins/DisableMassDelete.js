@@ -10,21 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
-    
+describe('Forecasts.Base.Plugins.DisableMassDelete', function() {
+
     var app, view, layout, moduleName = 'Opportunities', context, options, model;
-    
+
     beforeEach(function() {
         app = SUGAR.App;
         context = app.context.getContext();
-        context.set({mass_collection: new Backbone.Collection() });
+        context.set({mass_collection: new Backbone.Collection()});
 
         SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableMassDelete', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
         });
-        
+
         options = {
             meta: {
                 panels: [{
@@ -32,15 +32,15 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
                 }]
             }
         };
-        
+
         SugarTest.seedMetadata(true);
-        app.metadata.getModule("Forecasts", "config").is_setup = 1;
+        app.metadata.getModule('Forecasts', 'config').is_setup = 1;
         SugarTest.loadComponent('base', 'view', 'massupdate');
 
-        layout = SugarTest.createLayout("base", moduleName, "list", null, null);
-        view = SugarTest.createView("base", moduleName, "massupdate", options, context, true, layout);
+        layout = SugarTest.createLayout('base', moduleName, 'list', null, null);
+        view = SugarTest.createView('base', moduleName, 'massupdate', options, context, true, layout);
     });
-    
+
     afterEach(function() {
         delete app.plugins.plugins['field']['DisableMassDelete'];
         view = null;
@@ -49,30 +49,31 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
         options = null;
         layout = null;
     });
-    
-    describe("when nothing is closed", function() {
+
+    describe('when nothing is closed', function() {
         beforeEach(function() {
-            sinon.stub(view, "getMassUpdateModel", function() {
-                return {models:[]};
+            sinon.stub(view, 'getMassUpdateModel', function() {
+                return {models: []};
             });
         });
-        
+
         afterEach(function() {
             view.getMassUpdateModel.restore();
         });
-        
-        it("should return null", function() {
+
+        it('should return null', function() {
             var message = view._warnDelete();
             expect(message).toEqual(null);
         });
     });
-    
-    describe("when something is closed", function() {
+
+    describe('when something is closed', function() {
         beforeEach(function() {
-            sinon.stub(view, "getMassUpdateModel", function() {
-                return {models:[new Backbone.Model({
-                        id: "aaa",
-                        name: "boo",
+            sinon.stub(view, 'getMassUpdateModel', function() {
+                return {
+                    models: [new Backbone.Model({
+                        id: 'aaa',
+                        name: 'boo',
                         module: moduleName,
                         sales_status: 'Closed Won',
                         closed_revenue_line_items: 0
@@ -83,23 +84,24 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
                 };
             });
         });
-        
+
         afterEach(function() {
             view.getMassUpdateModel.restore();
         });
-        
-        it("should return WARNING_NO_DELETE_SELECTED", function() {
+
+        it('should return WARNING_NO_DELETE_SELECTED_STATUS', function() {
             var message = view._warnDelete();
-            expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
+            expect(message).toEqual('WARNING_NO_DELETE_SELECTED_STATUS');
         });
     });
-    
-    describe("when an opp has a closed RLI", function() {
+
+    describe('when an opp has a closed RLI', function() {
         beforeEach(function() {
-            sinon.stub(view, "getMassUpdateModel", function() {
-                return {models:[new Backbone.Model({
-                        id: "aaa",
-                        name: "boo",
+            sinon.stub(view, 'getMassUpdateModel', function() {
+                return {
+                    models: [new Backbone.Model({
+                        id: 'aaa',
+                        name: 'boo',
                         module: moduleName,
                         sales_status: 'In Progress',
                         closed_revenue_line_items: 1
@@ -110,23 +112,24 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
                 };
             });
         });
-        
+
         afterEach(function() {
             view.getMassUpdateModel.restore();
         });
-        
-        it("should return WARNING_NO_DELETE_CLOSED_SELECTED", function() {
+
+        it('should return WARNING_NO_DELETE_CLOSED_SELECTED_STATUS', function() {
             var message = view._warnDelete();
-            expect(message).toEqual("WARNING_NO_DELETE_CLOSED_SELECTED");
+            expect(message).toEqual('WARNING_NO_DELETE_CLOSED_SELECTED_STATUS');
         });
     });
-    
-    describe("when an opp is closed and it also has a closed RLI", function() {
+
+    describe('when an opp is closed and it also has a closed RLI', function() {
         beforeEach(function() {
-            sinon.stub(view, "getMassUpdateModel", function() {
-                return {models:[new Backbone.Model({
-                        id: "aaa",
-                        name: "boo",
+            sinon.stub(view, 'getMassUpdateModel', function() {
+                return {
+                    models: [new Backbone.Model({
+                        id: 'aaa',
+                        name: 'boo',
                         module: moduleName,
                         sales_status: 'Closed Won',
                         closed_revenue_line_items: 1
@@ -137,23 +140,24 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
                 };
             });
         });
-        
+
         afterEach(function() {
             view.getMassUpdateModel.restore();
         });
-        
-        it("should return WARNING_NO_DELETE_SELECTED", function() {
+
+        it('should return WARNING_NO_DELETE_SELECTED_STATUS', function() {
             var message = view._warnDelete();
-            expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
+            expect(message).toEqual('WARNING_NO_DELETE_SELECTED_STATUS');
         });
     });
-    
-    describe("when an item has a closed sales_stage", function() {
+
+    describe('when an item has a closed sales_stage', function() {
         beforeEach(function() {
-            sinon.stub(view, "getMassUpdateModel", function() {
-                return {models:[new Backbone.Model({
-                        id: "aaa",
-                        name: "boo",
+            sinon.stub(view, 'getMassUpdateModel', function() {
+                return {
+                    models: [new Backbone.Model({
+                        id: 'aaa',
+                        name: 'boo',
                         module: moduleName,
                         sales_stage: 'Closed Won',
                         sales_status: null,
@@ -165,14 +169,14 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
                 };
             });
         });
-        
+
         afterEach(function() {
             view.getMassUpdateModel.restore();
         });
-        
-        it("should return WARNING_NO_DELETE_SELECTED", function() {
+
+        it('should return WARNING_NO_DELETE_SELECTED_STATUS', function() {
             var message = view._warnDelete();
-            expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
+            expect(message).toEqual('WARNING_NO_DELETE_SELECTED_STATUS');
         });
     });
 });

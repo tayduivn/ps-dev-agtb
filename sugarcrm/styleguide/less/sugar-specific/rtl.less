@@ -543,14 +543,8 @@ html.rtl {
         }
     }
 
-    .dashboard .dashlets > li:first-child {
-        padding-right: 5px;
+    .side .dashlets > li:last-child {
         padding-left: 0;
-    }
-
-    .dashboard .dashlets > li:last-child {
-        padding-left: 5px;
-        padding-right: 0;
     }
 
     .dashboard .dashlets .dashlet-row .rows.well > .btn {
@@ -582,6 +576,34 @@ html.rtl {
 
     .side .dashlets > li:last-child {
         padding-left: 0;
+    }
+
+    .dashboard,
+    .preview-data {
+        .dashlets > li:first-child {
+            padding-right: 5px;
+            padding-left: 0;
+        }
+        .dashlets > li:last-child {
+            padding-left: 5px;
+            padding-right: 0;
+        }
+        .dashlet .listed li p {
+            padding-left: 0;
+            padding-right: 44px;
+        }
+        .dashlet .listed li .pull-left.avatar {
+            margin-left: 0;
+            margin-right: -44px;
+        }
+        .dashlet .listed li .icon-stack,
+        .dashlet .listed li img {
+            margin: 0 0 0 12px;
+        }
+        .dashlet .listed li .details {
+            padding-right: 44px;
+            padding-left: 0;
+        }
     }
 
     .sorting_asc span, .sorting_desc span, .sorting span {

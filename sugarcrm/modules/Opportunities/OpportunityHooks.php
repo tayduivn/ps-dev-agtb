@@ -13,6 +13,15 @@
 require_once('modules/Forecasts/AbstractForecastHooks.php');
 class OpportunityHooks extends AbstractForecastHooks
 {
+    /**
+     * @return array
+     */
+    protected static function useRevenueLineItems()
+    {
+        // get the OpportunitySettings
+        $settings = Opportunity::getSettings();
+        return (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems');
+    }
 
     /**
      * This is a general hook that takes the Opportunity and saves it to the forecast worksheet record.
@@ -24,7 +33,7 @@ class OpportunityHooks extends AbstractForecastHooks
      */
     public static function saveWorksheet(Opportunity $bean, $event, $args)
     {
-        if (static::isForecastSetup()) {
+        if (static::isForecastSetup() && !static::useRevenueLineItems()) {
             /* @var $worksheet ForecastWorksheet */
             $worksheet = BeanFactory::getBean('ForecastWorksheets');
             $worksheet->saveRelatedOpportunity($bean);
@@ -43,7 +52,7 @@ class OpportunityHooks extends AbstractForecastHooks
      */
     public static function deleteOpportunityRevenueLineItems(Opportunity $bean, $event, $args)
     {
-        if (static::isForecastSetup()) {
+        if (static::useRevenueLineItems()) {
             $rlis = $bean->get_linked_beans('revenuelineitems', 'RevenueLineItems');
             foreach ($rlis as $rli) {
                 $rli->mark_deleted($rli->id);
@@ -60,7 +69,7 @@ class OpportunityHooks extends AbstractForecastHooks
      */
     public static function setSalesStatus(Opportunity $bean, $event, $args)
     {
-        if ($bean->ACLFieldAccess('sales_status', 'write')) {
+        if (static::useRevenueLineItems() && $bean->ACLFieldAccess('sales_status', 'write')) {
             // we have a new bean so set the value to new and dump out
             if (empty($bean->fetched_row)) {
                 $bean->sales_status = Opportunity::STATUS_NEW;
@@ -113,53 +122,5 @@ class OpportunityHooks extends AbstractForecastHooks
                 }
             }
         }
-    }
-
-    /**
-     * This handles the maintaining of the hidden RevenueLineItem when we are forecasting by Opportunities
-     *
-     * @param Opportunity $opp          The Opportunity Bean
-     * @param string $event             What event is being handled
-     * @param array $args               Any additional arguments passed in
-     * @return boolean
-     */
-    public static function processHiddenRevenueLineItem(Opportunity $opp, $event, $args = array())
-    {
-        // if this is not after save, then ignore it
-        if ($event != 'after_save') {
-            return false;
-        }
-
-        // make sure forecasts is setup and we are forecasting by Opportunities
-        if (static::isForecastSetup() && static::$settings['forecast_by'] == 'Opportunities') {
-            //We create a related product entry for any new opportunity so that we may forecast on products
-            // create an empty product module
-            /* @var $rli RevenueLineItem */
-            $rli = BeanFactory::getBean('RevenueLineItems');
-            $rli->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-
-            $rli->name = $opp->name;
-            $rli->best_case = $opp->best_case;
-            $rli->likely_case = $opp->amount;
-            $rli->worst_case = $opp->worst_case;
-            $rli->cost_price = $opp->amount;
-            $rli->quantity = 1;
-            $rli->currency_id = $opp->currency_id;
-            $rli->base_rate = $opp->base_rate;
-            $rli->probability = $opp->probability;
-            $rli->date_closed = $opp->date_closed;
-            $rli->date_closed_timestamp = $opp->date_closed_timestamp;
-            $rli->assigned_user_id = $opp->assigned_user_id;
-            $rli->opportunity_id = $opp->id;
-            $rli->account_id = $opp->account_id;
-            $rli->commit_stage = $opp->commit_stage;
-            $rli->sales_stage = $opp->sales_stage;
-            $rli->deleted = $opp->deleted;
-            $rli->save();
-
-            return true;
-        }
-
-        return false;
     }
 }

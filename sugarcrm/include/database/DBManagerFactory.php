@@ -96,7 +96,7 @@ class DBManagerFactory
      * instance if one is not specified
      *
      * @param  string $instanceName optional, name of the instance
-     * @return DBManager DBManager instance
+     * @return DBManager Database instance
      */
 	public static function getInstance($instanceName = '')
     {
