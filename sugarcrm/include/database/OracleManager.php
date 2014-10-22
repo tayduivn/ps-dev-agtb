@@ -427,24 +427,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Run query throuh prepared statement, accounting for LOBs
-     * @param string $sql SQL query
-     * @param string $data Data for SQL
-     * @param array $defs Field definitions
-     * @param string $msg Error message
-     * @return boolean
-     */
-    protected function preparedQueryLob($sql, $data, $defs, $msg = '')
-    {
-        $ps = new $this->preparedStatementClass($this);
-        $ps->parseSQL($sql);
-        if(!$ps->setLobs($this->getLobFields($defs))->preparePreparedStatement($msg)) {
-            return false;
-        }
-        return $ps->executePreparedStatement($data, $msg);
-    }
-
-    /**
      * @see DBManager::update()
      */
     public function update(SugarBean $bean, array $where = array())
@@ -452,8 +434,8 @@ class OracleManager extends DBManager
         $this->tableName = $bean->getTableName();
         $msg = "Error updating table: ".$this->tableName;
         if($this->usePreparedStatements) {
-            list($sql, $data) = $this->updateSQL($bean, $where, true);
-            return $this->preparedQueryLob($sql, $data, $bean->getFieldDefinitions(), $msg);
+            list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
+            return $this->preparedQuery($sql, $data, $lobs, $msg);
         } else {
             $sql = $this->updateSQL($bean,$where);
             $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
@@ -464,33 +446,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Extract LOB fields from vardefs
-     * @param array $fieldDefs vardefs
-     * @return array Array containing LOB fields, keyed by field number and value is field name
-     */
-    protected function getLobFields($fieldDefs)
-    {
-        $lob_fields = array();
-        $cnt = 0;
-        foreach ($fieldDefs as $fieldDef) {
-            $type = $this->getColumnType($this->getFieldType($fieldDef));
-            if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
-                continue;
-            }
-
-            //not include the field if a value is not set...
-            if (!isset($data[$fieldDef['name']])) continue;
-
-            $cnt++;
-            $lob_type = false;
-            if ($this->isTextType($type)) {
-                $lob_fields[$cnt] = $fieldDef['name'];
-            }
-        }
-        return $lob_fields;
-    }
-
-    /**
      * @see DBManager::insert()
      */
     public function insert(SugarBean $bean)
@@ -498,8 +453,8 @@ class OracleManager extends DBManager
         $this->tableName = $bean->getTableName();
         $msg = "Error inserting into table: ".$this->tableName;
         if($this->usePreparedStatements) {
-            list($sql, $data) = $this->insertSQL($bean, true);
-            return $this->preparedQueryLob($sql, $data, $bean->getFieldDefinitions(), $msg);
+            list($sql, $data, $lobs) = $this->insertSQL($bean, true);
+            return $this->preparedQuery($sql, $data, $lobs, $msg);
         } else {
             $sql = $this->insertSQL($bean);
             $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
