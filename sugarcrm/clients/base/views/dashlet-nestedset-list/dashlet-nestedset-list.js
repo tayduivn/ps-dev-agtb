@@ -260,6 +260,8 @@
 
         collection.filterDef = [{}];
         collection.filterDef[0][this.extraModule.field] = {$equals: id};
+        collection.filterDef[0]['status'] = {$in: ['published', 'published-in', 'published-ex']};
+        collection.filterDef[0]['active_rev'] = {$equals: 1};
         collection.fetch({
             success: function(data) {
                 self.removeChildrens(id, 'document');

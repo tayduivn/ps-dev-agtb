@@ -264,14 +264,13 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'active_rev',
                     'type' => 'bool',
                 ),
+                'team_name' => array(
+                    'name' => 'team_name',
+                ),
                 'internal_rev' => array(
                     'name' => 'internal_rev',
                     'type' => 'bool',
                 ),
-                'team_name' => array(
-                    'name' => 'team_name',
-                ),
-
                 'date_entered' => array(
                     'name' => 'date_entered',
                 ),
