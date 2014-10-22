@@ -358,18 +358,31 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             $sqlCase = "min(CASE " . implode("\n", $order_by_arr) . " ELSE $i END)";
         }
 
+        $fcsettings = Forecast::getSettings();
+
+        $stage_cases = array();
+        $closed_stages = array_merge($fcsettings['sales_stage_won'], $fcsettings['sales_stage_lost']);
+
+        foreach($closed_stages as $stage) {
+            $stage_cases[] = $db->quoted($stage);
+        }
+
+        $stage_cases = implode(',', $stage_cases);
+
         $sq = new SugarQuery();
         $sq->select(array('id', 'name', 'opportunity_id'))
             ->fieldRaw($sqlCase, 'sales_stage')
-            ->fieldRaw($this->dateClosedMigration . '(date_closed)', 'date_closed')
-            ->fieldRaw($this->dateClosedMigration . '(date_closed_timestamp)', 'date_closed_timestamp');
+            ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage IN (' . $stage_cases . ') THEN date_closed END)', 'dc_closed')
+            ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage NOT IN (' . $stage_cases . ') THEN date_closed END)', 'dc_open')
+            ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage IN (' . $stage_cases . ') THEN date_closed_timestamp END)', 'dct_closed')
+            ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage NOT IN (' . $stage_cases . ') THEN date_closed_timestamp END)', 'dct_open');
         $sq->from($rli);
         $sq->groupBy('opportunity_id');
 
         $results = $sq->execute();
         foreach ($results as $result) {
-            $sql = 'UPDATE opportunities SET date_closed = ' . $db->quoted($result['date_closed']) . ',
-                date_closed_timestamp = ' . $db->quoted($result['date_closed_timestamp']) . ',
+            $sql = 'UPDATE opportunities SET date_closed = ' . $db->quoted((!empty($result['dc_open']) ? $result['dc_open'] : $result['dc_closed'])) . ',
+                date_closed_timestamp = ' . $db->quoted((!empty($result['dct_open']) ? $result['dct_open'] : $result['dct_closed'])) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
                 sales_status = "", commit_stage = ""
