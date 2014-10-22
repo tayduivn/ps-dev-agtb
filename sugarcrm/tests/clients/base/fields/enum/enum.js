@@ -87,26 +87,6 @@ describe("enum field", function() {
         expect(field.model.get(field.name)).toEqual('first');
     });
 
-    it("should not default the value of the field to the first option if undefined if write access is false", function() {
-        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
-        field.items = {'first': 'first', 'second': 'second'};
-        field.model.set({_acl: {fields: {test_enum: { write: 'no'}}}});
-        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
-        field.render();
-        loadEnumSpy.restore();
-        expect(field.model.get(field.name)).toBeUndefined();
-    });
-
-    it("should not default the value of the field to the first option if defaultOnUndefined is false", function() {
-        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
-        field.items = {'first': 'first', 'second': 'second'};
-        field.defaultOnUndefined = false;
-        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
-        field.render();
-        loadEnumSpy.restore();
-        expect(field.model.get(field.name)).toBeUndefined();
-    });
-
     it("should not default the value of the field to the first option if multi select", function() {
         var field = SugarTest.createField("base", fieldName, "enum", "edit", {isMultiSelect: true, options: "bugs_type_dom"});
         field.items = {'first': 'first', 'second': 'second'};

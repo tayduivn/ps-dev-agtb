@@ -179,6 +179,7 @@ describe('Base.View.FilterRows', function() {
             var $row = view.addRow();
             expect($row.data('nameField')).toBeDefined();
             expect($row.data('nameField').type).toEqual('enum');
+            // FIXME (SC-2833): add empty select option to not set the first option as default in filter row
             expect($row.data('nameField').def.options).toEqual(['test_field']);
         });
     });

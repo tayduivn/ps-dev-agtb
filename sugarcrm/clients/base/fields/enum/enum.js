@@ -25,12 +25,6 @@
      */
     appendValueTag: 'input[name=append_value]',
 
-    /**
-     * Whether the value of this enum should be defaulted to the first item when model attribute is undefined
-     * Set to false to prevent this defaulting
-     */
-    defaultOnUndefined: true,
-
     //For multi select, we replace the empty key by a temporary key because Select2 doesn't handle empty values well
     BLANK_VALUE_ID: '___i_am_empty___',
 
@@ -162,14 +156,15 @@
             }, this);
             this.items = obj;
         }
-        var optionsKeys = _.isObject(this.items) ? _.keys(this.items) : [];
+        var optionsKeys = _.isObject(this.items) ? _.keys(this.items) : [],
+            defaultValue;
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         // if the user has write access to the model for the field we are currently on
-        if (this.defaultOnUndefined && !this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))
+        if (!this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))
             && app.acl.hasAccessToModel('write', this.model, this.name)
             ) {
-            var defaultValue = this._getDefaultOption(optionsKeys);
+            defaultValue = this._getDefaultOption(optionsKeys);
             if (defaultValue) {
                 // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
                 this.model.set(this.name, defaultValue, {silent: true});
@@ -201,12 +196,12 @@
                     plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
                 }
                 $el.select2("container").addClass("tleft");
-                $el.on('change', function(ev){
+                $el.on('change', function(ev) {
                     var value = ev.val;
                     if (_.isUndefined(value)) {
                         return;
                     }
-                    if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
+                    if (self.model) {
                         self.model.set(self.name, self.unformat(value));
                         //Forecasting uses backbone model (not bean) for custom enums so we have to check here
                         if (_.isFunction(self.model.removeDefaultAttribute)) {
@@ -237,7 +232,9 @@
                 if (!_.isArray(this.value)) {
                     this.value = [this.value];
                 }
-                $el.select2('val', this.value);
+                // Trigger the `change` event only if we automatically set the
+                // default value.
+                $el.select2('val', this.value, !!defaultValue);
             }
         } else {
             // Set loading message in place of empty DIV while options are loaded via API
@@ -578,6 +575,7 @@
                 this.model.set(this.name + '_replace', this.appendValue ? '1' : '0');
             }, this));
         }
+
     },
 
     /**
