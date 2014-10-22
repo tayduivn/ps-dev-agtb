@@ -54,6 +54,20 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'type' => 'status',
                 ),
                 array(
+                    'name' => 'active_date',
+                    'vname' => 'LBL_PUBLISH_DATE',
+                    'type' => 'date',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'exp_date',
+                    'vname' => 'LBL_EXP_DATE',
+                    'type' => 'date',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
                     'name' => 'tags',
                     'label' => 'LBL_TAGS',
                     'default' => true,
