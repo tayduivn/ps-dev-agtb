@@ -36,7 +36,14 @@ $vardefs = array(
                 'mobile' => false,
                 'portal' => false,
             ),
-        )
+        ),
+        'tag_lower' => array(
+            'name' => 'tag_lower',
+            'vname' => 'LBL_TAGS_LOWER',
+            'type' => 'text',
+            'studio' => false,
+            'reportable' => false,
+        ),
     ),
     'relationships' => array(
         strtolower($module).'_tags' => array(

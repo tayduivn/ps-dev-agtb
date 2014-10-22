@@ -27,12 +27,21 @@ class SugarFieldTag extends SugarFieldMultienum
             return;
         }
 
+        $lowercaseValues = array();
         foreach ($params[$field] as $key => &$record) {
             // First create tag bean if it needs to be created
             $this->getTagBean($record);
 
             // Format tag to look more like a multienum field
             $record = $record['name'];
+
+            // Make a lowercase version for storage and retrieval
+            $lowercaseValues[] = strtolower($record);
+        }
+
+        // Make the lowercase version of the tag and save that to the bean
+        if (isset($bean->field_defs[$field . '_lower']) && !empty($lowercaseValues)) {
+            $bean->{$field . '_lower'} = implode(' ', $lowercaseValues);
         }
 
         // Then save tags as a field on current bean

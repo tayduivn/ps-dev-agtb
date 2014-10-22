@@ -46,8 +46,10 @@ class SugarWidgetFieldTag extends SugarWidgetFieldVarchar {
         $matches = explode(',', $layout_def['input_name0']);
         $q = "";
         foreach ($matches as $match) {
-            $match = trim($match);
-            $q .= " " . $this->_get_column_select($layout_def) . " LIKE '%" .$GLOBALS['db']->quote($match)."%' OR";
+            // Make the match field the lowercase version of the field. This feels
+            // a little dirty but I bet Mike Rowe would approve
+            $match = strtolower(trim($match));
+            $q .= " " . $this->getLowercaseColumnSelect($layout_def) . " LIKE '%" .$GLOBALS['db']->quote($match)."%' OR";
         }
 
         return rtrim($q, " OR");
@@ -64,10 +66,26 @@ class SugarWidgetFieldTag extends SugarWidgetFieldVarchar {
         $matches = explode(',', $layout_def['input_name0']);
         $q = "";
         foreach ($matches as $match) {
-            $match = trim($match);
-            $q .= " " . $this->_get_column_select($layout_def) . " NOT LIKE '%" .$GLOBALS['db']->quote($match)."%' AND";
+            // Make the match field the lowercase version of the field. This feels
+            // a little dirty but I bet Mike Rowe would approve
+            $match = strtolower(trim($match));
+            $q .= " " . $this->getLowercaseColumnSelect($layout_def) . " NOT LIKE '%" .$GLOBALS['db']->quote($match)."%' AND";
         }
 
         return rtrim($q, " AND");
+    }
+
+    /**
+     * Gets the lowercase version of the name of the field for use in queries
+     * 
+     * @param array $def
+     * @return string
+     */
+    protected function getLowercaseColumnSelect($def)
+    {
+        // Copied to ensure that references don't get clobbered after this point
+        $hold = $def;
+        $hold['name'] .= '_lower';
+        return parent::_get_column_select($hold);
     }
 }
