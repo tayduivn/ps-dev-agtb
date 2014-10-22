@@ -3107,6 +3107,8 @@ $app_strings = array (
     'ERROR_ACCESS_MODULE' => 'You do not have access to this module.',
     'ERROR_MAX_FILESIZE_EXCEEDED' => 'Error. The attachment is too large.',
     'ERROR_UPLOAD_FAILED' => 'Error. The file failed to upload.',
+    'ERROR_EXP_DATE_LOW' => 'Error. The date of this field can not be before date of publishing.',
+    'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires the date of this field.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
@@ -5260,11 +5262,12 @@ $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
 $app_list_strings['kbsdocument_status_dom'] = array(
     'draft' => 'Draft',
-    'expired' => 'Expired',
     'in-review' => 'In Review',
+    'approved' => 'Approved',
     'published' => 'Published',
     'published-in' => 'Published (Internal)',
     'published-ex' => 'Published (Extrenal)',
+    'expired' => 'Expired',
 );
 
 $app_list_strings['kbdocument_status_dom'] = array (

@@ -37,7 +37,7 @@ $mod_strings = array (
 'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 'LBL_OOTB_CREATE_NEXT_TIMEPERIOD' => 'Create Future TimePeriods',
 'LBL_OOTB_HEARTBEAT' => 'Sugar Heartbeat',
-'LBL_OOTB_KBSCONTENT_EXPIRE' => 'Expire KBSContent articles.',
+'LBL_OOTB_KBSCONTENT_UPDATE' => 'Update KBSContent articles.',
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',

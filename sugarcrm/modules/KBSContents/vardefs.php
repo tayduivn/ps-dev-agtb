@@ -190,6 +190,16 @@ $dictionary['KBSContent'] = array(
             'studio' => false,
             'readonly' => true,
         ),
+        'internal_rev' => array(
+            'name' => 'internal_rev',
+            'vname' => 'LBL_INTERNAL_REV',
+            'type' => 'tinyint',
+            'isnull' => 'true',
+            'comment' => 'Internal revision flag',
+            'default' => 0,
+            'duplicate_on_record_copy' => 'no',
+            'studio' => false,
+        ),
         'kbsarticles_kbscontents' => array(
             'name' => 'kbsarticles_kbscontents',
             'type' => 'link',
