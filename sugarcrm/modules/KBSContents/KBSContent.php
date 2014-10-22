@@ -127,6 +127,14 @@ class KBSContent extends SugarBean {
                         'en' => 'English',
                         'primary' => true,
                     ),
+                    array(
+                        'de' => 'German',
+                        'primary' => false,
+                    ),
+                    array(
+                        'ru' => 'Russian',
+                        'primary' => false,
+                    ),
                 ),
                 'module' => 'KBSDocuments',
             )
