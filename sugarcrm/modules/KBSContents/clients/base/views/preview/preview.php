@@ -75,6 +75,7 @@ $viewdefs['KBSContents']['base']['view']['preview'] = array(
                 'date_modified',
                 'team_name',
                 'exp_date',
+                'active_date',
             ),
         ),
     ),
