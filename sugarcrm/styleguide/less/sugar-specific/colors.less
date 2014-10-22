@@ -1,15 +1,25 @@
 /* COLORS
   ----------------*/
 
-/* background colors */
+/* gray scale colors */
 
 .black {background-color: @black;}
-.grayDarker {background-color: @grayDarker;}
-.grayDark {background-color: @grayDark;}
+.gray-darker {background-color: @grayDarker;}
+.gray-dark {background-color: @grayDark;}
 .gray {background-color: @gray;}
-.grayLight {background-color: @grayLight;}
-.grayLighter {background-color: @grayLighter;}
+.gray-light {background-color: @grayLight;}
+.gray-lighter {background-color: @grayLighter;}
 .white {background-color: @white;}
+
+.black-text {color: @black;}
+.gray-darker-text {color: @grayDarker;}
+.gray-dark-text {color: @grayDark;}
+.gray-text {color: @gray;}
+.gray-light-text {color: @grayLight;}
+.gray-lighter-text {color: @grayLighter;}
+.white-text {color: @white;}
+
+/* accent colors */
 
 .mint {background-color: @mint;}
 .green {background-color: @green;}
@@ -26,32 +36,6 @@
 .teal {background-color: @teal;}
 .coral {background-color: @coral;}
 
-.infoText {background-color: @infoText;}
-.errorText {background-color: @errorText;}
-.errorTextAlert {background-color: @errorTextAlert;}
-.successText {background-color: @successText;}
-.warningText {background-color: @warningText;}
-
-.infoBackground {background-color: @infoBackground;}
-.errorBackground {background-color: @errorBackground;}
-.successBackground {background-color: @successBackground;}
-.warningBackground {background-color: @warningBackground;}
-
-.infoBorder {background-color: @infoBorder;}
-.errorBorder {background-color: @errorBorder;}
-.successBorder {background-color: @successBorder;}
-.warningBorder {background-color: @warningBorder;}
-
-/* text colors */
-
-.black-text {color: @black;}
-.grayDarker-text {color: @grayDarker;}
-.grayDark-text {color: @grayDark;}
-.gray-text {color: @gray;}
-.grayLight-text {color: @grayLight;}
-.grayLighter-text {color: @grayLighter;}
-.white-text {color: @white;}
-
 .mint-text {color: @mint;}
 .green-text {color: @green;}
 .army-text {color: @army;}
@@ -66,5 +50,23 @@
 .pacific-text {color: @pacific;}
 .teal-text {color: @teal;}
 .coral-text {color: @coral;}
+
+/* alert state colors */
+
+.info-text {background-color: @infoText;}
+.error-text {background-color: @errorText;}
+.error-text-alert {background-color: @errorTextAlert;}
+.success-text {background-color: @successText;}
+.warning-text {background-color: @warningText;}
+
+.info-background {background-color: @infoBackground;}
+.error-background {background-color: @errorBackground;}
+.success-background {background-color: @successBackground;}
+.warning-background {background-color: @warningBackground;}
+
+.info-border {background-color: @infoBorder;}
+.error-border {background-color: @errorBorder;}
+.success-border {background-color: @successBorder;}
+.warning-border {background-color: @warningBorder;}
 
 /* colors for D3 charts are in nv.d3.less */
