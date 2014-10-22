@@ -15,7 +15,7 @@
  *
  * @author Collin Lee
  */
-class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {

@@ -21,7 +21,7 @@ require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
  * Relate field data is not displayed in subpanel
  *
  */
-class RLIBug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class RLIBug52361Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var User

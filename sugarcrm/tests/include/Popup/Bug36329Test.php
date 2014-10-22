@@ -15,7 +15,7 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 /**
  * @ticket 23140
  */
-class Bug36329Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $save_query;
 	var $current_language;

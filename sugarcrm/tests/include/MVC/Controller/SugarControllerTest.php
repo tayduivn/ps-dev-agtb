@@ -12,7 +12,7 @@
 
 require_once 'include/MVC/Controller/SugarController.php';
 
-class SugarControllerTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $module_name;
 

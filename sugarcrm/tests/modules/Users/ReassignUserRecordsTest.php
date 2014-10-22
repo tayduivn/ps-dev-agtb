@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ReassignUserRecordsTest extends Sugar_PHPUnit_Framework_OutputTestCase {
+class ReassignUserRecordsTest extends Sugar_PHPUnit_Framework_TestCase {
 
     private $user1;
     private $user2;

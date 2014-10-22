@@ -15,7 +15,7 @@ require_once('modules/Teams/Team.php');
 require_once('modules/Teams/TeamSet.php');
 require_once('vendor/nusoap//nusoap.php');
 
-class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_sugarField;
     private $_smarty;

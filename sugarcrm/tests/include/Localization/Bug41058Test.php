@@ -12,7 +12,7 @@
 
 require_once 'modules/UpgradeWizard/uw_utils.php';
 
-class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
+class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
 
     var $user;
     var $backupConfig;

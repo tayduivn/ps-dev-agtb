@@ -17,7 +17,7 @@ require_once('vendor/tcpdf/tcpdf.php');
 /**
  * @ticket 38850
  */
-class Bug38850Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug38850Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testCanInterjectCodeInTcpdfTag()
     {

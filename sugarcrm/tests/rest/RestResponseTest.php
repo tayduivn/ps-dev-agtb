@@ -2,7 +2,7 @@
 require_once('include/api/RestService.php');
 require_once('include/download_file.php');
 
-class RestResponseTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class RestResponseTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * Find specific header in an array

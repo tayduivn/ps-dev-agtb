@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug44831Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug44831Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
