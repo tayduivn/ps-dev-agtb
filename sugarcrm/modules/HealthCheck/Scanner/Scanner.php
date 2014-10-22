@@ -1016,6 +1016,7 @@ class HealthCheckScanner
                     'wireless.editviewdefs.php',
                     'wireless.detailviewdefs.php',
                     'wireless.listviewdefs.php',
+                    'convertdefs.php',     // CRYS-536 - exclude */Leads/metadata/convertdefs.php
                 );
                 return !in_array(basename($def), $filesToExclude);
             }
@@ -1199,13 +1200,6 @@ class HealthCheckScanner
         }
         return $res;
     }
-
-    protected $knownCustomCode = array(
-        '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-        '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
-        '{$fields.currency_symbol.value}{$fields.deal_calc.value}',
-        '{$EMAIL1_LINK}{$EMAIL1}</a>',
-    );
 
     /**
      * Look for custom code in array of defs
