@@ -3887,6 +3887,14 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
     'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'Localizations dashelet description',
 
+    // Most Useful Knowledge Base Articles dashlet
+    'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
+    'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
+
+    // Usefulness for Articles dashlet
+    'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
+    'LBL_DASHLET_USEFULNESS_DESC' => 'Usefulness for Articles Description',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
