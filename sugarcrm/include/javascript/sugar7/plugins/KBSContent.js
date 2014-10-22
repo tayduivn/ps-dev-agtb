@@ -64,6 +64,7 @@
                     success: function() {
                         prefill.copy(parentModel);
                         prefill.unset('id');
+                        prefill.set('status', 'draft');
 
                         if (type === self.CONTENT_LOCALIZATION) {
                             self._onCreateLocalization(prefill, parentModel);
