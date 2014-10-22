@@ -65,7 +65,9 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || {};
-        if (this.context.get('module') === this.extraModule.module && this.context.get('action') === 'detail') {
+        if (this.context.get('module') === this.extraModule.module
+            && this.context.get('action') === 'record'
+            ) {
             this.useStates = false;
         }
     },
@@ -185,32 +187,49 @@
      * @param {Object} data
      */
     stateLoaded: function(data) {
-        _.each(data.open, function(value) {
+        var originalUseState = this.useStates,
+            self = this;
+        async.forEach(data.open, function(value, callback) {
+            self.useStates = false;
             value.open = true;
-            this.folderToggled(value);
-        }, this);
+            self.folderToggled(value, callback);
+        }, function() {
+            _.each(data.open, function(value) {
+                self.openNode(value.id);
+            });
+            self.useStates = originalUseState;
+        });
         return true;
     },
 
     /**
      * Handle toggle of tree folder.
      * @param {Object} data
+     * @param {Function} callback Async callback to use with async.js
      * @return {Boolean}
      */
-    folderToggled: function (data) {
+    folderToggled: function (data, callback) {
+        var triggeredCallback = false,
+            self = this;
         if (data.open) {
             var model = this.collection.getChild(data.id),
                 items = [];
-            if (!model.id) {
-                return true;
+            if (model.id) {
+                items = model.children.models;
+                if (items.length !== 0) {
+                    triggeredCallback = true;
+                    async.forEach(items, function(item, c) {
+                        self.loadAdditionalLeaf(item.id, c);
+                    }, function() {
+                        if (_.isFunction(callback)) {
+                            callback.call();
+                        }
+                    });
+                }
             }
-            items = model.children.models;
-            if (items.length === 0) {
-                return true;
-            }
-            _.each(items, function(item) {
-                this.loadAdditionalLeaf(item.id);
-            }, this);
+        }
+        if (triggeredCallback === false && _.isFunction(callback)) {
+                callback.call();
         }
         if (this.useStates) {
             this.saveJSTreeState();
@@ -244,6 +263,9 @@
             || _.isEmpty(this.extraModule.field)
             || !_.isUndefined(this.loadedLeafs[id])
         ) {
+            if (_.isFunction(callback)) {
+                callback.call();
+            }
             return;
         }
         var collection = app.data.createBeanCollection(this.extraModule.module),

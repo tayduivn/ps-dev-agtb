@@ -748,6 +748,17 @@
             },
 
             /**
+             * Open required node.
+             * @param {String} id
+             */
+            openNode: function(id) {
+                var selectedNode = this.jsTree.find('[data-id=' + id +']');
+                if (selectedNode.hasClass('jstree-closed')) {
+                    this.jsTree.jstree('open_node', selectedNode);
+                }
+            },
+
+            /**
              * Show child nodes which were added by insertNode.
              * @param {String} id
              */
