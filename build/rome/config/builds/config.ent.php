@@ -52,6 +52,7 @@ $config['builds']['ent']['languages']= array(
 'et_EE',
 'es_LA',
 'fi_FI',
+'ar_SA',
 );
 $config['builds']['ent']['lic'] = array('sub');
 $config['blackList']['ent'] = array(
