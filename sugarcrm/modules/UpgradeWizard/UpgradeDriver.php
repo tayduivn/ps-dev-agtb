@@ -1731,15 +1731,19 @@ abstract class UpgradeDriver
         $vfile = __DIR__ . "/" . self::VERSION_FILE;
         if (file_exists($vfile)) {
             $data = json_decode(file_get_contents($vfile), true);
-            if (empty($data)) {
-                return array($version, $build);
-            }
             if (!empty($data['version'])) {
                 $version = $data['version'];
             }
             if (!empty($data['build'])) {
                 $build = $data['build'];
             }
+        } elseif (file_exists('sugar_version.php')) {
+            if(!defined('sugarEntry')) {
+                define('sugarEntry', 'upgrader');
+            }
+            include 'sugar_version.php';
+            $version = $sugar_version;
+            $build = $sugar_build;
         }
         return array($version, $build);
     }
