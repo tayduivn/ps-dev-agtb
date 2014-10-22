@@ -73,6 +73,10 @@
             publishingDate = this.model.get(fieldName);
 
         if (!publishingDate && status == 'approved') {
+            // If the field is hidden.
+            if (!this.view.getField('active_date')) {
+                fieldName = 'status';
+            }
             errors[fieldName] = errors[fieldName] || {};
             errors[fieldName].activeDateApproveRequired = true;
         }
