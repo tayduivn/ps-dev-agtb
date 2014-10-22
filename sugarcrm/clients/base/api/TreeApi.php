@@ -251,7 +251,7 @@ class TreeApi extends FilterApi
      * This method prepend record to target as first child.
      * @param Object $api api object
      * @param Array $args arguments passed from api
-     * @return id Bean id
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      * @throws SugarApiExceptionNotFound
      */
     public function prepend($api, $args)
@@ -261,14 +261,15 @@ class TreeApi extends FilterApi
         $api->action = 'save';
         $target = $this->retrieveBean($args['module'], $args['target']);
         $target->prepend($bean);
-        return $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
+        return $this->formatBean($api, $args, $bean);
     }
 
     /**
      * This method append record to target as last child.
      * @param Object $api api object
      * @param Array $args arguments passed from api
-     * @return id Bean id
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      * @throws SugarApiExceptionNotFound
      */
     public function append($api, $args)
@@ -278,14 +279,15 @@ class TreeApi extends FilterApi
         $api->action = 'save';
         $target = $this->retrieveBean($args['module'], $args['target']);
         $target->append($bean);
-        return $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
+        return $this->formatBean($api, $args, $bean);
     }
 
     /**
      * This method insert record as previous sibling of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
-     * @return id Bean id
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      * @throws SugarApiExceptionNotFound
      */
     public function insertBefore($api, $args)
@@ -295,14 +297,15 @@ class TreeApi extends FilterApi
         $api->action = 'save';
         $target = $this->retrieveBean($args['module'], $args['target']);
         $bean->insertBefore($target);
-        return $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
+        return $this->formatBean($api, $args, $bean);
     }
 
     /**
      * This method insert record as next sibling of target.
      * @param Object $api api object
      * @param Array $args arguments passed from api
-     * @return id Bean id
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      * @throws SugarApiExceptionNotFound
      */
     public function insertAfter($api, $args)
@@ -312,7 +315,8 @@ class TreeApi extends FilterApi
         $api->action = 'save';
         $target = $this->retrieveBean($args['module'], $args['target']);
         $bean->insertAfter($target);
-        return $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
+        return $this->formatBean($api, $args, $bean);
     }
 
     /**

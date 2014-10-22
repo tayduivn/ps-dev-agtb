@@ -79,10 +79,12 @@
              * Handler on sync NestedSetCollection.
              *
              * Re-render all nested set views that display same category root.
+             * As additional action - refresh context menu.
              *
              * @param {Data.NestedSetCollection} collection Synced collection.
              */
             onNestedSetSyncComplete: function(collection) {
+                this._refreshContextMenu();
                 if (this.disposed || _.isUndefined(this.collection) ||
                     this.collection.root !== collection.root
                 ) {
@@ -246,8 +248,7 @@
                         search: {
                             case_insensitive: true
                         }
-                    },
-                    self = this;
+                    };
                 jsTreeOptions = _.extend({}, jsTreeOptions, this.jsTreeOptions);
                 treeData.ctx = this.context;
 
@@ -278,7 +279,18 @@
                  */
                 if ($.vakata.dnd.is_drag && $.vakata.dnd.user_data.jstree) {
                     if (!_.isUndefined(data.rslt.o) && !_.isUndefined(data.rslt.r)) {
-                        this.moveNode(data.rslt.o.data('id'), data.rslt.r.data('id'), data.rslt.p, function() {});
+                        this.moveNode(data.rslt.o.data('id'), data.rslt.r.data('id'), data.rslt.p, function(obj, response) {
+                            var levelDelta = parseInt(obj.level) - parseInt($(data.rslt.o).data('level'));
+                            //set new level for dragged node
+                            $(data.rslt.o).attr('data-level', obj.level);
+                            $(data.rslt.o).data('level', obj.level);
+                            //recalculate the level for all nodes within selected
+                            _.each($(data.rslt.o).find('li'), function(item){
+                                var currentLevel = parseInt($(item).attr('data-level'));
+                                $(item).attr('data-level',  currentLevel + levelDelta);
+                                $(item).data('level', currentLevel + levelDelta);
+                            });
+                        });
                     }
                 }
             },
@@ -315,7 +327,7 @@
              * @private
              */
             _removeHandler: function(event, data) {
-                /* ToDo: remove handler - wbi */
+                /* ToDo: implement action on remove */
             },
 
             /**
@@ -364,7 +376,6 @@
                             label: app.lang.get('LBL_CONTEXTMENU_EDIT', self.module),
                             action: function(obj) {
                                 this.rename(obj);
-                                 // ToDo: waiting for edit implementation on backend
                             }
                         },
                         moveup: {
@@ -419,7 +430,6 @@
                             _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
-                                // ToDo: create method to get node from collection
                                 var bean = self.collection.getChild(obj.data('id'));
                                 if (!_.isUndefined(bean)) {
                                     self.warnDelete({
@@ -505,6 +515,7 @@
                     subMenu = {};
                 _.each(this.collection.models, function(entry, index) {
                     subMenu['movetosubmenu' + index] = {
+                        id: entry.id,
                         separator_before: false,
                         icon: 'jstree-icon',
                         separator_after: false,
@@ -618,8 +629,9 @@
                     this.collection.append({
                         target: parentId,
                         data: {name: node.title},
-                        success: function(id) {
-                            newNode.attr('data-id', id);
+                        success: function(item) {
+                            newNode.attr('data-id', item.id);
+                            newNode.attr('data-level', item.level);
                             self._toggleVisibility(false);
                         },
                         error: function() {
@@ -646,6 +658,27 @@
              * @private
              */
             _jstreeShowContextmenu: function(event, data) {
+                var container = data.inst._get_node().parent(),
+                    level = data.inst._get_node().attr('data-level'),
+                    firstNodeId = $(container).find('li[data-level=' + level + ']').first().data('id'),
+                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
+
+                if (!_.isUndefined(data.inst.get_settings().contextmenu.items)) {
+                    data.inst._set_settings({
+                        contextmenu: {
+                            items: {
+                                moveup: {_disabled: data.inst._get_node().data('id') === firstNodeId}
+                            }
+                        }
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {
+                            items: {
+                                movedown: {_disabled: data.inst._get_node().data('id') === lastNodeId}
+                            }
+                        }
+                    });
+                }
                 if (!$(event.currentTarget).hasClass('jstree-loading')) {
                     data.inst.show_contextmenu($(data.args[0]), data.args[2].pageX, data.args[2].pageY);
                 }
@@ -820,9 +853,18 @@
              * @param {Function} callback
              */
             moveNode: function(idRecord, idTarget, position, callback) {
-                var pos = position || 'last',
+                var self = this,
+                    pos = position || 'last',
                     method = 'move' + pos.charAt(0).toUpperCase() + pos.substring(1).toLowerCase();
-                if (_.isFunction(this.collection[method])) {
+
+                if (idRecord === idTarget) {
+                    app.alert.show('wrong_path_confirmation', {
+                        level: 'error',
+                        messages: app.lang.get('LBL_WRONG_MOVE_PATH', this.module)
+                    });
+                }
+
+                if (_.isFunction(this.collection[method]) && (idRecord !== idTarget)) {
                     this.collection[method]({
                         record: idRecord,
                         target: idTarget,
@@ -833,6 +875,17 @@
                         }
                     });
                 }
+            },
+
+            /**
+             * Refresh context menu.
+             * @private
+             */
+            _refreshContextMenu: function() {
+                // Set items to null due to avoid merge from $.extend
+                $.jstree._focused()._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
+                // Set items to updated list
+                $.jstree._focused()._set_settings({contextmenu: {items: {moveto: {submenu: this._buildRootsSubmenu()}}}});
             }
         });
     });
