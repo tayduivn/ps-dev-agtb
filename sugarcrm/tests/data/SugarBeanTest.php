@@ -701,6 +701,11 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotContains("opportunity_role_fields", $query["secondary_select"], "secondary_select should not contain fields with relationship_fields defined (e.g. opportunity_role_fields).");
         $this->assertContains("opportunity_role_id", $query["secondary_select"], "secondary_select should contain the fields that's defined in relationship_fields (e.g. opportunity_role_id).");
+
+        $bean = BeanFactory::getBean('Calls');
+        $query = $bean->create_new_list_query('', '', array('contact_name', 'contact_id'), array(), 0, '', true);
+
+        $this->assertContains("contact_id", $query["secondary_select"], "secondary_select should contain rel_key field (e.g. contact_id).");
     }
 }
 
