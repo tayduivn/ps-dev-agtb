@@ -25,6 +25,7 @@ $dictionary['KBSContent'] = array(
     ),
     'unified_search_default_enabled' => true,
     'comment' => 'A content represents information about document',
+    'duplicate_merge' => true,
     'fields' => array(
         'kbdocument_body' => array(
             'name' => 'kbdocument_body',
@@ -49,7 +50,6 @@ $dictionary['KBSContent'] = array(
             'name' => 'active_date',
             'vname' => 'LBL_PUBLISH_DATE',
             'type' => 'date',
-            'importable' => 'required',
             'sortable' => true,
             'studio' => false,
         ),
@@ -219,6 +219,7 @@ $dictionary['KBSContent'] = array(
             'reportable' => false,
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
+            'importable' => false,
             'audited' => true,
             'studio' => false,
         ),
@@ -464,7 +465,13 @@ $dictionary['KBSContent'] = array(
             'relationship_type' => 'one-to-many'
         ),
     ),
-
+    'indices' => array(
+        array(
+            'name' => 'idx_kbscontent_name',
+            'type' => 'index',
+            'fields' => array('name'),
+        ),
+    ),
     'duplicate_check' => array(
         'enabled' => false,
     ),
@@ -480,3 +487,4 @@ VardefManager::createVardef(
     )
 );
 $dictionary['KBSContent']['fields']['name']['audited'] = true;
+$dictionary['KBSContent']['fields']['name']['importable'] = 'required';
