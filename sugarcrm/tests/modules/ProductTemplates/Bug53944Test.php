@@ -19,7 +19,7 @@
  * @author imatsiushyna@sugarcrm.com
  */
 
-class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug53944Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var string

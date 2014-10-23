@@ -16,7 +16,7 @@ require_once 'modules/Import/views/view.step3.php';
 require_once 'modules/Import/views/view.step4.php';
 require_once 'modules/Import/Importer.php';
 
-class ImportFormsTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase {
+class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	var $non_admin_user;
     var $current_user;

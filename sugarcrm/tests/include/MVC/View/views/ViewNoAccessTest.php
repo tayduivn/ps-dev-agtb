@@ -12,7 +12,7 @@
  
 require_once('include/MVC/View/views/view.noaccess.php');
 
-class ViewNoAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class ViewNoAccessTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{

@@ -113,13 +113,6 @@ class OraclePreparedStatement extends PreparedStatement
             'bool'             => SQLT_INT,
     );
 
-    /**
-     * List of LOB fields
-     * index => name
-     * @var array
-     */
-    protected $lobFields = array();
-
     public function preparePreparedStatement( $msg = '' )
     {
         if(empty($this->parsedSQL)) {
@@ -166,16 +159,6 @@ class OraclePreparedStatement extends PreparedStatement
         foreach ($this->lobFields as $idx => $name) {
             $this->bound_vars[$idx] = oci_new_descriptor($this->dblink, OCI_D_LOB);
         }
-        return $this;
-    }
-
-    /**
-     * Set LOB fields
-     * @param array $lob_fields
-     */
-    public function setLobs(array $lob_fields)
-    {
-        $this->lobFields = $lob_fields;
         return $this;
     }
 
@@ -281,49 +264,5 @@ class OraclePreparedStatement extends PreparedStatement
         }
 
         $this->stmt = null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseSQL($sql)
-    {
-        if (!parent::parseSQL($sql)) {
-            return false;
-        }
-        // divide columns and values
-        preg_match('/insert.*\((.*)\)\s*values\s*\((.*)\)/mi', $sql, $matches);
-        if (!empty($matches[2])) {
-            $lobFields = array();
-            $preps = array();
-            $columns = explode(',', $matches[1]);
-            $tmp = explode(',', $matches[2]);
-            //try to assemble complex values with brackets
-            for ($i = 0, $key = 0; $i < count($columns), $key < count($tmp);) {
-                $col = $tmp[$key];
-                if (strpos($col, '(') !== false) {
-                    while (strpos($tmp[$key], ')') === false) {
-                        $key++;
-                        $col .= ',' . $tmp[$key];
-                    }
-                }
-                $preps[$i++] = $col;
-                $key++;
-            }
-            $i = 0;
-            // try to find lob fields
-            foreach ($columns as $key => $col) {
-                if (strpos($preps[$key], '?') !== false) {
-                    $col = trim($col);
-                    $this->fieldDefs[$i]['name'] = $col;
-                    if ($this->DBM->isTextType($this->fieldDefs[$i]['type'])) {
-                        $lobFields[$i] = $col;
-                    }
-                    $i++;
-                }
-            }
-            $this->setLobs($lobFields);
-        }
-        return true;
     }
 }

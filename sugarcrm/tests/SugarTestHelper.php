@@ -261,63 +261,6 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         return true;
     }
 
-    public function runBare()
-    {
-        // Prevent the activity stream from creating messages.
-        Activity::disable();
-        if (SHADOW_CHECK && empty($this->file_map)) {
-            $this->file_map = self::getFiles();
-        }
-        parent::runBare();
-        if (SHADOW_CHECK) {
-            $oldfiles = $this->file_map;
-            $this->file_map = self::getFiles();
-            $this->assertEquals($oldfiles, $this->file_map);
-        }
-    }
-}
-
-// define output testcase subclass
-class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
-{
-    protected $backupGlobals = false;
-
-    protected $_notRegex;
-
-    protected function assertPreConditions()
-    {
-        $GLOBALS['runningTest'] = $this->getName(false);
-        $GLOBALS['runningTestClass'] = get_class($this);
-        if (isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
-        }
-        SugarCache::instance()->flush();
-    }
-
-    protected function assertPostConditions()
-    {
-        if (!empty($_REQUEST)) {
-            foreach (array_keys($_REQUEST) as $k) {
-                unset($_REQUEST[$k]);
-            }
-        }
-
-        if (!empty($_POST)) {
-            foreach (array_keys($_POST) as $k) {
-                unset($_POST[$k]);
-            }
-        }
-
-        if (!empty($_GET)) {
-            foreach (array_keys($_GET) as $k) {
-                unset($_GET[$k]);
-            }
-        }
-        if (isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
-        }
-    }
-
     protected function notRegexCallback($output)
     {
         $this->assertNotRegExp($this->_notRegex, $output);
@@ -332,31 +275,28 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
         $this->setOutputCallback(array($this, "notRegexCallback"));
     }
 
-    public static function tearDownAfterClass()
-    {
-        unset($GLOBALS['disable_date_format']);
-        SugarBean::resetOperations();
-        $GLOBALS['timedate']->clearCache();
-        if (constant('CHECK_FILE_MAPS')) {
-            if (!Sugar_PHPUnit_Framework_TestCase::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
-                SugarAutoLoader::buildCache();
-            }
-        }
-    }
-
     public function runBare()
     {
         // Prevent the activity stream from creating messages.
         Activity::disable();
         if (SHADOW_CHECK && empty($this->file_map)) {
-            $this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
+            $this->file_map = static::getFiles();
         }
         parent::runBare();
         if (SHADOW_CHECK) {
-            $newfiles = Sugar_PHPUnit_Framework_TestCase::getFiles();
-            $this->assertEquals($this->file_map, $newfiles);
+            $oldfiles = $this->file_map;
+            $this->file_map = static::getFiles();
+            $this->assertEquals($oldfiles, $this->file_map);
         }
     }
+}
+
+/**
+ * @deprecated Do not use this class, it will be removed soon
+ * Use Sugar_PHPUnit_Framework_TestCase instead
+ */
+class Sugar_PHPUnit_Framework_OutputTestCase extends Sugar_PHPUnit_Framework_TestCase
+{
 }
 
 // define a mock logger interface; used for capturing logging messages emited

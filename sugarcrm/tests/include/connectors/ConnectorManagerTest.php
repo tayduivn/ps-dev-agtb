@@ -100,7 +100,7 @@ class ConnectorManagerTest extends ConnectorManager
     }
 }
 
-class ConnectorsValidTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class ConnectorsValidTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function tearDown()

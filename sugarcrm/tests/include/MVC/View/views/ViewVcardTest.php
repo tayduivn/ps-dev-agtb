@@ -12,7 +12,7 @@
  
 require_once('include/MVC/View/views/view.vcard.php');
 
-class ViewVcardTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class ViewVcardTest extends Sugar_PHPUnit_Framework_TestCase
 {   
     public function setUp()
     {
