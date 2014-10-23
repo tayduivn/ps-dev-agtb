@@ -73,6 +73,7 @@ $dictionary['ReportMaker'] = array('table' => 'report_maker'
     'type' => 'varchar',
     'len' => '50',
     'importable' => 'required',
+    'required' => true,
   ),
     'title' =>
   array (
