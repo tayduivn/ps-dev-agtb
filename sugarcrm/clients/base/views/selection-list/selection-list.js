@@ -121,7 +121,7 @@
     },
 
     /**
-     * Selected from list. Closes the drawer.
+     * Closes the drawer passing the selected model attributes.
      *
      * @param {object} context
      * @param {object} selectedModel The selected record.
@@ -160,7 +160,11 @@
     },
 
     /**
-     * Selects multiple records and closes the drawer.
+     * Returns an array of attributes given a collection.
+     *
+     * @param {collection} collection A collection of records.
+     * @return {object[]} attributes An array containing the attribute object of
+     *   each model.
      *
      * @private
      */

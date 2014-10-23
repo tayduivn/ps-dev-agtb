@@ -71,15 +71,36 @@
                 }
             }, this);
         }
+
+        this._preselectModel();
     },
 
     /**
-     * Select or unselect a record.
+     * Checks the checkbox if the model is preselected.
+     *
+     * @private
+     */
+    _preselectModel: function() {
+
+        this.preselectedModelIds = this.context.get('preselectedModelIds');
+        if (!_.isEmpty(this.preselectedModelIds)) {
+            this._isModelPreselected = _.contains(this.preselectedModelIds, this.model.id);
+            if (this._isModelPreselected) {
+                this.toggleSelect(true);
+                var index = this.preselectedModelIds.indexOf(this.model.id);
+                this.preselectedModelIds.splice(index, 1);
+            }
+        }
+    },
+
+    /**
+     * Selects or unselects a record.
      *
      * @param {Event} event The `click` event.
      */
     check: function(event) {
-        this.toggleSelect(this.$(this.fieldTag).is(':checked'));
+        var $checkbox = this.$(this.fieldTag);
+        this.toggleSelect($checkbox.is(':checked'));
     },
 
     /**
@@ -88,11 +109,11 @@
      * @param {Event} event The `click` event.
      */
     checkAll: function(event) {
-        var checkbox = this.$(this.fieldTag);
+        var $checkbox = this.$(this.fieldTag);
 
-        if (checkbox && event.currentTarget === event.target) {
-            var isChecked = checkbox.is(':checked');
-            checkbox.attr('checked', !isChecked);
+        if ($checkbox && event.currentTarget === event.target) {
+            var isChecked = $checkbox.is(':checked');
+            $checkbox.attr('checked', !isChecked);
             this.toggleSelect(!isChecked);
         }
     },
@@ -158,6 +179,8 @@
                 this.$(this.fieldTag).attr('checked', !!massCollection.get(this.model.id));
             }, this);
 
+            // If the model is in the mass collection, make sure the checkbox
+            // is checked.
             if (massCollection.get(this.model) || massCollection.entire) {
                 this.$(this.fieldTag).attr('checked', true);
                 this.selected = true;
@@ -426,11 +449,6 @@
             field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
             field.render();
         }, this);
-
-        if (_.contains(this.options.context.get('modelsId'), this.model.id)) {
-            this.$(this.fieldTag).prop('checked', true);
-            this.check();
-        }
     },
 
     setPlaceholder: function() {

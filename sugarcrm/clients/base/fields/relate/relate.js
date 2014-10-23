@@ -638,7 +638,7 @@
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
-                modelsId: this.model.get(this.def.id_name),
+                preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
                 multiSelect: this.def.isMultiSelect,
                 maxSelectedRecords: this.maxSelectedRecords
             }
