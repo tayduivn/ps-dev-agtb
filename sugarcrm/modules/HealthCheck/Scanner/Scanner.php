@@ -1925,12 +1925,13 @@ ENDP;
      * @param array $fields List of fields to check
      * @param array $fieldDefs Vardefs
      * @param array $status Status array to store errors
+     * @param string $module Module name
      */
-    protected function checkFields($key, $fields, $fieldDefs, $custom = '')
+    protected function checkFields($key, $fields, $fieldDefs, $custom = '', $module)
     {
         foreach ($fields as $subField) {
             if (empty($fieldDefs[$subField])) {
-                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
+                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField, $module);
             }
         }
     }
@@ -1988,7 +1989,7 @@ ENDP;
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey", $key, $value['name']);
+                $this->updateStatus("badVardefsKey", $key, $value['name'], $module);
                 continue;
             }
 
@@ -2006,7 +2007,7 @@ ENDP;
 
             if ($key == 'team_name') {
                 if (empty($value['module'])) {
-                    $this->updateStatus("badVardefsRelate", $key);
+                    $this->updateStatus("badVardefsRelate", $key, $module);
                 }
                 // this field is really weird, let's leave it alone for now
                 continue;
@@ -2053,7 +2054,7 @@ ENDP;
                             $result = count_chars(implode('', $result), 3);
 
                             if ($result) {
-                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result);
+                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result, $module);
                             }
                         }
 
@@ -2061,7 +2062,7 @@ ENDP;
                     case 'link':
                         $seed->load_relationship($key);
                         if (empty($seed->$key)) {
-                            $this->updateStatus("badVardefsLink", $key);
+                            $this->updateStatus("badVardefsLink", $key, $module);
                         }
                         break;
                     case 'relate':
@@ -2069,12 +2070,12 @@ ENDP;
                             $lname = $value['link'];
                             if (empty($fieldDefs[$lname])) {
                                 ;
-                                $this->updateStatus("badVardefsKey", $key, $lname);
+                                $this->updateStatus("badVardefsKey", $key, $lname, $module);
                                 break;
                             }
                             $seed->load_relationship($lname);
                             if (empty($seed->$lname)) {
-                                $this->updateStatus("badVardefsRelate", $key);
+                                $this->updateStatus("badVardefsRelate", $key, $module);
                                 break;
                             }
                             $relatedModuleName = $seed->$lname->getRelatedModuleName();
@@ -2088,7 +2089,7 @@ ENDP;
                         }
                         if ((empty($value['link_type']) || $value['link_type'] != 'relationship_info') &&
                             empty($value['module'])) {
-                            $this->updateStatus("badVardefsRelate", $key);
+                            $this->updateStatus("badVardefsRelate", $key, $module);
                         }
                         break;
                 }
@@ -2097,11 +2098,11 @@ ENDP;
             if (empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
-                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
+                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom, $module);
                 }
                 // check db_concat_fields
                 if (isset($value['db_concat_fields'])) {
-                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
+                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom, $module);
                 }
                 // check sort_on
                 if (!empty($value['sort_on'])) {
@@ -2110,7 +2111,7 @@ ENDP;
                     } else {
                         $sort = array($value['sort_on']);
                     }
-                    $this->checkFields($key, $sort, $fieldDefs, $custom);
+                    $this->checkFields($key, $sort, $fieldDefs, $custom, $module);
                 }
             }
         }
