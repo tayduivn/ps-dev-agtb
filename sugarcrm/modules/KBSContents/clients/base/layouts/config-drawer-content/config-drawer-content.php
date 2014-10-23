@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,12 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['KBSContents']['base']['view']['module-menu'] = array(
-    'config' => array(
-        'data_provider' => 'Categories',
-        'config_provider' => 'KBSContents',
-        'root_name' => 'category_root'
+$viewdefs['KBSContents']['base']['layout']['config-drawer-content'] = array(
+    'type' => 'config-drawer-content',
+    'name' => 'config-drawer-content',
+    'components' => array(
+        array(
+            'view' => 'config-languages',
+        ),
     ),
-    'label' => 'LNK_LIST_KBSTOPICS'
 );

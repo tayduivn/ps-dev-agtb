@@ -40,18 +40,18 @@ class KBSContent extends SugarBean {
     public function getCategoryRoot()
     {
         $admin = BeanFactory::getBean('Administration');
-        $config = $admin->getConfigForModule('KBSDocuments');
+        $config = $admin->getConfigForModule('KBSContents');
 
         if (empty($config['category_root'])) {
             $this->setupCategoryRoot();
-            $config = $admin->getConfigForModule('KBSDocuments');
+            $config = $admin->getConfigForModule('KBSContents');
         }
 
         return $config['category_root'];
     }
 
     /**
-     * Setup root for KBSDocuments categories.
+     * Setup root for KBSContents categories.
      */
     public function setupCategoryRoot()
     {
@@ -71,7 +71,7 @@ class KBSContent extends SugarBean {
             $api,
             array(
                 'category_root' => $categoryRoot->makeRoot(),
-                'module' => 'KBSDocuments',
+                'module' => 'KBSContents',
             )
         );
     }
@@ -83,11 +83,11 @@ class KBSContent extends SugarBean {
     public function getPrimaryLanguage()
     {
         $admin = BeanFactory::getBean('Administration');
-        $config = $admin->getConfigForModule('KBSDocuments');
+        $config = $admin->getConfigForModule('KBSContents');
 
         if (empty($config['languages']['primary'])) {
             $this->setupPrimaryLanguage();
-            $config = $admin->getConfigForModule('KBSDocuments');
+            $config = $admin->getConfigForModule('KBSContents');
         }
         $langs = $config['languages'];
         $default = null;
@@ -106,7 +106,7 @@ class KBSContent extends SugarBean {
     }
 
     /**
-     * Setup Default Languages for KBSDocuments.
+     * Setup Default Languages for KBSContents.
      */
     public function setupPrimaryLanguage()
     {
@@ -127,16 +127,8 @@ class KBSContent extends SugarBean {
                         'en' => 'English',
                         'primary' => true,
                     ),
-                    array(
-                        'de' => 'German',
-                        'primary' => false,
-                    ),
-                    array(
-                        'ru' => 'Russian',
-                        'primary' => false,
-                    ),
                 ),
-                'module' => 'KBSDocuments',
+                'module' => 'KBSContents',
             )
         );
     }

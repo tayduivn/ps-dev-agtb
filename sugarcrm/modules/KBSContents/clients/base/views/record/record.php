@@ -246,7 +246,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'language' => array(
                     'name' => 'language',
                     'type' => 'enum-config',
-                    'module' => 'KBSDocuments',
                     'key' => 'languages',
                 ),
                 'revision' => array(
@@ -256,7 +255,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'category_name' => array(
                     'name' => 'category_name',
                     'type' => 'nested-set',
-                    'config_provider' => 'KBSDocuments',
+                    'config_provider' => 'KBSContents',
                     'data_provider' => 'Categories',
                     'label' => 'LBL_TOPIC_NAME',
                 ),

@@ -36,7 +36,6 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'enabled' => true,
                     'link' => true,
                     'type' => 'enum-config',
-                    'module' => 'KBSDocuments',
                     'key' => 'languages',
                 ),
                 array(
