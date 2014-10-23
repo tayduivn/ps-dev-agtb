@@ -58,7 +58,6 @@ $viewdefs['KBSContents']['base']['view']['subpanel-for-localizations'] = array(
                     'enabled' => true,
                     'link' => true,
                     'type' => 'enum-config',
-                    'module' => 'KBSDocuments',
                     'key' => 'languages',
                 ),
                 array(

@@ -51,12 +51,12 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-reorder',
         'target' => 'view',
     ),
-//    array(
-//        'route' => "#{$module_name}/config",
-//        'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
-//        'acl_action' => 'admin',
-//        'acl_module' => $module_name,
-//        'icon' => 'icon-question-sign',
-//    ),
+    array(
+        'route' => "#{$module_name}/config",
+        'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
+        'acl_action' => 'admin',
+        'acl_module' => $module_name,
+        'icon' => 'icon-question-sign',
+    ),
 );
 

@@ -22,7 +22,6 @@ $viewdefs['KBSContents']['base']['filter']['default'] = array(
         ),
         'language' => array(
             'type' => 'enum-config',
-            'module' => 'KBSDocuments',
             'key' => 'languages',
         ),
         'revision' => array(),
