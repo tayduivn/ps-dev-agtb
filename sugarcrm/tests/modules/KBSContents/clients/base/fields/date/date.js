@@ -37,15 +37,38 @@ describe('KBSContents.Field.Date', function() {
         expect(validateSpy.args[0][2].exp_date.expDateLow).toBeTruthy();
     });
 
-    it('Approved requires publishing date.', function() {
+    it('Approved requires publishing date and the field on view.', function() {
         var validateSpy = sinonSandbox.spy(function(mod, field, errors) {
         });
+        sinonSandbox.stub(field.view, 'getField', function(name) {
+            if (name == 'active_date') {
+                return {name: 'active_date'};
+            }
+        });
+
         field.model.set('status', 'approved');
         field.model.set('active_date', null);
 
         field._doValidateActiveDateField([], [], validateSpy);
 
         expect(validateSpy.args[0][2].active_date.activeDateApproveRequired).toBeTruthy();
+    });
+
+    it('Approved requires publishing date and the field not on view.', function() {
+        var validateSpy = sinonSandbox.spy(function(mod, field, errors) {
+        });
+        sinonSandbox.stub(field.view, 'getField', function(name) {
+            if (name == 'active_date') {
+                return undefined;
+            }
+        });
+        field.model.set('status', 'approved');
+        field.model.set('active_date', null);
+
+        field._doValidateActiveDateField([], [], validateSpy);
+
+        // The validation decorator should be on the status field.
+        expect(validateSpy.args[0][2].status.activeDateApproveRequired).toBeTruthy();
     });
 
     it('Expiration changes own date to current.', function() {
