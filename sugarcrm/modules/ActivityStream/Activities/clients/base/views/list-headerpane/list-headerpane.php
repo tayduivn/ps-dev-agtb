@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Activities']['base']['view']['list-headerpane'] = array(
-    'type' => 'headerpane',
+    'template' => 'headerpane',
     'buttons' => array(
         array(
             'name' => 'sidebar_toggle',
