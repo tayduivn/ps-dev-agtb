@@ -69,6 +69,7 @@
             closeOnSelect: false,
             width: '100%',
             containerCssClass: 'select2-choices-pills-close',
+            tokenSeparators: [','],
 
             initSelection: function(element, callback) {
                 var data = self.parseRecords(self.value);
