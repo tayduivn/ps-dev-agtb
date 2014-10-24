@@ -67,7 +67,8 @@
         'keydown [data-role=secondinput]': 'handleKeyDown',
         'click [data-action=full-screen]': 'fullScreen',
         'click [data-action=create-new]': 'switchCreate',
-        'keydown [data-role=add-item]': 'handleKeyDown'
+        'keydown [data-role=add-item]': 'handleKeyDown',
+        'click [data-action=show-list]': 'showList'
 
     },
 
@@ -307,6 +308,29 @@
                 treeoptions: treeOptions
             }
         }, _.bind(this.selectedNode, this));
+    },
+
+    /**
+     * Open drawer with module records.
+     */
+    showList: function() {
+        var filterDef = [{}],
+            moduleName = app.lang.get('LBL_MODULE_NAME', this.module),
+            title = app.lang.get(
+                'LBL_FILTERED_LIST_BY_FIELD',
+                this.module,
+                {module: moduleName, label: this.label, value: this.value}
+            );
+        filterDef[0][this.def.id_name] = this.model.get(this.def.id_name);
+        app.drawer.open({
+            layout: 'prefiltered',
+            module: this.module,
+            context: {
+                module: this.module,
+                headerPaneTitle: title,
+                filterDef: filterDef
+            }
+        });
     },
 
     /**

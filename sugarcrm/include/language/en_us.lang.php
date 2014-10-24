@@ -3891,6 +3891,8 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
     'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
 
+    'LBL_FILTERED_LIST_BY_FIELD' => '{{module}} filtered by {{label}} "{{value}}"',
+
     // Usefulness for Articles dashlet
     'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
     'LBL_DASHLET_USEFULNESS_DESC' => 'Usefulness for Articles Description',
