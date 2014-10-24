@@ -148,11 +148,9 @@
      * @param {array} list of objects/beans
      */
     parseRecords: function(list) {
-
         var select2 = [];
 
         _.each(list, function(item) {
-
             var record = item;
 
             // we may have a bean from a collection
@@ -180,9 +178,7 @@
             });
 
             if (!valFound) {
-                // If ID = text, then it is a new tag. Set ID to false for the backend to create a new tag out of it.
-                var id = (e.added.id === e.added.text) ? false : e.added.id;
-                this.value.push({id: id, name: e.added.text});
+                this.value.push({id: e.added.id, name: e.added.text});
             }
         } else if (e.removed) {
             // Remove the tag

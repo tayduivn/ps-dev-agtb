@@ -54,8 +54,9 @@ class SugarFieldTag extends SugarFieldMultienum
         $tagBean = BeanFactory::getBean('Tags');
 
         if (!empty($record['id'])) {
-            $tagBean->retrieve($record['id']);
-            return $tagBean;
+            if ($tagBean->retrieve($record['id'])) {
+                return $tagBean;
+            }
         }
 
         // See if this tag exists already. If it does send back the bean for it
@@ -68,8 +69,9 @@ class SugarFieldTag extends SugarFieldMultienum
 
         // If there is a result for this tag name, send back the bean for it
         if (!empty($result[0]['id'])) {
-            $tagBean->retrieve($result[0]['id']);
-            return $tagBean;
+            if ($tagBean->retrieve($result[0]['id'])) {
+                return $tagBean;
+            }
         }
 
         // Create a new record and send back THAT bean
