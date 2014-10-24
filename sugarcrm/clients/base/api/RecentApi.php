@@ -53,6 +53,9 @@ class RecentApi extends SugarApi
         if (!empty($args['max_num'])) {
             $options['limit'] = (int) $args['max_num'];
         }
+        if (!empty($GLOBALS['sugar_config']['max_list_limit']) && $options['limit'] > $GLOBALS['sugar_config']['max_list_limit']) {
+            $options['limit'] = $GLOBALS['sugar_config']['max_list_limit'];
+        }
 
         $options['offset'] = 0;
 
