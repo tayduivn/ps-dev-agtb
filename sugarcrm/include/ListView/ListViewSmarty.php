@@ -207,6 +207,14 @@ class ListViewSmarty extends ListViewDisplay{
         }
         $this->ss->assign('displayEmptyDataMesssages', $displayEmptyDataMessages);
 
+        $displaySubMessage = true;
+        $modulesExemptFromSubMessage = array('Reports');
+        if(in_array($currentModule, $modulesExemptFromSubMessage) )
+        {
+            $displaySubMessage = false;
+        }
+        $this->ss->assign('displaySubMessage', $displaySubMessage);
+
 		$str = parent::display();
 		$strend = $this->displayEnd();
 

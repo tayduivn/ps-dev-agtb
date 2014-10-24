@@ -65,7 +65,7 @@
         var model = this.collection.at(0),
             module = model ? model.module : this.context.get('module');
         this.showMoreLabel = app.lang.get('TPL_SHOW_MORE_MODULE', module, {
-            module: app.lang.getModuleName(module, {plural: true}).toLowerCase(),
+            module: new Handlebars.SafeString(app.lang.getModuleName(module, {plural: true}).toLowerCase()),
             count: this.collection.length,
             offset: this.collection.next_offset >= 0
         });

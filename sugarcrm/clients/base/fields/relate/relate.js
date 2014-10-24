@@ -540,7 +540,7 @@
             module = app.lang.getModuleName(searchModule, {defaultValue: searchModuleLower});
 
         return app.lang.get('LBL_SEARCH_SELECT_MODULE', this.module, {
-            module: module
+            module: new Handlebars.SafeString(module)
         });
     },
 

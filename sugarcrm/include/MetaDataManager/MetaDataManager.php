@@ -2855,9 +2855,12 @@ class MetaDataManager
      */
     protected function getFields()
     {
+        global $dictionary;
+        include_once 'modules/TableDictionary.php';
+
         $fields = array();
-        if (!empty($GLOBALS['dictionary'][static::$cacheTable]['fields'])) {
-            $fields = $GLOBALS['dictionary'][static::$cacheTable]['fields'];
+        if (!empty($dictionary[static::$cacheTable]['fields'])) {
+            $fields = $dictionary[static::$cacheTable]['fields'];
         }
         return $fields;
     }
