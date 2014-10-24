@@ -732,6 +732,37 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'label',
                             'cell_css_class' => 'span2',
+                            'default_value' => 'LBL_DNB_BAL_GU_DUNS',
+                            'css' => 'dnb-bal-param-label'
+                        ),
+                        array(
+                            'name' => 'dnb_bal_gu_duns',
+                            'tooltip' => 'LBL_TT_DNB_BAL_DUNS',
+                            'type' => 'int',
+                            'cell_css_class' => 'span2',
+                            'no_required_placeholder' => true,
+                            'required' => true,
+                            'len' => 15
+                        ),
+                        array(
+                            'type' => 'rowaction',
+                            'cell_css_class' => 'span1',
+                            'icon' => 'fa-plus',
+                            'css_class' => 'dnb-bal-add-btn btn',
+                            'event' => 'dnb-bal-gu-duns-btn'
+                        ),
+                        array(
+                            'type' => 'tagcontainer',
+                            'cell_css_class' => 'tagcontainer span3',
+                            'id' => 'dnb-gu-duns-tags'
+                        ),
+                    ),
+                ),
+                array(
+                    'fields' => array(
+                        array(
+                            'type' => 'label',
+                            'cell_css_class' => 'span2',
                             'default_value' => 'LBL_DNB_BAL_ORG_ID',
                             'css' => 'dnb-bal-param-label'
                         ),
@@ -1273,6 +1304,14 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             'modelKey' => 'dunsNum', //keys to be used in model
             'modelSubKey' => 'DUNSNumber-'
         ),
+        'dnb-bal-gu-duns-btn' => array(
+            'addBtn' => '.dnb-bal-gu-duns-btn',
+            'container' => '#dnb-gu-duns-tags',
+            'tagLimit' => 10,
+            'inputKey' => 'dnb_bal_gu_duns',
+            'modelKey' => 'guDunsNum', //keys to be used in model
+            'modelSubKey' => 'GlobalUltimateDUNSNumber-'
+        ),
         'dnb-bal-org-name-btn' => array(
             'addBtn' => '.dnb-bal-org-name-btn',
             'container' => '#dnb-org-name-tags',
@@ -1444,6 +1483,10 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             'dunsNum' => array(
                 'label' => 'LBL_DNB_BAL_DUNS',
                 'id' => 'dnb-duns-tags'
+            ),
+            'guDunsNum' => array(
+                'label' => 'LBL_DNB_BAL_GU_DUNS',
+                'id' => 'dnb-gu-duns-tags'
             ),
             'orgid' => array(
                 'label' => 'LBL_DNB_BAL_ORG_ID',
