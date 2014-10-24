@@ -52,13 +52,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'target' => 'view',
     ),
     array(
-        'route' => "#{$module_name}/config",
-        'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
-        'acl_action' => 'admin',
-        'acl_module' => $module_name,
-        'icon' => 'icon-question-sign',
-    ),
-    array(
         'route' => '#bwc/index.php?' . http_build_query(
                 array(
                     'module' => 'Import',
@@ -70,6 +63,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_action' => 'import',
         'acl_module' => $module_name,
         'icon' => 'icon-upload',
+    ),
+    array(
+        'route' => "#{$module_name}/config",
+        'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
+        'acl_action' => 'admin',
+        'acl_module' => $module_name,
+        'icon' => 'icon-question-sign',
     ),
 );
 
