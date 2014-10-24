@@ -260,7 +260,7 @@
      */
     reset: function(triggerBefore) {
         triggerBefore = triggerBefore === false ? false : true;
-        if(triggerBefore && !this.triggerBefore("reset", {drawer: this})) {
+        if (triggerBefore && !this.triggerBefore("reset", {drawer: this})) {
             return false;
         }
 
@@ -580,25 +580,30 @@
     },
 
     /**
-     * Scroll the main and sidebar to the top and save its position.
+     * Scroll the content, main and sidebar divs to the top and save its position.
+     * Content needs to be scrolled as well because in small width screens,
+     * the responsive layout changes the #content div to be a scrollable container
      * @private
      */
     _scrollToTop: function() {
         var drawers = this._getDrawers(true),
             $mainpane = drawers.$top.find('.main-pane'),
-            $sidepane = drawers.$top.find('.sidebar-content');
+            $sidepane = drawers.$top.find('.sidebar-content'),
+            $content = app.$contentEl;
 
         this.scrollTopPositions.push({
             main: $mainpane.scrollTop(),
-            side: $sidepane.scrollTop()
+            side: $sidepane.scrollTop(),
+            content: $content.scrollTop()
         });
 
         $mainpane.scrollTop(0);
         $sidepane.scrollTop(0);
+        $content.scrollTop(0);
     },
 
     /**
-     * Scroll the main and sidebar back to its original position.
+     * Scroll the content, main and sidebar elements back to its original position.
      * @param drawerLayout
      * @private
      */
@@ -611,6 +616,7 @@
         } else {
             app.$contentEl.find('.main-pane').scrollTop(scrollPositions.main);
             app.$contentEl.find('.sidebar-content').scrollTop(scrollPositions.side);
+            app.$contentEl.scrollTop(scrollPositions.content)
         }
     },
 
