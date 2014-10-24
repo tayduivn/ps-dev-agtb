@@ -65,6 +65,7 @@ $mod_strings = array (
     'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
     'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
+    'LBL_POPUP_REMINDER_TIME' => 'Popup Reminder Time',
     'LBL_SEND_BUTTON_TITLE'=>'Save & Send Invites [Alt+I]',
     'LBL_SEND_BUTTON_KEY'=>'I',
     'LBL_SEND_BUTTON_LABEL'=>'Save & Send Invites',
@@ -139,7 +140,37 @@ $mod_strings = array (
     'LBL_SEND_INVITES' => 'Send Invites',
     'LBL_REMINDER_TITLE' => 'Call:',
 
+    //record save
+    'LBL_RECORD_SAVED_SUCCESS' => 'You scheduled the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a> for {{formatDate date_start}}.',
+    'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You scheduled the {{moduleSingularLower}} for {{formatDate date_start}}, but you do not have permission to access it.',
+
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
 
     'TPL_CALL_STATUS_CHANGED' => 'Call marked as {{status}}.',
+
+    // Help Text
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of calls logged by users in your organization. {{plural_module_name}} may be in a status of "Planned", "Held", or "Not Held". From this {{plural_module_name}} list view, you can click the "X" icon on any planned call\'s row in order to mark it as held. Sugar users as well as contacts and leads may be added as invitees. There are various ways you can create calls in Sugar such as via the {{calls_module}} module, {{calendar_module}} module, and import. Users can also schedule calls via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. {{contacts_module}}, {{accounts_module}}, {{leads_module}}, etc.), which automatically creates a relationship between both records. Once the call record is created, you can view and edit information pertaining to the call via the {{plural_module_name}} record view.',
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of {{calls_singular_module}} records logged by users in your organization.  {{plural_module_name}} may be in a status of "Planned", "Held", or "Not Held". Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the activity stream by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of {{calls_singular_module}} records logged by users in your organization.  {{plural_module_name}} may be in a status of "lanned", "Held", or "Not Held". Sugar users as well as contacts and leads may be added as invitees.
+
+To create a {{calls_singular_module}}:
+1. Provide values for the fields as desired.
+    - Fields marked "Required" must be completed prior to saving.
+    - Click "Show More" to expose additional fields if necessary.
+2. Add invitees to the {{calls_singular_module}}.
+    - Click "Select an Attendee" to add an existing user, contact, or lead to the {{calls_singular_module}}.
+    - Click the plus icon to the right of "Select an Attendee" to create a {{calls_singular_module}} attendee as a new Sugar record.
+3. Click "Save" to finalize the new record and return to the previous page.
+    - Choose "Save and view" to open the new {{calls_singular_module}} in record view.
+    - Choose "Save and create new" to immediately create another new {{calls_singular_module}}.',
 );

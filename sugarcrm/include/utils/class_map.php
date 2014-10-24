@@ -44,6 +44,7 @@ $class_map = array(
     'OutboundEmail' => 'include/OutboundEmail/OutboundEmail.php',
     'MailerFactory' => 'modules/Mailer/MailerFactory.php',
     'LogicHook' => 'include/utils/LogicHook.php',
+    'LegacyJsonServer' => 'include/utils/LegacyJsonServer.php',
     'SugarTheme' => 'include/SugarTheme/SugarTheme.php',
     'SugarThemeRegistry' => 'include/SugarTheme/SugarTheme.php',
     'SugarModule' => 'include/MVC/SugarModule.php',

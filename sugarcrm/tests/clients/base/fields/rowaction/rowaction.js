@@ -52,6 +52,56 @@ describe('Base.Field.Rowaction', function() {
         aclStub.restore();
     });
 
+    describe('triggering the event', function() {
+        var e, sandbox;
+
+        beforeEach(function() {
+            e = $.Event('click');
+            e.currentTarget = field.$el.get(0);
+
+            field.view.context = {trigger: $.noop};
+            sandbox = sinon.sandbox.create();
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should trigger the default event', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.name = 'foo';
+            field.def.event = undefined;
+            field.propagateEvent(e);
+            expect(spy).toHaveBeenCalledWith('button:foo:click');
+        });
+
+        it('should trigger a custom event', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.propagateEvent(e);
+            expect(spy).toHaveBeenCalledWith(field.def.event);
+        });
+
+        using('event names', [undefined, 'context', 'foo'], function(eventName) {
+            it('should return the context as the target on which to trigger the event', function() {
+                field.view.context.name = 'context';
+                field.def.target = eventName;
+                expect(field.getTarget().name).toEqual(field.view.context.name);
+            });
+        });
+
+        it('should return the view as the target on which to trigger the event', function() {
+            field.view.name = 'view';
+            field.def.target = 'view';
+            expect(field.getTarget().name).toEqual(field.view.name);
+        });
+
+        it('should return the layout as the target on which to trigger the event', function() {
+            field.view = {layout: {name: 'layout'}};
+            field.def.target = 'layout';
+            expect(field.getTarget().name).toEqual(field.view.layout.name);
+        });
+    });
+
     describe('rowActionSelect', function(){
         var e, triggerStub;
 

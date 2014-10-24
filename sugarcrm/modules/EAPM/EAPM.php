@@ -141,6 +141,9 @@ class EAPM extends Basic {
            unset($_SESSION['EAPM'][$this->application]);
        }
 
+       // Nuke the Meetings type dropdown cache
+       sugar_cache_clear('meetings_type_drop_down');
+
        return $parentRet;
    }
 

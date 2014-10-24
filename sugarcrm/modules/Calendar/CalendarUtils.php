@@ -228,12 +228,14 @@ class CalendarUtils
 		 * @var SugarDateTime $start Recurrence start date.
 		 */
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+
 		/** 
 		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
+         * To Make the RepeatUntil Date Inclusive, we need to Add 1 Day to End
 		 */
-		 
 		if (!empty($params['until'])) {
 			$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $until);
+            $end->modify("+1 Day");
 		} else {
 			$end = $start;
 		}
@@ -245,8 +247,7 @@ class CalendarUtils
 
 		$limit = SugarConfig::getInstance()->get('calendar.max_repeat_count',1000);
 
-        // current/end check should be inclusive to handle until date 
-		while($i < $count || ($count == 0 && $current->format("U") <= $end->format("U"))){
+		while($i < $count || ($count == 0 && $current->format("U") < $end->format("U"))){
 			$skip = false;
 			switch($type){
 				case "Daily":

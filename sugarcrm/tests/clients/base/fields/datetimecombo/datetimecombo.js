@@ -25,6 +25,37 @@ describe('Base.Field.DateTimeCombo', function() {
         app.view.reset();
     });
 
+    describe('verify options from field definitions are recognized and passed into timepicker', function() {
+        var timeFieldOptions = [
+            {key: 'disable_text_input', value: true, name: 'disableTextInput'},
+            {key: 'disable_text_input', value: false, name: 'disableTextInput'},
+            {key: 'scroll_default_now', value: true, name: 'scrollDefaultNow'},
+            {key: 'scroll_default_now', value: false, name: 'scrollDefaultNow'},
+            {key: 'step', value: 20, name: 'step'},
+            {key: 'step', value: 55, name: 'step'}
+        ];
+
+        using('time field options', timeFieldOptions, function(option) {
+            it('should use the ' + option.key + ' option from the field def when instantiating the timepicker', function() {
+                var def, field, spy;
+                def = {time: {}};
+                def.time[option.key] = option.value;
+                sinon.collection.stub(app.user, 'getPreference').withArgs('timepref').returns('h:ia');
+                field = SugarTest.createField('base', 'time', 'datetimecombo', 'edit', def);
+                spy = sinon.collection.spy();
+                sinon.collection.stub(field, '$').withArgs(field.secondaryFieldTag).returns({
+                    timepicker: function() {
+                        spy(arguments);
+                    }
+                });
+                field._setupTimePicker();
+                expect(spy.args[0][0][0][option.name]).toBe(option.value);
+                sinon.collection.restore();
+                field.dispose();
+            });
+        });
+    });
+
     describe('format', function() {
         beforeEach(function() {
             sinon.collection.spy(app, 'date');
@@ -165,26 +196,27 @@ describe('Base.Field.DateTimeCombo', function() {
     });
 
     describe('render', function() {
+        var field;
+
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('datetimecombo', 'field', 'base', 'edit');
+            SugarTest.testMetadata.set();
+
+            sinon.collection.stub(app.user, 'getPreference')
+                .withArgs('datepref').returns('d/m/Y')
+                .withArgs('timepref').returns('h:ia');
+
+            field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
+        });
+
+        afterEach(function() {
+            field.dispose();
+            SugarTest.testMetadata.dispose();
+            Handlebars.templates = {};
+        });
+
         describe('edit', function() {
-            var field;
-
-            beforeEach(function() {
-                SugarTest.testMetadata.init();
-                SugarTest.loadHandlebarsTemplate('datetimecombo', 'field', 'base', 'edit');
-                SugarTest.testMetadata.set();
-
-                sinon.collection.stub(app.user, 'getPreference')
-                    .withArgs('datepref').returns('d/m/Y')
-                    .withArgs('timepref').returns('h:ia');
-
-                field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
-            });
-
-            afterEach(function() {
-                SugarTest.testMetadata.dispose();
-                Handlebars.templates = {};
-            });
-
             it('should have both pickers defined only in edit mode', function() {
                 field.render();
 
@@ -252,6 +284,88 @@ describe('Base.Field.DateTimeCombo', function() {
                 expect(field.model.get(field.name)).toBe('');
 
                 clock.restore();
+            });
+        });
+
+        describe('_enableDuration', function() {
+            it('should add duration to the timepicker dropdown', function() {
+                var $durationDropdown;
+
+                field.def.time = {
+                    duration: {
+                        relative_to: 'foo'
+                    }
+                };
+                field.name = 'bar';
+                field.model.set({
+                    foo: '2014-07-17T11:00',
+                    bar: '2014-07-17T12:00'
+                });
+
+                field.render();
+                field.$(field.secondaryFieldTag).focus();
+
+                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
+
+                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(52);
+                expect($durationDropdown.find('.ui-timepicker-selected').text()).toBe('12:00pm (1 hr)');
+            });
+
+            it('should only show options in the timepicker dropdown that has 0 or more duration', function() {
+                var $durationDropdown;
+
+                field.def.time = {
+                    duration: {
+                        relative_to: 'foo'
+                    }
+                };
+                field.name = 'bar';
+                field.model.set({
+                    foo: '2014-07-17T11:00',
+                    bar: '2014-07-17T12:00'
+                });
+
+                field.render();
+                field.$(field.secondaryFieldTag).focus();
+
+                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
+
+                expect($durationDropdown.find('li').first().text()).toBe('11:00am (0 mins)');
+                expect($durationDropdown.find('li').last().text()).toBe('11:45pm (12 hrs 45 mins)');
+            });
+
+            it('should not display duration if duration has not been enabled in the view definition', function() {
+                var $durationDropdown;
+
+                field.name = 'bar';
+                field.model.set({
+                    foo: '2014-07-17T11:00',
+                    bar: '2014-07-17T12:00'
+                });
+
+                field.render();
+                field.$(field.secondaryFieldTag).focus();
+
+                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
+
+                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(0);
+            });
+
+            it('should not display duration if the datetime is not on the same day as its relative_to field.', function() {
+                var $durationDropdown;
+
+                field.name = 'bar';
+                field.model.set({
+                    foo: '2014-07-17T11:00',
+                    bar: '2014-07-18T12:00'
+                });
+
+                field.render();
+                field.$(field.secondaryFieldTag).focus();
+
+                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
+
+                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(0);
             });
         });
     });

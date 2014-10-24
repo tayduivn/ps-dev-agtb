@@ -262,7 +262,7 @@
     loadEnumOptions: function(fetch, callback) {
         var self = this,
             meta = app.metadata.getModule(this.module, 'fields'),
-            fieldMeta = meta && meta[this.name] ? meta[this.name] : this.def;
+            fieldMeta = meta && meta[this.name] ? app.utils.deepCopy(meta[this.name]) : this.def;
         this.items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
 
@@ -554,7 +554,7 @@
                 if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
                     this.render();
                 } else {
-                    this.$(this.fieldTag).select2('val', this.model.get(this.name));
+                    this.$(this.fieldTag).select2('val', this.format(this.model.get(this.name)));
                 }
             }, this);
         }

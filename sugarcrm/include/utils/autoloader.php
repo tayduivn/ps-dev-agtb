@@ -88,19 +88,22 @@ class SugarAutoLoader
     public static $namespaceMapPsr4 = array();
 
     /**
-     * Class loading directories
-     * Classes in these dirs are loaded by class name:
-     * Foo -> $dir/Foo.php
-     * @var array paths
-     */
+	 * Class loading directories
+	 * Classes in these dirs are loaded by class name:
+	 * Foo -> $dir/Foo.php
+	 * @var array paths
+	 */
     public static $dirMap = array(
+        'clients/base/api/',
         "data/visibility/",
         "data/Relationships/",
         "data/duplicatecheck/",
+        'include/api/',
+        "include/CalendarEvents/",
         "include/SugarSearchEngine/",
         "include/",
         "modules/Mailer/",
-        "include/api/",
+        'modules/Calendar/',
     );
 
     /**

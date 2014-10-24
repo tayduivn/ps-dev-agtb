@@ -90,6 +90,7 @@ class Meeting extends SugarBean {
     var $date_changed = false;
 
 	public $send_invites = false;
+    public $auto_invite_parent = true;
 
     /**
      * This is a deprecated method, please start using __construct() as this
@@ -220,6 +221,8 @@ class Meeting extends SugarBean {
                 $this->id = create_guid();
                 $this->new_with_id = true;
             }
+            // formatting fix required because our schedule meeting APIs expect data in a specific format
+            $this->fixUpFormatting();
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
@@ -241,7 +244,7 @@ class Meeting extends SugarBean {
 
         $return_id = parent::save($check_notify);
         // Previously this was handled in both the MeetingFormBase and the AfterImportSave function, so now it just happens every time you save a record.
-        if ($this->parent_type == 'Contacts') {
+        if ($this->parent_type == 'Contacts' && $this->auto_invite_parent !== false) {
             if (is_array($this->contacts_arr) && !in_array($this->parent_id, $this->contacts_arr)) {
                 $this->contacts_arr[] = $this->parent_id;
             }
@@ -249,7 +252,7 @@ class Meeting extends SugarBean {
             if (!$this->contacts->relationship_exists('contacts', array('id' => $this->parent_id))) {
                 $this->contacts->add($this->parent_id);
             }
-        } elseif ($this->parent_type == 'Leads') {
+        } elseif ($this->parent_type == 'Leads' && $this->auto_invite_parent !== false) {
             if (isset($this->leads_arr) && is_array($this->leads_arr) && !in_array($this->parent_id, $this->leads_arr)) {
                 $this->leads_arr[] = $this->parent_id;
             }
@@ -281,8 +284,8 @@ class Meeting extends SugarBean {
 
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
-        // always set the assigned user if its the current user to accepted
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id) {
+        // if there isn't a fetched row its new
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
@@ -555,15 +558,17 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
-		$typekey = strtolower($meeting->type);
-		if(isset($meeting->type)) {
-		    if(!empty($app_list_strings['eapm_list'][$typekey])) {
-    		    $typestring = $app_list_strings['eapm_list'][$typekey];
-	    	} else {
-		        $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
-		    }
-		}
-		$xtpl->assign("MEETING_TYPE", isset($meeting->type)? $typestring:"");
+        $typekey = strtolower($meeting->type);
+        if (isset($meeting->type)) {
+            if (!empty($app_list_strings['eapm_list'][$meeting->type])) {
+                $typestring = $app_list_strings['eapm_list'][$meeting->type];
+            } elseif (!empty($app_list_strings['eapm_list'][$typekey])) {
+                $typestring = $app_list_strings['eapm_list'][$typekey];
+            } else {
+                $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
+            }
+        }
+        $xtpl->assign("MEETING_TYPE", isset($meeting->type) ? $typestring : "");
 		$startdate = $timedate->fromDb($meeting->date_start);
 		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
 		$enddate = $timedate->fromDb($meeting->date_end);
@@ -683,18 +688,22 @@ class Meeting extends SugarBean {
 			return parent::get_notification_recipients();
 		}
 
-		$list = array();
-		if(!is_array($this->contacts_arr)) {
-			$this->contacts_arr =	array();
-		}
+        $list = array();
+        if(!is_array($this->contacts_arr)) {
+            $this->contacts_arr = array();
+        }
 
-		if(!is_array($this->users_arr)) {
-			$this->users_arr =	array();
-		}
+        if(!is_array($this->users_arr)) {
+            $this->users_arr = array();
+        }
 
         if(!is_array($this->leads_arr)) {
-			$this->leads_arr =	array();
-		}
+            $this->leads_arr = array();
+        }
+
+        if (empty($this->leads_arr) && $this->load_relationship('leads')) {
+            $this->leads_arr = $this->leads->get();
+        }
 
 		foreach($this->users_arr as $user_id) {
 			$notify_user = BeanFactory::getBean('Users', $user_id);
@@ -977,35 +986,46 @@ class Meeting extends SugarBean {
     }
 } // end class def
 
-// External API integration, for the dropdown list of what external API's are available
+/**
+ * Global functions used to get enum list for Meetings Type field
+ * TODO: Move these into Meeting class when we no longer need to support BWC
+ */
+
+/**
+ * External API integration, for the Meetings drop-down list of what external APIs are available
+
+ * @param SugarBean $focus
+ * @param string $name
+ * @param string $value
+ * @param string $view
+ * @return array External integrations available for meetings
+ */
 //TODO: do we really need focus, name and view params for this function
 function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = null, $view = null)
 {
-	global $dictionary, $app_list_strings;
+    global $dictionary, $app_list_strings;
 
-	$cacheKeyName = 'meetings_type_drop_down';
-
+    $cacheKeyName = 'meetings_type_drop_down';
     $apiList = sugar_cache_retrieve($cacheKeyName);
-    if ($apiList === null)
-    {
+    if ($apiList === null) {
         require_once('include/externalAPI/ExternalAPIFactory.php');
 
         $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-        $apiList = array_merge(array('Sugar'=>$GLOBALS['app_list_strings']['eapm_list']['Sugar']), $apiList);
+        $apiList = array_merge(array('Sugar' => $app_list_strings['eapm_list']['Sugar']), $apiList);
         sugar_cache_put($cacheKeyName, $apiList);
     }
 
-	if(!empty($value) && empty($apiList[$value]))
-	{
-		$apiList[$value] = $value;
+    if (!empty($value) && empty($apiList[$value])) {
+        $apiList[$value] = $value;
     }
-	//bug 46294: adding list of options to dropdown list (if it is not the default list)
-    if ($dictionary['Meeting']['fields']['type']['options'] != "eapm_list")
-    {
+
+    // if options list name is defined in vardef and is a different list than eapm_list then use that list
+    $typeField = $dictionary['Meeting']['fields']['type'];
+    if (isset($typeField['options']) && $typeField['options'] != "eapm_list") {
         $apiList = array_merge(getMeetingTypeOptions($dictionary, $app_list_strings), $apiList);
     }
 
-	return $apiList;
+    return $apiList;
 }
 
 /**
@@ -1016,20 +1036,17 @@ function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = nu
  */
 function getMeetingTypeOptions($dictionary, $app_list_strings)
 {
-	$result = array();
+    $result = array();
 
     // getting name of meeting type to fill dropdown list by its values
-    if (isset($dictionary['Meeting']['fields']['type']['options']))
-	{
-    	$typeName = $dictionary['Meeting']['fields']['type']['options'];
+    if (isset($dictionary['Meeting']['fields']['type']['options'])) {
+        $typeName = $dictionary['Meeting']['fields']['type']['options'];
 
-        if (!empty($app_list_strings[$typeName]))
-		{
-        	$typeList = $app_list_strings[$typeName];
+        if (!empty($app_list_strings[$typeName])) {
+            $typeList = $app_list_strings[$typeName];
 
-            foreach ($typeList as $key => $value)
-			{
-				$result[$value] = $value;
+            foreach ($typeList as $key => $value) {
+                $result[$value] = $value;
             }
         }
     }

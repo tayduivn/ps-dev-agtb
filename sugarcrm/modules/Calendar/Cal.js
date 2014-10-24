@@ -8,8 +8,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-	
-	var CAL = {};
+
+    var CAL = {},
+        app = window.parent.SUGAR.App;
 
 	CAL.slot_height = 14;
 	CAL.dropped = 0;
@@ -312,10 +313,11 @@
 					e.style.zIndex = 2;				 
 		});
 		YAHOO.util.Event.on(el,"mouseout",function(event){	
-				if(!CAL.records_openable)
-					return;	
-			       	var node = event.toElement || event.relatedTarget;
-			       	var i = 3;
+                if(!CAL.records_openable) {
+                    return;
+                }
+                var node = event.toElement || event.relatedTarget;
+                var i = 3;
 				while(i > 0){
 					if(node == this)
 						return;
@@ -966,7 +968,7 @@
 	CAL.reset_edit_dialog = function (){
 		var e;
 
-		document.forms["CalendarEditView"].elements["current_module"].value = "Meetings";
+		document.forms["CalendarEditView"].elements["current_module"].value = "Calls";
 	
 		CAL.get("radio_call").removeAttribute("disabled");
 		CAL.get("radio_meeting").removeAttribute("disabled");
@@ -1228,129 +1230,23 @@
 			}
 		}
 	}
-		
-	CAL.load_form = function (module_name, record, edit_all_recurrences){
-	
-		CAL.disable_creating = true;
-	
-		var e;
-		var to_open = true;
-		if(module_name == "Tasks")
-			to_open = false;
 
-		if(to_open && CAL.records_openable){
-			CAL.get("form_content").style.display = "none";
-		
-			CAL.disable_buttons();	
-	
-			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;
-			
-			CAL.repeat_tab_handle(module_name);
-			
-			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-			
-			params = {};
-			if(edit_all_recurrences)
-				params = {stay_on_tab: true};
-			
-			CAL.open_edit_dialog(params);	
-			CAL.get("record").value = "";	
-				
-			if(!edit_all_recurrences)
-				edit_all_recurrences = "";		
-	
-			var callback = {
-																	
-					success: function(o){
-						try{
-							res = eval("("+o.responseText+")");
-						}catch(err){
-							alert(CAL.lbl_error_loading);
-							CAL.editDialog.cancel();							
-							ajaxStatus.hideStatus();
-							return;	
-						}			
-						if(res.access == 'yes'){							
-													
-							var fc = document.getElementById("form_content");
-							CAL.script_evaled = false;
-							fc.innerHTML = '<script type="text/javascript">CAL.script_evaled = true;</script>'+res.html; 
-							if(!CAL.script_evaled){											
-								SUGAR.util.evalScript(res.html);
-							}
-							
-							CAL.get("record").value = res.record;
-							CAL.get("current_module").value = res.module_name;	
-							var mod_name = res.module_name;	
-							
-							if(mod_name == "Meetings")
-								CAL.get("radio_meeting").checked = true;
-							if(mod_name == "Calls")
-								CAL.get("radio_call").checked = true;
-								
-							if(res.edit == 1){
-								CAL.record_editable = true;
-							}else{
-								CAL.record_editable = false;
-							}
-							
-							CAL.get("radio_call").setAttribute("disabled","disabled");
-							CAL.get("radio_meeting").setAttribute("disabled","disabled");						
-																				
-		
-							eval(res.gr);							
-							SugarWidgetScheduler.update_time();											
-							if(CAL.record_editable){
-								CAL.enable_buttons();
-							}
+    /**
+     * This is the hook point for when an event in the calendar is clicked
+     * We are just routing to Record View for now since we can't
+     * open Sidecar record views in a drawer (and allow the user to close)
+     *
+     * @param {String} module_name The name of the module
+     * @param {String} record The id of the record
+     * @param {Boolean} edit_all_recurrences Whether there are recurrences
+     */
+    CAL.load_form = function (module_name, record, edit_all_recurrences) {
+        //TODO: Open this in a drawer in edit mode - right now we can't do this
+        var navigateUrl = '#' + app.router.buildRoute(module_name, record);
+        app.router.navigate(navigateUrl, {trigger: true});
+    };
 
-                            // don't let disallowed actions work
-                            var acl = res.acl;
-                            if (!acl.delete) {
-                                CAL.get('btn-delete').setAttribute('disabled','disabled');
-                            }
-							
-							CAL.get("form_content").style.display = "";
-							
-							if(typeof res.repeat != "undefined"){
-								CAL.fill_repeat_tab(res.repeat);
-							}
-							
-							CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
-							ajaxStatus.hideStatus();
-							CAL.get("btn-save").focus();
-								
-							setTimeout(function(){
-								if (!res.edit) {									
-									$("#scheduler .schedulerInvitees").css("display", "none");
-									$("#create-invitees-buttons").css("display", "none");
-									$("#create-invitees-title").css("display", "none");
-								}
-								enableQS(false);
-//								disableOnUnloadEditView();
-							},500);	
-						}else
-							alert(CAL.lbl_error_loading);
-																			
-					},
-					failure: function(){
-						alert(CAL.lbl_error_loading);
-					}
-			};
-			var url = "index.php?module=Calendar&action=QuickEdit&sugar_body_only=true";
-			var data = {
-				"current_module" : module_name,
-				"record" : record,
-				"edit_all_recurrences" : edit_all_recurrences
-			};
-			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));
-			
-		}
-								
-	}
-	
-	
-	CAL.editAllRecurrences = function (){		
+	CAL.editAllRecurrences = function() {
 		var record = CAL.get("record").value;
 		if(CAL.get("repeat_parent_id").value != ""){
 			record = CAL.get("repeat_parent_id").value;
@@ -1361,8 +1257,7 @@
 			CAL.load_form(module, record, true);			
 		}		
 	}
-		
-	
+
 	CAL.remove_shared = function (record_id, edit_all_recurrences){
 			if(typeof edit_all_recurrences == "undefined")
 				edit_all_recurrences = false;
@@ -1498,81 +1393,69 @@
 		CAL.load_create_form(CAL.current_params);				
 	}
 
+    CAL.load_create_form = function (params) {
+        CAL.disable_buttons();
+        ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
+        CAL.repeat_tab_handle(CAL.current_params.module_name);
 
-	
-	CAL.load_create_form = function (params){	
-		
-			CAL.disable_buttons();	
-	
-			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-			
-			CAL.repeat_tab_handle(CAL.current_params.module_name);
-			
-			var callback = {
-																	
-					success: function(o){
-						try{
-							res = eval("("+o.responseText+")");
-						}catch(err){
-							alert(CAL.lbl_error_loading);
-							CAL.editDialog.cancel();							
-							ajaxStatus.hideStatus();
-							return;	
-						}			
-						if(res.access == 'yes'){						
-							var fc = document.getElementById("form_content");
-							CAL.script_evaled = false;
-							fc.innerHTML = '<script type="text/javascript">CAL.script_evaled = true;</script>'+res.html; 
-							
-							if(!CAL.script_evaled){											
-								SUGAR.util.evalScript(res.html);
-							}
-														
-							CAL.get("record").value = "";
-							CAL.get("current_module").value = res.module_name;								
-							var mod_name = res.module_name;	
-													
-							if(res.edit == 1){
-								CAL.record_editable = true;
-							}else{
-								CAL.record_editable = false;
-							}
-														
-							CAL.get("title-cal-edit").innerHTML = CAL.lbl_create_new;
-							
-							if(typeof res.repeat != "undefined"){
-								CAL.fill_repeat_tab(res.repeat);
-							}
-							
-							CAL.enable_buttons();
-								
-							setTimeout(function(){
-								SugarWidgetScheduler.update_time();
-								enableQS(false);
-//								disableOnUnloadEditView();
-							},500);
-							
-							ajaxStatus.hideStatus();
-						}else{
-							alert(CAL.lbl_error_loading);
-							ajaxStatus.hideStatus();
-						}
-					},
-					failure: function() {
-						alert(CAL.lbl_error_loading);
-						ajaxStatus.hideStatus();
-					}	
-			};			
-							
-			var url = "index.php?module=Calendar&action=QuickEdit&sugar_body_only=true";
-			var data = {
-				"current_module" : params.module_name,
-				"assigned_user_id" : params.user_id,
-				"assigned_user_name" : params.user_name,
-				"date_start" : params.date_start
-			};
-			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
-	}
+        var callback = {
+            success: function (o) {
+                try {
+                    res = eval("(" + o.responseText + ")");
+                } catch (err) {
+                    alert(CAL.lbl_error_loading);
+                    CAL.editDialog.cancel();
+                    ajaxStatus.hideStatus();
+                    return;
+                }
+                if (res.access == 'yes') {
+                    var fc = document.getElementById("form_content");
+                    CAL.script_evaled = false;
+                    fc.innerHTML = '<script type="text/javascript">CAL.script_evaled = true;</script>' + res.html;
+
+                    if (!CAL.script_evaled) {
+                        SUGAR.util.evalScript(res.html);
+                    }
+
+                    CAL.get("record").value = "";
+                    CAL.get("current_module").value = res.module_name;
+
+                    CAL.record_editable = (res.edit == 1);
+
+                    CAL.get("title-cal-edit").innerHTML = CAL.lbl_create_new;
+
+                    if (typeof res.repeat != "undefined") {
+                        CAL.fill_repeat_tab(res.repeat);
+                    }
+
+                    CAL.enable_buttons();
+
+                    setTimeout(function () {
+                        SugarWidgetScheduler.update_time();
+                        enableQS(false);
+                    }, 500);
+
+                    ajaxStatus.hideStatus();
+                } else {
+                    alert(CAL.lbl_error_loading);
+                    ajaxStatus.hideStatus();
+                }
+            },
+            failure: function () {
+                alert(CAL.lbl_error_loading);
+                ajaxStatus.hideStatus();
+            }
+        };
+
+        var url = "index.php?module=Calendar&action=QuickEdit&sugar_body_only=true";
+        var data = {
+            "current_module": params.module_name,
+            "assigned_user_id": params.user_id,
+            "assigned_user_name": params.user_name,
+            "date_start": params.date_start
+        };
+        YAHOO.util.Connect.asyncRequest('POST', url, callback, CAL.toURI(data));
+    }
 	
 	CAL.full_form = function() {
 		var e = document.createElement('input');
@@ -1615,67 +1498,43 @@
 			CAL.get("btn-remove-all-recurrences").removeAttribute("disabled");
 		}
 	}
-		
-	
-	CAL.dialog_create = function (cell){
-	
-			var e,user_id,user_name;
-			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;														
-			CAL.open_edit_dialog();
-			
-			CAL.disable_buttons();
-			
-			var module_name = CAL.get("current_module").value;
-			
-			if(CAL.view == 'shared'){
-				// Pick the div that contains 2 custom attributes we
-				// use for storing values in case of 'shared' view
-				parentWithUserValues = $('div[user_id][user_name]');
-				// Pull out the values
-				user_name = parentWithUserValues.attr('user_name');
-				user_id = parentWithUserValues.attr('user_id');
 
-				// Shared by multiple users, need to get attributes from user whom is clicked
-				if (parentWithUserValues.length > 1) {
-				    var theUserName, theUserId;
-				    var theUser = cell.parentNode;
-				    while (theUser) {
-				        if (theUser.getAttribute("user_name") && theUser.getAttribute("user_id")) {
-				            theUserName = theUser.getAttribute("user_name");
-				            theUserId = theUser.getAttribute("user_id");
-				            break;
-				        }
-				        else {
-				            theUser = theUser.parentNode;
-				        }
-				    }
-				    // Found user in the parentNode iteration, use it
-				    if (theUserName && theUserId) {
-				        user_name = theUserName;
-				        user_id = theUserId;
-				    }
-				}
+    CAL.dialog_create = function(cell) {
+        var dateStart = CAL.unformatDateTime(cell.getAttribute('datetime')),
+            meetingDurationMinutes = 15,
+            meetingAttributes = {
+                'date_start': dateStart,
+                'date_end': app.date(dateStart).add('m', meetingDurationMinutes).formatServer(),
+                'duration_hours': 0,
+                'duration_minutes': meetingDurationMinutes
+            };
 
-				CAL.GR_update_user(user_id);
-			}else{
-				user_id = CAL.current_user_id;
-				user_name = CAL.current_user_name;
-				CAL.GR_update_user(CAL.current_user_id);												
-			}						
-			
-			var params = {	
-				'module_name': module_name,
-				'user_id': user_id,	
-				'user_name': user_name,			
-				'date_start': cell.getAttribute("datetime")				
-			};
-			CAL.current_params = params;
-			CAL.load_create_form(CAL.current_params);
-							
-	}
-	
+        CAL.openActivityCreateDrawer('Meetings', meetingAttributes);
+
+        app.alert.show('create-option-alert', {
+            level: 'warning',
+            autoClose: true,
+            autoCloseDelay: 15000,
+            title: ' ',
+            messages: app.lang.get('LBL_CREATING_NEW_ACTIVITY', 'Calendar'),
+            onLinkClick: function(event) {
+                var action = $(event.currentTarget).data('action'),
+                    taskAttributes;
+
+                app.alert.dismiss('create-option-alert');
+                if (action === 'create-task') {
+                    taskAttributes = {
+                        'date_due': dateStart
+                    };
+                    CAL.loadActivityCreateDrawer('Tasks', taskAttributes);
+                } else if (action === 'schedule-call') {
+                    CAL.loadActivityCreateDrawer('Calls', meetingAttributes);
+                }
+            }
+        });
+    };
+
 	CAL.dialog_save = function(){
-						
 						CAL.disable_buttons();
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
@@ -1830,8 +1689,7 @@
 									CAL.editDialog.cancel();	
 	}
 	
-	CAL.refresh = function () {	
-	
+	CAL.refresh = function () {
 		var callback = {
 			success: function(o) {
 				
@@ -2074,6 +1932,72 @@
             result.push(value);
         }
         return result;
+    };
+
+    /**
+     * Open the create drawer for the given module and the given
+     * prefilled attributes.
+     *
+     * @param module
+     * @param prefillAttributes
+     */
+    CAL.openActivityCreateDrawer = function(module, prefillAttributes) {
+        var prefill = app.data.createBean(module);
+
+        // Open prepopulated meeting create form
+        prefill.set(prefillAttributes);
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                model: prefill,
+                module: module,
+                forceNew: true
+            }
+        }, _.bind(function(context, model) {
+            if (model) {
+                //reload the iframe to display new calendar events
+                document.location.reload();
+            }
+        }, this));
+    };
+
+    /**
+     * Replaces the create layout in the open drawer for the given module
+     * and the given prefilled attributes.
+     *
+     * @param module
+     * @param prefillAttributes
+     */
+    CAL.loadActivityCreateDrawer = function(module, prefillAttributes) {
+        var prefill = app.data.createBean(module);
+
+        // Open prepopulated meeting create form
+        prefill.set(prefillAttributes);
+        app.drawer.load({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                model: prefill,
+                module: module,
+                forceNew: true
+            }
+        });
+    };
+
+    /**
+     * Takes the date/time value displayed and formats
+     * appropriately for setting on a model.
+     *
+     * @param dateTime
+     * @returns {String} date/time value formatted for model
+     */
+    CAL.unformatDateTime = function (dateTime) {
+        var dateFormat = app.user.getPreference('datepref') +
+                ' ' + app.user.getPreference('timepref'),
+            jsDateFormat = app.date.convertFormat(dateFormat);
+
+        return app.date(dateTime, jsDateFormat, true).format();
     };
 
 	YAHOO.util.DDCAL = function(id, sGroup, config){ 

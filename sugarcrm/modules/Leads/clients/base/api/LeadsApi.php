@@ -25,6 +25,14 @@ class LeadsApi extends ModuleApi {
                 'shortHelp' => 'This method creates a new Lead record with option to add Target & Email relationships',
                 'longHelp' => 'modules/Leads/clients/base/api/help/LeadsApi.html',
             ),
+            'getFreeBusySchedule' => array(
+                'reqType' => 'GET',
+                'path' => array("Leads", '?', "freebusy"),
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'getFreeBusySchedule',
+                'shortHelp' => 'Retrieve a list of calendar event start and end times for specified person',
+                'longHelp' => 'include/api/help/lead_get_freebusy_help.html',
+            ),
         );
     }
 
@@ -55,6 +63,22 @@ class LeadsApi extends ModuleApi {
         }
 
         return $data;
+    }
+
+    /**
+     * Retrieve a list of calendar event start and end times for specified person
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function getFreeBusySchedule($api, $args)
+    {
+        $bean = $this->loadBean($api, $args, 'view');
+        return array(
+            "module" => $bean->module_name,
+            "id" => $bean->id,
+            "freebusy" => $bean->getFreeBusySchedule($args),
+        );
     }
 
     /**

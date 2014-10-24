@@ -22,11 +22,11 @@ class SugarTestCampaignUtilities
 
     private function __construct() {}
 
-    public static function createCampaign($id = '') 
+    public static function createCampaign($id = '', $class='Campaign')
     {
         $time = mt_rand();
     	$name = 'SugarCampaign';
-    	$campaign = new Campaign();
+    	$campaign = new $class();
         $campaign->name = $name . $time;
         $campaign->status = 'Active';
         $campaign->campaign_type = 'Email';
@@ -137,5 +137,19 @@ class SugarTestCampaignUtilities
         }
 
         return $campaignTrackerIds;
+    }
+}
+
+class CampaignMock extends Campaign
+{
+    public function getNotificationEmailTemplate($test = false)
+    {
+        if ($test) {
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            return $this->createNotificationEmailTemplate($templateName);
+        }
+
+        return $this->createNotificationEmailTemplate($templateName);
+
     }
 }

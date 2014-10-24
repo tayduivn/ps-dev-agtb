@@ -82,6 +82,10 @@ describe('Base.Field.Date', function() {
             expect(field.unformat()).toBeUndefined();
             expect(field.unformat('32/01/1984')).toBeUndefined();
         });
+
+        it('should return undefined if an empty string is supplied', function() {
+            expect(field.unformat('')).toBeUndefined();
+        });
     });
 
     describe('defaults', function() {

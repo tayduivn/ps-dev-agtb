@@ -312,6 +312,10 @@
                     'include/javascript/sugar7/plugins/Prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Chart.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/EmailClientLaunch.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/VirtualCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/SearchForMore.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/EditAllRecurrences.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/AddAsInvitee.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY
@@ -338,6 +342,7 @@
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             $sugar_grp_sugar7_portal2 = array(

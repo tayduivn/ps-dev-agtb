@@ -174,6 +174,8 @@
                     _.defer(function(field) {
                         if (field.disposed !== true) {
                             field.setMode(viewName);
+                            field.$el.closest('.record-cell')
+                                .toggleClass('edit', (viewName === 'edit'));
                         }
                     }, field);
 
@@ -247,6 +249,8 @@
                     } else {
                         $(document).on('mousedown.record' + field.name, {field: field}, this.editableMouseClicked);
                     }
+                    field.$el.closest('.record-cell')
+                        .toggleClass('edit', true);
                 } else {
                     if (_.isFunction(field.unbindKeyDown)) {
                         field.unbindKeyDown();
@@ -254,6 +258,8 @@
                         field.$(field.fieldTag).off('keydown.record');
                     }
                     $(document).off('mousedown.record' + field.name);
+                    field.$el.closest('.record-cell')
+                        .toggleClass('edit', false);
                 }
             },
 

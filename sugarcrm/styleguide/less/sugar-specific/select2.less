@@ -32,6 +32,7 @@
   }
   &.select2-dropdown-open {
     z-index: @zindexDropdown;
+    .select2-choice,
     .select2-choices {
       .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
     }
@@ -203,11 +204,12 @@
   }
   .select2-choice {
     background: @grayLighter;
-    color: @grayLight;
+    color: @gray;
     border-color: @inputBorderColor;
     filter: none;
     line-height: 26px;
     height: 26px;
+    .border-radius(3px);
     .box-shadow(none);
     &:focus {
       border-color: @linkColor;
@@ -267,6 +269,7 @@
   color: @textColor;
   border-color: @inputBorderColor;
   z-index: @zindexSelect2menu;
+  .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
   &.select2-drop-active {
     min-width: 50px;
     border-color: @linkColor;
@@ -283,6 +286,14 @@
   }
   .select2-results:last-child {
     .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+  }
+}
+
+.select2-menu-only.select2-drop {
+  .border-radius(@baseBorderRadius);
+  border-top: 1px solid @linkColor;
+  .select2-search-hidden + .select2-results {
+    .border-radius(@baseBorderRadius);
   }
 }
 
@@ -324,6 +335,10 @@
   .select2-result-label {
     padding: 8px 10px;
     white-space: nowrap;
+    .label-module-mini {
+      margin: 1px 4px 0 0;
+      float: left;
+    }
   }
   li div {
     line-height: 18px;

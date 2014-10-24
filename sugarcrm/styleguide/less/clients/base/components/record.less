@@ -84,7 +84,7 @@
       padding-left: 0;
     }
     .record-cell {
-      input[type="text"],
+      input[type="text"]:not(.select2-input),
       textarea,
       .uneditable-input,
       .select2-container {
@@ -155,6 +155,7 @@
     .record-label {
       font-size: @fontSizeSmall;
       color: lighten(@gray, 12%);
+      display: block;
     }
     .normal > span {
       display: block;
@@ -185,7 +186,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    input[type="text"],
+    input[type="text"]:not(.select2-input),
     input[type="password"],
     textarea,
     .uneditable-input {
@@ -270,6 +271,15 @@
       .uneditable-input {
         vertical-align: middle;
       }
+    }
+
+    .nopadding {
+      padding-left: 0;
+    }
+    .fieldset-text {
+      text-align: center;
+      margin-top: 20px;
+      padding-left: 4px;
     }
 
     &[data-type="textarea"] {
@@ -601,13 +611,19 @@
         }
       }
     }
-  }
 
-  .record-edit-link-wrapper {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    &[data-type="repeat-dow"] {
+      .select2-search-field input {
+        margin-top: -2.5px;
+        padding-left: 12px;
+        padding-right: 0;
+      }
+      .error-tooltip.add-on {
+        top: -2px;
+        right: 11px;
+      }
+    }
+
   }
 
   .wide {
@@ -697,17 +713,21 @@
     display: table;
     min-height: 0;
     width: 100%;
+    .calcWidth(~"100% + 2px");
+  }
+  .record-cell:not(.span12) .normal > .fieldset-inline {
     .calcWidth(~"100% + 16px");
   }
   .fieldset-inline {
     .fieldset-field {
       display: table-cell;
       padding-right: 8px;
-      vertical-align: bottom;
+      vertical-align: top;
       .record-label {
         min-height: 18px;
         margin: -2px 0 2px;
         display: block;
+        white-space: nowrap;
         &:empty {
           display: none;
           &+ .edit {
@@ -720,14 +740,20 @@
     .fieldset-field:last-child {
       padding-right: 0;
     }
-    &:not(.edit) {
+    &:not(.edit):not(.fieldset-equal) {
       .fieldset-field:last-child {
         width: 100%;
       }
     }
     &.edit {
-      .fieldset-field:not(:last-child) {
-        padding-right: 16px;
+      .fieldset-field {
+        &[data-type="label"] {
+          padding: 18px 12px 0 4px;
+          text-align: center;
+        }
+        //&:not(:last-child) {
+        // padding-right: 8px;
+        //}
       }
     }
   }
@@ -796,43 +822,40 @@
 
 .record-edit-link-wrapper {
   position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
   z-index: 0;
   .record-edit-link {
     display: none;
     padding: 0px;
     text-decoration: none;
-    cursor: pointer;
+    cursor: text;
+    height: 100%;
+    width: 100%;
     &.btn-invisible:hover {
       border: 1px solid transparent;
       background: none;
     }
-    cursor: text;
-    height: 100%;
-    width: 100%;
   }
 }
-.record-cell {
-  &:hover {
-    .record-edit-link {
-      display: inline-block;
-      .icon-pencil {
-        left: 0;
-        top: 2px;
-        font-size: 10px;
-        position: absolute;
-        color: @grayLight;
-      }
+.record-cell:not(.edit):hover {
+  .record-edit-link {
+    display: inline-block;
+    .icon-pencil {
+      left: 0;
+      top: 2px;
+      font-size: 10px;
+      position: absolute;
+      color: @grayLight;
     }
   }
 }
 .record-cell.edit {
-  &:hover {
-    .record-edit-link {
-      display: none;
-      .icon-pencil {
-        display: none;
-      }
-    }
+  .record-edit-link-wrapper {
+    display: none;
   }
 }
 
@@ -902,5 +925,224 @@
   .record-panel-content {
     width: auto !important;
     padding: 20px 20px 10px 5px;
+  }
+}
+
+.participants-schedule {
+  display: table;
+  width: 100%;
+  .row {
+    display: table-row;
+    .cell {
+      display: table-cell;
+      vertical-align: middle;
+      .container {
+        display: table;
+        width: 100%;
+        &:before, &:after {
+          display: none;
+        }
+      }
+      &.times {
+        .timeblock {
+          display: table-cell;
+          vertical-align: middle;
+        }
+      }
+    }
+    &.header {
+      border: none;
+      * {
+        font-size: 11px;
+        font-weight: normal;
+        color: rgb(118,118,118);
+      }
+      .cell {
+        &.times {
+          border-right: 1px transparent;
+          .timeblock {
+            width: 11.111%;
+            text-align: center;
+            line-height: 16px;
+            border-radius: 2px;
+            &.alt {
+              background-color: rgb(229,229,229);
+            }
+          }
+        }
+      }
+    }
+    &.participant {
+      margin-top: 5px;
+      .cell {
+        border-color: rgb(181,181,181);
+        border-style: solid;
+        border-width: 1px 0;
+        &.profile {
+          width: 170px;
+          border-width: 1px 0 1px 1px;
+          border-radius: 3px 0 0 3px;
+          padding: 0 5px;
+          .avatar {
+            min-width: 20px;
+            display: table-cell;
+            vertical-align: middle;
+            padding-right: 5px;
+            img {
+              border: none;
+            }
+            span {
+              display: block;
+            }
+          }
+          .name {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            span {
+              width: 95px;
+            }
+          }
+          .status {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 5px;
+            .label {
+              float: right;
+            }
+          }
+        }
+        &.times {
+          border-width: 1px 1px 1px 0;
+          border-radius: 0 3px 3px 0;
+          position: relative;
+          &.unavailable, &.loading {
+            .overlay {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+              background-color: rgba(0,0,0,.1);
+              font-size: 11px;
+              font-weight: bold;
+              text-align: center;
+              line-height: 33px;
+              text-shadow: 0 1px 0 rgba(255,255,255,.025);
+            }
+            .container {
+              .timeblock {
+                border-color: rgb(221,221,221);
+              }
+            }
+          }
+          .container {
+            border-radius: 0 3px 3px 0;
+            .timeblock {
+              width: 11.111%;
+              height: 32px;
+              border-left: 1px solid rgb(204,204,204);
+              &:last-child {
+                border-radius: 0 3px 3px 0;
+              }
+              span {
+                width: 25%;
+                height: 26px;
+                display: inline-block;
+                float: left;
+                border-left: 1px solid rgba(204,204,204,.5);
+                box-sizing: border-box;
+                &:first-child {
+                  border: none;
+                }
+                &.schedule {
+                  border-top: 2px solid #ccc;
+                  border-bottom: 2px solid #ccc;
+                  &.start {
+                    border-left: 2px solid rgb(55,136,14);
+                  }
+                  &.end {
+                    border-right: 2px solid rgb(190,0,20);
+                  }
+                }
+                &.start-end {
+                  border-left: 2px solid rgb(55,136,14);
+                }
+                &.busy {
+                  background-color: rgb(101,101,101);
+                  border-color: rgb(70,70,70);
+                }
+              }
+            }
+          }
+        }
+        &.buttons {
+          border: none;
+          width: 80px;
+          .btn-toolbar {
+            margin: 0;
+            padding-left: 10px;
+          }
+        }
+      }
+    }
+    &.spacer {
+      .cell {
+        height: 5px;
+      }
+    }
+  }
+}
+.participants-form {
+  display: table;
+  width: 100%;
+  .cell {
+    display: table-cell;
+    vertical-align: middle;
+    &.select {
+      .field {
+        margin-left: 2px;
+        > .select2-container {
+          margin: 0;
+        }
+      }
+    }
+    &.buttons {
+      width: 82px;
+      .btn-toolbar {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}
+// for preview pane
+.participants {
+  display: table;
+  .row {
+    display: table-row;
+    .cell {
+      display: table-cell;
+      vertical-align: middle;
+      height: 34px;
+      padding: 0 5px;
+    }
+    &.spacer {
+      .cell {
+        height: 5px;
+      }
+    }
+  }
+  .participant {
+    border: 1px solid rgb(181,181,181);
+    border-radius: 3px;
+  }
+  .name {
+    font-size: 11px;
+    font-weight: bold;
+    width: 95px;
+    max-width: 95px;
   }
 }

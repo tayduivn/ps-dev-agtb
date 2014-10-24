@@ -9,11 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $module_name = 'Meetings';
 $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
-    'href' => '#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
     'label' => 'LNK_NEW_MEETING',
     'visible' => true,
     'order' => 7,

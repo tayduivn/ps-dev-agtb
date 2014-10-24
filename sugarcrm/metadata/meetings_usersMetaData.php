@@ -62,6 +62,10 @@ $dictionary['meetings_users'] = array(
 				'type'			=> 'alternate_key', 
 				'fields'		=> array('meeting_id', 'user_id'),
 		),
+        array(	'name'			=> 'idx_meeting_users_del',
+                'type'			=> 'alternate_key',
+                'fields'		=> array('meeting_id', 'user_id', 'deleted'),
+        ),
 	),
 	'relationships' => array(
 		'meetings_users' => array(

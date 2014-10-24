@@ -59,8 +59,15 @@
      */
     initialize: function(options) {
         app.plugins.attach(this, 'view');
-        this.onConfirm = options.onConfirm;
-        this.onCancel = options.onCancel;
+
+        options || (options = {});
+        options.confirm || (options.confirm = {});
+        options.cancel || (options.cancel = {});
+
+        this.onConfirm = options.onConfirm || options.confirm.callback;
+        this.confirmLabel = options.confirm.label || 'LBL_CONFIRM_BUTTON_LABEL';
+        this.onCancel = options.onCancel || options.cancel.callback;
+        this.cancelLabel = options.cancel.label || 'LBL_CANCEL_BUTTON_LABEL';
         this.onLinkClick = options.onLinkClick;
         this.onClose = options.onClose;
         this.templateOptions = options.templateOptions;
@@ -178,7 +185,8 @@
         var seed = _.extend({}, {
             alertClass: alertClasses,
             title: this.getTranslatedLabels(title),
-            messages: this.getTranslatedLabels(messages)
+            messages: this.getTranslatedLabels(messages),
+            alert: this
         }, templateOptions);
         return template(seed);
     },

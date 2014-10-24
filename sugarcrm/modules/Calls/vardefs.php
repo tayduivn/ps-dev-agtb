@@ -34,9 +34,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'int',
     'len' => '2',
     'comment' => 'Call duration, hours portion',
-	'required' => true,
-    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
-
+    'required' => true,
+    'massupdate' => false,
+    'studio' => false,
   ),
   'duration_minutes' =>
   array (
@@ -48,34 +48,39 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'group'=>'duration_hours',
     'importable' => 'required',
     'comment' => 'Call duration, minutes portion',
-    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'required' => true,
+    'massupdate' => false,
+    'studio' => false,
   ),
 
    'date_start' =>
   array (
     'name' => 'date_start',
-    'vname' => 'LBL_DATE',
+    'vname' => 'LBL_CALENDAR_START_DATE',
     'type' => 'datetimecombo',
     'dbType' => 'datetime',
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
 	'required' => true,
+    'massupdate' => false,
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
+    'studio' => array('recordview' => false),
   ),
 
   'date_end' =>
   array (
     'name' => 'date_end',
-    'vname' => 'LBL_DATE_END',
+    'vname' => 'LBL_CALENDAR_END_DATE',
     'type' => 'datetimecombo',
 	'dbType' => 'datetime',
-    'massupdate'=>false,
+    'massupdate' => false,
     'comment' => 'Date is which call is scheduled to (or did) end',
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
-    'studio' => array('wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
+    'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
+    'readonly' => true,
   ),
 
  'parent_type'=>
@@ -148,7 +153,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_REMINDER_TIME',
+    'vname' => 'LBL_POPUP_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',
@@ -156,7 +161,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => array('recordview' => false, 'wirelesseditview' => false),
   ),
   'email_reminder_checked' => array(
     'name' => 'email_reminder_checked',
@@ -178,7 +183,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => array('recordview' => false, 'wirelesseditview' => false),
   ),
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',
@@ -407,7 +412,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_type' =>
   array(
     'name' => 'repeat_type',
-    'vname' => 'LBL_REPEAT_TYPE',
+    'vname' => 'LBL_CALENDAR_REPEAT_TYPE',
     'type' => 'enum',
     'len' => 36,
     'options' => 'repeat_type_dom',
@@ -420,7 +425,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_interval' =>
   array(
     'name' => 'repeat_interval',
-    'vname' => 'LBL_REPEAT_INTERVAL',
+    'vname' => 'LBL_CALENDAR_REPEAT_INTERVAL',
     'type' => 'int',
     'len' => 3,
     'default' => 1,
@@ -433,7 +438,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_dow' =>
   array(
     'name' => 'repeat_dow',
-    'vname' => 'LBL_REPEAT_DOW',
+    'vname' => 'LBL_CALENDAR_REPEAT_DOW',
     'type' => 'varchar',
     'len' => 7,
     'comment' => 'Days of week in recurrence',
@@ -445,7 +450,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_until' =>
   array(
     'name' => 'repeat_until',
-    'vname' => 'LBL_REPEAT_UNTIL',
+    'vname' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
     'type' => 'date',
     'comment' => 'Repeat until specified date',
     'importable' => 'false',
@@ -456,9 +461,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'repeat_count' =>
   array(
     'name' => 'repeat_count',
-    'vname' => 'LBL_REPEAT_COUNT',
+    'vname' => 'LBL_CALENDAR_REPEAT_COUNT',
     'type' => 'int',
     'len' => 7,
+    'default' => 10,
+    'validation' => array('type' => 'range', 'min' => 1),
     'comment' => 'Number of recurrence',
     'importable' => 'false',
     'massupdate' => false,
@@ -496,7 +503,26 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not to send out invites (Meta-data only)',
     'massupdate' => false,
-   ),  
+   ),
+        'invitees' => array(
+            'name' => 'invitees',
+            'source' => 'non-db',
+            'type' => 'collection',
+            'vname' => 'LBL_INVITEES',
+            'links' => array(
+                'contacts',
+                'leads',
+                'users',
+            ),
+            'order_by' => 'name:asc',
+        ),
+    'auto_invite_parent' => array(
+        'name' => 'auto_invite_parent',
+        'type' => 'bool',
+        'source' => 'non-db',
+        'comment' => 'Flag to allow for turning off auto invite of parent record -  (Meta-data only)',
+        'massupdate' => false,
+    ),
 ),
 'indices' => array (
 	array(
@@ -513,6 +539,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'name' => 'idx_calls_date_start',
         'type' => 'index',
         'fields' => array('date_start'),
+    ),
+    array(
+        'name' => 'idx_calls_date_start_end_del',
+        'type' => 'index',
+        'fields'=> array('date_start', 'date_end', 'deleted'),
     ),
     // due to pulls from client side to check if there are reminders to handle.
     array(
@@ -574,6 +605,10 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'	=> true,
+
+    'duplicate_check' => array(
+        'enabled' => false,
+    ),
 );
 
 VardefManager::createVardef('Calls','Call', array('default', 'assignable',

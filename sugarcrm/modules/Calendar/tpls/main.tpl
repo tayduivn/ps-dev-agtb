@@ -42,8 +42,8 @@
 		CAL.scroll_slot = {$scroll_slot};
 		CAL.basic.min_height = {$basic_min_height};
 
-		CAL.lbl_create_new = "{$MOD.LBL_CREATE_NEW_RECORD}";
-		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
+		CAL.lbl_create_new = "{$MOD.LBL_CREATE_NEW_CALL}";
+		CAL.lbl_edit = "{$MOD.LBL_EDIT_CALL}";
 		CAL.lbl_saving = "{$MOD.LBL_SAVING}";
 		CAL.lbl_loading = "{$MOD.LBL_LOADING}";
 		CAL.lbl_sending = "{$MOD.LBL_SENDING_INVITES}";

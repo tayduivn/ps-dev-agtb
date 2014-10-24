@@ -14,6 +14,7 @@
 require_once 'modules/Meetings/Meeting.php';
 require_once 'modules/Meetings/MeetingFormBase.php';
 require_once 'modules/Activities/EmailReminder.php';
+require_once 'include/externalAPI/ExternalAPIFactory.php';
 
 
 class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
@@ -26,6 +27,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("app_list_strings");
 
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->name = 'Test Meeting';
@@ -49,6 +51,10 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
@@ -163,5 +169,80 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($meeting->reminder_checked);
         $this->assertTrue($meeting->email_reminder_checked);
+    }
+
+    public function testGetMeetingsExternalApiDropDown_NoCachedValues_ReturnsExternalAPIResults()
+    {
+        sugar_cache_clear('meetings_type_drop_down');
+        //no way to mock out ExternalAPIFactory, so just using the value returned, likely empty array
+        $expected = ExternalAPIFactory::getModuleDropDown('Meetings');
+        $expected = array_merge(array('Sugar' => 'Sugar'), $expected);
+        $actual = getMeetingsExternalApiDropDown();
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetMeetingsExternalApiDropDown_WithCachedValues_ReturnsCachedValues()
+    {
+        $cachedValues = array('Cached' => 'Cached');
+        sugar_cache_put('meetings_type_drop_down', $cachedValues);
+        $actual = getMeetingsExternalApiDropDown();
+        $this->assertEquals($cachedValues, $actual);
+    }
+
+    public function testGetMeetingsExternalApiDropDown_WithValuePassed_AppendValueToList()
+    {
+        $passedValue = 'PassedIn';
+        $cachedValues = array('Cached' => 'Cached');
+        sugar_cache_put('meetings_type_drop_down', $cachedValues);
+        $expected = array_merge($cachedValues, array($passedValue => $passedValue));
+        $actual = getMeetingsExternalApiDropDown(null, null, $passedValue);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetMeetingsExternalApiDropDown_OptionsOnMeta_AppendToList()
+    {
+        SugarTestHelper::setUp("dictionary");
+        global $dictionary, $app_list_strings;
+        $dictionary['Meeting']['fields']['type']['options'] = 'foo_type';
+        $app_list_strings['foo_type'] = array('Foo' => 'Foo');
+        $cachedValues = array('Cached' => 'Cached');
+        sugar_cache_put('meetings_type_drop_down', $cachedValues);
+        $expected = array_merge($cachedValues, $app_list_strings['foo_type']);
+        $actual = getMeetingsExternalApiDropDown();
+        $this->assertEquals($expected, $actual);
+        unset($dictionary['Meeting']['fields']['type']['options']);
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreAlreadyLoaded_ReturnsRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->users_arr = array($GLOBALS['current_user']->id);
+        $meeting->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $GLOBALS['current_user']->id);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[0]->id);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertEmpty($actual, 'The current user should be in the list.');
     }
 }

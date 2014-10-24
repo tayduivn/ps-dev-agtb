@@ -25,15 +25,15 @@ class BeanAssigneeNotificationTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     public function testAssigneeForBWCModule()
     {
-        $bean = SugarTestMeetingUtilities::createMeeting();
-        $template = $bean->getNotificationEmailTemplate();
+        $bean = SugarTestCampaignUtilities::createCampaign('', 'CampaignMock');
+        $template = $bean->getNotificationEmailTemplate(true);
         $url = $template->VARS['URL'];
 
         // check if the URL points to the proper instance

@@ -150,16 +150,66 @@
      * @protected
      */
     _setupTimePicker: function() {
-        var $field = this.$(this.secondaryFieldTag);
+        var options;
 
-        $field.timepicker({
+        this.def.time || (this.def.time = {});
+
+        options = {
             timeFormat: this.getUserTimeFormat(),
-            // FIXME: add metadata driven support for the following properties
-            scrollDefaultNow: true,
-            step: 15,
-            className: 'prevent-mousedown',
+            scrollDefaultNow: _.isUndefined(this.def.time.scroll_default_now) ?
+                true :
+                !!this.def.time.scroll_default_now,
+            step: this.def.time.step || 15,
+            disableTextInput: _.isUndefined(this.def.time.disable_text_input) ?
+                false :
+                !!this.def.time.disable_text_input,
+            className: this.def.time.css_class || 'prevent-mousedown',
             appendTo: this.view.$el
-        });
+        };
+
+        this._enableDuration(options);
+
+        this.$(this.secondaryFieldTag).timepicker(options);
+    },
+
+    /**
+     * Show duration on the timepicker dropdown if enabled in view definition.
+     * @param {Object} options - timepicker options
+     * @private
+     */
+    _enableDuration: function(options) {
+        var self = this;
+
+        if (this.def.time.duration) {
+            options.maxTime = 85500; //23.75 hours, which is 11:45pm
+
+            options.durationTime = function() {
+                var dateStartString = self.model.get(self.def.time.duration.relative_to),
+                    dateEndString = self.model.get(self.name),
+                    startDate,
+                    endDate;
+
+                this.minTime = null;
+                this.showDuration = false;
+
+                if (!dateStartString || !dateEndString) {
+                    return;
+                }
+
+                startDate = app.date(dateStartString);
+                endDate = app.date(dateEndString);
+
+                if ((startDate.years() === endDate.years()) && (startDate.months() === endDate.months()) && (startDate.days() === endDate.days())) {
+                    this.minTime = app.date.duration({
+                        hours: startDate.hours(),
+                        minutes: startDate.minutes()
+                    }).asSeconds();
+                    this.showDuration = true;
+                }
+
+                return this.minTime;
+            };
+        }
     },
 
     /**
@@ -260,6 +310,10 @@
         }
 
         this.model.on('change:' + this.name, function(model, value) {
+            if (this.disposed) {
+                return;
+            }
+            
             if (this.action !== 'edit' && this.action !== 'massupdate') {
                 this.render();
                 return;
