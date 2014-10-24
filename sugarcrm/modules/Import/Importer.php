@@ -541,15 +541,29 @@ class Importer
             $tagFieldName = $focus->getTagField();
             $tagField = $focus->field_defs[$tagFieldName];
 
-            // Get the tags from the row
-            $tags = explode('^,^', trim($row[$this->hasTags], '^'));
+            // Get the tags from the bean if they exist
+            $currentTags = $sfTag->getTagValues($focus, $tagFieldName);
 
-            // And read them into the params array for the field handler
-            foreach ($tags as $tag) {
+            // Get the tags from the row. Tags are separated by double quotes.
+            // ex "Value1","Value2","Value3" and then merged with existing tags
+            $tags = $sfTag->getTagValuesFromImport($row[$this->hasTags]);
+
+            // Build the params array so the field can save what needs saving
+            $params[$tagFieldName] = array();
+            foreach ($currentTags as $tag) {
                 // Clean up the tag for sending to the field handler
                 $params[$tagFieldName][] = array('name' => trim($tag));
             }
 
+            // Now read the import values into the params array for the field handler
+            foreach ($tags as $tag) {
+                $params[$tagFieldName][] = array('name' => trim($tag));
+            }
+
+            // Now make the tags unique
+            $params[$tagFieldName] = array_unique($params[$tagFieldName]);
+
+            // Now save the field
             $sfTag->apiSave($focus, $params, $tagFieldName, $tagField);
         }
     }

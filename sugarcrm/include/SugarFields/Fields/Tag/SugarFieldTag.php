@@ -120,10 +120,44 @@ class SugarFieldTag extends SugarFieldMultienum
 
     /**
      * @inheritDoc
-     * Override multienum in order to preserve "^,^" as delimiter
+     * Override multienum to make a value list of "value1","value2","value3" from
+     * ^value1^,^value2^,^value3^
      */
     public function exportSanitize($value, $vardef, $focus, $row=array())
     {
-        return $value;
+        $values = unencodeMultienum($value);
+        return '"' . implode('","', $values) . '"';
+    }
+
+    /**
+     * Gets the tags for a bean as an array of values
+     *
+     * @param SugarBean $bean The SugarBean that you are getting a value of
+     * @param string $field The field to get a normal value from
+     * @return Array
+     */
+    public function getTagValues(SugarBean $bean, $field)
+    {
+        return $this->getNormalizedFieldValues($bean, $field);
+    }
+
+    /**
+     * Reads a string of input from an import process and gets the tag values from
+     * that string. The import string should look like "Value1","Value2","Value3"
+     *
+     * @param string $value The import row of data
+     * @return array
+     */
+    public function getTagValuesFromImport($value)
+    {
+        if (empty($value)) {
+            return array();
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return explode('","', trim($value, '"'));
     }
 }
