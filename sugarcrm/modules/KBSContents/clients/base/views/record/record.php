@@ -159,6 +159,10 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'status',
                     'type' => 'status',
                     'span' => 2,
+                    'related_fields' => array(
+                        'active_date',
+                        'exp_date',
+                    ),
                     'enum_width' => '200px',
                 ),
             ),

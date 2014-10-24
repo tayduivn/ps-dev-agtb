@@ -32,6 +32,14 @@
                 this.on('init', function() {
                     this.context.on('button:create_localization_button:click', this.createLocalization, this);
                     this.context.on('button:create_revision_button:click', this.createRevision, this);
+
+                    if (this.action == 'list') {
+                        this.context.on('list:editrow:fire', _.bind(function(model, view) {
+                            this._initValidationHandler(model);
+                        }, this));
+                    } else {
+                        this._initValidationHandler(this.model);
+                    }
                 });
             },
 
@@ -222,7 +230,121 @@
                         });
                     }, this)
                 );
+            },
+
+            /**
+             * Define custom validation tasks.
+             *
+             * @param {Object} model Bean model.
+             */
+            _initValidationHandler: function(model) {
+                // Copy model for list view records to not replace this.model.
+                var _doValidateExpDateFieldPartial = _.partial(this._doValidateExpDateField, model),
+                    _doValidateActiveDateFieldPartial = _.partial(this._doValidateActiveDateField, model),
+                    _validationCompletePartial = _.partial(this._validationComplete, model);
+
+                // TODO: This needs an API instead. Will be fixed by SC-3369.
+                app.error.errorName2Keys['expDateLow'] = 'ERROR_EXP_DATE_LOW';
+                app.error.errorName2Keys['activeDateApproveRequired'] = 'ERROR_ACTIVE_DATE_APPROVE_REQUIRED';
+
+                model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
+                model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
+                model.on('validation:complete', _.bind(_validationCompletePartial, this));
+            },
+
+            /**
+             * Custom validator for the "exp_date" field.
+             * Show error when expiration date is lower than publishing.
+             *
+             * @param {Object} model Bean.
+             * @param {Object} fields Hash of field definitions to validate.
+             * @param {Object} errors Error validation errors.
+             * @param {Function} callback Async.js waterfall callback.
+             */
+            _doValidateExpDateField: function(model, fields, errors, callback) {
+                var fieldName = 'exp_date',
+                    expDate = model.get(fieldName),
+                    publishingDate = model.get('active_date'),
+                    status = model.get('status'),
+                    changed = model.changedAttributes(model.getSyncedAttributes());
+
+                if (
+                    this._isPublishingStatus(status) &&
+                    (!changed.status || !this._isPublishingStatus(changed.status))
+                ) {
+                    publishingDate = app.date().formatServer(true);
+                    model.set('active_date', publishingDate);
+                }
+
+                if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
+                    if (!this.getField(fieldName)) {
+                        fieldName = 'active_date';
+                    }
+                    errors[fieldName] = errors[fieldName] || {};
+                    errors[fieldName].expDateLow = true;
+                }
+
+                callback(null, fields, errors);
+            },
+
+            /**
+             * Custom validator for the "active_date" field.
+             * Approved status requires publishing date.
+             *
+             * @param {Object} model Bean.
+             * @param {Object} fields Hash of field definitions to validate.
+             * @param {Object} errors Error validation errors.
+             * @param {Function} callback Async.js waterfall callback.
+             */
+            _doValidateActiveDateField: function(model, fields, errors, callback) {
+                var fieldName = 'active_date',
+                    status = model.get('status'),
+                    publishingDate = model.get(fieldName);
+
+                if (!publishingDate && status == 'approved') {
+                    // If the field is hidden.
+                    if (!this.getField(fieldName)) {
+                        fieldName = 'status';
+                    }
+                    errors[fieldName] = errors[fieldName] || {};
+                    errors[fieldName].activeDateApproveRequired = true;
+                }
+
+                callback(null, fields, errors);
+            },
+
+            /**
+             * Called whenever validation completes.
+             * Change publishing and expiration dates to current on manual change.
+             *
+             * @param {Boolean} isValid
+             */
+            _validationComplete: function(model, isValid) {
+                if (isValid) {
+                    var changed = model.changedAttributes(model.getSyncedAttributes());
+                    var current = model.get('status');
+
+                    if (current == 'expired') {
+                        model.set('exp_date', app.date().formatServer(true));
+                    } else if (
+                        this._isPublishingStatus(current) &&
+                        !(changed.status && this._isPublishingStatus(changed.status))
+                    ) {
+                        model.set('active_date', app.date().formatServer(true));
+                    }
+                }
+            },
+
+            /**
+             * Check if passed status is publishing status.
+             *
+             * @param {String} status Status field value.
+             * @return {Boolean}
+             */
+            _isPublishingStatus: function(status) {
+                return ['published', 'published-in', 'published-ex'].indexOf(status) !== -1;
             }
+
         });
 
     });

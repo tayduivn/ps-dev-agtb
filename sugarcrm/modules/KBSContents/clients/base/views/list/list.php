@@ -51,6 +51,10 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'default' => true,
                     'name' => 'status',
                     'type' => 'status',
+                    'related_fields' => array(
+                        'active_date',
+                        'exp_date',
+                    ),
                 ),
                 array(
                     'name' => 'tags',

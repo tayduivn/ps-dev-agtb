@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,10 +8,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="input-append date">
-    <input type="text" data-type="date" class="datepicker" value="{{value}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} placeholder="{{fieldPlaceholder}}">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
-</div>
+({
+    extendsFrom: 'ListView',
 
+    /**
+     * {@inheritDoc}
+     *
+     * Add KBSContent plugin for view.
+     */
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], [
+            'KBSContent'
+        ]);
+
+        this._super('initialize', [options]);
+    }
+
+})
