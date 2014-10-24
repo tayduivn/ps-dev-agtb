@@ -122,13 +122,13 @@ class SugarFieldTag extends SugarFieldMultienum
 
     /**
      * @inheritDoc
-     * Override multienum to make a value list of "value1","value2","value3" from
+     * Override multienum to make a value list of value1,value2,value3 from
      * ^value1^,^value2^,^value3^
      */
     public function exportSanitize($value, $vardef, $focus, $row=array())
     {
         $values = unencodeMultienum($value);
-        return '"' . implode('","', $values) . '"';
+        return implode(',', $values);
     }
 
     /**
@@ -145,7 +145,7 @@ class SugarFieldTag extends SugarFieldMultienum
 
     /**
      * Reads a string of input from an import process and gets the tag values from
-     * that string. The import string should look like "Value1","Value2","Value3"
+     * that string. The import string should look like Value1,Value2,Value3
      *
      * @param string $value The import row of data
      * @return array
@@ -160,6 +160,6 @@ class SugarFieldTag extends SugarFieldMultienum
             return $value;
         }
 
-        return explode('","', trim($value, '"'));
+        return explode(',', trim($value));
     }
 }
