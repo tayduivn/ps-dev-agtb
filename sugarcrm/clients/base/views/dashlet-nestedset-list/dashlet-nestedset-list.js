@@ -65,9 +65,9 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || {};
-        if (this.context.get('module') === this.extraModule.module
-            && this.context.get('action') === 'record'
-            ) {
+        if (this.context.get('module') === this.extraModule.module &&
+            this.context.get('action') === 'record'
+        ) {
             this.useStates = false;
         }
     },

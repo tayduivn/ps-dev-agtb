@@ -19,7 +19,7 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
                     'id' => 'dashlet-nestedset-list-kbscontents',
                 ),
                 'data_provider' => 'Categories',
-                'config_provider' => 'KBSDocuments',
+                'config_provider' => 'KBSContents',
                 'root_name' => 'category_root',
                 'extra_provider' => array(
                     'module' => 'KBSContents',
@@ -28,7 +28,7 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
             ),
             'preview' => array(
                 'data_provider' => 'Categories',
-                'config_provider' => 'KBSDocuments',
+                'config_provider' => 'KBSContents',
                 'root_name' => 'category_root',
             ),
             'filter' => array(
