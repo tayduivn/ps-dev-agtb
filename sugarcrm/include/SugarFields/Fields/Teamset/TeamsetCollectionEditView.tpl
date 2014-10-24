@@ -91,7 +91,7 @@
         <td valign='top' align='center' class="teamset-row">
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
             &nbsp;
-            <input id="primary_{$idname}_collection_0" name="primary_{$idname}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked" title="{sugar_translate label='LBL_TEAM_PRIM_TITLE'}" {else} title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" {/if} value="0" onclick="collection['{$displayParams.formName}_{$idname}'].changePrimary(true);"/>
+            <input id="primary_{$idname}_collection_0" name="primary_{$idname}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked" title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}" {else} title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" {/if} value="0" onclick="collection['{$displayParams.formName}_{$idname}'].changePrimary(true);"/>
             </span>
         </td>
         <td>
