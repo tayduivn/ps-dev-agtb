@@ -26,6 +26,7 @@ class KBSContent extends SugarBean {
     public $object_name = "KBSContent";
     public $new_schema = true;
     public $module_dir = 'KBSContents';
+    public $importable = true;
 
     public $status;
     public $active_rev;
