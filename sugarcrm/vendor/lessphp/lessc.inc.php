@@ -125,6 +125,14 @@ class lessc{
 			throw new Exception('load error: failed to find '.$fname);
 		}
 
+		$options = array();
+
+		switch($this->formatterName){
+			case 'compressed':
+				$options['compress'] = true;
+				break;
+		}
+
 		$pi = pathinfo($fname);
 
 		$oldImport = $this->importDir;
@@ -135,7 +143,7 @@ class lessc{
 		$this->allParsedFiles = array();
 		$this->addParsedFile($fname);
 
-		$parser = new Less_Parser();
+		$parser = new Less_Parser($options);
 		$parser->SetImportDirs($this->getImportDirs());
 		if( count( $this->registeredVars ) ) $parser->ModifyVars( $this->registeredVars );
 		foreach ($this->libFunctions as $name => $func) {
