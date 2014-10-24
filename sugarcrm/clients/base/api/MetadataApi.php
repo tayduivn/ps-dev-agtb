@@ -74,7 +74,6 @@ class MetadataApi extends SugarApi
                 'method' => 'getLanguage',
                 'shortHelp' => 'Returns the labels for the application',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
-                'noLoginRequired' => true,
                 'rawReply' => true,
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
@@ -334,17 +333,13 @@ class MetadataApi extends SugarApi
         // Get the metadata manager we need first
         $mm = $this->getMetaDataManager($api->platform, $public);
 
-        $ordered = empty($args['ordered']) ? false : (bool) $args['ordered'];
-
-        // Hangle ETagging
-        $hash = $mm->getLanguageHash($args['lang'], $ordered);
-        if (!empty($hash) && $api->generateETagHeader($hash)) {
-            return;
-        }
-
          //Since this is a raw response we need to set the content type ourselves.
         $api->getResponse()->setHeader("Content-Type", "application/json");
-        
+        //Cache language files forever as the request includes the hash in the URL
+        $api->getResponse()->setHeader("Cache-Control" , "max-age=31556940, private");
+        $api->getResponse()->setHeader("Pragma" , "");
+        $api->getResponse()->setHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31556940));
+
         return $mm->getLanguage($args);
     }
 

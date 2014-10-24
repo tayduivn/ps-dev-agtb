@@ -954,8 +954,7 @@ AddType     application/javascript  .js
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA]
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    
     RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -1073,12 +1072,8 @@ function handleWebConfig()
 
     $rewrite_config_array = array(
         array(
-            '1' => 'rest/(.*)$',
-            '2' => 'api/rest.php?__sugar_url={R:1}',
-        ),
-        array(
             '1' => '^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json',
-            '2' => 'api/rest.php/v10/lang/public/{R:1}?platform={R:2}',
+            '2' => 'rest/v10/lang/public/{R:1}?platform={R:2}&ordered={R:3}',
             'rule_params' => array(
                 'stopProcessing' => 'false',
             ),
@@ -1088,7 +1083,7 @@ function handleWebConfig()
         ),
         array(
             '1' => '^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json',
-            '2' => 'api/rest/v10/lang/{R:1}?platform={R:2}',
+            '2' => 'rest/v10/lang/{R:1}?platform={R:2}&ordered={R:3}',
             'rule_params' => array(
                 'stopProcessing' => 'false',
             ),
@@ -1098,7 +1093,7 @@ function handleWebConfig()
         ),
         array(
             '1' => '^cache/Expressions/functions_cache(_debug)?.js$',
-            '2' => 'api/rest/v10/ExpressionEngine/functions?debug={R:1}',
+            '2' => 'rest/v10/ExpressionEngine/functions?debug={R:1}',
             'rule_params' => array(
                 'stopProcessing' => 'false',
             ),
@@ -1109,6 +1104,10 @@ function handleWebConfig()
         array(
             '1' => '^portal/(.*)$',
             '2' => 'portal2/{R:1}',
+        ),
+        array(
+            '1' => 'rest/(.*)$',
+            '2' => 'api/rest.php?__sugar_url={R:1}',
         ),
     );
 
