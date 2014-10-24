@@ -22,83 +22,78 @@ class SugarUpgradeConvertKBDocuments extends UpgradeScript
     public $version = '7.5';
 
     /**
-     * @var array Where key is a converted KB tag ID and a value is KBS topic ID.
+     * @var array Where key is a converted KB tag ID and a value is KBS category ID.
      */
     protected $convertedTagsTopics = array();
 
     public function run()
     {
-        // TODO: refactor to use new categories
+        if (!version_compare($this->from_version, '7.5', '<=')) {
+            return;
+        }
+        $documents = $this->getOldDocuments();
 
-//        if (!version_compare($this->from_version, '7.5', '<=')) {
-//            return;
-//        }
-//        $documents = $this->getOldDocuments();
-//
-//        // Relationships for KBSContents are not loaded yet.
-//        SugarRelationshipFactory::rebuildCache();
-//
-//        foreach ($documents as $row) {
-//            $this->log("Convert the KBDocument {$row['id']} to a KBSContent.");
-//            /** @var $KBBean KBDocument */
-//            $KBDocument = BeanFactory::getBean('KBDocuments', $row['id']);
-//
-//            /** @var $KBBean KBSContent */
-//            $KBSContent = BeanFactory::getBean('KBSContents');
-//
-//            $data = $KBDocument->toArray();
-//            unset($data['id']);
-//            $data['kbdocument_body'] = $KBDocument->body;
-//            $data['kbsapprover_id'] = $KBDocument->kbdoc_approver_id;
-//
-//            $app_list_strings = return_app_list_strings_language('en_us');
-//            // Yes, the status_id is a lable.
-//            $statusKey = array_search($KBDocument->status_id, $app_list_strings['kbsdocument_status_dom']);
-//            $data['status'] = ($statusKey !== false) ? $statusKey : 'draft';
-//
-//            $KBDocument->load_relationship('cases');
-//            $firstCaseId = key($KBDocument->cases->getBeans());
-//
-//            if ($firstCaseId) {
-//                $data['kbscase_id'] = $firstCaseId;
-//            }
-//
-//            $tagSet = $this->getOldTags($KBDocument->id);
-//            foreach ($tagSet as $tag) {
-//                $this->log("Convert the KBTag {$tag['kbtag_id']} to a topic.");
-//                $tag = BeanFactory::getBean('KBTags', $tag['kbtag_id']);
-//
-//                // Probably in future KBS will have multiply topics.
-//                // Convert tags tree to topics but relate only last converted.
-//                $data['topic_id'] = $this->convertTagsToTopicsRecursive($tag);
-//            }
-//
-//            $KBSContent->populateFromRow($data);
-//            $KBSContent->save();
-//
-//            $KBSContent->load_relationship('tags_link');
-//            foreach ($tagSet as $tag) {
-//                $this->log("Convert the KBTag {$tag['kbtag_id']} to a tag.");
-//                $tag = BeanFactory::getBean('KBTags', $tag['kbtag_id']);
-//
-//                // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
-//                // are converted to the set "c1, c2, p4".
-//                $newTag = BeanFactory::getBean('Tags');
-//                $newTag->name = $tag->tag_name;
-//                $newTag->save();
-//                $KBSContent->tags_link->add($newTag);
-//            }
-//
-//            $KBSContent->load_relationship('attachments');
-//
-//            // Converts attached files to Notes.
-//            $attachments = $KBDocument->get_kbdoc_attachments_for_newemail($KBDocument->id);
-//            foreach ($attachments['attachments'] as $attachment) {
-//                $this->log("Convert attachment {$attachment['id']}.");
-//                $note = BeanFactory::getBean('Notes', $attachment['id']);
-//                $KBSContent->attachments->add($note);
-//            }
-//        }
+        // Relationships for KBSContents are not loaded yet.
+        SugarRelationshipFactory::rebuildCache();
+
+        foreach ($documents as $row) {
+            $this->log("Convert the KBDocument {$row['id']} to a KBSContent.");
+            /** @var $KBBean KBDocument */
+            $KBDocument = BeanFactory::getBean('KBDocuments', $row['id']);
+
+            /** @var $KBBean KBSContent */
+            $KBSContent = BeanFactory::getBean('KBSContents');
+
+            $data = $KBDocument->toArray();
+            unset($data['id']);
+            $data['kbdocument_body'] = $KBDocument->body;
+            $data['kbsapprover_id'] = $KBDocument->kbdoc_approver_id;
+
+            $app_list_strings = return_app_list_strings_language('en_us');
+            // Yes, the status_id is a lable.
+            $statusKey = array_search($KBDocument->status_id, $app_list_strings['kbsdocument_status_dom']);
+            $data['status'] = ($statusKey !== false) ? $statusKey : 'draft';
+
+            $KBDocument->load_relationship('cases');
+            $firstCaseId = key($KBDocument->cases->getBeans());
+
+            if ($firstCaseId) {
+                $data['kbscase_id'] = $firstCaseId;
+            }
+
+            $tagSet = $this->getOldTags($KBDocument->id);
+            foreach ($tagSet as $tag) {
+                $this->log("Convert the KBTag {$tag['kbtag_id']} to a topic\\category.");
+                $tag = BeanFactory::getBean('KBTags', $tag['kbtag_id']);
+                $this->convertTagsToTopicsRecursive($tag);
+            }
+
+            $KBSContent->populateFromRow($data);
+            $KBSContent->save();
+
+            $KBSContent->load_relationship('tags_link');
+            foreach ($tagSet as $tag) {
+                $this->log("Convert the KBTag {$tag['kbtag_id']} to a tag.");
+                $tag = BeanFactory::getBean('KBTags', $tag['kbtag_id']);
+
+                // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
+                // are converted to the set "c1, c2, p4".
+                $newTag = BeanFactory::getBean('Tags');
+                $newTag->name = $tag->tag_name;
+                $newTag->save();
+                $KBSContent->tags_link->add($newTag);
+            }
+
+            $KBSContent->load_relationship('attachments');
+
+            // Converts attached files to Notes.
+            $attachments = $KBDocument->get_kbdoc_attachments_for_newemail($KBDocument->id);
+            foreach ($attachments['attachments'] as $attachment) {
+                $this->log("Convert attachment {$attachment['id']}.");
+                $note = BeanFactory::getBean('Notes', $attachment['id']);
+                $KBSContent->attachments->add($note);
+            }
+        }
     }
 
     /**
@@ -124,23 +119,26 @@ class SugarUpgradeConvertKBDocuments extends UpgradeScript
     protected function getOldTags($docId)
     {
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('KBDocuments'));
-        $sq->joinTable('kbdocuments_kbtags', array(
+        $sq->select(array('tag.kbtag_id'));
+        $sq->joinTable(
+            'kbdocuments_kbtags',
+            array(
                 'joinType' => 'INNER',
                 'alias' => 'tag',
                 'linkingTable' => true,
-            ))->on()->equalsField(
-                'kbdocuments.id',
-                'tag.kbdocument_id'
-            )->equals('tag.deleted', '0');
+            )
+        )->on()->equalsField(
+            'kbdocuments.id',
+            'tag.kbdocument_id'
+        )->equals('tag.deleted', '0');
+        $sq->from(BeanFactory::getBean('KBDocuments'));
         $sq->where()->equals('kbdocuments.id', $docId);
-        $sq->select('tag.kbtag_id');
 
         return $sq->execute('array');
     }
 
     /**
-     * Recursively converts old tags to topics.
+     * Recursively converts old tags to topics\categories.
      *
      * @param KBTag $tag
      * @return string Associated topic ID.
@@ -150,12 +148,22 @@ class SugarUpgradeConvertKBDocuments extends UpgradeScript
         if (isset($this->convertedTagsTopics[$tag->id])) {
             return $this->convertedTagsTopics[$tag->id];
         }
-        $topic = BeanFactory::getBean('KBSTopics');
+        $topic = BeanFactory::newBean('Categories');
         $topic->name = $tag->tag_name;
 
         if ($tag->parent_tag_id) {
             $parentTag = BeanFactory::getBean('KBTags', $tag->parent_tag_id);
-            $topic->parent_id = $this->convertTagsToTopicsRecursive($parentTag);
+            $parentTopicId = $this->convertTagsToTopicsRecursive($parentTag);
+            $parentTopic = BeanFactory::getBean('Categories', $parentTopicId, array('use_cache' => false));
+            $parentTopic->append($topic);
+        } else {
+            $KBSContent = BeanFactory::getBean('KBSContents');
+            $rootTopic = BeanFactory::getBean(
+                'Categories',
+                $KBSContent->getCategoryRoot(),
+                array('use_cache' => false)
+            );
+            $rootTopic->append($topic);
         }
 
         $topicId = $topic->save();

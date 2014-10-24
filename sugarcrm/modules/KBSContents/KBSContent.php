@@ -42,8 +42,9 @@ class KBSContent extends SugarBean {
     {
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('KBSContents');
+        $category = BeanFactory::newBean('Categories');
 
-        if (empty($config['category_root'])) {
+        if (empty($config['category_root']) || !$category->retrieve($config['category_root'])) {
             $this->setupCategoryRoot();
             $config = $admin->getConfigForModule('KBSContents');
         }
