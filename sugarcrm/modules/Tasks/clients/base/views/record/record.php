@@ -71,12 +71,14 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
+                    'closed_status' => 'Completed',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'closebutton',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
+                    'closed_status' => 'Completed',
                     'acl_action' => 'edit',
                 ),
                 array(

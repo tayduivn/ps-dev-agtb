@@ -96,6 +96,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
         'icon' => 'icon-remove-circle',
         'name' => 'record-close',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
+        'closed_status' => 'Held',
         'acl_action' => 'edit',
       ),
     ),

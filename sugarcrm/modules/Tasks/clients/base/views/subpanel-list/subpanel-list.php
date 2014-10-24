@@ -89,6 +89,7 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
         'type' => 'closebutton',
         'name' => 'record-close',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
+        'closed_status' => 'Completed',
         'acl_action' => 'edit',
       ),
     ),
