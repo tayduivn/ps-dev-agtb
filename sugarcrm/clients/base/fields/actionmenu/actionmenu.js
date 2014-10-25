@@ -246,7 +246,7 @@
         filterDef = massCollection.filterDef || [];
         //if list view is for linking and link fetch size configuration exists, set it,
         //otherwise default to maxRecordFetchSize
-        max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
+        max_num = (this.view.meta.selection.isLinkAction && app.config.maxRecordLinkFetchSize) ?
             app.config.maxRecordLinkFetchSize :
             app.config.maxRecordFetchSize;
         order = this.context.get('collection').orderBy;

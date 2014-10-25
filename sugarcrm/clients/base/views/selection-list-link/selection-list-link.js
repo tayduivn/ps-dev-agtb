@@ -17,13 +17,14 @@
     extendsFrom: 'SelectionListView',
 
     initialize: function(options) {
-        this.oneToMany = options.context.get('recLink') ?
+        this.multiSelect = options.context.get('recLink') ?
                 app.data.canHaveMany(app.controller.context.get('module'), options.context.get('recLink')) :
                 false;
 
         this._super('initialize', [options]);
+        options.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
 
-        if (this.oneToMany) {
+        if (this.multiSelect) {
             //Set up mass linker component
             var pageComponent = this.layout.getComponent('mass-link');
             if (!pageComponent) {
@@ -44,7 +45,7 @@
      * Sets up events
      */
     initializeEvents: function() {
-        if (this.oneToMany) {
+        if (this.multiSelect) {
             this.context.on('selection-list:link:multi', this._selectMultipleAndClose, this);
             this.context.on('selection-list:select', this._refreshList, this);
         } else {

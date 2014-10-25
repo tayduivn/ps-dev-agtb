@@ -23,24 +23,24 @@
      */
 
     initialize: function(options) {
-        this.multiSelect = options.context.get('multiSelect');
+        this.multiSelect = this.multiSelect || options.context.get('multiSelect');
         this.maxSelectedRecords = options.context.get('maxSelectedRecords');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
         options.meta = options.meta || {};
 
-        //Allow multiselect if allowed and for One to Multi relationship.
-        if (this.oneToMany || this.multiSelect) {
+        //Allow multiselect if allowed.
+        if (this.multiSelect) {
             options.meta.selection = {
                 type: 'multi',
-                isLinkAction: true
+                isSearchAndSelectAction: true
             };
         } else {
             options.meta.selection = {
                 type: 'single',
                 label: 'LBL_LINK_SELECT',
-                isLinkAction: true
+                isSearchAndSelectAction: true
             };
         }
 
@@ -61,7 +61,7 @@
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
         if (!($(event.target).is('a,i,input'))) {
-            if (this.oneToMany || this.multiSelect) {
+            if (this.multiSelect) {
                 //simulate click on the input for this row
                 var checkbox = $(event.currentTarget).find('input[name="check"]');
                 checkbox[0].click();
