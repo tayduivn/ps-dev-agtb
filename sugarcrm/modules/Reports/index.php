@@ -248,6 +248,7 @@ function checkSavedReportACL(&$reporter,&$args) {
                  && $col_module != 'Releases'
                  && $col_module != 'Teams'
                  && $col_module != 'CampaignLog'
+                 && $col_module != 'Manufacturers'
              )
              {
                  sugar_die($mod_strings['LBL_NO_ACCESS']);
