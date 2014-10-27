@@ -26,5 +26,6 @@ $mod_strings = array(
     'LBL_CONTEXTMENU_DELETE' => 'Delete',
     'LBL_SEARCH_TREE' => 'Search by title...',
     'LBL_DEFAULT_TITLE' => 'Default title',
-    'LBL_ADD_NEW' => 'Add'
+    'LBL_ADD_NEW' => 'Add',
+    'LBL_WRONG_MOVE_PATH' => 'Impossible to move the node within itself'
 );

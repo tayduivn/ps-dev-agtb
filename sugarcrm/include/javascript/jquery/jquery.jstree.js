@@ -3627,7 +3627,7 @@
 				str += "<li class='" + (val._class || "") + (val._disabled ? " jstree-contextmenu-disabled " : "") + "'><ins ";
 				if(val.icon && val.icon.indexOf("/") === -1) { str += " class='" + val.icon + "' "; }
 				if(val.icon && val.icon.indexOf("/") !== -1) { str += " style='background:url(" + val.icon + ") center center no-repeat;' "; }
-				str += ">&#160;</ins><a href='#' rel='" + i + "'>";
+				str += ">&#160;</ins><a href='#' rel='" + i + "'" + (typeof(val.id) !== "undefined" ? " data-id='" + val.id + "'" : '') + ">";
 				if(val.submenu) {
 					str += "<span style='float:" + ($.vakata.context.rtl ? "left" : "right") + ";'>&raquo;</span>";
 				}

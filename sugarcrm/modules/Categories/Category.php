@@ -149,6 +149,8 @@ class Category extends SugarBean implements NestedBeanInterface
         }
 
         $this->shiftLeftRight($right + 1, -$delta);
+
+        $this->retrieve($this->id);
     }
 
     /**
