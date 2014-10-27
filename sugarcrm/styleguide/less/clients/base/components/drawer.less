@@ -43,10 +43,6 @@
 #content.noscroll {
     overflow: hidden;
     z-index: 0;
-    position: static;
-    .drawer {
-        margin-top: 47px;
-    }
 }
 body.noscroll {
     overflow: hidden;
@@ -57,16 +53,13 @@ body.noscroll {
 .drawer.inactive {
     .main-pane {
         position: relative;
-        top: 0;
+        top: 5px;
     }
     .side-pane.active {
         display: block;
     }
-    .sidebar-content .dashboard {
-        padding-top: 0;
-    }
     .dashboard {
-        top: 0;
+        top: 5px;
     }
     .headerpane,
     .preview-headerbar {
@@ -92,6 +85,9 @@ body.noscroll {
     .drawer.active {
         overflow: auto;
         background-image: url('@{textureSecondary}');
+        .main-pane {
+            background: @white;
+        }
     }
     .drawer.inactive {
         .sidebar-toggle {

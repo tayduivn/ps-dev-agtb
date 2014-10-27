@@ -954,8 +954,7 @@ AddType     application/javascript  .js
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA,DPI]
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    
     RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA,DPI]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

@@ -11,26 +11,36 @@
  */
 require_once 'CliUpgrader.php';
 
+/**
+ * Upgrder for the shadow environment
+ */
 class ShadowUpgrader extends CliUpgrader
 {
     protected $options = array(
-            // required, short, long
-            'pre_template' => array(true, 'f', 'from'),
-            'post_template' => array(true, 't', 'to'),
-            "source_dir" => array(true, 's', 'source'),
-            "log" => array(true, 'l', 'log'),
-            "admin" => array(true, 'u', 'user'),
-            "backup" => array(false, 'b', 'backup'),
-            "script_mask" => array(false, 'm', 'mask'),
-            "stage" => array(false, 'S', 'stage'),
+        // required, short, long
+        'pre_template' => array(true, 'f', 'from'),
+        'post_template' => array(true, 't', 'to'),
+        "source_dir" => array(true, 's', 'source'),
+        "log" => array(true, 'l', 'log'),
+        "admin" => array(true, 'u', 'user'),
+        "backup" => array(false, 'b', 'backup'),
+        "script_mask" => array(false, 'm', 'mask'),
+        "stage" => array(false, 'S', 'stage'),
+        "autoconfirm" => array(false, 'A', 'autoconfirm')
     );
 
+    /**
+     * @see CliUpgrader::usage()
+     */
     protected function commit()
     {
         // commit doesn't do anything
         return true;
     }
 
+    /**
+     * @see CliUpgrader::usage()
+     */
     protected static function usage()
     {
 		list($version, $build) = static::getVersion();
@@ -53,11 +63,16 @@ Optional arguments:
                                            Supported types: db, custom, none. Default is db,custom.
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
+    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
 
 eoq2;
     	echo $usage;
     }
 
+    /**
+     * @see UpgradeDriver::verifyArguments()
+     * @return bool
+     */
     protected function verifyArguments()
     {
         if(!function_exists("shadow")) {
@@ -77,7 +92,7 @@ eoq2;
         }
 
         if(!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
-            $this->argError("{$his->context['post_template']} is not a SugarCRM template.");
+            $this->argError("{$this->context['post_template']} is not a SugarCRM template.");
         }
 
         if(!is_file("{$this->context['source_dir']}/config.php")) {
@@ -87,6 +102,11 @@ eoq2;
     	return true;
     }
 
+    /**
+     * Returns version from the given $path
+     * @param $path
+     * @return string
+     */
     protected function getVersionFromPath($path)
     {
         $parts = explode(DIRECTORY_SEPARATOR, $path);
@@ -120,12 +140,22 @@ eoq2;
         return $context;
     }
 
+    /**
+     * @see CliUpgrader::extractZip()
+     * @param string $zip
+     * @return bool|false
+     */
     protected function extractZip($zip)
     {
         // no zip, nothing to extract
         return true;
     }
 
+    /**
+     * @see CliUpgrader::unlink()
+     * @param string $file
+     * @return bool
+     */
     public function unlink($file)
     {
         if($file[0] == '/') {
@@ -138,6 +168,10 @@ eoq2;
         return true;
     }
 
+    /**
+     * @see CliUpgrader::getManifest()
+     * @return array
+     */
     protected function getManifest()
     {
         // load target data
@@ -155,12 +189,21 @@ eoq2;
         );
     }
 
+    /**
+     * @see CliUpgrader::verify()
+     * @param string $zip
+     * @param string $dir
+     * @return bool|false
+     */
     protected function verify($zip, $dir)
     {
         chdir($this->context['pre_template']);
         return parent::verify($zip, $dir);
     }
 
+    /**
+     * @see CliUpgrader::initSugar()
+     */
     protected function initSugar()
     {
         if($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
@@ -173,6 +216,25 @@ eoq2;
         shadow($templ_dir, $this->context['source_dir'], array("cache", "upload", "config.php"));
         $this->context['source_dir'] = $templ_dir;
         return parent::initSugar();
+    }
+
+    /**
+     * @see CliUpgrader::healthcheck()
+     * @return bool
+     */
+    public function healthcheck()
+    {
+        $this->initSugar();
+        return parent::healthcheck();
+    }
+
+    /**
+     * @see UpgradeDriver::getPackageUid()
+     * @return string
+     */
+    protected function getPackageUid()
+    {
+        return md5($this->context['post_template']);
     }
 }
 

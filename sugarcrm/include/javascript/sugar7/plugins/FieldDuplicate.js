@@ -20,13 +20,24 @@
              */
             _duplicateBeanId: null,
 
+            _duplicateBeanModule: null,
+
             /**
              * Setup id of {Data.Bean} from which field should be duplicated.
              *
-             * @param {String} modelId Id of model.
+             * @param {String} id Id of model.
+             * @param {String} module Module of model.
              */
-            duplicateFromModel: function(modelId) {
-                this._duplicateBeanId = modelId;
+            duplicateFromModel: function(id, module) {
+                this._duplicateBeanId = id;
+
+                /**
+                 * Contains module of {@link Data.Bean} from which field should be duplicated.
+                 *
+                 * @property {String}
+                 * @protected
+                 */
+                this._duplicateBeanModule = module;
             },
 
             /**
@@ -37,10 +48,16 @@
              * @private
              */
             _onFieldDuplicate: function(model) {
-                var modelId = (model instanceof Backbone.Model) ? model.get('id') : null;
+                var id = null, module = null;
+
+                if (model instanceof Backbone.Model) {
+                    id = model.get('id');
+                    module = model.module;
+                }
 
                 this.duplicateFromModel(
-                    (this.model && this.model.get('id') === modelId) ? null : modelId
+                    (this.model && this.model.get('id') === id) ? null : id,
+                    (this.module && this.module === module) ? null : module
                 );
 
                 if (_.isFunction(this.onFieldDuplicate)) {
@@ -124,6 +141,11 @@
                             ) {
                                 options.params = options.params || {};
                                 options.params[this.name + '_duplicateBeanId'] = this._duplicateBeanId;
+                            }
+                        }, this);
+                        this.model.on('duplicate:field:prepare:save', function(model) {
+                            if (this.model.get(this.name)) {
+                                model[this.name + '_duplicateBeanId'] = this._duplicateBeanId;
                             }
                         }, this);
                         this.model.on('duplicate:format:field', this._formatFieldForDuplicate, this);

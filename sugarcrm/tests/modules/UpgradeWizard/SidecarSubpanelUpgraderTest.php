@@ -16,6 +16,8 @@ require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarLayoutdefsMetaDataUpgra
 
 class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
 {
+    protected $oldDefsDefault;
+    protected $oldDefsAccountDefault;
     protected $oldDefs;
     protected $expectedDefs;
 
@@ -25,6 +27,8 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp('files');
         $this->upgrader = new SidecarMetaDataUpgrader();
         $this->filesToRemove = array();
     }
@@ -36,12 +40,13 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
                 unlink($file);
             }
         }
+        parent::tearDown();
+        SugarTestHelper::tearDown();
     }
 
     public function testViewDefsUpgrade()
     {
         $this->setUpViewDefs();
-
         $oldFileName = 'custom/modules/Accounts/metadata/subpanels/ForAwesometest.php';
         if (!is_dir(dirname($oldFileName))) {
             sugar_mkdir(dirname($oldFileName), null, true);
@@ -68,14 +73,13 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
     public function testLayoutDefsUpgrade()
     {
         $this->setUpLayoutDefs();
-
         $fileArray = array(
             'module' => 'Accounts',
             'client' => 'base',
             'filename' => 'overridecalls.php',
             'fullpath' => 'custom/Extension/modules/Accounts/Ext/Layoutdefs/overridecalls.php',
         );
-        $subpanelUpgrader = new SidecarLayoutdefsMetaDataUpgrader($this->upgrader, $fileArray);
+        $subpanelUpgrader = new SidecarSubpanelLayoutdefsMetaDataUpgraderMock($this->upgrader, $fileArray);
         if (!is_dir("custom/modules/Accounts/metadata/")) {
             sugar_mkdir("custom/modules/Accounts/metadata/", null, true);
         }
@@ -108,6 +112,17 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
         );
         $this->filesToRemove[] = 'custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php';
 
+        $subpanelFileName = 'custom/modules/Calls/metadata/subpanels/ForCalls.php';
+        if (!is_dir(dirname($subpanelFileName))) {
+            sugar_mkdir(dirname($subpanelFileName), null, true);
+        }
+        write_array_to_file(
+            "subpanel_layout",
+            $this->oldDefs,
+            $subpanelFileName
+        );
+        $this->filesToRemove[] = $subpanelFileName;
+        
         $subpanelUpgrader->upgrade();
 
         $this->assertFileExists(
@@ -119,6 +134,249 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->expectedNewLayoutDefs, $viewdefs['Accounts']['base']['layout']['subpanels']['components'][0]);
     }
 
+    /**
+     * Test of correct behaviour when subpanel file exists in package folder
+     * and .
+     * @result override file is created in clients 
+     */
+    public function testCheckCorrectSubpanelDefinition()
+    {
+        $this->setUpDefinitionDefs();
+
+        // create overridden subpanel file
+        $accountDefaultSubpanel = 'custom/modules/Cases/metadata/subpanels/Accountdefault.php';
+        if (!is_dir(dirname($accountDefaultSubpanel))) {
+            sugar_mkdir(dirname($accountDefaultSubpanel), null, true);
+        }
+        write_array_to_file(
+            "subpanel_layout",
+            $this->oldDefsAccountDefault,
+            $accountDefaultSubpanel
+        );
+        SugarTestHelper::saveFile($accountDefaultSubpanel);
+
+        // create default subpanel file
+        $defaultSubpanel = 'modules/Cases/metadata/subpanels/default.php';
+        if (!is_dir(dirname($defaultSubpanel))) {
+            sugar_mkdir(dirname($defaultSubpanel), null, true);
+        }
+        write_array_to_file(
+            "subpanel_layout",
+            $this->oldDefsDefault,
+            $defaultSubpanel
+        );
+        SugarTestHelper::saveFile($defaultSubpanel);
+
+        $fileArray = array(
+            'module' => 'Accounts',
+            'client' => 'base',
+            'filename' => '_overrideAccountCasesdefault.php',
+            'fullpath' => 'custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCasesdefault.php',
+        );
+
+        $subpanelUpgrader = new SidecarSubpanelLayoutdefsMetaDataUpgraderMock($this->upgrader, $fileArray);
+
+        if (!is_dir("modules/Accounts/metadata/")) {
+            sugar_mkdir("custom/modules/Accounts/metadata/", null, true);
+        }
+        if (!is_dir("custom/Extension/modules/Accounts/Ext/Layoutdefs/")) {
+            sugar_mkdir("custom/Extension/modules/Accounts/Ext/Layoutdefs/", null, true);
+        }
+
+        if (!is_dir("custom/modules/Accounts/Ext/Layoutdefs/")) {
+            sugar_mkdir("custom/modules/Accounts/Ext/Layoutdefs/", null, true);
+        }
+
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']",
+            $this->testLayoutDefs,
+            "custom/modules/Accounts/metadata/subpaneldefs.php"
+        );
+        SugarTestHelper::saveFile('custom/modules/Accounts/metadata/subpaneldefs.php');
+
+        // put overridden_subpanel_name with exist link to Accountdefault
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']['cases']['override_subpanel_name']",
+            'Accountdefault',
+            "custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCasesdefault.php"
+        );
+        SugarTestHelper::saveFile('custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCasesdefault.php');
+
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']['cases']['override_subpanel_name']",
+            'Accountdefault',
+            "custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php"
+        );
+        SugarTestHelper::saveFile('custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php');
+
+        // Upgrade will check if override_subpanel_name link exists and if appropriate subpanel file exists 
+        // in package /subpanels/ folder.
+        $subpanelUpgrader->upgrade();
+
+        $this->assertNotNull($subpanelUpgrader->getSidecarViewDefs());
+
+        // If overridden link is present, it will be used and file will be created in clients/ after upgrade.
+        $this->assertFileExists(
+            "custom/Extension/modules/Accounts/Ext/clients/base/layouts/subpanels/_overrideAccountCasesdefault.php"
+        );
+
+        SugarTestHelper::saveFile('custom/Extension/modules/Accounts/Ext/clients/base/layouts/subpanels/_overrideAccountCasesdefault.php');
+    }
+
+    /**
+     * Test of incorrect behaviour when subpanel has not have a definition file in package,
+     * but relation overridden to non-exists subpanel link.
+     * @result override file is ignored and did not created in clients
+     */
+    public function testCheckIncorrectSubpanelDefinition()
+    {
+        $this->setUpDefinitionDefs();
+
+        // create default subpanel file
+        $defaultSubpanel = 'modules/Calls/metadata/subpanels/default.php';
+        if (!is_dir(dirname($defaultSubpanel))) {
+            sugar_mkdir(dirname($defaultSubpanel), null, true);
+        }
+        write_array_to_file(
+            "subpanel_layout",
+            $this->oldDefsDefault,
+            $defaultSubpanel
+        );
+        SugarTestHelper::saveFile($defaultSubpanel);
+
+        $fileArray = array(
+            'module' => 'Accounts',
+            'client' => 'base',
+            'filename' => '_overrideAccountCallsdefault.php',
+            'fullpath' => 'custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCallsdefault.php',
+        );
+
+        $subpanelUpgrader = new SidecarSubpanelLayoutdefsMetaDataUpgraderMock($this->upgrader, $fileArray);
+
+        if (!is_dir("modules/Accounts/metadata/")) {
+            sugar_mkdir("custom/modules/Accounts/metadata/", null, true);
+        }
+        if (!is_dir("custom/Extension/modules/Accounts/Ext/Layoutdefs/")) {
+            sugar_mkdir("custom/Extension/modules/Accounts/Ext/Layoutdefs/", null, true);
+        }
+        if (!is_dir("custom/modules/Accounts/Ext/Layoutdefs/")) {
+            sugar_mkdir("custom/modules/Accounts/Ext/Layoutdefs/", null, true);
+        }
+
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']",
+            $this->testLayoutDefs,
+            "custom/modules/Accounts/metadata/subpaneldefs.php"
+        );
+        SugarTestHelper::saveFile('custom/modules/Accounts/metadata/subpaneldefs.php');
+
+        // put overridden_subpanel_name with non-existent link Accountdefault
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']['calls']['override_subpanel_name']",
+            'Accountdefault',
+            "custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCallsdefault.php"
+        );
+        SugarTestHelper::saveFile('custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccountCallsdefault.php');
+
+        write_array_to_file(
+            "layout_defs['Accounts']['subpanel_setup']['calls']['override_subpanel_name']",
+            'Accountdefault',
+            "custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php"
+        );
+        SugarTestHelper::saveFile('custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php');
+
+        // Upgrade will check if override_subpanel_name link exists and if appropriate subpanel file exists 
+        // in package /subpanels/ folder.
+        $subpanelUpgrader->upgrade();
+
+        // If overridden link is not present, it will be ignored and file wouldn't be created at all.
+        $this->assertFileNotExists(
+            "custom/Extension/modules/Accounts/Ext/clients/base/layouts/subpanels/_overrideAccountCallsdefault.php"
+        );
+    }
+
+    public function setUpDefinitionDefs() {
+        $this->testLayoutDefs = array(
+            'cases' => array(
+                'module' => 'Cases',
+                'subpanel_name' => 'default',
+                'get_subpanel_data' => 'cases',
+            ),
+        );
+
+        //
+        $this->oldDefsDefault = array(
+            'top_buttons' => array(
+                array('widget_class' => 'SubPanelTopCreateButton'),
+                array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Cases'),
+            ),
+
+            'where' => '',
+
+            'list_fields' => array(
+                'name'=>array(
+                    'vname' => 'LBL_NAME',
+                    'widget_class' => 'SubPanelDetailViewLink',
+                    'width' => '45%',
+                ),
+                'date_modified'=>array(
+                    'vname' => 'LBL_DATE_MODIFIED',
+                    'width' => '45%',
+                ),
+                'edit_button'=>array(
+                    'widget_class' => 'SubPanelEditButton',
+                    'module' => 'Calls',
+                    'width' => '4%',
+                ),
+                'remove_button'=>array(
+                    'widget_class' => 'SubPanelRemoveButton',
+                    'module' => 'Calls',
+                    'width' => '5%',
+                ),
+            ),
+        );
+
+        $this->oldDefsAccountDefault = array(
+            'list_fields' => array(
+                'name' =>
+                    array(
+                        'vname' => 'LBL_NAME',
+                        'widget_class' => 'SubPanelDetailViewLink',
+                        'width' => '15%',
+                        'default' => true,
+                    ),
+                'reseller_type' =>
+                    array(
+                        'type' => 'enum',
+                        'studio' => 'visible',
+                        'vname' => 'LBL_RESELLER_TYPE',
+                        'width' => '10%',
+                        'default' => true,
+                    ),
+                'date_modified' =>
+                    array(
+                        'vname' => 'LBL_DATE_MODIFIED',
+                        'width' => '5%',
+                        'default' => true,
+                    ),
+                'edit_button' =>
+                    array(
+                        'widget_class' => 'SubPanelEditButton',
+                        'module' => 'Calls',
+                        'width' => '4%',
+                        'default' => true,
+                    ),
+                'remove_button' =>
+                    array(
+                        'widget_class' => 'SubPanelRemoveButton',
+                        'module' => 'Calls',
+                        'width' => '5%',
+                        'default' => true,
+                    ),
+            )
+        );
+    }
+    
     public function setUpLayoutDefs()
     {
         $this->oldLayoutDefs = array(
@@ -242,5 +500,15 @@ class SidecarSubpanelViewDefUpgraderMock extends SidecarSubpanelMetaDataUpgrader
     public function handleSave()
     {
         // do nothing
+    }
+}
+
+class SidecarSubpanelLayoutdefsMetaDataUpgraderMock extends SidecarLayoutdefsMetaDataUpgrader
+{
+    public function __construct(SidecarMetaDataUpgrader $upgrader, Array $file) {
+        // restore self::$supanelData for each test. 
+        self::$supanelData = array();
+        
+        parent::__construct($upgrader, $file);
     }
 }
