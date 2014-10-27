@@ -309,6 +309,14 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_BUGS',
   ),
+  'kbscontents' =>
+    array (
+      'name' => 'kbscontents',
+      'type' => 'link',
+      'relationship' => 'kbscontent_notes',
+      'source'=>'non-db',
+      'vname'=>'LBL_KBSDOCUMENTS',
+    ),
   'emails' =>
   array(
     'name'=> 'emails',
