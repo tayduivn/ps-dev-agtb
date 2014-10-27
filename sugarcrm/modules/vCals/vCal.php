@@ -14,7 +14,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Calendar/Calendar.php');
 
 class vCal extends SugarBean {
-	// Stored fields
+
+    public static $cache_enabled = true;
+
+    // Stored fields
 	var $id;
 	var $date_modified;
 	var $user_id;
@@ -110,7 +113,11 @@ class vCal extends SugarBean {
 		$str = '';
 		global $DO_USER_TIME_OFFSET,$timedate;
 
-		$DO_USER_TIME_OFFSET = true;
+        if (!static::$cache_enabled) {
+            return $str;
+        }
+
+        $DO_USER_TIME_OFFSET = true;
 		if(empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->id)) {
 		    $GLOBALS['current_user'] = $user_bean;
 		}
@@ -147,64 +154,74 @@ class vCal extends SugarBean {
 
 	}
 
-        // return a freebusy vcal string
-        function get_vcal_freebusy($user_focus,$cached=true)
-        {
-           global $locale, $timedate;
-           $str = "BEGIN:VCALENDAR\n";
-           $str .= "VERSION:2.0\n";
-           $str .= "PRODID:-//SugarCRM//SugarCRM Calendar//EN\n";
-           $str .= "BEGIN:VFREEBUSY\n";
+    /**
+     * @param $user_focus
+     * @param bool  $cached
+     * @param SugarDateTime $startDate  optional: if Not cached
+     * @param SugarDateTime $endDate    optional: if Not cached
+     * @return string freebusy vcal string
+     */
+    // return a freebusy vcal string
+    function get_vcal_freebusy($user_focus, $cached = true, SugarDateTime $startDate = null, SugarDateTime $endDate = null)
+    {
+        global $locale, $timedate;
+        $str = "BEGIN:VCALENDAR\n";
+        $str .= "VERSION:2.0\n";
+        $str .= "PRODID:-//SugarCRM//SugarCRM Calendar//EN\n";
+        $str .= "BEGIN:VFREEBUSY\n";
 
-           $name = $locale->formatName($user_focus);
-           $email = $user_focus->email1;
+        $name = $locale->formatName($user_focus);
+        $email = $user_focus->email1;
+        // get current date for the user
+        $now_date_time = $timedate->getNow(true);
+        $timeOffset = 2;
 
-           // get current date for the user
-           $now_date_time = $timedate->getNow(true);
+        $realTimeSearch = false;
+        if (!$cached && !empty($startDate) && !empty($endDate)) {
+            $realTimeSearch = true;
 
-           // get start date ( 1 day ago )
-           $start_date_time = $now_date_time->get("yesterday");
+            // Use Start and End Dates provided
+            $start_date_time = $startDate;
+            $end_date_time = $endDate;
+        } else {
+            // get start date ( 1 day ago )
+            $start_date_time = $now_date_time->get("yesterday");
 
-           // get date 2 months from start date
-			global $sugar_config;
-			$timeOffset = 2;
+            // get date 2 months from start date
+            global $sugar_config;
             if (isset($sugar_config['vcal_time']) && $sugar_config['vcal_time'] != 0 && $sugar_config['vcal_time'] < 13)
-			{
-				$timeOffset = $sugar_config['vcal_time'];
-			}
-           $end_date_time = $start_date_time->get("+$timeOffset months");
+            {
+                $timeOffset = $sugar_config['vcal_time'];
+            }
+            $end_date_time = $start_date_time->get("+$timeOffset months");
+        }
 
-           // get UTC time format
-           $utc_start_time = $start_date_time->asDb();
-           $utc_end_time = $end_date_time->asDb();
-           $utc_now_time = $now_date_time->asDb();
+        // get UTC time format
+        $utc_start_time = $start_date_time->asDb();
+        $utc_end_time = $end_date_time->asDb();
+        $utc_now_time = $now_date_time->asDb();
 
-           $str .= "ORGANIZER;CN=$name:$email\n";
-           $str .= "DTSTART:$utc_start_time\n";
-           $str .= "DTEND:$utc_end_time\n";
+        $str .= "ORGANIZER;CN=$name:$email\n";
+        $str .= "DTSTART:$utc_start_time\n";
+        $str .= "DTEND:$utc_end_time\n";
 
-           // now insert the freebusy lines
-           // retrieve cached freebusy lines from vcals
-		   if ($timeOffset != 0)
-		   {
-           if ($cached == true)
-           {
-             $str .= $this->get_freebusy_lines_cache($user_focus);
-           }
-           // generate freebusy from Meetings and Calls
-           else
-           {
-               $str .= $this->create_sugar_freebusy($user_focus,$start_date_time,$end_date_time);
-			}
-           }
+        if (static::$cache_enabled) {
+            if ($realTimeSearch || (!$cached && $timeOffset != 0)) {
+                // insert the freebusy lines
+                $str .= $this->create_sugar_freebusy($user_focus,$start_date_time,$end_date_time);
+            } else {
+                // retrieve cached freebusy lines from vcals
+                $str .= $this->get_freebusy_lines_cache($user_focus);
+            }
+        }
 
-           // UID:20030724T213406Z-10358-1000-1-12@phoenix
-           $str .= "DTSTAMP:$utc_now_time\n";
-           $str .= "END:VFREEBUSY\n";
-           $str .= "END:VCALENDAR\n";
-           return $str;
+        // UID:20030724T213406Z-10358-1000-1-12@phoenix
+        $str .= "DTSTAMP:$utc_now_time\n";
+        $str .= "END:VFREEBUSY\n";
+        $str .= "END:VCALENDAR\n";
+        return $str;
 
-	}
+    }
 
 	// static function:
         // cache vcals

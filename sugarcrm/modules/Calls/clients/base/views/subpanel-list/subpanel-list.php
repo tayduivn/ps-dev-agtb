@@ -45,6 +45,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_start',
+          'readonly' => true,
         ),
         array(
           'label' => 'LBL_DATE_END',
@@ -66,6 +67,15 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
   ),
   'rowactions' => array(
     'actions' => array(
+      array(
+        'type' => 'rowaction',
+        'css_class' => 'btn',
+        'tooltip' => 'LBL_PREVIEW',
+        'event' => 'list:preview:fire',
+        'icon' => 'icon-eye-open',
+        'acl_action' => 'view',
+        'allow_bwc' => false,
+      ),
       array(
           'type' => 'rowaction',
           'name' => 'edit_button',

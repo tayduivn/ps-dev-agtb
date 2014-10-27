@@ -11,5 +11,8 @@
  */
 --}}
 {{#if model.id}}
+    <span class="label label-spacer">{{str "LBL_FOLLOWING" this.module}}</span>
+    <span class="label label-spacer">{{str "LBL_FOLLOW" this.module}}</span>
+    <span class="label label-spacer">{{str "LBL_UNFOLLOW" this.module}}</span>
     <a href="javascript:void(0);" name="{{name}}" class="label{{#if value}} label-success{{/if}}" data-hover="true" data-event="list:follow:fire">{{label}}</a>
 {{/if}}

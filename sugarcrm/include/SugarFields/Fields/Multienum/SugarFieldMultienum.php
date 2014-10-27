@@ -12,6 +12,7 @@
  */
 
 require_once('include/SugarFields/Fields/Enum/SugarFieldEnum.php');
+require_once('include/workflow/alert_utils.php');
 
 class SugarFieldMultienum extends SugarFieldEnum
 {

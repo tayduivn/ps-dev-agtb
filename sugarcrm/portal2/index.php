@@ -23,7 +23,6 @@ ensureJSCacheFilesExist();
 <html>
     <head>
         <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=9, IE=10">
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
         <!-- CSS -->
@@ -51,10 +50,12 @@ ensureJSCacheFilesExist();
         <div id="sidecar">
             <div id="portal">
                 <div id="alerts" class="alert-top">
-                    <div class="alert alert-process">
-                        <strong>Loading</strong>
-                        <div class="loading">
-                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                    <div class="alert-wrapper">
+                        <div class="alert alert-process">
+                            <strong>Loading</strong>
+                            <div class="loading">
+                                <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                            </div>
                         </div>
                     </div>
                 </div>

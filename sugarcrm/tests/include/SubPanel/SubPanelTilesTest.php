@@ -24,8 +24,7 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestCallUtilities::removeAllCreatedCalls();
-
+        SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestHelper::tearDown();
     }
 
@@ -36,7 +35,23 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCustomSubpanelOrder($customSubpanelOrder)
     {
-        $bean = SugarTestCallUtilities::createCall();
+        $bean = SugarTestCampaignUtilities::createCampaign();
+        $remainingSubpanels = array(
+            3 => 'emailmarketing',
+            4 => 'track_queue',
+            5 => 'targeted',
+            6 => 'viewed',
+            7 => 'link',
+            8 => 'lead',
+            9 => 'contact',
+            10 => 'invalid_email',
+            11 => 'send_error',
+            12 => 'removed',
+            13 => 'blocked',
+            14 => 'accounts',
+            15 => 'opportunities',
+        );
+        $customSubpanelOrder = array_merge($customSubpanelOrder, $remainingSubpanels);
 
         $GLOBALS['current_user']->setPreference('subpanelLayout', $customSubpanelOrder, 0, $bean->module_dir);
 
@@ -44,8 +59,7 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
 
         $layout = $tiles->getTabs();
 
-        // History was ommitted so check the resulting array is the data-set plus history (which was automatically added).
-        $this->assertEquals(array_merge($customSubpanelOrder, array('history')), $layout, 'SubPanel returned is not correct');
+        $this->assertEquals($customSubpanelOrder, $layout, 'SubPanel returned is not correct');
     }
 
     public static function dataProviderCustomSubpanelOrder()
@@ -53,16 +67,16 @@ class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(
                 array(
-                    0 => 'contacts',
-                    1 => 'users',
-                    2 => 'leads',
+                    0 => 'leads',
+                    1 => 'prospectlists',
+                    2 => 'tracked_urls',
                 ),
             ),
             array(
                 array(
-                    0 => 'users',
-                    1 => 'leads',
-                    2 => 'contacts',
+                    0 => 'prospectlists',
+                    1 => 'tracked_urls',
+                    2 => 'leads',
                 ),
             ),
         );

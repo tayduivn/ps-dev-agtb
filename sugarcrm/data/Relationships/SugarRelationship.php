@@ -498,6 +498,28 @@ abstract class SugarRelationship
     }
 
     /**
+     * Call the before update logic hook for a given link
+     *
+     * @param  SugarBean $focus base bean the hooks is triggered from
+     * @param  SugarBean $related bean being added/removed/updated from relationship
+     * @param string $link_name name of link being triggerd
+     *
+     * @return void
+     */
+    protected function callBeforeUpdate($focus, $related, $link_name = "")
+    {
+        $custom_logic_arguments = $this->getCustomLogicArguments(
+            $focus,
+            $related,
+            $link_name
+        );
+        $focus->call_custom_logic(
+            'before_relationship_update',
+            $custom_logic_arguments
+        );
+    }
+
+    /**
      * Call the after update logic hook for a given link
      *
      * @param  SugarBean $focus base bean the hooks is triggered from

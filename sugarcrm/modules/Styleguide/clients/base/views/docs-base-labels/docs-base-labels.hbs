@@ -78,17 +78,17 @@
     <tbody>
   {{#each module_list}}
       <tr>
-        <td><b>{{this}}</b></td>
+        <td><b>{{./this}}</b></td>
         <td>
-          <span class="label label-module label-module-lg label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
-          <span class="label label-module label-module-md label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
-          <span class="label label-module label-module-btn label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
-          <span class="label label-module label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
-          <span class="label label-module label-module-sm label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
-          <span class="label label-module label-module-mini label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-lg label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-md label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-btn label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-sm label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-mini label-{{./this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
         </td>
         <td>{{moduleIconToolTip this}}</td>
-        <td><code>.label-{{this}}</code></td>
+        <td><code>.label-{{./this}}</code></td>
       </tr>
   {{/each}}
     </tbody>

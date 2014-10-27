@@ -46,6 +46,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DATE',
           'enabled' => true,
           'default' => true,
+          'readonly' => true,
         ),
         array(
           'name' => 'date_end',
@@ -67,6 +68,15 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
   ),
   'rowactions' => array(
     'actions' => array(
+      array(
+        'type' => 'rowaction',
+        'css_class' => 'btn',
+        'tooltip' => 'LBL_PREVIEW',
+        'event' => 'list:preview:fire',
+        'icon' => 'icon-eye-open',
+        'acl_action' => 'view',
+        'allow_bwc' => false,
+      ),
       array(
           'type' => 'rowaction',
           'name' => 'edit_button',

@@ -25,6 +25,14 @@ class UsersApi extends ModuleApi
                 'shortHelp' => 'This method deletes a User record',
                 'longHelp'  => 'modules/Users/api/help/UsersApi.html',
             ),
+            'getFreeBusySchedule' => array(
+                'reqType' => 'GET',
+                'path' => array("Users", '?', "freebusy"),
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'getFreeBusySchedule',
+                'shortHelp' => 'Retrieve a list of calendar event start and end times for specified person',
+                'longHelp' => 'include/api/help/user_get_freebusy_help.html',
+            ),
         );
     }
 
@@ -59,5 +67,21 @@ class UsersApi extends ModuleApi
         $user->save();
 
         return array('id' => $user->id);
+    }
+
+    /**
+     * Retrieve a list of calendar event start and end times for specified person
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function getFreeBusySchedule($api, $args)
+    {
+        $bean = $this->loadBean($api, $args, 'view');
+        return array(
+            "module" => $bean->module_name,
+            "id" => $bean->id,
+            "freebusy" => $bean->getFreeBusySchedule($args),
+        );
     }
 }

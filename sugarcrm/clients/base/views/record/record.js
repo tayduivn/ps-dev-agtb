@@ -225,14 +225,6 @@
 
         // Field labels in headerpane should be hidden on view but displayed in edit and create
         _.each(this.fields, function(field) {
-            var toggleLabel = _.bind(function() {
-                this.toggleLabelByField(field, this.createMode);
-            }, this);
-
-            field.off('render', toggleLabel);
-            if (field.$el.closest('.headerpane').length > 0) {
-                field.on('render', toggleLabel);
-            }
             // some fields like 'favorite' is readonly by default, so we need to remove edit-link-wrapper
             if (field.def.readonly && field.name && -1 == _.indexOf(this.noEditFields, field.name)) {
                 this.$('.record-edit-link-wrapper[data-name=' + field.name + ']').remove();
@@ -525,8 +517,6 @@
      *   otherwise.
      */
     toggleEdit: function(isEdit) {
-        this.$('.record-edit-link-wrapper').toggle(!isEdit);
-        this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
         this.toggleViewButtons(isEdit);
         this.adjustHeaderpane();
@@ -572,7 +562,6 @@
      *   otherwise.
      */
     toggleHeaderLabels: function(isEdit) {
-        this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleViewButtons(isEdit);
         this.adjustHeaderpane();
     },
@@ -587,30 +576,7 @@
      * property).
      */
     toggleViewButtons: function(isEdit) {
-        this.$('.headerpane span[data-type="badge"]').toggleClass('hide', isEdit);
-        this.$('.headerpane span[data-type="favorite"]').toggleClass('hide', isEdit);
-        this.$('.headerpane span[data-type="follow"]').toggleClass('hide', isEdit);
         this.$('.headerpane .btn-group-previous-next').toggleClass('hide', isEdit);
-    },
-
-    /**
-     * Hide/show field label given a field.
-     *
-     * @param {View.Field} field The field to toggle the label based on current
-     *   action.
-     */
-    toggleLabelByField: function(field, inCreate) {
-        if (field.action === 'edit' || (field.action === 'disabled' && inCreate)) {
-            field.$el.closest('.record-cell')
-                .addClass('edit')
-                .find('.record-label')
-                .show();
-        } else {
-            field.$el.closest('.record-cell')
-                .removeClass('edit')
-                .find('.record-label')
-                .hide();
-        }
     },
 
     handleSave: function() {
@@ -1132,6 +1098,10 @@
                     this._widenLastCell($recordCells);
                 }
             }
+        }
+
+        if (this.layout) {
+            this.layout.trigger('headerpane:adjust_fields');
         }
     },
 

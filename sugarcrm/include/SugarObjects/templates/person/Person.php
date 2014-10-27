@@ -183,4 +183,54 @@ class Person extends Basic
             $newbean->shipping_address_country = $this->alt_address_country;
         }
     }
+
+    /**
+     * Retrieve a list of this person's calendar event start and end times ordered by start datetime
+     * @return array
+     */
+    public function getFreeBusySchedule(array $options = array())
+    {
+        global $timedate;
+        global $sugar_config;
+
+        //--- Explicit config can be used to force use of vCal Cache instead of RealTime Search
+        $useFreeBusyCache = !empty($sugar_config['freebusy_use_vcal_cache']);
+
+        $vcalBean = BeanFactory::getBean('vCals');
+        if (!$useFreeBusyCache && !empty($options['start']) && !empty($options['end'])) {
+            $sugarDateTimeStart = $timedate->fromIso($options['start']);
+            $sugarDateTimeEnd = $timedate->fromIso($options['end']);
+            $vcalData = $vcalBean->get_vcal_freebusy($this, false, $sugarDateTimeStart, $sugarDateTimeEnd);
+        } else {
+            $vcalData = $vcalBean->get_vcal_freebusy($this, true);
+        }
+
+        $vcalData = str_replace("\r\n", "\n", $vcalData);
+        $lines = explode("\n", $vcalData);
+        $utc = new DateTimeZone("UTC");
+
+        $activities = array();
+        foreach ($lines as $line) {
+            if (preg_match('/^FREEBUSY.*?:([^\/]+)\/([^\/]+)/i', $line, $matches)) {
+                $datesArray = array(
+                    SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[1], $utc),
+                    SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[2], $utc)
+                );
+                $act = new CalendarActivity($datesArray);
+                $startTime = $timedate->asIso($act->start_time);
+                $endTime = $timedate->asIso($act->end_time);
+                $activities[$startTime] = array(
+                    "start" => $startTime,
+                    "end" => $endTime,
+                );
+            }
+        }
+        ksort($activities); // order by start date
+        $freeBusySchedule = array();
+        foreach ($activities AS $startDate => $act) {
+            $freeBusySchedule[] = $act;
+        }
+
+        return $freeBusySchedule;
+    }
 }

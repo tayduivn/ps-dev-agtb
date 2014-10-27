@@ -106,10 +106,7 @@
      */
     initialize: function (options) {
         var createViewEvents = {};
-        createViewEvents['click a[name=' + this.saveButtonName + ']:not(.disabled)'] = 'save';
         createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
-        createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']:not(.disabled)'] = 'saveAndCreate';
-        createViewEvents['click a[name=' + this.saveAndViewButtonName + ']:not(.disabled)'] = 'saveAndView';
         createViewEvents['click a[name=' + this.restoreButtonName + ']:not(.disabled)'] = 'restoreModel';
         this.events = _.extend({}, this.events, createViewEvents);
         this.plugins = _.union(this.plugins || [], [
@@ -122,6 +119,10 @@
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
+
+        //inherit base create metadata for purpose of initialization
+        options.meta = _.extend({}, app.metadata.getView(null, 'create'), options.meta);
+
         this._super("initialize", [options]);
         this.model.off("change", null, this);
 
@@ -197,8 +198,15 @@
         //override handleSync since there is no need to save the previous model state
     },
 
-    delegateButtonEvents: function () {
-        //override record view's button delegation
+    /**
+     * @inheritdoc
+     *
+     * Wires up the save buttons.
+     */
+    delegateButtonEvents: function() {
+        this.context.on('button:' + this.saveButtonName + ':click', this.save, this);
+        this.context.on('button:' + this.saveAndCreateButtonName + ':click', this.saveAndCreate, this);
+        this.context.on('button:' + this.saveAndViewButtonName + ':click', this.saveAndView, this);
     },
 
     _render: function () {

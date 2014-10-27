@@ -25,6 +25,29 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 		$this->module="Meetings";
 		$this->subpanelDiv = "activities";
 
+        if(!empty($this->module))
+        {
+            $defines['child_module_name'] = $this->module;
+        }
+        else
+        {
+            $defines['child_module_name'] = $defines['module'];
+        }
+
+        if(!empty($this->subpanelDiv))
+        {
+            $defines['subpanelDiv'] = $this->subpanelDiv;
+        }
+
+        $defines['parent_bean_name'] = get_class( $defines['focus']);
+
+        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+        // Doing this early so as not to spend cycles on code that will go unused
+        $sidecarButton = $this->_get_form_sidecar($defines);
+        if ($sidecarButton) {
+            return $sidecarButton;
+        }
+
 		// Create the additional form fields with real values if they were not passed in
 		if(empty($additionalFormFields) && $this->additional_form_fields)
 		{
@@ -40,22 +63,6 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 				}
 			}
 		}
-
-		if(!empty($this->module))
-		{
-			$defines['child_module_name'] = $this->module;
-		}
-		else
-		{
-			$defines['child_module_name'] = $defines['module'];
-		}
-
-		if(!empty($this->subpanelDiv))
-		{
-			$defines['subpanelDiv'] = $this->subpanelDiv;
-		}
-
-		$defines['parent_bean_name'] = get_class( $defines['focus']);
 
 		$form = 'form' . $defines['child_module_name'];
 		$button = '<form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, \'subpanel_' . strtolower($defines['subpanelDiv']) . '\', \'' . addslashes($app_strings['LBL_LOADING']) . '\');" action="index.php" method="post" name="form" id="form' . $form . "\">\n";

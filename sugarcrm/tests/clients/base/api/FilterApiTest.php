@@ -17,7 +17,7 @@ require_once("clients/base/api/FilterApi.php");
  */
 class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public static $notes, $opps, $accounts, $meetings;
+    public static $notes, $opps, $accounts, $meetings, $oldLimit;
 
     /** @var FilterApi */
     private $filterApi;
@@ -73,6 +73,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Clean up any hanging related records
         SugarRelationship::resaveRelatedBeans();
+        if (!empty($GLOBALS['sugar_config']['max_list_limit'])) {
+            self::$oldLimit = $GLOBALS['sugar_config']['max_list_limit'];
+        }
+
     }
 
     public function setUp()
@@ -87,6 +91,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '" . $GLOBALS['current_user']->id . "'");
         //END SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
+        $GLOBALS['sugar_config']['max_list_limit'] = self::$oldLimit;
     }
 
     public static function tearDownAfterClass()
@@ -176,6 +181,23 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
+    }
+
+    public function testMaxNumLimit()
+    {
+        $GLOBALS['sugar_config']['max_list_limit'] = 3;
+        $reply = $this->filterApi->filterList(
+                $this->serviceMock,
+                array(
+                        'module' => 'Accounts',
+                        'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                        'fields' => 'id,name',
+                        'max_num' => '5'
+                )
+        );
+        $this->assertEquals(3, $reply['next_offset'], 'Next offset is not set correctly');
+        $this->assertEquals(3, count($reply['records']), 'Returned too many results');
+
     }
 
     public function testSimpleFilterWithOffset()

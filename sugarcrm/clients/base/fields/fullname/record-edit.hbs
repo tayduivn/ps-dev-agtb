@@ -11,7 +11,7 @@
  */
 --}}
 {{#each fields}}
-    <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
+    <span class="record-cell{{#if span}} span{{span}}{{/if}}" data-name="{{name}}" data-type="{{type}}">
         {{#unless dismiss_label}}
             <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
         {{/unless}}

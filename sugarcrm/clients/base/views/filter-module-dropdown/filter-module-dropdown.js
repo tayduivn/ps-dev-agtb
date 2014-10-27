@@ -41,30 +41,28 @@
      */
     _render: function() {
         this._super('_render');
-
-        if (this.layout.showingActivities) {
-            this.filterList = this.getModuleListForActivities();
-        } else if (this.layout.layoutType === "record") {
-            this.filterList = this.getModuleListForSubpanels();
-        } else {
-            this.$el.hide();
-            return this;
-        }
-
-        this._renderDropdown(this.filterList);
+        this._renderDropdown();
     },
 
     /**
      * Render select2 dropdown
      * @private
      */
-    _renderDropdown: function(data) {
+    _renderDropdown: function() {
         var self = this;
+
+        this.filterList = this.getFilterList();
+
+        // Hide the dropdown if filterList has not been specified.
+        if (!this.filterList) {
+            this.$el.hide();
+            return;
+        }
 
         this.filterNode = this.$(".related-filter");
 
         this.filterNode.select2({
-            data: data,
+            data: this.filterList,
             multiple: false,
             minimumResultsForSearch: 7,
             formatSelection: _.bind(this.formatSelection, this),
@@ -79,7 +77,7 @@
         });
 
         // Disable the module filter dropdown.
-        if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
+        if (this.shouldDisableFilter()) {
             this.filterNode.select2("disable");
         }
 
@@ -96,6 +94,30 @@
             }
             self.layout.trigger("filter:change:module", linkModule, e.val);
         });
+    },
+
+    /**
+     * Get the list for filter module dropdown.
+     * @returns {Object}
+     */
+    getFilterList: function() {
+        var filterList;
+
+        if (this.layout.showingActivities) {
+            filterList = this.getModuleListForActivities();
+        } else if (this.layout.layoutType === "record") {
+            filterList = this.getModuleListForSubpanels();
+        }
+
+        return filterList;
+    },
+
+    /**
+     * Should the filter be disabled?
+     * @returns {boolean}
+     */
+    shouldDisableFilter: function() {
+        return (this.layout.layoutType !== "record" || this.layout.showingActivities);
     },
 
     /**
@@ -218,18 +240,12 @@
     },
 
     /**
-     * Update the text for the selected module and returns template
+     * Returns the label for the dropdown.
      *
-     * @param {Object} item
-     * @returns {string}
+     * @return {string}
      */
-    formatSelection: function(item) {
-        var selectionLabel, safeString;
-
-        //Escape string to prevent XSS injection
-        safeString = Handlebars.Utils.escapeExpression(item.text);
-        // Update the text for the selected module.
-        this.$('.choice-related').html(safeString);
+    getSelectionLabel: function() {
+        var selectionLabel;
 
         if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
             selectionLabel = app.lang.get("LBL_MODULE");
@@ -237,8 +253,24 @@
             selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
         }
 
+        return selectionLabel;
+    },
 
-        return this._select2formatSelectionTemplate(selectionLabel);
+    /**
+     * Update the text for the selected module and returns template
+     *
+     * @param {Object} item
+     * @returns {string}
+     */
+    formatSelection: function(item) {
+        var safeString;
+
+        //Escape string to prevent XSS injection
+        safeString = Handlebars.Utils.escapeExpression(item.text);
+        // Update the text for the selected module.
+        this.$('.choice-related').html(safeString);
+
+        return this._select2formatSelectionTemplate(this.getSelectionLabel());
     },
 
     /**

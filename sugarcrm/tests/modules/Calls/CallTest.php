@@ -24,7 +24,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $contact = BeanFactory::newBean('Contacts');
-        $contact->first_name = 'MeetingTest';
+        $contact->first_name = 'CallTest';
         $contact->last_name = 'Contact';
         $contact->save();
         $this->contact = $contact;        
@@ -32,6 +32,11 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestCallUtilities::removeCallUsers();
+        SugarTestCallUtilities::removeCallContacts();
+        SugarTestCallUtilities::removeAllCreatedCalls();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
         if(!empty($this->callid)) {
             $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->callid}'");
             $GLOBALS['db']->query("DELETE FROM vcals WHERE user_id='{$GLOBALS['current_user']->id}'");
@@ -167,5 +172,40 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($call->reminder_checked);
         $this->assertTrue($call->email_reminder_checked);
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreAlreadyLoaded_ReturnsRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $call = BeanFactory::newBean('Calls');
+        $call->users_arr = array($GLOBALS['current_user']->id);
+        $call->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+
+        $actual = $call->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $call = SugarTestCallUtilities::createCall();
+        SugarTestCallUtilities::addCallUserRelation($call->id, $GLOBALS['current_user']->id);
+        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[0]->id);
+        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[1]->id);
+
+        $actual = $call->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
 }

@@ -124,7 +124,7 @@ describe("enum field", function() {
             renderSpy2.restore();
             field2.dispose();
         });
-        it('should avoid duplicate enum api call', function() {
+        it('should avoid duplicate enum api calls on the same context', function() {
             var apiSpy = sinon.spy(app.api, 'enumOptions');
             var field = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, model);
             var field2 = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, model, field.context);
@@ -139,13 +139,10 @@ describe("enum field", function() {
             SugarTest.server.respondWith('GET', /.*rest\/v10\/Contacts\/enum\/test_enum.*/,
                 [200, { 'Content-Type': 'application/json'}, JSON.stringify(expected)]);
             field.render();
-            SugarTest.server.respond();
             field2.render();
-            field.render();
-
+            SugarTest.server.respond();
             expect(apiSpy.calledOnce).toBe(true);
-            //second field should be ignored, once first ajax called is being called
-            expect(apiSpy.calledTwice).toBe(false);
+
             _.each(expected, function(value, key) {
                 expect(field.items[key]).toBe(value);
                 expect(field2.items[key]).toBe(value);
@@ -208,6 +205,22 @@ describe("enum field", function() {
             var original = null;
             var expected = [];
             expect(field.unformat(original)).toEqual(expected);
+        });
+
+        it("should format the model's value into a string array when model is updated", function() {
+            var value = "^1^,^2^",
+                actual,
+                expected = ["1", "2"];
+            field = SugarTest.createField("base", fieldName, "enum", "edit", {isMultiSelect: true});
+            field.items = {
+                '1': 'Foo',
+                '2': 'Bar',
+                '3': 'Baz'
+            };
+            field.render();
+            field.model.set(field.name, value);
+            actual = field.$('input').select2('val');
+            expect(actual).toEqual(expected);
         });
 
         describe("blank value on multi select", function() {

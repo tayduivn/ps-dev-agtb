@@ -44,6 +44,8 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/KBSContent.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/JSTree.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/NestedSetCollection.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/VirtualCollection.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/SearchForMore.js"></script>
     <!-- FIXME remove this on SC-3047 -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Tinymce.js"></script>

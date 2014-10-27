@@ -92,23 +92,126 @@ describe("Alert View", function() {
         });
     });
 
+    describe('confirmation alerts', function() {
+        it('should cancel alert before calling onCancel and onConfirm', function() {
+            var calledLast,
+                cancelStub;
+            view.onCancel = function() {
+                calledLast = 'onCancel';
+            };
+            view.onConfirm = function() {
+                calledLast = 'onConfirm';
+            };
+            cancelStub = sinon.collection.stub(view, 'cancel', function() {
+                calledLast = 'cancel';
+            });
 
-    it('should cancel alert before calling onCancel and onConfirm', function() {
-        var calledLast,
-            cancelStub;
-        view.onCancel = function() { calledLast = 'onCancel'; };
-        view.onConfirm = function() { calledLast = 'onConfirm'; };
-        cancelStub = sinon.collection.stub(view, 'cancel', function() { calledLast = 'cancel'; });
+            //Test onCancel
+            view.cancelClicked();
+            expect(cancelStub).toHaveBeenCalledOnce();
+            expect(calledLast).toEqual('onCancel');
+            //Test onConfirm
+            view.confirmClicked();
+            expect(cancelStub).toHaveBeenCalledTwice();
+            expect(calledLast).toEqual('onConfirm');
 
-        //Test onCancel
-        view.cancelClicked();
-        expect(cancelStub).toHaveBeenCalledOnce();
-        expect(calledLast).toEqual('onCancel');
-        //Test onConfirm
-        view.confirmClicked();
-        expect(cancelStub).toHaveBeenCalledTwice();
-        expect(calledLast).toEqual('onConfirm');
+        });
 
+        var alertClass;
+
+        describe("when button objects aren't use for the confirmation buttons", function() {
+            beforeEach(function() {
+                alertClass = app.view.views['BaseAlertView'];
+            });
+
+            it('should set onConfirm from options.onConfirm', function() {
+                var alert = new alertClass({level: 'confirmation', onConfirm: 'confirm'});
+                expect(alert.onConfirm).toEqual('confirm');
+            });
+
+            it('should set confirmLabel to the default label', function() {
+                var alert = new alertClass({level: 'confirmation'});
+                expect(alert.confirmLabel).toEqual('LBL_CONFIRM_BUTTON_LABEL');
+            });
+
+            it('should set onCancel from options.onCancel', function() {
+                var alert = new alertClass({level: 'confirmation', onCancel: 'cancel'});
+                expect(alert.onCancel).toEqual('cancel');
+            });
+
+            it('should set cancelLabel to the default label', function() {
+                var alert = new alertClass({level: 'confirmation'});
+                expect(alert.cancelLabel).toEqual('LBL_CANCEL_BUTTON_LABEL');
+            });
+
+            it('should prioritize options.onConfirm over options.confirm.callback', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    onConfirm: 'foo',
+                    confirm: {
+                        callback: 'bar'
+                    }
+                });
+                expect(alert.onConfirm).toEqual('foo');
+            });
+
+            it('should prioritize options.onCancel over options.cancel.callback', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    onCancel: 'foo',
+                    cancel: {
+                        callback: 'bar'
+                    }
+                });
+                expect(alert.onCancel).toEqual('foo');
+            });
+        });
+
+        describe('when button objects are use for the confirmation buttons', function() {
+            beforeEach(function() {
+                alertClass = app.view.views['BaseAlertView'];
+            });
+
+            it('should set onConfirm from options.confirm.callback', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    confirm: {
+                        callback: 'confirm'
+                    }
+                });
+                expect(alert.onConfirm).toEqual('confirm');
+            });
+
+            it('should set confirmLabel to the custom label', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    confirm: {
+                        label: 'LBL_CONFIRM'
+                    }
+                });
+                expect(alert.confirmLabel).toEqual('LBL_CONFIRM');
+            });
+
+            it('should set onCancel from options.cancel.callback', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    cancel: {
+                        callback: 'cancel'
+                    }
+                });
+                expect(alert.onCancel).toEqual('cancel');
+            });
+
+            it('should set cancelLabel to the custom label', function() {
+                var alert = new alertClass({
+                    level: 'confirmation',
+                    cancel: {
+                        label: 'LBL_CANCEL'
+                    }
+                });
+                expect(alert.cancelLabel).toEqual('LBL_CANCEL');
+            });
+        });
     });
 
     describe('Key bindings', function() {

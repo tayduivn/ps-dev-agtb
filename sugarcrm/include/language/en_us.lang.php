@@ -456,7 +456,9 @@ $app_list_strings = array (
       ),
   //time is in seconds; the greater the time the longer it takes;
   'reminder_max_time' => 90000,
-  'reminder_time_options' => array( 60=> '1 minute prior',
+  'reminder_time_options' => array(
+      '-1' => 'None',
+      60=> '1 minute prior',
                                   300=> '5 minutes prior',
                                   600=> '10 minutes prior',
                                   900=> '15 minutes prior',
@@ -1502,6 +1504,39 @@ $app_list_strings = array (
         'Weekly' => 'week(s)',
         'Monthly' => 'month(s)',
         'Yearly' => 'year(s)',
+    ),
+
+    'repeat_interval_number' => array(
+        1 => '1',
+        2 => '2',
+        3 => '3',
+        4 => '4',
+        5 => '5',
+        6 => '6',
+        7 => '7',
+        8 => '8',
+        9 => '9',
+        10 => '10',
+        11 => '11',
+        12 => '12',
+        13 => '13',
+        14 => '14',
+        15 => '15',
+        16 => '16',
+        17 => '17',
+        18 => '18',
+        19 => '19',
+        20 => '20',
+        21 => '21',
+        22 => '22',
+        23 => '23',
+        24 => '24',
+        25 => '25',
+        26 => '26',
+        27 => '27',
+        28 => '28',
+        29 => '29',
+        30 => '30',
     ),
 
     'duration_dom' => array(
@@ -2644,6 +2679,7 @@ $app_strings = array (
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
     'LBL_SHOW_LESS_RECENTS' => '...Less recents',
     'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
+    'LBL_SHOW_MORE_GENERIC' => 'More {{name}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -3003,6 +3039,9 @@ Sincerely, SugarCRM',
     'LBL_THEME_COLOR'=>'Color',
     'LBL_THEME_FONT'=>'Font',
     'LBL_THOUSANDS_SYMBOL' => 'K',
+    'LBL_SCHEDULE_MEETING_BUTTON_TITLE' => 'Schedule Meeting',
+    'LBL_SCHEDULE_MEETING_BUTTON_KEY'   => 'M',
+    'LBL_SCHEDULE_MEETING_BUTTON_LABEL' => 'Schedule Meeting',
     'LBL_TRACK_EMAIL_BUTTON_KEY' => 'K',
     'LBL_TRACK_EMAIL_BUTTON_LABEL' => 'Archive Email',
     'LBL_TRACK_EMAIL_BUTTON_TITLE' => 'Archive Email',
@@ -5175,6 +5214,36 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CONFIG_BLOCKED_DESC_USER_ACCESS' => 'User does not have access to {{module}}',
     'LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS' => 'User does not have access to configure {{module}} settings',
     'LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS' => 'Database settings for {{module}} need to be fixed',
+
+    // duration field
+    'LBL_START_AND_END_DATE' => '{{start}} - {{end}} ({{duration}})',
+    'LBL_START_AND_END_DATE_SAME_DAY' => '{{date}} {{start}} - {{end}} ({{duration}})',
+    'LBL_START_AND_END_DATE_TO' => 'to',
+    'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
+
+    'LBL_CALENDAR_START_DATE' => "Start Date",
+    'LBL_CALENDAR_END_DATE' => "End Date",
+    'LBL_CALENDAR_DURATION' => "Duration",
+    'LBL_CALENDAR_RECURRENCE' => "Recurrence",
+    'LBL_CALENDAR_REMINDERS' => "Reminders",
+
+    'LBL_CALENDAR_REPEAT_TYPE' => "Repeat Type",
+    'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
+    'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
+    'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
+    'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
+
+    'ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD' => 'Recurrence changes must be made using the first record in the series.',
+
+    'LBL_CALENDAR_EVENT_RESPONSE_ACCEPT' => 'Attending',
+    'LBL_CALENDAR_EVENT_RESPONSE_DECLINE' => 'Declined',
+    'LBL_CALENDAR_EVENT_RESPONSE_TENTATIVE' => 'Tentative',
+    'LBL_CALENDAR_EVENT_RESPONSE_NONE' => 'No Reply',
+    'LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE' => 'Schedule Unavailable',
+
+    'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
+
+    'LBL_SAVE_AND_SEND_INVITES_BUTTON' => 'Save and Send Invites',
 );
 
 $app_list_strings['interactions_options'] = array (

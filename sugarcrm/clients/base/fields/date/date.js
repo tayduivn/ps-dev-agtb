@@ -338,7 +338,7 @@
      */
     unformat: function(value) {
         if (!value) {
-            return value;
+            return;
         }
 
         value = app.date(value, app.date.convertFormat(this.getUserDateFormat()), true);
@@ -364,7 +364,14 @@
     },
 
     /**
-     * @inheritDoc
+     * Focus on the date field.
+     */
+    focus: function() {
+        this.$(this.fieldTag).datepicker('focusShow');
+    },
+
+    /**
+     * @inheritdoc
      */
     _dispose: function() {
         // FIXME: new date picker versions have support for plugin removal/destroy

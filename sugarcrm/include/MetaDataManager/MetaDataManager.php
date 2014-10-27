@@ -269,6 +269,9 @@ class MetaDataManager
             'level' => true,
             'write_to_server' => true,
         ),
+        'calendar' => array(
+            'max_repeat_count' => true,
+        ),
     );
 
     /**

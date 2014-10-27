@@ -25,7 +25,8 @@ $dictionary['calls_users'] = array(
         array('name' => 'calls_userspk', 'type' => 'primary', 'fields' => array('id')),
         array('name' => 'idx_usr_call_call', 'type' => 'index', 'fields' => array('call_id')),
         array('name' => 'idx_usr_call_usr', 'type' => 'index', 'fields' => array('user_id')),
-        array('name' => 'idx_call_users', 'type' => 'alternate_key', 'fields' => array('call_id', 'user_id'))
+        array('name' => 'idx_call_users', 'type' => 'alternate_key', 'fields' => array('call_id', 'user_id')),
+        array('name' => 'idx_call_users_del', 'type' => 'alternate_key', 'fields' => array('call_id', 'user_id', 'deleted')),
     ),
     'relationships' => array(
         'calls_users' => array(

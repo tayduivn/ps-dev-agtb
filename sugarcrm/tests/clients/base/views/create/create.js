@@ -799,6 +799,18 @@ describe('Base.View.Create', function() {
             });
         });
 
+        using(
+            'save buttons',
+            ['save_button', 'save_create_button', 'save_view_button'],
+            function(buttonName) {
+                it('should save when the save button click event is triggered', function() {
+                    var stub = sinonSandbox.stub(view, 'initiateSave');
+                    view.context.trigger('button:' + buttonName + ':click');
+                    expect(stub).toHaveBeenCalled();
+                });
+            }
+        );
+
         it("Should not save data when save button is clicked but duplicates are found", function() {
             var flag = false,
                 validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {

@@ -71,7 +71,7 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
             $report_modules[$key] = $value;
         }
 
-		if($key=='Releases' || $key == 'CampaignLog') {
+		if($key=='Releases' || $key == 'CampaignLog' || $key == 'Manufacturers') {
 			$report_modules[$key] = $value;
 		}
 

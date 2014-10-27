@@ -231,8 +231,12 @@
              * @private
              */
             _retrieveEmailAddressFromModel: function(model) {
-                var emails = model.get('email'),
-                    email,
+                var emails = model.get('email');
+                if (_.isUndefined(emails)) {
+                    // need to include fallback, since in a 6.7 where a module is modified using Studio, we have 'email1' in custom files
+                    return model.get('email1');
+                }
+                var email,
                     isValidEmail = function(email) {
                         return (!_.isUndefined(email) &&
                             !_.isEmpty(email.email_address) &&
