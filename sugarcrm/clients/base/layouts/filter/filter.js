@@ -440,7 +440,8 @@
             massCollection.reset([],{silent: true});
         }
         var self = this,
-            ctxList = this.getRelevantContextList();
+            ctxList = this.getRelevantContextList(),
+            batchId = ctxList.length > 1 ? _.uniqueId() : false;
         _.each(ctxList, function(ctx) {
             var ctxCollection = ctx.get('collection'),
                 origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
@@ -448,6 +449,9 @@
                 options = {
                     //Show alerts for this request
                     showAlerts: true,
+                    apiOptions: {
+                        bulk: batchId
+                    },
                     success: function(collection, response, options) {
                         // Close the preview pane to ensure that the preview
                         // collection is in sync with the list collection.
@@ -467,6 +471,9 @@
             ctx.set('skipFetch', false);
             ctx.loadData(options);
         });
+        if (batchId) {
+            app.api.triggerBulkCall(batchId);
+        }
     },
 
     /**

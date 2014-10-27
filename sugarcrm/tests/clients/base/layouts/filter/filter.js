@@ -132,6 +132,41 @@ describe('Base.Layout.Filter', function() {
                         expect(layout.context.get('currentFilterId')).toEqual('new_filter');
                     }
                 );
+                it('should use the bulk API when more than one context is loaded', function(){
+                    var callCount = 0,
+                        loadOptions = false,
+                        fakeContext = {
+                            get: function(){ return { resetPagination: function(){ }}; },
+                            set: function(){ },
+                            resetLoadFlag: function(){ },
+                            resetPagination: function(){ },
+                            loadData: function(options) {
+                                loadOptions = options;
+                            }
+                        },
+                        contextStub = sinon.collection.stub(layout, 'getRelevantContextList', function(){
+                            var ret = [];
+                            if (callCount == 0) {
+                                ret = [fakeContext];
+                            } else if (callCount == 1) {
+                                ret = [fakeContext, fakeContext];
+                            }
+                            callCount++;
+                            return ret;
+                        });
+
+                    layout.applyFilter();
+                    expect(contextStub).toHaveBeenCalled();
+                    expect(loadOptions).toBeTruthy();
+                    expect(loadOptions.apiOptions.bulk).toBeFalsy();
+
+                    layout.applyFilter();
+                    expect(callCount).toEqual(2);
+                    expect(loadOptions).toBeTruthy();
+                    expect(loadOptions.apiOptions.bulk).toBeTruthy();
+
+                    contextStub.restore();
+                });
             });
             describe('refreshDropdown', function() {
                 beforeEach(function() {
