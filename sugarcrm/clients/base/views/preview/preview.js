@@ -284,7 +284,6 @@
 
             //  If module not specified we need select module from model in collection by current index.
             var currModule = module || this.collection.models[currIndex].module;
-            var moduleMeta = app.metadata.getModule(currModule);
             this.model = app.data.createBean(currModule);
             this.bindUpdates(this.collection.models[currIndex]);
             this.model.set("id", this.collection.models[currIndex].get("id"));
@@ -297,7 +296,8 @@
                     //Reset the preview
                     app.events.trigger("preview:render", model, null, false);
                     self.switching = false;
-                }
+                },
+                view: 'record'
             });
         }
     },
