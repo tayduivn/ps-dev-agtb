@@ -46,6 +46,7 @@ $mod_strings = array(
 
     'LBL_SCAN_401_LOG' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_LOG' => 'Bad module %s - not in beanList and not in filesystem',
+    'LBL_SCAN_403_LOG' => 'Specific Sugar files inclusion found for:' . PHP_EOL .'%s',
     'LBL_SCAN_520_LOG' => 'Logic hook after_ui_frame detected in %s',
     'LBL_SCAN_521_LOG' => 'Logic hook after_ui_footer detected in %s',
 //    'LBL_SCAN_405_LOG' => 'Incompatible Integration - %s %s',
@@ -125,6 +126,7 @@ $mod_strings = array(
 
     'LBL_SCAN_401_TITLE' => 'Vendor files inclusion found, for files that have been moved to vendor:'. PHP_EOL .'%s',
     'LBL_SCAN_402_TITLE' => 'Bad module %s - not in beanList and not in filesystem',
+    'LBL_SCAN_403_TITLE' => 'Specific Sugar files inclusion found for:' . PHP_EOL .'%s',
     'LBL_SCAN_520_TITLE' => 'Logic hook after_ui_frame detected in %s',
     'LBL_SCAN_521_TITLE' => 'Logic hook after_ui_footer detected in %s',
 //    'LBL_SCAN_405_TITLE' => 'Incompatible Integration - %s %s',
@@ -202,6 +204,7 @@ $mod_strings = array(
 
     'LBL_SCAN_401_DESCR' => 'Customized file includes a file that has been moved to the vendor directory.  We have attempted to take the corrective action and no further action is needed. ',
     'LBL_SCAN_402_DESCR' => 'Bad module %s - not in beanList and not in filesystem',
+    'LBL_SCAN_403_DESCR' => 'Some of the Sugar files have changed their location in Sugar 7. We have to correct their include paths.',
     'LBL_SCAN_520_DESCR' => 'This logic hook is not supported anymore in Sugar 7',
     'LBL_SCAN_521_DESCR' => 'This logic hook is not supported anymore in Sugar 7',
 //    'LBL_SCAN_405_DESCR' => 'Package detected which has been blacklisted as not supported in Sugar 7',
