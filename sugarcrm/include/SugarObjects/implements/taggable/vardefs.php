@@ -43,6 +43,8 @@ $vardefs = array(
             'type' => 'text',
             'studio' => false,
             'reportable' => false,
+            'importable' => false,
+            'exportable' => false,
         ),
     ),
     'relationships' => array(

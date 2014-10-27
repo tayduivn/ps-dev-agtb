@@ -544,29 +544,38 @@ class Importer
             // Build the params array so the field can save what needs saving
             $params[$tagFieldName] = array();
 
-            // Get the tags from the bean if they exist
-            $currentTags = $sfTag->getTagValues($focus, $tagFieldName);
+            // Get the tags from the bean if they exist. Using a fresh bean
+            // because at this point $focus is the new data.
+            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
+            //$currentTags = $sfTag->getTagValues(BeanFactory::getBean($focus->module_dir, $focus->id), $tagFieldName);
 
             // Get the tags from the row. Tags are separated by double quotes.
             // ex Value1,Value2,Value3 and then merged with existing tags
             $importTags = $sfTag->getTagValuesFromImport($row[$this->hasTags]);
 
-            // Now get all tags and massage them a little bit for uniqueness
-            $allTags = array_merge($currentTags, $importTags);
+            // Now get all tags and massage them a little bit for uniqueness.
+            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
+            //$allTags = array_merge($currentTags, $importTags);
+            $allTags = $importTags;
 
             // Holds the lowercase tag name to make sure tags are unique for this record
             $tagCheck = array();
             foreach ($allTags as $tag) {
+                // Simple cleansing
                 $tag = trim($tag);
-                $tagLower = strtolower($tag);
 
-                // If we haven't touched this tag yet, hit it
-                if (!isset($tagCheck[$tagLower])) {
-                    // Add it to the params array
-                    $params[$tagFieldName][] = array('name' => $tag);
+                // If the tag, after trim, is empty, move on
+                if (!empty($tag)) {
+                    $tagLower = strtolower($tag);
 
-                    // Mark that it has been checked
-                    $tagCheck[$tagLower] = 1;
+                    // If we haven't touched this tag yet, hit it
+                    if (!isset($tagCheck[$tagLower])) {
+                        // Add it to the params array
+                        $params[$tagFieldName][] = array('name' => $tag);
+
+                        // Mark that it has been checked
+                        $tagCheck[$tagLower] = 1;
+                    }
                 }
             }
 
