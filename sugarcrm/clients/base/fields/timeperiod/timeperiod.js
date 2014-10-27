@@ -50,9 +50,18 @@
     updateDefaultTooltip: false,
 
     /**
+     * Tooltip placement direction for the template
+     */
+    tooltipDir: 'right',
+
+    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
+        if (app.lang.direction === 'rtl') {
+            this.tooltipDir = 'left';
+        }
+
         var collectionParams = {limit: 100, params: {}};
         this._super('initialize', [options]);
 
@@ -181,6 +190,10 @@
     formatOption: function(object) {
         // check once if the tpTooltipMap has been built yet
         this.updateDefaultTooltip = _.isUndefined(this.tpTooltipMap[object.id]);
-        return this.tooltipTemplate({tooltip: this.tpTooltipMap[object.id], value: object.text});
+        return this.tooltipTemplate({
+            tooltip: this.tpTooltipMap[object.id],
+            value: object.text,
+            tooltipDir: this.tooltipDir
+        });
     }
 })

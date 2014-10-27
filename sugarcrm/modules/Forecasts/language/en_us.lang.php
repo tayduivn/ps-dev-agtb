@@ -213,7 +213,8 @@ $mod_strings = array (
     'LBL_TREE_PARENT' => 'Parent',
 
     // Label for Current User Rep Worksheet Line
-    'LBL_MY_MANAGER_LINE' => '{0} (me)',
+    // &#x200E; tells the browser to interpret as left-to-right
+    'LBL_MY_MANAGER_LINE' => '{0} (me)&#x200E;',
 
     //Labels for worksheet items
     'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',

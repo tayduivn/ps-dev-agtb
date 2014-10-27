@@ -325,6 +325,7 @@ $fieldsHidden = array(
         'name' => 'date_entered_by',
         'readonly' => true,
         'type' => 'fieldset',
+        'inline' => true,
         'label' => 'LBL_DATE_ENTERED',
         'fields' => array(
             array(
@@ -343,6 +344,7 @@ $fieldsHidden = array(
         'name' => 'date_modified_by',
         'readonly' => true,
         'type' => 'fieldset',
+        'inline' => true,
         'label' => 'LBL_DATE_MODIFIED',
         'fields' => array(
             array(

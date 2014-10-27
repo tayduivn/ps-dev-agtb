@@ -167,7 +167,9 @@
                 datapointLength = this.view.$('.info .last-commit .datapoints div.datapoint').length,
                 sel = this.view.$('.last-commit .datapoints div.datapoint:nth-child(' + index + ')');
             if (datapointLength > 2 && index <= 2 || datapointLength == 2 && index == 1) {
-                $(sel).width(width - 8);
+                // RTL was off 1px
+                var widthMod = (app.lang.direction === 'rtl') ? 7 : 8;
+                $(sel).width(width - widthMod);
             } else {
                 $(sel).width(width);
             }
