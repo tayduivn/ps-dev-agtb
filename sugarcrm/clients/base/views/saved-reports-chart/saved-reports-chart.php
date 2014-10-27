@@ -43,6 +43,146 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'options' => 'sugar7_dashlet_reports_auto_refresh_options'
                 ),
                 array(
+                    'name' => 'chart_type',
+                    'label' => 'Chart type',
+                    'type' => 'enum',
+                    'options' => 'd3_chart_types',
+                ),
+                array(
+                    'name' => 'showValues',
+                    'label' => 'Value placement',
+                    'type' => 'enum',
+                    'default' => false,
+                    'options' => 'd3_value_placement',
+                ),
+
+                array(
+                    'name' => 'title_options',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'Show title',
+                    'toggle' => 'show_title',
+                    'dependent' => 'report_title',
+                    'fields' => array(
+                        array(
+                            'name' => 'show_title',
+                            'type' => 'bool',
+                            'default' => 0,
+                            'css_class' => 'align-top',
+                        ),
+                        array(
+                            'name' => 'report_title',
+                        ),
+                    ),
+                ),
+
+                array(
+                    'name' => 'show_legend',
+                    'label' => 'Show legend',
+                    'type' => 'bool',
+                    'default' => 1,
+                ),
+
+                array(
+                    'name' => 'y_label_options',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'Show y-axis label',
+                    'toggle' => 'show_y_label',
+                    'dependent' => 'y_axis_label',
+                    'fields' => array(
+                        array(
+                            'name' => 'show_y_label',
+                            'type' => 'bool',
+                            'default' => 0,
+                        ),
+                        array(
+                            'name' => 'y_axis_label',
+                        ),
+                    ),
+                ),
+
+                array(
+                    'name' => 'groupDisplayOptions',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'Group display options',
+                    'css_class' => 'fieldset-wrap',
+                    'fields' => array(
+                        array(
+                            'name' => 'allowScroll',
+                            'text' => 'Allow scrolling',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'stacked',
+                            'text' => 'Stack data series',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'hideEmptyGroups',
+                            'text' => 'Hide empty groups',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                    ),
+                ),
+
+                array(
+                    'name' => 'x_label_options',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'Show x-axis label',
+                    'toggle' => 'show_x_label',
+                    'dependent' => 'x_axis_label',
+                    'fields' => array(
+                        array(
+                            'name' => 'show_x_label',
+                            'type' => 'bool',
+                            'default' => 0,
+                        ),
+                        array(
+                            'name' => 'x_axis_label',
+                        ),
+                    ),
+                ),
+
+                array(
+                    'name' => 'tickDisplayMethods',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => true,
+                    'label' => 'Tick display methods',
+                    'css_class' => 'fieldset-wrap',
+                    'fields' => array(
+                        array(
+                            'name' => 'wrapTicks',
+                            'text' => 'Wrap ticks',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'staggerTicks',
+                            'text' => 'Stagger ticks',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'rotateTicks',
+                            'text' => 'Rotate ticks',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                    ),
+                ),
+
+                array(
                     'name' => 'editReport',
                     'label' => 'LBL_REPORT_EDIT',
                     'type' => 'button',

@@ -195,7 +195,6 @@
       margin-left: -7px;
       font-size: @fontSizeLarge;
       font-weight: 500;
-      color: @gray;
       width: 100%;
       z-index: 1;
       &:focus {
@@ -714,9 +713,14 @@
     min-height: 0;
     width: 100%;
     .calcWidth(~"100% + 2px");
+    &.fieldset-wrap {
+      display: block;
+    }
   }
   .record-cell:not(.span12) .normal > .fieldset-inline {
-    .calcWidth(~"100% + 16px");
+    //this is causing problems with normal field layouts
+    //TODO: revisit this width issue as part of UIUX-1795
+    //.calcWidth(~"100% + 16px");
   }
   .fieldset-inline {
     .fieldset-field {
@@ -740,9 +744,17 @@
     .fieldset-field:last-child {
       padding-right: 0;
     }
-    &:not(.edit):not(.fieldset-equal) {
+    &:not(.edit):not(.fieldset-equal):not(.fieldset-wrap) {
       .fieldset-field:last-child {
         width: 100%;
+      }
+    }
+    &.fieldset-wrap {
+      .fieldset-field {
+        display: inline-block;
+      }
+      label {
+        white-space: nowrap;
       }
     }
     &.edit {
