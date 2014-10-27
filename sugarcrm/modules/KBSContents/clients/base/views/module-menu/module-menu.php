@@ -17,5 +17,12 @@ $viewdefs['KBSContents']['base']['view']['module-menu'] = array(
         'config_provider' => 'KBSContents',
         'root_name' => 'category_root'
     ),
-    'label' => 'LNK_LIST_KBSTOPICS'
+    'label' => 'LNK_LIST_KBSTOPICS',
+    'filterDef' => array(
+        array(
+            'active_rev' => array(
+                '$equals' => '1',
+            ),
+        ),
+    ),
 );

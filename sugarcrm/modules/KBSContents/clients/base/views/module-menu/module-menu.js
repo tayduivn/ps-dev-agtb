@@ -80,5 +80,24 @@
                 treecallbacks: treeCallbacks
             }
         });
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    populate: function(tplName, filter, limit) {
+        if (limit <= 0) {
+            return;
+        }
+        filter =  _.union([], filter, this.meta.filterDef || []);
+        this.collection.fetch({
+            'showAlerts': false,
+            'fields': ['id', 'name'],
+            'filter': filter,
+            'limit': limit,
+            'success': _.bind(function() {
+                this._renderPartial(tplName);
+            }, this)
+        });
     }
 })
