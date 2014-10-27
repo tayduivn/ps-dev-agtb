@@ -27,6 +27,7 @@ class DnbApi extends SugarApi
                 'method' => 'dnbDirectGet',
                 'shortHelp' => 'Invoke DNB API using GET',
                 'longHelp' => 'include/api/help/dnb_get_help.html',
+                'keepSession' => true,
             ),
             'dnbDirectPost' => array(
                 'reqType' => 'POST',
@@ -35,6 +36,7 @@ class DnbApi extends SugarApi
                 'method' => 'dnbDirectPost',
                 'shortHelp' => 'Invoke DNB API using POST',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
+                'keepSession' => true,
             ),
             'dnbAccountsBAL' => array(
                 'reqType' => 'POST',
@@ -43,6 +45,7 @@ class DnbApi extends SugarApi
                 'method' => 'dnbAccountsBAL',
                 'shortHelp' => 'Invoke BAL For Accounts',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
+                'keepSession' => true,
             ),
             'dnbContactsBAL' => array(
                 'reqType' => 'POST',
@@ -51,6 +54,7 @@ class DnbApi extends SugarApi
                 'method' => 'dnbContactsBAL',
                 'shortHelp' => 'Invoke BAL For Contacts',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
+                'keepSession' => true,
             ),
             'dnbBulkImport' => array(
                 'reqType' => 'POST',
