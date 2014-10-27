@@ -609,4 +609,15 @@
             $('#logoutframe').attr('src',data.url);
         }
     });
+
+    /**
+     * Shortcuts should be disabled in setup wizard.
+     */
+    app.user.on('change:show_wizard', function(user, show_wizard) {
+        if (show_wizard) {
+            app.shortcuts.disable();
+        } else {
+            app.shortcuts.enable();
+        }
+    });
 })(SUGAR.App);
