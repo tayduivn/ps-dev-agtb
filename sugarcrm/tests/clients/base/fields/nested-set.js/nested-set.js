@@ -31,10 +31,9 @@ describe('Base.Field.Nested-set', function() {
         app.cache.cutAll();
         app.view.reset();
         _.defer.restore();
+        field.dispose();
         Handlebars.templates = {};
-        field.model = null;
-        field._loadTemplate = null;
-        field = null;
+        SugarTest.testMetadata.dispose();
         delete app.plugins.plugins['field']['JSTree'];
         delete app.plugins.plugins['field']['NestedSetCollection'];
         sinonSandbox.restore();
@@ -86,17 +85,18 @@ describe('Base.Field.Nested-set', function() {
     it('Should show input for creation.', function() {
         var aSel = '[data-action=create-new]',
             iSel = '[data-role=add-item]',
-            dSel = '[data-role=treeinput]';
+            dSel = '[data-role=treeinput]',
+            cSel = '[data-action=create-label-cover]';
         sinonSandbox.stub(field, '_renderTree', function() {});
         field.action = 'edit';
         field.render();
         field.$(dSel).click();
         field.$(aSel).click();
         expect(field.$(iSel).length).not.toBe(0);
-        expect(field.$(aSel).css('display')).toBe('none');
+        expect(field.$(cSel).css('display')).toBe('none');
         field.switchCreate();
         expect(field.$(iSel).length).toBe(0);
-        expect(field.$(aSel).css('display')).not.toBe('none');
+        expect(field.$(cSel).css('display')).not.toBe('none');
     });
 
 });
