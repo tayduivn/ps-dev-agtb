@@ -68,7 +68,6 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->save();
         $this->ob = $ob;
 
-
         $system = $ob->getSystemMailerSettings();
         $system->new_with_id = FALSE;
         $system->mail_smtpport = $newSystemPort;
@@ -109,7 +108,6 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->mail_smtppass = "User Pass";
         $ob->save();
         $this->ob = $ob;
-
 
         $system = $ob->getSystemMailerSettings();
         $system->new_with_id = FALSE;
@@ -182,6 +180,7 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $oe = new OutboundEmail();
 
         $GLOBALS['db']->query("DELETE FROM config WHERE category='notify' AND name='allow_default_outbound' ");
+        $oe->resetSystemMailerCache();
         $system = $oe->getSystemMailerSettings();
 
         //System does not require auth, no user overide account.

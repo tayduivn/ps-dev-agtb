@@ -58,6 +58,11 @@ class Forecast extends SugarBean
     public $disable_custom_fields = true;
 
     /**
+     * @var null|string Uses to store value of $config['buckets_dom'] to prevent repeating DB operations
+     */
+    protected static $commitStageDropdownCache = null;
+
+    /**
      * holds the settings for the Forecast Module
      *
      * @var array
@@ -285,9 +290,18 @@ class Forecast extends SugarBean
      */
     public function getCommitStageDropdown()
     {
-        $adminBean = BeanFactory::getBean('Administration');
-        $config = $adminBean->getConfigForModule($this->module_name);
-        return translate($config['buckets_dom']);
+        if (is_null(static::$commitStageDropdownCache)) {
+            $adminBean = BeanFactory::getBean('Administration');
+            $config = $adminBean->getConfigForModule($this->module_name);
+            static::$commitStageDropdownCache = $config['buckets_dom'];
+        }
+
+        return translate(static::$commitStageDropdownCache);
+    }
+
+    public function resetCommitStageDropdownCache()
+    {
+        static::$commitStageDropdownCache = null;
     }
 
     public static function getSettings($reload = false)
