@@ -155,7 +155,7 @@ describe("tag field", function() {
         });
 
         it('createSearchChoice should return an object representing a new choice', function() {
-            field.render();
+            field._render();
             var returnedObj = field.$select2.createSearchChoice(name);
 
             expect(returnedObj.id).toEqual(name);
@@ -164,7 +164,7 @@ describe("tag field", function() {
 
         it('createSearchChoice should return false on filter views', function() {
             field.view.action = 'filter-rows';
-            field.render();
+            field._render();
 
             expect(field.$select2.createSearchChoice(name)).toBe(false);
         });
@@ -177,7 +177,7 @@ describe("tag field", function() {
                 return {placeholder: true};
             });
 
-            field.render();
+            field._render();
             field.$select2.createSearchChoice(name);
 
             // Expect parseRecords to have been called, and with an array as the argument
@@ -190,7 +190,7 @@ describe("tag field", function() {
             var getFormattedValueStub = sinon.collection.stub(field, 'getFormattedValue', function() {
                 return [{name: name}];
             });
-            field.render();
+            field._render();
 
             expect(select2Stub.callCount).toBeGreaterThan(1);
             // Get the arg that is pushed to the select2 function at the end of the initializeSelect2 function
@@ -207,7 +207,7 @@ describe("tag field", function() {
             var getFormattedValueStub = sinon.collection.stub(field, 'getFormattedValue', function() {
                 return [{name: name}];
             });
-            field.render();
+            field._render();
 
             expect(select2Stub.callCount).toBeGreaterThan(1);
             // Get the arg that is pushed to the select2 function at the end of the initializeSelect2 function
