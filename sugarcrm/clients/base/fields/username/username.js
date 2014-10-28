@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +8,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<input type="password" class="input-xlarge" id="" value="{{value}}"{{#if dir}} dir="{{dir}}"{{/if}} disabled>
+/**
+ * @class View.Fields.Base.UsernameField
+ * @alias SUGAR.App.view.fields.BaseUsernameField
+ * @extends View.Field
+ */
+({
+    //FIXME: SC-3447 this field should have bidirectional input
+    direction: 'ltr'
+})

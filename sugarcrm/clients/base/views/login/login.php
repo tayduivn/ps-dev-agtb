@@ -27,7 +27,7 @@ $viewdefs['base']['view']['login'] = array(
                 array(
                     array(
                         'name' => 'username',
-                        'type' => 'text',
+                        'type' => 'username',
                         'placeholder' => "LBL_LIST_USER_NAME", //LBL_LOGIN_USERNAME not translating properly across languages so using this for 6.x parity
                         'no_required_placeholder' => true,
                         'required' => true,

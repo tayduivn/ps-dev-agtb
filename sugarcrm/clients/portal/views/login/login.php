@@ -35,7 +35,7 @@ $viewdefs['portal']['view']['login'] = array(
                 array(
                     array(
                         'name' => 'username',
-                        'type' => 'text',
+                        'type' => 'username',
                         'placeholder' => "LBL_PORTAL_LOGIN_USERNAME",
                         'no_required_placeholder' => true,
                         'required' => true,
