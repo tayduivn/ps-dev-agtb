@@ -947,7 +947,9 @@ class HealthCheckScanner
 
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
+        $bwc = false;
         if (!$this->isMBModule($module)) {
+            $bwc = true;
             $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
@@ -975,7 +977,7 @@ class HealthCheckScanner
         // check for output in logic hooks
         // if there is some, we'd need to put it to custom
         // since upgrader does not handle it, we have to manually BWC the module
-        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM);
+        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM, $bwc);
     }
 
     /**
@@ -1028,8 +1030,11 @@ class HealthCheckScanner
         if (!empty($extfiles)) {
             $this->updateStatus("hasExtensions", $module, $extfiles);
         }
-        foreach ($extfiles as $phpfile) {
-            $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+        // skip check for output for bwc module
+        if (!$bwc) {
+            foreach ($extfiles as $phpfile) {
+                $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+            }
         }
 
         // Check custom vardefs
@@ -1158,7 +1163,7 @@ class HealthCheckScanner
         }
 
         // check logic hooks for module
-        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL, $bwc);
     }
 
     /**
@@ -1477,9 +1482,10 @@ class HealthCheckScanner
     /**
      * Check logic hooks for module
      * @param string $module
+     * @param string $status
      * @param bool $bwc
      */
-    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL)
+    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL, $bwc = false)
     {
         $this->log("Checking hooks for $module");
         $hook_files = array();
@@ -1492,7 +1498,7 @@ class HealthCheckScanner
                 $this->log("Checking module hook $hookname: $hookDescription");
                 if (empty($hook_data[2])) {
                     $this->updateStatus("badHookFile", $hookname, '');
-                } else {
+                } elseif (!$bwc) {
                     $this->checkFileForOutput($hook_data[2], $status);
                 }
             }
