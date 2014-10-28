@@ -259,6 +259,7 @@
     showComponent: function (name) {
         this._super('showComponent', [name]);
         if (this.currentToggle === this.TOGGLE_CREATE) {
+            this.createView.model.trigger('duplicate:field', this.convertLead);
             this.createViewRendered = true;
         }
         this.handleShowComponent();
@@ -468,6 +469,8 @@
             //not waiting on other modules before running dupe check, so mark as complete
             this.dupeCheckComplete();
         }
+
+        this.convertLead = model;
     },
 
     /**

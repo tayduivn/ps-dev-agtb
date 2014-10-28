@@ -9,13 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Activities']['base']['view']['list-headerpane'] = array(
-    'template' => 'headerpane',
-    'buttons' => array(
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-            'css_class' => 'list-headerpane',
-        ),
-    ),
-);
+
+class Go
+{
+    function Go($bean, $event, $arguments)
+    {
+        //logic
+    }
+}

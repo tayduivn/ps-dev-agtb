@@ -10,42 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once __DIR__ . '/../../modules/HealthCheck/pack_sortinghat.php';
+require_once __DIR__ . '/pack_cli.php';
 
-function packUpgradeWizardCli($phar, $params, $files = array())
-{
-
-    $defaults = array(
-        'version' => '7.5.0.0',
-        'build' => '998'
-    );
-
-    packSortingHat($phar, $params);
-
-    $params = array_merge($defaults, $params);
-
-    file_put_contents(__DIR__ . '/version.json', json_encode($params, true));
-
-    $chdir = __DIR__ . "/../..";
-
-    $files = array_merge(
-        array(
-            "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
-            "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
-            "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
-            "modules/UpgradeWizard/version.json" => 'version.json',
-            'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
-            'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
-            'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
-            'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
-        ),
-        $files
-    );
-
-    foreach ($files as $file => $inArchive) {
-        $phar->addFile($chdir . '/' . $file, $inArchive);
-    }
-}
+$files = array(
+    "modules/UpgradeWizard/ShadowUpgrader.php" => 'ShadowUpgrader.php'
+);
 
 if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
     return;
@@ -76,22 +45,23 @@ if (isset($argv[3])) {
     $params['build'] = $argv[3];
 }
 
+
 $phar = new Phar($name . '.phar');
 
-packUpgradeWizardCli($phar, $params);
+packUpgradeWizardCli($phar, $params, $files);
 
 $stub = <<<'STUB'
 <?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "CliUpgrader.php"; CliUpgrader::start(); __HALT_COMPILER();
+require_once "ShadowUpgrader.php"; ShadowUpgrader::start(); __HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
 
 $zip = new ZipArchive();
 $zip->open($name . '.zip', ZipArchive::CREATE);
 
-packUpgradeWizardCli($zip, $params);
+packUpgradeWizardCli($zip, $params, $files);
 
 $zip->close();
 
