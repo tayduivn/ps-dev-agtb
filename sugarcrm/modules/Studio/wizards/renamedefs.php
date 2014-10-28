@@ -882,6 +882,7 @@ $renamedefs = array(
             array('name' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE', 'type' => 'singular', 'source' => 'Campaigns'),
             array('name' => 'LBL_PROSPECT_LIST', 'type' => 'singular', 'source' => 'Prospects'),
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),
+            array('name' => 'LBL_LEAD', 'type' => 'singular', 'source' => 'Leads'),
         ),
         'Tasks' => array(
             array('name' => 'LBL_TASK', 'type' => 'plural', 'source' => 'Tasks'),
