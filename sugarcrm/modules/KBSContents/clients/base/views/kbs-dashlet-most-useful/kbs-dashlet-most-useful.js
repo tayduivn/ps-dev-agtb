@@ -28,9 +28,18 @@
      * @inheritDoc
      */
     initialize: function (options) {
+        var self = this;
+        
         options.module = 'KBSContents';
         this._super('initialize', [options]);
         this._initCollection();
+
+        this.listenTo(this.context.parent.get('collection'), 'sync', function () {
+            if (self.collection) {
+                self.collection.dataFetched = false;
+                self.layout.reloadDashlet(options);
+            }
+        });
     },
 
     /**
@@ -70,7 +79,6 @@
                 sync(method, model, options);
             }
         );
-
         return this;
     },
 
@@ -81,7 +89,12 @@
      */
     bindDataChange: function () {
         if (this.collection) {
-            this.collection.on('add remove reset', this.render, this);
+            this.collection.on('add remove reset', function () {
+                if (this.disposed) {
+                    return;
+                }
+                this.render();
+            }, this);
         }
     },
 
@@ -97,10 +110,19 @@
     /**
      * @inheritDoc
      */
-    loadData: function () {
+    loadData: function (options) {
         if (this.collection.dataFetched) {
+            if (options && options.complete) {
+                options.complete();
+            }
             return;
         }
-        this.collection.fetch();
+        this.collection.fetch({
+            success: function () {
+                if (options && options.complete) {
+                    options.complete();
+                }
+            }
+        });
     }
 })
