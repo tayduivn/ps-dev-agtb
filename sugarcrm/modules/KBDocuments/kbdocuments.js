@@ -529,7 +529,7 @@ SUGAR.kb = function() {
                 tagsTreeModalMoveDocs.setBody(result['body']);
                 tagsTreeModalMoveDocs.setHeader(' Tags');
                 var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() {
-                    this.hide();
+                    tagsTreeModalMoveDocs.hide();
                 }, scope: tree, correctScope:true});
                 tagsTreeModalMoveDocs.cfg.queueProperty("keylisteners", listeners);
 
@@ -543,6 +543,9 @@ SUGAR.kb = function() {
             }
             postData = 'tagsMode=' + YAHOO.lang.JSON.stringify(moveTags) + '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
             YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: fillInTags, failure: fillInTags}, postData);
+            $('#moveDlg').on('click', '.container-close', function(){
+                tagsTreeModalMoveDocs.hide();
+            });
         },
 
         applyTagsModal:function() {
@@ -603,7 +606,7 @@ SUGAR.kb = function() {
                 applyTagsToDocs.setBody(result['body']);
                 applyTagsToDocs.setHeader(SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_HEAD_TAGS'));
                 var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() {
-                    this.hide();
+                    applyTagsToDocs.hide();
                 }, scope: tree, correctScope:true});
                 applyTagsToDocs.cfg.queueProperty("keylisteners", listeners);
 
@@ -619,6 +622,9 @@ SUGAR.kb = function() {
             YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: fillInTags, failure: fillInTags}, postData);
 
             //myDialog.cfg.queueProperty("buttons", myButtons);
+            $('#applyDlg').on('click', '.container-close', function(){
+                applyTagsToDocs.hide();
+            });
         },
         serachTagAjax:function() {
             var searchTag = document.getElementById('tags_search').value;
