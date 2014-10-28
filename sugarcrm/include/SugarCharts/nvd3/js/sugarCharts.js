@@ -73,6 +73,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .margin(params.margin)
                         .showTitle(false)
                         .tooltips(true)
+                        .direction(function() {
+                            return App.lang.direction;
+                        })
                         .tooltipLine(function(key, x, y, e, graph) {
                             // Format the value using currency class and user settings
                             var val = App.currency.formatAmountLocale(e.point.y);
@@ -161,6 +164,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             return '<h3>' + key + '</h3>' +
                                 '<p>' + y + '</p>';
                         })
+                        .direction(function() {
+                            return App.lang.direction;
+                        })
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
                         .rotateTicks(params.rotateTicks)
@@ -241,6 +247,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             return '<h3>' + key + '</h3>' +
                                 '<p>' + y + '</p>';
                         })
+                        .direction(function() {
+                            return App.lang.direction;
+                        })
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
@@ -303,6 +312,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .colorData(params.colorData)
+                        .direction(function() {
+                            return App.lang.direction;
+                        })
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
@@ -347,6 +359,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .tooltipContent(function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
                                 '<p>' + (e.label || e.value) + '</p>';
+                        })
+                        .direction(function() {
+                            return App.lang.direction;
                         })
                         .colorData(params.colorData)
                         .fmtValueLabel(function(d) {
@@ -405,6 +420,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             .id(d3ChartId)
                             .x(function(d) { return d.key; })
                             .y(function(d) { return d.y; })
+                            .direction(function() {
+                                return App.lang.direction;
+                            })
                             .showLabels(true)
                             .showTitle(true)
                             .colorData('class')

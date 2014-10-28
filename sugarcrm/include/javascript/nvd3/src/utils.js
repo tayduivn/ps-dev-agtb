@@ -338,35 +338,22 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
 };
 
 nv.utils.getTextContrast = function(c, i, callback) {
-    var back = c,
-        backLab = d3.lab(back),
-        backLumen = backLab.l,
-        textLumen = backLumen > 50 ?
-          backLab.darker(3 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
-          backLab.brighter(3 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
-        textLab = d3.lab(textLumen, 0, 0),
-        text = textLab.toString();
-
-    if (callback) {
-      callback(backLab, textLab);
-    }
-
-    return text;
+  var back = c,
+      backLab = d3.lab(back),
+      backLumen = backLab.l,
+      textLumen = backLumen > 50 ?
+        backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
+        backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
+      textLab = d3.lab(textLumen, 0, 0),
+      text = textLab.toString();
+  if (callback) {
+    callback(backLab, textLab);
+  }
+  return text;
 };
 
-nv.utils.getTextContrast = function(c, i, callback) {
-    var back = c,
-        backLab = d3.lab(back),
-        backLumen = backLab.l,
-        textLumen = backLumen > 50 ?
-          backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
-          backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
-        textLab = d3.lab(textLumen, 0, 0),
-        text = textLab.toString();
-
-    if (callback) {
-      callback(backLab, textLab);
-    }
-
-    return text;
+nv.utils.isRTLChar = function(c) {
+  var rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
+      rtlCharReg_ = new RegExp('[' + rtlChars_ + ']');
+  return rtlCharReg_.test(c);
 };

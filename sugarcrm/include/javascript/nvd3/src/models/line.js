@@ -20,9 +20,9 @@ nv.models.line = function() {
     , y //can be accessed via chart.yScale()
     , delay = 200
     , interpolate = "linear" // controls the line interpolation
-    , color = nv.utils.defaultColor()
+    , color = function (d, i) { return nv.utils.defaultColor()(d, d.series); }
     , fill = color
-    , classes = function (d,i) { return 'nv-group nv-series-'+ i; }
+    , classes = function (d,i) { return 'nv-group nv-series-' + d.series; }
     ;
 
   scatter
@@ -116,9 +116,9 @@ nv.models.line = function() {
           .remove();
       groups
           .classed('hover', function(d) { return d.hover; })
-          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
-          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
-          .attr('stroke', function(d,i){ return this.getAttribute('stroke') || fill(d,i); });
+          .attr('class', classes)
+          .attr('fill', color)
+          .attr('stroke', color);
       d3.transition(groups)
           .style('stroke-opacity', 1)
           .style('fill-opacity', 0.5);
