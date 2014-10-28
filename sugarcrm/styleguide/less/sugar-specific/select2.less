@@ -420,36 +420,38 @@
     min-width: 8px;
   }
 }
-.error .select2-container {
-  .select2-choice > .select2-chosen {
-    margin-right: 38px;
-  }
-  &.select2-allowclear .select2-choice {
-    .select2-chosen {
-      margin-right: 55px;
-    }
-    abbr {
-      right: 36px;
-    }
-  }
-}
-.error .currency .select2-container {
-  .select2-choice .select2-chosen {
-    margin-right: 20px;
-    min-width: 8px;
-  }
-}
+
 .error {
+  .select2-container {
+    .select2-choice > .select2-chosen {
+      margin-right: 38px;
+    }
+    &.select2-allowclear .select2-choice {
+      .select2-chosen {
+        margin-right: 55px;
+      }
+      abbr {
+        right: 36px;
+      }
+    }
+  }
+  .currency .select2-container {
+    .select2-choice .select2-chosen {
+      margin-right: 20px;
+      min-width: 8px;
+    }
+  }
   .select2-container + .input-append {
     position: static;
     font-size: inherit;
-    .add-on.error-tooltip {
-      position: absolute;
-      top: 3px;
-      right: 17px;
-      left: auto;
-      background: transparent;
-    }
+  }
+  .select2-container + .input-append .add-on.error-tooltip,
+  input.select2 + .add-on.error-tooltip {
+    position: absolute;
+    top: 3px;
+    right: 17px;
+    left: auto;
+    background: transparent;
   }
 }
 
