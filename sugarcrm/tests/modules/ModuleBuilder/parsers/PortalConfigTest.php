@@ -42,15 +42,14 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function test_PortalConfigParserHandleSaveConfig()
+    public function test_PortalConfigParserSetUpConfig()
     {
-
         $retrievedSettings = array();
         foreach ($this->requestVars as $varKey => $value) {
             $_REQUEST[$varKey] = $value;
         }
         $parser = new ParserModifyPortalConfig();
-        $parser->handleSave();
+        $parser->setUpPortal($_REQUEST);
         $result = $GLOBALS['db']->query("SELECT * FROM config WHERE category = 'portal'");
 
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -76,8 +75,30 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
             // Actual assertion
             $this->assertEquals($jd, $value, "JSON Decoded value for $varKey should be equal to $value, actual value is $jd: start value - $test, html_entity_decode value - $he");
         }
+    }
 
+    public function test_PortalConfigUnsetConfig()
+    {
+        $expectedSettings = array(
+            'appStatus' => 'offline',
+            'on' => 0,
+        );
+        $parser = new ParserModifyPortalConfig();
+        $parser->unsetPortal();
+        $result = $GLOBALS['db']->query("SELECT * FROM config WHERE category = 'portal'");
 
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $retrievedSettings[$row['name']] = $row['value'];
+        }
+        foreach ($expectedSettings as $varKey => $value) {
+            $test = $retrievedSettings[$varKey];
+            //  Decode step one
+            $he = html_entity_decode($test);
+            // Decode step two
+            $jd = json_decode($he);
+
+            $this->assertEquals($jd, $value, "JSON Decoded value for $varKey should be equal to $value, actual value is $jd: start value - $test, html_entity_decode value - $he");
+        }
     }
 
     public function test_PortalConfigCreateUser()
