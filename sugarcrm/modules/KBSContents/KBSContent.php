@@ -84,14 +84,7 @@ class KBSContent extends SugarBean {
      */
     public function getPrimaryLanguage()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $config = $admin->getConfigForModule('KBSContents');
-
-        if (empty($config['languages']['primary'])) {
-            $this->setupPrimaryLanguage();
-            $config = $admin->getConfigForModule('KBSContents');
-        }
-        $langs = $config['languages'];
+        $langs = $this->getLanguages();
         $default = null;
         foreach ($langs as $lang) {
             if ($lang['primary'] === true) {
@@ -104,7 +97,22 @@ class KBSContent extends SugarBean {
                 break;
             }
         }
+        if ($default === null) {
+            $this->setupPrimaryLanguage();
+            $default = $this->getPrimaryLanguage();
+        }
         return $default;
+    }
+
+    /**
+     * Return available languages for KB.
+     * @return array
+     */
+    public function getLanguages()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('KBSContents');
+        return $config['languages'] ? $config['languages'] : array();
     }
 
     /**
