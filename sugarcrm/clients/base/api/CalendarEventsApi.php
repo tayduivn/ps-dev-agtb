@@ -36,8 +36,8 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Tailor the specification (e.g. path) for the specified module and merge in the API specification passed in
-     * @param string module
-     * @param array child Api
+     * @param string $module
+     * @param array $childApi defaults to empty array
      * @return array
      */
     protected function getRestApi($module, $childApi = array())
@@ -82,9 +82,9 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Create either a single event record or a set of recurring events if record is a recurring event
-     * @param $api
-     * @param $args
-     * @return array
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     * @param array $additionalProperties Additional properties to be set on the bean
      */
     public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
     {
@@ -153,17 +153,10 @@ class CalendarEventsApi extends ModuleApi
     /**
      * Creates child events in recurring series
      * @param SugarBean $bean
-     * @throws SugarApiException
      */
     public function generateRecurringCalendarEvents(SugarBean $bean)
     {
-        try {
-            $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
-        } catch (SugarApiException $e) {
-            throw($e);
-        } catch (Exception $e) {
-            throw new SugarApiException($e->getMessage());
-        }
+        $GLOBALS['calendarEvents']->saveRecurringEvents($bean);
     }
 
     /**
@@ -172,29 +165,24 @@ class CalendarEventsApi extends ModuleApi
      * @param $api
      * @param $args
      * @return array
-     * @throws SugarApiException
+     * @throws SugarApiExceptionInvalidParameter - when updating using the 'all_recurrences' option, the id of the
+     *         Parent (root) bean must be provided.
      */
     public function updateRecurringCalendarEvent(SugarBean $bean, $api, $args)
     {
         if (!empty($bean->repeat_parent_id) && ($bean->repeat_parent_id !== $bean->id)) {
-            throw new SugarApiException('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
+            throw new SugarApiExceptionInvalidParameter('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
         }
 
         $api->action = 'save';
         $this->updateRecord($api, $args);
 
-        try {
-            // if event is still recurring after update, save recurring events
-            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
-                $GLOBALS['calendarEvents']->saveRecurringEvents($bean, true);
-            } else {
-                // event is not recurring anymore, delete child instances
-                $this->deleteRecurrences($bean);
-            }
-        } catch (SugarApiException $e) {
-            throw($e);
-        } catch (Exception $e) {
-            throw new SugarApiException($e->getMessage());
+        // if event is still recurring after update, save recurring events
+        if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+            $GLOBALS['calendarEvents']->saveRecurringEvents($bean);
+        } else {
+            // event is not recurring anymore, delete child instances
+            $this->deleteRecurrences($bean);
         }
 
         return $this->getLoadedAndFormattedBean($api, $args, $bean);

@@ -34,7 +34,7 @@ SUGAR.ajaxLoad = true;
 var html_editor = '{$HTML_EDITOR|escape:javascript}';
 {literal}
 var setupMCE = function() {
-	ModuleBuilder.tabPanel.get("activeTab").closeEvent.subscribe(function() {
+    ModuleBuilder.tabPanel.get("activeTab").on("remove", function() {
 		tinyMCE.execCommand('mceRemoveControl', false, 'htmlarea');
 	});
 	tinyMCE.execCommand('mceAddControl', false, 'htmlarea');

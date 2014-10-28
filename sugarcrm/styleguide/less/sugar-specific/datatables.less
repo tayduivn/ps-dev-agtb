@@ -772,6 +772,11 @@ FLEXLIST GENERIC */
   /*FORECASTS WORKSHEETS*/
   &.forecast-worksheet .dataTable,
   &.forecast-manager-worksheet .dataTable {
+    tbody tr:last-child {
+      td:last-child > span {
+        padding-bottom: 3px;
+      }
+    }
     td {
       &[data-type="currency"] {
         min-width: 115px !important;

@@ -473,4 +473,35 @@ class SugarBeanBeforeSaveTestHook
     {
         self::$callCounter++;
     }
+
+    public function testCreateRecordACL()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $case = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('ACLAccess', 'save'))
+            ->getMock();
+        $case->expects($this->any())
+            ->method('ACLAccess')
+            ->will($this->returnValue(false));
+        $case->field_defs = array();
+        $case->module_dir = 'Cases';
+        $case->module_name = 'Cases';
+        $case->id = 'the-id';
+
+        /** @var RelateRecordApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('RelateRecordApi')
+            ->setMethods(array('loadBean'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('loadBean')
+            ->will($this->onConsecutiveCalls($contact, $case));
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $response = $api->createRelatedRecord($service, array(
+            'link_name' => 'cases',
+        ));
+
+        $this->assertArrayHasKey('related_record', $response);
+        $this->assertArrayHasKey('_acl', $response['related_record']);
+    }
 }

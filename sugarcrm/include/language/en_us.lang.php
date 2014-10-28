@@ -1703,6 +1703,23 @@ $app_list_strings = array (
         'print'       => 'Print',
         'pieWedgeName'      => 'sections',
     ),
+    'd3_chart_types' => array (
+        'pie chart'            => 'Pie Chart',
+        'bar chart'            => 'Vertical Bar Chart',
+        'group by chart'       => 'Vertical Bar Grouped Chart',
+        'horizontal bar chart' => 'Horizontal Bar Chart',
+        'horizontal group by chart' => 'Horizontal Bar Grouped Chart',
+        'line chart'           => 'Line Chart',
+        'funnel chart 3D'      => 'Funnel Chart',
+    ),
+    'd3_value_placement' => array (
+        '0'            => 'None',
+        '1'            => 'Default',
+        'start'            => 'Start',
+        'middle'       => 'Middle',
+        'end' => 'End',
+        'top' => 'Top',
+    ),
     'pipeline_chart_dom' => array (
         'fun'   => 'Funnel',
         'hbar'  => 'Horizontal Bar',

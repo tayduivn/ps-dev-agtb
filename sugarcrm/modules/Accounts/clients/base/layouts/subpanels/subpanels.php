@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
-  'components' => array (
+    'components' => array (
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_CALLS_SUBPANEL_TITLE',

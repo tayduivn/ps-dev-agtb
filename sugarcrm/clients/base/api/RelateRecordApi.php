@@ -153,16 +153,17 @@ class RelateRecordApi extends SugarApi
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
      * @param $args array The arguments array passed in from the API
      * @param $primaryBean SugarBean The near side of the link
-     * @param $relatedBean SugarBean The far side of the link
-     * @param $linkName string What is the name of the link field that you want to get the related fields for
-     * @param $relatedData array The data for the related fields (such as the contact_role in opportunities_contacts relationship)
+     * @param $relatedArray array The data for the related fields (such as the contact_role in opportunities_contacts relationship)
      * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
      */
-    protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, $relatedArray = array()) {
+    protected function formatNearAndFarRecords(
+        ServiceBase $api,
+        array $args,
+        SugarBean $primaryBean,
+        array $relatedArray
+    ) {
         $api->action = 'view';
         $recordArray = $this->formatBean($api, $args, $primaryBean);
-        if (empty($relatedArray))
-            $relatedArray = $this->getRelatedRecord($api, $args);
 
         return array(
             'record'=>$recordArray,
@@ -217,10 +218,19 @@ class RelateRecordApi extends SugarApi
 
         $args['remote_id'] = $relatedBean->id;
 
-        // This forces a re-retrieval of the bean from the database
-        BeanFactory::unregisterBean($relatedBean);
+        // bypass ACL and team security check in order to be able to return the result
+        $relatedBean = $this->loadBean($api, array(
+            'module' => $relatedBean->module_name,
+            'record' => $relatedBean->id,
+        ), 'view', array(
+            'use_cache' => false,
+            'disable_row_level_security' => true,
+        ));
+        $relatedArray = $this->formatBean($api, $args, $relatedBean, array(
+            'display_acl' => true,
+        ));
 
-        return $this->formatNearAndFarRecords($api, $args, $primaryBean);
+        return $this->formatNearAndFarRecords($api, $args, $primaryBean, $relatedArray);
     }
 
     function createRelatedLink($api, $args) {

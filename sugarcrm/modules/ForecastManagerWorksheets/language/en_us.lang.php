@@ -141,7 +141,8 @@ $mod_strings = array (
     'LBL_VERSION' => 'Version',
 
     // Label for Current User Rep Worksheet Line
-    'LBL_MY_MANAGER_LINE' => '{{full_name}} (me)',
+    // &#x200E; tells the browser to interpret as left-to-right
+    'LBL_MY_MANAGER_LINE' => '{{full_name}} (me)&#x200E;',
 
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {{field_name}}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {{min}} and {{max}}',

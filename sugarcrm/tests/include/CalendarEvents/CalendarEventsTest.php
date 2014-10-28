@@ -92,7 +92,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting = $this->newMeeting('', $args);
 
         $calEvents = new CalendarEventsTest_CalendarEvents();
-        $calEvents->saveRecurringEvents($meeting, $args);
+        $calEvents->saveRecurringEvents($meeting);
 
         $eventsCreated = $calEvents->getEventsCreated();
         $this->meetingIds = array_merge($this->meetingIds, array_keys($eventsCreated));
