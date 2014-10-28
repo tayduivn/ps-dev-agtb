@@ -953,9 +953,9 @@ AddType     application/javascript  .js
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA]
-    
-    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_ordered)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA]
+
+    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_ordered)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA]
@@ -1072,7 +1072,7 @@ function handleWebConfig()
 
     $rewrite_config_array = array(
         array(
-            '1' => '^cache/api/metadata/lang_(.._..)_(.*)_public(_\w*)?\.json',
+            '1' => '^cache/api/metadata/lang_(.._..)_(.*)_public(_ordered)?\.json',
             '2' => 'rest/v10/lang/public/{R:1}?platform={R:2}&ordered={R:3}',
             'rule_params' => array(
                 'stopProcessing' => 'false',
@@ -1082,7 +1082,7 @@ function handleWebConfig()
             ),
         ),
         array(
-            '1' => '^cache/api/metadata/lang_(.._..)_([^_]*)(_\w*)?\.json',
+            '1' => '^cache/api/metadata/lang_(.._..)_([^_]*)(_ordered)?\.json',
             '2' => 'rest/v10/lang/{R:1}?platform={R:2}&ordered={R:3}',
             'rule_params' => array(
                 'stopProcessing' => 'false',
