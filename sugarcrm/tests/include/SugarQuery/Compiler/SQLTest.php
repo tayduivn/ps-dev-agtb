@@ -126,4 +126,132 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * Test addition of order stability column
+     *
+     * @param array $args Arguments for SugarQuery_Compiler_SQL::applyOrderByStability
+     * @param string $expColumn Expected stability column name to be added
+     *
+     * @covers SugarQuery_Compiler_SQL::applyOrderByStability
+     * @group unit
+     * @dataProvider dataProviderTestApplyOrderByStability
+     */
+    public function testApplyOrderByStability($args, $expColumn)
+    {
+        // SUT
+        $compiler = $this->getMockBuilder('SugarQuery_Compiler_SQL')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        // Mock SugarQuery for SUT
+        $query = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        SugarTestReflection::setProtectedValue($compiler, 'sugar_query', $query);
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $compiler,
+            'applyOrderByStability',
+            $args
+        );
+
+        // Test last element in result
+        $added = array_pop($result);
+        $this->assertInstanceOf('SugarQuery_Builder_Orderby', $added);
+        $this->assertEquals(
+            $expColumn,
+            $added->column->field,
+            'Incorrect column used for order stability'
+        );
+
+    }
+
+    public function dataProviderTestApplyOrderByStability()
+    {
+        $mockOrderBy = $this->getMockBuilder('SugarQuery_Builder_Orderby')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return array(
+            array(
+                array(
+                    array(),
+                    'fieldx',
+                ),
+                'fieldx'
+            ),
+            array(
+                array(
+                    array(),
+                ),
+                'id',
+            ),
+            array(
+                array(
+                    array($mockOrderBy),
+                    'fieldy',
+                ),
+                'fieldy',
+            ),
+        );
+    }
+
+    /**
+     * Test invocation of `ORDER BY` stability based on db capability
+     *
+     * @param boolean $orderByStability Apply order stability
+     * @param boolean $capability DBManager order_stability capability
+     * @param boolean $expectedApply Invocation expectation to apply order stability in `ORDER BY`
+     *
+     * @covers SugarQuery_Compiler_SQL::compileOrderBy
+     * @group unit
+     * @dataProvider dataProviderTestCompileOrderByStability
+     */
+    public function testCompileOrderByStability($orderByStability, $capability, $expectedApply)
+    {
+        // SUT
+        $compiler = $this->getMockBuilder('SugarQuery_Compiler_SQL')
+            ->disableOriginalConstructor()
+            ->setMethods(array('applyOrderByStability'))
+            ->getMock();
+
+        // DBManager Mock
+        $db = $this->getMockBuilder('DBManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('supports'))
+            ->getMockForAbstractClass();
+
+        $db->expects($this->any())
+            ->method('supports')
+            ->with($this->equalTo('order_stability'))
+            ->will($this->returnValue($capability));
+
+        SugarTestReflection::setProtectedValue($compiler, 'db', $db);
+
+        $expected = $expectedApply ? $this->once() : $this->never();
+        $compiler->expects($expected)
+            ->method('applyOrderByStability')
+            ->will($this->returnValue(array()));
+
+        // Execute test call
+        SugarTestReflection::callProtectedMethod(
+            $compiler,
+            'compileOrderBy',
+            array(array(), $orderByStability)
+        );
+
+    }
+
+    public function dataProviderTestCompileOrderByStability()
+    {
+        return array(
+            array(true, false, true),
+            array(true, true, false),
+            array(false, false, false),
+            array(false, true, false),
+        );
+    }
 }
