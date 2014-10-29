@@ -46,7 +46,7 @@
     }
   }
   .select2-choices {
-    padding: 2px 4px 2px 0;
+    padding: 2px 4px 2px 2px;
     min-height: 22px;
     border: @inputBorder;
     background-image: none;
@@ -189,6 +189,82 @@
         }
         &.select2-locked div {
           padding-right: 0;
+        }
+      }
+    }
+
+    &.select2field {
+      .select2-search-field {
+        input {
+          padding: 6px 4px;
+          margin: -6px 0 0;
+          &.select2-active {
+            background: transparent !important;
+          }
+        }
+      }
+    }
+
+    &.select2-choices-pills-square {
+      li {
+        border-radius: 3px;
+        padding: 6px;
+        color: @white;
+        font-weight: 600;
+        &.select2-search-choice-focus {
+          color: @dropdownLinkColor;
+          border-radius: 3px;
+          border-color: @linkColor !important;
+          background-color: lighten(@grayDark, 10%);
+        }
+      }
+      .select2-choices {
+        padding-left: 2px;
+        min-height: 30px;
+      }
+      .select2-search-choice {
+        div {
+          font-size: @baseFontSize;
+          padding: 0px 12px 0px 0px;
+          border-radius: 3px;
+          color: @white;
+          .label {
+            background: #499C00;
+            text-align: center;
+            color: @white;
+            line-height: 16px;
+          }
+        }
+        .icon {
+          display: block;
+          float: left;
+          width: 20px;
+          height: 20px;
+          margin: -5px 5px 0 -5px;
+          box-sizing: border-box;
+          img {
+            width: inherit;
+            height: inherit;
+          }
+        }
+        a.select2-search-choice-close {
+          top: 6px;
+          right: 4px;
+          font-size: 12px;
+          font-weight: normal;
+          color: @black;
+          &::before {
+            content: "\f00d";
+          }
+          &:hover {
+            color: @grayLight;
+          }
+        }
+      }
+      .select2-search-field {
+        input {
+          padding: 6px 4px;
+          margin: -1px 0 0;
         }
       }
     }
@@ -487,4 +563,24 @@
 }
 .error .select2-addon .select2-choice > div {
   margin-right: 0;
+}
+
+.tags {
+  margin: 0;
+  .clearfix();
+  .tag-wrapper {
+      float: left;
+      max-width: 100%;
+      padding: 3px 6px 2px;
+      margin: 0 4px 4px 0;
+      background: @gray;
+      .box-sizing(border-box);
+      .border-radius(9px);
+      .tag-name {
+        font-size: @fontSizeSmall;
+        line-height: 12px;
+        color: @white;
+        font-weight: 600;
+      }
+  }
 }

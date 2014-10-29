@@ -129,4 +129,5 @@ $md5_string = array (
   './modules/Filters/Filters.php' => 'ebd2903fca759a76024a6bce25d4a9a1',
   './modules/Dashboards/Dashboard.php' => 'e2e857dd1543c0d19bff0138df33ab03',
   './modules/PdfManager/PdfManager.php' => '41f4084f6c4b623f776c9ff2d0af5a11',
+  './modules/Tags/Tag.php' => '95fede414784866f663a6acb1d161305',
 );

@@ -107,6 +107,7 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
+    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -215,6 +216,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Reports_1'=>'Saved Report',
+    'Tags' => 'Tag',
   ),
 
 /*
@@ -5233,6 +5235,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
 
     'LBL_SAVE_AND_SEND_INVITES_BUTTON' => 'Save and Send Invites',
+
+    //Tag Strings
+    'LBL_TAG_NEW_TAG' => '(New Tag)',
+    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.'
 );
 
 $app_list_strings['interactions_options'] = array (

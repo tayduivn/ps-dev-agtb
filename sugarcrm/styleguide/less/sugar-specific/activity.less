@@ -21,9 +21,15 @@
     left: 10px;
     top: 10px;
   }
-  .tagged span.label {
-    font-size: @baseFontSize - 1;
-    padding: 2px 4px 1px;
+  .tagged {
+    max-width: 100%;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    span.label {
+      font-size: @baseFontSize - 1;
+      padding: 2px 4px 1px;
+    }
   }
   p {
     margin: 0;

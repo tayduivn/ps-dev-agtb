@@ -284,7 +284,10 @@ $dictionary['Prospect'] = array(
                 array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
             )
         )
-    )
+    ),
+    'uses' => array(
+        'taggable',
+    ),
 );
 VardefManager::createVardef(
     'Prospects',

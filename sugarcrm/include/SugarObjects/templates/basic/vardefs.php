@@ -274,6 +274,7 @@ $vardefs = array(
     'uses' => array(
         'following',
         'favorite',
+        'taggable',
     ),
     'duplicate_check' => array(
         'enabled' => true,

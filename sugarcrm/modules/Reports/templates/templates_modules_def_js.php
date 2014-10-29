@@ -619,6 +619,11 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 filter_defs['multienum'] = qualifiers;
 
 var qualifiers =  new Array();
+qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_contains',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
+filter_defs['tag'] = qualifiers;
+
+var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
 qualifiers[qualifiers.length] = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};

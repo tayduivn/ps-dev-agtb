@@ -53,6 +53,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

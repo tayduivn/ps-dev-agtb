@@ -212,6 +212,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(
