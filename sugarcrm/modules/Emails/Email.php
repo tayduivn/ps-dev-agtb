@@ -502,9 +502,10 @@ class Email extends SugarBean {
 	        $this->name = EmailTemplate::parse_template($this->name, $object_arr);
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
-            
-            if (empty($this->id) && $this->type != 'draft' && $this->status != 'draft' &&
-                $this->type != 'archived' && $this->status != 'archived'
+
+            if ($this->type != 'draft' && $this->status != 'draft' &&
+                $this->type != 'archived' && $this->status != 'archived' &&
+                !($this->type == 'out' && $this->status == 'sent')
             ) {
                 $this->id = create_guid();
                 $this->date_entered = "";
