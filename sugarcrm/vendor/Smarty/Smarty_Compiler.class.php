@@ -799,7 +799,8 @@ class Smarty_Compiler extends Smarty {
 
         $_cacheable_state = $this->_push_cacheable_state('function', $tag_command);
         $attrs = $this->_parse_attrs($tag_args);
-        $arg_list = $this->_compile_arg_list('function', $tag_command, $attrs, $_cache_attrs='');
+        $_cache_attrs = '';
+        $arg_list = $this->_compile_arg_list('function', $tag_command, $attrs, $_cache_attrs);
 
         $output = $this->_compile_plugin_call('function', $tag_command).'(array('.implode(',', $arg_list)."), \$this)";
         if($tag_modifier != '') {
