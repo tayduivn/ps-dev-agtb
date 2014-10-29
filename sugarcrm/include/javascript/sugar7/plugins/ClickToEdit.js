@@ -749,15 +749,6 @@
                     this.setMode('list');
                     return;
                 }
-
-                var hb = Handlebars.compile("{{str key module context}}"),
-                    args = {field_name: app.lang.get(this.def.label, this.module)};
-
-                // set the proper error message
-                this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': this.module, 'context': args});
-
-                // display rad error tooltipz!
-                this.showErrors();
             }
         });
     });
