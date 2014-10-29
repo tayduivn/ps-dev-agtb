@@ -50,6 +50,11 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         ),
     );
 
+    protected $sugarSpecificFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php' =>
+            'include/SugarSmarty/plugins/function.sugar_action_menu.php',
+    );
+
     public function run()
     {
         // determine directory set
@@ -146,6 +151,30 @@ class SugarUpgradeRepairVendors extends UpgradeScript
     }
 
     /**
+     * Repair include paths for Sugar Specific files that are not vendor files but do reside in another directory
+     * @param string $file string name of the file to check and process
+     */
+    public function repairSugarSpecificFilesPath($file)
+    {
+        $replacedCount = 0;
+
+        $contents = file_get_contents($file);
+
+        $contents = str_replace(
+            array_keys($this->sugarSpecificFiles),
+            array_values($this->sugarSpecificFiles),
+            $contents,
+            $replacedCount
+        );
+
+        if ($replacedCount) {
+            $this->log("Updating $file with replacing old path");
+            $this->backupFile($file);
+            sugar_file_put_contents($file, $contents);
+        }
+    }
+
+    /**
      * Scan directory and replace vendors links
      * @param string $path
      * @param array $directories
@@ -181,6 +210,9 @@ class SugarUpgradeRepairVendors extends UpgradeScript
                 } else {
                     if ($item->isFile()) {
                         $file = $item->getPathname();
+
+                        $this->repairSugarSpecificFilesPath($file);
+
                         // check for any occurrence of the directories and replace them
                         $fileContents = file_get_contents($file);
                         foreach ($directories as $pattern => $replace) {

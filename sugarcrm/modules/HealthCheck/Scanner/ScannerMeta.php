@@ -155,6 +155,10 @@ class HealthCheckScannerMeta
 //            'report' => 'badModule',
 //            'bucket' => self::CUSTOM,
 //        ),
+        403 => array(
+            'report' => 'sugarSpecificFilesInclusion',
+            'bucket' => self::CUSTOM,
+        ),
         520 => array(
             'report' => 'logicHookAfterUIFrame',
             'bucket' => self::MANUAL,

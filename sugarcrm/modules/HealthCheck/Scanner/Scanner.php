@@ -536,6 +536,17 @@ class HealthCheckScanner
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
+        if (!empty($this->specificSugarFilesToFix)) {
+            $specificFiles = '';
+            foreach ($this->specificSugarFilesToFix as $fileToFix => $filesInfo) {
+                $specificFiles .= "'$fileToFix' in: " . PHP_EOL;
+                foreach ($filesInfo as $file => $info) {
+                    $specificFiles .= " '$file' file in line {$info['line']}" . PHP_EOL;
+                }
+            }
+            $this->updateStatus("sugarSpecificFilesInclusion", $specificFiles);
+        }
+
         if (!empty($this->deletedFilesReferenced)) {
             $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
@@ -748,6 +759,8 @@ class HealthCheckScanner
     );
     protected $filesToFix = array();
 
+    protected $specificSugarFilesToFix = array();
+
     /**
      * Dump Scanner issues to log and optional stdout
      */
@@ -764,6 +777,31 @@ class HealthCheckScanner
     }
 
     protected $deletedFilesReferenced = array();
+
+    /**
+     * Searching line number of value
+     * @param string $file File to search in
+     * @param string $pattern Value to search
+     * @param string optional $directory
+     * @return array
+     */
+    protected function getLineNumberOfPattern($file, $pattern, $directory = '')
+    {
+        $foundInfo = array();
+
+        $fileContentsLined = file($file);
+        $pattern = "#$pattern#";
+        $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+
+        if (count($linesFound) > 0) {
+
+            foreach ($linesFound as $linePosition => $lineContent) {
+                $foundInfo['line'] = ((int)$linePosition + 1);
+                $foundInfo['directory'] = $directory;
+            }
+        }
+        return $foundInfo;
+    }
 
     /**
      * This method checks for directories/files that have been moved/removed that are referenced
@@ -798,21 +836,18 @@ class HealthCheckScanner
                                         $value
                                     ) > 0
                                 ) {
+                                    if (empty($this->specificSugarFilesToFix[$specificSugarFile][$file])) {
+                                        $fileInfo = $this->getLineNumberOfPattern($file, $value, $directory);
+                                        if ($fileInfo) {
+                                            $this->specificSugarFilesToFix[$specificSugarFile][$file] = $fileInfo;
+                                        }
+                                    }
                                     break 2;
                                 }
                             }
 
-                            $fileContentsLined = file($file);
-                            $pattern = "#$value#";
-                            $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
-                            if (count($linesFound) > 0) {
-                                $foundVendor = array();
-
-                                foreach ($linesFound as $linePosition => $lineContent) {
-                                    $foundVendor['line'] = ((int)$linePosition + 1);
-                                    $foundVendor['directory'] = $directory;
-                                }
-
+                            $foundVendor = $this->getLineNumberOfPattern($file, $value, $directory);
+                            if (!empty($foundVendor)) {
                                 $vendorFileFound = true;
                                 $includedVendors[] = $foundVendor;
                                 break;
