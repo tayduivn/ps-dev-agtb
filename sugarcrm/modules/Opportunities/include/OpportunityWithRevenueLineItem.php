@@ -179,6 +179,16 @@ EOL;
      */
     protected function fixRevenueLineItemModule()
     {
+        // lets make sure the dir is there
+        SugarAutoLoader::ensureDir($this->rliModuleExtFolder . '/Vardefs');
+
+        $file_contents = <<<EOL
+<?php
+\$dictionary['RevenueLineItem']['importable'] = true;
+EOL;
+
+        sugar_file_put_contents($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile, $file_contents);
+
         SugarAutoLoader::ensureDir($this->appExtFolder . '/Include');
         
         // we need to run the code we are putting in the custom file

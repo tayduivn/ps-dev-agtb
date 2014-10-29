@@ -177,6 +177,10 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             SugarAutoLoader::unlink($this->rliStudioFile);
         }
 
+        if (SugarAutoLoader::fileExists($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile)) {
+            SugarAutoLoader::unlink($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile);
+        }
+
         // hide the RLI module in workflows
         $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(false);
 

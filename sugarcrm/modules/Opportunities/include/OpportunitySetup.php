@@ -43,6 +43,13 @@ abstract class OpportunitySetup
     protected $moduleExtFolder = 'custom/Extension/modules/Opportunities/Ext';
 
     /**
+     * RevenueLineItem Extension Folder
+     *
+     * @var string
+     */
+    protected $rliModuleExtFolder = 'custom/Extension/modules/RevenueLineItems/Ext';
+
+    /**
      * Dupe Check Extension File Name
      *
      * @var string
@@ -55,6 +62,13 @@ abstract class OpportunitySetup
      * @var string
      */
     protected $rliModuleExtFile = 'rli_unhide.ext.php';
+
+    /**
+     * RevenueLineItem Module Extension vardef dictionary change
+     *
+     * @var string
+     */
+    protected $rliModuleExtVardefFile = 'rli_vardef.ext.php';
 
     /**
      * What is the file name for the extends to disable the stock Opportunity Dependencies
