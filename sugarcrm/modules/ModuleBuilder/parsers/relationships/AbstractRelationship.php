@@ -225,6 +225,12 @@ class AbstractRelationship
             	'system_label' =>  isset($leftSysLabel)?$leftSysLabel :'LBL_' . strtoupper ( $this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel() ) . '_TITLE' ,
             	'display_label' => ($update && !empty($_REQUEST [ 'rhs_label' ] ))?$_REQUEST [ 'rhs_label' ] :(empty($this->rhs_label) ? translate ( $this->rhs_module ) : $this->rhs_label),
             ) ;
+
+            $labelDefinitions[] = array(
+                'module' => $this->rhs_module ,
+                'system_label' => isset($leftSysLabel) ? $leftSysLabel : 'LBL_' . strtoupper($this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel()) . '_TITLE_ID' ,
+                'display_label' => ($update && !empty($_REQUEST['lhs_label'])) ? $_REQUEST['lhs_label'] . " ID" : (empty($this->lhs_label) ? translate($this->lhs_module . " ID") : $this->lhs_label . " ID"),
+            ) ;
         }
         return $labelDefinitions ;
     }
@@ -365,6 +371,10 @@ class AbstractRelationship
     {
         $vardef = $this->getRelateFieldDefinition($sourceModule, $relationshipName, $vname);
         unset($vardef['db_concat_fields']);
+
+        if (!empty($vname)) {
+             $vardef ['vname'] = $vname . '_ID';
+        }
 
         $vardef [ 'name' ] = $this->getIDName( $sourceModule ) ; // must match the id_name field value in the relate field definition
 		$vardef ['reportable'] = false;
