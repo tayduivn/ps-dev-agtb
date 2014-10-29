@@ -13,17 +13,9 @@
 class CalendarEventsApi extends ModuleApi
 {
     /**
-     * {@inheritDoc}
-     *
-     * Instantiates the CalendarEvents service and places it in $GLOBALS if it hasn't already been instantiated.
-     * $GLOBALS is used as a service locator.
+     * @var CalendarEvents
      */
-    public function __construct()
-    {
-        if (!isset($GLOBALS['calendarEvents'])) {
-            $GLOBALS['calendarEvents'] = new CalendarEvents();
-        }
-    }
+    protected $calendarEvents;
 
     /**
      * {@inheritDoc}
@@ -90,10 +82,10 @@ class CalendarEventsApi extends ModuleApi
     {
         $bean = parent::createBean($api,$args, $additionalProperties);
         if (!empty($bean->id)) {
-            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+            if ($this->getCalendarEvents()->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
             } else {
-                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
+                $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         }
 
@@ -111,24 +103,24 @@ class CalendarEventsApi extends ModuleApi
         $api->action = 'view';
         $bean = $this->loadBean($api, $args, 'view');
 
-        if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+        if ($this->getCalendarEvents()->isEventRecurring($bean)) {
             if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
             } else {
                 // when updating a single occurrence of a recurring meeting without the
                 // `all_recurrences` flag, no updates to recurrence fields are allowed
                 $updateResult = $this->updateRecord($api, $this->filterOutRecurrenceFields($args));
-                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
+                $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         } else {
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary
             $bean = $this->reloadBean($api, $args);
-            if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
+            if ($this->getCalendarEvents()->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
             } else {
-                $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
+                $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         }
         return $updateResult;
@@ -147,7 +139,7 @@ class CalendarEventsApi extends ModuleApi
         } else {
             $this->deleteRecord($api, $args);
         }
-        $GLOBALS['calendarEvents']->rebuildFreeBusyCache($GLOBALS['current_user']);
+        $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
     }
 
     /**
@@ -156,7 +148,7 @@ class CalendarEventsApi extends ModuleApi
      */
     public function generateRecurringCalendarEvents(SugarBean $bean)
     {
-        $GLOBALS['calendarEvents']->saveRecurringEvents($bean);
+        $this->getCalendarEvents()->saveRecurringEvents($bean);
     }
 
     /**
@@ -178,8 +170,8 @@ class CalendarEventsApi extends ModuleApi
         $this->updateRecord($api, $args);
 
         // if event is still recurring after update, save recurring events
-        if ($GLOBALS['calendarEvents']->isEventRecurring($bean)) {
-            $GLOBALS['calendarEvents']->saveRecurringEvents($bean);
+        if ($this->getCalendarEvents()->isEventRecurring($bean)) {
+            $this->getCalendarEvents()->saveRecurringEvents($bean);
         } else {
             // event is not recurring anymore, delete child instances
             $this->deleteRecurrences($bean);
@@ -394,5 +386,19 @@ class CalendarEventsApi extends ModuleApi
         }
 
         return $ret;
+    }
+
+    /**
+     * Lazily loads CalendarEvents service
+     *
+     * @return CalendarEvents
+     */
+    protected function getCalendarEvents()
+    {
+        if (!$this->calendarEvents) {
+            $this->calendarEvents = new CalendarEvents();
+        }
+
+        return $this->calendarEvents;
     }
 }
