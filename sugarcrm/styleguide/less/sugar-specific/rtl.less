@@ -693,6 +693,21 @@ html.rtl {
         margin-right: 0;
     }
 
+    .dashboard {
+        .dashlet-content {
+            .forecast-details {
+                .span6.tright {
+                    text-align: left !important; /*cannot avoid using !important since low level .tright is using important*/
+                }
+            }
+            .bestNumbers {
+                .span6.tcenter:not(:first-child) {
+                    margin-right: 2.127659574%;
+                    margin-left: 0;
+                }
+            }
+        }
+    }
     .dashboard .btn-slider .noUiSliderEnds {
         margin: 0 0 0 30px;
     }
