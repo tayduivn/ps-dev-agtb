@@ -85,6 +85,7 @@ if(!empty($_REQUEST['record']) && $_REQUEST['record']!=""){
 $focus->custom_query = $focus->statis_query;
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);
+if (!isset($_POST['query_locked'])) $focus->query_locked = 'off';
 $focus->save();
 
 
