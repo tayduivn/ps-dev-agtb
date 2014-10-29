@@ -5,67 +5,51 @@
 }
 .resource {
   display: table-cell;
-  width: 15%;
-  .calcWidth(~"100% / 6");
+  width: 33%;
   padding: 5px 15px 2px 15px;
   border-right: 1px dashed #d3d3d3;
-  vertical-align: top;
-  white-space: nowrap;
-  &:last-child {
-    border-right: none;
-  }
+}
+.resource:last-child {
+  border-right: none;
 }
 
-.side,
-.preview-data,
-.dashlets .span4 {
-   .resource-list {
-    display: block;
-    margin: 5px 12px;
-  }
-  .resource {
-    display: block;
-    width: 100%;
-    padding: 8px 0;
-    border-bottom: 1px dashed #d3d3d3;
-    border-right: none;
-    &:last-child {
-      border-bottom: none;
-    }
-  }
+.side .resource-list,
+.preview-data .resource-list,
+.dashlets .span4 .resource-list {
+  display: block;
+  margin: 5px 20px;
 }
-
-.resource-thumbnail {
-  vertical-align: middle;
-  .label {
-    padding: 0;
-    line-height: 33px;
-    text-align: center;
-    margin-top: 2px;
-  }
-  i {
-    color: @white;
-    font-size: 16px;
-    padding: 0;
-    display: inline-block;
-    width: 16px;
-    line-height: 16px;
-  }
+.side .resource,
+.preview-data .resource,
+.dashlets .span4 .resource {
+  display: block;
+  width: 100%;
+  padding: 15px 0 15px;
+  border-bottom: 1px dashed #d3d3d3;
+  border-right: none;
+}
+.side .resource:last-child,
+.preview-data .resource:last-child,
+.dashlets .span4 .resource:last-child {
+  border-bottom: none;
 }
 
 .resource-info {
-  margin-left: 36px;
-  &:before {
-    content: "";
-    height: 33px;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  a {
-    display: inline-block;
-    font-size: 14px;
-    line-height: 17px;
-    vertical-align: middle;
-    white-space: normal;
-  }
+  margin-left: 44px;
+}
+.resource i {
+  color: white;
+  font-size: 20px;
+  padding: 3px;
+  display: inline-block;
+}
+.resource-info a {
+  margin-bottom: 3px;
+  margin-top: -2px;
+  display: block;
+  font-size: 14px;
+}
+.resource-info .details {
+  font-size: 12px;
+  line-height: 14px;
 }
