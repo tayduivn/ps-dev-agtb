@@ -131,6 +131,10 @@ class SugarView
             $this->renderJavascript();
         }
 
+        if (!empty($_REQUEST['updated_records'])) {
+            $this->errors[] = $_REQUEST['updated_records'];
+        }
+
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();

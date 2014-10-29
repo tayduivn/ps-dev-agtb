@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,13 +9,5 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#each resources}}
-<li class="resource {{css_class}}">
-    <a href="{{url}}" target="_blank"><span class="label label-module label-module-md pull-left {{color}}"><i class="icon-2x {{icon}}"></i></span></a>
-    <div class="resource-info">
-        <a href="{{url}}" target="_blank">{{str link module}}</a>
-        <p class="details">{{str teaser module}}</p>
-    </div>
-</li>
-{{/each}}
+
+badPHPSyntaxHere;

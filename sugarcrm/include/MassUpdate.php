@@ -139,6 +139,7 @@ eoq;
 
 		require_once('include/formbase.php');
 		global $current_user, $db, $disable_date_format, $timedate;
+        $retval = array();
 
 		foreach($_POST as $post=>$value){
 			if(is_array($value)){
@@ -276,7 +277,9 @@ eoq;
                         $searchEngine = SugarSearchEngineFactory::getInstance();
                         $searchEngine->delete($this->sugarbean);
                         //END SUGARCRM flav=pro ONLY
-					}
+                    } else {
+                        $retval[] = $id;
+                    }
 				}
 				else {
 					if($this->sugarbean->object_name == 'Contact' && isset($_POST['Sync'])){ // special for contacts module
@@ -412,6 +415,7 @@ eoq;
 			//END SUGARCRM flav=pro ONLY
 		}
 		$disable_date_format = $old_value;
+            return $retval;
 	}
 
     public static function setMassUpdateFielddefs(Array $fielddefs, $moduleName) {

@@ -2158,26 +2158,14 @@ class SugarBean
     }
 
     protected function getTemplateNameForNotificationEmail() {
-        global $beanList;
-
-        $templateName = null;
-
-        if ($this->module_dir == "Cases") {
-            $templateName = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
-        } else {
-            $templateName = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
-        }
+        $templateName = BeanFactory::getObjectName($this->module_dir);
 
         if (!in_array('set_notification_body', get_class_methods($this))) {
             $templateName = "Default";
         }
 
-        if (!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
-            $templateName = $beanList[$this->module_dir].'Special';
-        }
-
-        if ($this->special_notification) {
-            $templateName = $beanList[$this->module_dir].'Special';
+        if (!empty($_SESSION["special_notification"]) || !empty($this->special_notification)) {
+            $templateName .= 'Special';
         }
 
         return $templateName;
