@@ -16,6 +16,9 @@
 
     function backToLogin(bDismiss) {
         if(bDismiss) app.alert.dismissAll();
+        if (app.api.isAuthenticated()) {
+            app.api.resetAuth();
+        }
         app.router.login();
     }
 
@@ -39,6 +42,14 @@
             title: app.lang.get(title)
         });
     }
+
+    //Return the user to the login page when the sync fails
+    app.events.on('app:sync:error', function(error) {
+        backToLogin(true);
+        // Sync can fail for many reasons such as server error, bad cache, auth, etc.
+        // Server message to provides details.
+        alertUser("sync_failure" , "ERR_SYNC_FAILED", (error && error.message) || "LBL_INVALID_412_RESPONSE");
+    });
     
     /**
      * This is caused by attempt to login with invalid creds. 
