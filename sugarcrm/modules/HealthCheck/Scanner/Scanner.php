@@ -152,6 +152,9 @@ class HealthCheckScanner
         'Sugar-Sage Integration Modules' => array(
             array('version' => '2.7.0-8-g74f8c47'),
         ),
+        'inetMAPS' => array(
+            array('version' => '*', 'path' => 'modules/inetMAPS/classes/')
+        )
     );
 
     /**
@@ -652,6 +655,13 @@ class HealthCheckScanner
                         $scp = strcasecmp($manifest['author'], $req['author']);
                         $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));
                     }
+
+                    if (!empty($req['path']) && is_dir($req['path']) &&
+                        is_callable(array('SugarAutoLoader', 'addDirectory'))
+                    ) {
+                        SugarAutoLoader::addDirectory($req['path']);
+                    }
+
                     if ($incompatible) {
                         break;
                     }
