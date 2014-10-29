@@ -12,10 +12,10 @@
  */
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'clients/base/api/ListApi.php';
+require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
 
-class ContactsApi extends ListApi
+class ContactsApi extends ModuleApi
 {
     public function registerApiRest()
     {
