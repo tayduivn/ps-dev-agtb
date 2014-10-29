@@ -551,7 +551,11 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         $fn = "{$base_path}/sugarfield_{$field}.php";
         if (file_exists($fn)) {
             $this->deleteFile($fn);
+        } else {
+	        return false;
         }
+
+        return true;
     }
 
     /**
@@ -665,6 +669,11 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     {
         $mod = $seed->module_dir;
         $files = $this->getFiles($seed, '', $field);
+
+        if (count($files) == 0) {
+            return false;
+        }
+
         foreach ($files as $file) {
             $dictionary = array();
             include $file;
@@ -683,6 +692,8 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                 }
             }
         }
+
+        return true;
     }
 
     /**
@@ -692,9 +703,12 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      */
     protected function removeField($seed, $field)
     {
-        $this->log("Field {$field} for object {$seed->object_name} removing");
-        $this->deleteFieldFile($seed, $field);
-        $this->removeFieldFromExt($seed, $field);
+        $fieldres = $this->deleteFieldFile($seed, $field);
+        $extres = $this->removeFieldFromExt($seed, $field);
+
+        if ($fieldres || $extres) {
+            $this->log("Field {$field} for object {$seed->object_name} removed");
+        }
     }
 }
 
