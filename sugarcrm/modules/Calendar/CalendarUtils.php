@@ -326,12 +326,6 @@ class CalendarUtils
 				$users_rel_arr[] = $ro['user_id'];
 			}
 		}
-		$qu_users = "
-				INSERT INTO {$bean->rel_users_table}
-				(id,user_id,{$lower_name}_id,date_modified)
-				VALUES
-		";
-		$users_filled = false;
 
 		$qu = "SELECT * FROM {$bean->rel_contacts_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
@@ -339,12 +333,6 @@ class CalendarUtils
 		while($ro = $db->fetchByAssoc($re)) {
 			$contacts_rel_arr[] = $ro['contact_id'];
 		}
-		$qu_contacts = "
-				INSERT INTO {$bean->rel_contacts_table}
-				(id,contact_id,{$lower_name}_id,date_modified)
-				VALUES
-		";
-		$contacts_filled = false;
 
 		$qu = "SELECT * FROM {$bean->rel_leads_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
@@ -352,13 +340,10 @@ class CalendarUtils
 		while($ro = $db->fetchByAssoc($re)) {
 			$leads_rel_arr[] = $ro['lead_id'];
 		}
-		$qu_leads = "
-				INSERT INTO {$bean->rel_leads_table}
-				(id,lead_id,{$lower_name}_id,date_modified)
-				VALUES
-		";
-		$leads_filled = false;
 
+		$qu_contacts = array();
+		$qu_users = array();
+		$qu_leads = array();
 		$arr = array();
 		$i = 0;
 		
@@ -380,22 +365,28 @@ class CalendarUtils
 
 			if($clone->id){
 				foreach($users_rel_arr as $user_id){
-					if($users_filled)
-						$qu_users .= ",".PHP_EOL;
-					$qu_users .= "('".create_guid()."','{$user_id}','{$clone->id}','{$date_modified}')";
-					$users_filled = true;
+                    $qu_users[] = array(
+                        'id' => create_guid(),
+                        'user_id' => $user_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
 				}
 				foreach($contacts_rel_arr as $contact_id){
-					if($contacts_filled)
-						$qu_contacts .= ",".PHP_EOL;
-					$qu_contacts .= "('".create_guid()."','{$contact_id}','{$clone->id}','{$date_modified}')";
-					$contacts_filled = true;
+                    $qu_contacts[] = array(
+                        'id' => create_guid(),
+                        'contact_id' => $contact_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
 				}
 				foreach($leads_rel_arr as $lead_id){
-					if($leads_filled)
-						$qu_leads .= ",".PHP_EOL;
-					$qu_leads .= "('".create_guid()."','{$lead_id}','{$clone->id}','{$date_modified}')";
-					$leads_filled = true;
+                    $qu_leads[] = array(
+                        'id' => create_guid(),
+                        'lead_id' => $lead_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
 				}
 				if($i < 44){
 					$clone->date_start = $date_start;
@@ -408,15 +399,39 @@ class CalendarUtils
 		
         Activity::enable();
 
-		if ($users_filled) {
-			$db->query($qu_users);
-		}
-		if ($contacts_filled) {
-			$db->query($qu_contacts);
-		}		
-		if ($leads_filled) {
-			$db->query($qu_leads);
-		}
+        if (!empty($qu_users)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'user_id' => array('name' => 'user_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_users as $qu_user) {
+                $db->insertParams($bean->rel_users_table, $fields, $qu_user);
+            }
+        }
+        if (!empty($qu_contacts)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'contact_id' => array('name' => 'contact_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_contacts as $qu_contact) {
+                $db->insertParams($bean->rel_contacts_table, $fields, $qu_contact);
+            }
+        }
+        if (!empty($qu_leads)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'lead_id' => array('name' => 'lead_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_leads as $qu_lead) {
+                $db->insertParams($bean->rel_leads_table, $fields, $qu_lead);
+            }
+        }
 		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
@@ -442,10 +457,10 @@ class CalendarUtils
 		while( $ro = $db->fetchByAssoc($re)) {
 			$id = $ro['id'];
 			$date_modified = $GLOBALS['timedate']->nowDb();
-			$db->query("UPDATE {$bean->table_name} SET deleted = 1, date_modified = '{$date_modified}', modified_user_id = '{$modified_user_id}' WHERE id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = '{$date_modified}' WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = '{$date_modified}' WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = '{$date_modified}' WHERE {$lower_name}_id = '{$id}'");
+			$db->query("UPDATE {$bean->table_name} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . ", modified_user_id = '{$modified_user_id}' WHERE id = '{$id}'");
+			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
+			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
+			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 		}
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}
@@ -473,9 +488,9 @@ class CalendarUtils
 			$id = $ro['id'];
 			if($i == 0){
 				$new_parent_id = $id;
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = '{$date_modified}' WHERE id = '{$id}'";
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
 			}else{
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = '{$date_modified}' WHERE id = '{$id}'";
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
 			}
 			$db->query($qu);
       		$i++;
