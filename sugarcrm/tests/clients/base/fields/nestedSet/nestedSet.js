@@ -1,4 +1,4 @@
-describe('Base.Field.Nested-set', function() {
+describe('Base.Field.NestedSet', function() {
     var module = 'KBSContents',
         fieldDef = {
             category_root: '76c5ad26-21db-1be5-85ee-54258f68dd4a',
@@ -11,9 +11,9 @@ describe('Base.Field.Nested-set', function() {
         sinonSandbox = sinon.sandbox.create();
 
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'field', 'nested-set');
+        SugarTest.loadComponent('base', 'field', 'nestedSet');
         SugarTest.loadPlugin('NestedSetCollection');
-        SugarTest.loadHandlebarsTemplate('nested-set', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('nestedSet', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
 
         app.data.declareModels();
@@ -24,7 +24,7 @@ describe('Base.Field.Nested-set', function() {
                 callback = args.shift();
             callback.apply(this, args);
         });
-        field = SugarTest.createField('base', 'nested-set', 'nested-set', 'edit', fieldDef, module);
+        field = SugarTest.createField('base', 'nestedSet', 'nestedSet', 'edit', fieldDef, module);
     });
 
     afterEach(function() {
@@ -39,7 +39,7 @@ describe('Base.Field.Nested-set', function() {
         sinonSandbox.restore();
     });
 
-    it('Should render tree and togle icon on render only in edit mode.', function() {
+    it('Should render tree and toggle icon on render only in edit mode.', function() {
         var treeRenderSpy = sinonSandbox.stub(field, '_renderTree');
         var toggleSearchIconSpy = sinonSandbox.spy(field, 'toggleSearchIcon');
 

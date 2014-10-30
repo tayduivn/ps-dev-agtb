@@ -220,6 +220,7 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signature',
     'Reports_1'=>'Saved Report',
     'Tags' => 'Tag',
+      'Categories' => 'Category',
   ),
 
 /*

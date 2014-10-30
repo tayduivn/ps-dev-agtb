@@ -91,7 +91,7 @@
                 options: {}
             };
             this._renderTree(
-                $('[data-place=tree]'),
+                this.$('[data-place=tree]'),
                 treeOptions,
                 {
                     'onSelect': _.bind(this.selectedNode, this),
@@ -112,7 +112,7 @@
         var module = this.def.config_provider || this.context.get('module'),
             config = app.metadata.getModule(module, 'config');
         this.categoryRoot = this.def.category_root || config.category_root || '';
-        this.moduleRoot = this.def.data_provider || module;
+        this.moduleRoot = this.def.category_provider || this.def.data_provider || module;
         this.dropdownCallback = _.bind(this.handleGlobalClick, this);
         this.emptyLabel = app.lang.get(
             'LBL_SEARCH_SELECT_MODULE',

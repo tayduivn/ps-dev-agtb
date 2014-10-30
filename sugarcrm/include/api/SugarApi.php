@@ -389,6 +389,7 @@ abstract class SugarApi {
                 if (!empty($fieldDefs[$field]) && isset($fieldDefs[$field]['type'])) {
                     switch ($fieldDefs[$field]['type']) {
                         case 'relate':
+                        case 'nestedSet':
                             if (!empty($fieldDefs[$field]['id_name'])) {
                                 $fields[] = $fieldDefs[$field]['id_name'];
                             }
