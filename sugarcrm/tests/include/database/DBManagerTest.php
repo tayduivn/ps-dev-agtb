@@ -1262,6 +1262,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         ->method('add_drop_constraint')
         ->will($this->returnCallback(
             function ($table, $definition, $drop = false) {
+                if ($definition['type'] == 'clustered') {
+                    $definition['type'] = 'index'; // SQL Server uses clustered index, we need switch that back
+                }
                 return "ALTER TABLE $table ". ($drop?"DROP":"ADD") . " ". json_encode($definition);
             }
         ));
