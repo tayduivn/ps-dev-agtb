@@ -570,8 +570,7 @@ abstract class OpportunitySetup
 
         foreach($rli_links as $name => $link) {
             if ($rli_bean->load_relationship($name) && $rli_bean->$name instanceof Link2) {
-                $rel_module = $rli_bean->$name->getRelatedModuleName();
-                $rel_bean = BeanFactory::getBeanName($rel_module);
+                $bean = BeanFactory::getBean($rli_bean->$name->getRelatedModuleName());
                 $rel_name = $rli_bean->$name->getRelatedModuleLinkName();
 
                 // if for some reason we didn't find a rli_name on the other side of the link
@@ -581,14 +580,14 @@ abstract class OpportunitySetup
                 }
 
                 $file = 'rli_link_workflow.php';
-                $folder = "custom/Extension/modules/{$rel_module}/Ext";
+                $folder = "custom/Extension/modules/{$bean->module_dir}/Ext";
 
                 SugarAutoLoader::ensureDir($folder . '/Vardefs');
 
                 if ($show === true) {
                     $file_contents = <<<EOL
 <?php
-\$dictionary['{$rel_bean}']['fields']['{$rel_name}']['workflow'] = true;
+\$dictionary['{$bean->object_name}']['fields']['{$rel_name}']['workflow'] = true;
 EOL;
 
                     sugar_file_put_contents($folder . '/Vardefs/' . $file, $file_contents);
@@ -600,7 +599,7 @@ EOL;
                     }
                 }
 
-                $rnr_modules[] = $rel_module;
+                $rnr_modules[] = $bean->module_name;
             }
         }
 
