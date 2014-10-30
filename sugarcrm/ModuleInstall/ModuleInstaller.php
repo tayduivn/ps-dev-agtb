@@ -55,7 +55,7 @@ class ModuleInstaller{
 
 	function ModuleInstaller(){
 		$this->ms = new ModuleScanner();
-		$this->modules = get_module_dir_list();
+		$this->modules = $this->getModuleDirs();
 		$this->db = DBManagerFactory::getInstance();
         include("ModuleInstall/extensions.php");
         $this->extensions = $extensions;
@@ -294,7 +294,7 @@ class ModuleInstaller{
 				/* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
 			}
 			//here we should get the module list again as we could have copied something to the modules dir
-			$this->modules = get_module_dir_list();
+			$this->modules = $this->getModuleDirs();
 		}
 	}
 	function uninstall_copy(){
@@ -3046,6 +3046,33 @@ private function dir_file_count($path){
             }
             //END SUGARCRM flav=pro ONLY
         }
+    }
+
+    /**
+     * Get module directories
+     * @return multitype:string mixed
+     */
+    public static function getModuleDirs()
+    {
+        // For now, we define module dirs as:
+        // 1. Any directory directly under modules/
+        // 2. Any directory like modules/Something/Other if modules/Something/Other/vardefs.php exists
+        $modules = array();
+        foreach (new FilesystemIterator('modules', FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::SKIP_DOTS) as $name => $fileInfo) {
+            if (!$fileInfo->isDir()) {
+                continue;
+            }
+            $modules[] = $name;
+            foreach (new FilesystemIterator("modules/$name", FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::SKIP_DOTS) as $subname => $fileInfo) {
+                if (!$fileInfo->isDir()) {
+                    continue;
+                }
+                if (file_exists("modules/$name/$subname/vardefs.php")) {
+                   $modules[] = "$name/$subname";
+                }
+            }
+        }
+        return $modules;
     }
 
 }
