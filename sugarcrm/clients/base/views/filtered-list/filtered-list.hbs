@@ -28,7 +28,7 @@
             {{#if ../filteredCollection.length}}
                 {{#each ../../filteredCollection}}
                 <tr name="{{module}}_{{attributes.id}}" class="single">
-                    {{#each ../../fields}}
+                    {{#each fields}}
                         <td>{{field ../../../../this model=../this template=../../../../this.action}}</td>
                     {{/each}}
                 </tr>
