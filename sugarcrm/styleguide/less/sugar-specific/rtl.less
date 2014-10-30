@@ -73,7 +73,6 @@ html.rtl {
     }
     /* END RESET */
 
-
     .dropdown-menu:not(.datepicker) {
         right: 0;
         left: auto;
@@ -532,6 +531,9 @@ html.rtl {
                 }
             }
         }
+        &.right-actions .dataTable td:last-child .actions .dropdown-menu {
+            text-align: right;
+        }
         &.scroll-width {
             th:nth-last-child(2) {
                 border-left: none;
@@ -605,6 +607,9 @@ html.rtl {
         th {
             border-left: @tableBorder;
             border-right: 0;
+            .dropdown-menu {
+                text-align: right;
+            }
         }
         td,
         th {
