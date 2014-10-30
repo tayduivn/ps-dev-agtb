@@ -423,6 +423,16 @@
             'desc': 'LBL_DNB_NONMARK_REAS_TXT_DESC',
             'case_fmt': true
         },
+        'orgid': {
+            'json_path': 'RegisteredDetail.OrganizationIdentificationNumberDetail',
+            'label': 'LBL_DNB_ORG_ID',
+            'desc': 'LBL_DNB_ORG_ID_DESC',
+            'sub_array': {
+                'data_type': 'org_id',
+                'org_id': 'OrganizationIdentificationNumber',
+                'org_id_type': '@TypeText'
+            }
+        },
         'indcodes': {
             'json_path': 'IndustryCode.IndustryCode',
             'label': 'LBL_DNB_IND_CD',
@@ -661,7 +671,8 @@
             'ind_codes': this.formatIndCodes,
             'tpa': this.formatTPA,
             'sales_rev': this.formatAnnualSales,
-            'prim_sic': this.formatPrimSic
+            'prim_sic': this.formatPrimSic,
+            'org_id': this.formatOrgId
         };
         this.leadsAttr = this.contactAttr.slice();
         this.leadsAttr.push('account_name');
@@ -849,8 +860,15 @@
             _.each(dataElementsMap, function(value, key) {
                 //extract the informtaion
                 var dnbDataElement = null, dnbDataObj;
-                //if the data map is array then traverse the nested array
-                if (value.sub_array) {
+                if (key === 'orgid') {
+                    //if the key is orgId
+                    dnbDataElement = this.getJsonNode(productDetails, value.json_path);
+                    var formattedOrgIds = this.formatOrgId(dnbDataElement, value.sub_array);
+                    if (!_.isEmpty(formattedOrgIds)) {
+                        formattedDataElements = formattedDataElements.concat(formattedOrgIds);
+                    }
+                } else if (value.sub_array) {
+                    //if the data map is array then traverse the nested array
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
                     _.each(dnbDataElement, function(dnbSubData) {
                         dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
@@ -973,6 +991,36 @@
             dnbDataObj.dnbLabel = ind_code_type + ':' + ind_code;
         }
         return dnbDataObj;
+    },
+
+    /**
+     * Preprocesses organization identification number
+     * @param {Array} orgIdArr
+     * @param {Object} orgIdDD Data Dictionary
+     * @return {Array}
+     */
+    formatOrgId: function(orgIdArr, orgIdDD) {
+        var uniqueOrgIds = _.uniq(_.pluck(orgIdArr,'OrganizationIdentificationNumber'));
+        var uniqueOrgIdObjects = [],
+            formattedObjects = [];
+        _.each(uniqueOrgIds, function(orgId) {
+            uniqueOrgIdObjects.push(_.find(orgIdArr, function(orgIdObj){
+                return orgIdObj.OrganizationIdentificationNumber === orgId;
+            }));
+        });
+        _.each(uniqueOrgIdObjects, function(orgIdObj){
+            var dnbDataObj = null;
+            var org_id_type = this.getJsonNode(orgIdObj, orgIdDD.org_id_type);
+            var org_id = this.getJsonNode(orgIdObj, orgIdDD.org_id);
+            if (!_.isUndefined(org_id_type) && org_id_type !== 'Unknown'
+                && !_.isUndefined(org_id) ) {
+                dnbDataObj = {};
+                dnbDataObj.dataElement = org_id;
+                dnbDataObj.dnbLabel = org_id_type;
+                formattedObjects.push(dnbDataObj);
+            }
+        }, this);
+        return formattedObjects;
     },
 
     /**
