@@ -918,7 +918,15 @@ html.rtl {
     }
 
     #languageList {
-        direction: ltr;
+        direction: rtr;
+        ul[role=menu] {
+            direction: ltr;
+            text-align: right;
+        }
+        .dropdown-menu {
+            left: 0;
+            right: auto;
+        }
     }
 
     .dashlet {
