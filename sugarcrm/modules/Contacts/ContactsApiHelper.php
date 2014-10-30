@@ -28,7 +28,8 @@ class ContactsApiHelper extends SugarBeanApiHelper
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         if ($data) {
-            if (!empty($bean->emailAddress)) {
+            if (!empty($bean->emailAddress) && $bean->emailAddress->addresses != $bean->emailAddress->fetchedAddresses
+            ) {
                 $bean->emailAddress->populateLegacyFields($bean);
             }
 

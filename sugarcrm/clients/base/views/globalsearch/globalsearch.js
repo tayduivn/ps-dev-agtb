@@ -174,6 +174,7 @@
                 }
             }
         });
+
         // Prevent the form from being submitted
         this.$('.navbar-search').submit(function() {
             return false;

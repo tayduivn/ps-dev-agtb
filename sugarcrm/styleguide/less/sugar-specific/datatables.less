@@ -233,6 +233,9 @@
       width: 100%;
       .box-sizing(border-box);
       padding: 4px 6px;
+      &:focus {
+        z-index: 0;
+      }
     }
     input[type=radio],
     input[type=checkbox] {
@@ -349,6 +352,15 @@
         &[data-type="relate"] {
           min-width: 150px;
           max-width: 150px !important;
+        }
+        &[data-type="tag"] {
+          min-width: 200px;
+          max-width: 200px;
+          .edit > .select2-container > .select2-choices {
+            max-height: 22px;
+            min-height: 22px;
+            overflow-y: scroll;
+          }
         }
         &[data-type="date"] {
           min-width: 108px;

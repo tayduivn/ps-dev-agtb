@@ -83,6 +83,7 @@
         this.preview = this.getPreviewData();
         var data = this.model.get('data');
         var activity_type = this.model.get('activity_type');
+
         this.tpl = "TPL_ACTIVITY_" + activity_type.toUpperCase();
 
         switch(activity_type) {

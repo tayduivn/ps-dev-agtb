@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once dirname(__FILE__).'/UpgradeDriver.php';
+require_once dirname(__FILE__) . '/UpgradeDriver.php';
 
 /**
  * Web driver
@@ -45,7 +45,7 @@ class WebUpgrader extends UpgradeDriver
     {
         if (!isset($_SESSION)) {
             // Oauth token support
-            if(isset($_SERVER['HTTP_OAUTH_TOKEN'])) {
+            if (isset($_SERVER['HTTP_OAUTH_TOKEN'])) {
                 session_id($_SERVER['HTTP_OAUTH_TOKEN']);
             }
             session_start();
@@ -60,15 +60,18 @@ class WebUpgrader extends UpgradeDriver
      */
     public function startRequest($token)
     {
-        if(empty($token) || empty($this->state['webToken']) || $token != $this->state['webToken']) {
+        if (empty($token) || empty($this->state['webToken']) || $token != $this->state['webToken']) {
             return false;
         }
-        if(empty($this->state['admin'])) {
+        if (empty($this->state['admin'])) {
             return false;
         }
-        if(!empty($this->state['zip'])) {
+        if (!empty($this->state['zip'])) {
             $this->context['zip'] = $this->state['zip'];
-            $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
+            $this->context['backup_dir'] = $this->config['upload_dir'] . "/upgrades/backup/" . pathinfo(
+                    $this->context['zip'],
+                    PATHINFO_FILENAME
+                ) . "-restore";
         }
         return true;
     }
@@ -80,7 +83,7 @@ class WebUpgrader extends UpgradeDriver
     protected function getUser()
     {
         $user = BeanFactory::getBean('Users', $this->state['admin']);
-        if($user) {
+        if ($user) {
             $this->context['admin'] = $user->user_name;
         }
         return $user;
@@ -91,8 +94,12 @@ class WebUpgrader extends UpgradeDriver
      * We copy them so that upgrading would not mess them up
      * @var array
      */
-    protected $upgradeFiles = array('WebUpgrader.php', 'UpgradeDriver.php',
-        'upgrade_screen.php', 'version.json');
+    protected $upgradeFiles = array(
+        'WebUpgrader.php',
+        'UpgradeDriver.php',
+        'upgrade_screen.php',
+        'version.json'
+    );
 
     /**
      * Start upgrade process
@@ -101,29 +108,31 @@ class WebUpgrader extends UpgradeDriver
     public function startUpgrade()
     {
         // Load admin user name
-         $this->initSession();
-         if(empty($_SESSION['authenticated_user_id'])) {
-             return false;
-         }
-         $this->cleanState();
-         $this->state['admin'] = $_SESSION['authenticated_user_id'];
-         $this->initSugar();
-         if(empty($GLOBALS['current_user']) || !$GLOBALS['current_user']->isAdmin()) {
-             return $this->errorPrint('ERR_NOT_ADMIN');
-         }
-         if(!empty($GLOBALS['sugar_config']['disable_uw_upload'])) {
-             return $this->errorPrint('ERR_NO_VIEW_ACCESS_REASON');
-         }
-         $this->state['webToken'] = create_guid();
-         $this->saveState();
-         // copy upgrader files
-         $upg_dir = $this->cacheDir("upgrades/driver/");
-         $this->ensureDir($upg_dir);
-         $_SESSION['upgrade_dir'] = $upg_dir;
-         foreach($this->upgradeFiles as $ufile) {
-             copy("modules/UpgradeWizard/$ufile", "{$upg_dir}{$ufile}");
-         }
-         return $this->state['webToken'];
+        $this->initSession();
+        if (empty($_SESSION['authenticated_user_id'])) {
+            return false;
+        }
+        $this->cleanState();
+        $this->state['admin'] = $_SESSION['authenticated_user_id'];
+        $this->initSugar();
+        if (empty($GLOBALS['current_user']) || !$GLOBALS['current_user']->isAdmin()) {
+            return $this->errorPrint('ERR_NOT_ADMIN');
+        }
+        if (!empty($GLOBALS['sugar_config']['disable_uw_upload'])) {
+            return $this->errorPrint('ERR_NO_VIEW_ACCESS_REASON');
+        }
+        $this->state['webToken'] = create_guid();
+        $this->saveState();
+        // copy upgrader files
+        $upg_dir = $this->cacheDir("upgrades/driver/");
+        $this->ensureDir($upg_dir);
+        $_SESSION['upgrade_dir'] = $upg_dir;
+        foreach ($this->upgradeFiles as $ufile) {
+            if (file_exists("modules/UpgradeWizard/$ufile")) {
+                copy("modules/UpgradeWizard/$ufile", "{$upg_dir}{$ufile}");
+            }
+        }
+        return $this->state['webToken'];
     }
 
     /**
@@ -133,13 +142,13 @@ class WebUpgrader extends UpgradeDriver
     protected function getStatus()
     {
         $state = array();
-        if(isset($this->state['stage'])) {
+        if (isset($this->state['stage'])) {
             $state['stage'] = $this->state['stage'];
         }
-        if(isset($this->state['scripts'])) {
+        if (isset($this->state['scripts'])) {
             $state['scripts'] = $this->state['scripts'];
         }
-            if(isset($this->state['script_count'])) {
+        if (isset($this->state['script_count'])) {
             $state['script_count'] = $this->state['script_count'];
         }
         return $state;
@@ -202,14 +211,14 @@ class WebUpgrader extends UpgradeDriver
      * @var array
      */
     protected $upload_errors = array(
-        0=>"There is no error, the file uploaded with success",
-        1=>"The uploaded file exceeds the upload_max_filesize directive in php.ini",
-        2=>"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
-        3=>"The uploaded file was only partially uploaded",
-        4=>"No file was uploaded",
-        6=>"Missing a temporary folder",
-        7=>"Failed to write file to disk",
-        8=>"A PHP extension stopped the file upload",
+        0 => "There is no error, the file uploaded with success",
+        1 => "The uploaded file exceeds the upload_max_filesize directive in php.ini",
+        2 => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
+        3 => "The uploaded file was only partially uploaded",
+        4 => "No file was uploaded",
+        6 => "Missing a temporary folder",
+        7 => "Failed to write file to disk",
+        8 => "A PHP extension stopped the file upload",
 
     );
 
@@ -219,20 +228,26 @@ class WebUpgrader extends UpgradeDriver
      */
     protected function handleUpload()
     {
-        if(empty($_FILES['zip'])) {
+        if (empty($_FILES['zip'])) {
             return $this->error("Expected file upload", true);
         }
-        if($_FILES['zip']['error'] != UPLOAD_ERR_OK) {
-            return $this->error("File upload error: {$this->upload_errors[$_FILES['zip']['error']]} ({$_FILES['zip']['error']})", true);
+        if ($_FILES['zip']['error'] != UPLOAD_ERR_OK) {
+            return $this->error(
+                "File upload error: {$this->upload_errors[$_FILES['zip']['error']]} ({$_FILES['zip']['error']})",
+                true
+            );
         }
-        if(!is_uploaded_file($_FILES['zip']['tmp_name'])) {
+        if (!is_uploaded_file($_FILES['zip']['tmp_name'])) {
             return $this->error("Upload failed", true);
         }
-        $this->ensureDir($this->config['upload_dir']."/upgrades");
-        $this->context['zip'] = $this->config['upload_dir']."/upgrades/".basename($_FILES['zip']['name']);
+        $this->ensureDir($this->config['upload_dir'] . "/upgrades");
+        $this->context['zip'] = $this->config['upload_dir'] . "/upgrades/" . basename($_FILES['zip']['name']);
         if (move_uploaded_file($_FILES['zip']['tmp_name'], $this->context['zip'])) {
             $this->state['zip'] = $this->context['zip'];
-            $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
+            $this->context['backup_dir'] = $this->config['upload_dir'] . "/upgrades/backup/" . pathinfo(
+                    $this->context['zip'],
+                    PATHINFO_FILENAME
+                ) . "-restore";
             $this->saveState();
             return true;
         } else {
@@ -247,7 +262,7 @@ class WebUpgrader extends UpgradeDriver
     public function displayUpgradePage()
     {
         global $token;
-        include dirname(__FILE__).'/upgrade_screen.php';
+        include dirname(__FILE__) . '/upgrade_screen.php';
     }
 
     /**
@@ -272,7 +287,7 @@ class WebUpgrader extends UpgradeDriver
         }
 
         $bean = BeanFactory::getBean('HealthCheck', $id);
-        if(!$bean) {
+        if (!$bean) {
             $this->log("Cannot find health check result by id $id");
             return false;
         }

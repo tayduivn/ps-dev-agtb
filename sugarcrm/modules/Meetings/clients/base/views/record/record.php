@@ -313,6 +313,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 'team_name',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

@@ -11,8 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
+require_once 'include/generic/SugarWidgets/SugarWidgetFieldint.php';
 
 global $current_user;
 

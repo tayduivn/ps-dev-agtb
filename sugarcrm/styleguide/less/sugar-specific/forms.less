@@ -250,6 +250,18 @@ input[type=radio] {
     /* The size is defined in twitter-bootstrap/forms.less */
     padding: 4px 6px;
   }
+  input:focus,
+  select:focus,
+  .uneditable-input:focus {
+    z-index: inherit;
+    &+ .add-on {
+      display: none;
+      &+ .add-on {
+        display: none;
+      }
+    }
+  }
+
   .ui-timepicker-input {
     margin-left: -24px;
   }
@@ -264,7 +276,6 @@ input[type=radio] {
     .add-on {
       left: -26px;
       color: @errorText;
-      z-index: 1;
       [class^="icon-"] {
         color: @errorText;
       }

@@ -221,26 +221,37 @@
             self.preview = false;
             self.clearErrorDecoration();
             self.render();
-        } else {
-            var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
-            if (confirm(confirmMessage)) {
-                //Otherwise delete the image
-                app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
-                        success: function(response) {
-                            //Need to fire the change event twice so model.previous(self.name) is also changed.
-                            self.model.unset(self.name);
-                            self.model.set(self.name, null);
-                            if (response.record && response.record.date_modified) {
-                                self.model.set('date_modified', response.record.date_modified);
-                            }
-                            if (!self.disposed) self.render();
-                        },
-                        error: function(data) {
-                            // refresh token if it has expired
-                            app.error.handleHttpError(data, {});
-                        }}
-                );
-            }
+            return;
+        }
+
+        // If it's a duplicate, don't delete the file
+        if (this._duplicateBeanId) {
+            self.model.unset(self.name);
+            self.model.set(self.name, null);
+            self.render();
+            return;
+        }
+
+        var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
+        if (confirm(confirmMessage)) {
+            //Otherwise delete the image
+            app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
+                    success: function(response) {
+                        //Need to fire the change event twice so model.previous(self.name) is also changed.
+                        self.model.unset(self.name);
+                        self.model.set(self.name, null);
+                        if (response.record && response.record.date_modified) {
+                            self.model.set('date_modified', response.record.date_modified);
+                        }
+                        if (!self.disposed) {
+                            self.render();
+                        }
+                    },
+                    error: function(data) {
+                        // refresh token if it has expired
+                        app.error.handleHttpError(data, {});
+                    }}
+            );
         }
     },
 
@@ -250,7 +261,7 @@
      */
     buildUrl: function(options) {
         return app.api.buildFileURL({
-            module: this.module,
+            module: this._duplicateBeanModule ? this._duplicateBeanModule : this.module,
             id: this._duplicateBeanId ? this._duplicateBeanId : this.model.id,
             field: this.name
         }, options);

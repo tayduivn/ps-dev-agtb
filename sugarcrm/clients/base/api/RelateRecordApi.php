@@ -199,6 +199,7 @@ class RelateRecordApi extends SugarApi
      * @param ServiceBase $api The API class of the request.
      * @param array $args The arguments array passed in from the API.
      * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
+     * @throws SugarApiExceptionError In case if the module API has improper interface
      */
     public function createRelatedRecord($api, $args)
     {
@@ -451,7 +452,7 @@ class RelateRecordApi extends SugarApi
     }
 
     /**
-     * Returns arguments for internal call to Module API
+     * Returns the API implementation for the given module
      *
      * @param ServiceBase $api
      * @param string $module Relate module name
@@ -460,15 +461,41 @@ class RelateRecordApi extends SugarApi
      */
     protected function getModuleApi(ServiceBase $api, $module)
     {
-        $file = sprintf('modules/%1$s/clients/%2$s/api/%1$sApi.php', $module, $api->platform);
-        if (file_exists($file)) {
-            require_once $file;
-            $class = sprintf('%sApi', $module);
-            return new $class;
+        $moduleApi = $this->loadModuleApi($api, $module);
+        if ($moduleApi instanceof ModuleApi) {
+            return $moduleApi;
         }
 
         require_once 'clients/base/api/ModuleApi.php';
         return new ModuleApi();
+    }
+
+    /**
+     * Loads the API implementation for the given module
+     *
+     * @param ServiceBase $api
+     * @param string $module Relate module name
+     *
+     * @return ModuleApi Module API implementation
+     */
+    protected function loadModuleApi(ServiceBase $api, $module)
+    {
+        $templates = array(
+            array('custom/modules/%s/clients/%s/api/', 'Custom%sApi'),
+            array('modules/%s/clients/%s/api/', '%sApi'),
+        );
+
+        foreach ($templates as $template) {
+            list($directoryTemplate, $classTemplate) = $template;
+            $class = sprintf($classTemplate, $module);
+            $file = sprintf($directoryTemplate, $module, $api->platform) . $class . '.php';
+            if (file_exists($file)) {
+                require_once $file;
+                return new $class;
+            }
+        }
+
+        return null;
     }
 
     /**

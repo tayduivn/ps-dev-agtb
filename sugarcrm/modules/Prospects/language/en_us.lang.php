@@ -145,6 +145,7 @@ $mod_strings = array (
   'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE'=>'Campaign Log',
   'LBL_TRACKER_KEY'=>'Tracker Key',
   'LBL_LEAD_ID'=>'Lead Id',
+  'LBL_LEAD' => 'Lead',
   'LBL_CONVERTED_LEAD'=>'Converted Lead',
   'LBL_ACCOUNT_NAME'=>'Account Name',
   'LBL_EDIT_ACCOUNT_NAME'=>'Account Name:',

@@ -295,6 +295,9 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
 
 //This enables optimistic locking for Saves From EditView
     'optimistic_locking'=>true,
+    'uses' => array(
+        'taggable',
+    ),
 );
 VardefManager::createVardef(
     'Cases',

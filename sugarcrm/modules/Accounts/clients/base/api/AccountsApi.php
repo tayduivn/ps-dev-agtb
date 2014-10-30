@@ -11,10 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ListApi.php';
+require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
 
-class AccountsApi extends ListApi
+class AccountsApi extends ModuleApi
 {
     public function registerApiRest()
     {

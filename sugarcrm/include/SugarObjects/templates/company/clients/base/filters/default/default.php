@@ -67,6 +67,7 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
         'ticker_symbol' => array(),
         'email' => array(),
         'assigned_user_name' => array(),
+        'tag' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',

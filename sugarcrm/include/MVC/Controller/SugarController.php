@@ -599,6 +599,7 @@ class SugarController
 	 * Perform the actual massupdate.
 	 */
 	protected function action_massupdate(){
+        global $app_strings;
 		if(!empty($_REQUEST['massupdate']) && $_REQUEST['massupdate'] == 'true' && (!empty($_REQUEST['uid']) || !empty($_REQUEST['entire']))){
 			if(!empty($_REQUEST['Delete']) && $_REQUEST['Delete']=='true' && !$this->bean->ACLAccess('delete')
                 || (empty($_REQUEST['Delete']) || $_REQUEST['Delete']!='true') && !$this->bean->ACLAccess('save')){
@@ -618,9 +619,23 @@ class SugarController
             if(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
                 $mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
             }
-            $mass->handleMassUpdate();
+            $arr = $mass->handleMassUpdate();
             $storeQuery = new StoreQuery();//restore the current search. to solve bug 24722 for multi tabs massupdate.
             $temp_req = array('current_query_by_page' => $_REQUEST['current_query_by_page'], 'return_module' => $_REQUEST['return_module'], 'return_action' => $_REQUEST['return_action']);
+            if (!empty($_POST['mass'])) {
+                $total_records = count($_POST['mass']);
+                $failed_update = count($arr);
+                $successful_update = $total_records - $failed_update;
+                if ($successful_update == $total_records) {
+                    $massupdate_status = $app_strings['LBL_MASS_UPDATE_SUCCESS'];
+                } else {
+                    $massupdate_status = $app_strings['TPL_MASSUPDATE_SUCCESS'] .
+                        " " . $app_strings['TPL_MASSUPDATE_WARNING_PERMISSION'];
+                    $massupdate_status = str_replace("{{num}}", $successful_update, $massupdate_status);
+                    $massupdate_status = str_replace("{{remain}}", $failed_update, $massupdate_status);
+                }
+                $temp_req['updated_records'] = $massupdate_status;
+            }
             if($_REQUEST['return_module'] == 'Emails') {
                 if(!empty($_REQUEST['type']) && !empty($_REQUEST['ie_assigned_user_id'])) {
                     $this->req_for_email = array('type' => $_REQUEST['type'], 'ie_assigned_user_id' => $_REQUEST['ie_assigned_user_id']); // Specifically for My Achieves
@@ -630,7 +645,11 @@ class SugarController
             $_REQUEST = unserialize(base64_decode($temp_req['current_query_by_page']));
             unset($_REQUEST[$seed->module_dir.'2_'.strtoupper($seed->object_name).'_offset']);//after massupdate, the page should redirect to no offset page
             $storeQuery->saveFromRequest($_REQUEST['module']);
-            $_REQUEST = array('return_module' => $temp_req['return_module'], 'return_action' => $temp_req['return_action']);//for post_massupdate, to go back to original page.
+            $_REQUEST = array(
+                'return_module' => $temp_req['return_module'],
+                'return_action' => $temp_req['return_action'],
+                'updated_records' => $temp_req['updated_records']
+            ); //for post_massupdate, to go back to original page.
 		}else{
 			sugar_die("You must massupdate at least one record");
 		}
@@ -645,7 +664,10 @@ class SugarController
 		$return_action = isset($_REQUEST['return_action']) ?
 			$_REQUEST['return_action'] :
 			$GLOBALS['sugar_config']['default_action'];
-		$url = "index.php?module=".$return_module."&action=".$return_action;
+        $url = "index.php?module=".$return_module."&action=".$return_action;
+        if (isset($_REQUEST['updated_records'])) {
+            $url .= "&updated_records=" . $_REQUEST['updated_records'];
+        }
 		if($return_module == 'Emails'){//specificly for My Achieves
 			if(!empty($this->req_for_email['type']) && !empty($this->req_for_email['ie_assigned_user_id'])) {
 				$url = $url . "&type=".$this->req_for_email['type']."&assigned_user_id=".$this->req_for_email['ie_assigned_user_id'];

@@ -24,4 +24,19 @@ class Tag extends Basic
     {
         parent::__construct();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function save($check_notify = false)
+    {
+        // We need a tag name or really what's the point?
+        if (empty($this->name)) {
+            return false;
+        }
+
+        // For searching making sure we lowercase the name to name_lower
+        $this->name_lower = strtolower($this->name);
+        return parent::save($check_notify);
+    }
 }

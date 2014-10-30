@@ -93,22 +93,50 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->createRelatedRecord($service, $relateApiArgs);
     }
 
-    /**
-     * @dataProvider getModuleApiProvider
-     */
-    public function testGetModuleApi($module, $expected)
+    public function testLoadModuleApiSuccess()
+    {
+        $moduleApi = $this->loadModuleApi('Users');
+        $this->assertInstanceOf('UsersApi', $moduleApi);
+    }
+
+    public function testLoadModuleApiFailure()
+    {
+        $moduleApi = $this->loadModuleApi('UnknownModule');
+        $this->assertNull($moduleApi);
+    }
+
+    private function loadModuleApi($module)
     {
         $api = new RelateRecordApi();
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApi', array($service, $module));
+        return SugarTestReflection::callProtectedMethod($api, 'loadModuleApi', array($service, $module));
+    }
+
+    /**
+     * @dataProvider getModuleApiProvider
+     */
+    public function testGetModuleApi($loaded, $expected)
+    {
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        require_once 'clients/base/api/RelateRecordApi.php';
+        $api = $this->getMock('RelateRecordApi', array('loadModuleApi'));
+        $api->expects($this->once())
+            ->method('loadModuleApi')
+            ->with($service, 'TheModule')
+            ->willReturn($loaded);
+
+        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApi', array($service, 'TheModule'));
         $this->assertInstanceOf($expected, $actual);
     }
 
     public static function getModuleApiProvider()
     {
+        require_once 'modules/Users/clients/base/api/UsersApi.php';
         return array(
-            'module-specific' => array('Users', 'UsersApi'),
-            'generic' => array('UnknownModule', 'ModuleApi'),
+            'module-specific' => array(new UsersApi(), 'UsersApi'),
+            'non-module' => array(new StdClass(), 'ModuleApi'),
+            'default' => array(null, 'ModuleApi'),
         );
     }
 

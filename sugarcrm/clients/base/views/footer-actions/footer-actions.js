@@ -152,6 +152,7 @@
 
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
+        this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
         app.view.View.prototype._renderHtml.call(this);
     },
     feedback: function() {

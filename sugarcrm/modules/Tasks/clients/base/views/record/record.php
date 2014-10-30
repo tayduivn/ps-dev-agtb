@@ -155,6 +155,10 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 'status',
                 'assigned_user_name',
                 'parent_name',
+                array(
+                    'name' => 'tag',
+                    'span' => '12',
+                ),
             ),
         ),
         array(

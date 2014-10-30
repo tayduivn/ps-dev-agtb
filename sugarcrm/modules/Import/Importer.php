@@ -12,10 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/ImportFieldSanitize.php');
-require_once('modules/Import/ImportDuplicateCheck.php');
-
+require_once 'modules/Import/ImportCacheFiles.php';
+require_once 'modules/Import/ImportFieldSanitize.php';
+require_once 'modules/Import/ImportDuplicateCheck.php';
+require_once 'include/SugarFields/SugarFieldHandler.php';
 
 class Importer
 {
@@ -67,6 +67,13 @@ class Importer
      */
     protected $currencyFieldPosition = false;
 
+    /**
+     * Flag that tells the importer whether to look for tags
+     *
+     * @var boolean
+     */
+    protected $hasTags = false;
+
     public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
@@ -103,6 +110,9 @@ class Importer
 
         // do we have a currency_id field
         $this->currencyFieldPosition = array_search('currency_id', $this->importColumns);
+
+        // Are we importing tags?
+        $this->hasTags = array_search('tag', $this->importColumns);
 
         foreach($this->importSource as $row)
         {
@@ -497,6 +507,8 @@ class Importer
 
         if ($do_save)
         {
+            // handleTagsImport() needs to be called before saveImportBean()
+            $this->handleTagsImport($focus, $row);
             $this->saveImportBean($focus, $newRecord);
             // Update the created/updated counter
             $this->importSource->markRowAsImported($newRecord);
@@ -508,6 +520,69 @@ class Importer
 
     }
 
+    /**
+     * Handles importing of tags for a row
+     * 
+     * @param SugarBean $focus The parent sugar bean
+     * @param array $row The row of data being imported
+     */
+    public function handleTagsImport($focus, $row)
+    {
+        // Handle tags import - this needs to be done only when we have an 
+        // ID for the parent record as relationships don't like it when you
+        // don't have a real record to relate to
+        if ($this->hasTags !== false && $focus->isTaggable() && !empty($row[$this->hasTags])) {
+            $sfh = new SugarFieldHandler();
+
+            // Get the Tag SugarField for handling the saving
+            $sfTag = $sfh->getSugarField('tag');
+
+            // Build an argument list for this save
+            $tagFieldName = $focus->getTagField();
+            $tagField = $focus->field_defs[$tagFieldName];
+
+            // Build the params array so the field can save what needs saving
+            $params[$tagFieldName] = array();
+
+            // Get the tags from the bean if they exist. Using a fresh bean
+            // because at this point $focus is the new data.
+            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
+            //$currentTags = $sfTag->getTagValues(BeanFactory::getBean($focus->module_dir, $focus->id), $tagFieldName);
+
+            // Get the tags from the row. Tags are separated by double quotes.
+            // ex Value1,Value2,Value3 and then merged with existing tags
+            $importTags = $sfTag->getTagValuesFromImport($row[$this->hasTags]);
+
+            // Now get all tags and massage them a little bit for uniqueness.
+            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
+            //$allTags = array_merge($currentTags, $importTags);
+            $allTags = $importTags;
+
+            // Holds the lowercase tag name to make sure tags are unique for this record
+            $tagCheck = array();
+            foreach ($allTags as $tag) {
+                // Simple cleansing
+                $tag = trim($tag);
+
+                // If the tag, after trim, is empty, move on
+                if (!empty($tag)) {
+                    $tagLower = strtolower($tag);
+
+                    // If we haven't touched this tag yet, hit it
+                    if (!isset($tagCheck[$tagLower])) {
+                        // Add it to the params array
+                        $params[$tagFieldName][] = array('name' => $tag);
+
+                        // Mark that it has been checked
+                        $tagCheck[$tagLower] = 1;
+                    }
+                }
+            }
+
+            // Now save the field
+            $sfTag->apiSave($focus, $params, $tagFieldName, $tagField);
+        }
+    }
 
     protected function sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated)
     {
@@ -1110,7 +1185,7 @@ class Importer
      * Handles non-primary emails string read from CSV file
      *
      * @param mixed     $rowValue        Serialized data
-     * @param mixed     $defaultRowValue Default value in case if row value is empty 
+     * @param mixed     $defaultRowValue Default value in case if row value is empty
      * @param string    $fieldTranslated Name of CSV column
      *
      * @return array                     Collection of parsed non-primary e-mails
@@ -1170,7 +1245,7 @@ class Importer
      * Parses serialized data of non-primary email addresses
      *
      * @param string $value           Serialized data in the following format:
-     *                                email_address1[,invalid_email1[,opt_out1]][;email_address2...] 
+     *                                email_address1[,invalid_email1[,opt_out1]][;email_address2...]
      * @param string $fieldTranslated Name of CSV column
      *
      * @return array                  Collection of address properties
