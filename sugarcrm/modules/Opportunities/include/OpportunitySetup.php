@@ -203,6 +203,9 @@ abstract class OpportunitySetup
         // fix the selected-list view
         $this->processSelectedListView($fieldMap);
 
+        // fix the dupecheck-list view
+        $this->processDupeCheckListView($fieldMap);
+
         // get the generic list view
         $this->processListView($fieldMap);
 
@@ -268,6 +271,18 @@ abstract class OpportunitySetup
     {
         /* @var $listDefsParser SidecarListLayoutMetaDataParser */
         $listDefsParser = ParserFactory::getParser(MB_SIDECARPOPUPVIEW, 'Opportunities', null, null, 'base');
+        $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
+    }
+
+    /**
+     * Fix the `dupecheck-list` view
+     *
+     * @param array $fieldMap
+     */
+    protected function processDupeCheckListView(array $fieldMap)
+    {
+        /* @var $listDefsParser SidecarListLayoutMetaDataParser */
+        $listDefsParser = ParserFactory::getParser(MB_SIDECARDUPECHECKVIEW, 'Opportunities', null, null, 'base');
         $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
     }
 

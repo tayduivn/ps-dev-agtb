@@ -36,7 +36,7 @@ $viewdefs['Opportunities']['base']['view']['dupecheck-list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'sales_status',
+                    'name' => 'sales_stage',
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,

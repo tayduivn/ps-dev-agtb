@@ -41,6 +41,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     protected $allowedViews = array(
         MB_SIDECARLISTVIEW,
         MB_SIDECARPOPUPVIEW,
+        MB_SIDECARDUPECHECKVIEW,
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSLISTVIEW,
         //END SUGARCRM flav=pro ONLY
