@@ -21,9 +21,15 @@
     left: 10px;
     top: 10px;
   }
-  .tagged span.label {
-    font-size: @baseFontSize - 1;
-    padding: 2px 4px 1px;
+  .tagged {
+    max-width: 100%;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    span.label {
+      font-size: @baseFontSize - 1;
+      padding: 2px 4px 1px;
+    }
   }
   p {
     margin: 0;
@@ -174,12 +180,4 @@ div[data-placeholder]:not(:focus):not([data-hide-placeholder]):before {
 .dashlet .activitystream-posts-comments-container  .actions {
   position: absolute;
   top: 10px;
-}
-
-.activitystream-layout .omnibar .inputactions {
-  position: absolute;
-  top: 3px;
-  right: 0px;
-  padding:0px;
-  background-color: #fff;
 }

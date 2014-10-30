@@ -180,6 +180,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'department',
                 'phone_mobile',
                 'do_not_call',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

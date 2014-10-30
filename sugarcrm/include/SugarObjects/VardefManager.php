@@ -20,6 +20,15 @@ class VardefManager{
     public static $inReload = array();
 
     /**
+     * List of templates to ignore for BWC modules when adding templates
+     * 
+     * @var array
+     */
+    public static $ignoreBWCTemplates = array(
+        'taggable' => true,
+    );
+
+    /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
      * It is meant to load the vardefs from the SugarObject.
      */
@@ -38,6 +47,34 @@ class VardefManager{
             // among avoiding using other templates twice let's make sure the templates
             // are unique
             $templates = array_unique($templates);
+        }
+
+        // Load up fields if there is a need for that. Introduced with the taggable
+        // template
+        if (isset($GLOBALS['dictionary'][$object]['load_fields'])) {
+            $lf = $GLOBALS['dictionary'][$object]['load_fields'];
+
+            // Make sure we actually have a fields array to work with
+            if (empty($GLOBALS['dictionary'][$object]['fields'])) {
+                $GLOBALS['dictionary'][$object]['fields'] = array();
+            }
+
+            if (is_string($lf) && function_exists($lf)) {
+                // Merge fields from the function onto the known fields
+                $GLOBALS['dictionary'][$object]['fields'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['fields'],
+                    $lf()
+                );
+            } elseif (is_array($lf) && isset($lf['class']) && isset($lf['method'])) {
+                $class = $lf['class'];
+                $method = $lf['method'];
+
+                // Merge fields from the method call onto the known fields
+                $GLOBALS['dictionary'][$object]['fields'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['fields'],
+                    $class::$method()
+                );
+            }
         }
 
         //reverse the sort order so priority goes highest to lowest;
@@ -69,6 +106,19 @@ class VardefManager{
                 }
             }
         }
+
+        // Handle unsetting of fields as per the defs. Do this last to make sure
+        // all extension fields have loaded
+        if (isset($GLOBALS['dictionary'][$object]['unset_fields'])) {
+            $uf = $GLOBALS['dictionary'][$object]['unset_fields'];
+            if (is_string($uf)) {
+                unset($GLOBALS['dictionary'][$object]['fields'][$uf]);
+            } elseif (is_array($uf)) {
+                foreach ($uf as $f) {
+                    unset($GLOBALS['dictionary'][$object]['fields'][$f]);
+                }
+            }
+        }
     }
 
     /**
@@ -85,14 +135,38 @@ class VardefManager{
         }
     }
 
+    /**
+     * Checks to see if the template for a module should be skipped. Used by 
+     * addTemplate to see if certain templates should be added by BWC modules.
+     * 
+     * @param string $module The name of the module to check
+     * @param string $template The template to check for the module
+     * @return boolean
+     */
+    public static function ignoreBWCTemplate($module, $template)
+    {
+        // Add logic as needed here... starting with BWC modules not being taggable
+        return isModuleBWC($module) && !empty(self::$ignoreBWCTemplates[$template]);
+    }
+
     static function addTemplate($module, $object, $template, $object_name=false){
-        if($template == 'default')$template = 'basic';
+        // Normalize the template name
+        if ($template == 'default') {
+            $template = 'basic';
+        }
+
         // The ActivityStream has subdirectories but this code doesn't expect it
         // let's fix it up here
         if (strpos($module,'/') !== false) {
             $tmp = explode('/',$module);
             $module = array_pop($tmp);
         }
+
+        // Verify that we should use this template for BWC modules
+        if (self::ignoreBWCTemplate($module, $template)) {
+            return;
+        }
+
         $templates = array();
         $fields = array();
         if(empty($object_name))$object_name = $object;

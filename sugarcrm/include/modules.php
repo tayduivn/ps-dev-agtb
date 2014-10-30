@@ -417,7 +417,7 @@ $report_include_modules['Contracts']='Contract';
 //add Tracker modules
 
 $report_include_modules['Trackers']         = 'Tracker';
-
+$report_include_modules['Tags'] = 'Tag';
 
 //BEGIN SUGARCRM flav=pro ONLY
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';

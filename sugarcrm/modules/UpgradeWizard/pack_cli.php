@@ -12,7 +12,8 @@
 
 require_once __DIR__ . '/../../modules/HealthCheck/pack_sortinghat.php';
 
-function packUpgradeWizardCli($phar, $params) {
+function packUpgradeWizardCli($phar, $params, $files = array())
+{
 
     $defaults = array(
         'version' => '7.5.0.0',
@@ -25,17 +26,20 @@ function packUpgradeWizardCli($phar, $params) {
 
     file_put_contents(__DIR__ . '/version.json', json_encode($params, true));
 
-    $chdir =  __DIR__ ."/../..";
+    $chdir = __DIR__ . "/../..";
 
-    $files=array(
-        "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
-        "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
-        "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
-        "modules/UpgradeWizard/version.json" => 'version.json',
-        'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
-        'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
-        'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
-        'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
+    $files = array_merge(
+        array(
+            "modules/UpgradeWizard/SILENTUPGRADE.txt" => 'SILENTUPGRADE.txt',
+            "modules/UpgradeWizard/UpgradeDriver.php" => 'UpgradeDriver.php',
+            "modules/UpgradeWizard/CliUpgrader.php" => 'CliUpgrader.php',
+            "modules/UpgradeWizard/version.json" => 'version.json',
+            'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheckClient.php',
+            'include/SugarSystemInfo/SugarSystemInfo.php' => 'SugarSystemInfo.php',
+            'include/SugarHeartbeat/SugarHeartbeatClient.php' => 'SugarHeartbeatClient.php',
+            'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheckHelper.php',
+        ),
+        $files
     );
 
     foreach ($files as $file => $inArchive) {
@@ -43,7 +47,9 @@ function packUpgradeWizardCli($phar, $params) {
     }
 }
 
-if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
+if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
+    return;
+}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
@@ -63,10 +69,10 @@ if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('zip
 }
 
 $params = array();
-if(isset($argv[2])) {
+if (isset($argv[2])) {
     $params['version'] = $argv[2];
 }
-if(isset($argv[3])) {
+if (isset($argv[3])) {
     $params['build'] = $argv[3];
 }
 

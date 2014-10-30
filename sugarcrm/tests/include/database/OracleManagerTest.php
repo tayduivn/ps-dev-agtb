@@ -270,5 +270,12 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('2014-03-21 13:24:46', $data);
     }
 
-
+    /**
+     * Test order_stability capability BR-2097
+     */
+    public function testOrderStability()
+    {
+        $msg = 'OracleManager cannot have order_stability capability';
+        $this->assertFalse($this->_db->supports('order_stability'), $msg);
+    }
 }

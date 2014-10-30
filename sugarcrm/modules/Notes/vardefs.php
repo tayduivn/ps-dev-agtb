@@ -389,6 +389,9 @@ $dictionary['Note'] = array(
 
     ,'duplicate_check' => array(
         'enabled' => false
+    ),
+    'uses' => array(
+        'taggable',
     )
 );
 

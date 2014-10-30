@@ -61,7 +61,12 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
 
         $GLOBALS['log']->debug('have saml data.');
         $this->settings = SAMLAuthenticate::loadSettings();
-        $this->samlresponse = new OneLogin_Saml_Response($this->settings, $_POST['SAMLResponse']);
+        try {
+            $this->samlresponse = new OneLogin_Saml_Response($this->settings, $_POST['SAMLResponse']);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("Unexpected exception: ".$e->getMessage());
+            return '';
+        }
 
         if ($this->samlresponse->isValid()) {
             $GLOBALS['log']->debug('response is valid');

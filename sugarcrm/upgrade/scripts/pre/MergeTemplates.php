@@ -27,11 +27,7 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
             return;
         }
         $this->log("**** Merge started ");
-        //If we are coming from 6.x, use the old 3-way merge to preserve compatiability
-        //When upgrading from 7.x->7.y, use the merge from the new package
-        if (version_compare($this->from_version, '7.0', '>=') &&
-            file_exists($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge.php')
-        ) {
+        if (file_exists($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge.php')) {
             $this->mergeWithNewClasses();
         } else {
             $this->mergeWithExistingClasses();
@@ -44,7 +40,7 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
         $this->log("**** Using new merge classes");
         require_once($this->context['new_source_dir'] . '/modules/UpgradeWizard/SugarMerge/SugarMerge.php');
         if ($this->loadSugarMerge7()) {
-            $merger = new SugarMerge7($this->context['new_source_dir'], null, null, true);
+            $merger = new SugarMerge7($this->context['new_source_dir'], '', 'custom', true);
             $merger->setUpgrader($this->upgrader);
             $merger->mergeAll();
         }

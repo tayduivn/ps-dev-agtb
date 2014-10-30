@@ -44,6 +44,7 @@ $vardefs = array(
             'merge_filter' => 'enabled',
             'module' => 'EmailAddresses',
 		    'studio' => array(
+                'listview' => false,
                 'editview' => true,
                 'editField' => true,
                 'searchview' => false,

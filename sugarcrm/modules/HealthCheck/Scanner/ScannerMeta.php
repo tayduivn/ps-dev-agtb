@@ -217,6 +217,7 @@ class HealthCheckScannerMeta
         417 => array(
             'report' => 'incompatModule',
             'bucket' => self::CUSTOM,
+            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         418 => array(
             'report' => 'subpanelLinkNonExistModule',
@@ -253,7 +254,7 @@ class HealthCheckScannerMeta
         ),
         426 => array(
             'report' => 'foundPrint',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         427 => array(
             'report' => 'foundDieExit',
@@ -325,6 +326,11 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Inline_HTML_Found/'
         ),
+        529 => array(
+            'report' => 'phpError',
+            'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_PHP_Error_in_File/'
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(
@@ -362,7 +368,6 @@ class HealthCheckScannerMeta
         517 => array(
             'report' => 'incompatIntegration',
             'bucket' => self::MANUAL,
-            'kb'     => 'http://support.sugarcrm.com/04_Find_Answers/02KB/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Module/'
         ),
         528 => array(
             'report' => 'vardefIncorrectDisplayDefault',

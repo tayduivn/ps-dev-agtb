@@ -37,6 +37,7 @@ $viewdefs['Notes']['mobile']['view']['edit'] = array(
                 'description',
                 'contact_name',
                 'parent_name',
+                'filename',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

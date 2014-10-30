@@ -3924,12 +3924,12 @@ Sincerely, SugarCRM',
     'LBL_LEARNING_RESOURCES_TITLE' => 'Learning Resources',
     'LBL_LEARNING_RESOURCES_DESC' => 'SugarCRM Learning Resources',
     'LBL_LEARNING_RESOURCES_NAME' => 'Learning Resources',
-    'LBL_LEARNING_RESOURCES_DISCOVER_LINK' => 'Discover SugarCRM: YouTube Channel',
-    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University - Training & Videos',
-    'LBL_LEARNING_RESOURCES_START_LINK' => 'Getting Started with SugarCRM',
-    'LBL_LEARNING_RESOURCES_TRAINING_LINK' => 'SugarCRM Weekly Live Training',
-    'LBL_LEARNING_RESOURCES_WEBINARS_LINK' => 'SugarCRM Weekly Webinars',
-    'LBL_LEARNING_RESOURCES_VIDEOS_LINK' => 'Helpful How-to Videos',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_TEASER' => 'Become a Sugar expert with upgrade training, videos, classes, webinars, and certification.',
+    'LBL_LEARNING_RESOURCES_COMMUNITY_LINK' => 'Community Forums',
+    'LBL_LEARNING_RESOURCES_COMMUNITY_TEASER' => 'Join the discussion, problem solve, and share ideas with other users.',
+    'LBL_LEARNING_RESOURCES_SUPPORT_LINK' => 'Documentation & Support',
+    'LBL_LEARNING_RESOURCES_SUPPORT_TEASER' => 'Learn the details of how Sugar works and engage with support.',
 
     /* Country Chart Dashlet */
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
@@ -5263,6 +5263,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
 
     'LBL_SAVE_AND_SEND_INVITES_BUTTON' => 'Save and Send Invites',
+
+    //Tag Strings
+    'LBL_TAG_NEW_TAG' => '(New Tag)',
+    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.'
 );
 
 $app_list_strings['interactions_options'] = array (

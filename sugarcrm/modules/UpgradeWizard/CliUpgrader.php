@@ -584,25 +584,21 @@ eoq2;
     }
 
     /**
-     * @see UpgradeDriver::preflightDuplicateUpgrade
-     * @return bool
+     * @see UpgradeDriver::getPackageUid()
+     * @return string
      */
-    protected function preflightDuplicateUpgrade()
+    protected function  getPackageUid()
     {
         if ($this->context['zip_as_dir']) {
             $md5sum = $this->context['zip'] . DIRECTORY_SEPARATOR . 'md5sum';
             if (!file_exists($md5sum)) {
                 return $this->error("md5sum file doesn't exist", true);
             }
-            $md5 = trim(file_get_contents($md5sum));
+            $md5sum = trim(file_get_contents($md5sum));
         } else {
-            $md5 = md5_file($this->context['zip']);
+            $md5sum = md5_file($this->context['zip']);
         }
-        $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='$md5'");
-        if (!empty($dup)) {
-            return $this->error("This package (md5: $md5) was already installed", true);
-        }
-        return true;
+        return $md5sum;
     }
 }
 

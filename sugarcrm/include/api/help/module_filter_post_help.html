@@ -17,7 +17,11 @@
 
 <h2>Summary</h2>
 <span class="lead">
-    This endpoint will return a set of records filtered by an expression. The filter can be applied to multiple fields and have multiple and/or conditions in it. Care will need to be taken to make sure this filter has appropriate indexes on the server side otherwise the runtime of the endpoint will be very long. Related fields can be searched by specifying the field name as: "link_name.remote_field", so if you wished to search the Accounts module by a related member account you would use "members.sic_code".
+    This endpoint will return a set of records filtered by an expression. The filter can be applied to multiple fields
+    and have multiple and/or conditions in it. Care will need to be taken to make sure this filter has appropriate
+    indexes on the server side otherwise the runtime of the endpoint will be very long. Related fields can be searched
+    by specifying the field name as: "link_name.remote_field", so if you wished to search the Accounts module by a
+    related member account you would use "members.sic_code".
 </span>
 
 <h2>Request Arguments</h2>
@@ -91,13 +95,32 @@
     </tr>
     <tr>
         <td>
+            view
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Instead of defining the fields argument, the view argument can be used instead. The field list is
+            constructed at the server side based on the view definition which is requested. This argument can be used
+            in combination with the fields argument. Common views are "record" and "list".
+            <br>
+            Example: <code>record</code>
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
             order_by
         </td>
         <td>
             String
         </td>
         <td>
-            How to sort the returned records, in a comma delimited list with the direction appended to the column name after a colon.
+            How to sort the returned records, in a comma delimited list with the direction appended to the column name
+            after a colon.
             <br>
             Example: <code>name:DESC,account_type:DESC,date_modified:ASC</code>
         </td>
@@ -132,7 +155,8 @@ There are four types of filters:
 <h4>Full</h4>
 
 <div class="well well-small">
-    This expression allows you to specify what operation you want to use for filtering on the field. In the example you would match any record where the field "name" starts with the value "Nelson".
+    This expression allows you to specify what operation you want to use for filtering on the field. In the example
+    you would match any record where the field "name" starts with the value "Nelson".
 
     <h5>Example</h5>
 <pre class="pre-scrollable">
@@ -280,7 +304,9 @@ There are four types of filters:
 <h4>Sub-expressions</h4>
 
 <div class="well well-small">
-    This allows you to group filter expressions into or/and groupings. By default all expressions are and'ed together. The example expression would match if the field "name" was either "Nelson Inc" or "Nelson LLC". The only currently accepted sub-expression types are "$and" and "$or".
+    This allows you to group filter expressions into or/and groupings. By default all expressions are and'ed together.
+    The example expression would match if the field "name" was either "Nelson Inc" or "Nelson LLC". The only currently
+    accepted sub-expression types are "$and" and "$or".
 
     <h5>Example</h5>
 <pre class="pre-scrollable">
@@ -303,7 +329,10 @@ There are four types of filters:
 
 <h4>Modules</h4>
 <div class="well well-small">
-There are two module expressions, they operate on modules instead of fields. The current module can be specified by either using the module name "_this" or by leaving the module name as a blank string. The example expression would filter the records in the current module to only your favorites. The only currently accepted module expressions are "$favorite" and "$owner".
+There are two module expressions, they operate on modules instead of fields. The current module can be specified by
+either using the module name "_this" or by leaving the module name as a blank string. The example expression would
+filter the records in the current module to only your favorites. The only currently accepted module expressions are
+"$favorite" and "$owner".
 
 <h5>Example</h5>
 <pre class="pre-scrollable">
@@ -335,7 +364,8 @@ There are two module expressions, they operate on modules instead of fields. The
             Integer
         </td>
         <td>
-            Displays the next offset for retrieval of additional results. -1 will be returned when there are no more records.
+            Displays the next offset for retrieval of additional results. -1 will be returned when there are no more
+            records.
         </td>
     </tr>
     <tr>

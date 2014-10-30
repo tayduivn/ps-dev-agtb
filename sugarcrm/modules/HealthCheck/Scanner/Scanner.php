@@ -74,6 +74,12 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
+        'SugarSMS' => array(
+            array('version' => '*'),
+        ),
+        'GoogleSalesMap' => array(
+            array('version' => '3.0.2'),
+        ),
         'Zendesk' => array(
             array('version' => '2.8'),
         ),
@@ -1010,6 +1016,7 @@ class HealthCheckScanner
                     'wireless.editviewdefs.php',
                     'wireless.detailviewdefs.php',
                     'wireless.listviewdefs.php',
+                    'convertdefs.php',     // CRYS-536 - exclude */Leads/metadata/convertdefs.php
                 );
                 return !in_array(basename($def), $filesToExclude);
             }
@@ -1193,13 +1200,6 @@ class HealthCheckScanner
         }
         return $res;
     }
-
-    protected $knownCustomCode = array(
-        '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-        '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
-        '{$fields.currency_symbol.value}{$fields.deal_calc.value}',
-        '{$EMAIL1_LINK}{$EMAIL1}</a>',
-    );
 
     /**
      * Look for custom code in array of defs
@@ -1618,14 +1618,13 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile, $status)
     {
-        if (in_array($phpfile, $this->ignoreOutputCheckFiles)) {
-            return;
-        }
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
             return;
         }
+        $processOutput = !in_array($phpfile, $this->ignoreOutputCheckFiles);
+
         // remove sugarEntry check
         $sePattern = <<<ENDP
 if\s*\(\s*!\s*defined\s*\(\s*'sugarEntry'\s*\)\s*(\|\|\s*!\s*sugarEntry\s*)?\)\s*{?\s*die\s*\(\s*'Not A Valid Entry Point'\s*\)\s*;\s*}?
@@ -1640,15 +1639,15 @@ ENDP;
                 if ($token[0] == T_INLINE_HTML) {
                     $inlineHTMLStatus = (strlen(trim($token[1])) != 0) ? 'inlineHtml' : 'inlineHtmlSpacing';
                     $args = array($inlineHTMLStatus, $phpfile, $token[2]);
-                } elseif ($token[0] == T_ECHO) {
+                } elseif ($processOutput && $token[0] == T_ECHO) {
                     $args = array('foundEcho', $phpfile, $token[2]);
-                } elseif ($token[0] == T_PRINT) {
+                } elseif ($processOutput && $token[0] == T_PRINT) {
                     $args = array('foundPrint', $phpfile, $token[2]);
                 } elseif ($token[0] == T_EXIT) {
                     $args = array('foundDieExit', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
+                } elseif ($processOutput && $token[0] == T_STRING && $token[1] == 'print_r' && $this->checkPrintR($index, $tokens)) {
                     $args = array('foundPrintR', $phpfile, $token[2]);
-                } elseif ($token[0] == T_STRING && $token[1] == 'var_dump') {
+                } elseif ($processOutput && $token[0] == T_STRING && $token[1] == 'var_dump') {
                     $args = array('foundVarDump', $phpfile, $token[2]);
                 } elseif ($token[0] == T_STRING && strpos($token[1], 'ob_') === 0) {
                     $args = array('inlineHtml', $token[1], $phpfile, $token[2]);
@@ -1746,7 +1745,26 @@ ENDP;
      */
     public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        $this->log("PHP: [$errno] $errstr in $errfile at $errline", 'ERROR');
+        switch ($errno) {
+            case 1:     $e_type = 'E_ERROR'; break;
+            case 2:     $e_type = 'E_WARNING'; break;
+            case 4:     $e_type = 'E_PARSE'; break;
+            case 8:     $e_type = 'E_NOTICE'; break;
+            case 16:    $e_type = 'E_CORE_ERROR'; break;
+            case 32:    $e_type = 'E_CORE_WARNING'; break;
+            case 64:    $e_type = 'E_COMPILE_ERROR'; break;
+            case 128:   $e_type = 'E_COMPILE_WARNING'; break;
+            case 256:   $e_type = 'E_USER_ERROR'; break;
+            case 512:   $e_type = 'E_USER_WARNING'; break;
+            case 1024:  $e_type = 'E_USER_NOTICE'; break;
+            case 2048:  $e_type = 'E_STRICT'; break;
+            case 4096:  $e_type = 'E_RECOVERABLE_ERROR'; break;
+            case 8192:  $e_type = 'E_DEPRECATED'; break;
+            case 16384: $e_type = 'E_USER_DEPRECATED'; break;
+            case 30719: $e_type = 'E_ALL'; break;
+            default:    $e_type = 'E_UNKNOWN'; break;
+        }
+        $this->updateStatus("phpError", $e_type, $errstr, $errfile, $errline);
     }
 
     public $names = array(
@@ -1803,7 +1821,7 @@ ENDP;
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
         foreach ($this->glob("$module_dir/*") as $file) {
-            if (isset($hook_files[$file])) {
+            if (in_array($file, $hook_files)) {
                 // logic hook files are OK
                 continue;
             }
@@ -1835,7 +1853,7 @@ ENDP;
 
         // now check custom/ for unknown files
         foreach ($this->glob("custom/$module_dir/*") as $file) {
-            if (isset($hook_files[$file])) {
+            if (in_array($file, $hook_files)) {
                 // logic hook files are OK
                 continue;
             }
@@ -1926,12 +1944,13 @@ ENDP;
      * @param array $fields List of fields to check
      * @param array $fieldDefs Vardefs
      * @param array $status Status array to store errors
+     * @param string $module Module name
      */
-    protected function checkFields($key, $fields, $fieldDefs, $custom = '')
+    protected function checkFields($key, $fields, $fieldDefs, $custom = '', $module)
     {
         foreach ($fields as $subField) {
             if (empty($fieldDefs[$subField])) {
-                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField);
+                $this->updateStatus('badVardefsSubfields' . $custom, $key, $subField, $module);
             }
         }
     }
@@ -1989,7 +2008,7 @@ ENDP;
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey", $key, $value['name']);
+                $this->updateStatus("badVardefsKey", $key, $value['name'], $module);
                 continue;
             }
 
@@ -2007,7 +2026,7 @@ ENDP;
 
             if ($key == 'team_name') {
                 if (empty($value['module'])) {
-                    $this->updateStatus("badVardefsRelate", $key);
+                    $this->updateStatus("badVardefsRelate", $key, $module);
                 }
                 // this field is really weird, let's leave it alone for now
                 continue;
@@ -2021,7 +2040,7 @@ ENDP;
                         $stockFields
                     ))  // and it is non-stock module or it is stock module but field is non-stock
             ) {
-                $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $key);
+                $this->updateStatus("vardefHtmlFunctionName" . $custom, $value['function']['name'], $module, $key);
             }
 
             if (!empty($value['type'])) {
@@ -2054,7 +2073,7 @@ ENDP;
                             $result = count_chars(implode('', $result), 3);
 
                             if ($result) {
-                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result);
+                                $this->updateStatus("badVardefsMultienum", $value['name'], $value['options'], $result, $module);
                             }
                         }
 
@@ -2062,7 +2081,7 @@ ENDP;
                     case 'link':
                         $seed->load_relationship($key);
                         if (empty($seed->$key)) {
-                            $this->updateStatus("badVardefsLink", $key);
+                            $this->updateStatus("badVardefsLink", $key, $module);
                         }
                         break;
                     case 'relate':
@@ -2070,12 +2089,12 @@ ENDP;
                             $lname = $value['link'];
                             if (empty($fieldDefs[$lname])) {
                                 ;
-                                $this->updateStatus("badVardefsKey", $key, $lname);
+                                $this->updateStatus("badVardefsKey", $key, $lname, $module);
                                 break;
                             }
                             $seed->load_relationship($lname);
                             if (empty($seed->$lname)) {
-                                $this->updateStatus("badVardefsRelate", $key);
+                                $this->updateStatus("badVardefsRelate", $key, $module);
                                 break;
                             }
                             $relatedModuleName = $seed->$lname->getRelatedModuleName();
@@ -2089,7 +2108,7 @@ ENDP;
                         }
                         if ((empty($value['link_type']) || $value['link_type'] != 'relationship_info') &&
                             empty($value['module'])) {
-                            $this->updateStatus("badVardefsRelate", $key);
+                            $this->updateStatus("badVardefsRelate", $key, $module);
                         }
                         break;
                 }
@@ -2098,11 +2117,11 @@ ENDP;
             if (empty($value['source']) || $value['source'] == 'db' || $value['source'] == 'custom_fields') {
                 // check fields
                 if (isset($value['fields'])) {
-                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom);
+                    $this->checkFields($key, $value['fields'], $fieldDefs, $custom, $module);
                 }
                 // check db_concat_fields
                 if (isset($value['db_concat_fields'])) {
-                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom);
+                    $this->checkFields($key, $value['db_concat_fields'], $fieldDefs, $custom, $module);
                 }
                 // check sort_on
                 if (!empty($value['sort_on'])) {
@@ -2111,7 +2130,7 @@ ENDP;
                     } else {
                         $sort = array($value['sort_on']);
                     }
-                    $this->checkFields($key, $sort, $fieldDefs, $custom);
+                    $this->checkFields($key, $sort, $fieldDefs, $custom, $module);
                 }
             }
         }

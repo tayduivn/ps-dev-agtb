@@ -34,12 +34,10 @@ ENDP;
 
     public function checkFiles($files)
     {
-        foreach ($files as $file) {
-            if (is_array($file)) {
-                $this->checkFiles($file);
+        foreach ($files as $file => $functions) {
+            if (empty($functions)) {
                 continue;
             }
-
             // check for any occurrence of the directories and flag them
             $fileContents = file_get_contents($file);
 
@@ -50,7 +48,9 @@ ENDP;
                 $fileContents = preg_replace("#{$this->sePattern}#i", '', $fileContents);
             }
 
-            if (preg_match_all('#([^_])\b(print_r|var_dump|exit|die)\b(.*?(,(.*?)\)?)?);#is', $fileContents, $matchAll, PREG_SET_ORDER)) {
+            $regExp = implode('|', $functions);
+
+            if (preg_match_all('#([^_])\b('. $regExp . ')\b(.*?(,(.*?)\)?)?);#is', $fileContents, $matchAll, PREG_SET_ORDER)) {
 
                 $changedContents = $fileContents;
                 $changedContentsFlag = false;
@@ -62,7 +62,7 @@ ENDP;
                     }
 
                     $pattern = $match[0];
-                    $replace = preg_replace('#([^_])\b(print_r|var_dump|exit|die)\b([^_])#is', '\\1sugar_upgrade_\\2\\3', $pattern);
+                    $replace = preg_replace('#([^_])\b(' . $regExp . ')\b([^_])#is', '\\1sugar_upgrade_\\2\\3', $pattern);
 
                     if (!empty($pattern) && !empty($replace)) {
                         $changedContents = preg_replace("#" . preg_quote($pattern, '#') . "#is", $replace, $changedContents);
@@ -84,54 +84,6 @@ ENDP;
         }
     }
 
-    /**
-     * Scan directory and build the list of PHP files it contains
-     * @param string $path
-     * @return array Files data
-     */
-    protected function getPhpFiles($path)
-    {
-        global $bwcModules;
-        $ds = explode('/', $path);
-
-        if (($ds[0] == 'custom') && ($ds[1] == 'modules') && in_array($ds[2], $bwcModules)) {
-            return array();
-        }
-
-        $data = array();
-        if(!is_dir($path)) {
-            return array();
-        }
-        $path = rtrim($path, "/") . "/";
-        $iter = new DirectoryIterator($path);
-        foreach ($iter as $item) {
-            if ($item->isDot()) {
-                continue;
-            }
-
-            $filename = $item->getFilename();
-            if(strpos($filename, ".suback.php") !== false) {
-                // we'll ignore .suback files, they are old upgrade backups
-                continue;
-            }
-
-            if ($item->isDir() && in_array($filename, $this->excludedScanDirectories)) {
-                continue;
-            } elseif ($item->isDir()) {
-                if(strtolower($filename) == 'disable' || strtolower($filename) == 'disabled') {
-                    // skip disable dirs
-                    continue;
-                }
-                $data = array_merge($data, $this->getPhpFiles($path . $filename . "/"));
-            } elseif ($item->getExtension() != 'php') {
-                continue;
-            } else {
-                $data[] = $path . $filename;
-            }
-        }
-        return $data;
-    }
-
     public function run()
     {
         // run only when upgrade version is less than 7.0.0
@@ -139,7 +91,25 @@ ENDP;
             return;
         }
 
-        $files = $this->getPhpFiles("custom/");
-        $this->checkFiles($files);
+        $healthCheck = array();
+        if (!empty($this->state['healthcheck'])) {
+            foreach ($this->state['healthcheck'] as $healthMeta) {
+                switch ($healthMeta['report']) {
+                    case 'foundDieExit' :
+                        $healthCheck[$healthMeta['params'][0]][] = 'exit';
+                        $healthCheck[$healthMeta['params'][0]][] = 'die';
+                        break;
+                    case 'foundPrintR' :
+                        $healthCheck[$healthMeta['params'][0]][] = 'print_r';
+                        break;
+                    case 'foundVarDump' :
+                        $healthCheck[$healthMeta['params'][0]][] = 'var_dump';
+                        break;
+                    // ignoring foundEcho foundPrint because we don't know how to fix them correctly
+                }
+            }
+        }
+
+        $this->checkFiles($healthCheck);
     }
 }

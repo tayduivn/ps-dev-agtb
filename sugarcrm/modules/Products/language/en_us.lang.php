@@ -23,6 +23,7 @@ $mod_strings = array(
     'LBL_LEAD_SOURCE' => 'Lead Source',
     'LBL_LIST_NAME' => 'Quoted Line Item',
     'LBL_LIST_MANUFACTURER' => 'Manufacturer',
+    'LBL_MANUFACTURERS' => 'Manufacturers',
     'LBL_LIST_LBL_MFT_PART_NUM' => 'Mft Num',
     'LBL_LIST_QUANTITY' => 'Quantity',
     'LBL_LIST_COST_PRICE' => 'Cost',

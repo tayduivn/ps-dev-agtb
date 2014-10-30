@@ -2158,26 +2158,14 @@ class SugarBean
     }
 
     protected function getTemplateNameForNotificationEmail() {
-        global $beanList;
-
-        $templateName = null;
-
-        if ($this->module_dir == "Cases") {
-            $templateName = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
-        } else {
-            $templateName = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
-        }
+        $templateName = BeanFactory::getObjectName($this->module_dir);
 
         if (!in_array('set_notification_body', get_class_methods($this))) {
             $templateName = "Default";
         }
 
-        if (!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
-            $templateName = $beanList[$this->module_dir].'Special';
-        }
-
-        if ($this->special_notification) {
-            $templateName = $beanList[$this->module_dir].'Special';
+        if (!empty($_SESSION["special_notification"]) || !empty($this->special_notification)) {
+            $templateName .= 'Special';
         }
 
         return $templateName;
@@ -3626,18 +3614,26 @@ class SugarBean
             }
 
             if ($is_valid) {
+
+                // Determine order by direction. Will be the same for multiple columns.
+                $order = isset($list_column[1]) ? $list_column[1] : '';
+
                 if (isset($field_map[$list_column_name])) {
-                    $columns = array();
-                    $order = array_slice($list_column, 1);
                     foreach ($field_map[$list_column_name] as $field) {
-                        $columns[] = array_merge(array($field), $order);
+                        $valid_elements[$field] = $field . ' ' .$order;
                     }
                 } else {
-                    $columns = array($list_column);
+                    $valid_elements[$list_column[0]] = implode(' ', $list_column);
                 }
 
-                foreach ($columns as $column) {
-                    $valid_elements[] = implode(' ', $column);
+                // Apply `ORDER BY` stability if not implied by db backend
+                if (!$this->db->supports('order_stability')) {
+                    if ($suppress_table_name) {
+                        $stableCol = 'id';
+                    } else {
+                        $stableCol = $bean_queried->getTableName() . '.id';
+                    }
+                    $valid_elements[$stableCol] = "{$stableCol} {$order}";
                 }
             }
         }
@@ -7776,5 +7772,31 @@ class SugarBean
         }
 
         return $fields;
+    }
+
+    /**
+     * Checks to see if a bean implements taggable
+     *
+     * @return boolean True if tags are enabled for this bean
+     */
+    public function isTaggable()
+    {
+        return $this->getTagField() !== null;
+    }
+
+    /**
+     * Gets the field_defs key for the tag field of a bean
+     *
+     * @return string
+     */
+    public function getTagField()
+    {
+        foreach ($this->field_defs as $name => $def) {
+            if (isset($def['type']) && $def['type'] === 'tag') {
+                return $name;
+            }
+        }
+
+        return null;
     }
 }

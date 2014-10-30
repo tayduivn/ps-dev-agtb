@@ -1028,7 +1028,7 @@ class ExtAPIDnb extends ExternalAPIBase
                 }
             }
         } else if (in_array($type, $this->contactModules)) {
-            $path = $this->commonJsonPaths[$module];
+            $path = !empty($this->commonJsonPaths[$module]) ? $this->commonJsonPaths[$module] : '';
             if ($module === 'contactsPage') {
                 $modifiedApiResponse = $this->checkAndMarkDuplicateLists($apiResponse, 'principalId', $type, 'dnb_principal_id');
                 return $modifiedApiResponse;

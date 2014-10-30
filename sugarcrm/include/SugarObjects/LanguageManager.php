@@ -122,16 +122,15 @@ class LanguageManager
 				LanguageManager::_clearCache($module_dir, $clean_lang);
 			}
 		} else {
-			$cache_dir = sugar_cached('modules/');
-			if(file_exists($cache_dir) && $dir = @opendir($cache_dir)) {
-				while(($entry = readdir($dir)) !== false) {
-					if ($entry == "." || $entry == "..") continue;
-						foreach($languages as $clean_lang) {
-							LanguageManager::_clearCache($entry, $clean_lang);
-						}
-				}
-				closedir($dir);
-			}
+            $cache_dir = sugar_cached('modules');
+            if (file_exists($cache_dir)) {
+                foreach (glob("{$cache_dir}/*", GLOB_ONLYDIR|GLOB_NOSORT) as $entry) {
+                    $module = basename($entry);
+                    foreach ($languages as $clean_lang) {
+                        LanguageManager::_clearCache($module, $clean_lang);
+                    }
+                }
+            }
 		}
 	}
 

@@ -31,7 +31,7 @@ class TagsRelatedModulesUtilities
                 $name = strtolower($module) . '_link';
                 $fields[$name] = array(
                     'name' => $name,
-                    'vname' => 'LBL_GENERIC_LINK',
+                    'vname' => $module,
                     'type' => 'link',
                     'relationship' => $relName,
                     'source' => 'non-db',
