@@ -1105,7 +1105,6 @@
                 } else {
                     ellipsisCellWidth = this._calculateEllipsifiedCellWidth($recordCells, $ellipsisCell);
                     this._setMaxWidthForEllipsifiedCell($ellipsisCell, ellipsisCellWidth);
-                    this._widenLastCell($recordCells);
                 }
             }
         }
@@ -1171,26 +1170,6 @@
             ellipsifiedCell.setMaxWidth(width);
         } else {
             $ellipsisCell.css({'max-width': width});
-        }
-    },
-
-    /**
-     * Widen the last cell to 100%.
-     * @param {jQuery} $cells
-     * @private
-     */
-    _widenLastCell: function($cells) {
-        var $cellToWiden;
-
-        _.each($cells, function(cell) {
-            var $cell = $(cell);
-            if ($cell.hasClass('record-cell') && (!$cell.hasClass('hide') || $cell.is(':visible'))) {
-                $cellToWiden = $cell;
-            }
-        });
-
-        if ($cellToWiden) {
-            $cellToWiden.css({'width': '100%'});
         }
     },
 
