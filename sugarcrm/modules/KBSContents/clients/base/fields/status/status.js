@@ -45,7 +45,7 @@
      */
     _render: function() {
         if (!this.model.has(this.name)) {
-            this.model.set(this.name, 'draft');
+            this.model.set(this.name, 'draft', {silent: true});
         }
 
         var status = this.model.get(this.name),

@@ -16,8 +16,7 @@ $viewdefs['KBSContents']['base']['filter']['default'] = array(
     'fields' => array(
         'name' => array(),
         'status' => array(),
-        'tags' => array(
-            'type' => 'tags',
+        'tag' => array(
             'vname' => 'LBL_TAGS',
         ),
         'language' => array(

@@ -53,11 +53,10 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'type' => 'status',
                 ),
                 array(
-                    'name' => 'tags',
+                    'name' => 'tag',
                     'label' => 'LBL_TAGS',
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'tags',
                     'sortable' => false,
                 ),
             ),
