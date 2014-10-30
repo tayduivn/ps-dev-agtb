@@ -89,4 +89,5 @@ $mod_strings = array (
     'LBL_TEMPATE_LOAD_MESSAGE' => 'The template will overwrite all contents.' .
         ' Are you sure you want to use this template?',
     'LNK_IMPORT_KBSCONTENTS' => 'Import Articles',
+    'LBL_DELETE_CONFIRMATION_LANGUAGE' => 'All documents with this language will be deleted! Are you sure you want to delete this language?',
 );
