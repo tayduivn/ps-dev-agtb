@@ -122,8 +122,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         	$email->uid = $_REQUEST['uid'];
         }
 
-        $email->type = 'out';
-        $email->status = 'sent';
+        if (!isset($_REQUEST['saveDraft'])) {
+            $email->type = 'out';
+            $email->status = 'sent';
+        }
         $sendResult = false;
         try {
             $sendResult = $email->email2Send($_REQUEST);
