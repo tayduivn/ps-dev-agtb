@@ -29,7 +29,6 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user']->getSystemUser();
         $GLOBALS['current_user'] = $this->api->user;
-
         $this->calendarEventsApi = new CalendarEventsApi();
     }
 
@@ -49,16 +48,13 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDeleteRecord_NotRecurringMeeting_CallsDeleteMethod()
     {
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('deleteRecord', 'deleteRecordAndRecurrences')
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecordAndRecurrences');
-
-        $this->calendarEventsApi = $calendarEventsApiMock;
 
         $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
         $mockMeeting->expects($this->any())
@@ -75,23 +71,20 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $mockMeeting->id,
         );
 
-        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
 
         BeanFactory::unregisterBean($mockMeeting);
     }
 
     public function testDeleteRecord_RecurringMeeting_CallsDeleterRecurrenceMethod()
     {
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('deleteRecord', 'deleteRecordAndRecurrences')
         );
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecordAndRecurrences');
-
-        $this->calendarEventsApi = $calendarEventsApiMock;
 
         $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
         $mockMeeting->expects($this->any())
@@ -109,7 +102,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'true',
         );
 
-        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
 
         BeanFactory::unregisterBean($mockMeeting);
     }
@@ -234,8 +227,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateRecord_NotRecurringMeeting_CallsCreateMethod()
     {
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('createRecord', 'generateRecurringCalendarEvents')
         );
         $calendarEventsApiMock->expects($this->once())
@@ -243,7 +235,6 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
         $args = array(
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
@@ -251,7 +242,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_minutes' => '30',
         );
 
-        $this->calendarEventsApi->createRecord($this->api, $args);
+        $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
     public function testCreateRecord_RecurringMeeting_CallsGenerateRecurringCalendarEventsMethod()
@@ -269,15 +260,13 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['duration_hours'] = 1;
         $args['duration_minutes'] = 30;
 
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('generateRecurringCalendarEvents')
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
-        $result = $this->calendarEventsApi->createBean($this->api, $args);
+        $result = $calendarEventsApiMock->createBean($this->api, $args);
         $this->meetingIds[] = $result->id;
     }
 
@@ -301,12 +290,14 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['duration_hours'] = 1;
         $args['duration_minutes'] = 30;
 
-        $GLOBALS['calendarEvents'] = new CalendarEventsApiTest_CalendarEvents();
-        $result = $this->calendarEventsApi->createBean($this->api, $args);
+        $calendarEvents = new CalendarEventsApiTest_CalendarEvents();
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(array('getCalendarEvents'), $calendarEvents);
+
+        $result = $calendarEventsApiMock->createBean($this->api, $args);
 
         $this->assertFalse(empty($result->id), "createRecord API Failed to Create Meeting");
 
-        $eventsCreated = $GLOBALS['calendarEvents']->getEventsCreated();
+        $eventsCreated = $calendarEvents->getEventsCreated();
         $this->meetingIds = array_merge($this->meetingIds, array_keys($eventsCreated));
 
         $this->assertEquals($args['repeat_count'], count($eventsCreated) + 1, "Unexpected Number of Recurring Meetings");
@@ -323,18 +314,18 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'true',
         );
 
-        $this->mockCalendarEventsIsEventRecurring(true);
+        $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecurringCalendarEvent');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_RecurringAndNotAllRecurrences_UpdatesSingleEventNoRecurrenceFields()
@@ -354,19 +345,19 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'repeat_count' => 'foo5',
         ));
 
-        $this->mockCalendarEventsIsEventRecurring(true);
+        $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord')
             ->with($this->api, $argsExpected);
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecurringCalendarEvent');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_NonRecurring_UpdatesSingleEvent()
@@ -379,20 +370,20 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $meeting->id,
         );
 
-        $this->mockCalendarEventsIsEventRecurring(false);
+        $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecurringCalendarEvent');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_NonRecurringChangedToRecurring_UpdatesEventGeneratesRecurring()
@@ -405,24 +396,24 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $meeting->id,
         );
 
-        $this->mockCalendarEventsIsEventRecurring(false);
+        $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
         //second time called will return true
-        $GLOBALS['calendarEvents']->expects($this->at(1))
+        $calendarEvents->expects($this->at(1))
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecurringCalendarEvent');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateRecurringCalendarEvent_RecurringAfterUpdate_SavesRecurringEvents()
@@ -439,27 +430,26 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_minutes' => '30',
         );
 
-        $this->calendarEventsApi = $this->getMock(
-            'CalendarEventsApi',
-            array('updateRecord', 'getLoadedAndFormattedBean')
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents')
         );
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->once())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'getLoadedAndFormattedBean'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('getLoadedAndFormattedBean')
             ->will($this->returnValue(array()));
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
-            array('isEventRecurring', 'saveRecurringEvents')
-        );
-        $GLOBALS['calendarEvents']->expects($this->any())
-            ->method('isEventRecurring')
-            ->will($this->returnValue(true));
-        $GLOBALS['calendarEvents']->expects($this->once())
-            ->method('saveRecurringEvents');
-
-        $this->calendarEventsApi->updateRecurringCalendarEvent($meeting, $this->api, $args);
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
     }
 
     public function testUpdateRecurringCalendarEvent_NonRecurringAfterUpdate_RemovesRecurringEvents()
@@ -476,29 +466,29 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'duration_minutes' => '30',
         );
 
-        $this->calendarEventsApi = $this->getMock(
-            'CalendarEventsApi',
-            array('updateRecord', 'deleteRecurrences', 'getLoadedAndFormattedBean')
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents')
         );
-        $this->calendarEventsApi->expects($this->once())
+
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(false));
+        $calendarEvents->expects($this->never())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'deleteRecurrences', 'getLoadedAndFormattedBean'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecurrences');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('getLoadedAndFormattedBean')
             ->will($this->returnValue(array()));
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
-            array('isEventRecurring', 'saveRecurringEvents')
-        );
-        $GLOBALS['calendarEvents']->expects($this->any())
-            ->method('isEventRecurring')
-            ->will($this->returnValue(false));
-        $GLOBALS['calendarEvents']->expects($this->never())
-            ->method('saveRecurringEvents');
-
-        $this->calendarEventsApi->updateRecurringCalendarEvent($meeting, $this->api, $args);
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
     }
 
     /**
@@ -518,14 +508,13 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
              'duration_minutes' => '30',
          );
 
-         $this->calendarEventsApi = $this->getMock(
-             'CalendarEventsApi',
+         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
              array('updateRecord')
          );
-         $this->calendarEventsApi->expects($this->never())
+         $calendarEventsApiMock->expects($this->never())
              ->method('updateRecord');
 
-         $this->calendarEventsApi->updateRecurringCalendarEvent(
+         $calendarEventsApiMock->updateRecurringCalendarEvent(
              $meeting,
              $this->api,
              $args
@@ -534,22 +523,21 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateRecord_CreateRecordFails_rebuildFBCacheNotInvoked()
     {
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('createRecord',)
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('createRecord')
             ->will($this->returnValue(array()));
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
         $args = array(
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createRecord($this->api, $args);
+
+        $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
     public function testCreateRecord_NotRecurring_rebuildFBCacheInvoked()
@@ -559,19 +547,19 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->meetingIds[] = $meeting->id;
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->any())
+
+        $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
             ->will($this->returnValue(false));
-        $GLOBALS['calendarEvents']->expects($this->once())
+        $calendarEvents->expects($this->once())
             ->method('rebuildFreeBusyCache');
 
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
-            array('loadBean', 'generateRecurringCalendarEvents')
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('loadBean', 'generateRecurringCalendarEvents'),
+            $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('loadBean')
@@ -579,14 +567,13 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
         $args = array(
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createRecord($this->api, $args);
+        $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
     public function testCreateRecord_Recurring_rebuildFBCacheNotInvoked()
@@ -596,19 +583,19 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->meetingIds[] = $meeting->id;
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->any())
+
+        $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
-        $GLOBALS['calendarEvents']->expects($this->never())
+        $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
-            array('loadBean', 'generateRecurringCalendarEvents')
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('loadBean', 'generateRecurringCalendarEvents'),
+            $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('loadBean')
@@ -616,14 +603,13 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
         $args = array(
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
         );
-        $this->calendarEventsApi->createRecord($this->api, $args);
+        $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
     /**
@@ -657,25 +643,25 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'true',
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->any())
+
+        $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
-        $GLOBALS['calendarEvents']->expects($this->never())
+        $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecurringCalendarEvent')
             ->will($this->returnValue(array()));
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_isRecurringAndNotAllRecurrences_rebuildFBCacheInvoked()
@@ -689,25 +675,25 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'false',
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->any())
+
+        $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
-        $GLOBALS['calendarEvents']->expects($this->once())
+        $calendarEvents->expects($this->once())
             ->method('rebuildFreeBusyCache');
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord')
             ->will($this->returnValue(array()));
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_NonRecurringChangedToRecurring_rebuildFBCacheNotInvoked()
@@ -720,34 +706,33 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $meeting->id,
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
 
         //first time called will return false
-        $GLOBALS['calendarEvents']->expects($this->at(0))
+        $calendarEvents->expects($this->at(0))
             ->method('isEventRecurring')
             ->will($this->returnValue(false));
         //second time called will return true
-        $GLOBALS['calendarEvents']->expects($this->at(1))
+        $calendarEvents->expects($this->at(1))
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
-        $GLOBALS['calendarEvents']->expects($this->never())
+        $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->any())
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->any())
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecurringCalendarEvent');
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_NonRecurring_rebuildFBCacheInvoked()
@@ -760,30 +745,29 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $meeting->id,
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring', 'rebuildFreeBusyCache')
         );
 
         //first time called will return false
-        $GLOBALS['calendarEvents']->expects($this->exactly(2))
+        $calendarEvents->expects($this->exactly(2))
             ->method('isEventRecurring')
             ->will($this->returnValue(false));
-        $GLOBALS['calendarEvents']->expects($this->once())
+        $calendarEvents->expects($this->once())
             ->method('rebuildFreeBusyCache');
 
-        $this->mockCalendarEventsApiForUpdate();
-        $this->calendarEventsApi->expects($this->exactly(2))
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApiUpdate($calendarEvents);
+        $calendarEventsApiMock->expects($this->exactly(2))
             ->method('loadBean')
             ->will($this->returnValue($meeting));
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('updateRecurringCalendarEvent');
-        $this->calendarEventsApi->expects($this->never())
+        $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
     public function testDeleteRecord_SingleOccurrence_rebuildFBCacheInvoked()
@@ -797,24 +781,23 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'false',
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->once())
+
+        $calendarEvents->expects($this->once())
             ->method('rebuildFreeBusyCache');
 
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
-            array('deleteRecord', 'deleteRecordAndRecurrences')
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('deleteRecord', 'deleteRecordAndRecurrences'),
+            $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecordAndRecurrences');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
-        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
     }
 
     public function testDeleteRecord_AllOccurrences_rebuildFBCacheInvoked()
@@ -828,24 +811,23 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'all_recurrences' => 'true',
         );
 
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('rebuildFreeBusyCache')
         );
-        $GLOBALS['calendarEvents']->expects($this->once())
+
+        $calendarEvents->expects($this->once())
             ->method('rebuildFreeBusyCache');
 
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
-            array('deleteRecord', 'deleteRecordAndRecurrences')
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('deleteRecord', 'deleteRecordAndRecurrences'),
+            $calendarEvents
         );
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecordAndRecurrences');
 
-        $this->calendarEventsApi = $calendarEventsApiMock;
-        $this->calendarEventsApi->deleteCalendarEvent($this->api, $args);
+        $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
     }
 
     public function testBuildSearchParams_ConvertsRestArgsToLegacyParams()
@@ -893,7 +875,6 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testTransformInvitees_ConvertsLegacyResultsToUnifiedSearchForm()
     {
-        $this->calendarEventsApi = new CalendarEventsApiTest_CalendarEventsApi();
         $args = array(
             'q' => 'bar',
             'fields' => 'first_name,last_name,email,account_name',
@@ -912,11 +893,11 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $this->calendarEventsApi = $this->getMock(
+        $calendarEventsApiMock = $this->getMock(
             'CalendarEventsApiTest_CalendarEventsApi',
             array('formatBean')
         );
-        $this->calendarEventsApi->expects($this->once())
+        $calendarEventsApiMock->expects($this->once())
             ->method('formatBean')
             ->will($this->returnValue($formattedBean));
 
@@ -949,7 +930,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedInvitees,
-            $this->calendarEventsApi->publicTransformInvitees($this->api, $args, $searchResults),
+            $calendarEventsApiMock->publicTransformInvitees($this->api, $args, $searchResults),
             'Legacy search results should be transformed correctly into unified search format'
         );
     }
@@ -1030,29 +1011,62 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         return $timedate->asIso($timedate->fromDB($dbDateTime));
     }
 
-    private function mockCalendarEventsApiForUpdate()
+    private function getMockForCalendarEventsApiUpdate(CalendarEvents $calendarEvents)
     {
-        $calendarEventsApiMock = $this->getMock(
-            'CalendarEventsApi',
+        return $this->getMockForCalendarEventsApi(
             array(
                 'updateRecord',
                 'updateRecurringCalendarEvent',
                 'loadBean',
                 'generateRecurringCalendarEvents',
-            )
+            ),
+            $calendarEvents
         );
-        $this->calendarEventsApi = $calendarEventsApiMock;
     }
 
-    private function mockCalendarEventsIsEventRecurring($isRecurring)
+    private function getMockForCalendarEventsApi(array $methodsArray = array(), CalendarEvents $calendarEvents = null)
     {
-        $GLOBALS['calendarEvents'] = $this->getMock(
-            'CalendarEvents',
+        if (empty($calendarEvents)) {
+            $calendarEvents = new CalendarEvents();
+        }
+
+        if (!in_array('getCalendarEvents', $methodsArray)) {
+            $methodsArray[] = 'getCalendarEvents';
+        }
+
+        $calendarEventsApiMock = $this->getMock(
+            'CalendarEventsApi',
+            $methodsArray
+        );
+
+        $calendarEventsApiMock->expects($this->any())
+            ->method('getCalendarEvents')
+            ->will($this->returnValue($calendarEvents));
+
+        return $calendarEventsApiMock;
+    }
+
+    private function getMockForCalendarEventsIsEventRecurring($isRecurring)
+    {
+        $calendarEvents = $this->getMockForCalendarEvents(
             array('isEventRecurring')
         );
-        $GLOBALS['calendarEvents']->expects($this->at(0))
+
+        $calendarEvents->expects($this->at(0))
             ->method('isEventRecurring')
             ->will($this->returnValue($isRecurring));
+
+        return $calendarEvents;
+    }
+
+    private function getMockForCalendarEvents($methodsArray = array())
+    {
+        $calendarEvents = $this->getMock(
+            'CalendarEvents',
+            $methodsArray
+        );
+
+        return $calendarEvents;
     }
 }
 

@@ -10,17 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @var CalendarEvents
+ */
+
 class CalendarEvents
 {
     /**
      * Schedulable calendar events (modules) supported
+     * @var array
      */
-    public static $calendarEventModules = array(
+    public $calendarEventModules = array(
         'Meetings',
         'Calls',
         'Tasks',
     );
-
     /**
      * @param SugarBean $bean
      * @return bool
@@ -28,7 +32,7 @@ class CalendarEvents
      */
     public function isEventRecurring(SugarBean $bean)
     {
-        if (!in_array($bean->module_name, static::$calendarEventModules)) {
+        if (!in_array($bean->module_name, $this->calendarEventModules)) {
             $logmsg = 'Recurring Calendar Event - Module Unexpected: ' . $bean->module_name;
             $GLOBALS['log']->error($logmsg);
             throw new SugarException('LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED', array($bean->module_name));
