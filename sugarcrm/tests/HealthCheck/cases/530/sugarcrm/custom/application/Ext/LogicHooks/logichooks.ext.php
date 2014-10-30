@@ -9,3 +9,5 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+$hook_array['after_ui_footer'][] = array(1, 'fake', 'custom/missingFile.php', 'fake', 'fake');

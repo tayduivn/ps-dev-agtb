@@ -335,6 +335,10 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_PHP_Error_in_File/'
         ),
+        530 => array(
+            'report' => 'missingCustomFile',
+            'bucket' => self::MANUAL,
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(
