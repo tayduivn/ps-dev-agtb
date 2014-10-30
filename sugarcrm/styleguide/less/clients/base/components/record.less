@@ -940,9 +940,15 @@
   }
 }
 
+/* Invitees/Participants Field Styling */
+
 .participants-schedule {
   display: table;
-  width: 100%;
+  width: 101.75%;
+  margin-left: -9px;
+  &.new {
+    width: 102.25%;
+  }
   .row {
     display: table-row;
     .cell {
@@ -995,6 +1001,7 @@
           border-width: 1px 0 1px 1px;
           border-radius: 3px 0 0 3px;
           padding: 0 5px;
+          background-color: white;
           .avatar {
             min-width: 20px;
             display: table-cell;
@@ -1030,6 +1037,7 @@
           border-width: 1px 1px 1px 0;
           border-radius: 0 3px 3px 0;
           position: relative;
+          background-color: white;
           &.unavailable, &.loading {
             .overlay {
               position: absolute;
@@ -1092,10 +1100,11 @@
         }
         &.buttons {
           border: none;
-          width: 80px;
+          width: 1px;
           .btn-toolbar {
             margin: 0;
             padding-left: 10px;
+            white-space: nowrap;
           }
         }
       }
@@ -1108,24 +1117,29 @@
   }
 }
 .participants-form {
-  display: table;
+  display: table-row;
   width: 100%;
+  margin-left: -9px;
   .cell {
     display: table-cell;
     vertical-align: middle;
     &.select {
       .field {
-        margin-left: 2px;
+        margin-left: -197px;
         > .select2-container {
           margin: 0;
         }
       }
     }
     &.buttons {
-      width: 82px;
+      width: 1px;
       .btn-toolbar {
         margin: 0;
         padding: 0;
+        white-space: nowrap;
+        .btn-group + .btn-group {
+          margin-left: 9px;
+        }
       }
     }
   }
