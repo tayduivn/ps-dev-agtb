@@ -80,6 +80,7 @@ $mod_strings = array(
     'LBL_SCAN_527_LOG' => "Table name in bean %s does not match the table attribute in the %s/vardefs.php",
     'LBL_SCAN_528_LOG' => 'Field %s of %s module has incorrect display_default value',
     'LBL_SCAN_529_LOG' => '%s: %s in file %s on line %s',
+    'LBL_SCAN_530_LOG' => 'Missing custom file: %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -176,6 +177,7 @@ $mod_strings = array(
     'LBL_SCAN_526_TITLE' => "Bad vardefs - multienum field '%s' with options list '%s' keys contain incompatible characters - '%s' in module %s",
     'LBL_SCAN_528_TITLE' => 'Field %s of %s module has incorrect display_default value',
     'LBL_SCAN_529_TITLE' => '%s: %s in file %s on line %s',
+    'LBL_SCAN_530_TITLE' => 'Missing custom file: %s',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
@@ -254,6 +256,7 @@ $mod_strings = array(
     'LBL_SCAN_526_DESCR' => "This List contains Item Name values that prevent the upgrade.",
     'LBL_SCAN_528_DESCR' => 'Date/Datetime/Time field with incorrect display_default value like -none-',
     'LBL_SCAN_529_DESCR' => 'PHP errors may be triggered by the interpreter when incorrect php-syntax or some run-time code-problems are found.',
+    'LBL_SCAN_530_DESCR' => 'One of the custom files is not present in the instance, but is used by the custom code.',
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',

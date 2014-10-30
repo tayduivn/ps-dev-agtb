@@ -1150,9 +1150,14 @@ class HealthCheckScanner
         global $dictionary;
         include "modules/$module/vardefs.php";
         // load only original vardefs
-        $original_vardefs = $GLOBALS['dictionary'][$object];
+        if (!empty($GLOBALS['dictionary'][$object])) {
+            $original_vardefs = $GLOBALS['dictionary'][$object];
+        } else {
+            return;
+        }
         // return vardefs back to old state
         $GLOBALS['dictionary'][$object] = $full_vardefs;
+        $original_vardefs['fields'] = (is_array($original_vardefs['fields'])) ? $original_vardefs['fields'] : array();
         foreach ($original_vardefs['fields'] as $name => $def) {
             if (empty($def['type']) || empty($def['name'])) {
                 continue;
@@ -1438,8 +1443,13 @@ class HealthCheckScanner
 
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
-                $this->log("Checking module hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], $status);
+                $hookDescription = (!empty($hook_data[1])) ? $hook_data[1] : '';
+                $this->log("Checking module hook $hookname: $hookDescription");
+                if (empty($hook_data[2])) {
+                    $this->updateStatus("badHookFile", $hookname, '');
+                } else {
+                    $this->checkFileForOutput($hook_data[2], $status);
+                }
             }
         }
     }
@@ -1601,9 +1611,10 @@ class HealthCheckScanner
         }
         foreach ($hook_array as $hooks) {
             foreach ($hooks as $hook) {
-                if (!file_exists($hook[2])) {
+                $hookFileLocation = (!empty($hook[2])) ? $hook[2] : '';
+                if (!file_exists($hookFileLocation)) {
                     // putting it as custom since LogicHook checks file_exists
-                    $this->updateStatus("badHookFile", $hookfile, $hook[2]);
+                    $this->updateStatus("badHookFile", $hookfile, $hookFileLocation);
                 }
             }
         }
@@ -1618,6 +1629,10 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile, $status)
     {
+        if (!file_exists($phpfile)) {
+            $this->updateStatus("missingCustomFile", $phpfile);
+            return;
+        }
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
@@ -1812,7 +1827,11 @@ ENDP;
         $hook_files_list = array();
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
-                $hook_files_list[] = $hook_data[2];
+                if (empty($hook_data[2])) {
+                    $this->updateStatus("badHookFile", $hookname, '');
+                } else {
+                    $hook_files_list[] = $hook_data[2];
+                }
             }
         }
         $hook_files = array_unique($hook_files_list);
@@ -2001,14 +2020,16 @@ ENDP;
 
         // get names of 'stock' fields, that are defined in original vardefs.php
         $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
-        $stockFields = array_keys($stockFields[$seed->object_name]['fields']);
+        $stockFields = (!empty($stockFields[$seed->object_name]) && is_array($stockFields[$seed->object_name]['fields'])) ?
+            array_keys($stockFields[$seed->object_name]['fields']) : array();
 
         foreach ($fieldDefs as $key => $value) {
             if (!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey", $key, $value['name'], $module);
+                $nameValue = (!empty($value['name'])) ? $value['name'] : '';
+                $this->updateStatus("badVardefsKey", $key, $nameValue, $module);
                 continue;
             }
 
