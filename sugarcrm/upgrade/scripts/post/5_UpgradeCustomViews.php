@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- * Adds default order for visible modules.
- */
-class SugarUpgradeUpgradeCustomQuickCreate extends UpgradeScript
+class SugarUpgradeUpgradeCustomViews extends UpgradeScript
 {
     public $order = 5000;
     public $type = self::UPGRADE_CUSTOM;
@@ -22,9 +19,22 @@ class SugarUpgradeUpgradeCustomQuickCreate extends UpgradeScript
     public function run()
     {
         // Only run when coming from a version lower than 7.2.
-        if (version_compare($this->from_version, '7.2', '>=')) {
-            return;
+        if (version_compare($this->from_version, '7.2', '<')) {
+            $this->fixQuickCreateOrder();
         }
+
+        // Only run when coming from a version lower than 7.6.
+        if (version_compare($this->from_version, '7.6', '<')) {
+            $this->addStickyResizableColumnsFlag('recordlist');
+            $this->addStickyResizableColumnsFlag('history-summary');
+        }
+    }
+
+    /**
+     * Fixes quickcreate modules order to be the same as the Enabled Modules
+     * list.
+     */
+    private function fixQuickCreateOrder() {
 
         global $moduleList;
         $enabledModules = array();
@@ -55,6 +65,37 @@ class SugarUpgradeUpgradeCustomQuickCreate extends UpgradeScript
                 $customQuickCreateFile
             );
         }
+    }
 
+    /**
+     * Adds missing `sticky_resizable_columns` flag on custom list views.
+     *
+     * @param string $viewName The name of the view.
+     */
+    private function addStickyResizableColumnsFlag($viewName) {
+        $file = 'clients/base/' . $viewName . '/' . $viewName .'.php';
+        $customFile = 'custom/' . $file;
+        if (!file_exists($file) || !file_exists($customFile)) {
+            return;
+        }
+
+        require $customFile;
+        $customMeta = $viewdefs['base']['view'][$viewName];
+        if (isset($customMeta['sticky_resizable_columns'])) {
+            return;
+        }
+
+        require $file;
+        $defaultMeta = $viewdefs['base']['view'][$viewName];
+        if (!isset($defaultMeta['sticky_resizable_columns'])) {
+            return;
+        }
+
+        $customMeta['sticky_resizable_columns'] = $defaultMeta['sticky_resizable_columns'];
+        write_array_to_file(
+            "viewdefs['base']['view']['$viewName']",
+            $customMeta,
+            $customFile
+        );
     }
 }
