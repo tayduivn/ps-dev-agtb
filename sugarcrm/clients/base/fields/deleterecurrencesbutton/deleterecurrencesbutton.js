@@ -26,13 +26,16 @@
     },
 
     /**
-     * Checks whether the user has both the access to the model and that the calendar event is a recurring type.
      * @inheritdoc
-     * @returns {Boolean}
+     *
+     * Button should be hidden if meeting displayed is not recurring
      */
-    hasAccess: function() {
-        var acl = this._super('hasAccess');
-        return acl && !_.isEmpty(this.model.get('repeat_type'));
+    _render: function() {
+        if (_.isEmpty(this.model.get('repeat_type'))) {
+            this.hide();
+        } else {
+            this._super('_render');
+        }
     },
 
     /**
