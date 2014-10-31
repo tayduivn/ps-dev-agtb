@@ -81,7 +81,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->assigned_user_id = 1;
 
         $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
-        $helper->method('getInvitees')->will($this->returnValue(array()));
+        $helper->expects($this->any())->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
         $this->assertFalse($meeting->update_vcal, 'Should have been set to false');
@@ -106,7 +106,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array($meeting, 'contacts', array(), $contacts),
         );
         $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
-        $helper->method('getInvitees')->will($this->returnValueMap($map));
+        $helper->expects($this->any())->method('getInvitees')->will($this->returnValueMap($map));
 
         $helper->populateFromApi($meeting, array());
         $this->assertCount(
@@ -129,7 +129,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->assigned_user_id = create_guid();
 
         $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
-        $helper->method('getInvitees')->will($this->returnValue(array()));
+        $helper->expects($this->any())->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
         $this->assertCount(2, $meeting->users_arr, 'Should include both the assigned user and current user');
@@ -145,7 +145,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->assigned_user_id = create_guid();
 
         $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
-        $helper->method('getInvitees')->will($this->returnValue(array()));
+        $helper->expects($this->any())->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
         $this->assertCount(1, $meeting->users_arr, 'Should only contain the assigned user');
@@ -203,7 +203,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFormatForApi_MeetingIsRelatedToAContact_TheNameOfTheContactIsAddedToTheResponse()
     {
         $meeting = $this->getMock('Meeting', array('ACLAccess'));
-        $meeting->method('ACLAccess')->will($this->returnValue(true));
+        $meeting->expects($this->any())->method('ACLAccess')->will($this->returnValue(true));
         BeanFactory::setBeanClass('Meetings', get_class($meeting));
         $meeting->id = create_guid();
         BeanFactory::registerBean($meeting);
@@ -222,7 +222,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetInvitees_ReturnsCorrectDataForLink()
     {
         $meeting = $this->getMock('Meeting', array('load_relationship'));
-        $meeting->method('load_relationship')
+        $meeting->expects($this->any())->method('load_relationship')
             ->will($this->returnValue(false));
 
         BeanFactory::setBeanClass('Meetings', get_class($meeting));
