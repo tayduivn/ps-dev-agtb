@@ -52,10 +52,10 @@ class EqualExpression extends BooleanExpression
                 params = this.getParameters(),
                 a = params[0].evaluate(),
                 b = params[1].evaluate(),
-                hasBool = params[0] instanceof SUGAR.expressions.TrueExpression ||
-                    params[1] instanceof SUGAR.expressions.TrueExpression;
+                hasBool = params[0] instanceof SUGAR.expressions.BooleanExpression ||
+                    params[1] instanceof SUGAR.expressions.BooleanExpression;
 
-            if ( a == b  || (hasBool && SEE.isTruthy(a) && SEE.isTruthy(b))) {
+            if ( a == b  || (hasBool && ((SEE.isTruthy(a) && SEE.isTruthy(b)) || (!SEE.isTruthy(a) && !SEE.isTruthy(b))))) {
                return SEE.TRUE;
             }
             return SEE.FALSE;
