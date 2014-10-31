@@ -59,6 +59,7 @@ abstract class AbstractMetaDataImplementation
     MB_LISTVIEW                 => 'listViewDefs',
     MB_SIDECARLISTVIEW          => 'viewdefs',
     MB_SIDECARPOPUPVIEW         => 'viewdefs',
+    MB_SIDECARDUPECHECKVIEW     => 'viewdefs',
     MB_BASICSEARCH              => 'searchdefs',
     MB_ADVANCEDSEARCH           => 'searchdefs',
     MB_EDITVIEW                 => 'viewdefs',

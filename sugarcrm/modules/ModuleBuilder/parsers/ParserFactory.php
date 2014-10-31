@@ -167,8 +167,9 @@ class ParserFactory
 
                 return new DashletMetaDataParser($view, $moduleName, $packageName  );
             case MB_SIDECARPOPUPVIEW:
+            case MB_SIDECARDUPECHECKVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-                return new SidecarListLayoutMetaDataParser(MB_SIDECARPOPUPVIEW, $moduleName, $packageName, 'base');
+                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, 'base');
             case MB_POPUPLIST :
             case MB_POPUPSEARCH :
                 require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php';
