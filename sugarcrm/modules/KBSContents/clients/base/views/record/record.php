@@ -257,9 +257,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 ),
                 'category_name' => array(
                     'name' => 'category_name',
-                    'type' => 'nested-set',
-                    'config_provider' => 'KBSContents',
-                    'data_provider' => 'Categories',
                     'label' => 'LBL_TOPIC_NAME',
                 ),
                 'active_rev' => array(

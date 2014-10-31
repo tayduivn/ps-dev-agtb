@@ -396,6 +396,15 @@ class SugarBean
     protected static $loadedDefs = array();
 
     /**
+     * Field's type which are behavior like related.
+     * @var array
+     */
+    public static $relateFieldTypes = array(
+        'relate',
+        'nestedSet',
+    );
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
@@ -5468,8 +5477,7 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if($field['type'] == 'relate' && !empty($field['module']))
-            {
+            if (in_array($field['type'], static::$relateFieldTypes) && !empty($field['module'])) {
                 $name = $field['name'];
                 if(empty($this->$name))
                 {
