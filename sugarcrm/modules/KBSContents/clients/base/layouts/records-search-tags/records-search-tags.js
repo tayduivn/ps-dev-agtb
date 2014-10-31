@@ -31,7 +31,7 @@
 
         var filterDef = {
             filter: [{
-                tags: {
+                tag: {
                     $in: [{
                         id: false,
                         name: options.def.context.tag
