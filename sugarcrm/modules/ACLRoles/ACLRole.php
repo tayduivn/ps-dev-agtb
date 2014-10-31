@@ -73,8 +73,8 @@ function setAction($role_id, $action_id, $access){
  * @param GUID $user_id
  * @return a list of ACLRole objects
  */
-function getUserRoles($user_id, $getAsNameArray = true){
-
+public static function getUserRoles($user_id, $getAsNameArray = true)
+{
         //if we don't have it loaded then lets check against the db
         $additional_where = '';
         $query = "SELECT acl_roles.* ".
