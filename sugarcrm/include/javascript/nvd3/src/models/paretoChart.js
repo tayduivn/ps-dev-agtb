@@ -265,14 +265,14 @@ nv.models.paretoChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarWithLegend').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -394,12 +394,14 @@ nv.models.paretoChart = function () {
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .id('outline_' + chart.id());
       lines2
         .margin({top: 0, right: lOffset, bottom: 0, left: lOffset})
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .size(function(){ return Math.pow(6,2) * Math.PI; })
         .id('foreground_' + chart.id());
       linesWrap1

@@ -4200,7 +4200,7 @@ nv.models.funnelChart = function() {
 
       yAxisWrap.selectAll('.tick.major text')
         .style('font-size', innerWidth < 500 ? '11px' : '15px')
-        .html(fmtAxisLabel);
+        .each(fmtAxisLabel);
 
 
       // Build array of tick label dimensions
@@ -4259,7 +4259,7 @@ nv.models.funnelChart = function() {
               y = t.textOffset;
           return y + 'px';
         })
-        .html(fmtAxisLabel);
+        .each(fmtAxisLabel);
 
       // Set leaders
       yAxisWrap.selectAll('.tick.major line')
@@ -4283,7 +4283,7 @@ nv.models.funnelChart = function() {
             var t = tickDimensions[i],
                 h = t.lineOffset,
                 w = t.widthOffset;
-            return [[0,h], [w, h], [w + h / 2, 0]];
+            return '0,' + h + ' ' + w + ',' + h + ' ' + (w + h / 2) + ',0';
           })
           .style('opacity', function(d, i) {
             var t = tickDimensions[i];
@@ -4357,27 +4357,35 @@ nv.models.funnelChart = function() {
       }
 
       function fmtAxisLabel(d, i) {
-        var data, tick;
+        var data, tick, node, count;
+
+        node = d3.select(this);
+        node.text('');
 
         if (!i) {
-          return '';
+          return;
         }
-
         if (tickDimensions) {
           tick = tickDimensions[i];
           if (tick.thickness > tick.height) {
-            return '';
+            return;
           }
         }
 
         data = funnelData[i - 1];
 
-        var count = isNaN(data.count) ? '' : ' (' + data.count + ')',
-            left = tickDimensions ? tickDimensions[i].width / 2 : 0,
-            label =  '<tspan x="0" style="font-size:11px">' + data.key + count + '</tspan>';
-            label += '<tspan x="0" dy="1em" style="font-size:15px">' + funnel.fmtValueLabel()(data.values[0]) + '</tspan>';
+        count = isNaN(data.count) ? '' : ' (' + data.count + ')';
 
-        return label;
+        node.append('tspan')
+          .attr('x', 0)
+          .style('font-size', '11px')
+          .text(data.key + count);
+
+        node.append('tspan')
+          .attr('x', 0)
+          .attr('dy', '1em')
+          .style('font-size', '15px')
+          .text(funnel.fmtValueLabel()(data.values[0]));
       }
 
       function resetScale(scale, data) {
@@ -5918,14 +5926,14 @@ nv.models.lineChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-lineChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-lineChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -6215,7 +6223,7 @@ nv.models.lineChart = function () {
   chart.yAxis = yAxis;
 
   d3.rebind(chart, lines, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'delay', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, lines, 'defined', 'isArea', 'interpolate', 'size', 'clipVoronoi', 'interactive');
+  d3.rebind(chart, lines, 'defined', 'isArea', 'interpolate', 'size', 'clipVoronoi', 'useVoronoi', 'interactive');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
   chart.colorData = function (_) {
@@ -8992,14 +9000,14 @@ nv.models.paretoChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarWithLegend').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -9121,12 +9129,14 @@ nv.models.paretoChart = function () {
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .id('outline_' + chart.id());
       lines2
         .margin({top: 0, right: lOffset, bottom: 0, left: lOffset})
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .size(function(){ return Math.pow(6,2) * Math.PI; })
         .id('foreground_' + chart.id());
       linesWrap1
