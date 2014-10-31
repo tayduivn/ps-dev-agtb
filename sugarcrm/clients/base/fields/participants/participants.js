@@ -110,7 +110,10 @@
      */
     bindDataChange: function() {
         this.model.on('change:' + this.name, this.render, this);
-        this.model.on('change:date_start', this.renderTimelineInfo, this);
+        this.model.on('change:date_start', function() {
+            this.clearFreeBusyInformationCache();
+            this.renderTimelineInfo();
+        }, this);
         this.model.on('change:date_end', this.markStartAndEnd, this);
         this.model.on('sync:' + this.name, this.hideShowMoreButton, this);
     },
@@ -279,6 +282,7 @@
     fetchFreeBusyInformation: function() {
         var self = this,
             requests = [],
+            startAndEndDates = this.getStartAndEndDates(),
             participants = this.getFieldValue();
 
         participants.each(function(participant) {
@@ -293,7 +297,10 @@
                 if (freeBusyFromCache) {
                     self.fillInFreeBusyInformation(freeBusyFromCache);
                 } else {
-                    url = app.api.buildURL(moduleName, 'freebusy', {id: id});
+                    url = app.api.buildURL(moduleName, 'freebusy', {id: id}, {
+                        start: startAndEndDates.timelineStart.formatServer(),
+                        end: startAndEndDates.timelineEnd.formatServer()
+                    });
                     requests.push({
                         url: url.substring(4) //need to remove "rest" from the URL to be compatible with the bulk API
                     });
@@ -474,6 +481,13 @@
             module: moduleName,
             id: id
         });
+    },
+
+    /**
+     * Clear free/busy data cache.
+     */
+    clearFreeBusyInformationCache: function() {
+        this._freeBusyCache = [];
     },
 
     /**

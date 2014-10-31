@@ -25,4 +25,10 @@ class ModuleInstallerTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($this->anything(), 'foo', 'bar', 'baz');
         $minst->merge_files('foo', 'bar', 'baz', false);
     }
+
+    public function testModuleDirs()
+    {
+        $modules = ModuleInstaller::getModuleDirs();
+        $this->assertContains("ActivityStream/Activities", $modules, "ActivityStream/Activities not found!");
+    }
 }

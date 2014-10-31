@@ -72,7 +72,6 @@ describe('View.Fields.Base.ParticipantsField', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'timeline-header.partial');
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'search-result.partial');
-        SugarTest.loadComponent('base', 'field', 'participants');
         SugarTest.declareData('base', module, true, false);
         SugarTest.loadPlugin('EllipsisInline');
         SugarTest.loadPlugin('VirtualCollection');
@@ -541,11 +540,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
             field.render();
 
-            expect(callBulkApiSpy.args[0][0]).toEqual([{
-                url: app.api.buildURL('Users', 'freebusy', {id: '1'}).substring(4)
-            }, {
-                url: app.api.buildURL('Users', 'freebusy', {id: '2'}).substring(4)
-            }]);
+            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/1/freebusy');
+            expect(callBulkApiSpy.args[0][0][1].url).toContain('rest/v10/Users/2/freebusy');
         });
 
         it('should not fetch information for a user if free/busy information has been cached for that user', function() {
@@ -558,9 +554,23 @@ describe('View.Fields.Base.ParticipantsField', function() {
             });
             field.render();
 
-            expect(callBulkApiSpy.args[0][0]).toEqual([{
-                url: app.api.buildURL('Users', 'freebusy', {id: '2'}).substring(4)
-            }]);
+            expect(_.size(callBulkApiSpy.args[0][0])).toBe(1);
+            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/2/freebusy');
+        });
+
+        it('should fetch free busy information if date_start has changed', function() {
+            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+
+            field.cacheFreeBusyInformation({module: 'Users', id: '1', freebusy: []});
+            field.cacheFreeBusyInformation({module: 'Users', id: '2', freebusy: []});
+            field.bindDataChange();
+            field.render();
+
+            expect(_.size(callBulkApiSpy.args[0][0])).toBe(0);
+
+            field.model.set('date_start', '2014-08-27T08:00:00');
+
+            expect(_.size(callBulkApiSpy.args[1][0])).toBe(2);
         });
 
         it('should mark busy indicators on timeslots that are taken up by other meetings', function() {

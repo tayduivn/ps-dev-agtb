@@ -80,6 +80,11 @@ function create_cache_directory($file)
     return $dir . '/'. $paths[sizeof($paths) - 1];
 }
 
+/**
+ * @deprecated
+ * Use ModuleInstaller::getModuleDirs
+ * @return string
+ */
 function get_module_dir_list()
 {
 	$modules = array();
@@ -329,7 +334,7 @@ function sugar_rename( $old_filename, $new_filename){
 	else {
 		$success = rename($old_filename, $new_filename);
 	}
-    
+
     if ($success) {
         SugarAutoLoader::addToMap($new_filename);
     }
