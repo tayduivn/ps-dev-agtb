@@ -811,7 +811,7 @@ class OracleManager extends DBManager
 
     protected function isNullable($vardef)
     {
-        if(!empty($vardef['type']) && $this->isTextType($vardef['type'])) {
+        if(!empty($vardef['type']) && $this->isTextType($this->getFieldType($vardef))) {
             return false;
         }
 		return parent::isNullable($vardef);
