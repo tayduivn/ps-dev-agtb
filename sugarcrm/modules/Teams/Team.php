@@ -263,8 +263,8 @@ class Team extends SugarBean
 		$this->db->query($query,true,"Error deleting memberships while deleting team: ");
 
 		// Update teams and set deleted = 1
-		$query = "UPDATE teams SET deleted = 1 WHERE id='{$this->id}'";
-		$this->db->query($query,true,"Error deleting team: ");
+		$this->deleted = 1;
+		$this->save();
 
 		require_once('modules/Teams/TeamSetManager.php');
 		TeamSetManager::flushBackendCache();
