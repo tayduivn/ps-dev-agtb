@@ -259,10 +259,6 @@ $(window).bind("load", function () {
            $('#uploadForm').submit();
         });
 
-        $('a[name="export_button"]').on('click', function() {
-            $('#exportForm').submit();
-        });
-
         $('input[type="file"]').on('change', function() {
             var $this = $(this),
                 text = ($this.val().split('\\').pop() || 'No file chosen...');
@@ -404,11 +400,6 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <form id="exportForm" class="invisible">
-                <input type="hidden" name="action" value="exportlog">
-                <input type="hidden" name="token" value="<?php echo $token ?>">
-            </form>
-            <a class="btn btn-invisible" href="javascript:void(0);" name="export_button">Export Log</a>
             <a class="btn btn-primary disabled" href="index.php" data-action="gohome">Go to Home Page</a>
           </span>
         </div>

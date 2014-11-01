@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,7 +15,7 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $files_dir = 'modules/UpgradeWizard/';
 } else {
     session_start();
-    if (!empty($_SESSION['upgrade_dir']) && is_dir($_SESSION['upgrade_dir'])) {
+    if(!empty($_SESSION['upgrade_dir'])) {
         $files_dir = $_SESSION['upgrade_dir'];
     } else {
         $files_dir = 'modules/UpgradeWizard/';
