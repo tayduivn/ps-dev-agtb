@@ -164,11 +164,6 @@ class WebUpgrader extends UpgradeDriver
         if ($action == "status") {
             return $this->getStatus();
         }
-
-        if ($action == 'exportlog') {
-            return $this->exportLog();
-        }
-
         if (!in_array($action, $this->stages)) {
             return $this->error("Unknown stage $action", true);
         }
@@ -302,23 +297,5 @@ class WebUpgrader extends UpgradeDriver
 
         $this->log("Skipping health check - we have a confirmed id");
         return true;
-    }
-
-    /**
-     * Export log file
-     */
-    protected function exportLog()
-    {
-        $file = $this->context['log'];
-        if (!file_exists($file)) {
-            return false;
-        }
-        header('Content-Type: application/text');
-        header('Content-Disposition: attachment; filename=' . basename($file));
-        header('Content-Length: ' . filesize($file));
-        ob_clean();
-        flush();
-        readfile($file);
-        exit;
     }
 }
