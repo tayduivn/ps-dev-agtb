@@ -24,29 +24,9 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'enabled' => true,
                     'default' => true
                 ),
-                array(
-                    'name' => 'account_name',
-                    'readonly' => true,
-                    'enabled' => true,
-                    'default' => true
-                ),
-                'sales_stage',
-                'probability',
                 'date_closed',
-                'commit_stage',
                 array(
-                    'name' => 'product_template_name',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'category_name',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                'quantity',
-                array(
-                    'name' => 'worst_case',
+                    'name' => 'likely_case',
                     'type' => 'currency',
                     'related_fields' => array(
                         'currency_id',
@@ -64,7 +44,27 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'default' => true
                 ),
                 array(
-                    'name' => 'likely_case',
+                    'name' => 'account_name',
+                    'readonly' => true,
+                    'enabled' => true,
+                    'default' => true
+                ),
+                'sales_stage',
+                'probability',
+                'commit_stage',
+                array(
+                    'name' => 'product_template_name',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array(
+                    'name' => 'category_name',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                'quantity',
+                array(
+                    'name' => 'worst_case',
                     'type' => 'currency',
                     'related_fields' => array(
                         'currency_id',
