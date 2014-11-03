@@ -235,10 +235,10 @@
      * in the end of the list.
      *
      * @param {Event} [e] The event that triggered the row.
-     * @return {Element} The new row element appendend.
+     * @return {Element} The new initialized appended row element.
      */
     addRow: function(e) {
-        var $row, model, field, $fieldValue, $fieldContainer;
+        var $row;
 
         if (e) {
             // Triggered by clicking the plus sign. Add the row to that point.
@@ -246,24 +246,53 @@
             $row.after(this.formRowTemplate());
             $row = $row.next();
             this.layout.trigger('filter:toggle:savestate', true);
-        } else {
-            // Add the initial row.
-            $row = $(this.formRowTemplate()).appendTo(this.$el);
         }
+        return this.initRow($row);
+    },
+
+    /**
+     * Initializes a row either with the retrieved field values or the
+     * default field values.
+     *
+     * @param {jQuery} [$row] The related filter row.
+     * @param {Object} [data] The values to set in the fields.
+     * @return {jQuery} $row The initialized row element.
+     */
+    initRow: function($row, data) {
+        $row = $row || $(this.formRowTemplate()).appendTo(this.$el);
+        data = data || {};
+        var model, field, $fieldValue, $fieldContainer;
+
+        // Init the row with the data available.
+        $row.data('name', data.name);
+        $row.data('operator', data.operator);
+        $row.data('value', data.value);
+
+        // Create a blank model for the enum field, and set the field value if
+        // we know it.
         model = app.data.createBean(this.moduleName);
+        if (data.name) {
+            model.set('filter_row_name', data.name);
+        }
         field = this.createField(model, {
+            name: 'filter_row_name',
             type: 'enum',
             options: this.filterFields
         });
 
+        // Add the field to the dom.
         $fieldValue = $row.find('[data-filter=field]');
         $fieldContainer = $(field.getPlaceholder().string);
         $fieldContainer.appendTo($fieldValue);
 
+        // Store the field in the data attributes.
         $row.data('nameField', field);
 
         this._renderField(field, $fieldContainer);
 
+        if (data.name) {
+            this.initOperatorField($row);
+        }
         return $row;
     },
 
@@ -377,9 +406,8 @@
      * @param {Object} rowObj The filter definition of a row.
      */
     populateRow: function(rowObj) {
-        var $row = this.addRow(),
-            moduleMeta = app.metadata.getModule(this.layout.currentModule),
-            fieldMeta = moduleMeta.fields;
+        var moduleMeta = app.metadata.getModule(this.layout.currentModule);
+        var fieldMeta = moduleMeta.fields;
 
         _.each(rowObj, function(value, key) {
             var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
@@ -408,7 +436,6 @@
                 key = def ? def.name : key;
                 value = {'$equals': values};
             } else if (!fieldMeta[key] && !isPredefinedFilter) {
-                $row.remove();
                 return;
             }
 
@@ -417,23 +444,17 @@
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
                 // field not found so don't create row for it.
                 if (!relate) {
-                    $row.remove();
                     return;
                 }
                 key = relate.name;
             }
 
-            $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
-
             if (_.isString(value) || _.isNumber(value)) {
-                value = {"$equals": value};
+                value = {'$equals': value};
             }
             _.each(value, function(value, operator) {
-                $row.data('value', value);
-                $row.find('[data-filter=operator] input[type=hidden]')
-                    .select2('val', operator === '$dateRange' ? value : operator)
-                    .trigger('change');
-            });
+                this.initRow(null, {name: key, operator: operator, value: value});
+            }, this);
         }, this);
     },
 
@@ -442,21 +463,34 @@
      * @param {Event} e
      */
     handleFieldSelected: function(e) {
-        var $el = this.$(e.currentTarget),
-            $row = $el.parents('[data-filter=row]'),
-            $fieldWrapper = $row.find('[data-filter=operator]'),
-            data = $row.data(),
-            fieldName = $el.val(),
-            fieldOpts = [
+        var $el = this.$(e.currentTarget);
+        var $row = $el.parents('[data-filter=row]');
+        var fieldOpts = [
                 {'field': 'operatorField', 'value': 'operator'},
                 {'field': 'valueField', 'value': 'value'}
             ];
         this._disposeRowFields($row, fieldOpts);
+        this.initOperatorField($row);
+    },
 
+    /**
+     * Initializes the operator field.
+     *
+     * @param {jQuery} $row The related filter row.
+     */
+    initOperatorField: function($row) {
+        var $fieldWrapper = $row.find('[data-filter=operator]');
+        var data = $row.data();
+        var fieldName = data.nameField.model.get('filter_row_name');
+        var previousOperator = data.operator;
+
+        // Make sure the data attributes contain the right selected field.
         data['name'] = fieldName;
+
         if (!fieldName) {
             return;
         }
+
         // For relate fields
         data.id_name = this.fieldList[fieldName].id_name;
         // For flex-relate fields
@@ -479,9 +513,6 @@
             $fieldWrapper.removeClass('hide').empty();
         $row.find('[data-filter=value]').addClass('hide').empty();
 
-        // If the user is editing a filter, clear the operator.
-        //$row.find('.field-operator select').select2('val', '');
-
         _.each(types, function(operand) {
             payload[operand] = app.lang.get(
                 this.filterOperatorMap[fieldType][operand],
@@ -491,7 +522,13 @@
 
         // Render the operator field
         var model = app.data.createBean(this.moduleName);
+
+        if (previousOperator) {
+            model.set('filter_row_operator', data.operator === '$dateRange' ? data.value : data.operator);
+        }
+
         var field = this.createField(model, {
+                name: 'filter_row_operator',
                 type: 'enum',
                 // minimumResultsForSearch set to 9999 to hide the search field,
                 // See: https://github.com/ivaynberg/select2/issues/414
@@ -507,6 +544,14 @@
 
         var hide = fieldType === 'parent';
         this._hideOperator(hide, $row);
+
+        // We want to go into 'initValueField' only if the field value is known.
+        // We need to check 'previousOperator' instead of 'data.operator'
+        // because even if the default operator has been set, the field would
+        // have set 'data.operator' when it rendered anyway.
+        if (previousOperator) {
+            this.initValueField($row);
+        }
     },
 
     /**
@@ -530,17 +575,27 @@
      * @param {Event} e
      */
     handleOperatorSelected: function(e) {
-        var $el = this.$(e.currentTarget),
-            $row = $el.parents('[data-filter=row]'),
-            data = $row.data(),
-            operation = $el.val(),
-            fieldOpts = [
-                {'field': 'valueField', 'value': 'value'}
-            ];
+        var $el = this.$(e.currentTarget);
+        var $row = $el.parents('[data-filter=row]');
+        var fieldOpts = [
+            {'field': 'valueField', 'value': 'value'}
+        ];
 
         this._disposeRowFields($row, fieldOpts);
+        this.initValueField($row);
+    },
 
-        data['operator'] = operation;
+    /**
+     * Initializes the value field.
+     *
+     * @param {jQuery} $row The related filter row.
+     */
+    initValueField: function($row) {
+        var data = $row.data();
+        var operation = data.operatorField.model.get('filter_row_operator');
+
+        // Make sure the data attributes contain the right operator selected.
+        data.operator = operation;
         if (!operation) {
             return;
         }
