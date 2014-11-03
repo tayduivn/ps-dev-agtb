@@ -1,8 +1,8 @@
-describe('modules.kbscontents.clients.base.fields.multitext', function() {
+describe('modules.kbscontents.clients.base.fields.languages', function() {
 	var app, field, sandbox,
         module = 'KBSContents',
         fieldName = 'languages',
-        fieldType = 'multitext',
+        fieldType = 'languages',
         model;
 
     beforeEach(function() {
@@ -22,9 +22,9 @@ describe('modules.kbscontents.clients.base.fields.multitext', function() {
         field = SugarTest.createField('base', fieldName, fieldType, 'edit', {
             'searchBarThreshold': 5,
             'label': 'Available languages',
-            'default':  false,
+            'default': false,
             'enabled': true,
-            'view': 'edit',
+            'view': 'edit'
         }, module, model, null, true);
     });
 
@@ -65,7 +65,7 @@ describe('modules.kbscontents.clients.base.fields.multitext', function() {
         expect(format).toHaveBeenCalled();
         expect(_.first(model.get(fieldName))).toEqual({
             'primary': false,
-            'testlang1': 'Test Lang 1',
+            'testlang1': 'Test Lang 1'
         });
     });
 
@@ -96,7 +96,7 @@ describe('modules.kbscontents.clients.base.fields.multitext', function() {
                     }
                 ],
                 primary: false
-            },
+            }
         ]);
 
         expect(result).toEqual(jasmine.any(Array));
@@ -121,7 +121,7 @@ describe('modules.kbscontents.clients.base.fields.multitext', function() {
 
         field.render();
         var setPrimary = sandbox.spy(field, 'setPrimary'),
-            unformat = sandbox.spy(field, 'unformat');;
+            unformat = sandbox.spy(field, 'unformat');
         field.$('[data-action="set-primary-field"]').last().click();
 
         expect(setPrimary).toHaveBeenCalledWith(1);
@@ -139,6 +139,9 @@ describe('modules.kbscontents.clients.base.fields.multitext', function() {
     });
 
     it('should remove item from list when remove-field button clicked', function() {
+        sandbox.stub(app.alert, 'show', function(name, options) {
+            options.onConfirm();
+        });
         field.render();
         expect(field.value.length).toEqual(1);
         field.$('[data-action=add-field]').click();

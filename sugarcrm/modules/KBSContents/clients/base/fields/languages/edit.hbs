@@ -13,10 +13,10 @@
  */
 }}
 {{#each value}}
-    <div class="control-group" data-name="multitext_{{name}}">
+    <div class="control-group" data-name="languages_{{name}}">
         <div class="controls controls-three btn-fit">
         {{#eachOptions items}}
-            <input type="text" name="key_{{../name}}" class="inherit-width" value="{{key}}" data-id="{{../id}}" data-index="{{@index}}">
+            <input type="text" name="key_{{../name}}" class="inherit-width" value="{{key}}" data-id="{{../id}}" data-index="{{@index}}" maxlength="2">
             <input type="text" name="value_{{../name}}" class="inherit-width" value="{{value}}" data-id="{{../id}}" data-index="{{@index}}">
         {{/eachOptions}}
             <button type="button" class="btn third {{#if primary}}active{{/if}}" name="primary" data-action="set-primary-field" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_SET_ITEM_PRIMARY" ../module}}"><i class="icon-star"></i></button>

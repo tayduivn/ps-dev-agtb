@@ -16,7 +16,7 @@ $viewdefs['KBSContents']['base']['view']['config-languages'] = array(
             'fields' => array(
                 array(
                     'name' => 'languages',
-                    'type' => 'multitext',
+                    'type' => 'languages',
                     'searchBarThreshold' => 5,
                     'label' => 'LBL_EDIT_LANGUAGES',
                     'default' => false,
