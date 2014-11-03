@@ -581,7 +581,7 @@ class HealthCheckScanner
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], HealthCheckScannerMeta::CUSTOM);
+                $this->checkFileForOutput($hook_data[2]);
             }
         }
         // TODO: custom dashlets
@@ -926,11 +926,8 @@ class HealthCheckScanner
             }
         }
 
-
         // check for output in logic hooks
-        // if there is some, we'd need to put it to custom
-        // since upgrader does not handle it, we have to manually BWC the module
-        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM);
+        $this->checkHooks($module);
     }
 
     /**
@@ -984,7 +981,7 @@ class HealthCheckScanner
             $this->updateStatus("hasExtensions", $module, $extfiles);
         }
         foreach ($extfiles as $phpfile) {
-            $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+            $this->checkFileForOutput($phpfile);
         }
 
         // Check custom vardefs
@@ -1113,7 +1110,7 @@ class HealthCheckScanner
         }
 
         // check logic hooks for module
-        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+        $this->checkHooks($module);
     }
 
     /**
@@ -1427,9 +1424,8 @@ class HealthCheckScanner
     /**
      * Check logic hooks for module
      * @param string $module
-     * @param bool $bwc
      */
-    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL)
+    protected function checkHooks($module)
     {
         $this->log("Checking hooks for $module");
         $hook_files = array();
@@ -1439,7 +1435,7 @@ class HealthCheckScanner
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
                 $this->log("Checking module hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], $status);
+                $this->checkFileForOutput($hook_data[2]);
             }
         }
     }
@@ -1614,9 +1610,8 @@ class HealthCheckScanner
      * Check PHP file for output constructs.
      * Set $status if it happens.
      * @param string $phpfile
-     * @param string $status
      */
-    protected function checkFileForOutput($phpfile, $status)
+    protected function checkFileForOutput($phpfile)
     {
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
