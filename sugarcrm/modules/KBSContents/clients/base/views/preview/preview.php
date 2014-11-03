@@ -54,10 +54,9 @@ $viewdefs['KBSContents']['base']['view']['preview'] = array(
                     'modulefield' => 'filename',
                 ),
                 array(
-                    'label' => 'LBL_TAGS',
+                    'name' => 'tag',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'tag',
                 ),
             ),
         ),

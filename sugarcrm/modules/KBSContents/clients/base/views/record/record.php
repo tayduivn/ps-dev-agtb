@@ -222,7 +222,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'attachment_list' => array(
+                array(
                     'name' => 'attachment_list',
                     'label' => 'LBL_ATTACHMENTS',
                     'type' => 'attachments',
@@ -232,7 +232,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'bLabel' => 'LBL_ADD_ATTACHMENT',
                     'span' => 12,
                 ),
-                'tag' => array(
+                array(
                     'name' => 'tag',
                     'span' => 12,
                 ),

@@ -45,12 +45,6 @@ $listViewDefs['KBSContents'] = array(
         'default' => true,
         'width' => '10%',
     ),
-    'TAG' => array(
-        'label' => 'LBL_TAGS',
-        'default' => true,
-        'sortable' => false,
-        'width' => '10%',
-    ),
     'DATE_ENTERED' => array(
         'width' => '5%',
         'label' => 'LBL_DATE_ENTERED',
