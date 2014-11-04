@@ -8,6 +8,14 @@ describe('KBSContents.Base.Views.KBSDashletMostUseful', function() {
         context = app.context.getContext({
             module: moduleName
         });
+        context.parent = new Backbone.Model();
+        context.parent.set('module', moduleName);
+        context.prepare();
+
+        sandbox.stub(context.parent, 'get', function() {
+            return new Backbone.Collection();
+        });
+
         SugarTest.loadComponent(
             'base',
             'view',
