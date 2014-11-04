@@ -49,7 +49,7 @@ class ProductBundlesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->helper = $this->getMock('ProductBundlesApiHelper', array('execute'), array($this->api_service));
 
         $this->product_bundle = $this->getMock('ProductBundle', array('save'));
-        $this->quote = $this->getMock('Quote', array('save', 'retrieve', 'ACLAccess'));
+        $this->quote = $this->getMock('Quote', array('save', 'retrieve', 'ACLAccess', 'mark_deleted'));
 
     }
 
