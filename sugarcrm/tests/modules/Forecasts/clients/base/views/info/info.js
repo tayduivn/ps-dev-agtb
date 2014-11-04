@@ -13,8 +13,24 @@ describe("Forecasts.Views.Info", function() {
     var view, layout, moduleName = "Forecasts", sbox = sinon.sandbox.create();
 
     beforeEach(function() {
+
+        var viewMeta = {
+            datapoints: [
+                {
+                    name: 'quota',
+                    label: 'LBL_QUOTA',
+                    type: 'quotapoint'
+                },
+                {
+                    name: 'worst_case',
+                    label: 'LBL_WORST',
+                    type: 'datapoint'
+                }
+            ]
+        };
+
         layout = SugarTest.createLayout("base", "ForecastWorksheets", "list", null, null);
-        view = SugarTest.createView("base", moduleName, "info", null, null, true, layout, true);
+        view = SugarTest.createView("base", moduleName, "info", viewMeta, null, true, layout, true);
     });
 
     afterEach(function() {
