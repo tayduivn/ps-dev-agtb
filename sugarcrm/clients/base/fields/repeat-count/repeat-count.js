@@ -20,19 +20,64 @@
     extendsFrom: 'IntField',
 
     /**
+     * @property {int} defaultCount
+     *
+     * The number of occurrences to use as a default in the UI when creating a
+     * new record.
+     */
+    defaultCount: 10,
+
+    /**
      * @inheritdoc
      *
-     * Add custom max value validation
+     * Add custom max value validation. The value of the field is defaulted in
+     * the UI when creating a new record.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         // setting type & def.type so number validator will run
         this.type = this.def.type = 'int';
 
+        if (this.model.isNew()) {
+            this.model.set(this.name, this.defaultCount);
+        }
+
         this.model.addValidationTask(
             'repeat_count_max_validator_' + this.cid,
             _.bind(this._doValidateRepeatCountMax, this)
         );
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Always returns an empty string if the value is 0, '0', null, or
+     * undefined.
+     */
+    format: function(value) {
+        value = this._super('format', [value]);
+
+        return (value === '0' || value == null) ? '' : value;
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Converts the value to an integer so that the integer representation is
+     * always used in the model.
+     */
+    unformat: function(value) {
+        if (!_.isString(value)) {
+            return value;
+        }
+
+        if (value.trim() === '') {
+            value = 0;
+        } else {
+            value = parseInt(this._super('unformat', [value]), 10);
+        }
+
+        return value;
     },
 
     /**
@@ -47,7 +92,7 @@
      * @private
      */
     _doValidateRepeatCountMax: function(fields, errors, callback) {
-        var repeatCount = parseInt(this.model.get('repeat_count'), 10),
+        var repeatCount = parseInt(this.model.get(this.name), 10),
             maxRepeatCount = app.config.calendar.maxRepeatCount;
 
         if (repeatCount > maxRepeatCount) {

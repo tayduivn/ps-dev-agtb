@@ -145,43 +145,75 @@ describe('View.Fields.Base.RecurrenceField', function() {
         });
     });
 
-    using('variations of repeat type, repeat count and repeat until values',[
-        {
-            expectation: 'should error when recurring with repeat count and repeat until blank',
-            repeatType: 'Daily',
-            repeatCount: '',
-            repeatUntil: '',
-            isErrorExpected: true
-        },
-        {
-            expectation: 'should not error when non-recurring with repeat count and repeat until blank',
-            repeatType: '',
-            repeatCount: '',
-            repeatUntil: '',
-            isErrorExpected: false
-        },
-        {
-            expectation: 'should not error when repeat count is populated and repeat until is blank',
-            repeatType: 'Daily',
-            repeatCount: 10,
-            repeatUntil: '',
-            isErrorExpected: false
-        },
-        {
-            expectation: 'should not error when repeat until is populated and repeat count is blank',
-            repeatType: 'Daily',
-            repeatCount: '',
-            repeatUntil: 'foo',
-            isErrorExpected: false
-        }
-    ], function (value) {
-        it(value.expectation, function() {
-            var errors = {};
-            field.model.set('repeat_type', value.repeatType, {silent: true});
-            field.model.set('repeat_count', value.repeatCount, {silent: true});
-            field.model.set('repeat_until', value.repeatUntil, {silent: true});
+    describe('validating the fields', function() {
+        var errors;
+
+        beforeEach(function() {
+            errors = {};
+        });
+
+        using('variations of repeat type, repeat count and repeat until values', [
+            {
+                expectation: 'should error when recurring with repeat count and repeat until blank',
+                repeatType: 'Daily',
+                repeatCount: '',
+                repeatUntil: '',
+                isErrorExpected: true
+            },
+            {
+                expectation: 'should not error when non-recurring with repeat count and repeat until blank',
+                repeatType: '',
+                repeatCount: '',
+                repeatUntil: '',
+                isErrorExpected: false
+            },
+            {
+                expectation: 'should not error when repeat count is populated and repeat until is blank',
+                repeatType: 'Daily',
+                repeatCount: 10,
+                repeatUntil: '',
+                isErrorExpected: false
+            },
+            {
+                expectation: 'should not error when repeat until is populated and repeat count is blank',
+                repeatType: 'Daily',
+                repeatCount: '',
+                repeatUntil: 'foo',
+                isErrorExpected: false
+            }
+        ], function(value) {
+            it(value.expectation, function() {
+                field.model.set('repeat_type', value.repeatType, {silent: true});
+                field.model.set('repeat_count', value.repeatCount, {silent: true});
+                field.model.set('repeat_until', value.repeatUntil, {silent: true});
+                field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+                expect(!_.isEmpty(errors)).toBe(value.isErrorExpected);
+            });
+        });
+
+        it('should mark repeat_count as required', function() {
+            field.model.set('repeat_type', 'Daily', {silent: true});
+            field.model.set('repeat_count', '', {silent: true});
+            field.model.set('repeat_until', '', {silent: true});
+
             field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
-            expect(!_.isEmpty(errors)).toBe(value.isErrorExpected);
+
+            expect(errors.repeat_count).toEqual({required: true});
+        });
+
+        it('should mark repeat_count as not meeting the minimum value', function() {
+            var repeatCount;
+
+            // always less than the minimum, even if the minimum changes
+            repeatCount = field.repeatCountMin - 1;
+
+            field.model.set('repeat_type', 'Daily', {silent: true});
+            field.model.set('repeat_count', repeatCount, {silent: true});
+            field.model.set('repeat_until', '', {silent: true});
+
+            field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+
+            expect(errors.repeat_count).toEqual({minValue: field.repeatCountMin});
         });
     });
 });

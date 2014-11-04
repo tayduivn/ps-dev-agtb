@@ -464,8 +464,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'vname' => 'LBL_CALENDAR_REPEAT_COUNT',
     'type' => 'int',
     'len' => 7,
-    'default' => 10,
-    'validation' => array('type' => 'range', 'min' => 1),
     'comment' => 'Number of recurrence',
     'importable' => 'false',
     'massupdate' => false,
