@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,13 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-
-class SugarFieldUsername extends SugarFieldBase {
-	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
- 
-        return $this->fetch($this->findTemplate('DetailView'));
-    }
-}
-?>
+/**
+ * @class View.Fields.Base.PasswordField
+ * @alias SUGAR.App.view.fields.BasePasswordField
+ * @extends View.Field
+ */
+({
+    direction: 'ltr'
+})

@@ -1,4 +1,3 @@
-{*
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,10 +8,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-*}
-<span class="sugar_field" id="{{sugarvar key='name'}}">
-{$fields[{{sugarvar key='salutation' stringFormat=true}}].value} {$fields[{{sugarvar key='first_name' stringFormat=true}}].value} {$fields[{{sugarvar key='last_name' stringFormat=true}}].value}
-</span>
-{{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
-{{/if}}
+/**
+ * @class View.Fields.Base.UsernameField
+ * @alias SUGAR.App.view.fields.BaseUsernameField
+ * @extends View.Field
+ */
+({
+    //FIXME: SC-3447 this field should have bidirectional input
+    direction: 'ltr'
+})
