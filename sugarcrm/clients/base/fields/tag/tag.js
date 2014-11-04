@@ -114,7 +114,26 @@
             }, 300),
 
             sortResults: function(results, container, query) {
+                // Check to see if any of the results would be a new tag
+                var newTag = _.find(results, function(obj) {
+                    return obj.newTag;
+                });
+
+                // If we have a new tag, pop it out so it doesn't get sorted
+                if (newTag) {
+                    results = _.reject(results, function(obj) {
+                        return obj.newTag;
+                    });
+                }
+
+                // Sort existing tags
                 results = _.sortBy(results, 'text');
+
+                // Push new tag back on to the end of the list
+                if (newTag) {
+                    results.push(newTag);
+                }
+
                 return results;
             }
         });
