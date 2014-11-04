@@ -312,47 +312,81 @@ function shouldCheckSugar(){
 // may modify any portion of the Critical Control Software.
 
 
-//Adding a comment for 6.5.5
-function authenticateDownloadKey(){
-	$data = array();
-	if(empty($GLOBALS['license']->settings['license_validation_key']) && shouldCheckSugar()){
-		check_now(get_sugarbeat());
-	}
-	//could not connect to server so we'll let it pass
-
-	if(empty($GLOBALS['license']->settings['license_validation_key'])){
-		return false;
-	}
-
-
-	if(!empty($GLOBALS['license']->settings['license_validation_key']['validation']))return true;
-	$data['license_expire_date'] = $GLOBALS['license']->settings['license_expire_date'];
-	$data['license_users'] =  intval($GLOBALS['license']->settings['license_users']);
-	$data['license_num_lic_oc'] = intval( $GLOBALS['license']->settings['license_num_lic_oc']);
-	$data['license_num_portal_users'] = intval($GLOBALS['license']->settings['license_num_portal_users']);
-	$data['license_vk_end_date'] = $GLOBALS['license']->settings['license_vk_end_date'];
-	$data['license_key'] = $GLOBALS['license']->settings['license_key'];
-    if(isset($GLOBALS['license']->settings['license_enforce_portal_user_limit'])) {
-        $data['enforce_portal_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_portal_user_limit']);
-    }
-    if(isset($GLOBALS['license']->settings['license_enforce_user_limit'])) {
-    	$data['enforce_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_user_limit']);
+/**
+ * Authenticate license settings
+ * @return boolean
+ */
+function authenticateDownloadKey()
+{
+    // Retreive license if required
+    if (empty($GLOBALS['license']->settings['license_validation_key']) && shouldCheckSugar()) {
+        check_now(get_sugarbeat());
     }
 
-	if(empty($GLOBALS['license']->settings['license_validation_key'])) return false;
-	$og = unserialize(sugarDecode('validation', $GLOBALS['license']->settings['license_validation_key']));
+    // Validation key is required
+    if (empty($GLOBALS['license']->settings['license_validation_key'])) {
+        return false;
+    }
 
+    // We are good if a validation is already set
+    if (!empty($GLOBALS['license']->settings['license_validation_key']['validation'])) {
+        return true;
+    }
 
-	foreach($og as $name=>$value){
+    // Populate data from globals
+    $fromGlobals = array(
+        'license_expire_date' => array(
+            'type' => 'string',
+        ),
+        'license_users' => array(
+            'type' => 'int',
+        ),
+        'license_num_lic_oc' => array(
+            'type' => 'int',
+        ),
+        'license_num_portal_users' => array(
+            'type' => 'int',
+        ),
+        'license_vk_end_date' => array(
+            'type' => 'string',
+        ),
+        'license_key' => array(
+            'type' => 'string',
+        ),
+        'license_enforce_portal_user_limit' => array(
+            'type' => 'int',
+            'target' => 'enforce_portal_user_limit',
+        ),
+        'license_enforce_user_limit' => array(
+            'type' => 'int',
+            'target' => 'enforce_user_limit',
+        ),
+    );
 
-		if(!isset($data[$name]) || $data[$name] != $value){
+    $data = array();
+    foreach ($fromGlobals as $source => $defs) {
+        $target = empty($defs['target']) ? $source : $defs['target'];
+        if (isset($GLOBALS['license']->settings[$source])) {
+            switch ($defs['type']) {
+                case 'int':
+                    $data[$target] = intval($GLOBALS['license']->settings[$source]);
+                    break;
+                default:
+                    $data[$target] = $GLOBALS['license']->settings[$source];
+                    break;
+            }
+        }
+    }
 
-			return false;
-		}
-	}
+    // Decode the received validation key and compare with current settings
+    $og = unserialize(sugarDecode('validation', $GLOBALS['license']->settings['license_validation_key']));
+    foreach ($og as $name => $value) {
+        if (!isset($data[$name]) || $data[$name] != $value) {
+            return false;
+        }
+    }
 
-	return true;
-
+    return true;
 }
 
 function ocLicense(){
@@ -497,55 +531,63 @@ function setSystemState($state){
 	}
 }
 
-function checkSystemState(){
-	if(ocLicense())return;
-	if($_SESSION['LICENSE_EXPIRES_IN'] === 'REQUIRED'){
-		die('LICENSE INFORMATION IS REQUIRED PLEASE CONTACT A SYSTEM ADMIN ');
-	}
-	if($_SESSION['VALIDATION_EXPIRES_IN'] === 'REQUIRED'){
-		die('LICENSE INFORMATION IS REQUIRED PLEASE CONTACT A SYSTEM ADMIN ');
-	}
-	if($_SESSION['LICENSE_EXPIRES_IN'] != 'valid' && $_SESSION['LICENSE_EXPIRES_IN'] < -30){
-		die('LICENSE EXPIRED ' . abs( $_SESSION['LICENSE_EXPIRES_IN']) .' day(s) ago - PLEASE CONTACT A SYSTEM ADMIN');
-	}
-	if($_SESSION['VALIDATION_EXPIRES_IN'] != 'valid' && $_SESSION['VALIDATION_EXPIRES_IN'] < -30){
-		die('VALIDATION KEY FOR LICENSE EXPIRED ' . abs( $_SESSION['VALIDATION_EXPIRES_IN']) .' day(s) ago - PLEASE CONTACT A SYSTEM ADMIN');
-	}
+/**
+ * Used by SOAP services
+ */
+function checkSystemState()
+{
+    if (ocLicense()) {
+        return;
+    }
+    if ($_SESSION['LICENSE_EXPIRES_IN'] === 'REQUIRED') {
+        die('LICENSE INFORMATION IS REQUIRED PLEASE CONTACT A SYSTEM ADMIN ');
+    }
+    if ($_SESSION['VALIDATION_EXPIRES_IN'] === 'REQUIRED') {
+        die('LICENSE INFORMATION IS REQUIRED PLEASE CONTACT A SYSTEM ADMIN ');
+    }
+    if ($_SESSION['LICENSE_EXPIRES_IN'] != 'valid' && $_SESSION['LICENSE_EXPIRES_IN'] < -30) {
+        die('LICENSE EXPIRED ' . abs($_SESSION['LICENSE_EXPIRES_IN']) .' day(s) ago - PLEASE CONTACT A SYSTEM ADMIN');
+    }
+    if ($_SESSION['VALIDATION_EXPIRES_IN'] != 'valid' && $_SESSION['VALIDATION_EXPIRES_IN'] < -30) {
+        die('VALIDATION KEY FOR LICENSE EXPIRED ' . abs($_SESSION['VALIDATION_EXPIRES_IN']) .' day(s) ago - PLEASE CONTACT A SYSTEM ADMIN');
+    }
 }
-function checkSystemLicenseStatus(){
 
-	global $license;
+/**
+ * Check current license status
+ */
+function checkSystemLicenseStatus()
+{
+    global $license;
+    loadLicense(true);
 
-	loadLicense(true);
+    if (ocLicense()) {
+        return;
+    }
 
-	if(ocLicense())return;
+    if (!empty($license->settings)) {
 
-	if(!empty($license->settings)){
+        if (isset($license->settings['license_vk_end_date'])) {
+            $_SESSION['VALIDATION_EXPIRES_IN'] = isAboutToExpire($license->settings['license_vk_end_date']);
+        } else {
+            $_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
+        }
 
+        if (!empty($license->settings['license_expire_date'])) {
+            $_SESSION['LICENSE_EXPIRES_IN'] = isAboutToExpire($license->settings['license_expire_date']);
+        } else {
+            $_SESSION['LICENSE_EXPIRES_IN'] = 'REQUIRED';
+        }
 
-		if(isset($license->settings['license_vk_end_date'])){
-
-			$_SESSION['VALIDATION_EXPIRES_IN'] = isAboutToExpire($license->settings['license_vk_end_date']);
-
-		}else{
-			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
-		}
-
-		if(!empty($license->settings['license_expire_date'])){
-			$_SESSION['LICENSE_EXPIRES_IN'] = isAboutToExpire($license->settings['license_expire_date']);
-		}else{
-			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
-		}
-
-        if(isset($license->settings['license_num_lic_oc'])){
+        if (isset($license->settings['license_num_lic_oc'])) {
             $_SESSION['EXCEEDING_OC_LICENSES'] = hasExceededOfflineClientLicenses($license->settings['license_num_lic_oc']);
-        }else{
+        } else {
             $_SESSION['EXCEEDING_OC_LICENSES'] = false;
         }
-	}else{
-		$_SESSION['INVALID_LICENSE'] = true;
-	}
 
+    } else {
+        $_SESSION['INVALID_LICENSE'] = true;
+    }
 }
 
 /**
@@ -689,6 +731,7 @@ function apiActualLoadSystemStatus()
         // END CE-OD License User Limit Enforcement
     }
 
+    // Only allow administrators because of altered license issue
     if (!empty($_SESSION['HomeOnly'])) {
         return array(
             'level'  =>'admin_only',
