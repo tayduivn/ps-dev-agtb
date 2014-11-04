@@ -127,11 +127,12 @@ class CalendarEventsApi extends ModuleApi
     public function deleteCalendarEvent($api, $args)
     {
         if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
-            $this->deleteRecordAndRecurrences($api, $args);
+            $result = $this->deleteRecordAndRecurrences($api, $args);
         } else {
-            $this->deleteRecord($api, $args);
+            $result = $this->deleteRecord($api, $args);
         }
         $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
+        return $result;
     }
 
     /**
