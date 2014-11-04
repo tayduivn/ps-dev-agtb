@@ -401,15 +401,17 @@
             //For BWC module, current document title will be replaced with BWC title
             title = $('#bwc-frame').get(0) ? $('#bwc-frame').get(0).contentWindow.document.title : getTitle();
         } else {
-            title = getTitle();
-            if (!_.isEmpty(context.get("model"))) {
+            var currModel = context.get('model');
+            if (!_.isEmpty(currModel)) {
+                title = getTitle(currModel);
                 //for record view, the title should be updated once model is fetched
-                var currModel = context.get("model");
                 currModel.on("change", setTitle, this);
                 app.controller.layout.once("dispose", function() {
                     currModel.off("change", setTitle);
                 });
                 prevModel = currModel;
+            } else {
+                title = getTitle();
             }
         }
         document.title = title || document.title;
