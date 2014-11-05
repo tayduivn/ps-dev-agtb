@@ -67,18 +67,25 @@ describe('Base.Field.Rowaction', function() {
             sandbox.restore();
         });
 
-        it('should trigger the default event', function() {
-            var spy = sandbox.spy(field.view.context, 'trigger');
-            field.name = 'foo';
-            field.def.event = undefined;
-            field.propagateEvent(e);
-            expect(spy).toHaveBeenCalledWith('button:foo:click');
-        });
-
-        it('should trigger a custom event', function() {
+        it('should trigger the event defined in metadata', function() {
             var spy = sandbox.spy(field.view.context, 'trigger');
             field.propagateEvent(e);
             expect(spy).toHaveBeenCalledWith(field.def.event);
+        });
+
+        it('should trigger the event defined in the data-event attribute', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.def.event = undefined;
+            $(e.currentTarget).data('event', 'foo');
+            field.propagateEvent(e);
+            expect(spy).toHaveBeenCalledWith('foo');
+        });
+
+        it('should not trigger an event', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.def.event = undefined;
+            field.propagateEvent(e);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         using('event names', [undefined, 'context', 'foo'], function(eventName) {

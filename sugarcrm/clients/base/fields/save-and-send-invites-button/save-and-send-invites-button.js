@@ -47,13 +47,10 @@
      * Triggers the save event on the record once button is clicked
      *
      * @see View.Fields.Base.RowactionField#getTarget
-     * @param {Object} [event] The click event.
+     * @param {Event} event The click event.
      */
     propagateEvent: function(event) {
-        var triggerName = this.view.save_button ? this.view.save_button : 'save_button',
-            trigger = 'button:' + triggerName + ':click';
-
         this.model.set('send_invites', true, {silent: true});
-        this.context.trigger(trigger);
+        this._super('propagateEvent', [event]);
     }
 })

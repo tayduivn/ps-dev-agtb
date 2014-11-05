@@ -31,7 +31,7 @@
     /**
      * Triggers event provided at this.def.event on the view's context object by default.
      * Can be configured to trigger events on 'view' itself or the view's 'layout'.
-     * @param {Object} [evt] The click event.
+     * @param {Event} evt The click event.
      */
     rowActionSelect: function(evt) {
         // make sure that we are not disabled first
@@ -44,19 +44,19 @@
      * Triggers an event on the target to inform listeners that the button was
      * clicked.
      *
-     * The event specified in the button metadata will be used as the name of
-     * the event. Otherwise, the button name will be wrapped in a namespace:
-     *
-     *     ```
-     *     button:save_button:click
-     *     ```
+     * The name of the event can either come from the data-event attribute on
+     * the button element or be specified in the button metadata under the
+     * `event` key.
      *
      * @see View.Fields.Base.RowactionField#getTarget
-     * @param {Object} [event] The click event.
+     * @param {Event} event The click event.
      */
     propagateEvent: function(event) {
-        var eventName = this.def.event || 'button:' + this.name + ':click';
-        this.getTarget().trigger(eventName, this.model, this, event);
+        var eventName = $(event.currentTarget).data('event') || this.def.event;
+
+        if (eventName) {
+            this.getTarget().trigger(eventName, this.model, this, event);
+        }
     },
 
     /**

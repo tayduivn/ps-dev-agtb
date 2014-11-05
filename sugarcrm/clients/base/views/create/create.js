@@ -105,10 +105,6 @@
      * for the current layout.
      */
     initialize: function (options) {
-        var createViewEvents = {};
-        createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
-        createViewEvents['click a[name=' + this.restoreButtonName + ']:not(.disabled)'] = 'restoreModel';
-        this.events = _.extend({}, this.events, createViewEvents);
         this.plugins = _.union(this.plugins || [], [
             'FindDuplicates'
         ]);
@@ -207,6 +203,8 @@
         this.context.on('button:' + this.saveButtonName + ':click', this.save, this);
         this.context.on('button:' + this.saveAndCreateButtonName + ':click', this.saveAndCreate, this);
         this.context.on('button:' + this.saveAndViewButtonName + ':click', this.saveAndView, this);
+        this.context.on('button:' + this.cancelButtonName + ':click', this.cancel, this);
+        this.context.on('button:' + this.restoreButtonName + ':click', this.restoreModel, this);
     },
 
     _render: function () {
