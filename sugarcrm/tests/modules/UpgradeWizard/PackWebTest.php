@@ -1,7 +1,6 @@
 <?php
 
-require_once 'modules/UpgradeWizard/CliUpgrader.php';
-require_once 'modules/UpgradeWizard/pack_web.php';
+require_once __DIR__ . '/../../../modules/UpgradeWizard/pack_web.php';
 
 class PackWebTest extends PHPUnit_Framework_TestCase
 {
@@ -80,13 +79,13 @@ class PackWebTest extends PHPUnit_Framework_TestCase
 
     public function testPackWebPhp()
     {
-        $result = exec(CliUpgrader::getPHPBinaryPath() . ' modules/UpgradeWizard/pack_web.php');
+        $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_web.php');
         $this->assertEquals(
-            "Use modules/UpgradeWizard/pack_web.php name.zip [sugarVersion [buildNumber [from]]]",
+            "Use " . __DIR__ . "/../../../modules/UpgradeWizard/pack_web.php name.zip [sugarVersion [buildNumber [from]]]",
             $result
         );
         $zip = tempnam('/tmp', 'zip') . '.zip';
-        exec(CliUpgrader::getPHPBinaryPath() . ' modules/UpgradeWizard/pack_web.php ' . $zip);
+        exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_web.php ' . $zip);
         $this->assertTrue(file_exists($zip));
         unlink($zip);
     }

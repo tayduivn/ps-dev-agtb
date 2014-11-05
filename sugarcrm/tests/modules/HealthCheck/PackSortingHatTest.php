@@ -1,7 +1,6 @@
 <?php
 
-require_once 'modules/UpgradeWizard/CliUpgrader.php';
-require_once 'modules/HealthCheck/pack_sortinghat.php';
+require_once __DIR__ . '/../../../modules/HealthCheck/pack_sortinghat.php';
 
 class PackSortingHatTest extends PHPUnit_Framework_TestCase
 {
@@ -55,13 +54,13 @@ class PackSortingHatTest extends PHPUnit_Framework_TestCase
 
     public function testPackSortingHatPhp()
     {
-        $result = exec(CliUpgrader::getPHPBinaryPath() . ' modules/HealthCheck/pack_sortinghat.php');
+        $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/HealthCheck/pack_sortinghat.php');
         $this->assertEquals(
-            "Use modules/HealthCheck/pack_sortinghat.php healthcheck.phar [sugarVersion [buildNumber]]",
+            "Use " . __DIR__ . "/../../../modules/HealthCheck/pack_sortinghat.php healthcheck.phar [sugarVersion [buildNumber]]",
             $result
         );
         $zip = tempnam('/tmp', 'phar') . '.phar';
-        exec(CliUpgrader::getPHPBinaryPath() . ' modules/HealthCheck/pack_sortinghat.php ' . $zip);
+        exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/HealthCheck/pack_sortinghat.php ' . $zip);
         $this->assertTrue(file_exists($zip));
         unlink($zip);
     }

@@ -337,33 +337,6 @@ eoq2;
      */
     public function parseArgs($argv)
     {
-        $context = $this->mapArgs($argv);
-        $context['php'] = static::getPHPBinaryPath();
-        if (empty($context['script'])) {
-            $pharPath = Phar::running(false);
-            $context['script'] = $pharPath ? $pharPath : __FILE__;
-        }
-        $context['argv'] = $argv;
-        $this->context = $context;
-        $this->log("Setting context to: " . var_export($context, true));
-        return $context;
-    }
-
-    /**
-     * Returns path to php binary
-     *
-     * @return string path to php
-     */
-    public static function getPHPBinaryPath()
-    {
-        if (defined("PHP_BINARY")) {
-            return PHP_BINARY;
-        } elseif (!empty($_ENV['_'])) {
-            return $_ENV['_'];
-        } elseif (!empty($_SERVER['_'])) {
-            return $_SERVER['_'];
-        }
-
         if (defined('PHP_BINDIR')) {
             $php_path = PHP_BINDIR . "/";
         } else {
@@ -372,7 +345,24 @@ eoq2;
         if (!file_exists($php_path . 'php')) {
             $php_path = '';
         }
-        return $php_path . "php";
+        $context = $this->mapArgs($argv);
+        if (defined("PHP_BINARY")) {
+            $context['php'] = PHP_BINARY;
+        } elseif (!empty($_ENV['_'])) {
+            $context['php'] = $_ENV['_'];
+        } elseif (!empty($_SERVER['_'])) {
+            $context['php'] = $_SERVER['_'];
+        } else {
+            $context['php'] = $php_path . "php";
+        }
+        if (empty($context['script'])) {
+            $pharPath = Phar::running(false);
+            $context['script'] = $pharPath ? $pharPath : __FILE__;
+        }
+        $context['argv'] = $argv;
+        $this->context = $context;
+        $this->log("Setting context to: " . var_export($context, true));
+        return $context;
     }
 
     /**
