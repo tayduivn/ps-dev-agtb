@@ -666,9 +666,10 @@
      * @param {Event} event
      */
     addRow: function(event) {
-        this.$('[name=newRow]').css('display', 'table');
-        this.getFieldElement().select2('open');
+        this.$('.participants-schedule').addClass('new');
+        this.$('[name=newRow]').css('display', 'table-row');
         $(event.currentTarget).hide();
+        this.getFieldElement().select2('open');
     },
 
     /**
@@ -695,6 +696,7 @@
         } else {
             this.$('[name=newRow]').hide();
             this.$('button[data-action=addRow]').show();
+            this.$('.participants-schedule').removeClass('new');
         }
     },
 

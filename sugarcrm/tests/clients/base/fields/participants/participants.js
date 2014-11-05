@@ -222,7 +222,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub($.fn, 'select2');
             field.render();
             field.$('button[data-action=addRow]').click();
-            expect(field.$('[name=newRow]').css('display')).toEqual('table');
+            expect(field.$('[name=newRow]').css('display')).toEqual('table-row');
             expect(field.$('button[data-action=addRow]').css('display')).toEqual('none');
         });
 

@@ -130,20 +130,21 @@
         <div class="cell"></div>
     </div>
     {{/each}}
-</div>
-<div class="participants-form" name="newRow">
-    <div class="cell select">
-        <div class="field">
-            <input type="hidden" class="select2 inherit-width" name="{{name}}" data-placeholder="{{placeholder}}" />
+    <div class="row participants-form" name="newRow">
+        <div class="cell"></div>
+        <div class="cell select">
+            <div class="field">
+                <input type="hidden" class="select2 inherit-width" name="{{name}}" data-placeholder="{{placeholder}}" />
+            </div>
         </div>
-    </div>
-    <div class="cell buttons">
-        <div class="btn-toolbar" style="display: table-cell;">
-            <div class="btn-group"></div>
-            <div class="btn-group">
-                <button type="button" class="btn" data-action="removeRow">
-                    <i class="icon-minus"></i>
-                </button>
+        <div class="cell buttons">
+            <div class="btn-toolbar" style="display: table-cell;">
+                <div class="btn-group"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn" data-action="removeRow">
+                        <i class="icon-minus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
