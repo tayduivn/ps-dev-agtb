@@ -96,6 +96,11 @@ module.exports = function(grunt) {
                 'ttf'
             ],
             excludedFiles: [
+            // Array of paths to exclude. Not regex patterns, only plain strings.
+            // Could be a filename, a part of the path, or the full path.
+                'sidecar/lib/',
+                'include/javascript/yui3/',
+                'styleguide/less/twitter-bootstrap'
             ],
             // Array of directory patterns (PCRE regex).
             // Only works with the name, not its path.
@@ -103,8 +108,6 @@ module.exports = function(grunt) {
                 'node_modules',
                 'vendor',
                 'tests',
-                'sidecar/lib/',
-                'yui3',
                 // sugarcharts should be ignored
                 'SugarCharts'
 
