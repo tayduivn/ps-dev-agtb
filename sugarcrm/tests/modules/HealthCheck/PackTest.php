@@ -1,6 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../../../modules/HealthCheck/pack.php';
+require_once 'modules/UpgradeWizard/CliUpgrader.php';
+require_once 'modules/HealthCheck/pack.php';
 
 class PackTest extends PHPUnit_Framework_TestCase
 {
@@ -79,13 +80,13 @@ class PackTest extends PHPUnit_Framework_TestCase
 
     public function testPackPhp()
     {
-        $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/HealthCheck/pack.php');
+        $result = exec(CliUpgrader::getPHPBinaryPath() . ' modules/HealthCheck/pack.php');
         $this->assertEquals(
-            "Use " . __DIR__ . "/../../../modules/HealthCheck/pack.php name.zip [sugarVersion [buildNumber [from]]]",
+            "Use modules/HealthCheck/pack.php name.zip [sugarVersion [buildNumber [from]]]",
             $result
         );
         $zip = tempnam('/tmp', 'zip') . '.zip';
-        exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/HealthCheck/pack.php ' . $zip);
+        exec(CliUpgrader::getPHPBinaryPath() . ' modules/HealthCheck/pack.php ' . $zip);
         $this->assertTrue(file_exists($zip));
         unlink($zip);
     }
