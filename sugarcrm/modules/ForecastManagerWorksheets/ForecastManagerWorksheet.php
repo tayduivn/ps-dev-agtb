@@ -120,6 +120,7 @@ class ForecastManagerWorksheet extends SugarBean
      * @param string $quota_amount
      * @param string $user_id
      * @param string $timeperiod_id
+     * @return Quota The Quota Bean
      */
     protected function commitQuota($quota_amount, $user_id, $timeperiod_id, $quota_type)
     {
@@ -132,8 +133,18 @@ class ForecastManagerWorksheet extends SugarBean
         $quota->quota_type = $quota_type;
         $quota->amount = $quota_amount;
         $quota->save();
+
+        return $quota;
     }
 
+    /**
+     * Fetch the Quota from the DB.
+     *
+     * @param string $user_id
+     * @param string $timeperiod_id
+     * @param string $quota_type
+     * @return Quota
+     */
     protected function getQuota($user_id, $timeperiod_id, $quota_type) {
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
@@ -413,7 +424,9 @@ class ForecastManagerWorksheet extends SugarBean
             $current_quota = $this->getQuota($user_id, $timeperiod_id, $type);
         }
 
-        $this->commitQuota(
+        // get the updated quota back, this is needed because current_quota might be empty
+        // as it could very well not exist yet.
+        $quota = $this->commitQuota(
             $quota,
             $user_id,
             $timeperiod_id,
@@ -427,7 +440,7 @@ class ForecastManagerWorksheet extends SugarBean
 
             if ($new_quota !== $current_quota->amount) {
                 $args = array(
-                    'isUpdate' => true,
+                    'isUpdate' => !empty($current_quota->amount),
                     'dataChanges' => array(
                         'amount' => array(
                             'field_name' => 'amount',
@@ -441,7 +454,7 @@ class ForecastManagerWorksheet extends SugarBean
                 // Manually Create the Activity Stream Entry!
                 SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
                 $aqm = new ActivityQueueManager();
-                $aqm->eventDispatcher($current_quota, 'after_save', $args);
+                $aqm->eventDispatcher($quota, 'after_save', $args);
             }
         }
     }

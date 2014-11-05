@@ -49,7 +49,6 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'name' => 'assign_quota',
                     'type' => 'assignquota',
                     'label' => 'LBL_ASSIGN_QUOTA_BUTTON',
-                    'css_class' => 'disabled',
                     'events' => array(
                         'click' => 'button:assign_quota:click',
                     ),
