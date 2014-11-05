@@ -95,6 +95,14 @@ describe('Plugins.EditAllRecurrences', function() {
         expect(view.allRecurrencesMode).toEqual(true);
     });
 
+    it('should toggle repeat type into edit mode when not recurring and coming from edit route', function() {
+        var toggleEditStub = sandbox.stub(view, 'toggleEdit');
+        view.context.set('action', 'edit'); //simulate coming from edit route
+        view.model.set('repeat_type', '');
+        view.model.trigger('sync');
+        expect(toggleEditStub).toHaveBeenCalledWith(true);
+    });
+
     it('should update noEditFields when toggling all recurrence mode', function() {
         view.toggleAllRecurrencesMode(true);
         expect(view.noEditFields).toEqual([]);
@@ -114,6 +122,14 @@ describe('Plugins.EditAllRecurrences', function() {
         view.model.id = 'foo_id';
         view.editClicked();
         expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit/all_recurrences', {trigger: false});
+    });
+
+    it('should show a /edit route when editing non-recurring meeting, even though allRecurrences is true', function() {
+        view.allRecurrencesMode = true;
+        view.model.set('repeat_type', '');
+        view.model.id = 'foo_id';
+        view.editClicked();
+        expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit', {trigger: false});
     });
 
     describe('Next/Previous Button Behavior', function() {
