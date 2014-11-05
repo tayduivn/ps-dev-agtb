@@ -77,13 +77,37 @@ module.exports = function(grunt) {
         checkLicense: {
             excludedExtensions: [
                 'json',
+                // image files
                 'gif',
+                'jpeg',
+                'jpg',
                 'png',
-                'min'
+                'ico',
+                // special system files
+                'DS_Store',
+                // Doc files
+                'md',
+                'txt',
+                // vector files
+                'svg',
+                'svgz',
+                // font files
+                'eot',
+                'ttf'
             ],
+            excludedFiles: [
+            ],
+            // Array of directory patterns (PCRE regex).
+            // Only works with the name, not its path.
             excludedDirectories: [
                 'node_modules',
-                'vendor'
+                'vendor',
+                'tests',
+                'sidecar/lib/',
+                'yui3',
+                // sugarcharts should be ignored
+                'SugarCharts'
+
             ],
             licenseFile: 'grunt/assets/licenseHeader'
         },
