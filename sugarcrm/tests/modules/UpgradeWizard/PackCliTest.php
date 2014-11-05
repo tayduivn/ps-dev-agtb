@@ -1,7 +1,6 @@
 <?php
 
-require_once 'modules/UpgradeWizard/CliUpgrader.php';
-require_once 'modules/UpgradeWizard/pack_cli.php';
+require_once __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php';
 
 class PackCliTest extends PHPUnit_Framework_TestCase
 {
@@ -55,16 +54,16 @@ class PackCliTest extends PHPUnit_Framework_TestCase
 
     public function testPackCliPhp()
     {
-        $result = exec(CliUpgrader::getPHPBinaryPath() . ' modules/UpgradeWizard/pack_cli.php');
+        $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php');
         $this->assertEquals(
-            "Use modules/UpgradeWizard/pack_cli.php name (no zip or phar extension) [sugarVersion [buildNumber]]",
+            "Use " . __DIR__ . "/../../../modules/UpgradeWizard/pack_cli.php name (no zip or phar extension) [sugarVersion [buildNumber]]",
             $result
         );
         if (ini_get('phar.readonly')) {
             $this->markTestSkipped('Disable phar.readonly to run this test');
         }
         $zip = tempnam('/tmp', 'test');
-        exec(CliUpgrader::getPHPBinaryPath() . ' modules/UpgradeWizard/pack_cli.php ' . $zip);
+        exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php ' . $zip);
         $this->assertTrue(file_exists($zip . '.zip'));
         unlink($zip);
     }
