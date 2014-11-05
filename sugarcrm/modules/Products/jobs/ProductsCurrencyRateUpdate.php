@@ -34,6 +34,7 @@ class ProductsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         $this->addRateColumnDefinition('products','base_rate');
         // set usdollar field definitions
         $this->addUsDollarColumnDefinition('products','discount_amount','discount_amount_usdollar');
+        $this->addUsDollarColumnDefinition('products','discount_price','discount_usdollar');
         $this->addUsDollarColumnDefinition('products','deal_calc','deal_calc_usdollar');
         $this->addUsDollarColumnDefinition('products','cost_price','cost_usdollar');
         $this->addUsDollarColumnDefinition('products','list_price','list_usdollar');
@@ -55,7 +56,37 @@ class ProductsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateRate($table, $column, $currencyId)
     {
-        return false;
+        // get the conversion rate
+        $sq = new SugarQuery();
+        $sq->select(array('conversion_rate'));
+        $sq->from(BeanFactory::getBean('Currencies'));
+        $sq->where()
+            ->equals('id', $currencyId);
+
+        $rate = $sq->getOne();
+
+        $ids = $this->getProductsWithNonClosedQuote();
+
+        // setup SQL statement
+        $query = sprintf("UPDATE %s SET %s = %s
+        WHERE id IN (%s)
+        AND currency_id = %s",
+            $table,
+            $column,
+            $this->db->quote($rate),
+            implode(",", $ids),
+            $this->db->quoted($currencyId)
+        );
+        // execute
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array(__CLASS__, $query)
+            )
+        );
+        return !empty($result);
     }
 
     /**
@@ -74,7 +105,61 @@ class ProductsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
-        return false;
+        $ids = $this->getProductsWithNonClosedQuote();
+
+        // setup SQL statement
+        $query = sprintf("UPDATE %s SET %s = %s / base_rate
+            WHERE id IN (%s)
+            AND currency_id = %s",
+            $tableName,
+            $usDollarColumn,
+            $amountColumn,
+            implode(",", $ids),
+            $this->db->quoted($currencyId)
+        );
+        // execute
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array(__CLASS__, $query)
+            )
+        );
+        return !empty($result);
     }
 
+    protected function getProductsWithNonClosedQuote()
+    {
+        $product = BeanFactory::getBean('Products');
+
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from($product);
+
+        // join in the product bundles table
+        $product->load_relationships('product_bundles');
+        // we use a left join here so we can get products that do not have quotes
+        $product->product_bundles->buildJoinSugarQuery($sq, array('joinType' => 'LEFT'));
+
+        // join in the quotes table off of Product Bundles
+        $bundle = BeanFactory::getBean('ProductBundles');
+        $bundle->load_relationship('quotes');
+        $bundle->quotes->buildJoinSugarQuery($sq, array('joinType' => 'LEFT'));
+
+        $quote = BeanFactory::getBean('Quotes');
+
+        $sq->where()
+            ->queryOr()
+            ->isNull('quotes.quote_stage', $quote)
+            ->notIn('quotes.quote_stage', $quote->closed_statuses, $quote);
+
+        $results = $sq->execute();
+
+        $db = $this->db;
+        // we just need the array, so use array_map to pull it out of the results
+        return array_map(function($a) use($db) {
+                return $db->quoted($a['id']);
+            }, $results);
+    }
 }

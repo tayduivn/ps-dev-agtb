@@ -25,8 +25,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 abstract class CurrencyRateUpdateAbstract
 {
-    /*
+    /**
      * database handle
+     * @var DBManager
      */
     protected $db;
 

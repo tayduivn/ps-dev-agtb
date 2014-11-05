@@ -518,4 +518,26 @@ class ProductBundle extends SugarBean
         }
         return ($pb1->bundle_index < $pb2->bundle_index) ? -1 : 1;
     }
+
+    /**
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
+     */
+    public function updateCurrencyBaseRate()
+    {
+        // load the bundle -> quotes relationship
+        $this->load_relationship('quotes');
+
+        // get the beans
+        $quote = array_pop($this->quotes->getBeans());
+
+        if (empty($quote)) {
+            return true;
+        }
+
+        // if the quote is not closed, we should update the base rate
+        return !$quote->isClosed();
+
+    }
 }

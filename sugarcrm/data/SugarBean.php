@@ -1792,7 +1792,7 @@ class SugarBean
 
         // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
         if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
-            SugarCurrency::verifyCurrencyBaseRateSet($this);
+            SugarCurrency::verifyCurrencyBaseRateSet($this, $isUpdate);
         }
 
         require_once("data/BeanFactory.php");
