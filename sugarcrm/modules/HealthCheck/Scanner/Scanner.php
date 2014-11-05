@@ -238,6 +238,15 @@ class HealthCheckScanner
     );
 
     /**
+     * If Scanner founds some number of files and is going to report them, it's better to report them in bunches.
+     * This field defines an appropriate bunch size.
+     * @see CRYS-554
+     *
+     * @var int
+     */
+    protected $numberOfFilesToReport = 5;
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -1887,6 +1896,7 @@ ENDP;
         }
         $hook_files = array_unique($hook_files_list);
 
+        $unknownMBModuleFiles = array();
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
@@ -1913,8 +1923,10 @@ ENDP;
             }
             if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
-                $this->updateStatus("isNotMBModule", $file, $module_name);
-                return false;
+                if (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) {
+                    break;
+                }
+                $unknownMBModuleFiles[] = $file;
             }
         }
         // files that are OK for custom:
@@ -1929,10 +1941,20 @@ ENDP;
             }
             if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
-                $this->updateStatus("isNotMBModule", $file, $module_name);
-                return false;
+                if (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) {
+                    break;
+                }
+                $unknownMBModuleFiles[] = $file;
             }
         }
+
+        if (!empty($unknownMBModuleFiles)) {
+            $filesToReport = array_slice($unknownMBModuleFiles, 0, $this->numberOfFilesToReport);
+            $moreMessage = (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) ? PHP_EOL . 'and there are more...' : '';
+            $this->updateStatus("isNotMBModule", $filesToReport, $moreMessage, $module_name);
+            return false;
+        }
+
         $badExts = array(
             "ActionViewMap",
             "ActionFileMap",
