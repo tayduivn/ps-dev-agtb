@@ -800,7 +800,35 @@ html.rtl {
         }
 
         .filter-body > .row-fluid {
-            padding-right: 0
+            padding-right: 0;
+            padding-left: 64px;
+            .filter-value.controls {
+                margin-right: 2.127659574%;
+                margin-left: 0;
+            }
+        }
+        .massupdate {
+            > .span3 {
+                margin-right: 2.127659574%;
+                margin-left: 0;
+            }
+            .controls {
+                &.btn-fit {
+                    &.controls-three {
+                        padding-left: 108px;
+                        padding-right: 0;
+
+                        .btn {
+                            left: 0;
+                            right: auto;
+                        }
+                        .btn.third {
+                            left: 72px;
+                            right: auto;
+                        }
+                    }
+                }
+            }
         }
     }
 
