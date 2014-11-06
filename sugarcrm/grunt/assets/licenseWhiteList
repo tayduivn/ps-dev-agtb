@@ -1,0 +1,9 @@
+/**
+ * Add here paths to exclude from the search directory.
+ * Could be either a filename, a folder name, a part of the path, or the full path.
+ * It doesn't support regex patterns, only plain strings.
+**/
+//START THE LIST BELOW//
+sidecar/lib/
+include/javascript/yui3/
+styleguide/less/twitter-bootstrap

@@ -15,11 +15,17 @@ module.exports = function(grunt) {
         var exec = require('child_process').exec;
         var options = grunt.config.get([this.name]);
         var licenseFile = options.licenseFile;
+        var whiteList = options.whiteList;
         var excludedExtensions = options.excludedExtensions.join('|');
         var excludedDirectories = options.excludedDirectories.join('|');
-        var excludedFiles = options.excludedFiles.join('\\n');
 
-        // Prepares the pattern
+        //Prepares excluded files.
+        var excludedFiles = grunt.file.read(whiteList).split('\n');
+        var whiteListStartMarker = excludedFiles.indexOf('//START THE LIST BELOW//') + 1;
+        excludedFiles.splice(0, whiteListStartMarker);
+        excludedFiles = excludedFiles.join('\\n');
+
+        // Prepares the pattern.
         var pattern = grunt.file.read(licenseFile);
         pattern = pattern.trim();
         pattern = pattern.replace(/\*/g, '\\*');
@@ -32,13 +38,13 @@ module.exports = function(grunt) {
             '-M',
             // The output will be file names of files that doesnt match the pattern.
             '-L',
-            // Recursive mode
+            // Recursive mode.
             '-r',
-            // Ignores case
+            // Ignores case.
             '-i',
-            //Excluded directories
+            //Excluded directories.
             '--exclude-dir="' + excludedDirectories + '"',
-            // Excluded extensions
+            // Excluded extensions.
             '--exclude="((.*)\.(' + excludedExtensions + '))"',
             //Pattern to match in each file.
             '"^' + pattern + '$"',

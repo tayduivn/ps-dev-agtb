@@ -95,13 +95,6 @@ module.exports = function(grunt) {
                 'eot',
                 'ttf'
             ],
-            excludedFiles: [
-            // Array of paths to exclude. Not regex patterns, only plain strings.
-            // Could be a filename, a part of the path, or the full path.
-                'sidecar/lib/',
-                'include/javascript/yui3/',
-                'styleguide/less/twitter-bootstrap'
-            ],
             // Array of directory patterns (PCRE regex).
             // Only works with the name, not its path.
             excludedDirectories: [
@@ -112,7 +105,9 @@ module.exports = function(grunt) {
                 'SugarCharts'
 
             ],
-            licenseFile: 'grunt/assets/licenseHeader'
+            licenseFile: 'grunt/assets/licenseHeader',
+            // Add paths you want to exclude in the whiteList file.
+            whiteList: 'grunt/assets/licenseWhiteList'
         },
         jsduck: {
             all: {
