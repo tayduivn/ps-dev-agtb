@@ -820,6 +820,9 @@ html.rtl {
                 margin-right: 8px;
             }
         }
+        &.search-filter .select2-choice {
+            padding-left: 6px;
+        }
     }
 
     .extend {
@@ -834,6 +837,19 @@ html.rtl {
             .filter-value.controls {
                 margin-right: 2.127659574%;
                 margin-left: 0;
+            }
+            .controls.span4:not(:first-child) {
+                margin-left: 0;
+                margin-right: 2.127659574%;
+            }
+        }
+        .filter-header > .row-fluid {
+            .span6:not(.controls) {
+                margin-left: 0;
+                margin-right: 2.127659574%;
+                .btn-primary {
+                    margin-right: 0;
+                }
             }
         }
         .massupdate {
