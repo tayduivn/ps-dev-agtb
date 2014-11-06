@@ -99,8 +99,7 @@ class ForecastReset
      */
     protected $tables = array(
         'forecast_worksheets',
-        'forecasts',
-        'forecast_manager_worksheets'
+        'forecasts'
     );
 
     /**
@@ -115,6 +114,34 @@ class ForecastReset
         foreach ($this->tables as $table) {
             $db->query($db->truncateTableSQL($table));
         }
+
+        // truncate the forecast_manager_worksheets_audit table if it exists
+        $fmw = BeanFactory::getBean('ForecastManagerWorksheets');
+        $audit_table = $fmw->get_audit_table_name();
+        if ($db->tableExists($audit_table)) {
+            $db->query($db->truncateTableSQL($audit_table));
+        }
+
+        // we don't truncate the manager worksheets, we need to delete the committed records first
+        $sql = 'DELETE FROM forecast_manager_worksheets where draft = 0;';
+        $db->query($sql);
+
+        // now update all the draft records to have best, likely and worst set to 0
+        // and all the other additional behind the scenes fields set to 0.
+        // this basically makes a draft row with just a quota in it
+        $sql = 'UPDATE forecast_manager_worksheets SET
+                  best_case = 0,
+                  worst_case = 0,
+                  likely_case = 0,
+                  best_case_adjusted = 0,
+                  worst_case_adjusted = 0,
+                  likely_case_adjusted = 0,
+                  opp_count = 0,
+                  pipeline_opp_count = 0,
+                  pipeline_amount = 0,
+                  closed_amount = 0,
+                  manager_saved = 0';
+        $db->query($sql);
     }
 
     /**
