@@ -45,11 +45,8 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
     public function test_PortalConfigParserSetUpConfig()
     {
         $retrievedSettings = array();
-        foreach ($this->requestVars as $varKey => $value) {
-            $_REQUEST[$varKey] = $value;
-        }
         $parser = new ParserModifyPortalConfig();
-        $parser->setUpPortal($_REQUEST);
+        $parser->setUpPortal($this->requestVars);
         $result = $GLOBALS['db']->query("SELECT * FROM config WHERE category = 'portal'");
 
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {

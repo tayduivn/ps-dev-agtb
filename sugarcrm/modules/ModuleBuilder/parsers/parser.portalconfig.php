@@ -22,25 +22,19 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 {
 
     /**
-     * Constructor
-     */
-    public function init()
-    {
-    }
-
-    /**
      * Sets up Portal.
      *
-     * @param array $settings the array of portal settings.
+     * @param array $settings (optional) the array of portal settings.
      */
-    public function setUpPortal($settings = array())
+    public function setUpPortal(array $settings = array())
     {
         // Initialize `MySettings_tab` (setting containing the list of module
         // tabs) if not set.
         $tabController = new TabController();
         $tabController->getPortalTabs();
 
-        $portalFields = array('defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
+        $portalFields = array('defaultUser', 'appName', 'logoURL', 'serverUrl',
+            'maxQueryResult', 'maxSearchQueryResult');
         $portalConfig = $this->getDefaultPortalSettings();
 
         foreach ($portalFields as $field) {
@@ -64,9 +58,10 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     public function unsetPortal()
     {
-        $portalConfig = array();
-        $portalConfig['appStatus'] = 'offline';
-        $portalConfig['on'] = 0;
+        $portalConfig = array(
+            'appStatus' => 'offLine',
+            'on' => 0
+        );
         $this->savePortalSettings($portalConfig);
         $this->removeOAuthForPortalUser();
     }
@@ -128,25 +123,25 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     private function setUpUser()
     {
-        $u = $this->getPortalUser();
+        $user = $this->getPortalUser();
         $role = $this->getPortalACLRole();
 
-        if (!($u->check_role_membership($role->name))) {
-            $u->load_relationship('aclroles');
-            $u->aclroles->add($role);
-            $u->save();
+        if (!($user->check_role_membership($role->name))) {
+            $user->load_relationship('aclroles');
+            $user->aclroles->add($role);
+            $user->save();
         }
     }
 
     /**
      * Saves Portal settings in the database.
      *
-     * @param $portalConfig an array containing Portal settings to save.
+     * @param array $portalConfig an array containing Portal settings to save.
      */
-    private function savePortalSettings($portalConfig)
+    private function savePortalSettings(array $portalConfig)
     {
         //TODO: Remove after we resolve issues with test associated to this
-        $GLOBALS['log']->info("Updating portal config");
+        $GLOBALS['log']->info('Updating portal config');
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
             // TODO: category should be `support`, platform should be `portal`
@@ -155,7 +150,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
-// Verify the existence of the javascript config file
+        // Verify the existence of the javascript config file
         if (!file_exists('portal2/config.js')) {
             require_once 'ModuleInstall/ModuleInstaller.php';
             ModuleInstaller::handlePortalConfig();
@@ -217,7 +212,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     }
 
     /**
-     * Creates the oauthkey record for this portal user if it doesn't exists.
+     * Creates the oauthkey record for this portal user if it doesn't exist.
      */
     public function createOAuthForPortalUser()
     {
