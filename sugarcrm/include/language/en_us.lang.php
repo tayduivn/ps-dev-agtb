@@ -2411,6 +2411,8 @@ $app_strings = array (
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
 
     'LBL_CLOSE_BUTTON_LABEL' => 'Close',
+    'TPL_STATUS_CHANGE_SUCCESS' => '{{moduleSingular}} marked as {{status}}.',
+
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
