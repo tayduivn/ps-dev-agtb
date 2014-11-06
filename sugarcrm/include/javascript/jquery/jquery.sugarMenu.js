@@ -175,7 +175,7 @@
 							dropDownHandle.addClass("ab");
 							dropDownHandle.tipTip({maxWidth: "auto",
 							   edgeOffset: 10,
-		                       content: "More Actions",
+		                       content: SUGAR.language.get('app_strings','LBL_MORE_ACTION'),
 		                       defaultPosition: "top"});
 
 						}
