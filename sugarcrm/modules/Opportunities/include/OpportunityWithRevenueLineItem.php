@@ -226,6 +226,9 @@ EOL;
         // show the rli module in the mega menu
         $this->setRevenueLineItemModuleTab(true);
 
+        // handle the parent_type_field
+        $this->setRevenueLineItemInParentRelateDropDown(true);
+
         // place the studio file
         sugar_touch($this->rliStudioFile);
 

@@ -189,6 +189,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         // hide the mega menu tab
         $this->setRevenueLineItemModuleTab(false);
 
+        // handle the parent type field
+        $this->setRevenueLineItemInParentRelateDropDown(false);
+
         // disable the ACLs on RevenueLineItems
         ACLAction::removeActions('RevenueLineItems');
 
