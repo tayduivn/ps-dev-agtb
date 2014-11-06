@@ -51,7 +51,7 @@ function save_checks(offset, module)
 {
     if (typeof document.MassUpdate[module] == 'undefined')
     {
-        document.MassUpdate.innerHTML += '<input type="hidden" name="' + module + '" value="' + offset + '>';
+        document.MassUpdate.innerHTML += '<input type="hidden" name="' + module + '" value="' + offset + '">';
     }
     document.MassUpdate[module].value = offset;
     document.MassUpdate.submit();
