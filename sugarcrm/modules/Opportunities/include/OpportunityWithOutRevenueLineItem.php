@@ -76,6 +76,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'massupdate' => true,
             'reportable' => true,
             'workflow' => true,
+            'importable' => true,
         ),
         'probability' => array(
             'audited' => true,
@@ -88,6 +89,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'reportable' => false,
             'audited' => false,
             'massupdate' => false,
+            'importable' => false,
         ),
         'date_closed_timestamp' => array(
             'formula' => 'timestamp($date_closed)'

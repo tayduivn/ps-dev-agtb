@@ -94,11 +94,11 @@ class StandardField extends DynamicField
             	|| ((substr($property, 0,3) == 'ext' && strlen($property) == 4))
             ) 
             	continue;
-       	 		
+
             // Bug 37043 - Avoid writing out vardef defintions that are the default value.
             if (isset($newDef[$property]) &&
             	((!isset($currdef[$property]) && !$this->isDefaultValue($property,$newDef[$property], $this->baseField))
-            		|| (isset($currdef[$property]) && $currdef[$property] != $newDef[$property])
+            		|| (isset($currdef[$property]) && $currdef[$property] !== $newDef[$property])
             	)
             ){
             	$this->custom_def[$property] =
@@ -132,5 +132,3 @@ class StandardField extends DynamicField
     
     
 }
-
-?>

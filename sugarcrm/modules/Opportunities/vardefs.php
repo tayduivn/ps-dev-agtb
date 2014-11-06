@@ -283,6 +283,7 @@ $dictionary['Opportunity'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => false,
             'reportable' => false,
+            'importable' => false
         ),
         'probability' => array(
             'name' => 'probability',

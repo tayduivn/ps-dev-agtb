@@ -72,6 +72,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'massupdate' => false,
             'reportable' => false,
             'workflow' => false,
+            'importable' => false,
         ),
         'probability' => array(
             'audited' => false,
@@ -84,6 +85,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'reportable' => true,
             'audited' => true,
             'massupdate' => true,
+            'importable' => true,
         ),
         'date_closed_timestamp' => array(
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")'
