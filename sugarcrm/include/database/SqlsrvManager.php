@@ -279,7 +279,7 @@ class SqlsrvManager extends MssqlManager
                 $fielddef2['type'] = $fielddef1['type'];
             }
         }
-        return parent::compareVarDefs($fielddef1, $fielddef2);
+        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
     }
 
     /**
