@@ -3,6 +3,12 @@
 /*
 Modification information for LGPL compliance
 
+commit d270030a6fa40cb9da7725f32f4f768e276fda9b
+Author: skymeyer <jelle.vink@gmail.com>
+Date:   Mon Nov 3 21:10:12 2014 -0800
+
+    BR-2177: Avoid php notices "array to string conversion"
+
 commit 5f3c903c0f801464e8cceb36f83b248edee3f963
 Author: Sergey Morozov <smorozov@sugarcrm.com>
 Date:   Sat Jul 12 13:34:44 2014 +0300
