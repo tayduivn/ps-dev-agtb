@@ -80,6 +80,8 @@ $dictionary['Product'] = array(
                 'tax_class' => 'tax_class',
                 'weight' => 'weight',
                 'type_name' => 'type_name',
+                'manufacturer_id' => 'manufacturer_id',
+                'manufacturer_name' => 'manufacturer_name',
             ),
         ),
         'account_id' => array(
