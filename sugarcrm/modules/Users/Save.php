@@ -201,13 +201,13 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             //Put home back in.  It needs to be first display module in Sugar 7
             array_unshift($DISPLAY_ARR['display_tabs'], 'Home');
 
-            // Order is relevent on display modules, so a simple diff is not
-            // sufficient in this case. We need sameness AND order.
-            // NOTE: HIDE_ARR will always be changed if display is changed, so
-            // there is no need to check its state. Since REMOVE is no longer
-            // supported there is no need to check that array for state either.
-            $refreshMetadata = array_values($DISPLAY_ARR['display_tabs']) !== array_values($curDisplay);
-            $tabs->set_user_tabs($DISPLAY_ARR['display_tabs'], $focus, 'display');
+            // Order is relevant on display modules, use identical (===) comparison
+            // If DISPLAY_ARR changed, so did HIDE_ARR
+            // Save tabs only if there are changes
+            if (array_values($DISPLAY_ARR['display_tabs']) !== array_values($curDisplay)) {
+                $refreshMetadata = true;
+                $tabs->set_user_tabs($DISPLAY_ARR['display_tabs'], $focus, 'display');
+            }
         }
 
         if (isset($HIDE_ARR['hide_tabs'])) {
