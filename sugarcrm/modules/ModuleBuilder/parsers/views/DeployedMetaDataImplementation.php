@@ -26,15 +26,22 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedMetaDataImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
+    /**
+     * Additional metadata parameters
+     *
+     * @var array
+     */
+    protected $params = array();
 
 	/*
 	 * Constructor
 	 * @param string $view
 	 * @param string $moduleName
 	 * @param string $client The client making the request for this implementation
+     * @param array  $params Additional metadata parameters
 	 * @throws Exception Thrown if the provided view doesn't exist for this module
 	 */
-	function __construct ($view , $moduleName, $client = '')
+    public function __construct($view, $moduleName, $client = '', array $params = array())
 	{
         // Set the deployed state to true
         $this->_deployed = true;
@@ -47,6 +54,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		// END ASSERTIONS
 
 		$this->_view = strtolower($view);
+        $this->params = $params;
         $this->setViewClient($client);
 		$this->_moduleName = $moduleName ;
 
@@ -69,7 +77,18 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$loaded = null ;
 		foreach ( array ( MB_BASEMETADATALOCATION , MB_CUSTOMMETADATALOCATION , MB_WORKINGMETADATALOCATION , MB_HISTORYMETADATALOCATION ) as $type )
 		{
-			$this->_sourceFilename = $this->getFileName ( $view, $moduleName, $type ) ;
+            $this->_sourceFilename = $this->getFileName($view, $moduleName, $type, $client, $params);
+            //When loading, if no role layout is found, revert to the default version.
+            if (($type == MB_CUSTOMMETADATALOCATION || $type == MB_BASEMETADATALOCATION)
+                && !file_exists($this->_sourceFilename)) {
+                $this->_sourceFilename = $this->getFileName(
+                    $view,
+                    $moduleName,
+                    $type,
+                    $client,
+                    array_merge($params, array('role' => null))
+                );
+            }
 			if($view == MB_POPUPSEARCH || $view == MB_POPUPLIST){
 				global $current_language;
 				$mod = return_module_language($current_language , $moduleName);
@@ -221,7 +240,11 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		// we need to check the custom location where the derived layouts will be
 		foreach ( array ( MB_BASEMETADATALOCATION , MB_CUSTOMMETADATALOCATION ) as $type )
 		{
-			$sourceFilename = $this->getFileName ( $view, $moduleName, $type ) ;
+            $sourceFilename = $this->getFileName($view, $moduleName, $type, null, $params);
+            //When loading, if no role layout is found, revert to the default version.
+            if (!file_exists($sourceFilename)) {
+                $sourceFilename = $this->getFileName($view, $moduleName, $type);
+            }
 			if($view == MB_POPUPSEARCH || $view == MB_POPUPLIST){
 				global $current_language;
 				$mod = return_module_language($current_language , $moduleName);
@@ -411,13 +434,26 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 * @param string $modulename     The name of the module that will use this layout
 	 * @param string $type           The location of the file (custom, history, etc)
 	 * @param string $client         The client type for the file name
-	 */
-	public function getFileName($view , $moduleName , $type = MB_CUSTOMMETADATALOCATION, $client = null)
-	{
-        if ($client === null) {
-            $client = $this->_viewClient;
+     * @param array  $params         Additional metadata parameters
+     */
+    public function getFileName(
+        $view,
+        $moduleName,
+        $type = MB_CUSTOMMETADATALOCATION,
+        $client = '',
+        array $params = array()
+    ) {
+        $params = array_merge($this->params, $params, array(
+            'client' => $this->_viewClient,
+            'type' => $type,
+        ));
+
+        if ($client) {
+            $params['client'] = $client;
         }
-        return MetaDataFiles::getDeployedFileName($view, $moduleName, $type, $client);
+
+        $file = MetaDataFiles::getFile($view, $moduleName, $params);
+        return MetaDataFiles::getFilePath($file);
 	}
 	
 	private function replaceVariables($defs, $module) {
@@ -473,5 +509,13 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
     public function saveToFile($file, $defs)
     {
         $this->_saveToFile ( $file, $defs ) ;
+    }
+
+    /**
+     * Returns additional metadata parameters
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 }

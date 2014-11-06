@@ -1500,6 +1500,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (rel)
                 tmpElem.rel = rel;
             headElem.appendChild(tmpElem);
+        },
+        switchLayoutRole: function(role){
+            $('input[name="selectedRole"]').val(role);
+            $('#prepareForSave').append('<input name="action" type="hidden" value="editLayout">');
+            this.submitForm('prepareForSave');
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

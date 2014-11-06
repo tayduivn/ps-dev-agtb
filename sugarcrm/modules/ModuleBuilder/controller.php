@@ -836,13 +836,18 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
 
-
-
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client) ;
+        $params = array();
+        if (!empty($_REQUEST['selectedRole'])) {
+            $params['role'] = $_REQUEST['selectedRole'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
         $parser->writeWorkingFile () ;
 
 
@@ -870,11 +875,19 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client);
+
+        $params = array();
+        if (!empty($_REQUEST['selectedRole'])) {
+            $params['role'] = $_REQUEST['selectedRole'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
         $parser->handleSave () ;
 
 

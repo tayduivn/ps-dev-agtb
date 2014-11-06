@@ -1038,17 +1038,35 @@ class SugarAutoLoader
         if (!is_array($data)) {
             return $result;
         }
-        foreach ($data as $file => $data) {
+        self::flatten($dir, $data, $get_dirs, $extension, $result);
+        return $result;
+    }
+
+    /**
+     * Flattens the result of self::getDirFiles()
+     *
+     * @param string $dir Base directory
+     * @param array $data Tree data
+     * @param boolean $get_dirs
+     * @param string $extension Filter files by extension
+     * @param array $result Flattened data
+     */
+    protected function flatten($dir, array $data, $get_dirs, $extension, &$result)
+    {
+        foreach ($data as $file => $nodes) {
             // check extension if given
             if (!empty($extension) && pathinfo($file, PATHINFO_EXTENSION) != $extension) {
                 continue;
             }
+            $path = $dir . '/' . $file;
             // get dirs or files depending on $get_dirs
-            if (is_array($data) == $get_dirs) {
-                $result[] = "$dir/$file";
+            if (is_array($nodes) == $get_dirs) {
+                $result[] = $path;
+            }
+            if (is_array($nodes)) {
+                self::flatten($path, $nodes, $get_dirs, $extension, $result);
             }
         }
-        return $result;
     }
 
     /**
@@ -1246,7 +1264,7 @@ class SugarAutoLoader
             }
             $filename = $item->getFilename();
             if ($item->isDir()) {
-                $data[$filename] = self::scanDir($path.$filename."/");
+                $data[$filename] = self::scanDir($path . '/' . $filename);
             } else {
                 if (!in_array(pathinfo($filename, PATHINFO_EXTENSION), self::$exts)) {
                     continue;

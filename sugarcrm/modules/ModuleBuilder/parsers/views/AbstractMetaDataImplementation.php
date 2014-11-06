@@ -476,5 +476,4 @@ abstract class AbstractMetaDataImplementation
             }
         }
     }
-
 }

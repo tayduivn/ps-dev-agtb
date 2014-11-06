@@ -693,6 +693,7 @@ $mod_strings = array(
 'LBL_ACTIVITIES'=>'Activity Stream',
 'LBL_SEARCH'=>'Search',
 'LBL_NEW'=>'New',
+'LBL_ROLE'=>'Role',
 'LBL_TYPE_BASIC'=>'basic',
 'LBL_TYPE_COMPANY'=>'company',
 'LBL_TYPE_PERSON'=>'person',
