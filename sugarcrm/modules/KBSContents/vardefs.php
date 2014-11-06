@@ -42,6 +42,9 @@ $dictionary['KBSContent'] = array(
             'vname' => 'LBL_LANG',
             'audited' => true,
             'studio' => false,
+            'full_text_search' => array(
+                'enabled' => true,
+            ),
         ),
         'active_date' => array(
             'name' => 'active_date',
