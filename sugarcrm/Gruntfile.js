@@ -105,9 +105,9 @@ module.exports = function(grunt) {
                 'SugarCharts'
 
             ],
-            licenseFile: 'grunt/assets/licenseHeader',
+            licenseFile: 'grunt/assets/license-header',
             // Add paths you want to exclude in the whiteList file.
-            whiteList: 'grunt/assets/licenseWhiteList'
+            whiteList: 'grunt/assets/license-white-list'
         },
         jsduck: {
             all: {

@@ -10,7 +10,7 @@
  */
 
 module.exports = function(grunt) {
-    grunt.registerTask('checkLicense', "Checks which files doesn't have a license on top of them", function() {
+    grunt.registerTask('checkLicense', "Returns files that do not have the sugar license header", function() {
         this.async();
         var exec = require('child_process').exec;
         var options = grunt.config.get([this.name]);
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
             if (error && error.code === 1) {
                 grunt.log.ok('No files without license header found.');
             } else {
-                grunt.log.subhead('Bad license headers found at least in:');
+                grunt.log.subhead('Invalid license headers found in:');
                 grunt.log.error(stdout);
             }
         });
