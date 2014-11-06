@@ -58,13 +58,13 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     initialize: function(options) {
         // Holds report data from the server's endpoint once we fetch it
         this.reportData = new Backbone.Model();
         this.reportOptions = [];
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
     },
 
     /**
@@ -128,7 +128,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     bindDataChange: function() {
         if (this.meta.config) {
@@ -149,7 +149,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     loadData: function(options) {
         options = options || {};
@@ -185,9 +185,18 @@
         return _.defaults(settings, defaults);
     },
 
+    /**
+     * Process the chart data from the server
+     *
+     * @param {Object|String} serverData The Report Data from the server
+     * @param {Boolean} [update] Is this an update to the report?
+     */
     setChartParams: function(serverData, update) {
         // only called by bindDataChange when the report id is changed in config panel
         if (_.isUndefined(serverData.reportData)) {
+            if (!this.meta.config && this.chartField) {
+                this.chartField.displayNoData(true);
+            }
             return;
         }
         update = _.isUndefined(update) ? false : update;
@@ -230,7 +239,7 @@
 
     /**
      * Returns the x-axis label based on report data
-     * @returns {String}
+     * @return {String}
      */
     _getXaxisLabel: function(data) {
         var label = '';
@@ -242,7 +251,7 @@
 
     /**
      * Returns the y-axis label based on report data
-     * @returns {String}
+     * @return {String}
      */
     _getYaxisLabel: function(data) {
         var label = '';
@@ -258,7 +267,7 @@
 
     /**
      * Returns the barType chart property based on the type of chart
-     * @returns {String}
+     * @return {String}
      */
     _getBarType: function(type) {
         var barType;
@@ -372,13 +381,13 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     _render: function() {
         // if we're in config, or if the chartField doesn't exist yet... render
         // otherwise do not render again as this destroys and re-draws the chart and looks awful
         if (this.meta.config || _.isUndefined(this.chartField)) {
-            app.view.View.prototype._render.call(this);
+            this._super('_render');
         }
     },
 
@@ -414,7 +423,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      * When rendering fields, get a reference to the chart field if we don't have one yet
      */
     _renderField: function(field) {
