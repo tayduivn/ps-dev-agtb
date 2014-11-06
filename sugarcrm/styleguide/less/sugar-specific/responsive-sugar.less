@@ -307,6 +307,12 @@
     }
   }
 
+  //for safari's totally busted fixed position modal on login
+  #header[style*="display: none;"] + #content {
+    top: 0;
+    margin-top: 0;
+  }
+
   #portal #content > .row-fluid > .dashboard {
     padding-top: 0 !important;
   }
@@ -341,6 +347,7 @@
     .dashboard {
       top: auto;
       bottom: auto;
+      padding-top: 0;
       .headerpane {
         position: relative;
         width: 100%;
@@ -363,8 +370,13 @@
     padding-top: 0;
   }
 
-  .headerpane .sidebar-toggle {
-    display: none;
+  .headerpane {
+    .sidebar-toggle {
+      display: none;
+    }
+    .btn-toolbar {
+      padding-right: 16px;
+    }
   }
 
   .drawer.inactive {
