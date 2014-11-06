@@ -57,7 +57,7 @@ if (!empty($sugar_config['enable_web_services_user_creation'])) {
             'label' => 'LNK_NEW_PORTAL_USER',
             'acl_action' => 'admin',
             'acl_module' => $moduleName,
-            'icon' => 'icon-plus',
+            'icon' => 'fa-plus',
         );
 }
 //BEGIN SUGARCRM flav=ent ONLY

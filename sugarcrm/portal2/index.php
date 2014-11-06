@@ -54,7 +54,7 @@ ensureJSCacheFilesExist();
                         <div class="alert alert-process">
                             <strong>Loading</strong>
                             <div class="loading">
-                                <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                                <i class="l1 fa fa-circle"></i><i class="l2 fa fa-circle"></i><i class="l3 fa fa-circle"></i>
                             </div>
                         </div>
                     </div>

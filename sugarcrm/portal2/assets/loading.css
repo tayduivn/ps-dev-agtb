@@ -63,20 +63,13 @@ body {
   animation: move 1s infinite linear;
 }
 
-.icon-circle:before {
+.fa-circle:before {
     content: "\f111";
 }
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
-    display: inline-block;
-}
-
-[class^="icon-"], [class*=" icon-"] {
+.loading .fa {
     line-height: normal;
     vertical-align: baseline;
-}
-
-[class^="icon-"], [class*=" icon-"] {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -84,13 +77,13 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
+.loading .fa:before {
     text-decoration: inherit;
     display: inline-block;
     speak: none;
 }
 
-.nav li .loading .icon-circle {
+.nav li .loading .fa-circle {
     width: auto;
 }
 

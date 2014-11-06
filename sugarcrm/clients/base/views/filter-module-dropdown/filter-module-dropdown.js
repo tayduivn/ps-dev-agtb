@@ -250,7 +250,7 @@
         if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
             selectionLabel = app.lang.get("LBL_MODULE");
         } else {
-            selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+            selectionLabel = app.lang.get("LBL_RELATED") + '<i class="fa fa-caret-down"></i>';
         }
 
         return selectionLabel;

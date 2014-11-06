@@ -280,7 +280,7 @@
 
         // figure out if it changed here based
         if (app.math.isDifferentWithPrecision(newValue, oldValue)) {
-            cls = (newValue > oldValue) ? ' fa-arrow-up icon-green' : ' fa-arrow-down icon-red';
+            cls = (newValue > oldValue) ? ' fa-arrow-up font-green' : ' fa-arrow-down font-red';
         }
         return cls;
     }

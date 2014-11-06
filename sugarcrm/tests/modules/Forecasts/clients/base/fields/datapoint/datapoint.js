@@ -130,14 +130,14 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
                 return true;
             });
-            expect(field._getArrowIconColorClass(100.10, 100.00)).toEqual(' fa-arrow-up icon-green');
+            expect(field._getArrowIconColorClass(100.10, 100.00)).toEqual(' fa-arrow-up font-green');
         });
 
         it('should return down arrow class', function() {
             sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
                 return true;
             });
-            expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' fa-arrow-down icon-red');
+            expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' fa-arrow-down font-red');
         });
     });
 

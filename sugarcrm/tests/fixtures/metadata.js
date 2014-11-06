@@ -301,7 +301,7 @@ tmpMetadata = {
                             {
                                 name: "show_more_button_back",
                                 type: "navElement",
-                                icon: "icon-plus",
+                                icon: "fa-plus",
                                 label: " ",
                                 route: {
                                     action: "create",
@@ -311,7 +311,7 @@ tmpMetadata = {
                             {
                                 name: "show_more_button_back",
                                 type: "navElement",
-                                icon: "icon-chevron-left",
+                                icon: "fa-chevron-left",
                                 label: " ",
                                 events: {
                                     click: "function(){ var self = this; " +
@@ -322,7 +322,7 @@ tmpMetadata = {
                             {
                                 name: "show_more_button_forward",
                                 type: "navElement",
-                                icon: "icon-chevron-right",
+                                icon: "fa-chevron-right",
                                 label: " ",
                                 events: {
                                     click: "function(){ var self = this; " +
@@ -1115,9 +1115,9 @@ tmpMetadata = {
         "sugarField_actionsLink": {
             "templates": {
                 "default": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
-                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
-                    "  <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
-                    " <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
+                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\"><i class=\"fa-list-alt\"><\/i>Details<\/a><\/li> " +
+                    "  <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\/edit\"><i class=\"fa-pencil\"><\/i> Edit<\/a><\/li>  " +
+                    " <li><a href=\"#{{model.module}}\/{{{fieldValue model \"id\"}}}\/delete\"><i class=\"fa-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
             }
         }
     },
