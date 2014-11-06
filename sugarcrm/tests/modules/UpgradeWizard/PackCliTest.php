@@ -54,6 +54,9 @@ class PackCliTest extends PHPUnit_Framework_TestCase
 
     public function testPackCliPhp()
     {
+        if (is_windows()) {
+            $this->markTestSkipped('Skipping on Windows - PHP_BINDIR bug');
+        }
         $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php');
         $this->assertEquals(
             "Use " . __DIR__ . "/../../../modules/UpgradeWizard/pack_cli.php name (no zip or phar extension) [sugarVersion [buildNumber]]",
