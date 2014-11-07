@@ -694,7 +694,7 @@ describe('Plugins.VirtualCollection', function() {
 
         describe('setting a collection field', function() {
             it('should set the collection as a default when created', function() {
-                expect(model.getDefaultAttribute(attribute)).toBe(collection);
+                expect(model.getDefault(attribute)).toBe(collection);
             });
 
             it('should still set any non-collection fields on the bean', function() {

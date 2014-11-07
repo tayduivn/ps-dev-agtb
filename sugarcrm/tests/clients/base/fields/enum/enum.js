@@ -133,7 +133,7 @@ describe("enum field", function() {
                     fake1: 'fvalue1',
                     fake2: 'fvalue2'
                 };
-            sinon.stub(field.model, 'setDefaultAttribute');
+            sinon.stub(field.model, 'setDefault');
             //setup fake REST end-point for enum
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', /.*rest\/v10\/Contacts\/enum\/test_enum.*/,

@@ -156,7 +156,7 @@ describe('Base.Field.DateTimeCombo', function() {
 
             expect(field.value).toEqual({'date': '15/01/1984', 'time': '7:20pm'});
             expect(field.model.get(field.name)).toBe(expectedDate);
-            expect(field.model.getDefaultAttribute(field.name)).toBe(expectedDate);
+            expect(field.model.getDefault(field.name)).toBe(expectedDate);
 
             field.dispose();
         });

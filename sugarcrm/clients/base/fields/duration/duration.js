@@ -31,10 +31,12 @@
 
             // Values for date_start, date_end, duration_hours, and duration_minutes
             // should be set as the default on the model.
-            this.model.setDefaultAttribute('date_start', this.model.get('date_start'));
-            this.model.setDefaultAttribute('date_end', this.model.get('date_end'));
-            this.model.setDefaultAttribute('duration_hours', this.model.get('duration_hours'));
-            this.model.setDefaultAttribute('duration_minutes', this.model.get('duration_minutes'));
+            this.model.setDefault({
+                'date_start': this.model.get('date_start'),
+                'date_end': this.model.get('date_end'),
+                'duration_hours': this.model.get('duration_hours'),
+                'duration_minutes': this.model.get('duration_minutes')
+            });
         }
     },
 
