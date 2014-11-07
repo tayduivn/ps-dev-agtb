@@ -280,7 +280,7 @@ class PMSEPreProcessor
             'evn_condition',
             'evn_message',
             'evn_operation_name',
-            'evn_operation_implementation_ref',
+            'evn_operation_implementation',
             'evn_time_date',
             'evn_time_cycle',
             'evn_time_duration',

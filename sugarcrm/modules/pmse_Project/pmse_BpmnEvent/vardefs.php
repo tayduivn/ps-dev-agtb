@@ -466,10 +466,10 @@ $dictionary['pmse_BpmnEvent'] = array(
     'len' => '255',
     'size' => '255',
   ),
-'evn_operation_implementation_ref' =>
+'evn_operation_implementation' =>
   array (
     'required' => true,
-    'name' => 'evn_operation_implementation_ref',
+    'name' => 'evn_operation_implementation',
     'vname' => '',
     'type' => 'varchar',
     'massupdate' => false,
