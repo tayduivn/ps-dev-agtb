@@ -49,7 +49,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $this->savePortalSettings($portalConfig);
         $this->setUpUser();
 
-        //Refresh cache so that module metadata is rebuilt
+        $this->refreshCache();
+    }
+
+    /**
+     * Refreshes cache so that module metadata is rebuilt.
+     */
+    protected function refreshCache()
+    {
         MetaDataManager::refreshCache(array('base', 'portal'));
     }
 
@@ -145,7 +152,8 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
             // TODO: category should be `support`, platform should be `portal`
-            if (!Administration::getSettings()->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {
+            $admin = $this->getAdministrationBean();
+            if (!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
             }
         }
@@ -158,6 +166,15 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     }
 
     /**
+     * TODO build me a dependency injection
+     * @return Administration the Administration class.
+     */
+    protected function getAdministrationBean()
+    {
+        return BeanFactory::getBean('Administration');
+    }
+
+    /**
      * Removes OAuth key of Portal user.
      */
     public function removeOAuthForPortalUser()
@@ -165,7 +182,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         // Try to retrieve the portal user. If exists, check for
         // corresponding oauth2 and mark deleted.
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = User::retrieve_user_id($portalUserName);
+        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
         if ($id) {
             $clientSeed = BeanFactory::newBean('OAuthKeys');
             $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
@@ -183,7 +200,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     public function getPortalUser()
     {
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = User::retrieve_user_id($portalUserName);
+        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
         if (!$id) {
             $user = BeanFactory::getBean('Users');
             $user->user_name = $portalUserName;
