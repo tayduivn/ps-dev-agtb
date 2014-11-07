@@ -31,16 +31,6 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'name' => 'status',
         ),
         array(
-          'target_record_key' => 'contact_id',
-          'target_module' => 'Contacts',
-          'label' => 'LBL_LIST_CONTACT',
-          'link' => true,
-          'enabled' => true,
-          'default' => true,
-          'name' => 'contact_name',
-          'related_fields' => array('contact_id'),
-        ),
-        array(
           'label' => 'LBL_LIST_DATE',
           'enabled' => true,
           'default' => true,
