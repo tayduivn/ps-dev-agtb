@@ -394,12 +394,14 @@ nv.models.paretoChart = function() {
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .id('outline_' + chart.id());
       lines2
         .margin({top: 0, right: lOffset, bottom: 0, left: lOffset})
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .size(function() { return Math.pow(6, 2) * Math.PI; })
         .id('foreground_' + chart.id());
       linesWrap1

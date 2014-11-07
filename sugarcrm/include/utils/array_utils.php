@@ -28,7 +28,7 @@ function var_export_helper($tempArray) {
  * @params : $array_name - a String containing the name of an array.
  * @params : $value_name - a String containing the name of a variable in the array.
  * @params : $value      - a String containing the associated value with $value_name.
- * 
+ *
  * @returns: String. Example - override_value_to_string($name, 'b', 1) = '$name['b'] = 1;'
  */
 
@@ -101,11 +101,13 @@ function is_sequential($arr)
  *
  * @return string : example - "\$sugar_config['a']['b']['c'][0] = 'hello';\n"
  */
-function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $original = null) {
+function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $original = null)
+{
+    $quoted_vname = var_export($value_name, true);
     if (is_array($value)) {
         $str = '';
         $seq = false;
-        $newArrayName = $array_name . "['$value_name']";
+        $newArrayName = $array_name . "[$quoted_vname]";
         if (is_array($original)) {
             if (!empty($original[$value_name]) && is_array($original[$value_name])) {
                 $original = $original[$value_name];
@@ -140,7 +142,7 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
                     return "\$$array_name" . "[] = " . var_export($value, true) . ";\n";
                 }
             }
-            return "\$$array_name" . "['$value_name'] = " . var_export($value, true) . ";\n";
+            return "\$$array_name" . "[$quoted_vname] = " . var_export($value, true) . ";\n";
         }
     }
 }
@@ -148,7 +150,7 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 /**
  * This function will attempt to convert an object to an array.
  * Loops are not checked for so this function should be used with caution.
- * 
+ *
  * @param $obj
  * @return array representation of $obj
  */
@@ -163,19 +165,19 @@ function object_to_array_recursive($obj)
 		if (is_object($val)) {
 			$ret[$key] = object_to_array_recursive($val);
 		}
-		
+
 	}
 	return $ret;
 }
 /**
-	 * This function returns an array of all the key=>value pairs in $array1 
+	 * This function returns an array of all the key=>value pairs in $array1
 	 * that are wither not present, or different in $array2.
 	 * If a key exists in $array2 but not $array1, it will not be reported.
 	 * Values which are arrays are traced further and reported only if thier is a difference
 	 * in one or more of thier children.
-	 * 
-	 * @param array $array1, the array which contains all the key=>values you wish to check againts
-	 * @param array $array2, the array which 
+	 *
+	 * @param array $array1, the array which contains all the key=>values you wish to check against
+	 * @param array $array2, the array which
 	 * @param array $allowEmpty, will return the value if it is empty in $array1 and not in $array2,
 	 * otherwise empty values in $array1 are ignored.
 	 * @return array containing the differences between the two arrays
@@ -197,7 +199,7 @@ function object_to_array_recursive($obj)
 		}
 		return $diff;
 	}
-	
+
 	/**
 	 * Recursivly set a value in an array, creating sub arrays as necessary
 	 *
@@ -321,5 +323,3 @@ class SugarArray extends ArrayObject
         }
     }
 }
-
-?>
