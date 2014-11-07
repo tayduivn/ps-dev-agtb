@@ -854,6 +854,14 @@
     },
 
     /**
+     * Get the current button state.
+     * @return {string} The current button state
+     */
+    getCurrentButtonState: function() {
+        return this.currentState;
+    },
+
+    /**
      * Set the title in the header pane.
      *
      * @param {String} title The new title to set on the headerpane.
