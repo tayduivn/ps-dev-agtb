@@ -362,16 +362,16 @@ class ViewLayoutView extends SugarView
         //Only super user should have access to all roles
         $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
         foreach ($allRoles as $role) {
-            $roleLayoutFilePath = $implementation->getFileName(
+            $fileExists = $implementation->fileExists(
                 $this->editLayout,
                 $this->editModule,
                 MB_CUSTOMMETADATALOCATION,
-                null,
                 array(
                     'role' => $role->id,
                 )
             );
-            $prefix = file_exists($roleLayoutFilePath) ? '* ' : '';
+
+            $prefix = $fileExists ? '* ' : '';
             $roles[$role->id] = $prefix . $role->name;
         }
 

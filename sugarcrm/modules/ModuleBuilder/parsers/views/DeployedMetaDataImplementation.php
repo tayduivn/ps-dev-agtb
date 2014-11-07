@@ -33,6 +33,19 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
      */
     protected $params = array();
 
+    /**
+     * Dictionary of available metadata locations. The value designates
+     * if the location may store context dependent metadata
+     *
+     * @var array
+     */
+    protected static $locations = array(
+        MB_BASEMETADATALOCATION => false,
+        MB_CUSTOMMETADATALOCATION => true,
+        MB_WORKINGMETADATALOCATION => true,
+        MB_HISTORYMETADATALOCATION => false,
+    );
+
 	/*
 	 * Constructor
 	 * @param string $view
@@ -77,18 +90,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$loaded = null ;
 		foreach ( array ( MB_BASEMETADATALOCATION , MB_CUSTOMMETADATALOCATION , MB_WORKINGMETADATALOCATION , MB_HISTORYMETADATALOCATION ) as $type )
 		{
-            $this->_sourceFilename = $this->getFileName($view, $moduleName, $type, $client, $params);
-            //When loading, if no role layout is found, revert to the default version.
-            if (($type == MB_CUSTOMMETADATALOCATION || $type == MB_BASEMETADATALOCATION)
-                && !file_exists($this->_sourceFilename)) {
-                $this->_sourceFilename = $this->getFileName(
-                    $view,
-                    $moduleName,
-                    $type,
-                    $client,
-                    array_merge($params, array('role' => null))
-                );
-            }
+            $this->_sourceFilename = $this->getFileName($view, $moduleName, $type, $client);
 			if($view == MB_POPUPSEARCH || $view == MB_POPUPLIST){
 				global $current_language;
 				$mod = return_module_language($current_language , $moduleName);
@@ -240,11 +242,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		// we need to check the custom location where the derived layouts will be
 		foreach ( array ( MB_BASEMETADATALOCATION , MB_CUSTOMMETADATALOCATION ) as $type )
 		{
-            $sourceFilename = $this->getFileName($view, $moduleName, $type, null, $params);
-            //When loading, if no role layout is found, revert to the default version.
-            if (!file_exists($sourceFilename)) {
-                $sourceFilename = $this->getFileName($view, $moduleName, $type);
-            }
+            $sourceFilename = $this->getFileName($view, $moduleName, $type);
 			if($view == MB_POPUPSEARCH || $view == MB_POPUPLIST){
 				global $current_language;
 				$mod = return_module_language($current_language , $moduleName);
@@ -413,12 +411,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 
 		// when we deploy get rid of the working file; we have the changes in the MB_CUSTOMMETADATALOCATION so no need for a redundant copy in MB_WORKINGMETADATALOCATION
 		// this also simplifies manual editing of layouts. You can now switch back and forth between Studio and manual changes without having to keep these two locations in sync
-		$workingFilename = $this->getFileName($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION);
+        $workingFilename = $this->getFileNameNoDefault($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION);
 
 		if (file_exists($workingFilename)) {
-		    unlink($this->getFileName($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION));
+            unlink($workingFilename);
         }
-		$filename = $this->getFileName($this->_view, $this->_moduleName, MB_CUSTOMMETADATALOCATION);
+        $filename = $this->getFileNameNoDefault($this->_view, $this->_moduleName, MB_CUSTOMMETADATALOCATION);
 		$GLOBALS['log']->debug(get_class($this) . "->deploy(): writing to " . $filename);
 		$this->_saveToFile($filename, $defs);
 
@@ -427,35 +425,97 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		TemplateHandler::clearCache($this->_moduleName);
 	}
 
-	/*
-	 * Construct a full pathname for the requested metadata
+    /**
+     * Construct a full pathname for the requested metadata. If the file which matches additional metadata parameters
+     * doesn't exist, the default file name is returned
 	 *
 	 * @param string $view           The view type, that is, EditView, DetailView etc
-	 * @param string $modulename     The name of the module that will use this layout
-	 * @param string $type           The location of the file (custom, history, etc)
+     * @param string $moduleName     The name of the module that will use this layout
+     * @param string $location       The location of the file (custom, history, etc)
 	 * @param string $client         The client type for the file name
-     * @param array  $params         Additional metadata parameters
+     *
+     * @return string
      */
-    public function getFileName(
-        $view,
-        $moduleName,
-        $type = MB_CUSTOMMETADATALOCATION,
-        $client = '',
-        array $params = array()
-    ) {
-        $params = array_merge($this->params, $params, array(
+    public function getFileName($view, $moduleName, $location = MB_CUSTOMMETADATALOCATION, $client = '')
+    {
+        if ($this->params && $this->locationSupportsParameters($location)) {
+            $filename = $this->getFileNameByParameters($view, $moduleName, $location, $client, $this->params);
+            // if no role layout is found, revert to the default version
+            if (file_exists($filename)) {
+                return $filename;
+            }
+        }
+
+        return $this->getFileNameByParameters($view, $moduleName, $location, $client);
+    }
+
+    /**
+     * Construct a full pathname for the requested metadata and do not check if the file exists
+     *
+     * @param string $view The view type, that is, EditView, DetailView etc
+     * @param string $moduleName The name of the module that will use this layout
+     * @param string $location The location of the file (custom, history, etc)
+     * @param string $client The client type for the file name
+     *
+     * @return string
+     */
+    public function getFileNameNoDefault($view, $moduleName, $location = MB_CUSTOMMETADATALOCATION, $client = null)
+    {
+        return $this->getFileNameByParameters($view, $moduleName, $location, $client, $this->params);
+    }
+
+    /**
+     * Checks if metadata file with the given parameters exists
+     *
+     * @param string $view The view type
+     * @param string $moduleName The name of the module that will use this metadata
+     * @param string $location The location of the file
+     * @param array $params Additional metadata parameters
+     *
+     * @return bool
+     */
+    public function fileExists($view, $moduleName, $location, array $params)
+    {
+        $filename = $this->getFileNameByParameters($view, $moduleName, $location, null, $params);
+        return file_exists($filename);
+    }
+
+    /**
+     * Returns metadata file name for the given additional metadata parameters
+     *
+     * @param string $view The view type
+     * @param string $module The name of the module that will use this metadata
+     * @param string $location The location of the file
+     * @param string $client The client type
+     * @param array $params Additional metadata parameters
+     * @return string
+     */
+    protected function getFileNameByParameters($view, $module, $location, $client, array $params = array())
+    {
+        $params = array_merge($params, array(
             'client' => $this->_viewClient,
-            'type' => $type,
+            'location' => $location,
         ));
 
         if ($client) {
             $params['client'] = $client;
         }
 
-        $file = MetaDataFiles::getFile($view, $moduleName, $params);
+        $file = MetaDataFiles::getFile($view, $module, $params);
         return MetaDataFiles::getFilePath($file);
-	}
-	
+    }
+
+    /**
+     * Checks if the given metadata location supports parameteres
+     *
+     * @param string $location
+     * @return bool
+     */
+    protected function locationSupportsParameters($location)
+    {
+        return !empty(self::$locations[$location]);
+    }
+
 	private function replaceVariables($defs, $module) {
         return MetaDataFiles::getModuleMetaDataDefsWithReplacements($module instanceof StudioModule ? $module->seed : $module, $defs);
 		/*

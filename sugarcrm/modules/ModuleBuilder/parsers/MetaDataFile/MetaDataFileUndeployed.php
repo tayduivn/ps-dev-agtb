@@ -35,21 +35,22 @@ class MetaDataFileUndeployed implements MetaDataFileInterface
     /**
      * @var string
      */
-    protected $type;
+    protected $location;
 
     /**
      * Constructor
      *
      * @param MetaDataFileInterface $file
      * @param string $package
+     * @param string $location
      */
-    public function __construct(MetaDataFileInterface $file, $package, $type)
+    public function __construct(MetaDataFileInterface $file, $package, $location)
     {
         $this->file = $file;
         $this->package = $package;
-        $type = strtolower($type);
+        $location = strtolower($location);
 
-        switch ($type) {
+        switch ($location) {
             case MB_BASEMETADATALOCATION:
             case MB_HISTORYMETADATALOCATION:
             case MB_WORKINGMETADATALOCATION:
@@ -57,12 +58,12 @@ class MetaDataFileUndeployed implements MetaDataFileInterface
             default:
                 // just warn rather than die
                 $GLOBALS['log']->warn(
-                    "UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized"
+                    "Undeployed metadata location $location is not recognized"
                 );
                 break;
         }
 
-        $this->type = $type;
+        $this->location = $location;
     }
 
     /** {@inheritDoc} */
@@ -70,7 +71,7 @@ class MetaDataFileUndeployed implements MetaDataFileInterface
     {
         $path = $this->file->getPath();
 
-        switch ($this->type) {
+        switch ($this->location) {
             case MB_HISTORYMETADATALOCATION:
                 array_unshift(
                     $path,

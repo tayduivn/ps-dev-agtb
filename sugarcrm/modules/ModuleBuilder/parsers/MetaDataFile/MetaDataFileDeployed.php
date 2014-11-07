@@ -28,28 +28,33 @@ class MetaDataFileDeployed implements MetaDataFileInterface
     protected $file;
 
     /**
+     * @var string
+     */
+    protected $location;
+
+    /**
      * Constructor
      *
      * @param MetaDataFileInterface $file
-     * @param string $type
+     * @param string $location
      */
-    public function __construct(MetaDataFileInterface $file, $type)
+    public function __construct(MetaDataFileInterface $file, $location)
     {
         $this->file = $file;
-        $this->type = strtolower($type);
+        $this->location = strtolower($location);
     }
 
     /** {@inheritDoc} */
     public function getPath()
     {
         $paths = MetaDataFiles::getPaths();
-        if (!isset($paths[$this->type])) {
-            sugar_die("Type $this->type is not recognized");
+        if (!isset($paths[$this->location])) {
+            throw new Exception("Deployed metadata location $this->location is not recognized");
         }
 
         $path = $this->file->getPath();
-        if ($paths[$this->type]) {
-            array_unshift($path, $paths[$this->type]);
+        if ($paths[$this->location]) {
+            array_unshift($path, $paths[$this->location]);
         }
 
         return $path;

@@ -470,10 +470,10 @@ class MetaDataFiles
 
         if (!empty($params['package'])) {
             require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileUndeployed.php';
-            $file = new MetaDataFileUndeployed($file, $params['package'], $params['type']);
+            $file = new MetaDataFileUndeployed($file, $params['package'], $params['location']);
         } else {
             require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
-            $file = new MetaDataFileDeployed($file, $params['type']);
+            $file = new MetaDataFileDeployed($file, $params['location']);
 
             if (!empty($params['role'])) {
                 require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
