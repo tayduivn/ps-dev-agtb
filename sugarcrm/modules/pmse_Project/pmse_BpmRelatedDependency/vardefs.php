@@ -394,10 +394,10 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
     'len' => '36',
     'size' => '36',
   ),
-'evn_operation_implementation_ref' =>
+'evn_operation_implementation' =>
   array (
     'required' => true,
-    'name' => 'evn_operation_implementation_ref',
+    'name' => 'evn_operation_implementation',
     'vname' => 'Event operation implementation',
     'type' => 'varchar',
     'massupdate' => false,

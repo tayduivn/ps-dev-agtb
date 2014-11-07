@@ -3782,10 +3782,10 @@ AdamProject.prototype.updatePropertiesGrid = function (element) {
                 readOnly: true
             });
             setup.rows.push({
-                name: 'evn_operation_implementation_ref',
+                name: 'evn_operation_implementation',
                 label: translate('LBL_PMSE_PROPERTY_GRID_OPERATION_IMPLEMENTATION_REF'),
                 type: 'text',
-                value: element.evn_operation_implementation_ref,
+                value: element.evn_operation_implementation,
                 readOnly: true
             });
             setup.rows.push({
@@ -5581,7 +5581,7 @@ var AdamEvent = function (options) {
      * XXXX
      * @type {String}
      */
-    this.evn_operation_implementation_ref = null;
+    this.evn_operation_implementation = null;
     /**
      * Defines the date to be executed a timer event
      * @type {String}
@@ -5826,7 +5826,7 @@ AdamEvent.prototype.setEventEscalation = function (name, code) {
  */
 AdamEvent.prototype.setEventOperation = function (name, implementation) {
     this.evn_operation_name = name;
-    this.evn_operation_implementation_ref = implementation;
+    this.evn_operation_implementation = implementation;
     return this;
 };
 
@@ -5887,7 +5887,7 @@ AdamEvent.prototype.getDBObject = function () {
         evn_condition: this.evn_condition,
         evn_message: this.evn_message,
         evn_operation_name: this.evn_operation_name,
-        evn_operation_implementation_ref: this.evn_operation_implementation_ref,
+        evn_operation_implementation: this.evn_operation_implementation,
         evn_time_date: this.evn_time_date,
         evn_time_cycle: this.evn_time_cycle,
         evn_time_duration: this.evn_time_duration,

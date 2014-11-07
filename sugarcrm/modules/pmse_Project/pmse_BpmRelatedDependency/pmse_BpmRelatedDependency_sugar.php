@@ -41,7 +41,7 @@ class pmse_BpmRelatedDependency_sugar extends Basic {
     var $evn_condition;
     var $evn_message;
     var $evn_operation_name;
-    var $evn_operation_implementation_ref;
+    var $evn_operation_implementation;
     var $evn_time_date;
     var $evn_time_cycle;
     var $evn_time_duration;
