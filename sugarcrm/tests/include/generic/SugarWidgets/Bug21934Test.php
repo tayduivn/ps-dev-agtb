@@ -67,7 +67,7 @@ class Bug21934Test extends PHPUnit_Framework_TestCase
             ->getMock();
         $widget->expects($this->any())
             ->method('now')
-            ->willReturn($now);
+            ->will($this->returnValue($now));
         $widget->expects($this->once())
             ->method('get_start_end_date_filter')
             ->with($this->anything(), $start, $end);
