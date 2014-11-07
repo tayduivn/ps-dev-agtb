@@ -30,7 +30,7 @@ function getJSLanguage()
 
     require_once ('include/language/jsLanguage.php');
 
-    global $moduleList;
+    global $app_list_strings;
 
     if (empty($_REQUEST['lang'])) {
         echo "No language specified";
@@ -51,9 +51,14 @@ function getJSLanguage()
 
         return;
     }
-    if (!empty($_REQUEST['module'])) {
+    if (empty($_REQUEST['module']) || $_REQUEST['module'] === 'app_strings') {
+        $file = sugar_cached('jsLanguage/') . $lang . '.js';
+        if (!sugar_is_file($file)) {
+            jsLanguage::createAppStringsCache($lang);
+        }
+    } else {
         $module = clean_path($_REQUEST['module']);
-        if (!in_array($module, $moduleList)) {
+        if (!isset($app_list_strings['moduleList'][$module])) {
             echo "Invalid module specified";
 
             return;
@@ -61,11 +66,6 @@ function getJSLanguage()
         $file = sugar_cached('jsLanguage/') . $module . "/" . $lang . '.js';
         if (!sugar_is_file($file)) {
             jsLanguage::createModuleStringsCache($module, $lang);
-        }
-    } else {
-        $file = sugar_cached('jsLanguage/') . $lang . '.js';
-        if (!sugar_is_file($file)) {
-            jsLanguage::createAppStringsCache($lang);
         }
     }
 
