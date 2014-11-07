@@ -61,7 +61,7 @@
              * @property {string}
              * @protected
              */
-            this._thisListViewFieldSizes = app.user.lastState.key('width-fields', this);
+            this._thisListViewFieldSizesKey = app.user.lastState.key('width-fields', this);
         }
 
         this._fields = this.parseFields();
@@ -778,7 +778,8 @@
             this.$el.addClass('right-actions');
         }
 
-        var displayWidthSetting = !_.isUndefined(app.user.lastState.get(this._thisListViewFieldSizes));
+        var displayWidthSetting = this._thisListViewFieldSizes ||
+            !_.isUndefined(app.user.lastState.get(this._thisListViewFieldSizesKey));
         var displayOrderSetting = false;
         if (this._thisListViewFieldList) {
             var customOrder = _.union(this._thisListViewFieldList.position, this._defaultFieldOrder);
@@ -897,7 +898,11 @@
     },
 
     /**
-     * Saves the current field widths to the cache.
+     * Saves the current field widths in {@link #_thisListViewFieldSizes}.
+     *
+     * If the stickiness is enabled, it also saves the widths into the cache,
+     * so that the next time the view is loaded, the user retrieves his
+     * preferred widths.
      *
      * Example of a value stored in the cache:
      *
@@ -912,7 +917,7 @@
     saveCurrentWidths: function(columns) {
         // Needed in order to fix the scroll helper whenever the widths change.
         this.resize();
-        if (!this._thisListViewFieldListKey || !this._thisListViewFieldSizes) {
+        if (!this._thisListViewFieldListKey) {
             return;
         }
         var visibleFields = _.pluck(this._fields.visible, 'name');
@@ -922,17 +927,30 @@
         };
         var encoded = this._encodeCacheWidthData(decoded);
         this._toggleSettings('widths', true);
-        app.user.lastState.set(this._thisListViewFieldSizes, encoded);
+
+        /**
+         * The list of user defined column widths for this specific view.
+         *
+         * @property {Array}
+         * @protected
+         */
+        this._thisListViewFieldSizes = encoded;
+
+        if (this._thisListViewFieldSizesKey) {
+            app.user.lastState.set(this._thisListViewFieldSizesKey, encoded);
+        }
     },
 
     /**
      * Resets the column widths to the default settings.
+     *
+     * If the stickiness is enabled, it also removes the entry from the cache.
      */
     resetColumnWidths: function() {
-        if (!this._thisListViewFieldSizes) {
-            return;
+        this._thisListViewFieldSizes = null;
+        if (this._thisListViewFieldSizesKey) {
+            app.user.lastState.remove(this._thisListViewFieldSizesKey);
         }
-        app.user.lastState.remove(this._thisListViewFieldSizes);
         if (!this.disposed) {
             this.render();
             this._toggleSettings('widths', false);
@@ -964,12 +982,15 @@
     },
 
     /**
-     * Gets the cached list of widths for each visible field in the list view.
+     * Gets the list of widths for each visible field in the list view.
+     *
+     * If the stickiness is enabled, it will look for the entry in the cache.
      *
      * @return {Array} The list of widths if found, `undefined` otherwise.
      */
     getCacheWidths: function() {
-        var encodedData = app.user.lastState.get(this._thisListViewFieldSizes);
+        var encodedData = this._thisListViewFieldSizes ||
+            app.user.lastState.get(this._thisListViewFieldSizesKey);
         if (!encodedData) {
             return;
         }
