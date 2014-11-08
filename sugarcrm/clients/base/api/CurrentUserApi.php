@@ -177,6 +177,7 @@ class CurrentUserApi extends SugarApi
         $user_data = $this->setExpiredPassword($user_data);
         $user_data['picture'] = $current_user->picture;
         $user_data['acl'] = $this->getAcls($api->platform);
+        $user_data['acl_roles'] = $this->getAclRoles($api->platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
         $user_data['is_top_level_manager'] = false;
         $user_data['reports_to_id'] = $current_user->reports_to_id;
@@ -395,6 +396,19 @@ class CurrentUserApi extends SugarApi
         $acls = $this->enforceModuleACLs($acls);
 
         return $acls;
+    }
+
+    /**
+     * Returns an array of role ids assigned to current user
+     *
+     * @param $platform
+     * @return array
+     */
+    protected function getAclRoles($platform)
+    {
+        $user = $this->getUserBean();
+        $user->load_relationship('aclroles');
+        return $user->aclroles->get();
     }
 
     /**

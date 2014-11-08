@@ -15,6 +15,7 @@ $mod_strings = array(
     'LBL_HIDEOPTIONS' => 'Hide Options' /*for 508 compliance fix*/,
     'LBL_DELETE' => 'Delete' /*for 508 compliance fix*/,
     'LBL_POWERED_BY_SUGAR' => 'Powered By SugarCRM' /*for 508 compliance fix*/,
+    'LBL_ROLE' => 'Role',
 'help'=>array(
     'package'=>array(
             'create'=>'Provide a <b>Name</b> for the package.  The name you enter must be alphanumeric and contain no spaces. (Example: HR_Management)<br/><br/> You can provide <b>Author</b> and <b>Description</b> information for package. <br/><br/>Click <b>Save</b> to create the package.',

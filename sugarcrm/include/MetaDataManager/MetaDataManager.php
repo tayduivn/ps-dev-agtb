@@ -58,6 +58,7 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
+    const MM_ROLEDROPDOWNS  = 'role_dropdowns';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -152,6 +153,7 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
+        self::MM_ROLEDROPDOWNS  => 'getRoleDropdowns'
     );
 
     /**
@@ -3199,6 +3201,7 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
+            self::MM_ROLEDROPDOWNS
         );
     }
 
@@ -3543,6 +3546,31 @@ class MetaDataManager
             }
         }
         return $fields;
+    }
+
+    /**
+     * Returns an array or role-based dropdowns
+     *
+     * @return array
+     */
+    public function getRoleDropdowns()
+    {
+        require_once 'modules/ModuleBuilder/parsers/parser.roledropdown.php';
+        $parser = new ParserRoleDropDown();
+        $data = $parser->getAll();
+        //memory safe;
+        array_walk(
+            $data,
+            function (&$dropdowns) {
+                array_walk(
+                    $dropdowns,
+                    function (&$options) {
+                        $options = $this->convertToTuples($options);
+                    }
+                );
+            }
+        );
+        return $data;
     }
 
     /**

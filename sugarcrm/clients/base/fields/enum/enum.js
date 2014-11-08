@@ -379,6 +379,7 @@
     _initSelection: function($ele, callback){
         var data = [];
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
+        options = this.items = this._filterRoleOptions(options);
         var values = $ele.val();
         if (this.def.isMultiSelect) {
             values = values.split(this.def.separator || ',');
@@ -391,6 +392,29 @@
         } else {
             callback(data);
         }
+    },
+
+    /**
+     *
+     * @param options
+     * @returns {A}
+     * @private
+     */
+    _filterRoleOptions: function (options) {
+        var aclRoles = app.user.get('acl_roles'), newOptions = {}, filters;
+        if(_.isEmpty(aclRoles)) {
+            return options;
+        }
+        filters = app.metadata.getRoleDropdownFilter(aclRoles[0], this.def.options);
+        if (_.isEmpty(filters)) {
+            return options;
+        }
+        _.each(_.keys(filters), function(key) {
+            if(app.utils.isTruthy(filters[key])) {
+                newOptions[key] = options[key];
+            }
+        });
+        return newOptions;
     },
 
     /**
