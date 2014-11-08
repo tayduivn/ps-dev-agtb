@@ -108,13 +108,18 @@
     },
 
     /**
-     * Mark the model as held and update the collection and re-render the dashlet to remove it from the view
-     * @param model {app.Bean} Call/Meeting model to be marked as Held
+     * Completes the selected activity.
+     *
+     * Shows a confirmation alert and sets the activity as `Held` on confirm.
+     * Also updates the collection and re-renders the dashlet to remove it from
+     * the view.
+     *
+     * @param {Data.Bean} model Call/Meeting model to be marked as `Held`.
      */
     heldActivity: function(model){
         var self = this;
-        var name = model.get('name') || '',
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name;
         app.alert.show('close_activity_confirmation:' + model.get('id'), {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE'), [context]),
