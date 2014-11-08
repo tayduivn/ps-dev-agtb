@@ -82,15 +82,17 @@
     },
 
     /**
-     * Format the message displayed in the alert.
+     * Formats the messages to display in the alerts when deleting recurrences.
      *
-     * @return {Object} Confirmation and success messages.
+     * @return {Object} The list of messages.
+     * @return {string} return.confirmation Confirmation message.
+     * @return {string} return.success Success message.
      */
     getDeleteMessages: function() {
-        var messages = {},
-            model = this.model,
-            name = app.utils.getRecordName(model),
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        var messages = {};
+        var model = this.model;
+        var name = app.utils.getRecordName(model);
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
 
         messages.confirmation = app.lang.get('LBL_CONFIRM_REMOVE_ALL_RECURRENCES', this.module);
         messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);

@@ -688,15 +688,17 @@
     },
 
     /**
-     * Format the message displayed in the alert.
+     * Formats the messages to display in the alerts when deleting a record.
      *
-     * @return {Object} Confirmation and success messages.
+     * @return {Object} The list of messages.
+     * @return {string} return.confirmation Confirmation message.
+     * @return {string} return.success Success message.
      */
     getDeleteMessages: function() {
-        var messages = {},
-            model = this.model,
-            name = app.utils.getRecordName(model),
-            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
+        var messages = {};
+        var model = this.model;
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
 
         messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
         messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
