@@ -379,7 +379,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $stage_cases = implode(',', $stage_cases);
 
         $sq = new SugarQuery();
-        $sq->select(array('id', 'name', 'opportunity_id'))
+        $sq->select(array('opportunity_id'))
             ->fieldRaw($sqlCase, 'sales_stage')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage IN (' . $stage_cases . ') THEN date_closed END)', 'dc_closed')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage NOT IN (' . $stage_cases . ') THEN date_closed END)', 'dc_open')
