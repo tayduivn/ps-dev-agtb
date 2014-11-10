@@ -238,7 +238,6 @@ $admin_group_header []= array(
     $admin_option_defs,
     'LBL_PMSE_ADMIN_DESC_MODULE'
 );
-_ppl("here!");
 //END SUGARCRM flav=ent ONLY
 
 

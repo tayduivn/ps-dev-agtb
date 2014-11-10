@@ -81,33 +81,37 @@ class PMSECasesListApi  extends FilterApi
         $q->from($inboxBean, array('alias' => 'a'));
         $q->joinRaw('INNER JOIN users u ON a.created_by=u.id');
         $q->select->fieldRaw('u.last_name','last_name');
-        $q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
-        if($args['module_list']=='all')
-        {
-            $q->where()->queryAnd()
-                ->addRaw("a.cas_title LIKE '%".$args['q']."%' OR a.pro_title LIKE '%".$args['q']."%' OR a.cas_status LIKE '%".$args['q']."%' OR last_name LIKE '%".$args['q']."%'");
-        }
-        else
-        {
-            if($args['module_list']=='Cases Title')
+        //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
+        //Doesn't appear to be used.
+        //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
+        if (!empty($args['q'])) {
+            if($args['module_list']=='all')
             {
                 $q->where()->queryAnd()
-                    ->addRaw("a.cas_title LIKE '%".$args['q']."%'");
+                    ->addRaw("a.cas_title LIKE '%".$args['q']."%' OR a.pro_title LIKE '%".$args['q']."%' OR a.cas_status LIKE '%".$args['q']."%' OR last_name LIKE '%".$args['q']."%'");
             }
-            if($args['module_list']=='Process Name')
+            else
             {
-                $q->where()->queryAnd()
-                    ->addRaw("a.pro_title LIKE '%".$args['q']."%'");
-            }
-            if($args['module_list']=='Status')
-            {
-                $q->where()->queryAnd()
-                    ->addRaw("a.cas_status LIKE '%".$args['q']."%'");
-            }
-            if($args['module_list']=='Owner')
-            {
-                $q->where()->queryAnd()
-                    ->addRaw("last_name LIKE '%".$args['q']."%'");
+                if($args['module_list']=='Cases Title')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.cas_title LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Process Name')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.pro_title LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Status')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.cas_status LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Owner')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("last_name LIKE '%".$args['q']."%'");
+                }
             }
         }
         foreach ($options['order_by'] as $orderBy) {
