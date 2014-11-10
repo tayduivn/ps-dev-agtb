@@ -354,8 +354,9 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Empty',
     'ProjectTask',
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'RevenueLineItems'
+    'RevenueLineItems',
     //END SUGARCRM flav=pro && flav!=ent ONLY
+    'ModuleBuilder'
     );
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)
