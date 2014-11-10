@@ -36,6 +36,7 @@ $vardefs = array(
                 'mobile' => false,
                 'portal' => false,
             ),
+            'sortable' => false,
         ),
         'tag_lower' => array(
             'name' => 'tag_lower',
@@ -45,6 +46,7 @@ $vardefs = array(
             'reportable' => false,
             'importable' => false,
             'exportable' => false,
+            'sortable' => false,
         ),
     ),
     'relationships' => array(
