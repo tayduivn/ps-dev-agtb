@@ -152,6 +152,8 @@ abstract class OpportunitySetup
 
         // r&r the rli + related modules
         $this->runRepairAndRebuild($rnr_modules);
+
+        register_shutdown_function(array('SugarAutoLoader', 'buildCache'));
     }
 
     /**
