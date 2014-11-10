@@ -39,10 +39,6 @@
     }
   }
   [data-type="status"].edit {
-    .record-label {
-      display: block !important;
-      padding-top: 8px !important;
-    }
     .record-edit-link-wrapper {
       left: -12px !important;
     }
@@ -52,9 +48,18 @@
   }
 }
 
-.record .record-cell .record-label {
-  &[data-name="attachment_list"] {
-    padding-bottom: 6px !important;
+.record .record-cell {
+  .record-label {
+    &[data-name="attachment_list"] {
+      padding-bottom: 6px !important;
+    }
+  }
+  &.edit {
+    span[data-fieldname="attachment_list"] {
+      > span.edit{
+        margin-left: -6px;
+      }
+    }
   }
 }
 [data-fieldname="attachment_list"] {
