@@ -116,6 +116,12 @@
         }, this);
         this.model.on('change:date_end', this.markStartAndEnd, this);
         this.model.on('sync:' + this.name, this.hideShowMoreButton, this);
+
+        // Fetch free/busy information again on save to get the latest.
+        this.model.on('sync', function() {
+            this.clearFreeBusyInformationCache();
+            this.fetchFreeBusyInformation();
+        }, this);
     },
 
     /**
@@ -285,6 +291,10 @@
             startAndEndDates = this.getStartAndEndDates(),
             participants = this.getFieldValue();
 
+        if (this.freebusy.isFetching()) {
+            return;
+        }
+
         participants.each(function(participant) {
             var url,
                 freeBusyFromCache,
@@ -310,7 +320,7 @@
             }
         });
 
-        this.callBulkApi(requests, {
+        this.freebusy.fetch(requests, {
             success: function(data) {
                 if (!self.disposed) {
                     _.each(data, function(response) {
@@ -339,16 +349,41 @@
         });
     },
 
-    /**
-     * Calls the bulk api to make multiple requests in a single call.
-     * @param {Array} requests
-     * @param {Object} options
-     */
-    callBulkApi: function(requests, options) {
-        if (!_.isEmpty(requests)) {
-            app.api.call('create', app.api.buildURL(null, 'bulk'), {requests: requests}, options);
+    freebusy: (function() {
+        var fetching = false;
+
+        return {
+            /**
+             * Calls the bulk api to make multiple free/busy GET requests in a single call.
+             * @param {array} requests
+             * @param {Object} options
+             */
+            fetch: function(requests, options) {
+                var self = this;
+                if (!_.isEmpty(requests)) {
+                    options.complete = _.wrap(options.complete, function(func, request) {
+                        func(request);
+                        self.isFetching(false);
+                    }, this);
+                    app.api.call('create', app.api.buildURL(null, 'bulk'), {requests: requests}, options);
+                    this.isFetching(true);
+                }
+            },
+
+            /**
+             * Is it currently in the process of fetching?
+             * @param {boolean} [isFetching] Set whether or not it is currently fetching
+             * @return {boolean}
+             */
+            isFetching: function(isFetching) {
+                if (_.isUndefined(isFetching)) {
+                    return fetching;
+                } else {
+                    fetching = isFetching;
+                }
+            }
         }
-    },
+    })(),
 
     /**
      * Fill in the busy slots on the timeline.
