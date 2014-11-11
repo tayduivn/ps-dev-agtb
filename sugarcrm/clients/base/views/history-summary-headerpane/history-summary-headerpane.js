@@ -36,7 +36,7 @@
         var parent = this._getParentModel();
         var recordName = this._getParentModelName();
         if (parent && recordName) {
-            return app.lang.get(title, parent.module, {name: recordName});
+            return new Handlebars.SafeString(app.lang.get(title, parent.module, {name: recordName}));
         }
         return title;
     },
