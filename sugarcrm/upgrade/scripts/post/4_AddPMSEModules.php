@@ -22,7 +22,7 @@ class SugarUpgradeAddPMSEModules extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.6.0', '>=')) {
+        if ($this->fromFlavor('ent') && version_compare($this->from_version, '7.6.0', '>=')) {
             return;
         }
 
