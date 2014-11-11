@@ -348,7 +348,8 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'studio' => false,
             'workflow' => false,
-            'reportable' => false
+            'reportable' => false,
+            'importable' => false
         ),
         'closed_revenue_line_items' => array(
             'name' => 'closed_revenue_line_items',
@@ -359,7 +360,8 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'studio' => false,
             'workflow' => false,
-            'reportable' => false
+            'reportable' => false,
+            'importable' => false
         ),
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(

@@ -959,7 +959,7 @@ AddType     application/javascript  .js
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA,DPI]
-    RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&lang=$1 [L,QSA,DPI]
+    RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&module=app_strings&lang=$1 [L,QSA,DPI]
     RewriteRule ^cache/jsLanguage/(\w*)/(.._..).js$ index.php?entryPoint=jslang&module=$1&lang=$2 [L,QSA,DPI]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]

@@ -162,4 +162,25 @@ class SugarFieldTag extends SugarFieldMultienum
 
         return explode(',', trim($value));
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function normalizeDefaultValue($value) {
+        // Treat field as an import list to make tags from string
+        $tags = $this->getTagValuesFromImport($value);
+        // Trim white space from each tag so users who type in 'tag1, tag2' won't end up with the tag: ' tag2'
+        $tags = array_map('trim', $tags);
+        // Sort tags in alphabetical order
+        sort($tags);
+
+        // Format tags to what the front end will expect
+        $return = array();
+        foreach ($tags as $tag) {
+            if (!empty($tag)) {
+                $return[] = array('name' => "$tag");
+            }
+        }
+        return $return;
+    }
 }

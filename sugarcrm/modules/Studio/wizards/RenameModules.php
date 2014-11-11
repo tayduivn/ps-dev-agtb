@@ -112,12 +112,21 @@ class RenameModules
 
 
         foreach ($selected_dropdown as $key=>$value) {
-           $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
-           if ($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
-                $selected_dropdown[$key]=array('lang'=>$value, 'user_lang'=> '['.$app_list_strings['moduleList'][$key] . ']', 'singular' => $singularValue);
-           } else {
-               $selected_dropdown[$key]=array('lang'=>$value, 'singular' => $singularValue);
-           }
+            $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
+            if ($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
+                $selected_dropdown[$key] = array(
+                    'lang' => $value,
+                    'user_lang' => '['.$app_list_strings['moduleList'][$key].']',
+                    'singular' => $singularValue,
+                    'module' => 'module-'.mb_strtolower($key),
+                );
+            } else {
+                $selected_dropdown[$key] = array(
+                    'lang' => $value,
+                    'singular' => $singularValue,
+                    'module' => 'module-'.mb_strtolower($key),
+                );
+            }
         }
 
 
