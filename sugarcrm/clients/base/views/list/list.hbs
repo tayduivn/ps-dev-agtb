@@ -15,8 +15,7 @@
     <thead>
     <tr>
         {{#each fields}}
-            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}{{#if widthClass}} {{widthClass}}{{/if}}"
-                {{#if styles}} style="{{styles}}"{{/if}}
+            <th {{#if this.width}}width="{{this.width}}" {{/if}}class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
                  <span>
                     {{str label ../../module}}
@@ -29,8 +28,8 @@
     {{#each ../collection.models}}
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../fields}}
-            <td{{#if align}} class="{{align}}"{{/if}}>
-              {{field ../../../this model=../this template=../../../viewName}}
+            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
+              {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}
     </tr>

@@ -12,7 +12,6 @@
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php');
 require_once ('include/MVC/View/SugarView.php');
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php');
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 
 class ViewProperty extends SugarView
 {
@@ -88,9 +87,6 @@ class ViewProperty extends SugarView
         $smarty->assign('selected_lang', $selected_lang);
 
         ksort($this->properties);
-        if (isset($this->properties['width'])) {
-            $smarty->assign('defaultWidths', SidecarListLayoutMetaDataParser::getDefaultWidths());
-        }
 
         $smarty->assign("properties",$this->properties);
         $smarty->assign("mod_strings",$mod_strings);

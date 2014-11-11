@@ -53,7 +53,7 @@ class UpgradeQuickCreateTest extends UpgradeTestCase
      */
     public function testModifyCustomQuickCreateFilesWithOrder()
     {
-        $script = $this->upgrader->getScript('post', '5_UpgradeCustomViews');
+        $script = $this->upgrader->getScript('post', '5_UpgradeCustomQuickCreate');
         $script->run();
 
         require $this->quickCreateFile;

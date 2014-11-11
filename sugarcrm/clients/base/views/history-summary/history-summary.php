@@ -11,7 +11,6 @@
  */
 $viewdefs['base']['view']['history-summary'] = array(
     'template' => 'history-summary',
-    'sticky_resizable_columns' => true,
     'rowactions' => array(
         'actions' => array(
             array(
@@ -30,14 +29,14 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'picture',
                     'type' => 'avatar',
-                    'align' => 'center',
+                    'align' => 'tcenter',
                     'label' => 'LBL_MODULE_TYPE',
                     'dismiss_label' => true,
                     'readonly' => true,
                     'enabled' => true,
                     'default' => true,
                     'isSortable' => true,
-                    'width' => 'small',
+                    'css_class' => 'cell-small',
                 ),
                 array(
                     'name' => 'name',
@@ -47,7 +46,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'default' => true,
                     'link' => true,
                     'isSortable' => true,
-                    'width' => 'large',
+                    'css_class' => 'cell-large',
                 ),
                 array(
                     'name' => 'status',
@@ -62,7 +61,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                     'label' => 'LBL_DESCRIPTION',
                     'enabled' => true,
                     'default' => true,
-                    'width' => 'xlarge'
+                    'css_class' => 'cell-xlarge'
                 ),
                 array(
                     'name' => 'to_addrs',
