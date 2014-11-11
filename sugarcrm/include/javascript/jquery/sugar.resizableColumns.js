@@ -1,3 +1,9 @@
+/*
+ * Modifications made by SugarCRM Inc. © 2014. These modifications are subject
+ * to the same terms as the MIT license.
+ * For information on the full license terms or related notices, go to
+ * http://www.sugarcrm.com/third-party-software.
+ */
 /* jQuery Resizable Columns v0.1.0 | http://dobtco.github.io/jquery-resizable-columns/ | Licensed MIT | Built Fri Oct 24 2014 18:33:37 */
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice;
