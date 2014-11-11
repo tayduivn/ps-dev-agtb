@@ -102,25 +102,6 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     }
 
     /**
-     * Gets the list of predefined widths available for the list view columns.
-     *
-     * @return array The list of widths.
-     * @static
-     */
-    static public function getDefaultWidths() {
-        $widths = array(
-            'xxsmall',
-            'xsmall',
-            'small',
-            'medium',
-            'large',
-            'xlarge',
-            'xxlarge',
-        );
-        return $widths;
-    }
-
-    /**
      * Detects if the field should be displayed in "Default" list
      *
      * @param array $field Field view definition
@@ -215,7 +196,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                             } else {
                                 $field['label'] = $this->_fielddefs[$field['name']]['vname'];
                             }
-                        }
+                        }                        
                         $availableFields[$field['name']] = $field;
                     }
                 }
@@ -408,20 +389,20 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                 }
 
                 if (isset($_REQUEST[strtolower($fieldname) . 'width'])) {
-                    $width = substr($_REQUEST[$fieldname . 'width'], 6);
-                    $isPercentage = strrpos($width, '%') !== false;
-                    $intWidth = intval($width);
-                    $isDefaultWidth = in_array($width, self::getDefaultWidths());
-
-                    if (!$isPercentage && ($intWidth > 0 || $isDefaultWidth)) {
-                        $newPaneldefs[$newPaneldefIndex]['width'] = $width;
-                    } else {
-                        unset($newPaneldefs[$newPaneldefIndex]['width']);
+                    $width = substr($_REQUEST[$fieldname . 'width'], 6, 3);
+                    if (strpos($width, "%") != false) {
+                        $width = substr($width, 0, 2);
                     }
+
+                    if (!($width < 101 && $width > 0)) {
+                        $width = 10;
+                    }
+
+                    $newPaneldefs[$newPaneldefIndex]['width'] = $width."%";
                 } elseif (($def = $this->panelGetField($fieldname)) && isset($def['field']['width'])) {
                     $newPaneldefs[$newPaneldefIndex]['width'] = $def['field']['width'];
                 } else {
-                    unset($newPaneldefs[$newPaneldefIndex]['width']);
+                    $newPaneldefs[$newPaneldefIndex]['width'] = "10%";
                 }
 
                 // Set the default flag to make it a default field
@@ -656,7 +637,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the currency_format property of the fielddef
-     *
+     * 
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @param bool $addDefault Flag that determines whether the default property is added
@@ -686,7 +667,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the id and link properties of the fielddef
-     *
+     * 
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -710,7 +691,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the sortable property of the fielddef
-     *
+     * 
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -729,7 +710,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the currency_format property of the fielddef
-     *
+     * 
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -746,7 +727,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the align property of the fielddef
-     *
+     * 
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -762,7 +743,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the readonly property of a fielddef
-     *
+     * 
      * @param array $rawDef   The raw field def from an initial def fetch
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -778,7 +759,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the relate_fields property of a fielddef
-     *
+     * 
      * @param array $rawDef   The raw field def from an initial def fetch
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -788,7 +769,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         if (isset($rawDef['related_fields']) && !empty($rawDef['related_fields'])) {
             $fieldDef['related_fields'] = $rawDef['related_fields'];
         }
-
+        
         return $fieldDef;
     }
 }

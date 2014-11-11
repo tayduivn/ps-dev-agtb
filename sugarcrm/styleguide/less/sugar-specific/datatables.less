@@ -568,7 +568,6 @@ FLEXLIST GENERIC */
   &.left-actions.scroll-width .dataTable {
     th:first-child {
       > span {
-        z-index: 10;
         border-right: @tableBorder;
         &:after {
           .right-shadow(43px);
@@ -577,7 +576,6 @@ FLEXLIST GENERIC */
     }
     td:first-child {
       > span {
-        z-index: 10;
         border-right: @tableBorder;
           &:after {
           .right-shadow(37px);
@@ -671,7 +669,6 @@ FLEXLIST GENERIC */
     th:last-child {
       .dropdown,
       > span {
-        z-index: 10;
         border-left: @tableBorder;
         &:before {
           .left-shadow(43px);
@@ -1031,20 +1028,17 @@ table th.nosort span:after {
       padding-left: 30px;
       width: 100%;
       text-align: left;
-      margin-left: 0;
       &.active {
         font-weight: bold;
-      }
-      .icon {
-        margin-right: 5px;
-        margin-left: -20px;
+        padding-left: 10px;
+        margin-left: 0;
+        .icon-ok {
+          margin-right: 5px;
+        }
       }
     }
     li {
       border-bottom: 1px solid @grayLighter;
-    }
-    li.divider + li {
-      border-top: 1px solid #ddd;
     }
   }
 }
