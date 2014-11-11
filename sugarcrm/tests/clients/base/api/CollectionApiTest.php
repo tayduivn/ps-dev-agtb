@@ -1018,4 +1018,85 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @dataProvider mergeRequestFieldsAndSortFieldsProvider
+     */
+    public function testMergeRequestFieldsAndSortFields($args, $expected) {
+
+        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('CollectionApi')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $api,
+            'mergeRequestFieldsAndSortFields',
+            array($args)
+        );
+
+        $this->assertEquals($expected, $actual,'Merged array does not contain the desired elements');
+
+    }
+
+    public static function mergeRequestFieldsAndSortFieldsProvider() {
+        return array(
+                array(
+                    array('fields' => array('id','title'), 'order_by' =>  array('name' => true)),
+                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true), 'addedRequestFields' => array('name'))
+                ),
+                array(
+                    array('fields' => array('id','title'), 'order_by' =>  array('name' => false)),
+                    array('fields' => array('id','title','name'), 'order_by' => array('name' => false), 'addedRequestFields' => array('name'))
+                ),
+                array(
+                    array('fields' => array('id','title','name'), 'order_by' =>  array('name' => true)),
+                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true))
+                ),
+                array(
+                    array('fields' => array('id','title'), 'order_by' =>  array('name' => true, 'id' => true)),
+                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true, 'id' => true), 'addedRequestFields' => array('name'))
+                ),
+        );
+
+    }
+
+    /**
+     * @dataProvider cleanDataProvider
+     */
+    public function testCleanData($records, $args, $expected) {
+
+        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('CollectionApi')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $api,
+            'cleanData',
+            array($records, $args)
+        );
+
+        $this->assertEquals($expected, $actual,'Unrequested fields not removed from return data.');
+    }
+
+    public static function cleanDataProvider() {
+        return array(
+            array(
+                array(array('id' => 123, 'title' => 'Sales Executive', 'name' => 'John Smith'),
+                      array('id' => 456, 'title' => 'Sgr Manager', 'name' => 'Peter Hanks')),
+                array('addedRequestFields' => array('name')),
+                array(array('id' => 123, 'title' => 'Sales Executive'),
+                      array('id' => 456, 'title' => 'Sgr Manager'))
+            ),
+            array(
+                array(array('id' => 123, 'title' => 'Sales Executive', 'name' => 'John Smith'),
+                    array('id' => 456, 'title' => 'Sgr Manager', 'name' => 'Peter Hanks')),
+                array('addedRequestFields' => array('name','title')),
+                array(array('id' => 123),
+                    array('id' => 456))
+            ),
+
+        );
+    }
 }
