@@ -34,90 +34,80 @@ describe("Base.View.List", function () {
     });
 
     describe('parseFieldMetadata', function() {
-        it('should parse fields set the correct align and width params', function() {
-            var options = {};
-            options.meta = {
-                panels: [
-                    {
-                        fields: [
-                            {
-                                'name': 'test1',
-                                'align': 'left'
-                            },
-                            {
-                                'name': 'test2',
-                                'align': 'center'
-                            },
-                            {
-                                'name': 'test3',
-                                'align': 'right'
-                            },
-                            {
-                                'name': 'test4',
-                                'align': 'invalid'
-                            }
-                        ]
-                    },
-                    {
-                        fields: [
-                            {
-                                'name': 'test5',
-                                'width': '20%'
-                            },
-                            {
-                                'name': 'test6',
-                                'width': '105%'
-                            },
-                            {
-                                'name': 'test7',
-                                'width': '105'
-                            }
-                        ]
-                    }
-                ]
-            };
-            options = view.parseFieldMetadata(options);
 
-            expect(options.meta.panels).toEqual([
-                    {
-                        fields: [
-                            {
-                                'name': 'test1',
-                                'align': 'tleft'
-                            },
-                            {
-                                'name': 'test2',
-                                'align': 'tcenter'
-                            },
-                            {
-                                'name': 'test3',
-                                'align': 'tright'
-                            },
-                            {
-                                'name': 'test4',
-                                'align': ''
-                            }
-                        ]
-                    },
-                    {
-                        fields: [
-                            {
-                                'name': 'test5',
-                                'width': '20%'
-                            },
-                            {
-                                'name': 'test6',
-                                'width': ''
-                            },
-                            {
-                                'name': 'test7',
-                                'width': ''
-                            }
-                        ]
-                    }
-                ]);
+        using('different field metadata', [
+            {
+                'before': {'name': 'test', 'align': 'left'},
+                'after': {
+                    'name': 'test',
+                    'align': 'tleft'
+                }
+            },
+            {
+                'before': {'name': 'test', 'align': 'center'},
+                'after': {
+                    'name': 'test',
+                    'align': 'tcenter'
+                }
+            },
+            {
+                'before': {'name': 'test', 'align': 'right'},
+                'after': {
+                    'name': 'test',
+                    'align': 'tright'
+                }
+            },
+            {
+                'before': {'name': 'test', 'align': 'invalid'},
+                'after': {'name': 'test'}
+            },
+            {
+                'before': {'name': 'test', 'width': '30%'},
+                'after': {'name': 'test', 'width': '30%'}
+            },
+            {
+                'before': {'name': 'test', 'width': '30px'},
+                'after': {
+                    'name': 'test',
+                    'width': '30px',
+                    'styles': 'width:30px;max-width:30px;min-width:30px'
+                }
+            },
+            {
+                'before': {'name': 'test', 'width': '30'},
+                'after': {
+                    'name': 'test',
+                    'width': '30',
+                    'styles': 'width:30px;max-width:30px;min-width:30px'
+                }
+            },
+            {
+                'before': {'name': 'test', 'width': 'small'},
+                'after': {
+                    'name': 'test',
+                    'width': 'small',
+                    'widthClass': 'cell-small'
+                }
+            },
+            {
+                'before': {'name': 'test', 'width': 'xlarge'},
+                'after': {
+                    'name': 'test',
+                    'width': 'xlarge',
+                    'widthClass': 'cell-xlarge'
+                }
+            }
+        ], function(data) {
+
+            it('should validate and format width and alignment for each field', function() {
+                var metadata = {panels: [{fields: [data['before']]}]};
+                var options = view.parseFieldMetadata({meta: metadata});
+
+                expect(options.meta.panels[0].fields[0]).toEqual(data['after']);
+            });
         });
     });
+
     it('should set the limit correctly if sorting and offset is already set', function() {
         var options1 = view.getSortOptions(view.collection);
         var offset = 5;
