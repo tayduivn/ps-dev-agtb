@@ -228,14 +228,16 @@
      * @private
      */
     _doValidateRepeatCountOrUntilRequired: function(fields, errors, callback) {
-        var repeatType = this.model.get('repeat_type'),
-            repeatCount = this.model.get('repeat_count'),
-            repeatUntil = this.model.get('repeat_until');
+        var repeatCount, repeatCountIsPopulated, repeatUntilIsPopulated;
 
-        if (this._isPopulated(repeatType)) {
-            if (!this._isPopulated(repeatCount) && !this._isPopulated(repeatUntil)) {
+        repeatCount = this.model.get('repeat_count');
+        repeatCountIsPopulated = this._isPopulated(repeatCount);
+        repeatUntilIsPopulated = this._isPopulated(this.model.get('repeat_until'));
+
+        if (this._isPopulated(this.model.get('repeat_type'))) {
+            if (!repeatUntilIsPopulated && !repeatCountIsPopulated) {
                 errors.repeat_count = {required: true};
-            } else if (this._isPopulated(repeatCount) && repeatCount < this.repeatCountMin) {
+            } else if (!repeatUntilIsPopulated && repeatCountIsPopulated && repeatCount < this.repeatCountMin) {
                 errors.repeat_count = {minValue: this.repeatCountMin};
             }
         }
