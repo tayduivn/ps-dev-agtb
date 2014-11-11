@@ -193,7 +193,7 @@ function parseArgs(args) {
         }
 
         if (!_.isEmpty(lastArg)) {
-            params[lastArg.substr(2)] = _.contains(arg, ',') ? arg.split(',') : arg;
+            params[lastArg.substr(2)] = arg.split(',');
             lastArg = '';
         }
     });
