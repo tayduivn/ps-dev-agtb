@@ -437,32 +437,33 @@
         // reset the selected on filter apply
         var massCollection = this.context.get('mass_collection');
         if (massCollection && massCollection.models && massCollection.models.length > 0) {
-            massCollection.reset([],{silent: true});
+            massCollection.reset([], {silent: true});
         }
-        var self = this,
-            ctxList = this.getRelevantContextList(),
-            batchId = ctxList.length > 1 ? _.uniqueId() : false;
+        var self = this;
+        var ctxList = this.getRelevantContextList();
+        var batchId = ctxList.length > 1 ? _.uniqueId() : false;
         _.each(ctxList, function(ctx) {
-            var ctxCollection = ctx.get('collection'),
-                origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
-                filterDef = self.buildFilterDef(origFilterDef, query, ctx),
-                options = {
-                    //Show alerts for this request
-                    showAlerts: true,
-                    apiOptions: {
-                        bulk: batchId
-                    },
-                    success: function(collection, response, options) {
-                        // Close the preview pane to ensure that the preview
-                        // collection is in sync with the list collection.
-                        app.events.trigger('preview:close');
+            var ctxCollection = ctx.get('collection');
+            var origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [];
+            var filterDef = self.buildFilterDef(origFilterDef, query, ctx);
+            var options = {
+                //Show alerts for this request
+                showAlerts: true,
+                apiOptions: {
+                    bulk: batchId
+                },
+                success: function(collection, response, options) {
+                    // Close the preview pane to ensure that the preview
+                    // collection is in sync with the list collection.
+                    app.events.trigger('preview:close');
 
-                        // FIXME (SC-3670): This is introduced as a quick-fix for SC-3647
-                        // This will not be necessary with the PR for SC-3670
-                        if (collection && collection.options && collection.options.apiOptions) {
-                            collection.options.apiOptions = undefined;
-                        }
-                    }};
+                    // FIXME (SC-3670): This is introduced as a quick-fix for SC-3647
+                    // This will not be necessary with the PR for SC-3670
+                    if (collection && collection.options && collection.options.apiOptions) {
+                        collection.options.apiOptions = undefined;
+                    }
+                }
+            };
 
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
