@@ -462,6 +462,18 @@ html.rtl {
         left: 0px;
     }
 
+    table.reorderable-columns {
+        .th-droppable-placeholder {
+            left: auto;
+            right: -2px;
+        }
+        th[data-fieldname] > div > div > span {
+            padding-right: 0;
+            padding-left: 6px;
+            margin-left: 0px;
+        }
+    }
+
     .flex-list-view {
         &.left-actions .dataTable {
             th:first-child,
