@@ -707,7 +707,7 @@ class CollectionApi extends SugarApi
             // make a single list of requested fields and sort by fields
             $mergedFieldsArray = array_unique(array_merge($fieldsArray, $orderByFieldsArray));
             // Store the single list back in the args array
-            $args['fields'] = implode(',', $mergedFieldsArray);
+            $args['fields'] = $mergedFieldsArray;
 
             // Populate the addedRequestFields array. If a field has been requested (e.g: name) and
             // is also in the order_by arguments, then we should not add it to the below array.
