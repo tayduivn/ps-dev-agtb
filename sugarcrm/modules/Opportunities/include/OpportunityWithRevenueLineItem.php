@@ -187,6 +187,7 @@ EOL;
         $file_contents = <<<EOL
 <?php
 \$dictionary['RevenueLineItem']['importable'] = true;
+\$dictionary['RevenueLineItem']['unified_search'] = true;
 EOL;
 
         sugar_file_put_contents($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile, $file_contents);
