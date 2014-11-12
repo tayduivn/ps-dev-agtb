@@ -35,6 +35,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'save-and-send-invites-button',
+                    'event' => 'button:save_button:click',
                     'name' => 'save_invite_button',
                     'label' => 'LBL_SAVE_AND_SEND_INVITES_BUTTON',
                     'acl_action' => 'edit',

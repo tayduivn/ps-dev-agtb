@@ -14,7 +14,7 @@ describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
             'save_button',
             'save-and-send-invites-button',
             'edit',
-            undefined,
+            {event: 'button:save_button:click'},
             'Meetings'
         );
 
@@ -35,30 +35,26 @@ describe('View.Fields.Base.SaveAndSendInvitesButtonField', function() {
 
     describe('when the save button is clicked', function() {
         it('should set send_invites to true and trigger record save', function() {
-            var fieldStub = sinon.stub(field.context, 'trigger');
+            sandbox.stub(field.view.context, 'trigger');
 
             field.rowActionSelect(event);
 
-            expect(field.context.trigger.calledWith('button:save_button:click')).toBe(true);
+            expect(field.view.context.trigger.calledWith('button:save_button:click')).toBe(true);
             expect(field.model.get('send_invites')).toBe(true);
-
-            fieldStub.restore();
         });
 
         using('triggered events', ['error:validation', 'data:sync:complete'], function(trigger) {
             it('should unset send_invites for triggered events', function() {
-                var fieldStub = sinon.stub(field.context, 'trigger');
+                sandbox.stub(field.view.context, 'trigger');
 
                 field.rowActionSelect(event);
 
-                expect(field.context.trigger.calledWith('button:save_button:click')).toBe(true);
+                expect(field.view.context.trigger.calledWith('button:save_button:click')).toBe(true);
                 expect(field.model.get('send_invites')).toBe(true);
 
                 field.model.trigger(trigger);
 
                 expect(field.model.get('send_invites')).toBe(undefined);
-
-                fieldStub.restore();
             });
         });
     });
