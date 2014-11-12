@@ -49,10 +49,13 @@ $viewdefs['KBSContents']['portal']['layout']['record'] = array(
                     ),
                     array(
                         'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
+                            'components' => array(
+                                array(
+                                    'layout' => 'list-dashboard',
+                                ),
+                            ),
                             'name' => 'dashboard-pane',
-                            'span' => 4,
+                            'span' => 12,
                         ),
                     ),
                     array(
