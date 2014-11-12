@@ -65,8 +65,8 @@ class ViewLayoutView extends SugarView
     {
         global $mod_strings ;
         $params = array();
-        if (!empty($_REQUEST['selectedRole'])) {
-            $role = $params['role'] = $_REQUEST['selectedRole'];
+        if (!empty($_REQUEST['role'])) {
+            $role = $params['role'] = $_REQUEST['role'];
         } else {
             $role = null;
         }
@@ -122,7 +122,7 @@ class ViewLayoutView extends SugarView
                 }
 		    }
 
-            $buttons = $this->getButtons($history, $disableLayout);
+            $buttons = $this->getButtons($history, $disableLayout, $params);
         }
 
         $smarty->assign('buttons', $this->getButtonHTML($buttons));
@@ -263,7 +263,7 @@ class ViewLayoutView extends SugarView
         return $this->ss;
     }
 
-    protected function getButtons($history, $disableLayout)
+    protected function getButtons($history, $disableLayout, $params)
     {
         $buttons = array();
         if (!$this->fromModuleBuilder) {
@@ -294,10 +294,25 @@ class ViewLayoutView extends SugarView
             'actionScript' => "onclick='ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\")'",
             'disabled' => $disableLayout,
         );
+
+        if (!$params) {
+            $action = 'ModuleBuilder.history.revert('
+                . '"' . $this->editModule . '",'
+                . '"' . $this->editLayout . '",'
+                . '"' . $history->getLast() . '",'
+                . '""'
+                . ')';
+        } else {
+            $action = 'ModuleBuilder.history.resetToDefault('
+                . '"' . $this->editModule . '",'
+                . '"' . $this->editLayout . '"'
+                . ')';
+        }
+
         $buttons [] = array(
             'id' => 'historyDefault',
             'text' => translate('LBL_RESTORE_DEFAULT'),
-            'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
+            'actionScript' => "onclick='$action'",
             'disabled' => $disableLayout,
         );
         if ($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE) {
@@ -314,9 +329,9 @@ class ViewLayoutView extends SugarView
             $buttons [] = array(
                 'id' => 'roleList',
                 'type' => 'enum',
-                'actionScript' => 'style="max-width:150px" onchange="ModuleBuilder.switchLayoutRole(this.value)"',
+                'actionScript' => 'style="max-width:150px" onchange="ModuleBuilder.switchLayoutRole(this)"',
                 "options" => $this->getRoleList(true),
-                "selected" => empty($_REQUEST['selectedRole']) ? "" :  $_REQUEST['selectedRole'],
+                "selected" => empty($_REQUEST['role']) ? "" :  $_REQUEST['role'],
             );
         }
         return $buttons;

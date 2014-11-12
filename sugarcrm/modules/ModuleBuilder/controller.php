@@ -837,8 +837,8 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
         $params = array();
-        if (!empty($_REQUEST['selectedRole'])) {
-            $params['role'] = $_REQUEST['selectedRole'];
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
         }
         $parser = ParserFactory::getParser(
             $parserview,
@@ -877,8 +877,8 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
         $params = array();
-        if (!empty($_REQUEST['selectedRole'])) {
-            $params['role'] = $_REQUEST['selectedRole'];
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
         }
         $parser = ParserFactory::getParser(
             $parserview,
@@ -888,8 +888,12 @@ class ModuleBuilderController extends SugarController
             $client,
             $params
         );
-        $parser->handleSave () ;
 
+        if (!empty($_REQUEST['is_synced'])) {
+            $parser->resetToDefault();
+        } else {
+            $parser->handleSave();
+        }
 
         if (!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower ($parser->_view) == MB_EDITVIEW) {

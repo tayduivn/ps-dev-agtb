@@ -38,7 +38,7 @@ YAHOO.extend(Studio2.FieldDD, YAHOO.util.DDProxy, {
 
     endDrag: function(e) {
         Studio2.clearScrollObj();
-     	ModuleBuilder.state.isDirty=true;
+        ModuleBuilder.state.markAsDirty();
         var srcEl = this.getEl();
         var proxy = this.getDragEl();
         var proxyid = proxy.id;

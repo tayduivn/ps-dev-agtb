@@ -260,7 +260,7 @@
     <input type='hidden' name='MB' value='1'>
     <input type='hidden' name='view_package' value='{$view_package}'>
 {/if}
-<input type='hidden' name='selectedRole' value='{$selected_role}'>
+<input type='hidden' name='role' value='{$selected_role}'>
 <input type='hidden' name='to_pdf' value='1'>
 </form>
 <script>

@@ -19,6 +19,16 @@ class ViewHistory extends SugarView
     var $pageSize = 10 ;
 
     /**
+     * @var History
+     */
+    protected $history;
+
+    /**
+     * @var AbstractMetaDataParser
+     */
+    protected $parser;
+
+    /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams($browserTitle = false)
@@ -44,8 +54,19 @@ class ViewHistory extends SugarView
         
         $packageName = (isset ( $_REQUEST [ 'view_package' ] ) && (strtolower ( $_REQUEST [ 'view_package' ] ) != 'studio')) ? $_REQUEST [ 'view_package' ] : null ;
         $this->module = $_REQUEST [ 'view_module' ] ;
-        
-        $this->parser = ParserFactory::getParser ( $this->layout, $this->module, $packageName, $subpanelName ) ;
+
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $this->parser = ParserFactory::getParser(
+            $this->layout,
+            $this->module,
+            $packageName,
+            $subpanelName,
+            null,
+            $params
+        );
         $this->history = $this->parser->getHistory () ;
         $action = ! empty ( $_REQUEST [ 'histAction' ] ) ? $_REQUEST [ 'histAction' ] : 'browse' ;
         $GLOBALS['log']->debug( get_class($this)."->display(): performing History action {$action}" ) ;
@@ -145,6 +166,13 @@ class ViewHistory extends SugarView
         }
         $sid = $_REQUEST [ 'sid' ] ;
         $this->history->restoreByTimestamp ( $sid ) ;
+    }
+
+    protected function resetToDefault()
+    {
+        $implementation = $this->parser->getImplementation();
+        $fileName = $implementation->getDefaultFileName($this->layout, $this->module);
+        $this->history->savePreview($fileName);
     }
 
 	/**

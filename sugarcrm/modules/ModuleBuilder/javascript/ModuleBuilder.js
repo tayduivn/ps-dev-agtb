@@ -282,7 +282,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_package: ModuleBuilder.MBpackage,
 					view_module: module,
 					view: layout,
-					subpanel: subpanel
+                    subpanel: subpanel,
+                    role: $("input[name=role]").val()
 				};
 				ModuleBuilder.history.popup_window.load(ModuleBuilder.paramsToUrl(ModuleBuilder.history.params));
 				ModuleBuilder.history.popup_window.show();
@@ -299,7 +300,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						view_module: module,
 						view: layout,
 						sid: id,
-						subpanel: subpanel
+                        subpanel: subpanel,
+                        role: $("input[name=role]").val()
 					};
 					prevPanel = new YAHOO.SUGAR.ClosableTab({
 						dataSrc: Connect.url + "&" + ModuleBuilder.paramsToUrl(ModuleBuilder.history.params),
@@ -328,7 +330,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_module: module,
 					view: layout,
 					sid: id,
-					subpanel: subpanel
+                    subpanel: subpanel,
+                    role: $("input[name=role]").val()
 				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
@@ -338,9 +341,28 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						"&subpanel=" + subpanel +
 						"&view_package=" + ModuleBuilder.MBpackage
 					);
-					ModuleBuilder.state.isDirty = true;
+                    ModuleBuilder.state.markAsDirty();
 				});
 			},
+            resetToDefault: function(module, layout) {
+                ModuleBuilder.history.params = {
+                    module: 'ModuleBuilder',
+                    histAction: 'resetToDefault',
+                    action: 'history',
+                    view_package: ModuleBuilder.MBpackage,
+                    view_module: module,
+                    view: layout,
+                    role: $("input[name=role]").val()
+                };
+                ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
+                    ModuleBuilder.history.reverted = true;
+                    ModuleBuilder.getContent(ModuleBuilder.contentURL, function(content) {
+                        ModuleBuilder.updateContent(content);
+                        ModuleBuilder.state.markAsDirty();
+                        ModuleBuilder.state.markAsReset();
+                    });
+                });
+            },
 			cleanup: function() {
 				if (ModuleBuilder.history.reverted && ModuleBuilder.history.params.histAction) {
 					ModuleBuilder.history.params.histAction = 'unrestore';
@@ -362,6 +384,22 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		state: {
 			isDirty: false,
+            isReset: false,
+            markAsDirty: function() {
+                ModuleBuilder.state.isDirty = true;
+                ModuleBuilder.state.markAsNotReset();
+            },
+            markAsClean: function() {
+                ModuleBuilder.state.isDirty = false;
+            },
+            markAsReset: function() {
+                ModuleBuilder.state.isReset = true;
+                $("#saveBtn").prop("disabled", true);
+            },
+            markAsNotReset: function() {
+                ModuleBuilder.state.isReset = false;
+                $("#saveBtn").prop("disabled", false);
+            },
 			saving: false,
             hideFailedMesage: false,
 			intended_view: {
@@ -383,7 +421,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				//set dirty = false
 				//call the save method of the current view.
 				//call the intended action.
-				ModuleBuilder.state.isDirty = false;
+                ModuleBuilder.state.markAsClean();
 				var saveBtn = document.getElementById("saveBtn");
 				if (!saveBtn) {
 					var mbForm = document.forms[1];
@@ -414,7 +452,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			onDontSaveClick: function(){
 				//set dirty to false
 				//call the intended action.
-				ModuleBuilder.state.isDirty = false;
+                ModuleBuilder.state.markAsClean();
 				ModuleBuilder.history.cleanup();
 				ModuleBuilder.getContent(ModuleBuilder.state.intended_view.url, ModuleBuilder.state.intended_view.successCall);
 				ModuleBuilder.state.popup_window.hide();
@@ -441,6 +479,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         isDefault:true,
                         handler: function(){
                             ModuleBuilder.state.popup_window.hide()
+                            if (ModuleBuilder.state.intended_view.cancelCall) {
+                                ModuleBuilder.state.intended_view.cancelCall();
+                            }
                         }
                      },{
                         text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_SAVE_CHANGES'),
@@ -468,7 +509,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             ModuleBuilder.getContent(url+"&copyFromEditView=true");
              ModuleBuilder.contentURL = url;
             ModuleBuilder.state.intended_view.url = url;
-            ModuleBuilder.state.isDirty = true;
+            ModuleBuilder.state.markAsDirty();
         },
 		//AJAX Navigation Functions
 		navigate : function(url) {
@@ -477,7 +518,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.getContent(url);
 			}
 		},
-		getContent: function(url, successCall){
+        getContent: function(url, successCall, cancelCall) {
 			if (!url) return;
 			
 			if (url.substring(0, 11) == "javascript:")
@@ -489,6 +530,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			//save a pointer to intended action
 			ModuleBuilder.state.intended_view.url = url;
 			ModuleBuilder.state.intended_view.successCall = successCall;
+            ModuleBuilder.state.intended_view.cancelCall = cancelCall;
 			if(ModuleBuilder.state.isDirty){ //prompt to save current data.
 				//check if we are editing a property of the current view (such views open up in new tabs)
 				//if so we leave the state dirty and return
@@ -508,7 +550,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.callInProgress = true;
 				successCall = ModuleBuilder.updateContent;
 			}
-			ModuleBuilder.asyncRequest(url, successCall);
+
+            var requestUrl = url;
+            var role = $("input[name=role]").val();
+            if (role) {
+                requestUrl += "&role=" + encodeURIComponent(role);
+            }
+
+            ModuleBuilder.asyncRequest(requestUrl, successCall);
 		},
 		updateContent: function(o){
 			ModuleBuilder.callInProgress = false;
@@ -865,7 +914,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		handleSave: function(form, callBack){
 			if (check_form(form)) {
-				ModuleBuilder.state.isDirty=false;
+                ModuleBuilder.state.markAsClean();
 				ModuleBuilder.submitForm(form, callBack);
 			}
 		},
@@ -1119,6 +1168,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			return url;
 		},
+        urlToParams: function(url) {
+            var params = {};
+            for (var pairs = url.split("&"), parts, i = 0, length = pairs.length; i < length; i++) {
+                parts = pairs[i].split("=", 2);
+                params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+            }
+            return params;
+        },
 		/**
 		 * Indicates whether the text presented shows that the request failed and
 		 * is requiring a login via redirect.
@@ -1501,10 +1558,21 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 tmpElem.rel = rel;
             headElem.appendChild(tmpElem);
         },
-        switchLayoutRole: function(role){
-            $('input[name="selectedRole"]').val(role);
-            $('#prepareForSave').append('<input name="action" type="hidden" value="editLayout">');
-            this.submitForm('prepareForSave');
+        switchLayoutRole: function(element) {
+            var $select = $(element);
+            var $input = $('input[name="role"]');
+            var previousRole = $input.val();
+            var role = $select.val();
+            $input.val(role);
+
+            var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
+            params.role = role;
+            var url = ModuleBuilder.paramsToUrl(params);
+
+            ModuleBuilder.getContent(url, null, function() {
+                $input.val(previousRole);
+                $select.val(previousRole);
+            });
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

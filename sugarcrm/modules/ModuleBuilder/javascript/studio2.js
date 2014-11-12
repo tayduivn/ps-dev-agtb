@@ -802,8 +802,12 @@ Studio2 = {
 	},
 
 	handleSave: function() {
+        // do not save role specific view which is synchronized with the based one without deployment
+        if (ModuleBuilder.state.isSynced) {
+            return;
+        }
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-		ModuleBuilder.state.isDirty=false;
+        ModuleBuilder.state.markAsClean();
 		this.prepareForSave();
 		// set <input type='hidden' name='action' value='saveLayout'>
 		var saveForm = document.forms['prepareForSave'];
@@ -818,7 +822,7 @@ Studio2 = {
 
 	handlePublish: function() {
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-		ModuleBuilder.state.isDirty=false;
+        ModuleBuilder.state.markAsClean();
 		this.prepareForSave();
 		// set <input type='hidden' name='action' value='saveAndPublishLayout'>
 		var saveForm = document.forms['prepareForSave'];
@@ -827,6 +831,13 @@ Studio2 = {
 		inputField.setAttribute('name','action');
 		inputField.setAttribute('value','saveAndPublishLayout');
 		saveForm.appendChild(inputField);
+
+        var isSynced = document.createElement('input');
+        isSynced.setAttribute('type', 'hidden');
+        isSynced.setAttribute('name', 'is_synced');
+        isSynced.setAttribute('value', ~~ModuleBuilder.state.isReset);
+        saveForm.appendChild(isSynced);
+
 		ModuleBuilder.submitForm('prepareForSave');
 		ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder','LBL_DEPLOYE_COMPLETE'),5000);
 	},

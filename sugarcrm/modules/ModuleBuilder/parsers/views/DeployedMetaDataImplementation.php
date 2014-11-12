@@ -33,19 +33,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
      */
     protected $params = array();
 
-    /**
-     * Dictionary of available metadata locations. The value designates
-     * if the location may store context dependent metadata
-     *
-     * @var array
-     */
-    protected static $locations = array(
-        MB_BASEMETADATALOCATION => false,
-        MB_CUSTOMMETADATALOCATION => true,
-        MB_WORKINGMETADATALOCATION => true,
-        MB_HISTORYMETADATALOCATION => false,
-    );
-
 	/*
 	 * Constructor
 	 * @param string $view
@@ -288,9 +275,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         if (is_array($this->_paneldefs) && !is_numeric(key($this->_paneldefs))) {
             $this->_paneldefs = array($this->_paneldefs);
         }
-        
-		$this->_history = new History ( $this->getFileName ( $view, $moduleName, MB_HISTORYMETADATALOCATION ) ) ;
 
+        $this->_history = new History($this->getFileNameNoDefault($view, $moduleName, MB_HISTORYMETADATALOCATION));
 	}
     
     /**
@@ -449,6 +435,19 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         return $this->getFileNameByParameters($view, $moduleName, $location, $client);
     }
 
+    public function getDefaultFileName($view, $moduleName, $client = null)
+    {
+        $locations = array(MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION);
+        foreach ($locations as $location) {
+            $fileName = $this->getFileNameByParameters($view, $moduleName, $location, $client);
+            if (file_exists($fileName)) {
+                return $fileName;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Construct a full pathname for the requested metadata and do not check if the file exists
      *
@@ -513,7 +512,14 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
      */
     protected function locationSupportsParameters($location)
     {
-        return !empty(self::$locations[$location]);
+        switch ($location) {
+            case MB_CUSTOMMETADATALOCATION:
+            case MB_WORKINGMETADATALOCATION:
+            case MB_HISTORYMETADATALOCATION:
+                return true;
+        }
+
+        return false;
     }
 
 	private function replaceVariables($defs, $module) {
@@ -577,5 +583,18 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
     public function getParams()
     {
         return $this->params;
+    }
+
+    /**
+     * Resets user specific metadata to default
+     */
+    public function resetToDefault()
+    {
+        if (count($this->params) > 0) {
+            $fileName = $this->getFileNameNoDefault($this->_view, $this->_moduleName);
+            if (file_exists($fileName)) {
+                unlink($fileName);
+            }
+        }
     }
 }
