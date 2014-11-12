@@ -26,7 +26,43 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 ),
                 'date_closed',
                 array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate',
+                        'total_amount',
+                        'quantity',
+                        'discount_amount',
+                        'discount_price'
+                    ),
+                    'showTransactionalAmount' => true,
+                    'convertToBase' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array(
                     'name' => 'likely_case',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate',
+                        'total_amount',
+                        'quantity',
+                        'discount_amount',
+                        'discount_price'
+                    ),
+                    'showTransactionalAmount' => true,
+                    'convertToBase' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array(
+                    'name' => 'best_case',
                     'type' => 'currency',
                     'related_fields' => array(
                         'currency_id',
@@ -63,42 +99,6 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'default' => true
                 ),
                 'quantity',
-                array(
-                    'name' => 'worst_case',
-                    'type' => 'currency',
-                    'related_fields' => array(
-                        'currency_id',
-                        'base_rate',
-                        'total_amount',
-                        'quantity',
-                        'discount_amount',
-                        'discount_price'
-                    ),
-                    'showTransactionalAmount' => true,
-                    'convertToBase' => true,
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'best_case',
-                    'type' => 'currency',
-                    'related_fields' => array(
-                        'currency_id',
-                        'base_rate',
-                        'total_amount',
-                        'quantity',
-                        'discount_amount',
-                        'discount_price'
-                    ),
-                    'showTransactionalAmount' => true,
-                    'convertToBase' => true,
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
-                    'enabled' => true,
-                    'default' => true
-                ),
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',

@@ -42,7 +42,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
                 ),
                 'date_closed',
                 array(
-                    'name' => 'likely_case',
+                    'name' => 'worst_case',
                     'type' => 'currency',
                     'related_fields' => array(
                         'currency_id',
@@ -59,25 +59,8 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
                     'enabled' => true,
                     'default' => true
                 ),
-                'sales_stage',
                 array(
-                    'name' => 'probability',
-                    'readonly' => true
-                ),
-                'commit_stage',
-                array(
-                    'name' => 'product_template_name',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'category_name',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                'quantity',
-                array(
-                    'name' => 'worst_case',
+                    'name' => 'likely_case',
                     'type' => 'currency',
                     'related_fields' => array(
                         'currency_id',
@@ -112,6 +95,23 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
                     'enabled' => true,
                     'default' => true
                 ),
+                'sales_stage',
+                array(
+                    'name' => 'probability',
+                    'readonly' => true
+                ),
+                'commit_stage',
+                array(
+                    'name' => 'product_template_name',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array(
+                    'name' => 'category_name',
+                    'enabled' => true,
+                    'default' => true
+                ),
+                'quantity',
                 array(
                     'name' => 'assigned_user_name',
                     'enabled' => true,
