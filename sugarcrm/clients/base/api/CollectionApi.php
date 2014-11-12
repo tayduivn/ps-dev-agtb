@@ -278,7 +278,6 @@ class CollectionApi extends SugarApi
             $args['fields'] = explode(',',$args['fields']);
         }
 
-
         return $args;
     }
 
@@ -691,9 +690,10 @@ class CollectionApi extends SugarApi
     /**
      * Merge Requested Fields and Sort By Fields into a single list so that they can be retrieved from the db.
      * @param array $args
-     * @return array $args Modified args is returned back
+     * @return array $args Modified args is returned back. 'fields' is modified and 'addedRequestFields' is added
      */
-    protected function mergeRequestFieldsAndSortFields(array $args) {
+    protected function mergeRequestFieldsAndSortFields(array $args)
+    {
 
         // array to store fields that were added to the original fields list
         // This array is needed so that we can cleanup the output by deleting these added Fields
@@ -701,7 +701,7 @@ class CollectionApi extends SugarApi
         // for sorting
         $addedRequestFields = array();
 
-        if (isset($args['fields']) && isset($args['order_by']) && is_array($args['order_by']))  {
+        if (isset($args['fields']) && isset($args['order_by'])) {
             $fieldsArray = $args['fields'];
             $orderByFieldsArray = array_keys($args['order_by']);
             // make a single list of requested fields and sort by fields
@@ -738,34 +738,20 @@ class CollectionApi extends SugarApi
      * @param $args
      * @return array Modified Data Array is returned back
      */
-    protected function cleanData($recordsArray, $args) {
-        $cleanedRecordsArray = array();
+    protected function cleanData($recordsArray, $args)
+    {
 
-        $modifiedFlag = false;
         if (isset($args['addedRequestFields'])) {
-            $addedRequestFields = $args['addedRequestFields'];
+            // make the field names to be removed as the 'keys'
+            $addedRequestFields = array_flip($args['addedRequestFields']);
             // Loop through all records
-            foreach ($recordsArray as $record) {
+            foreach ($recordsArray as $k => $record) {
                 // Check if any addedRequestField occurs in the record. If so delete it.
-                foreach ($addedRequestFields as $addedField) {
-                    if (isset($record[$addedField])) {
-                        unset($record[$addedField]);
-                        $modifiedFlag = true; // at least one record was modified
-                    }
-                }
-                $cleanedRecordsArray[] = $record;
-
+                $recordsArray[$k] = array_diff_key($record, $addedRequestFields);
             }
-
         }
 
-        if ($modifiedFlag) {
-            // something was modified. Return the modified array.
-            return $cleanedRecordsArray;
-        } else {
-            // nothing was modified. We can return the original array back.
-            return $recordsArray;
-        }
+        return ($recordsArray);
 
     }
 }
