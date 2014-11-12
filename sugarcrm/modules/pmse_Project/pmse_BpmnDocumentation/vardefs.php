@@ -1,0 +1,146 @@
+<?php
+$dictionary['pmse_BpmnDocumentation'] = array(
+	'table'=>'pmse_bpmn_documentation',
+	'audited'=>false,
+	'activity_enabled'=>false,
+		'duplicate_merge'=>true,
+		'fields'=>array ('doc_uid' =>
+  array (
+    'required' => true,
+    'name' => 'doc_uid',
+    'vname' => '',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'len' => '36',
+    'size' => '36',
+  ),
+'prj_id' =>
+  array (
+    'required' => true,
+    'name' => 'prj_id',
+    'vname' => '',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'len' => '36',
+    'size' => '36',
+  ),
+'doc_element' =>
+  array (
+    'required' => true,
+    'name' => 'doc_element',
+    'vname' => '',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'len' => '36',
+    'size' => '36',
+  ),
+'doc_element_type' =>
+  array (
+    'required' => true,
+    'name' => 'doc_element_type',
+    'vname' => '',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'len' => '45',
+    'size' => '45',
+  ),
+'doc_documentation' =>
+  array (
+    'required' => false,
+    'name' => 'doc_documentation',
+    'vname' => '',
+    'type' => 'text',
+    'massupdate' => false,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'size' => '20',
+    'rows' => '4',
+    'cols' => '20',
+  ),
+),
+	'relationships'=>array (
+),
+	'optimistic_locking'=>true,
+		'unified_search'=>true,
+	);
+if (!class_exists('VardefManager')){
+        require_once('include/SugarObjects/VardefManager.php');
+}
+VardefManager::createVardef('pmse_BpmnDocumentation','pmse_BpmnDocumentation', array('basic','assignable'));

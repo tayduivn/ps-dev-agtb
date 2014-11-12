@@ -161,7 +161,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
 
                         <?php
 
-                            if ( file_exists($endpoint['longHelp']) )
+                            if (!empty($endpoint['longHelp']) && file_exists($endpoint['longHelp']) )
                             {
                                 echo file_get_contents($endpoint['longHelp']);
                             }
@@ -169,20 +169,21 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
                             {
                                 echo '<span class="lead">No additional help.</span>';
                             }
+                        //Hide the file links if no long help exists
+                        if(!empty($endpoint['longHelp'])) { ?>
 
-                        ?>
+                            <div class="pull-right muted">
+                                <i class="icon-file"></i>
+                                <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
+                            </div>
 
-                        <div class="pull-right muted">
-                            <i class="icon-file"></i>
-                            <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
                         </div>
 
-                    </div>
-
-                    <div class="pull-right">
-                        <i class="icon-file"></i>
-                        <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
-                    </div>
+                        <div class="pull-right">
+                            <i class="icon-file"></i>
+                            <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
+                        </div>
+                        <?php } ?>
                 </div>
 
             </div>
