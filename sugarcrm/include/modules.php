@@ -424,6 +424,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'DocumentRevisions',
     'Empty',
     'ProjectTask',
+    'RevenueLineItems',
     //BEGIN SUGARCRM flav=ent ONLY
     'pmse_BpmnActivity',
     'pmse_BpmnArtifact',
