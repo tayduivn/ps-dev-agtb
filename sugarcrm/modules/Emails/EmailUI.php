@@ -2880,8 +2880,10 @@ eoq;
 			} // if
         } // foreach
 
-	    $oe = new OutboundEmail();
-        $system = $oe->getSystemMailerSettings();
+        $oe = new OutboundEmail();
+        if ($oe ->isAllowUserAccessToSystemDefaultOutbound()) {
+            $system = $oe->getSystemMailerSettings();
+        }
 
         $return = $current_user->getUsersNameAndEmail();
 		$return['name'] = from_html($return['name']);
