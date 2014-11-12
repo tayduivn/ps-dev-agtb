@@ -308,6 +308,7 @@ class Lead extends Person {
 			if(!empty($campaign_list))
 				$this->campaign_name = $campaign_list[0]->name;
 		}
+        $this->save();
 	}
 
 	function get_list_view_data()
