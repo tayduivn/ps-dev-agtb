@@ -22,19 +22,24 @@
   overflow-x: hidden;
 
   .headerpane {
-    .record-cell {
-      padding-top: 15px;
-      &:first-child {
-        width: 100%;
-        max-width: 100px; //temp until better fix for ellipsis
+    h1 {
+      > .record-cell {
+        padding-top: 15px;
+        &:first-child {
+          width: 100%;
+          max-width: 100px; //temp until better fix for ellipsis
+        }
+        &.edit {
+          padding: 15px 0 0 20px;
+        }
+        .detail {
+          display: inline-block;
+          padding-top: 4px;
+        }
       }
-      .detail {
-        display: inline-block;
-        padding-top: 4px;
+      input[type="text"] {
+        margin: 0 0 0 -7px;
       }
-    }
-    input[type="text"] {
-      margin: 0 0 0 -7px;
     }
   }
 
