@@ -182,7 +182,7 @@ class Audit extends SugarBean
             unset($row['before_value_text']);
             unset($row['after_value_text']);
 
-            $fieldType = $bean->field_defs[$row['field_name']]['type'];
+            $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
             switch ($fieldType) {
                 case 'date':
                 case 'time':
@@ -209,37 +209,12 @@ class Audit extends SugarBean
                         }
                     }
                     break;
-                case 'tag':
-                    $row['before'] = $this->formatTags($row['before']);
-                    $row['after'] = $this->formatTags($row['after']);
-                    break;
             }
 
             $return[] = $row;
         }
 
         return $return;
-    }
-
-    /**
-     * Formats tags value.
-     *
-     * @param string $tags String in database format,
-     *   e.g.: ^t1^,...,^tN^
-     * @return array Array of tags,
-     *   e.g.: array(array('name' => 't1'), ..., array('name' => 'tN'))
-     */
-    protected function formatTags($tags)
-    {
-        if (empty($tags)) {
-            return array();
-        }
-
-        $tags = explode(',', str_replace('^', '', $tags));
-
-        return array_map(function ($tag) {
-            return array('name' => $tag);
-        }, $tags);
     }
 
     /**
