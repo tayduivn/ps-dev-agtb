@@ -18,7 +18,7 @@
 
     _render: function() {
         // FIXME: This will be cleaned up by SC-3478.
-        if (this.view.name === 'record') {
+        if (this.view.name === 'record' || this.view.name === 'audit') {
             this.def.link = false;
         } else if (this.view.name === 'preview') {
             this.def.link = _.isUndefined(this.def.link) ? true : this.def.link;
