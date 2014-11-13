@@ -1,12 +1,10 @@
 <?php
 
-
 /**
  * Description of PMSEValidationLevel
  *
  * @codeCoverageIgnore
  */
-
 abstract class PMSEValidationLevel
 {
     const NoValidation = 0;

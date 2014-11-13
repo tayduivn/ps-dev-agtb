@@ -1,18 +1,17 @@
 <?php
-
 require_once 'PMSEValidate.php';
-require_once 'modules/pmse_Inbox/engine/PMSEExpressionEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Description of PMSETerminateValidator
- * 
+ *
  */
 class PMSETerminateValidator implements PMSEValidate
 {
     /**
      *
-     * @var Integer 
+     * @var Integer
      */
     protected $level;
 
@@ -24,12 +23,12 @@ class PMSETerminateValidator implements PMSEValidate
 
     /**
      *
-     * @var type 
+     * @var type
      */
-    protected $expressionEvaluator;
+    protected $evaluator;
     
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -37,11 +36,11 @@ class PMSETerminateValidator implements PMSEValidate
     {
         $this->level = $level;
         $this->logger = PMSELogger::getInstance();
-        $this->expressionEvaluator = new PMSEExpressionEvaluator();
+        $this->evaluator = new PMSEEvaluator();
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -51,7 +50,7 @@ class PMSETerminateValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return PMSELogger
      * @codeCoverageIgnore
      */
@@ -61,27 +60,27 @@ class PMSETerminateValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getExpressionEvaluator()
+    public function getEvaluator()
     {
-        return $this->expressionEvaluator;
+        return $this->evaluator;
     }
 
     /**
      * 
-     * @param type $expressionEvaluator
+     * @param type $evaluator
      * @codeCoverageIgnore
      */
-    public function setExpressionEvaluator($expressionEvaluator)
+    public function setEvaluator($evaluator)
     {
-        $this->expressionEvaluator = $expressionEvaluator;
+        $this->evaluator = $evaluator;
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -91,7 +90,7 @@ class PMSETerminateValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -101,9 +100,9 @@ class PMSETerminateValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param PMSERequest $request
-     * @return \PMSERequest     
+     * @return \PMSERequest
      */
     public function validateRequest(PMSERequest $request)
     {
@@ -119,7 +118,7 @@ class PMSETerminateValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @param type $request
@@ -128,17 +127,17 @@ class PMSETerminateValidator implements PMSEValidate
      */
     public function validateExpression($bean, $flowData, $request, $paramsRelated = array())
     {
-        $terminate = $this->expressionEvaluator->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated);
+        $terminate = $this->evaluator->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated);
         if ($flowData['evn_criteria'] != '' && $flowData['evn_criteria'] != '[]' && $terminate) {
             $request->setResult('TERMINATE_CASE');
         }
-        $condition = $this->expressionEvaluator->condition();
+        $condition = $this->evaluator->condition();
         $this->logger->debug("Eval: $condition returned " . ($request->isValid()));
         return $request;
     }
 
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @param type $externalAction
@@ -154,7 +153,7 @@ class PMSETerminateValidator implements PMSEValidate
                 )
             );
         }
-        
+
         $this->logger->debug("Parameters related returned :" . print_r($paramsRelated, true));
         return $paramsRelated;
     }

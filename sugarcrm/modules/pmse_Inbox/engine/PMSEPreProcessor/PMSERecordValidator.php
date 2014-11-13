@@ -1,9 +1,6 @@
 <?php
-
-
 require_once 'PMSEValidate.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-
 
 class PMSERecordValidator implements PMSEValidate
 {
@@ -12,15 +9,15 @@ class PMSERecordValidator implements PMSEValidate
      * @var Integer
      */
     protected $level;
-    
+
     /**
      *
      * @var PMSELogger
      */
     protected $logger;
-    
+
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -31,7 +28,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -41,7 +38,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -51,7 +48,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -59,9 +56,9 @@ class PMSERecordValidator implements PMSEValidate
     {
         $this->logger = $logger;
     }
-        
+
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -69,20 +66,20 @@ class PMSERecordValidator implements PMSEValidate
     {
         $this->level = $level;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSERequest $request
      * @return \PMSERequest
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request ". get_class($this));
-        $this->logger->debug("Request data". print_r($request,true));
+        $this->logger->info("Validate Request " . get_class($this));
+        $this->logger->debug("Request data" . print_r($request, true));
 
         $request->validate();
         return $request;
     }
 
-    
+
 }

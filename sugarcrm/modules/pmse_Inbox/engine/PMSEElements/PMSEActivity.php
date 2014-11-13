@@ -1,23 +1,20 @@
 <?php
-
 require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
 require_once 'PMSEShape.php';
-
 
 /**
  * Description of PMSEActivity
  *
  * @codeCoverageIgnore
  */
-
 class PMSEActivity extends PMSEShape
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $definitionBean;
-    
+
     /**
      * @codeCoverageIgnore
      */
@@ -26,9 +23,9 @@ class PMSEActivity extends PMSEShape
         $this->definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition');
         parent::__construct();
     }
-    
+
     /**
-     * 
+     *
      * @param type $module
      * @return \PMSEHistoryData
      * @codeCoverageIgnore
@@ -59,7 +56,7 @@ class PMSEActivity extends PMSEShape
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @return type
      * @codeCoverageIgnore

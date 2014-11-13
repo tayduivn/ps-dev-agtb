@@ -1,0 +1,26 @@
+<!--<div class="block preview-data">-->
+    <!--{{#each meta.panels}}-->
+        <!--{{#each fields}}-->
+            <!--<div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}">-->
+                <!--<div class="span5">{{str  this.label ../../this.model.module}}</div>-->
+                <!--<div class="span7" data-type="{{type}}" name="{{name}}">-->
+                    <!--{{field ../../this}}-->
+                    <!--&lt;!&ndash;{{field ../../this model=../../model template="detail"}}&ndash;&gt;-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--{{/each}}-->
+    <!--{{/each}}-->
+<!--</div>-->
+<div class="block preview-data">
+<!--<div class="modal-body">-->
+<fieldset>
+    {{#each meta.panels}}
+        {{#each fields}}
+            <div class="row-fluid control-group">
+                <label class="span2">{{str this.label ../../this.model.module}}</label>
+                <div class="span10">{{field ../../this model=../../context.attributes.createModel template="edit"}}</div>
+            </div>
+        {{/each}}
+    {{/each}}
+</fieldset>
+</div>

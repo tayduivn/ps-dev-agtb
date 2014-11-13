@@ -10,6 +10,7 @@ require_once 'PMSEDataParserInterface.php';
 require_once 'PMSEFieldParser.php';
 require_once 'PMSEBusinessRuleParser.php';
 require_once 'PMSEFormResponseParser.php';
+require_once 'PMSEUserRoleParser.php';
 
 class PMSEDataParserGateway implements PMSEDataParserInterface
 {
@@ -100,7 +101,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
     public function parseCriteriaArray($criteriaArray, $bean, $currentUser, $beanList = array(), $params = array())
     {
         $parsedArray = array();
-        if (!empty($criteriaArray) && is_array($criteriaArray)){
+        if (!empty($criteriaArray) && is_array($criteriaArray)) {
             foreach ($criteriaArray as $key => $criteriaToken) {
                 $isDefault = false;
                 switch ($criteriaToken->expType) {
@@ -113,6 +114,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
                         $this->dataParser = new PMSEFormResponseParser();
                         break;
                     case 'MODULE':
+                    case 'VARIABLE':
                     case 'DEFAULT_MODULE':
                         $this->dataParser = new PMSEFieldParser();
                         break;
@@ -143,7 +145,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
      * @param array $params if additional parameters
      * @return object the modified token
      */
-    public function parseCriteriaToken($criteriaToken, $params=array())
+    public function parseCriteriaToken($criteriaToken, $params = array())
     {
         return $this->dataParser->parseCriteriaToken($criteriaToken, $params);
     }

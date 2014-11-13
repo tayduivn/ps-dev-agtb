@@ -5,7 +5,6 @@ $pmseModulesList = array (
   'pmse_Project',
   'pmse_Business_Rules',
   'pmse_Emails_Templates',
-  'pmse_Config',
   'pmse_BpmnActivity',
 'pmse_BpmnArtifact',
 'pmse_BpmnBound',

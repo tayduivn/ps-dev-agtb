@@ -1,5 +1,4 @@
 <?php
-
 require_once 'PMSEActivity.php';
 
 class PMSEScriptTask extends PMSEActivity
@@ -9,7 +8,8 @@ class PMSEScriptTask extends PMSEActivity
     /**
      * @codeCoverageIgnore
      */
-    public function __construct(){
+    public function __construct()
+    {
         global $current_user;
         $this->currentUser = $current_user;
         parent::__construct();

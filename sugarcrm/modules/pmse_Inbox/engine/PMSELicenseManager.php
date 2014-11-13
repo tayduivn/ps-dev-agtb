@@ -1,8 +1,9 @@
 <?php
-require_once ('Crypt.php');
-require_once ('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
-require_once ('modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php');
-require_once ('modules/pmse_Inbox/engine/PMSEFlowRouter.php');
+require_once('Crypt.php');
+require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php');
+require_once('modules/pmse_Inbox/engine/PMSEFlowRouter.php');
+
 /**
  * The License Manager class, validates licenses, establish connections to the license server,
  * but also retrieve and process the returned license data.
@@ -69,7 +70,7 @@ class PMSELicenseManager
         $this->key = '1234567890';
         $this->crypt = new Crypt();
         global $db;
-        $this->db = isset($GLOBALS["db"])?$GLOBALS["db"]:$db;
+        $this->db = isset($GLOBALS["db"]) ? $GLOBALS["db"] : $db;
 
         $this->pmse = PMSE::getInstance();
         $this->moduleName = $this->pmse->getModuleName();
@@ -221,7 +222,8 @@ class PMSELicenseManager
             $this->amBean->save();
             if (!$this->amBean->in_save) {
                 $result->success = true;
-                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_INSTALLSUCCESSFULLY', $this->moduleName);
+                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_INSTALLSUCCESSFULLY',
+                    $this->moduleName);
                 // call wakeUPFreezedFlows
                 $this->wakeUpFreezedFlows();
             }
@@ -335,7 +337,8 @@ class PMSELicenseManager
             return $result;
         } else {
             if (!isset($license->lic_max_admins)) {
-                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_ADMINISTRATORMISSING', $this->moduleName);
+                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_ADMINISTRATORMISSING',
+                    $this->moduleName);
                 return $result;
             } else {
                 $result->lic_max_admins = $license->lic_max_admins;
@@ -353,22 +356,25 @@ class PMSELicenseManager
                 $result->lic_max_cases = $license->lic_max_cases;
             }
             if (!isset($license->lic_product_expiration_date)) {
-                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_PRODUCTDATEMISSING', $this->moduleName);
+                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_PRODUCTDATEMISSING',
+                    $this->moduleName);
                 return $result;
             } else {
                 $result->lic_product_expiration_date = $license->lic_product_expiration_date;
             }
             if (!isset($license->lic_support_expiration_date)) {
-                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_SUPPORTDATEMISSING', $this->moduleName);
+                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_SUPPORTDATEMISSING',
+                    $this->moduleName);
                 return $result;
             } else {
                 $result->lic_support_expiration_date = $license->lic_support_expiration_date;
             }
             if (!isset($license->lic_enabled_br)) {
-                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_BUSSINESRULESMISSING', $this->moduleName);
+                $result->message = translate('LBL_PMSE_ADAM_LICENSEMANAGER_MESSAGE_BUSSINESRULESMISSING',
+                    $this->moduleName);
                 return $result;
             } else {
-                $result->lic_enabled_br = (bool) $license->lic_enabled_br;
+                $result->lic_enabled_br = (bool)$license->lic_enabled_br;
             }
             $result->success = true;
         }
@@ -438,9 +444,9 @@ class PMSELicenseManager
         }
         return $serverName;
     }
-    
+
     /**
-     * 
+     *
      */
     public function wakeUpFreezedFlows()
     {
@@ -463,7 +469,7 @@ class PMSELicenseManager
 
         // replace the bpmLog calls for the error handler classes
         if ($n == 0) {
-            
+
             //$this->bpmLog('DEBUG', ": processed $n flows with status freezed");
         } else {
             //$this->bpmLog('INFO', "cron: processed $n flows with status freezed");

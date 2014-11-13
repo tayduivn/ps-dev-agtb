@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class gets the data type and value which is evaluated each token
  * this token includes a new element that contains the current value of the case
@@ -122,16 +123,16 @@ class PMSEBusinessRuleParser implements PMSEDataParserInterface
     {
         switch (strtoupper($token->expFieldType)) {
             case 'INT':
-                $token->expValue = (int) $token->expValue;
+                $token->expValue = (int)$token->expValue;
                 break;
             case 'FLOAT':
-                $token->expValue = (float) $token->expValue;
+                $token->expValue = (float)$token->expValue;
                 break;
             case 'DOUBLE':
-                $token->expValue = (double) $token->expValue;
+                $token->expValue = (double)$token->expValue;
                 break;
             case 'BOOL':
-                $token->expValue = $token->expValue=='true'?true:false;//(bool) $token->expValue;
+                $token->expValue = $token->expValue == 'true' ? true : false;//(bool) $token->expValue;
                 break;
             default :
                 $token->expValue = $token->expValue;

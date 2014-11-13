@@ -1,5 +1,6 @@
 <?php
 require_once 'AbstractLogger.php';
+
 /**
  * This Logger can be used to avoid conditional log calls
  *

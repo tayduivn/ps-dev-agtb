@@ -35,18 +35,23 @@ $viewdefs[$module_name]['base']['layout']['reassignCases'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => 'filter',
+                                                'view' => 'casesList-filter',
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend'
                                             ),
-                                            array(
-                                                'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
-                                            ),
-                                            array(
-                                                'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
-                                            ),
+//                                            array(
+//                                                'layout' => 'filter',
+//                                                'targetEl' => '.filter',
+//                                                'position' => 'prepend'
+//                                            ),
+//                                            array(
+//                                                'view' => 'filter-rows',
+//                                                "targetEl" => '.filter-options'
+//                                            ),
+//                                            array(
+//                                                'view' => 'filter-actions',
+//                                                "targetEl" => '.filter-options'
+//                                            ),
 //                                            array(
 //                                                'layout' => 'activitystream',
 //                                                'context' => array(

@@ -1,10 +1,10 @@
 <?php
-
-$viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
+$module_name = 'pmse_Inbox';
+$viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
     'dashlets' => array(
         array(
-            'label' => 'PMSE Inbox',
-            'description' => 'ProcessMaker Inbox',
+            'label' => 'LBL_PMSE_PROCESSES_DASHLET',
+            'description' => 'LBL_PMSE_PROCESSES_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,
                 'date' => 'true',
@@ -17,16 +17,14 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
             ),
             'filter' => array(
                 'module' => array(
-                    'Accounts',
-                    'Bugs',
-                    'Cases',
-                    'Contacts',
+                    //'Accounts',
+                    //'Bugs',
+                    //'Cases',
+                    //'Contacts',
                     'Home',
-                    'Leads',
-                    'Opportunities',
-                    'Prospects',
-//                    'pmse_Inbox',
-//                    'pmse_BpmProcessDefinition',
+                    //'Leads',
+                    //'Opportunities',
+                    //'Prospects',
                 ),
                 'view' => 'record',
             ),
@@ -34,35 +32,6 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
     ),
     'custom_toolbar' => array(
         'buttons' => array(
-//            array(
-//                'type' => 'actiondropdown',
-//                'no_default_action' => true,
-//                'icon' => 'fa-plus',
-//                'buttons' => array(
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'createRecord',
-//                        'params' => array(
-//                            'module' => 'pmse_Project',
-//                            'link' => '#pmse_Project',
-//                        ),
-//                        'label' => 'LBL_PMSE_BUTTON_CREATEPROCESS',
-//                        'acl_action' => 'create',
-//                        'acl_module' => 'pmse_Project',
-//                    ),
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'createRecord',
-//                        'params' => array(
-//                            'module' => 'pmse_Project',
-//                            'link' => 'Process',
-//                        ),
-//                        'label' => 'LBL_PMSE_BUTTON_IMPORTPROCESS',
-//                        'acl_action' => 'create',
-//                        'acl_module' => 'pmse_Project',
-//                    ),
-//                ),
-//            ),
             array(
                 'dropdown_buttons' => array(
                     array(
@@ -90,40 +59,6 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
             ),
         ),
     ),
-//    'panels' => array(
-//        array(
-//            'name' => 'panel_body',
-//            'columns' => 2,
-//            'labelsOnTop' => true,
-//            'placeholders' => true,
-//            'fields' => array(
-//                array(
-//                    'name' => 'visibility',
-//                    'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
-//                    'type' => 'enum',
-//                    'options' => 'tasks_visibility_options',
-//                ),
-//                array(
-//                    'name' => 'limit',
-//                    'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
-//                    'type' => 'enum',
-//                    'options' => 'tasks_limit_options',
-//                ),
-//            ),
-//        ),
-//    ),
-//comment for fail
-
-
-    /*'filter' => array(
-        array(
-            'name' => 'filter',
-            'label' => 'LBL_FILTER',
-            'type' => 'enum',
-            'options' => 'history_filter_options'
-        ),
-    ),*/
-
 
     'panels' => array(
         array(
@@ -158,13 +93,9 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
             'active' => true,
             'filter_applied_to' => 'in_time',
             'filters' => array(
-                //'custom_source' => 'PMSE',
-                //'cas_ownership' => array('$equals' => 'MYCASES'),
-                //'created_by' => array('$not_in' => array('1')),
-                //'assignment_method' => array('$not_in' => 'selfservice'),
                 'act_assignment_method' => array('$equals' => 'static'),
             ),
-            'label' => 'My Cases',
+            'label' => 'LBL_PMSE_MY_PROCESSES',
             'link' => 'pmse_Inbox',
             'module' => 'pmse_Inbox',
             'order_by' => 'date_entered:asc',
@@ -176,11 +107,11 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
             'filters' => array(
                 //'custom_source' => 'PMSE',
                 //'assignment_method' => array('$equals' => 'selfservice'),
-                'act_assignment_method' => array('$equals' =>array('selfservice','BALANCED')),
+                'act_assignment_method' => array('$equals' => array('selfservice', 'BALANCED')),
                 //'assigned_user_id' => array('$not_in' => array('1')),
             ),
             //'fields' => array('cas_id','cas_enrique'),
-            'label' => 'Self Service',
+            'label' => 'LBL_PMSE_SELF_SERVICE_PROCESSES',
             'link' => 'pmse_Inbox',
             'module' => 'pmse_Inbox',
             'order_by' => 'date_entered:asc',

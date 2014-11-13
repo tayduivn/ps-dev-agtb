@@ -5,8 +5,8 @@
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
-        //this.collection.allowed_modules = ['Accounts', 'Contacts', 'Leads', 'Prospects', 'Users'];
-        //this.context.on('compose:addressbook:search', this.search, this);
+//        this.collection.allowed_modules = ['User Assigned'];
+        this.context.on('compose:addressbook:search', this.search, this);
     },
     /**
      * Calls the custom PMSEEngine API endpoint to search for Task for Cases.
@@ -23,7 +23,7 @@
 
         // only fetch from the approved modules
         if (_.isEmpty(options.module_list)) {
-            options.module_list = ['all'];
+            options.module_list = ['User Assigned'];
         } else {
             options.module_list = _.intersection(this.allowed_modules, options.module_list);
         }

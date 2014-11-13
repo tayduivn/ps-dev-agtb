@@ -1,6 +1,7 @@
 <?php
 require_once('PMSEExporter.php');
 require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+
 /**
  * Exports a record of Project
  *
@@ -9,7 +10,8 @@ require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
  * @package PMSE
  * @codeCoverageIgnore
  */
-class PMSEProjectExporter extends  PMSEExporter {
+class PMSEProjectExporter extends PMSEExporter
+{
 
     public function __construct()
     {
@@ -30,7 +32,8 @@ class PMSEProjectExporter extends  PMSEExporter {
 
         if ($this->bean->fetched_row != false) {
             $this->projectId = $this->bean->id;
-            $this->bean->fetched_row = PMSEEngineUtils::unsetCommonFields($this->bean->fetched_row, array('name', 'description'));
+            $this->bean->fetched_row = PMSEEngineUtils::unsetCommonFields($this->bean->fetched_row,
+                array('name', 'description'));
             $this->bean->fetched_row['process'] = $this->getProjectProcess();
             $this->bean->fetched_row['diagram'] = $this->getProjectDiagram($this->bean->id);
             $this->bean->fetched_row['definition'] = $this->getProcessDefinition();
@@ -100,24 +103,23 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $activityBean->getSelectRows("", "bpmn_activity.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnActivity'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_activity.act_id=bpmn_bound.bou_element'), array('LEFT', 'bpm_activity_definition', 'bpmn_activity.act_id=bpm_activity_definition.act_id')));
             $q = new SugarQuery();
             $q->from($activityBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
-            $q->joinRaw("LEFT JOIN pmse_bpm_activity_definition c ON (a.id=c.id)", array('alias'=>'c'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
+            $q->joinRaw("LEFT JOIN pmse_bpm_activity_definition c ON (a.id=c.id)", array('alias' => 'c'));
             $fields = $this->getFields('pmse_BpmnActivity', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnActivity'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
             $fields_ad = $this->getFields('pmse_BpmActivityDefinition', array(), 'c');
-            foreach($fields_ad as $key => $value){
+            foreach ($fields_ad as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -142,24 +144,23 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $eventBean->getSelectRows("", "bpmn_event.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnEvent'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_event.evn_id=bpmn_bound.bou_element'), array('LEFT', 'bpm_event_definition', 'bpmn_event.evn_id=bpm_event_definition.evn_id')));
             $q = new SugarQuery();
             $q->from($eventBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
-            $q->joinRaw("LEFT JOIN pmse_bpm_event_definition c ON (a.id=c.id)", array('alias'=>'c'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
+            $q->joinRaw("LEFT JOIN pmse_bpm_event_definition c ON (a.id=c.id)", array('alias' => 'c'));
             $fields = $this->getFields('pmse_BpmnEvent', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnEvent'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
             $fields_ad = $this->getFields('pmse_BpmEventDefinition', array(), 'c');
-            foreach($fields_ad as $key => $value){
+            foreach ($fields_ad as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -180,19 +181,18 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $gatewayBean->getSelectRows("", "bpmn_gateway.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnGateway'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_gateway.gat_id=bpmn_bound.bou_element')));
             $q = new SugarQuery();
             $q->from($gatewayBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
             $fields = $this->getFields('pmse_BpmnGateway', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnGateway'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -209,19 +209,18 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $artifactBean->getSelectRows("", "bpmn_artifact.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnArtifact'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_artifact.art_id=bpmn_bound.bou_element')));
             $q = new SugarQuery();
             $q->from($artifactBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
             $fields = $this->getFields('pmse_BpmnArtifact', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnArtifact'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -241,11 +240,14 @@ class PMSEProjectExporter extends  PMSEExporter {
                     $row = PMSEEngineUtils::unsetCommonFields($row, array('name', 'description'));
                     $row = PMSEEngineUtils::sanitizeKeyFields($row);
                     $row['prj_id'] = $prjID;
-                    $row['flo_element_origin'] = PMSEEngineUtils::getElementUid($row['flo_element_origin'], $row['flo_element_origin_type'], PMSEEngineUtils::getEntityUid($row['flo_element_origin_type']));
-                    $row['flo_element_dest'] = PMSEEngineUtils::getElementUid($row['flo_element_dest'], $row['flo_element_dest_type'], PMSEEngineUtils::getEntityUid($row['flo_element_dest_type']));
+                    $row['flo_element_origin'] = PMSEEngineUtils::getElementUid($row['flo_element_origin'],
+                        $row['flo_element_origin_type'],
+                        PMSEEngineUtils::getEntityUid($row['flo_element_origin_type']));
+                    $row['flo_element_dest'] = PMSEEngineUtils::getElementUid($row['flo_element_dest'],
+                        $row['flo_element_dest_type'], PMSEEngineUtils::getEntityUid($row['flo_element_dest_type']));
                     $row['flo_state'] = json_decode($row['flo_state']);
                     $row['flo_condition'] = json_decode($row['flo_condition']);
-                    $row['flo_condition'] = !empty($row['flo_condition'])?$this->processBusinessRulesData($row['flo_condition']):'';
+                    $row['flo_condition'] = !empty($row['flo_condition']) ? $this->processBusinessRulesData($row['flo_condition']) : '';
                     $flowData[] = $row;
                 }
             }
@@ -255,19 +257,18 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $lanesetBean->getSelectRows("", "bpmn_laneset.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnLaneset'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_laneset.lns_id=bpmn_bound.bou_element')));
             $q = new SugarQuery();
             $q->from($lanesetBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
             $fields = $this->getFields('pmse_BpmnLaneset', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnLaneset'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -282,19 +283,18 @@ class PMSEProjectExporter extends  PMSEExporter {
             //$data = $laneBean->getSelectRows("", "bpmn_lane.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnLane'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_lane.lan_id=bpmn_bound.bou_element')));
             $q = new SugarQuery();
             $q->from($laneBean, array('alias' => 'a'));
-            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias'=>'b'));
+            $q->joinRaw("INNER JOIN pmse_bpmn_bound b ON (a.id=b.bou_element)", array('alias' => 'b'));
             $fields = $this->getFields('pmse_BpmnLane', array('name'), 'a');
             $q->select($fields);
             $q->where()->queryAnd()
                 ->addRaw("a.prj_id='" . $prjID . "' AND b.bou_element_type='bpmnLane'");
             $fields_bound = $this->getFields('pmse_BpmnBound', array(), 'b');
-            foreach($fields_bound as $key => $value) {
+            foreach ($fields_bound as $key => $value) {
                 $q->select->fieldRaw($value);
             }
-            //$v = $q->compileSql();
-            //print_r($v);
+
             $rows = $q->execute();
-            //print_r($rows); //die;
+
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -368,7 +368,8 @@ class PMSEProjectExporter extends  PMSEExporter {
         $definitionData = array();
         $definitionBean->retrieve_by_string_fields(array("prj_id" => $this->projectId));
         if (!empty($definitionBean->fetched_row)) {
-            $definitionData = PMSEEngineUtils::unsetCommonFields($definitionBean->fetched_row, array('name', 'description'));
+            $definitionData = PMSEEngineUtils::unsetCommonFields($definitionBean->fetched_row,
+                array('name', 'description'));
             $definitionData = PMSEEngineUtils::sanitizeKeyFields($definitionBean->fetched_row);
         }
         return $definitionData;
@@ -405,9 +406,9 @@ class PMSEProjectExporter extends  PMSEExporter {
     {
         if (is_array($conditionArray)) {
             foreach ($conditionArray as $key => $value) {
-                if (isset($value->expType) && $value->expType=='BUSINESS_RULES') {
+                if (isset($value->expType) && $value->expType == 'BUSINESS_RULES') {
                     $activityBeam = BeanFactory::getBean('pmse_BpmnActivity');
-                    $activityBeam->retrieve_by_string_fields(array('id'=>$value->expField));
+                    $activityBeam->retrieve_by_string_fields(array('id' => $value->expField));
                     $conditionArray[$key]->expField = $activityBeam->act_uid;
                 }
             }
@@ -415,7 +416,7 @@ class PMSEProjectExporter extends  PMSEExporter {
         return $conditionArray;
     }
 
-    private function getFields($module, $except=array(), $alias='')
+    private function getFields($module, $except = array(), $alias = '')
     {
         $result = array();
         $rows = array_flip(PMSEEngineUtils::getAllFieldsBean($module));

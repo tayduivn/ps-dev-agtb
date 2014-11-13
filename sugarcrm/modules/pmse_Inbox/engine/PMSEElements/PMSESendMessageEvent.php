@@ -1,5 +1,4 @@
 <?php
-
 require_once 'PMSEIntermediateEvent.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
 
@@ -7,19 +6,19 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     private $eventDefinitionBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $locale;
 
 
     /**
-     * 
+     *
      * @global type $locale
      * @codeCoverageIgnore
      */
@@ -27,14 +26,14 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     {
 
         global $locale;
-        $this->locale = $locale; 
+        $this->locale = $locale;
         $this->eventDefinitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
         parent::__construct();
 
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -44,7 +43,7 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -54,7 +53,7 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -64,7 +63,7 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     }
 
     /**
-     * 
+     *
      * @param type $locale
      * @codeCoverageIgnore
      */
@@ -72,25 +71,25 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     {
         $this->locale = $locale;
     }
-    
+
     /**
-     * This method prepares the response of the current element based on the 
-     * $bean object and the $flowData, an external action such as 
+     * This method prepares the response of the current element based on the
+     * $bean object and the $flowData, an external action such as
      * ROUTE or ADHOC_REASSIGN could be also processed.
-     * 
-     * This method probably should be override for each new element, but it's 
-     * not mandatory. However the response structure always must pass using 
+     *
+     * This method probably should be override for each new element, but it's
+     * not mandatory. However the response structure always must pass using
      * the 'prepareResponse' Method.
-     * 
+     *
      * As defined in the example:
-     * 
+     *
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
      * $response['flow_filters'] = array('first_id', 'second_id'); //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
      *
-     * 
+     *
      * @param type $flowData
      * @param type $bean
      * @param type $externalAction
@@ -106,9 +105,9 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
             return $this->prepareResponse($flowData, 'QUEUE', 'CREATE');
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $flowData
      * @return type
      */
@@ -119,7 +118,8 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
         $json = htmlspecialchars_decode($this->eventDefinitionBean->evn_params);
         $bean = $this->caseFlowHandler->retrieveBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
         $addresses = $this->emailHandler->processEmailsFromJson($bean, $json, $flowData);
-        $result = $this->emailHandler->sendTemplateEmail($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id'], $addresses, $templateId);
+        $result = $this->emailHandler->sendTemplateEmail($flowData['cas_sugar_module'],
+            $flowData['cas_sugar_object_id'], $addresses, $templateId);
 
         if (!$result['result']) {
             throw new PMSEElementException($result['ErrorInfo'], $flowData, $this);
@@ -127,7 +127,6 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
             throw new PMSEElementException($result['ErrorMessage'], $flowData, $this);
         }
     }
-
 
 
 }

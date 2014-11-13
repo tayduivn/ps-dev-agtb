@@ -1,6 +1,7 @@
 <?php
 require_once 'LoggerInterface.php';
 require_once 'LogLevel.php';
+
 /**
  * This is a simple Logger implementation that other Loggers can inherit from.
  *

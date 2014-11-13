@@ -6,8 +6,14 @@
     },
 
     showCase: function (model) {
-        //console.log('Child: ', child);
-        var url = model.module + '/' + model.id + '/layout/show-case/' + model.get('flow_id');
-        App.router.navigate(url , {trigger: true, replace: true });
+        //var url = model.module + '/' + model.id + '/layout/show-case/' + model.get('flow_id');
+        var ShowCaseUrl = app.router.buildRoute(model.module, model.get('id2'), 'layout/show-case/' + model.get('flow_id'));
+        var ShowCaseUrlBwc = app.bwc.buildRoute(model.module, '', 'showCase', {id:model.get('flow_id')});
+        var SugarModule = model.get('cas_sugar_module');
+        if (App.metadata._dev_data.modules[SugarModule].isBwcEnabled) {
+            app.router.navigate(ShowCaseUrlBwc , {trigger: true, replace: true });
+        } else {
+            app.router.navigate(ShowCaseUrl , {trigger: true, replace: true });
+        }
     }
 })
