@@ -3,31 +3,32 @@ var decision_table,
     brModule;
 
 function addDecisionTable(data) {
+    var module = 'pmse_Business_Rules';
     $.extend(true, data, {
         language: {
-            SINGLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_SINGLEHIT'),
-            MULTIPLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_MULTIPLEHIT'),
-            CONDITIONS: translate('LBL_PMSE_BUSINESSRULES_LABEL_CONDITIONS'),
-            CONCLUSIONS: translate('LBL_PMSE_BUSINESSRULES_LABEL_CONCLUSIONS'),
-            ADD_ROW: translate('LBL_PMSE_BUSINESSRULES_LABEL_ADDROW'),
-            REMOVE_ROW: translate('LBL_PMSE_BUSINESSRULES_LABEL_REMOVEROW'),
-            ERROR_CONCLUSION_VAR_DUPLICATED: translate('LBL_PMSE_BUSINESSRULES_ERROR_CONCLUSIONVARDUPLICATED'),
-            ERROR_EMPTY_RETURN_VALUE: translate('LBL_PMSE_BUSINESSRULES_ERROR_EMPTYRETURNVALUE'),
-            ERROR_EMPTY_ROW: translate('LBL_PMSE_BUSINESSRULES_ERROR_EMPTYROW'),
-            ERROR_NOT_EXISTING_FIELDS: translate('LBL_PMSE_MESSAGE_REQUIRED_FIELDS_BUSINESSRULES'),
-            ERROR_INCORRECT_BUILD: translate('LBL_PMSE_BUSINESSRULES_ERROR_INCORRECT_BUILD'),
-            MSG_DELETE_ROW: translate('LBL_PMSE_BUSINESSRULES_LABEL_MSGDELETEROW'),
-            LBL_RETURN: translate('LBL_PMSE_BUSINESSRULES_LABEL_RETURN'),
-            ERROR_NO_VARIABLE_SELECTED: translate('LBL_PMSE_BUSINESSRULES_ERROR_NOVARIABLE_SELECTED'),
-            ERROR_INVALID_EXPRESSION: translate('LBL_PMSE_BUSINESSRULES_ERROR_INVALIDEXPRESSION'),
-            ERROR_MISSING_EXPRESSION_OR_OPERATOR: translate('LBL_PMSE_BUSINESSRULES_ERROR_MISSINGEXPRESSIONOROPERATOR'),
-            LBL_VARIABLES: translate('LBL_PMSE_ADAM_UI_LBL_VARIABLES'),
-            LBL_CONSTANTS: translate('LBL_PMSE_ADAM_UI_LBL_CONSTANTS'),
-            LBL_ADD_CONDITION: translate('LBL_PMSE_BUSINESSRULES_LABEL_ADD_CONDITION'),
-            LBL_ADD_CONCLUSION: translate('LBL_PMSE_BUSINESSRULES_LABEL_ADD_CONCLUSION'),
-            MIN_ROWS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_ROWS'),
-            MIN_CONDITIONS_COLS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_CONDITIONS_COLS'),
-            MIN_CONCLUSIONS_COLS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_CONCLUSIONS_COLS')
+            SINGLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_SINGLEHIT', module),
+            MULTIPLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_MULTIPLEHIT', module),
+            CONDITIONS: translate('LBL_PMSE_LABEL_CONDITIONS', module),
+            CONCLUSIONS: translate('LBL_PMSE_LABEL_CONCLUSIONS', module),
+            ADD_ROW: translate('LBL_PMSE_TOOLTIP_ADD_ROW', module),
+            REMOVE_ROW: translate('LBL_PMSE_BUSINESSRULES_LABEL_REMOVEROW', module),
+            ERROR_CONCLUSION_VAR_DUPLICATED: translate('LBL_PMSE_BUSINESSRULES_ERROR_CONCLUSIONVARDUPLICATED', module),
+            ERROR_EMPTY_RETURN_VALUE: translate('LBL_PMSE_BUSINESSRULES_ERROR_EMPTYRETURNVALUE', module),
+            ERROR_EMPTY_ROW: translate('LBL_PMSE_BUSINESSRULES_ERROR_EMPTYROW', module),
+            ERROR_NOT_EXISTING_FIELDS: translate('LBL_PMSE_MESSAGE_REQUIRED_FIELDS_BUSINESSRULES', module),
+            ERROR_INCORRECT_BUILD: translate('LBL_PMSE_BUSINESSRULES_ERROR_INCORRECT_BUILD', module),
+            MSG_DELETE_ROW: translate('LBL_PMSE_BUSINESSRULES_LABEL_MSGDELETEROW',module),
+            LBL_RETURN: translate('LBL_PMSE_LABEL_RETURN', module),
+            ERROR_NO_VARIABLE_SELECTED: translate('LBL_PMSE_BUSINESSRULES_ERROR_NOVARIABLE_SELECTED', module),
+            ERROR_INVALID_EXPRESSION: translate('LBL_PMSE_BUSINESSRULES_ERROR_INVALIDEXPRESSION', module),
+            ERROR_MISSING_EXPRESSION_OR_OPERATOR: translate('LBL_PMSE_BUSINESSRULES_ERROR_MISSINGEXPRESSIONOROPERATOR', module),
+            LBL_VARIABLES: translate('LBL_PMSE_ADAM_UI_LBL_VARIABLES', module),
+            LBL_CONSTANTS: translate('LBL_PMSE_ADAM_UI_LBL_CONSTANTS', module),
+            LBL_ADD_CONDITION: translate('LBL_PMSE_BUSINESSRULES_LABEL_ADD_CONDITION', module),
+            LBL_ADD_CONCLUSION: translate('LBL_PMSE_TOOLTIP_ADD_CONCLUSION', module),
+            MIN_ROWS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_ROWS', module),
+            MIN_CONDITIONS_COLS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_CONDITIONS_COLS', module),
+            MIN_CONCLUSIONS_COLS: translate('LBL_PMSE_BUSINESSRULES_ERROR_MIN_CONCLUSIONS_COLS', module)
         }
     });
 
@@ -65,7 +66,7 @@ function addDecisionTable(data) {
     $('#businessruledesigner').prepend(decision_table.getHTML());
 }
 
-function saveAll(router) {
+function saveBR(router) {
     var json,
         base64encoded,
         validation = decision_table.isValid();
@@ -80,9 +81,19 @@ function saveAll(router) {
 
         App.api.call('update', url, attributes, {
             success: function (data) {
-                App.alert.dismiss('upload');
-                decision_table.setIsDirty(false, true);
-                goBack(router);
+                if (router) {
+                    App.alert.dismiss('upload');
+                    decision_table.setIsDirty(false, true);
+                    goBack(router);
+                } else {
+                    decision_table.setIsDirty(false);
+                    App.alert.dismiss('upload');
+                    App.alert.show('br-saving-success', {
+                        level: 'success',
+                        messages: brName + ' was saved correctly',
+                        autoClose: true
+                    });
+                }
             },
             error: function (err) {
                 App.alert.dismiss('upload');
@@ -91,47 +102,11 @@ function saveAll(router) {
     } else {
         App.alert.show('br-save-error', {
             level: 'error',
-            messages: 'Current Business Rules have errors and cannot be saved at the moment.',
+            messages: validation.location + ": " + validation.message,
             autoClose: true
         });
     }
-}
-
-function saveOnly() {
-    var json,
-        base64encoded,
-        validation = decision_table.isValid();
-
-    if (decision_table && validation.valid) {
-
-        json = decision_table.getJSON();
-        base64encoded = JSON.stringify(json);
-        url = App.api.buildURL('pmse_Business_Rules', null, {id: decision_table.id});
-        attributes = {rst_source_definition: base64encoded};
-        App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoclose: false});
-
-        App.api.call('update', url, attributes, {
-            success: function (data) {
-                decision_table.setIsDirty(false);
-                App.alert.dismiss('upload');
-                App.alert.show('br-saving-success', {
-                    level: 'success',
-                    messages: brName + ' was saved correctly',
-                    autoClose: true
-                });
-            },
-            error: function (err) {
-                App.alert.dismiss('upload');
-            }
-        });
-    } else {
-        App.alert.show('br-save-error', {
-            level: 'error',
-            messages: 'Current Business Rules have errors and cannot be saved at the moment.',
-            autoClose: true
-        });
-    }
-}
+};
 
 function updateBRContainer(state) {
     updateDimensions();

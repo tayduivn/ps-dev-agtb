@@ -91,7 +91,7 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'export_button',
-                'label' => 'LBL_PMSE_DASHLET_LABEL_EXPORT',
+                'label' => 'LBL_PMSE_LABEL_EXPORT',
                 'event' => 'list:exportbusinessrules:fire',
                 'acl_action' => 'view',
             ),

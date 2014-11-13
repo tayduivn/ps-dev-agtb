@@ -26,17 +26,16 @@
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_businessrules', {
                 level:'error',
-                messages: app.lang.get('LBL_EMPTY_BUSINESSRULES', self.module),
+                messages: app.lang.get('LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING', self.module),
                 autoClose: false
             });
         } else {
-            console.log('begin');
             app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function (data) {
                         app.router.goBack();
                         app.alert.show('process-import-saved', {
                             level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_BUSINESS_RULES_SUCCESS', self.module),
+                            messages: app.lang.get('LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
                     },

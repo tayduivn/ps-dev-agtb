@@ -49,7 +49,7 @@ array (
                           'type' => 'rowaction',
                           'event' => 'button:export_businessrules:click',
                           'name' => 'export_businessrules',
-                          'label' => 'LBL_PMSE_DASHLET_LABEL_EXPORT',
+                          'label' => 'LBL_PMSE_LABEL_EXPORT',
                           'acl_action' => 'view',
                       ),
                       array(

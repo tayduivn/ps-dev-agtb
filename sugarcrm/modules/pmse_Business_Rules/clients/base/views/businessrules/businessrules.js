@@ -17,7 +17,7 @@
         this.context.on("businessRules:cancel:button", this.cancelBusinessRules, this);
 
         this.myDefaultLayout = this.closestComponent('sidebar');
-
+        app.routing.before('route', this.beforeRouteChange, this, true);
     },
 
     render: function () {
@@ -26,15 +26,37 @@
     },
 
     saveBusinessRules: function() {
-        saveAll(app.router);
+        saveBR(app.router);
     },
 
     saveOnlyBusinessRules: function() {
-        saveOnly();
+        saveBR();
     },
 
     cancelBusinessRules: function () {
         cancelAction(app.router);
+    },
+
+    beforeRouteChange: function () {
+        var self = this,
+            resp = false;
+        if (decision_table.isDirty){
+            var targetUrl = Backbone.history.getFragment();
+            //Replace the url hash back to the current staying page
+            app.router.navigate(targetUrl, {trigger: false, replace: true});
+            app.alert.show('leave_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES', this.module),
+                onConfirm: function () {
+                    var targetUrl = Backbone.history.getFragment();
+                    app.router.navigate(targetUrl , {trigger: true, replace: true });
+                    window.location.reload()
+                },
+                onCancel: $.noop
+            });
+            return false;
+        }
+        return true;
     }
 })
 
