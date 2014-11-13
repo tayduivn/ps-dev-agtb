@@ -1034,12 +1034,12 @@ class SugarAutoLoader
         	}
         	$data = $data[$part];
         }
-        $result = array();
+
         if (!is_array($data)) {
-            return $result;
+            return array();
         }
-        self::flatten($dir, $data, $get_dirs, $extension, $result);
-        return $result;
+
+        return self::flatten($dir, $data, $get_dirs, $extension);
     }
 
     /**
@@ -1049,10 +1049,12 @@ class SugarAutoLoader
      * @param array $data Tree data
      * @param boolean $get_dirs
      * @param string $extension Filter files by extension
-     * @param array $result Flattened data
+     *
+     * @return array Flattened data
      */
-    protected function flatten($dir, array $data, $get_dirs, $extension, &$result)
+    protected function flatten($dir, array $data, $get_dirs, $extension)
     {
+        $result = array();
         foreach ($data as $file => $nodes) {
             // check extension if given
             if (!empty($extension) && pathinfo($file, PATHINFO_EXTENSION) != $extension) {
@@ -1064,9 +1066,14 @@ class SugarAutoLoader
                 $result[] = $path;
             }
             if (is_array($nodes)) {
-                self::flatten($path, $nodes, $get_dirs, $extension, $result);
+                $result = array_merge(
+                    $result,
+                    self::flatten($path, $nodes, $get_dirs, $extension)
+                );
             }
         }
+
+        return $result;
     }
 
     /**
