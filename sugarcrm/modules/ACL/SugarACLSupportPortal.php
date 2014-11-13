@@ -109,6 +109,7 @@ class SugarACLSupportPortal extends SugarACLStatic
                  && $bean->module_dir != 'Contacts' 
                  && $bean->module_dir != 'Bugs'
                  && $bean->module_dir != 'KBSContents'
+                 && $bean->module_dir != 'Categories'
                  && $bean->module_dir != 'DocumentRevisions' ) {
                 return false;
             }

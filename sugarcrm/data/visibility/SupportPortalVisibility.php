@@ -83,6 +83,8 @@ class SupportPortalVisibility extends SugarVisibility
 
         // The Portal Rules Of Visibility:
         switch ($this->bean->module_dir) {
+            case 'Categories':
+                break;
             case 'KBSContents':
                 if ($queryType == 'where') {
                     $queryPart = " $table_alias.active_rev=1 AND"

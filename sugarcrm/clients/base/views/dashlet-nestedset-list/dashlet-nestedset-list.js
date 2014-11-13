@@ -137,7 +137,7 @@
                 if (_.isEmpty(this.extraModule.module)) {
                     break;
                 }
-                var route = app.router.buildRoute(this.extraModule.module, data.id, 'record');
+                var route = app.router.buildRoute(this.extraModule.module, data.id);
                 app.router.navigate(route, {trigger: true});
                 break;
             case 'folder':
