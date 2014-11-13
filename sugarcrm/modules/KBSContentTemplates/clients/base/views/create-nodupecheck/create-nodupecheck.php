@@ -20,10 +20,20 @@ $viewdefs['KBSContentTemplates']['base']['view']['create-nodupecheck'] = array(
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'name' => 'save_button',
-            'type' => 'button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
             'primary' => true,
+            'showOn' => 'create',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
+                ),
+            ),
         ),
         // create::skipDupeCheck() requires "duplicate_dropdown" object, should be fixed by SC-3337.
         array(
