@@ -126,6 +126,15 @@ class PMSEProjectCRUDApi extends ModuleApi
         $processDefinitionBean->assigned_user_id = $projectBean->assigned_user_id;
         $processDefinitionBean->save();
 
+        $relDepStatus = $projectBean->prj_status=='ACTIVE'?'INACTIVE':'ACTIVE';
+        while(
+            $relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
+            ->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_status'=>$relDepStatus))
+        ) {
+            $relatedDepBean->pro_status = $projectBean->prj_status;
+            $relatedDepBean->save();
+        }
+        
         $keysArray = array('prj_id' => $id, 'pro_id' => $pro_id);
         $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_id'=>$pro_id, 'name'=>'Default'));
         if (empty($dynaF)) {

@@ -6,7 +6,7 @@
     },
 
     closeDesigner: function() {
-        app.router.goBack();
+        app.router.navigate('pmse_Project', {trigger: true});
     },
 
     loadData: function (options) {

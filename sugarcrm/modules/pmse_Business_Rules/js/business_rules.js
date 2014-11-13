@@ -66,7 +66,7 @@ function addDecisionTable(data) {
     $('#businessruledesigner').prepend(decision_table.getHTML());
 }
 
-function saveBR(router) {
+function saveBR(route) {
     var json,
         base64encoded,
         validation = decision_table.isValid();
@@ -81,10 +81,11 @@ function saveBR(router) {
 
         App.api.call('update', url, attributes, {
             success: function (data) {
-                if (router) {
+                if (route) {
                     App.alert.dismiss('upload');
                     decision_table.setIsDirty(false, true);
-                    goBack(router);
+                    App.router.navigate(route, {trigger: true});
+                    
                 } else {
                     decision_table.setIsDirty(false);
                     App.alert.dismiss('upload');
@@ -182,11 +183,11 @@ function cancelAction(router) {
                 return;
             },
             onConfirm: function () {
-                goBack(router);
+                App.router.navigate('pmse_Business_Rules', {trigger: true});
             }
         });
     } else {
-        goBack(router);
+        App.router.navigate('pmse_Business_Rules', {trigger: true});
     }
 }
 

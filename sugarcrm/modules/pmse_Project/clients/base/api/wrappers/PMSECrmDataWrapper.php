@@ -13,34 +13,132 @@ require_once 'PMSEObservers/PMSEObservable.php';
  */
 class PMSECrmDataWrapper implements PMSEObservable
 {
-    /**#@+
-     * @access private
+    /**
+     *
+     * @var type 
      */
     protected $defaultDynaform;
+
+    /**
+     *
+     * @var type 
+     */
     protected $beanFactory;
+
+    /**
+     *
+     * @var type 
+     */
     protected $studioBrowser;
 
+    /**
+     *
+     * @var type 
+     */
     protected $processDefinition;
+
+    /**
+     *
+     * @var type 
+     */
     protected $activityDefinitionBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $dynaformBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $teamsBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $projectBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $processBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $activityBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $ruleSetBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $emailTemplateBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $inboxBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $usersBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $emailBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $inboundEmailBean;
+
+    /**
+     *
+     * @var type 
+     */
     protected $sugarQueryObject;
 
+    /**
+     *
+     * @var type 
+     * 
+     */
     protected $beanList;
-    protected $aclRoleObject;
-    protected $db;
-    protected $observers;
 
-    /**#@-*/
+    /**
+     *
+     * @var type 
+     */
+    protected $aclRoleObject;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $db;
+
+    /**
+     *
+     * @var array 
+     */
+    protected $observers;
 
     /**
      *
@@ -669,6 +767,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
+     * Return the structure of an invalid request.
      * @codeCoverageIgnore
      */
     public function invalidRequest()
@@ -828,7 +927,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds
+     * Retrieve list of Fieds 
      * @param string $filter
      * @param array $additionalArgs
      * @return object
@@ -914,6 +1013,13 @@ class PMSECrmDataWrapper implements PMSEObservable
         return $res;
     }
 
+    /**
+     * Retrieve the target and a related module based on a relationship
+     * then retrieves a list of fields of both modules.
+     * @param type $filter
+     * @param type $relationship
+     * @return array
+     */
     public function getTargetAndRelatedFields($filter = '', $relationship = 'all')
     {
         $result = array();
@@ -1025,7 +1131,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Task.
+     * Retrieve list of Activities (USERTASK|SCRIPTTASK).
      * @param string $filter
      * @return object
      */
@@ -1092,9 +1198,9 @@ class PMSECrmDataWrapper implements PMSEObservable
 //                    "INNER JOIN pmse_bpm_dynamic_forms c ON (c.dyn_uid=b.act_type)",
 //                    array('alias' => 'c')
 //                );
-            // replaced the a.prj_id for the c.prj_id field in the last join in order to remove duplicate rows
-            // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=a.prj_id)", array('alias' => 'd'));
-//                $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=c.prj_id)", array('alias' => 'd'));
+                // replaced the a.prj_id for the c.prj_id field in the last join in order to remove duplicate rows
+                // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=a.prj_id)", array('alias' => 'd'));
+                // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=c.prj_id)", array('alias' => 'd'));
                 break;
         }
         $this->sugarQueryObject->where()->queryAnd()

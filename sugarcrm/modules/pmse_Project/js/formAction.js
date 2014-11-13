@@ -1,5 +1,11 @@
 var w, hp;
-
+var _App;
+if(App){
+    _App = App;
+}
+else{
+    _App = parent.SUGAR.App;
+}
 //var getFormData = function(address)
 //{
 //    var responseData;
@@ -36,11 +42,23 @@ var confirmReassign = function()
         //window.location.href = "./index.php"
     });
 }
-
+var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB)
+{
+    var value=new Object();
+    value.moduleName = valuesA;
+    value.beanId = valuesB;
+    reassignForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
+}
 var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
 {
     //showModalWindow("?module=ProcessMaker&action=reassignForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex + "&team_id=" + teamId, '# ' + casId + ': Reassignment');
     showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId, taskName, values);
+}
+var adhocFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB){
+    var value=new Object();
+    value.moduleName = valuesA;
+    value.beanId = valuesB;
+    adhocForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
 }
 var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
     showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
@@ -49,11 +67,12 @@ var claim_case = function(cas_id,cas_index){
     var value = {};
     value.cas_id = cas_id;
     value.cas_index = cas_index;
-    var pmseInboxUrl = App.api.buildURL('pmse_Inbox/engine_claim','',{},{});
-    App.api.call('update', pmseInboxUrl, value,{
+    var pmseInboxUrl = _App.api.buildURL('pmse_Inbox/engine_claim','',{},{});
+    _App.api.call('update', pmseInboxUrl, value,{
         success: function (){
-//                  App.route.refresh();
-            window.location.reload();
+            if(!_App.router.refresh()){
+                window.location.reload();
+            }
         }
     });
 }
@@ -252,25 +271,39 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         items: items,
         closeContainerOnSubmit: true,
         buttons: [
-            {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE') , handler: function () {
+            {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox') , handler: function () {
                 var cbDate=$("#reassign_user option:selected").html();
                 items[8].setValue($("#adhoc_user option:selected").html());
-                f.submit();
-                if (wtype == 'reassign')
-                {
-                    App.router.redirect('Home');
-                }
-                else if(wtype == 'adhoc')
-                {
-                    if ($('#assigned_user_name').length)
-                    {
-                        $("#assigned_user_name").val(cbDate);
+//                f.submit();
+                var urlIni = _App.api.buildURL(url, null, null);
+                attributes = {
+                    data: f.getData()
+                };
+                _App.api.call('update', urlIni, attributes, {
+                    success: function (response) {
+                        if (wtype == 'reassign')
+                        {
+                            w.close();
+                            _App.router.redirect('Home');
+                        }
+                        else if(wtype == 'adhoc')
+                        {
+                            if ($('#assigned_user_name').length)
+                            {
+                                $("#assigned_user_name").val(cbDate);
+                                w.close();
+                            }
+                            else
+                            {
+                                w.close();
+                                if(!_App.router.refresh()){
+                                    window.location.reload();
+                                }
+                            }
+                        }
                     }
-                    else
-                    {
-                        App.router.refresh();
-                    }
-                }
+                });
+                //--
             }},
             { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CLOSE', 'pmse_Inbox'), handler: function () {
                 w.close();
@@ -282,15 +315,24 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 casIdField.setValue(casId);
                 casIndexField.setValue(casIndex);
 
-                var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value':''}];
-                combo_users.proxy.getData(null, {
-                    success: function(users) {
-                        if (users) {
-                            aUsers = aUsers.concat(users.result);
-                            combo_users.setOptions(aUsers);
-                        }
+                var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Inbox'), 'value':''}];
+//                combo_users.proxy.getData(null, {
+//                    success: function(users) {
+//                        if (users) {
+//                            aUsers = aUsers.concat(users.result);
+//                            combo_users.setOptions(aUsers);
+//                        }
+//                    }
+//                });
+                //--
+                var urlGet = _App.api.buildURL(url+'/users/'+ flowId, null, null);
+                _App.api.call('read', urlGet, {}, {
+                    success: function (response) {
+                        aUsers = aUsers.concat(response.result);
+                        combo_users.setOptions(aUsers);
                     }
                 });
+                //--
                 f.setProxy(proxy);
             }
         }

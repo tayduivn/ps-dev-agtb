@@ -26,7 +26,7 @@
     },
 
     saveBusinessRules: function() {
-        saveBR(app.router);
+        saveBR(App.router.buildRoute("pmse_Business_Rules"));
     },
 
     saveOnlyBusinessRules: function() {

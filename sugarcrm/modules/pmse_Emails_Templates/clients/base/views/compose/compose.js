@@ -43,7 +43,7 @@
     cancel: function() {
             this.toggleEdit(false);
             this.inlineEditMode = false;
-            App.router.navigate('Home' , {trigger: true, replace: true });
+            App.router.navigate("pmse_Emails_Templates", {trigger: true});
     },
 
     /**
@@ -57,7 +57,7 @@
         }, this));
     },
     validationCompleteApprove: function (model,exit) {
-        var url, attributes, bodyHtml, subject;
+        var url, attributes, bodyHtml, subject, route = this.context.get("module");
 
         url = App.api.buildURL('pmse_Emails_Templates', null, {id: this.context.attributes.modelId});
         bodyHtml = model.get('body_html');//bodyHtml = this.model.get('body_html');
@@ -76,7 +76,7 @@
                 if(exit)
                 {
                     model.revertAttributes();
-                    App.router.redirect('Home');
+                    App.router.redirect(route);
                 }
             },
             error: function (err) {

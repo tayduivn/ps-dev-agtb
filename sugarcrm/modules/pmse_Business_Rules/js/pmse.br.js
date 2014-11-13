@@ -7162,7 +7162,7 @@ var ListPanel = function(settings) {
 	this._htmlMessage = null;
 	this._showingLoadingMessage = null;
 	this._filter = [];
-	/*this._fieldToFilter = null;*/
+	this._filterMode = null; 
 	this.onItemClick = null;
 	this.onLoad = null;
 	ListPanel.prototype.init.call(this, settings);
@@ -7183,6 +7183,7 @@ ListPanel.prototype.init = function (settings) {
 		dataRoot: null,
 		onLoad: null,
 		filter: [],
+		filterMode: 'inclusive', 
 		fieldToFilter: null
 	};
 
@@ -7191,7 +7192,8 @@ ListPanel.prototype.init = function (settings) {
 	this._proxy = new SugarProxy();
 	this._autoload = defaults.autoload;
 
-	this.setItemsContent(defaults.itemsContent)
+	this.setFilterMode(defaults.filterMode)
+		.setItemsContent(defaults.itemsContent)
 		.setOnItemClickHandler(defaults.onItemClick)
 		.setDataURL(defaults.dataURL)
 		.setDataRoot(defaults.dataRoot)
@@ -7208,9 +7210,21 @@ ListPanel.prototype.init = function (settings) {
 	}
 };
 
+ListPanel.prototype.setFilterMode = function (filterMode) { 	 	
+	if (filterMode !== 'inclusive' && filterMode !== 'exclusive') { 	 	
+		throw new Error('setFilterMode(): The value for the parameter should be \"inclusive\" or \"exclusive\"'); 	 	
+	} 	 	
+	this._filterMode = filterMode; 	 	
+	return this; 	 	
+}; 	 	
+ 	 	
+ListPanel.prototype.getFilterMode = function (filterMode) { 	 	
+	return this._filterMode; 	 	
+};
+
 ListPanel.prototype.setOnLoadHandler = function (handler) {
 	if (!(handler === null || typeof handler === 'function')) {
-		throw new Error("onLoadHandler(): The parameter must be a functoin or null.");
+		throw new Error("onLoadHandler(): The parameter must be a function or null.");
 	}
 	this.onLoad = handler;
 	return this;
@@ -7355,12 +7369,16 @@ ListPanel.prototype.addDataItem = function (data) {
 };
 
 ListPanel.prototype._filterData = function (data, fieldToFilter, filter) {
-	var filteredData = [], i, validationFunction = false;
+	var filteredData = [], i, validationFunction = false, that = this;;
 
 	if (jQuery.isArray(filter) && filter.length) {
 		validationFunction = function (data) {
 			var i = 0;
-			return filter.indexOf(data[fieldToFilter]) >= 0;
+			if (that._filterMode === 'inclusive') {
+				return filter.indexOf(data[fieldToFilter]) >= 0;
+			} else { 	 	
+				return filter.indexOf(data[fieldToFilter]) === -1; 	 	
+			}
 		};
 	} else if (typeof filter === 'string') {
 		validationFunction = function (data) {
@@ -9091,6 +9109,7 @@ ExpressionControl.prototype.setVariablePanel = function (settings) {
 		valueField: "value",
 		typeField: "type",
 		typeFilter: null,
+		filterMode: "inclusive", 
 		moduleTextField: null,
 		moduleValueField: null
 	};
@@ -9138,6 +9157,9 @@ ExpressionControl.prototype.setVariablePanel = function (settings) {
 		}
 		if (typeof defaults.moduleValueField !== "string") {
 			throw new Error("setVariablePanel(): The \"moduleValueField\" property must be a string.");
+		}
+		if (defaults.filterMode !== 'inclusive' && defaults.filterMode !== 'exclusive') { 	 	
+			throw new Error("setVariablePanel(): The \"filterMode\" property must be \"exclusive\" or \"inclusive\""); 	 	
 		}
 	}
 
@@ -9658,6 +9680,7 @@ ExpressionControl.prototype.addVariablesList = function (data, cfg) {
 	conf = {
 		fieldToFilter: "type",
 		filter: cfg.typeFilter,
+		filterMode: cfg.filterMode,
 		title: cfg.moduleText,
 		data: [],
 		itemsContent: itemsContentHook
@@ -9693,6 +9716,7 @@ ExpressionControl.prototype._onLoadVariableDataSuccess = function () {
 						valueField: settings.valueField,
 						typeField: settings.typeField,
 						typeFilter: settings.typeFilter,
+						filterMode: settings.filterMode,
 						moduleText: data[i][settings.moduleTextField],
 						moduleValue: data[i][settings.moduleValueField]
 					}
@@ -9750,6 +9774,7 @@ ExpressionControl.prototype._onLoadVariableDataSuccess = function () {
 						valueField: settings.valueField,
 						typeField: settings.typeField,
 						typeFilter: settings.typeFilter,
+						filterMode: settings.filterMode,
 						moduleText: aux[i].fields[0][settings.moduleTextField],
 						moduleValue: aux[i].fields[0][settings.moduleValueField]
 					});
