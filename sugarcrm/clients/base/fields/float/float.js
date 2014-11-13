@@ -59,11 +59,24 @@
         if (this.def.disable_num_format) {
             return value;
         }
+
+        var number_grouping_separator = app.user.getPreference('number_grouping_separator') || ',';
+        var decimal_separator = app.user.getPreference('decimal_separator') || '.';
+
+        if (_.isUndefined(this.def.precision) || !this.def.precision) {
+            return app.utils.addNumberSeperators(
+                value.toString(), 
+                number_grouping_separator, 
+                decimal_separator
+            );
+        }
+
         return app.utils.formatNumber(
             value,
-            this.def.round || 4,
-            this.def.precision || 4,
-            app.user.getPreference('number_grouping_separator') || ',',
-            app.user.getPreference('decimal_separator') || '.');
+            this.def.precision,
+            this.def.precision,
+            number_grouping_separator,
+            decimal_separator
+        );
     }
 })
