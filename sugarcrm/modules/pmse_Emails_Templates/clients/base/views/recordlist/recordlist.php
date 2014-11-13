@@ -7,35 +7,6 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
-//            array(
-//                'name' => 'edit_button',
-//                'type' => 'button',
-//                'label' => 'LBL_MASS_UPDATE',
-//                'primary' => true,
-//                'events' => array(
-//                    'click' => 'list:massupdate:fire',
-//                ),
-//                'acl_action' => 'massupdate',
-//            ),
-//            array(
-//                'name' => 'calc_field_button',
-//                'type' => 'button',
-//                'label' => 'LBL_UPDATE_CALC_FIELDS',
-//                'events' => array(
-//                    'click' => 'list:updatecalcfields:fire',
-//                ),
-//                'acl_action' => 'massupdate',
-//            ),
-//            array(
-//                'name' => 'merge_button',
-//                'type' => 'button',
-//                'label' => 'LBL_MERGE',
-//                'primary' => true,
-//                'events' => array(
-//                    'click' => 'list:mergeduplicates:fire',
-//                ),
-//                'acl_action' => 'edit',
-//            ),
             array(
                 'name' => 'delete_button',
                 'type' => 'button',
@@ -82,16 +53,10 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
             ),
-//            array(
-//                'type' => 'follow',
-//                'name' => 'follow_button',
-//                'event' => 'list:follow:fire',
-//                'acl_action' => 'view',
-//            ),
             array(
                 'type' => 'rowaction',
                 'name' => 'export_button',
-                'label' => 'LBL_PMSE_DASHLET_LABEL_EXPORT',
+                'label' => 'LBL_PMSE_LABEL_EXPORT',
                 'event' => 'list:exportemailstemplates:fire',
                 'acl_action' => 'view',
             ),

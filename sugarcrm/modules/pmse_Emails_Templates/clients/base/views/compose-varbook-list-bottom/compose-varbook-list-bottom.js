@@ -7,6 +7,6 @@
      * Label should be "More recipients...".
      */
     setShowMoreLabel: function() {
-        this.showMoreLabel = app.lang.get('LBL_SHOW_MORE_VARIABLES', this.module);
+        this.showMoreLabel = app.lang.get('LBL_PMSE_SHOW_MORE_VARIABLES', this.module);
     }
 })

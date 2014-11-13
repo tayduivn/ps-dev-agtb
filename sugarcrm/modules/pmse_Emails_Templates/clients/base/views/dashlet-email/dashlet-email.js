@@ -46,10 +46,8 @@
      * Fire dessigner
      */
     editRecord: function(model) {
-        //console.log('open edit email template');
         var redirect = model.module + "/" + model.id + "/layout/emailtemplates";
         app.router.navigate(redirect, {trigger: true, replace: true });
-
     },
 
     /**
