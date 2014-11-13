@@ -10,7 +10,7 @@
  */
 
 module.exports = function(grunt) {
-    grunt.registerTask('checkLicense', "Returns files that do not have the sugar license header", function() {
+    grunt.registerTask('check-license', 'Returns files that do not have the sugar license header', function() {
         this.async();
         var exec = require('child_process').exec;
         var options = grunt.config.get([this.name]);
@@ -20,14 +20,21 @@ module.exports = function(grunt) {
         var excludedDirectories = options.excludedDirectories.join('|');
 
         //Prepares excluded files.
-        var excludedFiles = grunt.file.read(whiteList).split('\n');
-        var whiteListStartMarker = excludedFiles.indexOf('//START THE LIST BELOW//') + 1;
-        excludedFiles.splice(0, whiteListStartMarker);
+        var excludedFiles = grunt.file.readJSON(whiteList).excludedFiles;
         excludedFiles = excludedFiles.join('\\n');
 
-        // Prepares the pattern.
         var pattern = grunt.file.read(licenseFile);
         pattern = pattern.trim();
+
+        //Add '*' in front of each line.
+        pattern = pattern.replace(/\n/g, '\n \*');
+        //Add comment token at the beginning and the end of the text.
+        pattern = pattern.replace(/^/, '/\*\n \*');
+        pattern = pattern.replace(/$/, '\n \*/');
+        //Put spaces after '*'.
+        pattern = pattern.replace(/\*(?=\w)/g, '\* ');
+
+        // Prepares the PCRE pattern.
         pattern = pattern.replace(/\*/g, '\\*');
         pattern = pattern.replace(/\n/g, '\\s');
         pattern = pattern.replace(/\(/g, '\\(');
@@ -53,7 +60,7 @@ module.exports = function(grunt) {
         ];
         var command = 'pcregrep ' + cmdOptions.join(' ') + '| grep -v -F "$( printf \'' + excludedFiles + '\' )"';
 
-//      Runs the command.
+        //Runs the command.
         exec(command, {maxBuffer: 2000 * 1024}, function(error, stdout, stderr) {
 
             if (error && error.code === 1) {
