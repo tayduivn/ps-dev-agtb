@@ -156,9 +156,22 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		    if(empty($beanFiles)) {
 		        include('include/modules.php');
 		    }
-		    $bean_name = get_singular_bean_name($field_def['module']);
-		    require_once($beanFiles[$bean_name]);
-            $list = $field_def['function']();
+
+            $list = '';
+            //use bean function if function and function bean have been specified
+            if (!empty($field_def['function_bean'])) {
+                $bean = BeanFactory::getBean($field_def['function_bean']);
+                if ( method_exists($bean, $field_def['function'])) {
+                    $list = $bean->$field_def['function']();
+                }
+            }
+
+            //if list was not filled through a bean function, use method
+            if(empty($list)) {
+                $bean_name = get_singular_bean_name($field_def['module']);
+                require_once($beanFiles[$bean_name]);
+                $list = $field_def['function']();
+            }
         }
 		if (empty ($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a') {
 			$order_dir = "ASC";
