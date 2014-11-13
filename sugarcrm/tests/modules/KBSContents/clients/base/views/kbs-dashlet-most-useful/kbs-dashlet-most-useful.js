@@ -1,6 +1,6 @@
 describe('KBSContents.Base.Views.KBSDashletMostUseful', function() {
 
-    var app, view, sandbox, context, moduleName = 'KBSContents';
+    var app, view, sandbox, context, meta, moduleName = 'KBSContents';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -11,6 +11,9 @@ describe('KBSContents.Base.Views.KBSDashletMostUseful', function() {
         context.parent = new Backbone.Model();
         context.parent.set('module', moduleName);
         context.prepare();
+        meta = {
+            config: false
+        };
 
         sandbox.stub(context.parent, 'get', function() {
             return new Backbone.Collection();
@@ -33,7 +36,7 @@ describe('KBSContents.Base.Views.KBSDashletMostUseful', function() {
             'base',
             moduleName,
             'kbs-dashlet-most-useful',
-            null,
+            meta,
             context,
             moduleName
         );

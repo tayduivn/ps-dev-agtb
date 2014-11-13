@@ -32,12 +32,14 @@
         this._super('initialize', [options]);
         this._initCollection();
 
-        this.listenTo(this.context.parent.get('collection'), 'sync', function () {
-            if (self.collection) {
-                self.collection.dataFetched = false;
-                self.layout.reloadDashlet(options);
-            }
-        });
+        if (_.isUndefined(this.meta.config) || this.meta.config === false){
+            this.listenTo(this.context.parent.get('collection'), 'sync', function () {
+                if (self.collection) {
+                    self.collection.dataFetched = false;
+                    self.layout.reloadDashlet(options);
+                }
+            });
+        }
     },
 
     /**
