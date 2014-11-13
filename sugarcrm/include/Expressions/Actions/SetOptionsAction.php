@@ -72,6 +72,9 @@ class SetOptionsAction extends AbstractAction{
 
 					field.model.fields[this.target].options = field.items;
 
+					//if the list of choices is empty but field has a value, show this value
+					empty = field.model.get(this.target) ? false : empty;
+
 					var visAction = new SUGAR.forms.SetVisibilityAction(this.target, (empty ? 'false' : 'true'), '');
 					visAction.setContext(context);
 					visAction.exec();
@@ -82,7 +85,7 @@ class SetOptionsAction extends AbstractAction{
 					});
 
 					if (selected.length == 0 && field.model.fields[field.name].type != 'multienum') {
-					    selected = selected.concat(empty ? '' : keys[0]);
+					    selected = selected.concat(empty ? '' : field.model.get(this.target));
 					}
 
 					context.setValue(this.target, selected);

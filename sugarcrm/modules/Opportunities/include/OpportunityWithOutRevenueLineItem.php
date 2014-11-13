@@ -76,6 +76,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'massupdate' => true,
             'reportable' => true,
             'workflow' => true,
+            'importable' => true,
         ),
         'probability' => array(
             'audited' => true,
@@ -88,6 +89,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'reportable' => false,
             'audited' => false,
             'massupdate' => false,
+            'importable' => false,
         ),
         'date_closed_timestamp' => array(
             'formula' => 'timestamp($date_closed)'
@@ -177,11 +179,18 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             SugarAutoLoader::unlink($this->rliStudioFile);
         }
 
+        if (SugarAutoLoader::fileExists($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile)) {
+            SugarAutoLoader::unlink($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile);
+        }
+
         // hide the RLI module in workflows
         $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(false);
 
         // hide the mega menu tab
         $this->setRevenueLineItemModuleTab(false);
+
+        // handle the parent type field
+        $this->setRevenueLineItemInParentRelateDropDown(false);
 
         // disable the ACLs on RevenueLineItems
         ACLAction::removeActions('RevenueLineItems');

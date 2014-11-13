@@ -305,7 +305,8 @@ class LegacyJsonServer
             $result = $result . " and users.status='Active'";
         }
 
-        return $result;
+        //add parenthesis because visibility will be added as an additional 'AND' clause
+        return '(' . $result . ')';
     }
 
     /**

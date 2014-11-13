@@ -1,0 +1,17 @@
+
+{{#each meta.panels}}
+<div class="btn-group pull-right" style="margin-right: 20px;">
+        <a class="btn btn" href="javascript:void(0);" track="click:log_refresh_button" name="log_refresh_button">
+          Refresh</a>
+</div>
+<fieldset style="margin-left: 20px; margin-top: 70px;"><legend><h1 id="logPmseId"></h1></legend>
+
+    {{#each fields}}
+        <div class="span10 controls">
+            {{field ../../this}}
+        </div>
+
+    {{/each}}
+
+</fieldset>
+{{/each}}

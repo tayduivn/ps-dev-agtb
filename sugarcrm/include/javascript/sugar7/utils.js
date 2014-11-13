@@ -653,8 +653,8 @@
             /**
              * Extracts the full record name from a model.
              *
-             * @param {Bean} the model concerned.
-             * @return {String} the record name.
+             * @param {Data.Bean} model The model concerned.
+             * @return {string} The record name.
              */
             getRecordName: function(model) {
                 // Special case for `Documents`

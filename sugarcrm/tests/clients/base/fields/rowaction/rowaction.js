@@ -67,18 +67,25 @@ describe('Base.Field.Rowaction', function() {
             sandbox.restore();
         });
 
-        it('should trigger the default event', function() {
+        it('should trigger the event defined in metadata', function() {
             var spy = sandbox.spy(field.view.context, 'trigger');
-            field.name = 'foo';
-            field.def.event = undefined;
-            field.propagateEvent(e);
-            expect(spy).toHaveBeenCalledWith('button:foo:click');
+            field.rowActionSelect(e);
+            expect(spy).toHaveBeenCalledWith(field.def.event);
         });
 
-        it('should trigger a custom event', function() {
+        it('should trigger the event defined in the data-event attribute', function() {
             var spy = sandbox.spy(field.view.context, 'trigger');
-            field.propagateEvent(e);
-            expect(spy).toHaveBeenCalledWith(field.def.event);
+            field.def.event = undefined;
+            $(e.currentTarget).data('event', 'foo');
+            field.rowActionSelect(e);
+            expect(spy).toHaveBeenCalledWith('foo');
+        });
+
+        it('should not trigger an event', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.def.event = undefined;
+            field.rowActionSelect(e);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         using('event names', [undefined, 'context', 'foo'], function(eventName) {
@@ -101,46 +108,4 @@ describe('Base.Field.Rowaction', function() {
             expect(field.getTarget().name).toEqual(field.view.layout.name);
         });
     });
-
-    describe('rowActionSelect', function(){
-        var e, triggerStub;
-
-        beforeEach(function(){
-            //Wire up event
-            e = jQuery.Event("click");
-            e.currentTarget = field.$el.get(0);
-            field.$el.data('event', field.def.event);
-        });
-
-        afterEach(function(){
-            triggerStub.restore();
-        });
-
-        it('should trigger event on view\'s context by default', function() {
-            field.model = app.data.createBean(moduleName);
-            field.view.context = {trigger: function(){}};
-            triggerStub = sinon.spy(field.view.context, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-
-        it('should trigger event on view\'s layout when "layout" is set as target', function() {
-            field.def.target = 'layout';
-            field.model = app.data.createBean(moduleName);
-            field.view.layout = {trigger: function(){}};
-            triggerStub = sinon.spy(field.view.layout, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-
-        it('should trigger event on view when "view" is set as target', function() {
-            field.def.target = 'view';
-            field.model = app.data.createBean(moduleName);
-            field.view.trigger =  function(){};
-            triggerStub = sinon.spy(field.view, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-    });
-
 });

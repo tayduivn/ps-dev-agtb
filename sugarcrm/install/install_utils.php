@@ -959,6 +959,8 @@ AddType     application/javascript  .js
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA,DPI]
+    RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&module=app_strings&lang=$1 [L,QSA,DPI]
+    RewriteRule ^cache/jsLanguage/(\w*)/(.._..).js$ index.php?entryPoint=jslang&module=$1&lang=$2 [L,QSA,DPI]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
     RewriteRule ^portal$ portal/? [R=301,L]
@@ -1080,6 +1082,7 @@ function handleWebConfig()
             'action_params' => array(
                 'appendQueryString' => 'false',
             ),
+            'skip_file' => true
         ),
         array(
             '1' => '^cache/api/metadata/lang_(.._..)_([^_]*)(_ordered)?\.json',
@@ -1090,6 +1093,7 @@ function handleWebConfig()
             'action_params' => array(
                 'appendQueryString' => 'false',
             ),
+            'skip_file' => true
         ),
         array(
             '1' => '^cache/Expressions/functions_cache(_debug)?.js$',
@@ -1147,18 +1151,21 @@ function handleWebConfig()
                             $xmldoc->writeAttribute('url', $rewrite_config_array[$i]['1']);
                             $xmldoc->writeAttribute('ignoreCase', 'true');
                         $xmldoc->endElement();
-                        $xmldoc->startElement('conditions');
-                            $xmldoc->startElement('add');
-                                $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
-                                $xmldoc->writeAttribute('matchType', 'IsFile');
-                                $xmldoc->writeAttribute('negate', 'true');
+                        if (empty($rewrite_config_array[$i]['skip_file'])) {
+                            $xmldoc->startElement('conditions');
+                               $xmldoc->startElement('add');
+                                   $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
+                                   $xmldoc->writeAttribute('matchType', 'IsFile');
+                                   $xmldoc->writeAttribute('negate', 'true');
+                               $xmldoc->endElement();
+                               $xmldoc->startElement('add');
+                                   $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
+                                   $xmldoc->writeAttribute('matchType', 'IsDirectory');
+                                   $xmldoc->writeAttribute('negate', 'true');
+                               $xmldoc->endElement();
                             $xmldoc->endElement();
-                            $xmldoc->startElement('add');
-                                $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
-                                $xmldoc->writeAttribute('matchType', 'IsDirectory');
-                                $xmldoc->writeAttribute('negate', 'true');
-                            $xmldoc->endElement();
-                        $xmldoc->endElement();
+                        }
+
                         $xmldoc->startElement('action');
                             $xmldoc->writeAttribute('type', 'Rewrite');
                             $xmldoc->writeAttribute('url', $rewrite_config_array[$i]['2']);

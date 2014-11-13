@@ -263,7 +263,7 @@ nv.models.funnelChart = function() {
 
       yAxisWrap.selectAll('.tick.major text')
         .style('font-size', innerWidth < 500 ? '11px' : '15px')
-        .html(fmtAxisLabel);
+        .each(fmtAxisLabel);
 
 
       // Build array of tick label dimensions
@@ -322,7 +322,7 @@ nv.models.funnelChart = function() {
               y = t.textOffset;
           return y + 'px';
         })
-        .html(fmtAxisLabel);
+        .each(fmtAxisLabel);
 
       // Set leaders
       yAxisWrap.selectAll('.tick.major line')
@@ -346,7 +346,7 @@ nv.models.funnelChart = function() {
             var t = tickDimensions[i],
                 h = t.lineOffset,
                 w = t.widthOffset;
-            return [[0,h], [w, h], [w + h / 2, 0]];
+            return '0,' + h + ' ' + w + ',' + h + ' ' + (w + h / 2) + ',0';
           })
           .style('opacity', function(d, i) {
             var t = tickDimensions[i];
@@ -420,27 +420,35 @@ nv.models.funnelChart = function() {
       }
 
       function fmtAxisLabel(d, i) {
-        var data, tick;
+        var data, tick, node, count;
+
+        node = d3.select(this);
+        node.text('');
 
         if (!i) {
-          return '';
+          return;
         }
-
         if (tickDimensions) {
           tick = tickDimensions[i];
           if (tick.thickness > tick.height) {
-            return '';
+            return;
           }
         }
 
         data = funnelData[i - 1];
 
-        var count = isNaN(data.count) ? '' : ' (' + data.count + ')',
-            left = tickDimensions ? tickDimensions[i].width / 2 : 0,
-            label =  '<tspan x="0" style="font-size:11px">' + data.key + count + '</tspan>';
-            label += '<tspan x="0" dy="1em" style="font-size:15px">' + funnel.fmtValueLabel()(data.values[0]) + '</tspan>';
+        count = isNaN(data.count) ? '' : ' (' + data.count + ')';
 
-        return label;
+        node.append('tspan')
+          .attr('x', 0)
+          .style('font-size', '11px')
+          .text(data.key + count);
+
+        node.append('tspan')
+          .attr('x', 0)
+          .attr('dy', '1em')
+          .style('font-size', '15px')
+          .text(funnel.fmtValueLabel()(data.values[0]));
       }
 
       function resetScale(scale, data) {

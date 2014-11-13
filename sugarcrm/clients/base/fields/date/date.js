@@ -202,6 +202,11 @@
      * Date picker doesn't trigger a `change` event whenever the date value
      * changes we need to override this method and listen to the `hide` event.
      *
+     * Plus, we're using the `hide` event instead of the `changeDate` event
+     * because the latter doesn't track copy/paste of dates whether from
+     * keyboard or mouse and it also doesn't track field clearance through
+     * keyboard, e.g.: selecting date text and press cmd+x.
+     *
      * All invalid values are cleared from fields without triggering an event
      * because `this.model.set()` could have been already empty thus not
      * triggering a new event and not calling the default code of

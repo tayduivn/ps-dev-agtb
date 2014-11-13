@@ -91,7 +91,7 @@ class SummaryWithDetailsReportTest extends Sugar_PHPUnit_Framework_TestCase
                 'name' => 'user_name',
                 'label' => 'User Name',
                 'table_key' => 'Opportunities:assigned_user_link',
-                'type' => 'user_name'
+                'type' => 'username'
             ),
             1 => array(
                 'name' => 'sales_stage',

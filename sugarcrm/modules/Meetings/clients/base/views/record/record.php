@@ -35,6 +35,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'save-and-send-invites-button',
+                    'event' => 'button:save_button:click',
                     'name' => 'save_invite_button',
                     'label' => 'LBL_SAVE_AND_SEND_INVITES_BUTTON',
                     'acl_action' => 'edit',
@@ -137,12 +138,14 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_LABEL',
+                    'closed_status' => 'Held',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'closebutton',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_LABEL',
+                    'closed_status' => 'Held',
                     'acl_action' => 'edit',
                 ),
             ),

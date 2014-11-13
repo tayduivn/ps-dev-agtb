@@ -100,6 +100,9 @@ class OpportunitiesConfigApi extends ConfigModuleApi
 
             // we need to refresh the cache but do it in the shutdown for this process
             register_shutdown_function(array('MetaDataManager', 'refreshCache'));
+
+            require_once('modules/Home/UnifiedSearchAdvanced.php');
+            register_shutdown_function(array('UnifiedSearchAdvanced', 'clearCache'));
         }
 
         return $settings;

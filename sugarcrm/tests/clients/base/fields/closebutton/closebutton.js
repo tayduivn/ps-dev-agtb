@@ -1,5 +1,5 @@
-describe("Close Button Field", function() {
-    var app, field;
+describe('Close Button Field', function() {
+    var app, field, sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -13,50 +13,44 @@ describe("Close Button Field", function() {
         app.data.declareModels();
 
         field = SugarTest.createField('base', 'record-close', 'closebutton', 'list', {
-            'name':'record-close',
-            'type':'closebutton',
-            'acl_action':'edit'
-        }, 'Contacts', app.data.createBean('Contacts'));
+            'name': 'record-close',
+            'type': 'closebutton',
+            'acl_action': 'edit',
+            'closed_status': 'Completed'
+        }, 'Tasks', app.data.createBean('Tasks'));
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        sandbox.restore();
+        field.dispose();
         SugarTest.testMetadata.dispose();
         app.view.reset();
     });
 
     it('should show the button if the record is not closed', function() {
-        field.model.set('status','Not Started');
+        field.model.set('status', 'Not Started');
         expect(field.isVisible()).toBe(true);
     });
-    
+
     it('should hide the button if the record is closed', function() {
         field.model.set('status', 'Completed');
         expect(field.isVisible()).toBe(false);
     });
 
-    it('should hide the button if acl denies access', function() {
-        var hasAccessStub = sinon.stub(app.view.fields.BaseButtonField.prototype, 'hasAccess').returns(false);
+    it('should set record to completed when closeClicked() is called', function() {
+        var saveStub = sandbox.stub(field.model, 'save');
+
         field.model.set('status', 'Not Started');
-
-        expect(field.isVisible()).toBe(false);
-        hasAccessStub.restore();
-    });
-
-    it('should set record to completed on success', function() {
-        var saveStub = sinon.stub(field.model,'save', function(dummy, callbacks) {
-            callbacks.success();
-        });
-
         field.closeClicked();
 
         expect(saveStub.calledOnce).toBe(true);
         expect(field.model.get('status')).toBe('Completed');
-
-        saveStub.restore();
     });
 
     it('should revert status to previous value on error', function() {
-        var saveStub = sinon.stub(field.model,'save', function(dummy, callbacks) {
+        var saveStub = sandbox.stub(field.model, 'save', function(dummy, callbacks) {
             callbacks.error();
         });
 
@@ -68,34 +62,53 @@ describe("Close Button Field", function() {
 
         expect(saveStub.calledOnce).toBe(true);
         expect(field.model.get('status')).toBe('Not Started');
-
-        saveStub.restore();
     });
 
     it('should call method to open drawer to create a new record when closeNewClicked() is called', function() {
-        var saveStub = sinon.stub(field.model,'save', function(dummy, callbacks) {
+        var openDrawerToCreateNewRecordStub = sandbox.stub(field, 'openDrawerToCreateNewRecord'),
+            showSuccessMessageStub = sandbox.stub(field, 'showSuccessMessage');
+
+        sandbox.stub(field.model, 'save', function(dummy, callbacks) {
             callbacks.success();
-        }),
-            openDrawerToCreateNewRecordStub = sinon.stub(field, 'openDrawerToCreateNewRecord');
+        });
 
         field.closeNewClicked();
 
         expect(openDrawerToCreateNewRecordStub.calledOnce).toBe(true);
-
-        saveStub.restore();
-        openDrawerToCreateNewRecordStub.restore();
+        expect(showSuccessMessageStub.calledOnce).toBe(true);
     });
 
-
-    describe('hasAccess', function() {
-        it('should return true if status is not set to Completed', function() {
-            field.model.set('status','Not Started');
-            expect(field.hasAccess()).toBe(true);
+    it('should show success message using app string value for status', function() {
+        var langGetStub = sandbox.stub(app.lang, 'get');
+        sandbox.stub(app.alert, 'show');
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {fields: {status: {options: 'status_dom'}}};
+        });
+        sandbox.stub(app.lang, 'getAppListStrings', function() {
+            return {'Completed': 'Foo'};
         });
 
-        it('should return true if status is not set to Completed', function() {
-            field.model.set('status','Completed');
-            expect(field.hasAccess()).toBe(false);
+        field.showSuccessMessage();
+        expect(langGetStub).toHaveBeenCalledWith('TPL_STATUS_CHANGE_SUCCESS', 'Tasks', {
+            moduleSingular: 'Tasks',
+            status: 'foo'
+        });
+    });
+
+    it('should show success message using closed status value for status', function() {
+        var langGetStub = sandbox.stub(app.lang, 'get');
+        sandbox.stub(app.alert, 'show');
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {fields: {status: {/* no options */}}};
+        });
+        sandbox.stub(app.lang, 'getAppListStrings', function() {
+            return {'Completed': 'Foo'};
+        });
+
+        field.showSuccessMessage();
+        expect(langGetStub).toHaveBeenCalledWith('TPL_STATUS_CHANGE_SUCCESS', 'Tasks', {
+            moduleSingular: 'Tasks',
+            status: 'completed'
         });
     });
 });

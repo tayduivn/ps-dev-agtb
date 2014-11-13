@@ -23,7 +23,7 @@
   th {
     line-height: 26px;
     min-width: @cell-medium;
-    max-width: @cell-medium;
+    max-width: @cell-large;
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
@@ -505,9 +505,6 @@ FLEXLIST GENERIC */
   .dataTable {
     max-width: none;
     position: static;
-    td:last-child :not(.btn-group) > span > .rowaction.btn {
-      float: right;
-    }
   }
 
   /*LEFT ACTIONS ONLY*/
@@ -616,7 +613,7 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         top: 0;
-        right: 1px;
+        right: 0;
         padding: 7px 7px 7px 8px;
         background-color: inherit;
         &.open {
@@ -631,7 +628,7 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         margin-top: -18px;
-        right: 1px;
+        right: 0;
         padding: 4px 7px 4px 8px;
         border-bottom: @tableBorder;
         background-color: inherit;
@@ -920,19 +917,15 @@ FLEXLIST GENERIC */
   }
 }
 
-.subpanel .flex-list-view .dataTable {
-  border-bottom: 0;
-}
-
 //from twitter-bootstrap/datatables.less
-.sorting_asc,
-.sorting_desc,
-.sorting {
+th.sorting_asc,
+th.sorting_desc,
+th.sorting {
   cursor: pointer;
-  padding-right: 18px;
+  padding-right: 12px;
   span {
+    padding-right: 12px;
     position: relative;
-    //margin-right: 16px;
   }
   span:after {
     color: @grayLight;
@@ -943,7 +936,7 @@ FLEXLIST GENERIC */
     white-space: pre;
     position: absolute;
     top: 7px;
-    right: 0px;
+    right: 2px;
     float: right;
     content: "\f0d8\A\f0d7";
     font-weight: normal;
@@ -961,15 +954,15 @@ th.sorting_desc {
     font-weight: normal;
   }
 }
-.sorting_asc span:after {
+th.sorting_asc span:after {
   content: "\f0d8";
 }
-.sorting_desc span:after {
+th.sorting_desc span:after {
   top: 13px;
   content: "\f0d7";
 }
-.sorting_desc_disabled,
-.sorting_asc_disabled {
+th.sorting_desc_disabled,
+th.sorting_asc_disabled {
   cursor: default;
   span:after {
     color: @grayLighter;

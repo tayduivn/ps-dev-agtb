@@ -15,8 +15,19 @@
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='ExportCustom'>
 <div align="left">
-<input type="submit" class="button" name="exportCustomBtn" value="{$mod_strings.LBL_EC_EXPORTBTN}" onclick="return check_form('exportcustom');">
+{if !$nb_mod}
+    <input type="button" class="button" name="exportCustomBtn" value="{$mod_strings.LBL_BTN_BACK}" onclick="ModuleBuilder.getContent('module=ModuleBuilder&action=wizard')">
+    <input disabled="disabled" type="submit" class="button" name="exportCustomBtn" value="{$mod_strings.LBL_EC_EXPORTBTN}">
+{else}
+    <input type="submit" class="button" name="exportCustomBtn" value="{$mod_strings.LBL_EC_EXPORTBTN}" onclick="return check_form('exportcustom');">
+{/if}
 </div>
+
+{if !$nb_mod}
+    <br>
+    <h3 class="required">{$mod_strings.LBL_EC_NOCUSTOM}</h3>
+{/if}
+
 <br>
     <table class="mbTable">
     <tbody>
@@ -51,12 +62,12 @@
     </tbody>
 	</table>
 	
-    <table border="0" CELLSPACING="15" WIDTH="100%">
-        <TR><input type="hidden" name="hiddenCount"></TR>
+    <table border="0" CELLSPACING="15" WIDTH="100%" class="checkboxset">
+        <TR><TD><input type="hidden" name="hiddenCount"></TD></TR>
         {foreach from=$modules key=k item=i}
         
         <TR>
-            <TD><h3 style='margin-bottom:20px;'>{if $i != ""}<INPUT onchange="updateCount(this);" type="checkbox" name="modules[]" value={$k}>{/if}{$moduleList[$k]}</h3></TD>
+            <TD><h3 style='margin-bottom:20px;'>{if $i != ""}<INPUT type="checkbox" name="modules[]" value={$k}>{/if}{$moduleList[$k]}</h3></TD>
             <TD VALIGN="top">
             {foreach from=$i item=j}
             {$j}<br>
@@ -69,19 +80,10 @@
     <br> 
 </form>
 
-{literal}
 <script type="text/javascript">
-var boxChecked = 0;
-
-function updateCount(box) {
-   boxChecked = box.checked == true ? ++boxChecked : --boxChecked;
-   document.exportcustom.hiddenCount.value = (boxChecked == 0 ? "" : "CHECKED");
-}
-{/literal}
 ModuleBuilder.helpRegister('exportcustom');
 ModuleBuilder.helpSetup('exportcustom','exportHelp');
-addToValidate('exportcustom', 'hiddenCount', 'varchar', true, '{$mod_strings.LBL_EC_CHECKERROR}');
-addToValidate('exportcustom', 'name', 'varchar', true, '{$mod_strings.LBL_PACKAGE_NAME}'{literal});
+addToValidate('exportcustom', 'modules[]', 'checkboxset', true, '{$mod_strings.LBL_EC_CHECKERROR}');
+addToValidate('exportcustom', 'name', 'varchar', true, '{$mod_strings.LBL_PACKAGE_NAME}');
 </script>
-{/literal}
 {include file='modules/ModuleBuilder/tpls/assistantJavascript.tpl'}

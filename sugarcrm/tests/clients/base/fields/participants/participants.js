@@ -222,7 +222,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub($.fn, 'select2');
             field.render();
             field.$('button[data-action=addRow]').click();
-            expect(field.$('[name=newRow]').css('display')).toEqual('table');
+            expect(field.$('[name=newRow]').css('display')).toEqual('table-row');
             expect(field.$('button[data-action=addRow]').css('display')).toEqual('none');
         });
 
@@ -536,16 +536,16 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should only fetch information for Users', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.render();
 
-            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/1/freebusy');
-            expect(callBulkApiSpy.args[0][0][1].url).toContain('rest/v10/Users/2/freebusy');
+            expect(freebusyFetchSpy.args[0][0][0].url).toContain('rest/v10/Users/1/freebusy');
+            expect(freebusyFetchSpy.args[0][0][1].url).toContain('rest/v10/Users/2/freebusy');
         });
 
         it('should not fetch information for a user if free/busy information has been cached for that user', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.cacheFreeBusyInformation({
                 id: '1',
@@ -554,23 +554,23 @@ describe('View.Fields.Base.ParticipantsField', function() {
             });
             field.render();
 
-            expect(_.size(callBulkApiSpy.args[0][0])).toBe(1);
-            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/2/freebusy');
+            expect(_.size(freebusyFetchSpy.args[0][0])).toBe(1);
+            expect(freebusyFetchSpy.args[0][0][0].url).toContain('rest/v10/Users/2/freebusy');
         });
 
         it('should fetch free busy information if date_start has changed', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.cacheFreeBusyInformation({module: 'Users', id: '1', freebusy: []});
             field.cacheFreeBusyInformation({module: 'Users', id: '2', freebusy: []});
             field.bindDataChange();
             field.render();
 
-            expect(_.size(callBulkApiSpy.args[0][0])).toBe(0);
+            expect(_.size(freebusyFetchSpy.args[0][0])).toBe(0);
 
             field.model.set('date_start', '2014-08-27T08:00:00');
 
-            expect(_.size(callBulkApiSpy.args[1][0])).toBe(2);
+            expect(_.size(freebusyFetchSpy.args[1][0])).toBe(2);
         });
 
         it('should mark busy indicators on timeslots that are taken up by other meetings', function() {
@@ -673,6 +673,54 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
             expect(field._freeBusyCache.length).toBe(1);
             expect(field.getFreeBusyInformationFromCache('Users', '123').freebusy[0].start).toBe('bar');
+        });
+    });
+
+    describe('fetching the free/busy information', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+        });
+
+        it('second time should not happen if fetching is already in process', function() {
+            var freebusyFetchStub = sandbox.stub(field.freebusy, 'fetch', function(requests, options) {
+                this.isFetching(true);
+            });
+
+            field.model.off();
+            field.getFieldValue().reset(participants);
+            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T10:15:00-04:00');
+
+            field.fetchFreeBusyInformation();
+
+            expect(freebusyFetchStub.calledOnce).toBe(true);
+
+            field.fetchFreeBusyInformation();
+
+            expect(freebusyFetchStub.calledOnce).toBe(true);
+        });
+
+        it('should occur when the model is saved', function() {
+            var freebusyFetchSpy = sandbox.stub(field.freebusy, 'fetch');
+
+            field.model.off();
+            field.getFieldValue().reset(participants);
+            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T10:15:00-04:00');
+            field.bindDataChange();
+
+            field.model.trigger('sync');
+
+            expect(freebusyFetchSpy.calledOnce).toBe(true);
         });
     });
 

@@ -83,16 +83,23 @@ include_once('include/workflow/expression_utils.php');
 		}
 
 		if(!empty($field_type)){
-
 			/*
 			One off check to see if this is duration_hours or duration_minutes
 			These two fields really should be enum, but they are chars.  This is a problem,
 			since the UI for calls is really enum in 15 minute increments
 			*/
+            $sorted_fields = array();
+
 			if($selector_array['target_field']=="duration_minutes"){
 
 				$target_field_array['options'] = "duration_intervals";
 				$field_type = "enum";
+
+                //if the module is calls, then populate sorted_fields array with minute values
+                if(get_class($temp_module) == 'Call' && isset($temp_module->minutes_values)) {
+                    $target_field_array['function'] = '';
+                    $sorted_fields = $temp_module->minutes_values;
+                }
 			//end if target_field is duration_minutes or duration_hours
 			}
 
@@ -116,7 +123,6 @@ include_once('include/workflow/expression_utils.php');
 				//check for multi_select and that this is the same dropdown as previous;
 
 				//Set the value select
-				$sorted_fields = array();
 				if(!empty($target_field_array['function'])){
 					$function = $target_field_array['function'];
 					if(is_array($function) && isset($function['name'])){
@@ -137,7 +143,11 @@ include_once('include/workflow/expression_utils.php');
                     }
 					$sorted_fields = call_user_func($function);
 				}else{
-					$sorted_fields = $app_list_strings[$target_field_array['options']];
+                    //get list of strings if sorted fields has not already been populated
+                    if(count($sorted_fields) == 0)
+                    {
+                        $sorted_fields = $app_list_strings[$target_field_array['options']];
+                    }
 				}
 				if (isset($sorted_fields)) {
 					asort($sorted_fields);

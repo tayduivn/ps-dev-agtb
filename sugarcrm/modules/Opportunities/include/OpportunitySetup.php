@@ -43,6 +43,13 @@ abstract class OpportunitySetup
     protected $moduleExtFolder = 'custom/Extension/modules/Opportunities/Ext';
 
     /**
+     * RevenueLineItem Extension Folder
+     *
+     * @var string
+     */
+    protected $rliModuleExtFolder = 'custom/Extension/modules/RevenueLineItems/Ext';
+
+    /**
      * Dupe Check Extension File Name
      *
      * @var string
@@ -55,6 +62,13 @@ abstract class OpportunitySetup
      * @var string
      */
     protected $rliModuleExtFile = 'rli_unhide.ext.php';
+
+    /**
+     * RevenueLineItem Module Extension vardef dictionary change
+     *
+     * @var string
+     */
+    protected $rliModuleExtVardefFile = 'rli_vardef.ext.php';
 
     /**
      * What is the file name for the extends to disable the stock Opportunity Dependencies
@@ -203,6 +217,9 @@ abstract class OpportunitySetup
         // fix the selected-list view
         $this->processSelectedListView($fieldMap);
 
+        // fix the dupecheck-list view
+        $this->processDupeCheckListView($fieldMap);
+
         // get the generic list view
         $this->processListView($fieldMap);
 
@@ -268,6 +285,18 @@ abstract class OpportunitySetup
     {
         /* @var $listDefsParser SidecarListLayoutMetaDataParser */
         $listDefsParser = ParserFactory::getParser(MB_SIDECARPOPUPVIEW, 'Opportunities', null, null, 'base');
+        $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
+    }
+
+    /**
+     * Fix the `dupecheck-list` view
+     *
+     * @param array $fieldMap
+     */
+    protected function processDupeCheckListView(array $fieldMap)
+    {
+        /* @var $listDefsParser SidecarListLayoutMetaDataParser */
+        $listDefsParser = ParserFactory::getParser(MB_SIDECARDUPECHECKVIEW, 'Opportunities', null, null, 'base');
         $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
     }
 
@@ -440,6 +469,49 @@ abstract class OpportunitySetup
     }
 
     /**
+     * Add or Remove the RevenueLineItems Module to the Parent Type dropdown List
+     *
+     * @param bool $add Defaults to `true`
+     */
+    protected function setRevenueLineItemInParentRelateDropDown($add = true)
+    {
+        $list = $GLOBALS['app_list_strings']['parent_type_display'];
+        $rli = BeanFactory::getBean('RevenueLineItems');
+
+        $hasRLI = isset($list[$rli->module_name]);
+
+        if ($add && !$hasRLI) {
+            // get the translated value
+            $list[$rli->module_name] = $GLOBALS['app_list_strings']['moduleList'][$rli->module_name];
+        } elseif (!$add && $hasRLI) {
+            unset($list[$rli->module_name]);
+        }
+
+        // the parser need all the values to be in their own array with the key first then the value
+        $new_list = array();
+        foreach($list as $k => $v) {
+            $new_list[] = array($k, $v);
+        }
+
+        $params = array(
+            'dropdown_name' => 'parent_type_display',
+            'dropdown_lang' => $GLOBALS['current_language'],
+            'list_value' => json_encode($new_list),
+            'view_package' => 'studio',
+        );
+        // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
+        // was passed in.
+        $_REQUEST['view_package'] = 'studio';
+
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
+        $dd_parser = new ParserDropDown();
+        $dd_parser->saveDropDown($params);
+
+        // clean up the request object
+        unset($_REQUEST['view_package']);
+    }
+
+    /**
      * Process WorkFlows
      *
      * This will mark any WorkFlows based on the Opportunity Module as Inactive so they don't run and potentially blow
@@ -570,8 +642,7 @@ abstract class OpportunitySetup
 
         foreach($rli_links as $name => $link) {
             if ($rli_bean->load_relationship($name) && $rli_bean->$name instanceof Link2) {
-                $rel_module = $rli_bean->$name->getRelatedModuleName();
-                $rel_bean = BeanFactory::getBeanName($rel_module);
+                $bean = BeanFactory::getBean($rli_bean->$name->getRelatedModuleName());
                 $rel_name = $rli_bean->$name->getRelatedModuleLinkName();
 
                 // if for some reason we didn't find a rli_name on the other side of the link
@@ -581,14 +652,14 @@ abstract class OpportunitySetup
                 }
 
                 $file = 'rli_link_workflow.php';
-                $folder = "custom/Extension/modules/{$rel_module}/Ext";
+                $folder = "custom/Extension/modules/{$bean->module_dir}/Ext";
 
                 SugarAutoLoader::ensureDir($folder . '/Vardefs');
 
                 if ($show === true) {
                     $file_contents = <<<EOL
 <?php
-\$dictionary['{$rel_bean}']['fields']['{$rel_name}']['workflow'] = true;
+\$dictionary['{$bean->object_name}']['fields']['{$rel_name}']['workflow'] = true;
 EOL;
 
                     sugar_file_put_contents($folder . '/Vardefs/' . $file, $file_contents);
@@ -600,7 +671,7 @@ EOL;
                     }
                 }
 
-                $rnr_modules[] = $rel_module;
+                $rnr_modules[] = $bean->module_name;
             }
         }
 

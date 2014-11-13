@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//FILE SUGARCRM flav=ent ONLY
 class OpportunitySetupTest extends Sugar_PHPUnit_Framework_TestCase
 {
 

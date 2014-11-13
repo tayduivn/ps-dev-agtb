@@ -75,6 +75,7 @@ $viewdefs['Calls']['base']['view']['recordlist'] = array(
                 'type' => 'closebutton',
                 'name' => 'record-close',
                 'label' => 'LBL_LIST_CLOSE',
+                'closed_status' => 'Held',
                 'acl_action' => 'edit',
             ),
             array(

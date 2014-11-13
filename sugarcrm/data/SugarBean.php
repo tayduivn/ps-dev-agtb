@@ -25,6 +25,7 @@ require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+require_once('include/utils.php');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/Expressions/Expression/Parser/Parser.php');
 //END SUGARCRM flav=pro ONLY
@@ -529,6 +530,10 @@ class SugarBean
                 if(!empty($dictionary[$this->object_name]['optimistic_locking']))
                 {
                     $this->optimistic_lock=true;
+                }
+
+                if (isset($dictionary[$this->object_name]['importable'])) {
+                    $this->importable = isTruthy($dictionary[$this->object_name]['importable']);
                 }
             }
             self::$loadedDefs[$this->object_name]['column_fields'] =& $this->column_fields;

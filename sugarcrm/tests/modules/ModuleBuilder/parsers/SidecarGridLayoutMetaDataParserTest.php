@@ -323,6 +323,121 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
             array('defs' => array('name' => 'test2', 'vname' => 'LBL_TEST2'), 'expectation' => false),
         );
     }
+
+    /**
+     * Test handling of span adjustments and mutation of the baseSpans array
+     * 
+     * @param int $fieldCount The count of fields in a row
+     * @param array $lastField The last field that was touched
+     * @param array $baseSpans Array of fields that had spans orignally applied
+     * @param int $singleSpanUnit The size of a single span
+     * @param array $expectResult Expected return value
+     * @param array $expectBaseSpans Expected baseSpans array
+     * @dataProvider testSpanAdjustmentsProvider
+     */
+    public function testSpanAdjustments($fieldCount, $lastField, $baseSpans, $singleSpanUnit, $expectResult, $expectBaseSpans)
+    {
+        $this->_parser->setBaseSpans($baseSpans);
+        $result = $this->_parser->testGetLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
+
+        // Test the result
+        $this->assertEquals($result, $expectResult);
+
+        // Test the adjusted spans
+        $adjSpans = $this->_parser->getBaseSpans();
+        $this->assertEquals($adjSpans, $expectBaseSpans);
+    }
+
+    public function testSpanAdjustmentsProvider()
+    {
+        // maxSpan on the parser is 12 by default
+        // maxCols on the parser is 2 by default
+        return array(
+            // Test no handling for single field rows
+            array(
+                'fieldCount' => 1,
+                'lastField' => null,
+                'baseSpans' => array(),
+                'singleSpanUnit' => 6,
+                'expectResult' => array('span' => 12),
+                'expectBaseSpans' => array(),
+            ),
+            // Test OOTB behavior
+            array(
+                'fieldCount' => 2,
+                'lastField' => array('name' => 'test'),
+                'baseSpans' => array('test' => 12),
+                'singleSpanUnit' => 6,
+                'expectResult' => array('span' => 6),
+                'expectBaseSpans' => array(
+                    'test' => array(
+                        'span' => 6, 
+                        'adjustment' => 6,
+                    ),
+                ),
+            ),
+            // Test oddball single span behavior
+            array(
+                'fieldCount' => 2,
+                'lastField' => array('name' => 'test'),
+                'baseSpans' => array('test' => 12),
+                'singleSpanUnit' => 4,
+                'expectResult' => array('span' => 4),
+                'expectBaseSpans' => array(
+                    'test' => array(
+                        'span' => 8,
+                        'adjustment' => 4,
+                    ),
+                ),
+            ),
+            // Test unsetting of the lastField from baseSpans
+            array(
+                'fieldCount' => 2,
+                'lastField' => array('name' => 'test'),
+                'baseSpans' => array('test' => 6, 'test1' => 12),
+                'singleSpanUnit' => 6,
+                'expectResult' => array('span' => 12),
+                'expectBaseSpans' => array(
+                    'test1' => array(
+                        'span' => 12,
+                        'adjustment' => 0,
+                    ),
+                ),
+            ),
+            // Test no handling if no lastField name
+            array(
+                'fieldCount' => 2,
+                'lastField' => array(),
+                'baseSpans' => array('test' => 6, 'test1' => 12),
+                'singleSpanUnit' => 6,
+                'expectResult' => array(),
+                'expectBaseSpans' => array(
+                    'test' => array(
+                        'span' => 6,
+                        'adjustment' => 0,
+                    ),
+                    'test1' => array(
+                        'span' => 12,
+                        'adjustment' => 0,
+                    ),
+                ),
+            ),
+            // Test no handling if no baseSpans of the field name
+            array(
+                'fieldCount' => 2,
+                'lastField' => array('name' => 'test'),
+                'baseSpans' => array('test1' => 12),
+                'singleSpanUnit' => 6,
+                'expectResult' => array(),
+                'expectBaseSpans' => array(
+                    'test1' => array(
+                        'span' => 12,
+                        'adjustment' => 0,
+                    ),
+                ),
+            ),
+        );
+    }
 }
 
 
@@ -379,5 +494,22 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
 
     public function testGetFieldsFromLayout($viewdef) {
         return $this->getFieldsFromLayout($viewdef);
+    }
+
+    public function testGetLastFieldSpan($lastField, $singleSpanUnit, $fieldCount)
+    {
+        return $this->getLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
+    }
+
+    public function setBaseSpans($spans)
+    {
+        foreach ($spans as $name => $value) {
+            $this->setBaseSpan($name, $value);
+        }
+    }
+
+    public function getBaseSpans()
+    {
+        return $this->baseSpans;
     }
 }

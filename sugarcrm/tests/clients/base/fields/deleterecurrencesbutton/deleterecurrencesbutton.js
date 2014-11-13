@@ -21,6 +21,7 @@ describe('Delete Recurrences Field', function() {
             module: module,
             model: app.data.createBean('Meetings')
         });
+        field.model.module = 'Meetings';
 
     });
 
@@ -50,15 +51,21 @@ describe('Delete Recurrences Field', function() {
         hasAccessStub.restore();
     });
 
-    describe('hasAccess', function() {
-        it('should return true if the repeat type is set to a recurring type', function() {
-            field.model.set('repeat_type', 'Weekly');
-            expect(field.hasAccess()).toBe(true);
+    describe('Hiding the button for non-recurring events', function() {
+        var hideStub;
+
+        beforeEach(function() {
+            hideStub = sinonSandbox.stub(field, 'hide');
         });
 
-        it('should return false if the repeat type is not set to a recurring type', function() {
+        it('should not hide button when repeat_type field is set', function() {
+            field.model.set('repeat_type', 'Weekly');
+            expect(hideStub).not.toHaveBeenCalled();
+        });
+
+        it('should hide button when repeat_type field is not set', function() {
             field.model.set('repeat_type', '');
-            expect(field.hasAccess()).toBe(false);
+            expect(hideStub).toHaveBeenCalled();
         });
     });
 

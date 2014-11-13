@@ -619,6 +619,10 @@ FP;
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
     //BEGIN SUGARCRM flav=ent ONLY
+    $enabled_tabs[] = 'pmse_Project';
+    $enabled_tabs[] = 'pmse_Inbox';
+    $enabled_tabs[] = 'pmse_Business_Rules';
+    $enabled_tabs[] = 'pmse_Emails_Templates';
 
     if ($_SESSION['demoData'] != 'no') {
         $enabled_tabs[] = 'KBDocuments';

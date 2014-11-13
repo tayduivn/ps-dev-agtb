@@ -15,6 +15,9 @@ require_once 'include/database/OracleManager.php';
 
 class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var OracleManager */
+    protected $_db = null;
+
     static public function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -277,5 +280,21 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $msg = 'OracleManager cannot have order_stability capability';
         $this->assertFalse($this->_db->supports('order_stability'), $msg);
+    }
+
+    /**
+     * Test checks correct detection of type of vardef if type and dbType are different
+     */
+    public function testIsNullableTypeDetection()
+    {
+        $vardef = array(
+            'type' => 'someMagicType',
+            'dbType' => 'text',
+        );
+        /** @var PHPUnit_Framework_MockObject_MockObject|OracleManager $db */
+        $db = $this->getMock(get_class($this->_db), array('getFieldType', 'isTextType'));
+        $db->expects($this->atLeastOnce())->method('getFieldType')->with($this->equalTo($vardef))->will($this->returnValue($vardef['dbType']));
+        $db->expects($this->atLeastOnce())->method('isTextType')->with($this->equalTo($vardef['dbType']))->will($this->returnValue(true));
+        SugarTestReflection::callProtectedMethod($db, 'isNullable', array($vardef));
     }
 }

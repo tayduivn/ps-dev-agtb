@@ -73,14 +73,9 @@ html.rtl {
     }
     /* END RESET */
 
-
-    .dropdown-menu:not(.datepicker) {
-        right: 0;
+    #userActions .profileactions-profile .avatar {
+        right: 11px;
         left: auto;
-    }
-
-    .dropdown-menu.datepicker {
-        margin-left: -140px;
     }
 
     .label-module {
@@ -129,6 +124,10 @@ html.rtl {
     .merge-interface .merge-row.merge-row-field-teamset button {
         left: auto;
         right: 61px;
+    }
+
+    h4.merge-interface-header {
+      text-indent: 14px;
     }
 
     h4.merge-interface-header button {
@@ -191,6 +190,19 @@ html.rtl {
             padding-left: 0;
             padding-right: 6px;
         }
+        .record-cell[data-type="teamset"] {
+            .btn {
+                margin-left: 8px;
+                margin-right: 0;
+            }
+            .select2-container, .select2-result {
+                margin-right: 7px;
+            }
+        }
+        .record-cell[data-type="email"] .btn-group.prevent-mousedown {
+            margin-left: 8px;
+            margin-right: 0;
+        }
     }
 
     div .record .record-cell .select2-container {
@@ -215,6 +227,10 @@ html.rtl {
 
     .select2-container, .select2-results {
         text-align: right;
+    }
+
+    .select2-container-multi .select2-choices li {
+        float: right;
     }
 
     .record .record-cell[data-type="language"] .select2-container .select2-choice,
@@ -446,6 +462,18 @@ html.rtl {
         left: 0px;
     }
 
+    table.reorderable-columns {
+        .th-droppable-placeholder {
+            left: auto;
+            right: -2px;
+        }
+        th[data-fieldname] > div > div > span {
+            padding-right: 0;
+            padding-left: 6px;
+            margin-left: 0px;
+        }
+    }
+
     .flex-list-view {
         &.left-actions .dataTable {
             th:first-child,
@@ -519,6 +547,9 @@ html.rtl {
                 }
             }
         }
+        &.right-actions .dataTable td:last-child .actions .dropdown-menu {
+            text-align: right;
+        }
         &.scroll-width {
             th:nth-last-child(2) {
                 border-left: none;
@@ -549,9 +580,6 @@ html.rtl {
             }
             .dataTable {
                 td {
-                    // commit notification icons
-                    padding: 0px 8px;
-
                     // pencil icon
                     &.editableColumn span.isEditable:hover .edit-icon {
                         position: absolute;
@@ -595,6 +623,9 @@ html.rtl {
         th {
             border-left: @tableBorder;
             border-right: 0;
+            .dropdown-menu {
+                text-align: right;
+            }
         }
         td,
         th {
@@ -602,11 +633,6 @@ html.rtl {
         }
         th:last-child {
             border-left: none;
-        }
-        td {
-            &.[direction=ltr] {
-                text-align: left;
-            }
         }
     }
     .table-striped {
@@ -690,6 +716,10 @@ html.rtl {
         padding-left: 0;
     }
 
+    .btn-slider .noUiSliderEnds {
+        margin: 0 0 0 30px;
+    }
+
     .dashboard,
     .preview-data {
         .dashlets > li:first-child {
@@ -768,6 +798,17 @@ html.rtl {
         right: auto;
     }
 
+    .morecol .dropdown-menu {
+        button {
+            text-align: right;
+            padding-right: 30px;
+            padding-left: 0;
+        }
+        button.active {
+            padding-right: 10px;
+        }
+    }
+
     .select2-container {
         .select2-choice {
             padding-left: 20px;
@@ -781,6 +822,9 @@ html.rtl {
                 margin-right: 8px;
             }
         }
+        &.search-filter .select2-choice {
+            padding-left: 6px;
+        }
     }
 
     .extend {
@@ -790,7 +834,48 @@ html.rtl {
         }
 
         .filter-body > .row-fluid {
-            padding-right: 0
+            padding-right: 0;
+            padding-left: 64px;
+            .filter-value.controls {
+                margin-right: 2.127659574%;
+                margin-left: 0;
+            }
+            .controls.span4:not(:first-child) {
+                margin-left: 0;
+                margin-right: 2.127659574%;
+            }
+        }
+        .filter-header > .row-fluid {
+            .span6:not(.controls) {
+                margin-left: 0;
+                margin-right: 2.127659574%;
+                .btn-primary {
+                    margin-right: 0;
+                }
+            }
+        }
+        .massupdate {
+            > .span3 {
+                margin-right: 2.127659574%;
+                margin-left: 0;
+            }
+            .controls {
+                &.btn-fit {
+                    &.controls-three {
+                        padding-left: 108px;
+                        padding-right: 0;
+
+                        .btn {
+                            left: 0;
+                            right: auto;
+                        }
+                        .btn.third {
+                            left: 72px;
+                            right: auto;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -908,7 +993,15 @@ html.rtl {
     }
 
     #languageList {
-        direction: ltr;
+        direction: rtr;
+        ul[role=menu] {
+            direction: ltr;
+            text-align: right;
+        }
+        .dropdown-menu {
+            left: 0;
+            right: auto;
+        }
     }
 
     .dashlet {
@@ -988,6 +1081,12 @@ html.rtl {
         }
     }
 
+    .currency-field {
+        label.original {
+            margin: 0 0 0 4px;
+        }
+    }
+
     .info {
         // smaller non-bold "totals" numbers below Best/Likely
         .last-commit {
@@ -1002,5 +1101,21 @@ html.rtl {
                 margin-left: 0;
             }
         }
+    }
+
+    ::-webkit-input-placeholder {
+      text-align: right;
+    }
+
+    :-moz-placeholder { /* Firefox 18- */
+      text-align: right;
+    }
+
+    ::-moz-placeholder {  /* Firefox 19+ */
+      text-align: right;
+    }
+
+    :-ms-input-placeholder {
+      text-align: right;
     }
 }

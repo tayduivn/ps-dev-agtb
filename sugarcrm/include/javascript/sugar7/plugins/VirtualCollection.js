@@ -723,7 +723,7 @@
                     callbacks.complete = options.complete;
                 }
 
-                url = app.api.buildURL(this.parent.module, 'invitee_search', null, params);
+                url = app.api.buildURL('Calendar', 'invitee_search', null, params);
                 return app.api.call('read', url, null, callbacks);
             },
 

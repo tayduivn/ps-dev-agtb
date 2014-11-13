@@ -44,16 +44,10 @@
     /**
      * @inheritDoc
      *
-     * Triggers the save event on the record once button is clicked
-     *
-     * @see View.Fields.Base.RowactionField#getTarget
-     * @param {Object} [event] The click event.
+     * Silently sets `send_invites` to true on the model before saving.
      */
-    propagateEvent: function(event) {
-        var triggerName = this.view.save_button ? this.view.save_button : 'save_button',
-            trigger = 'button:' + triggerName + ':click';
-
+    rowActionSelect: function(event) {
         this.model.set('send_invites', true, {silent: true});
-        this.context.trigger(trigger);
+        this._super('rowActionSelect', [event]);
     }
 })

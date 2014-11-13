@@ -31,10 +31,17 @@ class ViewExportcustomizations extends SugarView
  		$smarty = new Sugar_Smarty();
  		$mb = new MBPackage("packageCustom");
  		$mod=$mb->getCustomModules();
- 		foreach($mod as $key => $value){
- 		    $modules[]=$key;
- 		    $custom[]=$value;
- 		}
+
+ 		$modules = array();
+ 		$custom = array();
+ 		
+		if (is_array($mod)) { 
+		    foreach($mod as $key => $value) {
+		        $modules[] = $key;
+		        $custom[] = $value;
+		    }
+		}
+
  		$nb_mod = count($modules);
  		$smarty->assign('mod_strings', $mod_strings);
  		$smarty->assign('modules', $mod);

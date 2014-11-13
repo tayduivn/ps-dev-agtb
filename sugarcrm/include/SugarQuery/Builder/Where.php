@@ -395,11 +395,11 @@ abstract class SugarQuery_Builder_Where
                 $type = !empty($type['type']) ? $type['type'] : '';
             }
             if (!$type) {
-                $where->lte($field, $timeDate->asDb($dates[1], true), $bean);
-                $where->gte($field, $timeDate->asDb($dates[0], true), $bean);
+                $where->lte($field, $timeDate->asDb($dates[1]), $bean);
+                $where->gte($field, $timeDate->asDb($dates[0]), $bean);
             } else {
-                $where->lte($field, $timeDate->asDbType($dates[1], $type, true), $bean);
-                $where->gte($field, $timeDate->asDbType($dates[0], $type, true), $bean);
+                $where->lte($field, $timeDate->asDbType($dates[1], $type), $bean);
+                $where->gte($field, $timeDate->asDbType($dates[0], $type), $bean);
             }
         }
         return $this;

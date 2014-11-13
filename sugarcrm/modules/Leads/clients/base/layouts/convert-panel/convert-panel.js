@@ -124,7 +124,8 @@
                 'skipFetch': true,
                 'dupelisttype': 'dupecheck-list-select',
                 'collection': this.createDuplicateCollection(leadsModel, this.meta.module),
-                'layoutName': 'records'
+                'layoutName': 'records',
+                'dataView': 'selection-list'
             });
         context.prepare();
 

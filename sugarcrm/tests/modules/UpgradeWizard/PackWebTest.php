@@ -79,6 +79,9 @@ class PackWebTest extends PHPUnit_Framework_TestCase
 
     public function testPackWebPhp()
     {
+        if (is_windows()) {
+            $this->markTestSkipped('Skipping on Windows - PHP_BINDIR bug');
+        }
         $result = exec(PHP_BINDIR . '/php ' . __DIR__ . '/../../../modules/UpgradeWizard/pack_web.php');
         $this->assertEquals(
             "Use " . __DIR__ . "/../../../modules/UpgradeWizard/pack_web.php name.zip [sugarVersion [buildNumber [from]]]",

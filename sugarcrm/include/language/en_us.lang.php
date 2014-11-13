@@ -73,6 +73,11 @@ $app_list_strings = array (
     'ReportMaker' => 'Advanced Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
+    'pmse_Inbox' => 'PMSE Engine',
+    'pmse_Project' => 'PMSE Process',
+    'pmse_Business_Rules' => 'PMSE Business Rules',
+    'pmse_Emails_Templates' => 'PMSE Emails Templates',
+    'pmse_Config' => 'PMSE Administration',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -178,11 +183,16 @@ $app_list_strings = array (
     'Roles'=>'Role',
     'Notifications'=>'Notification',
     'Sync'=>'Sync',
-	'PdfManager' => 'PDF Manager',
-//BEGIN SUGARCRM flav=ent ONLY
+    'PdfManager' => 'PDF Manager',
+    //BEGIN SUGARCRM flav=ent ONLY
     'ReportMaker' => ' Advanced Report',
     'DataSets' => 'Data Format',
     'CustomQueries' => 'Custom Query',
+    'pmse_Inbox' => 'PMSE Engine',
+    'pmse_Project' => 'PMSE Process',
+    'pmse_Business_Rules' => 'PMSE Business Rules',
+    'pmse_Emails_Templates' => 'PMSE Emails Templates',
+    'pmse_Config' => 'PMSE Administration',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -668,11 +678,6 @@ $app_list_strings = array (
     'Contacts' => 'Contact',
     'Tasks' => 'Task',
     'Opportunities' => 'Opportunity',
-
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    'RevenueLineItems' => 'Revenue Line Item',
-    //END SUGARCRM flav=ent ONLY
     'Products' => 'Quoted Line Item',
     'Quotes' => 'Quote',
 
@@ -2415,6 +2420,8 @@ $app_strings = array (
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
 
     'LBL_CLOSE_BUTTON_LABEL' => 'Close',
+    'TPL_STATUS_CHANGE_SUCCESS' => '{{moduleSingular}} marked as {{status}}.',
+
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
@@ -4481,7 +4488,7 @@ Sincerely, SugarCRM',
     'LBL_TOUR_RECORD_DASHBOARDACTIONS' => 'Create new groups of Dashlets',
     'LBL_TOUR_RECORD_DASHBOARDNAME' => 'Assign a name to the group of Dashlets',
     'LBL_TOUR_RECORD_DASHLETCOG' => 'Choose to remove Dashlet or to change settings',
-    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 preview. Use arrows below for a quick tour.',
+    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7. Use arrows below for a quick tour.',
     'LBL_TOUR_LIST_INTRO' =>'View a list of records and take actions records.',
     'LBL_TOUR_RECORD_INTRO' =>'View details on this record and see all data related to it.',
     'LBL_TOUR_FORECAST_INTRO' =>'Manage pipeline and Forecast.',
@@ -4930,6 +4937,8 @@ Sincerely, SugarCRM',
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',
     'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0}',
+
+    'LBL_MORE_ACTION' => 'More Actions',
 
     //quickcreate modal dialog
     'LBL_MESSAGE_BOX_TITLE' => 'Alert',
