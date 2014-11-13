@@ -91,6 +91,8 @@ class ViewProperty extends SugarView
         if (isset($this->properties['width'])) {
             $smarty->assign('defaultWidths', SidecarListLayoutMetaDataParser::getDefaultWidths());
         }
+        // BWC modules width are in %, sidecar modules widths are in pixels.
+        $smarty->assign('widthUnit', isModuleBWC($this->editModule) ? '%' : 'px');
 
         $smarty->assign("properties",$this->properties);
         $smarty->assign("mod_strings",$mod_strings);

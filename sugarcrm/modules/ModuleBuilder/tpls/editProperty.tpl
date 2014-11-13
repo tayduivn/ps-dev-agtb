@@ -26,8 +26,10 @@
 {literal}
 <script>
     function saveAction() {
-        for(var i=0;i<document.editProperty.elements.length;i++)
-        {
+{/literal}
+        var widthUnit = '{$widthUnit}';
+{literal}
+        for(var i=0, l=document.editProperty.elements.length; i<l; i++) {
             var field = document.editProperty.elements[i];
             if (field.className.indexOf('save') != -1 )
             {
@@ -35,10 +37,14 @@
                 {
                     var id = field.id.substring('editProperty_'.length);
                     var fieldSpan = document.getElementById(id);
-                    fieldSpan.innerHTML = YAHOO.lang.escapeHTML(field.value);
+                    var value = YAHOO.lang.escapeHTML(field.value);
+
+                    // If editing a width on list layouts, update the unit
                     if (field.name.toLowerCase().indexOf('width') != -1) {
-                        fieldSpan.nextElementSibling.innerHTML = field.value == '' || isNaN(field.value) ? '' : 'px';
+                        value = value.replace('px', '').replace('%', '').trim();
+                        fieldSpan.nextElementSibling.innerHTML = field.value == '' || isNaN(+value) ? '' : widthUnit;
                     }
+                    fieldSpan.innerHTML = value;
                 }
             }
         }
