@@ -31,16 +31,10 @@
 			var field = document.editProperty.elements[i];
 			if (field.className.indexOf('save') != -1 )
 			{
-				var id = field.id.substring('editProperty_'.length);
-
-				// In case of "Restore Defaults" on record layout view
-				var oldValue = document.getElementById(id).innerHTML.trim();
-				var newValue = document.getElementById('display_' + id).value;
-				if (field.value === 'no_change' && oldValue != newValue) {
-					field.value = newValue;
-				}
-
-				if (field.value != 'no_change') {
+				if (field.value != 'no_change')
+				{
+					var property = field.name.substring('editProperty_'.length);
+					var id = field.id.substring('editProperty_'.length);
 					document.getElementById(id).innerHTML = YAHOO.lang.escapeHTML(field.value);
 				}
 			}
@@ -79,7 +73,7 @@
 			{if isset($property.hidden)}
 				{$property.value}
 			{else}
-				<input id='display_{$id}{$property.id}' onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
+				<input onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
 			{/if}
 			{* //BEGIN SUGARCRM flav=een ONLY *}
 			{/if}
