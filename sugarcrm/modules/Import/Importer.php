@@ -116,7 +116,7 @@ class Importer
 
         //catch output including notices and warnings so import process can run to completion
         $output = '';
-       	ob_start();
+        ob_start();
         foreach($this->importSource as $row)
         {
             $this->importRow($row);
@@ -126,10 +126,10 @@ class Importer
         //first, replace more than one consecutive spaces with a single space.  This is to condense
         //multiple line/row errors and prevent miscount of rows in list navigation UI
         $output = ob_get_clean();
-       	if(!empty($output)) {
+        if(!empty($output)) {
             $output = preg_replace('/\s+/', ' ', trim($output));
-       		$this->importSource->writeError( 'Execution', 'Execution Error', $output);
-       	}
+            $this->importSource->writeError( 'Execution', 'Execution Error', $output);
+        }
 
 
         // save mapping if requested
