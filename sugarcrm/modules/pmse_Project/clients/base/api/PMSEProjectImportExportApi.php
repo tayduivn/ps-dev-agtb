@@ -1,10 +1,10 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/vCardApi.php';
-
 require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
 
@@ -39,13 +39,13 @@ class PMSEProjectImportExportApi extends vCardApi
         );
     }
 
-    public function projectDownload ($api, $args)
+    public function projectDownload($api, $args)
     {
         $projectBean = new PMSEProjectExporter();
-        $requiredFields  = array('record', 'module');
-        foreach ( $requiredFields as $fieldName ) {
-            if ( !array_key_exists($fieldName, $args) ) {
-                throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
+        $requiredFields = array('record', 'module');
+        foreach ($requiredFields as $fieldName) {
+            if (!array_key_exists($fieldName, $args)) {
+                throw new SugarApiExceptionMissingParameter('Missing parameter: ' . $fieldName);
             }
         }
 

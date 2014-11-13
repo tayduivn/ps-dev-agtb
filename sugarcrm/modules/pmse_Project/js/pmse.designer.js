@@ -666,6 +666,12 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
             return false;
         }
         if (shape.getConnectionType() === "none") {
+            App.alert.show('warning_connection', {
+                level: 'warning',
+                messages: translate('LBL_PMSE_ADAM_UI_INVALID_CONNECTION'),
+                autoClose: true,
+                autoCloseDelay: 9000
+            });
             return true;
         }
 
@@ -681,8 +687,6 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
             }
         }
         if (ui.helper && ui.helper.attr('id') === "drag-helper") {
-
-            console.log("DD");
 
             //if its the helper then we need to create two ports and draw a
             // connection
@@ -778,7 +782,6 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
 
             connection.canvas.commandStack.add(new jCore.CommandConnect(connection));
 
-            console.log("Connection", connection);
             //connect the two ports
             connection.connect();
             connection.setSegmentMoveHandlers();
@@ -987,8 +990,21 @@ AdamShape.prototype.getType = function () {
  * @return {*}
  */
 AdamShape.prototype.setName = function (value) {
+    var item;
     if (this.label) {
         this.label.setMessage(value);
+        if (listPanelError){
+            if ( listPanelError.items.length ) {
+                item = listPanelError.getItemById(this.id);
+                if ( item ) {
+                    if ( value.trim().length ) {
+                        item.setTitle(value);                        
+                    } else {
+                        item.setTitle("[unnamed]");
+                    }
+                }
+            }
+        }
     }
     return this;
 };
@@ -1189,6 +1205,252 @@ AdamShape.prototype.updateFlowConditions = function () {
     }
 };
 
+AdamShape.prototype.getFamilyNumber = function (shape) {
+    var map = {
+        'AdamActivity' : 5,
+        'AdamEvent' : 6,
+        'AdamGateway': 7,
+        'AdamData': 8,
+        'AdamArtifact': 9
+    };
+    return map[shape.getType()];
+};
+
+AdamShape.prototype.attachErrorToShape = function (objArray) {
+    var i, j,
+        sw,
+        message,
+        ruleArray,
+        testCount,
+        rule,
+        error,
+        sizeItems,
+        allErrors = [];
+    this.BPMNError = new jCore.ArrayList();
+    for (i = 0; i < objArray.length; i += 1) {
+        message  = objArray[i].message;
+        ruleArray = objArray[i].rules;
+
+        sw = (objArray[i].family === 8 && objArray[i].familyType === 4) ?
+            false : true;
+        for (j = 0; j < ruleArray.length; j += 1) {
+            rule = ruleArray[j];
+
+            testCount = this.countFlow(rule.element, rule.direction);
+            if (objArray[i].family === 8 && objArray[i].familyType === 4) {
+                sw = sw || (testCount > rule.value);
+
+            } else {
+                switch (rule.compare){
+                    case '=':
+                        sw = sw && (testCount === rule.value);
+                        break;
+                    case '>':
+                        sw = sw && (testCount > rule.value);
+                        break;
+                    case '<':
+                        sw = sw && (testCount < rule.value);
+                        break;
+                }
+            }
+        }
+        if (!sw){
+            //TODO attach error to shape
+            this.BPMNError.insert({
+                code: objArray[i].id,
+                //element: rule.element,
+                direction: rule.direction,
+                description: message
+            });
+            //this.canvas.diagram.refreshErrorGrid(this);
+
+        }
+    }
+    if (this.BPMNError.getSize() > 0) {
+        this.addErrorLayer('error', 2);
+
+    } else {
+        this.clearErrors();
+    }
+
+    //listPanelError.setItems(items)
+    //console.log(listPanelError);
+    listPanelError.setItems(this.getShapeWithErros());
+        if (countErrors){
+            if (listPanelError.getItems().length){
+                countErrors.style.display = "block";
+                sizeItems = listPanelError.getAllErros();
+                countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
+            } else {
+                countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
+            }
+        }
+};
+
+
+AdamShape.prototype.getShapeWithErros = function () {
+    var i, shape, errors, error, f = [], items = [], object = {}, subObject = {};
+    for (i = 0; i < canvas.getCustomShapes().getSize(); i += 1) {
+        shape = canvas.getCustomShapes().get(i);
+        if(shape.BPMNError !== undefined) {
+            if (shape.BPMNError.getSize()){
+                object = {};
+                object.title = shape.getName()||'[unnamed]';
+
+                object.errorType =  this.getShapeType(shape.getType(), shape);
+                object.items = [];
+                object.errorId = shape.getID();
+                errors = shape.BPMNError;
+                for ( j = 0; j < errors.getSize(); j += 1) {
+                    subObject = {};
+                    error = errors.get(j);
+                    subObject.messageId =  error.code;
+                    subObject.message = error.description;
+                    object.items.push(subObject);
+                }
+                items.push(object);
+                }
+        }
+    }
+    return items;
+};
+
+AdamShape.prototype.getShapeType = function (type, shape) {
+    var shapeType, shapeMessage, itemType = "";
+    switch (type){
+        case "AdamActivity" :
+            shapeType = shape.act_task_type;
+            itemType = type +shapeType; 
+        break;
+        case "AdamEvent" :
+            shapeType = shape.getEventType();
+            shapeMessage = shape.getEventMessage()||shape.getEventMarker();
+            itemType = type +shapeType + shapeMessage;  
+        break;
+        case "AdamGateway" :
+            shapeType = shape.getGatewayType();
+            shapeMessage = shape.getGatewayType();
+            itemType = type +shapeType;  
+        break;
+    };
+    return itemType;
+};
+
+AdamShape.prototype.countFlow = function (element, direction) {
+    var i,
+        eleMap = {
+            'sequenceFlow': 'regular',
+            'associationFlow': 'dotted'
+        },
+        port,
+        connection,
+        count = 0;
+
+    for (i = 0; i < this.getPorts().getSize(); i += 1) {
+        port = this.getPorts().get(i);
+        connection = port.getConnection();
+        switch(direction) {
+            case 'incoming':
+                if (eleMap[element] === connection.segmentStyle){
+                    if (port.getID() === connection.getDestPort().getID()){
+                        count += 1;
+                    }
+                }
+                break;
+            case 'outgoing':
+                if (eleMap[element] === connection.segmentStyle){
+                    if (port.getID() === connection.getSrcPort().getID()){
+                        count += 1;
+                    }
+                }break;
+            case 'none':
+                if (port.getID() === connection.getSrcPort().getID()){
+                    count += 1;
+                }
+                break;
+        }
+
+    }
+
+    return count;
+};
+
+AdamShape.prototype.addErrorLayer = function (cssMarker, position) {
+    var layer, cl, cs, zoom, options;
+    layer = this.layers.find('id', this.id + 'Layer-Errors');
+    if (typeof position === 'undefined' || position === null) {
+        cl = cssMarker;
+        cs = 'bpmn_zoom';
+    } else {
+        cl = 'div-empty';
+        cs = '';
+    }
+    if (typeof layer === 'undefined') {
+        options = {
+            layerName : "error-layer",
+            priority: 3,
+            visible: true,
+            style: {
+                cssClasses: []
+            }
+        };
+        // Creating a layer
+        layer = this.createLayer(options);
+
+    } else {
+        if (typeof position === 'undefined' || position === null) {
+            layer.setElementClass(cl);
+        }
+    }
+    if (typeof position !== 'undefined' && position !== null) {
+        this.addErrors(layer, position);
+    }
+};
+
+AdamShape.prototype.clearErrors = function () {
+    var i, lMarker, ifExist;
+    for (i = 0; i < this.markersArray.getSize(); i += 1){
+        lMarker = this.markersArray.get(i);
+        if (lMarker.position === 2) {
+            //ifExist = true;
+
+            lMarker.removeAllClasses();
+            break;
+        }
+    }
+};
+
+AdamShape.prototype.addErrors = function (newLayer, pos) {
+    var  nMarker, x, lMarker, ifExist = false,
+        errorArrayClass = [], cls, i;
+
+    for (i = 0; i < this.markersArray.getSize(); i += 1){
+        lMarker = this.markersArray.get(i);
+        if (lMarker.position === pos) {
+            ifExist = true;
+            break;
+        }
+    }
+    for (i = 0; i < newLayer.ZOOMSCALES; i += 1) {
+        cls = 'adam-status-' + ((i * 25) + 50) + '-warning adam-error-color icon-exclamation-sign';
+        errorArrayClass.push(cls);
+    }
+    if (!ifExist) {
+        nMarker = new AdamMarker({
+            parent : newLayer,
+            position : pos,
+            height : 17,
+            width : 17,
+            markerZoomClasses : errorArrayClass
+        });
+        this.markersArray.insert(nMarker);
+
+        nMarker.paint();
+        nMarker.setElementClass(errorArrayClass);
+    } else {
+        lMarker.setElementClass(errorArrayClass);
+    }
+};
 /*global jCore, $, AdamShape */
 /**
  * @class AdamFlow
@@ -2075,11 +2337,13 @@ CommandSingleProperty.prototype.initObject = function (options) {
 CommandSingleProperty.prototype.execute = function () {
     this.receiver[this.propertyName] = this.after;
     this.receiver.canvas.triggerCommandAdam(this.receiver, [this.propertyName], [this.before], [this.after]);
+    this.receiver.canvas.bpmnValidation();
 };
 
 CommandSingleProperty.prototype.undo = function () {
     this.receiver[this.propertyName] = this.before;
     this.receiver.canvas.triggerCommandAdam(this.receiver, [this.propertyName], [this.after], [this.before]);
+    this.receiver.canvas.bpmnValidation();
 };
 
 CommandSingleProperty.prototype.redo = function () {
@@ -2311,7 +2575,7 @@ AdamActivityResizeBehavior.prototype.updateResizeMinimums = function (shape) {
  * Create a new version of the class
  */
 var callbackCS;
-var AdamProject = function () {
+var AdamProject = function (settings) {
     /**
      * Unique Identifier for the project
      * @type {String}
@@ -2389,15 +2653,32 @@ var AdamProject = function () {
      * @type {Object} This object is a used from the jquery propi plugin
      */
     this.propertiesGrid = null;
+    /**
+     * Object that contains project's metadata.
+     * @type {Object}
+     */
+    this._metadata = {};
 
     this.process_definition = {};
+    AdamProject.prototype.preinit.call(this, settings);
 };
 /**
  * Object type
  * @type {String}
  */
 AdamProject.prototype.type = "AdamProject";
+/**
+ * Initializes the AdamProject.
+ */
+AdamProject.prototype.preinit = function (settings) {
+    var defaults = {
+        metadata: []
+    };
 
+    jQuery.extend(true, defaults, settings);
+
+    this.setMetadata(defaults.metadata);
+};
 /**
  * Returns the project uid
  * @return {String}
@@ -2501,11 +2782,19 @@ AdamProject.prototype.load = function (id, callback) {
 //            console.log(success);
             if (callback && callback.success) {
                 callback.success.call(this, data);
+            }    
+            if (canvas){
+                canvas.bpmnValidation();
+                //jQuery(".pane.ui-layout-center").append(countErrors);
             }
         },
         error: function (err) {
             //TODO Process HERE error at loading project
         }
+        /*if (canvas) {
+            
+            console.log(1);
+        }*/
     });
     return status;
 };
@@ -2548,7 +2837,6 @@ AdamProject.prototype.save = function () {
     };
         App.api.call('update', url, attributes, {
             success: function (data) {
-                console.log(data);
                 self.isWaitingResponse = false;
                 if (data.success) {
                     self.updateDirtyProject();
@@ -2576,7 +2864,6 @@ AdamProject.prototype.loadProject = function (response) {
     var diagram, i, result;
     if (response.project) {
         diagram = response.project.diagram[0];
-        console.log(diagram);
         this.setName(response.project.prj_name);
         this.setDescription(response.project.prj_description);
 
@@ -4017,6 +4304,61 @@ AdamProject.prototype.onSelectElementHandler = function (canvas) {
     };
 };
 
+AdamProject.prototype.addMetadata = function (metadataName, config, replaceIfExists) {
+    var meta, proxy;
+    config = config || {};
+    if (typeof config !== "object") {
+        throw new Error("addMetadata(): the second (which is optional) must be an object or null.");
+    }
+    if (!this._metadata[metadataName] || replaceIfExists) {
+        meta = this._metadata[metadataName] = {};
+        if (typeof config.dataURL === "string" && config.dataURL) {
+            meta.dataURL = config.dataURL;
+            meta.dataRoot = config.dataRoot;
+            proxy = new SugarProxy();
+            proxy.url = config.dataURL; 
+            proxy.getData(null, {
+                success: function (data) {
+                    meta.data = config.dataRoot ? data[config.dataRoot] : data;
+                    if (typeof config.success === "function") {
+                        config.success(meta.data);
+                    }
+                }
+            });
+            return;
+        } else if (config.data) {
+            meta.data = config.data
+        }    
+    }
+
+    if (typeof config.success === "function") {
+        config.success(this._metadata[metadataName].data);
+    }
+    
+    return this;
+};
+
+AdamProject.prototype.setMetadata = function (metadata) {
+    var i, metadataName;
+    if(!jQuery.isArray(metadata)) {
+        throw new Error("setMetadata(): The parameter must be an array.");
+    }
+    for (i = 0; i < metadata.length; i++) {
+        if (typeof metadata[i] !== 'object') {
+            throw new Error("setMetadata(): All the elements of the array parameter must be objects.");
+        }
+        if (metadataName = metadata[i].name) {
+            this.addMetadata(metadataName, metadata[i], true);
+        }
+    }
+
+    return this;
+};
+
+AdamProject.prototype.getMetadata = function (metadataName) {
+    return (this._metadata[metadataName] && this._metadata[metadataName].data) || null;
+};
+
 /*global jCore, $, HiddenField, TextareaField, TextField, ItemMatrixField,
  PROJECT_LOCKED_VARIABLES, SUGAR_URL, RestProxy, ComboboxField, adamUID,
  PROJECT_MODULE, project, MessagePanel, PROJECT_LOCKED_VARIABLES, Form, Window,
@@ -4050,7 +4392,283 @@ var AdamCanvas = function (options) {
     this.project = null;
 
     this.currentMenu = null;
+
     this.isClicked = false;
+
+    /**
+     * BPMN General Rules for validations,
+     * @type {object}
+     *
+     */
+    this.bpmnRules = {
+        AdamEvent : {
+            start :[
+                {
+                    id : '106107',
+                    type: 1,
+                    family: 6,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_START_EVENT_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ],
+            end: [
+                {
+                    id : '106108',
+                    type: 1,
+                    family: 6,
+                    familyType: 3,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_END_EVENT_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ],
+            intermediate: [
+                {
+                    id : '106109',
+                    type: 1,
+                    family: 6,
+                    familyType: 2,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_INTERMEDIATE_EVENT_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '106112',
+                    type: 1,
+                    family: 6,
+                    familyType: 2,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_INTERMEDIATE_EVENT_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '=',
+                            value: 1,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ],
+            boundary: [
+                {
+                    id : '106115',
+                    type: 1,
+                    family: 6,
+                    familyType: 4,
+                    familySubType: 1,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_BOUNDARY_EVENT_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '=',
+                            value: 1,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+
+                        }
+                    ]
+                }
+            ]
+        },
+        AdamActivity : {
+            task: [
+                {
+                    id : '105101',
+                    type: 1,
+                    family: 5,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ACTIVITY_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '105102',
+                    type: 1,
+                    family: 5,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ACTIVITY_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ]
+        },
+        AdamGateway: {
+            diverging : [
+                {
+                    id : '107101',
+                    type: 1,
+                    family: 7,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_DIVERGING_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>=',
+                            value: 1,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '107102',
+                    type: 1,
+                    family: 7,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_DIVERGING_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 1,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ],
+            converging : [
+                {
+                    id : '107201',
+                    type: 1,
+                    family: 7,
+                    familyType: 2,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_CONVERGING_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 1,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '107202',
+                    type: 1,
+                    family: 7,
+                    familyType: 2,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_CONVERGING_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '=',
+                            value: 1,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ],
+            mixed : [
+                {
+                    id : '107301',
+                    type: 1,
+                    family: 7,
+                    familyType: 3,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_MIXED_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 1,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '107302',
+                    type: 1,
+                    family: 7,
+                    familyType: 3,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_GATEWAY_MIXED_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 1,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                }
+            ]
+
+        },
+        AdamArtifact: {
+            textannotation : [
+                {
+                    id : '109101',
+                    type: 1,
+                    family: 9,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ANNOTATION'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'none',
+                            element: 'associationLine'
+                        }
+                    ]
+                }
+            ]
+        }
+    };
+
     AdamCanvas.prototype.initObject.call(this, options);
 };
 AdamCanvas.prototype = new jCore.Canvas();
@@ -4165,23 +4783,22 @@ AdamCanvas.prototype.getContextMenu = function () {
         proLockedFieldBKP,
         url;
 
-
     /** FORM MODULES **/
     hiddenNameModule = new HiddenField({name: 'pro_module'});
 
     processName = new TextField({
         name: 'prj_name',
-        label: 'Name',
+        label: translate('LBL_PMSE_LABEL_PROCESS_NAME'),
         required: true
     });
     processDescription = new TextareaField({
         name: 'prj_description',
-        label: 'Description'
+        label: translate('LBL_PMSE_LABEL_DESCRIPTION')
     });
 
     itemMatrix = new ItemMatrixField({
         jtype: 'itemmatrix',
-        label: 'Locked Fields',
+        label: translate('LBL_PMSE_LABEL_LOCKED_FIELDS'),
         name: 'pro_locked_variables',
         submit: true,
         fieldWidth: 350,
@@ -4191,33 +4808,17 @@ AdamCanvas.prototype.getContextMenu = function () {
     });
     criteriaField = new CriteriaField({
         name: 'pro_terminate_variables',
-        label: translate('LBL_PMSE_LABEL_TERMINATE_CASES'),
+        label: translate('LBL_PMSE_LABEL_TERMINATE_PROCESS'),
         required: false,
         fieldWidth: 250,
         fieldHeight: 80,
-        panels: {
-            businessRulesEvaluation: {
-                enabled: false
-            },
-            formResponseEvaluation: {
-                enabled: false
-            },
-            math: {
-                enabled: false
-            },
-            fixedDateEvaluation: {
-                enabled: false
-            },
-            sugarDateEvaluation: {
-                enabled: false
-            },
-            unitTimeEvaluation: {
-                enabled: false
-            },
-            userEvaluation: {
-                enabled: false
-            }
+        decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+        operators: {
+            logic: true,
+            group: true
         },
+        constant: false,
         decimalSeparator: PMSE_DECIMAL_SEPARATOR
     });
 
@@ -4248,7 +4849,7 @@ AdamCanvas.prototype.getContextMenu = function () {
 
     comboModules = new ComboboxField({
         jtype: 'combobox',
-        label: translate('LBL_PMSE_LABEL_MODULE'),
+        label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
         name: 'comboModules',
         submit: false,
         change: function () {
@@ -4273,42 +4874,40 @@ AdamCanvas.prototype.getContextMenu = function () {
         'loaded' : function (data) {
             App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
             //w.style.display = 'none';
-//            $('.adam-window').hide();
+            //$('.adam-window').hide();
             var arrOperator = [
                 {'value': 'equal', 'text': '='}
             ],
                 modules;
 
             var options = [];
-            criteriaField.setBaseModule(PROJECT_MODULE);
+            criteriaField.setModuleEvaluation({
+                dataURL: "pmse_Project/CrmData/related/" + PROJECT_MODULE,
+                dataRoot: "result",
+                fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                fieldDataRoot: "result"
+            });
             processName.setValue(project.name);
 
-
-
-//            modulesList = App.metadata.getModules();
-//
-//            for( var property in modulesList ){
-//                //console.log( property );
-//                //console.log( modulesList[property] );
-//                if (modulesList[property].favoritesEnabled) {
-//                    options.push({'value': property, 'text': property});
-//                }
-//            }
-//            options.sort(function(a, b){
-//                var nameA=a.text.toLowerCase(), nameB=b.text.toLowerCase();
-//                if (nameA < nameB) //sort string ascending
-//                    return -1
-//                if (nameA > nameB)
-//                    return 1
-//                return 0 //default return value (no sorting)
-//            });
-//
-//            comboModules.setOptions(options);
-//            console.log(PROJECT_MODULE);
-//            comboModules.setValue(PROJECT_MODULE || options[0].value);
-
-
-
+            //modulesList = App.metadata.getModules();
+            //for( var property in modulesList ){
+            //    //console.log( property );
+            //    //console.log( modulesList[property] );
+            //    if (modulesList[property].favoritesEnabled) {
+            //        options.push({'value': property, 'text': property});
+            //    }
+            //}
+            //options.sort(function(a, b){
+            //    var nameA=a.text.toLowerCase(), nameB=b.text.toLowerCase();
+            //    if (nameA < nameB) //sort string ascending
+            //        return -1
+            //    if (nameA > nameB)
+            //        return 1
+            //    return 0 //default return value (no sorting)
+            //});
+            //comboModules.setOptions(options);
+            //console.log(PROJECT_MODULE);
+            //comboModules.setValue(PROJECT_MODULE || options[0].value);
 
             comboModules.proxy.getData(null, {
                 success: function (modules) {
@@ -4327,9 +4926,6 @@ AdamCanvas.prototype.getContextMenu = function () {
 
         },
         'submit' : function (data) {
-            console.log ('submit');
-            console.log(project.restClient);
-            console.log(processName.value + '!==' + project.name);
 
             if (processName.value !== project.name) {
                 url = App.api.buildURL('pmse_Project', null, null, {
@@ -4337,66 +4933,65 @@ AdamCanvas.prototype.getContextMenu = function () {
                 });
                 App.api.call("read", url, null, {
                     success:function (a) {
-                        console.log (a);
                       if (a.records.length === 0) {
                             checkModuleAndSaveData(data);
                         } else {
                             var mp = new MessagePanel({
                                 title: 'Error',
                                 wtype: 'Error',
-                                message: translate('LBL_PMSE_MESSAGE_THEPROCESSNAMEALREADYEXISTS', processName.value)//response.message
+                                message: translate('LBL_PMSE_MESSAGE_THEPROCESSNAMEALREADYEXISTS', 'pmse_Project', processName.value)//response.message
                             });
                             mp.show();
                         }
                     }
                 });
-//                project.restClient.getCall({
-//                    url: 'pmse_Project/CrmData/validateProjectName',
-//                    id: processName.value,
-//                    data: {},
-//                    success: function (xhr, response) {
-//                        if (response.result) {
-//                            /*data = {
-//                                prj_name: processName.value,
-//                                prj_description: processDescription.value,
-//                                pro_locked_variables: comboModules.value,
-//                                pro_module: comboModules.value
-//                            };
-//                            project.setDescription(PROJECT_DESCRIPTION = processDescription.value);
-//                            project.setName(PROJECT_NAME = processName.value);
-//                            proxyModule.sendData(data);
-//                            //NAME MODULE
-//                            PROJECT_MODULE = comboModules.value;
-//                            //LOCKED VARIABLES
-//                            PROJECT_LOCKED_VARIABLES = itemMatrix.getLockedField();*/
-//                            checkModuleAndSaveData(data);
-//                            /*if (comboModules.value !== oldModule) {
-//                                wAlert.show();
-//                            } else {
-//                                data = {
-//                                    prj_description: processDescription.value,
-//                                    pro_locked_variables: comboModules.value,
-//                                };
-//                                project.setDescription(PROJECT_DESCRIPTION = processDescription.value);
-//                                proxyModule.sendData(data);
-//                                //LOCKED VARIABLES
-//                                PROJECT_LOCKED_VARIABLES = itemMatrix.getLockedField();
-//                                w.close();
-//                            }*/
-//                        } else {
-//                            var mp = new MessagePanel({
-//                                title: 'Error',
-//                                wtype: 'Error',
-//                                message: response.message
-//                            });
-//                            mp.show();
-//                        }
-//                    },
-//                    failure: function (xhr, response) {
-//                        //console.log(response);
-//                        //TODO Process HERE error at loading project
-//                    }
-//                });
+                //project.restClient.getCall({
+                //    url: 'pmse_Project/CrmData/validateProjectName',
+                //    id: processName.value,
+                //    data: {},
+                //    success: function (xhr, response) {
+                //        if (response.result) {
+                //            /*data = {
+                //                prj_name: processName.value,
+                //                prj_description: processDescription.value,
+                //                pro_locked_variables: comboModules.value,
+                //                pro_module: comboModules.value
+                //            };
+                //            project.setDescription(PROJECT_DESCRIPTION = processDescription.value);
+                //            project.setName(PROJECT_NAME = processName.value);
+                //            proxyModule.sendData(data);
+                //            //NAME MODULE
+                //            PROJECT_MODULE = comboModules.value;
+                //            //LOCKED VARIABLES
+                //            PROJECT_LOCKED_VARIABLES = itemMatrix.getLockedField();*/
+                //            checkModuleAndSaveData(data);
+                //            /*if (comboModules.value !== oldModule) {
+                //                wAlert.show();
+                //            } else {
+                //                data = {
+                //                    prj_description: processDescription.value,
+                //                    pro_locked_variables: comboModules.value,
+                //                };
+                //                project.setDescription(PROJECT_DESCRIPTION = processDescription.value);
+                //                proxyModule.sendData(data);
+                //                //LOCKED VARIABLES
+                //                PROJECT_LOCKED_VARIABLES = itemMatrix.getLockedField();
+                //                w.close();
+                //            }*/
+                //        } else {
+                //            var mp = new MessagePanel({
+                //                title: 'Error',
+                //                wtype: 'Error',
+                //                message: response.message
+                //            });
+                //            mp.show();
+                //        }
+                //    },
+                //    failure: function (xhr, response) {
+                //        //console.log(response);
+                //        //TODO Process HERE error at loading project
+                //    }
+                //});
             } else {
                 /*data = {
                     prj_description: processDescription.value,
@@ -4462,15 +5057,14 @@ AdamCanvas.prototype.getContextMenu = function () {
 
     proxyConfirm = new SugarProxy({
         url: 'pmse_Project/CrmData/putData/' + adamUID,
-//        restClient: this.canvas.project.restClient,
+        //restClient: this.canvas.project.restClient,
         uid: adamUID,
         callback: null
     });
-//
-//    proxyConfirm.restClient.setRestfulBehavior(SUGAR_REST);
-//    if (!SUGAR_REST) {
-//        proxyConfirm.restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
-//    }
+    //proxyConfirm.restClient.setRestfulBehavior(SUGAR_REST);
+    //if (!SUGAR_REST) {
+    //    proxyConfirm.restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
+    //}
 
     proModuleField = new HiddenField({
         name: 'pro_new_module'
@@ -4490,7 +5084,7 @@ AdamCanvas.prototype.getContextMenu = function () {
     mp2 = new MessagePanel({
         title: "Module change warning",
         wtype: 'Confirm',
-        message: translate('LBL_PMSE_MESSAGE_REMOVEALLSTARTCRITERIA'),
+        message: translate('LBL_PMSE_MESSAGE_REMOVE_ALL_START_CRITERIA'),
         buttons: [
             {
                 jtype: 'normal',
@@ -4519,7 +5113,6 @@ AdamCanvas.prototype.getContextMenu = function () {
                         //success: function (xhr, response) {
                         success: function (response) {
                             //TODO SUCCESS ALERT
-                            console.log(response);
                             if (!response.success) {
                                 errorModule = new MessagePanel({
                                     title: "Error",
@@ -4577,7 +5170,7 @@ AdamCanvas.prototype.getContextMenu = function () {
             itemMatrix,
             hiddenNameModule
         ],
-//        closeContainerOnSubmit: true,
+        //closeContainerOnSubmit: true,
         buttons: [
            // { jtype: 'submit', caption: 'Save' },
 
@@ -4591,7 +5184,7 @@ AdamCanvas.prototype.getContextMenu = function () {
                     cancelInformation =  new MessagePanel({
                         title: "Confirm",
                         wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM'),
+                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
                         buttons: [
                             {
                                 jtype: 'normal',
@@ -4782,6 +5375,7 @@ AdamCanvas.prototype.onCreateElementHandler = function (element) {
         var items2 = this.getDiagramTree();
         Tree.treeReload('tree', items2);
     }
+    this.bpmnValidation();
 };
 /**
  *  Define the action when the element is updated into the canvas
@@ -4806,12 +5400,36 @@ AdamCanvas.prototype.onChangeElementHandler = function (element) {
  * @param element
  */
 AdamCanvas.prototype.onRemoveElementHandler = function (element) {
+    var i, items, sizeItems, item;
     if (this.project instanceof AdamProject) {
         this.project.removeElement(element);
 
         var items2 = this.getDiagramTree();
         Tree.treeReload('tree', items2);
         this.project.updatePropertiesGrid();
+    }
+    //console.log('Remove Element');
+    if (listPanelError){
+        if (listPanelError.items.length){
+            for ( i = 0 ; i < element.length ; i+=1 ) {
+                if (!(element[i].type === "Connection")){
+                    item = listPanelError.getItemById(element[i].getID()); 
+                    if (item){
+                        listPanelError.removeItemById(element[i].getID());
+                    }
+                }
+            }   
+        }
+    }
+    this.bpmnValidation();
+    if (countErrors){
+        if (listPanelError.getItems().length){
+                countErrors.style.display = "block";
+                sizeItems = listPanelError.getAllErros();
+                countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
+        } else {
+            countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
+        }
     }
 };
 /**
@@ -5304,7 +5922,72 @@ AdamCanvas.prototype.cleanAllFlowConditions = function () {
         }
     }
     return cleaned;
-}
+};
+
+/**
+ * Validate diagram respect BPMN 2.0 rules
+ * @returns {BPMNCanvas}
+ */
+AdamCanvas.prototype.bpmnValidation = function () {
+    var i, j,
+        shape,
+        rulesObject = this.bpmnRules,
+        family,
+        rules,
+        message,
+        testCount,
+        objArray,
+        sw;
+    for (i = 0; i < this.getCustomShapes().getSize(); i += 1) {
+        objArray = [];
+        shape = this.getCustomShapes().get(i);
+        family = shape.getFamilyNumber(shape);
+        switch (family) {
+            case 5:
+                if (shape.getActivityType() === 'TASK'
+                    || shape.getActivityType() === 'SUBPROCESS') {
+                    objArray = rulesObject[shape.getType()]
+                        ['task'];
+                }
+                break;
+            case 6:
+                if (rulesObject[shape.getType()] &&
+                    rulesObject[shape.getType()]
+                        [shape.getEventType().toLowerCase()]){
+                    objArray = rulesObject[shape.getType()]
+                        [shape.getEventType().toLowerCase()];
+                }
+                break;
+            case 7:
+                switch (shape.getDirection()) {
+                    case 'CONVERGING':
+                        objArray = rulesObject[shape.getType()]
+                            ['converging'];
+                        break;
+                    case 'DIVERGING':
+                        objArray = rulesObject[shape.getType()]
+                            ['diverging'];
+                        break;
+                    case 'MIXED':
+                        objArray = rulesObject[shape.getType()]
+                            ['mixed'];
+                        break;
+                }
+
+                break;
+            case 9:
+                if (rulesObject[shape.getType()] &&
+                    rulesObject[shape.getType()]
+                        [shape.getArtifactType().toLowerCase()]){
+                    objArray = rulesObject[shape.getType()]
+                        [shape.getArtifactType().toLowerCase()];
+                }
+                break;
+        }
+        shape.attachErrorToShape(objArray);
+    }
+    return this;
+};
 
 /*global jCore, $ */
 /**
@@ -5329,7 +6012,7 @@ var AdamMarker = function (options) {
      * @type {Array}
      * @private
      */
-    this.offset =  ['5 5', '0 5', '0 5', '5 -1', '0 -1', '-5 -1'];
+    this.offset =  ['5 5', '0 5', '0 0', '5 -1', '0 -1', '-5 -1'];
     /**
      * Define the marker type property
      * @type {null}
@@ -5486,6 +6169,13 @@ AdamMarker.prototype.removeAllClasses = function () {
     return this;
 };
 
+AdamMarker.prototype.setElementClass = function (newClassArray) {
+    var newSprite;
+    this.setEClass(newClassArray);
+    this.removeAllClasses();
+    this.applyZoom();
+    return this;
+};
 /*global AdamShape, $, Action, translate, AdamShapeLayerCommand, RestProxy,
  SUGAR_URL, CriteriaField, PMSE_DECIMAL_SEPARATOR, ComboboxField, HiddenField,
  TextField, PROJECT_MODULE, CheckboxField, DateField, RadiobuttonField, Form,
@@ -5608,6 +6298,12 @@ var AdamEvent = function (options) {
      * @type {Number}
      */
     this.numberRelativeToActivity = 0;
+
+    /**
+     * Array of markers added to this activity
+     * @type {Array}
+     */
+    this.markersArray = new jCore.ArrayList();
 
     AdamEvent.prototype.initObject.call(this, options);
 };
@@ -6314,53 +7010,7 @@ AdamEvent.prototype.createConfigureAction = function () {
         startCriteria = null, oldModule, newModule, mp, cancelInformation, actiontimerType, durationRadio, i,
         repeatEveryCombo, everyOptions, repeatEveryNumberCombo, cyclicDate, fixedRadio, cyclicRadio, incrementWasClicked = false,
         durationTextField, unitComboBox, fixedDate, incrementCkeck, durationTextField2, unitComboBox2, operationCombo, criteria,
-        root = this, hiddenParams, hiddenFn, callback = {}, ddlModules, ddlEmailTemplate, aTemplate, criteriaField, emailTemplates, datecriteria,
-        emailsProxy = new SugarProxy({
-            url: 'pmse_Project/CrmData/emails/' + this.id,
-            uid: this.id,
-            callback: null
-        }),
-        groups = [
-            {
-                name: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'),
-                value: "Current User"
-            },
-            {
-                name: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'),
-                value: "Record Owner"
-            },
-            {
-                name: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'),
-                value: "Supervisor"
-            },
-            // {
-            //     name: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'),
-            //     value: 'Record Owner'
-            // },
-            {
-                name: translate('LBL_PMSE_LABEL_TEAM'),
-                proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/teams/public',
-                    uid: '',
-                    callback: null
-                }),
-                nameField: "text",
-                valueField: "value",
-                showValue: false
-            }
-          // ,
-          // {
-          //     name: "Module",
-          //     proxy: new RestProxy({
-          //         url: SUGAR_URL + '/rest/v10/CrmData/modules/',
-          //         uid: '',
-          //         restClient: this.canvas.project.restClient,
-          //         callback: null
-          //     }),
-          //     nameField: "moduleName",
-          //     valueField: "emailAddress"
-          // }
-        ];
+        root = this, hiddenParams, hiddenFn, callback = {}, ddlModules, ddlEmailTemplate, aTemplate, criteriaField, emailTemplates, datecriteria;
 
     //Event Form Proxy
     proxy = new SugarProxy({
@@ -6390,52 +7040,45 @@ AdamEvent.prototype.createConfigureAction = function () {
     case 'START':
         criteriaField = new CriteriaField({
             name: 'evn_criteria',
-            label: translate('LBL_PMSE_LABEL_CRITERIA'),
+            label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
             required: false,
             fieldWidth: 250,
             fieldHeight: 80,
-            //restClient: this.parent.project.restClient,
-            panels: {
-                businessRulesEvaluation: {
-                    enabled: false
-                },
-                formResponseEvaluation: {
-                    enabled: false
-                },
-                math: {
-                    enabled: false
-                },
-                fixedDateEvaluation: {
-                    enabled: false
-                },
-                sugarDateEvaluation: {
-                    enabled: false
-                },
-                unitTimeEvaluation: {
-                    enabled: false
-                },
-                userEvaluation: {
-                    enabled: true
-                }
+            decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+            numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+            operators: {
+                logic: true,
+                group: true
             },
-            decimalSeparator: PMSE_DECIMAL_SEPARATOR
+            constant: false
         });
 
         ddlModules = new ComboboxField({
             jtype: 'combobox',
             name: 'evn_module',
-            label: translate('LBL_PMSE_LABEL_MODULE'),
+            label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
             required: true,
             readOnly: !changeModule,
             initialValue: initialValue,
             helpTooltip: {
-                message: translate('LBL_PMSE_TOOLTIP_EVENT_MODULE')
+                message: translate('LBL_PMSE_FORM_TOOLTIP_EVENT_MODULE')
             },
-            change: function () {
-                if (criteriaField.items.length > 0) {
-                    mp.show();
+            change: function (combo, newValue, oldValue) {
+                if (criteriaField.getItems().length > 0) {
+                    mp.show(newValue, oldValue);
                 } else {
-                    criteriaField.setBaseModule(this.value);
+                    //criteriaField.setRelatedModulesDataURL('pmse_Project/CrmData/related/' + this.value);//criteriaField.setBaseModule(this.value);
+                    criteriaField.setModuleEvaluation({
+                        dataURL: "pmse_Project/CrmData/related/" + this.value,
+                        dataRoot: 'result',
+                        textField: "text",
+                        valueField: "value",
+                        fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                        fieldDataRoot: 'result',
+                        fieldTextField: "text",
+                        fieldValueField: "value",
+                        fieldTypeField: "type"
+                    })
                 }
             },
             related: 'modules',
@@ -6455,7 +7098,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 label: translate('LBL_PMSE_FORM_LABEL_APPLIES_TO'),
                 options: [
                     {
-                        text: translate('LBL_PMSE_OPTION_SELECT'),
+                        text: translate('LBL_PMSE_FORM_OPTION_SELECT'),
                         value: ''
                     },
                     {
@@ -6469,7 +7112,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 ],
                 required: true,
                 helpTooltip: {
-                    message: translate('LBL_PMSE_TOOLTIP_WHEN_START_EVENT')
+                    message: translate('LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT')
                 }
             },
             criteriaField
@@ -6478,25 +7121,90 @@ AdamEvent.prototype.createConfigureAction = function () {
         wWidth = 500;
         callback = {
             loaded: function (data) {
-//                console.log('Event "loaded" for ' + this.id + " triggered", data);
+                //console.log('Event "loaded" for ' + this.id + " triggered", data);
                 root.canvas.emptyCurrentSelection();
                 ddlModules.proxy.getData(null,{
                     success: function(modules) {
-//                        console.log(modules.result);
-//                        console.log(data);
-//                        ddlModules.setOptions(modules.result);
+                        //console.log(modules.result);
+                        //console.log(data);
+                        //ddlModules.setOptions(modules.result);
                         //ddlModules.setValue(data.evn_module || (modules.result[0].value || null));
                         ddlModules.setValue(root.evn_message || (modules.result[0].value || null));
                         oldModule = data.evn_module;
-//                        console.log(oldModule, ddlModules.value);
-                        criteriaField.setBaseModule(ddlModules.value);
+                        //console.log(oldModule, ddlModules.value);
+                        //criteriaField.setRelatedModulesDataURL("pmse_Project/CrmData/related/" + ddlModules.value); //criteriaField.setBaseModule(ddlModules.value);
+                        criteriaField.setModuleEvaluation({
+                            dataURL: "pmse_Project/CrmData/related/" + ddlModules.value,
+                            dataRoot: 'result',
+                            textField: "text",
+                            valueField: "value",
+                            fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                            fieldDataRoot: 'result',
+                            fieldTextField: "text",
+                            fieldValueField: "value",
+                            fieldTypeField: "type"
+                        }).setUserEvaluation({
+                            defaultUsersDataURL: 'pmse_Project/CrmData/defaultUsersList',
+                            defaultUsersDataRoot: 'result',
+                            defaultUsersValueField: "value",
+                            userRolesDataURL: 'pmse_Project/CrmData/rolesList',
+                            userRolesDataRoot: 'result',
+                            usersDataURL: 'pmse_Project/CrmData/users',
+                            usersDataRoot: 'result',
+                            usersValueField: "value"
+                        });
                         App.alert.dismiss('upload');
                         w.html.style.display = 'inline';
                     }
                 });
             }
         };
-        mp = new MessagePanel({
+        mp = {
+            _messagePanel: null,
+            show: function(comboNewValue, comboOldValue) {
+                this._messagePanel = new MessagePanel({
+                    title: "Module change warning",
+                    wtype: 'Confirm',
+                    message: translate('LBL_PMSE_MESSAGE_REMOVE_ALL_START_CRITERIA'),
+                    buttons: [
+                        {
+                            jtype: 'normal',
+                            caption: translate('LBL_PMSE_BUTTON_OK'),
+                            handler: function () {
+                                //criteriaField.clear().setRelatedModulesDataURL("pmse_Project/CrmData/related/" + comboNewValue); //criteriaField.clear().setBaseModule(ddlModules.value);
+                                criteriaField.clear().setModuleEvaluation({
+                                    dataURL: "pmse_Project/CrmData/related/" + comboNewValue,
+                                    dataRoot: 'result',
+                                    textField: "text",
+                                    valueField: "value",
+                                    fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                                    fieldDataRoot: 'result',
+                                    fieldTextField: "text",
+                                    fieldValueField: "value",
+                                    fieldTypeField: "type"
+                                });
+                                mp.hide();
+                            }
+                        },
+                        {
+                            jtype: 'normal',
+                            caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                            handler: function () {
+                                ddlModules.setValue(comboOldValue);
+                                mp.hide();
+                            }
+                        }
+                    ]
+                });
+                this._messagePanel.show();
+            },
+            hide: function() {
+                if (this._messagePanel) {
+                    this._messagePanel.hide();
+                }
+            }
+        };
+        /*mp = new MessagePanel({
             title: "Module change warning",
             wtype: 'Confirm',
             message: translate('LBL_PMSE_MESSAGE_REMOVEALLSTARTCRITERIA'),
@@ -6505,7 +7213,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     jtype: 'normal',
                     caption: translate('LBL_PMSE_BUTTON_OK'),
                     handler: function () {
-                        criteriaField.clear().setBaseModule(ddlModules.value);
+                        criteriaField.clear().setRelatedModulesDataURL("pmse_Project/CrmData/related/" + ddlModules.value); //criteriaField.clear().setBaseModule(ddlModules.value);
                         mp.hide();
                     }
                 },
@@ -6518,7 +7226,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     }
                 }
             ]
-        });
+        });*/
         break;
     case 'INTERMEDIATE':
         if (this.evn_marker === 'MESSAGE') {
@@ -6528,7 +7236,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     required: true,
                     //related: 'templates',
                     name: 'evn_criteria',
-                    label: translate('LBL_PMSE_LABEL_EMAIL_TEMPLATE'),
+                    label: translate('LBL_PMSE_FORM_LABEL_EMAIL_TEMPLATE'),
                     proxy: new SugarProxy({
                         url: 'pmse_Project/CrmData/emailtemplates',
                         uid: "",
@@ -6540,7 +7248,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     required: true,
                     //related: 'beans',
                     name: 'evn_module',
-                    label: translate('LBL_PMSE_LABEL_MODULE'),
+                    label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                     proxy: new SugarProxy({
                         url: 'pmse_Project/CrmData/modules',
                         uid: "",
@@ -6550,7 +7258,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         ddlEmailTemplate.proxy.uid = this.value;
                         ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + this.value;
                         ddlEmailTemplate.removeOptions();
-                        aTemplate = [{'text': translate('LBL_PMSE_OPTION_SELECT'), 'value': ''}];
+                        aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
                         ddlEmailTemplate.proxy.getData(null,{
                             success: function(emailTemplates){
                                 aTemplate = aTemplate.concat(emailTemplates.result);
@@ -6567,9 +7275,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                 hiddenFn = function () {
                     var parentForm = this.parent, address = {};
 
-//                    address['to'] = parentForm.items[2].getObject();
-//                    address['cc'] = parentForm.items[3].getObject();
-//                    address['bcc'] = parentForm.items[4].getObject();
+                    //address['to'] = parentForm.items[2].getObject();
+                    //address['cc'] = parentForm.items[3].getObject();
+                    //address['bcc'] = parentForm.items[4].getObject();
                     address.to = parentForm.items[2].getObject();
                     address.cc = parentForm.items[3].getObject();
                     address.bcc = parentForm.items[4].getObject();
@@ -6587,12 +7295,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                         fieldWidth: 250,
                         fieldHeight: 50,
                         change: hiddenFn,
-                        groups: groups,
-                        inputPattern: "email",
-                        nameField: 'fullName',
-                        valueField: 'emailAddress',
-                        proxy: emailsProxy,
-                        varPanel: true
+                        suggestionItemName: 'fullName',
+                        suggestionItemAddress: 'emailAddress',
+                        suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                        suggestionDataRoot: "result",
+                        teams: project.getMetadata('teams') || []
                     },
                     {
                         jtype: 'emailpicker',
@@ -6603,12 +7310,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                         fieldWidth: 250,
                         fieldHeight: 50,
                         change: hiddenFn,
-                        groups: groups,
-                        inputPattern: "email",
-                        nameField: 'fullName',
-                        valueField: 'emailAddress',
-                        proxy: emailsProxy,
-                        varPanel: true
+                        suggestionItemName: 'fullName',
+                        suggestionItemAddress: 'emailAddress',
+                        suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                        suggestionDataRoot: "result",
+                        teams: project.getMetadata('teams') || []
                     },
                     {
                         jtype: 'emailpicker',
@@ -6619,12 +7325,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                         fieldWidth: 250,
                         fieldHeight: 50,
                         change: hiddenFn,
-                        groups: groups,
-                        inputPattern: "email",
-                        nameField: 'fullName',
-                        valueField: 'emailAddress',
-                        proxy: emailsProxy,
-                        varPanel: true
+                        suggestionItemName: 'fullName',
+                        suggestionItemAddress: 'emailAddress',
+                        suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                        suggestionDataRoot: "result",
+                        teams: project.getMetadata('teams') || []
                     },
                     hiddenParams
                 ];
@@ -6632,7 +7337,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 wWidth = 500;
                 callback = {
                     loaded: function (data) {
-                        var params = null, i;
+                        var params = null, i, emailPickerFields = [], dataSource;
                         root.canvas.emptyCurrentSelection();
                         if (data && data.evn_params) {
                             try {
@@ -6643,30 +7348,51 @@ AdamEvent.prototype.createConfigureAction = function () {
                                 for (i = 0; i < f.items.length; i += 1) {
                                     switch (f.items[i].name) {
                                     case 'address_to':
-                                        f.items[i].setItems(params.to);
+                                        f.items[i].setValue(params.to);
+                                        emailPickerFields.push(i);
                                         break;
                                     case 'address_cc':
-                                        f.items[i].setItems(params.cc);
+                                        f.items[i].setValue(params.cc);
+                                        emailPickerFields.push(i);
                                         break;
                                     case 'address_bcc':
-                                        f.items[i].setItems(params.bcc);
+                                        f.items[i].setValue(params.bcc);
+                                        emailPickerFields.push(i);
                                         break;
                                     }
                                 }
                             }
                         }
 
+                        /*dataSource = project.getMetadata('targetModuleFieldsDataSource');
+                        dataSource.url = dataSource.url.replace("{MODULE}", PROJECT_MODULE);
+                        dataSource = project.addMetadata("targetModuleFields", {
+                          dataURL: dataSource.url,
+                          dataRoot: dataSource.root,
+                          success: function (data) {
+                            f.items[2].setVariables({
+                              data: data
+                            });
+                            f.items[3].setVariables({
+                              data: data
+                            });
+                            f.items[4].setVariables({
+                              data: data
+                            });
+                          }
+                        });*/
+
                         ddlModules.proxy.getData(null, {
                             success: function(params) {
                                 if (params && params.result) {
-//                            console.log(params.result);
+                                    //console.log(params.result);
                                     ddlModules.setOptions(params.result);
                                     ddlModules.setValue(data.evn_module || ((params.result[0] && params.result[0].value) || null));
                                 }
 
                                 ddlEmailTemplate.proxy.uid = ddlModules.value;
                                 ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + ddlModules.value;
-                                aTemplate = [{'text': translate('LBL_PMSE_OPTION_SELECT'), 'value': ''}];
+                                aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
                                 ddlEmailTemplate.proxy.getData(null, {
                                     success: function(params2) {
                                         aTemplate = aTemplate.concat(params2.result);
@@ -6681,7 +7407,32 @@ AdamEvent.prototype.createConfigureAction = function () {
                             }
                         });
 
-
+                        //We load the teams
+                        project.addMetadata("teams", {
+                            dataURL: project.getMetadata("teamsDataSource").url, 
+                            dataRoot: project.getMetadata("teamsDataSource").root,  
+                            success: function(data) { 
+                                var i;
+                                if(emailPickerFields.length) {
+                                    for (i = 0; i < emailPickerFields.length; i += 1) {
+                                        f.items[emailPickerFields[i]].setTeamNameField("text");
+                                        f.items[emailPickerFields[i]].setTeams(data);
+                                    }    
+                                } else {
+                                    for (i = 0; i < f.items.length; i += 1) {
+                                        switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setTeamNameField("text");
+                                            f.items[i].setTeams(data);
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        });
                     },
                     submit: function (data) {
                         //console.log(data);
@@ -6692,34 +7443,31 @@ AdamEvent.prototype.createConfigureAction = function () {
                     {
                         jtype: 'criteria',
                         name: 'evn_criteria',
-                        label: translate('LBL_PMSE_LABEL_CRITERIA'),
+                        label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
                         required: false,
-                        fieldWidth: 250,
-                        fieldHeight: 80,
-                        restClient: this.parent.project.restClient,
-                        panels: {
-                            businessRulesEvaluation: {
-                                enabled: false
-                            },
-                            formResponseEvaluation: {
-                                enabled: false
-                            },
-                            math: {
-                                enabled: false
-                            },
-                            fixedDateEvaluation: {
-                                enabled: false
-                            },
-                            sugarDateEvaluation: {
-                                enabled: false
-                            },
-                            unitTimeEvaluation: {
-                                enabled: false
-                            }
+                        operators: {
+                          logic: true,
+                          group: true
                         },
-                        decimalSeparator: PMSE_DECIMAL_SEPARATOR,
-                        base_module: PROJECT_MODULE,
-                        base_module_label: translate('LBL_PMSE_ADAM_UI_LBL_TARGET_MODULE')
+                        constant: false,
+                        evaluation: {
+                          module: {
+                            dataURL: "pmse_Project/CrmData/related/" + PROJECT_MODULE,
+                            dataRoot: 'result',
+                            fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                            fieldDataRoot: 'result'
+                          },
+                          user: {
+                              defaultUsersDataURL: "pmse_Project/CrmData/defaultUsersList",
+                              defaultUsersDataRoot: "result",
+                              userRolesDataURL: "pmse_Project/CrmData/rolesList",
+                              userRolesDataRoot: "result",
+                              usersDataURL: "pmse_Project/CrmData/users",
+                              usersDataRoot: "result"
+                          }
+                        },
+                        decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator
                     }
                 ];
                 wHeight = 185;
@@ -6739,17 +7487,17 @@ AdamEvent.prototype.createConfigureAction = function () {
             durationTextField  = new TextField(
                 {
                     jtype: 'text',
-//                    validators: [
-//                        {
-//                            jtype: 'integer',
-//                            errorMessage: translate('LBL_PMSE_ADAM_UI_ERROR_INVALID_INTEGER')
-//                        }
-//                    ],
+                    //validators: [
+                    //    {
+                    //        jtype: 'integer',
+                    //        errorMessage: translate('LBL_PMSE_ADAM_UI_ERROR_INVALID_INTEGER')
+                    //    }
+                    //],
                     name: 'evn_duration_criteria',
-                    label: translate('LBL_PMSE_LABEL_DURATION'),
+                    label: translate('LBL_PMSE_FORM_LABEL_DURATION'),
                     required: true,
                     helpTooltip: {
-                        message: translate('LBL_PMSE_TOOLTIP_DURATION')
+                        message: translate('LBL_PMSE_FORM_TOOLTIP_DURATION')
                     },
                     fieldWidth: '50px'
                     //readOnly: true
@@ -6760,7 +7508,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 {
                     //jtype: 'combobox',
                     name: 'evn_duration_params',
-                    label: translate('LBL_PMSE_LABEL_UNIT'),
+                    label: translate('LBL_PMSE_FORM_LABEL_UNIT'),
                     options: [
                         { text: translate('LBL_PMSE_FORM_OPTION_DAYS'), value: 'day'},
                         { text: translate('LBL_PMSE_FORM_OPTION_HOURS'), value: 'hour'},
@@ -6774,25 +7522,25 @@ AdamEvent.prototype.createConfigureAction = function () {
 
 
 
-//            repeatEveryCombo = new ComboboxField(
-//                {
-//                    //jtype: 'combobox',
-//                    name: 'evn_cyclic_repeat',
-//                    label: translate('LBL_PMSE_LABEL_REPEATS'),
-//                    options: [
-//                        { text: translate('Every Day'), value: 'Every Day'},
-//                        { text: translate('Every working days (Monday to Friday)'), value: 'Every working days (Monday to Friday)'},
-//                        { text: translate('Every Monday, Wednesday and Friday'), value: 'Every Monday, Wednesday and Friday'},
-//                        { text: translate('Every Tuesday and Thursday'), value: 'Every Tuesday and Thursday'},
-//                        { text: translate('Every week'), value: 'Every week'},
-//                        { text: translate('Every month'), value: 'Every month'},
-//                        { text: translate('Every year'), value: 'Every year'}
-//                    ],
-//                    initialValue: 'Every Day',
-//                    required: true
-//                    //readOnly: true
-//                }
-//            );
+            //repeatEveryCombo = new ComboboxField(
+            //    {
+            //        //jtype: 'combobox',
+            //        name: 'evn_cyclic_repeat',
+            //        label: translate('LBL_PMSE_LABEL_REPEATS'),
+            //        options: [
+            //            { text: translate('Every Day'), value: 'Every Day'},
+            //            { text: translate('Every working days (Monday to Friday)'), value: 'Every working days (Monday to Friday)'},
+            //            { text: translate('Every Monday, Wednesday and Friday'), value: 'Every Monday, Wednesday and Friday'},
+            //            { text: translate('Every Tuesday and Thursday'), value: 'Every Tuesday and Thursday'},
+            //            { text: translate('Every week'), value: 'Every week'},
+            //            { text: translate('Every month'), value: 'Every month'},
+            //            { text: translate('Every year'), value: 'Every year'}
+            //        ],
+            //        initialValue: 'Every Day',
+            //        required: true
+            //        //readOnly: true
+            //    }
+            //);
             everyOptions = [];
             for (i = 1; i <= 30; i += 1) {
                 everyOptions.push({text: translate(i), value: i});
@@ -6823,7 +7571,7 @@ AdamEvent.prototype.createConfigureAction = function () {
             durationRadio = new RadiobuttonField({
                 jtype: 'radio',
                 name: 'evn_timer_type',
-                label: translate('LBL_PMSE_LABEL_DURATION'),
+                label: translate('LBL_PMSE_FORM_LABEL_DURATION'),
                 value : true,
                 labelAlign: 'right',
                 onClick: function (e, ui) {
@@ -6834,23 +7582,21 @@ AdamEvent.prototype.createConfigureAction = function () {
                     datecriteria.disable();
                     datecriteria.clear();
                     datecriteria.isValid();
-//
-//                    fixedDate.disable();
-//                    incrementCkeck.disable();
-//                    durationTextField2.disable();
-//                    unitComboBox2.disable();
-//                    operationCombo.disable();
-//
-//                    repeatEveryCombo.disable();
-//                    repeatEveryNumberCombo.disable();
-//                    cyclicDate.disable();
+                    //fixedDate.disable();
+                    //incrementCkeck.disable();
+                    //durationTextField2.disable();
+                    //unitComboBox2.disable();
+                    //operationCombo.disable();
+                    //repeatEveryCombo.disable();
+                    //repeatEveryNumberCombo.disable();
+                    //cyclicDate.disable();
 
                 }
             });
             fixedRadio = new RadiobuttonField({
                 jtype: 'radio',
                 name: 'evn_timer_type',
-                label: translate('LBL_PMSE_LABEL_FIXEDDATE'),
+                label: translate('LBL_PMSE_FORM_LABEL_FIXED_DATE'),
                 reverse : true,
                 labelAlign: 'right',
                 onClick: function (e, ui) {
@@ -6860,28 +7606,28 @@ AdamEvent.prototype.createConfigureAction = function () {
                     unitComboBox.disable();
 
                     datecriteria.enable();
-//                    fixedDate.enable();
-//                    incrementCkeck.enable();
-//                    if (!incrementWasClicked) {
-//                        durationTextField2.disable();
-//                        unitComboBox2.disable();
-//                        operationCombo.disable();
-//                    } else {
-//                        durationTextField2.enable();
-//                        unitComboBox2.enable();
-//                        operationCombo.enable();
-//                    }
+                    //fixedDate.enable();
+                    //incrementCkeck.enable();
+                    //if (!incrementWasClicked) {
+                    //    durationTextField2.disable();
+                    //    unitComboBox2.disable();
+                    //    operationCombo.disable();
+                    //} else {
+                    //    durationTextField2.enable();
+                    //    unitComboBox2.enable();
+                    //    operationCombo.enable();
+                    //}
 
 
-//                    repeatEveryCombo.disable();
-//                    repeatEveryNumberCombo.disable();
-//                    cyclicDate.disable();
+                    //repeatEveryCombo.disable();
+                    //repeatEveryNumberCombo.disable();
+                    //cyclicDate.disable();
 
                 }
             });
-            datecriteria = new CriteriaField({
+            /*datecriteria = new CriteriaField({
                 name: 'evn_criteria',
-                label: translate('LBL_PMSE_LABEL_CRITERIA'),
+                label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
                 required: false,
                 fieldWidth: 300,
                 fieldHeight: 80,
@@ -6909,6 +7655,52 @@ AdamEvent.prototype.createConfigureAction = function () {
 
                 },
                 decimalSeparator: PMSE_DECIMAL_SEPARATOR
+            });*/
+            /*datecriteria = new ExpressionField({
+                name: 'evn_criteria',
+                label: translate('LBL_PMSE_LABEL_CRITERIA'),
+                required: false,
+                fieldWidth: 300,
+                fieldHeight: 80,
+                dateFormat: project.getMetadata("datePickerFormat"),
+                variablesDataFormat: 'hierarchical',
+                variablesChildRoot: 'fields',
+                variablesGroupNameField: 'text',
+                variablesGroupValueField: 'value',
+                variableNameField: 'text',
+                variableValueField: 'value',
+                variableTypeField: "type",
+                variableTypeFilter: ["Date", "Datetime"]
+            });*/
+
+            datecriteria = new CriteriaField({
+                name: 'evn_criteria',
+                label: translate('LBL_PMSE_LABEL_CRITERIA'),
+                required: false,
+                fieldWidth: 300,
+                fieldHeight: 80,
+                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                operators: {
+                    arithmetic: ['+', '-']
+                },
+                constant: {
+                    date: true,
+                    timespan: true
+                },
+                variable: {
+                    dataURL: project.getMetadata("fieldsDataSource").url.replace("{MODULE}", project.process_definition.pro_module),
+                    dataRoot: project.getMetadata("fieldsDataSource").root,
+                    dataFormat: "hierarchical",
+                    dataChildRoot: "fields",
+                    textField: "text",
+                    valueField: "value",
+                    typeField: "type",
+                    typeFilter: ['Date', 'Datetime'],
+                    moduleTextField: "text",
+                    moduleValueField: "value"
+                },
+                dateFormat: project.getMetadata("datePickerFormat")
             });
 
             cyclicRadio = new RadiobuttonField({
@@ -6922,16 +7714,16 @@ AdamEvent.prototype.createConfigureAction = function () {
                     durationTextField.disable();
                     unitComboBox.disable();
 
-//                    fixedDate.disable();
-//                    incrementCkeck.disable();
-//
-//                    durationTextField2.disable();
-//                    unitComboBox2.disable();
-//                    operationCombo.disable();
+                    //                    fixedDate.disable();
+                    //                    incrementCkeck.disable();
+                    //
+                    //                    durationTextField2.disable();
+                    //                    unitComboBox2.disable();
+                    //                    operationCombo.disable();
 
-//                    repeatEveryCombo.enable();
-//                    repeatEveryNumberCombo.enable();
-//                    cyclicDate.enable();
+                    //                    repeatEveryCombo.enable();
+                    //                    repeatEveryNumberCombo.enable();
+                    //                    cyclicDate.enable();
 
                 }
 
@@ -6945,23 +7737,31 @@ AdamEvent.prototype.createConfigureAction = function () {
 
                 fixedRadio,
                 datecriteria
-//                fixedDate,
-//                incrementCkeck,
-//                operationCombo,
-//                durationTextField2,
-//                unitComboBox2
+                //                fixedDate,
+                //                incrementCkeck,
+                //                operationCombo,
+                //                durationTextField2,
+                //                unitComboBox2
 
-//                cyclicRadio,
-//                repeatEveryCombo,
-//                repeatEveryNumberCombo,
-//                cyclicDate
+                //                cyclicRadio,
+                //                repeatEveryCombo,
+                //                repeatEveryNumberCombo,
+                //                cyclicDate
             ];
             wHeight = 420;
             wWidth = 500;
             callback = {
                 loaded: function (data) {
 
-                    datecriteria.setBaseModule(PROJECT_MODULE);
+                    /*project.addMetadata("fields", {
+                        dataURL: project.getMetadata("fieldsDataSource").url.replace("{MODULE}", project.process_definition.pro_module),
+                        dataRoot: project.getMetadata("fieldsDataSource").root,
+                        success: function (data) {
+                            //datecriteria.setVariablesData(data);
+                        }
+                    });*/
+
+                    //datecriteria.setBaseModule(PROJECT_MODULE);
                     root.canvas.emptyCurrentSelection();
                     switch (data.evn_params) {
                     case 'fixed date':
@@ -6972,6 +7772,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         durationTextField.disable();
                         unitComboBox.disable();
                         //  datecriteria.setBaseModule(PROJECT_MODULE);
+                        datecriteria.enable();
 
                         break;
                     case 'cyclic':
@@ -6999,7 +7800,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     w.html.style.display = 'inline';
                 },
                 submit: function (data) {
-                    console.log(data);
+
                 }
             };
         }
@@ -7011,7 +7812,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 //required: true,
                 //related: 'templates',
                 name: 'evn_criteria',
-                label: translate('LBL_PMSE_LABEL_EMAIL_TEMPLATE'),
+                label: translate('LBL_PMSE_FORM_LABEL_EMAIL_TEMPLATE'),
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/emailtemplates/',
                     //restClient: this.canvas.project.restClient,
@@ -7024,7 +7825,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 required: true,
                 //related: 'beans',
                 name: 'evn_module',
-                label: translate('LBL_PMSE_LABEL_MODULE'),
+                label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/modules/',
                     //restClient: this.canvas.project.restClient,
@@ -7035,7 +7836,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     ddlEmailTemplate.proxy.uid = this.value;
                     ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + this.value;
                     ddlEmailTemplate.removeOptions();
-                    aTemplate = [{'text': translate('LBL_PMSE_OPTION_SELECT'), 'value': ''}];
+                    aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
                     emailTemplates = ddlEmailTemplate.proxy.getData(null,{
                         success: function(emailTemplates) {
                             aTemplate = aTemplate.concat(emailTemplates.result);
@@ -7051,9 +7852,9 @@ AdamEvent.prototype.createConfigureAction = function () {
             hiddenFn = function () {
                 var parentForm = this.parent, address = {};
 
-//                address['to'] = parentForm.items[2].getObject();
-//                address['cc'] = parentForm.items[3].getObject();
-//                address['bcc'] = parentForm.items[4].getObject();
+                //address['to'] = parentForm.items[2].getObject();
+                //address['cc'] = parentForm.items[3].getObject();
+                //address['bcc'] = parentForm.items[4].getObject();
                 address.to = parentForm.items[2].getObject();
                 address.cc = parentForm.items[3].getObject();
                 address.bcc = parentForm.items[4].getObject();
@@ -7072,12 +7873,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                     fieldWidth: 250,
                     fieldHeight: 50,
                     change: hiddenFn,
-                    groups: groups,
-                    inputPattern: "email",
-                    nameField: 'fullName',
-                    valueField: 'emailAddress',
-                    proxy: emailsProxy,
-                    varPanel: true
+                    suggestionItemName: 'fullName',
+                    suggestionItemAddress: 'emailAddress',
+                    suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                    suggestionDataRoot: "result",
+                    teams: project.getMetadata('teams') || []
                 },
 
                 {
@@ -7089,12 +7889,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                     fieldWidth: 250,
                     fieldHeight: 50,
                     change: hiddenFn,
-                    groups: groups,
-                    inputPattern: "email",
-                    nameField: 'fullName',
-                    valueField: 'emailAddress',
-                    proxy: emailsProxy,
-                    varPanel: true
+                    suggestionItemName: 'fullName',
+                    suggestionItemAddress: 'emailAddress',
+                    suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                    suggestionDataRoot: "result",
+                    teams: project.getMetadata('teams') || []
                 },
                 {
                     jtype: 'emailpicker',
@@ -7105,12 +7904,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                     fieldWidth: 250,
                     fieldHeight: 50,
                     change: hiddenFn,
-                    groups: groups,
-                    inputPattern: "email",
-                    nameField: 'fullName',
-                    valueField: 'emailAddress',
-                    proxy: emailsProxy,
-                    varPanel: true
+                    suggestionItemName: 'fullName',
+                    suggestionItemAddress: 'emailAddress',
+                    suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                    suggestionDataRoot: "result",
+                    teams: project.getMetadata('teams') || []
                 },
                 hiddenParams
             ];
@@ -7130,15 +7928,15 @@ AdamEvent.prototype.createConfigureAction = function () {
                                 switch (f.items[i].name) {
                                 case 'address_to':
                                     //f.items[i].setValue(params.to.join(', '));
-                                    f.items[i].setItems(params.to);
+                                    f.items[i].setValue(params.to);
                                     break;
                                 case 'address_cc':
                                     //f.items[i].setValue(params.cc.join(', '));
-                                    f.items[i].setItems(params.cc);
+                                    f.items[i].setValue(params.cc);
                                     break;
                                 case 'address_bcc':
                                     //f.items[i].setValue(params.bcc.join(', '));
-                                    f.items[i].setItems(params.bcc);
+                                    f.items[i].setValue(params.bcc);
                                     break;
                                 }
                             }
@@ -7155,14 +7953,14 @@ AdamEvent.prototype.createConfigureAction = function () {
 
                             ddlEmailTemplate.proxy.uid = ddlModules.value;
                             ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + ddlModules.value;
-                            aTemplate = [{'text': translate('LBL_PMSE_OPTION_SELECT'), 'value': ''}];
+                            aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
                             ddlEmailTemplate.proxy.getData( null, {
                                 success: function(params) {
                                     aTemplate = aTemplate.concat(params.result);
                                     ddlEmailTemplate.setOptions(aTemplate);
-//                    if (params && params.result) {
-//                        ddlEmailTemplate.setValue(data.evn_criteria || ((params.result[0] && params.result[0].value) || null));
-//                    }
+            //if (params && params.result) {
+            //    ddlEmailTemplate.setValue(data.evn_criteria || ((params.result[0] && params.result[0].value) || null));
+            //}
                                     App.alert.dismiss('upload');
                                     w.html.style.display = 'inline';
                                 }
@@ -7190,7 +7988,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     cancelInformation =  new MessagePanel({
                         title: "Confirm",
                         wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM'),
+                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
                         buttons: [
                             {
                                 jtype: 'normal',
@@ -7225,7 +8023,7 @@ AdamEvent.prototype.createConfigureAction = function () {
         width: wWidth,
         height: wHeight,
         modal: true,
-        title: translate('LBL_PMSE_LABEL_EVENT') + ': ' + this.getName()
+        title: translate('LBL_PMSE_FORM_TITLE_LABEL_EVENT') + ': ' + this.getName()
     });
     w.addPanel(f);
 
@@ -7327,6 +8125,13 @@ AdamGateway = function (options) {
      * @type {null}
      */
     this.gat_default_flow = null;
+
+    /**
+     * Array of markers added to this activity
+     * @type {Array}
+     */
+    this.markersArray = new jCore.ArrayList();
+
     AdamGateway.prototype.initObject.call(this, options);
 };
 
@@ -7487,6 +8292,9 @@ AdamGateway.prototype.getDBObject = function () {
     };
 };
 
+AdamGateway.prototype.getDirection = function () {
+    return this.gat_direction;
+};
 
 AdamGateway.prototype.getGatewayType = function () {
     return this.gat_type;
@@ -7791,7 +8599,7 @@ AdamGateway.prototype.createConfigureAction = function () {
         width: wWidth,
         height: wHeight,
         modal: true,
-        title: translate('LBL_PMSE_LABEL_GATEWAY') + ': ' + this.getName()
+        title: translate('LBL_PMSE_FORM_TITLE_GATEWAY') + ': ' + this.getName()
     });
     for (i = 0; i < this.getPorts().getSize(); i += 1) {
         connection = this.getPorts().get(i).connection;
@@ -7813,7 +8621,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                     cancelInformation =  new MessagePanel({
                         title: "Confirm",
                         wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM'),
+                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
                         buttons: [
                             {
                                 jtype: 'normal',
@@ -7872,7 +8680,12 @@ AdamGateway.prototype.createConfigureAction = function () {
                         root.reorderItem(f, ui.item.attr('id'));
                     },
                     start: function (event, ui) {
+                        var fields, i;
                         //console.log('was changed');
+                        fields = f.items;
+                        for (i = 0; i < fields.length; i += 1) {
+                            fields[i].closePanel();
+                        }
                         $('.multiple-item-panel').hide();
                         $(f.body).css('cursor', 'move');
                     }
@@ -7896,7 +8709,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                     criteriaName = (connection.getName()
                         && connection.getName() !== '')
                         ? connection.getName() : connection.getDestPort().parent.getName();
-                    criteriaLabel = translate('LBL_PMSE_LABEL_CRITERIA') + ' (' + criteriaName + ')';
+                    criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
 //                    console.log(connection.getFlowCondition());
                     criteriaItems.push(
                         {
@@ -7904,25 +8717,43 @@ AdamGateway.prototype.createConfigureAction = function () {
                             name: 'condition-' + connection.getID(),
                             label: criteriaLabel,
                             required: false,
-                            restClient: root.parent.project.restClient,
                             value: connection.getFlowCondition(),
-                            decimalSeparator: PMSE_DECIMAL_SEPARATOR,
-                            base_module: PROJECT_MODULE,
-                            base_module_label: translate('LBL_PMSE_ADAM_UI_LBL_TARGET_MODULE'),
-                            panels: {
-                                math: {
-                                    enabled: false
+                            fieldWidth: 288,
+                            fieldHeight: 128,
+                            decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                            numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                            operators: {
+                                logic: true, 
+                                group: true,
+                                aritmetic: false,
+                                comparison: false   
+                            },
+                            evaluation: {
+                                module: {
+                                    dataURL: 'pmse_Project/CrmData/related/' + project.process_definition.pro_module,
+                                    dataRoot: 'result',
+                                    fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                                    fieldDataRoot: "result",
+                                    fieldTypeField: "type"
                                 },
-                                fixedDateEvaluation: {
-                                    enabled: false
+                                form: {
+                                    dataURL: "pmse_Project/CrmData/activities/" + project.uid,
+                                    dataRoot: 'result'
                                 },
-                                sugarDateEvaluation: {
-                                    enabled: false
+                                business_rule: {
+                                    dataURL: 'pmse_Project/CrmData/businessrules/' + project.uid,
+                                    dataRoot: 'result'
                                 },
-                                unitTimeEvaluation: {
-                                    enabled: false
+                                user: {
+                                    defaultUsersDataURL: "pmse_Project/CrmData/defaultUsersList",
+                                    defaultUsersDataRoot: "result",
+                                    userRolesDataURL: "pmse_Project/CrmData/rolesList",
+                                    userRolesDataRoot: "result",
+                                    usersDataURL: "pmse_Project/CrmData/users",
+                                    usersDataRoot: "result"
                                 }
-                            }
+                            },
+                            constant: false
                         }
                     );
                 }
@@ -9251,13 +10082,13 @@ AdamActivity.prototype.createConfigurateAction = function () {
     cancelInformation =  new MessagePanel({
         title: "Confirm",
         wtype: 'Confirm',
-        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM')
+        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM')
     });
     w = new Window({
         width: wWidth,
         height: this.act_task_type === 'USERTASK' ? 340 : wHeight,
         modal: true,
-        title: translate('LBL_PMSE_FORM_TITLE_ACTIVIY') + ': ' + this.getName()
+        title: translate('LBL_PMSE_FORM_TITLE_ACTIVITY') + ': ' + this.getName()
     });
 
     if (this.act_task_type === 'USERTASK') {
@@ -9271,7 +10102,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
 
         itemMatrix = new ItemMatrixField({
             jtype: 'itemmatrix',
-            label: translate('LBL_PMSE_ADAM_DESIGNER_READONLY_FIELDS'),
+            label: translate('LBL_PMSE_FORM_LABEL_READ_ONLY_FIELDS'),
             name: 'act_readonly_fields',
             submit: true,
             fieldWidth: 350,
@@ -9316,7 +10147,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
 
         requiredFields = new ItemMatrixField({
             jtype: 'itemmatrix',
-            label: translate('LBL_PMSE_ADAM_DESIGNER_REQUIRED_FIELDS'),
+            label: translate('LBL_PMSE_FORM_LABEL_REQUIRED_FIELDS'),
             name: 'act_required_fields',
             submit: true,
             fieldWidth: 350,
@@ -9406,9 +10237,9 @@ AdamActivity.prototype.createConfigurateAction = function () {
         expTimeDuration = new NumberField(
             {
                 name: 'evn_criteria',
-                label: translate('LBL_PMSE_LABEL_DURATION'),
+                label: translate('LBL_PMSE_FORM_LABEL_DURATION'),
                 helpTooltip: {
-                    message: translate('LBL_PMSE_TOOLTIP_DURATION')
+                    message: translate('LBL_PMSE_FORM_TOOLTIP_DURATION')
                 },
                 fieldWidth: '50px',
                 submit: false,
@@ -9418,7 +10249,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
 
         expTimeCombo = new ComboboxField({
             name: 'evn_params',
-            label: translate('LBL_PMSE_LABEL_UNIT'),
+            label: translate('LBL_PMSE_FORM_LABEL_UNIT'),
             options: [
                 { text: translate('LBL_PMSE_FORM_OPTION_DAYS'), value: 'day'},
                 { text: translate('LBL_PMSE_FORM_OPTION_HOURS'), value: 'hour'},
@@ -9481,8 +10312,8 @@ AdamActivity.prototype.createConfigurateAction = function () {
 
         formsField = new ComboboxField({
             name: 'act_type',
-            label: translate('LBL_PMSE_FORM_FORM_TYPE'),
-            required: true,
+            label: translate('LBL_PMSE_FORM_LABEL_FORM_TYPE'),
+            required: false,
             proxy: new SugarProxy({
                 url: 'pmse_Project/CrmData/dynaforms/' + adamUID,
                 uid: adamUID,
@@ -9576,10 +10407,15 @@ AdamActivity.prototype.createConfigurateAction = function () {
             name: 'act_reassignment_type'
         });
 
-        items = [formsField, responseButtons,
+        actTypeField = new HiddenField({
+            name: 'act_type'
+        });
+
+        items = [/*formsField,*/ responseButtons,
             labelAssigment,
             reassignCheck, combo_teams,
-            adhocCheck, combo_teams_1
+            adhocCheck, combo_teams_1,
+            actTypeField
         ];
 
         callback = {
@@ -9669,6 +10505,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
 
                             if (data.act_type) {
                                 formsField.setValue(data.act_type);
+                                actTypeField.setValue(data.act_type);
                             }
                             if (data.act_response_buttons) {
                                 responseButtons.setValue(data.act_response_buttons);
@@ -9710,6 +10547,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
         relatedForm.setCallback({submit: callback.submit});
 
     } else {
+        //TODO REVIEW THIS ELSE
         actionCSS = 'adam-menu-icon-configure';
         proxy = null;
         actionName = 'Configuration...';
@@ -9780,26 +10618,26 @@ AdamActivity.prototype.createConfigurateAction = function () {
     });
 
     w.addPanel({
-        title: translate('LBL_PMSE_ADAM_DESIGNER_GENERAL_SETTINGS'),
+        title: translate('LBL_PMSE_FORM_LABEL_GENERAL_SETTINGS'),
         panel: f
     });
 
     if (f2) {
         w.addPanel({
-            title: translate('LBL_PMSE_ADAM_DESIGNER_READONLY_FIELDS'),
+            title: translate('LBL_PMSE_FORM_LABEL_READ_ONLY_FIELDS'),
             panel: f2
         });
     }
     if (requiredForm) {
         w.addPanel({
-            title: translate('LBL_PMSE_ADAM_DESIGNER_REQUIRED_FIELDS'),
+            title: translate('LBL_PMSE_FORM_LABEL_REQUIRED_FIELDS'),
             panel: requiredForm
         });
     }
 
     if (f3) {
         w.addPanel({
-            title: translate('LBL_PMSE_ADAM_DESIGNER_EXPECTED_TIME'),
+            title: translate('LBL_PMSE_FORM_LABEL_EXPECTED_TIME'),
             panel: f3
         });
     }
@@ -9850,7 +10688,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
     cancelInformation =  new MessagePanel({
         title: "Confirm",
         wtype: 'Confirm',
-        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM')
+        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM')
     });
     proxy = new SugarProxy({
         url: 'pmse_Project/ActivityDefinition/' + this.id,
@@ -10021,7 +10859,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
     w = new Window({
         width: 500,
         height: 350,
-        title: translate('LBL_PMSE_FORM_USER_DEFINITION') + ': ' + this.getName(),
+        title: translate('LBL_PMSE_FORM_TITLE_USER_DEFINITION') + ': ' + this.getName(),
         modal: true
     });
     w.addPanel(f);
@@ -10064,7 +10902,7 @@ AdamActivity.prototype.actionFactory = function (type) {
     cancelInformation =  new MessagePanel({
         title: "Confirm",
         wtype: 'Confirm',
-        message: translate('LBL_PMSE_MESSAGE_CANCELCONFIRM')
+        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM')
     });
     switch (type) {
         case 'NONE':
@@ -10132,7 +10970,7 @@ AdamActivity.prototype.actionFactory = function (type) {
 
                 }
             };
-            windowTitle = translate('LBL_PMSE_FORM_LABEL_ASSIGN_USER') + ': ' + this.getName();
+            windowTitle = translate('LBL_PMSE_FORM_TITLE_ASSIGN_USER') + ': ' + this.getName();
             break;
         case 'ASSIGN_TEAM':
             combo_teams = new ComboboxField({
@@ -10191,7 +11029,6 @@ AdamActivity.prototype.actionFactory = function (type) {
                     root.canvas.emptyCurrentSelection();
                     teams = combo_teams.proxy.getData(null,{
                         success: function(teams) {
-                            console.log(teams);
                             combo_teams.setOptions(teams.result);
                             if (data) {
                                 combo_teams.setValue(data.act_assign_team || teams.result[0].value);
@@ -10206,7 +11043,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                     });
                 }
             };
-            windowTitle = translate('LBL_PMSE_FORM_LABEL_ASSIGN_TEAM') + ': ' + this.getName();
+            windowTitle = translate('LBL_PMSE_FORM_TITLE_ASSIGN_TEAM') + ': ' + this.getName();
             break;
         case 'CHANGE_FIELD':
             labelWidth = '20%';
@@ -10228,7 +11065,7 @@ AdamActivity.prototype.actionFactory = function (type) {
 
             };
             combo_modules = new ComboboxField({
-                label: translate('LBL_PMSE_LABEL_MODULE'),
+                label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 name: 'act_field_module',
                 submit: true,
                 change: changeFieldsFn,
@@ -10239,9 +11076,11 @@ AdamActivity.prototype.actionFactory = function (type) {
                 })
             });
             updater_field = new UpdaterField({
-                label: translate('LBL_PMSE_LABEL_FIELDS'),
+                label: translate('LBL_PMSE_FORM_LABEL_FIELDS'),
                 name: 'act_fields',
                 submit: true,
+                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE,
                     uid: null,
@@ -10263,26 +11102,24 @@ AdamActivity.prototype.actionFactory = function (type) {
                 uid: this.id,
                 callback: null
             });
-            windowTitle = translate('LBL_PMSE_LABEL_CHANGE_FIELDS') + ': ' + this.getName();
+            windowTitle = translate('LBL_PMSE_FORM_TITLE_CHANGE_FIELDS') + ': ' + this.getName();
             callback = {
                 'loaded' : function (data) {
-                    var modules, opt = [], listProxy,
-                        aModules = [{'text': '<<' + translate('LBL_PMSE_ADAM_UI_LBL_TARGET_MODULE') + '>>', 'value': PROJECT_MODULE}];
+                    var modules, opt = [], listProxy;
                     root.canvas.emptyCurrentSelection();
 
                     combo_modules.proxy.getData(null, {
                         success: function(modules) {
                             if (modules && modules.success) {
-                                aModules = aModules.concat(modules.result);
-                                combo_modules.setOptions(aModules);
+                                combo_modules.setOptions(modules.result);
                                 updater_field.proxy.uid = PROJECT_MODULE;
-                                initialModule = data.act_field_module || PROJECT_MODULE;
+                                initialModule = PROJECT_MODULE;
                                 updater_field.proxy.url = 'pmse_Project/CrmData/fields/' + initialModule
                                 updater_field.proxy.getData(null, {
                                     success: function(fields) {
                                         if (fields) {
 
-                                            updater_field.setPanelList(fields.result);
+                                            updater_field.setVariables(fields.result);
                                             updater_field.setOptions(fields.result, true);
                                             updater_field.setValue(data.act_fields || null);
                                             App.alert.dismiss('upload');
@@ -10327,9 +11164,11 @@ AdamActivity.prototype.actionFactory = function (type) {
                 })
             });
             updater_field = new UpdaterField({
-                label: translate('LBL_PMSE_LABEL_FIELDS'),
+                label: translate('LBL_PMSE_FORM_LABEL_FIELDS'),
                 name: 'act_fields',
                 submit: true,
+                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/addRelatedRecord/'+ PROJECT_MODULE,
                     uid: null,
@@ -10363,7 +11202,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                                updater_field.proxy.getData(null,{
                                    success: function(fields) {
                                        updater_field.setOptions(fields.result);
-                                       updater_field.setPanelList(fields.result);
+                                       updater_field.setVariables(fields.result);
                                        updater_field.setValue(data.act_fields || null);
                                        App.alert.dismiss('upload');
                                        w.html.style.display = 'inline';
@@ -10401,10 +11240,10 @@ AdamActivity.prototype.actionFactory = function (type) {
                 uid: this.id,
                 callback: null
             });
-            windowTitle = translate('LBL_PMSE_CONTEXT_MENU_BUSINESS_RULE') + ': ' + this.getName();
+            windowTitle = translate('LBL_PMSE_FORM_TITLE_BUSINESS_RULE') + ': ' + this.getName();
             callback = {
                 'loaded': function (data) {
-                    var rules, aRules = [{'text': translate('LBL_PMSE_OPTION_SELECT'), 'value': '', 'selected': true}];
+                    var rules, aRules = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': '', 'selected': true}];
                     root.canvas.emptyCurrentSelection();
                     //rules = combo_business.proxy.getData();
                     combo_business.proxy.getData(null,{
@@ -11843,3 +12682,714 @@ var AdamCommandReconnect = function (rec, opt) {
 
 
 })( jQuery );
+var ErrorMessageItem = function (options) {
+	Element.call(this, jQuery.extend(true, options , {
+		/*width : 200,
+		height : 20,*/
+		position : "relative"
+	}));
+	this.message = null;
+	this.messageId = null;
+	this.messageContainer = null;
+	this.parent = null;
+	ErrorMessageItem.prototype.initObject.call(this, options);
+};
+
+ErrorMessageItem.prototype = new Element();
+
+ErrorMessageItem.prototype.type = "ErrorMessageItem";
+
+ErrorMessageItem.prototype.family = "Element";
+
+ErrorMessageItem.prototype.initObject = function (options) {
+	var defaults = {
+		message : "[no message]",
+		messageId : "",
+		parent : null
+	}
+	jQuery.extend(true, defaults, options);
+	this.setMessage(defaults.message);
+	this.setMessageId(defaults.messageId);
+	this.setParent(defaults.parent);
+};
+
+ErrorMessageItem.prototype.setParent = function (parent){
+	this.parent = parent;
+	return this;
+};
+
+ErrorMessageItem.prototype.getParent = function (parent){
+	return this.parent;
+};
+
+ErrorMessageItem.prototype.setMessageId = function (messageId) {
+	if ( !(typeof messageId === "string") ) {
+		throw new Error("ErrorMessageItem.setMessageId(): not valid, should be a string value");
+	}
+	this.messageId  = messageId;
+	return this;
+};
+
+ErrorMessageItem.prototype.getMessageId = function () {
+	return this.messageId;
+};
+
+ErrorMessageItem.prototype.setMessage = function (message) {
+	if ( !(typeof message === "string") ) {
+		throw new Error("ErrorMessageItem.setMessage(): not valid, should be a string value");
+	}
+	this.message  = message;
+	if (this.html){
+		this.messageContainer.textContent = this.message; 
+	}
+	return this;
+};
+
+ErrorMessageItem.prototype.getMessage = function (){
+	return this.message;
+};
+
+ErrorMessageItem.prototype.createHTML = function () {
+	var messageContainer;
+    if (!this.html) {
+        this.html = this.createHTMLElement('li');
+        this.html.id = this.id;
+        this.style.applyStyle();
+        this.style.addProperties({
+            position: "relative",
+            left: this.x,
+            top: this.y,
+            width: this.width,
+            height: this.height,
+            zIndex: this.zOrder
+        });
+        messageContainer = this.createHTMLElement('span');
+		messageContainer.className = "messageContainer";
+		this.html.appendChild(messageContainer);
+		this.messageContainer = messageContainer;
+		this.setMessage(this.message);
+		this.html.style.height = "auto";
+		this.html.style.width = "auto";
+		this.html.className = "comment";
+		this.html.style.padding = "3px 3px 3px 0px";
+
+    }
+    return this.html;
+};
+var ListContainer = function (options) {
+	Container.call(this, options);
+	ListContainer.prototype.initObject.call(this, options);
+};
+
+ListContainer.prototype = new Container();
+
+ListContainer.prototype.type = 'ListContainer';
+
+ListContainer.prototype.family = 'ListContainer';
+
+ListContainer.prototype.initObject = function (options) {
+};
+
+ListContainer.prototype.setItems = function (items) {
+	var i;
+	this.clearItems();
+	if (!(jQuery.isArray(items))) {
+		throw new Error("ListContainer.setItems(): the value is invalid, should be a type array");
+	}
+	for ( i = 0 ; i < items.length ; i+=1 ) {
+		this.addItem(items[i]);
+	}
+    return this;
+};
+
+ListContainer.prototype.addItem = function (item) {
+	var newItem;
+	if ( item instanceof ErrorMessageItem ) {
+		newItem = item;
+	} else if ( typeof  item === "object" ) {
+		newItem = new ErrorMessageItem(item);
+	} else {
+		throw new Error ("ListContainer.addItem(): the value is invalid");
+	}
+	this.items.push(newItem);
+	if ( this.html ) {
+		this.messagecontainer.appendChild(newItem.getHTML());
+	}
+	return this;
+};
+
+ListContainer.prototype.clearItems = function () {
+	var i, length = this.items.length;
+	for ( i = 0 ; i < length ; i+=1 ) {
+		this.removeItem(0)
+	}	
+	return this;
+};
+
+ListContainer.prototype.removeItem = function (index) {
+	var item = this.items.splice(index,1)[0];  
+	if ( item.html ) {
+		jQuery(item.getHTML()).remove();
+	}
+	return this;
+};
+
+
+ListContainer.prototype.paintItems = function () {
+	var i; 
+	if ( this.messagecontainer ) {
+		for ( i = 0 ; i < this.items.length ; i+=1 ) {
+			this.body.appendChild(this.items[i].getHTML());
+		}
+	}
+	return this;
+};
+
+ListContainer.prototype.createHTML = function () {
+	if(!this.html){
+		Container.prototype.createHTML.call(this);
+		this.html.style.position = "relative"
+	}
+	return this.html;
+};
+
+ListContainer.prototype.getItems = function () {
+	return this.items;
+};
+
+ListContainer.prototype.getItem = function (index) {
+	if (index >= 0 && index < this.items.length ) {
+		return this.items[index];
+	} else {
+		throw new Error("ListContainer.getItem():the index does not exist");
+	}
+};
+var ErrorListItem = function (options) {
+    ListContainer.call(this, options);
+    this.messagecontainer = null ;
+    this.iconContainer = null;
+    this.titleContainer = null;
+    this.errorType = null;
+    this.errorId = null;
+    this.title = null;
+    this.onClick = null;
+    this.parent = null;
+
+	this.listOfTypes =  
+		{	
+			AdamGatewayEVENTBASED : "adam-tree-icon-gateway-exclusive",  
+			AdamGatewayINCLUSIVE : "adam-tree-icon-gateway-exclusive", 
+			AdamEventSTARTLeads : "adam-tree-icon-start-leads",
+			AdamActivityUSERTASK : "adam-tree-icon-user-task",
+			AdamEventSTARTOpportunities : "adam-tree-icon-start-opportunities",
+			AdamEventSTARTDocuments : "adam-tree-icon-start-documents",
+			AdamEventSTART : "adam-tree-icon-start",
+			AdamGatewayEXCLUSIVE : "adam-tree-icon-gateway-exclusive",
+			AdamGatewayPARALLEL : "adam-tree-icon-gateway-parallel",
+			AdamEventINTERMEDIATETIMER  : "adam-tree-icon-intermediate-timer",
+			AdamEventENDEMPTY  :"adam-tree-icon-end",
+			AdamEventINTERMEDIATEMESSAGE  : "adam-tree-icon-intermediate-message",
+			textannotation : "adam-tree-icon-textannotation ",
+			AdamEventSTARTMESSAGE : "adam-tree-icon-start",
+			AdamActivitySCRIPTTASK : "adam-tree-icon-user-task"
+		};
+    ErrorListItem.prototype.initObject.call(this, options);
+};
+
+ErrorListItem.prototype = new ListContainer();
+ErrorListItem.prototype.type = 'ErrorListItem';
+
+ErrorListItem.prototype.family = 'ErrorListItem';
+
+ErrorListItem.prototype.initObject = function (options) {
+	var defaults = {
+		errorType : "",
+		errorId : "",
+		title : "[untitle]",
+		onClick : null,
+		parent : null
+	};
+	jQuery.extend(true, defaults, options);
+
+	this.setErrorType(defaults.errorType);
+	this.setErrorId(defaults.errorId);
+	this.setTitle(defaults.title);
+	this.setOnClick(defaults.onClick);
+	this.setParent(defaults.parent);
+};
+
+ErrorListItem.prototype.setParent = function (parent) {
+	this.parent = parent;
+	return this;
+};
+
+ErrorListItem.prototype.getParent = function () {
+	return this.parent;
+};
+
+ErrorListItem.prototype.setOnClick = function (handler) {
+	if ( !(typeof handler === 'function' || handler === null) ) {
+		throw new Error ("ErrorListItem.setInconHandler(): the value is invalid");
+	}
+	this.onClick = handler;
+	return this;
+};
+
+ErrorListItem.prototype.attachListeners = function () {
+    var that = this, item;
+    jQuery(this.html).click(function(e){
+    	if (typeof that.onClick === 'function' ) {
+    		if ( that.parent ) {
+				that.onClick(that.parent, that, that.errorType, that.errorId);	
+    		} else {
+	    		that.onClick(that, that.errorType, that.errorId);				
+    		}
+    			that.select();
+    	}
+    });
+    return this;
+};
+
+ErrorListItem.prototype.setSelect = function (value) {
+	if ( !(typeof value === "boolean") ) {
+		throw new Error("ErrorListItem.select(): error in parameter");
+	}
+	this.selected = value;
+	if ( this.html ) {
+		if ( this.selected ) {
+			this.select();
+		} else {
+			this.deselect();
+		}
+	}
+	return this;
+};
+
+ErrorListItem.prototype.select = function () {
+	if (this.html){
+		if (this.parent){
+			item = this.parent.getSelectedItem();
+			if(item){
+				item.deselect();
+			}
+			this.parent.setSelectedItem(this);
+		}
+		jQuery(this.getHTML()).css("background","#f3f8fe");		
+	}
+	return this;
+};
+
+ErrorListItem.prototype.deselect = function () {
+	if (this.html){
+		jQuery(this.getHTML()).css("background","inherit")	
+	}
+	return this;
+};
+
+ErrorListItem.prototype.setTitle = function (title) {
+	if (!(typeof title === "string")) {
+		throw new Error ("ErrorListItem.setTitle(): the value is invalid");					
+	}
+	this.title = title;
+	if (this.html){
+		this.titleContainer.textContent = this.title;
+		this.resizeWidthTitle();
+	}
+	return this;	
+};
+
+ErrorListItem.prototype.resizeWidthTitle = function () {
+	var auxWidth1, auxWidth2;
+	if ( this.html ) {
+		auxWidth1 = jQuery(this.titleContainer).outerWidth();
+		this.titleContainer.style.width = "auto";
+		auxWidth2 = jQuery(this.titleContainer).outerWidth();
+		if ( auxWidth2 > auxWidth1 ) {
+			this.titleContainer.title = this.title;
+		} else {
+			this.titleContainer.title = "";
+		}
+		this.titleContainer.style.width = "80%";
+	}
+	return this;
+};
+
+ErrorListItem.prototype.getTitle  = function () {
+	return this.title;
+};
+
+ErrorListItem.prototype.setErrorId = function (id) {
+	if (!(typeof id === "string")) {
+		throw new Error ("ErrorListItem.addItem(): the value is invalid");					
+	}
+	this.errorId  = id;
+	return this;
+};
+
+ErrorListItem.prototype.getErrorId = function () {
+	return this.errorId;
+};
+
+ErrorListItem.prototype.createHTML = function () {
+    var messagecontainer, iconContainer, titleContainer; 
+    if (!this.html) {
+	    ListContainer.prototype.createHTML.call(this);
+	    messagecontainer = this.createHTMLElement('ul');
+	    messagecontainer.className = "messagecontainer comments ";
+	    messagecontainer.style.margin = "0 0 9px 25px";
+	    iconContainer = this.createHTMLElement('i');
+	    iconContainer.className = "iconContainer";
+	    //iconContainer.textContent = "[x]"
+	    titleContainer = this.createHTMLElement('span');
+	    titleContainer.className = "titleContainer adam-error-color";
+	    this.body.appendChild(iconContainer);
+	    this.body.appendChild(titleContainer);
+	    this.body.appendChild(messagecontainer);
+	    this.messagecontainer = messagecontainer;
+	    this.iconContainer = iconContainer;
+	    this.titleContainer = titleContainer;
+	    this.paintItems();
+		this.setErrorType(this.errorType);
+		this.setTitle(this.title);
+		this.html.style.height = "auto";
+		this.attachListeners();
+
+		$(this.html).addClass('activitystream-posts-comments-container');
+		this.html.style.padding = "8px";
+		this.html.style.width = "auto";
+		this.html.style.height = "auto";
+		this.titleContainer.style.paddingLeft = "10px";
+		this.fixedStyles();
+    }
+    return this.html;
+};
+
+ErrorListItem.prototype.fixedStyles = function () {
+	if (this.html) {
+		jQuery(this.titleContainer).css({
+			"width": "80%",
+			"text-overflow": "ellipsis",
+			"white-space": "nowrap",
+			"overflow": "hidden",
+			"display": "inline-block",
+			"cursor" : "pointer"
+		});
+	}
+	return this;
+}
+
+ErrorListItem.prototype.paintItems = function () {
+	var i; 
+	if ( this.messagecontainer ) {
+		for ( i = 0 ; i < this.items.length ; i+=1 ) {
+			this.messagecontainer.appendChild(this.items[i].getHTML());
+		}
+	}
+	return this;
+};
+
+ErrorListItem.prototype.setErrorType = function (errorType){
+	if ( !(typeof errorType === "string") ) {
+		throw new Error ("ErrorListItem.setErrorType(): not valid, should be a string value");
+	}
+
+	this.errorType = errorType;
+	if ( this.html ) {
+		jQuery(this.html).removeClass();			
+		jQuery(this.html).addClass("error-"+errorType);
+		this.iconContainer.className = this.listOfTypes[errorType];
+	}
+	return this;
+};
+ErrorListItem.prototype.addItem = function (item) {
+	var newItem;
+	if ( item instanceof ErrorMessageItem ) {
+		newItem = item;
+	} else if ( typeof  item === "object" ) {
+		newItem = new ErrorMessageItem(item);
+	} else {
+		throw new Error ("ErrorListItem.addItem(): the value is invalid");
+	}
+	newItem.setParent(this);
+	this.items.push(newItem);
+	if ( this.html ) {
+		this.messagecontainer.appendChild(newItem.getHTML());
+	}
+	return this;
+};
+ErrorListItem.prototype.getItemByMessageId = function (messageId){
+	var i, item;
+	for ( i = 0 ; i < this.items.length ; i+=1 ) {
+		if (this.items[i].getMessageId() === messageId){
+			item = this.items[i];
+		}
+	}
+	if ( item ) {
+		return item;					
+	} else {
+		null;
+	}
+};
+var ErrorListPanel = function (options) {
+    ListContainer.call(this, options);
+    this.onClickItem = null;
+    this.title = null;
+    this.parent = null;
+    this.titleContainer = null;
+    this.selectedItem = null;
+    this.classItemSelected = null;
+    ErrorListPanel.prototype.initObject.call(this, options);
+};
+
+ErrorListPanel.prototype = new ListContainer();
+
+ErrorListPanel.prototype.type = 'ErrorListPanel';
+
+ErrorListPanel.prototype.family = 'ErrorListPanel';
+
+ErrorListPanel.prototype.initObject = function (options) {
+	var defaults = {
+		onClickItem : null,
+		title : "[Untitle]",
+		parent : null,
+		classItemSelected : "selected"
+	}
+
+	jQuery.extend(true, defaults , options);
+
+	this.setOnClickItem(defaults.onClickItem);
+	this.setTitle(defaults.title);
+	this.setParent(defaults.parent);
+	this.setClassItemSelected(defaults.classItemSelected);
+};
+
+ErrorListPanel.prototype.setClassItemSelected = function(className) {
+	if ( !(typeof className === "string") ) {
+		throw  new Error ("ErrorListPanel.setClassItemSelected:the value is invalid ");
+	}
+	this.classItemSelected = className;
+	return this;
+};
+ErrorListPanel.prototype.getClassItemSelected = function() {
+	return this.classItemSelected;
+};
+
+ErrorListPanel.prototype.setParent = function (parent) {
+	this.parent = parent;
+	return this;
+};
+
+ErrorListPanel.prototype.getParent = function () {
+	return this.parent;
+};
+
+ErrorListPanel.prototype.setTitle = function (title) {
+	if ( !(typeof title === "string") ) {
+		throw  new Error ("ErrorListPanel.setTitle():the value is invalid ");
+	}
+	this.title = title;
+	if ( this.html ) {
+		this.titleContainer.textContent = title;
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.getTitle = function () {
+	return this.title;
+};
+
+ErrorListPanel.prototype.setOnClickItem = function (handler) {
+	var i;
+	if ( !(typeof handler === 'function' || handler === null) ) {
+		throw new Error ("ErrorListPanel.setInconHandler(): the value is invalid");
+	}
+	this.onClickItem = handler;
+	if (this.items.length){
+		for ( i = 0 ; i < this.items.length ; i+=1 ) {
+			this.items[i].onClick = this.onClickItem;
+		}
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.createHTML = function () {
+    var titleContainer; 
+    if (!this.html) {
+	    ListContainer.prototype.createHTML.call(this);
+	    titleContainer = this.createHTMLElement('h4');
+	    titleContainer.className = "dashlet-title adam-error-color";
+		this.html.appendChild(titleContainer);
+	    this.titleContainer = titleContainer; 
+	    jQuery(this.body).remove();
+	    body = this.createHTMLElement('div');
+	    body.className = 'j-container';
+	    this.html.appendChild(body);
+	    this.body = body;
+	    this.setBodyHeight(this.bodyHeight);
+	    this.paintItems();	    
+	    this.setTitle(this.title);
+	    this.customStyles();
+    }
+    return this.html;
+};
+ErrorListPanel.prototype.customStyles = function () {
+	if (this.html){
+		this.body.style.listStyle = "none";
+		this.titleContainer.style.margin = "0px";
+		this.titleContainer.style.padding = "6px 5px 6px 10px";
+		this.titleContainer.style.fontWeight = 500;
+		this.titleContainer.style.background = "#f6f6f6";
+		this.titleContainer.style.borderBottom = "1px solid #ddd";
+	    this.html.style.width = "auto";
+	    this.html.style.background = "white";
+	    this.html.style.height = "auto";
+	    this.html.style.border = "1px solid #ddd";
+	    jQuery(this.html).css("borderRadius", "3px");
+	    jQuery(this.titleContainer).css("borderRadius", "3px 3px 0px 0px");
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.paintItems = function () {
+	var i; 
+	if ( this.html ) {
+		for ( i = 0 ; i < this.items.length ; i+=1 ) {
+			this.body.appendChild(this.items[i].getHTML());
+		}
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.addItem = function (item) {
+	var newItem;
+	if ( item instanceof ErrorListItem ) {
+		newItem = item;
+	} else if ( typeof  item === "object" ) {
+		newItem = new ErrorListItem(item);
+	} else {
+		throw new Error ("ErrorListPanel.addItem(): the value is invalid");
+	}
+	newItem.setParent(this);
+	newItem.onClick  = this.onClickItem;
+	this.items.push(newItem);
+	if ( this.html ) {
+		this.body.appendChild(newItem.getHTML());
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.getContainerMessageById = function (id) {
+	var item, i;
+	for ( i = 0 ; i < this.items.length ; i+=1 ) {
+		if (this.items[i].getErrorId() === id){
+			item = this.items[i];
+		}
+	}
+	if ( item ) {
+		return item;					
+	} else {
+		null;
+	}
+};
+
+ErrorListPanel.prototype.addNewMessage = function (containerId, message, messageId) {
+	var item;
+	item = this.getContainerMessageById(containerId);
+	if (item){
+		item.addItem({message:message, messageId: messageId});
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.removeMessage = function (containerId, messageId) {
+	var item, messageItem, index;
+	item = this.getContainerMessageById(containerId);
+	if ( item ) {
+		messageItem = item.getItemByMessageId(messageId);
+		if ( messageItem ) {
+			index  = item.items.indexOf(messageItem);
+			item.removeItem(index);
+		}
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.removeItemById = function (id) {
+	var items = this.getItems(), i, index;
+
+	if ( !(typeof id ===  "string") ) {
+		throw new Error("ErrorListPanel.removeItemById(): the value is invalid");
+	}
+
+	for  ( i = 0 ; i < items.length; i+=1 ) {
+		if (items[i].getErrorId() === id ) {
+			index = i;
+		}
+	}
+	if ( index !== undefined ) {
+		item = this.getItem(index);
+		this.removeItem(index);
+		return item;
+		return item;
+	} else {
+		return null;
+	}
+};
+
+ErrorListPanel.prototype.appendTo = function (tagId) {
+	var tag = tagId || "";
+	if (jQuery(tag).length) {
+		jQuery(tag).append(this.getHTML());	
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.getItemById = function (id) {
+	var items = this.getItems(), i, index;
+
+	if ( !(typeof id ===  "string") ) {
+		throw new Error("ErrorListPanel.removeItemById(): the value is invalid");
+	}
+
+	for  ( i = 0 ; i < items.length; i+=1 ) {
+		if (items[i].getErrorId() === id ) {
+			index = i;
+		}
+	}
+	if ( index !== undefined ) {
+		item = this.getItem(index);
+		return item;
+	} else {
+		return null;
+	}
+};
+
+ErrorListPanel.prototype.setSelectedItem = function (item) {
+	if (item instanceof ErrorListItem) {
+		this.selectedItem = item;
+	}
+	return this;
+};
+
+ErrorListPanel.prototype.getSelectedItem = function () {
+	return this.selectedItem;
+};
+
+ErrorListPanel.prototype.getAllErros = function () {
+	var count = 0;
+	for ( i = 0 ; i < this.items.length ; i+=1 ) {
+		count = count + this.items[i].getItems().length;
+	}
+	return count;
+};
+
+ErrorListPanel.prototype.resizeWidthTitleItems = function () {
+	var i;
+	if ( this.html ) {
+		for ( i = 0 ; i < this.items.length ; i+=1 ) {
+			this.getItem(i).resizeWidthTitle();
+		}
+	}
+	return this;
+};
+//@ sourceURL=pmse.designer.js

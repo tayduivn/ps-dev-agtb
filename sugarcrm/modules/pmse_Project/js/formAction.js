@@ -37,13 +37,13 @@ var confirmReassign = function()
     });
 }
 
-var reassignForm = function(casId, casIndex, flowId, pmseInboxId,taskName,values)
+var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
 {
     //showModalWindow("?module=ProcessMaker&action=reassignForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex + "&team_id=" + teamId, '# ' + casId + ': Reassignment');
-    showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId,taskName,values);
+    showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId, taskName, values);
 }
-var adhocForm = function(casId, casIndex, flowId, pmseInboxId,taskName,values){
-    showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId,taskName,values);
+var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
+    showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
 }
 var claim_case = function(cas_id,cas_index){
     var value = {};
@@ -152,7 +152,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
     });
     combo_users = new ComboboxField({
         jtype: 'combobox',
-        label: translate('LBL_PMSE_LABEL_USER'),
+        label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
         name: 'adhoc_user',
         submit: true,
         //change: hiddenUpdateFn,
@@ -165,13 +165,13 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
 //        }),
         required: true,
         helpTooltip: {
-            message: translate('LBL_PMSE_MESSAGE_SELECTUSER')
+            message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
         }
 
     });
     combo_type = new ComboboxField({
         name: 'adhoc_type',
-        label: translate('LBL_PMSE_LABEL_TYPE2'),
+        label: translate('LBL_PMSE_FORM_LABEL_TYPE', 'pmse_Inbox'),
         options: [
             {text: 'Round Trip', value: 'ROUND_TRIP'},
             {text: 'One Way', value: 'ONE_WAY'}
@@ -182,7 +182,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
 
     textArea = new TextareaField({
         name: 'adhoc_comment',
-        label: translate('LBL_PMSE_LABEL_NOTE'),
+        label: translate('LBL_PMSE_FORM_LABEL_NOTE', 'pmse_Inbox'),
         fieldWidth: '300px',
         fieldHeight: '100px'
     });
@@ -193,7 +193,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
 
     if (wtype === 'reassign') {
         url = 'pmse_Inbox/AdhocReassign';
-        wtitle = translate('LBL_PMSE_TITLE_AD_HOC');
+        wtitle = translate('LBL_PMSE_TITLE_AD_HOC', 'pmse_Inbox');
         wWidth = 550;
         wHeight = 300;
         items = [
@@ -214,7 +214,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         textArea.setName('adhoc_comment')
     } else {
         url = 'pmse_Inbox/ReassignForm';
-        wtitle = translate('LBL_PMSE_TITLE_REASSIGN');
+        wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
         wWidth = 500;
         wHeight = 250;
         items = [
@@ -272,7 +272,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                     }
                 }
             }},
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CLOSE'), handler: function () {
+            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CLOSE', 'pmse_Inbox'), handler: function () {
                 w.close();
             }}
         ],
@@ -282,7 +282,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 casIdField.setValue(casId);
                 casIndexField.setValue(casIndex);
 
-                var users, aUsers = [{'text':translate('LBL_PMSE_OPTION_SELECT'), 'value':''}];
+                var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value':''}];
                 combo_users.proxy.getData(null, {
                     success: function(users) {
                         if (users) {
@@ -365,7 +365,7 @@ function onSubmit(e) {
         if (PMVAL) {
             for (i = 0; i < PMVAL.length; i += 1) {
                 ele = document.getElementById(PMVAL[i]);
-                if (ele) {
+                if (ele && ele.value) {
                     if (ele.value.trim && ele.value.trim() == '') {
                         $(ele).addClass('required');
                         msg += PMVAL[i] + '<br>';

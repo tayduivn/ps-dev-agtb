@@ -4,7 +4,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'pmse_Project';
 $viewdefs[$module_name]['base']['view']['project-import-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => "LNK_IMPORT_VCARD",
+    'title' => "LBL_IMPORT",
     'buttons' => array(
         array(
             'name'    => 'project_cancel_button',
@@ -15,7 +15,7 @@ $viewdefs[$module_name]['base']['view']['project-import-headerpane'] = array(
         array(
             'name'    => 'project_finish_button',
             'type'    => 'button',
-            'label'   => 'LBL_IMPORT_BUTTON_LABEL',
+            'label'   => 'LBL_PMSE_IMPORT_BUTTON_LABEL',
             'acl_action' => 'create',
             'css_class' => 'btn-primary',
         ),

@@ -28,7 +28,7 @@
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_process', {
                 level:'error',
-                messages: app.lang.get('LBL_EMPTY_PROCESS', self.module),
+                messages: app.lang.get('LBL_PMSE_PROCESS_DEFINITION_EMPTY_WARNING', self.module),
                 autoClose: false
             });
         } else {
@@ -39,7 +39,7 @@
                         app.router.navigate(route, {trigger: true});
                         app.alert.show('process-import-saved', {
                             level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_PROCESS_SUCCESS', self.module),
+                            messages: app.lang.get('LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
                     },

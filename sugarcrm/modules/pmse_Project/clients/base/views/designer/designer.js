@@ -1,5 +1,14 @@
 ({
     className: 'designer',
+
+    events: {
+        'click .btn-close-designer': 'closeDesigner'
+    },
+
+    closeDesigner: function() {
+        app.router.goBack();
+    },
+
     loadData: function (options) {
         this.prj_uid = this.options.context.attributes.modelId;
     },

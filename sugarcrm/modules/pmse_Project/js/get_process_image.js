@@ -1,14 +1,20 @@
-function ShowLog(app, code) {
-    var pmseInboxUrl = app.api.buildFileURL({
+function showImage(code) {
+    var _App, pmseInboxUrl;
+    if (App) {
+        _App = App;
+    } else {
+        _App = parent.SUGAR.App;
+    }
+    pmseInboxUrl = _App.api.buildFileURL({
         module: 'pmse_Inbox',
         id: code,
         field: 'id'
     }, {cleanCache: true});
-    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-    viewImage(pmseInboxUrl, code);
+    _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+    viewImage(pmseInboxUrl, code, _App);
 }
 
-function viewImage(url, code){
+function viewImage(url, code, _App){
     var f, w, hp, img, ih, iw, a;
     img = new Image();
     img.src = url;
@@ -30,10 +36,11 @@ function viewImage(url, code){
             width: iw + 40,
             height: ((ih + 45) < 400) ?  ih + 45 : 400,
             modal: true,
-            title: translate('LBL_PMSE_TITLE_CASE') + ' # ' + code + ': ' + translate('LBL_PMSE_TITLE_CURRENT_STATUS')
+            //title: translate('LBL_PMSE_TITLE_CASE') + ' # ' + code + ': ' + translate('LBL_PMSE_TITLE_CURRENT_STATUS')
+            title: translate('LBL_PMSE_TITLE_IMAGE_GENERATOR', 'pmse_Inbox', code)
         });
         w.addPanel(hp);
         w.show();
-        App.alert.dismiss('upload');
+        _App.alert.dismiss('upload');
     };
 }
