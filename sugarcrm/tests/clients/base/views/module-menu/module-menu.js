@@ -30,13 +30,19 @@ describe('Module Menu', function() {
                 fields: { name: {} }
             };
         });
-        var fetchStub = sinon.collection.stub(view.collection, 'fetch', function(options) {
+
+        var favStub = sinon.collection.stub(view.getCollection('favorites'), 'fetch', function(options) {
+            options.success.call(this, []);
+        });
+
+        var recentStub = sinon.collection.stub(view.getCollection('recently-viewed'), 'fetch', function(options) {
             options.success.call(this, []);
         });
 
         view.$el.trigger('shown.bs.dropdown');
 
-        expect(fetchStub.calledTwice).toBeTruthy();
+        expect(favStub.calledOnce).toBeTruthy();
+        expect(recentStub.calledOnce).toBeTruthy();
     });
 
     it('should not populate favorites on modules that don\'t support it', function() {
