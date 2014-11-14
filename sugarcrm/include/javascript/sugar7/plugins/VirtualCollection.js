@@ -290,6 +290,8 @@
              * collection is attached.
              * @param {String} options.fieldName The name of the attribute on
              * the parent model where this collection is stored.
+             * @param {Core.Context} options.context The context to which this
+             * collection is attached.
              * @param {Array} options.links The link field names included for
              * this collection.
              */
@@ -301,6 +303,9 @@
 
                 this.fieldName = options.fieldName;
                 delete options.fieldName;
+
+                this.context = options.context;
+                delete options.context;
 
                 this.relatedModules = {};
                 this.links = _.reduce(options.links, function(memo, link) {
