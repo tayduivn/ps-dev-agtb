@@ -10,6 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+global $sugar_config;
 
 $moduleName = 'Users';
 $viewdefs[$moduleName]['base']['menu']['header'] = array(
@@ -40,22 +41,47 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_module' => $moduleName,
         'icon' => 'icon-plus',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
+);
+//BEGIN SUGARCRM flav=pro ONLY
+if (isset($sugar_config['enable_web_services_user_creation']) && $sugar_config['enable_web_services_user_creation']) {
+    $viewdefs[$moduleName]['base']['menu']['header'][] =
+        array(
+            'route' => '#bwc/index.php?' . http_build_query(
+                array(
+                    'module' => $moduleName,
+                    'action' => 'EditView',
+                    'usertype'=>'portal',
+                    'return_module' => $moduleName,
+                    'return_action' => 'DetailView',
+                )
+            ),
+            'label' => 'LNK_NEW_PORTAL_USER',
+            'acl_action' => 'admin',
+            'acl_module' => $moduleName,
+            'icon' => 'icon-plus',
+        );
+}
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+$viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
         'route' => '#bwc/index.php?' . http_build_query(
-            array(
-                'module' => $moduleName,
-                'action' => 'EditView',
-                'usertype'=>'portal',
-                'return_module' => $moduleName,
-                'return_action' => 'DetailView',
-            )
-        ),
+                array(
+                    'module' => $moduleName,
+                    'action' => 'EditView',
+                    'usertype'=>'portal',
+                    'return_module' => $moduleName,
+                    'return_action' => 'DetailView',
+                )
+            ),
         'label' => 'LNK_NEW_PORTAL_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
         'icon' => 'icon-plus',
-    ),
+    );
+//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
+$viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
         'route' => '#bwc/index.php?' . http_build_query(
             array(
@@ -67,8 +93,9 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
         'icon' => 'icon-move',
-    ),
-    //END SUGARCRM flav=pro ONLY
+    );
+//END SUGARCRM flav=pro ONLY
+$viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
         'route' => '#bwc/index.php?' . http_build_query(
             array(
@@ -83,5 +110,4 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
         'icon' => 'icon-upload',
-    ),
-);
+    );
