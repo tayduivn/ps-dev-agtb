@@ -32,7 +32,10 @@
     /**
      * On 'app:sync:complete' and 'app:sync:error' we dismiss the alert
      */
-    app.events.on('app:sync:complete app:sync:error', function() {
+    app.events.on('app:sync:complete', function() {
+        app.alert.dismiss('app:sync');
+    });
+    app.events.on('app:sync:error', function() {
         app.alert.dismiss('app:sync');
     });
 
@@ -167,6 +170,12 @@
         // By default we don't display the alert
         if (!options.showAlerts) return;
 
+        // As we display alerts we have have to check if there is a process alert to dismiss prior to display the success one
+        // (as many requests can be fired at the same time we make sure not to dismiss another process alert!)
+        if (options.showAlerts.process !== false) {
+            processAlert.dismiss();
+        }
+
         // Error module will display proper message
         if (method === 'read') return;
 
@@ -200,16 +209,10 @@
 
         if (!error || (!error.handled && _.indexOf(suppressErrorMessageFor, error.status) === -1)) {
             syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
-        }
-    });
-
-    app.events.on('data:sync:complete', function(method, model, options) {
-        // As we display alerts we have have to check if there is a process
-        // alert to dismiss prior to display the success one (as many requests
-        // can be fired at the same time we make sure not to dismiss another
-        // process alert!)
-        if (options.showAlerts && options.showAlerts.process !== false) {
-            processAlert.dismiss();
+        } else {
+            if (options.showAlerts && options.showAlerts.process !== false) {
+                processAlert.dismiss();
+            }
         }
     });
 
