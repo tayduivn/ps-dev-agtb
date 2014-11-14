@@ -89,17 +89,12 @@ class ReportMaker extends SugarBean {
     }
 
 
-    function clear_deleted($id){
-
-    //first update and remove report_id's for any datasets
-    		$query = "update data_sets set report_id='' where report_id='$id' and deleted=0";
-
-			$this->db->query($query,true,"error removing data sets from reports: ");
-
-			$this->mark_deleted($id);
-
-	//end function clear_deleted
-	}
+    public function mark_deleted($id)
+    {
+        $query = "update data_sets set report_id='' where report_id='$id' and deleted=0";
+        $this->db->query($query, true, "error removing data sets from reports: ");
+        parent::mark_deleted($id);
+    }
 
 
 	function mark_relationships_deleted($id)
