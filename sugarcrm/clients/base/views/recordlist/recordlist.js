@@ -264,8 +264,10 @@
     _getLeftBorderPosition: function() {
         if (!this._leftBorderPosition) {
             var scrollPanel = this.$('.flex-list-view-content');
-            this._leftBorderPosition = scrollPanel.find('thead tr:first th:first').outerWidth();
-        }
+            var rtl = app.lang.direction === 'rtl';
+            var thSelector = rtl ? 'last' : 'first';
+            this._leftBorderPosition = scrollPanel.find('thead tr:first th:' + thSelector).outerWidth();
+            }
         return this._leftBorderPosition;
     },
 
@@ -277,9 +279,34 @@
     _getRightBorderPosition: function() {
         if (!this._rightBorderPosition) {
             var scrollPanel = this.$('.flex-list-view-content');
-            this._rightBorderPosition = scrollPanel.find('thead tr:first th:last').position().left;
+            var rtl = app.lang.direction === 'rtl';
+            var thSelector = rtl ? 'first' : 'last';
+            this._rightBorderPosition = scrollPanel.find('thead tr:first th:' + thSelector).children().position().left;
         }
         return this._rightBorderPosition;
+    },
+
+    /**
+     * Retrieves the location of the edges of the list viewport.
+     * @return {Object} Object containing the position of the right and left
+     *   edges.
+     * @private
+     */
+    _getBordersPosition: function() {
+        if (!this._bordersPosition) {
+            this._bordersPosition = {};
+            var thSelector = {};
+            var scrollPanel = this.$('.flex-list-view-content');
+            var rtl = app.lang.direction === 'rtl';
+
+            thSelector.left = rtl ? 'last' : 'first';
+            thSelector.right = rtl ? 'first' : 'last';
+            this._bordersPosition.left = scrollPanel.find('thead tr:first th:' + thSelector.left).outerWidth();
+            this._bordersPosition.right = scrollPanel.find(
+                'thead tr:first th:' + thSelector.right).children().position().left;
+
+        }
+        return this._bordersPosition;
     },
 
     /**
@@ -288,21 +315,43 @@
      * If focus item located within the viewport area,
      * avoid adjusting panel location.
      *
-     * @param {Object} location Location of the focused element.
+     * @param {Object} location Position of the focused element relative to its
+     *   viewport.
+     *   'location.left' is the distance between the left
+     *   border of the focused field and the left border of the view port.
+     *   'location.right' is the distance between the right
+     *   side of the focused field and the left border of the view port.
+     *
      */
     setPanelPosition: function(location) {
-        //FIXME: SC-3654 Remove this temporary fix to disable auto-scroll in RTL.
-        if (app.lang.direction === 'rtl') {
+        var leftBorderPosition = this._getBordersPosition().left,
+            rightBorderPosition = this._getBordersPosition().right,
+            fieldLeft = location.left,
+            fieldRight = location.right;
+        if (fieldRight <= rightBorderPosition && fieldLeft >= leftBorderPosition) {
             return;
         }
-        var leftBorderPosition = this._getLeftBorderPosition(),
-            rightBorderPosition = this._getRightBorderPosition(),
-            relativeLeft = location.left,
-            relativeRight = location.right;
-        if (relativeRight <= rightBorderPosition && relativeLeft >= leftBorderPosition) {
+        this._scrollToMakeFieldVisible(leftBorderPosition, rightBorderPosition, location);
+    },
+
+    _scrollToMakeFieldVisible: function(leftBorderPosition, rightBorderPosition, location) {
+        var scrollPanel = this.$('.flex-list-view-content');
+        var scrollPosition = scrollPanel.scrollLeft();
+        var fieldLeft = location.left;
+        var fieldRight = location.right;
+        var fieldPadding = location.fieldPadding;
+
+        var distanceToScroll;
+
+        if (fieldLeft < leftBorderPosition) {
+            distanceToScroll = fieldLeft - leftBorderPosition - fieldPadding;
+            scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
+        } else if (rightBorderPosition < fieldRight) {
+            distanceToScroll = fieldRight - rightBorderPosition + fieldPadding;
+            scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
+    } else {
             return;
         }
-        this.setScrollAtRightBorder(location.right);
     },
 
     /**
@@ -514,6 +563,8 @@
     /**
      * Toggle editable entire row fields.
      *
+     * This method is not currently used.
+     *
      * @param {Boolean} isEdit True for edit mode, otherwise toggle back to list mode.
      */
     toggleEdit: function(isEdit) {
@@ -632,5 +683,10 @@
                 $checkbox.get(0).click();
             }
         }, this);
+    },
+
+    resize: function() {
+        this._super('resize');
+        this._bordersPosition = null;
     }
 })

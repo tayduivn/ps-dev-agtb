@@ -509,15 +509,17 @@
                 if (this.disposed) {
                     return;
                 }
-                var left = this.$el.offset().left,
+                var left = this.$el.position().left,
                     right = this.$el.outerWidth() + left,
                     top = this.$el.offset().top,
-                    bottom = this.$el.outerHeight() + top;
+                    bottom = this.$el.outerHeight() + top,
+                    fieldPadding = parseInt(this.$el.parent().css('padding-left'));
                 this.view.trigger('field:focus:location', {
                     left: left,
                     right: right,
                     top: top,
-                    bottom: bottom
+                    bottom: bottom,
+                    fieldPadding: fieldPadding
                 });
             },
 
