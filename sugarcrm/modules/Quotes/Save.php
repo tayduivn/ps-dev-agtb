@@ -38,7 +38,6 @@ if (!empty($_POST['assigned_user_id']) &&
 } else {
     $check_notify = false;
 }
-
 //bug55337 - Inline edit to different stage, cause total amount to display 0
 if (!isset($_REQUEST['from_dcmenu'])) {
     $focus->tax = 0;
