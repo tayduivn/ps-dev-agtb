@@ -2669,9 +2669,14 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 sugarListView.prototype.check_item = function(cb, form) {
 	if(cb.checked) {
 		sugarListView.update_count(1, true);
+        if(sugarListView.get_checks_count() == $(".checkbox").length -2)
+        {
+            $(".massall.checkbox").attr("checked", "checked");
+        }
 
 	}else{
 		sugarListView.update_count(-1, true);
+        $(".massall.checkbox").removeAttr("checked");
 		if(typeof form != 'undefined' && form != null) {
 			sugarListView.prototype.updateUid(cb, form);
 		}
