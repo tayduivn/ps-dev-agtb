@@ -495,9 +495,9 @@ $app_list_strings = array (
   'meeting_status_default' => 'Planned',
   'meeting_status_dom' =>
   array (
-    'Planned' => 'Planned',
+    'Planned' => 'Scheduled',
     'Held' => 'Held',
-    'Not Held' => 'Not Held',
+    'Not Held' => 'Canceled',
   ),
   'extapi_meeting_password' =>
   array (
@@ -511,9 +511,9 @@ $app_list_strings = array (
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (
-    'Planned' => 'Planned',
+    'Planned' => 'Scheduled',
     'Held' => 'Held',
-    'Not Held' => 'Not Held',
+    'Not Held' => 'Canceled',
   ),
   'call_direction_default' => 'Outbound',
   'call_direction_dom' =>
