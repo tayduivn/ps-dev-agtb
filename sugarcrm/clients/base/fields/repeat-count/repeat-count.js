@@ -64,17 +64,28 @@
      * @inheritdoc
      *
      * Converts the value to an integer so that the integer representation is
-     * always used in the model.
+     * always used in the model. If the value cannot be expressed as an number,
+     * then it is left untouched. If the value is an empty string, then it is
+     * converted to 0.
      */
     unformat: function(value) {
         if (!_.isString(value)) {
+            // can't unformat it, so let the validator do the work
             return value;
         }
 
-        if (value.trim() === '') {
-            value = 0;
+        // get the unformatted number
+        value = this._super('unformat', [value]);
+
+        if (_.isString(value)) {
+            // it couldn't be unformatted
+            if (value.trim() === '') {
+                // it's the equivalent of 0
+                value = 0;
+            }
         } else {
-            value = parseInt(this._super('unformat', [value]), 10);
+            // it's a number, so make it an integer
+            value = Math.round(value);
         }
 
         return value;
