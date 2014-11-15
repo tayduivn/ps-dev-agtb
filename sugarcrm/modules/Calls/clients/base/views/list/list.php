@@ -75,17 +75,6 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'sortable' => true,
                 ),
                 array(
-                    'target_record_key' => 'contact_id',
-                    'target_module' => 'Contacts',
-                    'label' => 'LBL_LIST_CONTACT',
-                    'link' => true,
-                    'enabled' => true,
-                    'default' => false,
-                    'readonly' => true,
-                    'name' => 'contact_name',
-                    'related_fields' => array('contact_id'),
-                ),
-                array(
                     'name' => 'date_entered',
                     'enabled' => true,
                     'default' => false,
