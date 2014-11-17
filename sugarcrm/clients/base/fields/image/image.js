@@ -53,9 +53,9 @@
         // error properties.
         app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
         app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
-        
+
         // FIXME: we should have a {@link Da
-        if (_.isFunction(this.model.addValidationTask) && !this.model.hasImageRequiredValidator) {
+        if (_.isFunction(this.model.addValidationTask)) {
             this.model.hasImageRequiredValidator = true;
             this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
         }
