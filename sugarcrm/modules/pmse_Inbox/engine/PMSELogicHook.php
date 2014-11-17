@@ -74,7 +74,7 @@ class PMSELogicHook
 
         //if module is pmse_Inbox and we are routing a case, then returns immediately
         if (isset($_REQUEST['__sugar_url'])) {
-            $url = split('/', $_REQUEST['__sugar_url']);
+            $url = preg_split('/\//', $_REQUEST['__sugar_url']);
             if (strtolower($url[1]) == 'pmse_inbox' && strtolower($url[2]) == 'engine_route') {
                 return true;
             }
