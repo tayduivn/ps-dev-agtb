@@ -290,6 +290,10 @@
      * @param {Object} location Location of the focused element.
      */
     setPanelPosition: function(location) {
+        //FIXME: SC-3654 Remove this temporary fix to disable auto-scroll in RTL.
+        if (app.lang.direction === 'rtl') {
+            return;
+        }
         var leftBorderPosition = this._getLeftBorderPosition(),
             rightBorderPosition = this._getRightBorderPosition(),
             relativeLeft = location.left,
