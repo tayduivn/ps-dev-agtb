@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DurationFieldView is a fieldset for Meetings/Calls for managing duration of an event
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DurationField
  * @alias SUGAR.App.view.fields.BaseDurationField
  */
