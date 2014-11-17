@@ -42,8 +42,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
 );
-//BEGIN SUGARCRM flav=pro ONLY
-if (isset($sugar_config['enable_web_services_user_creation']) && $sugar_config['enable_web_services_user_creation']) {
+if (!empty($sugar_config['enable_web_services_user_creation'])) {
     $viewdefs[$moduleName]['base']['menu']['header'][] =
         array(
             'route' => '#bwc/index.php?' . http_build_query(
@@ -61,7 +60,6 @@ if (isset($sugar_config['enable_web_services_user_creation']) && $sugar_config['
             'icon' => 'icon-plus',
         );
 }
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 $viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
@@ -80,7 +78,6 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'icon' => 'icon-plus',
     );
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 $viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -94,7 +91,6 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'acl_module' => $moduleName,
         'icon' => 'icon-move',
     );
-//END SUGARCRM flav=pro ONLY
 $viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
         'route' => '#bwc/index.php?' . http_build_query(
