@@ -120,13 +120,14 @@ class PMSEEngineFilterApi extends FilterApi
         $isEmpty = empty($filters);
         foreach ($filters as $filter) {
             foreach ($filter as $field => $values) {
-                //TODO review $values is array
-                foreach ($values as $condition => $value) {
-                    if ($field!='in_time') {
-                        if (is_array($value)) {
-                            $type = $this->applyArrayFilter($where, $condition, $field, $value);
-                        } else {
-                            $type = ($field == 'act_assignment_method')? $value : $type;                            
+                if (is_array($values)) {
+                    foreach ($values as $condition => $value) {
+                        if ($field != 'in_time') {
+                            if (is_array($value)) {
+                                $type = $this->applyArrayFilter($where, $condition, $field, $value);
+                            } else {
+                                $type = ($field == 'act_assignment_method') ? $value : $type;
+                            }
                         }
                     }
                 }

@@ -83,7 +83,7 @@ class PMSECasesListApi extends FilterApi
         $flowQuery = new SugarQuery();
         $bean = BeanFactory::getBean('pmse_BpmFlow');
         $flowQuery->from($bean, array('alias' => 'f'));
-        $flowQuery->select->fieldRaw('count(f.cas_flow_status)', 'flow_count');
+        $flowQuery->select->fieldRaw('count(f.cas_flow_status)','flow_count');
         $flowQuery->where()
             ->equals('f.cas_flow_status', 'ERROR');
         $flowQuery->where()->queryAnd()
@@ -92,8 +92,9 @@ class PMSECasesListApi extends FilterApi
 
         $q = new SugarQuery();
         $inboxBean = BeanFactory::getBean('pmse_Inbox');
-        if ($args['order_by'] == 'cas_due_date:asc') {
-            $args['order_by'] = 'cas_create_date:asc';
+        if($args['order_by']=='cas_due_date:asc')
+        {
+            $args['order_by']='cas_create_date:asc';
         }
         $options = self::parseArguments($api, $args, $inboxBean);
         $fields = array(
@@ -102,27 +103,38 @@ class PMSECasesListApi extends FilterApi
         $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
         $q->joinRaw('INNER JOIN users u ON a.created_by=u.id');
-        $q->select->fieldRaw('u.last_name', 'last_name');
-        $q->select->fieldRaw('(' . $flowQuery->compileSql() . ')', 'flow_error');
-        if ($args['module_list'] == 'all' && !empty($args['q'])) {
-            $q->where()->queryAnd()
-                ->addRaw("a.cas_title LIKE '%" . $args['q'] . "%' OR a.pro_title LIKE '%" . $args['q'] . "%' OR a.cas_status LIKE '%" . $args['q'] . "%' OR last_name LIKE '%" . $args['q'] . "%'");
-        } else {
-            if ($args['module_list'] == 'Cases Title') {
+        $q->select->fieldRaw('u.last_name','last_name');
+        //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
+        //Doesn't appear to be used.
+        //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
+        if (!empty($args['q'])) {
+            if($args['module_list']=='all')
+            {
                 $q->where()->queryAnd()
-                    ->addRaw("a.cas_title LIKE '%" . $args['q'] . "%'");
+                    ->addRaw("a.cas_title LIKE '%".$args['q']."%' OR a.pro_title LIKE '%".$args['q']."%' OR a.cas_status LIKE '%".$args['q']."%' OR last_name LIKE '%".$args['q']."%'");
             }
-            if ($args['module_list'] == 'Process Name') {
-                $q->where()->queryAnd()
-                    ->addRaw("a.pro_title LIKE '%" . $args['q'] . "%'");
-            }
-            if ($args['module_list'] == 'Status') {
-                $q->where()->queryAnd()
-                    ->addRaw("a.cas_status LIKE '%" . $args['q'] . "%'");
-            }
-            if ($args['module_list'] == 'Owner') {
-                $q->where()->queryAnd()
-                    ->addRaw("last_name LIKE '%" . $args['q'] . "%'");
+            else
+            {
+                if($args['module_list']=='Cases Title')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.cas_title LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Process Name')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.pro_title LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Status')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("a.cas_status LIKE '%".$args['q']."%'");
+                }
+                if($args['module_list']=='Owner')
+                {
+                    $q->where()->queryAnd()
+                        ->addRaw("last_name LIKE '%".$args['q']."%'");
+                }
             }
         }
         foreach ($options['order_by'] as $orderBy) {
@@ -133,18 +145,18 @@ class PMSECasesListApi extends FilterApi
         $q->limit($options['limit']);
         $q->offset($options['offset']);
 
-        $offset = $options['offset'] + $options['limit'];
-        $count = 0;
+        $offset=$options['offset']+$options['limit'];
+        $count=0;
         $list = $q->execute();
         foreach ($list as $key => $value) {
-            if ($value["cas_status"] === 'IN PROGRESS') {
-                $list[$key]["cas_status"] = '<data class="label label-Leads">' . $value["cas_status"] . '</data>';
-            } elseif ($value["cas_status"] === 'COMPLETED' || $value["cas_status"] === 'TERMINATED') {
-                $list[$key]["cas_status"] = '<data class="label label-success">' . $value["cas_status"] . '</data>';
-            } elseif ($value["cas_status"] === 'CANCELLED') {
-                $list[$key]["cas_status"] = '<data class="label label-warning">' . $value["cas_status"] . '</data>';
-            } else {
-                $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
+            if($value["cas_status"]==='TODO'){
+                $list[$key]["cas_status"]='<data class="label label-Leads">'.$value["cas_status"].'</data>';
+            }elseif($value["cas_status"]==='COMPLETED' || $value["cas_status"]==='TERMINATED'){
+                $list[$key]["cas_status"]='<data class="label label-success">'.$value["cas_status"].'</data>';
+            }elseif($value["cas_status"]==='CANCELLED'){
+                $list[$key]["cas_status"]='<data class="label label-warning">'.$value["cas_status"].'</data>';
+            }else{
+                $list[$key]["cas_status"]='<data class="label label-important">'.$value["cas_status"].'</data>';
             }
 
 //            if($value["flow_error"]!='0')
@@ -154,10 +166,10 @@ class PMSECasesListApi extends FilterApi
 //            }
             $count++;
         }
-        if ($count == $options['limit']) {
-            $offset = $options['offset'] + $options['limit'];
-        } else {
-            $offset = -1;
+        if($count==$options['limit']){
+            $offset=$options['offset']+$options['limit'];
+        }else{
+            $offset=-1;
         }
 
         $data = array();

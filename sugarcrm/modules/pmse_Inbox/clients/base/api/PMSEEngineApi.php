@@ -971,6 +971,7 @@ class PMSEEngineApi extends SugarApi
 
         $rows = $q->execute();
 
+        $rows_aux = array();
 
         foreach ($rows as $key => $row) {
             if (in_array($row['cas_id'], $arrayUnattendedCases)) {
