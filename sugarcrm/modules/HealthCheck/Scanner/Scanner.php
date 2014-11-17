@@ -1820,6 +1820,10 @@ ENDP;
      */
     public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        // error was suppressed with the @-operator
+        if (error_reporting() === 0) {
+            return false;
+        }
         switch ($errno) {
             case 1:     $e_type = 'E_ERROR'; break;
             case 2:     $e_type = 'E_WARNING'; break;
