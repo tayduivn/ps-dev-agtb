@@ -289,11 +289,11 @@ hr.soften {
     top: 15%;
     position:absolute;
     left: 50%;
-    width:186px;
+    width:316px;
     .text {
       position: relative;
       left: -50%;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: normal;
       text-align: center;
       width: 100%;
@@ -304,6 +304,21 @@ hr.soften {
       padding: 10px;
       margin-left: -12px;
       text-shadow: none;
+    }
+    .resource-list {
+        text-align: left;
+        .resource-info {
+          a {
+            color: @white;
+          }
+          .details {
+              color: darken(@grayLighter, 10%);
+          }
+        }
+
+        .resource:last-child {
+            padding-bottom: 0px;
+        }
     }
   }
 
