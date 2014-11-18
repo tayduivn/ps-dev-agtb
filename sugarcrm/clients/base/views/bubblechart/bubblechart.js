@@ -141,7 +141,7 @@
         this.settings.on('change:filter_duration', this.changeFilter, this);
 
         this.layout.on('render', function() {
-            if (!this.settings.get('config')) {
+            if (!this.disposed && !this.settings.get('config')) {
                 this.layout.setTitle(app.lang.get(this.meta.label, this.forecastBy));
             }
         }, this);
