@@ -40,8 +40,13 @@
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
-        this._super('initialize', [options]);
+
         this.forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities';
+
+        // set the title label in meta the same way the dashlet title is set on render
+        options.meta.label = app.lang.get(options.meta.label, this.forecastBy);
+
+        this._super('initialize', [options]);
 
         var fields = [
             'id',
