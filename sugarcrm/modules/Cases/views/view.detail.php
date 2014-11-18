@@ -20,10 +20,10 @@ class CasesViewDetail extends ViewDetail {
     public function preDisplay()
     {
         parent::preDisplay();
-        if(ACLController::checkAccess('KBDocuments', 'edit', true))
+        if(ACLController::checkAccess('KBOLDDocuments', 'edit', true))
         {
             array_push($this->dv->defs['templateMeta']['form']['buttons'], array(
-                    'customCode'=>'<input title="{$MOD.LBL_CREATE_KB_DOCUMENT}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\';" type="submit" name="button" value="{$MOD.LBL_CREATE_KB_DOCUMENT}">',
+                    'customCode'=>'<input title="{$MOD.LBL_CREATE_KB_DOCUMENT}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBOLDDocuments\';" type="submit" name="button" value="{$MOD.LBL_CREATE_KB_DOCUMENT}">',
                     'sugar_html' => array(
                         'type' => 'submit',
                         'value' => '{$MOD.LBL_CREATE_KB_DOCUMENT}',
@@ -31,7 +31,7 @@ class CasesViewDetail extends ViewDetail {
                             'title' => '{$MOD.LBL_CREATE_KB_DOCUMENT}',
                             'accessKey' => 'M',
                             'class' => 'button',
-                            'onclick' => 'this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\';',
+                            'onclick' => 'this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBOLDDocuments\';',
                             'name' => 'button',
                         ),
                     ),

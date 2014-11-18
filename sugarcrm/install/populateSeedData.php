@@ -686,17 +686,17 @@ foreach($sugar_demodata['contract_seed_data'] as $v){
 ///
 /// SEED DATA FOR KNOWLEDGE BASE
 ///
-$kbtags_hash = array();
-foreach($sugar_demodata['kbdocument_seed_data_kbtags'] as $v){
-    $kbtag = new KBTag;
-    $kbtag->tag_name = $v;
-    $id = $kbtag->save();
-    $kbtags_hash[$id] = $v;
+$kboldtags_hash = array();
+foreach($sugar_demodata['kbolddocument_seed_data_kboldtags'] as $v){
+    $kboldtag = new KBOLDTag;
+    $kboldtag->tag_name = $v;
+    $id = $kboldtag->save();
+    $kboldtags_hash[$id] = $v;
 }
 
-foreach($sugar_demodata['kbdocument_seed_data'] as $v){
-	$kbdoc = new KBDocument();
-	$kbdoc->kbdocument_name = $v['name'];
+foreach($sugar_demodata['kbolddocument_seed_data'] as $v){
+	$kbdoc = new KBOLDDocument();
+	$kbdoc->kbolddocument_name = $v['name'];
 	$kbdoc->status_id = 'Published';
 	$kbdoc->team_id = 1;
 	$kbdoc->assigned_user_id = 'seed_will_id';
@@ -707,36 +707,36 @@ foreach($sugar_demodata['kbdocument_seed_data'] as $v){
 //END SUGARCRM flav=ent ONLY
 	$kbdoc->save();
 
-	$kbdocRevision = new KBDocumentRevision;
-	$kbdocRevision->change_log = translate('DEF_CREATE_LOG','KBDocuments');
+	$kbdocRevision = new KBOLDDocumentRevision;
+	$kbdocRevision->change_log = translate('DEF_CREATE_LOG','KBOLDDocuments');
 	$kbdocRevision->revision = '1';
-	$kbdocRevision->kbdocument_id = $kbdoc->id;
+	$kbdocRevision->kbolddocument_id = $kbdoc->id;
 	$kbdocRevision->latest = true;
 	$kbdocRevision->save();
 
 	$docRevision = new DocumentRevision();
-	$docRevision->filename = $kbdoc->kbdocument_name;
+	$docRevision->filename = $kbdoc->kbolddocument_name;
 	$docRevision->save();
 
-    $kbdocContent = new KBContent();
+    $kbdocContent = new KBOLDContent();
     $kbdocContent->document_revision_id = $docRevision->id;
     $kbdocContent->team_id = $kbdoc->team_id;
-	$kbdocContent->kbdocument_body = $v['body'];
+	$kbdocContent->kbolddocument_body = $v['body'];
 	$kbdocContent->save();
 
-	$kbdocRevision->kbcontent_id = $kbdocContent->id;
+	$kbdocRevision->kboldcontent_id = $kbdocContent->id;
     $kbdocRevision->document_revision_id = $docRevision->id;
     $kbdocRevision->save();
 
-    $kbdoc->kbdocument_revision_id = $kbdocRevision->id;
+    $kbdoc->kbolddocument_revision_id = $kbdocRevision->id;
 	$kbdoc->save();
 
 	foreach ($v['tags'] as $tag) {
-	    $kbdocKBTag = new KBDocumentKBTag();
-	    $kbdocKBTag->kbtag_id = array_search($tag,$kbtags_hash);
-	    $kbdocKBTag->kbdocument_id = $kbdoc->id;
-	    $kbdocKBTag->team_id = $kbdoc->team_id;
-	    $kbdocKBTag->save();
+	    $kbdocKBOLDTag = new KBOLDDocumentKBOLDTag();
+	    $kbdocKBOLDTag->kboldtag_id = array_search($tag,$kboldtags_hash);
+	    $kbdocKBOLDTag->kbolddocument_id = $kbdoc->id;
+	    $kbdocKBOLDTag->team_id = $kbdoc->team_id;
+	    $kbdocKBOLDTag->save();
 	}
 }
 

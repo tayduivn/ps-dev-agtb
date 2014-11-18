@@ -52,8 +52,8 @@ Touched:
 - modules/DCEClients/client_utils.php
 - modules/DCEClients/instanceImport.php
 - modules/DCEClients/processAction.php
-- modules/KBDocuments/Save.php
-- modules/KBDocuments/SearchUtils.php
+- modules/KBOLDDocuments/Save.php
+- modules/KBOLDDocuments/SearchUtils.php
 - modules/EmailMan/EmailMan.php
 - modules/EmailMan/EmailManDelivery.php
 - modules/Charts/Dashlets/MyForecastingChartDashlet/MyForecastingChartDashlet.php

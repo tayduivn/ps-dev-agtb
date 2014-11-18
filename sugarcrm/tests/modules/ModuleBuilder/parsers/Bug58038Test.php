@@ -19,7 +19,7 @@ require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParse
  */
 class Bug58038Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $_module = 'KBDocuments';
+    protected $_module = 'KBOLDDocuments';
     
     public function setUp()
     {

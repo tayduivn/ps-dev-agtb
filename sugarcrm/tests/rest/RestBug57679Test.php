@@ -37,10 +37,10 @@ class Bug57679Test extends RestTestPortalBase
     {
         parent::setUp();
         
-        // Build 10 KBDocuments for testing
+        // Build 10 KBOLDDocuments for testing
         for ($i = 1; $i < 11; $i++) {
-            $kbdoc = new KBDocument();
-            $kbdoc->kbdocument_name = "KBDocument bug57679 #{$i} - " . create_guid_section(6);
+            $kbdoc = new KBOLDDocument();
+            $kbdoc->kbolddocument_name = "KBOLDDocument bug57679 #{$i} - " . create_guid_section(6);
             $kbdoc->body = 'UNIT TEST GENERATED DOCUMENT #' . $i;
             $startDate = new SugarDateTime();
             $startDate->modify('-7 weeks');
@@ -89,7 +89,7 @@ class Bug57679Test extends RestTestPortalBase
     public function testDeletedKBDocsRecordsNotReturnedInList()
     {
         // First run, get the list of KBDocs... count should be 10
-        $reply = $this->_restCall("KBDocuments?q=".rawurlencode("KBDocument bug57679")."&fields=kbdocument_name,active_date,exp_date,date_entered,kbdocument_revision_number&max_num=20&order_by=date_modified:desc");
+        $reply = $this->_restCall("KBOLDDocuments?q=".rawurlencode("KBOLDDocument bug57679")."&fields=kbolddocument_name,active_date,exp_date,date_entered,kbolddocument_revision_number&max_num=20&order_by=date_modified:desc");
         $records = $reply['reply']['records'];
         $this->assertNotEmpty($records, "First rest reply is empty and should not be");
         $count = count($records);
@@ -100,7 +100,7 @@ class Bug57679Test extends RestTestPortalBase
         $delete->mark_deleted($delete->id);
         
         // Now get the list again... count should be 9
-        $reply = $this->_restCall("KBDocuments?q=".rawurlencode("KBDocument bug57679")."&fields=kbdocument_name,active_date,exp_date,date_entered,kbdocument_revision_number&max_num=20&order_by=date_modified:desc");
+        $reply = $this->_restCall("KBOLDDocuments?q=".rawurlencode("KBOLDDocument bug57679")."&fields=kbolddocument_name,active_date,exp_date,date_entered,kbolddocument_revision_number&max_num=20&order_by=date_modified:desc");
         $records = $reply['reply']['records'];
         $this->assertNotEmpty($records, "Second rest reply is empty and should not be");
         $count = count($records);

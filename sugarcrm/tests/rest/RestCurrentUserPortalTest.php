@@ -34,7 +34,7 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
                                 'Bugs' => array('edit' => 'no', 'create' => 'yes'), 
                                 'Cases' => array('edit' => 'no', 'create' => 'yes'), 
                                 'Notes' => array('edit' => 'no', 'create' => 'yes'), 
-                                'KBDocuments' => array('edit' => 'no', 'create' => 'no'), 
+                                'KBOLDDocuments' => array('edit' => 'no', 'create' => 'no'), 
                                 // edit is yes because they can edit themselves
                                 'Contacts' => array('edit' => 'yes', 'create' => 'yes'),
                             );

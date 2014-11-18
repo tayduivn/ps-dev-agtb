@@ -40,7 +40,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
      * @var array Test set of tabs for portal
      */
     static protected $testPortalTabs = array(
-        'KBDocuments' => 'KBDocuments',
+        'KBOLDDocuments' => 'KBOLDDocuments',
         'Contacts' => 'Contacts',
         'Cases' => 'Cases',
         'Bugs' => 'Bugs'

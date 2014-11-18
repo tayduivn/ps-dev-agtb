@@ -35,14 +35,14 @@ $layout_defs['Cases'] = array(
 				),
 			),
 		),
-        'kbdocuments' => array(
+        'kbolddocuments' => array(
             'order'             => 20,
-            'module'            => 'KBDocuments',
+            'module'            => 'KBOLDDocuments',
             'subpanel_name'     => 'default',
             'sort_order'        => 'desc',
             'sort_by'           => 'name',
-            'title_key'         => 'LBL_KBDOCUMENTS_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'kbdocuments',
+            'title_key'         => 'LBL_KBOLDDOCUMENTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'kbolddocuments',
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopCreateButton'),
                 array('widget_class' => 'SubPanelTopSelectButton'),

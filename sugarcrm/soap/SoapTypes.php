@@ -822,7 +822,7 @@ $server->wsdl->addComplexType(
 
 //BEGIN SUGARCRM flav=pro ONLY
 $server->wsdl->addComplexType(
-    'kbtag',
+    'kboldtag',
 	'complexType',
    	 'struct',
    	 'all',
@@ -835,20 +835,20 @@ $server->wsdl->addComplexType(
 );
 
 $server->wsdl->addComplexType(
-    'kbtag_list',
+    'kboldtag_list',
     'complexType',
      'array',
      '',
       'SOAP-ENC:Array',
     array(),
     array(
-		 array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:kbtag[]')
+		 array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:kboldtag[]')
     ),
-	'tns:kbtag'
+	'tns:kboldtag'
 );
 
 $server->wsdl->addComplexType(
-    'kbtag_doc',
+    'kboldtag_doc',
 	'complexType',
    	 'struct',
    	 'all',
@@ -860,16 +860,16 @@ $server->wsdl->addComplexType(
 );
 
 $server->wsdl->addComplexType(
-    'kbtag_docs_list',
+    'kboldtag_docs_list',
     'complexType',
      'array',
      '',
       'SOAP-ENC:Array',
     array(),
      array(
-		 array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:kbtag_doc[]')
+		 array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:kboldtag_doc[]')
     ),
-	'tns:kbtag_doc'
+	'tns:kboldtag_doc'
 );
 //END SUGARCRM flav=pro ONLY
 ?>

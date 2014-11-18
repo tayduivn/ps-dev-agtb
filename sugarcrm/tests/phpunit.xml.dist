@@ -105,7 +105,7 @@
             <directory>./modules/Documents/</directory>
             <directory>./modules/Filters/</directory>
             <directory>./modules/iCals/</directory>
-            <directory>./modules/KBDocumentRevisions/</directory>
+            <directory>./modules/KBOLDDocumentRevisions/</directory>
             <directory>./modules/MergeRecords/</directory>
             <directory>./modules/MassUpdate/</directory>
             <directory>./modules/Meetings/</directory>
@@ -122,7 +122,7 @@
         <testsuite name="Sugar SP Test Suite">
             <directory>./modules/Bugs/</directory>
             <directory>./modules/Cases/</directory>
-            <directory>./modules/KBDocuments/</directory>
+            <directory>./modules/KBOLDDocuments/</directory>
         </testsuite>
         <testsuite name="Sugar MAR Test Suite">
             <directory>./modules/ActivityStream/</directory>

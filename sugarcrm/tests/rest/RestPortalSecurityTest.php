@@ -34,19 +34,19 @@ class RestPortalSecurityTest extends RestTestPortalBase {
     {
         // KBDoc cleanup
         if (!empty($this->kbDocId)) {
-            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id = '" . $this->kbDocId . "'");
-            $GLOBALS['db']->query("DELETE FROM kbdocument_revisions WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM kbolddocuments WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM kbolddocument_revisions WHERE id = '" . $this->kbDocId . "'");
             $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '" . $this->kbDocId . "'");
         }
         parent::tearDown();
     }
 
-    public function testBug57022KBDocuments() {
+    public function testBug57022KBOLDDocuments() {
         //bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact
 
-        // Add 1 KBDocument
-        $kbdoc = new KBDocument();
-        $kbdoc->kbdocument_name = "KBDocument bug57022 - " . create_guid();
+        // Add 1 KBOLDDocument
+        $kbdoc = new KBOLDDocument();
+        $kbdoc->kbolddocument_name = "KBOLDDocument bug57022 - " . create_guid();
         $kbdoc->body = 'This is a document for the unit test system';
         $startDate = new SugarDateTime();
         $startDate->modify('-7 weeks');
@@ -59,7 +59,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $kbdoc->save();
         $this->kbDocId =$kbdoc->id;
             // Positive Test : Should be able to see the KBDoc
-        $restReply = $this->_restCall("KBDocuments/" . $kbdoc->id);
+        $restReply = $this->_restCall("KBOLDDocuments/" . $kbdoc->id);
         $this->assertEquals($kbdoc->id,$restReply['reply']['id'], 'bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact');
     }
 
@@ -130,10 +130,10 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
-        // Add some KBDocuments
+        // Add some KBOLDDocuments
         for ( $i = 0 ; $i < 6 ; $i++ ) {
-            $kbdoc = new KBDocument();
-            $kbdoc->kbdocument_name = "KBDocument ".($i+1)." - ".create_guid();
+            $kbdoc = new KBOLDDocument();
+            $kbdoc->kbolddocument_name = "KBOLDDocument ".($i+1)." - ".create_guid();
             $kbdoc->body = 'This is a document for the unit test system';
             $startDate = new SugarDateTime();
             $startDate->modify('-7 weeks');
@@ -490,8 +490,8 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->notes[] = $createdNote;
 
 
-        // Validate KBDocuments
-        $restReply = $this->_restCall("KBDocuments/");
+        // Validate KBOLDDocuments
+        $restReply = $this->_restCall("KBOLDDocuments/");
 
         $this->assertTrue(is_array($restReply['reply']['records']), "Reply Records was not array");
 
@@ -506,13 +506,13 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         }
         // Should not be able to fetch some of the records, let's test that.
         for ( $i = 0; $i < 3 ; $i++ ) {
-            $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[$i]->id);
+            $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[$i]->id);
             $this->assertEquals('not_found',$restReply['reply']['error']);
         }
         // The last two KBDocs we created should be visible.
-        $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[4]->id);
+        $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[4]->id);
         $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
-        $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[5]->id);
+        $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[5]->id);
         $this->assertEquals($this->kbdocs[5]->id,$restReply['reply']['id']);
 
     }

@@ -164,7 +164,7 @@ class RestTestPortalBase extends RestTestBase {
     // Copied from parser.portalconfig.php, when that gets merged we should probably just abuse that function.
     protected function _getPortalACLRole()
     {
-        $allowedModules = array('Accounts','Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
+        $allowedModules = array('Accounts','Bugs', 'Cases', 'Notes', 'KBOLDDocuments', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
@@ -196,7 +196,7 @@ class RestTestPortalBase extends RestTestBase {
                     } else {
                         $aclAllow = ACL_ALLOW_NONE;
                     }
-                    if ($moduleName == 'KBDocuments' && $actionName == 'edit') {
+                    if ($moduleName == 'KBOLDDocuments' && $actionName == 'edit') {
                         $aclAllow = ACL_ALLOW_NONE;
                     }
                     if ($moduleName == 'Contacts') {

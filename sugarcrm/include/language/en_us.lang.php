@@ -102,7 +102,7 @@ $app_list_strings = array (
     'TrackerQueries' => 'Tracker Queries',
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
-    'KBDocuments' => 'Knowledge Base',
+    'KBOLDDocuments' => 'Knowledge Base',
   	'SugarFavorites'=>'Favorites',
 	'PdfManager' => 'PDF Manager',
 
@@ -162,7 +162,7 @@ $app_list_strings = array (
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
     'Bugs' => 'Bug',
-    'KBDocuments' => 'Knowledge Base Document',
+    'KBOLDDocuments' => 'Knowledge Base Document',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
@@ -5404,7 +5404,7 @@ $app_list_strings['kbsdocument_status_dom'] = array(
     'expired' => 'Expired',
 );
 
-$app_list_strings['kbdocument_status_dom'] = array (
+$app_list_strings['kbolddocument_status_dom'] = array (
     'Draft' => 'Draft',
     'Expired' => 'Expired',
     'In Review' => 'In Review',
@@ -5423,7 +5423,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
 
 
-  $app_list_strings['kbdocument_attachment_option_dom'] =
+  $app_list_strings['kbolddocument_attachment_option_dom'] =
     array(
         ''=>'',
         'some' => 'Has Attachments',
@@ -5435,7 +5435,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
   $app_list_strings['moduleList']['Words'] = 'Words';
   $app_list_strings['moduleListSingular']['Words'] = 'Word';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
-  $app_list_strings['kbdocument_viewing_frequency_dom'] =
+  $app_list_strings['kbolddocument_viewing_frequency_dom'] =
   array(
     ''=>'',
     'Top_5'  => 'Top 5',
@@ -5446,7 +5446,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'Bot_20' => 'Bottom 20',
   );
 
-   $app_list_strings['kbdocument_canned_search'] =
+   $app_list_strings['kbolddocument_canned_search'] =
     array(
         'all'=>'All',
         'added' => 'Added Last 30 days',
@@ -5454,7 +5454,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
         'updated' =>'Updated Last 30 days',
         'faqs' => 'FAQs',
     );
-    $app_list_strings['kbdocument_date_filter_options'] =
+    $app_list_strings['kbolddocument_date_filter_options'] =
         array(
     '' => '',
     'on' => 'On',

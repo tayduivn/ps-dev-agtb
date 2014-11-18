@@ -14,7 +14,7 @@
 /**
  * Bug55154Test.php
  *
- * Tests KBDocuments Module 'keywords' field is not available in any layout.
+ * Tests KBOLDDocuments Module 'keywords' field is not available in any layout.
  * 
  * Using the parser factory delegates including necessary parser files at construct
  * time as opposed to loading all required files per fixture.
@@ -24,7 +24,7 @@ require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
     protected $testModule;
     protected $testField  = 'keywords';
-    protected static $testModuleStatic = 'KBDocuments';
+    protected static $testModuleStatic = 'KBOLDDocuments';
     
     public static function setUpBeforeClass()
     {

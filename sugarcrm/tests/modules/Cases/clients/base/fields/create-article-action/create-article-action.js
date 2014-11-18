@@ -30,7 +30,7 @@ describe('BaseCasesCreateArticleActionField', function() {
     it('should set the route based on model id', function() {
         field.model.id = 'test-case-id';
         field.initialize(field.options);
-        expect(field.def.route).toEqual('bwc/index.php?module=KBDocuments&action=EditView&case_id=test-case-id');
+        expect(field.def.route).toEqual('bwc/index.php?module=KBOLDDocuments&action=EditView&case_id=test-case-id');
     });
 
     it('should load the rowaction template', function() {

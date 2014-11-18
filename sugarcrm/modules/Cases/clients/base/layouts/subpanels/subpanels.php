@@ -78,9 +78,9 @@ $viewdefs['Cases']['base']['layout']['subpanels'] = array (
       ),
       array(
           'layout' => 'subpanel',
-          'label' => 'LBL_KBDOCUMENTS_SUBPANEL_TITLE',
+          'label' => 'LBL_KBOLDDOCUMENTS_SUBPANEL_TITLE',
           'context' => array (
-              'link' => 'kbdocuments',
+              'link' => 'kbolddocuments',
           ),
       ),
   ),

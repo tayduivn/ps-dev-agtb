@@ -34,7 +34,7 @@ class StudioModule
      * @var array
      */
     static $quickCreateNotSupportedModules = array(
-        'kbdocuments',
+        'kbolddocuments',
         'projecttask',
         'campaigns',
         'quotes',

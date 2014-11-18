@@ -2026,7 +2026,7 @@ td.edit.view td[align=right]
     border-left: none;
 }
 
-/* override some of the detail view styles for show more detail option (KBDocument detail view)*/
+/* override some of the detail view styles for show more detail option (KBOLDDocument detail view)*/
 .detail td.subdetail{
    padding:0px; 
    border-bottom:medium none;

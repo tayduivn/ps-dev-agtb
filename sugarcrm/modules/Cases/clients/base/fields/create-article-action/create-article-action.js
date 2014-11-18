@@ -21,7 +21,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.def.route = 'bwc/index.php?module=KBDocuments&action=EditView&case_id=' + this.model.id;
+        this.def.route = 'bwc/index.php?module=KBOLDDocuments&action=EditView&case_id=' + this.model.id;
     },
 
     /**

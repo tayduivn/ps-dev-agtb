@@ -377,7 +377,7 @@ echo "<br>";
     ///create kb tag data.
     installLog("create kb tag default data");
 
-	KBTag::default_install_data();
+	KBOLDTag::default_install_data();
     //END SUGARCRM flav=pro ONLY
 
     echo $mod_strings['LBL_PERFORM_DONE'];
@@ -625,7 +625,7 @@ FP;
     $enabled_tabs[] = 'pmse_Emails_Templates';
 
     if ($_SESSION['demoData'] != 'no') {
-        $enabled_tabs[] = 'KBDocuments';
+        $enabled_tabs[] = 'KBOLDDocuments';
         $enabled_tabs[] = 'Bugs';
     }
     //END SUGARCRM flav=ent ONLY
