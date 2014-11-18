@@ -4349,6 +4349,7 @@ Sincerely, SugarCRM',
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
+    'LBL_NO_DUPLICATES_FOUND' => 'No duplicates found.',
 
     'LBL_SUCCESS' => 'Success',
     'LBL_ERROR' => 'Error',
