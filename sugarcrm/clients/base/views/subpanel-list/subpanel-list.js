@@ -18,7 +18,7 @@
 ({
     extendsFrom: 'RecordlistView',
     fallbackFieldTemplate: 'list',
-    plugins: ['ErrorDecoration', 'Editable', 'SugarLogic', 'Pagination', 'LinkedModel'],
+    plugins: ['ErrorDecoration', 'Editable', 'SugarLogic', 'Pagination', 'LinkedModel', 'ResizableColumns'],
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",

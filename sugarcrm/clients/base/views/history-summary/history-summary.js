@@ -46,7 +46,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['ReorderableColumns', 'ListColumnEllipsis']);
+        this.plugins = _.union(this.plugins, ['ReorderableColumns', 'ResizableColumns', 'ListColumnEllipsis']);
 
         if (options.context.parent) {
             this.baseModule = options.context.parent.get('module');
