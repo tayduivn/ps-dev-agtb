@@ -28,11 +28,11 @@ class ParserRoleDropDown extends ModuleBuilderParser
             return array();
         }
         require_once $filePath;
-        if (empty(${$this->varName}[$role][$dropdown])) {
-            $GLOBALS['log']->error("ParserRoleDropDown :: Cannot find \$$this->varName[$role][$dropdown] in $filePath");
+        if (empty(${$this->varName}[$dropdown])) {
+            $GLOBALS['log']->error("ParserRoleDropDown :: Cannot find \$$this->varName[$dropdown] in $filePath");
             return array();
         }
-        return ${$this->varName}[$role][$dropdown];
+        return ${$this->varName}[$dropdown];
     }
 
     /**
@@ -42,12 +42,36 @@ class ParserRoleDropDown extends ModuleBuilderParser
      */
     public function getAll()
     {
-        $files = glob(sugar_root_dir() . '/' . $this->path . '/*/*.php');
-        $files += glob(sugar_root_dir() . '/custom/' . $this->path . '/*/*.php');
+        return $this->getValuesFromFiles($this->getAllFiles());
+    }
+
+    /**
+     * @return array list of all Role Based language files.
+     */
+    public function getAllFiles() {
+        return array_merge(
+            glob($this->path . '/*/*.php'),
+            glob('custom/' . $this->path . '/*/*.php')
+        );
+    }
+
+    /**
+     * @param array $files
+     *
+     * @return array dropdown keys found in the given files
+     */
+    public function getValuesFromFiles(array $files) {
         ${$this->varName} = array();
         foreach ($files as $file) {
-            require $file;
+            if (is_array($file) && isset($file['path'])) {
+                $file = $file['path'];
+            }
+            if (is_string($file) && SugarAutoLoader::fileExists($file)) {
+                require $file;
+            }
+
         }
+
         return ${$this->varName};
     }
 
@@ -91,12 +115,12 @@ class ParserRoleDropDown extends ModuleBuilderParser
             return false;
         }
         $result = write_array_to_file(
-            "{$this->varName}['{$role}']['{$name}']",
+            "{$this->varName}['{$name}']",
             $this->parseBlankOptionPlaceholder($data),
             'custom/' . $this->getFilePath($role, $name)
         );
         if ($result) {
-            MetaDataManager::refreshSectionCache(MetaDataManager::MM_ROLEDROPDOWNS);
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDVALS);
         }
         return $result;
     }
@@ -107,13 +131,14 @@ class ParserRoleDropDown extends ModuleBuilderParser
      */
     protected function parseBlankOptionPlaceholder($data)
     {
-        $keys = array_keys($data);
-        $keys = array_map(
-            function ($item) {
-                return str_replace(self::BLANK_PLACEHOLDER, '', $item);
-            },
-            $keys
-        );
-        return array_combine($keys, array_values($data));
+        foreach($data as $key => $item) {
+            if ($key === self::BLANK_PLACEHOLDER) {
+                unset($data[$key]);
+                $data[''] = $item;
+                break;
+            }
+        }
+
+        return $data;
     }
 }

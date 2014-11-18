@@ -58,7 +58,7 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
-    const MM_ROLEDROPDOWNS  = 'role_dropdowns';
+    const MM_EDITDDVALS     = 'editable_dropdown_values';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -153,7 +153,7 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
-        self::MM_ROLEDROPDOWNS  => 'getRoleDropdowns'
+        self::MM_EDITDDVALS     => 'getEditableDropdownValues'
     );
 
     /**
@@ -2175,7 +2175,7 @@ class MetaDataManager
                 $data = $this->$method($data, $context);
             } else {
                 $method = $this->sectionMap[$section];
-                $data[$section] = $this->$method();
+                $data[$section] = $this->$method($data, $context);
             }
         }
 
@@ -3201,7 +3201,7 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
-            self::MM_ROLEDROPDOWNS
+            self::MM_EDITDDVALS
         );
     }
 
@@ -3553,24 +3553,45 @@ class MetaDataManager
      *
      * @return array
      */
-    public function getRoleDropdowns()
+    public function getEditableDropdownValues($data = array(), MetaDataContextInterface $context = null)
     {
+        if ($this->public) {
+            return array();
+        }
+        if (is_null($context)) {
+            $context = $this->getCurrentUserContext();
+        }
+
         require_once 'modules/ModuleBuilder/parsers/parser.roledropdown.php';
+
         $parser = new ParserRoleDropDown();
-        $data = $parser->getAll();
-        //memory safe;
-        array_walk(
-            $data,
-            function (&$dropdowns) {
-                array_walk(
-                    $dropdowns,
-                    function (&$options) {
-                        $options = $this->convertToTuples($options);
-                    }
-                );
-            }
+        $patform = $this->platforms[0];
+        $files = array_map(function($file) use ($patform) {
+                $info = pathinfo($file);
+                return array(
+                   'path'=>$file,
+                   'file'=>$info['basename'],
+                   'subPath'=>$info['dirname'],
+                   'platform'=>$patform,
+               );
+            },
+            $parser->getAllFiles()
         );
-        return $data;
+        $files = array_filter($files, function (array $file) use ($context) {
+            return $context->isValid($file);
+        });
+
+        uasort($files, function ($a, $b) use ($context) {
+            return $context->compare($a, $b);
+        });
+
+        $values = $parser->getValuesFromFiles($files);
+
+        $result = array();
+        foreach ($values as $role)
+            if (!isset($result)
+        );
+        return $values;
     }
 
     /**
@@ -3699,16 +3720,18 @@ class MetaDataManager
      */
     protected static function getAllRoleSets()
     {
-        $roleSet = BeanFactory::getBean('ACLRoleSets');
-        $query = new SugarQuery();
-        $query->from($roleSet);
-        $query->select('id', 'hash');
-        $data = $query->execute();
-
         $roleSets = array();
-        foreach ($data as $row) {
-            $roleSets[] = $clone = clone $roleSet;
-            $clone->populateFromRow($row);
+        $roleSet = BeanFactory::getBean('ACLRoleSets');
+        if ($roleSet) {
+            $query = new SugarQuery();
+            $query->from($roleSet);
+            $query->select('id', 'hash');
+            $data = $query->execute();
+
+            foreach ($data as $row) {
+                $roleSets[] = $clone = clone $roleSet;
+                $clone->populateFromRow($row);
+            }
         }
 
         return $roleSets;

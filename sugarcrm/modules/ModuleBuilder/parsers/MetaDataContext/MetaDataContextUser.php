@@ -69,8 +69,9 @@ class MetaDataContextUser implements MetaDataContextInterface
      */
     protected function getRoleSet(User $user)
     {
-        $user->load_relationship('acl_role_sets');
-        $roleSets = $user->acl_role_sets->getBeans();
-        return array_shift($roleSets);
+        if ($user->load_relationship('acl_role_sets')) {
+            $roleSets = $user->acl_role_sets->getBeans();
+            return array_shift($roleSets);
+        }
     }
 }

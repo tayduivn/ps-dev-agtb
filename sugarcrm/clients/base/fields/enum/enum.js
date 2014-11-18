@@ -71,6 +71,22 @@
      */
     _keysOrder: null,
 
+    initialize: function(){
+        this._super("initialize", arguments);
+
+        //Reset the availible options based on the user's access and the model's values
+        if (_.isString(this.def.options)) {
+            var self = this;
+
+            this.listenTo(this.model, "sync", function(model){
+                var options = app.lang.getAppListStrings(self.def.options);
+                if (options) {
+                    self.items = self._filterRoleOptions(options);
+                }
+            });
+        }
+    },
+
     /**
      * @inheritDoc
      *
@@ -401,16 +417,31 @@
      * @private
      */
     _filterRoleOptions: function (options) {
-        var aclRoles = app.user.get('acl_roles'), newOptions = {}, filters;
-        if(_.isEmpty(aclRoles)) {
-            return options;
-        }
-        filters = app.metadata.getRoleDropdownFilter(aclRoles[0], this.def.options);
+        var currentValue,
+            syncedVal,
+            newOptions = {},
+            filters = app.metadata.getEditableDropdownFilters(this.def.options);
+
         if (_.isEmpty(filters)) {
             return options;
         }
-        _.each(_.keys(filters), function(key) {
-            if(app.utils.isTruthy(filters[key])) {
+
+        if (!_.contains(this.view.plugins, "Editable")) {
+            debugger;
+            return options;
+        }
+        //Force the current value(s) into the availible options
+        syncedVal = this.model.getSyncedAttributes();
+        currentValue = _.isUndefined(syncedVal[this.name]) ? this.model.get(this.name) : syncedVal[this.name];
+        if (_.isString(currentValue)) {
+            currentValue = [currentValue];
+        }
+        _.each(currentValue, function(value){
+            filters[value] = true;
+        });
+        //Now remove the disabled options
+        _.each(filters, function(visible, key) {
+            if(app.utils.isTruthy(visible)) {
                 newOptions[key] = options[key];
             }
         });
