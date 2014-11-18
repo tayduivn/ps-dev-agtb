@@ -18,10 +18,13 @@ class TemplateHTML extends TemplateField{
     var $size = '';
     var $len = '';
     
-    function save($df){
-		$this->ext3 = 'text';
-		parent::save($df);
-	}
+    function save($df)
+    {
+        $this->ext3 = 'text';
+        // clean the field of any dangerous html tags like the script tag, etc
+        $this->ext4 = SugarCleaner::cleanHtml($this->ext4, true);
+        parent::save($df);
+    }
 	
 	function set($values){
        parent::set($values);
