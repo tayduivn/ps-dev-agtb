@@ -957,6 +957,46 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testAddFiltersWithFieldCompare()
+    {
+        /** @var SugarQuery $query */
+        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
+            BeanFactory::getBean('Accounts'),
+            array(
+                'select' => array('name', 'contacts'),
+                'order_by' => array(),
+                'limit' => null,
+                'offset' => 0,
+            ),
+        ));
+
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        $where = $this->getMock('SugarQuery_Builder_Where', array('gt'), array($query));
+        $where->expects($this->once())->method('gt')->with(
+            $this->equalTo('date_entered'),
+            $this->equalTo(array('$field' => 'date_modified')),
+            $this->anything()
+        );
+
+        SugarTestReflection::callProtectedMethod(
+            'FilterApi',
+            'addFilters',
+            array(
+                array(
+                    array(
+                        'date_entered' => array(
+                            '$gt' => array(
+                                '$field' => 'date_modified'
+                            ),
+                        ),
+                    )
+                ),
+                $where,
+                $query
+            )
+        );
+    }
+
     /**
      * When we need $dateRange filter then $dateRange method should receive bean as parameter
      */

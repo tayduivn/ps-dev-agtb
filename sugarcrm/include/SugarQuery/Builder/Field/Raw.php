@@ -12,7 +12,7 @@
 
 
 /**
- * SugarQuery_Builder_Field_Orderby
+ * SugarQuery_Builder_Field_Raw
  * @api
  */
 

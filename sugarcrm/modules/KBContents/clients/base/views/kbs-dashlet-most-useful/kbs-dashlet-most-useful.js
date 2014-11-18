@@ -63,6 +63,11 @@
                 'active_rev': {
                     '$equals': 1
                 },
+                'useful': {
+                    '$gt': {
+                        '$field': 'notuseful'
+                    }
+                },
                 'status': {
                     '$in': ['published-in', 'published-ex']
                 }
