@@ -221,7 +221,13 @@ THE SOFTWARE.
             xhr.send(fd);
         },
         dataURItoBlob: function(dataURI){
-            // for check the original function: http://stackoverflow.com/questions/4998908/
+            // The following is provided for your convenience should you wish to learn more about
+            // Convert Data URI to File then append to FormData.
+            // For a list of the actual third party software used in this Sugar product,
+            // please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+            //
+            // http://stackoverflow.com/questions/4998908/
+
             // convert base64 to raw binary data held in a string
             // doesn't handle URLEncoded DataURIs
             var byteString = atob(dataURI.split(',')[1]);
