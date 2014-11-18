@@ -76,7 +76,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'massupdate' => true,
             'reportable' => true,
             'workflow' => true,
-            'importable' => true,
+            'importable' => 'required',
         ),
         'probability' => array(
             'audited' => true,
