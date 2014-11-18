@@ -142,7 +142,8 @@ class DownloadFile {
      * @return bool
      * @throws Exception
      */
-    private function validateBeanAndField($bean, $field, $type) {
+    protected function validateBeanAndField($bean, $field, $type)
+    {
         if (!$bean instanceof SugarBean || empty($bean->id) || empty($bean->{$field})) {
             // @TODO Localize this exception message
             throw new Exception('Invalid SugarBean');
@@ -278,26 +279,18 @@ class DownloadFile {
     {
         $archive = tempnam(sys_get_temp_dir(), 'sug');
 
-        $zip = new ZipArchive();
-        $zip->open($archive);
-        $counts = 0;
+        $files = $this->getFileNamesForArchive($beans, $field);
 
-        foreach ($beans as $bean) {
-            if ($this->validateBeanAndField($bean, $field, 'file')
-                || $this->validateBeanAndField($bean, $field, 'image')) {
-
-                $info = $this->getFileInfo($bean, $field);
-                if ($info) {
-                    $zip->addFromString($info['name'], file_get_contents($info['path']));
-                    $counts++;
-                }
-            }
-        }
-        $zip->close();
-
-        if (!$counts) {
+        if (count($files) == 0) {
             throw new Exception('Files could not be retrieved for this record');
         }
+
+        $zip = new ZipArchive();
+        $zip->open($archive);
+        foreach ($files as $file => $path) {
+            $zip->addFromString($file, file_get_contents($path));
+        }
+        $zip->close();
 
         $outputName = trim($outputName);
         if (empty($outputName)) {
@@ -312,6 +305,51 @@ class DownloadFile {
             'name' => $outputName,
             'path' => $archive,
         ));
+    }
+
+    /**
+     * Return files name with postfix, if need, and path to it.
+     * @param array $beans
+     * @param string $field
+     * @return array File name and path.
+     * @throws Exception
+     */
+    public function getFileNamesForArchive($beans, $field)
+    {
+        $aliases = array();
+        $result = array();
+
+        foreach ($beans as $bean) {
+            if ($this->validateBeanAndField($bean, $field, 'file')
+                || $this->validateBeanAndField($bean, $field, 'image')) {
+
+                $info = $this->getFileInfo($bean, $field);
+                if ($info) {
+                    if (empty($aliases[$info['name']])) {
+                        $aliases[$info['name']] = array();
+                    }
+                    array_push($aliases[$info['name']], $info['path']);
+                }
+            }
+        }
+
+        foreach ($aliases as $fname => $paths) {
+            if (count($paths) == 1) {
+                $result[$fname] = reset($paths);
+            } else {
+                $count = 0;
+                $fparts = explode('.', $fname);
+                $ind =  count($fparts) > 1 ? count($fparts) - 2 : 0;
+                $tmp = $fparts[$ind];
+                foreach ($paths as $path) {
+                    $fparts[$ind] .= "_{$count}";
+                    $count ++;
+                    $result[implode('.', $fparts)] = $path;
+                    $fparts[$ind] = $tmp;
+                }
+            }
+        }
+        return $result;
     }
 
     /**
