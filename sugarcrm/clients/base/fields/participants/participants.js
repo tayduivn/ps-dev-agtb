@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * ParticipantsField is a field for Meetings/Calls that manages the invitees of an event
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.ParticipantsField
  * @alias SUGAR.App.view.fields.BaseParticipantsField
  * @extends View.Field

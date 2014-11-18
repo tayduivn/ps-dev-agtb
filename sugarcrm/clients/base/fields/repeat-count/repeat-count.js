@@ -9,8 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * RepeatCount field is a special int field for Meetings & Calls that adds
+ * RepeatCount field is a special int field for Meetings/Calls that adds
  * max validation (which can't be done via metadata due to config value)
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
  *
  * @class View.Fields.Base.RepeatCountField
  * @alias SUGAR.App.view.fields.BaseRepeatCountField

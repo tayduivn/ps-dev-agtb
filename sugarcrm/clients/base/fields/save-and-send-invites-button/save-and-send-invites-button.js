@@ -9,9 +9,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * SaveAndSendInvitesButtonField field is a field for Meetings/Calls that handles setting the flag for sending emails to guests
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.SaveAndSendInvitesButtonField
  * @alias SUGAR.App.view.fields.BaseSaveAndSendInvitesButtonField
  * @extends View.Fields.Base.Rowaction
+ *
  */
 ({
     extendsFrom: 'RowactionField',

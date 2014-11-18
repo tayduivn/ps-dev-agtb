@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DeleterecurrencesbuttonField is a field for Meetings/Calls for the ability to delete all recurring events for a parent record
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DeleterecurrencesbuttonField
  * @alias SUGAR.App.view.fields.BaseDeleterecurrencesbuttonField
  * @extends View.Fields.Base.Rowaction
