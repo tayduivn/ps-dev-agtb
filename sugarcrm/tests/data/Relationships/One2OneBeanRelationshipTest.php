@@ -53,4 +53,15 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('id', $ret->on['and']->conditions[0]->field->field);
         $this->assertEquals('products.revenuelineitem_id', $ret->on['and']->conditions[0]->values);
     }
+
+    /**
+     * @covers One2OneBeanRelationship::getType
+     */
+    public function testGetType()
+    {
+        $relationship = $this->getMock('One2OneBeanRelationship', null, array(), '', false);
+
+        $this->assertEquals(REL_TYPE_ONE, $relationship->getType(REL_LHS));
+        $this->assertEquals(REL_TYPE_ONE, $relationship->getType(REL_RHS));
+    }
 }
