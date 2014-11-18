@@ -20,7 +20,7 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
-    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'rows were not imported due to error',
+    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'number of errors were found.  View error tab for rows that were not imported due to error',
     'LBL_UPDATE_SUCCESSFULLY' => 'records updated successfully',
     'LBL_SUCCESSFULLY_IMPORTED' => 'records were created',
     'LBL_STEP_4_TITLE' => 'Step {0}: Import File',

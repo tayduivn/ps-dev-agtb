@@ -31,17 +31,6 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'default' => true,
         ),
         array(
-          'target_record_key' => 'contact_id',
-          'target_module' => 'Contacts',
-          'name' => 'contact_name',
-          'label' => 'LBL_LIST_CONTACT',
-          'link' => true,
-          'module' => 'Contacts',
-          'enabled' => true,
-          'default' => true,
-          'related_fields' => array('contact_id'),
-        ),
-        array(
           'name' => 'date_start',
           'label' => 'LBL_LIST_DATE',
           'enabled' => true,

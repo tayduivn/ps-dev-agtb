@@ -174,10 +174,6 @@ ProcessImport = new function()
         YAHOO.util.Connect.asyncRequest('POST', 'index.php',
             {
                 success: function(o) {
-                    if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
-                        this.failure(o);
-                    }
-                    else {
                         var locationStr = "index.php?module=Import"
                             + "&action=Last"
                             + "&current_step=" + document.getElementById("importstepdup").current_step.value
@@ -193,7 +189,6 @@ ProcessImport = new function()
                             ProcessImport.fileCount++;
                             ProcessImport.submit();
                         }
-                    }
                 },
                 failure: function(o) {
                 	YAHOO.SUGAR.MessageBox.minWidth = 500;

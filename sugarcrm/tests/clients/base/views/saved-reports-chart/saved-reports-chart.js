@@ -90,7 +90,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
     describe('setChartParams()', function() {
         var field;
         beforeEach(function() {
-            SugarTest.loadComponent('base', 'field', 'chart', 'detail');
+            SugarTest.loadComponent('base', 'field', 'chart');
             field = SugarTest.createField({
                 name: 'chart_field',
                 type: 'chart',

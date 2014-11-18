@@ -260,10 +260,11 @@
      * @param {Function} callback (optional) Called when enum options are available.
      */
     loadEnumOptions: function(fetch, callback) {
-        var self = this,
-            meta = app.metadata.getModule(this.module, 'fields'),
-            fieldMeta = meta && meta[this.name] ? app.utils.deepCopy(meta[this.name]) : this.def;
-        this.items = this.def.options || fieldMeta.options;
+        var self = this;
+        var _itemsKey = 'cache:' + this.module + ':' + this.name + ':items';
+
+        this.items = this.def.options || this.context.get(_itemsKey);
+
         fetch = fetch || false;
 
         if (fetch || !this.items) {
@@ -284,7 +285,7 @@
                         if(self.disposed) { return; }
                         if (self.items !== o) {
                             self.items = o;
-                            fieldMeta.options = self.items;
+                            self.context.set(_itemsKey, self.items);
                             self.context.unset(_key);
                             callback.call(self);
                         }

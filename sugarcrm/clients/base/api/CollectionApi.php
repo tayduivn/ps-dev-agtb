@@ -79,6 +79,8 @@ class CollectionApi extends SugarApi
 
         $definition = $this->getCollectionDefinition($bean, $args['collection_name']);
         $args = $this->normalizeArguments($args, $definition);
+        // merge requested fields and sort fields into a single list
+        $args = $this->mergeRequestFieldsAndSortFields($args);
 
         $data = $this->getData($api, $args, $bean, $definition['links']);
         $allRecords = $this->flattenData($data, $nextOffset);
@@ -89,6 +91,9 @@ class CollectionApi extends SugarApi
         $records = array_slice($allRecords, 0, $args['max_num']);
         $remainder = array_slice($allRecords, $args['max_num']);
         $nextOffset = $this->getNextOffset($args['offset'], $records, $nextOffset, $remainder);
+
+        // remove unwanted fields from the data
+        $records = $this->cleanData($records, $args);
 
         return array(
             'records' => $records,
@@ -266,6 +271,11 @@ class CollectionApi extends SugarApi
             } else {
                 $args['order_by'] = $this->getDefaultOrderBy();
             }
+        }
+
+        // convert fields to a array for consistent behavior with SugarApi::formatBeans
+        if (!empty($args['fields']) && !is_array($args['fields'])) {
+            $args['fields'] = explode(',',$args['fields']);
         }
 
         return $args;
@@ -675,5 +685,73 @@ class CollectionApi extends SugarApi
         }
 
         return $this->relateApi;
+    }
+
+    /**
+     * Merge Requested Fields and Sort By Fields into a single list so that they can be retrieved from the db.
+     * @param array $args
+     * @return array $args Modified args is returned back. 'fields' is modified and 'addedRequestFields' is added
+     */
+    protected function mergeRequestFieldsAndSortFields(array $args)
+    {
+
+        // array to store fields that were added to the original fields list
+        // This array is needed so that we can cleanup the output by deleting these added Fields
+        // which were not requested in the initial call. These "added" fields will be used just
+        // for sorting
+        $addedRequestFields = array();
+
+        if (isset($args['fields']) && isset($args['order_by'])) {
+            $fieldsArray = $args['fields'];
+            $orderByFieldsArray = array_keys($args['order_by']);
+            // make a single list of requested fields and sort by fields
+            $mergedFieldsArray = array_unique(array_merge($fieldsArray, $orderByFieldsArray));
+            // Store the single list back in the args array
+            $args['fields'] = $mergedFieldsArray;
+
+            // Populate the addedRequestFields array. If a field has been requested (e.g: name) and
+            // is also in the order_by arguments, then we should not add it to the below array.
+            // This is because we want to display the name in this case since it has been
+            // explicitly asked for. The below array will contain only those fields that need to be
+            // cleaned up before the output.
+            foreach ($orderByFieldsArray as $orderField) {
+                if (!in_array($orderField, $fieldsArray)) {
+                    $addedRequestFields[] = $orderField;
+                }
+            }
+
+            if (!empty($addedRequestFields)) {
+                $args['addedRequestFields'] = $addedRequestFields;
+            }
+        }
+
+        return $args;
+    }
+
+    /**
+     * Clean up the data from unwanted fields that were not requested. For the purpose of sorting
+     * we may have requested additional fields from the database. However these need not be
+     * displayed to the user. Hence remove all such fields which are contained in
+     * addedRequestFields variable in the args array.
+     *
+     * @param $recordsArray
+     * @param $args
+     * @return array Modified Data Array is returned back
+     */
+    protected function cleanData($recordsArray, $args)
+    {
+
+        if (isset($args['addedRequestFields'])) {
+            // make the field names to be removed as the 'keys'
+            $addedRequestFields = array_flip($args['addedRequestFields']);
+            // Loop through all records
+            foreach ($recordsArray as $k => $record) {
+                // Check if any addedRequestField occurs in the record. If so delete it.
+                $recordsArray[$k] = array_diff_key($record, $addedRequestFields);
+            }
+        }
+
+        return ($recordsArray);
+
     }
 }

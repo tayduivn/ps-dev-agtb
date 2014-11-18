@@ -177,7 +177,7 @@ abstract class ImportDataSource implements Iterator
         fputcsv($fp,array($error,$fieldName,$fieldValue,$this->_rowsCount));
         fclose($fp);
 
-        if ( !$this->_rowCountedForErrors )
+        if ( !$this->_rowCountedForErrors || $error == 'Execution')
         {
             $this->_errorCount++;
             $this->_rowCountedForErrors = true;

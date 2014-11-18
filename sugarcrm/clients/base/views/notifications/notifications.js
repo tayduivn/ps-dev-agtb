@@ -56,6 +56,11 @@
     _remindersIntervalId: null,
 
     /**
+     * @property {Number} Timestamp of last time when we checked reminders.
+     */
+    _remindersIntervalStamp: 0,
+
+    /**
      * Interval ID defined when the pulling mechanism is running.
      *
      * @property {Number}
@@ -207,7 +212,7 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
-        this.dateStarted = new Date().getTime();
+        this._remindersIntervalStamp = this.dateStarted = new Date().getTime();
 
         this.pull();
         this._pullReminders();
@@ -327,17 +332,18 @@
             this.stopPulling();
             return this;
         }
-        var date = new Date(),
-            diff = this.reminderDelay - (date.getTime() - this.dateStarted) % this.reminderDelay;
+        var date = (new Date()).getTime(),
+            diff = this.reminderDelay - (date - this._remindersIntervalStamp) % this.reminderDelay;
         this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), diff);
         _.each(this._alertsCollections, function(collection) {
             _.chain(collection.models)
                 .filter(function(model) {
-                    var needDate = new Date(model.get('date_start')) - parseInt(model.get('reminder_time'), 10) * 1000;
-                    return needDate > date && needDate - date <= diff;
+                    var needDate = (new Date(model.get('date_start'))).getTime() - parseInt(model.get('reminder_time'), 10) * 1000;
+                    return needDate > this._remindersIntervalStamp && needDate - this._remindersIntervalStamp <= diff;
                 }, this)
                 .each(this._showReminderAlert, this);
         }, this);
+        this._remindersIntervalStamp = date + diff;
         return this;
     },
 

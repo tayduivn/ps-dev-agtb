@@ -335,7 +335,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'dbType' => 'varchar',
     'source'=>'non-db',
     'len' => 36,
-    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
+      'importable' => 'false',
+    'studio' => false,
 	),
 
   'contacts' =>
