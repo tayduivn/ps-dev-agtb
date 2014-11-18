@@ -11,12 +11,12 @@
 /**
  * @class View.Views.Base.ConfigHeaderButtonsView
  * @alias SUGAR.App.view.views.BaseConfigHeaderButtonsView
- * @extends View.View
+ * @extends  View.View
  */
 ({
     events: {
         'click a[name="cancel_button"]': 'cancelConfig',
-        'click a[name="save_button"]': 'saveConfig'
+        'click a[name="save_button"]:not(.disabled)': 'saveConfig'
     },
 
     /**
@@ -161,6 +161,7 @@
      */
     saveConfig: function() {
         if (this.triggerBefore('save')) {
+            this.getField('save_button').setDisabled(true);
             this._saveConfig();
         }
     },
@@ -176,11 +177,14 @@
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
-                if(app.drawer) {
+                if (app.drawer) {
                     this.showSavedConfirmation();
                     // close the drawer and return to Forecasts
                     app.drawer.close(this.context, this.context.get('model'));
                 }
+            }, this),
+            error: _.bind(function() {
+                this.getField('save_button').setDisabled(false);
             }, this)
         });
     },
