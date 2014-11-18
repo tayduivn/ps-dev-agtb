@@ -1573,6 +1573,21 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 $input.val(previousRole);
                 $select.val(previousRole);
             });
+        },
+        copyLayoutFromRole: function() {
+            var role = $("input[name=role]").val();
+            var source = $("#implementedRoles").val();
+            var originalUrl = ModuleBuilder.contentURL;
+            
+            var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
+            params.action = "copyLayout";
+            params.source = source;
+            var url = ModuleBuilder.paramsToUrl(params);
+
+            ModuleBuilder.getContent(url, function() {
+                ModuleBuilder.state.markAsDirty();
+            });
+            ModuleBuilder.contentURL = originalUrl;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

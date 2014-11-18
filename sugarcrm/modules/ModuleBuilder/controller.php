@@ -1135,6 +1135,27 @@ class ModuleBuilderController extends SugarController
         }
     }
 
+    public function action_copyLayout()
+    {
+        $module = $_REQUEST['view_module'];
+        $view = $_REQUEST['view'];
+        $role = $_REQUEST['role'];
+        $source = $_REQUEST['source'];
+
+        $sourceParser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $source));
+        $sourceImplementation = $sourceParser->getImplementation();
+        $fileName = $sourceImplementation->getFileNameNoDefault($view, $module);
+        if (!file_exists($fileName)) {
+            return;
+        }
+
+        $parser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $role));
+        $history = $parser->getHistory();
+        $history->savePreview($fileName);
+
+        $this->view = 'layoutview';
+    }
+
     /**
      * Nomalizes module strings.
      *

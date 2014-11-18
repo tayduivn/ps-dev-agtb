@@ -315,6 +315,7 @@ class ViewLayoutView extends SugarView
             'actionScript' => "onclick='$action'",
             'disabled' => $disableLayout,
         );
+        $implementation = $this->parser->getImplementation();
         if ($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE) {
             $buttons [] = array(
                 'id' => 'copyFromEditView',
@@ -322,17 +323,35 @@ class ViewLayoutView extends SugarView
                 'actionScript' => "onclick='ModuleBuilder.copyFromView(\"{$this->editModule}\", \"{$this->editLayout}\")'",
                 'disabled' => $disableLayout,
             );
-        } elseif (!empty($GLOBALS['sugar_config']['roleBasedViews'])
-            && $this->parser->getImplementation()->isDeployed()) {
+        } elseif ($this->editLayout == MB_RECORDVIEW && !empty($GLOBALS['sugar_config']['roleBasedViews'])
+            && $implementation->isDeployed()) {
+            $roles = $this->getRoleList($implementation);
             $buttons [] = array('type' => 'spacer', 'width' => '33px');
             $buttons [] = array('type' => 'label', "text" => translate('LBL_ROLE') . ":");
             $buttons [] = array(
                 'id' => 'roleList',
                 'type' => 'enum',
                 'actionScript' => 'style="max-width:150px" onchange="ModuleBuilder.switchLayoutRole(this)"',
-                "options" => $this->getRoleList(true),
-                "selected" => empty($_REQUEST['role']) ? "" :  $_REQUEST['role'],
+                "options" => $this->getAvailableRoleList($roles),
+                "selected" => empty($params['role']) ? "" :  $params['role'],
             );
+            if (!empty($params['role'])) {
+                $buttons [] = array('type' => 'spacer', 'width' => '33px');
+                $buttons [] = array('type' => 'label', "text" => translate('LBL_COPY_FROM') . ":");
+                $buttons [] = array(
+                    'id' => 'implementedRoles',
+                    'type' => 'enum',
+                    'actionScript' => 'style="max-width:150px"',
+                    "options" => $this->getRoleListWithMetadata($roles, $params['role']),
+                    "selected" => null,
+                );
+                $buttons [] = array(
+                    'id' => 'copyBtn',
+                    'text' => translate('LBL_COPY'),
+                    'actionScript' => "onclick='ModuleBuilder.copyLayoutFromRole();'",
+                    'disabled' => $disableLayout,
+                );
+            }
         }
         return $buttons;
     }
@@ -367,17 +386,22 @@ class ViewLayoutView extends SugarView
         return $html;
     }
 
-    protected function getRoleList()
+    /**
+     * Returns object storage containing available roles as keys
+     * and flags indicating if there is role specific metadata as value
+     *
+     * @param MetaDataImplementationInterface $implementation
+     * @return SplObjectStorage
+     */
+    protected function getRoleList(MetaDataImplementationInterface $implementation)
     {
         global $current_user;
 
-        $implementation = $this->parser->getImplementation();
-
-        $roles = array('' => translate('LBL_DEFAULT'));
+        $roles = new SplObjectStorage();
         //Only super user should have access to all roles
         $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
         foreach ($allRoles as $role) {
-            $fileExists = $implementation->fileExists(
+            $hasMetadata = $implementation->fileExists(
                 $this->editLayout,
                 $this->editModule,
                 MB_CUSTOMMETADATALOCATION,
@@ -385,11 +409,47 @@ class ViewLayoutView extends SugarView
                     'role' => $role->id,
                 )
             );
-
-            $prefix = $fileExists ? '* ' : '';
-            $roles[$role->id] = $prefix . $role->name;
+            $roles[$role] = $hasMetadata;
         }
 
         return $roles;
+    }
+
+    /**
+     * Returns list of roles with marker indicating whether role specific metadata exists
+     *
+     * @param SplObjectStorage $roles
+     * @return array
+     */
+    protected function getAvailableRoleList(SplObjectStorage $roles)
+    {
+        $result = array('' => translate('LBL_DEFAULT'));
+        foreach ($roles as $role) {
+            $hasMetadata = $roles->offsetGet($role);
+            $prefix = $hasMetadata ? '* ' : '';
+            $result[$role->id] = $prefix . $role->name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns list of roles which have role specific metadata
+     *
+     * @param SplObjectStorage $roles
+     * @param $currentRole
+     * @return array
+     */
+    protected function getRoleListWithMetadata(SplObjectStorage $roles, $currentRole)
+    {
+        $result = array();
+        foreach ($roles as $role) {
+            $hasMetadata = $roles->offsetGet($role);
+            if ($hasMetadata && $role->id != $currentRole) {
+                $result[$role->id] = $role->name;
+            }
+        }
+
+        return $result;
     }
 }
