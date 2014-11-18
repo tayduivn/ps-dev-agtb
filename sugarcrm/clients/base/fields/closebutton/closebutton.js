@@ -71,7 +71,7 @@
     },
 
     /**
-     * Retrieve the closed status value from the def
+     * Retrieve the closed status value from the fields meta definition
      *
      * @return {string}
      */
@@ -82,7 +82,8 @@
     },
 
     /**
-     * Retrieve the status field name from the def - default to 'status'
+     * Retrieve the status field name from the field meta definition.
+     * Defaults to 'status'
      *
      * @return {string}
      */
@@ -95,7 +96,7 @@
     /**
      * Close the record by setting the appropriate status on the record.
      *
-     * @param {boolean} createNew Whether to open a new drawer to create a
+     * @param {boolean} createNew Flag for whether to open a new drawer to create a
      *   record after close.
      * @private
      */

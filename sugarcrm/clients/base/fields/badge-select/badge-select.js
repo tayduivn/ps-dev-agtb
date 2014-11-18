@@ -41,7 +41,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * This field renders as a badge when not in edit mode and as an enum when
      * in edit mode.

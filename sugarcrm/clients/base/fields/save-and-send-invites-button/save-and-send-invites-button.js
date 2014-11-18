@@ -15,7 +15,7 @@
  *
  * @class View.Fields.Base.SaveAndSendInvitesButtonField
  * @alias SUGAR.App.view.fields.BaseSaveAndSendInvitesButtonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
  *
  */
 ({
@@ -34,7 +34,7 @@
 
     /**
      * Setting model event to allow unsetting of send_invites after validation error or data sync completed.
-     * @inheritDoc
+     * @inheritdoc
      */
     bindDataChange: function() {
         if (!this.model) {
@@ -47,7 +47,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Silently sets `send_invites` to true on the model before saving.
      */

@@ -252,6 +252,7 @@
              * instance are cleared when the collection is synchronized (See
              * {@link Link#clearAndUpdateDefaults}).
              *
+             * @param {Object} options
              * @param {Data.Bean} options.parent The model to which this
              * collection is attached.
              * @param {String} options.fieldName The name of the attribute on
@@ -760,7 +761,7 @@
         };
 
         /**
-         * @see Data.Bean#toJSON
+         * {@link Data.Bean#toJSON}
          *
          * {@link Data.Bean Beans} to be linked or unlinked via the link fields
          * will be reduced to a specific set of attributes.
@@ -803,7 +804,7 @@
         };
 
         /**
-         * @see Data.Bean#copy
+         * {@link Data.Bean#copy}
          *
          * Copies any collection fields on the model from the source
          * {@link Data.Bean}.
@@ -847,7 +848,7 @@
         };
 
         /**
-         * @see Data.Bean#set
+         * {@link Data.Bean#set}
          *
          * Creates a new {@link VirtualCollection} at the attribute using the
          * existing value as the default set of models. The default value of
@@ -869,7 +870,7 @@
         };
 
         /**
-         * @see Data.Bean#hasChanged
+         * {@link Data.Bean#hasChanged}
          *
          * Tests the collection fields when determining whether or not the
          * {@link Data.Bean} has changed.
@@ -894,7 +895,7 @@
         };
 
         /**
-         * @see Data.Bean#changedAttributes
+         * {@link Data.Bean#changedAttributes}
          *
          * Includes in the return value any collection fields with collections
          * that have changed. When comparing objects, Backbone does not do a
@@ -915,7 +916,7 @@
         };
 
         /**
-         * @see Data.Bean#revertAttributes
+         * {@link Data.Bean#revertAttributes}
          *
          * Reverts all collections to their state when they were last
          * synchronized.
@@ -930,7 +931,7 @@
         };
 
         /**
-         * @see Data.Bean#getSyncedAttributes
+         * {@link Data.Bean#getSyncedAttributes}
          *
          * Includes in the return value all collection fields and their
          * associated link attributes. When comparing objects, Backbone does

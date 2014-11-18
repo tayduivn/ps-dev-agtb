@@ -15,6 +15,7 @@
  *
  * @class View.Fields.Base.DurationField
  * @alias SUGAR.App.view.fields.BaseDurationField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',
@@ -43,7 +44,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     bindDataChange: function() {
         // Change the end date when start date changes.
@@ -80,7 +81,7 @@
 
     /**
      * Return the display string for the start and date, along with the duration.
-     * @returns {string}
+     * @return {string} The duration string
      */
     getFormattedValue: function() {
         var displayString = '',
@@ -185,7 +186,7 @@
 
     /**
      * Is this date range valid? It returns true when start date is before end date.
-     * @returns {boolean}
+     * @return {boolean}
      */
     isDateRangeValid: function() {
         var start = this.model.get('date_start'),

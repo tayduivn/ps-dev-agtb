@@ -52,7 +52,7 @@
 
     /**
      * Process the report that was selected by the user.
-     * @param {object} model
+     * @param {Object} model
      */
     selectDrawerCallback: function(model) {
         if (!model || _.isEmpty(model.id)) {
@@ -93,7 +93,7 @@
 
     /**
      * Links records from a report to the parent record
-     * @param {object} response
+     * @param {Object} response
      */
     linkRecordList: function(response) {
         var parentModel = this.context.get('parentModel'),
@@ -119,7 +119,7 @@
 
     /**
      * Success callback function for api call
-     * @param {object} results
+     * @param {Object} results
      */
     linkSuccessCallback: function(results) {
         var message, messageLevel;
@@ -146,7 +146,7 @@
 
     /**
      * Error callback function for api call
-     * @param {object} error
+     * @param {Object} error
      */
     linkErrorCallback: function(error) {
         app.alert.show('server-error', {
