@@ -85,8 +85,8 @@ $viewdefs['base']['view']['dnb-standard-company-info'] = array(
                 'marketind' => '1',
                 'dunsselfind' => '1',
                 'nonmarkreastxt' => '1',
-                'indcodes' => '1',
-
+                'orgid' => '1',
+                'indcodes' => '1'
             ),
             'preview' => array(
                 'compname' => '1',
@@ -153,6 +153,7 @@ $viewdefs['base']['view']['dnb-standard-company-info'] = array(
                 'marketind' => '1',
                 'dunsselfind' => '1',
                 'nonmarkreastxt' => '1',
+                'orgid' => '1',
                 'indcodes' => '1',
             ),
         ),
@@ -597,6 +598,15 @@ $viewdefs['base']['view']['dnb-standard-company-info'] = array(
                 'name' => 'nonmarkreastxt',
                 'label' => 'LBL_DNB_NONMARK_REAS_TXT',
                 'desc' => 'LBL_DNB_NONMARK_REAS_TXT_DESC',
+                'last' => '1',
+                'type' => 'bool'
+            ),
+            array(
+                'name' => 'orgid',
+                'label' => 'LBL_DNB_ORG_ID',
+                'desc' => 'LBL_DNB_ORG_ID_DESC',
+                'header' => 'LBL_DNB_REG_DET_HED',
+                'header_desc' => 'LBL_DNB_REG_DET_HED_DESC',
                 'last' => '1',
                 'type' => 'bool'
             ),
