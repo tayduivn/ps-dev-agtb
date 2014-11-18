@@ -548,10 +548,43 @@
             /**
              * Returns if the current browser has touch events
              *
-             * @returns {Boolean}
+             * @return {Boolean}
              */
             isTouchDevice: function() {
                 return Modernizr.touch;
+            },
+
+            /**
+             * Gets the rtl browser scroll type.
+             *
+             * In rtl mode, the JQuery 'scrolLeft()' function behaves
+             * differently depending on the browser. The rtl browser scroll type
+             * represents this behavior. Here are the values returned by
+             * 'scrolLeft()' depending on the type :
+             *   'default': 0 on the left, max on the right side.
+             *   'negative': -max on the left, 0 on the right side.
+             *   'reverse': max on the left, 0 on the right side.
+             *
+             * @return {string} type the rtl browser scroll type.
+             */
+                getRtlScrollType: function() {
+                var definer = $('<div dir="rtl" style="width: 1px; height: 1px; position: absolute;' +
+                        'top: -1000px; overflow: scroll">A</div>').appendTo('body')[0],
+                    type = 'reverse';
+
+                if (definer.scrollLeft > 0) {
+                    type = 'default';
+                } else {
+                    definer.scrollLeft = 1;
+                    if (definer.scrollLeft === 0) {
+                        type = 'negative';
+                    }
+                }
+                jQuery(definer).remove();
+                this.getRtlScrollType = function() {
+                    return type;
+                };
+                return type;
             },
 
             /**
