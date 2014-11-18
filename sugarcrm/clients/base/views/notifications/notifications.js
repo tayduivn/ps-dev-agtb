@@ -46,11 +46,6 @@
     _alertsCollections: {},
 
     /**
-     * @property {Number} Timestamp when we started pooling.
-     */
-    dateStarted: null,
-
-    /**
      * @property {Number} Interval ID for checking reminders.
      */
     _remindersIntervalId: null,
@@ -212,7 +207,7 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
-        this._remindersIntervalStamp = this.dateStarted = new Date().getTime();
+        this._remindersIntervalStamp = new Date().getTime();
 
         this.pull();
         this._pullReminders();
@@ -231,8 +226,8 @@
             this.stopPulling();
             return;
         }
-        var diff = this.delay - (new Date().getTime() - this.dateStarted) % this.delay;
-        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), diff);
+
+        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
 
         this.pull();
         this._pullReminders();
