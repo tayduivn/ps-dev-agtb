@@ -240,11 +240,11 @@
      */
     stopPulling: function() {
         if (!_.isNull(this._intervalId)) {
-            window.clearInterval(this._intervalId);
+            window.clearTimeout(this._intervalId);
             this._intervalId = null;
         }
         if (!_.isNull(this._remindersIntervalId)) {
-            window.clearInterval(this._remindersIntervalId);
+            window.clearTimeout(this._remindersIntervalId);
             this._remindersIntervalId = null;
         }
         return this;
