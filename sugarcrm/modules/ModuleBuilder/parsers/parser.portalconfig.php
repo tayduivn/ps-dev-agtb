@@ -22,23 +22,64 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 {
 
     /**
-     * Constructor
+     * Sets up Portal.
+     *
+     * @param array $settings (optional) the array of portal settings.
      */
-    function init()
-    {
-    }
-
-    /**
-     * handles portal config save and creating of portal users
-     */
-    function handleSave()
+    public function setUpPortal(array $settings = array())
     {
         // Initialize `MySettings_tab` (setting containing the list of module
         // tabs) if not set.
         $tabController = new TabController();
-        $tabs = $tabController->getPortalTabs();
+        $tabController->getPortalTabs();
 
-        $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
+        $portalFields = array('defaultUser', 'appName', 'logoURL', 'serverUrl',
+            'maxQueryResult', 'maxSearchQueryResult');
+        $portalConfig = $this->getDefaultPortalSettings();
+
+        foreach ($portalFields as $field) {
+            if (isset($settings[$field])) {
+                $portalConfig[$field] = $settings[$field];
+            }
+        }
+
+        $portalConfig['appStatus'] = 'online';
+        $portalConfig['on'] = 1;
+
+        $this->savePortalSettings($portalConfig);
+        $this->setUpUser();
+
+        $this->refreshCache();
+    }
+
+    /**
+     * Refreshes cache so that module metadata is rebuilt.
+     */
+    protected function refreshCache()
+    {
+        MetaDataManager::refreshCache(array('base', 'portal'));
+    }
+
+    /**
+     * Unsets Portal.
+     */
+    public function unsetPortal()
+    {
+        $portalConfig = array(
+            'appStatus' => 'offLine',
+            'on' => 0
+        );
+        $this->savePortalSettings($portalConfig);
+        $this->removeOAuthForPortalUser();
+    }
+
+    /**
+     * Gets the default Portal settings.
+     *
+     * @return array the array containing default Portal settings.
+     */
+    private function getDefaultPortalSettings()
+    {
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
@@ -69,29 +110,52 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         if (inDeveloperMode()) {
             $portalConfig['logLevel'] = 'DEBUG';
         }
-        foreach ($portalFields as $field) {
-            if (isset($_REQUEST[$field])) {
-                $portalConfig[$field] = $_REQUEST[$field];
-            }
-        }
+        return $portalConfig;
+    }
 
-        //Get the current portal status because if it has changed we need to clear the base metadata
-        if (isset($portalConfig['appStatus']) && $portalConfig['appStatus'] == 'true') {
-            $portalConfig['appStatus'] = 'online';
-            $portalConfig['on'] = 1;
+    /**
+     * Toggles portal state (enabled/disabled).
+     */
+    public function handleSave()
+    {
+        if (isset($_REQUEST['appStatus']) && $_REQUEST['appStatus'] == 'true') {
+            $this->setUpPortal($_REQUEST);
         } else {
-            $portalConfig['appStatus'] = 'offline';
-            $portalConfig['on'] = 0;
+            $this->unsetPortal();
         }
+    }
+
+    /**
+     * Sets up portal user.
+     */
+    private function setUpUser()
+    {
+        $user = $this->getPortalUser();
+        $role = $this->getPortalACLRole();
+
+        if (!($user->check_role_membership($role->name))) {
+            $user->load_relationship('aclroles');
+            $user->aclroles->add($role);
+            $user->save();
+        }
+    }
+
+    /**
+     * Saves Portal settings in the database.
+     *
+     * @param array $portalConfig an array containing Portal settings to save.
+     */
+    private function savePortalSettings(array $portalConfig)
+    {
         //TODO: Remove after we resolve issues with test associated to this
-        $GLOBALS['log']->info("Updating portal config");
+        $GLOBALS['log']->info('Updating portal config');
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
             // TODO: category should be `support`, platform should be `portal`
-            if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')){
+            $admin = $this->getAdministrationBean();
+            if (!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
             }
-
         }
 
         // Verify the existence of the javascript config file
@@ -99,34 +163,26 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             require_once 'ModuleInstall/ModuleInstaller.php';
             ModuleInstaller::handlePortalConfig();
         }
-
-        if (isset($portalConfig['on']) && $portalConfig['on'] == 1) {
-            $u = $this->getPortalUser();
-            $role = $this->getPortalACLRole();
-
-            if (!($u->check_role_membership($role->name))) {
-                $u->load_relationship('aclroles');
-                $u->aclroles->add($role);
-                $u->save();
-            }
-        } else {
-            $this->removeOAuthForPortalUser();
-        }
-        //Refresh cache so that module metadata is rebuilt
-        MetaDataManager::refreshCache(array('base', 'portal'));
-
     }
 
     /**
-     * Creates Portal User
-     * @return User
+     * TODO build me a dependency injection
+     * @return Administration the Administration class.
      */
-    function removeOAuthForPortalUser()
+    protected function getAdministrationBean()
+    {
+        return BeanFactory::getBean('Administration');
+    }
+
+    /**
+     * Removes OAuth key of Portal user.
+     */
+    public function removeOAuthForPortalUser()
     {
         // Try to retrieve the portal user. If exists, check for
         // corresponding oauth2 and mark deleted.
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = User::retrieve_user_id($portalUserName);
+        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
         if ($id) {
             $clientSeed = BeanFactory::newBean('OAuthKeys');
             $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
@@ -135,15 +191,16 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
     }
-        
+
     /**
-     * Creates Portal User
-     * @return User
+     * Creates Portal User.
+     *
+     * @return User the portal user.
      */
-    function getPortalUser()
+    public function getPortalUser()
     {
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = User::retrieve_user_id($portalUserName);
+        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
         if (!$id) {
             $user = BeanFactory::getBean('Users');
             $user->user_name = $portalUserName;
@@ -164,15 +221,17 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $id = $user->id;
 
             // set user id in system settings
-            $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);
+            Administration::getSettings()->saveSetting('supportPortal', 'RegCreatedBy', $id);
         }
         $this->createOAuthForPortalUser();
         $resultUser = BeanFactory::getBean('Users', $id);
         return $resultUser;
     }
 
-    // Make the oauthkey record for this portal user now if it doesn't exists
-    function createOAuthForPortalUser() 
+    /**
+     * Creates the oauthkey record for this portal user if it doesn't exist.
+     */
+    public function createOAuthForPortalUser()
     {
         $clientSeed = BeanFactory::newBean('OAuthKeys');
         $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
@@ -190,9 +249,10 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 
     /**
      * Creates Portal role and sets ACLS
+     *
      * @return ACLRole
      */
-    function getPortalACLRole()
+    public function getPortalACLRole()
     {
         global $mod_strings;
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
