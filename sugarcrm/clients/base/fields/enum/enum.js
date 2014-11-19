@@ -203,11 +203,6 @@
                     }
                     if (self.model) {
                         self.model.set(self.name, self.unformat(value));
-                        //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-                        if (_.isFunction(self.model.removeDefaultAttribute)) {
-                            self.model.removeDefaultAttribute(self.name)
-                        }
-
                     }
                 });
                 if (this.def.ordered) {

@@ -128,7 +128,6 @@
         if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
             if (module) {
                 this.model.set('parent_type', module, {silent: silent});
-                this.model.removeDefaultAttribute('parent_type');
             }
             // only set when we have an id on the model, as setting undefined
             // is causing issues with the warnUnsavedChanges() method
