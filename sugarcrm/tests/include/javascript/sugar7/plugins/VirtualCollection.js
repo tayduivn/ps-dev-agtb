@@ -707,6 +707,44 @@ describe('Plugins.VirtualCollection', function() {
                 expect(model.get(attribute).length).toBe(1);
                 expect(model.get('foo')).toEqual('bar');
             });
+
+            describe('setting to undefined', function() {
+                beforeEach(function() {
+                    model.set(attribute, _.last(contacts));
+                });
+
+                it('should set the attribute to an empty collection when setting with undefined', function() {
+                    model.set(attribute, undefined);
+
+                    expect(model.get(attribute).length).toBe(0);
+                });
+
+                it('should set the attribute to an empty collection when unsetting', function() {
+                    model.unset(attribute);
+
+                    expect(model.get(attribute).length).toBe(0);
+                });
+            });
+
+            it('should accept the models from the server response', function() {
+                var response = {
+                    records: contacts,
+                    next_offset: {}
+                };
+
+                model.set(attribute, response);
+
+                expect(model.get(attribute).length).toBe(contacts.length);
+            });
+
+            it('should accept the models from another collection', function() {
+                var collection = app.data.createBeanCollection('Contacts', contacts);
+
+                model.set(attribute, collection);
+
+                expect(model.get(attribute) === collection).toBe(false);
+                expect(model.get(attribute).length).toBe(collection.length);
+            });
         });
 
         describe('has the bean changed?', function() {
