@@ -10,6 +10,7 @@ nv.models.funnelChart = function() {
       height = null,
       showTitle = false,
       showLegend = true,
+      direction = 'ltr',
       tooltip = null,
       tooltips = true,
       tooltipContent = function(key, x, y, e, graph) {
@@ -80,17 +81,17 @@ nv.models.funnelChart = function() {
         container.transition().duration(durationMs).call(chart);
       };
 
-      chart.dataSeriesActivate = function (e) {
+      chart.dataSeriesActivate = function(e) {
         var series = e.series;
 
-        series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive' ;
+        series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
         series.values[0].active = series.active;
 
         // if you have activated a data series, inactivate the rest
         if (series.active === 'active') {
-          data.filter(function (d) {
+          data.filter(function(d) {
             return d.active !== 'active';
-          }).map(function (d) {
+          }).map(function(d) {
             d.values[0].active = 'inactive';
             d.active = 'inactive';
             return d;
@@ -98,10 +99,10 @@ nv.models.funnelChart = function() {
         }
 
         // if there are no active data series, activate them all
-        if (!data.filter(function (d) {
+        if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
-          data.map(function (d) {
+          data.map(function(d) {
             d.active = '';
             d.values[0].active = '';
             container.selectAll('.nv-series').classed('nv-inactive', false);
@@ -192,7 +193,7 @@ nv.models.funnelChart = function() {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
-            .attr('x', 0)
+            .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
             .attr('dy', '.71em')
             .attr('text-anchor', 'start')
@@ -209,6 +210,8 @@ nv.models.funnelChart = function() {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(funnelData)
@@ -252,7 +255,6 @@ nv.models.funnelChart = function() {
         .highlightZero(true)
         .showMaxMin(false)
         .tickValues(tickValues)
-        .textAnchor('start')
         .tickFormat(function(d, i) {
           return i === 0 ? '' : funnelData[i - 1].key;
         });
@@ -261,9 +263,12 @@ nv.models.funnelChart = function() {
         .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerWidth) + ',' + innerMargin.top + ')')
           .call(yAxis);
 
+      yAxisWrap.selectAll('.tick.major text.nv-value').remove();
+
       yAxisWrap.selectAll('.tick.major text')
+        .attr('class', 'nv-label')
         .style('font-size', innerWidth < 500 ? '11px' : '15px')
-        .each(fmtAxisLabel);
+        .html(fmtAxisLabel);
 
 
       // Build array of tick label dimensions
@@ -274,7 +279,7 @@ nv.models.funnelChart = function() {
             return {
               key: funnelData[i - 1] ? funnelData[i - 1].key : 'Base',
               width: w,
-              height: h,
+              height: 32,
               widthOffset: w,
               textOffset: 0,
               lineOffset: 0,
@@ -313,16 +318,22 @@ nv.models.funnelChart = function() {
 
       // Reposition tick elements and update label
       yAxisWrap.selectAll('.tick.major text')
-        // .attr('x', function(d, i) {
-        //   var t = tickDimensions[i];
-        //   return t.widthOffset / 2 + t.height + 'px';
-        // })
-        .attr('dy', function(d, i) {
-          var t = tickDimensions[i]
-              y = t.textOffset;
-          return y + 'px';
-        })
-        .each(fmtAxisLabel);
+        .attr('x', 0)
+        .attr('y', posAxisLabel)
+        .attr('dy', 0)
+        .text(fmtAxisLabel)
+          .each(function(d, i) {
+            if (!i) {
+              return;
+            }
+            var t = d3.select(this),
+                s = funnelData[i - 1];
+                m = nv.utils.isRTLChar(s.key.slice(-1)),
+                dir = m ? 'rtl' : 'ltr',
+                anchor = m ? 'end' : 'start';
+            t.attr('direction', dir);
+            t.style('text-anchor', anchor);
+          });
 
       // Set leaders
       yAxisWrap.selectAll('.tick.major line')
@@ -352,6 +363,16 @@ nv.models.funnelChart = function() {
             var t = tickDimensions[i];
             return !t.previousLabel ? 0 : 1;
           });
+
+      yAxisWrap.selectAll('.tick.major')
+        .append('text')
+          .attr('class', 'nv-value')
+          .attr('x', 0)
+          .attr('y', posAxisLabel)
+          .attr('dy', '1em')
+          .style('font-size', '15px')
+          .style('text-anchor', direction === 'rtl' ? 'end' : 'start')
+          .text(fmtAxisValue);
 
 
       function recalcDimensions(values, dimensions) {
@@ -419,36 +440,43 @@ nv.models.funnelChart = function() {
         return Math.round(minimumOffset);
       }
 
+      function posAxisLabel(d, i) {
+        var t = tickDimensions[i],
+            y = t ? t.textOffset || 0 : 0;
+        return y;
+      }
+
       function fmtAxisLabel(d, i) {
-        var data, tick, node, count;
-
-        node = d3.select(this);
-        node.text('');
-
+        var data, tick, c, l, m;
         if (!i) {
-          return;
+          return '';
         }
         if (tickDimensions) {
           tick = tickDimensions[i];
           if (tick.thickness > tick.height) {
-            return;
+            return '';
           }
         }
-
         data = funnelData[i - 1];
+        l = data.key;
+        m = nv.utils.isRTLChar(l.slice(-1));
+        l += isNaN(data.count) ? '' : ' (' + data.count + ')';
+        return l;
+      }
 
-        count = isNaN(data.count) ? '' : ' (' + data.count + ')';
-
-        node.append('tspan')
-          .attr('x', 0)
-          .style('font-size', '11px')
-          .text(data.key + count);
-
-        node.append('tspan')
-          .attr('x', 0)
-          .attr('dy', '1em')
-          .style('font-size', '15px')
-          .text(funnel.fmtValueLabel()(data.values[0]));
+      function fmtAxisValue(d, i) {
+        var data, tick;
+        if (!i) {
+          return '';
+        }
+        if (tickDimensions) {
+          tick = tickDimensions[i];
+          if (tick.thickness > tick.height) {
+            return '';
+          }
+        }
+        data = funnelData[i - 1];
+        return funnel.fmtValueLabel()(data.values[0]);
       }
 
       function resetScale(scale, data) {
@@ -567,45 +595,51 @@ nv.models.funnelChart = function() {
   d3.rebind(chart, funnel, 'fmtValueLabel', 'clipEdge', 'delay');
 
   chart.colorData = function(_) {
-    var colors = function(d, i) {
-          return nv.utils.defaultColor()(d, i);
-        },
-        classes = function (d, i) {
-          return 'nv-group nv-series-' + i;
-        },
-        type = arguments[0],
+    var type = arguments[0],
         params = arguments[1] || {};
+    var color = function(d, i) {
+          return nv.utils.defaultColor()(d, d.series);
+        };
+    var classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
+        };
 
     switch (type) {
       case 'graduated':
-        var c1 = params.c1,
-            c2 = params.c2,
-            l = params.l;
-        colors = function(d, i) {
-          return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(i / l);
+        color = function(d, i) {
+          return d3.interpolateHsl(d3.rgb(params.c1), d3.rgb(params.c2))(d.series / params.l);
         };
         break;
       case 'class':
-        colors = function() {
+        color = function() {
           return 'inherit';
         };
         classes = function(d, i) {
-          var iClass = (i * (params.step || 1)) % 14;
-          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass;
+        };
+        break;
+      case 'data':
+        color = function(d, i) {
+          return d.classes ? 'inherit' : d.color || nv.utils.defaultColor()(d, d.series);
+        };
+        classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
         };
         break;
     }
 
-    var fill = (!params.gradient) ? colors : function(d, i) {
+    var fill = (!params.gradient) ? color : function(d, i) {
       var p = {orientation: params.orientation || 'vertical', position: params.position || 'middle'};
-      return funnel.gradient(d, i, p);
+      return funnel.gradient(d, d.series, p);
     };
 
-    funnel.color(colors);
+    funnel.color(color);
     funnel.fill(fill);
     funnel.classes(classes);
 
-    legend.color(colors);
+    legend.color(color);
     legend.classes(classes);
 
     return chart;
@@ -718,6 +752,16 @@ nv.models.funnelChart = function() {
       return seriesClick;
     }
     seriesClick = _;
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    yAxis.direction(_);
+    legend.direction(_);
     return chart;
   };
 

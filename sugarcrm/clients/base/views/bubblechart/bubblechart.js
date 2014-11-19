@@ -119,6 +119,7 @@
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
+            .direction(app.lang.direction)
             .bubbleClick(function(e) {
                 self.chart.dispatch.tooltipHide(e);
                 app.router.navigate(app.router.buildRoute(self.forecastBy, e.point.id), {trigger: true});

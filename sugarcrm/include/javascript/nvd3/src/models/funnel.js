@@ -20,9 +20,9 @@ nv.models.funnel = function() {
       funnelOffset = 0,
       durationMs = 0,
       fmtValueLabel = function(d) { return d.label || d.value || d; },
-      color = nv.utils.defaultColor(),
+      color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
-      classes = function(d, i) { return 'nv-bar positive'; },
+      classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
   //============================================================
@@ -31,7 +31,7 @@ nv.models.funnel = function() {
   //============================================================
   // Private Variables
   //------------------------------------------------------------
-    
+
   var y0; //used to store previous scales
 
   //============================================================
@@ -198,15 +198,17 @@ nv.models.funnel = function() {
             .data(function(d) { return d; }, function(d) { return d.key; });
 
       groups.enter().append('g')
-          .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, i); })
-          .attr('fill', function(d, i) { return this.getAttribute('fill') || fill(d, i); });
+        .style('stroke-opacity', 1e-6)
+        .style('fill-opacity', 1e-6);
 
       groups.exit().transition().duration(durationMs)
         .selectAll('polygon.nv-bar')
         .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
               return pointsTrapezoid(y(d.y0), y(d.y0 + d.y), 0);
-            })
+          })
+          .style('stroke-opacity', 1e-6)
+          .style('fill-opacity', 1e-6)
           .remove();
 
       groups.exit().transition().duration(durationMs)
@@ -214,6 +216,7 @@ nv.models.funnel = function() {
         .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('y', 0)
           .attr('transform', 'translate(' + c + ',0)')
+          .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6)
           .remove();
 
@@ -226,9 +229,12 @@ nv.models.funnel = function() {
       //     .remove();
 
       groups
-          .classed('hover', function(d) { return d.hover; })
-          .classed('nv-active', function(d) { return d.active === 'active'; })
-          .classed('nv-inactive', function(d) { return d.active === 'inactive'; });
+        .attr('class', classes)
+        .attr('fill', fill)
+        .classed('hover', function(d) { return d.hover; })
+        .classed('nv-active', function(d) { return d.active === 'active'; })
+        .classed('nv-inactive', function(d) { return d.active === 'inactive'; })
+        .style({'stroke-opacity': 1, 'fill-opacity': 1});
 
       //------------------------------------------------------------
       // Polygons
@@ -385,23 +391,35 @@ nv.models.funnel = function() {
       //     });
 
       lblValue.transition().duration(durationMs)
-          .delay(function(d, i) {
-            return i * delay / data[0].values.length;
-          })
-          .attr('transform', function(d) {
-            var o = (y(d.y0 + d.y / 2));
-            return 'translate(' + c + ',' + o + ')';
-          });
+        .delay(function(d, i) {
+          return i * delay / data[0].values.length;
+        })
+        .attr('transform', function(d) {
+          var o = y(d.y0 + d.y / 2);
+          return 'translate(' + c + ',' + o + ')';
+        });
       lblValue.select('text.nv-label')
-          .text(function(d) {
-            var s = data[d.series],
-                l = s.key + (s.count ? ' (' + s.count + ')' : '');
-            return (Math.round(d.height) <= funnelMinHeight) ? '' : l;
-          });
+        .text(function(d) {
+          var s = data[d.series];
+          return Math.round(d.height) <= funnelMinHeight ? '' : s.key;
+        })
+        .attr('direction', function(d) {
+          var s = data[d.series],
+              m = nv.utils.isRTLChar(s.key.slice(-1)),
+              dir = m ? 'rtl' : 'ltr';
+          return dir;
+        });
+
+      lblValue.select('text.nv-label').append('tspan')
+        .text(function(d) {
+          var s = data[d.series],
+              l = s.count ? ' (' + s.count + ')' : '';
+          return Math.round(d.height) <= funnelMinHeight ? '' : l;
+        });
       lblValue.select('text.nv-value')
-          .text(function(d) {
-            return (Math.round(d.height) <= funnelMinHeight) ? '' : fmtValueLabel(d);
-          });
+        .text(function(d) {
+          return Math.round(d.height) <= funnelMinHeight ? '' : fmtValueLabel(d);
+        });
 
       //------------------------------------------------------------
       // Group Labels

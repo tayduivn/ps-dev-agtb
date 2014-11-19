@@ -22,13 +22,14 @@ nv.models.multiBar = function() {
       withLine = false,
       vertical = true,
       baseDimension = 60,
+      direction = 'ltr',
       delay = 200,
       xDomain,
       yDomain,
-      color = nv.utils.defaultColor(),
+      color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
       barColor = null, // adding the ability to set the color for each rather than the whole group
-      classes = function(d, i) { return 'nv-group nv-series-' + i; },
+      classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
   //============================================================
@@ -60,7 +61,6 @@ nv.models.multiBar = function() {
           maxX = vertical ? availableWidth : availableHeight,
           maxY = vertical ? availableHeight : availableWidth,
           valuePadding = 0,
-          colors = [],
           seriesCount = 0,
           groupCount = 0;
 
@@ -77,11 +77,6 @@ nv.models.multiBar = function() {
                  .values(function(d) { return d.values; })
                  .y(getY)(data);
       }
-
-      //add series index to each data point for reference
-      data.map(function(series, i) {
-        colors[i] = fill(series, i);
-      });
 
       //------------------------------------------------------------
       // HACK for negative value stacking
@@ -203,56 +198,41 @@ nv.models.multiBar = function() {
 
       //------------------------------------------------------------
 
-      defsEnter.append('clipPath')
-        .attr('id', 'nv-edge-clip-' + id)
-        .append('rect');
-      wrap.select('#nv-edge-clip-' + id + ' rect')
-        .attr('width', availableWidth)
-        .attr('height', availableHeight);
-
+      if (clipEdge) {
+        defsEnter.append('clipPath')
+          .attr('id', 'nv-edge-clip-' + id)
+          .append('rect');
+        wrap.select('#nv-edge-clip-' + id + ' rect')
+          .attr('width', availableWidth)
+          .attr('height', availableHeight);
+      }
       g .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
       //------------------------------------------------------------
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-            .data(
-              function(d) {
-                return d;
-              },
-              function(d) {
-                return d.key;
-              }
-            );
-      groups.enter().append('g')
-          .style('stroke-opacity', 1e-6)
-          .style('fill-opacity', 1e-6);
-      groups.exit()
-          .style('stroke-opacity', 1e-6)
-          .style('fill-opacity', 1e-6)
-        .selectAll('g.nv-bar')
-          .attr('y', function(d) {
-            return stacked ? y0(d.y0) : y0(0);
-          })
-          .attr(dimX, 0)
-          .remove();
-      groups
-        .attr('class', function(d, i) {
-          return classes(d, i);
-        })
-        .classed('hover', function(d) {
-          return d.hover;
-        })
-        .attr('fill', function(d, i) {
-          return fill(d, i);
-        })
-        // .attr('stroke', function(d, i) {
-        //   return this.getAttribute('fill') || fill(d, i);
-        // })
-        .classed('nv-active', function(d) { return d.active === 'active'; })
-        .classed('nv-inactive', function(d) { return d.active === 'inactive'; });
-      groups
-        .style({'stroke-opacity': 1, 'fill-opacity': 1});
+            .data(function(d) { return d; }, function(d) { return d.key; });
 
+      groups.enter().append('g')
+        .style('stroke-opacity', 1e-6)
+        .style('fill-opacity', 1e-6);
+      groups.exit()
+        .style('stroke-opacity', 1e-6)
+        .style('fill-opacity', 1e-6)
+          .selectAll('g.nv-bar')
+            .attr('y', function(d) {
+              return stacked ? y0(d.y0) : y0(0);
+            })
+            .attr(dimX, 0)
+            .remove();
+
+      groups
+        .attr('class', classes)
+        .attr('fill', fill)
+        .classed('hover', function(d) { return d.hover; })
+        .classed('nv-active', function(d) { return d.active === 'active'; })
+        .classed('nv-inactive', function(d) { return d.active === 'inactive'; })
+        .style({'stroke-opacity': 1, 'fill-opacity': 1});
 
       var bars = groups.selectAll('g.nv-bar')
             .data(
@@ -361,6 +341,7 @@ nv.models.multiBar = function() {
                         getY(d, i) < 0 ?  2 : -2 :
                         getY(d, i) < 0 ? -2 :  2 ;
             })
+            .attr(valX, 0)
             .attr(dimY, barLength)
             .attr(dimX, function(d, i) {
               var xScalar = (d.active && d.active === 'active') ? 1.2 : 1.0;
@@ -382,6 +363,7 @@ nv.models.multiBar = function() {
                         getY(d, i) < 0 ?  2 : -2 :
                         getY(d, i) < 0 ? -2 :  2 ;
             })
+            .attr(valX, 0)
             .attr(dimY, barLength)
             .attr(dimX, function(d, i) {
               var xScalar = (d.active && d.active === 'active') ? 1.2 : 1.0;
@@ -445,6 +427,7 @@ nv.models.multiBar = function() {
                       negative ? 'end' : 'start';
                   break;
               }
+              anchor = direction === 'rtl' && anchor !== 'middle' ? anchor === 'start' ? 'end' : 'start' : anchor;
             }
             return anchor;
           })
@@ -792,8 +775,15 @@ nv.models.multiBar = function() {
     return chart;
   };
 
-  //============================================================
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    return chart;
+  };
 
+  //============================================================
 
   return chart;
 };

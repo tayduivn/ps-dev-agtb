@@ -94,9 +94,10 @@
 <script src="../../../include/javascript/nvd3/src/models/treemapChart.js"></script>
 
 <script>
-  d3.json("data/treemap_data.json", function(chartData) {
+  d3.json('data/treemap_data.json', function(chartData) {
     var data = parseData(chartData.records);
 
+    // Default
     var chart1 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
@@ -113,7 +114,7 @@
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
-          .colorData('default', {gradient:true});
+          .colorData('default', {gradient: true});
     d3.select('#chart2 svg')
         .datum(data)
       .transition().duration(500)
