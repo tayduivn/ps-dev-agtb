@@ -13,7 +13,7 @@
 
     /**
      * True if the preview button is for a BWC module, false if not
-     * @boolean
+     * @property {boolean}
      */
     isBwcEnabled: undefined,
 

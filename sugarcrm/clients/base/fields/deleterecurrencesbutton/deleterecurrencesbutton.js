@@ -15,14 +15,14 @@
  *
  * @class View.Fields.Base.DeleterecurrencesbuttonField
  * @alias SUGAR.App.view.fields.BaseDeleterecurrencesbuttonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     extendsFrom: 'RowactionField',
 
     /**
      * @inheritdoc
-     * @param options
+     * @param {Object} options
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -32,7 +32,7 @@
     /**
      * @inheritdoc
      *
-     * Button should be hidden if meeting displayed is not recurring
+     *  The field is hidden if event is not a recurring calendar event
      */
     _render: function() {
         if (_.isEmpty(this.model.get('repeat_type'))) {
@@ -43,7 +43,7 @@
     },
 
     /**
-     * Re-render the field when the status on the record changes.
+     * Renders the field when the status on the record changes.
      */
     bindDataChange: function() {
         if (this.model) {

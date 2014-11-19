@@ -43,6 +43,8 @@
 
     /**
      * Get the default day of week (current day of the week)
+     *
+     * @return {String} Day of the week
      */
     getDefaultDayOfWeek: function() {
         var isoDayOfWeek = app.date().isoWeekday(),
@@ -72,7 +74,7 @@
      * Transform the list of items to conform to API spec
      *
      * @param {Object} items Days of the week list needing to be transformed
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _transformDowItems: function(items) {

@@ -15,7 +15,7 @@
  *
  * @class View.Fields.Base.EditrecurrencesbuttonField
  * @alias SUGAR.App.view.fields.BaseEditrecurrencesbuttonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     extendsFrom: 'RowactionField',

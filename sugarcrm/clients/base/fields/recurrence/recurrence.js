@@ -16,13 +16,12 @@
  *
  * @class View.Fields.Base.RecurrenceField
  * @alias SUGAR.App.view.fields.BaseRecurrenceField
- * @extends View.Fields.Base.FieldsetWithLabelsField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',
 
     /**
-     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -166,7 +165,7 @@
     /**
      * Show the given field
      *
-     * @param {String} fieldName Name of the field to show
+     * @param {string} fieldName Name of the field to show
      * @private
      */
     _showField: function(fieldName) {
@@ -176,7 +175,7 @@
     /**
      * Hide the given field
      *
-     * @param {String} fieldName Name of the field to hide
+     * @param {string} fieldName Name of the field to hide
      * @private
      */
     _hideField: function(fieldName) {
@@ -186,8 +185,8 @@
     /**
      * Returns the field cell for a given field name
      *
-     * @param {String} fieldName Name of the field to select
-     * @returns {jQuery} jQuery selected record cell
+     * @param {string} fieldName Name of the field to select
+     * @return {jQuery} jQuery selected record cell
      * @private
      */
     _getFieldRecordCellByName: function(fieldName) {
@@ -198,8 +197,8 @@
     /**
      * Returns the field cell for a given field type
      *
-     * @param {String} fieldType Type of the field to select
-     * @returns {jQuery} jQuery selected record cell
+     * @param {string} fieldType Type of the field to select
+     * @return {jQuery} jQuery selected record cell
      * @private
      */
     _getFieldRecordCellByType: function(fieldType) {
@@ -210,8 +209,8 @@
     /**
      * Check if a particular field is populated
      *
-     * @param {String|Number} value The value to check if it is populated
-     * @returns {Boolean} Returns true if the field is populated
+     * @param {string|number} value The value to check if it is populated
+     * @return {boolean} Returns true if the field is populated
      * @private
      */
     _isPopulated: function(value) {

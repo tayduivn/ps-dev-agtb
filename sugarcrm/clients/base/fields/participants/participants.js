@@ -359,7 +359,7 @@
         return {
             /**
              * Calls the bulk api to make multiple free/busy GET requests in a single call.
-             * @param {array} requests
+             * @param {Array} requests
              * @param {Object} options
              */
             fetch: function(requests, options) {
@@ -578,19 +578,20 @@
      *
      * @param {VirtualCollection} value
      * @return {Object} Array of models with view properties defined
-     * @return {String} return.Object.accept_status The translated string
+     * @return {string} return.accept_status The translated string
      * indicating the model's accept status
-     * @return {String} return.Object.accept_class The CSS class representing
+     * @return {string} return.accept_class The CSS class representing
      * the model's accept status per Twitter Bootstrap's label component
-     * @return {String} return.Object.avatar The URL where the model's avatar
+     * @return {string} return.avatar The URL where the model's avatar
      * can be downloaded or undefined if one does not exist
-     * @return {Boolean} return.Object.deletable Whether or not the model can
+     * @return {boolean} return.deletable Whether or not the model can
      * be removed from the collection
-     * @return {Boolean} return.Object.last Whether or not the model is the
+     * @return {boolean} return.last Whether or not the model is the
      * last one in the collection
-     * @return {Boolean} return.Object.preview.enabled Whether or not preview
+     * @return {Object} return.preview Preview information for model
+     * @return {boolean} return.preview.enabled Whether or not preview
      * is enabled for the model
-     * @return {String} return.Object.preview.label The tooltip to be shown for
+     * @return {string} return.preview.label The tooltip to be shown for
      * the model when hovering over the preview button
      */
     format: function(value) {
@@ -810,7 +811,7 @@
      * Pagination is disabled.
      *
      * @param {Object} query
-     * @param {String} query.term The search term
+     * @param {string} query.term The search term
      * @param {Function} query.callback The callback where data should be
      * passed once it has been loaded
      */
@@ -856,7 +857,7 @@
      * Format the search result for display in select2 result list
      *
      * @param {Data.Bean} bean A bean result
-     * @return {String}
+     * @return {string}
      */
     formatSearchResult: function(bean) {
         var result = {
