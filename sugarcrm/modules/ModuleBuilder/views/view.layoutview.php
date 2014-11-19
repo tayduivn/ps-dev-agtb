@@ -123,6 +123,11 @@ class ViewLayoutView extends SugarView
 		    }
 
             $buttons = $this->getButtons($history, $disableLayout, $params);
+
+            $implementation = $parser->getImplementation();
+            $roles = $this->getRoleList($implementation);
+            $copyFromOptions = $this->getRoleListWithMetadata($roles, $role);
+            $smarty->assign('copy_from_options', $copyFromOptions);
         }
 
         $smarty->assign('buttons', $this->getButtonHTML($buttons));
@@ -325,31 +330,24 @@ class ViewLayoutView extends SugarView
             );
         } elseif ($this->editLayout == MB_RECORDVIEW && !empty($GLOBALS['sugar_config']['roleBasedViews'])
             && $implementation->isDeployed()) {
-            $roles = $this->getRoleList($implementation);
+            $availableRoles = $this->getRoleList($implementation);
             $buttons [] = array('type' => 'spacer', 'width' => '33px');
             $buttons [] = array('type' => 'label', "text" => translate('LBL_ROLE') . ":");
             $buttons [] = array(
                 'id' => 'roleList',
                 'type' => 'enum',
                 'actionScript' => 'style="max-width:150px" onchange="ModuleBuilder.switchLayoutRole(this)"',
-                "options" => $this->getAvailableRoleList($roles),
+                "options" => $this->getAvailableRoleList($availableRoles),
                 "selected" => empty($params['role']) ? "" :  $params['role'],
             );
+
             if (!empty($params['role'])) {
-                $buttons [] = array('type' => 'spacer', 'width' => '33px');
-                $buttons [] = array('type' => 'label', "text" => translate('LBL_COPY_FROM') . ":");
-                $buttons [] = array(
-                    'id' => 'implementedRoles',
-                    'type' => 'enum',
-                    'actionScript' => 'style="max-width:150px"',
-                    "options" => $this->getRoleListWithMetadata($roles, $params['role']),
-                    "selected" => null,
-                );
+                $rolesWithMetadata = $this->getRoleListWithMetadata($availableRoles, $params['role']);
                 $buttons [] = array(
                     'id' => 'copyBtn',
-                    'text' => translate('LBL_COPY'),
+                    'text' => translate('LBL_BTN_COPY_FROM'),
                     'actionScript' => "onclick='ModuleBuilder.copyLayoutFromRole();'",
-                    'disabled' => $disableLayout,
+                    'disabled' => !count($rolesWithMetadata),
                 );
             }
         }

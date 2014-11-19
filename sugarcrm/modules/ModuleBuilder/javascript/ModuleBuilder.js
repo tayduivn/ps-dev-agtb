@@ -560,6 +560,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
             ModuleBuilder.asyncRequest(requestUrl, successCall);
 		},
 		updateContent: function(o){
+            if (ModuleBuilder.copyLayoutDialog) {
+                ModuleBuilder.copyLayoutDialog.destroy();
+                delete ModuleBuilder.copyLayoutDialog;
+            }
+
 			ModuleBuilder.callInProgress = false;
 			//Check if a save action was called and now we need to move-on
 			if (ModuleBuilder.state.saving) {
@@ -1575,19 +1580,56 @@ if (typeof(ModuleBuilder) == 'undefined') {
             });
         },
         copyLayoutFromRole: function() {
-            var role = $("input[name=role]").val();
-            var source = $("#implementedRoles").val();
-            var originalUrl = ModuleBuilder.contentURL;
-            
-            var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
-            params.action = "copyLayout";
-            params.source = source;
-            var url = ModuleBuilder.paramsToUrl(params);
+            var dialog = ModuleBuilder.getCopyLayoutDialog();
+            dialog.show();
+        },
+        getCopyLayoutDialog: function() {
+            if (ModuleBuilder.copyLayoutDialog) {
+                return ModuleBuilder.copyLayoutDialog;
+            }
 
-            ModuleBuilder.getContent(url, function() {
-                ModuleBuilder.state.markAsDirty();
+            var dialog = new YAHOO.widget.SimpleDialog("copy-from-dialog", {
+                fixedcenter: true,
+                modal: true,
+                draggable: false,
+                buttons: [{
+                    text: SUGAR.language.get("ModuleBuilder", "LBL_BTN_COPY"),
+                    handler: function() {
+                        var role = $("input[name=role]").val();
+                        var source = $("#copy-from-options").val();
+
+                        var originalUrl = ModuleBuilder.contentURL;
+
+                        var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
+                        params.action = "copyLayout";
+                        params.source = source;
+                        var url = ModuleBuilder.paramsToUrl(params);
+
+                        var dialog = this;
+                        ModuleBuilder.getContent(url, function() {
+                            ModuleBuilder.updateContent.apply(this, arguments);
+                            ModuleBuilder.state.markAsDirty();
+                            dialog.cancel();
+                        });
+                        ModuleBuilder.contentURL = originalUrl;
+                    }
+                }, {
+                    text: SUGAR.language.get("ModuleBuilder", "LBL_BTN_CANCEL"),
+                    isDefault:true,
+                    handler: function(){
+                        this.cancel();
+                    }
+                }]
             });
-            ModuleBuilder.contentURL = originalUrl;
+
+            var contents = document.getElementById("copy-from-contents");
+            contents.style.display = "";
+            dialog.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_HEADER_COPY_FROM_LAYOUT"));
+            dialog.setBody(contents);
+            dialog.render(document.body);
+
+            ModuleBuilder.copyLayoutDialog = dialog;
+            return dialog;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

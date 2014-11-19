@@ -438,6 +438,7 @@ $mod_strings = array(
 'LBL_SYNC_TO_DETAILVIEW' => 'Sync to DetailView',
 'LBL_SYNC_TO_DETAILVIEW_HELP' => 'Select this option to sync this EditView layout to the corresponding DetailView layout. Fields and field placement in the EditView<br>will be sync\'d and saved to the DetailView automatically upon clicking Save or Save & Deploy in the EditView. <br>Layout changes will not be able to be made in the DetailView.',
 'LBL_SYNC_TO_DETAILVIEW_NOTICE' => 'This DetailView is sync\'d with the corresponding EditView.<br> Fields and field placement in this DetailView reflect the fields and field placement in the EditView.<br> Changes to the DetailView cannot be saved or deployed within this page. Make changes or un-sync the layouts in the EditView. ',
+'LBL_COPY_FROM' => 'Copy from',
 'LBL_COPY_FROM_EDITVIEW' => 'Copy from EditView',
 'LBL_DROPDOWN_BLANK_WARNING' => 'Values are required for both the Item Name and the Display Label. To add a blank item, click Add without entering any values for the Item Name and the Display Label.',
 'LBL_DROPDOWN_KEY_EXISTS' => 'Key already exists in list',
@@ -577,6 +578,8 @@ $mod_strings = array(
 'LBL_BTN_NEXT'=>'Next',
 'LBL_BTN_BACK'=>'Back',
 'LBL_BTN_CLONE'=>'Clone',
+'LBL_BTN_COPY' => 'Copy',
+'LBL_BTN_COPY_FROM' => 'Copy from…',
 'LBL_BTN_ADDCOLS'=>'Add Columns',
 'LBL_BTN_ADDROWS'=>'Add Rows',
 'LBL_BTN_ADDFIELD'=>'Add Field',
@@ -861,4 +864,5 @@ $mod_strings = array(
                                  "is saved. The following format will be applied: (xxx) xxx-xxxx.",
 'LBL_ALL_MODULES'=>'All Modules',
 'LBL_RELATED_FIELD_ID_NAME_LABEL' => '{0} (related {1} ID)',
+'LBL_HEADER_COPY_FROM_LAYOUT' => 'Copy from layout',
 );
