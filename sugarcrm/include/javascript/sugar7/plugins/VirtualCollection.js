@@ -897,7 +897,7 @@
                 }));
 
                 this.attributes[key] = collection;
-                this.setDefaultAttribute(key, collection);
+                this.setDefault(key, collection);
             }, this.model);
 
             return this.model;
