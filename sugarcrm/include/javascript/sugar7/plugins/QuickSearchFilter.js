@@ -60,7 +60,7 @@
              * @return {Object} Quick search metadata (with highest priority).
              * @return {Array} return.fieldNames The fields to be used in
              *   quick search.
-             * @return {Boolean} return.splitTerms Whether to split the search
+             * @return {boolean} return.splitTerms Whether to split the search
              *   terms when there are multiple search fields.
              */
             getModuleQuickSearchMeta: function(searchModule) {
@@ -118,8 +118,6 @@
                         app.logger.error('Cannot have more than 1 split term filter');
                         return;
                     }
-                    
-                    // `splitTermFilter` is stored as a variable for a later push to `filterList`
                     splitTermFilter = this._buildSplitTermFilter(name, '$starts', searchTerm);
                 }, this);
 
@@ -132,7 +130,7 @@
                 if (filterList.length > 1) {
                     var filter = this._buildComplexFilter('$or', filterList);
                     if (filter) {
-                        filterList = new Array(filter);
+                        filterList = [filter];
                     }
                 }
 
@@ -147,7 +145,7 @@
                     }];
                 }
 
-                return filterList || [];
+                return filterList;
             },
 
             /**
@@ -171,8 +169,8 @@
              * Builds a `simple filter` object.
              *
              * A `simple filter` object is in the form of:
-             *  @example
-             *  { name: { operator: searchTerm } }
+             *
+             *     { name: { operator: searchTerm } }
              *
              * @param {string} name Name of the field to search by.
              * @param {string} operator Operator to search by.
@@ -193,8 +191,8 @@
              * Builds a `complex filter` object.
              *
              * A `complex filter` object is in the form of:
-             *  @example
-             *  { operator: filterList }
+             *
+             *     { operator: filterList }
              *
              * @param {string} operator Operator to search by.
              * @param {Array} filterList Array of filters.
@@ -236,27 +234,29 @@
                     return;
                 }
 
+                // If the field is a split-term field, but only composed of single item
+                // return the simple filter
+                if (fieldNames.length === 1) {
+                    return this._buildSimpleFilter(fieldNames[0], operator, searchTerm);
+                }
+
                 var filterList = [];
+                var tokens = searchTerm.split(' ');
 
-                // Splitting the search input is required only if there are more than 1 field
-                if (fieldNames.length > 1) {
-                    var tokens = searchTerm.split(' ');
+                // When the searchTerm is composed of at least 2 terms delimited by a space character,
+                // Divide the searchTerm in 2 unique sets
+                // e.g. For the name "Jean Paul Durand",
+                // first = "Jean", rest = "Paul Durand" (1st iteration)
+                // first = "Jean Paul", rest = "Durand" (2nd iteration)
+                for (var i = 1; i < tokens.length; ++i) {
+                    var first = _.first(tokens, i).join(' ');
+                    var rest = _.rest(tokens, i).join(' ');
 
-                    // When the searchTerm is composed of at least 2 terms delimited by a space character,
-                    // Divide the searchTerm in 2 unique sets
-                    // e.g. For the name "Jean Paul Durand",
-                    // first = "Jean", rest = "Paul Durand" (1st iteration)
-                    // first = "Jean Paul", rest = "Durand" (2nd iteration)
-                    for (var i = 1; i < tokens.length; ++i) {
-                        var first = _.first(tokens, i).join(' ');
-                        var rest = _.rest(tokens, i).join(' ');
-
-                        // Push the 2 unique sets per field
-                        _.each(fieldNames, function(name) {
-                            filterList.push(this._buildSimpleFilter(name, operator, first));
-                            filterList.push(this._buildSimpleFilter(name, operator, rest));
-                        }, this);
-                    }
+                    // Push the 2 unique sets per field
+                    _.each(fieldNames, function(name) {
+                        filterList.push(this._buildSimpleFilter(name, operator, first));
+                        filterList.push(this._buildSimpleFilter(name, operator, rest));
+                    }, this);
                 }
 
                 // Try with full search term in each field

@@ -29,7 +29,6 @@ describe('Plugins.Quicksearchfilter', function() {
     describe('Building the filter definition', function() {
         var quicksearch_field, filterDef;
         var searchTerm = 'John F Kennedy';
-
         beforeEach(function() {
             field = SugarTest.createField('base', 'account_name', 'relate', 'edit');
             field._moduleQuickSearchMeta = {};
@@ -39,7 +38,8 @@ describe('Plugins.Quicksearchfilter', function() {
             filterDef = null;
         });
 
-        using('various inputs to search for a contact "Luis Filipe Madeira Caeiro Figo"', [{
+        using('various inputs to search for a contact "Luis Filipe Madeira Caeiro Figo"', [
+            {
                 case: 'First part of first name',
                 searchValue: 'Luis',
                 expectedFilter: [{
@@ -137,80 +137,100 @@ describe('Plugins.Quicksearchfilter', function() {
 
         using('various quicksearch_field metadata', [
             {
+                case: 'Undefined',
+                meta: undefined,
+                expectedFilter: []
+            }, {
                 case: '1 Simple Field',
                 meta: ['simpleField1'],
-                expectedFilter: [{'simpleField1': {'$starts': 'Foo'}}]
+                expectedFilter: [{'simpleField1': {'$starts': 'Luis Filipe Madeira'}}]
             }, {
                 case: '2 Simple Fields',
                 meta: ['simpleField1', 'simpleField2'],
                 expectedFilter: [
                     {
                         '$or': [
-                            {'simpleField1': {'$starts': 'Foo'}},
-                            {'simpleField2': {'$starts': 'Foo'}}
+                            {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                            {'simpleField2': {'$starts': 'Luis Filipe Madeira'}}
                         ]
                     }
                 ]
             }, {
                 case: '1 Split Term Field',
                 meta: [['splitField1']],
-                expectedFilter: [{'splitField1': {'$starts': 'Foo'}}]
+                expectedFilter: [{'splitField1': {'$starts': 'Luis Filipe Madeira'}}]
             }, {
                 case: '1 Split Term Field composed of 2 Fields',
-                meta: [['splitField1', 'splitField2']],
-                expectedFilter: [
-                    {
-                        '$or': [
-                            {'splitField1': {'$starts': 'Foo'}},
-                            {'splitField2': {'$starts': 'Foo'}}
-                        ]
-                    }
-                ]
+                meta: [['first_name', 'last_name']],
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
+                    ]
+                }]
             }, {
                 case: '1 Simple Field, 1 Split Term Field',
                 meta: ['simpleField1', ['splitField1']],
-                expectedFilter: [
-                    {
-                        '$or': [
-                            {'simpleField1': {'$starts': 'Foo'}},
-                            {'splitField1': {'$starts': 'Foo'}}
-                        ]
-                    }
-                ]
+                expectedFilter: [{
+                    '$or': [
+                        {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                        {'splitField1': {'$starts': 'Luis Filipe Madeira'}}
+                    ]
+                }]
             }, {
                 case: '1 Simple Field, 1 Split Term Field composed of 2 Fields',
-                meta: ['simpleField1', ['splitField1', 'splitField2']],
-                expectedFilter: [
-                    {
-                        '$or': [
-                            {'simpleField1': {'$starts': 'Foo'}},
-                            {
-                                '$or': [
-                                    {'splitField1': {'$starts': 'Foo'}},
-                                    {'splitField2': {'$starts': 'Foo'}}
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                meta: ['simpleField1', ['first_name', 'last_name']],
+                expectedFilter: [{
+                    '$or': [
+                        {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                        {
+                            '$or': [
+                                {first_name: {$starts: 'Luis'}},
+                                {first_name: {$starts: 'Filipe Madeira'}},
+                                {last_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe Madeira'}},
+                                {first_name: {$starts: 'Luis Filipe'}},
+                                {first_name: {$starts: 'Madeira'}},
+                                {last_name: {$starts: 'Luis Filipe'}},
+                                {last_name: {$starts: 'Madeira'}},
+                                {first_name: {$starts: 'Luis Filipe Madeira'}},
+                                {last_name: {$starts: 'Luis Filipe Madeira'}}
+                            ]
+                        }
+                    ]
+                }]
             }, {
                 case: '2 Split Term Fields',
-                meta: [['splitField1', 'splitField2'], ['splitField3', 'splitField4']],
-                expectedFilter: [
-                    {
-                        '$or': [
-                            {'splitField1': {'$starts': 'Foo'}},
-                            {'splitField2': {'$starts': 'Foo'}}
-                        ]
-                    }
-                ]
+                meta: [['first_name', 'last_name'], ['splitField3', 'splitField4']],
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
+                    ]
+                }]
             }, {
                 case: '1 Split Term Field composed of 3 Fields',
                 meta: [['splitField1', 'splitField2', 'splitField3']],
                 expectedFilter: []
             }
         ], function(test) {
-            var searchTerm = 'Foo';
+            var searchTerm = 'Luis Filipe Madeira';
 
             it('should be valid with ' + test.case, function() {
                 quicksearch_field = test.meta;
@@ -221,15 +241,6 @@ describe('Plugins.Quicksearchfilter', function() {
 
                 expect(filterDef).toEqual(test.expectedFilter);
             });
-        });
-
-        it('should return empty for a complex filter with more than two fields', function() {
-            quicksearch_field = [['first_name', 'last_name', 'additional_field']];
-            sinon.collection.stub(app.metadata, 'getModule', function() {
-                return getFilterMetaData(quicksearch_field, 1);
-            });
-            filterDef = field.getFilterDef('Contacts', searchTerm);
-            expect(filterDef).toEqual([]);
         });
 
         it('should search if either field starts with full search string when quicksearch_split_terms not specified', function() {
