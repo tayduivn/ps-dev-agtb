@@ -29,6 +29,14 @@
     showNoData: false,
 
     /**
+     * @property {int} repeatCountMin
+     *
+     * The minimum number of occurrences that is allowed when the repeat_count
+     * field is used.
+     */
+    repeatCountMin: 1,
+
+    /**
      * @inheritdoc
      *
      * Add validator to ensure that either `repeat_count` or `repeat_until`
@@ -211,9 +219,10 @@
     },
 
     /**
-     * Custom required validator for the `repeat_count`/`repeat_until` field.
-     * This validates `repeat_count` is required if `repeat_until` is not
-     * specified.
+     * Custom validator for the `repeat_count`/`repeat_until` field.
+     *
+     * This validates `repeat_count` is required and meets the minimum value
+     * requirement if `repeat_until` is not specified.
      *
      * @param {Object} fields The list of field names and their definitions.
      * @param {Object} errors The list of field names and their errors.
@@ -221,16 +230,20 @@
      * @private
      */
     _doValidateRepeatCountOrUntilRequired: function(fields, errors, callback) {
-        var repeatType = this.model.get('repeat_type'),
-            repeatCount = this.model.get('repeat_count'),
-            repeatUntil = this.model.get('repeat_until');
+        var repeatCount, repeatCountIsPopulated, repeatUntilIsPopulated;
 
-        if (this._isPopulated(repeatType) &&
-            !this._isPopulated(repeatCount) &&
-            !this._isPopulated(repeatUntil)
-        ) {
-            errors.repeat_count = {'required': true};
+        repeatCount = this.model.get('repeat_count');
+        repeatCountIsPopulated = this._isPopulated(repeatCount);
+        repeatUntilIsPopulated = this._isPopulated(this.model.get('repeat_until'));
+
+        if (this._isPopulated(this.model.get('repeat_type'))) {
+            if (!repeatUntilIsPopulated && !repeatCountIsPopulated) {
+                errors.repeat_count = {required: true};
+            } else if (!repeatUntilIsPopulated && repeatCountIsPopulated && repeatCount < this.repeatCountMin) {
+                errors.repeat_count = {minValue: this.repeatCountMin};
+            }
         }
+
         callback(null, fields, errors);
     },
 
