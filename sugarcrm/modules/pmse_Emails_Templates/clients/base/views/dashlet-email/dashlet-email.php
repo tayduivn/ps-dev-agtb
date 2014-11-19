@@ -35,7 +35,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
             array(
                 'type' => 'actiondropdown',
                 'no_default_action' => true,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
@@ -134,7 +134,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:edit:fire',
                     'target' => 'view',
@@ -143,7 +143,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:delete-record:fire',
                     'target' => 'view',
@@ -152,7 +152,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:download:fire',
                     'target' => 'view',
@@ -161,7 +161,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-info-sign',
+                    'icon' => 'fa-info-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:description-record:fire',
                     'target' => 'view',

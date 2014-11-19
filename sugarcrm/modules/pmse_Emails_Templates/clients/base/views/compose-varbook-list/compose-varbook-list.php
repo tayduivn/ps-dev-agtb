@@ -39,7 +39,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose-varbook-list'] = arr
 //                'css_class'  => 'btn',
 //                'tooltip'    => 'LBL_PREVIEW',
 //                'event'      => 'list:preview:fire',
-//                'icon'       => 'icon-eye-open',
+//                'icon'       => 'fa-eye',
 //                'acl_action' => 'view',
 //            ),
 //        ),
