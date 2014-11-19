@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -15,10 +17,13 @@ require_once('include/MVC/View/views/view.list.php');
 
 class WorkFlowViewList extends ViewList
 {
- 	public function preDisplay()
- 	{
- 		$this->lv = new ListViewSmarty();
- 		$this->lv->export = false;
- 		$this->lv->showMassupdateFields = false;
- 	}
+    public function preDisplay()
+    {
+        $this->lv = new ListViewSmarty();
+        $this->lv->export = false;
+        $this->lv->showMassupdateFields = false;
+        //BEGIN SUGARCRM flav=ent ONLY
+        displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
+        //END SUGARCRM flav=ent ONLY
+    }
 }

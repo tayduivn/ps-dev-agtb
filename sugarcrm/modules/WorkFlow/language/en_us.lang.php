@@ -87,11 +87,16 @@ $mod_strings = array (
   'LBL_ALERT_ERRORS'=>'Notice: One or more alerts below contains errors.',
   'LBL_TRIGGER_ERROR'=>'Notice: This trigger contains invalid values and will not fire.',
   'LBL_TRIGGER_ERRORS'=>'Notice: One or more triggers below contains errors.',
-	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
-	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
-    'LBL_EMAILTEMPLATES_TYPE_LIST_WORKFLOW' => array('workflow'=>'Workflow'),
-    'LBL_EMAILTEMPLATES_TYPE'=>'Type',
+  'LBL_UP' => 'Up' /*for 508 compliance fix*/,
+  'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
+  'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EMAILTEMPLATES_TYPE_LIST_WORKFLOW' => array('workflow' => 'Workflow'),
+  'LBL_EMAILTEMPLATES_TYPE' => 'Type',
+  //BEGIN SUGARCRM flav=ent ONLY
+  'WARN_WORKFLOW_DEPRECATED_ERROR' => '<b>Warning:</b> The Workflow module will soon be obsolete and removed. '
+      . 'Please transfer workflows to the new <a href="index.php?module=pmse_Project">Process Author</a>.'
+      . '<span style="width: 1em; display: inline-block;">&nbsp;</span> (<a href="">Learn more about Process Author</a>)',
+  //END SUGARCRM flav=ent ONLY
 );
 
 
