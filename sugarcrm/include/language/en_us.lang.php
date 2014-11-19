@@ -33,7 +33,6 @@ $app_list_strings = array (
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
-    'RevenueLineItems' => 'Revenue Line Items',
     'WebLogicHooks' => 'Web Logic Hooks',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',

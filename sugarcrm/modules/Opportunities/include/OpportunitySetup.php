@@ -477,40 +477,57 @@ abstract class OpportunitySetup
      */
     protected function setRevenueLineItemInParentRelateDropDown($add = true)
     {
-        $list = $GLOBALS['app_list_strings']['parent_type_display'];
         $rli = BeanFactory::getBean('RevenueLineItems');
 
-        $hasRLI = isset($list[$rli->module_name]);
+        // get the default system language
+        $default_lang = SugarConfig::getInstance()->get('default_language');
 
-        if ($add && !$hasRLI) {
-            // get the translated value
-            $list[$rli->module_name] = $GLOBALS['app_list_strings']['moduleList'][$rli->module_name];
-        } elseif (!$add && $hasRLI) {
-            unset($list[$rli->module_name]);
-        }
+        // get the default app_list_strings and the default language for Revenue Line Items
+        $app_list_stings = return_app_list_strings_language($default_lang);
+        $module_lang = return_module_language($default_lang, 'RevenueLineItems');
 
-        // the parser need all the values to be in their own array with the key first then the value
-        $new_list = array();
-        foreach($list as $k => $v) {
-            $new_list[] = array($k, $v);
-        }
-
-        $params = array(
-            'dropdown_name' => 'parent_type_display',
-            'dropdown_lang' => $GLOBALS['current_language'],
-            'list_value' => json_encode($new_list),
-            'view_package' => 'studio',
+        // What lists need updating
+        $listsToUpdate = array(
+            'moduleList',
+            'parent_type_display'
         );
-        // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
-        // was passed in.
-        $_REQUEST['view_package'] = 'studio';
 
+        // load the Dropdown parser so it can easily be saved
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
         $dd_parser = new ParserDropDown();
-        $dd_parser->saveDropDown($params);
 
-        // clean up the request object
-        unset($_REQUEST['view_package']);
+        foreach($listsToUpdate as $list_key) {
+            $list = $app_list_stings[$list_key];
+            $hasRLI = isset($list[$rli->module_name]);
+
+            if ($add && !$hasRLI) {
+            // get the translated value
+                $list[$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+            } elseif (!$add && $hasRLI) {
+                unset($list[$rli->module_name]);
+            }
+
+            // the parser need all the values to be in their own array with the key first then the value
+            $new_list = array();
+            foreach($list as $k => $v) {
+                $new_list[] = array($k, $v);
+            }
+
+            $params = array(
+                'dropdown_name' => $list_key,
+                'dropdown_lang' => $default_lang,
+                'list_value' => json_encode($new_list),
+                'view_package' => 'studio',
+            );
+            // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
+            // was passed in.
+            $_REQUEST['view_package'] = 'studio';
+
+            $dd_parser->saveDropDown($params);
+
+            // clean up the request object
+            unset($_REQUEST['view_package']);
+        }
     }
 
     /**
