@@ -40,7 +40,8 @@
                 .showTitle(false)
                 .tooltips(true)
                 .showLegend(false)
-                .colorData('class')
+                .colorData('data')
+                .direction(app.lang.direction)
                 .tooltipContent(function(key, x, y, e, graph) {
                     return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
                 })

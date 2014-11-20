@@ -9,8 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DurationFieldView is a fieldset for Meetings/Calls for managing duration of an event
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DurationField
  * @alias SUGAR.App.view.fields.BaseDurationField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',
@@ -31,15 +36,17 @@
 
             // Values for date_start, date_end, duration_hours, and duration_minutes
             // should be set as the default on the model.
-            this.model.setDefaultAttribute('date_start', this.model.get('date_start'));
-            this.model.setDefaultAttribute('date_end', this.model.get('date_end'));
-            this.model.setDefaultAttribute('duration_hours', this.model.get('duration_hours'));
-            this.model.setDefaultAttribute('duration_minutes', this.model.get('duration_minutes'));
+            this.model.setDefault({
+                'date_start': this.model.get('date_start'),
+                'date_end': this.model.get('date_end'),
+                'duration_hours': this.model.get('duration_hours'),
+                'duration_minutes': this.model.get('duration_minutes')
+            });
         }
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     bindDataChange: function() {
         // Change the end date when start date changes.
@@ -76,7 +83,7 @@
 
     /**
      * Return the display string for the start and date, along with the duration.
-     * @returns {string}
+     * @return {string} The duration string
      */
     getFormattedValue: function() {
         var displayString = '',
@@ -181,7 +188,7 @@
 
     /**
      * Is this date range valid? It returns true when start date is before end date.
-     * @returns {boolean}
+     * @return {boolean}
      */
     isDateRangeValid: function() {
         var start = this.model.get('date_start'),

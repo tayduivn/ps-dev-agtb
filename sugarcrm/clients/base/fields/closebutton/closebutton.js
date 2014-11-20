@@ -9,10 +9,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * ClosebuttonField is a field for Meetings/Calls/Tasks that handles setting a value on a field in the model based on meta data with
+ * an option to create a new record
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.ClosebuttonField
  * @alias SUGAR.App.view.fields.BaseClosebuttonField
  * @extends View.Fields.Base.RowactionField
  */
+
+
 ({
     extendsFrom: 'RowactionField',
 
@@ -64,7 +71,7 @@
     },
 
     /**
-     * Retrieve the closed status value from the def
+     * Retrieve the closed status value from the fields meta definition
      *
      * @return {string}
      */
@@ -75,7 +82,8 @@
     },
 
     /**
-     * Retrieve the status field name from the def - default to 'status'
+     * Retrieve the status field name from the field meta definition.
+     * Defaults to 'status'
      *
      * @return {string}
      */
@@ -88,7 +96,7 @@
     /**
      * Close the record by setting the appropriate status on the record.
      *
-     * @param {boolean} createNew Whether to open a new drawer to create a
+     * @param {boolean} createNew Flag for whether to open a new drawer to create a
      *   record after close.
      * @private
      */

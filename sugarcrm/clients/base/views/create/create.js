@@ -152,10 +152,10 @@
             // set the default assigned user as current user, unless we are copying another record
             var isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
             if (!isDuplicate) {
-                this.model.set('assigned_user_id', app.user.id);
-                this.model.set('assigned_user_name', app.user.get('full_name'));
-                this.model.setDefaultAttribute('assigned_user_id', app.user.id);
-                this.model.setDefaultAttribute('assigned_user_name', app.user.get('full_name'));
+                this.model.setDefault({
+                    'assigned_user_id': app.user.id,
+                    'assigned_user_name': app.user.get('full_name')
+                });
             }
             this.model.relatedAttributes.assigned_user_id = app.user.id;
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
@@ -169,7 +169,7 @@
         // need to reset the default attributes because the plugin may have
         // calculated default values.
         this.on('sugarlogic:initialize', function() {
-            this.model.setDefaultAttributes(this.model.attributes);
+            this.model.setDefault(this.model.attributes);
         }, this);
     },
 
@@ -275,7 +275,7 @@
                 this.clear();
                 // set the default attributes and the relatedAttributes back
                 // on the model since it's been cleared out
-                this.model.set(_.extend(this.model.getDefaultAttributes(), this.model.relatedAttributes));
+                this.model.set(_.extend(this.model.getDefault(), this.model.relatedAttributes));
                 this.resetDuplicateState();
 
                 if (this.hasSubpanelModels) {

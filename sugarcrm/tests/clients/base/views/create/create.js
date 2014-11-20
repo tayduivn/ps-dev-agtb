@@ -927,7 +927,7 @@ describe('Base.View.Create', function() {
         });
         it('should save, and reset the defaults on the the model', function() {
             modelId = 123;
-            sinonSandbox.stub(view.model, 'getDefaultAttributes', function() {
+            sinonSandbox.stub(view.model, 'getDefault', function() {
                 return {
                     'quantity': 1
                 };
@@ -1069,7 +1069,7 @@ describe('Base.View.Create', function() {
             view.model.set('foo', true);
             expect(view.hasUnsavedChanges()).toBeTruthy();
 
-            view.model.setDefaultAttribute('foo', true);
+            view.model.setDefault('foo', true);
             expect(view.hasUnsavedChanges()).toBeFalsy();
         });
 
@@ -1093,9 +1093,9 @@ describe('Base.View.Create', function() {
     describe('SugarLogic integration', function() {
 
         it('should set the default attributes once plugin is initialized', function() {
-            var setDefaultAttributesStub = sinonSandbox.stub(view.model, 'setDefaultAttributes');
+            var setDefaultStub = sinonSandbox.stub(view.model, 'setDefault');
             view.trigger('sugarlogic:initialize');
-            expect(setDefaultAttributesStub).toHaveBeenCalled();
+            expect(setDefaultStub).toHaveBeenCalled();
         });
     });
 });

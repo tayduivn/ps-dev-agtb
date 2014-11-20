@@ -84,6 +84,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
+        $this->_mergeFielddefs($this->_fielddefs, $this->_viewdefs);
         $this->_language = '';
         // don't attempt to access the template_instance property if our subpanel represents a collection, as it won't be there - the sub-sub-panels get this value instead
         if (isset($this->_viewdefs['type']) && $this->_viewdefs['type'] != 'collection') {
@@ -354,8 +355,6 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         if (strpos($this->sidecarSubpanelName, 'subpanel-for-') !== false) {
             $this->_viewdefs['type'] = 'subpanel-list';
         }
-        // TODO: remove this when we have BWC modules converted
-        $this->stripUnwantedBWCKeys();
 
         write_array_to_file(
             $varname,
@@ -412,29 +411,6 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 && $viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'][0]['override_subpanel_list_view']['link'] == $this->linkName
             ) {
                 unlink($override);
-            }
-        }
-    }
-
-    /**
-     * Temporary method to remove BWC keys for sidecar subpanels
-     */
-    public function stripUnwantedBWCKeys()
-    {
-        static $unwantedKeys = array(
-            'width',
-        );
-        foreach ($this->_viewdefs['panels'] as &$panel) {
-            if (empty($panel['fields']) || !is_array($panel['fields'])) {
-                continue;
-            }
-            foreach ($panel['fields'] as &$field) {
-                foreach ($unwantedKeys as $unwantedKey) {
-                    if (empty($field[$unwantedKey])) {
-                        continue;
-                    }
-                    unset($field[$unwantedKey]);
-                }
             }
         }
     }

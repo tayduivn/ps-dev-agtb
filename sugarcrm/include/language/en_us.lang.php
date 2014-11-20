@@ -33,7 +33,6 @@ $app_list_strings = array (
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
-    'RevenueLineItems' => 'Revenue Line Items',
     'WebLogicHooks' => 'Web Logic Hooks',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
@@ -1230,7 +1229,7 @@ $app_list_strings = array (
     '-8' => '-8',
     '-9' => '-9',
     '-10' => '-10',
-    '12' => '-12',
+    '-12' => '-12',
     '-18' => '-18',
     '-24' => '-24',
   ),
@@ -3608,6 +3607,12 @@ Sincerely, SugarCRM',
     'LBL_DNB_ORGS_STRT_YEAR_DESC' => 'The year when operations undertaken by the organization commenced',
     'LBL_DNB_FRAN_TYP_TEXT_DESC' => 'Text that denotes whether the franchise rights are operated by a company or directly by the franchisee; i.e. franchisee, franchisor',
 
+    /* D&B Regsitration Details */
+    'LBL_DNB_REG_DET_HED' => 'Registered Details',
+    'LBL_DNB_REG_DET_HED_DESC' => 'Records the constitutional status of a subject as defined under the laws of a country E.g.; Limited Company, Partnership, co-operative Society and the Stock Equity or share structure employed by a business according to the legal form and rules of incorporation. The owners of the stock or shares are the owners of the business.',
+    'LBL_DNB_ORG_ID' => 'Organization Identification Number',
+    'LBL_DNB_ORG_ID_DESC' => 'A number assigned by an external body or by D&B which either uniquely identifies or helps to identify an organization. The issuing organization may be a Registration Authority, Government Department or Commercial Enterprise E.g. Chamber of Commerce numbers, VAT numbers, etc.',
+
     /* D&B Activities And Operations */
     'LBL_DNB_ACT_OPER' => 'Activities And Operations',
     'LBL_DNB_LOB' => 'Line Of Business',
@@ -4350,6 +4355,8 @@ Sincerely, SugarCRM',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_NO_DUPLICATES_FOUND' => 'No duplicates found.',
+    'LBL_RESET_DEFAULT_VIEW' => 'Reset default view',
+    'LBL_RESET_DEFAULT_WIDTHS' => 'Reset default widths',
 
     'LBL_SUCCESS' => 'Success',
     'LBL_ERROR' => 'Error',

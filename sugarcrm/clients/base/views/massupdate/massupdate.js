@@ -854,7 +854,7 @@
         this.visible = true;
         this.defaultOption = null;
         this.model.clear();
-        var defaults = _.extend({}, this.model._defaults, this.model.getDefaultAttributes());
+        var defaults = _.extend({}, this.model._defaults, this.model.getDefault());
         this.model.set(defaults);
         this.setDefault();
 

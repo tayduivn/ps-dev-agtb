@@ -486,7 +486,7 @@
 
         _.each(fieldMapping, function (sourceField, targetField) {
             if (model.has(sourceField) && model.get(sourceField) !== this.createView.model.get(targetField)) {
-                this.createView.model.setDefaultAttribute(targetField, model.get(sourceField));
+                this.createView.model.setDefault(targetField, model.get(sourceField));
                 this.createView.model.set(targetField, model.get(sourceField));
                 hasChanged = true;
             }
@@ -553,7 +553,7 @@
      * Resets the model to the default values so that unsaved warning prompt will not be displayed.
      */
     turnOffUnsavedChanges: function() {
-        var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefaultAttributes());
+        var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefault());
         this.createView.model.clear({silent: true});
         this.createView.model.set(defaults, {silent: true});
     },

@@ -36,13 +36,11 @@ describe('Base.Field.Teamset', function() {
             };
             SugarTest.declareData('base', 'Filters');
             SugarTest.loadComponent('base', 'field', 'relate');
-            var model = new Backbone.Model({
+            var model = app.data.createBean('Accounts', {
                 id: 'blahblahid',
                 team_name: [
                     {id: 'test-id', name: 'blahblah', primary: false}
-                ],
-                setDefaultAttribute: sinon.collection.stub(),
-                removeDefaultAttribute: sinon.collection.stub()
+                ]
             });
 
             sinon.collection.stub(Backbone.Collection.prototype, 'fetch');
@@ -91,17 +89,11 @@ describe('Base.Field.Teamset', function() {
         });
 
         it('should load the default team setting that is specified in the user profile settings', function() {
-            field.model = new Backbone.Model();
-            field.model.setDefaultAttribute = sinon.collection.stub();
-            field.model.removeDefaultAttribute = sinon.collection.stub();
-            var expected = [
-                    {
-                        id: '1', name: 'global'
-                    }
-                ],
-                getPreference = sinon.collection.stub(app.user, 'getPreference', function() {
-                    return expected;
-                });
+            field.model = app.data.createBean('Accounts');
+            var expected = [{ id: '1', name: 'global' }];
+            sinon.collection.stub(app.user, 'getPreference', function() {
+                return expected;
+            });
             field.render();
             var actual = field.value;
             expect(actual.length).toEqual(1);

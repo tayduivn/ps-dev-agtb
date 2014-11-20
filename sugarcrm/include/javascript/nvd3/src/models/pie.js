@@ -24,9 +24,10 @@ nv.models.pie = function() {
       endAngle = false,
       donutRatio = 0.447,
       durationMs = 0,
-      color = nv.utils.defaultColor(),
+      direction = 'ltr',
+      color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
-      classes = function(d, i) { return 'nv-slice nv-series-' + i; },
+      classes = function(d, i) { return 'nv-slice nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
   //============================================================
@@ -95,7 +96,8 @@ nv.models.pie = function() {
       slices.exit().remove();
 
       var ae = slices.enter().append('g')
-            .attr('class', function(d, i) { return this.getAttribute('class') || classes(d.data, i); })
+            .attr('class', function(d, i) { return classes(d.data, d.data.series); })
+            .attr('fill', function(d, i) { return fill(d.data, d.data.series); })
             .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
               dispatch.elementMouseover({
@@ -148,18 +150,18 @@ nv.models.pie = function() {
               d3.event.stopPropagation();
             });
 
-      var paths = ae.append('path')
-            .each(function(d) {
-              this._current = d;
-            });
+      ae.append('path')
+          .each(function(d) {
+            this._current = d;
+          });
 
       slices
         .classed('nv-active', function(d) { return d.data.active === 'active'; })
-        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; });
-
+        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; })
+        .attr('class', function(d, i) { return classes(d.data, d.data.series); })
+        .attr('fill', function(d, i) { return fill(d.data, d.data.series); });
 
       slices.select('path')
-        .style('fill', function(d, i) { return fill(d.data, d.data.series); })
         .style('stroke', '#ffffff')
         .style('stroke-width', 3)
         .style('stroke-opacity', 1);
@@ -252,13 +254,16 @@ nv.models.pie = function() {
         }
 
         slices.each(function(d, i) {
-          var slice = d3.select(this);
+          var slice = d3.select(this),
+              anchor = (d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end',
+              percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
+          anchor = direction === 'rtl' ? anchor === 'start' ? 'end' : 'start' : anchor;
+
           slice
             .select('.nv-label text')
-              .style('text-anchor', (d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') //center the text on it's origin or begin/end if orthogonal aligned
+              .style('text-anchor', anchor) //center the text on it's origin or begin/end if orthogonal aligned
               .text(function(d, i) {
-                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
-                    label = getX(d.data);
+                var label = getX(d.data);
                 return (label && percent > labelThreshold) ? label : '';
               });
 
@@ -508,6 +513,15 @@ nv.models.pie = function() {
     labelThreshold = _;
     return chart;
   };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    return chart;
+  };
+
   //============================================================
 
   return chart;

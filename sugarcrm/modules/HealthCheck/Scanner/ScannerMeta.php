@@ -235,7 +235,7 @@ class HealthCheckScannerMeta
         ),
         418 => array(
             'report' => 'subpanelLinkNonExistModule',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Subpanel_With_Link_To_NonExisting_Module/',
         ),
         419 => array(

@@ -374,6 +374,13 @@ $dictionary['Note'] = array(
         'rows' => 30,
         'cols' => 90,
       ),
+    'contact_parent' => array(
+        'name' => 'contact_parent',
+        'type' => 'link',
+        'relationship' => 'contact_notes_parent',
+        'source' => 'non-db',
+        'reportable' => false
+    ),
     ),
     'relationships'=>array(
     )

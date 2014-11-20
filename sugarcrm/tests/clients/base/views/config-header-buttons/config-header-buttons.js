@@ -52,4 +52,69 @@ describe('Base.View.ConfigHeaderButtons', function() {
             });
         });
     });
+
+    describe('saveConfig()', function() {
+        var button;
+        beforeEach(function() {
+            button = SugarTest.createField({
+                client: 'base',
+                name: 'save_button',
+                type: 'button',
+                viewName: 'detail',
+                fieldDef: {
+                    label: 'LBL_SAVE_BUTTON_LABEL'
+                }
+            });
+
+            sinon.collection.stub(button, 'setDisabled').withArgs(true).returns(true);
+            view.fields['save_button'] = button;
+        });
+
+        afterEach(function() {
+            button = null;
+        });
+
+        it('will disable the save button', function() {
+            sinon.collection.stub(view, '_saveConfig');
+            view.saveConfig();
+            expect(button.setDisabled).toHaveBeenCalledWith(true);
+        });
+
+        it('will not disable if beforeSave returns false', function() {
+            sinon.collection.stub(view, 'triggerBefore').returns(false);
+            view.saveConfig();
+            expect(button.setDisabled).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_saveConfig()', function() {
+        var button;
+        beforeEach(function() {
+            button = SugarTest.createField({
+                client: 'base',
+                name: 'save_button',
+                type: 'button',
+                viewName: 'detail',
+                fieldDef: {
+                    label: 'LBL_SAVE_BUTTON_LABEL'
+                }
+            });
+
+            sinon.collection.stub(button, 'setDisabled').withArgs(false).returns(true);
+            view.fields['save_button'] = button;
+        });
+
+        afterEach(function() {
+            button = null;
+        });
+
+        it('on xhr error will enable the button', function() {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.error({});
+            });
+
+            view._saveConfig();
+            expect(button.setDisabled).toHaveBeenCalledWith(false);
+        });
+    });
 });

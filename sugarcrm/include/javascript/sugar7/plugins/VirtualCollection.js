@@ -227,10 +227,44 @@
              * construction to avoid marking the initial models to be linked or
              * unlinked. These defaults are stored for reference.
              *
-             * To force all models to be linked during synchronization, create the
-             * collection without models and subsequently add all models.
+             * To force all models to be linked during synchronization, create
+             * the collection without models (`[]`) and subsequently add all
+             * models.
+             *
+             * If `models` is an array, then that array is assumed to contain
+             * the models to be inserted into the collection.
+             *
+             * If `models` is a {@link Backbone.Collection}, then the models
+             * from that collection are copied and used in the new collection.
+             *
+             * If `models` is an object that came directly from the server, then
+             * it should contain the keys `next_offset` and `records`, where
+             * `records` is an array of models. These models are inserted into
+             * the collection.
+             *
+             * If `models` is not an array, is not a {@link VirtualCollection},
+             * is not null or undefined, and does not have a `records` key, then
+             * it is assumed that the object represents a single model to be
+             * inserted into the collection.
+             *
+             * Otherwise, `models` is nothing and the collection is initialized
+             * without any models.
              */
             constructor: function(models, options) {
+                if (!_.isArray(models)) {
+                    if (models instanceof Backbone.Collection) {
+                        models = models.models;
+                    } else if (models) {
+                        if (models.records) {
+                            models = models.records;
+                        } else {
+                            models = [models];
+                        }
+                    } else {
+                        models = [];
+                    }
+                }
+
                 app.MixedBeanCollection.prototype.constructor.call(this, models, options);
 
                 this.offsets = {};
@@ -252,6 +286,7 @@
              * instance are cleared when the collection is synchronized (See
              * {@link Link#clearAndUpdateDefaults}).
              *
+             * @param {Object} options
              * @param {Data.Bean} options.parent The model to which this
              * collection is attached.
              * @param {String} options.fieldName The name of the attribute on
@@ -760,7 +795,7 @@
         };
 
         /**
-         * @see Data.Bean#toJSON
+         * {@link Data.Bean#toJSON}
          *
          * {@link Data.Bean Beans} to be linked or unlinked via the link fields
          * will be reduced to a specific set of attributes.
@@ -803,7 +838,7 @@
         };
 
         /**
-         * @see Data.Bean#copy
+         * {@link Data.Bean#copy}
          *
          * Copies any collection fields on the model from the source
          * {@link Data.Bean}.
@@ -847,7 +882,7 @@
         };
 
         /**
-         * @see Data.Bean#set
+         * {@link Data.Bean#set}
          *
          * Creates a new {@link VirtualCollection} at the attribute using the
          * existing value as the default set of models. The default value of
@@ -861,15 +896,16 @@
                     fieldName: key,
                     links: this.fields[key].links
                 }));
+
                 this.attributes[key] = collection;
-                this.setDefaultAttribute(key, collection);
+                this.setDefault(key, collection);
             }, this.model);
 
             return this.model;
         };
 
         /**
-         * @see Data.Bean#hasChanged
+         * {@link Data.Bean#hasChanged}
          *
          * Tests the collection fields when determining whether or not the
          * {@link Data.Bean} has changed.
@@ -894,7 +930,7 @@
         };
 
         /**
-         * @see Data.Bean#changedAttributes
+         * {@link Data.Bean#changedAttributes}
          *
          * Includes in the return value any collection fields with collections
          * that have changed. When comparing objects, Backbone does not do a
@@ -915,7 +951,7 @@
         };
 
         /**
-         * @see Data.Bean#revertAttributes
+         * {@link Data.Bean#revertAttributes}
          *
          * Reverts all collections to their state when they were last
          * synchronized.
@@ -930,7 +966,7 @@
         };
 
         /**
-         * @see Data.Bean#getSyncedAttributes
+         * {@link Data.Bean#getSyncedAttributes}
          *
          * Includes in the return value all collection fields and their
          * associated link attributes. When comparing objects, Backbone does

@@ -100,8 +100,7 @@
             )
         );
 
-        this.model.set(this.name, value);
-        this.model.setDefaultAttribute(this.name, value);
+        this.model.setDefault(this.name, value);
 
         return this;
     },

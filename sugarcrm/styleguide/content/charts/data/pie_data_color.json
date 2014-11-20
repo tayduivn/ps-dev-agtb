@@ -7,7 +7,7 @@
       "key": "Undefined"
       , "value": 100
       , "color": "#ba52d6"
-      , "classes": "nv-fill14"
+      , "classes": "nv-fill11"
     },
     {
       "key": "Cold Call"
@@ -25,7 +25,7 @@
       "key": "Self Generated"
       , "value": 150
       , "color": "#2ca02c"
-      , "classes": "nv-fill08"
+      , "classes": "nv-fill07"
     },
     {
       "key": "Employee"
@@ -37,7 +37,7 @@
       "key": "Partner"
       , "value": 100
       , "color": "#ff7f0e"
-      , "classes": "nv-fill04"
+      , "classes": "nv-fill03"
     },
     {
       "key": "Public Relations"

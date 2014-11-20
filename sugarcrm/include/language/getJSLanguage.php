@@ -58,7 +58,8 @@ function getJSLanguage()
         }
     } else {
         $module = clean_path($_REQUEST['module']);
-        if (!isset($app_list_strings['moduleList'][$module])) {
+        $fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
+        if (!isset($app_list_strings['moduleList'][$module]) && !in_array($module, $fullModuleList)) {
             echo "Invalid module specified";
 
             return;

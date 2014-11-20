@@ -290,7 +290,7 @@ class SugarFieldCollection extends SugarFieldBase {
 
         $response = $this->getCollectionApi()->getCollection($service, $args);
 
-        return $response['records'];
+        return $response;
     }
 
     /**

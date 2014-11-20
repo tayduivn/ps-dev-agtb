@@ -11,13 +11,13 @@ nv.models.multiBarChart = function() {
       showTitle = false,
       showControls = false,
       showLegend = true,
+      direction = 'ltr',
       tooltip = null,
       tooltips = true,
       scrollEnabled = true,
       overflowHandler = function(d) { return; },
       x,
       y,
-      id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       state = {},
       strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},
@@ -46,10 +46,8 @@ nv.models.multiBarChart = function() {
       yAxis = nv.models.axis()
         .tickPadding(4)
         .tickFormat(d3.format(',.1f')),
-      legend = nv.models.legend()
-        .align('right'),
+      legend = nv.models.legend(),
       controls = nv.models.legend()
-        .align('left')
         .color(['#444']),
       scroll = nv.models.scroll();
 
@@ -83,25 +81,30 @@ nv.models.multiBarChart = function() {
 
     selection.each(function(chartData) {
 
+      var that = this,
+          className = vertical ? 'multibarChart' : 'multiBarHorizontalChart';
+
       var properties = chartData ? chartData.properties : {},
           data = chartData ? chartData.data : null,
           groupLabels = [],
           groupTotals = [],
           dataBars = [],
-          container = d3.select(this),
-          that = this,
+          seriesCount = 0,
+          groupCount = 0;
+
+      // Chart layout
+      var container = d3.select(this),
           availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom,
           innerWidth = innerWidth || availableWidth,
           innerHeight = innerHeight || availableHeight,
           innerMargin = {top: 0, right: 0, bottom: 0, left: 0},
-          maxControlsWidth = 0,
+          trans = '';
+
+      // Legend variables
+      var maxControlsWidth = 0,
           maxLegendWidth = 0,
-          widthRatio = 0,
-          className = vertical ? 'multibarChart' : 'multiBarHorizontalChart',
-          trans = '',
-          seriesCount = 0,
-          groupCount = 0;
+          widthRatio = 0;
 
       // Scroll variables
       var minDimension = 0,
@@ -349,7 +352,7 @@ nv.models.multiBarChart = function() {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
-            .attr('x', 0)
+            .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
             .attr('dy', '.71em')
             .attr('text-anchor', 'start')
@@ -366,12 +369,14 @@ nv.models.multiBarChart = function() {
         controls
           .id('controls_' + chart.id())
           .strings(chart.strings().controls)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('left')
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
           .call(controls);
 
-        maxControlsWidth = controls.calculateWidth() + controls.margin().left;
+        maxControlsWidth = controls.calculateWidth();
       }
 
       if (showLegend) {
@@ -384,29 +389,40 @@ nv.models.multiBarChart = function() {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('right')
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
           .call(legend);
 
-        maxLegendWidth = legend.calculateWidth() + legend.margin().right;
+        maxLegendWidth = legend.calculateWidth();
       }
 
       // calculate proportional available space
       widthRatio = availableWidth / (maxControlsWidth + maxLegendWidth);
+      maxControlsWidth = Math.floor(maxControlsWidth * widthRatio);
+      maxLegendWidth = Math.floor(maxLegendWidth * widthRatio);
 
       if (showControls) {
         controls
-          .arrange(Math.floor(widthRatio * maxControlsWidth));
+          .arrange(maxControlsWidth);
+        maxLegendWidth = availableWidth - controls.width();
+      }
+      if (showLegend) {
+        legend
+          .arrange(maxLegendWidth);
+        maxControlsWidth = availableWidth - legend.width();
+      }
+
+      if (showControls) {
         controlsWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' ? availableWidth - controls.width() : 0) + ',' + innerMargin.top + ')');
       }
 
       if (showLegend) {
-        legend
-          .arrange(Math.floor(availableWidth - controls.width() + legend.margin().right));
         legendWrap
-          .attr('transform', 'translate(' + (controls.width() - controls.margin().left) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
       }
 
       // Recalc inner margins based on legend and control height
@@ -432,7 +448,7 @@ nv.models.multiBarChart = function() {
         .disabled(data.map(function(series) { return series.disabled; }))
         .width(getDimension('width'))
         .height(getDimension('height'))
-        .id(chart.id());
+        .clipEdge(false);
       barsWrap
         .data([dataBars])
         .call(multibar);
@@ -518,7 +534,7 @@ nv.models.multiBarChart = function() {
             };
 
         scroll
-          .id(id)
+          .id(chart.id())
           .enable(useScroll)
           .vertical(vertical)
           .width(innerWidth)
@@ -682,45 +698,51 @@ nv.models.multiBarChart = function() {
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
   chart.colorData = function(_) {
-    var colors = function(d, i) {
+    var type = arguments[0],
+        params = arguments[1] || {};
+    var color = function(d, i) {
           return nv.utils.defaultColor()(d, d.series);
         };
     var classes = function(d, i) {
           return 'nv-group nv-series-' + d.series;
         };
-    var type = arguments[0],
-        params = arguments[1] || {};
 
     switch (type) {
-    case 'graduated':
-      var c1 = params.c1,
-          c2 = params.c2,
-          l = params.l;
-      colors = function(d, i) {
-        return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(d.series / l);
-      };
-      break;
-    case 'class':
-      colors = function() {
-        return 'inherit';
-      };
-      classes = function (d, i) {
-        var iClass = (d.series * (params.step || 1)) % 14;
-        return 'nv-group nv-series-' + d.series + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
-      };
-      break;
+      case 'graduated':
+        color = function(d, i) {
+          return d3.interpolateHsl(d3.rgb(params.c1), d3.rgb(params.c2))(d.series / params.l);
+        };
+        break;
+      case 'class':
+        color = function() {
+          return 'inherit';
+        };
+        classes = function(d, i) {
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass;
+        };
+        break;
+      case 'data':
+        color = function(d, i) {
+          return d.classes ? 'inherit' : d.color || nv.utils.defaultColor()(d, d.series);
+        };
+        classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
+        };
+        break;
     }
 
-    var fill = (!params.gradient) ? colors : function(d, i) {
+    var fill = (!params.gradient) ? color : function(d, i) {
       var p = {orientation: params.orientation || (vertical ? 'vertical' : 'horizontal'), position: params.position || 'middle'};
       return multibar.gradient(d, d.series, p);
     };
 
-    multibar.color(colors);
+    multibar.color(color);
     multibar.fill(fill);
     multibar.classes(classes);
 
-    legend.color(colors);
+    legend.color(color);
     legend.classes(classes);
 
     return chart;
@@ -859,6 +881,19 @@ nv.models.multiBarChart = function() {
       return hideEmptyGroups;
     }
     hideEmptyGroups = _;
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    multibar.direction(_);
+    xAxis.direction(_);
+    yAxis.direction(_);
+    legend.direction(_);
+    controls.direction(_);
     return chart;
   };
 

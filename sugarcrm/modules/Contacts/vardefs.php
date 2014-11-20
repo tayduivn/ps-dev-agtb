@@ -422,6 +422,14 @@ $dictionary['Contact'] = array(
             'vname' => 'LBL_TASKS',
             'reportable' => false,
         ),
+        'notes_parent' => array(
+            'name' => 'notes_parent',
+            'type' => 'link',
+            'relationship' => 'contact_notes_parent',
+            'source' => 'non-db',
+            'vname' => 'LBL_NOTES',
+            'reportable' => false,
+        ),
         'all_tasks' => array(
             'name' => 'all_tasks',
             'type' => 'link',
@@ -720,6 +728,17 @@ $dictionary['Contact'] = array(
             'rhs_table' => 'notes',
             'rhs_key' => 'contact_id',
             'relationship_type' => 'one-to-many',
+        ),
+        'contact_notes_parent' => array(
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Notes',
+            'rhs_table' => 'notes',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Contacts',
         ),
         'contact_tasks' => array(
             'lhs_module' => 'Contacts',

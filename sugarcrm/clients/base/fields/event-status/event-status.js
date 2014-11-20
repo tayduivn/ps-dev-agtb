@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * EventStatusField is a field for Meetings/Calls that show the status field of the model as a badge field.
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.EventStatusField
  * @alias SUGAR.App.view.fields.BaseEventStatusField
  * @extends View.Fields.Base.BadgeSelectField

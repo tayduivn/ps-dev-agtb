@@ -61,7 +61,7 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'vertAdj'=> 8,
             ),
             array(
-                'name' => '#tour',
+                'name' => '[data-action="tour"]',
                 'text' => 'LBL_TOUR_TOUR',
                 'full' => true,
                 'vertAdj'=> -14,

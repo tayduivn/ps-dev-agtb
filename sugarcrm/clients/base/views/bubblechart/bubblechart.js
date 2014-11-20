@@ -40,8 +40,13 @@
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
-        this._super('initialize', [options]);
+
         this.forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities';
+
+        // set the title label in meta the same way the dashlet title is set on render
+        options.meta.label = app.lang.get(options.meta.label, this.forecastBy);
+
+        this._super('initialize', [options]);
 
         var fields = [
             'id',
@@ -114,6 +119,7 @@
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
+            .direction(app.lang.direction)
             .bubbleClick(function(e) {
                 self.chart.dispatch.tooltipHide(e);
                 app.router.navigate(app.router.buildRoute(self.forecastBy, e.point.id), {trigger: true});
@@ -141,7 +147,7 @@
         this.settings.on('change:filter_duration', this.changeFilter, this);
 
         this.layout.on('render', function() {
-            if (!this.settings.get('config')) {
+            if (!this.disposed && !this.settings.get('config')) {
                 this.layout.setTitle(app.lang.get(this.meta.label, this.forecastBy));
             }
         }, this);

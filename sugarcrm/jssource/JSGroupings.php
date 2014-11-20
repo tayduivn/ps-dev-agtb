@@ -278,6 +278,8 @@
                     'include/javascript/sugar7/plugins/EllipsisInline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ListColumnEllipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ReorderableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/jquery/sugar.resizableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ResizableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/HistoricalSummary.js'  => 'include/javascript/sugar_sidecar.min.js',

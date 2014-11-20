@@ -77,6 +77,8 @@
             chartConfig = this.getChartConfig(chartData.properties[0].type);
         }
 
+        chartConfig['direction'] = app.lang.direction;
+
         chart = new loadSugarChart(chartId, chartData, [], chartConfig, params, _.bind(function(chart) {
             self.chart = chart;
             self.chart_loaded = _.isFunction(this.chart.update);

@@ -9,22 +9,31 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Recurrence is a field for Calls & Meetings module used to set attributes
+ * Recurrence is a field for Meetings/Calls module used to set attributes
  * about a recurring record.
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
  *
  * @class View.Fields.Base.RecurrenceField
  * @alias SUGAR.App.view.fields.BaseRecurrenceField
- * @extends View.Fields.Base.FieldsetWithLabelsField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',
 
     /**
-     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
     showNoData: false,
+
+    /**
+     * @property {int} repeatCountMin
+     *
+     * The minimum number of occurrences that is allowed when the repeat_count
+     * field is used.
+     */
+    repeatCountMin: 1,
 
     /**
      * @inheritdoc
@@ -156,7 +165,7 @@
     /**
      * Show the given field
      *
-     * @param {String} fieldName Name of the field to show
+     * @param {string} fieldName Name of the field to show
      * @private
      */
     _showField: function(fieldName) {
@@ -166,7 +175,7 @@
     /**
      * Hide the given field
      *
-     * @param {String} fieldName Name of the field to hide
+     * @param {string} fieldName Name of the field to hide
      * @private
      */
     _hideField: function(fieldName) {
@@ -176,8 +185,8 @@
     /**
      * Returns the field cell for a given field name
      *
-     * @param {String} fieldName Name of the field to select
-     * @returns {jQuery} jQuery selected record cell
+     * @param {string} fieldName Name of the field to select
+     * @return {jQuery} jQuery selected record cell
      * @private
      */
     _getFieldRecordCellByName: function(fieldName) {
@@ -188,8 +197,8 @@
     /**
      * Returns the field cell for a given field type
      *
-     * @param {String} fieldType Type of the field to select
-     * @returns {jQuery} jQuery selected record cell
+     * @param {string} fieldType Type of the field to select
+     * @return {jQuery} jQuery selected record cell
      * @private
      */
     _getFieldRecordCellByType: function(fieldType) {
@@ -200,8 +209,8 @@
     /**
      * Check if a particular field is populated
      *
-     * @param {String|Number} value The value to check if it is populated
-     * @returns {Boolean} Returns true if the field is populated
+     * @param {string|number} value The value to check if it is populated
+     * @return {boolean} Returns true if the field is populated
      * @private
      */
     _isPopulated: function(value) {
@@ -209,9 +218,10 @@
     },
 
     /**
-     * Custom required validator for the `repeat_count`/`repeat_until` field.
-     * This validates `repeat_count` is required if `repeat_until` is not
-     * specified.
+     * Custom validator for the `repeat_count`/`repeat_until` field.
+     *
+     * This validates `repeat_count` is required and meets the minimum value
+     * requirement if `repeat_until` is not specified.
      *
      * @param {Object} fields The list of field names and their definitions.
      * @param {Object} errors The list of field names and their errors.
@@ -219,16 +229,20 @@
      * @private
      */
     _doValidateRepeatCountOrUntilRequired: function(fields, errors, callback) {
-        var repeatType = this.model.get('repeat_type'),
-            repeatCount = this.model.get('repeat_count'),
-            repeatUntil = this.model.get('repeat_until');
+        var repeatCount, repeatCountIsPopulated, repeatUntilIsPopulated;
 
-        if (this._isPopulated(repeatType) &&
-            !this._isPopulated(repeatCount) &&
-            !this._isPopulated(repeatUntil)
-        ) {
-            errors.repeat_count = {'required': true};
+        repeatCount = this.model.get('repeat_count');
+        repeatCountIsPopulated = this._isPopulated(repeatCount);
+        repeatUntilIsPopulated = this._isPopulated(this.model.get('repeat_until'));
+
+        if (this._isPopulated(this.model.get('repeat_type'))) {
+            if (!repeatUntilIsPopulated && !repeatCountIsPopulated) {
+                errors.repeat_count = {required: true};
+            } else if (!repeatUntilIsPopulated && repeatCountIsPopulated && repeatCount < this.repeatCountMin) {
+                errors.repeat_count = {minValue: this.repeatCountMin};
+            }
         }
+
         callback(null, fields, errors);
     },
 

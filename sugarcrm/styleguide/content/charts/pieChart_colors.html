@@ -101,7 +101,9 @@
 <script src="../../../include/javascript/nvd3/src/models/pieChart.js"></script>
 
 <script>
-  d3.json("data/pie_data.json", function(chartData) {
+  d3.json('data/pie_data.json', function(chartData) {
+
+    // Default
     var chart1 = nv.models.pieChart()
           .tooltips(false)
           .donut(true)
@@ -131,6 +133,7 @@
         .datum(chartData)
       .call(chart3);
 
+    // Graduated
     var chart7 = nv.models.pieChart()
           .tooltips(false)
           .donut(true)
@@ -151,10 +154,15 @@
   });
 
 
-  d3.json("data/pie_data_color.json", function(chartData) {
+  d3.json('data/pie_data_color.json', function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.classes;
+    });
+
+    // Data-Defined Color
     var chart4 = nv.models.pieChart()
           .tooltips(false)
-          .colorData('default');
+          .colorData('data');
     d3.select('#chart4 svg')
         .datum(chartData)
       .call(chart4);
@@ -165,14 +173,21 @@
           .donutRatio(0.4)
           .donutLabelsOutside(true)
           .hole(10)
-          .colorData('default', {gradient: true});
+          .colorData('data', {gradient: true});
     d3.select('#chart5 svg')
         .datum(chartData)
       .call(chart5);
+  });
 
+  d3.json('data/pie_data_color.json', function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.color;
+    });
+
+    // Data-Defined Classes
     var chart6 = nv.models.pieChart()
           .tooltips(false)
-          .colorData('class', {step: 2});
+          .colorData('data', {step: 2});
     d3.select('#chart6 svg')
         .datum(chartData)
       .call(chart6);

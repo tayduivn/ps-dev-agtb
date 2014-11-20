@@ -10,6 +10,7 @@ nv.models.treemapChart = function() {
     , height = null
     , showTitle = false
     , showLegend = false
+    , direction = 'ltr'
     , tooltip = null
     , tooltips = true
     , tooltipContent = function(point) {
@@ -17,6 +18,7 @@ nv.models.treemapChart = function() {
           '<p>Name: <b>' + point.name + '</b></p>';
         return tt;
       }
+    , colorData = 'default'
       //create a clone of the d3 array
     , colorArray = d3.scale.category20().range().map( function(d){ return d; })
     , x //can be accessed via chart.xScale()
@@ -100,14 +102,14 @@ nv.models.treemapChart = function() {
       var wrap = container.selectAll('g.nv-wrap.nv-treemapWithLegend').data(data);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-treemapWithLegend').append('g');
       var g = wrap.select('g');
-      
+
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
         .attr('width', availableWidth + margin.left + margin.right)
         .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
-        
+
       gEnter.append('g').attr('class', 'nv-treemapWrap');
 
       //------------------------------------------------------------
@@ -283,41 +285,47 @@ nv.models.treemapChart = function() {
 
   d3.rebind(chart, treemap, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'leafClick', 'getSize', 'getName', 'groups', 'color', 'fill', 'classes', 'gradient');
 
-  chart.colorData = function (_) {
+  chart.colorData = function(_) {
     if (!arguments.length) { return colorData; }
 
     var type = arguments[0],
-        params = arguments[1] || {},
-        colors = function (d,i) {
-          var c = (type === 'data' && d.color) ? {color:d.color} : {};
-          return nv.utils.getColor(colorArray)(c,i);
-        },
-        classes = function (d,i) { return 'nv-child'; }
-        ;
+        params = arguments[1] || {};
+    var color = function(d, i) {
+          var c = (type === 'data' && d.color) ? {color: d.color} : {};
+          return nv.utils.getColor(colorArray)(c, i);
+        };
+    var classes = function(d, i) {
+          return 'nv-child';
+        };
 
     switch (type) {
       case 'graduated':
-        colors = function (d,i,l) { return d3.interpolateHsl( d3.rgb(params.c1), d3.rgb(params.c2) )(i/l); };
+        color = function(d, i, l) {
+          return d3.interpolateHsl(d3.rgb(params.c1), d3.rgb(params.c2))(i / l);
+        };
         break;
       case 'class':
-        colors = function () { return 'inherit'; };
-        classes = function (d,i) {
-          var iClass = (i*(params.step || 1))%20;
-          return 'nv-child ' + (d.className || 'nv-fill' + (iClass>9?'':'0') + iClass);
+        color = function() {
+          return 'inherit';
+        };
+        classes = function(d, i) {
+          var iClass = (i * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-child ' + (d.className || 'nv-fill' + iClass);
         };
         break;
     }
 
-    var fill = (!params.gradient) ? colors : function (d,i) {
+    var fill = (!params.gradient) ? color : function(d, i) {
       var p = {orientation: params.orientation || 'horizontal', position: params.position || 'base'};
-      return treemap.gradient(d,i,p);
+      return treemap.gradient(d, i, p);
     };
 
-    treemap.color(colors);
+    treemap.color(color);
     treemap.fill(fill);
     treemap.classes(classes);
 
-    legend.color(colors);
+    legend.color(color);
     legend.classes(classes);
 
     colorData = arguments[0];
@@ -390,7 +398,7 @@ nv.models.treemapChart = function() {
     return chart;
   };
 
-  chart.strings = function (_) {
+  chart.strings = function(_) {
     if (!arguments.length) {
       return strings;
     }
@@ -399,6 +407,15 @@ nv.models.treemapChart = function() {
         strings[prop] = _[prop];
       }
     }
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    legend.direction(_);
     return chart;
   };
 
