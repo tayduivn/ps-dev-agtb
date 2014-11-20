@@ -11,7 +11,11 @@
  */
 --}}
 {{#if complete}}
-    {{str 'LBL_CONVERT_ASSOCIATED_MODULE' labelModule moduleInfo}}: {{associatedName}}
+    {{#if create}}
+        {{str 'LBL_CONVERT_CREATED_MODULE' labelModule moduleInfo}}
+    {{else}}
+        {{str 'LBL_CONVERT_SELECTED_MODULE' labelModule moduleInfo}}
+    {{/if}}: {{associatedName}}
 {{else}}
     {{#if create}}{{str 'LBL_CONVERT_CREATE_NEW' labelModule moduleInfo}}{{else}}{{moduleInfo.moduleName}}{{/if}}{{#unless required}} {{str 'LBL_CONVERT_PANEL_OPTIONAL' labelModule}}{{/unless}}:
 {{/if}}

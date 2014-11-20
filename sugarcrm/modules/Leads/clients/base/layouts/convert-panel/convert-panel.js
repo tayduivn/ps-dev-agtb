@@ -23,7 +23,7 @@
     accordionHeading: '.accordion-heading',
     accordionBody: '.accordion-body',
 
-    initialize:function (options) {
+    initialize: function(options) {
         var convertPanelEvents;
 
         this.meta = options.meta;
@@ -44,15 +44,15 @@
         };
         this.toggledOffDupes = false;
 
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
 
         this.addSubComponents();
 
         this.context.on('lead:convert:populate', this.handlePopulateRecords, this);
-        this.context.on('lead:convert:'+this.meta.module+':enable', this.handleEnablePanel, this);
-        this.context.on('lead:convert:'+this.meta.moduleNumber+':open', this.handleOpenRequest, this);
+        this.context.on('lead:convert:' + this.meta.module + ':enable', this.handleEnablePanel, this);
+        this.context.on('lead:convert:' + this.meta.moduleNumber + ':open', this.handleOpenRequest, this);
         this.context.on('lead:convert:exit', this.turnOffUnsavedChanges, this);
-        this.context.on('lead:convert:'+this.meta.module+':shown', this.handleShowComponent, this);
+        this.context.on('lead:convert:' + this.meta.module + ':shown', this.handleShowComponent, this);
 
         //if this panel is dependent on others - listen for changes and react accordingly
         this.addDependencyListeners();
@@ -69,8 +69,8 @@
      */
     _setModuleSpecificValues: function() {
         var module = this.meta.module;
-        this.meta.modulePlural = app.lang.getAppListStrings("moduleList")[module] || module;
-        this.meta.moduleSingular = app.lang.getAppListStrings("moduleListSingular")[module] || this.meta.modulePlural;
+        this.meta.modulePlural = app.lang.getAppListStrings('moduleList')[module] || module;
+        this.meta.moduleSingular = app.lang.getAppListStrings('moduleListSingular')[module] || this.meta.modulePlural;
 
         //enable or disable duplicate check
         var moduleMetadata = app.metadata.getModule(module);
@@ -80,8 +80,8 @@
 
     /**
      * Used by toggle layout to determine where to place sub-components
-     * @param component
-     * @returns {*}
+     * @param {Object} component
+     * @return {*}
      */
     getContainer: function(component) {
         if (component.name === 'convert-panel-header') {
@@ -166,10 +166,10 @@
     /**
      * Sets the listeners for changes to the dependent modules.
      */
-    addDependencyListeners: function () {
+    addDependencyListeners: function() {
         _.each(this.meta.dependentModules, function(details, module) {
-            this.context.on('lead:convert:'+module+':complete', this.updateFromDependentModuleChanges, this);
-            this.context.on('lead:convert:'+module+':reset', this.resetFromDependentModuleChanges, this);
+            this.context.on('lead:convert:' + module + ':complete', this.updateFromDependentModuleChanges, this);
+            this.context.on('lead:convert:' + module + ':reset', this.resetFromDependentModuleChanges, this);
         }, this);
     },
 
@@ -188,16 +188,17 @@
     },
 
     /**
-     * Removes fields from the meta and replaces with empty html container based on the modules config option - hiddenFields.
+     * Removes fields from the meta and replaces with empty html container
+     * based on the modules config option - hiddenFields.
      * For example.  Account name drop-down should not be available on contact and opportunity module.
-     * @param meta
-     * @param moduleMeta
+     * @param {Object} meta
+     * @param {Object} moduleMeta
      * @return {*}
      */
     removeFieldsFromMeta: function(meta, moduleMeta) {
         if (moduleMeta.hiddenFields) {
-            _.each(meta.panels, function(panel){
-                _.each(panel.fields, function(field, index, list){
+            _.each(meta.panels, function(panel) {
+                _.each(panel.fields, function(field, index, list) {
                     if (_.isString(field)) {
                         field = {name: field};
                     }
@@ -236,7 +237,7 @@
 
     /**
      * Check if the the current panel is enabled
-     * @returns {Boolean}
+     * @return {boolean}
      */
     isPanelEnabled: function() {
         return this.$(this.accordionHeading).hasClass('enabled');
@@ -245,7 +246,7 @@
     /**
      * Open the body of the panel if enabled
      */
-    openPanel: function () {
+    openPanel: function() {
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
             // if the panel is already open, do not re-open it, just trigger the event
@@ -257,7 +258,7 @@
         }
     },
 
-    showComponent: function (name) {
+    showComponent: function(name) {
         this._super('showComponent', [name]);
         if (this.currentToggle === this.TOGGLE_CREATE) {
             this.createView.model.trigger('duplicate:field', this.convertLead);
@@ -266,7 +267,7 @@
         this.handleShowComponent();
     },
 
-    handleShowComponent: function () {
+    handleShowComponent: function() {
         if (this.currentToggle === this.TOGGLE_CREATE && this.createView.meta.useTabsAndPanels && !this.createViewRendered) {
             this.createView.render();
             this.createViewRendered = true;
@@ -282,7 +283,7 @@
 
     /**
      * Handle click of Associate button - running validation if on create view or marking complete if on dupe view
-     * @param event
+     * @param {Event} event
      */
     handleAssociateClick: function(event) {
         //ignore clicks if button is disabled
@@ -312,10 +313,13 @@
 
     /**
      * Mark the panel as complete, close the panel body, and tell the next panel to open
-     * @param model
+     * @param {Object} model
      */
     markPanelComplete: function(model) {
-        var displayMessage = (this.currentToggle === this.TOGGLE_CREATE) ? 'LBL_CONVERT_MODULE_ASSOCIATED_NEW_SUCCESS' : 'LBL_CONVERT_MODULE_ASSOCIATED_SUCCESS';
+        var displayMessage = (this.currentToggle === this.TOGGLE_CREATE) ?
+                'LBL_CONVERT_MODULE_ASSOCIATED_NEW_SUCCESS' : 'LBL_CONVERT_MODULE_ASSOCIATED_SUCCESS',
+            displayTitle = (this.currentToggle === this.TOGGLE_CREATE) ?
+                'LBL_CONVERT_MODULE_CREATED' : 'LBL_CONVERT_MODULE_SELECTED';
 
         this.currentState.associatedName = this.getDisplayName(model);
         this.currentState.complete = true;
@@ -323,11 +327,14 @@
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
         app.alert.show('panel_associate_complete', {
             level: 'success',
-            title: app.lang.get('LBL_CONVERT_MODULE_ASSOCIATED', this.module, {moduleName:this.meta.moduleSingular}),
+            title: app.lang.get(displayTitle, this.module, {moduleName: this.meta.moduleSingular}),
             messages: app.lang.get(
                 displayMessage,
                 this.module,
-                {moduleNameLower:this.meta.moduleSingular.toLowerCase(),recordName:this.currentState.associatedName}
+                {
+                    moduleNameLower: this.meta.moduleSingular.toLowerCase(),
+                    recordName: this.currentState.associatedName
+                }
             ),
             autoClose: true
         });
@@ -342,14 +349,14 @@
     },
 
     requestNextPanelOpen: function() {
-        this.context.trigger('lead:convert:'+(this.meta.moduleNumber+1)+':open');
+        this.context.trigger('lead:convert:' + (this.meta.moduleNumber + 1) + ':open');
     },
 
     /**
      * Special logic for grabbing the display name for a module
      * using the name fields if they exist or a 'name' field if it exists
      *
-     * @param model
+     * @param {Object} model
      * @return {String}
      */
     getDisplayName: function(model) {
@@ -370,7 +377,7 @@
 
     /**
      * When reset button is clicked - reset this panel and open it
-     * @param event
+     * @param {Event} event
      */
     handleResetClick: function(event) {
         this.resetPanel();
@@ -402,7 +409,7 @@
     triggerDuplicateCheck: function() {
         if (this.shouldDupeCheckBePerformed(this.createView.model)) {
             this.trigger('lead:convert-dupecheck:pending');
-            this.duplicateView.context.trigger("dupecheck:fetch:fire", this.createView.model, {
+            this.duplicateView.context.trigger('dupecheck:fetch:fire', this.createView.model, {
                 //Show alerts for this request
                 showAlerts: true
             });
@@ -414,13 +421,13 @@
     /**
      * Check if duplicate check should be performed
      * dependent on enableDuplicateCheck setting and required dupe check fields
-     * @param model
+     * @param {Object} model
      */
     shouldDupeCheckBePerformed: function(model) {
         var performDuplicateCheck = this.meta.enableDuplicateCheck;
 
         if (this.meta.duplicateCheckRequiredFields) {
-            _.each(this.meta.duplicateCheckRequiredFields, function (field) {
+            _.each(this.meta.duplicateCheckRequiredFields, function(field) {
                 if (_.isEmpty(model.get(field))) {
                     performDuplicateCheck = false;
                 }
@@ -432,7 +439,7 @@
     /**
      * Populates the record view from the passed in model and then kick off the dupe check
      *
-     * @param model
+     * @param {Object} model
      */
     handlePopulateRecords: function(model) {
         var fieldMapping = {};
@@ -450,7 +457,7 @@
         var targetFields = app.metadata.getModule(this.meta.module, 'fields');
 
         _.each(model.attributes, function(fieldValue, fieldName) {
-            if (app.acl.hasAccessToModel("edit", this.createView.model, fieldName) &&
+            if (app.acl.hasAccessToModel('edit', this.createView.model, fieldName) &&
                 !_.isUndefined(sourceFields[fieldName]) &&
                 !_.isUndefined(targetFields[fieldName]) &&
                 sourceFields[fieldName].type === targetFields[fieldName].type &&
@@ -464,7 +471,7 @@
         }, this);
 
         this.populateRecords(model, fieldMapping);
-        if(this.meta.duplicateCheckOnStart) {
+        if (this.meta.duplicateCheckOnStart) {
             this.triggerDuplicateCheck();
         } else if (!this.meta.dependentModules || this.meta.dependentModules.length == 0) {
             //not waiting on other modules before running dupe check, so mark as complete
@@ -477,14 +484,14 @@
     /**
      * Use the convert metadata to determine how to map the lead fields to module fields
      *
-     * @param model
-     * @param fieldMapping
-     * @return {Boolean} whether the create view model has changed
+     * @param {Object} model
+     * @param {Object} fieldMapping
+     * @return {boolean} whether the create view model has changed
      */
-    populateRecords:function (model, fieldMapping) {
+    populateRecords: function(model, fieldMapping) {
         var hasChanged = false;
 
-        _.each(fieldMapping, function (sourceField, targetField) {
+        _.each(fieldMapping, function(sourceField, targetField) {
             if (model.has(sourceField) && model.get(sourceField) !== this.createView.model.get(targetField)) {
                 this.createView.model.setDefault(targetField, model.get(sourceField));
                 this.createView.model.set(targetField, model.get(sourceField));
@@ -503,7 +510,7 @@
     /**
      * Enable the panel
      *
-     * @param isEnabled add/remove the enabled flag on the header
+     * @param {boolean} isEnabled add/remove the enabled flag on the header
      */
     handleEnablePanel: function(isEnabled) {
         var $header = this.$(this.accordionHeading);
@@ -521,8 +528,8 @@
      * Updates the attributes on the model based on the changes from dependent modules duplicate view.
      * Uses dependentModules property - fieldMappings
      *
-     * @param moduleName
-     * @param model
+     * @param {String} moduleName
+     * @param {Object} model
      */
     updateFromDependentModuleChanges: function(moduleName, model) {
         var dependencies = this.meta.dependentModules,
@@ -561,6 +568,6 @@
     _dispose: function() {
         this.duplicateView.context.off(null, null, this);
         this.duplicateView.collection.off(null, null, this);
-        this._super("_dispose");
+        this._super('_dispose');
     }
 })
