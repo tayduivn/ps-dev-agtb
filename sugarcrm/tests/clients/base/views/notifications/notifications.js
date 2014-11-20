@@ -211,12 +211,12 @@ describe('Notifications', function() {
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function() {
                     return intervalId;
                 }),
-                clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop()),
+                clearTimeout = sinon.collection.stub(window, 'clearTimeout', $.noop()),
                 intervalId = 1;
 
             view.startPulling().stopPulling();
 
-            expect(clearInterval).toHaveBeenCalledTwice();
+            expect(clearTimeout).toHaveBeenCalledTwice();
             expect(view._intervalId).toBeNull();
             expect(view._remindersIntervalId).toBeNull();
         });
