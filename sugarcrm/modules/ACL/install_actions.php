@@ -155,7 +155,7 @@ if($installActions || $missingAclRolesActions) {
          'Contacts'=>array('admin'=>100, 'access'=>89),
          'Bugs'=>array('admin'=>100, 'access'=>89),
          'Cases'=>array('admin'=>100, 'access'=>89),
-         'KBSContents'=>array('admin'=>100, 'access'=>89),
+         'KBContents'=>array('admin'=>100, 'access'=>89),
         )
     );
 

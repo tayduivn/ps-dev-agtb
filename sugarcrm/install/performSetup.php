@@ -327,9 +327,9 @@ echo "<br>";
 
     unset($opps_config);
 
-    $KBSContent = new KBSContent();
-    $KBSContent->setupPrimaryLanguage();
-    $KBSContent->setupCategoryRoot();
+    $KBContent = new KBContent();
+    $KBContent->setupPrimaryLanguage();
+    $KBContent->setupCategoryRoot();
 
     installerHook('pre_createUsers');
     if ($new_tables) {
@@ -629,7 +629,7 @@ FP;
         $enabled_tabs[] = 'Bugs';
     }
     //END SUGARCRM flav=ent ONLY
-    $enabled_tabs[] = 'KBSContents';
+    $enabled_tabs[] = 'KBContents';
 
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');

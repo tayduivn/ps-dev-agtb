@@ -16,25 +16,25 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
             'description' => 'LBL_DASHLET_TOPICS_DESCRIPTION',
             'config' => array(
                 'last_state' => array(
-                    'id' => 'dashlet-nestedset-list-kbscontents',
+                    'id' => 'dashlet-nestedset-list-kbcontents',
                 ),
                 'data_provider' => 'Categories',
-                'config_provider' => 'KBSContents',
+                'config_provider' => 'KBContents',
                 'root_name' => 'category_root',
                 'extra_provider' => array(
-                    'module' => 'KBSContents',
+                    'module' => 'KBContents',
                     'field' => 'category_id',
                 ),
             ),
             'preview' => array(
                 'data_provider' => 'Categories',
-                'config_provider' => 'KBSContents',
+                'config_provider' => 'KBContents',
                 'root_name' => 'category_root',
             ),
             'filter' => array(
                 'module' => array(
-                    'KBSContents',
-                    'KBSContentTemplates',
+                    'KBContents',
+                    'KBContentTemplates',
                 ),
                 'view' => array(
                     'record',

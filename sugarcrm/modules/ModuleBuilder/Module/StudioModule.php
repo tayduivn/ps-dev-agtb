@@ -24,7 +24,7 @@ class StudioModule
         'Bugs', // Bug Tracker
         'Campaigns',
         'Contracts',
-        'KBSContents', // Knowledge Base
+        'KBContents', // Knowledge Base
         'ProductTemplates', // Product Catalog
         'Prospects', // Targets
     );

@@ -1,5 +1,5 @@
 describe('Plugins.NestedSetCollection', function() {
-    var module = 'KBSContents',
+    var module = 'KBContents',
         fieldDef = {
             category_root: '0',
             module_root: module

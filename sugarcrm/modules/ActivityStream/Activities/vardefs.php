@@ -167,12 +167,12 @@ $dictionary['Activity'] = array(
             'source'       => 'non-db',
             'vname'        => 'LBL_NOTES',
         ),
-        'kbscontents' => array(
-            'name' => 'kbscontents',
+        'kbcontents' => array(
+            'name' => 'kbcontents',
             'type' => 'link',
-            'relationship' => 'kbscontent_activities',
+            'relationship' => 'kbcontent_activities',
             'source' => 'non-db',
-            'vname' => 'LBL_KBSCONTENTS',
+            'vname' => 'LBL_KBCONTENTS',
         ),
 
         // Add table columns.

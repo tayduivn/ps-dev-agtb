@@ -85,7 +85,7 @@ class SupportPortalVisibility extends SugarVisibility
         switch ($this->bean->module_dir) {
             case 'Categories':
                 break;
-            case 'KBSContents':
+            case 'KBContents':
                 if ($queryType == 'where') {
                     $queryPart = " $table_alias.active_rev=1 AND"
                                 ." ($table_alias.status = 'published-ex' OR $table_alias.status ='published') ";
@@ -151,14 +151,14 @@ class SupportPortalVisibility extends SugarVisibility
                     //ENd SUGARCRM flav=ent ONLY
 
                 } elseif ($queryType == 'where') {
-                    $KBSContentsCondition = "{$table_alias}.parent_type = 'KBSContentsNotes' "
-                                    . "OR {$table_alias}.parent_type = 'KBSContentsAttachments'";
+                    $KBContentsCondition = "{$table_alias}.parent_type = 'KBContentsNotes' "
+                                    . "OR {$table_alias}.parent_type = 'KBContentsAttachments'";
 
                     if ( !empty($accountIds) ) {
-                        $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL OR {$KBSContentsCondition}) ";
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL OR {$KBContentsCondition}) ";
                     } else {
                         $queryPart = " {$table_alias}.portal_flag = 1 AND "
-                                    . "(bugs_pv.id IS NOT NULL OR {$KBSContentsCondition}) ";
+                                    . "(bugs_pv.id IS NOT NULL OR {$KBContentsCondition}) ";
                     }
                 }
                 break;

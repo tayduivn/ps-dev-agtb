@@ -950,8 +950,8 @@ class Scheduler extends SugarBean {
         $sched16->save();
 
         $sched17 = BeanFactory::getBean('Schedulers');
-        $sched17->name               = $mod_strings['LBL_OOTB_KBSCONTENT_UPDATE'];
-        $sched17->job                = 'class::SugarJobKBSContentUpdateArticles';
+        $sched17->name               = $mod_strings['LBL_OOTB_KBCONTENT_UPDATE'];
+        $sched17->job                = 'class::SugarJobKBContentUpdateArticles';
         $sched17->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
         $sched17->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
         $sched17->job_interval = '0::5::*::*::*';
