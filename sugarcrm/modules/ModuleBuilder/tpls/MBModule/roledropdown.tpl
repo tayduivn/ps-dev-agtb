@@ -118,36 +118,31 @@
                     <ul id="ul1" class="listContainer">
                         {foreach from=$role_options key='id' item='checked'}
                             {if isset($options[$id])}
+                                {if ($options[$id] === "")}
+                                    {capture assign=id}{sugar_translate label='LBL_BLANK'}{/capture}
+                                    {assign var=val value=$id}
+                                    {assign var=is_blank value=true}
+                                {else}
+                                    {assign var=val value=$options[$id]}
+                                    {assign var=is_blank value=false}
+                                {/if}
                             <li class="draggable{if !$checked} deleted{/if}" id="{$id}">
                                 <table width='100%'>
                                     <tr>
-                                        {if $options[$id] == ''}
-                                            <td class="first">
-                                                {sugar_translate label='LBL_BLANK'}
-                                                   <span class='fieldValue' id='span_'>
-                                                       [{sugar_translate label='LBL_BLANK'}]
-                                                   </span>
-                                            </td>
-                                            <td align="right">
-                                                <input id='value_' value='-blank-' type='hidden'>
-                                                <input type="hidden" value="0" name="dropdown_keys[-blank-]">
-                                                <input type="checkbox" value="1" {if $checked}checked{/if}
-                                                       name="dropdown_keys[-blank-]">
-                                            </td>
-                                        {else}
-                                            <td class="first">
-                                               <b>{$id}</b>
-                                               <span class='fieldValue' id='span_{$id}'>
-                                                  [{$options[$id]}]
-                                               </span>
-                                            </td>
-                                            <td align='right'>
-                                                <input id='value_{$id}' value='{$options[$id]|escape}' type='hidden'>
-                                                <input type="hidden" value="0" name="dropdown_keys[{$id}]">
-                                                <input type="checkbox" value="1" {if $checked}checked{/if}
-                                                       name="dropdown_keys[{$id}]">
-                                            </td>
-                                        {/if}
+                                        <td class="first">
+                                            {if $is_blank}
+                                                {$val}
+                                            {else}
+                                                <b>{$val}</b>
+                                            {/if}
+                                            <span class='fieldValue' id='span_{$id}'>[{$val}]</span>
+                                        </td>
+                                        <td align='right'>
+                                            <input id='value_{$id}' value='{$options[$id]|escape}' type='hidden'>
+                                            <input type="hidden" value="0" name="dropdown_keys[{$id}]">
+                                            <input type="checkbox" value="1" {if $checked}checked{/if}
+                                                   name="dropdown_keys[{$id}]">
+                                        </td>
                                     </tr>
                                 </table>
                             </li>

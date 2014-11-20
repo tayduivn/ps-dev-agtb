@@ -9,8 +9,6 @@ require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
  */
 class ParserRoleDropDown extends ModuleBuilderParser
 {
-    const BLANK_PLACEHOLDER = '-blank-';
-
     protected $path = 'include/language/roles';
     protected $varName = 'roledropdown';
 
@@ -137,8 +135,9 @@ class ParserRoleDropDown extends ModuleBuilderParser
     protected function convertFormData($data)
     {
         $converted = array();
+        $blank = translate('LBL_BLANK', 'ModuleBuilder');
         foreach ($data as $key => $item) {
-            if ($key === self::BLANK_PLACEHOLDER) {
+            if ($key === $blank) {
                 $key = '';
             }
 

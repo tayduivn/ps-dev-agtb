@@ -116,19 +116,24 @@
                 <td colspan='3'>
                     <ul id="ul1" class="listContainer">
                         {foreach from=$options key='name' item='val'}
+                            {if ($name === "")}
+                                {capture assign=name}{sugar_translate label='LBL_BLANK'}{/capture}
+                                {assign var=val value=$name}
+                                {assign var=is_blank value=true}
+                            {else}
+                                {assign var=is_blank value=false}
+                            {/if}
                             <li class="draggable" id="{$name}">
                                 <table width='100%'>
                                     <tr>
                                         <td class="first">
-                                            {if (!isset($val) || $val =='')}
-                                                {sugar_translate label='LBL_BLANK'}
+                                            {if $is_blank}
+                                                {$val}
                                             {else}
-                                                <b>{$name}</b>
+                                                <b>{$val}</b>
                                             {/if}
                                             <input id='value_{$name}' value='{$val|escape}' type='hidden'>
-			               <span class='fieldValue' id='span_{$name}'>
-			                   {if (!isset($val) || $val =='')}[{sugar_translate label='LBL_BLANK'}]{else}[{$val}]{/if}
-			               </span>
+			               <span class='fieldValue' id='span_{$name}'>[{$val}]</span>
 			               <span class='fieldValue' id='span_edit_{$name}' style='display:none'>
 			                   <input type='text' id='input_{$name}' value="{$val}"
                                       onBlur='SimpleList.setDropDownValue("{$name}", this.value, true)'>
