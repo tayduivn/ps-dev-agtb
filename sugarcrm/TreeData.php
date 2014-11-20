@@ -68,7 +68,7 @@ if (!empty($modulename) && !empty($func_name) && isset($beanList[$modulename]) )
     $TreeDataFunctions = array(
         'ProductTemplates' => array('get_node_data'=>'','get_categories_and_products'=>''),
         'ProductCategories' => array('get_node_data'=>'','get_product_categories'=>''),
-        'KBTags' => array(
+        'KBOLDTags' => array(
             'get_node_data'=>'',
             'get_tags_nodes'=>'',
             'get_tags_nodes_cached'=>'',
@@ -88,7 +88,7 @@ if (!empty($modulename) && !empty($func_name) && isset($beanList[$modulename]) )
             'check_tag_child_tags_for_articles'=>'',
             'childTagsHaveArticles'=>'',
             ),
-        'KBDocuments' => array(
+        'KBOLDDocuments' => array(
             'get_node_data'=>'',
             'get_category_nodes'=>'',
             'get_documents'=>'',

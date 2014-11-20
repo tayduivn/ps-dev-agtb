@@ -21571,8 +21571,8 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 ); 
 
 //BEGIN SUGARCRM flav=pro ONLY
-// KBDocuments
-$sugar_demodata['kbdocument_seed_data_kbtags'] = array(
+// KBOLDDocuments
+$sugar_demodata['kbolddocument_seed_data_kboldtags'] = array(
     'OS and Interface',
     'Hardware',
     'WiFi, Bluetooth, and Networking',
@@ -21580,7 +21580,7 @@ $sugar_demodata['kbdocument_seed_data_kbtags'] = array(
     'Basic Usage',
     );
 
-$sugar_demodata['kbdocument_seed_data'][] = array(
+$sugar_demodata['kbolddocument_seed_data'][] = array(
     'name' => 'Connecting to the Internet',
     'start_date' => '2010-01-01',
     'exp_date' => '2015-12-31',
@@ -21590,7 +21590,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
         ),
     );
 
-$sugar_demodata['kbdocument_seed_data'][] = array(
+$sugar_demodata['kbolddocument_seed_data'][] = array(
     'name' => 'Charging the battery',
     'start_date' => '2010-01-01',
     'exp_date' => '2015-12-31',
@@ -21603,7 +21603,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
         ),
     );
 
-$sugar_demodata['kbdocument_seed_data'][] = array(
+$sugar_demodata['kbolddocument_seed_data'][] = array(
     'name' => 'How to print',
     'start_date' => '2010-01-01',
     'exp_date' => '2015-12-31',
@@ -21614,7 +21614,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
         ),
     );
 
-$sugar_demodata['kbdocument_seed_data'][] = array(
+$sugar_demodata['kbolddocument_seed_data'][] = array(
     'name' => 'How to change the language',
     'start_date' => '2010-01-01',
     'exp_date' => '2015-12-31',
@@ -21625,7 +21625,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
         ),
     );
 
-$sugar_demodata['kbdocument_seed_data'][] = array(
+$sugar_demodata['kbolddocument_seed_data'][] = array(
     'name' => 'Resetting the device',
     'start_date' => '2010-01-01',
     'exp_date' => '2010-12-31',

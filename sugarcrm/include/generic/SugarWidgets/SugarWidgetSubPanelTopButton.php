@@ -255,8 +255,8 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             case 'documents' :
                 $name = $defines['focus']->document_name ;
                 break ;
-            case 'kbdocuments' :
-                $name = $defines['focus']->kbdocument_name ;
+            case 'kbolddocuments' :
+                $name = $defines['focus']->kbolddocument_name ;
                 break ;
             case 'leads' :
             case 'contacts' :

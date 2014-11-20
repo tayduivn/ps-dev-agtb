@@ -15,7 +15,7 @@ $portal_modules[] = 'Cases';
 $portal_modules[] = 'Bugs';
 
 //BEGIN SUGARCRM flav=pro ONLY
-$portal_modules[] = 'KBDocuments';
+$portal_modules[] = 'KBOLDDocuments';
 //END SUGARCRM flav=pro ONLY
 
 /*
@@ -23,7 +23,7 @@ BUGS
 */
 //BEGIN SUGARCRM flav=pro ONLY
 
-require_once('modules/KBDocuments/SearchUtils.php');
+require_once('modules/KBOLDDocuments/SearchUtils.php');
 //END SUGARCRM flav=pro ONLY
 
 function get_bugs_in_contacts($in, $orderBy = '')
@@ -206,9 +206,9 @@ function get_notes_in_module($in, $module, $orderBy = '')
         if(empty($in)  || $in =='()' || $in =="('')")return;
 
         // First, get the list of IDs.
-        if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
+        if ($module == 'KBOLDDocuments' || $module == 'DocumentRevisions') {
             $query = "SELECT dr.* from document_revisions dr
-                      inner join kbdocument_revisions kr on kr.document_revision_id = dr.id AND kr.kbdocument_id IN ($in)
+                      inner join kbolddocument_revisions kr on kr.document_revision_id = dr.id AND kr.kbolddocument_id IN ($in)
                       AND dr.file_mime_type is not null";
         } else {
             $query = "SELECT id from $rel->table_name where parent_id IN $in AND parent_type='".$GLOBALS['db']->quote($module)."' AND deleted=0 AND portal_flag = 1";
@@ -410,9 +410,9 @@ function login_user($portal_auth){
 //BEGIN SUGARCRM flav=pro ONLY
 /**
  * portal_get_child_tags_query
- * Given a tag name, this method scans the kbtags table and returns the first level
+ * Given a tag name, this method scans the kboldtags table and returns the first level
  * of any child tags found.
- * @param $tag The kbtags.parent_tag_id value to search for
+ * @param $tag The kboldtags.parent_tag_id value to search for
  * @return List of child tag ids.
  */
 function portal_get_child_tags_query($session, $tag) {
@@ -425,8 +425,8 @@ function portal_get_child_tags_query($session, $tag) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = BeanFactory::getBean('KBDocuments');
-    //Use KBDocuments/SearchUtils.php
+    $sugar = BeanFactory::getBean('KBOLDDocuments');
+    //Use KBOLDDocuments/SearchUtils.php
     return get_child_tags($tag, $sugar);
 }
 
@@ -440,12 +440,12 @@ function portal_get_tag_docs_query($session, $tag) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = BeanFactory::getBean('KBDocuments');
-    //Use KBDocuments/SearchUtils.php
+    $sugar = BeanFactory::getBean('KBOLDDocuments');
+    //Use KBOLDDocuments/SearchUtils.php
     return get_tag_docs($tag, $sugar);
 }
 
-function portal_get_kbdocument_body_query($session, $id) {
+function portal_get_kbolddocument_body_query($session, $id) {
 
     if (!portal_validate_authenticated($session)) {
         $error->set_error('invalid_session');
@@ -455,9 +455,9 @@ function portal_get_kbdocument_body_query($session, $id) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = BeanFactory::getBean('KBDocuments');
-    //Use KBDocuments/SearchUtils.php
-    return get_kbdocument_body($id, $sugar);
+    $sugar = BeanFactory::getBean('KBOLDDocuments');
+    //Use KBOLDDocuments/SearchUtils.php
+    return get_kbolddocument_body($id, $sugar);
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -521,14 +521,14 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
         if(!empty($_SESSION['viewable'][$module_name])){
             $list = get_related_list(get_module_in($module_name), BeanFactory::getBean('Bugs'), $where, $order_by, $row_offset, $limit);
         }
-    } else if ($module_name == 'KBDocuments') {
+    } else if ($module_name == 'KBOLDDocuments') {
 //BEGIN SUGARCRM flav=pro ONLY
-            $sugar = BeanFactory::getBean('KBDocuments');
+            $sugar = BeanFactory::getBean('KBOLDDocuments');
             $sugar->disable_row_level_security = true;
             $keywords = array();
             //Check if there was a LIKE or = clause built.  If so, the key/value pairs
             $where = str_replace("\'", "<##@comma@##>", $where);
-            if (preg_match_all("/kbdocuments[\.]([^\s]*?)[\s]+(LIKE|=)[\s]+[\'](.*?)[%][\']/si", $where, $matches, PREG_SET_ORDER)) {
+            if (preg_match_all("/kbolddocuments[\.]([^\s]*?)[\s]+(LIKE|=)[\s]+[\'](.*?)[%][\']/si", $where, $matches, PREG_SET_ORDER)) {
                 foreach($matches as $match) {
                         $value = str_replace("<##@comma@##>", "\'", $match[3]);
                         $keywords[$match[1]] = $value;
@@ -541,16 +541,16 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             while ($row = $sugar->db->fetchByAssoc($result)) {
                    $id = $row['id'];
                    //$list[] = $id;
-                   $record = BeanFactory::getBean('KBDocuments', $id, array("disable_row_level_security" => true));
+                   $record = BeanFactory::getBean('KBOLDDocuments', $id, array("disable_row_level_security" => true));
                    $record->fill_in_additional_list_fields();
                    $list[] = $record;
             }
 //END SUGARCRM flav=pro ONLY
     } else if ($module_name == 'FAQ') {
 //BEGIN SUGARCRM flav=pro ONLY
-                $sugar = BeanFactory::getBean('KBDocuments');
-                preg_match("/kbdocuments.tags[\s]=[\s]+[(][\'](.*?)[\'][)]/si", $where, $matches);
-                //Use KBDocuments/SearchUtils.php
+                $sugar = BeanFactory::getBean('KBOLDDocuments');
+                preg_match("/kbolddocuments.tags[\s]=[\s]+[(][\'](.*?)[\'][)]/si", $where, $matches);
+                //Use KBOLDDocuments/SearchUtils.php
                 //ToDo: Set Global ID for FAQ somewhere, can't assume it's faq1
                 $list = get_faq_list($matches[1], $sugar);
 //END SUGARCRM flav=pro ONLY
@@ -577,4 +577,4 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
 }
 
 $invalid_contact_fields = array('portal_password'=>1);
-$valid_modules_for_contact = array('Contacts'=>1, 'Cases'=>1, 'Notes'=>1, 'Bugs'=>1, 'Accounts'=>1, 'Leads'=>1, 'KBDocuments'=>1);
+$valid_modules_for_contact = array('Contacts'=>1, 'Cases'=>1, 'Notes'=>1, 'Bugs'=>1, 'Accounts'=>1, 'Leads'=>1, 'KBOLDDocuments'=>1);

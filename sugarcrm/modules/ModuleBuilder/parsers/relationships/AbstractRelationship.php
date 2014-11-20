@@ -466,8 +466,8 @@ class AbstractRelationship
                 case 'documents' :
                     $vardef [ 'rname' ] = 'document_name' ;
                     break ;
-                case 'kbdocuments' :
-                    $vardef [ 'rname' ] = 'kbdocument_name' ;
+                case 'kbolddocuments' :
+                    $vardef [ 'rname' ] = 'kbolddocument_name' ;
                     break ;
                 case 'leads' :
                 case 'contacts' :

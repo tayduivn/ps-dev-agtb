@@ -119,7 +119,7 @@
         "Calls": {
             "fields": {}
         },
-        "KBDocuments": {
+        "KBOLDDocuments": {
             "fields": {
                 "attachment_list": {}
             }

@@ -173,7 +173,7 @@ class DownloadFile {
                     $fileid  = $bean->id;
                     $fileurl = '';
 
-                    // Handle special cases, like Documents and KBDocumentRevisions
+                    // Handle special cases, like Documents and KBOLDDocumentRevisions
                     if (isset($bean->object_name)) {
                         if ($bean->object_name == 'Document') {
                             // Documents store their file information in DocumentRevisions
@@ -197,9 +197,9 @@ class DownloadFile {
                                     return false;
                                 }
                             }
-                        } elseif ($bean->object_name == 'KBDocument') {
-                            // Sorta the same thing with KBDocuments
-                            $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->id);
+                        } elseif ($bean->object_name == 'KBOLDDocument') {
+                            // Sorta the same thing with KBOLDDocuments
+                            $revision = BeanFactory::getBean('KBOLDDocumentRevisions', $bean->id);
 
                             if (!empty($revision)) {
                                 $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
@@ -213,7 +213,7 @@ class DownloadFile {
                                 $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
                             } else {
                                 // Try the kbdoc revision
-                                $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->kbdocument_revision_id);
+                                $revision = BeanFactory::getBean('KBOLDDocumentRevisions', $bean->kbolddocument_revision_id);
                                 if (!empty($revision)) {
                                     $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
                                     // Last change to fail, if nothing found, return false

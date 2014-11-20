@@ -148,9 +148,9 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $kbdocIds[] = $kbdoc->id;
             }
             $kbdocIds = "('".implode("','",$kbdocIds)."')";
-            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
-            if ($GLOBALS['db']->tableExists('kbdocuments_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
+            $GLOBALS['db']->query("DELETE FROM kbolddocuments WHERE id IN {$kbdocIds}");
+            if ($GLOBALS['db']->tableExists('kbolddocuments_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM kbolddocuments_cstm WHERE id_c IN {$kbdocIds}");
             }
         }
 

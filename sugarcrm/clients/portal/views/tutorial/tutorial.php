@@ -57,7 +57,7 @@ $viewdefs['portal']['view']['tutorial'] = array(
                 'full' => true,
             ),
             array(
-                'name' => '.routeLink.[data-route="#KBDocuments"]',
+                'name' => '.routeLink.[data-route="#KBOLDDocuments"]',
                 'text' => 'LBL_PORTAL_TOUR_RECORDS_KB',
                 'full' => true,
             ),

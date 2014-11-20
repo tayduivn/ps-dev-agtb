@@ -169,11 +169,11 @@ $beanList['WorkFlowActionShells']  = 'WorkFlowActionShell';
 $beanList['WorkFlowActions']  = 'WorkFlowAction';
 $beanList['Expressions']  = 'Expression';
 $beanList['Contracts']  = 'Contract';
-$beanList['KBDocuments'] = 'KBDocument';
-$beanList['KBDocumentRevisions'] = 'KBDocumentRevision';
-$beanList['KBTags'] = 'KBTag';
-$beanList['KBDocumentKBTags'] = 'KBDocumentKBTag';
-$beanList['KBContents'] = 'KBContent';
+$beanList['KBOLDDocuments'] = 'KBOLDDocument';
+$beanList['KBOLDDocumentRevisions'] = 'KBOLDDocumentRevision';
+$beanList['KBOLDTags'] = 'KBOLDTag';
+$beanList['KBOLDDocumentKBOLDTags'] = 'KBOLDDocumentKBOLDTag';
+$beanList['KBOLDContents'] = 'KBOLDContent';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
 $beanList['ProjectResources'] = 'ProjectResource';
@@ -344,11 +344,11 @@ $beanFiles['WorkFlowAction']  = 'modules/WorkFlowActions/WorkFlowAction.php';
 $beanFiles['Expression']  = 'modules/Expressions/Expression.php';
 $beanFiles['System']      = 'modules/Administration/System.php';
 $beanFiles['SessionManager']      = 'modules/Administration/SessionManager.php';
-$beanFiles['KBDocument'] = 'modules/KBDocuments/KBDocument.php';
-$beanFiles['KBDocumentRevision'] = 'modules/KBDocumentRevisions/KBDocumentRevision.php';
-$beanFiles['KBTag'] = 'modules/KBTags/KBTag.php';
-$beanFiles['KBDocumentKBTag'] = 'modules/KBDocumentKBTags/KBDocumentKBTag.php';
-$beanFiles['KBContent'] = 'modules/KBContents/KBContent.php';
+$beanFiles['KBOLDDocument'] = 'modules/KBOLDDocuments/KBOLDDocument.php';
+$beanFiles['KBOLDDocumentRevision'] = 'modules/KBOLDDocumentRevisions/KBOLDDocumentRevision.php';
+$beanFiles['KBOLDTag'] = 'modules/KBOLDTags/KBOLDTag.php';
+$beanFiles['KBOLDDocumentKBOLDTag'] = 'modules/KBOLDDocumentKBOLDTags/KBOLDDocumentKBOLDTag.php';
+$beanFiles['KBOLDContent'] = 'modules/KBOLDContents/KBOLDContent.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
 $beanFiles['ProjectResource'] = 'modules/ProjectResources/ProjectResource.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
@@ -407,7 +407,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
-    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'KBDocuments', 'ContractTypes',
+    'KBOLDDocumentRevisions', 'KBOLDDocumentKBOLDTags', 'KBOLDTags', 'KBOLDContents', 'KBOLDDocuments', 'ContractTypes',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
@@ -686,12 +686,12 @@ $bwcModules = array(
     'Import',
     'InboundEmail',
     //BEGIN SUGARCRM flav=pro ONLY
-    'KBContents',
-    'KBDocuments',
-    'KBDocumentRevisions',
-    'KBTags',
-    'KBDocumentKBTags',
-    'KBContents',
+    'KBOLDContents',
+    'KBOLDDocuments',
+    'KBOLDDocumentRevisions',
+    'KBOLDTags',
+    'KBOLDDocumentKBOLDTags',
+    'KBOLDContents',
     //END SUGARCRM flav=pro ONLY
     'Manufacturers',
     'MergeRecords',

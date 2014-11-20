@@ -72,13 +72,13 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'type' => 'rowaction',
                     'route' => '#bwc/index.php?' . http_build_query(
                         array(
-                            'module' => 'KBDocuments',
+                            'module' => 'KBOLDDocuments',
                             'action' => 'EditView',
                         )
                     ),
-                    'name' => 'create_kbdocument_button',
+                    'name' => 'create_kbolddocument_button',
                     'label' => 'LBL_CREATE_KB_DOCUMENT',
-                    'acl_module' => 'KBDocuments',
+                    'acl_module' => 'KBOLDDocuments',
                     'acl_action' => 'create',
                 ),
                 array(

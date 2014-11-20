@@ -34,7 +34,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
 
     protected $excludedModules = array(
         'Activities',
-        'KBDocuments',
+        'KBOLDDocuments',
         'Products',
         'ProductTemplates',
         'Leads',
