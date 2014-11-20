@@ -12,29 +12,26 @@
   className: 'container-fluid',
 
   // charts circular
-  _renderHtml: function () {
+  _renderHtml: function() {
     this._super('_renderHtml');
 
     // Pie Chart
-    d3.json("styleguide/content/charts/data/pie_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/pie_data.json', function(data) {
       nv.addGraph(function() {
         var chart = nv.models.pieChart()
               .x(function(d) { return d.key })
               .y(function(d) { return d.value })
               .showLabels(true)
               .showTitle(false)
-              //.color(d3.scale.category10().range())
-              //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
-              //.colorData( 'class' )
-              .colorData( 'default' )
-              .tooltipContent( function(key, x, y, e, graph) {
+              .direction(app.lang.direction)
+              .colorData('default')
+              .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
-                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                       '<p>Percent: <b>' +  x + '%</b></p>'
-                })
-            ;
+                       '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>' +
+                       '<p>Percent: <b>' + x + '%</b></p>';
+              });
 
-          d3.select("#pie svg")
+          d3.select('#pie svg')
               .datum(data)
             .transition().duration(500)
               .call(chart);
@@ -44,7 +41,7 @@
     });
 
     // Donut Chart
-    d3.json("styleguide/content/charts/data/pie_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/pie_data.json', function(data) {
       nv.addGraph(function() {
         var chart = nv.models.pieChart()
               .x(function(d) { return d.key })
@@ -55,18 +52,15 @@
               .donutRatio(0.4)
               .donutLabelsOutside(true)
               .hole(10)
-              //.color(d3.scale.category10().range())
-              //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
-              //.colorData( 'class' )
-              .colorData( 'default' )
-              .tooltipContent( function(key, x, y, e, graph) {
+              .direction(app.lang.direction)
+              .colorData('default')
+              .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
-                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                       '<p>Percent: <b>' +  x + '%</b></p>'
-                })
-            ;
+                       '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>' +
+                       '<p>Percent: <b>' + x + '%</b></p>';
+              });
 
-          d3.select("#donut svg")
+          d3.select('#donut svg')
               .datum(data)
             .transition().duration(1200)
               .call(chart);
