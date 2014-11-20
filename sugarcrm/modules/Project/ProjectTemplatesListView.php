@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once('include/ListView/ListViewSmarty.php');
-require SugarAutoLoader::loadWithMetafiles('Project', 'listviewdefs');
+require SugarAutoLoader::loadWithMetafiles('Project', 'projecttemplate_listviewdefs');
 
 require_once('include/SearchForm/SearchForm.php');
 
