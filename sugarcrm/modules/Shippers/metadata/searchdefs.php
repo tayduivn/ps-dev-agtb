@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * bug 59290 - this file was reverted, comment left so upgrader picks up the modified file - rbacon
- */
 $searchdefs['Shippers'] = array(
     'templateMeta' => array(
         'maxColumns' => '3',
