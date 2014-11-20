@@ -40,7 +40,7 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
         self::$revenueLineItem->discount_price = '1.00';
         self::$revenueLineItem->save();
 
-        SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem(self::$revenueLineItem->id);
+        SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem(array(self::$revenueLineItem->id));
     }
 
     public static function tearDownAfterClass()
