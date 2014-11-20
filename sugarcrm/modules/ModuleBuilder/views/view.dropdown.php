@@ -151,7 +151,7 @@ class ViewDropdown extends SugarView
         $smarty->assign('module_name', $module_name);
         $smarty->assign('selected_lang', $params['dropdown_lang']);
         $smarty->assign('available_languages', get_languages());
-        $smarty->assign('roles', $this->getACLRoleDictionary());
+        $smarty->assign('roles', $this->getAvailableRoleList($params['dropdown_name']));
         $smarty->assign('package_name', $package_name);
         return $smarty;
     }
@@ -173,10 +173,16 @@ class ViewDropdown extends SugarView
     }
 
     /**
-     * Builds id => name role dictionary
+     * Returns list of roles with marker indicating whether role specific metadata for the given dropdown field exists
+     *
+     * @param string $name Dropdown field name
+     * @return array
      */
-    protected function getACLRoleDictionary()
+    protected function getAvailableRoleList($name)
     {
-        return MBHelper::getACLRoleDictionary();
+        $parser = new ParserRoleDropDown();
+        return MBHelper::getAvailableRoleList(function (array $params) use ($parser, $name) {
+            return $parser->hasMetadata($name, $params['role']);
+        });
     }
 }

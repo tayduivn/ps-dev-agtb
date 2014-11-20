@@ -46,7 +46,7 @@ class ViewRoleDropdown extends ViewDropdown
      */
     protected function getRoleOptions($params)
     {
-        $parser = new ParserRoleDropDown($params['dropdown_role'], $params['dropdown_name']);
+        $parser = new ParserRoleDropDown();
         $options = $parser->getOne($params['dropdown_role'], $params['dropdown_name']);
         if (!$options) {
             $options = $this->getDefaultRoleOptions($params);

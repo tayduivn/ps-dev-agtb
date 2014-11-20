@@ -25,12 +25,26 @@ class ParserRoleDropDown extends ModuleBuilderParser
         if (!file_exists($filePath)) {
             return array();
         }
-        require_once $filePath;
+        require $filePath;
         if (empty(${$this->varName}[$dropdown])) {
             $GLOBALS['log']->error("ParserRoleDropDown :: Cannot find \$$this->varName[$dropdown] in $filePath");
             return array();
         }
         return ${$this->varName}[$dropdown];
+    }
+
+    /**
+     * Checks if there is role specific metadata for the given dropdown field
+     *
+     * @param string $name Field name
+     * @param string $role Role ID
+     *
+     * @return boolean
+     */
+    public function hasMetadata($name, $role)
+    {
+        $filePath = SugarAutoLoader::existingCustomOne($this->getFilePath($role, $name));
+        return file_exists($filePath);
     }
 
     /**

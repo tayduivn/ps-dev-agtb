@@ -188,7 +188,7 @@
         });
 
         $('select').on('change', function () {
-            if ($(this).val() === 'default') {
+            if ($(this).val() === '') {
                 this.form.action.value = 'dropdown';
             } else {
                 this.form.action.value = 'roledropdown';

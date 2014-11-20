@@ -16,18 +16,67 @@
 class MBHelper
 {
     /**
-     * Builds id => name role dictionary
+     * Returns list of roles with marker indicating whether role specific metadata exists
      *
+     * @param callable $callback Callback that checks if there is role specific metadata
      * @return array
      */
-    public static function getACLRoleDictionary()
+    public static function getAvailableRoleList($callback)
     {
-        $dict = array(
-            'default' => translate('LBL_DEFAULT')
-        );
-        foreach (ACLRole::getAllRoles() as $role) {
-            $dict[$role->id] = $role->name;
+        $roles = self::getRoles($callback);
+
+        $result = array('' => translate('LBL_DEFAULT'));
+        foreach ($roles as $role) {
+            $hasMetadata = $roles->offsetGet($role);
+            $prefix = $hasMetadata ? '* ' : '';
+            $result[$role->id] = $prefix . $role->name;
         }
-        return $dict;
+
+        return $result;
+    }
+
+    /**
+     * Returns list of roles which have role specific metadata
+     *
+     * @param callable $callback
+     * @param $currentRole
+     * @return array
+     */
+    public function getRoleListWithMetadata($callback, $currentRole)
+    {
+        $roles = self::getRoles($callback);
+
+        $result = array();
+        foreach ($roles as $role) {
+            $hasMetadata = $roles->offsetGet($role);
+            if ($hasMetadata && $role->id != $currentRole) {
+                $result[$role->id] = $role->name;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns object storage containing available roles as keys
+     * and flags indicating if there is role specific metadata as value
+     *
+     * @param callable $callback Callback that checks if there is role specific metadata
+     * @return SplObjectStorage
+     */
+    protected static function getRoles($callback)
+    {
+        global $current_user;
+
+        $roles = new SplObjectStorage();
+        //Only super user should have access to all roles
+        $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
+        foreach ($allRoles as $role) {
+            $roles[$role] = $callback(array(
+                'role' => $role->id,
+            ));
+        }
+
+        return $roles;
     }
 }
