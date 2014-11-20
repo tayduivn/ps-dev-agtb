@@ -111,6 +111,8 @@
                            onclick='SimpleList.sortAscending()'>
                     <input type='button' class='button' value='{sugar_translate label='LBL_BTN_SORT_DESCENDING'}'
                            onclick='SimpleList.sortDescending()'>
+                    <input type="button" class="button" id="select-all" value="{sugar_translate label="LBL_LISTVIEW_OPTION_ENTIRE"}">
+                    <input type="button" class="button" id="select-none" value="{sugar_translate label="LBL_LISTVIEW_NONE"}">
                 </td>
             </tr>
             <tr>
@@ -172,8 +174,17 @@
             }
         });
 
-        $('input[type="checkbox"]', "#ul1").on('change', function() {
-            $(this).parents('li').toggleClass('deleted');
+        $("#ul1").on("change", "input[type=checkbox]", function() {
+            var $this = $(this);
+            $this.closest("li").toggleClass("deleted", !$this.prop("checked"));
+        });
+
+        $("#select-all").click(function() {
+            $("input[type=checkbox]", "#ul1").prop("checked", true).trigger("change");
+        });
+
+        $("#select-none").click(function() {
+            $("input[type=checkbox]", "#ul1").prop("checked", false).trigger("change");
         });
 
         $('select').on('change', function () {
