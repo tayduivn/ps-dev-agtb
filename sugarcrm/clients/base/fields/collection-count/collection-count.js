@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.CountField
- * @alias SUGAR.App.view.fields.BaseCountField
+ * @class View.Fields.Base.CollectionCountField
+ * @alias SUGAR.App.view.fields.BaseCollectionCountField
  * @extends View.Field
  */
 ({
@@ -23,15 +23,8 @@
     /**
      * Fetches the total amount of filtered records from the collection, and
      * renders the field to show the new (or cached) total.
-     *
-     * @param {Event} [evt] The click event.
      */
-    fetchCount: function(evt) {
-        if (evt) {
-            // This is needed to prevent `panel-top` from toggling the subpanel.
-            evt.stopPropagation();
-        }
-
+    fetchCount: function() {
         if (_.isNull(this.collection.total)) {
             app.alert.show('fetch_count', {
                 level: 'process',

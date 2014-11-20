@@ -21,8 +21,8 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'default_value' => 'LBL_SEARCH_AND_SELECT',
         ),
         array(
-            'name' => 'count',
-            'type' => 'count',
+            'name' => 'collection-count',
+            'type' => 'collection-count',
         ),
     ),
     'buttons' => array(

@@ -20,8 +20,8 @@ $viewdefs['base']['view']['list-headerpane'] = array(
             'default_value' => 'LBL_MODULE_NAME',
         ),
         array(
-            'name' => 'count',
-            'type' => 'count',
+            'name' => 'collection-count',
+            'type' => 'collection-count',
         ),
     ),
     'buttons' => array(

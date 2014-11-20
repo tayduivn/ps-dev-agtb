@@ -1,4 +1,4 @@
-describe('Base.Field.Count', function() {
+describe('Base.Field.CollectionCount', function() {
     var app, field, template,
         module = 'Bugs',
         fieldName = 'foo';
@@ -6,10 +6,10 @@ describe('Base.Field.Count', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        template = SugarTest.loadHandlebarsTemplate('count', 'field', 'base', 'detail');
+        template = SugarTest.loadHandlebarsTemplate('collection-count', 'field', 'base', 'detail');
         SugarTest.testMetadata.set();
         fieldDef = {};
-        field = SugarTest.createField('base', fieldName, 'count', 'detail', fieldDef, module);
+        field = SugarTest.createField('base', fieldName, 'collection-count', 'detail', fieldDef, module);
     });
 
     afterEach(function() {
