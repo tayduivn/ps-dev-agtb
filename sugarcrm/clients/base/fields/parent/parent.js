@@ -56,6 +56,7 @@
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
                 this.model.setDefault(this.def.type_name, domParentTypeVal);
                 this._createFiltersCollection();
+                this._createSearchCollection();
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
@@ -128,6 +129,7 @@
         if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
             if (module) {
                 this.model.set('parent_type', module, {silent: silent});
+                this._createSearchCollection();
             }
             // only set when we have an id on the model, as setting undefined
             // is causing issues with the warnUnsavedChanges() method
