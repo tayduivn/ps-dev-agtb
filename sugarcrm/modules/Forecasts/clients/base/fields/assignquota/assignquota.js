@@ -106,27 +106,5 @@
                 }
             }, this)
         });
-    },
-
-    /**
-     * @inheritdoc
-     *
-     * Overriding so that the disabled class is correctly put on the field element and not the span tag
-     *
-     * @override
-     */
-    _removeViewClass: function(action) {
-        this.getFieldElement().removeClass(action);
-    },
-
-    /**
-     * @inheritdoc
-     *
-     * Overriding so that the disabled class is correctly put on the field element and not the span tag
-     *
-     * @override
-     */
-    _addViewClass: function(action) {
-        this.getFieldElement().addClass(action);
     }
 })

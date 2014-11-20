@@ -36,20 +36,20 @@ describe("Base.Field.Button", function() {
         expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
     });
 
-    it("setDisabled should clean up after itself and restore field.def.css_class value after _render", function() {
+    it('css_class should contain disable after calling setDisabled(true) and not after setDisabled(false)', function() {
         var def = {
-            css_class: 'original'
+            css_class: 'btn'
         };
-        field = SugarTest.createField("base","button", "button", "edit", def);
-        field._loadTemplate = function() {  this.template = function(){ return '<a class="btn" href="javascript:void(0);"></a>'}; };
-        field.render();
-        expect(field.def.css_class).toEqual('original');
+        field = SugarTest.createField('base', 'button', 'button', 'edit', def);
+
+        // make sure it doesn't start with it.
+        expect(field.def.css_class).not.toContain('disabled');
         field.setDisabled(true);
-        expect(field.def.css_class).toEqual('original');
-        expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
+        // make sure it's added
+        expect(field.def.css_class).toContain('disabled');
         field.setDisabled(false);
-        expect(field.def.css_class).toEqual('original');
-        expect(field.getFieldElement().hasClass("disabled")).toBeFalsy();
+        // make sure it's removed
+        expect(field.def.css_class).not.toContain('disabled');
     });
 
     it("should show and hide functions must trigger hide and show events, and it should change the isHidden property", function() {
