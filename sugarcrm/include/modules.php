@@ -546,9 +546,9 @@ $modInvisList[] = 'Notifications';
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
-    'KBSDocuments' => 'KBSContents',
-    'KBSArticles' => 'KBSContents',
-    'KBSContentTemplates' => 'KBSContents',
+    'KBDocuments' => 'KBContents',
+    'KBArticles' => 'KBContents',
+    'KBContentTemplates' => 'KBContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -767,21 +767,21 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
 );
 
-$beanList['KBSDocuments'] = 'KBSDocument';
-$beanFiles['KBSDocument'] = 'modules/KBSDocuments/KBSDocument.php';
-$modInvisList[] = 'KBSDocument';
+$beanList['KBDocuments'] = 'KBDocument';
+$beanFiles['KBDocument'] = 'modules/KBDocuments/KBDocument.php';
+$modInvisList[] = 'KBDocument';
 
-$beanList['KBSContents'] = 'KBSContent';
-$beanFiles['KBSContent'] = 'modules/KBSContents/KBSContent.php';
-$moduleList[] = 'KBSContents';
+$beanList['KBContents'] = 'KBContent';
+$beanFiles['KBContent'] = 'modules/KBContents/KBContent.php';
+$moduleList[] = 'KBContents';
 
-$beanList['KBSArticles'] = 'KBSArticle';
-$beanFiles['KBSArticle'] = 'modules/KBSArticles/KBSArticle.php';
-$modInvisList[] = 'KBSArticles';
+$beanList['KBArticles'] = 'KBArticle';
+$beanFiles['KBArticle'] = 'modules/KBArticles/KBArticle.php';
+$modInvisList[] = 'KBArticles';
 
-$beanList['KBSContentTemplates'] = 'KBSContentTemplate';
-$beanFiles['KBSContentTemplate'] = 'modules/KBSContentTemplates/KBSContentTemplate.php';
-$moduleList[] = 'KBSContentTemplates';
+$beanList['KBContentTemplates'] = 'KBContentTemplate';
+$beanFiles['KBContentTemplate'] = 'modules/KBContentTemplates/KBContentTemplate.php';
+$moduleList[] = 'KBContentTemplates';
 
 $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';

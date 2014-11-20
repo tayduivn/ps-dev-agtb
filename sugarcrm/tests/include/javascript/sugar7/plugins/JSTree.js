@@ -1,5 +1,5 @@
 describe('Plugins.JSTree', function() {
-    var module = 'KBSContents',
+    var module = 'KBContents',
         fieldDef = {
             category_root: '0',
             module_root: module

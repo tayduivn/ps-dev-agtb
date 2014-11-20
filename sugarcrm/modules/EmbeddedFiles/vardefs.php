@@ -14,7 +14,7 @@ $dictionary['EmbeddedFile'] = array(
     'table' => 'embedded_files',
     'audited' => false,
     'activity_enabled' => false,
-    'comment' => 'Files for KBSContent body.',
+    'comment' => 'Files for KBContent body.',
     'fields' => array(
         'filename' =>
             array(

@@ -13,7 +13,7 @@
  */
 
 /**
- * Converts KBOLDDocuments to KBSContents.
+ * Converts KBOLDDocuments to KBContents.
  */
 class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 {
@@ -33,16 +33,16 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         }
         $documents = $this->getOldDocuments();
 
-        // Relationships for KBSContents are not loaded yet.
+        // Relationships for KBContents are not loaded yet.
         SugarRelationshipFactory::rebuildCache();
 
         foreach ($documents as $row) {
-            $this->log("Convert the KBOLDDocument {$row['id']} to a KBSContent.");
+            $this->log("Convert the KBOLDDocument {$row['id']} to a KBContent.");
             /** @var $KBBean KBOLDDocument */
             $KBOLDDocument = BeanFactory::getBean('KBOLDDocuments', $row['id']);
 
-            /** @var $KBBean KBSContent */
-            $KBSContent = BeanFactory::getBean('KBSContents');
+            /** @var $KBBean KBContent */
+            $KBContent = BeanFactory::getBean('KBContents');
 
             $data = $KBOLDDocument->toArray();
             unset($data['id']);
@@ -51,7 +51,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 
             $app_list_strings = return_app_list_strings_language('en_us');
             // Yes, the status_id is a lable.
-            $statusKey = array_search($KBOLDDocument->status_id, $app_list_strings['kbsdocument_status_dom']);
+            $statusKey = array_search($KBOLDDocument->status_id, $app_list_strings['kbdocument_status_dom']);
             $data['status'] = ($statusKey !== false) ? $statusKey : 'draft';
 
             $KBOLDDocument->load_relationship('cases');
@@ -68,10 +68,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $this->convertTagsToTopicsRecursive($tag);
             }
 
-            $KBSContent->populateFromRow($data);
-            $KBSContent->save();
+            $KBContent->populateFromRow($data);
+            $KBContent->save();
 
-            $KBSContent->load_relationship('tags_link');
+            $KBContent->load_relationship('tags_link');
             foreach ($tagSet as $tag) {
                 $this->log("Convert the KBOLDTag {$tag['kboldtag_id']} to a tag.");
                 $tag = BeanFactory::getBean('KBOLDTags', $tag['kboldtag_id']);
@@ -81,17 +81,17 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $newTag = BeanFactory::getBean('Tags');
                 $newTag->name = $tag->tag_name;
                 $newTag->save();
-                $KBSContent->tags_link->add($newTag);
+                $KBContent->tags_link->add($newTag);
             }
 
-            $KBSContent->load_relationship('attachments');
+            $KBContent->load_relationship('attachments');
 
             // Converts attached files to Notes.
             $attachments = $KBOLDDocument->get_kbdoc_attachments_for_newemail($KBOLDDocument->id);
             foreach ($attachments['attachments'] as $attachment) {
                 $this->log("Convert attachment {$attachment['id']}.");
                 $note = BeanFactory::getBean('Notes', $attachment['id']);
-                $KBSContent->attachments->add($note);
+                $KBContent->attachments->add($note);
             }
         }
     }
@@ -157,10 +157,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             $parentTopic = BeanFactory::getBean('Categories', $parentTopicId, array('use_cache' => false));
             $parentTopic->append($topic);
         } else {
-            $KBSContent = BeanFactory::getBean('KBSContents');
+            $KBContent = BeanFactory::getBean('KBContents');
             $rootTopic = BeanFactory::getBean(
                 'Categories',
-                $KBSContent->getCategoryRoot(),
+                $KBContent->getCategoryRoot(),
                 array('use_cache' => false)
             );
             $rootTopic->append($topic);

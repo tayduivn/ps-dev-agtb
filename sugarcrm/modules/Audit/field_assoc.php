@@ -64,9 +64,9 @@ $moduleAssocFieldsArray = array(
             'select_field_join' => 'id',
         ),
     ),
-    'KBSContent' => array(
-        'kbsarticle_id' => array(
-            'table_name' => 'kbsarticles',
+    'KBContent' => array(
+        'kbarticle_id' => array(
+            'table_name' => 'kbarticles',
             'select_field_name' => 'name',
             'select_field_join' => 'id',
         ),

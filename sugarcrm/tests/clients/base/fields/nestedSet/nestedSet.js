@@ -1,5 +1,5 @@
 describe('Base.Field.NestedSet', function() {
-    var module = 'KBSContents',
+    var module = 'KBContents',
         fieldDef = {
             category_root: '76c5ad26-21db-1be5-85ee-54258f68dd4a',
             data_provider: 'Categories'

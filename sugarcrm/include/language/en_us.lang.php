@@ -5401,7 +5401,7 @@ $app_list_strings['project_priority_options'] = array (
 );
 $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
-$app_list_strings['kbsdocument_status_dom'] = array(
+$app_list_strings['kbdocument_status_dom'] = array(
     'draft' => 'Draft',
     'in-review' => 'In Review',
     'approved' => 'Approved',
@@ -11594,14 +11594,14 @@ $app_list_strings['dnb_states_iso'] = array(
    )
 );
 
-$app_list_strings['moduleList']['KBSDocuments'] = 'Knowledge Base Document';
-$app_list_strings['moduleListSingular']['KBSDocuments'] = 'Knowledge Base Document';
-$app_list_strings['moduleList']['KBSContents'] = 'Knowledge Base';
-$app_list_strings['moduleListSingular']['KBSContents'] = 'Knowledge Base';
-$app_list_strings['moduleList']['KBSArticles'] = 'Knowledge Base Article';
-$app_list_strings['moduleListSingular']['KBSArticles'] = 'Knowledge Base Article';
-$app_list_strings['moduleList']['KBSContentTemplates'] = 'Knowledge Base Template';
-$app_list_strings['moduleListSingular']['KBSContentTemplates'] = 'Knowledge Base Template';
+$app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base Document';
+$app_list_strings['moduleListSingular']['KBDocuments'] = 'Knowledge Base Document';
+$app_list_strings['moduleList']['KBContents'] = 'Knowledge Base';
+$app_list_strings['moduleListSingular']['KBContents'] = 'Knowledge Base';
+$app_list_strings['moduleList']['KBArticles'] = 'Knowledge Base Article';
+$app_list_strings['moduleListSingular']['KBArticles'] = 'Knowledge Base Article';
+$app_list_strings['moduleList']['KBContentTemplates'] = 'Knowledge Base Template';
+$app_list_strings['moduleListSingular']['KBContentTemplates'] = 'Knowledge Base Template';
 $app_list_strings['moduleList']['EmbeddedFiles'] = 'Embedded Files';
 $app_list_strings['moduleListSingular']['EmbeddedFiles'] = 'Embedded File';
 

@@ -66,7 +66,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $this->document->name = uniqid();
         // Not a mistake, status_id is a lable.
-        $this->document->status_id = $GLOBALS['app_list_strings']['kbsdocument_status_dom']['expired'];
+        $this->document->status_id = $GLOBALS['app_list_strings']['kbdocument_status_dom']['expired'];
         $this->document->body = 'test body';
 
         $this->content = BeanFactory::getBean('KBOLDContents');
@@ -106,8 +106,8 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
         $this->tagChild1Level2->save();
 
         // New root for tests.
-        $KBSContent = BeanFactory::getBean('KBSContents');
-        $KBSContent->setupCategoryRoot();
+        $KBContent = BeanFactory::getBean('KBContents');
+        $KBContent->setupCategoryRoot();
 
         $this->upgrader->setVersions(6.7, 'ult', 7.5, 'ult');
 
@@ -134,15 +134,15 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
         $this->tagChild2Level1->mark_deleted($this->tagChild2Level1->id);
         $this->tagChild1Level2->mark_deleted($this->tagChild1Level2->id);
 
-        $kbscontent = $this->getKBSContentBeanByName($this->document->name);
-        if ($kbscontent) {
-            if ($kbscontent->load_relationship('tags_link')) {
-                $tags = $kbscontent->tags_link->getBeans();
+        $kbcontent = $this->getKBContentBeanByName($this->document->name);
+        if ($kbcontent) {
+            if ($kbcontent->load_relationship('tags_link')) {
+                $tags = $kbcontent->tags_link->getBeans();
                 foreach ($tags as $tag) {
                     $tag->mark_deleted($tag->id);
                 }
             }
-            $kbscontent->mark_deleted($kbscontent->id);
+            $kbcontent->mark_deleted($kbcontent->id);
         }
         $names = array(
             $this->tagRoot1->tag_name,
@@ -165,7 +165,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
     {
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
         $this->assertEquals(1, $newDocument->active_rev);
     }
 
@@ -182,7 +182,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
 
         SugarTestCaseUtilities::removeAllCreatedCases();
 
@@ -199,7 +199,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
         $this->assertEquals($this->document->kbdoc_approver_id, $newDocument->kbsapprover_id);
     }
 
@@ -234,7 +234,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
         $KBRevisionAtts->mark_deleted($KBRevisionAtts->id);
         $docRevision->mark_deleted($docRevision->id);
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
 
         $newDocument->load_relationship('attachments');
         $notes = $newDocument->attachments->getBeans();
@@ -258,7 +258,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
         $this->assertEquals('draft', $newDocument->status);
     }
 
@@ -269,11 +269,11 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
     {
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
         $this->assertNotNull($newDocument);
         $this->assertEquals($this->document->body, $newDocument->kbolddocument_body);
         $this->assertEquals(
-            array_search($this->document->status_id, $GLOBALS['app_list_strings']['kbsdocument_status_dom']),
+            array_search($this->document->status_id, $GLOBALS['app_list_strings']['kbdocument_status_dom']),
             $newDocument->status
         );
     }
@@ -320,7 +320,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $this->script->run();
 
-        $newDocument = $this->getKBSContentBeanByName($this->document->name);
+        $newDocument = $this->getKBContentBeanByName($this->document->name);
         $newDocument->load_relationship('tags_link');
         $newTags = $newDocument->tags_link->getBeans();
 
@@ -367,7 +367,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $rootCat = BeanFactory::getBean(
             'Categories',
-            BeanFactory::getBean('KBSContents')->getCategoryRoot(),
+            BeanFactory::getBean('KBContents')->getCategoryRoot(),
             array('use_cache' => false)
         );
         $catTree = $rootCat->getTree();
@@ -380,21 +380,21 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
     }
 
     /**
-     * Returns first KBSContent record by name.
+     * Returns first KBContent record by name.
      *
      * @param string $name Name field value.
      * @return null|SugarBean
      */
-    protected function getKBSContentBeanByName($name)
+    protected function getKBContentBeanByName($name)
     {
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('KBSContents'));
+        $sq->from(BeanFactory::getBean('KBContents'));
         $sq->where()->equals('name', $name);
         $result = $sq->execute();
 
         if (!empty($result)) {
-            return BeanFactory::getBean('KBSContents', $result[0]['id']);
+            return BeanFactory::getBean('KBContents', $result[0]['id']);
         }
     }
 }

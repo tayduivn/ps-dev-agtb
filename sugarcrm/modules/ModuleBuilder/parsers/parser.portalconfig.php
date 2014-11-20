@@ -102,7 +102,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                     'field' => 'date_modified',
                     'direction' => 'desc'
                 ),
-                'KBSContents' => array(
+                'KBContents' => array(
                     'field' => 'date_modified',
                     'direction' => 'desc'
                 )
@@ -262,7 +262,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     public function getPortalACLRole()
     {
         global $mod_strings;
-        $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBSContents', 'Contacts');
+        $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBContents', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = BeanFactory::getBean('ACLRoles');
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
@@ -293,7 +293,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                         } else {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
-                        if ($moduleName == 'KBSContents' && $actionName == 'edit') {
+                        if ($moduleName == 'KBContents' && $actionName == 'edit') {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
                         if ($moduleName == 'Contacts') {

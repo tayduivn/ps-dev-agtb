@@ -41,7 +41,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Pagination.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/EmailClientLaunch.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Chart.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/KBSContent.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/KBContent.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/JSTree.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/NestedSetCollection.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/VirtualCollection.js"></script>
