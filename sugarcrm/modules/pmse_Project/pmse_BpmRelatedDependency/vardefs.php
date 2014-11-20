@@ -4,6 +4,7 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('evn_id' =>
   array (
     'required' => true,

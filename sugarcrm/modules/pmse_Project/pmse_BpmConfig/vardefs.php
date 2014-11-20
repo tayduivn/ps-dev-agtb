@@ -4,6 +4,7 @@ $dictionary['pmse_BpmConfig'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('cfg_status' =>
   array (
     'required' => true,

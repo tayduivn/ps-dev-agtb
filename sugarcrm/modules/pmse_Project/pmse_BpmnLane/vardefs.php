@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnLane'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('lan_uid' =>
   array (
     'required' => true,

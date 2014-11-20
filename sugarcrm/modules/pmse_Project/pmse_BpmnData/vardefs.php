@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnData'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('dat_uid' =>
   array (
     'required' => true,

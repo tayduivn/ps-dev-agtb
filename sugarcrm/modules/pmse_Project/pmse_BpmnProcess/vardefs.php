@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnProcess'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('pro_uid' =>
   array (
     'required' => true,

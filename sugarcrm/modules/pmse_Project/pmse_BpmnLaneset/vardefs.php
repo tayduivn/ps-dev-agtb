@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnLaneset'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('lns_uid' =>
   array (
     'required' => true,

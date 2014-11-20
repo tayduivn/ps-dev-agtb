@@ -3,6 +3,7 @@ $dictionary['pmse_BpmDynaForm'] = array(
 	'table'=>'pmse_bpm_dynamic_forms',
 	'audited'=>false,
 	'activity_enabled'=>false,
+    'reassignable'=>false,
 		'duplicate_merge'=>true,
 		'fields'=>array ('dyn_uid' =>
   array (

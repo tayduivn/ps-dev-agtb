@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnGateway'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('gat_uid' =>
   array (
     'required' => true,

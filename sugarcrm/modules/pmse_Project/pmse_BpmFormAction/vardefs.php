@@ -4,6 +4,7 @@ $dictionary['pmse_BpmFormAction'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('cas_id' =>
   array (
       'required' => true,

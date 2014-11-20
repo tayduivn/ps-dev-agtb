@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnDiagram'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('dia_uid' =>
   array (
     'required' => true,
