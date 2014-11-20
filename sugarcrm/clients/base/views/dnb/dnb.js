@@ -1261,7 +1261,12 @@
      * @return {String}  properCase String
      */
     properCase: function(strParam) {
-        //http://stackoverflow.com/a/196991/226906
+        // The following is provided for your convenience should you wish to learn more about
+        // Convert string to title case with javascript.
+        // For a list of the actual third party software used in this Sugar product,
+        // please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+        //
+        // http://stackoverflow.com/a/196991/226906
         return strParam.replace(/\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });

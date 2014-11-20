@@ -400,6 +400,12 @@
      */
     _updateAndTriggerChange: function (value) {
         // SP-1437: No Warning message when update with Team field only
+
+        // The following is provided for your convenience should you wish to learn more about
+        // Backbone Model .changedAttributes() not showing all changes.
+        // For a list of the actual third party software used in this Sugar product,
+        // please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+        //
         // http://stackoverflow.com/questions/17221680/backbone-model-changedattributes-not-showing-all-changes
         _.each(value, function(team) {
             // "add_button" and "remove_button" are JS elements, don't track them.

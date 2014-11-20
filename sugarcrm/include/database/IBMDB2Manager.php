@@ -609,6 +609,12 @@ class IBMDB2Manager  extends DBManager
 	* @see DBManager::convert()
 	 *
 	 * TODO revisit this for other versions of DB2
+	 *
+	 * The following is provided for your convenience should you wish to learn more about
+	 * Converting a string to a date in DB2.
+	 * For a list of the actual third party software used in this Sugar product,
+	 * please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+	 *
 	 * http://stackoverflow.com/questions/4852139/converting-a-string-to-a-date-in-db2
 	*/
 public function convert($string, $type, array $additional_parameters = array())
