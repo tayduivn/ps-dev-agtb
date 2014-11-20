@@ -90,7 +90,7 @@
             return;
         }
         filter =  _.union([], filter, this.meta.filterDef || []);
-        this.collection.fetch({
+        this.getCollection(tplName).fetch({
             'showAlerts': false,
             'fields': ['id', 'name'],
             'filter': filter,
