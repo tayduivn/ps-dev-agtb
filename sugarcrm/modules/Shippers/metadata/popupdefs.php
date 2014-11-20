@@ -18,8 +18,6 @@ $popupMeta = array(
     'orderBy' => 'shippers.name',
     'whereClauses' =>
         array('name' => 'shippers.name'),
-//    'searchInputs' =>
-//        array('name'),
     'listviewdefs' => array(
         'NAME' => array(
             'width' => '50',
