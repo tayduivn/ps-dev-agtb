@@ -420,9 +420,9 @@
         var currentValue,
             syncedVal,
             newOptions = {},
-            filters = app.metadata.getEditableDropdownFilters(this.def.options);
+            filter = app.metadata.getEditableDropdownFilter(this.def.options);
 
-        if (_.isEmpty(filters)) {
+        if (_.isEmpty(filter)) {
             return options;
         }
 
@@ -436,15 +436,19 @@
         if (_.isString(currentValue)) {
             currentValue = [currentValue];
         }
+
+        var currentIndex = {};
         _.each(currentValue, function(value){
-            filters[value] = true;
+            currentIndex[value] = true;
         });
+
         //Now remove the disabled options
-        _.each(filters, function(visible, key) {
-            if(app.utils.isTruthy(visible)) {
+        _.each(filter, function(visible, key) {
+            if (visible || key in currentIndex) {
                 newOptions[key] = options[key];
             }
         });
+
         return newOptions;
     },
 

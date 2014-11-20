@@ -42,7 +42,7 @@ class ParserRoleDropDown extends ModuleBuilderParser
      */
     public function getAll()
     {
-        return $this->getValuesFromFiles($this->getAllFiles());
+        return $this->getDropDownFiltersFromFiles($this->getAllFiles());
     }
 
     /**
@@ -56,11 +56,14 @@ class ParserRoleDropDown extends ModuleBuilderParser
     }
 
     /**
+     * Returns editable dropdown filters defined in the given files
+     * 
      * @param array $files
      *
-     * @return array dropdown keys found in the given files
+     * @return array dropdown filters found in the given files
      */
-    public function getValuesFromFiles(array $files) {
+    public function getDropDownFiltersFromFiles(array $files)
+    {
         ${$this->varName} = array();
         foreach ($files as $file) {
             if (is_array($file) && isset($file['path'])) {
@@ -116,29 +119,32 @@ class ParserRoleDropDown extends ModuleBuilderParser
         }
         $result = write_array_to_file(
             "{$this->varName}['{$name}']",
-            $this->parseBlankOptionPlaceholder($data),
+            $this->convertFormData($data),
             'custom/' . $this->getFilePath($role, $name)
         );
         if ($result) {
-            MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDVALS);
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
         }
         return $result;
     }
 
     /**
-     * @param $data
-     * @return array
+     * Converts form data to internal representation
+     *
+     * @param array $data Form data
+     * @return array Internal representation
      */
-    protected function parseBlankOptionPlaceholder($data)
+    protected function convertFormData($data)
     {
-        foreach($data as $key => $item) {
+        $converted = array();
+        foreach ($data as $key => $item) {
             if ($key === self::BLANK_PLACEHOLDER) {
-                unset($data[$key]);
-                $data[''] = $item;
-                break;
+                $key = '';
             }
+
+            $converted[$key] = (bool) $item;
         }
 
-        return $data;
+        return $converted;
     }
 }

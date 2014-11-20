@@ -2810,7 +2810,7 @@ private function dir_file_count($path){
                 "_override_values",
                 "filters",
                 "logo_url",
-                "editable_dropdown_values"
+                "editable_dropdown_filters",
             ),
         );
 

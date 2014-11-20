@@ -58,7 +58,7 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
-    const MM_EDITDDVALS     = 'editable_dropdown_values';
+    const MM_EDITDDFILTERS  = 'editable_dropdown_filters';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -153,7 +153,7 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
-        self::MM_EDITDDVALS     => 'getEditableDropdownValues'
+        self::MM_EDITDDFILTERS  => 'getEditableDropdownFilters'
     );
 
     /**
@@ -3201,7 +3201,7 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
-            self::MM_EDITDDVALS
+            self::MM_EDITDDFILTERS
         );
     }
 
@@ -3549,11 +3549,14 @@ class MetaDataManager
     }
 
     /**
-     * Returns an array or role-based dropdowns
+     * Returns editable dropdown filters
+     *
+     * @param array $data Existing data
+     * @param MetaDataContextInterface $context Metadata context
      *
      * @return array
      */
-    public function getEditableDropdownValues($data = array(), MetaDataContextInterface $context = null)
+    public function getEditableDropdownFilters($data = array(), MetaDataContextInterface $context = null)
     {
         if ($this->public) {
             return array();
@@ -3565,14 +3568,15 @@ class MetaDataManager
         require_once 'modules/ModuleBuilder/parsers/parser.roledropdown.php';
 
         $parser = new ParserRoleDropDown();
-        $patform = $this->platforms[0];
-        $files = array_map(function($file) use ($patform) {
+        $platform = $this->platforms[0];
+        $files = array_map(
+            function ($file) use ($platform) {
                 $info = pathinfo($file);
                 return array(
                    'path'=>$file,
                    'file'=>$info['basename'],
                    'subPath'=>$info['dirname'],
-                   'platform'=>$patform,
+                   'platform'=>$platform,
                );
             },
             $parser->getAllFiles()
@@ -3585,12 +3589,8 @@ class MetaDataManager
             return $context->compare($a, $b);
         });
 
-        $values = $parser->getValuesFromFiles($files);
+        $values = $parser->getDropDownFiltersFromFiles($files);
 
-        $result = array();
-        foreach ($values as $role)
-            if (!isset($result)
-        );
         return $values;
     }
 
