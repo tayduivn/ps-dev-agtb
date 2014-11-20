@@ -136,7 +136,15 @@ describe('Base.Layout.Filter', function() {
                     var callCount = 0,
                         loadOptions = false,
                         fakeContext = {
-                            get: function(){ return { resetPagination: function(){ }}; },
+                            get: function(arg) {
+                                if (arg == 'module') {
+                                    return moduleName;
+                                }
+                                return {
+                                    resetPagination: function() {}
+                                };
+                            },
+                            has: function() {},
                             set: function(){ },
                             resetLoadFlag: function(){ },
                             resetPagination: function(){ },
@@ -154,6 +162,9 @@ describe('Base.Layout.Filter', function() {
                             callCount++;
                             return ret;
                         });
+                    sinon.collection.stub(app.metadata, 'getModule', function() {
+                        return {};
+                    });
 
                     layout.applyFilter();
                     expect(contextStub).toHaveBeenCalled();
