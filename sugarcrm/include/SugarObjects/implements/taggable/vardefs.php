@@ -47,6 +47,7 @@ $vardefs = array(
             'importable' => false,
             'exportable' => false,
             'sortable' => false,
+            'hideacl' => true,
         ),
     ),
     'relationships' => array(
