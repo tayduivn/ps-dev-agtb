@@ -69,7 +69,13 @@
 }
 div.kb-attachmentlist-details-view {
   ul.select2-choices {
-    li.select2-search-choice div {
+    li.select2-search-choice {
+      span.select2-choice-type {
+        margin: 0 !important;
+        a.kb-attachment-link {
+          padding: 2px 4px !important;
+        }
+      }
     }
   }
   .btn-kb-download-all{
@@ -144,9 +150,9 @@ div.kb-attachmentlist-details-view {
 }
 
 label.kb-attach-btn {
-  position: relative;
+  position: absolute;
   z-index: 10;
-  top: 28px;
+  top: 5px;
   left: 10px;
   width: 50px;
   margin:-5px 0px 0px -7px;
