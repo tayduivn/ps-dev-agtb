@@ -8,6 +8,7 @@ describe('KBContents.Base.Views.PanelTopForRevisions', function() {
         context = app.context.getContext({
             module: moduleName
         });
+        context.set('model', new app.Bean());
         context.parent = new Backbone.Model();
 
         SugarTest.loadComponent(

@@ -48,7 +48,7 @@
                         this._initValidationHandler(this.model);
                     }
 
-                    if (!_.isEmpty(this.meta.buttons)) {
+                    if (this.meta && !_.isEmpty(this.meta.buttons)) {
                         var dupCheckButton = _.chain(this.meta.buttons)
                             .map(function(button) {
                                 var b = _.clone(button);
