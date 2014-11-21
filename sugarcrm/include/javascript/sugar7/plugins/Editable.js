@@ -157,15 +157,24 @@
              *
              * @param {Array} fields Fields that needs to be toggled.
              * @param {Boolean} isEdit True if it force into edit mode.
+             * @param {Function} [callback] Function that is called once all fields are toggled.
              */
-            toggleFields: function(fields, isEdit) {
-                var viewName = !!isEdit ? 'edit' : this.action;
+            toggleFields: function(fields, isEdit, callback) {
+                if (!_.isArray(fields)) {
+                    return;
+                }
+
+                var viewName = !!isEdit ? 'edit' : this.action,
+                    numOfToggledFields = fields.length;
+
                 _.each(fields, function(field) {
                     if (field.action === viewName) {
+                        numOfToggledFields--;
                         return; //don't toggle if it's the same
                     }
                     var meta = field.def;
                     if (meta && isEdit && meta.readonly) {
+                        numOfToggledFields--;
                         return;
                     }
 
@@ -176,6 +185,11 @@
                             field.setMode(viewName);
                             field.$el.closest('.record-cell')
                                 .toggleClass('edit', (viewName === 'edit'));
+
+                            numOfToggledFields--;
+                            if ((numOfToggledFields === 0) && _.isFunction(callback)) {
+                                callback();
+                            }
                         }
                     }, field);
 

@@ -229,7 +229,6 @@
             }
         }, this);
 
-        this.toggleHeaderLabels(this.createMode);
         this.initButtons();
         this.setEditableFields();
 
@@ -240,8 +239,8 @@
             this.setButtonStates(this.STATE.VIEW);
             if (this.createMode) {
                 // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-                // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
-                this.toggleFields(this.editableFields, true);
+                // readonly's pruned out), we can call toggleEdit - so only fields that should be are editable
+                this.toggleEdit(true);
             }
         }
 
@@ -518,9 +517,11 @@
      *   otherwise.
      */
     toggleEdit: function(isEdit) {
-        this.toggleFields(this.editableFields, isEdit);
-        this.toggleViewButtons(isEdit);
-        this.adjustHeaderpane();
+        var self = this;
+        this.toggleFields(this.editableFields, isEdit, function() {
+            self.toggleViewButtons(isEdit);
+            self.adjustHeaderpaneFields();
+        });
     },
 
     /**
@@ -554,17 +555,6 @@
             this.toggleViewButtons(true);
             this.adjustHeaderpaneFields();
         }
-    },
-
-    /**
-     * Hide/show all field labels in headerpane.
-     *
-     * @param {Boolean} isEdit `true` to show the field labels, `false`
-     *   otherwise.
-     */
-    toggleHeaderLabels: function(isEdit) {
-        this.toggleViewButtons(isEdit);
-        this.adjustHeaderpane();
     },
 
     /**
@@ -781,10 +771,19 @@
      * @param {View.Field} field Current focused field (field in inline-edit mode).
      */
     handleKeyDown: function(e, field) {
+        var whichField = e.shiftKey ? 'prevField' : 'nextField';
+
         if (e.which === 9) { // If tab
             e.preventDefault();
-            this.nextField(field, e.shiftKey ? 'prevField' : 'nextField');
-            this.adjustHeaderpane();
+            this.nextField(field, whichField);
+            if (field.$el.closest('.headerpane').length > 0) {
+                this.toggleViewButtons(false);
+                this.adjustHeaderpaneFields();
+            }
+            if (field[whichField] && field[whichField].$el.closest('.headerpane').length > 0) {
+                this.toggleViewButtons(true);
+                this.adjustHeaderpaneFields();
+            }
         }
     },
 
@@ -1096,10 +1095,10 @@
 
         $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
 
-        if (!_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
+        if (($recordCells.length > 0) && (this.getContainerWidth() > 0)) {
             $ellipsisCell = $(this._getCellToEllipsify($recordCells));
 
-            if (!_.isEmpty($ellipsisCell)) {
+            if ($ellipsisCell.length > 0) {
                 if ($ellipsisCell.hasClass('edit')) {
                     // make the ellipsis cell widen to 100% on edit
                     $ellipsisCell.css({'width': '100%'});
