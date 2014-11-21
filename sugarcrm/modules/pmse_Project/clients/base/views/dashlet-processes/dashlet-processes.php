@@ -36,7 +36,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
             array(
                 'type' => 'actiondropdown',
                 'no_default_action' => true,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
@@ -134,7 +134,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:designer:fire',
                     'target' => 'view',
@@ -143,7 +143,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:delete-record:fire',
                     'target' => 'view',
@@ -152,7 +152,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-arrow-circle-o-up',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:download:fire',
                     'target' => 'view',
@@ -161,8 +161,8 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-//                    'icon' => 'icon-eye-open',
-                    'icon' => 'icon-eye-close',
+//                    'icon' => 'fa-eye',
+                    'icon' => 'fa-eye-slash',
                     'css_class' => 'btn btn-mini',
 //                    'event' => 'dashlet-processes:enable-record:fire',
                     'event' => 'dashlet-processes:disable-record:fire',
@@ -173,7 +173,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-info-sign',
+                    'icon' => 'fa-info-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:description-record:fire',
                     'target' => 'view',
@@ -195,7 +195,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:designer:fire',
                     'target' => 'view',
@@ -204,7 +204,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => '',
                     'target' => 'view',
@@ -213,7 +213,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-arrow-circle-o-up',
                     'css_class' => 'btn btn-mini',
                     'event' => '',
                     'target' => 'view',
@@ -222,8 +222,8 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-//                    'icon' => 'icon-eye-close',
-                    'icon' => 'icon-eye-open',
+//                    'icon' => 'fa-eye-slash',
+                    'icon' => 'fa-eye',
                     'css_class' => 'btn btn-mini',
 //                    'event' => 'dashlet-processes:disable-record:fire',
                     'event' => 'dashlet-processes:enable-record:fire',
@@ -234,7 +234,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-info-sign',
+                    'icon' => 'fa-info-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:description-record:fire',
                     'target' => 'view',

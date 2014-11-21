@@ -15,7 +15,7 @@ describe('View.Fields.UnlinkAction', function() {
             'css_class':'btn',
             'tooltip':'Unlink',
             'event':'list:unlinkrow:fire',
-            'icon':'icon-trash',
+            'icon':'fa fa-trash-o',
             'acl_action':'delete'
         }, moduleName);
 

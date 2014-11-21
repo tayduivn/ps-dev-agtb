@@ -16,13 +16,13 @@ $viewdefs['portal']['view']['profileactions'] = array(
         'label' => 'LBL_PROFILE',
         'css_class' => 'profileactions-profile',
         'acl_action' => 'view',
-        'icon' => 'icon-user',
+        'icon' => 'fa-user',
         'submenu' => '',
     ),
     array(
         'route' => '#logout/?clear=1',
         'label' => 'LBL_LOGOUT',
-        'icon' => 'icon-signout',
+        'icon' => 'fa-sign-out',
         'submenu' => '',
     ),
 );

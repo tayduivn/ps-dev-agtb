@@ -37,7 +37,7 @@ $viewdefs['pmse_Inbox']['base']['view']['dashlet-inbox'] = array (
 //            array(
 //                'type' => 'actiondropdown',
 //                'no_default_action' => true,
-//                'icon' => 'icon-plus',
+//                'icon' => 'fa-plus',
 //                'buttons' => array(
 //                    array(
 //                        'type' => 'dashletaction',

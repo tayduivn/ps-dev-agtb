@@ -15,7 +15,7 @@
         {{#if model.attributes.picture_url}}
             <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
         {{else}}
-            <i class="icon-user icon-2x" alt="{{model.attributes.created_by_name}}"></i>
+            <i class="fa fa-user fa-2x" alt="{{model.attributes.created_by_name}}"></i>
         {{/if}}
     </a>
 {{else}}
@@ -74,11 +74,11 @@
 {{#unless readonly}}
     <div class="actions btn-group">
         <a class="btn btn-mini comment-btn" rel="tooltip" title="{{str 'LBL_COMMENT'}}">
-            <i class="icon-comment"></i>
+            <i class="fa fa-comment"></i>
         </a>
         {{#unless nopreview}}
             <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}">
-                <i class="icon-eye-open"></i>
+                <i class="fa fa-eye"></i>
             </a>
         {{/unless}}
     </div>

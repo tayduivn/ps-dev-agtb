@@ -9,7 +9,7 @@
 
 //Generate fixed spanX modal widths
 .spanModalX (@index) when (@index > 0) {
-  (~".modal.span@{index},.row-fluid .modal.span@{index}") { .spanModal(@index); }
+  .modal.span@{index},.row-fluid .modal.span@{index} { .spanModal(@index); }
   .spanModalX(@index - 1);
 }
 .spanModalX (0) {}

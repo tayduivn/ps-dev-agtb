@@ -17,28 +17,28 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_REPORTMAKER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index',
         'label' =>'LNK_LIST_REPORTMAKER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-list',
+        'icon' => 'fa-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=CustomQueries&action=EditView&return_module=CustomQueries&return_action=DetailView',
         'label' =>'LNK_NEW_CUSTOMQUERY',
         'acl_action'=>'admin',
         'acl_module'=>'CustomQueries',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=CustomQueries&action=index&return_module=CustomQueries&return_action=DetailView',
         'label' =>'LNK_CUSTOMQUERIES',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => 'icon-list',
+        'icon' => 'fa-list',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
@@ -46,14 +46,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_QUERYBUILDER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=QueryBuilder&action=index&return_module=QueryBuilder&return_action=DetailView',
         'label' =>'LNK_QUERYBUILDER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     //END SUGARCRM flav=int ONLY
     array(
@@ -61,20 +61,20 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_DATASET',
         'acl_action'=>'admin',
         'acl_module'=>'DataSets',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=DataSets&action=index&return_module=DataSets&return_action=index',
         'label' =>'LNK_LIST_DATASET',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-list',
+        'icon' => 'fa-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index',
         'label' =>'LBL_ALL_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-bar-chart',
+        'icon' => 'fa-bar-chart-o',
     ),
 );

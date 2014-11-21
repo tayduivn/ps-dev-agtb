@@ -920,9 +920,9 @@
             dnbDataObj = {};
             dnbDataObj.dataElement = this.properCase(empName);
             if (jobTitle) {
-                jobTitle = '<i class="icon-user"></i>' + this.properCase(jobTitle);
+                jobTitle = '<i class="fa fa-user"></i>' + this.properCase(jobTitle);
             } else {
-                jobTitle = '<i class="icon-user"></i>' + app.lang.get('LBL_DNB_ASSOCIATE');
+                jobTitle = '<i class="fa fa-user"></i>' + app.lang.get('LBL_DNB_ASSOCIATE');
             }
             dnbDataObj.dnbLabel = jobTitle;
         }

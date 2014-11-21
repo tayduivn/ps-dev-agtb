@@ -35,7 +35,7 @@ $viewdefs['Notifications']['base']['view']['recordlist'] = array(
                 'type' => 'rowaction',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
         ),

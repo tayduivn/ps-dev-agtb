@@ -31,7 +31,7 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'label' => 'LNK_NEW_RECORD',
                 'acl_action' => 'create',
                 'acl_module' => $moduleName,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
         );
 
         // Handle link to vCard
@@ -44,7 +44,7 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'label' => 'LNK_IMPORT_VCARD',
                 'acl_action' => 'create',
                 'acl_module' => $moduleName,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
             );
         }
 
@@ -53,7 +53,7 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'label' => 'LNK_LIST',
                 'acl_action' => 'list',
                 'acl_module' => $moduleName,
-                'icon' => 'icon-reorder',
+                'icon' => 'fa-bars',
         );
         $menu[] = array(
                 'route' => '#bwc/index.php?' . http_build_query(
@@ -66,7 +66,7 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'label' => 'LNK_IMPORT_'.strtoupper($moduleName),
                 'acl_action' => 'import',
                 'acl_module' => $moduleName,
-                'icon' => 'icon-upload',
+                'icon' => 'fa-arrow-circle-o-up',
         );
         $content = <<<END
 <?php

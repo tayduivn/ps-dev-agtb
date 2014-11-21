@@ -14,7 +14,7 @@ $viewdefs['Emails']['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
+            'icon' => 'fa-chevron-up',
             'tooltip' => 'LBL_TOGGLE_VISIBILITY',
         ),
         array(
@@ -24,7 +24,7 @@ $viewdefs['Emails']['base']['view']['panel-top'] = array(
             'buttons' => array(
                 array(
                     'type' => 'emailaction-paneltop',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'email_compose_button',
                     'label' => ' ',
                     'acl_action' => 'create',

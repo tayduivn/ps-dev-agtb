@@ -202,7 +202,7 @@ describe('Base.View.FilterModuleDropdown', function() {
             view.layout.showingActivities = false;
 
             html = view.formatSelection({id: 'test', text: 'TEST'});
-            expected = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+            expected = app.lang.get("LBL_RELATED") + '<i class="fa fa-caret-down"></i>';
             expect(html).toEqual(expected);
         });
 

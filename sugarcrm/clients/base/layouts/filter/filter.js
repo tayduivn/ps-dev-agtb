@@ -23,7 +23,7 @@
     plugins: ['QuickSearchFilter'],
 
     events: {
-        'click .add-on.icon-remove': function() { this.trigger('filter:clear:quicksearch'); }
+        'click .add-on.fa-times': function() { this.trigger('filter:clear:quicksearch'); }
     },
 
     /**
@@ -699,10 +699,10 @@
      * @param {Boolean} addIt TRUE if you want to add it, FALSO to remove
      */
     _toggleClearQuickSearchIcon: function(addIt) {
-        if (addIt && !this.$('.add-on.icon-remove')[0]) {
-            this.$el.append('<i class="add-on icon-remove"></i>');
+        if (addIt && !this.$('.fa-times.add-on')[0]) {
+            this.$el.append('<i class="fa fa-times add-on"></i>');
         } else if (!addIt) {
-            this.$('.add-on.icon-remove').remove();
+            this.$('.fa-times.add-on').remove();
         }
     },
 

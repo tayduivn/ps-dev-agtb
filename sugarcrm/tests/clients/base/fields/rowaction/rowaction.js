@@ -12,7 +12,7 @@ describe('Base.Field.Rowaction', function() {
             'css_class':'btn',
             'tooltip':'LBL_PREVIEW',
             'event':'list:preview:fire',
-            'icon':'icon-eye-open',
+            'icon':'fa fa-eye',
             'acl_action':'view'
         }, moduleName);
         field.view = {trigger: function(){}};

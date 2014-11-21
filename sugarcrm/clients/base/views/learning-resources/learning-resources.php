@@ -23,21 +23,21 @@ $viewdefs['base']['view']['learning-resources'] = array(
     'resources' => array(
         'sugar_university' => array(
             'color' => 'blue',
-            'icon' => 'icon-book',
+            'icon' => 'fa-book',
             'url' => 'http://university.sugarcrm.com/',
             'link' => 'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK',
             'teaser' => 'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_TEASER',
         ),
         'community' => array(
             'color' => 'green',
-            'icon' => 'icon-comments-alt',
+            'icon' => 'fa-comments-o',
             'url' => 'https://community.sugarcrm.com/',
             'link' => 'LBL_LEARNING_RESOURCES_COMMUNITY_LINK',
             'teaser' => 'LBL_LEARNING_RESOURCES_COMMUNITY_TEASER',
         ),
         'support' => array(
             'color' => 'red',
-            'icon' => 'icon-question-sign',
+            'icon' => 'fa-question-circle',
             'url' => 'http://support.sugarcrm.com/',
             'link' => 'LBL_LEARNING_RESOURCES_SUPPORT_LINK',
             'teaser' => 'LBL_LEARNING_RESOURCES_SUPPORT_TEASER',

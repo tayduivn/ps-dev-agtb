@@ -12,7 +12,7 @@
     events: {
         'keyup .search-name':        'throttledSearch',
         'paste .search-name':        'throttledSearch',
-        'click .add-on.icon-remove': 'clearInput'
+        'click .add-on.fa-times':    'clearInput'
     },
     /**
      * Converts the input field to a select2 field and adds the module filter for refining the search.
@@ -124,7 +124,7 @@
         this.getModuleFilter().html(item.text);
         return '<span class="select2-choice-type">'
             + app.lang.get('Fields')
-            + '<i class="icon-caret-down"></i></span>';
+            + '<i class="fa fa-caret-down"></i></span>';
     },
     /**
      * Format the choices in the module select box.
@@ -169,10 +169,10 @@
      * @param {Boolean} addIt TRUE if you want to add it, FALSE to remove
      */
     _toggleClearQuickSearchIcon: function(addIt) {
-        if (addIt && !this.$('.add-on.icon-remove')[0]) {
-            this.$('.filter-view.search').append('<i class="add-on icon-remove"></i>');
+        if (addIt && !this.$('.add-on.fa-times')[0]) {
+            this.$('.filter-view.search').append('<i class="add-on fa fa-times"></i>');
         } else if (!addIt) {
-            this.$('.add-on.icon-remove').remove();
+            this.$('.add-on.fa-times').remove();
         }
     },
     /**

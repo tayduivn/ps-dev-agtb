@@ -244,8 +244,8 @@
              * @return {String}
              */
             getArrowDirectionSpan: function(directionClass) {
-                return directionClass == "LBL_UP" ? '&nbsp;<i class="icon-arrow-up font-green"></i>' :
-                    directionClass == "LBL_DOWN" ? '&nbsp;<i class="icon-arrow-down font-red"></i>' : '';
+                return directionClass == "LBL_UP" ? '&nbsp;<i class="fa fa-arrow-up font-green"></i>' :
+                    directionClass == "LBL_DOWN" ? '&nbsp;<i class="fa fa-arrow-down font-red"></i>' : '';
             },
 
             /**

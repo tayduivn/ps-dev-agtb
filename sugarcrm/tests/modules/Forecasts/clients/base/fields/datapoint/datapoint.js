@@ -73,18 +73,18 @@ describe("Forecasts.Base.Field.Datapoint", function() {
         app.user.getAcls.restore();
         app.template.getField.restore();
     });
-    
+
     describe("when checkIfNeedsCommit is called", function() {
         beforeEach(function() {
             sandbox = sinon.sandbox.create();
             field = SugarTest.createField("base", "best_case", 'datapoint', 'list', fieldDef, moduleName, null, null, true);
             sandbox.stub(field.context, "trigger", function(){});
         });
-        
+
         afterEach(function() {
             sandbox.restore();
         });
-        
+
         describe("when the totals are equal", function() {
             beforeEach(function() {
                 field.total=0;
@@ -93,9 +93,9 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             });
             it("should not trigger 'forecasts:worksheet:needs_commit'", function() {
                 expect(field.context.trigger).not.toHaveBeenCalled();
-            });            
+            });
         });
-        
+
         describe("when the totals are not equal", function() {
             beforeEach(function() {
                 field.total=1;
@@ -104,7 +104,7 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             });
             it("should trigger 'forecasts:worksheet:needs_commit'", function() {
                 expect(field.context.trigger).toHaveBeenCalledWith('forecasts:worksheet:needs_commit');
-            });            
+            });
         });
     });
 
@@ -130,14 +130,14 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
                 return true;
             });
-            expect(field._getArrowIconColorClass(100.10, 100.00)).toEqual(' icon-arrow-up font-green');
+            expect(field._getArrowIconColorClass(100.10, 100.00)).toEqual(' fa-arrow-up font-green');
         });
 
         it('should return down arrow class', function() {
             sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
                 return true;
             });
-            expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' icon-arrow-down font-red');
+            expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' fa-arrow-down font-red');
         });
     });
 

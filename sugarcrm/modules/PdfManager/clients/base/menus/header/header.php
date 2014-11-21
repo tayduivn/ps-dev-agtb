@@ -22,7 +22,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_RECORD',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -34,13 +34,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?return_module=PdfManager&return_action=index&module=Configurator&action=SugarpdfSettings',
         'label' =>'LNK_EDIT_PDF_TEMPLATE',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-pencil',
+        'icon' => 'fa-pencil',
     ),
 );

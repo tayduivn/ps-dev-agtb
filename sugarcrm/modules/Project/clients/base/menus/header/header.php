@@ -17,7 +17,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_PROJECT',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -25,7 +25,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_PROJECT_TEMPLATES',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
@@ -33,7 +33,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_PROJECT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     // Project Templates
@@ -42,7 +42,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_PROJECT_TEMPLATES_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
@@ -50,7 +50,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_PROJECT_TASK_LIST',
         'acl_action'=>'list',
         'acl_module'=>'ProjectTask',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -58,7 +58,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_PROJECT_DASHBOARD',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //END SUGARCRM flav=pro ONLY
 );

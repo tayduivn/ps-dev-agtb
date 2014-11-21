@@ -41,7 +41,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     ),
                     'tooltip' => 'LBL_COMMIT_TOOLTIP',
                     'css_class' => 'btn-primary',
-                    'icon' => 'icon-upload',
+                    'icon' => 'fa-arrow-circle-o-up',
                     'acl_action' => 'current_user',
                     'primary' => true
                 ),

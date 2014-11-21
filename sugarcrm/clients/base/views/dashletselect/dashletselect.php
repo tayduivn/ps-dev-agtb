@@ -38,7 +38,7 @@ $viewdefs['base']['view']['dashletselect'] = array(
                     'tooltip' => 'LBL_PREVIEW',
                     'event' => 'dashletlist:preview:fire',
                     'css_class' => 'btn',
-                    'icon' => 'icon-eye-open',
+                    'icon' => 'fa-eye',
                     'width' => '7%',
                     'sortable' => false,
                 ),

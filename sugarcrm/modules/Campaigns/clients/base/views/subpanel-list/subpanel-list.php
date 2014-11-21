@@ -36,15 +36,15 @@ $viewdefs['Campaigns']['base']['view']['subpanel-list'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
-                'icon' => 'icon-pencil',
+                'icon' => 'fa-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
                 'allow_bwc' => true,
             ),
             array(
-                'type' => 'unlink-action',
-                'icon' => 'icon-unlink',
+                'type' => 'fa-chain-broken',
+                'icon' => 'fa-chain-broken',
                 'label' => 'LBL_UNLINK_BUTTON',
             ),
         ),

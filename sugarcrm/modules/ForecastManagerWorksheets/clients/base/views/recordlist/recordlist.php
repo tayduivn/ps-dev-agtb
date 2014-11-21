@@ -20,7 +20,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
                 'css_class' => 'btn disabled',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),*/
             array(
@@ -28,7 +28,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_HISTORY_LOG',
                 'event' => 'list:history_log:fire',
-                'icon' => 'icon-exclamation-sign',
+                'icon' => 'fa-exclamation-circle',
                 'acl_action' => 'view',
             ),
         ),

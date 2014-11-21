@@ -47,7 +47,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             array(
                 'type' => 'actiondropdown',
                 'no_default_action' => true,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
@@ -142,7 +142,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove-circle',
+                    'icon' => 'fa-times-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'planned-activities:close-record:fire',
                     'target' => 'view',
@@ -151,7 +151,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                 ),
                 array(
                     'type' => 'unlink-action',
-                    'icon' => 'icon-unlink',
+                    'icon' => 'fa-chain-broken',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'target' => 'view',
@@ -182,7 +182,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove-circle',
+                    'icon' => 'fa-times-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'planned-activities:close-record:fire',
                     'target' => 'view',
@@ -191,7 +191,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                 ),
                 array(
                     'type' => 'unlink-action',
-                    'icon' => 'icon-unlink',
+                    'icon' => 'fa-chain-broken',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'target' => 'view',

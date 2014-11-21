@@ -492,7 +492,7 @@
 
         //add expand/collapse tab behavior
         $drawerTab.on('click', _.bind(function(event) {
-            if ($('i', event.currentTarget).hasClass('icon-chevron-up')) {
+            if ($('i', event.currentTarget).hasClass('fa-chevron-up')) {
                 this._collapseDrawer($top, $bottom);
             } else {
                 this._expandDrawer($top, $bottom);
@@ -560,8 +560,8 @@
 
         $bottom
             .find('.drawer-tab i')
-            .removeClass('icon-chevron-down')
-            .addClass('icon-chevron-up');
+            .removeClass('fa-chevron-down')
+            .addClass('fa-chevron-up');
 
         this.trigger('drawer:resize', expandHeight);
     },
@@ -584,8 +584,8 @@
 
         $bottom
             .find('.drawer-tab i')
-            .removeClass('icon-chevron-up')
-            .addClass('icon-chevron-down');
+            .removeClass('fa-chevron-up')
+            .addClass('fa-chevron-down');
 
         this.trigger('drawer:resize', collapseHeight);
     },

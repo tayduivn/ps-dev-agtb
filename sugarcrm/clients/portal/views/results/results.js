@@ -18,7 +18,7 @@
 
     events: {
         'click [name=name]': 'gotoDetail',
-        'click .icon-eye-open': 'loadPreview',
+        'click .fa-eye': 'loadPreview',
         'click [name=show_more_button]': 'showMoreResults'
     },
 

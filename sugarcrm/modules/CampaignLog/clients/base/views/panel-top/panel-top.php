@@ -14,7 +14,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
+            'icon' => 'fa-chevron-up',
         ),
         array(
             'type' => 'actiondropdown',
@@ -23,7 +23,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
             'buttons' => array(
                 array(
                     'type' => 'sticky-rowaction',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',
@@ -34,7 +34,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
                     'type' => 'sticky-rowaction',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'icon' => 'icon-pencil',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'disabled',
                 ),
             ),

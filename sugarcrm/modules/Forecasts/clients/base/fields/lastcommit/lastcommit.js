@@ -46,7 +46,7 @@
      * Toggles the commit history log
      */
     triggerHistoryLog: function() {
-        this.$('i').toggleClass('icon-caret-down icon-caret-up');
+        this.$('i').toggleClass('fa-caret-down fa-caret-up');
         this.context.trigger('forecast:commit_log:trigger');
     },
 
