@@ -512,7 +512,7 @@
 
         if (!this._keysOrder) {
             this._keysOrder = {};
-            keys = _.map(app.lang.getAppListKeys(this.def.options), function(key) {
+            keys = _.map(this.items, function(key) {
                 return key.toString();
             });
             if (!_.isEqual(keys, _.keys(this.items))) {
