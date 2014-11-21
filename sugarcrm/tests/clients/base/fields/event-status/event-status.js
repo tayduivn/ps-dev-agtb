@@ -3,9 +3,10 @@ describe('View.Fields.Base.EventStatusField', function() {
 
     module = 'Meetings';
     items = {
-        Planned: 'Planned',
+        Planned: 'Scheduled',
         Held: 'Held',
-        'Not Held': 'Not Held'
+        'Not Held': 'Canceled',
+        foo: 'Foo Moo'
     };
 
     beforeEach(function() {
@@ -45,7 +46,7 @@ describe('View.Fields.Base.EventStatusField', function() {
         });
 
         using('detail modes', ['detail', 'list'], function(mode) {
-            it('should be a boostrap label', function() {
+            it('should be a bootstrap label', function() {
                 field.action = mode;
                 field.model.set('status', 'foo');
                 field.render();
@@ -53,19 +54,19 @@ describe('View.Fields.Base.EventStatusField', function() {
             });
         });
 
-        it('should be a success boostrap label when the meeting was held', function() {
+        it('should be a success bootstrap label when the meeting was held', function() {
             field.model.set('status', 'Held');
             field.render();
             checkClasses(1, 1, 0, 0);
         });
 
-        it('should be an important boostrap label when the meeting was not held', function() {
+        it('should be an important bootstrap label when the meeting was not held', function() {
             field.model.set('status', 'Not Held');
             field.render();
             checkClasses(1, 0, 1, 0);
         });
 
-        it('should be a plain boostrap label when the meeting is planned', function() {
+        it('should be a plain bootstrap label when the meeting is planned', function() {
             field.model.set('status', 'Planned');
             field.render();
             checkClasses(1, 0, 0, 1);
