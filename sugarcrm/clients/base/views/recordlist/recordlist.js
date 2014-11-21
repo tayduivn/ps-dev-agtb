@@ -258,42 +258,6 @@
     },
 
     /**
-     * Retrieve the location of the left edge of the list viewport.
-     *
-     * @deprecated This will be removed on future versions. Use
-     *   {@link #_getBordersPosition} instead.
-     * @return {Number} Position of the left edge.
-     * @private
-     */
-    _getLeftBorderPosition: function() {
-        if (!this._leftBorderPosition) {
-            var scrollPanel = this.$('.flex-list-view-content');
-            var rtl = app.lang.direction === 'rtl';
-            var thSelector = rtl ? 'last' : 'first';
-            this._leftBorderPosition = scrollPanel.find('thead tr:first th:' + thSelector).outerWidth();
-            }
-        return this._leftBorderPosition;
-    },
-
-    /**
-     * Retrieve the location of the right edge of the list viewport.
-     *
-     * @deprecated This will be removed on future versions. Use
-     *   {@link #_getBordersPosition} instead.
-     * @return {Number} Position of the right edge.
-     * @private
-     */
-    _getRightBorderPosition: function() {
-        if (!this._rightBorderPosition) {
-            var scrollPanel = this.$('.flex-list-view-content');
-            var rtl = app.lang.direction === 'rtl';
-            var thSelector = rtl ? 'first' : 'last';
-            this._rightBorderPosition = scrollPanel.find('thead tr:first th:' + thSelector).children().position().left;
-        }
-        return this._rightBorderPosition;
-    },
-
-    /**
      * Retrieves the location of the edges of the list viewport.
      *
      * @return {Object} Object containing the position of the right and left
@@ -304,13 +268,13 @@
         if (!this._bordersPosition) {
             this._bordersPosition = {};
             var thSelector = {};
-            var scrollPanel = this.$('.flex-list-view-content');
+            var $scrollPanel = this.$('.flex-list-view-content');
             var rtl = app.lang.direction === 'rtl';
 
             thSelector.left = rtl ? 'last' : 'first';
             thSelector.right = rtl ? 'first' : 'last';
-            this._bordersPosition.left = scrollPanel.find('thead tr:first th:' + thSelector.left).outerWidth();
-            this._bordersPosition.right = scrollPanel.find(
+            this._bordersPosition.left = $scrollPanel.find('thead tr:first th:' + thSelector.left).outerWidth();
+            this._bordersPosition.right = $scrollPanel.find(
                 'thead tr:first th:' + thSelector.right).children().position().left;
         }
         return this._bordersPosition;
@@ -324,10 +288,10 @@
      *
      * @param {Object} location Position of the focused element relative to its
      *   viewport.
-     *   'location.left' is the distance between the left
-     *   border of the focused field and the left border of the view port.
-     *   'location.right' is the distance between the right
-     *   side of the focused field and the left border of the view port.
+     *   `location.left` is the distance between the left
+     *   border of the focused field and the left border of the viewport.
+     *   `location.right` is the distance between the right
+     *   side of the focused field and the left border of the viewport.
      *
      */
     setPanelPosition: function(location) {
@@ -343,16 +307,16 @@
     /**
      * Scrolls the list horizontally to make the clicked field fully visible.
      *
-     * @param {Number} leftBorderPosition Position of the left edge of the
+     * @param {number} leftBorderPosition Position of the left edge of the
      *   list viewport.
-     * @param {Number} rightBorderPosition Position of the right edge of the
+     * @param {number} rightBorderPosition Position of the right edge of the
      *   list viewport.
      * @param {Object} location Location of the focused field.
      * @private
      */
     _scrollToMakeFieldVisible: function(leftBorderPosition, rightBorderPosition, location) {
-        var scrollPanel = this.$('.flex-list-view-content');
-        var scrollPosition = scrollPanel.scrollLeft();
+        var $scrollPanel = this.$('.flex-list-view-content');
+        var scrollPosition = $scrollPanel.scrollLeft();
         var fieldLeft = location.left;
         var fieldRight = location.right;
         var fieldPadding = location.fieldPadding;
@@ -363,13 +327,13 @@
             if (app.lang.direction === 'rtl' && this.scrollType === 'reverse') {
                 distanceToScroll = - distanceToScroll;
             }
-            scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
+            $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
         } else if (rightBorderPosition < fieldRight) {
             distanceToScroll = fieldRight - rightBorderPosition + fieldPadding;
             if (app.lang.direction === 'rtl' && this.scrollType === 'reverse') {
                 distanceToScroll = - distanceToScroll;
             }
-            scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
+            $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
         } else {
             return;
         }
@@ -379,32 +343,34 @@
      * Set the position of scrollable panel
      * at the left border of the focused element.
      *
-     * @param {Number} left Left position of the focused element.
-     * @deprecated This will be removed on future versions.
+     * @param {number} left Left position of the focused element.
+     * @deprecated 7.7 and will be removed in 7.8.
      */
     setScrollAtLeftBorder: function(left) {
-        var scrollPanel = this.$('.flex-list-view-content'),
-            leftBorderPosition = this._getLeftBorderPosition(),
-            scrollLeft = scrollPanel.scrollLeft();
+        var $scrollPanel = this.$('.flex-list-view-content'),
+            leftBorderPosition = this._getBordersPosition().left,
+            scrollLeft = $scrollPanel.scrollLeft();
 
         left += scrollLeft - leftBorderPosition;
-        scrollPanel.scrollLeft(left);
+        $scrollPanel.scrollLeft(left);
+        app.logger.warn('This method is deprecated and will be removed in 7.8');
     },
 
     /**
      * Set the position of scrollable panel
      * at the right border of the focused element.
      *
-     * @param {Number} right Right position of the focused element.
-     * @deprecated This will be removed on future versions.
+     * @param {number} right Right position of the focused element.
+     * @deprecated 7.7 and will be removed in 7.8.
      */
     setScrollAtRightBorder: function(right) {
-        var scrollPanel = this.$('.flex-list-view-content'),
-            rightBorderPosition = this._getRightBorderPosition(),
-            scrollLeft = scrollPanel.scrollLeft();
+        var $scrollPanel = this.$('.flex-list-view-content'),
+            rightBorderPosition = this._getBordersPosition().right,
+            scrollLeft = $scrollPanel.scrollLeft();
 
         right += scrollLeft - rightBorderPosition;
-        scrollPanel.scrollLeft(right);
+        $scrollPanel.scrollLeft(right);
+        app.logger.warn('This method is deprecated and will be removed in 7.8');
     },
 
     /**
@@ -708,6 +674,11 @@
         }, this);
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Unsets `_bordersPosition`.
+     */
     resize: function() {
         this._super('resize');
         this._bordersPosition = null;
