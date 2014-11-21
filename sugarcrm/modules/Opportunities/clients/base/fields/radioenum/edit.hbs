@@ -1,4 +1,3 @@
-{{!-- // FILE SUGARCRM flav=ent ONLY --}}
 {{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -11,6 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="field-alert-warning alert-warning">
-    {{warningText}}
-</div>
+{{#eachOptions items}}
+    <span class="radioenum-inline">
+        <label>
+            <input type="radio" name="{{../name}}" value="{{key}}"
+                {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}{{#eq key ../value}}checked{{/eq}}>
+            {{value}}
+        </label>
+    </span>
+{{/eachOptions}}
+{{#unless hideHelp}}
+    {{#if def.help}}
+        <p class="help-block">{{str def.help module}}</p>
+    {{/if}}
+{{/unless}}

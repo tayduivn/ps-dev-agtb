@@ -102,11 +102,23 @@
     },
 
     /**
-     * Handles switching the HowTo text and info
+     * Handles switching the HowTo text and info by a specific accordion view being toggled
      *
      * @param {String} helpId The
      * @private
      */
     _switchHowToData: function(helpId) {
+    },
+
+    /**
+     * Allows child config views with specific needs to be able to 'manually' update the HowTo text
+     *
+     * @param title
+     * @param text
+     */
+    changeHowToData: function(title, text) {
+        this.currentHowToData.title = title;
+        this.currentHowToData.text = text;
+        this.context.trigger('config:howtoData:change', this.currentHowToData);
     }
 })

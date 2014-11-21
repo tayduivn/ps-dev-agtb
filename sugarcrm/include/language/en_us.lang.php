@@ -5351,7 +5351,7 @@ $app_list_strings['forecast_pareto_visibility_options'] = array (
 
 $app_list_strings['opps_config_view_by_options_dom'] = array(
     'Opportunities' => 'Opportunities',
-    'RevenueLineItems' => 'Revenue Line Items'
+    'RevenueLineItems' => 'Opportunities and Revenue Line Items'
 );
 
 $app_list_strings['opps_config_view_by_closedate_rollup_dom'] = array(
