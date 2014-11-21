@@ -135,7 +135,9 @@ class ParserRoleDropDown extends ModuleBuilderParser
             'custom/' . $this->getFilePath($role, $name)
         );
         if ($result) {
-            MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS, array(), array(
+                'role' => $role,
+            ));
         }
         return $result;
     }
