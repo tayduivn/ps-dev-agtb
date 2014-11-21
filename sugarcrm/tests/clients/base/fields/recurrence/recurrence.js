@@ -129,6 +129,29 @@ describe('View.Fields.Base.RecurrenceField', function() {
             field.model.set('repeat_type', 'Weekly');
             expect(field.model.attributes).toEqual(expected);
         });
+
+        it('should set fields to defaults when repeat type changes to be non-repeating', function() {
+            var expected = {
+                repeat_type: '',
+                repeat_interval: 1,
+                repeat_count: 10,
+                repeat_until: ''
+            };
+
+            field.fields = [
+                { name: 'repeat_interval', def: { 'default': expected.repeat_interval } },
+                { name: 'repeat_count', def: { 'default': expected.repeat_count } }
+            ];
+
+            field.model.set('repeat_type', 'Daily');
+            field.model.set({
+                repeat_interval: null,
+                repeat_count: undefined,
+                repeat_until: 'foo'
+            });
+            field.model.set('repeat_type', '');
+            expect(field.model.attributes).toEqual(expected);
+        });
     });
 
     describe('Toggle Repeat Count & Repeat Until values', function() {
