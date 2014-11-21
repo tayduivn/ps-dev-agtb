@@ -46,7 +46,7 @@ $viewdefs['KBContents']['base']['view']['preview'] = array(
                     'name' => 'attachment_list',
                     'label' => 'LBL_ATTACHMENTS',
                     'type' => 'attachments',
-                    'link' => 'notes',
+                    'link' => 'attachments',
                     'module' => 'Notes',
                     'modulefield' => 'filename',
                 ),
