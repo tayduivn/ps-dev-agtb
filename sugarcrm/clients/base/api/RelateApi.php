@@ -44,6 +44,15 @@ class RelateApi extends FilterApi {
                 'shortHelp' => 'Lists related records.',
                 'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
             ),
+            'listRelatedRecordsCount' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', '?', 'link', '?', 'count'),
+                'pathVars' => array('module', 'record', '', 'link_name', ''),
+                'jsonParams' => array('filter'),
+                'method' => 'filterRelatedCount',
+                'shortHelp' => 'Counts all filtered related records.',
+                'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
+            ),
         );
     }
 

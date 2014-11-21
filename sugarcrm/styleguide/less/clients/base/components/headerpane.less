@@ -38,7 +38,10 @@
       display: table-cell;
       vertical-align: top;
       position: relative;
-      padding: 18px 18px 0 20px;
+      padding: 18px 0 0 20px;
+      & ~ .record-cell {
+        padding: 18px 18px 0 20px;
+      }
 
       &.hide {
         display: none;
@@ -56,6 +59,9 @@
         .record-label {
           left: 20px;
         }
+      }
+      &:last-of-type {
+        width: 100%;
       }
       .record-cell {
         white-space: nowrap;
@@ -75,6 +81,9 @@
       .list-headerpane .btn-toolbar {
         padding-top: 0;
         margin-top: -4px;
+      }
+      &[data-type="label"] + [data-type="collection-count"] {
+        padding-left: 5px;
       }
     }
   }

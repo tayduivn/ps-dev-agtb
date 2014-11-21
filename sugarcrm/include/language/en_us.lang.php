@@ -2773,6 +2773,11 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
+    'TPL_LIST_HEADER_COUNT' => '{{num}}',
+    'TPL_LIST_HEADER_COUNT_PARTIAL' => '{{num}}+',
+    'TPL_LIST_HEADER_COUNT_TOTAL' => '{{num}} of {{total}}',
+    'TPL_LIST_HEADER_COUNT_TOOLTIP' => 'Click to see the full count',
+
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
     'LBL_LOCALE_NAME_EXAMPLE_SALUTATION' => 'Dr.',

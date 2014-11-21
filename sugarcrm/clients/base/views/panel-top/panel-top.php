@@ -15,12 +15,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['panel-top'] = array(
     'buttons' => array(
         array(
-            'type' => 'button',
-            'css_class' => 'btn-invisible',
-            'icon' => 'fa-chevron-up',
-            'tooltip' => 'LBL_TOGGLE_VISIBILITY',
-        ),
-        array(
             'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
             'css_class' => 'pull-right',
@@ -39,6 +33,12 @@ $viewdefs['base']['view']['panel-top'] = array(
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                 ),
             ),
+        ),
+    ),
+    'fields' => array(
+        array(
+            'name' => 'collection-count',
+            'type' => 'collection-count',
         ),
     ),
 );

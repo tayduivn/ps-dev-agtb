@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +8,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#if def.formatted_value}}
-    {{def.formatted_value}}
-{{else}}
-    {{str def.default_value this.module}}
-{{/if}}
+/**
+ * @class View.Fields.Base.LabelField
+ * @alias SUGAR.App.view.fields.BaseLabelField
+ * @extends View.Field
+ */
+({
+    /**
+     * @inheritDoc
+     */
+    format: function(value) {
+        if (this.def.formatted_value) {
+            value = this.def.formatted_value;
+        } else {
+            value = app.lang.get(this.def.default_value, this.module);
+        }
+        return value;
+    }
+})
