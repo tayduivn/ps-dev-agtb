@@ -12,46 +12,6 @@
     app.events.on('app:init', function() {
         app.plugins.register('QuickSearchFilter', ['layout', 'view', 'field'], {
             /**
-             * Metadata about how quick search should be performed.
-             *
-             * @private
-             */
-            _moduleQuickSearchMeta: {},
-
-            /**
-             * Retrieve the highest priority quick search metadata.
-             *
-             * @param {string} searchModule Module name against which quick
-             *   search is applied.
-             *
-             * @return {Object} Field names and whether to split search terms.
-             * @private
-             */
-            _getQuickSearchMetaByPriority: function(searchModule) {
-                var meta = app.metadata.getModule(searchModule),
-                    filters = meta ? meta.filters : [],
-                    fieldNames = [],
-                    priority = 0,
-                    splitTerms = false;
-
-                _.each(filters, function(value) {
-                    if (value && value.meta && value.meta.quicksearch_field &&
-                        priority < value.meta.quicksearch_priority) {
-                        fieldNames = value.meta.quicksearch_field;
-                        priority = value.meta.quicksearch_priority;
-                        if (_.isBoolean(value.meta.quicksearch_split_terms)) {
-                            splitTerms = value.meta.quicksearch_split_terms;
-                        }
-                    }
-                });
-
-                return {
-                    fieldNames: fieldNames,
-                    splitTerms: splitTerms
-                };
-            },
-
-            /**
              * Retrieve and cache the quick search metadata.
              *
              * @param {string} searchModule Module name against which quick
@@ -62,11 +22,16 @@
              *   quick search.
              * @return {boolean} return.splitTerms Whether to split the search
              *   terms when there are multiple search fields.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#getModuleQuickSearchMeta} instead.
              */
             getModuleQuickSearchMeta: function(searchModule) {
-                this._moduleQuickSearchMeta[searchModule] = this._moduleQuickSearchMeta[searchModule] ||
-                    this._getQuickSearchMetaByPriority(searchModule);
-                return this._moduleQuickSearchMeta[searchModule];
+                app.logger.warn('Plugins.QuickSearchFilter.getModuleQuickSearchMeta is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.getModuleQuickSearchMeta');
+
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.getModuleQuickSearchMeta(searchModule);
             },
 
             /**
@@ -76,9 +41,16 @@
              *   search is applied.
              *
              * @return {Array} An array of field names for the searchModule.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#getModuleQuickSearchMeta} instead.
              */
             getModuleQuickSearchFields: function(searchModule) {
-                return this.getModuleQuickSearchMeta(searchModule).fieldNames;
+                app.logger.warn('Plugins.QuickSearchFilter.getModuleQuickSearchFields is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.getModuleQuickSearchMeta');
+
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.getModuleQuickSearchMeta(searchModule).fieldNames;
             },
 
             /**
@@ -90,182 +62,16 @@
              *
              * @return {Array} The search filter definition of quick search,
              *   otherwise an empty array.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#buildSearchTermFilter} instead.
              */
             getFilterDef: function(searchModule, searchTerm) {
-                if (searchModule === 'all_modules' || !searchTerm) {
-                    return [];
-                }
+                app.logger.warn('Plugins.QuickSearchFilter.getFilterDef is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.buildSearchTermFilter');
 
-                searchTerm = searchTerm.trim();
-
-                var splitTermFilter;
-                var filterList = [];
-                var fieldNames = this.getModuleQuickSearchFields(searchModule);
-
-                // Iterate through each field and check if the field is a simple
-                // or complex field, and build the filter object accordingly
-                _.each(fieldNames, function(name) {
-                    if (!_.isArray(name)) {
-                        var filter = this._buildSimpleFilter(name, '$starts', searchTerm);
-                        if (filter) {
-                            // Simple filters are pushed to `filterList`
-                            filterList.push(filter);
-                        }
-                        return;
-                    }
-
-                    if (splitTermFilter) {
-                        app.logger.error('Cannot have more than 1 split term filter');
-                        return;
-                    }
-                    splitTermFilter = this._buildSplitTermFilter(name, '$starts', searchTerm);
-                }, this);
-
-                // Push the split term filter
-                if (splitTermFilter) {
-                    filterList.push(splitTermFilter);
-                }
-
-                // If more than 1 filter was created, wrap them in `$or`
-                if (filterList.length > 1) {
-                    var filter = this._buildComplexFilter('$or', filterList);
-                    if (filter) {
-                        filterList = [filter];
-                    }
-                }
-
-                // FIXME [SC-3560]: This should be moved to the metadata
-                if (searchModule === 'Users' || searchModule === 'Employees') {
-                    filterList = this._simplifyFilter(filterList);
-                    filterList = [{
-                        '$and': [
-                            {'status': {'$not_equals': 'Inactive'}},
-                            filterList
-                        ]
-                    }];
-                }
-
-                return filterList;
-            },
-
-            /**
-             * Returns the first filter from `filterList`, if the length of
-             * `filterList` is 1.
-             *
-             * The *simplified* filter is in the form of the one returned by
-             * @link{#_buildSimpleFilter} or @link{#_buildComplexFilter}.
-             *
-             * @param {Array} filterList An array of filter definitions.
-             *
-             * @return {Array|Object} First element of `filterList`, if the
-             *   length of the array is 1, otherwise, the original `filterList`.
-             * @private
-             */
-            _simplifyFilter: function(filterList) {
-                return filterList.length > 1 ? filterList : filterList[0];
-            },
-
-            /**
-             * Builds a `simple filter` object.
-             *
-             * A `simple filter` object is in the form of:
-             *
-             *     { name: { operator: searchTerm } }
-             *
-             * @param {string} name Name of the field to search by.
-             * @param {string} operator Operator to search by.
-             * @param {string} searchTerm Search input entered.
-             *
-             * @return {Object} The search filter definition for quick search.
-             * @private
-             */
-            _buildSimpleFilter: function(name, operator, searchTerm) {
-                var def = {};
-                var filter = {};
-                filter[operator] = searchTerm;
-                def[name] = filter;
-                return def;
-            },
-
-            /**
-             * Builds a `complex filter` object.
-             *
-             * A `complex filter` object is in the form of:
-             *
-             *     { operator: filterList }
-             *
-             * @param {string} operator Operator to search by.
-             * @param {Array} filterList Array of filters.
-             *
-             * @return {Object|Array} Complex filter object,
-             *   or a simple filter object if `filterList` is of length 1,
-             *   otherwise an empty `Array`.
-             * @private
-             */
-            _buildComplexFilter: function(operator, filterList) {
-                if (_.isEmpty(filterList)) { return []; }
-
-                // if the length of the `filterList` is less than 2, then just return the simple filter
-                if (filterList.length < 2) {
-                    return filterList[0];
-                }
-
-                var filter = {};
-                filter[operator] = filterList;
-                return filter;
-            },
-
-            /**
-             * Builds a filter object by using unique combination of the
-             * searchTerm delimited by spaces.
-             *
-             * @param {Array} fieldNames Field within `quicksearch_field`
-             *   in the metadata to perform split term filtering.
-             * @param {string} operator Operator to search by for a field.
-             * @param {string} searchTerm Search input entered.
-             *
-             * @return {Object|undefined} The search filter definition for
-             *   quick search or `undefined` if no filter to apply or supported.
-             * @private
-             */
-            _buildSplitTermFilter: function(fieldNames, operator, searchTerm) {
-                if (fieldNames.length > 2) {
-                    app.logger.error('Cannot have more than 2 fields in a complex filter');
-                    return;
-                }
-
-                // If the field is a split-term field, but only composed of single item
-                // return the simple filter
-                if (fieldNames.length === 1) {
-                    return this._buildSimpleFilter(fieldNames[0], operator, searchTerm);
-                }
-
-                var filterList = [];
-                var tokens = searchTerm.split(' ');
-
-                // When the searchTerm is composed of at least 2 terms delimited by a space character,
-                // Divide the searchTerm in 2 unique sets
-                // e.g. For the name "Jean Paul Durand",
-                // first = "Jean", rest = "Paul Durand" (1st iteration)
-                // first = "Jean Paul", rest = "Durand" (2nd iteration)
-                for (var i = 1; i < tokens.length; ++i) {
-                    var first = _.first(tokens, i).join(' ');
-                    var rest = _.rest(tokens, i).join(' ');
-
-                    // Push the 2 unique sets per field
-                    _.each(fieldNames, function(name) {
-                        filterList.push(this._buildSimpleFilter(name, operator, first));
-                        filterList.push(this._buildSimpleFilter(name, operator, rest));
-                    }, this);
-                }
-
-                // Try with full search term in each field
-                // e.g. `first_name: Sangyoun Kim` or `last_name: Sangyoun Kim`
-                _.each(fieldNames, function(name) {
-                    filterList.push(this._buildSimpleFilter(name, operator, searchTerm));
-                }, this);
-
-                return this._buildComplexFilter('$or', filterList);
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.buildSearchTermFilter(searchModule, searchTerm);
             }
         });
     });

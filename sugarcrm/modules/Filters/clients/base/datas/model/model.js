@@ -58,63 +58,61 @@
      * @static
      */
     buildSearchTermFilter: function(moduleName, searchTerm) {
-        var searchFilter = [],
-            returnFilter = [],
-            searchMeta,
-            fieldNames,
-            terms,
-            filter;
-
-        if (moduleName === 'all_modules') {
+        if (moduleName === 'all_modules' || !searchTerm) {
             return [];
         }
-        searchMeta = app.data.getBeanClass('Filters').prototype.getModuleQuickSearchMeta(moduleName);
-        fieldNames = searchMeta.fieldNames;
 
-        if (searchTerm) {
-            // Strip leading or trailing whitespace
-            searchTerm = searchTerm.trim();
+        searchTerm = searchTerm.trim();
 
-            // For Person Type modules, need to split the terms and build a smart
-            // filter definition.
-            if (fieldNames.length === 2 && searchMeta.splitTerms) {
-                terms = searchTerm.split(' ');
-                var firstTerm = _.first(terms.splice(0, 1));
-                var otherTerms = terms.join(' ');
-                // First field starts with first term, second field starts with
-                // other terms. If only one term, use $or and search for the
-                // term on both fields.
-                terms = otherTerms ? [firstTerm, otherTerms] : null;
-            } else if (fieldNames.length > 2) {
-                app.logger.fatal('Filtering by 3 quicksearch fields is not yet supported.');
-            }
-            _.each(fieldNames, function(name, index) {
-                var o = {};
-                if (terms) {
-                    o[name] = {'$starts': terms[index]};
-                } else {
-                    o[name] = {'$starts': searchTerm};
+        var splitTermFilter;
+        var filterList = [];
+        var searchMeta = app.data.getBeanClass('Filters').prototype.getModuleQuickSearchMeta(moduleName);
+        var fieldNames = searchMeta.fieldNames;
+
+        // Iterate through each field and check if the field is a simple
+        // or complex field, and build the filter object accordingly
+        _.each(fieldNames, function(name) {
+            if (!_.isArray(name)) {
+                var filter = this._buildSimpleFilter(name, '$starts', searchTerm);
+                if (filter) {
+                    // Simple filters are pushed to `filterList`
+                    filterList.push(filter);
                 }
-                searchFilter.push(o);
-            });
-
-            filter = searchFilter[0];
-            if (searchFilter.length > 1) {
-                filter = terms ? {'$and': searchFilter} : {'$or': searchFilter};
+                return;
             }
-            returnFilter.push(filter);
 
-            // See MAR-1362 for details.
-            if (moduleName === 'Users' || moduleName === 'Employees') {
-                returnFilter[0] = ({
-                    '$and': [
-                        {'status': {'$not_equals': 'Inactive'}},
-                        returnFilter[0]
-                    ]
-                });
+            if (splitTermFilter) {
+                app.logger.error('Cannot have more than 1 split term filter');
+                return;
+            }
+            splitTermFilter = this._buildSplitTermFilter(name, '$starts', searchTerm);
+        }, this);
+
+        // Push the split term filter
+        if (splitTermFilter) {
+            filterList.push(splitTermFilter);
+        }
+
+        // If more than 1 filter was created, wrap them in `$or`
+        if (filterList.length > 1) {
+            var filter = this._buildComplexFilter('$or', filterList);
+            if (filter) {
+                filterList = [filter];
             }
         }
-        return returnFilter;
+
+        // FIXME [SC-3560]: This should be moved to the metadata
+        if (moduleName === 'Users' || moduleName === 'Employees') {
+            filterList = this._simplifyFilter(filterList);
+            filterList = [{
+                '$and': [
+                    {'status': {'$not_equals': 'Inactive'}},
+                    filterList
+                ]
+            }];
+        }
+
+        return filterList;
     },
 
     /**
@@ -288,5 +286,127 @@
             fieldNames: fieldNames,
             splitTerms: splitTerms
         };
+    },
+
+    /**
+     * Returns the first filter from `filterList`, if the length of
+     * `filterList` is 1.
+     *
+     * The *simplified* filter is in the form of the one returned by
+     * @link{#_buildSimpleFilter} or @link{#_buildComplexFilter}.
+     *
+     * @param {Array} filterList An array of filter definitions.
+     *
+     * @return {Array|Object} First element of `filterList`, if the
+     *   length of the array is 1, otherwise, the original `filterList`.
+     * @private
+     */
+    _simplifyFilter: function(filterList) {
+        return filterList.length > 1 ? filterList : filterList[0];
+    },
+
+    /**
+     * Builds a `simple filter` object.
+     *
+     * A `simple filter` object is in the form of:
+     *
+     *     { name: { operator: searchTerm } }
+     *
+     * @param {string} name Name of the field to search by.
+     * @param {string} operator Operator to search by.
+     * @param {string} searchTerm Search input entered.
+     *
+     * @return {Object} The search filter definition for quick search.
+     * @private
+     */
+    _buildSimpleFilter: function(name, operator, searchTerm) {
+        var def = {};
+        var filter = {};
+        filter[operator] = searchTerm;
+        def[name] = filter;
+        return def;
+    },
+
+    /**
+     * Builds a `complex filter` object.
+     *
+     * A `complex filter` object is in the form of:
+     *
+     *     { operator: filterList }
+     *
+     * @param {string} operator Operator to search by.
+     * @param {Array} filterList Array of filters.
+     *
+     * @return {Object|Array} Complex filter object,
+     *   or a simple filter object if `filterList` is of length 1,
+     *   otherwise an empty `Array`.
+     * @private
+     */
+    _buildComplexFilter: function(operator, filterList) {
+        if (_.isEmpty(filterList)) {
+            return [];
+        }
+
+        // if the length of the `filterList` is less than 2, then just return the simple filter
+        if (filterList.length < 2) {
+            return filterList[0];
+        }
+
+        var filter = {};
+        filter[operator] = filterList;
+        return filter;
+    },
+
+    /**
+     * Builds a filter object by using unique combination of the
+     * searchTerm delimited by spaces.
+     *
+     * @param {Array} fieldNames Field within `quicksearch_field`
+     *   in the metadata to perform split term filtering.
+     * @param {string} operator Operator to search by for a field.
+     * @param {string} searchTerm Search input entered.
+     *
+     * @return {Object|undefined} The search filter definition for
+     *   quick search or `undefined` if no filter to apply or supported.
+     * @private
+     */
+    _buildSplitTermFilter: function(fieldNames, operator, searchTerm) {
+        if (fieldNames.length > 2) {
+            app.logger.error('Cannot have more than 2 fields in a complex filter');
+            return;
+        }
+
+        // If the field is a split-term field, but only composed of single item
+        // return the simple filter
+        if (fieldNames.length === 1) {
+            return this._buildSimpleFilter(fieldNames[0], operator, searchTerm);
+        }
+
+        var filterList = [];
+        var tokens = searchTerm.split(' ');
+
+        // When the searchTerm is composed of at least 2 terms delimited by a space character,
+        // Divide the searchTerm in 2 unique sets
+        // e.g. For the name "Jean Paul Durand",
+        // first = "Jean", rest = "Paul Durand" (1st iteration)
+        // first = "Jean Paul", rest = "Durand" (2nd iteration)
+        for (var i = 1; i < tokens.length; ++i) {
+            var first = _.first(tokens, i).join(' ');
+            var rest = _.rest(tokens, i).join(' ');
+
+            // Push the 2 unique sets per field
+            _.each(fieldNames, function(name) {
+                filterList.push(this._buildSimpleFilter(name, operator, first));
+                filterList.push(this._buildSimpleFilter(name, operator, rest));
+            }, this);
+        }
+
+        // Try with full search term in each field
+        // e.g. `first_name: Sangyoun Kim` or `last_name: Sangyoun Kim`
+        _.each(fieldNames, function(name) {
+            filterList.push(this._buildSimpleFilter(name, operator, searchTerm));
+        }, this);
+
+        return this._buildComplexFilter('$or', filterList);
     }
 })
