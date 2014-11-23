@@ -50,7 +50,6 @@ describe('Base.Field.Parent', function() {
     it('should not set value when id is undefined', function() {
         var expected_module = 'Accounts';
 
-        field.model.removeDefaultAttribute = sinon.collection.stub();
         field.model.clear();
         field.setValue({id: undefined, value: undefined, module: expected_module});
         var actual_id = field.model.get('parent_id'),
@@ -66,7 +65,6 @@ describe('Base.Field.Parent', function() {
             expected_name = 'blahblah',
             expected_module = 'Accounts';
 
-        field.model.removeDefaultAttribute = sinon.collection.stub();
         field.setValue({id: expected_id, value: expected_name, module: expected_module});
         var actual_id = field.model.get('parent_id'),
             actual_name = field.model.get('parent_name'),
