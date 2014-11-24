@@ -40,8 +40,9 @@
         // setting type & def.type so number validator will run
         this.type = this.def.type = 'int';
 
+        this.def['default'] = this.def['default'] || this.defaultCount;
         if (this.model.isNew()) {
-            this.model.set(this.name, this.defaultCount);
+            this.model.set(this.name, this.def['default']);
         }
 
         this.model.addValidationTask(
