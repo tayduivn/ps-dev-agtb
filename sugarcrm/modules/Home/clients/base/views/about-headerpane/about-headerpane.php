@@ -20,4 +20,5 @@ $viewdefs['Home']['base']['view']['about-headerpane'] = array(
             'default_value' => 'TPL_ABOUT',
         ),
     ),
+    'buttons' => array(),
 );
