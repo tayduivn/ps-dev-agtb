@@ -3413,10 +3413,8 @@ function sugar_cleanup($exit = false)
     }
     SugarAutoLoader::saveClassMap();
 
-//	pre_login_check();
-    if (class_exists('DBManagerFactory')) {
-        $db = DBManagerFactory::getInstance();
-        $db->disconnect();
+    if (class_exists('DBManagerFactory', false)) {
+        DBManagerFactory::disconnectAll();
     }
     if ($exit) {
         exit;
