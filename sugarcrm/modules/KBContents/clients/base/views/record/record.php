@@ -181,7 +181,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                         array(
                             'name' => 'template',
                             'type' => 'template-button',
-                            'icon' => 'icon-file-alt',
+                            'icon' => 'fa-file-o',
                             'css_class' => 'pull-right load-template',
                             'label' => 'LBL_TEMPLATES',
                         ),

@@ -127,7 +127,7 @@
      */
     _toggleIconRemove: function(addIt) {
         if (addIt && !this.$('i[data-role=icon-remove]')[0]) {
-            this.$el.find('div[data-container=filter-view-search]').append('<i class="add-on icon-remove" data-role="icon-remove"></i>');
+            this.$el.find('div[data-container=filter-view-search]').append('<i class="add-on fa fa-remove" data-role="icon-remove"></i>');
         } else if (!addIt) {
             this.$('i[data-role=icon-remove]').remove();
         }

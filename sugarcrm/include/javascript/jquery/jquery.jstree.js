@@ -776,8 +776,8 @@
 					 */
 					if (p.settings.showMenu === true) {
 						var optmp = '<div class="btn-group btn-group-justified pull-right">' +
-							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="icon-plus"></span></a>' +
-							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="icon-caret-down"></span></a>' +
+							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="fa fa-plus"></span></a>' +
+							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="fa fa-caret-down"></span></a>' +
 							'</div>';
 						d.append(optmp);
 					}
@@ -1861,8 +1861,8 @@
 						 */
 						if (p.settings.showMenu === true) {
 							var optmp = '<div class="btn-group btn-group-justified pull-right">' +
-									'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="icon-plus"></span></a>' +
-									'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="icon-caret-down"></span></a>' +
+									'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="fa fa-plus"></span></a>' +
+									'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="fa fa-caret-down"></span></a>' +
 									'</div>';
 							d.append(optmp);
 						}

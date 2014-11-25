@@ -15,6 +15,6 @@ $viewdefs['KBContents']['portal']['menu']['header'] = array(
         'label' => 'LBL_MODULE_NAME',
         'acl_action' => 'list',
         'acl_module' => 'KBContents',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-reorder',
     ),
 );
