@@ -32,12 +32,11 @@ class ImportController extends SugarController
     {
         global $mod_strings;
 
-        if (isset($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == "jslang") {
-            // js lang requested, in which case this constructor turns into a noop since we don't have import_module
-            return;
+        if (!isset($_REQUEST['import_module'])) {
+            return; // there is no module to load
         }
 
-        $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        $this->importModule = $_REQUEST['import_module'];
 
         $this->bean = BeanFactory::getBean($this->importModule);
         if ( $this->bean ) {
