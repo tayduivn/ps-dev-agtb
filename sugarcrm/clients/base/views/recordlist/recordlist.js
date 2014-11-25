@@ -81,7 +81,6 @@
             this.layout.on('list:filter:toggled', this.filterToggled, this);
         }
         this.toggledModels = {};
-        this.scrollType = app.utils.getRtlScrollType();
 
         this.context._recordListFields = this.getFieldNames(null, true);
 
@@ -260,8 +259,9 @@
     /**
      * Retrieves the location of the edges of the list viewport.
      *
-     * @return {Object} Object containing the position of the right and left
-     *   edges.
+     * @return {Object} Object with properties:
+     * @return {number} return.left the position left edge.
+     * @return {number} return.right the position right edge.
      * @private
      */
     _getBordersPosition: function() {
@@ -292,7 +292,6 @@
      *   border of the focused field and the left border of the viewport.
      *   `location.right` is the distance between the right
      *   side of the focused field and the left border of the viewport.
-     *
      */
     setPanelPosition: function(location) {
         var bordersPosition = this._getBordersPosition();
@@ -324,13 +323,13 @@
 
         if (fieldLeft < leftBorderPosition) {
             distanceToScroll = fieldLeft - leftBorderPosition - fieldPadding;
-            if (app.lang.direction === 'rtl' && this.scrollType === 'reverse') {
+            if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
                 distanceToScroll = - distanceToScroll;
             }
             $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
         } else if (rightBorderPosition < fieldRight) {
             distanceToScroll = fieldRight - rightBorderPosition + fieldPadding;
-            if (app.lang.direction === 'rtl' && this.scrollType === 'reverse') {
+            if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
                 distanceToScroll = - distanceToScroll;
             }
             $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);

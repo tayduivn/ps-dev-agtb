@@ -513,7 +513,7 @@
                 var right = this.$el.outerWidth() + left;
                 var top = this.$el.offset().top;
                 var bottom = this.$el.outerHeight() + top;
-                var fieldPadding = parseInt(this.$el.parent().css('padding-left'));
+                var fieldPadding = parseInt(this.$el.parent().css('padding-left'), 10);
                 this.view.trigger('field:focus:location', {
                     left: left,
                     right: right,
