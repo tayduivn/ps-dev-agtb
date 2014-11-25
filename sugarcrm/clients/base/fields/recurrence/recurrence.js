@@ -131,12 +131,16 @@
     },
 
     /**
-     * Reset recurrence fields when `repeat_type` changes & then re-render so the
-     * hide/show logic is applied
+     * Set field defaults when `repeat_type` changes & then re-render so the
+     * hide/show logic is applied.
+     *
+     * When `repeat_type` is cleared (set to None), force all fields to their
+     * default values
      */
     repeatTypeChanged: function() {
+        var force = !this._isPopulated(this.model.get('repeat_type'));
         _.each(this.fields, function(field) {
-            if (!this._isPopulated(this.model.get(field.name))) {
+            if (force || !this._isPopulated(this.model.get(field.name))) {
                 this.model.set(field.name, field.def['default']);
             }
         }, this);
