@@ -32,7 +32,11 @@ class ImportController extends SugarController
     {
         global $mod_strings;
 
-        $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        if (!isset($_REQUEST['import_module'])) {
+            return; // there is no module to load
+        }
+
+        $this->importModule = $_REQUEST['import_module'];
 
         $this->bean = BeanFactory::getBean($this->importModule);
         if ( $this->bean ) {
