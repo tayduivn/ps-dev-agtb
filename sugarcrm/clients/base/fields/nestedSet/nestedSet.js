@@ -148,9 +148,9 @@
      */
     toggleSearchIcon: function(hide) {
         this.$('[data-role=secondinputaddon]')
-            .toggleClass('icon-search', !hide)
-            .toggleClass('icon-spinner', hide)
-            .toggleClass('icon-spin', hide);
+            .toggleClass('fa-search', !hide)
+            .toggleClass('fa-spinner', hide)
+            .toggleClass('fa-spin', hide);
     },
 
     /**
@@ -353,7 +353,7 @@
             $el = $('<input />', {'data-role': 'add-item', 'type': 'text'});
             $a.hide();
             $el.insertAfter($a);
-            $('<div />', {class: 'icon-folder-open', 'data-role': 'pseudo'}).html('&nbsp;').insertBefore($el);
+            $('<div />', {class: 'fa fa-folder-open', 'data-role': 'pseudo'}).html('&nbsp;').insertBefore($el);
             $el.focus();
         } else {
             $el.remove();

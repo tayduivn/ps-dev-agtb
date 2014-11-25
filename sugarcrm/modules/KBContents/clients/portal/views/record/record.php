@@ -56,7 +56,7 @@ $viewdefs['KBContents']['portal']['view']['record'] = array(
                     'module' => 'Notes',
                     'modulefield' => 'filename',
                     'bLable' => 'LBL_ADD_ATTACHMENT',
-                    'bIcon' => 'icon-paper-clip',
+                    'bIcon' => 'fa-paperclip',
                     'span' => 12,
                 ),
                 'usefulness' => array(
