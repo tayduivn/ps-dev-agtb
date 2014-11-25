@@ -18,19 +18,14 @@
     extendsFrom: 'ConfigPanelView',
 
     /**
-     * Holds the warning template with data for the opps_view_by field
-     */
-    $warningEl: undefined,
-
-    /**
-     * Boolean if the Forecasts module is set up and $warningEl has been created
-     */
-    hasWarningText: false,
-
-    /**
      * The current opps_view_by config setting when the view is initialized
      */
     currentOppsViewBySetting: undefined,
+
+    /**
+     * Stores if Forecasts is set up or not
+     */
+    isForecastsSetup: false,
 
     /**
      * @inheritdoc
@@ -40,31 +35,8 @@
 
         this.currentOppsViewBySetting = this.model.get('opps_view_by');
 
-        if (app.metadata.getModule('Forecasts', 'config').is_setup) {
-            this.createWarningEl();
-        }
-    },
-
-    /**
-     * Creates the `this.$warningEl` dom element with the proper text
-     */
-    createWarningEl: function() {
-        this.hasWarningText = true;
-        var warningObj = {
-                warningText: app.lang.get('LBL_OPPS_CONFIG_VIEW_BY_WARNING_FIELD_TEXT', 'Opportunities')
-            },
-            tpl = app.template.getView('config-opps-view-by.forecast-warning', 'Opportunities');
-        this.$warningEl = tpl(warningObj);
-    },
-
-    /**
-     * Appends the `this.$warningEl` dom element into the opps_view_by field
-     */
-    appendWarning: function() {
-        var $labelEl = this.$('label[for="opps_view_by"]');
-        if ($labelEl) {
-            $labelEl.append(this.$warningEl)
-        }
+        // get the boolean form of if Forecasts is configured
+        this.isForecastsSetup = !!app.metadata.getModule('Forecasts', 'config').is_setup;
     },
 
     /**
@@ -72,11 +44,11 @@
      */
     bindDataChange: function() {
         this.model.on('change:opps_view_by', function() {
-            if (this.hasWarningText && this.currentOppsViewBySetting !== this.model.get('opps_view_by')) {
+            if (this.isForecastsSetup && this.currentOppsViewBySetting !== this.model.get('opps_view_by')) {
                 this.displayWarningAlert();
-            } else {
-                this.showRollupOptions();
             }
+
+            this.showRollupOptions();
         }, this);
     },
 
@@ -87,7 +59,7 @@
         app.alert.show('forecast-warning', {
             level: 'confirmation',
             title: app.lang.get('LBL_WARNING'),
-            messages: app.lang.get('LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT', 'Opportunities'),
+            messages: app.lang.get('LBL_OPPS_CONFIG_ALERT', 'Opportunities'),
             onConfirm: _.bind(function() {
                 this.showRollupOptions();
             }, this),
@@ -99,15 +71,28 @@
         });
     },
 
+    /**
+     * Displays the Latest/Earliest Date toggle
+     */
     showRollupOptions: function() {
         if (this.currentOppsViewBySetting === 'RevenueLineItems' &&
             this.model.get('opps_view_by') === 'Opportunities') {
             this.getField('opps_closedate_rollup').show();
             this.$('[for=opps_closedate_rollup]').show();
+            this.$('#sales-stage-text').show();
+
+            // if there's no value here yet, set to latest
+            if (!this.model.has('opps_closedate_rollup')) {
+                this.$('input[value="latest"').attr('checked', true);
+            }
         } else {
             this.getField('opps_closedate_rollup').hide();
             this.$('[for=opps_closedate_rollup]').hide();
+            this.$('#sales-stage-text').hide();
         }
+
+        // update the title based on settings
+        this.updateTitle();
     },
 
     /**
@@ -115,10 +100,6 @@
      */
     _render: function(options) {
         this._super('_render', [options]);
-
-        if (this.hasWarningText) {
-            this.appendWarning();
-        }
 
         this.showRollupOptions();
     },
@@ -128,6 +109,13 @@
      * @override
      */
     _updateTitleValues: function() {
-        this.titleSelectedValues = this.model.get('opps_view_by');
+        var title = app.lang.getAppListStrings('opps_config_view_by_options_dom') || '';
+
+        // defensive coding in case user removed this options dom
+        if (title && _.isObject(title)) {
+            title = title[this.model.get('opps_view_by')]
+        }
+
+        this.titleSelectedValues = title;
     }
 })

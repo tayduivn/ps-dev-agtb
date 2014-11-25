@@ -62,7 +62,7 @@ describe('favorite field', function() {
 
         var loadTemplate = sinon.stub(field, '_loadTemplate', function() {
             this.template = function() {
-                return '<i class="icon-favorite"></i>';
+                return '<i class="fa fa-favorite"></i>';
             };
         });
 
@@ -83,7 +83,7 @@ describe('favorite field', function() {
 
         var loadTemplate = sinon.stub(field, '_loadTemplate', function() {
             this.template = function() {
-                return '<i class="icon-favorite"></i>';
+                return '<i class="fa fa-favorite"></i>';
             };
         });
 
@@ -97,8 +97,8 @@ describe('favorite field', function() {
     });
 
     describe("toggle favorite", function() {
-        var templateFavoriteIsActive   = '<i class="icon-favorite active"></i>',
-            templateFavoriteIsInactive = '<i class="icon-favorite"></i>',
+        var templateFavoriteIsActive   = '<i class="fa fa-favorite active"></i>',
+            templateFavoriteIsInactive = '<i class="fa fa-favorite"></i>',
             loadTemplateStub,
             isFavStub,
             favStub;
@@ -131,10 +131,10 @@ describe('favorite field', function() {
             field.model = model;
             field.render();
 
-            field.$('.icon-favorite').trigger('click');
+            field.$('.fa-favorite').trigger('click');
             expect(favStub.calledOnce);
             expect(isFavStub.calledOnce);
-            expect(field.$('.icon-favorite').hasClass('active')).toBeTruthy();
+            expect(field.$('.fa-favorite').hasClass('active')).toBeTruthy();
         });
 
         it('should unfavorite a favorite record', function() {
@@ -148,10 +148,10 @@ describe('favorite field', function() {
             field.model = model;
             field.render();
 
-            field.$('.icon-favorite').trigger('click');
+            field.$('.fa-favorite').trigger('click');
             expect(favStub.calledOnce);
             expect(isFavStub.calledOnce);
-            expect(field.$('.icon-favorite').hasClass('active')).toBeFalsy();
+            expect(field.$('.fa-favorite').hasClass('active')).toBeFalsy();
         });
 
         it('should log error if unable to favorite or unfavorite record', function() {
@@ -176,7 +176,7 @@ describe('favorite field', function() {
             field.model = model;
             field.render();
 
-            field.$('.icon-favorite').trigger('click');
+            field.$('.fa-favorite').trigger('click');
             expect(favStub.calledOnce);
             expect(isFavStub.calledOnce);
             expect(errorSpy.calledOnce);
@@ -206,7 +206,7 @@ describe('favorite field', function() {
                 field.model = model;
                 field.render();
 
-                field.$(".icon-favorite").trigger("click");
+                field.$(".fa-favorite").trigger("click");
                 expect(triggerSpy.calledWithExactly("favorite:active")).toBeTruthy();
             });
 
@@ -221,7 +221,7 @@ describe('favorite field', function() {
                 field.model = model;
                 field.render();
 
-                field.$(".icon-favorite").trigger("click");
+                field.$(".fa-favorite").trigger("click");
                 expect(triggerSpy.neverCalledWith("favorite:active")).toBeTruthy();
             });
         });

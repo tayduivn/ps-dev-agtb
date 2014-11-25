@@ -499,9 +499,9 @@ $app_list_strings = array (
   'meeting_status_default' => 'Planned',
   'meeting_status_dom' =>
   array (
-    'Planned' => 'Planned',
+    'Planned' => 'Scheduled',
     'Held' => 'Held',
-    'Not Held' => 'Not Held',
+    'Not Held' => 'Canceled',
   ),
   'extapi_meeting_password' =>
   array (
@@ -515,9 +515,9 @@ $app_list_strings = array (
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (
-    'Planned' => 'Planned',
+    'Planned' => 'Scheduled',
     'Held' => 'Held',
-    'Not Held' => 'Not Held',
+    'Not Held' => 'Canceled',
   ),
   'call_direction_default' => 'Outbound',
   'call_direction_dom' =>
@@ -2777,6 +2777,11 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
+    'TPL_LIST_HEADER_COUNT' => '{{num}}',
+    'TPL_LIST_HEADER_COUNT_PARTIAL' => '{{num}}+',
+    'TPL_LIST_HEADER_COUNT_TOTAL' => '{{num}} of {{total}}',
+    'TPL_LIST_HEADER_COUNT_TOOLTIP' => 'Click to see the full count',
+
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
     'LBL_LOCALE_NAME_EXAMPLE_SALUTATION' => 'Dr.',
@@ -4454,20 +4459,20 @@ Sincerely, SugarCRM',
 
     //in app tour
     'LBL_TOUR_SCREEN_1_TITLE_670' => 'Enhanced forecasting functionality in Sugar',
-    'LBL_TOUR_SCREEN_1_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Setup your forecasting parameters</li><li class="icon-ok">Easily track projected sales and pipeline health</li><li class="icon-ok">Forecast based on projected sales from your sales team</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_1_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">Setup your forecasting parameters</li><li class="fa fa-check">Easily track projected sales and pipeline health</li><li class="fa fa-check">Forecast based on projected sales from your sales team</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_2_TITLE_670' => 'Setup your forecasting parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Choose fiscal year start date</li><li class="icon-ok">Setup Time Periods to be either yearly or quarterly</li><li class="icon-ok">Decide how many past and future Time Periods need to be visible in the worksheet</li><li class="icon-ok">Select Forecast ranges to tag Opportunities as Include, Exclude or Upside</li><li class="icon-ok">Select Forecast scenarios to identify Likely, Best and Worst forecast</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">Choose fiscal year start date</li><li class="fa fa-check">Setup Time Periods to be either yearly or quarterly</li><li class="fa fa-check">Decide how many past and future Time Periods need to be visible in the worksheet</li><li class="fa fa-check">Select Forecast ranges to tag Opportunities as Include, Exclude or Upside</li><li class="fa fa-check">Select Forecast scenarios to identify Likely, Best and Worst forecast</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_3_TITLE_670' => 'Manage your Sales Team\'s Projected Sales',
-    'LBL_TOUR_SCREEN_3_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to review the Forecast</li><li class="icon-ok">View your sales team members’ worksheets and provide adjusted forecasts</li><li class="icon-ok">See alert on worksheet when a sales team member commits a new Forecast</li><li class="icon-ok">Save the Forecast worksheet as a draft version or commit the Forecast to your manager</li><li class="icon-ok">View history of previous commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_3_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">Select the Time Period to review the Forecast</li><li class="fa fa-check">View your sales team members’ worksheets and provide adjusted forecasts</li><li class="fa fa-check">See alert on worksheet when a sales team member commits a new Forecast</li><li class="fa fa-check">Save the Forecast worksheet as a draft version or commit the Forecast to your manager</li><li class="fa fa-check">View history of previous commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_4_TITLE_670' => 'Manage your Sales Team\'s Projected Sales',
-    'LBL_TOUR_SCREEN_4_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Pareto chart for pipeline analysis across all your sales team members\' forecasts</li><li class="icon-ok">Choose to visualize projected sales by Likely, Best or Worst forecast</li><li class="icon-ok">View projected sales and how close you are to make your team Quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen4-thumb.png" width="220" id="thumbnail_4" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_4_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">View Pareto chart for pipeline analysis across all your sales team members\' forecasts</li><li class="fa fa-check">Choose to visualize projected sales by Likely, Best or Worst forecast</li><li class="fa fa-check">View projected sales and how close you are to make your team Quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen4-thumb.png" width="220" id="thumbnail_4" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_5_TITLE_670' => 'Manage your own Projected Sales',
-    'LBL_TOUR_SCREEN_5_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period for your Forecast</li><li class="icon-ok">Review and in-line edit amounts and Win Probability for a quick what-if analysis</li><li class="icon-ok">Save the Forecast worksheet as a draft version or commit the Forecast to your manager</li><li class="icon-ok">View history of previous commits</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_5_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">Select the Time Period for your Forecast</li><li class="fa fa-check">Review and in-line edit amounts and Win Probability for a quick what-if analysis</li><li class="fa fa-check">Save the Forecast worksheet as a draft version or commit the Forecast to your manager</li><li class="fa fa-check">View history of previous commits</li><li class="fa fa-check">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_6_TITLE_670' => 'Manage your own Projected Sales',
-    'LBL_TOUR_SCREEN_6_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Pareto chart for pipeline analysis over time for your Opportunities</li><li class="icon-ok">Choose to visualize pipeline distribution by Sales Stage or Win Probability</li><li class="icon-ok">View projected sales and how close you are to make your assigned Quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen6-thumb.png" width="220" id="thumbnail_6" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_6_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="fa fa-check">View Pareto chart for pipeline analysis over time for your Opportunities</li><li class="fa fa-check">Choose to visualize pipeline distribution by Sales Stage or Win Probability</li><li class="fa fa-check">View projected sales and how close you are to make your assigned Quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen6-thumb.png" width="220" id="thumbnail_6" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_WELCOME' => 'What\'s New in Sugar',
     'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
-    'LBL_TOUR_FEATURES_670' => '<ul style=""><li class="icon-ok">Improved look and feel – now with a new modern theme.</li><li class="icon-ok">Enhanced Forecasts module – now with intuitive user interface and new data visualization</li></ul>',
+    'LBL_TOUR_FEATURES_670' => '<ul style=""><li class="fa fa-check">Improved look and feel – now with a new modern theme.</li><li class="fa fa-check">Enhanced Forecasts module – now with intuitive user interface and new data visualization</li></ul>',
     'LBL_TOUR_VISIT' => 'For more information please visit our application',
     'LBL_TOUR_DONE' => 'You\'re Done!',
     'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
@@ -4496,7 +4501,7 @@ Sincerely, SugarCRM',
     'LBL_TOUR_RECORD_DASHBOARDACTIONS' => 'Create new groups of Dashlets',
     'LBL_TOUR_RECORD_DASHBOARDNAME' => 'Assign a name to the group of Dashlets',
     'LBL_TOUR_RECORD_DASHLETCOG' => 'Choose to remove Dashlet or to change settings',
-    'LBL_TOUR_INTRO' =>'<h4>Welcome to Sugar</h4> We\'d like to walk you through some of the features.  Use the < and > arrows on the bottom of the screen to take a tour.<ul class="resource-list"><li class="resource "><a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/" target="_blank"><span class="label label-module label-module-md pull-left blue"><i class="icon-2x icon-magic"></i></span></a><div class="resource-info"><a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/" target="_blank">What\'s New</a><p class="details">Find out the key changes between releases.</p></div></li><li class="resource "><a href="http://university.sugarcrm.com/" target="_blank"><span class="label label-module label-module-md pull-left green"><i class="icon-2x icon-book"></i></span></a><div class="resource-info"><a href="http://university.sugarcrm.com/" target="_blank">Find out more about Sugar</a><p class="details">A robust library of eLearning, live and virtual classroom training, webinars and video tutorials.</p></div></li><li class="resource "><a href="http://support.sugarcrm.com/" target="_blank"><span class="label label-module label-module-md pull-left red"><i class="icon-2x icon-question-sign"></i></span></a><div class="resource-info"><a href="http://support.sugarcrm.com/" target="_blank">Get Support</a><p class="details">Need help, have a issue or want to suggest how to make Sugar better?</p></div></li></ul>',
+    'LBL_TOUR_INTRO' =>'<h4>Welcome to Sugar</h4> We\'d like to walk you through some of the features.  Use the < and > arrows on the bottom of the screen to take a tour.<ul class="resource-list"><li class="resource"><a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/" target="_blank"><span class="label label-module label-module-md pull-left blue"><i class="fa fa-2x fa-magic"></i></span></a><div class="resource-info"><a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/" target="_blank">What\'s New</a><p class="details">Find out the key changes between releases.</p></div></li><li class="resource"><a href="http://university.sugarcrm.com/" target="_blank"><span class="label label-module label-module-md pull-left green"><i class="fa fa-2x fa-book"></i></span></a><div class="resource-info"><a href="http://university.sugarcrm.com/" target="_blank">Find out more about Sugar</a><p class="details">A robust library of eLearning, live and virtual classroom training, webinars and video tutorials.</p></div></li><li class="resource"><a href="http://support.sugarcrm.com/" target="_blank"><span class="label label-module label-module-md pull-left red"><i class="fa fa-2x fa-question-circle"></i></span></a><div class="resource-info"><a href="http://support.sugarcrm.com/" target="_blank">Get Support</a><p class="details">Need help, have a issue or want to suggest how to make Sugar better?</p></div></li></ul>',
     'LBL_TOUR_LIST_INTRO' =>'View a list of records and take actions records.',
     'LBL_TOUR_RECORD_INTRO' =>'View details on this record and see all data related to it.',
     'LBL_TOUR_FORECAST_INTRO' =>'Manage pipeline and Forecast.',
@@ -5381,7 +5386,7 @@ $app_list_strings['forecast_pareto_visibility_options'] = array (
 
 $app_list_strings['opps_config_view_by_options_dom'] = array(
     'Opportunities' => 'Opportunities',
-    'RevenueLineItems' => 'Revenue Line Items'
+    'RevenueLineItems' => 'Opportunities and Revenue Line Items'
 );
 
 $app_list_strings['opps_config_view_by_closedate_rollup_dom'] = array(

@@ -53,12 +53,12 @@ dl.list {
     color: @linkMore;
     text-decoration: none;
   }
-  [class^="icon-"] {
+  .fa {
     display: inline-block;
     width: 1.25em;
     text-align: center;
   }
-  &:hover [class^="icon-"] {
+  &:hover .fa {
     text-decoration: none;
   }
 }
@@ -351,8 +351,7 @@ hr.soften {
       .opacity(100);
       background-color: darken(@navbarBackground, 20%);
       color: @navbarBackground;
-       [class^="icon-"],
-       [class*=" icon-"] {
+      .fa {
         .opacity(20);
       }
     }
@@ -365,7 +364,7 @@ hr.soften {
   position: relative;
 }
 
-.icon-spin {
+.fa-spin {
   display: inline-block;
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
@@ -394,7 +393,7 @@ hr.soften {
   100% { transform: rotate(359deg); }
 }
 @-moz-document url-prefix() {
-  .icon-spin { height: .9em; }
+  .fa-spin { height: .9em; }
 }
 
 .noaccess a {

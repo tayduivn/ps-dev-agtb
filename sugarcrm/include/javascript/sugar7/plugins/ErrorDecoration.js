@@ -68,7 +68,7 @@
                     }
                     this.$('.error').removeClass('error');
                     this.$('.error-tooltip').remove();
-                    this.$('[data-toggle="tab"] .icon-exclamation-sign').remove();
+                    this.$('[data-toggle="tab"] .fa-exclamation-circle').remove();
                 }, this);
             }
         });

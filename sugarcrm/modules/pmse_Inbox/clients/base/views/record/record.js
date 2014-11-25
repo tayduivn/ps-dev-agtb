@@ -1109,7 +1109,7 @@
             $panelHeader.next().toggle();
         }
         if ($panelHeader && $panelHeader.find('i')) {
-            $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');
+            $panelHeader.find('i').toggleClass('fa-chevron-up fa-chevron-down');
         }
         var panelName = this.$(e.currentTarget).parent().data('panelname');
         var state = 'collapsed';

@@ -53,12 +53,12 @@
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
                 <div class="dropdown">
-                    <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle"><i class="icon-ellipsis-horizontal"></i></button>
+                    <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle"><i class="fa fa-ellipsis-h"></i></button>
                     <ul class="dropdown-menu left carettop">
                     {{#each ../../../_fields.all}}
                         <li>
                             <button{{#if selected}} class="active"{{/if}} data-field-toggle="{{name}}">
-                                {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
+                                {{#if selected}}<i class="fa fa-check"></i> {{/if}}{{str label ../../../../module}}
                             </button>
                         </li>
                     {{/each}}

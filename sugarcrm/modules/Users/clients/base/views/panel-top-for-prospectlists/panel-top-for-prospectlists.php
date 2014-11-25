@@ -14,19 +14,13 @@ $viewdefs['Users']['base']['view']['panel-top-for-prospectlists'] = array(
     'type' => 'panel-top',
     'buttons' => array(
         array(
-            'type' => 'button',
-            'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
-            'tooltip' => 'LBL_TOGGLE_VISIBILITY',
-        ),
-        array(
             'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
                     'type' => 'sticky-rowaction',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',

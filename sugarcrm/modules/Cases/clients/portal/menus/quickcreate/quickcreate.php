@@ -16,6 +16,6 @@ $viewdefs[$module_name]['portal']['menu']['quickcreate'] = array(
     'layout' => 'create',
     'label' => 'LNK_NEW_CASE',
     'visible' => true,
-    'icon' => 'icon-plus',
+    'icon' => 'fa-plus',
     'order' => 0,
 );

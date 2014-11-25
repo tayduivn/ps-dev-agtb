@@ -15,14 +15,14 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
             array(
                 'type' => 'rowaction',
                 'css_class' => 'btn deleteBtn',
-                'icon' => 'icon-minus',
+                'icon' => 'fa-minus',
                 'event' => 'list:deleterow:fire',
                 'tooltip' => 'LBL_DELETE_BUTTON',
             ),
             array(
                 'type' => 'rowaction',
                 'css_class' => 'btn addBtn',
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'event' => 'list:addrow:fire',
                 'tooltip' => 'LBL_ADD_BUTTON',
             ),

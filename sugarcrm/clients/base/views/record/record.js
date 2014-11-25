@@ -231,7 +231,6 @@
             }
         }, this);
 
-        this.toggleHeaderLabels(this.createMode);
         this.initButtons();
         this.setEditableFields();
 
@@ -242,8 +241,8 @@
             this.setButtonStates(this.STATE.VIEW);
             if (this.createMode) {
                 // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-                // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
-                this.toggleFields(this.editableFields, true);
+                // readonly's pruned out), we can call toggleEdit - so only fields that should be are editable
+                this.toggleEdit(true);
             }
         }
 
@@ -520,9 +519,11 @@
      *   otherwise.
      */
     toggleEdit: function(isEdit) {
-        this.toggleFields(this.editableFields, isEdit);
-        this.toggleViewButtons(isEdit);
-        this.adjustHeaderpane();
+        var self = this;
+        this.toggleFields(this.editableFields, isEdit, function() {
+            self.toggleViewButtons(isEdit);
+            self.adjustHeaderpaneFields();
+        });
     },
 
     /**
@@ -556,17 +557,6 @@
             this.toggleViewButtons(true);
             this.adjustHeaderpaneFields();
         }
-    },
-
-    /**
-     * Hide/show all field labels in headerpane.
-     *
-     * @param {Boolean} isEdit `true` to show the field labels, `false`
-     *   otherwise.
-     */
-    toggleHeaderLabels: function(isEdit) {
-        this.toggleViewButtons(isEdit);
-        this.adjustHeaderpane();
     },
 
     /**
@@ -783,10 +773,19 @@
      * @param {View.Field} field Current focused field (field in inline-edit mode).
      */
     handleKeyDown: function(e, field) {
+        var whichField = e.shiftKey ? 'prevField' : 'nextField';
+
         if (e.which === 9) { // If tab
             e.preventDefault();
-            this.nextField(field, e.shiftKey ? 'prevField' : 'nextField');
-            this.adjustHeaderpane();
+            this.nextField(field, whichField);
+            if (field.$el.closest('.headerpane').length > 0) {
+                this.toggleViewButtons(false);
+                this.adjustHeaderpaneFields();
+            }
+            if (field[whichField] && field[whichField].$el.closest('.headerpane').length > 0) {
+                this.toggleViewButtons(true);
+                this.adjustHeaderpaneFields();
+            }
         }
     },
 
@@ -818,8 +817,8 @@
                 tabLink = this.$('[href="#'+fieldTab.attr('id')+'"].[data-toggle="tab"]');
                 tabLink.tab('show');
                 // Put a ! next to the tab if one doesn't already exist
-                if (tabLink.find('.icon-exclamation-sign').length === 0) {
-                    tabLink.append(' <i class="icon-exclamation-sign tab-warning"></i>');
+                if (tabLink.find('.fa-exclamation-circle').length === 0) {
+                    tabLink.append(' <i class="fa fa-exclamation-circle tab-warning"></i>');
                 }
             }
 
@@ -827,7 +826,7 @@
             if (fieldPanel && fieldPanel.is(':hidden')) {
                 fieldPanel.toggle();
                 var fieldPanelArrow = fieldPanel.prev().find('i');
-                fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
+                fieldPanelArrow.toggleClass('fa-chevron-up fa-chevron-down');
             }
         } else if (field.$el.is(':hidden')) {
             this.$('.more[data-moreless]').trigger('click');
@@ -1098,17 +1097,16 @@
 
         $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
 
-        if (!_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
+        if (($recordCells.length > 0) && (this.getContainerWidth() > 0)) {
             $ellipsisCell = $(this._getCellToEllipsify($recordCells));
 
-            if (!_.isEmpty($ellipsisCell)) {
+            if ($ellipsisCell.length > 0) {
                 if ($ellipsisCell.hasClass('edit')) {
                     // make the ellipsis cell widen to 100% on edit
                     $ellipsisCell.css({'width': '100%'});
                 } else {
                     ellipsisCellWidth = this._calculateEllipsifiedCellWidth($recordCells, $ellipsisCell);
                     this._setMaxWidthForEllipsifiedCell($ellipsisCell, ellipsisCellWidth);
-                    this._widenLastCell($recordCells);
                 }
             }
         }
@@ -1178,26 +1176,6 @@
     },
 
     /**
-     * Widen the last cell to 100%.
-     * @param {jQuery} $cells
-     * @private
-     */
-    _widenLastCell: function($cells) {
-        var $cellToWiden;
-
-        _.each($cells, function(cell) {
-            var $cell = $(cell);
-            if ($cell.hasClass('record-cell') && (!$cell.hasClass('hide') || $cell.is(':visible'))) {
-                $cellToWiden = $cell;
-            }
-        });
-
-        if ($cellToWiden) {
-            $cellToWiden.css({'width': '100%'});
-        }
-    },
-
-    /**
      * Adds the favorite field to app.view.View.getFieldNames() if `favorite` field is within a panel
      * so my_favorite is part of the field list and is fetched
      */
@@ -1234,7 +1212,7 @@
             $panelHeader.toggleClass('panel-inactive panel-active');
         }
         if ($panelHeader && $panelHeader.find('i')) {
-            $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');
+            $panelHeader.find('i').toggleClass('fa-chevron-up fa-chevron-down');
         }
         var panelName = this.$(e.currentTarget).parent().data('panelname');
         var state = 'collapsed';
@@ -1354,7 +1332,7 @@
         }, this);
 
         app.shortcuts.register('Record:Favorite', 'f a', function() {
-            this.$('.headerpane .icon-favorite:visible').click();
+            this.$('.headerpane .fa-favorite:visible').click();
         }, this);
 
         app.shortcuts.register('Record:Follow', 'f o', function() {

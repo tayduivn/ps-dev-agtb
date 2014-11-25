@@ -8,6 +8,7 @@
     top: 0;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 
     /* backdrop cover */
     .drawer-backdrop {
@@ -36,7 +37,16 @@
 
     /* set drawer transitions */
     &.transition {
-        .transition( all .3s );
+        .transition(top 300ms);
+        .main-pane {
+            top: 0;
+        }
+        .headerpane,
+        .preview-headerbar {
+            position: relative;
+            top: 0;
+            width: 100%;
+        }
     }
 }
 /* disables scrolling */
@@ -55,11 +65,12 @@ body.noscroll {
         position: relative;
         top: 5px;
     }
-    .side-pane.active {
-        display: block;
-    }
     .dashboard {
         top: 5px;
+        padding-top: 0;
+    }
+    .preview-pane {
+        padding-top: 5px;
     }
     .headerpane,
     .preview-headerbar {
@@ -69,6 +80,12 @@ body.noscroll {
         .btn-toolbar {
             visibility: hidden;
         }
+    }
+}
+
+.touch .drawer.active {
+    &.transition .main-pane {
+        padding-top: 0 !important
     }
 }
 
@@ -82,6 +99,12 @@ body.noscroll {
 }
 
 @media (max-width: 768px) {
+    .transition {
+        .main-pane.span8,
+        .main-pane.span12 {
+            margin: 0;
+        }
+    }
     .drawer.active {
         overflow: auto;
         background-image: url('@{textureSecondary}');
@@ -93,11 +116,11 @@ body.noscroll {
         .sidebar-toggle {
             display: none;
         }
-        .headerpane {
-            width: 100%;
-        }
         .main-pane {
             margin-top: 0;
+        }
+        .preview-pane {
+            position: relative;
         }
     }
 }

@@ -83,12 +83,35 @@ describe("Editable Plugin", function() {
             expect(field.tplName).toBe(view.action);
         });
 
-        view.toggleFields(view.fields, true);
+        view.toggleFields(_.values(view.fields), true);
 
         waitsFor(function() {
             var last = _.last(_.keys(view.fields));
             return view.fields[last].tplName == 'edit';
         }, 'it took too long to wait switching view', 1000);
+
+        runs(function() {
+            _.each(view.fields, function(field) {
+                expect(field.tplName).toBe('edit');
+            });
+        });
+    });
+
+    it('Should call the callback function when all fields have been toggled', function() {
+        var callbackStub = sinonSandbox.stub();
+
+        view.render();
+        view.model.set({
+            name: 'Name',
+            case_number: 123,
+            description: 'Description'
+        });
+
+        view.toggleFields(_.values(view.fields), true, callbackStub);
+
+        waitsFor(function() {
+            return callbackStub.calledOnce;
+        }, 'Callback did not get called in time.', 1000);
 
         runs(function() {
             _.each(view.fields, function(field) {

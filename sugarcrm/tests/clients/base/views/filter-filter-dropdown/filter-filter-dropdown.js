@@ -302,10 +302,10 @@ describe('Base.View.FilterFilterDropdown', function() {
                 .toEqual({id: 'test', text: 'TEST', icon: undefined});
 
             expect(view.formatResult({id: 'create', text: 'Create'}))
-                .toEqual({id: 'create', text: 'Create', icon: 'icon-plus'});
+                .toEqual({id: 'create', text: 'Create', icon: 'fa-plus'});
 
             expect(view.formatResult({id: 'last_filter', text: 'Last selected filter'}))
-                .toEqual({id: 'last_filter', text: 'Last selected filter', icon: 'icon-ok'});
+                .toEqual({id: 'last_filter', text: 'Last selected filter', icon: 'fa-check'});
         });
 
         it('should formatResultCssClass (add css class to visually add borders and separate categories)', function() {

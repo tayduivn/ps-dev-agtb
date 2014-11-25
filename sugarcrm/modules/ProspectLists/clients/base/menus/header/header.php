@@ -17,13 +17,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_PROSPECT_LIST',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_PROSPECT_LIST_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
 );

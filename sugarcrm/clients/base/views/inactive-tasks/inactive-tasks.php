@@ -45,7 +45,7 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             array(
                 'type' => 'actiondropdown',
                 'no_default_action' => true,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
@@ -123,7 +123,7 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'unlink-action',
-                    'icon' => 'icon-unlink',
+                    'icon' => 'fa-chain-broken',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'target' => 'view',
@@ -144,7 +144,7 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'unlink-action',
-                    'icon' => 'icon-unlink',
+                    'icon' => 'fa-chain-broken',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'target' => 'view',

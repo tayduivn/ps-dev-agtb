@@ -62,7 +62,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-state-btn'
                         ),
@@ -92,7 +92,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-city-btn'
                         ),
@@ -123,7 +123,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-area-code-btn'
                         ),
@@ -154,7 +154,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-postal-code-btn'
                         ),
@@ -208,7 +208,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-rad-srch-btn'
                         ),
@@ -267,7 +267,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-ind-code-btn'
                         ),
@@ -339,7 +339,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-sales-btn'
                         ),
@@ -398,7 +398,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-empcnt-btn'
                         ),
@@ -450,7 +450,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-empgrwth-btn'
                         ),
@@ -505,7 +505,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-mktcap-btn'
                         ),
@@ -546,7 +546,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-org-name-btn'
                         ),
@@ -600,7 +600,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-year-founding-btn'
                         ),
@@ -651,7 +651,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-duns-btn'
                         ),
@@ -682,7 +682,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-org-id-btn'
                         ),
@@ -748,7 +748,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-net-income-btn'
                         ),
@@ -803,7 +803,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-net-income-growth-btn'
                         ),
@@ -858,7 +858,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-assets-btn'
                         ),
@@ -924,7 +924,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-offer-amt-btn'
                         ),
@@ -979,7 +979,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-ipo-price-range-btn'
                         ),
@@ -1038,7 +1038,7 @@ $viewdefs['Accounts']['base']['view']['dnb-bal-params'] = array(
                         array(
                             'type' => 'rowaction',
                             'cell_css_class' => 'span1',
-                            'icon' => 'icon-plus',
+                            'icon' => 'fa-plus',
                             'css_class' => 'dnb-bal-add-btn btn',
                             'event' => 'dnb-bal-ipo-date-btn'
                         ),

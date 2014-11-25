@@ -17,6 +17,6 @@ $viewdefs[$module_name]['portal']['menu']['header'] = array(
         'label' =>'LBL_LIST_ARTICLES',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
         ),
 );

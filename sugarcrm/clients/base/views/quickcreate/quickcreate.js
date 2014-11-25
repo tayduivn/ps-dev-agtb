@@ -66,7 +66,7 @@
                     // apply default icon for compatibility with customizations from previous versions
                     // but leave the possibility to turn icon off by specifying empty value
                     if (!("icon" in menuItem)) {
-                        menuItem.icon = "icon-plus";
+                        menuItem.icon = "fa fa-plus";
                     }
                     //TODO: refactor sidecar field hbs helper so it can accept the module name directly
                     menuItem.model = app.data.createBean(name);

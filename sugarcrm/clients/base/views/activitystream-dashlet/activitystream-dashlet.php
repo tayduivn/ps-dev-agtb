@@ -36,14 +36,14 @@ $viewdefs['base']['view']['activitystream-dashlet'] = array(
             array(
                 "type" => "dashletaction",
                 "css_class" => "btn btn-invisible addComment",
-                "icon" => "icon-plus",
+                "icon" => "fa-plus",
                 "action" => "addComment",
                 'tooltip' => 'New comment',
             ),
             array(
                 "type" => "dashletaction",
                 "css_class" => "dashlet-toggle btn btn-invisible minify",
-                "icon" => "icon-chevron-up",
+                "icon" => "fa-chevron-up",
                 "action" => "toggleMinify",
                 "tooltip" => "LBL_DASHLET_MINIMIZE",
             ),

@@ -7,7 +7,7 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
         'actions' => array(
             array(
                 'type' => 'rowaction',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'event' => 'list:preview:fire',
                 'css_class'=>'overflow-visible',
                 'tooltip'=> 'Status',

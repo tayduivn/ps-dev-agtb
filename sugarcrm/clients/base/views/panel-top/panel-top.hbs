@@ -10,8 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="label label-module label-{{module}} pull-left">{{moduleIconLabel module}}</div> <h4 class="pull-left">{{str layout.label parentModule}}</h4>
+<div data-toggle="true" class="label label-module label-{{module}} pull-left">{{moduleIconLabel module}}</div> <h4 data-toggle="true" class="pull-left">{{str layout.label parentModule}}</h4>
+{{#each meta.fields}}
+<span class="pull-left panel-field">
+    {{field ../this model=../model}}
+</span>
+{{/each}}
 <div class="subpanel-controls btn-toolbar pull-right">
+    <a class="btn btn-invisible" data-toggle="true" href="javascript:void(0);" rel="tooltip" data-placement="bottom" data-original-title="{{str 'LBL_TOGGLE_VISIBILITY' module}}">
+        <i class="icon-chevron-up"></i>
+    </a>
     {{#each meta.buttons}}
         {{field ../this}}
     {{/each}}

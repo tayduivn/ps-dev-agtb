@@ -34,7 +34,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
             array(
                 'type' => 'actiondropdown',
                 'no_default_action' => true,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
@@ -136,7 +136,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-edit',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:businessRulesLayout:fire',
                     'target' => 'view',
@@ -145,7 +145,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:delete-record:fire',
                     'target' => 'view',
@@ -154,7 +154,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-download-alt',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',
@@ -163,7 +163,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-eye-close',
+//                    'icon' => 'fa-eye-slash',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => 'dashlet-processes:disable-record:fire',
 //                    'target' => 'view',
@@ -172,7 +172,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //                ),
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-info-sign',
+//                    'icon' => 'fa-info-circle',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => '',
 //                    'target' => 'view',
@@ -193,7 +193,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //            'row_actions' => array(
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-edit',
+//                    'icon' => 'fa-pencil',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => 'dessigner',
 //                    'target' => 'view',
@@ -202,7 +202,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //                ),
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-remove',
+//                    'icon' => 'fa-times',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => '',
 //                    'target' => 'view',
@@ -211,7 +211,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //                ),
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-download-alt',
+//                    'icon' => 'fa-download',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => '',
 //                    'target' => 'view',
@@ -220,7 +220,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //                ),
 //                array(
 //                    'type' => 'rowaction',
-//     icon               'icon' => 'icon-eye-open',
+//     icon               'icon' => 'fa-eye',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => 'dashlet-processes:enable-record:fire',
 //                    'target' => 'view',
@@ -229,7 +229,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
 //                ),
 //                array(
 //                    'type' => 'rowaction',
-//                    'icon' => 'icon-info-sign',
+//                    'icon' => 'fa-info-circle',
 //                    'css_class' => 'btn btn-mini',
 //                    'event' => '',
 //                    'target' => 'view',
@@ -257,7 +257,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:businessRulesLayout:fire',
                     'target' => 'view',
@@ -266,7 +266,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:delete-record:fire',
                     'target' => 'view',
@@ -275,7 +275,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',
@@ -284,7 +284,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-info-sign',
+                    'icon' => 'fa-info-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:description-record:fire',
                     'target' => 'view',
@@ -308,7 +308,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-edit',
+                    'icon' => 'fa-pencil',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:businessRulesLayout:fire',
                     'target' => 'view',
@@ -317,7 +317,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-remove',
+                    'icon' => 'fa-times',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:delete-record:fire',
                     'target' => 'view',
@@ -326,7 +326,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-download-alt',
+                    'icon' => 'fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',
@@ -335,7 +335,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-info-sign',
+                    'icon' => 'fa-info-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:description-record:fire',
                     'target' => 'view',

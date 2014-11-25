@@ -10,4 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<span class="label">{{value}}</span>
+{{#if value}}
+    {{#eachOptions items}}
+        {{#eq this.key ../value}}
+            <span class="label">{{value}}</span>
+        {{/eq}}
+    {{/eachOptions}}
+{{/if}}

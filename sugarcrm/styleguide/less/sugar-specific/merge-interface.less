@@ -7,19 +7,17 @@ h4.merge-interface-header {
   .preview {
     padding-top: 0;
   }
-  i.icon-eye-open {
-    padding: 2px 4px;
-  }
   button {
-    width: 65px;
-    text-align: left;
+    margin-right: 12px;
     &.on {
-      #gradient > .horizontal(darken(@grayLighter, 4%), darken(@grayLighter, 4%));
-      .border-radius(4px 0 0 4px);
-      i.icon-eye-open {
-        color: @gray;
-        .opacity(100);
-        text-shadow: 0 1px @white;
+      color: @white !important;
+      text-shadow: none;
+      background: @gray !important;
+      > .fa {
+        color: @grayLighter !important;
+      }
+      &:focus {
+        background: @grayDark !important;
       }
     }
   }
@@ -158,7 +156,7 @@ h4.merge-interface-header {
         display: block;
       }
     }
-    button.icon-remove-sign {
+    button.fa-times-circle {
       margin-top: 1px;
       line-height: 8px;
     }
@@ -358,9 +356,9 @@ h4.merge-interface-header {
   overflow: hidden;
 }
 
-@iterations: 50;
+@iterations: 10;
 .loopingClass (@index) when (@index > 0) {
-  (~".merge-row-field-height@{index}") {
+  .merge-row-field-height@{index} {
     height: (@index *(@mergeFieldHeight + 5)) !important;
   }
   .loopingClass(@index - 1);

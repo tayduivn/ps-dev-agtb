@@ -47,6 +47,12 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             }
         });
 
+        sinon.collection.stub(app.template, 'getView', function(view) {
+            return function() {
+                return view;
+            };
+        });
+
         // load the parent config-panel view
         SugarTest.loadComponent('base', 'view', 'config-panel');
         view = SugarTest.createView('base', 'Opportunities', 'config-opps-view-by', meta, null, true);
@@ -62,56 +68,25 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             view.initialize(options);
             expect(view.currentOppsViewBySetting).toEqual('Opportunities');
         });
-
-        it('should call createWarningEl if Forecasts is setup', function() {
-            app.metadata.getModule.restore();
-            sinon.collection.stub(app.metadata, 'getModule', function() {
-                return {
-                    is_setup: true
-                }
-            });
-            sinon.collection.stub(view, 'createWarningEl', function() {});
-            view.initialize(options);
-            expect(view.createWarningEl).toHaveBeenCalled();
-        });
-
-        it('should not call createWarningEl if Forecasts is not setup', function() {
-            sinon.collection.stub(view, 'createWarningEl', function() {});
-            view.initialize(options);
-            expect(view.createWarningEl).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('createWarningEl()', function() {
-        it('should build $warningEl', function() {
-            sinon.collection.stub(app.template, 'getView', function() {
-                return function(args) {
-                    return 'testEl';
-                }
-            });
-
-            view.createWarningEl();
-            expect(view.$warningEl).toEqual('testEl');
-        });
     });
 
     describe('bindDataChange()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'showRollupOptions');
         });
-        it('should call displayWarningAlert if hasWarningText and change is different than current', function() {
+        it('should call displayWarningAlert if isForecastsSetup and change is different than current', function() {
             sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.hasWarningText = true;
+            view.isForecastsSetup = true;
             view.currentOppsViewBySetting = 'Opportunities';
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
             expect(view.displayWarningAlert).toHaveBeenCalled();
-            expect(view.showRollupOptions).not.toHaveBeenCalled();
+            expect(view.showRollupOptions).toHaveBeenCalled();
         });
 
-        it('should not call displayWarningAlert if hasWarningText == false', function() {
+        it('should not call displayWarningAlert if isForecastsSetup == false', function() {
             sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.hasWarningText = false;
+            view.isForecastsSetup = false;
             view.currentOppsViewBySetting = 'Opportunities';
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
@@ -121,7 +96,7 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
 
         it('should not call displayWarningAlert if changing to the same as current', function() {
             sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.hasWarningText = true;
+            view.isForecastsSetup = true;
             view.currentOppsViewBySetting = 'RevenueLineItems';
             view.bindDataChange();
             view.model.set('opps_view_by', 'RevenueLineItems');
@@ -134,21 +109,8 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'showRollupOptions');
         });
-        it('should call appendWarning if hasWarningText == true', function() {
-            sinon.collection.stub(view, '_super', function() {});
-            sinon.collection.stub(view, 'appendWarning', function() {});
-            view.hasWarningText = true;
+        it('should call showRollupOptions()', function() {
             view._render();
-            expect(view.appendWarning).toHaveBeenCalled();
-            expect(view.showRollupOptions).toHaveBeenCalled();
-        });
-
-        it('should not call appendWarning if hasWarningText == false', function() {
-            sinon.collection.stub(view, '_super', function() {});
-            sinon.collection.stub(view, 'appendWarning', function() {});
-            view.hasWarningText = false;
-            view._render();
-            expect(view.appendWarning).not.toHaveBeenCalled();
             expect(view.showRollupOptions).toHaveBeenCalled();
         });
     });
@@ -156,11 +118,16 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
     describe('_updateTitleValues()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'showRollupOptions');
+            sinon.collection.stub(app.lang, 'getAppListStrings', function() {
+                return {
+                    'testValue': 'Test Value'
+                }
+            });
         });
         it('should set this.titleSelectedValues', function() {
             view.model.set('opps_view_by', 'testValue');
             view._updateTitleValues();
-            expect(view.titleSelectedValues).toBe('testValue');
+            expect(view.titleSelectedValues).toBe('Test Value');
         });
     });
 });

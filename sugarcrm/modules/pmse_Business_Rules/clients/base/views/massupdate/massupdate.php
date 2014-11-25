@@ -17,7 +17,7 @@ $viewdefs[$module_name]['base']['view']['massupdate'] = array(
             'type' => 'button',
             'value' => 'cancel',
             'css_class' => 'btn-invisible cancel_button',
-            'icon' => 'icon-remove',
+            'icon' => 'fa-times',
             'primary' => false,
         ),
     ),

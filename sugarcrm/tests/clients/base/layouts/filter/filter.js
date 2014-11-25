@@ -459,9 +459,9 @@ describe('Base.Layout.Filter', function() {
             sinon.collection.stub(layout, 'getRelevantContextList', function() { return []; });
             layout.$el = $('<div></div>');
             layout.applyFilter('not empty');
-            expect(layout.$('.add-on.icon-remove')[0]).not.toBeUndefined();
+            expect(layout.$('.add-on.fa-times')[0]).not.toBeUndefined();
             layout.applyFilter('');
-            expect(layout.$('.add-on.icon-remove')[0]).toBeUndefined();
+            expect(layout.$('.add-on.fa-times')[0]).toBeUndefined();
         });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;

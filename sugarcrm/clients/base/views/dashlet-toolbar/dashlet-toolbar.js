@@ -15,8 +15,8 @@
  */
 ({
     className: 'dashlet-header',
-    cssIconDefault: 'icon-cog',
-    cssIconRefresh: 'icon-refresh icon-spin',
+    cssIconDefault: 'fa-cog',
+    cssIconRefresh: 'fa-refresh fa-spin',
     defaultActions: {
         'dashlet:edit:clicked' : 'editClicked',
         'dashlet:refresh:clicked' : 'refreshClicked',
@@ -87,7 +87,7 @@
      */
     toggleMinify: function(evt) {
         var $el = this.$('.dashlet-toggle > i'),
-            collapsed = $el.is('.icon-chevron-up');
+            collapsed = $el.is('.fa-chevron-up');
         this.layout.collapse(collapsed);
         //firing an event to notify dashlet expand / collapse
         this.layout.trigger('dashlet:collapse',collapsed);

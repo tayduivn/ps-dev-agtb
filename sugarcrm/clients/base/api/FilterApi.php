@@ -78,8 +78,8 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
-            'filterModulePostCount' => array(
-                'reqType' => 'POST',
+            'filterModuleCount' => array(
+                'reqType' => 'GET',
                 'path' => array('<module>', 'filter', 'count'),
                 'pathVars' => array('module', '', ''),
                 'method' => 'filterListCount',

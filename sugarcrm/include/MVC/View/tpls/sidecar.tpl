@@ -32,7 +32,7 @@
                 <div id="alerts" class="alert-top">
                     <div class="loading gate">
                         <strong>{$LBL_LOADING}</strong>
-                        <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                        <i class="fa fa-circle l1"></i><i class="fa fa-circle l2"></i><i class="fa fa-circle l3"></i>
                     </div>
                 </div>
                 <div id="header"></div>

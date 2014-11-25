@@ -137,7 +137,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
 //                                array(
 //                                    'name'  => 'upload_new_button',
 //                                    'type'  => 'attachment-button',
-//                                    'icon'  => 'icon-paper-clip',
+//                                    'icon'  => 'fa-paperclip',
 //                                    'label' => 'LBL_ATTACHMENT',
 //                                ),
 //                                array(
@@ -154,13 +154,13 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
 //                                array(
 //                                    'name'  => 'signature_button',
 //                                    'type'  => 'button',
-//                                    'icon'  => 'icon-edit',
+//                                    'icon'  => 'fa-pencil',
 //                                    'label' => 'LBL_EMAIL_SIGNATURES',
 //                                ),
 //                                array(
 //                                    'name'  => 'template_button',
 //                                    'type'  => 'button',
-//                                    'icon'  => 'icon-file-alt',
+//                                    'icon'  => 'fa-file-o',
 //                                    'label' => 'LBL_EMAIL_TEMPLATES',
 //                                ),
 //                            ),
