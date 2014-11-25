@@ -62,10 +62,9 @@ class CliUpgrader extends UpgradeDriver
      */
     public function runStage($stage)
     {
-        $cmd = "{$this->context['php']} -f " . escapeshellarg($this->context['script']) . " -- ";
-        $cmd .= $this->buildArgString(
-            array('stage' => $stage, 'all' => true)
-        );
+        $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(
+                array('stage' => $stage, 'all' => true)
+            );
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == self::STOP_SIGNAL) ? self::STOP_SIGNAL : ($retcode == 0);
