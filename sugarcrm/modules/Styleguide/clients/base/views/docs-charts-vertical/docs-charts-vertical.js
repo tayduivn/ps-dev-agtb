@@ -20,6 +20,7 @@
               .showTitle(false)
               .tooltips(true)
               .showControls(false)
+              .direction(app.lang.direction)
               .colorData('default')
               .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Stage: <b>' + key + '</b></p>' +
@@ -32,22 +33,23 @@
 
         //Vertical Bar Chart with Line
         this.chart2 = nv.models.paretoChart()
-            .showTitle(false)
-            .showLegend(true)
-            .tooltips(true)
-            .showControls(false)
-            .stacked(true)
-            .clipEdge(false)
-            .colorData('default')
-            .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
-            .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
-            // override default barClick function
-            // .barClick( function(data,e,selection) {
-            //     //if only one bar series is disabled
-            //     d3.select('#vert2 svg')
-            //       .datum(forecast_data_Manager)
-            //       .call(chart);
-            //   })
+              .showTitle(false)
+              .showLegend(true)
+              .tooltips(true)
+              .showControls(false)
+              .direction(app.lang.direction)
+              .stacked(true)
+              .clipEdge(false)
+              .colorData('default')
+              .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
+              .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
+              // override default barClick function
+              // .barClick( function(data,e,selection) {
+              //     //if only one bar series is disabled
+              //     d3.select('#vert2 svg')
+              //       .datum(forecast_data_Manager)
+              //       .call(chart);
+              //   })
 
         nv.utils.windowResize(this.chart2.update);
 
