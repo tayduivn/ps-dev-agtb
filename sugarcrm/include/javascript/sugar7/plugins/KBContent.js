@@ -81,14 +81,19 @@
                     Object.getPrototypeOf(this).editExisting.call(this);
                     return;
                 }
-                var extraAttr = {
+                var self = this,
+                    extraAttr = {
                         'kbarticle_id': model.get('kbarticle_id'),
                         'kbdocument_id': model.get('kbdocument_id')
                     },
                     callback = _.bind(this.afterSave, this);
                 this.context.set('copiedFromModelId', model.id);
                 this.model.set(extraAttr, {silent: true});
-                this.createRecordWaterfall(callback);
+                this.model.doValidate(this.getFields(this.module), function(isValid) {
+                    if (isValid) {
+                        self.createRecordWaterfall(callback);
+                    }
+                });
             },
 
             /**
