@@ -191,7 +191,7 @@ if(isset($_POST['clear_loaded'])){
                     $_REQUEST['sortOrder']='desc';
                     $search_str = perform_advanced_search($focus,true);
                     
-                    $results = "<table class='h3Row'  width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td nowrap ><B>".$mod_strings['LBL_TOP_TEN_LIST_TITLE']."</B></td></tr></table>";
+                    $results = "<table class='h3Row'  width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td nowrap ><B>".$mod_strings['LBL_LIST_MOST_VIEWED']."</B></td></tr></table>";
                     $results .= get_fts_list($search_str);
                 }                
             }        
