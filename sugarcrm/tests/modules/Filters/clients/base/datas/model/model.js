@@ -546,4 +546,35 @@ describe('Data.Base.FiltersBean', function() {
             });
         });
     });
+
+    describe('_joinFilterDefs', function() {
+        var sampleFilterDef1 = {'name': {'$starts': 'value'}};
+        var sampleFilterDef2 = {
+            '$or': [
+                {'first_name': {'$starts': 'first name'}},
+                {'last_name': {'$starts': 'last name'}}
+            ]
+        };
+
+        it('should successfully join filter definitions passed in as individual parameters', function() {
+            var filterDef = prototype._joinFilterDefs('$or', sampleFilterDef1, sampleFilterDef2);
+            expect(filterDef).toEqual({
+                '$or': [
+                    sampleFilterDef1,
+                    sampleFilterDef2
+                ]
+            });
+        });
+
+        it('should successfully join filter definitions passed in as an array', function() {
+            var filterList = [sampleFilterDef1, sampleFilterDef2];
+            var filterDef = prototype._joinFilterDefs('$or', filterList);
+            expect(filterDef).toEqual({
+                '$or': [
+                    sampleFilterDef1,
+                    sampleFilterDef2
+                ]
+            });
+        });
+    });
 });
