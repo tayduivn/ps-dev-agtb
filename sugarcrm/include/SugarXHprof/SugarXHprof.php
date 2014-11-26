@@ -93,32 +93,26 @@ class SugarXHprof
      */
     protected static function loadConfig()
     {
-        if (!empty($GLOBALS['sugar_config']['xhprof_config']))
-        {
-            foreach($GLOBALS['sugar_config']['xhprof_config'] as $k => $v)
-            {
-                if (isset($v) && property_exists(__CLASS__, $k))
-                {
-                    self::${$k} = $v;
+        if (!empty($GLOBALS['sugar_config']['xhprof_config'])) {
+            foreach ($GLOBALS['sugar_config']['xhprof_config'] as $k => $v) {
+                if (isset($v) && property_exists(self::$manager, $k)) {
+                    static::${$k} = $v;
                 }
             }
         }
 
         // disabling profiler if XHprof extension is not loaded
-        if (extension_loaded('xhprof') == false)
-        {
+        if (extension_loaded('xhprof') == false) {
             self::$enable = false;
         }
 
         // using default directory for profiler if it is not set
-        if (empty(self::$log_to))
-        {
+        if (empty(self::$log_to)) {
             self::$log_to = ini_get('xhprof.output_dir');
         }
 
         // disabling profiler if directory is not exist or is not writable
-        if (is_dir(self::$log_to) == false || is_writable(self::$log_to) == false)
-        {
+        if (is_dir(self::$log_to) == false || is_writable(self::$log_to) == false) {
             self::$enable = false;
         }
     }
@@ -130,29 +124,28 @@ class SugarXHprof
      */
     public static function getInstance()
     {
-        if (self::$instance != null)
-        {
+        if (self::$instance != null) {
             return self::$instance;
         }
 
-        self::loadConfig();
+        self::$manager = !empty($GLOBALS['sugar_config']['xhprof_config']['manager']) ?
+            $GLOBALS['sugar_config']['xhprof_config']['manager'] :
+            self::$manager;
 
-        if (is_file('custom/include/SugarXHprof/' . self::$manager . '.php'))
-        {
+        if (is_file('custom/include/SugarXHprof/' . self::$manager . '.php')) {
             require_once 'custom/include/SugarXHprof/' . self::$manager . '.php';
-        }
-        elseif (is_file('include/SugarXHprof/' . self::$manager . '.php'))
-        {
+        } elseif (is_file('include/SugarXHprof/' . self::$manager . '.php')) {
             require_once 'include/SugarXHprof/' . self::$manager . '.php';
         }
-        if (class_exists(self::$manager) && is_subclass_of(self::$manager, __CLASS__))
-        {
+
+        if (class_exists(self::$manager) && is_subclass_of(self::$manager, __CLASS__)) {
             self::$instance = new self::$manager();
-        }
-        else
-        {
+        } else {
             self::$instance = new self();
         }
+
+        self::$instance->loadConfig();
+
         return self::$instance;
     }
 
