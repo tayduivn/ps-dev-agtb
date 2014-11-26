@@ -134,6 +134,15 @@
             this.collection.off();
         }
 
+        // Make sure only one request is sent for each module.
+        prototype._request = prototype._request || {};
+        if (prototype._request[module]) {
+            prototype._request[module].xhr.done(_.bind(function() {
+                this._onSuccessCallback(options.success);
+            }, this));
+            return;
+        }
+
         // Try to retrieve cached filters.
         prototype._cache = prototype._cache || {};
         if (prototype._cache[module]) {
@@ -152,7 +161,7 @@
             return;
         }
 
-        prototype.fetch.call(this, {
+        var requestObj = {
             showAlerts: false,
             filter: [
                 {'created_by': app.user.id},
@@ -162,6 +171,9 @@
                 this._cacheFilters(models);
                 this._onSuccessCallback(options.success);
             }, this),
+            complete: function() {
+                delete prototype._request[module];
+            },
             error: function() {
                 if (_.isFunction(options.error)) {
                     options.error();
@@ -169,7 +181,8 @@
                     app.logger.error('Unable to get filters from the server.');
                 }
             }
-        });
+        };
+        prototype._request[module] = prototype.fetch.call(this, requestObj);
     },
 
     /**
@@ -448,7 +461,6 @@
         delete prototype._cache[this.moduleName].template[model.id];
         delete prototype._cache[this.moduleName].user[model.id];
     },
-
 
     /**
      * Resets the filter cache for this module.
