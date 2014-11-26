@@ -57,7 +57,7 @@
         }
 
         rowTitle = app.lang.get(
-            'LBL_CONVERT_MODULE_ASSOCIATED',
+            'LBL_CONVERT_MODULE_SELECTED',
             this.module,
             {'moduleName': moduleSingular[moduleName]}
         );

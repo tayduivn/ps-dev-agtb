@@ -38,7 +38,7 @@
                 name: 'associate_button',
                 type: 'button',
                 label: this.getLabel(
-                    'LBL_CONVERT_ASSOCIATE_MODULE',
+                    'LBL_CONVERT_CREATE_MODULE',
                     {'moduleName': options.meta.moduleSingular}
                 ),
                 css_class: 'btn-primary disabled'
@@ -328,12 +328,26 @@
             }
         }
 
+        this.setAssociateButtonLabel(this.layout.currentToggle === this.layout.TOGGLE_CREATE);
+
         //only activate if current panel is active
         if (activate && panelActive) {
             $associateButton.removeClass('disabled');
         } else {
             $associateButton.addClass('disabled');
         }
+    },
+
+    /**
+     * Set the label for the Associate Button
+     * @param {Boolean} isCreate
+     */
+    setAssociateButtonLabel: function(isCreate) {
+        var label = 'LBL_CONVERT_SELECT_MODULE';
+        if (isCreate) {
+            label = 'LBL_CONVERT_CREATE_MODULE';
+        }
+        this.$('[name="associate_button"]').html(this.getLabel(label, {'moduleName': this.meta.moduleSingular}));
     },
 
     /**
