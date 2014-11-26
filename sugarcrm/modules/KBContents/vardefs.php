@@ -94,8 +94,8 @@ $dictionary['KBContent'] = array(
         'revision' => array(
             'name' => 'revision',
             'vname' => 'LBL_REVISION',
-            'type' => 'varchar',
-            'len' => '10',
+            'type' => 'int',
+            'default' => '0',
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
         ),
