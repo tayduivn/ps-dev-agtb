@@ -239,14 +239,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTTYPES',
         ),
-        //todo remove
-        'leads' => array(
-            'name' => 'leads',
-            'type' => 'link',
-            'relationship' => 'leads_documents',
-            'source' => 'non-db',
-            'vname' => 'LBL_LEADS',
-        ),
         // Links around the world
         'accounts' =>
         array(

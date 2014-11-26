@@ -169,22 +169,6 @@ describe("tag field", function() {
             expect(field.$select2.createSearchChoice(name)).toBe(false);
         });
 
-        it('createSearchChoice should call parseRecords when finding an old choice', function() {
-            var parseRecordsStub = sinon.collection.stub(field, 'parseRecords', function(object) {
-                return object;
-            });
-            var findStub = sinon.collection.stub(field.filterResults, 'find', function() {
-                return {placeholder: true};
-            });
-
-            field._render();
-            field.$select2.createSearchChoice(name);
-
-            // Expect parseRecords to have been called, and with an array as the argument
-            expect(parseRecordsStub.callCount).toBeGreaterThan(0);
-            expect(parseRecordsStub.args[0].length).toBeDefined();
-        });
-
         it('existing tags that contain special characters as the first character should be handled specially', function() {
             var name = '\'asdf';
             var getFormattedValueStub = sinon.collection.stub(field, 'getFormattedValue', function() {

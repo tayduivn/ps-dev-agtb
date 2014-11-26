@@ -381,13 +381,15 @@ eoq2;
     /**
      * Execution starts here
      */
-    public static function start()
+    public function start()
     {
         global $argv;
         $upgrader = new static();
         $upgrader->parseArgs($argv);
         $upgrader->verifyArguments($argv);
         $upgrader->init();
+        list($version, $build) = static::getVersion();
+        $upgrader->log("CliUpgrader v.$version (build $build) starting");
         if (isset($upgrader->context['stage'])) {
             $stage = $upgrader->context['stage'];
         } else {
@@ -610,5 +612,5 @@ $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is command-line only script");
 }
-CliUpgrader::start();
-
+$upgrader = new CliUpgrader();
+$upgrader->start();

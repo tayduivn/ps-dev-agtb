@@ -316,6 +316,13 @@ $title_max = count($titles) - 1;
 ////	DEMO CONTACTS
 
 $contacts = array();
+//BEGIN SUGARCRM flav=ent ONLY
+if (file_exists("install/demoData.{$current_language}.php")) {
+    $preferred_language = $current_language;
+} else {
+    $preferred_language = "en_us";
+}
+//END SUGARCRM flav=ent ONLY
 for($i=0; $i<$number_contacts; $i++) {
 	$contact = new Contact();
 	$contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0,$first_name_max)];
@@ -333,6 +340,7 @@ for($i=0; $i<$number_contacts; $i++) {
     $contact->portal_active = 1;
     $contact->portal_name = $contact->first_name.$contact->last_name.$i;
     $contact->portal_password = User::getPasswordHash($contact->first_name.$contact->last_name.$i);
+    $contact->preferred_language = $preferred_language;
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 /* comment out the non-pro code

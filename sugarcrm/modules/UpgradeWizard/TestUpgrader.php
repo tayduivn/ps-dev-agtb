@@ -36,6 +36,13 @@ class TestUpgrader extends UpgradeDriver
         );
         parent::__construct();
         $this->init();
+        $this->start();
+    }
+
+    public function start()
+    {
+        list($version, $build) = static::getVersion();
+        $this->log("TestUpgrader v.$version (build $build) starting");
     }
 
     public function cleanState()
