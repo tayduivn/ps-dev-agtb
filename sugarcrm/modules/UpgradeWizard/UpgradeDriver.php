@@ -304,7 +304,7 @@ abstract class UpgradeDriver
      * Execution will start here
      * This function must form context, create a class and run it
      */
-    static public function start()
+    public function start()
     {
         die("Must override this function in a driver");
     }
@@ -319,8 +319,6 @@ abstract class UpgradeDriver
      */
     public function init()
     {
-        list($version, $build) = static::getVersion();
-        $this->log("Upgrader v.$version (build $build) starting");
         chdir($this->context['source_dir']);
         $this->loadConfig();
         $this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
