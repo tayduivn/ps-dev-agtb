@@ -113,7 +113,13 @@
      * {@inheritdoc}
      */
     _render: function () {
-        var result = this._super('_render',[]);
+        if (this.action == 'noaccess') {
+            return;
+        }
+
+        // Please, do not put this._super call before acl check,
+        // due to _loadTemplate function logic from sidecar/src/view.js file
+        this._super('_render',[]);
 
         this.setSelect2Node();
         if (this.$node.length > 0) {
@@ -131,8 +137,6 @@
             $(this.$node.data('select2').containerSelector).attr('data-attachable', true);
             this.refreshFromModel();
         }
-
-        return result;
     },
 
     /**

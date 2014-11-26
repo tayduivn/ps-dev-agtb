@@ -106,6 +106,7 @@ $dictionary['KBContent'] = array(
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
+            'group' => 'usefulness',
         ),
         'notuseful' => array(
             'name' => 'notuseful',
@@ -114,6 +115,7 @@ $dictionary['KBContent'] = array(
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
+            'group' => 'usefulness',
         ),
         'attachment_list' => array(
             'name' => 'attachment_list',
@@ -121,6 +123,7 @@ $dictionary['KBContent'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_RATING',
             'studio' => false,
+            'group' => 'attachments',
         ),
         'notes' => array(
             'name' => 'notes',
@@ -139,6 +142,7 @@ $dictionary['KBContent'] = array(
             'module' => 'Notes',
             'bean_name' => 'Note',
             'source' => 'non-db',
+            'group' => 'attachments',
         ),
         'kbdocuments_kbcontents' => array(
             'name' => 'kbdocuments_kbcontents',
