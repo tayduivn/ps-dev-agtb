@@ -258,7 +258,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
                             'name' => 'repeat_until',
-                            'type' => 'date',
+                            'type' => 'repeat-until',
                         ),
                         array(
                             'type' => 'label',
