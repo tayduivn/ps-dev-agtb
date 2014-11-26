@@ -236,14 +236,6 @@ $dictionary['KBDocument'] = array(
     'source' => 'non-db',
     'vname' => 'LBL_CONTRACTS',
   ),
-  //todo remove
-  'leads' => array (
-    'name' => 'leads',
-    'type' => 'link',
-    'relationship' => 'leads_documents',
-    'source' => 'non-db',
-    'vname' => 'LBL_LEADS',
-  ),
   'created_by_link' =>
   array (
         'name' => 'created_by_link',
