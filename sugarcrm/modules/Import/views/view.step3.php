@@ -238,7 +238,8 @@ class ImportViewStep3 extends ImportView
                     $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
                 if ( isset($properties['comment']) )
                     $fieldtype .= ' - ' . $properties['comment'];
-                $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname . htmlentities($fieldtype) . '"'
+                $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
+                    . htmlentities($fieldtype, null, 'UTF-8') . '"'
                     . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
             }
 
@@ -308,8 +309,9 @@ class ImportViewStep3 extends ImportView
                         $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
                     if ( isset($properties['comment']) )
                         $fieldtype .= ' - ' . $properties['comment'];
-                    $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname . $fieldtype . '"' . $selected . $req_class . '>'
-                        . $displayname . $req_mark . '</option>\n';
+                    $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
+                        . htmlentities($fieldtype, null, 'UTF-8') . '"'
+                        . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
                 }
 
                 // get default field value
