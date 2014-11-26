@@ -5,36 +5,34 @@ nv.models.treemapChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 0, right: 10, bottom: 10, left: 10}
-    , width = null
-    , height = null
-    , showTitle = false
-    , showLegend = false
-    , direction = 'ltr'
-    , tooltip = null
-    , tooltips = true
-    , tooltipContent = function(point) {
+  var margin = {top: 0, right: 10, bottom: 10, left: 10},
+      width = null,
+      height = null,
+      showTitle = false,
+      showLegend = false,
+      direction = 'ltr',
+      tooltip = null,
+      tooltips = true,
+      tooltipContent = function(point) {
         var tt = '<p>Value: <b>' + d3.format(',.2s')(point.value) + '</b></p>' +
           '<p>Name: <b>' + point.name + '</b></p>';
         return tt;
-      }
-    , colorData = 'default'
+      },
+      colorData = 'default',
       //create a clone of the d3 array
-    , colorArray = d3.scale.category20().range().map( function(d){ return d; })
-    , x //can be accessed via chart.xScale()
-    , y //can be accessed via chart.yScale()
-    , strings = {
+      colorArray = d3.scale.category20().range().map( function(d) { return d; }),
+      x, //can be accessed via chart.xScale()
+      y, //can be accessed via chart.yScale()
+      strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},
         controls: {close: 'Hide controls', open: 'Show controls'},
         noData: 'No Data Available.'
-      }
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove')
-    ;
+      },
+      dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove');
 
 
-  var treemap = nv.models.treemap()
-    , legend = nv.models.legend()
-    ;
+  var treemap = nv.models.treemap(),
+      legend = nv.models.legend();
 
   //============================================================
 
@@ -47,7 +45,7 @@ nv.models.treemapChart = function() {
     var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
         top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
         content = tooltipContent(e.point);
-    tooltip = nv.tooltip.show( [left, top], content, null, null, offsetElement );
+    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================
@@ -61,7 +59,7 @@ nv.models.treemapChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
+      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
       chart.update = function() { container.transition().duration(300).call(chart); };
@@ -70,7 +68,8 @@ nv.models.treemapChart = function() {
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.children.length; }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d && d.children.length; }).length) {
+        container.select('.nvd3.nv-wrap').remove();
         var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
@@ -118,8 +117,8 @@ nv.models.treemapChart = function() {
       //------------------------------------------------------------
       // Title & Legend
 
-      var titleHeight = 0
-        , legendHeight = 0;
+      var titleHeight = 0,
+          legendHeight = 0;
 
       if (showLegend) {
         gEnter.append('g').attr('class', 'nv-legendWrap');
@@ -158,8 +157,7 @@ nv.models.treemapChart = function() {
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
-            .attr('fill', 'black')
-          ;
+            .attr('fill', 'black');
 
         titleHeight = parseInt(g.select('.nv-title').style('height'), 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
@@ -203,7 +201,7 @@ nv.models.treemapChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('legendClick', function(d,i) {
+      legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
 
         if (!data.filter(function(d) { return !d.disabled; }).length) {
@@ -228,10 +226,9 @@ nv.models.treemapChart = function() {
       function removeColors(d) {
         var i, l;
         if (d.color && colorArray.indexOf(d.color) !== -1) {
-          colorArray.splice(colorArray.indexOf(d.color),1);
+          colorArray.splice(colorArray.indexOf(d.color), 1);
         }
-        if ( d.children )
-        {
+        if (d.children) {
           l = d.children.length;
           for (i = 0; i < l; i += 1) {
             removeColors(d.children[i]);
@@ -268,7 +265,7 @@ nv.models.treemapChart = function() {
   });
   dispatch.on('tooltipMove', function(e) {
     if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
+      nv.tooltip.position(tooltip, e.pos);
     }
   });
   //============================================================
@@ -283,7 +280,7 @@ nv.models.treemapChart = function() {
   chart.legend = legend;
   chart.treemap = treemap;
 
-  d3.rebind(chart, treemap, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'leafClick', 'getSize', 'getName', 'groups', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, treemap, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'leafClick', 'getSize', 'getName', 'groups', 'color', 'fill', 'classes', 'gradient', 'direction');
 
   chart.colorData = function(_) {
     if (!arguments.length) { return colorData; }
@@ -407,15 +404,6 @@ nv.models.treemapChart = function() {
         strings[prop] = _[prop];
       }
     }
-    return chart;
-  };
-
-  chart.direction = function(_) {
-    if (!arguments.length) {
-      return direction;
-    }
-    direction = _;
-    legend.direction(_);
     return chart;
   };
 

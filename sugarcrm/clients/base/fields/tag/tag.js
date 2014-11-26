@@ -82,23 +82,12 @@
                     return false;
                 }
 
-                var selectedRecord = self.filterResults.find(function(record) {
-                    // To ensure sameness of search, make both values lowercase
-                    return term.toLowerCase() == record.get('name').toLowerCase();
-                });
-
-                if (selectedRecord) {
-                    // Search term exists
-                    return self.parseRecords([selectedRecord]);
-                } else {
-                    // Search term is new
-                    return {
-                        id: term,
-                        text: term + ' ' + app.lang.get('LBL_TAG_NEW_TAG'),
-                        locked: false,
-                        newTag: true
-                    };
-                }
+                return {
+                    id: term,
+                    text: term + ' ' + app.lang.get('LBL_TAG_NEW_TAG'),
+                    locked: false,
+                    newTag: true
+                };
             },
 
             query: _.debounce(function(query) {
