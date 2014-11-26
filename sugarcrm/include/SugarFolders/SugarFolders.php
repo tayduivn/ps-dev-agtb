@@ -356,12 +356,31 @@ ENDQ;
 		} else {
 			$ret = " AND emails.status NOT IN ('archived') AND emails.type NOT IN ('archived')";
 		}
-		$q = "SELECT emails.id , emails.name, emails.date_sent, emails.status, emails.type, emails.flagged, emails.reply_to_status, emails_text.from_addr, emails_text.to_addrs, 'Emails' polymorphic_module FROM emails" .
-		//BEGIN SUGARCRM flav=pro ONLY
-								   $this->addTeamSecurityClause() .
-		//END SUGARCRM flav=pro ONLY
-								   " JOIN emails_text on emails.id = emails_text.email_id
-                                   WHERE (type = '{$type}' OR status = '{$status}') AND assigned_user_id = '{$current_user->id}' AND emails.deleted=0 " . $this->addNonDynamicChildFoldersClause();
+        $q = "SELECT
+                emails.id,
+                emails.name,
+                emails.date_sent,
+                emails.status,
+                emails.type,
+                emails.flagged,
+                emails.reply_to_status,
+                emails_text.from_addr,
+                emails_text.to_addrs,
+                'Emails' polymorphic_module
+            FROM
+                emails
+            JOIN
+                emails_text
+            on
+                emails.id = emails_text.email_id
+                //BEGIN SUGARCRM flav=pro ONLY
+                " . $this->addTeamSecurityClause() . "
+                //END SUGARCRM flav=pro ONLY
+            WHERE
+                (type = '{$type}' OR status = '{$status}')
+                AND assigned_user_id = '{$current_user->id}'
+                AND emails.deleted = 0"
+        ;
 		return $q . $ret;
 	} // fn
 
@@ -369,7 +388,15 @@ ENDQ;
 	function addTeamSecurityClause() {
 		global $current_user;
 		if(!is_admin($current_user)) {
-			return " INNER JOIN	team_sets_teams tst	ON tst.team_set_id = emails.team_set_id	INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 ";
+            $dbResult = $this->db->query(
+                'SELECT team_id FROM team_memberships WHERE user_id=' .
+                $this->db->quoted($current_user->id) . ' AND deleted=0'
+            );
+            $teamsIds = array();
+            while ($team = $this->db->fetchByAssoc($dbResult)) {
+                $teamsIds[] = $this->db->quoted($team['team_id']);
+            }
+            return ' AND emails.team_set_id IN (' . implode(',', array_unique($teamsIds)) . ') ';
 		}
 	}
 	//END SUGARCRM flav=pro ONLY
@@ -404,12 +431,35 @@ ENDQ;
 			$r = $this->db->limitQuery(from_html($this->generateSugarsDynamicFolderQuery() . $order), $start, $pageSize);
 		} else {
 			// get items and iterate through them
-			$q = "SELECT emails.id , emails.name, emails.date_sent, emails.status, emails.type, emails.flagged, emails.reply_to_status, emails_text.from_addr, emails_text.to_addrs, 'Emails' polymorphic_module FROM emails JOIN folders_rel ON emails.id = folders_rel.polymorphic_id" .
-		//BEGIN SUGARCRM flav=pro ONLY
-								   $this->addTeamSecurityClause() .
-		//END SUGARCRM flav=pro ONLY
-				  " JOIN emails_text on emails.id = emails_text.email_id
-                  WHERE folders_rel.folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0";
+            $q = "SELECT
+                    emails.id,
+                    emails.name,
+                    emails.date_sent,
+                    emails.status,
+                    emails.type,
+                    emails.flagged,
+                    emails.reply_to_status,
+                    emails_text.from_addr,
+                    emails_text.to_addrs,
+                    'Emails' polymorphic_module
+                FROM
+                    emails
+                JOIN
+                    folders_rel
+                ON
+                    emails.id = folders_rel.polymorphic_id
+                JOIN
+                    emails_text
+                on
+                    emails.id = emails_text.email_id
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    " . $this->addTeamSecurityClause() . "
+                    //END SUGARCRM flav=pro ONLY
+                WHERE
+                    folders_rel.folder_id = '{$folderId}'
+                    AND folders_rel.deleted = 0
+                    AND emails.deleted = 0"
+            ;
 			if ($this->is_group) {
 				$q = $q . " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
@@ -464,11 +514,22 @@ ENDQ;
 	    	$r = $this->db->query ( from_html ( $modified_select_query )) ;
 		} else {
 			// get items and iterate through them
-			$q = "SELECT count(*) c FROM folders_rel JOIN emails ON emails.id = folders_rel.polymorphic_id" .
-		//BEGIN SUGARCRM flav=pro ONLY
-								   $this->addTeamSecurityClause() .
-		//END SUGARCRM flav=pro ONLY
-			" WHERE folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0" ;
+            $q = "SELECT
+                    count(*) c
+                FROM
+                    folders_rel
+                JOIN
+                    emails
+                ON
+                    emails.id = folders_rel.polymorphic_id
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    " . $this->addTeamSecurityClause() . "
+                    //END SUGARCRM flav=pro ONLY
+                WHERE
+                    folder_id = '{$folderId}'
+                    AND folders_rel.deleted = 0
+                    AND emails.deleted = 0"
+            ;
 			if ($this->is_group) {
 				$q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
@@ -493,11 +554,22 @@ ENDQ;
 	    	$r = $this->db->query (from_html($modified_select_query) . " AND emails.status = 'unread'") ;
         } else {
             // get items and iterate through them
-            $q = "SELECT count(*) c FROM folders_rel fr JOIN emails on fr.folder_id = '{$folderId}' AND fr.deleted = 0 " .
-		//BEGIN SUGARCRM flav=pro ONLY
-								   $this->addTeamSecurityClause() .
-		//END SUGARCRM flav=pro ONLY
-               "AND fr.polymorphic_id = emails.id AND emails.status = 'unread' AND emails.deleted = 0" ;
+            $q = "SELECT
+                    count(*) c
+                FROM
+                    folders_rel fr
+                JOIN
+                    emails
+                on
+                    fr.folder_id = '{$folderId}'
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    " . $this->addTeamSecurityClause() . "
+                    //END SUGARCRM flav=pro ONLY
+                    AND fr.deleted = 0
+                    AND fr.polymorphic_id = emails.id
+                    AND emails.status = 'unread'
+                    AND emails.deleted = 0"
+            ;
             if ($this->is_group) {
                 $q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
             }
