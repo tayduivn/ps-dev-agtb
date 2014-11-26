@@ -173,7 +173,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             $savefile
         );
 
-        // PAT-1230: delete the working file if exists as we do in DeployedMetaDataImplementation
+        // Delete the working file if exists as we do in DeployedMetaDataImplementation
         $workingFilename = $this->getMetadataFilename(MB_WORKINGMETADATALOCATION);
 
         if (file_exists($workingFilename)) {
