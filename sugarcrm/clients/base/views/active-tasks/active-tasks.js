@@ -185,5 +185,17 @@
         }
 
         this._super('_renderHtml');
+
+        // Handle Avatar display, in case image doesn't exist
+        this.$('img.avatar').load(function() {
+            $(this).removeClass('hide');
+        })
+        .error(function() {
+            $(this).parent().find('i').removeClass('hide');
+        });
+        this.$('img.avatar').each(function() {
+            var img = $(this);
+            img.attr('src', img.data('src'));
+        });
     }
 })
