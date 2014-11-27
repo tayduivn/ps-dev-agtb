@@ -424,4 +424,38 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $beans = $account->contacts->getBeans();
         $this->assertCount(0, $beans, 'Empty bean is retrieved instead of deleted one');
     }
+
+    /**
+     * @covers Link2::getType
+     */
+    public function testGetType()
+    {
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('getSide'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $link2->expects($this->atLeastOnce())
+            ->method('getSide')
+            ->willReturn(REL_LHS);
+
+        $relationship = $this->getMockForAbstractClass(
+            'AbstractRelationship',
+            array(),
+            '',
+            false,
+            false,
+            false,
+            array('getType')
+        );
+
+        $relationship->expects($this->atLeastOnce())
+            ->method('getType')
+            ->with(REL_LHS)
+            ->willReturn(REL_TYPE_MANY);
+
+        SugarTestReflection::setProtectedValue($link2, 'relationship', $relationship);
+
+        $this->assertEquals(REL_TYPE_MANY, $link2->getType());
+    }
 }

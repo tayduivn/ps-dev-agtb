@@ -149,4 +149,15 @@ class M2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         return $link;
     }
+
+    /**
+     * @covers M2MRelationship::getType
+     */
+    public function testGetType()
+    {
+        $relationship = $this->getMock('M2MRelationship', null, array(), '', false);
+
+        $this->assertEquals(REL_TYPE_MANY, $relationship->getType(REL_LHS));
+        $this->assertEquals(REL_TYPE_MANY, $relationship->getType(REL_RHS));
+    }
 }
