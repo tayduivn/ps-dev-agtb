@@ -793,7 +793,7 @@ $beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';
 $modInvisList[] = 'HealthCheck';
 $adminOnlyList['HealthCheck'] = array('all' => 1);
 $bwcModules[] = 'HealthCheck';
-
+$moduleList[] = 'KBOLDDocuments';
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

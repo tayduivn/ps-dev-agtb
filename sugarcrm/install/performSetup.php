@@ -625,7 +625,6 @@ FP;
     $enabled_tabs[] = 'pmse_Emails_Templates';
 
     if ($_SESSION['demoData'] != 'no') {
-        $enabled_tabs[] = 'KBOLDDocuments';
         $enabled_tabs[] = 'Bugs';
     }
     //END SUGARCRM flav=ent ONLY

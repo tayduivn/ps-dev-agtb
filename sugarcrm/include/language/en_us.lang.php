@@ -101,7 +101,7 @@ $app_list_strings = array (
     'TrackerQueries' => 'Tracker Queries',
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
-    'KBOLDDocuments' => 'Knowledge Base',
+    'KBOLDDocuments' => 'Knowledge Base (Old)',
   	'SugarFavorites'=>'Favorites',
 	'PdfManager' => 'PDF Manager',
 

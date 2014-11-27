@@ -20,9 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
 	//module
-	'LBL_MODULE_NAME' => 'Knowledge Base',
-    'LBL_MODULE_NAME_SINGULAR' => 'KBOLDDocument',
-	'LBL_MODULE_TITLE' => 'Knowledge Base Article',
+    'LBL_MODULE_NAME' => 'Knowledge Base (Old)',
+    'LBL_MODULE_NAME_SINGULAR' => 'KBDocument (Old)',
+    'LBL_MODULE_TITLE' => 'Knowledge Base Article (Old)',
 	'LNK_NEW_ARTICLE' => 'Create Article',
 	'LNK_KBOLDDOCUMENT_LIST'=> 'View Documents',
 	'LBL_DOC_REV_HEADER' => 'Document Revisions',
