@@ -94,7 +94,7 @@
 
     jsonFile = selectedFile.val();
     color = selectedColor.filter(':checked').val() || 'default',
-    showValues = selectedShowValues.val() || 0;
+    showValues = parseInt(selectedShowValues.val(), 10) ? true : false;
     direction = selectedDirection.filter(':checked').val() || 'ltr';
     $('html').css('direction', direction);
 
@@ -107,7 +107,7 @@
           .direction(direction)
           .showTitle(true)
           .donut(true)
-          .donutLabelsOutside(true)
+          .pieLabelsOutside(true)
           .donutRatio(0.447)
           .hole(10)
           .tooltipContent(function(key, x, y, e, graph) {
@@ -155,9 +155,8 @@
       chart.update();
     });
     selectedShowValues.on('change', function(d) {
-      showValues = selectedShowValues.val();
       chart
-        .showLabels(showValues === '1' ? true : showValues === '0' ? false : showValues);
+        .showLabels(parseInt(selectedShowValues.val(), 10) ? true : false);
       chart.update();
     });
     selectedDirection.on('change', function(d) {

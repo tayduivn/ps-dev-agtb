@@ -32,7 +32,7 @@
                 .y(function(d) {
                     return d.value;
                 })
-                .margin({top: 5, right: 20, bottom: 20, left: 20})
+                .margin({top: 5, right: 0, bottom: 20, left: 0})
                 .donut(true)
                 .donutLabelsOutside(true)
                 .donutRatio(0.447)
