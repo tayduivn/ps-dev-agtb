@@ -167,7 +167,7 @@ Studio2 = {
         var targetHeight =  body.clientHeight - (Dom.getY('panels') - Dom.getY(body)) - 32;
 		if (Studio2.isIE) targetHeight -= 10;
 		Dom.setStyle('panels', "height", targetHeight + "px");
-		Dom.setStyle('panels', "width" , ((Studio2.fieldwidth * 2) + 112) + "px");
+        Dom.setStyle('panels', "width" , ((Studio2.fieldwidth * Studio2.maxColumns) + 112) + "px");
 		Dom.setStyle('toolbox', "height", targetHeight + "px");
         Studio2.scrollZones = {
             panels: Studio2.getScrollZones('panels'),
