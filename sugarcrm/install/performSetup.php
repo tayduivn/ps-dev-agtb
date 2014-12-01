@@ -446,6 +446,46 @@ $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
 SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
 installerHook('post_setHiddenSubpanels');
 
+// Bug 28601 - Set the default list of tabs to show
+$enabled_tabs = array();
+$enabled_tabs[] = 'Home';
+
+$enabled_tabs[] = 'Accounts';
+$enabled_tabs[] = 'Contacts';
+$enabled_tabs[] = 'Opportunities';
+$enabled_tabs[] = 'Leads';
+$enabled_tabs[] = 'Calendar';
+$enabled_tabs[] = 'Reports';
+$enabled_tabs[] = 'Quotes';
+$enabled_tabs[] = 'Documents';
+$enabled_tabs[] = 'Emails';
+$enabled_tabs[] = 'Campaigns';
+$enabled_tabs[] = 'Calls';
+$enabled_tabs[] = 'Meetings';
+$enabled_tabs[] = 'Tasks';
+$enabled_tabs[] = 'Notes';
+$enabled_tabs[] = 'Forecasts';
+$enabled_tabs[] = 'Cases';
+$enabled_tabs[] = 'Prospects';
+$enabled_tabs[] = 'ProspectLists';
+//BEGIN SUGARCRM flav=ent ONLY
+$enabled_tabs[] = 'pmse_Project';
+$enabled_tabs[] = 'pmse_Inbox';
+$enabled_tabs[] = 'pmse_Business_Rules';
+$enabled_tabs[] = 'pmse_Emails_Templates';
+
+if ($_SESSION['demoData'] != 'no') {
+    $enabled_tabs[] = 'KBDocuments';
+    $enabled_tabs[] = 'Bugs';
+}
+//END SUGARCRM flav=ent ONLY
+
+installerHook('pre_setSystemTabs');
+require_once('modules/MySettings/TabController.php');
+$tabs = new TabController();
+$tabs->set_system_tabs($enabled_tabs);
+installerHook('post_setSystemTabs');
+
 // Create the user that will be used by Snip
 require_once('install/createSnipUser.php');
 /**
@@ -454,6 +494,23 @@ require_once('install/createSnipUser.php');
  * installLog("Enable InsideView Connector");
  * enableInsideViewConnector();
  **/
+
+
+//BEGIN SUGARCRM flav=ent ONLY
+installLog("converting Opportunities to use RevenueLineItems");
+$admin = BeanFactory::getBean('Administration');
+$admin->saveSetting('Opportunities', 'opps_view_by', 'RevenueLineItems', 'base');
+
+require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
+$converter = new OpportunityWithRevenueLineItem();
+$converter->doMetadataConvert();
+
+// use the converter to update forecasts, it's protected so we have to get around that for the setup
+installLog("converting Forecasts to use RevenueLineItems");
+$rm = new ReflectionMethod($converter, 'resetForecastData');
+$rm->setAccessible(true);
+$rm->invokeArgs($converter, array('RevenueLineItems'));
+//END SUGARCRM flav=ent ONLY
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 
@@ -615,46 +672,6 @@ if (!empty($_SESSION['setup_system_name'])) {
     $admin->saveSetting('system', 'name', $_SESSION['setup_system_name']);
 }
 
-
-// Bug 28601 - Set the default list of tabs to show
-$enabled_tabs = array();
-$enabled_tabs[] = 'Home';
-
-$enabled_tabs[] = 'Accounts';
-$enabled_tabs[] = 'Contacts';
-$enabled_tabs[] = 'Opportunities';
-$enabled_tabs[] = 'Leads';
-$enabled_tabs[] = 'Calendar';
-$enabled_tabs[] = 'Reports';
-$enabled_tabs[] = 'Quotes';
-$enabled_tabs[] = 'Documents';
-$enabled_tabs[] = 'Emails';
-$enabled_tabs[] = 'Campaigns';
-$enabled_tabs[] = 'Calls';
-$enabled_tabs[] = 'Meetings';
-$enabled_tabs[] = 'Tasks';
-$enabled_tabs[] = 'Notes';
-$enabled_tabs[] = 'Forecasts';
-$enabled_tabs[] = 'Cases';
-$enabled_tabs[] = 'Prospects';
-$enabled_tabs[] = 'ProspectLists';
-//BEGIN SUGARCRM flav=ent ONLY
-$enabled_tabs[] = 'pmse_Project';
-$enabled_tabs[] = 'pmse_Inbox';
-$enabled_tabs[] = 'pmse_Business_Rules';
-$enabled_tabs[] = 'pmse_Emails_Templates';
-
-if ($_SESSION['demoData'] != 'no') {
-    $enabled_tabs[] = 'KBDocuments';
-    $enabled_tabs[] = 'Bugs';
-}
-//END SUGARCRM flav=ent ONLY
-
-installerHook('pre_setSystemTabs');
-require_once('modules/MySettings/TabController.php');
-$tabs = new TabController();
-$tabs->set_system_tabs($enabled_tabs);
-installerHook('post_setSystemTabs');
 
 installLog("Running post-install hooks");
 post_install_modules();
