@@ -360,4 +360,35 @@ describe('Base.View.RecordList', function() {
             });
         });
     });
+
+    describe('Auto scrolling on fields focus in inline edit mode', function() {
+        using('fields hidden to the right and to the left',
+            [
+                {left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, hiddenAtRight: false},
+                {left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, hiddenAtRight: true}
+            ],
+            function(fieldLocation) {
+
+                it('should scroll the panel to the make the focused field visible', function() {
+                    var flexListViewHtml = '<div class="flex-list-view-content"></div>';
+                    view.$el.append(flexListViewHtml);
+                    var scrollLeftSpy = sinon.collection.spy($.fn, 'scrollLeft');
+                    var bordersPosition = {left: 71, right: 600};
+                    var expectedParams;
+                    var _getBordersPositionStub = sinon.collection.stub(view, '_getBordersPosition', function() {
+                        return bordersPosition;
+                    });
+
+                    if (fieldLocation.hiddenAtRight) {
+                        expectedParams = fieldLocation.right - bordersPosition.right + fieldLocation.fieldPadding;
+                    } else {
+                        expectedParams = fieldLocation.left - bordersPosition.left - fieldLocation.fieldPadding;
+                    }
+                    view.setPanelPosition(fieldLocation);
+
+                    expect(scrollLeftSpy).toHaveBeenCalledWith(expectedParams);
+                });
+            });
+
+    });
 });

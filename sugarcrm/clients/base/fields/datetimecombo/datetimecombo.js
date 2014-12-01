@@ -286,7 +286,7 @@
                 this.model.set(this.name, datetime);
             }, this),
             focus: _.bind(function() {
-            this.handleFocus();
+                this.handleFocus();
             }, this)
         });
     },
