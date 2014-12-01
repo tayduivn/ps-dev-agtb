@@ -3527,6 +3527,21 @@ Sincerely, SugarCRM',
     'LBL_DNB_CONTACT_LIST' => 'Back To D&B Contacts List',
     'LBL_DNB_CONTACT_SHOW_MORE' => 'Show More D&B Contacts',
 
+    /*D&B Metering*/
+    'LBL_DNB_METER' => 'D&B: Meter',
+    'LBL_DNB_METER_LONG_DESC' => 'D&B: Metering Information',
+    'LBL_DNB_METER_LOADING' => 'Loading usage information',
+    'LBL_DNB_METER_USED' => 'Used',
+    'LBL_DNB_METER_REMAINING' => 'Remaining',
+    'LBL_DNB_METER_PREM_ACCT' => 'Premium Accounts',
+    'LBL_DNB_METER_STD_ACCT' => 'Standard Accounts',
+    'LBL_DNB_METER_BAS_ACCT' => 'Basic Accounts',
+    'LBL_DNB_METER_PREM_CNTCT' => 'Premium Contacts',
+    'LBL_DNB_METER_STD_CNTCT' => 'Standard Contacts',
+    'LBL_DNB_METER_FF' => 'Family Tree',
+    'LBL_DNB_CONT_START' => 'Contract start date',
+    'LBL_DNB_CONT_END' => 'Subscription Renewal Date',
+
     /* D&B Subject Header */
     'LBL_DNB_SUBJ_HEADER' => 'Subject Header',
     'LBL_DNB_COMP_SUMM' => 'Company Description',
