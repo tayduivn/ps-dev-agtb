@@ -29,11 +29,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 )
             );
 
-        // set the visiblity on the parser to allow us to set the $implementation
-        $pr = new ReflectionClass($this->parser);
-        $prop = $pr->getProperty('implementation');
-        $prop->setAccessible(true);
-        $prop->setValue($this->parser, $implementation);
+        SugarTestReflection::setProtectedValue($this->parser, 'implementation', $implementation);
 
         $this->parser->client = 'unittest';
     }
@@ -428,6 +424,102 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                     'enabled' => false,
                 ),
                 false,
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSetDefSortable
+     */
+    public function testSetDefSortable($field_data, $expected)
+    {
+        $this->parser->_fielddefs = array(
+            'test_field' => $field_data
+        );
+
+        $results = $this->parser->setDefSortable('test_field', $field_data);
+
+        if ($expected) {
+            $this->assertArrayNotHasKey('sortable', $results);
+        } else {
+            $this->assertArrayHasKey('sortable', $results);
+            $this->assertFalse($results['sortable']);
+        }
+    }
+
+    public static function dataProviderSetDefSortable()
+    {
+        return array(
+            array(
+                array(
+                    'type' => 'parent',
+                ),
+                false
+            ),
+            array(
+                // relate with no sort_on or rname field
+                array(
+                    'type' => 'relate',
+                ),
+                false
+            ),
+            array(
+                // relate with sort_on field
+                array(
+                    'type' => 'relate',
+                    'sort_on' => array('name')
+                ),
+                true
+            ),
+            array(
+                // relate with rname field
+                array(
+                    'type' => 'relate',
+                    'rname' => 'name',
+                ),
+                true
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSetDefSortableKeepSortableSet
+     * @param $field_data
+     */
+    public function testSetDefSortableKeepSortableSet($field_data)
+    {
+        $this->parser->_fielddefs = array(
+            'test_field' => $field_data
+        );
+
+        $results = $this->parser->setDefSortable('test_field', $field_data);
+
+        $this->assertEquals($field_data['sortable'], $results['sortable']);
+    }
+
+    public static function dataProviderSetDefSortableKeepSortableSet()
+    {
+        return array(
+            array(
+                // invalid type should still keep the sortable flag
+                array(
+                    'type' => 'parent',
+                    'sortable' => true
+                ),
+            ),
+            array(
+                array(
+                    'type' => 'relate',
+                    'sort_on' => array('name'),
+                    'sortable' => false
+                ),
+            ),
+            array(
+                array(
+                    'type' => 'relate',
+                    'rname' => 'name',
+                    'sortable' => true,
+                )
             ),
         );
     }
