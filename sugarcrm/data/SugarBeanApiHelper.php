@@ -260,9 +260,10 @@ class SugarBeanApiHelper
             }
             if ( !$bean->ACLFieldAccess($fieldName, $acl, $context) ) {
                 // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
+                throw new SugarApiExceptionNotAuthorized(
+                    'Not allowed to edit field ' . $fieldName . ' in module: ' . $bean->module_name
+                );
             }
-
         }
         //END SUGARCRM flav=pro ONLY
 
