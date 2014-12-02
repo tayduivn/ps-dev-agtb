@@ -12,7 +12,12 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        SugarTestForecastUtilities::setUpForecastConfig();
+        $params = array();
+        // BEGIN SUGARCRM flav=ent ONLY
+        $params['forecast_by'] = 'RevenueLineItems';
+        // END SUGARCRM flav=end ONLY
+
+        SugarTestForecastUtilities::setUpForecastConfig($params);
     }
 
     public function tearDown()
@@ -273,6 +278,15 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $opp->date_closed = $tp->start_date;
         $opp->save();
 
+        // BEGIN SUGARCRM flav=ent ONLY
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->opportunity_id = $opp->id;
+        $rli->account_id = $acc->id;
+        $rli->assigned_user_id = $GLOBALS['current_user']->id;
+        $rli->date_closed = $tp->start_date;
+        $rli->save();
+        // END SUGARCRM flav=ent ONLY
+
         $bean = $this->getMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob'));
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');
 
@@ -284,6 +298,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     /**

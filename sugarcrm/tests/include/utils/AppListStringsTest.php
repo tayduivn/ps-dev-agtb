@@ -17,6 +17,8 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $temp_files = array();
 
+    protected $created_files = array();
+
     public function setUp()
     {
         if (!is_dir('custom/include/language'))
@@ -28,9 +30,12 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->restore_or_delete('include/language/fr_test.lang.php');
-        $this->restore_or_delete('custom/include/language/en_us.lang.php');
-        $this->restore_or_delete('custom/include/language/fr_test.lang.php');
+        if (!empty($this->created_files)) {
+            $this->created_files = array();
+            $this->restore_or_delete('include/language/fr_test.lang.php');
+            $this->restore_or_delete('custom/include/language/en_us.lang.php');
+            $this->restore_or_delete('custom/include/language/fr_test.lang.php');
+        }
     }
 
     public function testAppListStringsLanguage()
@@ -134,6 +139,7 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
         if (file_exists($filename)) {
             $this->temp_files[$filename] = file_get_contents($filename);
         }
+        $this->created_files[] = $filename;
         file_put_contents($filename, $contents);
         SugarAutoLoader::addToMap($filename, false);
     }
@@ -145,7 +151,7 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function restore_or_delete($filename)
     {
-        if (!isset($this->temp_files[$filename]) && !empty($this->temp_files[$filename])) {
+        if (isset($this->temp_files[$filename]) && !empty($this->temp_files[$filename])) {
             file_put_contents($filename, $this->temp_files[$filename]);
             $this->temp_files[$filename] = '';
         } else if (file_exists($filename)) {
