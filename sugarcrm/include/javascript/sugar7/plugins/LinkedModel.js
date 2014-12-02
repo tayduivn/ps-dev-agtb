@@ -154,10 +154,11 @@
 
                     self.context.resetLoadFlag();
                     self.context.set('skipFetch', false);
+                    // All the views have this method, but since this plugin
+                    // can officially be attached to a field, we need this
+                    // safe check.
                     if (_.isFunction(self.loadData)) {
                         self.loadData();
-                    } else {
-                        self.context.loadData();
                     }
                 });
             },
