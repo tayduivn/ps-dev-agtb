@@ -1,5 +1,4 @@
 <?php
-
 require_once 'PMSEObserver.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
@@ -9,10 +8,10 @@ class PMSEEventObserver implements PMSEObserver
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $relatedDependency;
-    
+
     /**
      *
      * @var PMSELogger
@@ -27,9 +26,9 @@ class PMSEEventObserver implements PMSEObserver
         $this->relatedDependency = new PMSERelatedDependencyWrapper();
         $this->logger = PMSELogger::getInstance();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -39,7 +38,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -49,7 +48,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param type $relatedDependency
      * @codeCoverageIgnore
      */
@@ -59,7 +58,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -67,9 +66,9 @@ class PMSEEventObserver implements PMSEObserver
     {
         $this->logger = $logger;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEObservable $subject
      */
     public function update($subject)
@@ -81,7 +80,7 @@ class PMSEEventObserver implements PMSEObserver
             $eventDefinition = $subject->getEventDefinition();
             $eventDefinitionData = $eventDefinition->fetched_row;
             $processDefinition = $subject->getProcessDefinition();
-            $processDefinitionData = ($processDefinition->fetched_row)? $processDefinition->fetched_row: array();
+            $processDefinitionData = ($processDefinition->fetched_row) ? $processDefinition->fetched_row : array();
             $completeData = $eventData + $eventDefinitionData + $processDefinitionData;
             $this->relatedDependency->processRelatedDependencies($completeData);
         }

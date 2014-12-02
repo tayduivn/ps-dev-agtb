@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Performs the analysis of case actions are: APPROVE, REJECT and ROUTE
  * according to the type of evaluation you want returns current value or null
@@ -102,7 +103,7 @@ class PMSEFormResponseParser implements PMSEDataParserInterface
             $existsID = stristr($idStr, $criteriaToken->expField);
             if ($existsUID || $existsID) {
                 $tokenValue = $row['frm_action'];
-                $tokenUid = $existsUID?$row['act_uid']:$row['act_id'];
+                $tokenUid = $existsUID ? $row['act_uid'] : $row['act_id'];
                 break;
             } else {
                 $row = $db->fetchByAssoc($result);

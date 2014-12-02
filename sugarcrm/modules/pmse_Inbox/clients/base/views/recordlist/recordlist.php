@@ -20,7 +20,7 @@ $viewdefs['pmse_Inbox']['base']['view']['recordlist'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
-                'label' => 'Show Case',
+                'label' => 'LBL_PMSE_SHOW_PROCESS',
                 'event' => 'list:process:fire',
                 'acl_action' => 'view',
             ),

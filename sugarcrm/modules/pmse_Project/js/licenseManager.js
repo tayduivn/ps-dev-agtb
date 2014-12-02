@@ -111,7 +111,7 @@ $(document).ready(function () {
             close: true,
             modal: true,
             draggable: true,
-            buttons: [ { text: translate('LBL_PMSE_BUTTON_CLOSE'), handler: handleOk, isDefault: true }]
+            buttons: [ { text: translate('LBL_PMSE_BUTTON_CLOSE', 'pmse_Inbox'), handler: handleOk, isDefault: true }]
         }
     );
     bpmLicenseDetailModal.render();

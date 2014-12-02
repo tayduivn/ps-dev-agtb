@@ -1,5 +1,14 @@
 ({
     className: 'designer',
+
+    events: {
+        'click .btn-close-designer': 'closeDesigner'
+    },
+
+    closeDesigner: function() {
+        app.router.navigate('pmse_Project', {trigger: true});
+    },
+
     loadData: function (options) {
         this.prj_uid = this.options.context.attributes.modelId;
     },

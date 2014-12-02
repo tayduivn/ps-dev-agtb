@@ -1,3 +1,10 @@
+var UITools = {
+    index: 0,
+    getIndex: function () {
+        this.index = this.index + 1;
+        return this.index;
+    }
+};
 var getRelativePosition = function (targetElement, relativeElement) {
     var e = $(targetElement).offset(),
         re = ($(relativeElement).get(0) instanceof Document) ? {top: 0, left: 0} : $(relativeElement).offset();
@@ -7,6 +14,549 @@ var getRelativePosition = function (targetElement, relativeElement) {
         left: e.left - re.left
     };
 };
+
+function isHTMLElement (obj) {
+    try {
+        //Using W3 DOM2 (works for FF, Opera and Chrom)
+        return obj instanceof HTMLElement;
+    }
+    catch(e){
+        //Browsers not supporting W3 DOM2 don't have HTMLElement and
+        //an exception is thrown and we end up here. Testing some
+        //properties that all elements have. (works on IE7)
+        return (typeof obj==="object") &&
+            (obj.nodeType===1) && (typeof obj.style === "object") &&
+            (typeof obj.ownerDocument ==="object");
+    }
+}
+
+function isInDOM (element) {
+    return jQuery(element).parents('body:last').get(0) === document.body;
+}
+
+function cloneObject (obj) {
+    var newObj = {}, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            newObj[key] = obj[key];
+        }
+    }
+    return newObj;
+}
+
+
+/**
+ * @class Style
+ * Class that represent the style of a an object, {@link JCoreObject} creates an instance of this class so every
+ * class that inherits from {@link JCoreObject} has an instance of this class.
+ *
+ *      // i.e
+ *      // Let's assume that 'shape' is a CustomShape
+ *      var style = new Style({
+ *          cssClasses: [
+ *              'sprite-class', 'marker-class', ...
+ *          ],
+ *          cssProperties: {
+ *              border: 1px solid black,
+ *              background-color: grey,
+ *              ...
+ *          },
+ *          belongsTo: shape
+ *      })
+ *
+ * @constructor Creates a new instance of this class
+ * @param {Object} options
+ * @cfg {Array} [cssClasses=[]] the classes that `this.belongsTo` has
+ * @cfg {Object} [cssProperties={}] the css properties that `this.belongsTo` has
+ * @cfg {Object} [belongsTo=null] a pointer to the owner of this instance
+ */
+var Style = function (options) {
+
+    /**
+     * JSON Object used to map each of the css properties of the object,
+     * this object has the same syntax as the object passed to jQuery.css()
+     *      cssProperties: {
+     *          background-color: [value],
+     *          border: [value],
+     *          ...
+     *      }
+     * @property {Object}
+     */
+    this.cssProperties = null;
+
+    /**
+     * Array of all the classes of this object
+     *      cssClasses = [
+     *          'class_1',
+     *          'class_2',
+     *          ...
+     *      ]
+     * @property {Array}
+     */
+    this.cssClasses = null;
+
+    /**
+     * Pointer to the object to whom this style belongs to
+     * @property {Object}
+     */
+    this.belongsTo = null;
+
+
+    Style.prototype.initObject.call(this, options);
+};
+
+
+/**
+ * The type of this class
+ * @property {String}
+ */
+Style.prototype.type = "Style";
+
+/**
+ * Constant for the max z-index
+ * @property {number} [MAX_ZINDEX=100]
+ */
+Style.MAX_ZINDEX = 100;
+
+/**
+ * Instance initializer which uses options to extend the config options to
+ * initialize the instance
+ * @private
+ * @param {Object} options
+ */
+Style.prototype.initObject = function (options) {
+    var defaults = {
+        cssClasses: [],
+        cssProperties: {},
+        belongsTo: null
+    };
+    $.extend(true, defaults, options);
+    this.cssClasses = defaults.cssClasses;
+    this.cssProperties = defaults.cssProperties;
+    this.belongsTo = defaults.belongsTo;
+};
+
+/**
+ * Applies cssProperties and cssClasses to `this.belongsTo`
+ * @chainable
+ */
+Style.prototype.applyStyle = function () {
+
+    if (!this.belongsTo.html) {
+        throw new Error("applyStyle(): can't apply style to an" +
+            " object with no html");
+    }
+
+    var i,
+        class_i;
+
+    // apply the cssProperties
+    $(this.belongsTo.html).css(this.cssProperties);
+
+    // apply saved classes
+    for (i = 0; i < this.cssClasses.length; i += 1) {
+        class_i = this.cssClasses[i];
+        if (!$(this.belongsTo.html).hasClass(class_i)) {
+            $(this.belongsTo.html).addClass(class_i);
+        }
+    }
+    return this;
+};
+
+/**
+ * Extends the property `cssProperties` with a new object and also applies those new properties
+ * @param {Object} properties
+ * @chainable
+ */
+Style.prototype.addProperties = function (properties) {
+    $.extend(true, this.cssProperties, properties);
+    $(this.belongsTo.html).css(properties);
+    return this;
+};
+
+/**
+ * Gets a property from `this.cssProperties` using jQuery or `window.getComputedStyle()`
+ * @param {String} property
+ * @return {String}
+ */
+Style.prototype.getProperty = function (property) {
+    return this.cssProperties[property] ||
+        $(this.belongsTo.html).css(property) ||
+            window.getComputedStyle(this.belongsTo.html, null)
+            .getPropertyValue(property);
+};
+
+/**
+ * Removes ´properties´ from the ´this.cssProperties´, also disables those properties from
+ * the HTMLElement
+ * @param {Object} properties
+ * @chainable
+ */
+Style.prototype.removeProperties = function (properties) {
+    var property,
+        i;
+    for (i = 0; i < properties.length; i += 1) {
+        property = properties[i];
+        if (this.cssProperties.hasOwnProperty(property)) { // JS Code Convention
+            $(this.belongsTo.html).css(property, "");   // reset inline style
+            delete this.cssProperties[property];
+        }
+    }
+    return this;
+};
+
+/**
+ * Adds new classes to ´this.cssClasses´ array
+ * @param {Array} cssClasses
+ * @chainable
+ */
+Style.prototype.addClasses = function (cssClasses) {
+    var i,
+        cssClass;
+    if (cssClasses && cssClasses instanceof Array) {
+        for (i = 0; i < cssClasses.length; i += 1) {
+            cssClass = cssClasses[i];
+            if (typeof cssClass === "string") {
+                if (this.cssClasses.indexOf(cssClass) === -1) {
+                    this.cssClasses.push(cssClass);
+                    $(this.belongsTo.html).addClass(cssClass);
+                }
+            } else {
+                throw new Error("addClasses(): array element is not of type string");
+            }
+        }
+    } else {
+        throw new Error("addClasses(): parameter must be of type Array");
+    }
+    return this;
+};
+
+/**
+ * Removes classes from ´this.cssClasses´ array, also removes those classes from
+ * the HTMLElement
+ * @param {Array} cssClasses
+ * @chainable
+ */
+Style.prototype.removeClasses = function (cssClasses) {
+
+    var i,
+        index,
+        cssClass;
+    if (cssClasses && cssClasses instanceof Array) {
+        for (i = 0; i < cssClasses.length; i += 1) {
+            cssClass = cssClasses[i];
+            if (typeof cssClass === "string") {
+                index = this.cssClasses.indexOf(cssClass);
+                if (index !== -1) {
+                    $(this.belongsTo.html).removeClass(this.cssClasses[index]);
+                    this.cssClasses.splice(index, 1);
+                }
+            } else {
+                throw new Error("removeClasses(): array element is not of " +
+                    "type string");
+            }
+        }
+    } else {
+        throw new Error("removeClasses(): parameter must be of type Array");
+    }
+    return this;
+};
+
+/**
+ * Removes all the classes from ´this.cssClasses´ array
+ * @param {Array} cssClasses
+ * @chainable
+ */
+Style.prototype.removeAllClasses = function () {
+    this.cssClasses = [];
+    $(this.belongsTo.html).removeClass();
+    return this;
+};
+
+/**
+ * Checks if the class is a class stored in ´this.cssClasses´
+ * @param cssClass
+ * @return {boolean}
+ */
+Style.prototype.containsClass = function (cssClass) {
+    return this.cssClasses.indexOf(cssClass) !== -1;
+};
+
+/**
+ * Returns an array with all the classes of ´this.belongsTo´
+ * @return {Array}
+ */
+Style.prototype.getClasses = function () {
+    return this.cssClasses;
+};
+
+/**
+ * Serializes this instance
+ * @return {Object}
+ * @return {Array} return.cssClasses
+ */
+Style.prototype.stringify = function () {
+    return {
+        cssClasses: this.cssClasses
+//        cssProperties: this.cssProperties
+    };
+};
+
+/**
+ * @class ArrayList
+ * Construct a List similar to Java's ArrayList that encapsulates methods for
+ * making a list that supports operations like get, insert and others.
+ *
+ *      some examples:
+ *      var item,
+ *          arrayList = new ArrayList();
+ *      arrayList.getSize()                 // 0
+ *      arrayList.insert({                  // insert an object
+ *          id: 100,
+ *          width: 100,
+ *          height: 100
+ *      });
+ *      arrayList.getSize();                // 1
+ *      arrayList.asArray();                // [{id : 100, ...}]
+ *      item = arrayList.find('id', 100);   // finds the first element with an id that equals 100
+ *      arrayList.remove(item);             // remove item from the arrayList
+ *      arrayList.getSize();                // 0
+ *      arrayList.isEmpty();                // true because the arrayList has no elements
+ *
+ * @constructor Returns an instance of the class ArrayList
+ */
+var ArrayList = function () {
+    /**
+     * The elements of the arrayList
+     * @property {Array}
+     * @private
+     */
+    var elements = [],
+        /**
+         * The size of the array
+         * @property {number} [size=0]
+         * @private
+         */
+        size = 0,
+        index,
+        i;
+    return {
+
+        /**
+         * The ID of this ArrayList is generated using the function Math.random
+         * @property {number} id
+         */
+        id: Math.random(),
+        /**
+         * Gets an element in the specified index or undefined if the index
+         * is not present in the array
+         * @param {number} index
+         * @returns {Object / undefined}
+         */
+        get : function (index) {
+            return elements[index];
+        },
+        /**
+         * Inserts an element at the end of the list
+         * @param {Object}
+         * @chainable
+         */
+        insert : function (item) {
+            elements[size] = item;
+            size += 1;
+            return this;
+        },
+        /**
+         * Inserts an element in a specific position
+         * @param {Object} item
+         * @chainable
+         */
+        insertAt: function(item, index) {
+            elements.splice(index, 0, item);
+            size = elements.length;
+            return this;
+        },
+        /**
+         * Removes an item from the list
+         * @param {Object} item
+         * @return {boolean}
+         */
+        remove : function (item) {
+            index = this.indexOf(item);
+            if (index === -1) {
+                return false;
+            }
+            //swap(elements[index], elements[size-1]);
+            size -= 1;
+            elements.splice(index, 1);
+            return true;
+        },
+        /**
+         * Gets the length of the list
+         * @return {number}
+         */
+        getSize : function () {
+            return size;
+        },
+        /**
+         * Returns true if the list is empty
+         * @returns {boolean}
+         */
+        isEmpty : function () {
+            return size === 0;
+        },
+        /**
+         * Returns the first occurrence of an element, if the element is not
+         * contained in the list then returns -1
+         * @param {Object} item
+         * @return {number}
+         */
+        indexOf : function (item) {
+            for (i = 0; i < size; i += 1) {
+                if (item.id === elements[i].id) {
+                    return i;
+                }
+            }
+            return -1;
+        },
+        /**
+         * Returns the the first object of the list that has the
+         * specified attribute with the specified value
+         * if the object is not found it returns undefined
+         * @param {string} attribute
+         * @param {string} value
+         * @return {Object / undefined}
+         */
+        find : function (attribute, value) {
+            var i,
+                current;
+            for (i = 0; i < elements.length; i += 1) {
+                current = elements[i];
+                if (current[attribute] === value) {
+                    return current;
+                }
+            }
+            return undefined;
+        },
+
+        /**
+         * Returns true if the list contains the item and false otherwise
+         * @param {Object} item
+         * @return {boolean}
+         */
+        contains : function (item) {
+            if (this.indexOf(item) !== -1) {
+                return true;
+            }
+            return false;
+        },
+        /**
+         * Sorts the list using compFunction if possible, if no compFunction
+         * is passed as an parameter then it returns false (the list is not sorted)
+         * @param {Function} compFunction
+         * @return {boolean}
+         */
+        sort : function (compFunction) {
+            var returnValue = false;
+            if (compFunction) {
+                elements.sort(compFunction);
+                returnValue = true;
+            }
+            return returnValue;
+        },
+        /**
+         * Returns the list as an array
+         * @return {Array}
+         */
+        asArray : function () {
+            return elements;
+        },
+        /**
+         * Returns the first element of the list
+         * @return {Object}
+         */
+        getFirst : function () {
+            return elements[0];
+        },
+        /**
+         * Returns the last element of the list
+         * @return {Object}
+         */
+        getLast : function () {
+            return elements[size - 1];
+        },
+
+        /**
+         * Returns the last element of the list and deletes it from the list
+         * @return {Object}
+         */
+        popLast : function () {
+            var lastElement;
+            size -= 1;
+            lastElement = elements[size];
+            elements.splice(size, 1);
+            return lastElement;
+        },
+        /**
+         * Returns an array with the objects that determine the minimum size
+         * the container should have
+         * The array values are in this order TOP, RIGHT, BOTTOM AND LEFT
+         * @return {Array}
+         */
+        getDimensionLimit : function () {
+            var result = [100000, -1, -1, 100000],
+                objects = [undefined, undefined, undefined, undefined];
+            //number of pixels we want the inner shapes to be
+            //apart from the border
+
+            for (i = 0; i < size; i += 1) {
+                if (result[0] > elements[i].y) {
+                    result[0] = elements[i].y;
+                    objects[0] = elements[i];
+
+                }
+                if (result[1] < elements[i].x + elements[i].width) {
+                    result[1] = elements[i].x + elements[i].width;
+                    objects[1] = elements[i];
+                }
+                if (result[2] < elements[i].y + elements[i].height) {
+                    result[2] = elements[i].y + elements[i].height;
+                    objects[2] = elements[i];
+                }
+                if (result[3] > elements[i].x) {
+                    result[3] = elements[i].x;
+                    objects[3] = elements[i];
+                }
+            }
+            return result;
+        },
+        /**
+         * Clears the content of the arrayList
+         * @chainable
+         */
+        clear : function () {
+            if (size !== 0) {
+                elements = [];
+                size = 0;
+            }
+            return this;
+        },
+        /**
+         * Returns the canvas of an element if possible
+         * @return {Canvas / undefined}
+         */
+        getCanvas : function () {
+            return (this.getSize() > 0) ? this.get(0).getCanvas() : undefined;
+        }
+    };
+};
+
+// Declarations created to instantiate in NodeJS environment
+if (typeof exports !== 'undefined') {
+    module.exports = ArrayList;
+//    var _ = require('../../lib/underscore/underscore.js');
+}
+
 /**
  * @class Base
  * Base Class
@@ -18,7 +568,7 @@ var getRelativePosition = function (targetElement, relativeElement) {
  */
 var Base = function (options) {
     var defaults = {
-        id : (options && options.id) || jCore.Utils.generateUniqueId()
+        id : (options && options.id) || 'base-ui-' + UITools.getIndex()
     };
     $.extend(true, defaults, options);
     /**
@@ -278,7 +828,7 @@ Proxy.prototype.setCallback = function (callback) {
  * Obtains the data
  */
 Proxy.prototype.getData = function () {
-    console.log('Getting Data from: ' + this.url);
+
 };
 
 /**
@@ -287,7 +837,7 @@ Proxy.prototype.getData = function () {
  * @param {Object} [callback]
  */
 Proxy.prototype.sendData = function (data, callback) {
-    console.log('Sending Data to: ' + this.url, data);
+
 };
 
 /**
@@ -367,7 +917,7 @@ Element.prototype.family = "Base";
  */
 Element.prototype.initObject = function (options) {
     var defaults = {
-        id : (options && options.id) || jCore.Utils.generateUniqueId(),
+        //id : (options && options.id) || jCore.Utils.generateUniqueId(),
         style : {
             cssProperties: {},
             cssClasses: []
@@ -380,8 +930,8 @@ Element.prototype.initObject = function (options) {
         visible : true
     };
     $.extend(true, defaults, options);
-    this.setId(defaults.id)
-        .setStyle(new jCore.Style({
+    this//.setId(defaults.id)
+        .setStyle(new Style({
             belongsTo: this,
             cssProperties: defaults.style.cssProperties,
             cssClasses: defaults.style.cssClasses
@@ -536,7 +1086,7 @@ Element.prototype.setVisible = function (value) {
  * @return {*}
  */
 Element.prototype.setStyle = function (style) {
-    if (style instanceof jCore.Style) {
+    if (style instanceof Style) {
         this.style = style;
     }
     return this;
@@ -1981,7 +2531,7 @@ Item.prototype.createHTML = function () {
     if (this.disabled) {
         li.className = li.className + ' adam-disabled';
     }
-    li.id = jCore.Utils.generateUniqueId();
+    li.id = UITools.getIndex();
     this.html = li;
     return this.html;
 };
@@ -2228,8 +2778,6 @@ MenuItem.prototype.attachListeners = function () {
     if (this.html) {
         $(this.itemAnchor)
             .click(function (e) {
-
-               console.log('hasta aqui llego');
 
                e.stopPropagation();
                if (!self.menu && !self.disabled) {
@@ -2550,7 +3098,7 @@ Panel.prototype.setHeader = function (h) {
  * Sets the header HTML element
  * @param {HTMLElement} f
  */
-Panel.prototype.    setFooter = function (f) {
+Panel.prototype.setFooter = function (f) {
     this.footer = f;
     return this;
 };
@@ -2849,19 +3397,17 @@ Form.prototype.setCloseContainerOnSubmit = function (value) {
  * Loads the form
  */
 Form.prototype.load = function () {
-    console.log("Loading Form:", this.id);
     var self = this, params = null;
     if (!this.loaded) {
         if (this.proxy) {
-            console.log("Calling Proxy:", this.proxy.url);
             params = this.getRelatedFields();
             this.proxy.getData(params, {
                 success: function (response) {
-                    console.log('Form '+ self.id + ': Loaded OK');
                     self.data = response;
                     self.applyData.call(self);
                     self.loaded = true;
                     self.attachListeners();
+                    self.setDirty(false);
                 }
             });
 
@@ -2907,9 +3453,7 @@ Form.prototype.reload = function () {
  * @param dontLoad boolean Set the flag to trigger loaded event. Default value is FALSE
  */
 Form.prototype.applyData = function (dontLoad) {
-    console.log('Data to Load:',this.data);
     var propertyName, i, related;
-    console.log("Applying Data for:", this.id);
     if (this.data) {
         //Applying related data
         if (this.data.related) {
@@ -2927,7 +3471,9 @@ Form.prototype.applyData = function (dontLoad) {
             if (this.data.hasOwnProperty(propertyName)) {
                 for (i = 0; i < this.items.length; i += 1) {
                     if (this.items[i].name === propertyName) {
-                        this.items[i].setValue(this.data[propertyName]);
+                        try {
+                            this.items[i].setValue(this.data[propertyName]);    
+                        } catch(e) {}
                         break;
                     }
                 }
@@ -2935,7 +3481,7 @@ Form.prototype.applyData = function (dontLoad) {
         }
     }
     //Triggering 'loaded' form event
-    if (this.callback.loaded && !dontLoad) {
+    if (this.callback && this.callback.loaded && !dontLoad) {
         this.callback.loaded.call(this, this.data, this.proxy !== null);
     }
 };
@@ -2982,9 +3528,6 @@ Form.prototype.addItem = function (item) {
                 break;
             case 'itemupdater':
                 newItem = new ItemUpdaterField(item, this);
-                break;
-            case 'expression':
-                newItem = new ExpressionField(item, this);
                 break;
             case 'radio':
                 newItem = new RadiobuttonField(item, this);
@@ -3158,8 +3701,8 @@ Form.prototype.onEnterFieldHandler = function (fieldObject) {
         var i;
 
         for (i = 0; i < that.items.length; i += 1) {
-            if (that.items[i] !==  fieldObject && that.items[i] instanceof CriteriaField) {
-                that.items[i].hidePanel();
+            if (that.items[i] !== fieldObject && (that.items[i] instanceof MultipleItemField || that.items[i] instanceof CriteriaField)) {
+                that.items[i].closePanel();
             }
         }
     };
@@ -3329,7 +3872,17 @@ Field.prototype.setRequired = function (value) {
     this.required = value;
     return this;
 };
-
+/**
+ * Takes the sent parameter and set it as the value in the control.
+ * @param {String} value
+ * @private
+ */
+Field.prototype._setValueToControl = function (value) {
+    if (this.html && this.controlObject) {
+        this.controlObject.value = this.value;
+    }
+    return this;
+};
 /**
  * Sets the field's value
  * @param {*} value
@@ -3342,9 +3895,7 @@ Field.prototype.setValue = function (value, change) {
     } else {
         this.value = value || this.initialValue;
     }
-    if (this.html && this.controlObject) {
-        this.controlObject.value = this.value;
-    }
+    this._setValueToControl(this.value);
     if (this.proxy) {
         this.load();
     }
@@ -3636,7 +4187,7 @@ Field.prototype.isValid = function () {
     return res;
 };
 
-Field.prototype.onChange = function () {
+Field.prototype.onChange = function (newValue, oldValue) {
     if (this.required) {
         this.evalRequired();
     }
@@ -3644,11 +4195,12 @@ Field.prototype.onChange = function () {
     this.isValid();
 
     if (this.change) {
-        this.change(this);
+        this.change(this, newValue, oldValue);
     }
     this.parent.setDirty(true);
     return this;
 };
+
 
 Field.prototype.doLoad = function () {
     if (this.proxy) {
@@ -4281,6 +4833,7 @@ TextField.prototype.createHTML = function () {
     this.html.appendChild(fieldLabel);
 
     textInput = this.createHTMLElement('input');
+    textInput.type = "text";
     textInput.id = this.name;
     textInput.value = this.value || "";
     if (this.fieldWidth) {
@@ -4505,8 +5058,9 @@ ComboboxField.prototype.attachListeners = function () {
     if (this.controlObject) {
         $(this.controlObject)
             .change(function (e) {
+                var oldValue = self.value;
                 self.setValue(this.value, true);
-                self.onChange();
+                self.onChange(this.value, oldValue);
             });
     }
     return this;
@@ -4926,21 +5480,12 @@ RadiobuttonField.prototype.evalRequired = function () {
     return response;
 };
 
-RadiobuttonField.prototype.setValue = function (value, change) {
-    if (change) {
-        this.value = value;
-    } else {
-        this.value = value || this.initialValue;
-    }
+RadiobuttonField.prototype._setValueToControl = function (value) {
     if (this.html && this.controlObject) {
         this.controlObject.checked = this.value;
     }
-    if (this.proxy) {
-        this.load();
-    }
     return this;
 };
-
 
 /**
  * @class LabelField
@@ -5824,10 +6369,13 @@ SugarProxy.prototype.getData = function (params, callback) {
     }
     App.api.call(operation, url, {}, {
         success: function (response) {
-            console.log('getData');
-            console.log(response);
             if (callback && callback.success) {
                 callback.success.call(self, response);
+            }
+        },
+        error: function (sugarHttpError) {
+            if(callback && typeof callback.error === 'function') {
+                callback.error.call(self, sugarHttpError);
             }
         }
     });
@@ -5835,7 +6383,6 @@ SugarProxy.prototype.getData = function (params, callback) {
 
 SugarProxy.prototype.sendData = function (data, callback) {
 
-    console.log('send data');
     var operation, self = this, send, url;
 
     operation = this.getOperation(this.sendMethod);
@@ -5846,8 +6393,7 @@ SugarProxy.prototype.sendData = function (data, callback) {
 
     App.api.call(operation, url, attributes, {
         success: function (response) {
-            console.log('getData - put');
-            console.log(response);
+
             if (callback && callback.success) {
                 callback.success.call(self, response);
             }
@@ -5856,7 +6402,6 @@ SugarProxy.prototype.sendData = function (data, callback) {
 };
 SugarProxy.prototype.createData = function (data, callback) {
 
-    console.log('send data');
     var operation, self = this, send, url;
 
     operation = this.getOperation(this.createMethod);
@@ -5867,8 +6412,6 @@ SugarProxy.prototype.createData = function (data, callback) {
 
     App.api.call(operation, url, attributes, {
         success: function (response) {
-            console.log('getData - post');
-            console.log(response);
             if (callback && callback.success) {
                 callback.success.call(self, response);
             }
@@ -5913,2218 +6456,6 @@ SugarProxy.prototype.getOperation = function (method) {
     return out;
 };
 
-var MultipleItemField = function (options, parent) {
-    this.items = [];
-    Field.call(this, options, parent);
-    this.controlObject = null;
-    this.panel = null;
-    this.fieldHeight = null;
-    this.itemsContainer = null;
-    this.labelObject = null;
-    this.disabled = false;
-    MultipleItemField.prototype.initObject.call(this, options);
-};
-
-MultipleItemField.prototype  = new Field();
-
-MultipleItemField.prototype.initObject = function (options) {
-    var defaults = {
-        items: JSON.parse((options && options.value) || '[]'),
-        fieldWidth: 280,
-        fieldHeight: 120,
-        panel: null
-    };
-
-    $.extend(true, defaults, options);
-
-    this.setPanel(defaults.panel || new MultipleItemPanel())
-        .setItems(defaults.items)
-        .setFieldWidth(defaults.fieldWidth)
-        .setFieldHeight(defaults.fieldHeight);
-};
-
-MultipleItemField.prototype.setPanel = function (panel) {
-    if(panel instanceof MultipleItemPanel) {
-        if(this.panel) {
-            $(this.panel.getHTML()).remove();
-        }
-        this.panel = panel;
-    }
-
-    return this;
-};
-
-MultipleItemField.prototype.setValue = function (value) {
-    if(value) {
-        try {
-            var items = JSON.parse(value);
-            this.setItems(items);
-        } catch (e) {
-            return this;
-        }
-    }
-    return this;
-};
-
-MultipleItemField.prototype.setFieldWidth = function (width) {
-    if(!isNaN(width)) {
-        this.fieldWidth = width;   
-    }
-    return this;
-};
-
-MultipleItemField.prototype.setFieldHeight = function (height) {
-    if(!isNaN(height)) {
-        this.fieldHeight = height;   
-    }
-    return this;
-};
-
-MultipleItemField.prototype.addItem = function (item) {
-    var that = this, newItem;
-
-    if(item instanceof SingleItem) {
-        newItem = item;
-    } else if (typeof item === 'object') {
-        newItem = new SingleItem({
-            label: item.label || "",
-            value: item.value || null
-        });
-    } else {
-        return this;
-    }
-
-    this.items.push(newItem);
-
-    $(this.controlObject).before(newItem.getHTML());
-
-    newItem.onRemove = function () {
-        that.removeItem(this);
-    };
-
-    this.hidePanel();
-        if (this.parent.loaded) {
-        this.onChange();
-    }
-    return this;
-};
-
-MultipleItemField.prototype.removeItem = function (item) {
-    var id = item.id, index = null, i;
-
-    for (i = 0; i < this.items.length; i += 1) {
-        if (this.items[i].id === id) {
-            index = i;
-            break;
-        }
-    }
-    if (index !== null) {
-        this.items.splice(index, 1);
-    }
-    this.hidePanel();
-    $(this.controlObject).focus();
-    this.onChange();
-
-    return this;
-};
-
-MultipleItemField.prototype.clear = function () {
-    $(this.itemsContainer).find("> li").remove();
-    this.items = [];
-    return this;
-};
-
-MultipleItemField.prototype.setItems = function (items) {
-    var i;
-    this.clear();
-    for (i = 0; i < items.length; i += 1) {
-        this.addItem(items[i]);
-    }
-    return this;
-};
-
-MultipleItemField.prototype.hidePanel = function () {
-    var i;
-    $(this.itemsContainer).removeClass('expanded');
-    for(i = 0; i < this.items.length; i+=1) {
-        $(this.items[i].html).removeClass("focused");
-    }
-    this.panel.close();
-
-    return this;
-};
-
-MultipleItemField.prototype.scrollTo = function () {
-    var fieldsDiv = this.html.parentNode;
-    if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < getRelativePosition(this.itemsContainer, fieldsDiv).top + $(this.itemsContainer).outerHeight() + fieldsDiv.scrollTop) {
-        this.html.parentNode.scrollTop = $(this.itemsContainer).position().top;
-        return;
-    }
-
-    return this;
-};
-
-MultipleItemField.prototype.showPanel = function () {
-
-    $(this.itemsContainer).addClass('focused');
-    $(this.panel.html).addClass('focused');
-
-    this.panel.open();
-    $(this.itemsContainer).addClass('expanded');
-    
-    return this;
-};
-
-MultipleItemField.prototype.createControlObject = function () {
-    var ctrlObj = document.createElement('input');
-
-    ctrlObj.className = 'multiple-item-input';
-
-    return ctrlObj;
-};
-
-MultipleItemField.prototype.attachListeners = function () {
-    var controlObject, itemsContainer, that = this;
-
-    controlObject = this.controlObject;
-    itemsContainer = this.itemsContainer;
-    
-    $(this.itemsContainer).on("click", function (e) {
-        e.stopPropagation();
-        if (!that.disabled) {
-            $(controlObject).focus().select();
-        }
-    });
-
-    $(controlObject).focus(function () {
-        that.scrollTo();
-        $(itemsContainer).addClass('focused');
-        $(that.panel.html).addClass('focused');
-    }).blur(function () {
-        that.hidePanel();
-        $(itemsContainer).removeClass('focused');
-        $(that.panel.html).removeClass('focused');
-    }).on('keyup', function (e) {
-        if(e.keyCode === 27) {
-            that.hidePanel();
-        }
-    }).on('keydown', function (e) {
-        e.stopPropagation();
-    });
-
-    return this;
-};
-
-MultipleItemField.prototype.createHTML = function () {
-    var fieldLabel, required = '', 
-        style, that = this, itemsContainer, controlObject;
-    Field.prototype.createHTML.call(this);
-
-    if (this.required) {
-        required = '<i>*</i> ';
-    }
-
-    fieldLabel = this.createHTMLElement('span');
-    fieldLabel.className = 'adam-form-label';
-    fieldLabel.innerHTML = this.label + ': ' + required;
-    fieldLabel.style.width = this.parent.labelWidth;
-    fieldLabel.style.verticalAlign = 'top';
-    this.html.appendChild(fieldLabel);
-    this.labelObject = fieldLabel;
-
-    itemsContainer = this.createHTMLElement('ul');
-    itemsContainer.className = 'multiple-item-container';
-    itemsContainer.id = this.name;
-
-    if (this.fieldWidth && this.fieldHeight) {
-        style = document.createAttribute('style');
-        if (this.fieldWidth) {
-            style.value += 'width: ' + this.fieldWidth + 'px; ';
-        }
-        if (this.fieldHeight) {
-            style.value += 'height: ' + this.fieldHeight + 'px; ';
-        }
-        itemsContainer.setAttributeNode(style);
-    }
-
-    controlObject = this.createControlObject();
-    itemsContainer.appendChild(controlObject);
-
-    this.html.appendChild(itemsContainer);
-
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
-    if (this.helpTooltip) {
-        this.html.appendChild(this.helpTooltip.getHTML());
-    }
-
-    this.itemsContainer = itemsContainer;
-    this.controlObject = controlObject;
-
-    $(this.parent.body).on('scroll', function () {
-        that.hidePanel();
-    });
-
-    this.panel.belongsTo = this.itemsContainer;
-    this.parent.parent.html.appendChild(this.panel.getHTML());
-
-    this.setItems(this.items);
-
-    return this.html;
-};
-
-MultipleItemField.prototype.evalRequired = function () {
-    var res = true;
-    if (this.required) {
-        res = (this.items.length > 0);
-        if (!res) {
-            $(this.itemsContainer).addClass('required');
-        } else {
-            $(this.itemsContainer).removeClass('required');
-        }
-    }
-    return res;
-};
-
-MultipleItemField.prototype.getObject = function () {
-    var i, obj = [];
-
-    for(i = 0; i < this.items.length; i+=1) {
-        obj.push(this.items[i].getObject());
-    }
-
-    return obj;
-};
-
-MultipleItemField.prototype.getObjectValue = function () {
-    this.value = JSON.stringify(this.getObject());
-    return Field.prototype.getObjectValue.call(this);
-};
-
-
-//MultipleItemPanel
-
-    var MultipleItemPanel = function(settings) {
-        Element.call(this, {
-            style: {
-                cssProperties: {
-                    "display": "none"
-                },
-                cssClasses: [
-                    "multiple-item-panel"
-                ]
-            }
-        });
-
-        this.belongsTo = null;
-        this.isOpen = null;
-        this.buttons = null;
-        this.subpanels = null;
-        this.matchParentWidth = null;
-
-        MultipleItemPanel.prototype.initObject.call(this, settings);
-    };
-
-    MultipleItemPanel.prototype = new Element();
-
-    MultipleItemPanel.prototype.type = "MultipleItemPanel";
-
-    MultipleItemPanel.prototype.initObject = function (settings) {
-        var defaults = {
-            belongsTo: null,
-            buttons: [],
-            matchParentWidth: true,
-            width: 200
-        };
-
-        $.extend(true, defaults, settings);
-
-        this.belongsTo = defaults.belongsTo;
-        this.buttons = [];
-        this.subpanels = [];
-        this.isOpen = false;
-        this.width = defaults.width;
-        this.matchParentWidth = defaults.matchParentWidth;
-
-        this.setButtons(defaults.buttons);
-    };
-
-    MultipleItemPanel.prototype.refreshPosition = function () {
-        var pos, margin = {
-            top: 0,
-            left: 0
-        };
-
-        if(this.html){
-            pos = getRelativePosition(this.belongsTo, this.html.parentElement);
-            if(this.html.parentElement.style.position !== 'absolute') {
-                margin.top = parseInt($(this.html.parentElement).css("margin-top"), 10);
-                margin.left = parseInt($(this.html.parentElement).css("margin-left"), 10);
-            }
-
-            if(this.matchParentWidth) {
-                this.setWidth($(this.belongsTo).outerWidth() - 2);   
-            }
-            this.setY((pos.top + margin.top -1 + $(this.belongsTo).outerHeight()));
-            this.setX(pos.left + margin.left);
-            /*this.style.addProperties({
-                "display": "none",
-                "zIndex": 999
-            });
-            this.isOpen = false;*/
-        }
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.setBelongsTo = function (element) {
-        this.belongsTo = element;
-
-        this.refreshPosition();
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.createSubpanel = function (settings, type) {
-        var subpanel;
-
-        switch(type) {
-            case 'list':
-                subpanel = new MultipleItemListSubpanel(settings);
-                break;
-        }
-
-        return subpanel;
-    };
-
-    MultipleItemPanel.prototype.createButtonPanel = function (settings) {
-        return new MultipleItemButtonPanel(settings);
-    };
-
-    MultipleItemPanel.prototype.showSubPanel = function (p) {
-        if(this.html) {
-            this.html.appendChild(p.getHTML());
-        }
-    };
-
-    MultipleItemPanel.prototype.addSubpanel = function (subpanel, type) {
-        var newSubpanel;
-        if(subpanel instanceof MultipleItemSubpanel) {
-            newSubpanel = subpanel;
-        } else {
-            newSubpanel = this.createSubpanel(subpanel, type);
-        }
-
-        newSubpanel.parent = this;
-
-        this.subpanels.push(newSubpanel);
-
-        if(this.html) {
-            this.html.appendChild(newSubpanel.getHTML());
-        }
-
-        return  this;
-    };
-
-    MultipleItemPanel.prototype.addButton = function (button) {
-        var buttonHTML, span;
-
-        if(typeof button.caption === 'string') {
-            buttonHTML = new Element({
-                style: {
-                    cssClasses: [
-                        'multiple-item-panel-button'
-                    ],
-                    cssProperties: {
-                        position: "relative",
-                        width: "auto",
-                        height: "auto"
-                    }
-                }
-            });
-
-            if(typeof button.onClick === 'function') {
-                $(buttonHTML.getHTML()).on("mousedown", function(e){
-                    e.stopPropagation();
-                    if (e.button !== 0 && e.button !== undefined) {
-                        return;
-                    }
-                    button.onClick.call(buttonHTML, e);
-                });
-            } else {
-                $(buttonHTML).on("mousedown", function (e) {
-                    e.stopPropagation();
-                });
-            }
-
-            buttonHTML.getHTML().style.position = 'relative';
-            buttonHTML.getHTML().style.width = 'auto';
-            buttonHTML.getHTML().style.height = 'auto';
-            span = buttonHTML.createHTMLElement('span');
-            span.innerHTML = button.caption;
-            buttonHTML.getHTML().appendChild(span);
-
-            buttonHTML.data = button.data;
-            buttonHTML.name = button.caption;
-
-            this.buttons.push(buttonHTML);
-
-            if(this.html) {
-                this.html.appendChild(buttonHTML.getHTML());
-            }
-        }
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.setButtons = function (buttons) {
-        var i;
-
-        for(i = 0; i < buttons.length; i+=1) {
-            this.addButton(buttons[i]);
-        }
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.clear = function () {
-        this.buttons = [];
-        this.subpanels = [];
-        $(this.html).empty();
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.createHTML = function () {
-        var html = Element.prototype.createHTML.call(this),
-            i;
-
-        html.style.height = 'auto';
-
-        for(i = 0; i < this.subpanels.length; i+=1) {
-            this.html.appendChild(this.subpanels[i].getHTML());
-        }
-
-        $(this.html).on("mousedown", function(e){
-            e.stopPropagation();
-        }).on("click", function(e){
-            e.stopPropagation();
-        }).on("mouseup", function(e){
-            e.stopPropagation();
-        });
-
-        if(!this.matchParentWidth) {
-            html.style.width = this.width + "em";
-        }
-
-        return html;
-    };
-
-    MultipleItemPanel.prototype.open = function () {
-        var html = this.html, i;
-
-        if(this.isOpen || !this.belongsTo) {
-            return this;
-        }
-
-        if(!html) {
-            html = this.getHTML();
-        }
-
-        this.refreshPosition();
-
-        for(i = 0; i < this.buttons.length; i+=1) {
-            this.html.appendChild(this.buttons[i].getHTML());
-        }
-
-        this.isOpen = true;
-        $(this.html).slideDown();
-
-        return this;
-    };
-
-    MultipleItemPanel.prototype.close = function () {
-        this.isOpen = false;
-        $(this.html).hide();
-        return this;
-    };
-
-    MultipleItemPanel.prototype.remove = function() {
-        $(this.html).remove();
-        delete this.subpanels;
-        delete this.belongsTo;
-        delete this.isOpen;
-        delete this.buttons;
-        delete this.matchParentWidth;
-    };
-
-//SubPanel
-
-    var MultipleItemSubpanel = function (settings) {
-        Element.call(this);
-        this.header = null;
-        this.title = null;
-        this.content = null;
-        this.collapsable = null;
-        this.visibleHeader = null;
-        this.showContentOnStart = null;
-        this.onOpen = null;
-        this.onClose = null;
-        this.parent = null;
-        this.language = {};
-
-        MultipleItemSubpanel.prototype.initObject.call(this, settings);
-    };
-
-    MultipleItemSubpanel.prototype = new Element();
-
-    MultipleItemSubpanel.prototype.type = "mutlipleItemSubPanel";
-
-    MultipleItemSubpanel.prototype.initObject = function (settings) {
-        var defaults = {
-            title: "",
-            collapsable: false,
-            showContentOnStart: false,
-            visibleHeader: true,
-            onOpen: null,
-            onClose: null,
-            parent: null
-        };
-
-        $.extend(true, defaults, settings);
-
-        this.parent = defaults.parent;
-        this.showContentOnStart = defaults.showContentOnStart;
-        this.onOpen = defaults.onOpen;
-        this.onClose = defaults.onClose;
-
-        this.setTitle(defaults.title)
-            .setIsCollapsable(defaults.collapsable)
-            .isVisibleHeader(defaults.visibleHeader);
-    };
-
-    MultipleItemSubpanel.prototype.isVisibleHeader = function (visible) {
-        this.visibleHeader = visible;
-
-        if(this.header) {
-            this.header.style.display = visible ? 'block' : 'none';
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.setTitle = function (title) {
-        this.title = title;
-        if(this.header) {
-            $(this.header).find('.header-text').text(this.title);
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.setIsCollapsable = function (bln) {
-         if(typeof bln === 'boolean') {
-            this.collapsable = bln;
-         }
-
-         return this;
-    };
-
-    MultipleItemSubpanel.prototype.reset = function () {};
-
-    MultipleItemSubpanel.prototype.close = function () {
-        var that = this;
-
-        this.isOpen = false;
-
-        $(this.html).removeClass('opened').find('.header .bullet').removeClass("adam-menu-icon-arrow-down");
-        $(this.content).slideUp(function() {
-            that.reset();
-        });
-
-        if(typeof this.onClose === 'function') {
-            this.onClose.call(this);
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.open = function () {
-        var $content = $(this.content);
-
-        this.isOpen = true;
-
-        if($content.css("display") !== 'none') {
-            return this;
-        }
-
-        $(this.html).addClass('opened').find('.header .bullet').addClass("adam-menu-icon-arrow-down");
-        if(this.displayFormOnStart) {
-            $(this.content).css("display", "block");
-        } else {
-            $(this.content).slideDown();
-        }
-
-        if(typeof this.onOpen === 'function') {
-            this.onOpen.call(this);
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.attachListeners = function () {
-        var that = this;
-        $(this.header).on("mousedown", function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            if (e.button !== 0 && e.button !== undefined) {
-                return;
-            }
-            if(that.isOpen) {
-                that.close();
-            } else {
-                that.open();
-            }
-        });
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.hideLoader = function () {
-        if(this.content) {
-            $(this.content).find('.loader').remove();
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.showLoader = function () {
-        var msg;
-        if(this.content) {
-            if($(this.content).find(".loader").get(0)) {
-                return this;
-            } 
-
-            msg = document.createElement("div");
-            msg.className = "loader";
-            msg.appendChild(document.createTextNode("loading..."));
-
-            $(this.content).prepend(msg);
-        }
-
-        return this;
-    };
-
-    MultipleItemSubpanel.prototype.createHTML = function () {
-        var header, aux, content;
-        if(!this.html) {
-            Element.prototype.createHTML.call(this);
-            this.html.style.height = 'auto';
-            this.html.style.width = 'auto';
-            this.html.style.position = "relative";
-            this.html.className = 'multiple-item-subpanel';
-
-            header = this.createHTMLElement('div');
-            header.className = "header";
-            content = this.createHTMLElement('div');
-            content.className = 'content';
-
-            if(!this.visibleHeader) {
-                header.style.display = 'none';
-            }
-
-            if(this.collapsable) {
-                aux = this.createHTMLElement('span');
-                aux.className = "adam-menu-icon-arrow-right bullet";
-                content.style.display = 'none';
-                header.appendChild(aux);
-            }
-
-            aux = this.createHTMLElement("span");
-            aux.className = "header-text";
-            aux.appendChild(document.createTextNode(this.title));
-
-            header.appendChild(aux);
-
-            this.header = header;
-            this.content = content;
-            this.html.appendChild(header);
-            this.html.appendChild(content);
-
-            this.attachListeners();
-
-            if(this.showContentOnStart) {
-                $(header).trigger("mousedown");
-            }
-        }
-
-        return this.html;
-    };
-
-//SubPanelList
-    var MultipleItemListSubpanel = function (settings) {
-        MultipleItemSubpanel.call(this, settings);
-        this.items = null;
-        this.listMaxHeight = null;
-        this.onItemSelect = null;
-        MultipleItemListSubpanel.prototype.initObject.call(this, settings);
-    };
-
-    MultipleItemListSubpanel.prototype = new MultipleItemSubpanel();
-
-    MultipleItemListSubpanel.prototype.initObject = function (settings) {
-        var defaults = {
-            items: [], 
-            listMaxHeight: null, 
-            onItemSelect: null
-        };
-
-        this.items = [];
-        this.listMaxHeight = defaults.listMaxHeight;
-        this.onItemSelect = settings.onItemSelect;
-
-        $.extend(true, defaults, settings);
-
-        this.setItems(defaults.items);
-    };
-
-    MultipleItemListSubpanel.prototype.selectItem = function (i) {
-        if(this.html) {
-            $(this.html).find('li:eq(' + i + ')').trigger("mousedown");
-        }
-
-        return this;
-    };
-
-    MultipleItemListSubpanel.prototype.setItems = function (items) {
-        var i;
-        if(items.push) {
-            for(i = 0; i < items.length; i+=1) {
-                this.addItem(items[i]);
-            }
-        }
-
-        return this;
-    };
-
-    MultipleItemListSubpanel.prototype.displayItem = function (item) {
-        var list, li, that = this, defaultData, label = item.label || item.text;
-        if(this.html) {
-            defaultData = {
-                label: label
-            };
-            list = $(this.html).find("ul");
-            li = $(document.createElement("li"));
-            li.html(label || "untitled");
-            li.data("value", item.value || null);
-            li.data("label", label);
-            li.data("data", $.extend(true, defaultData, item.data));
-
-            if(typeof this.onItemSelect === 'function') {
-                li.on("mousedown", function(e) {
-                    e.stopPropagation();
-                    if (e.button !== 0 && e.button !== undefined) {
-                        return;
-                    }
-                    that.onItemSelect.call(that, $(this).data("value"), $(this).data("data"));
-                });
-            }
-
-            list.append(li);
-        }
-
-        return this;
-    };
-
-    MultipleItemListSubpanel.prototype.clear = function () {
-        this.items = [];
-        $(this.content).find("ul").empty();
-
-        return this;
-    };
-
-    MultipleItemListSubpanel.prototype.addItem = function (item) {
-        this.items.push(item);
-        this.displayItem(item);
-
-        return this;
-    };
-
-    MultipleItemListSubpanel.prototype.createHTML = function() {
-        var i, ul;
-        MultipleItemSubpanel.prototype.createHTML.call(this);
-
-        ul = this.createHTMLElement("ul");
-        ul.className = 'multiple-item-list';
-        ul.style.height = 'auto';
-        ul.style.overflow = 'auto';
-        if(this.listMaxHeight) {
-            $(ul).css("max-height", this.listMaxHeight);
-        }
-        this.content.appendChild(ul);
-
-        for(i = 0; i < this.items.length; i+=1) {
-            this.displayItem(this.items[i]);
-        }
-
-        return this.html;
-    };
-
-//ButtonPanel
-    var MultipleItemButtonPanel = function (settings) {
-        Element.call(this, {
-            style: {
-                cssClasses: ["multiple-item-button-panel"]
-            }
-        });
-        this.buttons = null;
-        this.buttonsContainer = null;
-        this.label = null;
-        this.fallbackOnClickHandler = null;
-        MultipleItemButtonPanel.prototype.initObject.call(this, settings);
-    };
-
-    MultipleItemButtonPanel.prototype = new Element();
-
-    MultipleItemButtonPanel.prototype.initObject = function (settings) {
-        var defaults = {
-            buttons: [],
-            label: "[Button Panel]",
-            fallbackOnClickHandler: null
-        };
-
-        $.extend(true, defaults, settings);
-
-        this.buttons = [];
-        this.fallbackOnClickHandler = defaults.fallbackOnClickHandler;
-
-        this.setButtons(defaults.buttons)
-            .setLabel(defaults.label);
-    };
-
-    MultipleItemButtonPanel.prototype.setLabel = function (label) {
-        this.label = label;
-        if(this.html) {
-            $(this.html).find(".label").text(label);
-        }
-
-        return this;
-    };
-
-    MultipleItemButtonPanel.prototype.getButtonHTML = function (button) {
-        var element;
-
-        if(button.html) {
-            return button.html;
-        }
-
-        element = this.createHTMLElement("button");
-        element.value = button.value;
-        element.appendChild(document.createTextNode(button.caption));
-        if(typeof button.onClick === 'function') {
-            $(element).on("mousedown", function(e){
-                e.stopPropagation();
-                if(e.button !== 0 && e.button !== undefined) {
-                    return;
-                } 
-                button.onClick.call(button);
-            });
-        }
-        button.html = element;
-
-        return button.html;            
-    };
-
-    MultipleItemButtonPanel.prototype.addButton = function (button) {
-        if(typeof button === 'object') {
-            if(!button.onClick) {
-                button.onClick = this.fallbackOnClickHandler;
-            }
-            this.buttons.push(button);
-            
-            if(this.buttonsContainer) {
-                this.buttonsContainer.appendChild(this.getButtonHTML(button));
-            }
-        }
-
-        return this;
-    };
-
-    MultipleItemButtonPanel.prototype.setButtons = function (buttons) {
-        var i;
-
-        this.buttons = [];
-
-        if(this.buttonsContainer) {
-            $(this.buttonsContainer).empty();
-        }
-
-        for(i = 0; i< buttons.length; i+=1) {
-            this.addButton(buttons[i]);
-        }
-
-        return this;
-    };
-
-    MultipleItemButtonPanel.prototype.createHTML = function () {
-        var i = 0, label, container;
-
-        if(this.html) {
-            return this.html;
-        }
-
-        Element.prototype.createHTML.call(this);
-
-        this.html.style.position = 'relative';
-        this.html.style.height = 'auto';
-        this.html.style.width = 'auto';
-        this.html.style.display = 'block';
-        this.html.style.textAlign = 'center';
-
-        if(this.label !== "") {
-            label = this.createHTMLElement('span');
-            label.className = 'pmse-label';
-
-            label.appendChild(document.createTextNode(this.label));
-        }
-
-        container = this.createHTMLElement("div");
-        container.className = 'pmse-container';
-
-        for(i = 0; i < this.buttons.length; i+=1) {
-            container.appendChild(this.getButtonHTML(this.buttons[i]));
-        }
-
-        this.buttonsContainer = container;
-
-        if(label) {
-            this.html.appendChild(label);   
-        }
-        this.html.appendChild(container);
-
-        return this.html;
-    };
-
-//Single Item
-    var SingleItem = function (options) {
-        Element.call(this, options);
-        this.label = null;
-        this.value = null;
-        this.onRemove = null;
-        this.onClick = null;
-        this.showValueTooptip = null;
-        this.panel = null;
-        this.editable = null;
-        this.onChange = null;
-        this.inEditMode = null;
-        this.onEdit = null;
-        this.data = null;
-
-        SingleItem.prototype.initObject.call(this, options);
-    };
-
-    SingleItem.prototype = new Element();
-
-    SingleItem.prototype.type = 'SingleItem';
-
-    SingleItem.prototype.family = 'SingleItem';
-
-    SingleItem.prototype.initObject = function (options) {
-        var defaults = {
-            label: "",
-            value: null,
-            showValueTooptip: true,
-            editable: false,
-            //panel: null,
-            data: {},
-            onClick: null,
-            onChange: null,
-            onEdit: null,
-            onRemove: function () {}
-        };
-
-        $.extend(true, defaults, options);
-
-        this.onRemove = defaults.onRemove;
-        this.onClick = defaults.onClick;
-        this.onChange = defaults.onChange;
-        this.inEditMode = false;
-        this.data = typeof defaults.data === 'object' ? defaults.data : {};
-
-        this.setLabel(defaults.label)
-            .setShowValueToolTip(defaults.showValueTooptip)
-            .setValue(defaults.value)
-            .setIsEditable(defaults.editable)
-            .setOnEditHandler(defaults.onEdit);
-    };
-    /*
-    SingleItem.prototype.setOnClickHandler = function(handler) {
-        if(typeof handler === 'function') {
-            this.onClick = handler;
-            if(this.html) {
-                this.html.style.cursor = 'pointer';
-            }
-        } else {
-            this.onClick = null;
-            if(this.html) {
-                this.html.style.cursor = 'default';
-            }
-        }
-
-        return this;
-    };*/
-    /*
-    SingleItem.prototype.setIconVisible = function (visible) {
-        this.showIcon = visible;
-        this.updateHTML();
-        return this;
-    };*/
-    /*
-    SingleItem.prototype.setIconClasses = function(classes) {
-        this.iconClasses = classes;
-        this.updateHTML();
-        return this;
-    };*/
-
-    SingleItem.prototype.setOnEditHandler = function (handlerFunction) {
-        delete this.setOnEditHandler;
-        if(typeof handlerFunction === 'function') {
-            this.onEdit = handlerFunction;
-        } else {
-            this.onEdit = null;
-        }
-
-        this.refreshCursor();
-
-        return this;
-    };
-
-    SingleItem.prototype.refreshCursor = function() {
-        if(this.html) {
-            this.html.style.cursor = this.editable ? 'pointer' : (typeof this.onClick === 'function' ? 'pointer' : 'default');
-        }
-
-        return this;
-    };
-
-    SingleItem.prototype.setIsEditable = function(editable) {
-        this.editable = !!editable;
-
-        return this.refreshCursor();
-    };
-
-    SingleItem.prototype.setValue = function (value) {
-        this.value = value;
-        return this.updateHTML();    
-    };
-
-    SingleItem.prototype.getValue = function () {
-        return this.value;
-    };
-
-    SingleItem.prototype.setLabel = function (label) {
-        this.label = label;
-        return this.updateHTML();
-    };
-
-    SingleItem.prototype.getLabel = function () {
-        return this.label;
-    };
-
-    SingleItem.prototype.setData = function (key, value) {
-        this.data[key] = value;
-    };
-
-    SingleItem.prototype.getData = function (key) {
-        if(key) {
-            return this.data[key];
-        } else {
-            return this.data;
-        }
-    };
-
-    SingleItem.prototype.showCloseButton = function () {
-        if(this.html) {
-            $(this.html).find('.multiple-item-close').css("visibility", "visible");
-        }
-
-        return this;
-    };
-
-    SingleItem.prototype.hideCloseButton = function () {
-        if(this.html) {
-            $(this.html).find('.multiple-item-close').css("visibility", "hidden");
-        }
-
-        return this;
-    };
-
-    SingleItem.prototype.setShowValueToolTip = function (show) {
-        if(typeof show === 'boolean') {
-            this.showValueTooptip = show;
-        }
-        return this;
-    };
-
-    SingleItem.prototype.get_html_translation_table = function (table, quote_style) {
-        var entities = {},
-            hash_map = {},
-            decimal;
-        var constMappingTable = {},
-            constMappingQuoteStyle = {};
-        var useTable = {},
-            useQuoteStyle = {};
-
-        // Translate arguments
-        constMappingTable[0] = 'HTML_SPECIALCHARS';
-        constMappingTable[1] = 'HTML_ENTITIES';
-        constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
-        constMappingQuoteStyle[2] = 'ENT_COMPAT';
-        constMappingQuoteStyle[3] = 'ENT_QUOTES';
-
-        useTable = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
-        useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
-
-        if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
-            throw new Error("Table: " + useTable + ' not supported');
-            // return false;
-        }
-
-        entities['38'] = '&amp;';
-        if (useTable === 'HTML_ENTITIES') {
-            entities['160'] = '&nbsp;';
-            entities['161'] = '&iexcl;';
-            entities['162'] = '&cent;';
-            entities['163'] = '&pound;';
-            entities['164'] = '&curren;';
-            entities['165'] = '&yen;';
-            entities['166'] = '&brvbar;';
-            entities['167'] = '&sect;';
-            entities['168'] = '&uml;';
-            entities['169'] = '&copy;';
-            entities['170'] = '&ordf;';
-            entities['171'] = '&laquo;';
-            entities['172'] = '&not;';
-            entities['173'] = '&shy;';
-            entities['174'] = '&reg;';
-            entities['175'] = '&macr;';
-            entities['176'] = '&deg;';
-            entities['177'] = '&plusmn;';
-            entities['178'] = '&sup2;';
-            entities['179'] = '&sup3;';
-            entities['180'] = '&acute;';
-            entities['181'] = '&micro;';
-            entities['182'] = '&para;';
-            entities['183'] = '&middot;';
-            entities['184'] = '&cedil;';
-            entities['185'] = '&sup1;';
-            entities['186'] = '&ordm;';
-            entities['187'] = '&raquo;';
-            entities['188'] = '&frac14;';
-            entities['189'] = '&frac12;';
-            entities['190'] = '&frac34;';
-            entities['191'] = '&iquest;';
-            entities['192'] = '&Agrave;';
-            entities['193'] = '&Aacute;';
-            entities['194'] = '&Acirc;';
-            entities['195'] = '&Atilde;';
-            entities['196'] = '&Auml;';
-            entities['197'] = '&Aring;';
-            entities['198'] = '&AElig;';
-            entities['199'] = '&Ccedil;';
-            entities['200'] = '&Egrave;';
-            entities['201'] = '&Eacute;';
-            entities['202'] = '&Ecirc;';
-            entities['203'] = '&Euml;';
-            entities['204'] = '&Igrave;';
-            entities['205'] = '&Iacute;';
-            entities['206'] = '&Icirc;';
-            entities['207'] = '&Iuml;';
-            entities['208'] = '&ETH;';
-            entities['209'] = '&Ntilde;';
-            entities['210'] = '&Ograve;';
-            entities['211'] = '&Oacute;';
-            entities['212'] = '&Ocirc;';
-            entities['213'] = '&Otilde;';
-            entities['214'] = '&Ouml;';
-            entities['215'] = '&times;';
-            entities['216'] = '&Oslash;';
-            entities['217'] = '&Ugrave;';
-            entities['218'] = '&Uacute;';
-            entities['219'] = '&Ucirc;';
-            entities['220'] = '&Uuml;';
-            entities['221'] = '&Yacute;';
-            entities['222'] = '&THORN;';
-            entities['223'] = '&szlig;';
-            entities['224'] = '&agrave;';
-            entities['225'] = '&aacute;';
-            entities['226'] = '&acirc;';
-            entities['227'] = '&atilde;';
-            entities['228'] = '&auml;';
-            entities['229'] = '&aring;';
-            entities['230'] = '&aelig;';
-            entities['231'] = '&ccedil;';
-            entities['232'] = '&egrave;';
-            entities['233'] = '&eacute;';
-            entities['234'] = '&ecirc;';
-            entities['235'] = '&euml;';
-            entities['236'] = '&igrave;';
-            entities['237'] = '&iacute;';
-            entities['238'] = '&icirc;';
-            entities['239'] = '&iuml;';
-            entities['240'] = '&eth;';
-            entities['241'] = '&ntilde;';
-            entities['242'] = '&ograve;';
-            entities['243'] = '&oacute;';
-            entities['244'] = '&ocirc;';
-            entities['245'] = '&otilde;';
-            entities['246'] = '&ouml;';
-            entities['247'] = '&divide;';
-            entities['248'] = '&oslash;';
-            entities['249'] = '&ugrave;';
-            entities['250'] = '&uacute;';
-            entities['251'] = '&ucirc;';
-            entities['252'] = '&uuml;';
-            entities['253'] = '&yacute;';
-            entities['254'] = '&thorn;';
-            entities['255'] = '&yuml;';
-        }
-
-        if (useQuoteStyle !== 'ENT_NOQUOTES') {
-            entities['34'] = '&quot;';
-        }
-        if (useQuoteStyle === 'ENT_QUOTES') {
-            entities['39'] = '&#39;';
-        }
-        entities['60'] = '&lt;';
-        entities['62'] = '&gt;';
-
-
-        // ascii decimals to real symbols
-        if(entities['38']) {
-            hash_map[String.fromCharCode('38')] = entities['38']
-        }
-        for (decimal in entities) {
-            if (entities.hasOwnProperty(decimal) && decimal !== '38') {
-                hash_map[String.fromCharCode(decimal)] = entities[decimal];
-            }
-        }
-
-        return hash_map;
-    };
-
-    SingleItem.prototype.htmlentities = function(string, quote_style, charset, double_encode) {
-        var hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style),
-            symbol = '';
-            string = string == null ? '' : string + '';
-
-        if (!hash_map) {
-            return false;
-        }
-
-        if (quote_style && quote_style === 'ENT_QUOTES') {
-            hash_map["'"] = '&#039;';
-        }
-
-        if (!!double_encode || double_encode == null) {
-            for (symbol in hash_map) {
-                if (hash_map.hasOwnProperty(symbol)) {
-                    string = string.split(symbol).join(hash_map[symbol]);
-                }
-            }
-        } else {
-            string = string.replace(/([\s\S]*?)(&(?:#\d+|#x[\da-f]+|[a-zA-Z][\da-z]*);|$)/g, function (ignore, text, entity) {
-                for (symbol in hash_map) {
-                    if (hash_map.hasOwnProperty(symbol)) {
-                        text = text.split(symbol).join(hash_map[symbol]);
-                    }
-                }
-
-                return text + entity;
-            });
-        }
-
-        return string;
-    };
-
-    SingleItem.prototype.updateHTML = function (applyHTMLEntities) {
-        var html;
-        applyHTMLEntities = typeof applyHTMLEntities !== 'undefined' ? !!applyHTMLEntities : true;
-        if(this.html) {
-            if(applyHTMLEntities) {
-                html = this.htmlentities(this.getLabel());
-            } else {
-                html = this.getLabel();
-            }
-            if(/\s\s/.test(html)) {
-                html = html.replace(/\s/g, "&nbsp;");
-            }
-            $(this.html).find('span.pmse-small-label').html(html);
-
-            if (this.showValueTooptip && this.value) {
-                this.html.setAttribute("title", this.value);
-            }
-
-            $(this.html).find('.multiple-item-icon').removeClass()
-                .addClass('multiple-item-icon').addClass(this.iconClasses)
-                .css("display", this.showIcon ? 'inline-block' : 'none');
-        }
-        return this;
-    };
-
-    SingleItem.prototype.edit = function() {};
-
-    SingleItem.prototype.prepareEditionPanel = function() {};
-
-    SingleItem.prototype.exitEditMode = function() {
-        if(!this.inEditMode) {
-            return this;
-        }
-        this.showCloseButton()
-            .panel.close();
-        $(this.html).removeClass('expanded');
-        this.inEditMode = false;
-        return this;
-    };
-    
-    SingleItem.prototype.onClickHandler = function () {
-        var that = this;
-
-        return function (e) {
-            e.stopPropagation();
-            if(that.editable) {
-                if(!that.inEditMode) {
-                    if(!that.panel) {
-                        that.panel = new MultipleItemPanel({
-                            belongsTo: that.html,
-                            width: 50
-                        });
-                    }
-                    that.prepareEditionPanel()
-                        .hideCloseButton()
-                        .html.parentElement.parentElement.appendChild(that.panel.getHTML());
-                    $(that.html).addClass('expanded');
-                    that.inEditMode = true;
-                    that.panel.open();
-                    if(typeof that.onEdit === 'function') {
-                        that.onEdit.call(that);
-                    }
-                } else {
-                    that.exitEditMode();
-                }
-            } else {
-                if(typeof that.onClick === 'function') {
-                    that.onClick.call(that);
-                }
-            }
-        };
-    };
-
-    SingleItem.prototype.createHTML = function (applyHTMLEntities) {
-        if(this.html) {
-            return this.html;
-        }
-        var item = document.createElement('li'),
-            itemName = document.createElement('span'),
-            that = this, close;
-
-        applyHTMLEntities = typeof applyHTMLEntities === 'undefined' ? true :  !!applyHTMLEntities;
-        /*itemName.className = 'multiple-item-icon';
-        if(this.iconClasses) {
-            $(itemName).addClass(this.iconClasses);
-        }
-        if(!this.showIcon) {
-            itemName.style.display = 'none';
-        }
-        item.appendChild(itemName);
-
-        itemName = document.createElement('span');*/
-        itemName.className = "pmse-small-label";
-        if(applyHTMLEntities) {
-            $(itemName).html(this.htmlentities(this.getLabel() || ""));
-        } else {
-            $(itemName).html(this.getLabel());
-        }
-        
-        item.setAttribute("id", this.id);
-        if (this.showValueTooptip && this.value) {
-            item.setAttribute("title", this.value);
-        }
-
-        item.appendChild(itemName);
-
-        close = document.createElement('div');
-        //close.href = "javascript: ;";
-        close.className = 'multiple-item-close';
-        $(close).on("click", function (e) {
-            e.stopPropagation();
-            $(that.html).remove();
-            if(typeof that.onRemove === 'function') {
-                that.onRemove.call(that);
-            }
-        });
-
-        item.appendChild(close);
-
-        this.html = item;
-        $(item).on("click", that.onClickHandler());
-        this.refreshCursor();
-
-        return this.html;
-    };
-
-    SingleItem.prototype.getObject = function () {
-        return {
-            label: this.label,
-            value: this.value
-        };
-    };
-var EmailPickerField = function (options, parent) {
-    MultipleItemField.call(this, options, parent);
-    this.keyDelay = null;
-    this.timer = null;
-    this.groups = null;
-    this.selectedHandler = null;
-    this.searchValue = null;
-    this.nameField = null;
-    this.valueField = null;
-    this.suggestionsPanel;
-    EmailPickerField.prototype.initObject.call(this, options);
-};
-
-EmailPickerField.prototype = new MultipleItemField();
-
-EmailPickerField.prototype.type = 'EmailPickerField';
-
-EmailPickerField.prototype.initObject = function (options) {
-    var defaults = {
-            keyDelay: 500,
-            nameField: 'text',
-            valueField: 'value',
-            groups: [],
-            showValue: true,
-            language: {
-                LBL_SUGGESTIONS: 'Suggestions',
-                LBL_SUGGESTIONS_FOR: 'suggestion(s) for',
-                LBL_CONFIGURABLE: 'configurable',
-                ERROR_PROPERLY_SET_ITEMS: "All the items must be properly set"
-            },
-            varPanel: false,
-            fieldsProxy: new SugarProxy({
-                url: 'pmse_Project/CrmData/allFields/' + PROJECT_MODULE,
-                //restClient: options.proxy.restClient || new RestClient(),
-                uid: PROJECT_MODULE,
-                callback: null
-            }),
-            modulesProxy: new SugarProxy({
-                url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
-                //restClient: options.proxy.restClient || new RestClient(),
-                uid: PROJECT_MODULE,
-                callback: null
-            })
-        },
-        groupDefaults = {
-            nameField: 'text',
-            valueField: 'value',
-            showValue: true
-        },
-        i;
-
-    $.extend(true, defaults, options);
-
-    this.language = defaults.language;
-    this.groups = new jCore.ArrayList();
-
-    for (i = 0; i < defaults.groups.length; i += 1) {
-        defaults.groups[i] = $.extend({}, groupDefaults, defaults.groups[i]);
-    }
-
-    this.setKeyDelay(defaults.keyDelay)
-        .setGroups(defaults.groups)
-        .setNameField(defaults.nameField)
-        .setValueField(defaults.valueField);
-    this.fieldsProxy = defaults.fieldsProxy;
-    this.modulesProxy = defaults.modulesProxy;
-    this.varPanel = defaults.varPanel;
-    this.viewingForm = false;
-    this.base_module = PROJECT_MODULE;
-    this.base_module_label = translate('LBL_PMSE_ADAM_UI_LBL_TARGET_MODULE');
-};
-
-EmailPickerField.prototype.setNameField = function (fieldName) {
-    this.nameField = fieldName;
-    return this;
-};
-
-EmailPickerField.prototype.getNameField = function () {
-    return this.nameField;
-};
-
-EmailPickerField.prototype.setValueField = function (fieldName) {
-    this.valueField = fieldName;
-    return this;
-};
-
-EmailPickerField.prototype.getValueField = function () {
-    return this.valueField;
-};
-
-EmailPickerField.prototype.setGroups = function (groups) {
-    var i;
-
-    for(i = 0; i < groups.length; i ++) {
-        this.groups.insert(groups[i]);
-    }
-
-    return this;
-};
-
-EmailPickerField.prototype.setKeyDelay = function (milliseconds) {
-    this.keyDelay = milliseconds;
-    return this;
-};
-
-EmailPickerField.prototype.hidePanel = function () {
-    MultipleItemField.prototype.hidePanel.call(this);
-    this.clearSelectedHandler();
-    this.panel.clear();
-};
-
-EmailPickerField.prototype.clearInput = function () {
-    this.searchValue = $(this.controlObject).val("").val();
-    return this;
-};
-
-EmailPickerField.prototype.addItem = function (item) {
-
-    console.log('add item');
-    var size = this.items.length, that = this, module, newItem;
-
-    if(typeof item === 'object') {
-        item.label = item.label || item.name;
-        item.value = item.value || item.emailAddress;
-    }
-    module = item.module || null;
-
-
-
-
-    newItem = new EmailItem({
-        label: item.label || "",
-        value: item.value || null,
-        module: item.module,
-        data: item.data
-    });
-
-    this.items.push(newItem);
-
-    $(this.controlObject).before(newItem.getHTML());
-
-    newItem.onRemove = function () {
-        that.removeItem(this);
-    };
-
-    this.hidePanel();
-    if (this.parent.loaded) {
-        this.onChange();
-    }
-
-
-
-
-    //MultipleItemField.prototype.addItem.call(this, item);
-
-    if(size + 1 !== this.items.length) {
-        return this;
-    }
-
-    item = newItem;
-    if(!item.getValue()) {
-        item.onClick = function() {
-            that.clearSelectedHandler();
-            that.selectedHandler = this;
-            $(this.html).addClass("focused");
-            that.loadGroupSuggestions(this.getData('groupName'));
-        };
-    }
-
-    $(this.controlObject).val("").focus().select();
-    this.hidePanel();
-
-    return this;
-};
-
-EmailPickerField.prototype.processInputValue = function (value) {
-    var flag = true, aux, i;
-    aux = this.suggestionsPanel.items;
-    for (i = 0; i < aux.length; i += 1) {
-        if ($.trim(aux[i].value) === value) {
-            this.suggestionsPanel.selectItem(i);
-            return;
-        }
-    }
-
-    if (!/^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/.test(value)) {
-        flag = false;
-    }
-
-    if (flag) {
-        this.addItem({
-            label: value,
-            value: value
-        });
-    }
-
-    return flag;
-};
-
-EmailPickerField.prototype.hideSuggestionsList = function () {
-    if(this.suggestionsPanel) {
-        $(this.suggestionsPanel.html).remove();    
-    }
-    
-    return this;
-};
-
-EmailPickerField.prototype.createHTML = function () {
-    var div;
-    MultipleItemField.prototype.createHTML.call(this);
-    this.createConfigBtn();
-    /* CREATE THE CONFIG ICON */
-    div = this.createHTMLElement('i');
-
-    div.appendChild(this.configBtn);
-    this.configBtn = div;
-    this.html.appendChild(div);
-    return this;
-};
-
-
-EmailPickerField.prototype.createConfigBtn = function () {
-    var a,
-        span,
-        that = this,
-        $itemsContainer,
-        i,
-        item;
-    a = document.createElement('a');
-    a.id = "conf_" + this.id;
-
-    span = document.createElement('span');
-    span.className = 'adam-item-icon adam-menu-icon-configure';
-    span.style.top = '0px';
-    span.style.position = 'relative';
-    span.style.display = 'inline-block';
-    a.appendChild(span);
-    $itemsContainer = $(this.itemsContainer);
-    this.configBtn = a;
-    $(this.configBtn).on('click', function (e) {
-        //console.log('clicked');
-//        if (!that.showConfigBtn) {
-//        item.panel.clear();
-            for (i = 0; i < that.parent.items.length; i += 1) {
-                item = that.parent.items[i];
-                if (item.panel && (item.panel.type === "MultipleItemPanel")) {
-//                    item.panel.clear();
-                    item.panel.close();
-
-                }
-            }
-            that.showListPanel();
-            that.showConfigBtn = true;
-//        }
-
-
-
-    });
-
-    return this;
-};
-EmailPickerField.prototype.attachListeners = function () {
-    MultipleItemField.prototype.attachListeners.call(this);
-    var control, self = this,
-        $itemsContainer = $(this.itemsContainer);
-
-    control = $(this.controlObject);
-
-    control.off("blur");
-
-    $itemsContainer.on('blur', '.multiple-item-input', function () {
-
-        if (!self.viewingForm) {
-
-            self.hidePanel();
-            $itemsContainer.removeClass('focused');
-            $(self.panel.html).removeClass('focused');
-        }
-    });
-
-    control.on("click", function (e) {
-        self.clearSelectedHandler();
-        self.hideSuggestionsList();
-        self.showPanel();
-    }).on("keyup", function (e) {
-        console.log('here suggestion');
-        e.stopPropagation();
-        var aux, trimmedValue;
-        trimmedValue = $.trim(this.value);
-        clearInterval(self.timer);
-        if (e.keyCode === 13) {
-            if (trimmedValue) {
-                if (!self.processInputValue(trimmedValue)) {
-                    $(self.controlObject).focus().select();
-                }
-            } else {
-                self.showPanel(['groups']);
-            }
-        } else if (e.keyCode === 27) {
-            $(self.controlObject).val("");
-            self.hidePanel();
-        } else {
-            if (trimmedValue && trimmedValue !== self.searchValue && self.proxy) {
-                self.showPanel(['groups', 'suggestions']);
-                self.timer = setInterval(function () {
-                    clearInterval(self.timer);
-                    if (trimmedValue) {
-                        self.loadSuggestions(trimmedValue);
-                        self.searchValue = trimmedValue;
-                    }
-                }, self.keyDelay);
-            } else {
-                self.hideSuggestionsList();
-            }
-        }
-    });
-};
-
-EmailPickerField.prototype.onSuggestionSelectHandler = function () {
-    var that = this;
-
-    return function (a, b, c) {
-        if(b.type === 'group' && that.selectedHandler) {
-            that.selectedHandler.setValue(b.groupName);
-            that.selectedHandler.setLabel(b.name);
-            that.selectedHandler.onClick = null;
-            that.hidePanel();
-            that.onChange();
-        } else {
-            that.addItem({
-                label: b.name,
-                value: a
-            });
-        }
-    };
-};
-
-EmailPickerField.prototype.showSuggestionsPanel = function () {
-    var that = this;
-
-    if(this.panel.subpanels.length === 0) {
-        if(!this.suggestionsPanel) {
-            this.suggestionsPanel = this.panel.createSubpanel({
-                title: this.language.LBL_SUGGESTIONS, 
-                onItemSelect: that.onSuggestionSelectHandler(),
-                listMaxHeight: 200
-            }, "list");
-        }
-        this.panel.addSubpanel(this.suggestionsPanel);
-    }
-
-    this.suggestionsPanel.clear();
-    this.panel.showSubPanel(this.suggestionsPanel);
-    this.suggestionsPanel.showLoader();
-    this.suggestionsPanel.setTitle(this.language.LBL_SUGGESTIONS);
-
-    return this;
-};
-
-EmailPickerField.prototype.showGroupsList = function () {
-    var i, g, that = this, size = this.groups.getSize(),
-        helperFunction = function(target, gName) {
-            var that = target;
-            return function(){
-                var css = [], icon = "", showIcon = false;
-
-                if(!this.data.value) {
-                    css = ["unset"];
-                }
-
-                if(this.data.name === 'Module') {
-                    icon = 'icon-module';
-                    showIcon = true;
-                } else if(this.data.name === 'Team') {
-                    icon = 'adam-menu-icon-group';
-                    showIcon = true;
-                }
-
-                that.addItem(new EmailItem({
-                    label: this.data.name,
-                    value: this.data.value,
-                    showIcon: showIcon,
-                    iconClasses: icon,
-                    data: {
-                        proxy: this.data.proxy || null,
-                        nameField: this.data.nameField,
-                        valueField: this.data.valueField,
-                        showValue: this.data.showValue || false,
-                        groupName: gName
-                    },
-                    cssClasses: css
-                }));
-            }
-        };
-
-    if(this.panel.buttons.length > 0) {
-        return this;
-    }
-
-    for (i = 0; i < size; i += 1) {
-        g = this.groups.get(i);
-        this.panel.addButton({
-            caption: '<b>' + g.name + '</b>' + (g.proxy ? '&nbsp;<small>[' + this.language.LBL_CONFIGURABLE + ']</small>' : ''),
-            data: {
-                name: g.name,
-                value: g.value || null,
-                proxy: g.proxy,
-                nameField: g.nameField,
-                valueField: g.valueField,
-                showValue: g.showValue
-            },
-            onClick: helperFunction(that, g.name)
-        });
-    }
-    return this;
-};
-EmailPickerField.prototype.onListItemSelected = function (module_id, module_name) {
-    var that = this;
-    return function (value, data) {
-        var newExpression = "{::" + module_name + "::" + value + "::}";
-        that.addItem(new EmailItem({
-            label: newExpression,
-            value: newExpression,
-            module: module_id
-        }));
-        //that.module = module_id
-
-    };
-};
-
-
-/**
- * filter an array of objects by type that objects contains the type of field
- * @param {Array} fieldsArray
- * @param {String} type
- * @return {Array}
- */
-EmailPickerField.prototype.filterFielsByType = function (fieldsArray, type) {
-    var textFields = [],
-        i,
-        field;
-
-    for (i = 0; i < fieldsArray.length; i += 1) {
-        field = fieldsArray[i];
-        if (field.type === type) {
-            textFields.push(field);
-        }
-    }
-    return textFields;
-};
-
-EmailPickerField.prototype.clearSelectedHandler = function () {
-    this.selectedHandler = null;
-    $(this.itemsContainer).find("> li.focused").removeClass("focused");
-    return this;
-};
-
-EmailPickerField.prototype.showListPanel = function (subpanels) {
-    var i, suggestions = false, listPanel, data,variablesList, modules, self = this;
-
-    MultipleItemField.prototype.showPanel.call(this);
-
-    this.fieldsProxy.uid = PROJECT_MODULE;
-
-//    data = this.fieldsProxy.getData();
-//    variablesList = new MultipleItemListSubpanel({
-//        title:  translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', translate('LBL_PMSE_LABEL_TARGETMODULE')),
-//        collapsable: false,
-//        items: this.filterFielsByType(data.result, 'TextField'),
-//        onItemSelect: this.onListItemSelected(PROJECT_MODULE, PROJECT_MODULE)
-//    });
-//    this.panel.html.appendChild(variablesList.getHTML());
-//
-//    modules = this.modulesProxy.getData();
-//    for (i = 0; i < modules.result.length; i += 1) {
-//        this.fieldsProxy.uid =  modules.result[i].value;
-//
-//        data = this.fieldsProxy.getData();
-//        if (this.filterFielsByType(data.result, 'TextField').length > 0) {
-//            variablesList = new MultipleItemListSubpanel({
-//                title: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', modules.result[i].text),
-//                collapsable: true,
-//                items: this.filterFielsByType(data.result, 'TextField'),
-//                onItemSelect: this.onListItemSelected(modules.result[i].value, data.name)
-//            });
-//            this.panel.html.appendChild(variablesList.getHTML());
-//        }
-//
-
-//    }
-    this.fieldsProxy.getData(null,{
-        success: function(data) {
-            self.panel.clear();
-            variablesList = new MultipleItemListSubpanel({
-                title:  translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', translate('LBL_PMSE_LABEL_TARGETMODULE')),
-                collapsable: false,
-                items: self.filterFielsByType(data.fields, 'TextField'),
-                onItemSelect: self.onListItemSelected(PROJECT_MODULE, PROJECT_MODULE)
-            });
-            self.panel.html.appendChild(variablesList.getHTML());
-
-            for (i = 0; i < data.related_modules.length; i += 1) {
-
-                variablesList = new MultipleItemListSubpanel({
-                    title: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', data.related_modules[i].text),
-                    collapsable: true,
-                    items: self.filterFielsByType(data.related_modules[i].fields, 'TextField'),
-                    onItemSelect: self.onListItemSelected(data.related_modules[i].value, data.related_modules[i].value)
-                });
-                self.panel.html.appendChild(variablesList.getHTML());
-
-            }
-        }
-    });
-
-    return this;
-};
-
-
-
-EmailPickerField.prototype.showPanel = function (subpanels) {
-    var i, suggestions = false, listPanel;
-
-    if(!subpanels || !subpanels.push) {
-        subpanels = ["groups"];
-    }
-    this.panel.clear();
-    for(i = 0; i < subpanels.length; i++) {
-        switch(subpanels[i]) {
-            case 'groups':
-                this.showGroupsList();
-                break;
-            case 'suggestions':
-                suggestions = true;
-                this.showSuggestionsPanel();
-        }
-    }
-    MultipleItemField.prototype.showPanel.call(this);
-    return this;
-};
-
-EmailPickerField.prototype.fillSuggestionsList = function(response, settings) {
-    var num = 0, i, label, items = [],
-        defaultSettings =  {
-            nameField: this.nameField,
-            valueField: this.valueField,
-            type: "single",
-            showValue: true
-        }, suggestionsPanel, num = 0;
-
-    $.extend(true, defaultSettings, settings);
-
-    suggestionsPanel = this.suggestionsPanel;
-    suggestionsPanel.setTitle(this.language.LBL_SUGGESTIONS);
-
-    if (response.result) {
-        num = response.result.length;
-        for (i = 0; i < num; i += 1) {
-            label = '<b>' + response.result[i][defaultSettings.nameField] + "</b>";
-            if (response.result[i][defaultSettings.valueField] &&  defaultSettings.showValue) {
-                label += ("<br/>" + "<small>" + response.result[i][defaultSettings.valueField] + "</small>");
-            }
-            items.push({
-                label: label,
-                value: response.result[i][defaultSettings.valueField] || response.result[i][defaultSettings.nameField],
-                data: {
-                    name: response.result[i][defaultSettings.nameField],
-                    type: defaultSettings.type,
-                    groupName: (settings && settings.name) || null
-                }
-            });
-        }
-    }
-
-    this.suggestionsPanel.hideLoader();
-    if(defaultSettings.resultMessage) {
-        this.suggestionsPanel.setTitle(defaultSettings.resultMessage + " (" + num + ")");
-    } else {
-        this.suggestionsPanel.setTitle(num + " " + this.language.LBL_SUGGESTIONS_FOR + " \"" + response.search + "\"");    
-    }
-    this.suggestionsPanel.setItems(items);
-
-    return this;
-};
-
-EmailPickerField.prototype.loadSuggestions = function (query, settings) {
-    this.showPanel(['suggestions']);
-
-    query = $.trim(query || "");
-    if (query) {
-        this.proxy.uid = query;
-        this.proxy.url = 'pmse_Project/CrmData/emails/' + query;
-        self = this;
-        this.proxy.getData(null,{
-            success: function (emails) {
-                self.fillSuggestionsList(emails, settings);
-            }
-        });
-
-    }
-
-    return this;
-};
-
-EmailPickerField.prototype.loadGroupSuggestions = function (group) {
-    var self = this;
-
-    this.showPanel(['suggestions']);
-
-    group = this.groups.find("name", group);
-
-    //this.fillSuggestionsList(group.proxy.getData({}), $.extend(true, {resultMessage: group.name+" list", type: "group"}, group));
-    group.proxy.getData(null,{
-        success: function (emails) {
-            self.fillSuggestionsList(emails, $.extend(true, {resultMessage: group.name+" list", type: "group"}, group));
-        }
-    });
-};
-
-EmailPickerField.prototype.isValid = function () {
-    var i, res = true;
-
-    for (i = 0; i < this.items.length; i += 1) {
-        res = res && !!this.items[i].getValue();
-        if (!res) {
-            this.errorTooltip.setMessage(this.language.ERROR_PROPERLY_SET_ITEMS);
-            $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-            $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
-            return res;
-        } else {
-            $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-            $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        }
-    }
-
-    res = res && Field.prototype.isValid.call(this);
-
-    return res;
-};
-
-EmailPickerField.prototype.getObject = function () {
-    var i, obj = [], aux;
-
-    for(i = 0; i < this.items.length; i++) {
-        aux = this.items[i].getObject();
-        obj.push({
-            name: aux.label,
-            emailAddress: aux.value,
-            module: aux.module
-        });
-    }
-
-    return obj;
-};
-
-    var EmailItem = function(settings) {
-        SingleItem.call(this, settings);
-        this.colorAlert = null;
-        this.iconClasses = null;
-        this.showIcon = null;
-        this.emailItemType = null;
-        EmailItem.prototype.initObject.call(this, settings);
-    };
-
-    EmailItem.prototype = new SingleItem();
-
-    EmailItem.prototype.type = "EmailItem";
-
-    EmailItem.prototype.emailType = {
-        SINGLE: 0,
-        GROUP: 1
-    };
-
-    EmailItem.prototype.initObject = function(settings) {
-        var defaults = {
-            colorAlert: true,
-            iconClasses: null,
-            showIcon: false,
-            emailItemType: this.emailType.SINGLE,
-            module: null
-        };
-
-        $.extend(true, defaults, settings);
-
-        this.colorAlert = defaults.colorAlert;
-
-        this.setIconClasses(defaults.iconClasses)
-            .setIconVisible(defaults.showIcon);
-        this.module = defaults.module;
-    };
-
-    EmailItem.prototype.setIconVisible = function (visible) {
-        this.showIcon = visible;
-        this.updateHTML();
-        return this;
-    };
-
-    EmailItem.prototype.setIconClasses = function(classes) {
-        this.iconClasses = classes;
-        this.updateHTML();
-        return this;
-    };
-
-    EmailItem.prototype.updateHTML = function() {
-        SingleItem.prototype.updateHTML.call(this);
-
-        if(this.colorAlert) {
-            if(this.getValue() !== null) {
-                $(this.html).removeClass("unset");
-            } else {
-                $(this.html).addClass("unset");
-            }
-        }
-
-        return this;
-    };
-
-    EmailItem.prototype.createHTML = function() {
-        var span;
-        if(this.html) {
-            return this.html;
-        }
-
-        SingleItem.prototype.createHTML.call(this);
-        span = this.createHTMLElement('span');
-        span.className = 'multiple-item-icon';
-        if(this.iconClasses) {
-            $(span).addClass(this.iconClasses);
-        }
-        if(!this.showIcon) {
-            span.style.display = 'none';
-        }
-        $(this.html).prepend(span);
-
-
-
-        return this.html;
-    };
-    EmailItem.prototype.getObject = function () {
-        return {
-            label: this.label,
-            value: this.value,
-            module: this.module
-        };
-    };
 /*globals Field, $, document*/
 var ItemMatrixField = function (options, parent) {
     Field.call(this, options, parent);
@@ -8474,7 +6805,6 @@ ItemUpdaterField.prototype.createHTML = function () {
 
     for (i = 0; i < this.options.length; i += 1) {
         insert = this.options[i].getHTML();
-        console.log( i % 2, 'aa');
         if (i % 2 === 0) {
             insert.className = insert.className + ' updater-inverse';
         }
@@ -9212,5970 +7542,6 @@ HtmlPanel.prototype.attachListeners = function () {
         e.stopPropagation();
     });
 };
-/*globals MultipleItemField, RestProxy, SUGAR_URL, RestClient, PROJECT_MODULE, SUGAR_URL,
-    RestClient, project, $, MultipleItemPanel, SugarExpression, CriteriaForm, InputArea, Field, Element,
-    MultipleItemSubpanel, Base, jCore, SingleItem*/
-
-var CriteriaField = function (settings, parent) {
-    this.decimalSeparator = settings.decimalSeparator || ".";
-    MultipleItemField.call(this, settings, parent);
-    this.panels = null;
-    this.editMode = false;
-    this.expressionInEdition = null;
-    this.currentIndex = null;
-    this.viewingForm = null;
-    this.panelSemaphore = true;
-    this.base_module = null;
-    this.base_module_label = null;
-    this.timerCriteria = null;
-    this.typesMap = {};
-    CriteriaField.prototype.initObject.call(this, settings);
-};
-
-CriteriaField.prototype = new MultipleItemField();
-
-CriteriaField.prototype.type = 'CriteriaField';
-
-CriteriaField.prototype.initObject = function (settings) {
-    var defaults = {
-        value: null,
-        decimalSeparator: '.',
-        restClient: null, //new RestClient(),
-        base_module: null,
-        base_module_label: null,
-        timerCriteria: false,
-        panels: {
-            logic: {
-                enabled: true
-            },
-            group: {
-                enabled: true
-            },
-            math: {
-                enabled: true
-            },
-            fieldEvaluation: {
-                enabled: true,
-                modulesProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/related/' + this.currentModule,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: this.currentModule,
-                    callback: null
-                }),
-                fieldsProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/fields/' + this.currentModule,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: this.currentModule,
-                    callback: null
-                })
-            },
-            businessRulesEvaluation: {
-                enabled: true,
-                proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/businessrules/' + project.uid,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: project.uid,
-                    callback: null
-                })
-            },
-            formResponseEvaluation: {
-                enabled: true,
-                proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/activities/' + project.uid,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: project.uid,
-                    callback: null
-                })
-            },
-            userEvaluation: {
-                enabled: true,
-                valuesProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/users',
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: null,
-                    callback: null
-                }),
-                targetUserProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/defaultUsersList',
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: null,
-                    callback: null
-                })
-            },
-            fixedDateEvaluation: {
-                enabled: true
-            },
-            sugarDateEvaluation: {
-                enabled: true,
-                modulesProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/dateFields/' + project.uid,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: project.uid,
-                    callback: null
-                })
-            },
-            unitTimeEvaluation: {
-                enabled: true
-            },
-            arithmetic: {
-                enabled: false
-            },
-            variables: {
-                enabled: false,
-                fieldsProxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE,
-                    //restClient: settings.restClient || new RestClient(),
-                    uid: PROJECT_MODULE,
-                    callback: null
-                })
-            },
-            numbers: {
-                enabled: false
-            }
-        }
-    };
-
-    $.extend(true, defaults, settings);
-    this.modulesProxy = defaults.modulesProxy;
-    this.businessRulesProxy = defaults.businessRulesProxy;
-    this.viewingForm = false;
-    this.panels = defaults.panels;
-    this.base_module_label = defaults.base_module_label;
-    this.timerCriteria = defaults.timerCriteria;
-    this.setDecimalSeparator(defaults.decimalSeparator)
-        .setBaseModule(defaults.base_module)
-        .setModuleFieldsProxy(defaults.moduleFieldsProxy)
-        .setControlFormsProxy(defaults.controlFormsProxy);
-};
-
-CriteriaField.prototype.setBaseModule = function (module) {
-    if (module) {
-        this.base_module = module;
-        this.panels.fieldEvaluation.modulesProxy.url = 'pmse_Project/CrmData/related/' + module;
-        this.panels.sugarDateEvaluation.modulesProxy.uid = module;
-    }
-
-    return this;
-};
-
-CriteriaField.prototype.setDecimalSeparator = function (decimalSeparator) {
-    if (typeof decimalSeparator === 'string' && decimalSeparator) {
-        this.decimalSeparator = decimalSeparator;
-    }
-    return this;
-};
-
-CriteriaField.prototype.setControlFormsProxy = function (proxy) {
-    if (proxy instanceof RestProxy) {
-        this.controlFormsProxy = proxy;
-    }
-    return this;
-};
-
-CriteriaField.prototype.setModuleFieldsProxy = function (proxy) {
-    if (proxy instanceof RestProxy) {
-        this.moduleFieldsProxy = proxy;
-    }
-    return this;
-};
-
-CriteriaField.prototype.showPanel = function () {
-    var panel = this.panel, subPanel, i, subpanels;
-
-    if (this.editMode) {
-        for (i = 0; i < this.items.length; i += 1) {
-            this.items[i].setIsEditMode(false);
-        }
-    } else if (this.panel.isOpen) {
-        return this;
-    }
-
-    panel.clear();
-
-    subpanels = [
-        "logic",
-        "group",
-        "math",
-        "arithmetic",
-        "fieldEvaluation",
-        "formResponseEvaluation",
-        "businessRulesEvaluation",
-        "userEvaluation",
-        "fixedDateEvaluation",
-        "sugarDateEvaluation",
-        "unitTimeEvaluation",
-        "variables",
-        "numbers"
-    ];
-
-    for (i = 0; i < subpanels.length; i += 1) {
-        if (this.panels[subpanels[i]].enabled) {
-            subPanel = null;
-            switch (subpanels[i]) {
-            case 'formResponseEvaluation':
-                subPanel = this.createControlPanel();
-                break;
-            case 'fieldEvaluation':
-                subPanel = this.createModulesPanel();
-                break;
-            case 'logic':
-                subPanel = this.createLogicPanel().getHTML();
-                break;
-            case 'group':
-                subPanel = this.createGroupPanel().getHTML();
-                break;
-            case 'math':
-                subPanel = this.createMathPanel().getHTML();
-                break;
-            case 'arithmetic':
-                subPanel = this.createArithmeticPanel().getHTML();
-                break;
-            case 'businessRulesEvaluation':
-                subPanel = this.createBusinessRulePanel();
-                break;
-            case 'userEvaluation':
-                subPanel = this.createUserPanel();
-                break;
-            case 'fixedDateEvaluation':
-                subPanel = this.createFixedDatePanel();
-                break;
-            case 'sugarDateEvaluation':
-                subPanel = this.createSugarDatePanel();
-                break;
-            case 'unitTimeEvaluation':
-                subPanel = this.createUnitTimePanel();
-                break;
-            case 'variables':
-                subPanel = this.createVariablePanel();
-                break;
-            case 'numbers':
-                subPanel = this.createNumberPanel();
-                break;
-            }
-
-
-            if (subPanel) {
-                panel.html.appendChild(subPanel);
-            }
-        }
-    }
-
-    MultipleItemField.prototype.showPanel.call(this);
-};
-
-CriteriaField.prototype.showEditionPanel = function (settings) {
-    var panel = this.panel, subPanel;
-
-    panel.clear();
-
-    $(panel.html).css("min-width", 210);
-
-    if (!settings) {
-        settings = {};
-    }
-
-    if (!settings.type) {
-        return this;
-    }
-
-    switch (settings.type) {
-    case 'control':
-        subPanel = this.createControlPanel(settings.settings);
-        break;
-    case 'modules':
-        subPanel = this.createModulesPanel(settings.settings);
-        break;
-    case 'business_rules':
-        subPanel = this.createBusinessRulePanel(settings.settings);
-        break;
-    case 'user':
-        subPanel = this.createUserPanel(settings.settings);
-        break;
-    case 'fixed_date':
-        subPanel = this.createFixedDatePanel(settings.settings);
-        break;
-    case 'sugar_date':
-        subPanel = this.createSugarDatePanel(settings.settings);
-        break;
-    case 'unit_time':
-        subPanel = this.createUnitTimePanel(settings.settings);
-        break;
-    case 'variable':
-        subPanel = this.createVariablePanel(settings.settings);
-        break;
-    case 'number':
-        subPanel = this.createNumberPanel(settings.settings);
-        break;
-    }
-
-    if (subPanel) {
-        panel.html.appendChild(subPanel);
-    }
-
-    MultipleItemField.prototype.showPanel.call(this);
-
-    $(panel.html).removeClass('focused');
-    $(this.itemsContainer).removeClass('focused expanded');
-
-    return this;
-};
-
-CriteriaField.prototype.itemEditHandler = function () {
-    var that = this,
-        operatorMap = {
-            LOGIC : ["AND", "OR", "NOT"],
-            MATH : ["+", "-"],
-            ARITHMETIC : ["+", "-", "x", "/"]
-        };
-
-    return function () {
-        var miniPanel, i, expression = this, values = {}, type, aux;
-
-        for (i = 0; i < that.items.length; i += 1) {
-            if (that.items[i] !== this) {
-                that.items[i].setIsEditMode(false);
-            }
-        }
-        that.editMode = true;
-        that.expressionInEdition = this;
-        that.hidePanel();
-        values.fields = [];
-
-        switch (this.expType) {
-        case 'LOGIC':
-        case 'ARITHMETIC':
-        case 'MATH':
-            this.setOnExitEditHandler(function () {
-                $(miniPanel.html).remove();
-                miniPanel = null;
-                that.editMode = false;
-                that.expressionInEdition = null;
-                this.setOnExitEditHandler(null);
-            });
-            miniPanel = new MultipleItemPanel({
-                belongsTo: this.getHTML()
-            });
-            $(miniPanel.getHTML()).css('width', 'auto');
-            for (i = 0; i < operatorMap[this.expType].length; i += 1) {
-                if (operatorMap[this.expType][i] !== this.expValue.value) {
-                    miniPanel.addButton({
-                        caption: operatorMap[this.expType][i],
-                        onClick: function () {
-                            expression.setExpressionValue(this.name).setIsEditMode(false);
-                            that.onChange();
-                        }
-                    });
-                }
-            }
-            that.parent.parent.html.appendChild(miniPanel.getHTML());
-            miniPanel.open();
-            break;
-        case 'MODULE':
-            type = 'modules';
-            values.fields.push({
-                defaultSelection: this.expDirection
-            }, {
-                defaultSelection: this.expModule.value
-            }, {
-                defaultSelection: this.expField.value
-            }, {
-                defaultSelection: this.expOperator.value
-            }, {
-                value: this.expValue.value
-            });
-            break;
-        case 'CONTROL':
-            type = 'control';
-            values.fields.push({
-                defaultSelection: this.expField.value
-            }, {
-                defaultSelection: this.expValue.value
-            });
-            break;
-        case 'BUSINESS_RULES':
-            type = "business_rules";
-            values.fields.push({
-                defaultSelection: this.expField.value
-            }, {
-                defaultSelection: this.expOperator.value
-            }, {
-                value: this.expValue.value
-            });
-            break;
-        case 'USER_ADMIN':
-        case 'USER_ROLE':
-        case 'USER_IDENTITY':
-            if (this.expType === 'USER_ADMIN') {
-                aux = this.expOperator.value === 'equals' ? 'isAdmin' : 'isNotAdmin';
-            } else if (this.expType === 'USER_ROLE') {
-                aux = this.expOperator.value === 'equals' ? 'isRole' : 'isNotRole';
-            } else {
-                aux = this.expOperator.value === 'equals' ? 'isUser' : 'isNotUser';
-            }
-            type = "user";
-            values.fields.push({
-                defaultSelection: this.expField.value
-            }, {
-                defaultSelection: aux
-            }, {
-                defaultSelection: this.expValue.value
-            });
-            break;
-        case 'FIXED_DATE':
-            type = 'fixed_date';
-            values.fields.push({
-                value: this.expValue.value
-            });
-            break;
-        case 'SUGAR_DATE':
-            type = 'sugar_date';
-            values.fields.push({
-                defaultSelection: this.expValue.value
-            });
-            break;
-        case 'UNIT_TIME':
-            type = 'unit_time';
-            values.fields.push({
-                value: this.expValue.value
-
-            }, {
-                defaultSelection: this.expUnit
-            });
-
-            break;
-        case 'SUGAR_VAR':
-            type = 'variable';
-            values.fields.push({
-                value: this.expValue.value
-
-            });
-            break;
-        case 'NUMBER':
-            type = 'number';
-            values.fields.push({
-                value: this.expValue.value
-                //defaultSelection: this.expValue.value
-            });
-
-            break;
-        }
-
-
-        if (this.expType !== 'LOGIC' && this.expType !== 'MATH') {
-            that.panel.setBelongsTo(this.html);
-            that.showEditionPanel({
-                type: type,
-                settings: values
-            });
-        }
-    };
-};
-
-CriteriaField.prototype.itemExitEditHandler = function () {
-    var that = this;
-
-    return function () {
-        that.hidePanel();
-        that.panel.belongsTo = that.itemsContainer;
-        that.expressionInEdition = null;
-        that.editMode = false;
-    };
-};
-
-CriteriaField.prototype.hidePanel = function () {
-    MultipleItemField.prototype.hidePanel.call(this);
-
-    if (this.viewingForm) {
-        this.viewingForm = false;
-        $(this.itemsContainer).removeClass("focused");
-    }
-
-    return this;
-};
-
-CriteriaField.prototype.removeItem = function (item) {
-    var input = $(item.getData("inputArea")),
-        index = input.attr("tab-index");
-    input.remove();
-    this.updatePlaceholdersIndexes();
-    MultipleItemField.prototype.removeItem.call(this, item);
-    $(this.itemsContainer).find("input").filter('[tab-index="' + index + '"]').focus().select();
-    return this;
-};
-
-CriteriaField.prototype.updatePlaceholdersIndexes = function () {
-    $(this.itemsContainer).find('input').each(function (i) {
-        $(this).attr("tab-index", i);
-    }).val("");
-};
-
-CriteriaField.prototype.addItem = function (expression) {
-    var expObj, that = this, target, index = parseInt(this.currentIndex, 10);
-    if (expression) {
-        if (expression.family === 'SugarExpression') {
-            expObj = expression;
-        } else {
-            expObj = new SugarExpression($.extend(true, expression, {decimalSeparator: this.decimalSeparator}));
-        }
-
-        if ((expObj.expType === 'LOGIC' && expObj.expValue.value === 'NOT') || expObj.expType === 'GROUP') {
-            expObj.setIsEditable(false);
-        }
-
-        expObj.onClose = function () {
-            var id = this.id, index = null, i;
-            that.hidePanel();
-            for (i = 0; i < that.items.length; i += 1) {
-                if (that.items[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index !== null) {
-                that.items.splice(index, 1);
-            }
-            that.onChange();
-        };
-
-        expObj.onRemove = function () {
-            that.removeItem(this);
-        };
-
-        if (expObj.expType !== 'GROUP') {
-            expObj.setOnEditHandler(this.itemEditHandler());
-            if (expObj !== 'LOGIC') {
-                expObj.setOnExitEditHandler(this.itemExitEditHandler());
-            }
-        }
-
-        if (this.controlObject) {
-            if (isNaN(index)) {
-                target = $(this.controlObject);
-            } else {
-                target = $(this.itemsContainer).find('input').eq(index);
-                if (!target[0]) {
-                    target = $(this.controlObject);
-                    index = null;
-                }
-            }
-            expObj.setData("inputArea", this.createControlObject());
-            target.before(expObj.getData("inputArea")).before(expObj.getHTML());
-            target.before(expObj.getHTML());
-        }
-
-        if (!isNaN(index) && index > -1) {
-            this.items.splice(index, 0, expObj);
-        } else {
-            this.items.push(expObj);
-        }
-        if (this.html) {
-            this.updatePlaceholdersIndexes();
-            $(this.itemsContainer).find('input').val("").filter(":eq(" + (index + 1) + ")").focus().select();
-            this.hidePanel();
-            if (this.parent.loaded) {
-                this.onChange();
-            }
-        }
-    }
-    return this;
-};
-
-CriteriaField.prototype.createChildForm = function (formSettings) {
-    var that = this,
-        form,
-        html;
-
-    formSettings.showContentOnStart = this.editMode;
-    formSettings.visibleHeader = !this.editMode;
-    formSettings.submitCaption = this.editMode ? "Update" : "Add";
-    formSettings.collapsable = !this.editMode;
-    formSettings.cancelButton = true;
-    formSettings.onCancel = function () {
-        if (that.editMode) {
-            that.updateExpression(that.expressionInEdition, {});
-        } else {
-            that.hidePanel();
-        }
-    };
-    formSettings.onOpen = function () {
-        that.viewingForm = true;
-        $(that.parent.parent.html).find('.content').not(this.content).slideUp().end().end()
-            .find('.multiple-item-subpanel, .multiple-item-button-panel').not(this.html).slideUp();
-    };
-
-    formSettings.onClose = function () {
-        $(that.parent.parent.html).find('.multiple-item-subpanel, .multiple-item-button-panel').not(this.html).slideDown();
-        $(that.controlObject).focus();
-        that.viewingForm = false;
-    };
-
-    form = new CriteriaForm($.extend(true, formSettings, {language: this.parent.language}));
-
-    html = form.getHTML();
-    html.id = '#' + formSettings.name + '-panel';
-
-    return html;
-};
-
-CriteriaField.prototype.onLogicSelectHandler = function () {
-    var that = this;
-    return function () {
-        that.addItem(new SugarExpression({
-            expType: 'LOGIC',
-            expValue: this.value,
-            decimalSeparator: that.decimalSeparator
-        }));
-    };
-};
-
-CriteriaField.prototype.onGroupSelectHandler = function () {
-    var that = this;
-    return function () {
-        that.addItem(new SugarExpression({
-            expType: 'GROUP',
-            expValue: this.value,
-            editable: false,
-            decimalSeparator: that.decimalSeparator
-        }));
-    };
-};
-
-CriteriaField.prototype.onArithmeticSelectHandler = function () {
-    var that = this;
-    return function () {
-        that.addItem(new SugarExpression({
-            expType: 'ARITHMETIC',
-            expValue: this.value,
-            editable: true,
-            decimalSeparator: that.decimalSeparator
-        }));
-    };
-};
-
-CriteriaField.prototype.onMathSelectHandler = function () {
-    var that = this;
-    return function () {
-        that.addItem(new SugarExpression({
-            expType: 'MATH',
-            expValue: this.value,
-            editable: true,
-            decimalSeparator: that.decimalSeparator
-        }));
-    };
-};
-
-CriteriaField.prototype.getRegExpDecimalSeparator = function () {
-    var prefix = "";
-    switch (this.decimalSeparator) {
-    case "\\":
-    case "^":
-    case "$":
-    case "*":
-    case "+":
-    case "?":
-    case ".":
-    case "(":
-    case ")":
-    case "|":
-    case "{":
-    case "}":
-        prefix = "\\";
-        break;
-    }
-    return prefix + this.decimalSeparator;
-};
-
-CriteriaField.prototype.isNaN = function (value) {
-    var regExpDecimalSeparator;
-    if (typeof value === 'number') {
-        return true;
-    } else {
-        regExpDecimalSeparator = this.getRegExpDecimalSeparator();
-        return !(new RegExp("(^(\\+|-)?\\d+$)|(^(\\+|-)?\\d+" + regExpDecimalSeparator + "\\d*$)|(^(\\+|-)?\\d*" + regExpDecimalSeparator + "\\d+$)|(^(\\+|-)?\\d+(" + regExpDecimalSeparator + "\\d+)?e(\\+|-)?\\d+$)")).test(value);
-    }
-};
-
-CriteriaField.prototype.getSanitizedValue = function (value) {
-    var regexp;
-
-    if (typeof value === 'string') {
-        value = $.trim(value);
-        if (!this.isNaN(value)) {
-            regexp = new RegExp(this.getRegExpDecimalSeparator(), "g");
-            value = parseFloat(value.replace(regexp, "."));
-        }
-    }
-
-    return value;
-};
-
-CriteriaField.prototype.createUserPanel = function (formSettings) {
-    var that = this,
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_USER_EVALUATION,
-            name: "userEvaluation",
-            fields: [
-                {
-                    name: "expField",
-                    type: "select",
-                    label: this.parent.language.LBL_USER,
-                    dataSource: {
-                        source: that.panels.userEvaluation.targetUserProxy,
-                        labelField: "text",
-                        valueField: "value"
-                    },
-                    required: true
-                }, {
-                    name: "expOperator",
-                    type: "select",
-                    label: this.parent.language.LBL_OPERATOR,
-                    options: [
-                        {
-                            label: 'Is admin',
-                            value: 'isAdmin'
-                        }, {
-                            label: 'Is role',
-                            value: 'isRole'
-                        }, {
-                            label: 'Is user',
-                            value: 'isUser'
-                        }, {
-                            label: 'Is not admin',
-                            value: 'isNotAdmin'
-                        }, {
-                            label: 'Is not role',
-                            value: 'isNotRole'
-                        }, {
-                            label: 'Is not user',
-                            value: 'isNotUser'
-                        }
-                    ],
-                    required: true
-                }, {
-                    name: 'expValue',
-                    type: 'select',
-                    label: this.parent.language.LBL_VALUE,
-                    dependsOn: 'expOperator',
-                    dependencyHandler: function (e) {
-                        var data, self = this;
-                        if (e.getValue() === 'isAdmin' || e.getValue() === 'isNotAdmin') {
-                            this.clear().setIsDisabled(true).setRequired(false);
-                        } else {
-                            this.setIsDisabled(false).setRequired(true);
-                            switch (e.getValue()) {
-                            case 'isRole':
-                            case 'isNotRole':
-                                that.panels.userEvaluation.valuesProxy.setUrl('pmse_Project/CrmData/rolesList');
-                                break;
-                            case 'isUser':
-                            case 'isNotUser':
-                                //that.panels.userEvaluation.valuesProxy.setUrl(SUGAR_URL + '/rest/v10/CrmData/users');
-                                that.panels.userEvaluation.valuesProxy.setUrl('pmse_Project/CrmData/users');
-                                break;
-                            }
-
-                            that.panels.userEvaluation.valuesProxy.getData({'module': PROJECT_MODULE}, {
-                                success: function(data) {
-                                    if (data.result) {
-                                        self.fill(data.result, "text", "value");
-                                    }
-
-                                }
-                            });
-
-                        }
-                    },
-                    disabled: true
-                }
-            ],
-            onSubmit: function (data) {
-                var obj = {
-                    expValue: data.expValue
-                }, type, operator = 'not_equals', operator_text = "!=";
-
-                switch (data.expOperator) {
-                case 'isAdmin':
-                    operator = 'equals';
-                    operator_text = '==';
-                case 'isNotAdmin':
-                    type = SugarExpression.prototype.eTypes.USER_ADMIN;
-                    break;
-                case 'isRole':
-                    operator = 'equals';
-                    operator_text = '==';
-                case 'isNotRole':
-                    type = SugarExpression.prototype.eTypes.USER_ROLE;
-                    break;
-                case 'isUser':
-                    operator = 'equals';
-                    operator_text = '==';
-                case 'isNotUser':
-                    type = SugarExpression.prototype.eTypes.USER_IDENTITY;
-                    break;
-                }
-
-                obj.expField = {
-                    text: this.getFieldByName('expField').getSelectedText() || null,
-                    value: data.expField
-                };
-                obj.expOperator = {
-                    text: operator_text,
-                    value: operator
-                };
-                obj.expValue = {
-                    text: this.getFieldByName('expValue').getSelectedText() || null,
-                    value: data.expValue
-                };
-
-                if (that.editMode) {
-                    that.expressionInEdition.expType = type;
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = type;
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            }
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-CriteriaField.prototype.createBusinessRulePanel = function (formSettings) {
-    var that = this,
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_BUSINESS_RULE_EVALUATION,
-            name: "businessRulesEvaluation",
-            fields: [
-                {
-                    name: "expField",
-                    type: "select",
-                    label: this.parent.language.LBL_BUSINESS,
-                    dataSource: {
-                        source: that.panels.businessRulesEvaluation.proxy
-                    },
-                    defaultSelection: '[first]',
-                    required: true
-                }, {
-                    name: "expOperator",
-                    type: "select",
-                    label: this.parent.language.LBL_OPERATOR,
-                    options: SugarExpression.prototype.operators,
-                    defaultSelection: "equals",
-                    required: true
-                }, {
-                    name: "expValue",
-                    type: "long_text",
-                    label: this.parent.language.LBL_RESPONSE,
-                    required: false
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expField: {
-                        text: this.getFieldByName("expField").getSelectedText() || null,
-                        value: data.expField || null
-                    },
-                    expOperator: data.expOperator,
-                    expValue: that.getSanitizedValue(data.expValue)
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "BUSINESS_RULES";
-                    that.addItem(obj);
-                }
-                that.typesMap = {
-                    'TRUE': 'bool',
-                    'FALSE': 'bool',
-                    'NOW': 'constant',
-                    'NULL': 'constant'
-                };
-                that.viewingForm = false;
-            }
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-CriteriaField.prototype.createGroupPanel = function () {
-    var that = this,
-        settings = {
-            label: this.parent.language.LBL_GROUP,
-            buttons: [
-                {
-                    caption: "(",
-                    value: "(",
-                    onClick: that.onGroupSelectHandler()
-                }, {
-                    caption: ")",
-                    value: ")",
-                    onClick: that.onGroupSelectHandler()
-                }
-            ]
-        };
-
-    return this.panel.createButtonPanel(settings);
-};
-
-CriteriaField.prototype.createArithmeticPanel = function () {
-    var that = this,
-        settings = {
-            label: this.parent.language.LBL_OPERATION,
-            buttons: [
-                {
-                    caption: "+",
-                    value: "+",
-                    onClick: that.onArithmeticSelectHandler()
-                }, {
-                    caption: "-",
-                    value: "-",
-                    onClick: that.onArithmeticSelectHandler()
-                }, {
-                    caption: "x",
-                    value: "x",
-                    onClick: that.onArithmeticSelectHandler()
-                }, {
-                    caption: "/",
-                    value: "/",
-                    onClick: that.onArithmeticSelectHandler()
-                }
-            ]
-        };
-
-    return this.panel.createButtonPanel(settings);
-};
-
-CriteriaField.prototype.createMathPanel = function () {
-    var that = this,
-        settings = {
-            label: this.parent.language.LBL_OPERATION,
-            buttons: [
-                {
-                    caption: "+",
-                    value: "+",
-                    onClick: that.onMathSelectHandler()
-                }, {
-                    caption: "-",
-                    value: "-",
-                    onClick: that.onMathSelectHandler()
-                }
-            ]
-        };
-
-    return this.panel.createButtonPanel(settings);
-};
-
-CriteriaField.prototype.createFixedDatePanel = function (formSettings) {
-    var that = this,
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_FIXED_DATE,
-            name: "module",
-            fields: [
-                {
-                    name: "expValue",
-                    type: "date",
-                    label: this.parent.language.LBL_VALUE,
-                    required: false
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expValue: data.expValue
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "FIXED_DATE";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            },
-            onCancel: function () {}
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-CriteriaField.prototype.createSugarDatePanel = function (formSettings) {
-    var that = this,
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_SUGAR_DATE,
-            name: "module",
-            fields: [
-                {
-                    name: "expValue",
-                    type: "select",
-                    label: this.parent.language.LBL_VALUE,
-                   // options: options,
-                    preserveDefaultOptions: true,
-                    dataSource: {
-                        source: that.panels.sugarDateEvaluation.modulesProxy,
-                        labelField: "text",
-                        valueField: "value"
-                    },
-                    defaultSelection: '[first]',
-                    required: true
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expValue: data.expValue
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "SUGAR_DATE";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            },
-            onCancel: function () {}
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-CriteriaField.prototype.onListItemSelected = function() {
-    var that = this;
-    return function(value, data) {
-        var obj = {
-            expValue: value
-        };
-        obj.expType = "SUGAR_VAR";
-        that.addItem(obj);
-    };
-};
-CriteriaField.prototype.createVariablePanel = function (formSettings) {
-    var that = this,
-        data = this.panels.variables.fieldsProxy.getData();
-    //console.log (data);
-    variablesList = new MultipleItemListSubpanel({
-        title:  this.parent.language.LBL_VARIABLE,
-        collapsable: true,
-        items: data.result,
-        onItemSelect: this.onListItemSelected()
-    });
-    return variablesList.getHTML();
-
-};
-CriteriaField.prototype.createUnitTimePanel = function (formSettings) {
-    var that = this,
-
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_UNIT_TIME,
-            name: "module",
-            fields: [
-                {
-                    name: "expValue",
-                    type: "number",
-                    label: this.parent.language.LBL_VALUE,
-                    required: false
-                },
-                {
-                    name: "expUnit",
-                    type: "select",
-                    label: this.parent.language.LBL_UNIT,
-                    options: [
-                        {
-                            label: 'minutes',
-                            value: 'minutes'
-                        }, {
-                            label: 'hours',
-                            value: 'hours'
-                        }, {
-                            label: 'days',
-                            value: 'days'
-                        }, {
-                            label: 'months',
-                            value: 'months'
-                        }, {
-                            label: 'years',
-                            value: 'years'
-                        }
-                    ],
-                    defaultSelection: 'minutes',
-                    required: true
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expValue: data.expValue,
-                    expUnit: data.expUnit
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "UNIT_TIME";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            },
-            onCancel: function () {}
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-
-
-CriteriaField.prototype.createNumberPanel = function (formSettings) {
-    var that = this,
-
-        defaultFormSettings = {
-            title: this.parent.language.LBL_NUMBER,
-            name: "module",
-            fields: [
-                {
-                    name: "expValue",
-                    type: "number",
-                    label: this.parent.language.LBL_VALUE,
-                    required: false
-                }
-
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expValue: data.expValue
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "NUMBER";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            },
-            onCancel: function () {}
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-CriteriaField.prototype.createLogicPanel = function () {
-    var that = this,
-        settings = {
-            label: this.parent.language.LBL_LOGIC_OPERATORS,
-            buttons: [
-                {
-                    caption: "AND",
-                    value: "AND",
-                    onClick: that.onLogicSelectHandler()
-                }, {
-                    caption: "OR",
-                    value: "OR",
-                    onClick: that.onLogicSelectHandler()
-                }, {
-                    caption: "NOT",
-                    value: "NOT",
-                    onClick: that.onLogicSelectHandler()
-                }
-            ]
-        };
-
-    return this.panel.createButtonPanel(settings);
-};
-
-CriteriaField.prototype.updateExpression = function (target, newValues) {
-    var f, change = false, property;
-    for (property in newValues) {
-        if (newValues.hasOwnProperty(property)) {
-            switch (property) {
-            case 'expDirection':
-                f = this.parent.language.LBL_DIRECTION;
-                break;
-            case 'expModule':
-                f = this.parent.language.LBL_MODULE;
-                break;
-            case 'expField':
-                f = this.parent.language.LBL_FIELD;
-                break;
-            case 'expOperator':
-                f = this.parent.language.LBL_OPERATOR;
-                break;
-            case 'expValue':
-                f = this.parent.language.LBL_VALUE;
-                break;
-            case 'expUnit':
-                f = 'Unit';
-                break;
-            }
-
-            f = target['setExpression' + f];
-            if (typeof f === 'function') {
-                f.call(target, newValues[property]);
-                change = true;
-            }
-        }
-    }
-    target.setIsEditMode(false);
-    if (change) {
-        this.onChange();
-    }
-    return this;
-};
-
-CriteriaField.prototype.createModulesPanel  = function (formSettings) {
-    var that = this,
-        i,
-        options = this.base_module ? [{
-            label: "<<" + (this.base_module_label ? this.base_module_label : this.base_module) + ">>",
-            value: this.base_module || ""
-        }] : [],
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_MODULE_FIELD_EVALUATION,
-            name: "module",
-            fields: [
-                {
-                    name: "expDirection",
-                    type: "select",
-                    label: this.parent.language.LBL_DIRECTION,
-                    options: [
-                        {
-                            label: "before"
-                        },
-                        {
-                            label: "after"
-                        }
-                    ],
-                    defaultSelection: 'after',
-                    required: true
-                },
-                {
-                    name: "expModule",
-                    type: "select",
-                    label: this.parent.language.LBL_MODULE,
-                    options: options,
-                    preserveDefaultOptions: true,
-                    dataSource: {
-                        source: that.panels.fieldEvaluation.modulesProxy,
-                        labelField: "text",
-                        valueField: "value"
-                    },
-                    defaultSelection: '[first]',
-                    required: true
-                },
-                {
-                    name: "expField",
-                    type: "select",
-                    label: this.parent.language.LBL_VARIABLE,
-                    dependsOn: 'expModule',
-                    required: true,
-                    dependencyHandler: function (e) {
-                        var data;
-                        that.panels.fieldEvaluation.fieldsProxy.uid = e.getValue();
-                        if (that.panels.fieldEvaluation.fieldsProxy.uid) {
-                            self = this;
-                            that.panels.fieldEvaluation.fieldsProxy.url = 'pmse_Project/CrmData/fields/' + e.getValue();
-                            //console.log('new URL', that.panels.fieldEvaluation.fieldsProxy.url);
-                            that.panels.fieldEvaluation.fieldsProxy.getData(null,{
-                                success: function(data) {
-                                    //console.log(self, data);
-                                    if (data.result) {
-                                        self.fill(data.result, "text", "value");
-                                        for (i = 0; i < data.result.length; i += 1) {
-                                            that.typesMap[data.result[i].value] = data.result[i].type;
-                                        }
-                                    }
-                                }
-                            });
-
-                        } else {
-                            this.clear();
-                        }
-                    },
-                    defaultSelection: 'name'
-                },
-                {
-                    name: "expOperator",
-                    type: "select",
-                    label: this.parent.language.LBL_OPERATOR,
-                    options: SugarExpression.prototype.operators,
-                    defaultSelection: "equals",
-                    required: true
-                },
-                {
-                    name: "expValue",
-                    type: "text",
-                    label: this.parent.language.LBL_VALUE,
-                    required: false
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-                obj = {
-                    expDirection: data.expDirection || null,
-                    expModule: {
-                        text: this.getFieldByName('expModule').getSelectedText() || null,
-                        value: data.expModule || null
-                    },
-                    expField: {
-                        text: this.getFieldByName('expField').getSelectedText() || null,
-                        value: data.expField || null
-                    },
-                    expOperator: {
-                        text: this.getFieldByName("expOperator").getSelectedText() || null,
-                        value: data.expOperator
-                    },
-                    expValue: that.getSanitizedValue(data.expValue)
-                };
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "MODULE";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            },
-            onCancel: function () {}
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-CriteriaField.prototype.createControlPanel = function (formSettings) {
-    var that = this,
-        defaultFormSettings = {
-            title: this.parent.language.TITLE_FORM_RESPONSE_EVALUATION,
-            name: "control",
-            fields: [
-                {
-                    name: "expField",
-                    type: "select",
-                    label: this.parent.language.LBL_FORM,
-                    dataSource: {
-                        source: this.panels.formResponseEvaluation.proxy
-                    },
-                    defaultSelection: '[first]',
-                    required: true
-                },
-                {
-                    name: "expValue",
-                    type: "select",
-                    label: this.parent.language.LBL_STATUS,
-                    options: [
-                        {
-                            label: this.parent.language.LBL_APPROVED,
-                            value: "Approve"
-                        },
-                        {
-                            label: this.parent.language.LBL_REJECTED,
-                            value: "Reject"
-                        }
-                    ],
-                    defaultSelection: "[first]",
-                    required: true
-                }
-            ],
-            onSubmit: function (data) {
-                var obj;
-
-                obj = {
-                    expField: {
-                        text: this.getFieldByName('expField').getSelectedText() || null,
-                        value: data.expField || null
-                    },
-                    expOperator: {
-                        text: "==",
-                        value: "equals"
-                    },
-                    expValue: {
-                        text: this.getFieldByName('expValue').getSelectedText() || null,
-                        value: data.expValue || null
-                    }
-                };
-
-                if (that.editMode) {
-                    that.updateExpression(that.expressionInEdition, obj);
-                } else {
-                    obj.expType = "CONTROL";
-                    that.addItem(obj);
-                }
-                that.viewingForm = false;
-            }
-        };
-
-    $.extend(true, defaultFormSettings, formSettings || {});
-
-    return this.createChildForm(defaultFormSettings);
-};
-
-CriteriaField.prototype.getInputAreaValidationFunction = function () {
-    var that = this;
-    return function (value) {
-        value = $.trim(value).toUpperCase();
-        if (value === 'AND' || value === 'OR' || value === 'NOT') {
-            that.panelSemaphore = false;
-            that.addItem(new SugarExpression({
-                expType: 'LOGIC',
-                expValue: value,
-                decimalSeparator: that.decimalSeparator
-            }));
-            this.clear();
-        } else if (value === '(' || value === ')') {
-            that.panelSemaphore = false;
-            that.addItem(new SugarExpression({
-                expType: 'GROUP',
-                expValue: value,
-                editable: false,
-                decimalSeparator: that.decimalSeparator
-            }));
-            this.clear();
-//        } else if (value === '+' || value === '-') {
-//            that.panelSemaphore = false;
-//            that.addItem(new SugarExpression({
-//                expType: 'MATH',
-//                expValue: value,
-//                decimalSeparator: that.decimalSeparator
-//            }));
-//            this.clear();
-        } else if (!that.isNaN(value)) {
-            that.panelSemaphore = false;
-            that.addItem(new SugarExpression({
-                expType: 'NUMBER',
-                expValue: value,
-                decimalSeparator: that.decimalSeparator
-            }));
-            this.clear();
-
-        } else {
-            $(this.html).focus().select();
-        }
-        that.currentIndex = $(this.html).attr("tab-index");
-        return true;
-    };
-};
-
-CriteriaField.prototype.createControlObject = function () {
-    var input = new InputArea();
-    input.validationFunction = this.getInputAreaValidationFunction();
-    $(input.getHTML()).on("click", function (e) {
-        e.stopPropagation();
-    }).on("keydown", function (e) {
-        var $this = $(this), value = $this.val();
-        if (e.keyCode === 37 && value === '') {
-            $this.prev().prev().focus().select();
-        } else if (e.keyCode === 39 && value === '') {
-            $this.next().next().focus().select();
-        }
-    });
-    return input.getHTML();
-};
-
-CriteriaField.prototype.attachListeners = function () {
-    MultipleItemField.prototype.attachListeners.call(this);
-
-    var control, that = this,
-        $itemsContainer = $(this.itemsContainer);
-
-    control = $(this.controlObject);
-
-    control.off("blur");
-
-    $itemsContainer.on('blur', '.multiple-item-input', function () {
-
-        if (!that.viewingForm) {
-
-            that.hidePanel();
-            $itemsContainer.removeClass('focused');
-            $(that.panel.html).removeClass('focused');
-        }
-    }).on("click", '.multiple-item-input', function (e) {
-
-        e.stopPropagation();
-
-        that.showPanel();
-    }).on("keyup", '.multiple-item-input', function (e) {
-        e.stopPropagation();
-        if (e.keyCode !== 27) {
-            if (!that.panelSemaphore) {
-                that.panelSemaphore = true;
-            } else {
-                if ((!that.panel.isOpen && this.value !== "") || e.keyCode === 13) {
-                    that.showPanel();
-                }
-            }
-        } else {
-            that.hidePanel();
-        }
-    }).on("focus", '.multiple-item-input', function (e) {
-        $('.hasDatepicker').datepicker('hide');
-        that.currentIndex = $(this).attr("tab-index");
-        e.stopPropagation();
-        that.showPanel();
-    });
-
-    $itemsContainer.on("click", function (e) {
-        e.stopPropagation();
-        $(control).trigger("click");
-    });
-};
-
-CriteriaField.prototype.isValid = function () {
-    var i, valid = true, prev = null, exp, pendingToClose = 0, dataNum = 0, msg = "invalid criteria syntax";
-    if (!this.timerCriteria) {
-
-
-        for (i = 0; i < this.items.length; i += 1) {
-            exp = this.items[i];
-            if (exp.expSuperType === SugarExpression.prototype.sTypes.OPERAND || (exp.expType === 'GROUP' && exp.expValue.value === '(') || (exp.expType === 'LOGIC' && exp.expValue.value === 'NOT')) {
-                valid = valid && (
-                    prev === null ||
-                        prev.expType === 'LOGIC' || prev.expType === 'ARITHMETIC' ||
-                        (prev.expType === 'GROUP' && prev.expValue.value === '(')
-                );
-            } else {
-                if (prev === null) {
-                    valid = false;
-                    break;
-                }
-                valid = valid && (
-                    prev.expSuperType === SugarExpression.prototype.sTypes.OPERAND ||
-                        (prev.expType === 'GROUP' && prev.expValue.value === ')')
-                );
-            }
-
-            if (exp.expType === 'GROUP') {
-                if (exp.expValue.value === ')') {
-                    valid = valid && pendingToClose > 0;
-                    pendingToClose -= 1;
-                } else if (exp.expValue.value === '(') {
-                    pendingToClose += 1;
-                }
-            }
-
-            if (!valid) {
-                break;
-            }
-            prev = exp;
-        }
-
-        if (valid) {
-            if (prev) {
-                valid = valid && prev.expType !== 'LOGIC' && prev.expType !== 'ARITHMETIC' && !(prev.expType === 'GROUP' && prev.expValue.value === "(");
-            }
-            valid = valid && pendingToClose === 0;
-        }
-
-
-
-
-    } else {
-        if (this.items.length > 0) {
-            for (i = 0; i < this.items.length; i += 1) {
-                exp = this.items[i];
-                if (exp.expSuperType === SugarExpression.prototype.sTypes.OPERAND) {
-
-                    valid = valid && (
-                        prev === null ||
-                            prev.expType === 'MATH'
-                    );
-                } else {
-                    if (prev === null) {
-                        valid = false;
-                        break;
-                    }
-                    valid = valid && (
-                        prev.expSuperType === SugarExpression.prototype.sTypes.OPERAND
-                    );
-                }
-                if (!valid) {
-                    break;
-                }
-                if (exp.expType === 'SUGAR_DATE' || exp.expType === 'FIXED_DATE') {
-                    dataNum += 1;
-                }
-                prev = exp;
-            }
-
-            if (valid) {
-                if (prev) {
-                    valid = valid && prev.expType !== 'MATH';
-                }
-            }
-            if (valid) {
-                valid = valid && dataNum === 1 && (this.items[0].expType === 'SUGAR_DATE' || this.items[0].expType === 'FIXED_DATE');
-
-            }
-            if (!valid) {
-                msg = "invalid criteria syntax, format: [Date or Field of date] [+/-] [Time Span]";
-            }
-        }
-
-    }
-
-    if (valid) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        valid = valid && Field.prototype.isValid.call(this);
-    } else {
-        this.errorTooltip.setMessage(msg);
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
-    }
-
-    if (valid) {
-        return valid && Field.prototype.isValid.call(this);
-    }
-    return valid;
-
-};
-
-CriteriaField.prototype.getObject = function () {
-    var e, auxValue = [], exp, obj;
-    for (e = 0; e < this.items.length; e += 1) {
-        obj = {};
-        exp = this.items[e];
-        switch (exp.expType) {
-        case 'MODULE':
-            obj.expDirection = exp.expDirection || null;
-            obj.expFieldType = this.typesMap[exp.expField.value] || exp.expFieldType  || null;
-            obj.expModule = (exp.expModule && exp.expModule.value) || null;
-            obj.expField = exp.expField.value || null;
-            obj.expOperator = (exp.expOperator && exp.expOperator.value) || null;
-            break;
-        case 'BUSINESS_RULES':
-            obj.expFieldType = this.typesMap[exp.expValue.text] || exp.expFieldType || null;
-            obj.expDirection = exp.expDirection || null;
-            obj.expModule = (exp.expModule && exp.expModule.value) || null;
-            obj.expField = exp.expField.value || null;
-            obj.expOperator = (exp.expOperator && exp.expOperator.value) || null;
-            break;
-        case 'CONTROL':
-        case 'USER_ADMIN':
-        case 'USER_ROLE':
-        case 'USER_IDENTITY':
-            obj.expModule = (exp.expModule && exp.expModule.value) || null;
-            obj.expField = exp.expField.value || null;
-            obj.expOperator = (exp.expOperator && exp.expOperator.value) || null;
-            break;
-        case 'UNIT_TIME':
-            obj.expUnit = exp.expUnit.toLowerCase() || null;
-            break;
-        }
-        obj.expValue = exp.expValue.value;
-        obj.expType = exp.expType;
-        obj.expLabel = exp.getLabel();
-
-        auxValue.push(obj);
-    }
-    return auxValue;
-};
-
-CriteriaField.prototype.createHTML = function () {
-    var that = this;
-    if (this.html) {
-        return this.html;
-    }
-
-    MultipleItemField.prototype.createHTML.call(this);
-    $(this.itemsContainer).on('scroll', function () {
-        if (that.expressionInEdition) {
-            that.updateExpression(that.expressionInEdition, {});
-        }
-    });
-
-    return this.html;
-};
-
-//input area
-    var InputArea = function () {
-        Element.call(this);
-        this.textlabel = null;
-    };
-
-    InputArea.prototype = new Element();
-
-    InputArea.prototype.type = "InputArea";
-
-    InputArea.prototype.getTextWidth = function () {
-        var width;
-        this.textlabel.innerText = this.html.value;
-        $(this.html).before(this.textlabel);
-        width = $(this.textlabel).width();
-        $(this.textlabel).detach();
-        return width;
-    };
-
-    InputArea.prototype.validationFunction = function() {
-        return !!$.trim(this.html.value);
-    };
-
-    InputArea.prototype.acceptInput = function(value) {};
-
-    InputArea.prototype.clear = function() {
-        $(this.html).val("").css("width", "1px");
-        return this;
-    };
-
-    InputArea.prototype.onBlur = function () {
-        var that = this;
-        return function () {
-            that.clear();
-        };
-    };
-
-    InputArea.prototype.onKeyUp = function() {
-        var that = this;
-        return function (e) {
-            var $this = $(this),
-                value = $this.val(),
-                valid = false;
-
-            if(e.keyCode !== 37 && $.trim(value) !== '') {
-                $this.css("width", that.getTextWidth()+8);
-            }
-
-            if(e.keyCode === 13) {
-                e.preventDefault();
-                if(typeof that.validationFunction === 'function') {
-                    valid = that.validationFunction.call(that, value);
-                } else {
-                    valid = true;
-                }
-
-                if(valid) {
-                    that.acceptInput(value);    
-                }
-            } else if(e.keyCode === 27) {
-                that.clear();
-            }
-        };
-    };
-
-    InputArea.prototype.createHTML = function () {
-        var textbox, label; 
-        if(!this.html) {
-            textbox = this.createHTMLElement('input');
-            textbox.style.width = "1px";
-            textbox.type = "text";
-            textbox.className = 'multiple-item-input';
-
-            label = this.createHTMLElement('span');
-            label.style.display = 'none';
-            this.textlabel = label;
-
-            this.html = textbox;
-
-            this.style.addProperties({
-                "padding-left": 0,
-                "padding-right": 0,
-                "margin-right": 0,
-                "margin-left": 0
-            });
-
-            $(this.html).on('keyup', this.onKeyUp())
-                .on('blur', this.onBlur());
-        }
-        return this.html;
-    };
-CriteriaField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-    this.disabled = true;
-};
-
-CriteriaField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
-    this.disabled = false;
-};
-
-//CriteriaFormFields
-    //Criteria form field
-
-        var CriteriaFormField = function (settings) {
-            Base.call(this);
-            this.name = null;
-            this.label = null;
-            this.value = null;
-            this.form = null;
-            this.dependsOn = null;
-            this.required = null;
-            this.dependentFields = null;
-            this.dependencyHandler = null;
-            this.control = null;
-            this.restClient = null;
-            this.isDisabled = null;
-
-            CriteriaFormField.prototype.initObject.call(this, settings || {});
-        };
-
-        CriteriaFormField.prototype = new Base();
-
-        CriteriaFormField.prototype.type = 'CriteriaFormField';
-
-        CriteriaFormField.prototype.initObject = function (settings) {
-            var defaults = {
-                fieldType: "text",
-                name: "",
-                label: "",
-                dependsOn: null,
-                dependencyHandler: null,
-                value: null,
-                required: false,
-                dependentFields: [],
-                restClient: null,
-                disabled: false
-            };
-
-            $.extend(true, defaults, settings || {});
-
-            this.fieldType = defaults.fieldType;
-
-            this.setName(defaults.name)
-                .setLabel(defaults.label)
-                .setValue(defaults.value)
-                .setDependentFields(defaults.dependentFields)
-                .setDependency(defaults.dependsOn)
-                .setDependencyHandler(defaults.dependencyHandler)
-                .setRequired(defaults.required)
-                .setRestClient()
-                .createControl()
-                .setIsDisabled(defaults.disabled);
-        };
-
-        CriteriaFormField.prototype.setIsDisabled = function(disabled) {
-            this.isDisabled = !!disabled;
-            if(this.control) {
-                this.control.disabled = !!disabled;
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.getIsDisabled = function() {
-            return this.isDisabled;
-        };
-
-        CriteriaFormField.prototype.setRestClient = function(restClient) {
-            this.restClient = restClient;
-            return this;
-        };
-
-        CriteriaFormField.prototype.setRequired = function (required) {
-            if(typeof required === 'boolean') {
-                this.required = required;
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.setName = function (value) {
-            this.name = value;
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.setLabel = function (value) {
-            this.label = value;
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.setValue = function (value) {
-            this.value = value;
-
-            this.updateHTML();
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.getValue = function () {
-            return $(this.control).val();
-        };
-
-        CriteriaFormField.prototype.setDependentFields = function (fields) {
-            this.dependentFields = fields;
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.addDependentField = function (field) {
-            if(field instanceof CriteriaFormField && field !== this) {
-                this.dependentFields.push(field);
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.setDependency = function (field) {
-            if(field instanceof CriteriaFormField) {
-                this.dependsOn = field;
-                field.addDependentField(this);
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.setDependencyHandler = function (value) {
-            if(typeof value === 'function') {
-                this.dependencyHandler = value;
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.clear = function () {
-            $(this.control).val("");
-            this.value = "";
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.updateHTML = function () {
-            if(this.control) {
-                $(this.control).val(this.value || "");
-            }
-
-            return  this;
-        };
-
-        CriteriaFormField.prototype.createControl = function () { return this; };
-
-        CriteriaFormField.prototype.onChangeValueHandler = function () {
-            this.value = $(this.control).val();
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.reset = function () {
-            $(this.control).removeClass("error");
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.triggerDependentFields = function () {
-            var i, f;
-            for(i = 0; i < this.dependentFields.length; i+=1) {
-                f = this.dependentFields[i];
-                if(typeof f.dependencyHandler === 'function') {
-                    f.dependencyHandler.call(f, this);
-                }
-            }
-
-            return this;
-        };
-
-        CriteriaFormField.prototype.getHTML = function () {
-            var label, that = this;
-
-            if(this.html) {
-                return this.html;
-            }
-
-            label = document.createElement("span");
-            label.className = "pmse-form-label";
-            label.appendChild(document.createTextNode(this.label));
-            this.control.name = this.name;
-            this.control.id = this.id;
-            $(this.control).on("change", function() {
-                that.onChangeValueHandler();
-                that.isValid();
-                that.triggerDependentFields();
-            });
-            if(this.value !== null) {
-                $(this.control).val(this.value);
-            }
-
-            this.html = document.createElement("label");
-            this.html.appendChild(label);
-            this.html.appendChild(this.control);
-            if (this.type === "criteriaFormDateField") {
-                $(this.control).datepicker();
-                $('.datepicker').css('z-index', '1034');
-
-            }
-
-
-            return this.html;
-        };
-
-        CriteriaFormField.prototype.isValid = function () {
-            var valid = !!($(this.control).val() || !this.required);
-
-            if(!valid) {
-                $(this.control).addClass('error');
-            } else {
-                $(this.control).removeClass('error');
-            }
-
-            return valid;
-        };
-
-        CriteriaFormField.prototype.onAppend = function () {};
-
-//Criteria text field
-
-var CriteriaFormDateField = function (settings) {
-    CriteriaFormField.call(this, settings);
-    this.required = true;
-};
-
-CriteriaFormDateField.prototype = new CriteriaFormField();
-
-CriteriaFormDateField.prototype.type = "criteriaFormDateField";
-
-CriteriaFormDateField.prototype.createControl = function () {
-    this.control = document.createElement('input');
-    this.control.type = 'text';
-    this.control.autocomplete = "off";
-    $(this.control).on('keydown', function(e){
-        e.stopPropagation();
-    }).on('keyup', function (e) {
-            e.stopPropagation();
-        });
-
-    return this;
-};
-
-
-var CriteriaFormNumberField = function (settings) {
-    CriteriaFormField.call(this, settings);
-    this.required = true;
-};
-
-CriteriaFormNumberField.prototype = new CriteriaFormField();
-
-CriteriaFormNumberField.prototype.type = "criteriaFormNumberField";
-
-CriteriaFormNumberField.prototype.createControl = function () {
-    this.control = document.createElement('input');
-    this.control.type = 'text';
-    this.control.autocomplete = "off";
-    $(this.control).on('keydown', function(event){
-        event.stopPropagation();
-        // Allow: backspace, delete, tab, escape, and enter
-        if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
-            // Allow: Ctrl+A
-            (event.keyCode == 65 && event.ctrlKey === true) ||
-            // Allow: home, end, left, right
-            (event.keyCode >= 35 && event.keyCode <= 39)) {
-            // let it happen, don't do anything
-            return;
-        }
-        else {
-            // Ensure that it is a number and stop the keypress
-            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-                event.preventDefault();
-            }
-        }
-    }).on('keyup', function (e) {
-            e.stopPropagation();
-        });
-
-    return this;
-};
-    //Criteria text field
-
-        var CriteriaFormTextField = function (settings) {
-            CriteriaFormField.call(this, settings);
-        };
-
-        CriteriaFormTextField.prototype = new CriteriaFormField();
-
-        CriteriaFormTextField.prototype.type = "criteriaFormTextField";
-
-        CriteriaFormTextField.prototype.createControl = function () {
-            this.control = document.createElement('input');
-            this.control.type = 'text';
-
-            $(this.control).on('keydown', function(e){
-                e.stopPropagation();
-            }).on('keyup', function (e) {
-                e.stopPropagation();
-            });
-
-            return this;
-        };
-
-    //Criteria long_text field
-        var CriteriaFormLongTextField = function (settings) {
-            CriteriaFormField.call(this, settings);
-        };
-
-        CriteriaFormLongTextField.prototype = new CriteriaFormField();
-
-        CriteriaFormLongTextField.prototype.type = "CriteriaFormLongTextField";
-
-        CriteriaFormLongTextField.prototype.createControl = function () {
-            this.control = document.createElement('textarea');
-
-            return this;
-        };
-
-    //Criteria select field
-        var CriteriaFormSelectField = function (settings) {
-            this.defaultSelection = null;
-            this.selectedIndex = null;
-            this.preserveDefaultOptions = null;
-            this.options = null;
-            this.dataSource = null;
-            CriteriaFormField.call(this, settings);
-
-            CriteriaFormSelectField.prototype.initObject.call(this, settings);
-        };
-
-        CriteriaFormSelectField.prototype = new CriteriaFormField();
-
-        CriteriaFormSelectField.prototype.initObject = function (settings) {
-            var defaults = {
-                dataSource: null, 
-                options: [],
-                defaultSelection: null,
-                preserveDefaultOptions: false
-            };
-
-            $.extend(true, defaults, settings);
-            this.options = defaults.options;
-
-            this.setDefaultSelection(defaults.defaultSelection)
-                .fill(this.options)
-                .setDataSource(defaults.dataSource)
-                .setPreserveDefaultOptions(defaults.preserveDefaultOptions);
-        };
-
-        CriteriaFormSelectField.prototype.setPreserveDefaultOptions = function (preserve) {
-            this.preserveDefaultOptions = preserve;
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.setDefaultSelection = function (selection) {
-            this.defaultSelection = selection;
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.getSelectedText = function () {
-            var selectedOption = $(this.control).find('option:selected');
-            return selectedOption.get(0) ? selectedOption.text() : null;
-        };
-
-        CriteriaFormSelectField.prototype.setDataSource = function (dataSource) {
-            if(typeof dataSource === 'object') {
-                this.dataSource = $.extend(true, {
-                    labelField: 'text',
-                    valueField: 'value',
-                    itemsField: 'result'
-                }, dataSource);
-            }
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.clear = function () {
-            $(this.control).empty();
-            this.value = "";
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.fill = function (data, labelField, valueField) {
-            var i, option, l, v, s, ifSelected = false,
-                defaultSelection = this.defaultSelection;
-
-            labelField = labelField || "label";
-            valueField = valueField || "value";
-
-            $(this.control).empty();
-
-            for(i = 0; i < data.length; i+=1) {
-                l = data[i][labelField];
-                v = data[i][valueField];
-                s = data[i].selected || false;
-                option = document.createElement('option');
-                option.label = l || v;
-                option.value = v || l;
-                option.selected = s;
-                ifSelected = s || ifSelected;
-                option.appendChild(document.createTextNode(l||v));
-                this.control.appendChild(option);
-            }
-
-            if(!ifSelected) {
-                if(defaultSelection === '[first]') {
-                    $(this.control).find('option:first').attr("selected", true);
-                } else if (defaultSelection === '[none]' || defaultSelection === null) {
-                    this.control.selectedIndex = -1;
-                } else {
-                    $(this.control).find('option[value="' + defaultSelection + '"]').attr("selected", true);
-                }
-            }
-
-            this.value = $(this.control).val();
-
-            this.selectedIndex = this.control.selectedIndex;
-
-            this.triggerDependentFields();
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.bind = function (key) {
-            var data, control, i, iField, auxOptions = [], self = this;
-
-            if(this.dataSource) {
-                if(!this.control) {
-                    this.createControl();
-                }
-
-                if(this.dataSource.source) {
-                    if(key) {
-                        this.dataSource.source.uid = key;
-                    }
-
-                    this.dataSource.source.getData(null, {
-                        success: function (data) {
-                            control = $(self.control);
-                            control.empty();
-
-                            data = data || [];
-
-                            iField = self.dataSource.itemsField;
-
-                            data = iField ? data[iField] : data;
-
-                            if(data && data.push){
-                                if(self.preserveDefaultOptions) {
-                                    for(i = 0; i < self.options.length; i+=1) {
-                                        control = {};
-                                        control[self.dataSource.labelField] = self.options[i].label;
-                                        control[self.dataSource.valueField] = self.options[i].value;
-                                        auxOptions.push(control);
-                                    }
-                                    data = $.merge(auxOptions, data);
-                                }
-                                self.fill(data, self.dataSource.labelField, self.dataSource.valueField);
-                            }
-                        }
-                    });
-                    //console.log('Data', this.dataSource.source);
-
-
-                } else if(this.dependsOn) {
-                    this.dependsOn.triggerDependentFields();
-                }
-            }
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.createControl = function () {
-            this.control = document.createElement("select");
-
-            return this;
-        };
-
-        CriteriaFormSelectField.prototype.getHTML = function () {
-            this.bind();
-
-            return CriteriaFormField.prototype.getHTML.call(this);
-
-        };
-
-        CriteriaFormSelectField.prototype.onAppend = function () {
-            this.control.selectedIndex = this.selectedIndex;
-        };
-
-    //Criteria hidden field
-        var CriteriaFormHiddenField = function (settings) {
-            CriteriaFormField.call(this, settings);
-        };
-
-        CriteriaFormHiddenField.prototype = new CriteriaFormField();
-
-        CriteriaFormHiddenField.prototype.createControl = function () {
-            this.control = document.createElement("input");
-            this.control.type = "hidden";
-
-            $(this.control).val(this.getValue());
-
-            return this;
-        };
-
-        CriteriaFormHiddenField.prototype.getHTML = function () {
-            CriteriaFormField.prototype.getHTML.call(this);
-
-            this.html.style.display = 'none';
-
-            this.triggerDependentFields();
-
-            return this.html;
-        };
-
-//CriteriaForm 
-    var CriteriaForm = function (settings) {
-        MultipleItemSubpanel.call(this, settings);
-
-        this.fields = null;
-        this.onSubmit = null;
-        this.onCancel = null;
-        this.submitCaption = null;
-        this.cancelButton = null;
-        this.cancelCaption = null;
-
-        CriteriaForm.prototype.initObject.call(this, settings);
-    };
-
-    CriteriaForm.prototype.type = "CriteriaForm";
-
-    CriteriaForm.prototype = new MultipleItemSubpanel();
-
-    CriteriaForm.prototype.initObject = function (settings) {
-        var defaults = {
-            fields: [],
-            onSubmit: null,
-            onCancel: null,
-            cancelButton: false, 
-            language: {
-                BUTTON_SUBMIT: "Submit",
-                BUTTON_CANCEL: "Cancel"
-            }
-        };
-
-        $.extend(true, defaults, settings);
-
-        this.language = defaults.language;
-        this.onSubmit = defaults.onSubmit;
-        this.onCancel = defaults.onCancel;
-        this.submitCaption = this.language.BUTTON_SUBMIT;
-        this.cancelButton = defaults.cancelButton;
-        this.cancelCaption = this.language.BUTTON_CANCEL;
-
-        this.setFields(defaults.fields);
-    };
-
-    CriteriaForm.prototype.getFieldByName = function (name) {
-        return this.fields.find("name", name);
-    };
-
-    CriteriaForm.prototype.setFields = function (fields) {
-        var i, field;
-
-        this.fields = new jCore.ArrayList();
-
-        for(i = 0; i < fields.length; i+=1) {
-            field = fields[i];
-            if(!(fields[i] instanceof CriteriaFormField)) {
-                if(typeof field === 'object') {
-                    field.dependsOn = (field.dependsOn && this.getFieldByName(field.dependsOn)) || null;
-                    switch(field.type) {
-                        case 'text':
-                            field = new CriteriaFormTextField(field);
-                            break;
-                        case 'number':
-                            field = new CriteriaFormNumberField(field);
-                            break;
-                        case 'hidden':
-                            field = new CriteriaFormHiddenField(field);
-                            break;
-                        case 'select':
-                            field = new CriteriaFormSelectField(field);
-                            break;
-                        case 'long_text':
-                            field = new CriteriaFormLongTextField(field);
-                            break;
-                        case 'date':
-                            field = new CriteriaFormDateField(field);
-                            break;
-
-                    }
-                }
-            }
-            field.form = this;
-            this.fields.insert(field);
-        }
-
-        return this;
-    };
-
-    CriteriaForm.prototype.getSubmitObject = function () {
-        var obj = {}, i;
-
-        for(i = 0; i < this.fields.getSize(); i+=1) {
-            obj[this.fields.get(i).name] = this.fields.get(i).getValue();
-        }
-
-        return obj;
-    };
-
-    CriteriaForm.prototype.isValid = function () {
-        var i, valid = true;
-
-        for(i = 0; i < this.fields.getSize(); i+=1) {
-            valid = valid && this.fields.get(i).isValid();
-            if(!valid) {
-                return valid;
-            }
-        }
-
-        return valid;
-    };
-
-    CriteriaForm.prototype.reset = function () {
-        var i;
-
-        for(i = 0; i < this.fields.getSize(); i+=1) {
-            this.fields.get(i).reset();
-        }
-
-        return this;
-    };
-
-    CriteriaForm.prototype.createHTML = function () {
-        MultipleItemSubpanel.prototype.createHTML.call(this);
-        $(this.html).addClass('multiple-item-form');
-        return this.html;
-    };
-
-    CriteriaForm.prototype.open = function () {
-        var loader = document.createElement('div'),
-            $content = $(this.content), cancelButton,
-            aux, i, that = this, field, form,
-            submitFunction = function() {
-                var submitObject;
-
-                if(that.isValid()){
-                    if(typeof that.onSubmit === 'function') {
-                        submitObject = that.getSubmitObject();
-                        that.onSubmit.call(that, submitObject);
-                    }
-                }
-            };
-
-        $content.empty();
-
-        this.showLoader();
-
-        MultipleItemSubpanel.prototype.open.call(this);
-
-        form = this.createHTMLElement('form');
-        $(form).on('submit', function(e){
-            //alert('hola');
-            e.preventDefault();
-            submitFunction();
-
-        });
-
-        aux = [];
-
-        for(i = 0; i < this.fields.getSize(); i+=1) {
-            field = this.fields.get(i);
-            aux.push(this.fields.get(i).getHTML());
-        }
-
-        this.hideLoader();
-
-        for(i = 0; i < aux.length; i+=1) {
-            form.appendChild(aux[i]);
-            if(typeof aux[i].onAppend === 'function') {
-                aux[i].onAppend();
-            }
-        }
-
-        aux = document.createElement("div");
-        aux.style.textAlign = 'center';
-
-        loader = document.createElement('input');
-        loader.type = 'submit';
-        loader.value = this.submitCaption;
-        aux.appendChild(loader);
-
-        if(this.cancelButton) {
-            cancelButton = document.createElement('input');
-            cancelButton.type = 'button';
-            cancelButton.value = this.cancelCaption;
-            aux.appendChild(cancelButton);
-
-            $(cancelButton).on("click", function () {
-                if(typeof that.onCancel === 'function') {
-                    that.onCancel.call(that);
-                    $('.hasDatepicker').datepicker('hide');
-                }
-            });
-        }
-
-        form.appendChild(aux);
-        $content.append(form);
-
-        return this;
-    };
-
-//SugarExpession
-
-    var SugarExpression = function (options) {
-        SingleItem.call(this, options);
-
-        this.expType = null;
-        this.expDirection = null;
-        this.expModule = null;
-        this.expField = null;
-        this.expOperator = null;
-        this.expValue = null;
-        this.expUnit = null;
-        this.editable = null;
-        this.onEdit = null;
-        this.onExitEdit = null;
-        this.editMode = null;
-        this.expSuperType = null;
-        this.decimalSeparator = null;
-
-        SugarExpression.prototype.initObject.call(this, options);
-    };
-
-    SugarExpression.prototype = new SingleItem();
-
-    SugarExpression.prototype.type = 'SugarExpression';
-    SugarExpression.prototype.family = 'SugarExpression';
-
-    SugarExpression.prototype.operators = [
-        {
-            value: 'equals',
-            label: '=='
-        }, {
-            value: 'major_than',
-            label: '>'
-        }, {
-            value: 'major_equals_than',
-            label: '>='
-        }, {
-            value: 'not_equals',
-            label: '!='
-        }, {
-            value: 'minor_than',
-            label: '<'
-        }, {
-            value: 'minor_equals_than',
-            label: '<='
-        }/*, {
-            value: 'within',
-            label: 'within'
-        }, {
-            value: 'not_within',
-            label: 'not within'
-        }*/
-    ];
-
-    SugarExpression.prototype.sTypes = {
-        'OPERAND': 0,
-        'OPERATOR': 1,
-        'GROUP': 2
-    };
-
-    SugarExpression.prototype.eTypes = {
-        'LOGIC' : 'LOGIC',
-        'GROUP': 'GROUP',
-        'MATH': 'MATH',
-        'ARITHMETIC': 'ARITHMETIC',
-        'MODULE' : 'MODULE',
-        'CONTROL': 'CONTROL',
-        'DEFAULTMODULE': 'DEFAULTMODULE',
-        'BUSINESS_RULES': 'BUSINESS_RULES',
-        'USER_ADMIN': 'USER_ADMIN',
-        'USER_ROLE': 'USER_ROLE',
-        'USER_IDENTITY': 'USER_IDENTITY',
-        'FIXED_DATE': 'FIXED_DATE',
-        'SUGAR_DATE': 'SUGAR_DATE',
-        'UNIT_TIME': 'UNIT_TIME',
-        'SUGAR_VAR': 'SUGAR_VAR',
-        'NUMBER': 'NUMBER'
-    };
-    SugarExpression.prototype.initObject = function (options) {
-        var defaults = {
-            expType: null,
-            expModule: {
-                text: null,
-                value: null
-            },
-            expField: {
-                text: null,
-                value: null
-            },
-            expOperator : {
-                text: null,
-                value: null
-            },
-            expDirection: null,
-            expLabel: null,
-            expValue: {
-                text: null,
-                value: null
-            },
-            expUnit: null,
-            expFieldType: null,
-            editable: true,
-            onEdit: null,
-            onExitEdit: null,
-            decimalSeparator: '.'
-        }, aux;
-
-        $.extend(true, defaults, options);
-
-        this.editMode = false;
-
-        this.setDecimalSeparator(defaults.decimalSeparator)
-            .setExpressionType(defaults.expType)
-            .setExpressionValue(defaults.expValue)
-            .setExpressionUnit(defaults.expUnit)
-            .setFieldType(defaults.expFieldType)
-            .setExpressionOperator(defaults.expOperator)
-            .setExpressionModule(defaults.expModule)
-            .setExpressionField(defaults.expField)
-            .setExpressionDirection(defaults.expDirection)
-            .setIsEditable(defaults.editable)
-            .setOnEditHandler(defaults.onEdit)
-            .setOnExitEditHandler(defaults.onExitEdit)
-            .updateLabel();
-
-        aux = false;
-        if(defaults.expLabel) {
-            switch(this.expType) {
-                case 'DEFAULTMODULE':
-                case 'CONTROL':
-                case 'BUSINESS_RULES':
-                case 'MODULE':
-                    aux = defaults.expLabel.indexOf(this.expOperator.text);
-                    this.expField.text = $.trim(defaults.expLabel.substr(0, aux));
-                    this.updateLabel();
-                    break;
-                case 'USER_ADMIN':
-                case 'USER_IDENTITY':
-                case 'USER_ROLE':
-                    this.label = defaults.expLabel;
-                    break;
-            }
-            aux = true;
-        }
-        this.createHTML(defaults.expLabel)
-        if(!aux) {
-            this.updateHTML();
-        }
-    };
-
-    SugarExpression.prototype.setDecimalSeparator = function (decimalSeparator) {
-        if(typeof decimalSeparator === 'string' && decimalSeparator) {
-            this.decimalSeparator = decimalSeparator; 
-            if(this.expValue) {
-                this.setExpressionValue(this.expValue);
-            }
-        }
-        return this;
-    };
-
-    SugarExpression.prototype.setOnExitEditHandler = function (handlerFunction) {
-        delete this.setOnExitEditHandler;
-        if(typeof handlerFunction === 'function') {
-            this.onExitEdit = handlerFunction;
-        } else {
-            this.onExitEdit = null;
-        }
-
-        return this;
-    };
-
-    SugarExpression.prototype.setIsEditable = function (editable) {
-        this.editable = editable;
-        if(this.html) {
-            $(this.html).off("click").on("click", this.onClickHandler());
-        }
-        this.refreshCursor();
-
-        return this;
-    };
-
-    SugarExpression.prototype.setExpressionType = function (type) {
-        if (this.eTypes[type]) {
-            this.expType = this.eTypes[type];
-            switch(this.expType) {
-                case 'LOGIC':
-                    this.expSuperType = this.sTypes.OPERATOR;
-                    break;
-                case 'GROUP':
-                    this.expSuperType = this.sTypes.GROUP;
-                    break;
-                case 'ARITHMETIC':
-                    this.expSuperType = this.sTypes.OPERATOR;
-                case 'MATH':
-                    this.expSuperType = this.sTypes.OPERATOR;
-                    break;
-                case 'FIXED_DATE':
-                case 'NUMBER':
-                case 'SUGAR_VAR':
-                case 'SUGAR_DATE':
-                case 'UNIT_TIME':
-                case 'MODULE':
-                case 'CONTROL':
-                case 'DEFAULTMODULE':
-                case 'BUSINESS_RULES':
-                case 'USER_ADMIN':
-                case 'USER_IDENTITY':
-                case 'USER_ROLE':
-                    this.expSuperType = this.sTypes.OPERAND;
-            }
-        }
-        document.createElement('li');
-        return this;
-    };
-
-    SugarExpression.prototype.refreshTooltip = function() {
-        if(this.html) {
-            $(this.html).attr("title", this.getSugarExpressionText());
-        }
-
-        return this;
-    };
-
-    SugarExpression.prototype.updateHTML = function () {
-        this.updateLabel();
-
-        return SingleItem.prototype.updateHTML.call(this, false);
-    };
-
-    SugarExpression.prototype.createHTML = function (label) {
-        if(this.html) {
-            return this.html;
-        }
-
-        SingleItem.prototype.createHTML.call(this, false);
-        if(this.label === "") {
-            this.updateHTML();
-        } else {
-            SingleItem.prototype.updateHTML.call(this, false);    
-        }
-        
-        return this.refreshTooltip().html;
-    };
-
-    SugarExpression.prototype.setExpressionModule = function (module) {
-        if(typeof module === 'string') {
-            module = {
-                text: module, 
-                value: module
-            };
-        }
-        this.expModule = module;
-        return this;
-    };
-
-    SugarExpression.prototype.setExpressionField = function (field) {
-        if(typeof field === 'object') {
-            this.expField = field;
-        } else if(typeof field === 'string' || typeof field === 'number') {
-            this.expField ={
-                text: field,
-                value: field
-            };
-        }
-        this.updateHTML();
-        return this;
-    };
-
-    SugarExpression.prototype.getObject = function () {
-        return {
-            expType: this.expType,
-            expModule: this.expModule,
-            expField: this.expField,
-            expFieldType: this.expFieldType,
-            expOperator: this.expOperator,
-            expValue: this.expValue,
-            expUnit: this.expUnit,
-            expDirection: this.expDirection,
-            expLabel: this.getLabel()
-        };
-    };
-
-    SugarExpression.prototype.getValue = function () {
-        return JSON.stringify(this.getObject());
-    };
-
-    SugarExpression.prototype.updateLabel = function () {
-        if(this.expField && this.expOperator && this.expValue) {
-            this.label = this.getFriendlyText();
-        }
-
-        return this;
-    };
-
-    SugarExpression.prototype.setExpressionOperator = function (operator) {
-        var i; 
-        if(typeof operator === 'object') {
-            this.expOperator = operator;
-            this.updateHTML();
-        } else if(typeof operator === 'string') {
-            for(i = 0; i < this.operators.length; i+=1) {
-                if(this.operators[i].label === operator || this.operators[i].value === operator) {
-                    this.expOperator = {
-                        text: this.operators[i].label,
-                        value: this.operators[i].value
-                    };
-
-                    break;
-                }
-            }
-        }
-        return this;
-    };
-
-    SugarExpression.prototype.setIsEditMode = function (isEditMode) {
-        this.editMode = !!isEditMode;
-
-        if(isEditMode) {
-            this.hideCloseButton();
-            if(typeof this.onEdit === 'function') {
-                this.onEdit.call(this);
-            }
-            $(this.html).addClass('expanded');
-        } else {
-            this.showCloseButton();
-            this.refreshTooltip();
-            $(this.html).removeClass('expanded');
-            if(typeof this.onExitEdit === 'function') {
-                this.onExitEdit.call(this);
-            }
-        }
-
-        return this;
-    };
-
-    SugarExpression.prototype.onClickHandler = function () {
-        var that = this;
-
-        if(this.editable) {
-            return function (e) {
-                e.stopPropagation();
-                that.setIsEditMode(!that.editMode);
-            };
-        } else {
-            return null;
-        }
-    };
-
-    SugarExpression.prototype.setExpressionDirection = function (direction) {
-        this.expDirection = direction;
-        return this;
-    };
-
-    SugarExpression.prototype.formatNumber = function formatNumber(n,num_grp_sep,dec_sep,round,precision) {
-        if(typeof num_grp_sep=='undefined'||typeof dec_sep=='undefined')
-            return n;n=n?n.toString():'';
-        if(n.split)
-            n=n.split('.');
-        else 
-            return n;
-        if(n.length>2)
-            return n.join('.');
-        if(typeof round!='undefined') {
-            if(round>0&&n.length>1) {
-                n[1] = parseFloat('0.'+n[1]);
-                n[1] = Math.round(n[1]*Math.pow(10,round))/ Math.pow(10,round);
-                n[1] = n[1].toString().split('.')[1];
-            }
-            if(round<=0) {
-                n[0] = Math.round(parseInt(n[0],10)*Math.pow(10,round))/ Math.pow(10,round);
-                n[1]='';
-            }
-        }
-        if(typeof precision!='undefined'&&precision>=0) {
-            if(n.length>1&&typeof n[1]!='undefined')
-                n[1] = n[1].substring(0,precision);
-            else n[1]='';
-            if(n[1].length<precision) {
-                for(var wp=n[1].length;wp<precision;wp++)
-                    n[1]+='0';
-            }
-        }
-        regex=/(\d+)(\d{3})/;
-        while(num_grp_sep!=''&&regex.test(n[0]))
-            n[0]=n[0].toString().replace(regex,'$1'+num_grp_sep+'$2');
-        return n[0]+(n.length>1&&n[1]!=''?dec_sep+n[1]:'');
-    };
-/*
-    SugarExpression.prototype.getRegExpDecimalSeparator = function() {
-        var prefix = "";
-        switch(this.decimalSeparator) {
-            case "\\":
-            case  "^":
-            case  "$":
-            case  "*":
-            case  "+":
-            case  "?":
-            case  ".":
-            case  "(":
-            case  ")":
-            case  "|":
-            case  "{":
-            case  "}":
-                prefix = "\\";
-        }
-        return prefix+this.decimalSeparator;
-    };*/
-
-    /*SugarExpression.prototype.isNaN = function(value) {
-        var regExpDecimalSeparator = this.getRegExpDecimalSeparator();
-        if(typeof value === 'number') {
-            return true;
-        } else {
-            return !(new RegExp("/(^\\d+$)|(^\\d+" + regExpDecimalSeparator + "\\d*$)|(^\\d*" + regExpDecimalSeparator + "\\d+$)/")).test(value);
-        }
-    };*/
-
-    /*SugarExpression.prototype.toNumber = function(value) {
-        var prefix, regexp;
-        regexp = new RegExp(this.getRegExpDecimalSeparator(), "g");
-        return parseFloat(value.replace(regexp, "."));
-    };*/
-
-    SugarExpression.prototype.setExpressionValue = function (value) {
-        var text, regexp, valueAux;
-        if(value === undefined || value === null) {
-            this.expValue = {
-                text: '',
-                value: ''
-            };
-        } else {
-            if(typeof value !== 'object') {
-                if(typeof value === 'string') {
-                   value = $.trim(value); 
-                }
-                value = {
-                    text: value,
-                    value: value
-                };
-            }
-            if(this.expType === 'MODULE' || this.expType === 'BUSINESS_RULES') {
-                if(value.value === '') {
-                    value.text = '""';
-                } else if (typeof value.value === 'number') {
-                    value.text = value.value.toString().replace(/\./, this.decimalSeparator);
-                } else if(typeof value.value === 'string') {
-                    if(value.text.replace(/("([^"]+)"|(\s+))|('([^']+)'|(\s+))/, "$") !== "$") {
-                        if (this.expType === 'MODULE' ||
-                            (value.text.toUpperCase() !== 'TRUE' &&
-                            value.text.toUpperCase() !== 'FALSE' &&
-                            value.text.toUpperCase() !== 'NOW' &&
-                            value.text.toUpperCase() !== 'NULL')) {
-//                            value.text = '"' + value.text + '"';
-                            value.text = '\"' + value.text + '\"';
-                        } else {
-                            value.text =  value.text.toUpperCase();
-                        }
-
-                    } else if(/(^\".+\"$)|(^\'.+\'$)/.test(value.value)) {
-                        value.text = value.value.replace(/(^\')|(\'$)/g, "\"");
-                    } else {
-                        value.text = '"' + value.value + '"';
-                    }
-                } else {
-                    throw "The value must be number or string";
-                }
-            }
-            this.expValue = value;
-        }
-        this.updateHTML();
-        return this;
-    };
-    SugarExpression.prototype.setExpressionUnit = function (unit) {
-        this.expUnit = unit;
-        this.updateHTML();
-        return this;
-    };
-
-    SugarExpression.prototype.setFieldType = function (type) {
-        this.expFieldType = type;
-        this.updateHTML();
-        return this;
-    };
-    SugarExpression.prototype.getFriendlyText = function () {
-        var output = '';
-        switch (this.expType) {
-            case 'LOGIC':
-            case 'GROUP':
-            case 'MATH':
-            case 'ARITHMETIC':
-            case 'FIXED_DATE':
-            case 'NUMBER':
-            case 'SUGAR_VAR':
-            case 'SUGAR_DATE':
-                output = SingleItem.prototype.htmlentities(this.expValue.text);
-                break;
-            case 'UNIT_TIME':
-                //output = SingleItem.prototype.htmlentities(this.expValue.text);
-                output = this.expValue.text+'['+this.expUnit+']';
-                break;
-            case 'DEFAULTMODULE':
-            case 'CONTROL':
-            case 'BUSINESS_RULES':
-            case 'MODULE':
-                if (this.expOperator === 'with_in') {
-                    //output = this.expField.text + ' <b>' + this.expOperator.text + '</b> [' + SingleItem.prototype.htmlentities(this.expValue.text) + ']';
-                    output = this.expField.text + ' ' + this.expOperator.text + ' [' + SingleItem.prototype.htmlentities(this.expValue.text) + ']';
-                } else {
-                    //output = this.expField.text + ' <b>' + this.expOperator.text + '</b> ' + SingleItem.prototype.htmlentities(this.expValue.text);
-//                    output = this.expField.text + ' ' + this.expOperator.text + ' ' + SingleItem.prototype.htmlentities(this.expValue.text);
-                    output = this.expField.text + ' ' + this.expOperator.text + ' ' + this.expValue.text;
-                }
-                break;
-            case 'USER_ADMIN':
-                //output = this.expField.text + ' <b>is' + (this.expOperator.value === 'equals' ? '' : ' not') + '</b> admin';
-                output = this.expField.text + ' is' + (this.expOperator.value === 'equals' ? '' : ' not') + ' admin';
-                break;
-            case 'USER_ROLE':
-                //output = this.expField.text + ' <b>has' + (this.expOperator.value === 'equals' ? '' : ' not') + ' role</b> ' + this.expValue.text;
-                output = this.expField.text + ' has' + (this.expOperator.value === 'equals' ? '' : ' not') + ' role ' + this.expValue.text;
-                break;
-            case 'USER_IDENTITY':
-                //output = this.expField.text + ' <b>' + this.expOperator.text + '</b> ' + this.expValue.text;
-                output = this.expField.text + ' ' + this.expOperator.text + ' ' + this.expValue.text;
-                break;
-        }
-        return output;
-    };
-
-    SugarExpression.prototype.getSugarExpressionText = function () {
-        var output = '', fullOperand, aux = [];
-        switch (this.expType) {
-        case 'LOGIC':
-        case 'GROUP':
-        case 'MATH':
-        case 'ARITHMETIC':
-        case 'FIXED_DATE':
-        case 'NUMBER':
-        case 'SUGAR_VAR':
-            output = this.expValue.text;
-        case 'SUGAR_DATE':
-            output = this.expValue.text;
-            break;
-        case 'UNIT_TIME':
-            //output = this.expValue.text;
-            output = this.expValue.text+'['+this.expUnit+']';
-            break;
-        case 'CONTROL':
-        case 'BUSINESS_RULES':
-        case 'MODULE':
-            aux.push('{');
-            if (this.expDirection !== null) {
-                aux.push(this.expDirection);
-            }
-            aux.push((this.expModule && this.expModule.value) || "NULL");
-            aux.push(this.expField.value);
-            aux.push('}');
-            fullOperand = aux.join('::');
-            if (this.expOperator.value === 'with_in' || this.expOperator.value === 'not_with_in') {
-                output = fullOperand + ' ' + this.expOperator.text + ' [' + this.expValue.text + ']';
-            } else {
-                output = fullOperand + ' ' + this.expOperator.text + ' ' + this.expValue.text;
-            }
-            break;
-        }
-        return output;
-    };
-
-var ExpressionField = function(settings, parent) {
-    Field.call(this, settings, parent);
-    this.variablesProxy = null;
-    this.expressionFieldControl = null;
-    this.language = {};
-    ExpressionField.prototype.initObject.call(this, settings);
-};
-
-ExpressionField.prototype = new Field();
-
-ExpressionField.prototype.initObject = function(settings) {
-    var defaults = {
-        variablesProxy: null,
-        language: {
-            LBL_VARIABLES: 'Variables',
-            LBL_CONSTANTS: 'Constantes'
-        }
-    };
-
-    $.extend(true, defaults, settings);
-
-    this.language = defaults.language;
-    this.setVariablesProxy(defaults.variablesProxy);
-    this.expressionFieldControl = new ExpressionFieldControl({
-        value: this.value,
-        variables: this.getVariables(),
-        onChange: this.onChangeHandler(),
-        language: this.language
-    });
-};
-
-ExpressionField.prototype.getControl = function() {
-    return this.expressionFieldControl;
-};
-
-ExpressionField.prototype.clear = function () {
-    this.expressionFieldControl.clear();
-    return this;
-};
-
-ExpressionField.prototype.onChangeHandler = function() {
-    var that = this;
-
-    return function() {
-        that.value = this.value;
-        that.onChange();
-    };
-};
-
-ExpressionField.prototype.setVariablesProxy = function(proxy) {
-    if(proxy instanceof RestProxy) {
-        this.variablesProxy = proxy;
-    }
-
-    return this;
-};
-
-ExpressionField.prototype.getValue = function() {
-    return this.value;
-};
-
-ExpressionField.prototype.getVariables = function() {
-    var data, i, res = [];
-
-    if(this.variablesProxy) {
-        data = this.variablesProxy.getData();
-        if(data && data.success) {
-            for(i = 0; i < data.result.length; i++) {
-                res.push({
-                    label: data.result[i].text,
-                    value: data.result[i].value
-                });
-            }
-        }
-    }
-
-    return res;
-};
-
-ExpressionField.prototype.isValid = function() {
-    var valid = this.expressionFieldControl.isValid();
-
-    if (valid) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        return valid = valid && Field.prototype.isValid.call(this);
-    } else {
-        this.errorTooltip.setMessage("invalid criteria syntax");
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
-    }
-
-    return valid;
-};
-
-ExpressionField.prototype.createHTML = function() {
-    var fieldLabel, required = '', controlObject, textbox, panel;
-
-    Field.prototype.createHTML.call(this);
-
-    if (this.required) {
-        required = '<i>*</i> ';
-    }
-
-    fieldLabel = this.createHTMLElement('span');
-    fieldLabel.className = 'adam-form-label';
-    fieldLabel.innerHTML = required + this.label + ':';
-    fieldLabel.style.width = (this.parent.labelWidth) || 'auto';
-    this.html.appendChild(fieldLabel);
-
-    controlObject = this.expressionFieldControl.getHTML();
-    this.controlObject = controlObject;
-
-    this.html.appendChild(controlObject);
-
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
-    if (this.helpTooltip) {
-        this.html.appendChild(this.helpTooltip.getHTML());
-    }
-
-    return this.html;
-};
-
-ExpressionField.prototype.setValue = function(value) {
-    this.value = value;
-    if(this.expressionFieldControl) {
-        this.expressionFieldControl.setValue(value);
-    }
-
-    return this;
-};
-
-ExpressionField.prototype.evalRequired = function () {
-    var response = true;
-    if (this.required) {
-        response = this.expressionFieldControl.items.length;
-        if (!response) {
-            $(this.controlObject).addClass('required');
-        } else {
-            $(this.controlObject).removeClass('required');
-        }
-    }
-    return response;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-var ExpressionFieldControl = function(settings){
-    Element.call(this, settings);
-    this.items = [];
-    this.panel = null;
-    this.isPanelOpen = null;
-    this.value = null;
-    this.onChange = null;
-    this.expressionContainer = null;
-    this.variables = [];
-    this.initialized = false;
-    this.language = {};
-
-    ExpressionFieldControl.prototype.initObject.call(this, settings);
-};
-
-ExpressionFieldControl.prototype = new Element();
-
-ExpressionFieldControl.prototype.expressionType = {
-    'ARITMETIC': 0,
-    'LOGIC': 1,
-    'GROUP': 2,
-    'EVALUATION': 3,
-    'VAR': 4,
-    'CONST': 5,
-    'SQL': 6,
-    'INT': 7,
-    'FLOAT': 8,
-    'STRING': 9,
-    'BOOL': 10,
-    'DATE': 11
-};
-
-ExpressionFieldControl.prototype.expressions = [
-    ["+", "-", "x", "/"],
-    ["AND", "OR", "NOT"],
-    ["(", ")"],
-    ["==", "<", "<=", "=>", ">", "!="/*, "within", "not within"*/],
-    [],
-    ["NOW", "NULL"]
-];
-
-ExpressionFieldControl.prototype.initObject = function(settings) {
-    var defaults = {
-        variables: [],
-        value: "[]", 
-        onChange: null,
-        language: {
-            LBL_VARIABLES: 'Variables',
-            LBL_CONSTANTS: 'Constants'
-        }
-    };
-
-    $.extend(true, defaults, settings);
-
-    this.language = defaults.language;
-    this.setVariables(defaults.variables)
-        .setValue(defaults.value);
-
-    this.onChange = defaults.onChange;
-    this.initialized = true;
-};
-
-ExpressionFieldControl.prototype.setVariables = function(variables) {
-    if(variables.push && variables.pop) {
-        this.variables = variables;
-    }
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.clear = function() {
-    while(this.items.length) {
-        this.removeItem(this.items[0]);
-    }
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.setValue = function(value) {
-    var prevValue = this.value, i/*, label*/;
-    this.value = value;
-
-    if(this.value === prevValue) {
-        return this;
-    }
-
-    this.clear();
-    if(typeof value !== 'undefined' && value !== null && $.trim(value) !== "") {
-        value = JSON.parse(this.value);
-        for(i = 0; i < value.length; i++) {
-            /*label = null;
-            if(value[i].type === this.expressionType.STRING) {
-                label = '"' + value[i].value.replace(/"/g, "\\\"").replace(/'/g, "\\\'") + '"';
-            }*/
-            this.addItem(new ExpressionComponent({
-                    label: SingleItem.prototype.htmlentities(value[i].value),
-                    value: label || value[i].value,
-                    data: {
-                        type: this.expressionType[value[i].type]
-                    },
-                    language: this.language
-                }));
-        }
-    }
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.removeItem = function(item) {
-    var i;
-    for(i = 0; i < this.items.length; i++) {
-        if(this.items[i] === item) {
-            this.items.splice(i, 1);
-            $(this.expressionContainer).find("input").eq(i).remove();
-            $(this.expressionContainer).find("input").eq(i).select();
-            break;
-        }
-    }
-    this.updateValue();
-    return this;
-};
-
-ExpressionFieldControl.prototype.validateInputValue = function(value) {
-    var i = 0, type, j, label, valid;
-    if(typeof value === 'undefined' || value === null || $.trim(value) === "") {
-        return {
-            valid: false
-        };
-    }
-    if(/^\s*(\+|-)?\d+\s*$/.test(value)) {
-        return {
-            valid: true,
-            type: this.expressionType.INT,
-            value: value
-        };
-    } else if(/^\s*(\+|-)?\d+\.\d+\s*$/.test(value)) {
-        return {
-            valid: true,
-            type: this.expressionType.FLOAT,
-            value: value
-        };
-    } else if(/^\s*(true|false)\s*$/i.test(value)) {
-        return {
-            valid: true,
-            type: this.expressionType.BOOL,
-            value: value.toUpperCase()
-        };
-    } else if(/^\s*\d{4}-((0\d)|(1[0-2]))-(([0-2]\d)|(3[01]))\s*$/.test(value)) {
-        label = value.split("-");
-        label[0] = parseInt(label[0], 10);
-        label[1] = parseInt(label[1], 10);
-        label[2] = parseInt(label[2], 10);
-        valid = true;
-        switch(label[1]) {
-            case 2:
-                if((label[0] % 4 && label[0] % 100 != 0) || (label[0] % 400 === 0)) {
-                    valid = !(label[2] > 29);
-                } else {
-                    valid = !(label[2] > 28);
-                }
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                valid = !(label[2] > 30);
-                break;
-            default:
-                valid = !(label[2] > 31);
-                break;
-        }
-        if(valid) {
-            return {
-                valid: true, 
-                type: this.expressionType.DATE,
-                value: value,
-                label: value
-            };
-        }
-    } else if(/("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')/.test(value)) {
-        value = value.substr(1, value.length - 2);
-        label = '"' + value.replace(/"/g, "\\\"").replace(/'/g, "\\\'") + '"';
-        return {
-            valid: true, 
-            type: this.expressionType.STRING,
-            value: value,
-            label: label
-        };
-    } else {
-        for(type in this.expressionType) {
-            j = this.expressionType[type];
-            if(this.expressions[j]) {
-                for(i = 0; i < this.expressions[j].length; i++) {
-                    if(value.toLowerCase() == this.expressions[j][i].toLowerCase()) {
-                        return {
-                            valid: true,
-                            value: this.expressions[j][i],
-                            type: j
-                        };
-                    }
-                }
-            }
-        }
-    }
-
-    return {
-        valid: false
-    }   
-};
-
-ExpressionFieldControl.prototype.processInput = function(textbox) {
-    var isValid, index = $(textbox.parentElement).find("input").index(textbox);
-
-    textbox.value = $.trim(textbox.value);
-    isValid = this.validateInputValue(textbox.value);
-    if(isValid.valid) {
-        $(textbox).val("").css("width", "1px");
-        this.addItem(new ExpressionComponent({
-            label: SingleItem.prototype.htmlentities(isValid.label || isValid.value),
-            value: isValid.value,
-            data: {
-                type: isValid.type
-            },
-            language: this.language
-        }), index);
-        return true;
-    }
-
-    return false;
-};
-
-ExpressionFieldControl.prototype.createTextInput = function() {
-    var input = this.createHTMLElement("input"),
-        that = this;
-    
-    input.type = "text";
-    input.style.width = "1px";
-    input.style.margin = "0px";
-    input.style.padding = "0px";
-    input.className = "multiple-item-input";
-
-    return input;
-};
-
-ExpressionFieldControl.prototype.dispatchOnChangeCallback = function(prevValue) {
-    if(typeof this.onChange === 'function' && this.initialized) {
-        this.onChange.call(this, this.getValue(), prevValue);
-    }
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.updateValue = function() {
-    var i, value = "", prevValue = this.getValue();
-    if(this.html) {
-        for(i = 0; i < this.items.length; i++) {
-            value += this.items[i].getLabel() + " ";
-        }
-
-        this.html.value = this.html.title = $("<div/>").html(value).text();
-    }
-    this.value = JSON.stringify(this.getObject());
-
-    if(this.value !== prevValue) {
-        this.dispatchOnChangeCallback(prevValue);
-    }
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.onItemClickHandler = function() {
-    var that = this;
-    return function() {
-        var miniPanel = new MultipleItemPanel({
-                belongsTo: this.getHTML()
-            }), expressions = that.expressions[this.getData("type")], 
-            i, buttons = [], item = this;
-
-        for(i = 0; i < expressions.length; i++) {
-            buttons.push({
-                caption: expressions[i],
-                onClick: function() {
-                    $(miniPanel.html).remove();
-                    delete miniPanel;
-                    item.setValue(this.name).setLabel(this.name);
-                    that.dispatchOnChangeCallback();
-                }
-            });
-        }
-
-        miniPanel.setButtons(buttons);
-
-        document.body.appendChild(miniPanel.getHTML());
-        miniPanel.open();
-    };
-};
-
-ExpressionFieldControl.prototype.addItem = function(item, index) {
-    var that = this, target, label;
-    if(!(item instanceof ExpressionComponent)) {
-        if(item.type === this.expressionType.STRING) {
-            label = '"' +  item.value.replace(/"/g, "\\\"").replace(/'/g, "\\\'")  + '"';
-        }
-        item = new ExpressionComponent({
-            label: SingleItem.prototype.htmlentities(label || item.value),
-            value: item.value,
-            showValueTooltip: false,
-            data: {
-                type: item.type
-            },
-            language: this.language         
-        }, this);
-    } else {
-        item.parent = this;
-    }
-    item.onChange = function(newValue, oldValue) {
-        that.dispatchOnChangeCallback(oldValue);
-    };
-    item.onEdit = function() {
-        var i;
-        for(i = 0; i < that.items.length; i++) {
-            if(that.items[i] !== this) {
-                that.items[i].exitEditMode();
-            }
-        }
-    };
-
-    if(!index && index !== 0) {
-        target = $(this.expressionContainer).find("input:focus").get(0);
-        if(target) {
-            index = $(this.expressionContainer).find('input').index(target);
-        }
-    }
-    item.onRemove = function() {
-        that.removeItem(this);
-    };
-    /*if(item.getData("type") !== this.expressionType.VAR && item.getData("type") !== this.expressionType.CONST) {
-        item.onClick = this.onItemClickHandler();    
-    }*/
-    if(typeof index === 'undefined' || index === null || index >= this.items.length) {
-        this.items.push(item);
-        if(this.html) {
-            this.expressionContainer.appendChild(item.getHTML());
-            this.expressionContainer.appendChild(this.createTextInput());
-            $(this.expressionContainer).find("input:last").focus().select();
-        }
-    } else {
-        this.items.splice(index, 0, item);
-        if(this.html) {
-            if(index === 0) {
-                $(this.expressionContainer).prepend(item.getHTML()).prepend(this.createTextInput());
-            } else {
-                $(this.expressionContainer).find("li").eq(index).before(item.getHTML()).before(this.createTextInput());   
-            }
-            $(this.expressionContainer).find("input").eq(index +  1).focus().select();
-        }
-    }
-    if(target) {
-        target.value = "";
-        target.style.width = '1px';
-    }
-
-    this.updateValue();
-    return this;
-};
-
-ExpressionFieldControl.prototype.onListItemSelected = function(type) {
-    var that = this;
-    return function(value, data) {
-        var item = new ExpressionComponent({
-            label: value,
-            value: value,
-            showValueTooltip: false,
-            data: {
-                type: type
-            },
-            language: this.language
-        });
-        that.addItem(item);
-    };
-};
-
-ExpressionFieldControl.prototype.onOperatorClickHandler = function() {
-    var that = this;
-    return function() {
-        that.addItem(new ExpressionComponent({
-            label: this.caption, 
-            value: this.caption,
-            showValueTooltip: false,
-            data: {
-                type: this.value
-            },
-            language: this.language
-        }));
-    };
-};
-
-ExpressionFieldControl.prototype.setupPanel = function() {
-    var that = this, expressionContainer, operatorsPanel, variablesList, constantList, buttons = [], i, type, constants = [], closeButton;
-    if(!this.panel) {
-        this.panel = new MultipleItemPanel({
-            matchParentWidth: false,
-            width: 24,
-            belongsTo: this.html
-        });
-        $(this.panel.getHTML()).addClass('expression-field-panel');
-
-        expressionContainer = this.createHTMLElement('ul');
-        expressionContainer.className = 'multiple-item-container';
-        this.expressionContainer = expressionContainer;
-        this.expressionContainer.appendChild(this.createTextInput());
-
-        for(type in this.expressionType) {
-            if(type === 'CONST') {
-                continue;
-            }
-            i = this.expressionType[type];
-            if(this.expressions[i]) {
-                for(j = 0; j < this.expressions[i].length; j++) {
-                    buttons.push({
-                        caption: this.expressions[i][j],
-                        value: i
-                    });
-                }
-            }
-        }
-
-        for(i = 0; i < this.expressions[this.expressionType.CONST].length; i++) {
-            constants.push({
-                label: this.expressions[this.expressionType.CONST][i],
-                value: this.expressions[this.expressionType.CONST][i]
-            });
-        }
-
-        operatorsPanel = new MultipleItemButtonPanel({
-            label: "",
-            fallbackOnClickHandler: this.onOperatorClickHandler(),
-            buttons: buttons
-        });
-
-        variablesList = new MultipleItemListSubpanel({
-            title: this.language.LBL_VARIABLES,
-            collapsable: true,
-            items: this.variables,
-            onItemSelect: this.onListItemSelected(this.expressionType.VAR)
-        });
-        constantList = new MultipleItemListSubpanel({
-            title: this.language.LBL_CONSTANTS,
-            collapsable: true,
-            items: constants,
-            onItemSelect: this.onListItemSelected(this.expressionType.CONST),
-            onOpen: function() {
-                variablesList.close();
-            }
-        });
-        variablesList.onOpen = function() {
-            constantList.close();
-        };
-        this.panel.getHTML().appendChild(expressionContainer);
-        this.panel.getHTML().appendChild(operatorsPanel.getHTML());
-        this.panel.getHTML().appendChild(variablesList.getHTML());
-        this.panel.getHTML().appendChild(constantList.getHTML());
-    }
-    return this;
-};
-
-ExpressionFieldControl.prototype.createHTML = function() {
-    var controlObject, textbox, panel, i;
-
-    if(this.html) {
-        return this.html;
-    }
-
-    textbox = this.createHTMLElement('input');
-    textbox.type = 'text';
-    textbox.readOnly = true;
-    this.html = textbox;
-
-    this.updateValue();
-    this.setupPanel();
-
-    for(i = 0; i < this.items.length; i++) {
-        this.expressionContainer.appendChild(this.items[i].getHTML());
-        this.expressionContainer.appendChild(this.createTextInput());
-    }
-
-    this.attachListeners();
-
-    return this.html;
-};
-
-ExpressionFieldControl.prototype.selectInput = function() {
-    //$(this.html).find("input:last").select();
-    return this;
-};
-
-ExpressionFieldControl.prototype.openPanel = function() {
-    $(this.panel.html).addClass('focused');
-
-    //this.html.parentElement.parentElement.parentElement.appendChild(this.panel.getHTML());
-    $(document.body).append(this.panel.getHTML());
-    this.panel.open();
-    $(this.expressionContainer).trigger("click");
-    $(this.controlObject).addClass("focused");
-    this.isPanelOpen = true;
-    return this;
-};
-
-ExpressionFieldControl.prototype.closePanel = function() {
-    var i;
-    this.panel.close();
-    $(this.controlObject).removeClass('focused');
-    for(i = 0; i < this.items.length; i++) {
-        this.items[i].exitEditMode();
-    }
-    this.isPanelOpen = false;
-    return this;
-};
-
-ExpressionFieldControl.prototype.updateTextInput = function(textInput, text) {
-    var ffamily = $(textInput).css("font-family"), fsize = $(textInput).css("font-size"),
-        w = this.calculateWidth(text || textInput.value, fsize + " " + ffamily);
-    textInput.style.width = (w || 1) + "px";
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.checkExternalClickHandler = function() {
-    var that = this;
-
-    return function(e) {
-        if(!that.isPanelOpen) {
-            return;
-        }
-        var $target = $(e.target),
-            panelID = that.panel.html.id;
-
-        if($target[0].id !== panelID && $target.parents('#' + that.panel.html.id).length === 0) {
-            that.closePanel();
-        }
-    };
-};
-
-ExpressionFieldControl.prototype.attachListeners = function() {
-    var that = this;
-    if(!this.html) {
-        return this;
-    }
-
-    $(this.html).on('focus', function() {
-        $(this).addClass('focused');
-        that.selectInput().openPanel();
-    }).on('keydown click', function(e) {
-        if(e.which === 27 || e.which === 9) {
-            that.closePanel();
-        } else {
-            that.openPanel();
-        }
-    });
-
-    $(this.expressionContainer).on('click', function(e) {
-        $(this).find('input:last').select();
-    }).on('keydown', '.multiple-item-input', function(e) {
-        if(e.which === 13) {
-            e.preventDefault();
-            e.stopPropagation();
-            if(!that.processInput(this)) {
-                this.select();
-            }
-        } else if(e.which === 37 && this.value === "") {
-            e.preventDefault();
-            $(this).prev().prev().select();
-        } else if(e.which === 39 && this.value === "") {
-            e.preventDefault();
-            $(this).next().next().select();
-        } else if(e.which === 27) {
-            $(that.controlObject).focus();
-            that.closePanel();
-        }
-    }).on('keypress', '.multiple-item-input', function(e) {
-        that.updateTextInput(this, this.value + String.fromCharCode(e.which));
-    }).on('keyup', '.multiple-item-input', function(e) {
-        that.updateTextInput(this);
-    }).on('blur', '.multiple-item-input', function(e) { 
-        if(!that.processInput(this)) {
-            this.value = "";
-            this.style.width = "1px";
-        }
-    }).on('click', '.multiple-item-input', function(e) {
-        e.stopPropagation();
-    });
-
-    $(this.html.parentElement).on('scroll', function() {
-        that.closePanel();
-    });
-
-    $(document).on('mousedown', this.checkExternalClickHandler());
-
-    return this;
-};
-
-ExpressionFieldControl.prototype.isValid = function() {
-    var valid = true, pendingClose = 0, prev = null, i, type;
-
-    for(i = 0; i < this.items.length; i++) {
-        if(i === 0) {
-            switch(this.items[i].getData("type")) {
-                case this.expressionType.ARITMETIC:
-                    valid = false;
-                    break;
-                case this.expressionType.GROUP:
-                    valid = this.items[i].getValue() === '(';
-                        pendingClose++;
-                    break;
-                case this.expressionType.LOGIC:
-                    valid = this.items[i].getValue() === 'NOT';
-                    break;
-                case this.expressionType.EVALUATION:
-                    valid = false;
-                    break;
-                case this.expressionType.CONST:
-                case this.expressionType.INT:
-                case this.expressionType.FLOAT:
-                case this.expressionType.BOOL:
-                case this.expressionType.STRING:
-                case this.expressionType.DATE:
-                case this.expressionType.VAR:
-                    valid = true;
-                    break;
-            } 
-        } else {
-            switch(this.items[i].getData("type")) {
-                case this.expressionType.ARITMETIC:
-                case this.expressionType.EVALUATION:
-                    if(!(prev.type !== this.expressionType.ARITMETIC && (prev.type !== this.expressionType.GROUP || prev.value !== "(") && prev.type !== this.expressionType.LOGIC && prev.type !== this.expressionType.EVALUATION)) {
-                        valid =false;
-                    }
-                    break;
-                case this.expressionType.GROUP:
-                    if(this.items[i].getValue() === '(') {
-                        pendingClose++;
-                        if(prev === null) {
-                            valid =true;
-                        } else if(!(prev.type !== this.expressionType.CONST && prev.type !== this.expressionType.VAR && (prev.type !== this.expressionType.GROUP || prev.value !== ")") && prev.type !== this.expressionType.INT && prev.type !== this.expressionType.FLOAT && prev.type !== this.expressionType.BOOL && prev.type !== this.expressionType.DATE && prev.type !== this.expressionType.STRING)) {
-                            valid =false;
-                        }
-                    } else {
-                        pendingClose--;
-                        if(!(prev.type !== this.expressionType.ARITMETIC && (prev.type !== this.expressionType.GROUP || prev.value !== '(') && prev.type !== this.expressionType.LOGIC && prev.type !== this.expressionType.EVALUATION)) {
-                            valid =false;
-                        }
-                    }
-                    break;
-                case this.expressionType.LOGIC:
-                    if(this.items[i].getValue() === "NOT") {
-                        if(prev === null) {
-                            valid =true;
-                        } else if((prev.type === this.expressionType.LOGIC && prev.value === "NOT") || (prev.type === this.expressionType.GROUP && prev.value === ")")) {
-                            valid =false;
-                        }
-                    } else {
-                        //if(prev === null || !(prev.type === this.expressionType.VAR || prev.type === this.expressionType.CONST || (prev.type === this.expressionType.GROUP && prev.value === ")"))) {
-                        if(!(prev.type !== this.expressionType.ARITMETIC && (prev.type !== this.expressionType.GROUP || prev.value !="(") && prev.type !== this.expressionType.LOGIC && prev.type !== this.expressionType.EVALUATION)) {
-                            valid =false;
-                        }
-                    }
-                    break;
-                case this.expressionType.CONST:
-                case this.expressionType.INT:
-                case this.expressionType.FLOAT:
-                case this.expressionType.BOOL:
-                case this.expressionType.STRING:
-                case this.expressionType.DATE:
-                case this.expressionType.VAR:
-                    if(prev === null) {
-                        valid =true;
-                    } else if(!((prev.type !== this.expressionType.GROUP || prev.value !== ')') && prev.type !== this.expressionType.CONST && prev.type !== this.expressionType.VAR && prev.type !== this.expressionType.INT && prev.type !== this.expressionType.FLOAT && prev.type !== this.expressionType.BOOL && prev.type !== this.expressionType.STRING && prev.type !== this.expressionType.DATE)) {
-                        valid =false;
-                    }
-                    break;
-            }  
-        }
-
-        if(i === this.items.length - 1 && valid) {
-            switch(this.items[i].getData("type")) {
-                case this.expressionType.ARITMETIC:
-                    valid = false;
-                    break;
-                case this.expressionType.GROUP:
-                    valid = this.items[i].getValue() === ')';
-                    break;
-                case this.expressionType.LOGIC:
-                    valid = false;
-                    break;
-                case this.expressionType.EVALUATION:
-                    valid = false;
-                    break;
-                case this.expressionType.CONST:
-                case this.expressionType.INT:
-                case this.expressionType.FLOAT:
-                case this.expressionType.BOOL:
-                case this.expressionType.STRING:
-                case this.expressionType.DATE:
-                case this.expressionType.VAR:
-                    valid = true;
-                    break;
-            } 
-        }
-
-        if(!valid) {
-            break;
-        }
-
-        prev = {
-            type: this.items[i].getData("type"),
-            value: this.items[i].getValue()
-        };
-    }
-
-    return valid && (pendingClose === 0);
-};
-
-ExpressionFieldControl.prototype.getValue = function() {
-    return this.value;
-};
-
-ExpressionFieldControl.prototype.getObject = function() {
-    var json = [], i, helper = [];
-
-    for(i in this.expressionType) {
-        helper[this.expressionType[i]] = i; 
-    }
-
-    for(i = 0; i < this.items.length; i++) {
-        json.push({
-            value: this.items[i].getValue(),
-            type: helper[this.items[i].getData("type")]
-        });
-    }
-
-    return json;
-};
-
-ExpressionFieldControl.prototype.remove = function() {
-    $(this.html).remove();
-    this.panel.remove();
-    $(this.expressionContainer).remove();
-    delete this.items;
-    delete this.isPanelOpen;
-    delete this.value;
-    delete this.onChange;
-    delete this.variables;
-};
-
-var ExpressionComponent = function(settings, parent) {
-    SingleItem.call(this, $.extend(true, {editable: true}, settings));
-    this.parent = null;
-    this.onChange = null;
-    this.language = {};
-    ExpressionComponent.prototype.initObject.call(this, settings, parent);
-};
-
-ExpressionComponent.prototype = new SingleItem();
-
-ExpressionComponent.prototype.initObject = function(settings, parent) {
-    var defaults = {
-        language: {}
-    };
-    $.extend(true, defaults, settings);
-    this.parent = parent;
-    this.onChange = settings.onChange || null;
-    this.language = defaults.language;
-};
-
-ExpressionComponent.prototype.prepareEditionPanel = function() {
-    var i, type = this.getData("type"), that = this;
-    this.panel.clear();
-    if(type === ExpressionFieldControl.prototype.expressionType.VAR) {
-        this.panel.addSubpanel({
-            title: this.language.LBL_VARIABLES,
-            items: this.parent.variables,
-            visibleHeader: false,
-            onItemSelect: function(value) {
-                that.setValue(value);
-                that.setLabel(value);
-                that.parent.updateValue();
-                that.exitEditMode();
-            }
-        }, 'list');
-        this.panel.matchParentWidth = false;
-    } else if(type <= ExpressionFieldControl.prototype.expressionType.INT) {
-        if(ExpressionFieldControl.prototype.expressions[type]) {
-            for(i = 0; i < ExpressionFieldControl.prototype.expressions[type].length; i++) {
-                if(ExpressionFieldControl.prototype.expressions[type][i] !== this.getValue()) {
-                    this.panel.addButton({
-                        caption: ExpressionFieldControl.prototype.expressions[type][i],
-                        data: { value: ExpressionFieldControl.prototype.expressions[type][i] },
-                        onClick: function() {
-                            that.setValue(this.data.value);
-                            that.setLabel(that.getValue());
-                            that.parent.updateValue();
-                            that.exitEditMode();
-                        }
-                    });
-                }
-            }
-        }
-    } else {
-
-    }
-
-    $(this.panel.getHTML()).css("width", "150px");
-    return this;
-};
-
-ExpressionComponent.prototype.createHTML = function() {
-    return SingleItem.prototype.createHTML.call(this, false);
-};
-var DecisionTable = function(options) {
-    Element.call(this, {id: options.id});
-    this.base_module = null;
-    this.hitType = null;
-    this.dom = null;
-    this.name = null;
-    this.proxy = null;
-    this.conditions = null;
-    this.conclusions = null;
-    this.decisionRows = null;
-    this.rows = null;
-    this.width = null;
-    this.onAddColumn = null;
-    this.onRemoveColumn = null;
-    this.onAddRow = null;
-    this.onRemoveRow = null;
-    this.onChange = null;
-    this.onDirty = null;
-    this.showDirtyIndicator = null;
-    this.isDirty = null;
-    this.fields = [];
-    this.language = {};
-    this.correctlyBuilt = false;
-    DecisionTable.prototype.initObject.call(this, options || {});
-};
-
-DecisionTable.prototype = new Element();
-
-DecisionTable.prototype.type = 'DecisionTable';
-
-DecisionTable.prototype.initObject = function(options) {
-    var defaults = {
-        name: "",
-        proxy: new SugarProxy({
-            url:'pmse_Project/CrmData/fields/',
-            uid: null,
-            callback: null
-        }),
-        restClient: null,
-        base_module: "",
-        type: 'multiple',
-        width: 'auto',
-        rows: 0,
-        container: null,
-        columns: {
-            conditions: [],
-            conclusions: []
-        },
-        ruleset: [],
-        onAddColumn: null,
-        onRemoveColumn: null,
-        onChange: null,
-        showDirtyIndicator: true,
-        language: {
-            SINGLE_HIT: 'Single Hit',
-            MULTIPLE_HIT: 'Multiple Hit',
-            CONDITIONS: 'Conditions',
-            CONCLUSIONS: 'Conclusions',
-            ADD_ROW: 'Add row',
-            REMOVE_ROW: 'Remove row',
-            CLICK_TO_EDIT: 'Click to edit',
-            ERROR_CONCLUSION_VAR_DUPLICATED: 'conclusion variable is duplicated',
-            ERROR_EMPTY_RETURN_VALUE: 'The "Return" conclusion is empty',
-            ERROR_EMPTY_ROW: 'No conditions were specified in row with conclusions, It\'s allowed only one row with no conditions (default ruleset)',
-            ERROR_NOT_EXISTING_FIELDS: 'This Business Rules Table can\'t be created, the following fields must exists for the Module "%s":',
-            ERROR_INCORRECT_BUILD: 'This Business Rules Table can\'t is incorrectly built',
-            MSG_DELETE_ROW: 'Do you really want to delete this rule set?',
-            MIN_ROWS: 'The decision table must have at least 1 row',
-            MIN_CONDITIONS_COLS: 'The decision table must have at least 1 condition column',
-            MIN_CONCLUSIONS_COLS: 'The decision table must have at least 1 conclusion column',
-            //--for DecisionTableVariable--//
-            LBL_RETURN: 'Return',
-            ERROR_NO_VARIABLE_SELECTED: 'No variable was selected',
-            //for DecisionTableValue
-            ERROR_INVALID_EXPRESSION: 'Invalid expression',
-            LBL_VARIABLES: 'Variables',
-            LBL_CONSTANTS: 'Constants',
-            LBL_ADD_CONDITION: 'Add condition',
-            LBL_ADD_CONCLUSION: 'Add conclusion',
-            //for DecisionTableSingleValue
-            ERROR_MISSING_EXPRESSION_OR_OPERATOR: 'missing expression or operator'
-        }
-    };
-
-    $.extend(true, defaults, options);
-
-    this.dom = {};
-    this.conclusions = [];
-    this.conditions = [];
-    this.decisionRows = 0;
-    this.onAddColumn = defaults.onAddColumn;
-    this.onRemoveColumn = defaults.onRemoveColumn;
-    this.onChange = defaults.onChange;
-    this.rows = parseInt(defaults.rows, 10);
-    this.language = defaults.language;
-
-    this.setName(defaults.name)
-        .setProxy(defaults.proxy, defaults.restClient)
-        .setBaseModule(defaults.base_module)
-        .setHitType(defaults.type)
-        .setWidth(defaults.width)
-        .setShowDirtyIndicator(defaults.showDirtyIndicator);
-
-    //this.getHTML();
-    if(defaults.container) {
-        $(defaults.container).append(this.getHTML());
-
-        if(!this.isDOMNodeInsertedSupported) {
-            this.updateDimensions();
-        }
-    }
-
-    this.auxConclutions = defaults.columns.conclusions;
-    this.auxConditions = defaults.columns.conditions;
-    this.rules = defaults.ruleset;
-
-    this.getFields();
-    //this.setIsDirty(false);
-};
-
-DecisionTable.prototype.setShowDirtyIndicator = function(show) {
-    this.showDirtyIndicator = !!show;
-    return this;
-};
-
-DecisionTable.prototype.getIsDirty = function() {
-    return this.isDirty;
-};
-
-DecisionTable.prototype.setIsDirty = function(dirty, silence) {
-    this.isDirty = dirty;
-    if (!silence) {
-        if(typeof this.onDirty === 'function') {
-            this.onDirty.call(this, dirty);
-        }
-    }
-    return this;
-};
-
-DecisionTable.prototype.onChangeVariableHandler = function() {
-    var that = this;
-    return function(newVal, oldVal) {
-        var valid, cell = this.getHTML(),
-            index = $(cell.parentElement).find(cell.tagName.toLowerCase()).index(cell);
-        if(this.mode === 'condition') {
-            valid = that.validateColumn(index, 0);
-        } else {
-            valid = that.validateColumn(index, 1);
-        }
-
-        that.setIsDirty(true);
-
-        if(typeof that.onChange === 'function') {
-            that.onChange.call(that, {
-                object: this,
-                newVal: newVal,
-                oldVal: oldVal
-            }, valid);
-        }
-    };
-};
-
-DecisionTable.prototype.onChangeValueHandler = function() {
-    var that = this;
-    return function(valueObject, newVal, oldVal) {
-        var row, cell, index, indexColumn, isEvaluationVariable, valid;
-
-        isEvaluationVariable = valueObject instanceof DecisionTableValueEvaluation;
-        cell = isEvaluationVariable ? valueObject.getHTML()[0] : valueObject.getHTML();
-        row = cell.parentElement;
-        indexColumn = $(cell.parentElement).find("td").index(cell) / (isEvaluationVariable ? 2 : 1);
-        index = $(row.parentElement).find("tr").index(row);
-
-        /*valid = valueObject.isValid();*/
-
-        //if(valid.valid) {
-        valid = that.validateColumn(indexColumn, isEvaluationVariable ? 0 : 1);
-        if(valid.valid) {
-            valid = that.validateRow(index);
-        }
-        /* } else {
-         valid.location = (isEvaluationVariable ? 'Condition' : 'Conclusion') + " # " + (indexColumn + 1) + " - row # " + (index + 1);
-         }*/
-        that.setIsDirty(true);
-        if(typeof that.onChange === 'function') {
-            that.onChange.call(that, {
-                object: valueObject,
-                newVal: newVal,
-                oldVal: oldVal
-            }, valid);
-        }
-    };
-};
-
-DecisionTable.prototype.removeAllConclusions = function() {
-    while(this.conclusions.length) {
-        this.conclusions[0].remove();
-    }
-
-    return this;
-};
-
-DecisionTable.prototype.removeAllConditions = function() {
-    while(this.conditions.length) {
-        this.conditions[0].remove();
-    }
-    return this;
-};
-
-DecisionTable.prototype.setConditions = function(conditions) {
-    var i;
-    this.removeAllConditions();
-    for(i = 0; i < conditions.length    ; i+=1) {
-        this.addCondition(conditions[i]);
-    }
-    return this;
-};
-
-DecisionTable.prototype.setConclusions = function(conclusions) {
-    var i;
-    this.removeAllConclusions();
-    for(i = 0; i < conclusions.length; i+=1) {
-        this.addConclusion(!conclusions[i], conclusions[i]);
-    }
-    return this;
-};
-
-DecisionTable.prototype.setRuleset = function(ruleset) {
-    var i, j,
-        condition_column_helper = {},
-        conclusion_column_helper = {},
-        aux,
-        conditions, conclusions, errorHTML = "", auxHTML = {};
-
-    //fill the column helper for conditions
-    for(i = 0; i < this.conditions.length; i+=1) {
-        if(!condition_column_helper[this.conditions[i].select.value]) {
-            condition_column_helper[this.conditions[i].select.value] = [i];
-        } else {
-            condition_column_helper[this.conditions[i].select.value].push(i);
-        }
-    }
-
-    conclusion_column_helper.result = 0;
-    for(i = 1; i < this.conclusions.length; i+=1) {
-        conclusion_column_helper[this.conclusions[i].select.value] = i
-    }
-
-    for(i = 0; i < ruleset.length; i+=1) {
-        conditions = ruleset[i].conditions;
-        aux = {};
-        for(j = 0; j < conditions.length; j+=1) {
-            if(typeof aux[conditions[j].variable_name] === 'undefined') {
-                aux[conditions[j].variable_name] = -1;
-            }
-            aux[conditions[j].variable_name] +=1;
-            if(typeof condition_column_helper[conditions[j].variable_name] !== 'undefined') {
-                this.conditions[condition_column_helper[conditions[j].variable_name][aux[conditions[j].variable_name]]].addValue(conditions[j].value, conditions[j].condition);
-            } else {
-                auxHTML[conditions[j].variable_name] = 0;
-            }
-        }
-
-        conclusions = ruleset[i].conclusions;
-        for(j = 0; j < conclusions.length; j+=1) {
-            if(typeof conclusion_column_helper[conclusions[j].conclusion_value] !== 'undefined') {
-                this.conclusions[conclusion_column_helper[conclusions[j].conclusion_value]].addValue(conclusions[j].value);
-            } else {
-                auxHTML[conclusions[j].conclusion_value] = 0;
-            }
-        }
-
-        this.addDecisionRow();
-    }
-
-    for(i in auxHTML) {
-        errorHTML += '<li>' + i + '</li>';
-    }
-    if(errorHTML) {
-        auxHTML = this.createHTMLElement('p');
-        auxHTML.textContent = this.language.ERROR_NOT_EXISTING_FIELDS.replace(/\%s/, this.base_module);
-        this.html = this.createHTMLElement('div');
-        this.html.appendChild(auxHTML);
-        auxHTML = this.createHTMLElement('ul');
-        $(auxHTML).append(errorHTML);
-        $(this.html).append(auxHTML);
-    } else {
-        this.correctlyBuilt = true;
-    }
-
-    this.updateDimensions();
-    return this;
-};
-
-DecisionTable.prototype.isDOMNodeInsertedSupported = function() {
-    var div = this.createHTMLElement('div'), supported = false;
-    div.addEventListener('DOMNodeInserted', function() { supported = true; });
-    div.appendChild(div.cloneNode());
-
-    return supported;
-};
-
-DecisionTable.prototype.setRows = function(rows) {
-    this.rows = parseInt(rows, 10);
-    return this.updateDimensions();
-};
-
-DecisionTable.prototype.setWidth = function(w) {
-    this.width = w;
-    return this.updateDimensions();
-};
-
-DecisionTable.prototype.updateDimensions = function() {
-    if(!this.html) {
-        return this;
-    }
-    var w, w_cond, w_conc, index_w;//, header = $(this.dom.hitTypeLabel.parentElement);
-    //console.log("Header: ", header);
-
-    //this.dom.nameLabel.style.display = 'none';
-
-    if(this.width !== 'auto') {
-        index_w = $(this.dom.indexTableContainer).outerWidth() + 4;
-        w = (this.width - index_w) / (this.conditions.length + this.conclusions.length);
-        w_cond = $(this.dom.conditionsTable).css("width", "").outerWidth();
-        w_conc = $(this.dom.conclusionsTable).css("width", "").outerWidth();
-        w = w_cond + w_conc;
-        w_cond = Math.floor(w_cond / w * (this.width - index_w));
-        w_conc = this.width - index_w - w_cond;
-    } else {
-        $(this.dom.conditionsHeader.parentElement).css("width", "").find('th').css("width", "");
-        $(this.dom.conclusionsTable).css("width", "");
-        $(this.dom.conclusionsHeader.parentElement).css("width", "").find('th').css("width", "");
-    }
-
-    this.dom.conditionsTableContainer.style.width = this.dom.conditionsHeaderContainer.style.width = this.width !== 'auto' ? w_cond + "px" : "auto";
-    this.dom.conclusionsTableContainer.style.width = this.dom.conclusionsHeaderContainer.style.width = this.width !== 'auto' ? w_conc + "px" : "auto";
-
-    if(this.decisionRows && this.rows) {
-        w = $(this.dom.conditionsTable).find("tr").outerHeight();
-        this.dom.indexTableContainer.style.height = this.dom.conditionsTableContainer.style.height = this.dom.conclusionsTableContainer.style.height = ((w * this.rows) + 10 + this.rows) + "px";
-    } else {
-        this.dom.indexTableContainer.style.height = this.dom.conditionsTableContainer.style.height = this.dom.conclusionsTableContainer.style.height = "auto";
-    }
-
-    w = $(this.dom.conditionsTable).outerWidth();
-    if(w < $(this.dom.conditionsTableContainer).width() && this.width !== 'auto') {
-        this.dom.conditionsTable.style.width = "100%";
-        w = $(this.dom.conditionsTable).outerWidth();
-        w = Math.ceil(w/2) * 2;
-    }
-    $(this.dom.conditionsHeader.parentElement).css("width", w + "px");
-    w = Math.floor(w / this.conditions.length);
-    $(this.dom.conditionsHeader).find('th').css("width", w + "px");
-
-    w = $(this.dom.conclusionsTable).outerWidth();
-    if(w < $(this.dom.conclusionsTableContainer).width() && this.width !== 'auto') {
-        this.dom.conclusionsTable.style.width = "100%";
-        w = $(this.dom.conclusionsTable).outerWidth();
-        w = Math.ceil(w/2) * 2;
-    }
-    $(this.dom.conclusionsHeader.parentElement).css("width", w + "px");
-    w = Math.floor(w / this.conclusions.length);
-    $(this.dom.conclusionsHeader).find("th").css("width", w + "px");
-
-    //w_cond = $(this.dom.hitTypeLabel);
-    //w_conc = header.find('.decision-table-module');
-    //index = $(this.dom.dirtyIndicator);
-    //w = header.width();
-    //w -= ( w_cond.innerWidth() + parseInt(w_cond.css("margin-left"))
-    //+ parseInt(w_cond.css("margin-right")) + w_conc.innerWidth()
-    //+ parseInt(w_conc.css("margin-left")) + parseInt(w_conc.css("margin-right"))
-    //+ parseInt($(this.dom.nameLabel).css("margin-right")) + parseInt($(this.dom.nameLabel).css("margin-left"))
-    //+ index.width() + parseInt(index.css("margin-left")) + parseInt(index.css("margin-right")));
-    //this.dom.nameLabel.style.maxWidth = (w - 25) + 'px';
-    //this.dom.nameLabel.style.display = '';
-
-    return this;
-};
-
-DecisionTable.prototype.createRemoveButton = function() {
-    //var input = this.createHTMLElement('input');
-    var minusNode = this.createHTMLElement('span');
-    minusNode.className = 'icon-minus decision-table-remove';
-    //minusNode.innerHTML = '&nbsp;';
-    //input.tabIndex = 0;
-    //input.type = 'text';
-    //input.className = 'decision-table-remove';
-    //input.readOnly = true;
-    //input.value = '-';
-    //input.appendChild(minusNode);
-    //input.style.width = '15px';
-
-    return minusNode;
-};
-
-DecisionTable.prototype.addDecisionRow = function () {
-    var row = this.createHTMLElement('tr'), i, aux;
-
-    if(!(this.conditions.length && this.conclusions.length)) {
-        return this;
-    }
-
-    for(i = 0; i < this.conditions.length; i+=1) {
-        if(!this.conditions[i].values[this.decisionRows]) {
-            this.conditions[i].addValue();
-        }
-        aux = this.conditions[i].getValueHTML(this.conditions[i].values.length - 1);
-        row.appendChild(aux[0]);
-        row.appendChild(aux[1]);
-    }
-    this.dom.conditionsTable.appendChild(row);
-
-    row = row.cloneNode(false);
-    for(i = 0; i < this.conclusions.length; i+=1) {
-        if(!this.conclusions[i].values[this.decisionRows]) {
-            this.conclusions[i].addValue();
-        }
-        row.appendChild(this.conclusions[i].getValueHTML(this.conclusions[i].values.length - 1));
-    }
-    this.dom.conclusionsTable.appendChild(row);
-
-    row = row.cloneNode(false);
-    aux = this.createRemoveButton();
-    this.decisionRows+=1;
-    i = this.createHTMLElement("td");
-    i.appendChild(aux);
-    row.appendChild(i);
-    this.dom.indexTable.appendChild(row);
-
-    if(this.decisionRows === 1) {
-        this.updateDimensions();
-    }
-
-    if(typeof this.onAddRow === 'function') {
-        this.onAddRow.call(this);
-    }
-
-    return this;
-};
-
-DecisionTable.prototype.removeRowWithoutConfirmation = function (index) {
-    for(i = 0; i < this.conclusions.length; i+=1) {
-        this.conclusions[i].removeValue(index);
-    }
-
-    for(i = 0; i < this.conditions.length; i+=1) {
-        this.conditions[i].removeValue(index);
-    }
-
-    $(this.dom.indexTable).find('tr:eq(' + index + ')').remove();
-    $(this.dom.conditionsTable).find('tr:eq(' + index + ')').remove();
-    $(this.dom.conclusionsTable).find('tr:eq(' + index + ')').remove();
-
-    this.decisionRows --;
-    this.setIsDirty(true);
-
-    valid = this.validateColumn();
-
-    if(typeof this.onChange === 'function') {
-        this.onChange.call(this, {}, valid);
-    }
-
-    if(typeof this.onRemoveRow === 'function') {
-        this.onRemoveRow.call(this);
-    }
-
-    return this;
-};
-
-DecisionTable.prototype.removeDecisionRow = function(index) {
-    var i,
-        ask = false,
-        self = this;
-
-    if(this.decisionRows === 1) {
-        App.alert.show('mininal-error', {
-            level: 'warning',
-            messages: this.language.MIN_ROWS,
-            autoClose: true
-        });
-        return this;
-    }
-
-    //Check if there are conditions or conditions filled
-    for(i = 0; i < this.conditions.length; i+=1) {
-        if(this.conditions[i].values[index].filledValue()) {
-            ask = true;
-            break;
-        }
-    }
-    if (!ask) {
-        for(i = 0; i < this.conclusions.length; i+=1) {
-            if(this.conclusions[i].values[index].filledValue()) {
-                ask = true;
-                break;
-            }
-        }
-    }
-    if (ask) {
-        App.alert.show('message-config-delete-row', {
-            level: 'confirmation',
-            messages: this.language.MSG_DELETE_ROW,
-            onConfirm: function() {
-                return self.removeRowWithoutConfirmation(index);
-            },
-            onCancel: function() {
-                return this;
-            }
-        });
-    } else {
-        return this.removeRowWithoutConfirmation(index);
-    }
-};
-
-DecisionTable.prototype.getFields = function(defaultValue) {
-    var i = 0, self = this, fields;
-    if(this.fields.length) {
-        return this.fields;
-    }
-    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-    this.proxy.setUrl('pmse_Project/CrmData/fields/' + this.base_module);
-    this.proxy.getData( null, {
-        success: function(data) {
-
-            if(data && data.success) {
-                fields = [];
-                for(i = 0; i < data.result.length; i+=1) {
-                    fields.push({
-                        label: data.result[i].text,
-                        value: data.result[i].value
-                    });
-                }
-
-                self.fields = fields;
-
-
-                self.setConditions(self.auxConditions);
-                self.setConclusions(self.auxConclutions);
-                self.setRuleset(self.rules);
-
-                if(!self.conditions.length) {
-                    self.addCondition(defaultValue);
-                }
-
-                if(!self.conclusions.length) {
-                    self.addConclusion(true);
-                }
-
-                if(!self.decisionRows) {
-                    self.addDecisionRow();
-                }
-                App.alert.dismiss('upload');
-                self.setIsDirty(false);
-            }
-
-        }
-    });
-
-    return this;
-};
-
-DecisionTable.prototype.setName = function(name) {
-    this.name = name;
-    return this;
-};
-
-DecisionTable.prototype.setProxy = function(proxy, restClient) {
-    this.proxy = proxy;
-    return this;
-};
-
-DecisionTable.prototype.setBaseModule = function(base_module) {
-    this.base_module = base_module;
-    return this;
-};
-
-DecisionTable.prototype.setHitType = function(hitType) {
-    this.hitType = hitType;
-    return this;
-};
-
-DecisionTable.prototype.onRemoveVariableHandler = function(array) {
-    var that = this, variablesArray = array, valid;
-    return function() {
-        var x;
-        for(var i = 0; i < variablesArray.length; i+=1) {
-            if(variablesArray[i] === this) {
-                x = variablesArray[i];
-                variablesArray.splice(i, 1);
-            }
-        }
-        that.updateDimensions();
-        valid = that.validateRow();
-        if(typeof that.onRemoveColumn === 'function') {
-            that.onRemoveColumn.call(this, x);
-        }
-        that.setIsDirty(true);
-        if(typeof that.onChange === 'function') {
-            that.onChange.call(that, {}, valid);
-        }
-    };
-};
-
-
-DecisionTable.prototype.addCondition = function(defaultValue) {
-
-    var condition = new DecisionTableVariable({
-        parent: this,
-        value: defaultValue || null,
-        fields: this.fields,
-        language: this.language
-    }), i, html;
-
-
-    condition.onRemove = this.onRemoveVariableHandler(this.conditions);
-    condition.onChangeValue = this.onChangeValueHandler();
-    condition.onChange = this.onChangeVariableHandler();
-    this.conditions.push(condition);
-    if(this.html) {
-        this.dom.conditionsHeader.appendChild(condition.getHTML());
-    }
-
-    this.proxy.uid = this.base_module || "";
-
-    for(i = 0; i < this.decisionRows; i+=1) {
-        condition.addValue();
-        html = condition.getValueHTML(i);
-        $(this.dom.conditionsTable).find("tr:eq(" + i + ")").append(html[0]).append(html[1]);
-    }
-
-    this.updateDimensions();
-    this.setIsDirty(true);
-
-    if(typeof this.onAddColumn === 'function') {
-        this.onAddColumn.call(this, condition);
-    }
-
-    return this;
-};
-
-DecisionTable.prototype.addConclusion = function (returnType, defaultValue) {
-    var conclusion = new DecisionTableVariable({
-        returnType: returnType,
-        mode: "conclusion",
-        fields: this.fields,
-        value: defaultValue,
-        parent: this,
-        language: this.language
-    }), i;
-
-    conclusion.onRemove = this.onRemoveVariableHandler(this.conclusions);
-    conclusion.onChangeValue = this.onChangeValueHandler();
-    conclusion.onChange = this.onChangeVariableHandler();
-    this.conclusions.push(conclusion);
-    if(this.html) {
-        this.dom.conclusionsHeader.appendChild(conclusion.getHTML());
-    }
-
-    for(i = 0; i < this.decisionRows; i+=1) {
-        conclusion.addValue();
-        this.dom.conclusionsTable.childNodes[i].appendChild(conclusion.getValueHTML(i));
-    }
-
-    this.updateDimensions();
-    this.setIsDirty(true);
-    if(typeof this.onAddColumn === 'function') {
-        this.onAddColumn.call(this, conclusion);
-    }
-
-    return this;
-};
-
-DecisionTable.prototype.canBeRemoved = function(obj) {
-    var res = false;
-    if(obj.parent === this) {
-        if(obj.mode === 'condition') {
-            res = this.conditions.length > 1;
-            if(!res) {
-                App.alert.show('mininal-column-error', {
-                    level: 'warning',
-                    messages: this.language.MIN_CONDITIONS_COLS,
-                    autoClose: true
-                });
-            }
-        } else if (obj.mode === 'conclusion') {
-            res = this.conclusions.length > 1;
-            if(!res) {
-                App.alert.show('mininal-column-error', {
-                    level: 'warning',
-                    messages: this.language.MIN_CONCLUSIONS_COLS,
-                    autoClose: true
-                });
-            }
-        }
-    }
-    return res;
-};
-
-DecisionTable.prototype.createHTML = function() {
-    if(this.html) {
-        return this.html;
-    }
-
-    var table, row, cell, header, body, textContainer, subtable, button, i, span;
-
-    //create the table header
-    header = this.createHTMLElement('thead');
-    //row = this.createHTMLElement('tr');
-    //cell = this.createHTMLElement('th');
-    //cell.className = 'decision-table-title';
-    //cell.colSpan = 3;
-    //textContainer = this.createHTMLElement('div');
-    //span = this.createHTMLElement('span');
-    //span.appendChild(document.createTextNode((this.hitType === 'single' ? "[" + this.language.SINGLE_HIT + "]" : "[" + this.language.MULTIPLE_HIT + "]")));
-    //span.className = 'decision-table-type';
-    //span.title = this.language.CLICK_TO_EDIT;
-    //span.tabIndex = 0;
-    //this.dom.hitTypeLabel = span;
-    //textContainer.appendChild(span);
-    //span = span.cloneNode(false);
-    //span.appendChild(document.createTextNode(this.name));
-    //span.className = 'decision-table-name';
-    //span.title = this.language.CLICK_TO_EDIT;
-    //this.dom.nameLabel = span;
-    //textContainer.appendChild(span);
-    //span = span.cloneNode(false);
-    //span.title = "";
-    //$(span).removeAttr("tabIndex");
-    //span.textContent = this.isDirty ? '*' : '';
-    //textContainer.appendChild(span);
-    //this.dom.dirtyIndicator = span;
-    //span = span.cloneNode(false);
-    //span.className = 'decision-table-module';
-    //span.appendChild(document.createTextNode(this.base_module));
-    //textContainer.appendChild(span);
-    //
-    //cell.appendChild(textContainer);
-    //row.appendChild(cell);
-    //header.appendChild(row);
-    //this.dom.title = cell;
-
-    plusNode = this.createHTMLElement('span');
-    plusNode.className = 'icon-plus';
-    plusNode2 = this.createHTMLElement('span');
-    plusNode2.className = 'icon-plus';
-
-    //create the table subheaders
-    row = this.createHTMLElement('tr');
-    cell = this.createHTMLElement('th');
-    row.appendChild(cell);
-    cell = this.createHTMLElement('th');
-    button = this.createHTMLElement('button');
-    button.appendChild(plusNode);
-    button.className = 'decision-table-add-button';
-    button.title = this.language.LBL_ADD_CONDITION;
-    this.dom.addConditionButton = button;
-    textContainer = this.createHTMLElement('span');
-    textContainer.appendChild(document.createTextNode(this.language.CONDITIONS));
-    textContainer.appendChild(button);
-    cell.appendChild(textContainer);
-    cell.className = 'decision-table-separator-border';
-    row.appendChild(cell);
-    cell = cell.cloneNode(false);
-    button = button.cloneNode(true);
-    button.title = this.language.LBL_ADD_CONCLUSION;
-    this.dom.addConclusionButton = button;
-    textContainer = textContainer.cloneNode(false);
-    textContainer.appendChild(document.createTextNode(this.language.CONCLUSIONS));
-    textContainer.appendChild(button);
-    cell.appendChild(textContainer);
-    row.appendChild(cell);
-    header.appendChild(row);
-
-    //create the body and the body header
-    row = this.createHTMLElement("tr");
-    cell = this.createHTMLElement('th');
-    textContainer = this.createHTMLElement('button');
-    textContainer.appendChild(plusNode2);
-    textContainer.title = this.language.ADD_ROW;
-    textContainer.className = 'decision-table-add-row';
-    cell.appendChild(textContainer);
-    row.appendChild(cell);
-    cell = this.createHTMLElement('th');
-    textContainer = this.createHTMLElement('div');
-    textContainer.className = 'decision-table-conditions-header';
-    this.dom.conditionsHeaderContainer = textContainer;
-    subtable = this.createHTMLElement('table');
-    subtable.appendChild(row.cloneNode(false));
-    textContainer.appendChild(subtable);
-    this.dom.conditionsHeader = subtable.childNodes[0];
-    cell.className = 'decision-table-separator-border';
-    cell.appendChild(textContainer);
-    row.appendChild(cell);
-    cell = cell.cloneNode(true);
-    this.dom.conclusionsHeaderContainer = cell.childNodes[0];
-    this.dom.conclusionsHeaderContainer.className = "decision-table-conclusions-header";
-    this.dom.conclusionsHeader = this.dom.conclusionsHeaderContainer.childNodes[0].childNodes[0];
-    row.appendChild(cell);
-    body = this.createHTMLElement('tbody');
-    body.appendChild(row);
-
-    //create the cells in body that will contain the tables for data
-    row = this.createHTMLElement('tr');
-    cell = this.createHTMLElement('td');
-    textContainer = textContainer.cloneNode(false);
-    textContainer.className = 'decision-table-container';
-    this.dom.indexTableContainer = textContainer;
-    subtable = subtable.cloneNode(false);
-    subtable.className = 'decision-table-index';
-    this.dom.indexTable = subtable;
-    textContainer.appendChild(subtable);
-    cell.appendChild(textContainer);
-    row.appendChild(cell);
-    cell = cell.cloneNode(true);
-    this.dom.conditionsTable = (this.dom.conditionsTableContainer = cell.childNodes[0]).childNodes[0];
-    this.dom.conditionsTable.className = 'decision-table-conditions';
-    cell.className = 'decision-table-separator-border';
-    row.appendChild(cell);
-    cell = cell.cloneNode(true);
-    cell.className = "";
-    this.dom.conclusionsTable = (this.dom.conclusionsTableContainer = cell.childNodes[0]).childNodes[0];
-    //$(this.dom.conclusionsTableContainer).addClass("decision-table-scroll-x");
-    this.dom.conclusionsTable.className = 'decision-table-conclusions';
-    row.appendChild(cell);
-    body.appendChild(row);
-
-    //create the table and append the header and body
-    table = this.createHTMLElement('table');
-    table.className = "decision-table";
-    table.appendChild(header);
-    table.appendChild(body);
-
-    this.html = table;
-
-    for(i = 0; i < this.conditions.length; i+=1) {
-        this.dom.conditionsHeader.appendChild(this.conditions[i].getHTML());
-    }
-
-    for(i = 0; i < this.conclusions.length; i+=1) {
-        this.dom.conclusionsHeader.appendChild(this.conclusions[i].getHTML());
-    }
-
-    this.setShowDirtyIndicator(this.showDirtyIndicator);
-
-    this.attachListeners();
-
-    return this.html;
-};
-
-DecisionTable.prototype.attachListeners = function() {
-    var that = this;
-    $(this.dom.conditionsTableContainer).on('scroll', function(){
-        that.dom.conditionsHeaderContainer.scrollLeft = this.scrollLeft;
-        that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
-    });
-
-    $(this.dom.conditionsHeaderContainer).on('scroll', function() {
-        that.dom.conditionsTableContainer.scrollLeft = this.scrollLeft;
-    });
-
-    $(this.dom.conclusionsTableContainer).add(this.dom.conclusionsHeaderContainer).on('scroll', function(){
-        that.dom.conclusionsHeaderContainer.scrollLeft = that.dom.conclusionsTableContainer.scrollLeft = this.scrollLeft;
-        that.dom.indexTableContainer.scrollTop = that.dom.conditionsTableContainer.scrollTop = this.scrollTop;
-    });
-
-    $(this.dom.indexTableContainer).on('scroll', function() {
-        that.dom.conditionsTableContainer.scrollTop = that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
-    });
-
-    $(this.dom.addConclusionButton).on('click', function() {
-        that.addConclusion();
-    });
-
-    $(this.dom.addConditionButton).on('click', function() {
-        that.addCondition();
-    });
-
-//    $(this.dom.indexTable).on('click', 'span', function() {
-//        that.removeDecisionRow($(that.dom.indexTable).find("span").index(this));
-//    });
-    $(this.dom.indexTable).on('click', 'span.decision-table-remove', function() {
-        that.removeDecisionRow($(that.dom.indexTable).find("span.decision-table-remove").index(this));
-    });
-
-    $(this.dom.conditionsTable).on('keydown', 'td', function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if($(row).find("td:last").get(0) === this && !e.shiftKey) {
-                e.preventDefault();
-                $(that.conclusions[0].getValueHTML(index)).find("span").focus();
-            } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                e.preventDefault();
-                $(that.dom.indexTable).find("span").eq(index).focus();
-            }
-        }
-    });
-
-    $(this.dom.indexTable).on("keydown", "td", function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if(!e.shiftKey) {
-                e.preventDefault();
-                $(that.conditions[0].getValueHTML(index)[0]).find("span").focus();
-            } else if(index > 0){
-                e.preventDefault();
-                $(that.conclusions[that.conclusions.length - 1].getValueHTML(index - 1)).find("span").focus();
-            }
-        }
-    });
-
-    $(this.dom.conclusionsTable).on("keydown", "td", function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if($(row).find("td:last").get(0) === this && !e.shiftKey && index < that.decisionRows - 1) {
-                e.preventDefault();
-                $(that.dom.indexTable).find("span").eq(index + 1).focus();
-            } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                e.preventDefault();
-                $(that.conditions[that.conditions.length - 1].getValueHTML(index)[1]).find("span").focus();
-            }
-        }
-    });
-
-    $(this.dom.conditionsTable).on('keydown', 'td', function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if($(row).find("td:last").get(0) === this && !e.shiftKey) {
-                e.preventDefault();
-                $(that.conclusions[0].getValueHTML(index)).find("span").focus();
-            } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                e.preventDefault();
-                $(that.dom.indexTable).find("button").eq(index).focus();
-            }
-        }
-    });
-
-    $(this.dom.indexTable).on('keydown', 'td', function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if($(row).find("td:last").get(0) === this && !e.shiftKey) {
-                e.preventDefault();
-                $(that.conditions[0].getValueHTML(index)[0]).find("span").focus();
-            } else if($(row).find("td:first").get(0) === this && e.shiftKey && index > 0){
-                e.preventDefault();
-                $(that.conclusions[that.conclusions.length - 1].getValueHTML(index - 1)).find('span').focus();
-            }
-        }
-    });
-
-    $(this.dom.conclusionsTable).on('keydown', 'td', function(e) {
-        var index, row = this.parentElement;
-        if(e.keyCode === 9) {
-            index = $(row.parentElement).find("tr").index(row);
-            if($(row).find("td:last").get(0) === this && !e.shiftKey && index < that.decisionRows - 1) {
-                e.preventDefault();
-                $(that.dom.indexTable).find("button").eq(index + 1).focus();
-            } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                e.preventDefault();
-                $(that.conditions[that.conditions.length - 1].getValueHTML(index)[1]).find("span").focus();
-            }
-        }
-    });
-
-    $(this.html).find('.decision-table-add-row').on('click', function() {
-        that.addDecisionRow();
-    });
-
-    //$(this.dom.nameLabel).on('focus', function() {
-    //    var input = that.createHTMLElement('input');
-    //    input.type = 'text';
-    //    input.value = that.name;
-    //    $(this).empty().append(input);
-    //    $(input).select().focus();
-    //}).on('blur', 'input', function() {
-    //    var name = that.name, value = $.trim(this.value);
-    //    if(value) {
-    //        that.name = value;
-    //    }
-    //    if(name != that.name) {
-    //        that.setIsDirty(true);
-    //    }
-    //    $(this.parentElement).text(that.name);
-    //});
-
-    //$(this.dom.hitTypeLabel).on('focus', function() {
-    //    var select = that.createHTMLElement('select'),
-    //        option = that.createHTMLElement('option');
-    //
-    //    option.label = that.language.MULTIPLE_HIT;
-    //    option.value = 'multiple';
-    //    option.appendChild(document.createTextNode(option.label));
-    //    option.selected = that.hitType !== 'single';
-    //    select.appendChild(option);
-    //
-    //    option = option.cloneNode(false);
-    //    option.label = that.language.SINGLE_HIT;
-    //    option.value = 'single';
-    //    option.appendChild(document.createTextNode(option.label));
-    //    option.selected = that.hitType === 'single';
-    //    select.appendChild(option);
-    //
-    //    $(this).empty().append(select);
-    //    $(select).focus();
-    //}).on('blur', 'select', function() {
-    //    var prevValue = that.hitType;
-    //    that.hitType = this.value;
-    //    $(this.parentElement).text(that.hitType === 'single' ? '[' + that.language.SINGLE_HIT + ']' : '[' + that.language.MULTIPLE_HIT + ']');
-    //    if(prevValue !== this.value) {
-    //        that.setIsDirty(true);
-    //    }
-    //});
-
-    $(this.dom.conditionsTable).add(this.dom.conclusionsTable).add(this.dom.indexTable).on("focus", "td", function() {
-        var row = this.parentElement, index;
-        $(that.html).find("tr.cell-edit").removeClass("cell-edit");
-        index = $(row.parentElement).find("tr").index(row);
-        $(that.dom.indexTable.childNodes[index]).add(that.dom.conditionsTable.childNodes[index]).add(that.dom.conclusionsTable.childNodes[index]).addClass("cell-edit");
-    }).on("blur", "select, input", function(){
-        //$(that.html).find("tr.cell-edit").removeClass("cell-edit");
-    });
-
-    $(document).bind('DOMNodeInserted', function(e) {
-        if(e.target === that.html) {
-            that.updateDimensions();
-        }
-    });
-
-    return this;
-};
-
-DecisionTable.prototype.validateConclusions = function() {
-    var i, obj = {};
-
-    for(i = 0; i < this.conclusions.length; i+=1) {
-        if(!this.conclusions[i].returnType && this.conclusions[i].select.value && this.conclusions[i].getFilledValuesNum()) {
-            if(!obj[this.conclusions[i].select.value]) {
-                obj[this.conclusions[i].select.value] = true;
-            } else {
-                $(this.conclusions[i].getHTML()).addClass('error');
-                return {
-                    valid: false,
-                    location: "Conclusion # " + (i + 1),
-                    message: this.language.ERROR_CONCLUSION_VAR_DUPLICATED
-                }
-            }
-        }
-        $(this.conclusions[i].getHTML()).removeClass('error');
-    }
-
-    return {valid: true};
-};
-
-DecisionTable.prototype.validateRow = function(index) {
-    var start = 0, limit = this.decisionRows,
-        rowHasConclusions, rowHasConditions, i, j, defaultRulesets = 0;
-
-    if(typeof index === 'number') {
-        start = index;
-        limit = index + 1;
-    }
-
-    for(i = start; i < limit; i+=1) {
-        rowHasConditions = false;
-        rowHasConclusions = false;
-        //validate if the row has return value conclusion if there are any condition
-        for(j = 0; j < this.conditions.length; j+=1) {
-            if(this.conditions[j].values[i].filledValue()) {
-                rowHasConditions = true;
-                break;
-            }
-        }
-
-        if(rowHasConditions) {
-            if(!this.conclusions[0].values[i].filledValue()) {
-                $(this.conclusions[0].values[i].getHTML()).addClass("error");
-                return {
-                    valid: false,
-                    message: this.language.ERROR_EMPTY_RETURN_VALUE,
-                    location: "row # " + (i + 1)
-                };
-            } else {
-                rowHasConclusions = true;
-            }
-        }
-        $(this.conclusions[0].values[i].getHTML()).removeClass("error");
-
-        if(!rowHasConclusions) {
-            for(j = 0; j < this.conclusions.length; j+=1) {
-                if(this.conclusions[j].values[i].filledValue()) {
-                    rowHasConclusions = true;
-                    break;
-                }
-            }
-        }
-        if(rowHasConclusions && !rowHasConditions) {
-            defaultRulesets += 1;
-            if(defaultRulesets > 1) {
-                $(this.dom.conditionsTable).find('tr').eq(i).addClass('error');
-                return {
-                    valid: false,
-                    message: this.language.ERROR_EMPTY_ROW,
-                    location: 'row # ' + (i + 1)
-                };
-            }
-        }
-        $(this.dom.conditionsTable).find('tr').eq(i).removeClass('error');
-    }
-
-    return {valid: true};
-};
-
-DecisionTable.prototype.validateColumn = function(index, type) {
-    var valid, i, j, variables = [
-        {
-            type: "condition",
-            collection: this.conditions
-        }, {
-            type: "conclusion",
-            collection: this.conclusions
-        }
-    ];
-
-    $(this.dom.conditionsTable).find('tr').removeClass('error');
-
-    if(typeof index === 'number' && typeof type === 'number') {
-        valid = variables[type].collection[index].isValid();
-        if(!valid.valid) {
-            return {
-                valid: false,
-                message: valid.message,
-                location: variables[type].type + " # " + (index + 1) + (!isNaN(valid.index) ? " - row " + (valid.index + 1) : "")
-            };
-        }
-    } else {
-        for(j = 0; j < variables.length; j+=1) {
-            for(i = 0; i < variables[j].collection.length; i+=1) {
-                valid = variables[j].collection[i].isValid();
-                if(!valid.valid) {
-                    return {
-                        valid: false,
-                        message: valid.message,
-                        location: variables[j].type + " # " + (i + 1) + (!isNaN(valid.index) ? " - row " + (valid.index + 1) : "")
-                    };
-                }
-            }
-        }
-    }
-
-    return {valid: true};
-};
-
-DecisionTable.prototype.isValid = function() {
-    var valid;
-
-    if(!this.correctlyBuilt) {
-        return {
-            valid: false,
-            message: this.language.ERROR_INCORRECT_BUILD
-        };
-    }
-
-    valid = this.validateColumn();
-
-    if(!valid.valid) {
-        return valid;
-    }
-    valid = this.validateRow();
-    if(!valid.valid) {
-        return valid;
-    }
-
-    return this.validateConclusions();
-};
-
-DecisionTable.prototype.getJSON = function() {
-    var json = {
-        id: this.id,
-        base_module: this.base_module,
-        type: this.hitType,
-        name: this.name,
-        columns: {
-            conditions: [],
-            conclusions: []
-        },
-        ruleset: []
-    }, ruleset, conditions, conclusions, i, j, obj, defaultRuleSets = 0;
-
-    if(!this.isValid().valid) {
-        return null;
-    }
-
-    //Add the conditions columns evaluating duplications
-    obj = {};
-    for(j = 0; j < this.decisionRows; j+=1) {
-        for(i = 0; i < this.conditions.length; i+=1) {
-            if(this.conditions[i].select.value && this.conditions[i].values[j].getValue().length) {
-                if(!obj[this.conditions[i].select.value]) {
-                    obj[this.conditions[i].select.value] = {
-                        max: 0,
-                        current: 0
-                    };
-                }
-                obj[this.conditions[i].select.value].current +=1;
-                if(obj[this.conditions[i].select.value].current > obj[this.conditions[i].select.value].max) {
-                    obj[this.conditions[i].select.value].max = obj[this.conditions[i].select.value].current;
-                }
-            }
-        }
-        for(i in obj) {
-            obj[i].current = 0;
-        }
-    }
-    for(i = 0; i < this.conditions.length; i+=1) {
-        if(obj[this.conditions[i].select.value]) {
-            for(j = 0; j < obj[this.conditions[i].select.value].max; j+=1) {
-                json.columns.conditions.push(this.conditions[i].select.value);
-            }
-            delete obj[this.conditions[i].select.value];
-        }
-    }
-
-
-    for(i = 0; i < this.conclusions.length; i+=1) {
-        if(this.conclusions[i].returnType || (this.conclusions[i].select.value && this.conclusions[i].getFilledValuesNum())) {
-            json.columns.conclusions.push(this.conclusions[i].select ? this.conclusions[i].select.value : "");
-        }
-    }
-
-    for(i = 0; i < this.decisionRows; i+=1) {
-        ruleset = {
-            id: i + 1
-        };
-        conditions = [];
-        conclusions = [];
-        for(j = 0; j < this.conditions.length; j+=1) {
-            obj = this.conditions[j].getJSON(i);
-            if(obj) {
-                conditions.push(obj);
-            }
-        }
-        for(j = 0; j < this.conclusions.length; j+=1) {
-            obj = this.conclusions[j].getJSON(i);
-            if(obj.value.length) {
-                conclusions.push(obj);
-            }
-        }
-        ruleset.conditions = conditions;
-        ruleset.conclusions = conclusions;
-        if(!conditions.length) {
-            defaultRuleSets += 1;
-        }
-        if(conditions.length || defaultRuleSets <= 1) {
-            json.ruleset.push(ruleset);
-        }
-    }
-
-    return json;
-};
-
-//DecisionTableVariable
-var DecisionTableVariable = function(options) {
-    Element.call(this);
-    this.values = null;
-    this.name = null;
-    this.value = null;
-    this.parent = null;
-    this.mode = null;
-    this.returnType = null;
-    this.select = null;
-    this.closeButton = null;
-    this.onRemove = null;
-    this.onChange = null;
-    this.onChangeValue = null;
-    this.fields = [];
-    this.language = {};
-    DecisionTableVariable.prototype.initObject.call(this, options);
-};
-
-DecisionTableVariable.prototype = new Element();
-
-DecisionTableVariable.prototype.initObject = function(options) {
-    var defaults = {
-        values: [],
-        name: null,
-        value: null,
-        parent: null,
-        mode: "condition",
-        returnType: false,
-        onRemove: null,
-        onChange: null,
-        onChangeValue: null,
-        fields: [],
-        language: {}
-    };
-
-    $.extend(true, defaults, options);
-    this.language = defaults.language;
-    this.value = defaults.value;
-    this.values = [];
-    this.parent = defaults.parent;
-    this.mode = defaults.mode;
-    this.onRemove = defaults.onRemove;
-    this.onChange = defaults.onChange;
-    this.onChangeValue = defaults.onChangeValue;
-    this.returnType = defaults.returnType;
-    this.setFields(defaults.fields)
-        .setValues(defaults.values)
-        .setName(defaults.name);
-
-    if(!this.returnType) {
-        this.select = this.createHTMLElement('select');
-        this.updateSelect();
-    }
-};
-
-DecisionTableVariable.prototype.updateSelect = function() {
-    var i = 0, option;
-    $(this.select).empty();
-    if(this.fields.length) {
-        option = this.createHTMLElement('option');
-        this.select.appendChild(option);
-        for(i = 0; i < this.fields.length; i+=1) {
-            option = this.createHTMLElement('option');
-            option.label = this.fields[i].label;
-            option.value = this.fields[i].value;
-            option.appendChild(document.createTextNode(this.fields[i].label));
-            if(this.value === option.value) {
-                option.selected = true;
-            }
-            this.select.appendChild(option);
-        }
-    }
-
-    return this;
-};
-
-DecisionTableVariable.prototype.setFields = function(fields) {
-    if(fields.push && fields.pop) {
-        this.fields = fields;
-        if(this.select) {
-            this.updateSelect();
-        }
-    }
-
-    return this;
-};
-
-DecisionTableVariable.prototype.setName = function(name) {
-    this.name = name;
-    return this;
-};
-
-DecisionTableVariable.prototype.setValues = function(values) {
-    if(typeof values != "object" || !values.push) {
-        return this;
-    }
-    var i = 0;
-    if(this.mode === 'conclusion') {
-        for(i = 0; i < values.length; i+=1) {
-            if(typeof values[i] === "string" || typeof values[i] === 'number') {
-                this.values.push(new DecisionTableSingleValue({value: values[i], parent: this, fields: this.fields}));
-            }
-        }
-    } else {
-        for(i = 0; i < values.length; i+=1) {
-            this.values.push(new DecisionTableValueEvaluation({value: values[i].value, operator: values[i].operator, parent: this, fields: this.fields, language: this.language}));
-        }
-    }
-
-    return this;
-};
-
-DecisionTableVariable.prototype.getValueHTML = function(index) {
-    var cell, textContainer;
-
-    if(this.values[index]) {
-        return this.values[index].getHTML();
-    }
-
-    return null;
-};
-
-DecisionTableVariable.prototype.createHTML = function() {
-    if(this.html) {
-        return this.html;
-    }
-
-    var html = this.createHTMLElement('th'), content, closeButton;
-
-    if(this.returnType) {
-        content = this.createHTMLElement('span');
-        content.className = 'decision-table-return';
-        content.appendChild(document.createTextNode(this.returnType ? this.language.LBL_RETURN : (this.name || "")));
-    } else {
-        content = this.select;
-    }
-
-    html.appendChild(content);
-
-    if(!this.returnType) {
-        closeButton = this.createHTMLElement("button");
-        closeButton.appendChild(document.createTextNode(" "));
-        closeButton.className = 'decision-table-close-button';
-        closeButton.title = "Remove Column";
-        this.closeButton = closeButton;
-        html.appendChild(this.closeButton);
-    }
-
-    this.html = html;
-
-    this.attachListeners();
-
-    return html;
-};
-
-DecisionTableVariable.prototype.removeWithoutConfirmation = function () {
-    while(this.values.length) {
-        this.values[0].remove();
-    }
-    this.values = null;
-    $(this.html).remove();
-    if(typeof this.onRemove === 'function') {
-        this.onRemove.call(this);
-    }
-};
-
-
-DecisionTableVariable.prototype.remove = function() {
-    var self = this;
-    if(!this.parent.canBeRemoved(this)) {
-        return;
-    }
-    if(this.getFilledValuesNum()) {
-        App.alert.show('variable-check', {
-            level: 'confirmation',
-            //TODO Create a label to handle this message
-            messages: "Do you really want to remove this variable?",
-            onCancel: function() {
-                return;
-            },
-            onConfirm: function () {
-                self.removeWithoutConfirmation();
-            }
-        });
-    } else {
-        this.removeWithoutConfirmation();
-    }
-};
-
-DecisionTableVariable.prototype.attachListeners = function() {
-    var that = this;
-    if(!this.html) {
-        return this;
-    }
-
-    $(this.select).on('change', function(){
-        var oldValue = that.value;
-        that.name = $(this).find('option:selected').attr("label") || null;
-        that.value = this.value || null;
-        $(this).attr("title", that.name)
-            .parent().removeClass("error");
-        if(typeof that.onChange === 'function') {
-            that.onChange.call(that, that.value, oldValue);
-        }
-    });
-
-    $(this.closeButton).on("click", function() {
-        that.remove();
-    });
-
-    return this;
-};
-
-DecisionTableVariable.prototype.getFilledValuesNum = function() {
-    var i, n = 0;
-    for(i = 0; i < this.values.length; i+=1) {
-        if(this.values[i].filledValue()) {
-            n +=1;
-        }
-    }
-    return n;
-};
-
-DecisionTableVariable.prototype.onRemoveValueHandler = function() {
-    var that = this;
-    return function() {
-        var i;
-        for(i = 0; i < that.values.length; i+=1) {
-            if(that.values[i] === this) {
-                that.values.splice(i, 1);
-                return;
-            }
-        }
-    };
-};
-
-DecisionTableVariable.prototype.onChangeValueHandler = function() {
-    var that = this;
-    return function(newVal, oldVal) {
-        if(typeof that.onChangeValue === 'function') {
-            that.onChangeValue.call(that, this, newVal, oldVal);
-        }
-    };
-};
-
-DecisionTableVariable.prototype.addValue = function(value, operator) {
-    var value;
-    if(this.mode === 'conclusion') {
-        value = new DecisionTableSingleValue({value: value, parent: this, fields: this.fields, language: this.language});
-    } else {
-        value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.fields, language: this.language});
-    }
-    value.onRemove = this.onRemoveValueHandler();
-    value.onChange = this.onChangeValueHandler();
-    this.values.push(value);
-
-    return this;
-};
-
-DecisionTableVariable.prototype.getJSON = function(index) {
-    var json = {};
-    if(typeof index === 'number') {
-        if(this.values[index]) {
-
-            json.value = this.values[index].getValue();
-
-            if(this.mode === 'conclusion') {
-                json.conclusion_value = (this.returnType ? 'result' : this.select.value);
-                json.conclusion_type = this.returnType ? 'return' : 'variable'; //"expression" type also must be set
-            } else {
-                json.variable_name = this.select.value;
-                json.condition = this.values[index].operator;
-                if(!(!json.value || json.condition) || (!json.value && !json.condition) /*|| (json.value.push && !json.value.length)*/)  {
-                    return false;
-                }
-            }
-
-            return json;
-        }
-    } else {
-        return false;
-    }
-};
-
-DecisionTableVariable.prototype.removeValue = function(index) {
-    if(this.values[index]) {
-        $(this.values[index].getHTML()).remove();
-        this.values.splice(index, 1);
-    }
-
-    return this;
-};
-
-DecisionTableVariable.prototype.isValid = function() {
-    var valid = {
-        valid: true
-    }, i, values = 0, validation;
-    $(this.select).parent().removeClass("error");
-    if(this.mode === 'conclusion') {
-        for(i = 0; i < this.values.length; i+=1) {
-            validation = this.values[i].isValid();
-            if(!validation.valid) {
-                return validation;
-            }
-            if(this.values[i].value.length) {
-                values +=1;
-            }
-        }
-    } else {
-        for(i = 0; i < this.values.length; i+=1) {
-            validation = this.values[i].isValid();
-            if(this.values[i].operator) {
-                values +=1;
-            }
-            if(!validation.valid) {
-                valid.valid = false;
-                valid.message = validation.message;
-                valid.index = i;
-                return valid;
-            }
-        }
-    }
-
-    if(values && (this.select && !this.select.value)) {
-        $(this.select.parentElement).addClass("error");
-        valid = {
-            valid: false,
-            message: this.language.ERROR_NO_VARIABLE_SELECTED
-        };
-    }
-
-    return valid;
-};
-
-//Value Cells for DecisionTable
-//DecisionTableValue
-var DecisionTableValue = function(settings) {
-    Element.call(this);
-    this.value = null;
-    this.expression = null;
-    this.onRemove = null;
-    this.onChange = null;
-    this.parent = null;
-    this.language = {};
-    DecisionTableValue.prototype.initObject.call(this, settings);
-};
-
-DecisionTableValue.prototype = new Element();
-
-DecisionTableValue.prototype.initObject = function(settings) {
-    var defaults = {
-        value: [],
-        onRemove: null,
-        onChange: null,
-        parent: null,
-        fields: [],
-        language: {}
-    };
-    $.extend(true, defaults, settings || {});
-    this.language = defaults.language;
-    this.parentElement = defaults.parent;
-    this.expression = new ExpressionFieldControl({
-        variables: defaults.fields,
-        onChange: this.onChangeExpressionHandler(),
-        language: this.language
-    }, this);
-    this.setValue(defaults.value);
-    this.onRemove = defaults.onRemove;
-    this.onChange = defaults.onChange;
-};
-
-DecisionTableValue.prototype.onChangeExpressionHandler = function() {
-    var that = this;
-    return function(newVal, oldVal) {
-        that.value = this.getObject();
-        if(typeof that.onChange === 'function') {
-            that.onChange.call(that, newVal, oldVal);
-        }
-    };
-};
-
-DecisionTableValue.prototype.updateHTML = function() {};
-
-DecisionTableValue.prototype.setValue = function(value) {
-    var i;
-    this.expression.clear();
-    for(i = 0; i < value.length; i+=1) {
-        this.expression.addItem({
-            value: value[i].value,
-            label: value[i].value,
-            type: ExpressionFieldControl.prototype.expressionType[value[i].type]
-        });
-    }
-    this.value = value;
-    this.updateHTML();
-    return this;
-};
-
-DecisionTableValue.prototype.createHTML = function() {};
-
-DecisionTableValue.prototype.onEnterCellHandler = function(controlCreationFunction) {
-    var that = this;
-    return function() {
-        if(typeof controlCreationFunction !== 'function') {
-            return;
-        }
-        var control = controlCreationFunction();
-        $(this.parentElement).empty().append(control);
-        $(control).select().focus();
-    };
-};
-
-DecisionTableValue.prototype.onLeaveCellHandler = function(member) {
-    var that = this;
-    return function() {
-        var span = document.createElement('span'),
-            cell = this.parentElement, oldValue = that[member], changed = false;
-        span.tabIndex = 0;
-        changed = oldValue !== this.value;
-        that[member] = this.value;
-        if(that[member]) {
-            span.appendChild(document.createTextNode(that[member]));
-        } else {
-            span.innerHTML = '&nbsp;';
-        }
-        try {
-            $(cell).empty().append(span);;
-        } catch(e){}
-        that.isValid();
-        if(changed && typeof that.onChange === 'function') {
-            that.onChange.call(that, that[member], oldValue);
-        }
-    };
-};
-
-DecisionTableValue.prototype.isValid = function() {
-    if(this.expression.isValid()) {
-        $(this.html).removeClass('error');
-        return {
-            valid: true
-        };
-    } else {
-        $(this.html).addClass('error');
-        return {
-            valid: false,
-            message: this.language.ERROR_INVALID_EXPRESSION
-        }
-    }
-};
-
-DecisionTableValue.prototype.attachListeners = function() {};
-
-DecisionTableValue.prototype.remove = function() {
-    $(this.html).remove();
-    this.expression.remove();
-    if(typeof this.onRemove === 'function') {
-        this.onRemove.call(this);
-    }
-};
-
-DecisionTableValue.prototype.getValue = function() {
-    return this.expression.getObject();
-};
-
-DecisionTableValue.prototype.filledValue = function() {
-    return !!this.value.length;
-};
-
-//DecisionTableSingleValue
-var DecisionTableSingleValue = function(settings) {
-    DecisionTableValue.call(this, settings);
-};
-
-DecisionTableSingleValue.prototype = new DecisionTableValue();
-
-DecisionTableSingleValue.prototype.createValueControl = function() {
-    var that = this;
-    return function() {
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.value = that.value || "";
-        return input;
-    };
-};
-
-DecisionTableSingleValue.prototype.updateHTML = function() {
-    if(this.html) {
-        if(this.value) {
-            $(this.html).find('span').text(this.value);
-        } else {
-            $(this.html).find('span').html('&nbsp;');
-        }
-        $(this.html).find('input').val(this.value);
-    }
-    return this;
-};
-
-DecisionTableSingleValue.prototype.createHTML = function() {
-    if(this.html) {
-        return this.html;
-    }
-
-    var cell;
-
-    cell = this.createHTMLElement('td');
-
-    //span.tabIndex = 0; //<----remove
-    cell.appendChild(this.expression.getHTML());
-
-    this.html = cell;
-
-    //this.attachListeners();
-
-    return cell;
-};
-
-//DecisionTableValueEvaluation
-var DecisionTableValueEvaluation = function(settings) {
-    DecisionTableValue.call(this, settings);
-    this.operator = null;
-    DecisionTableValueEvaluation.prototype.initObject.call(this, settings);
-};
-
-DecisionTableValueEvaluation.prototype = new DecisionTableValue();
-
-DecisionTableValueEvaluation.prototype.OPERATORS = ["==", ">=", "<=", ">", "<", "!="/*, "within", "not within"*/];
-
-DecisionTableValueEvaluation.prototype.initObject = function(settings) {
-    this.setOperator(settings.operator || "");
-};
-
-DecisionTableValueEvaluation.prototype.setOperator = function(operator) {
-    this.operator = operator;
-
-    return this;
-};
-
-DecisionTableValueEvaluation.prototype.createHTML = function () {
-    if(this.html) {
-        return this.html;
-    }
-
-    var valueCell, operatorCell, span;
-    valueCell = DecisionTableSingleValue.prototype.createHTML.call(this);
-
-    operatorCell = this.createHTMLElement("td");
-    operatorCell.className = 'decision-table-operator';
-    span = this.createHTMLElement("span");
-    span.tabIndex = 0;
-    if(this.operator) {
-        span.appendChild(document.createTextNode(this.operator));
-    } else {
-        span.innerHTML = '&nbsp';
-    }
-    operatorCell.appendChild(span);
-
-    this.html = [operatorCell, valueCell];
-
-    this.attachListeners();
-
-    return this.html;
-};
-
-DecisionTableValueEvaluation.prototype.fillOperators = function(select) {
-    var i, option;
-
-    $(select).append('<option></option>');
-
-    for(i = 0; i < this.OPERATORS.length; i+=1) {
-        option = this.createHTMLElement("option");
-        option.label = option.value = this.OPERATORS[i];
-        option.appendChild(document.createTextNode(this.OPERATORS[i]));
-        option.selected = this.OPERATORS[i] === this.operator;
-        select.appendChild(option);
-    }
-
-    return select;
-};
-
-DecisionTableValueEvaluation.prototype.createValueControl = function() {
-    var that = this;
-    return function() {
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.value = that.value || "";
-        return input;
-    };
-};
-
-DecisionTableValueEvaluation.prototype.createOperatorControl = function() {
-    var that = this;
-    return function() {
-        var select = document.createElement('select');
-        that.fillOperators(select);
-        select.value = that.operator;
-        return select;
-    };
-};
-
-DecisionTableValueEvaluation.prototype.attachListeners = function() {
-    if(!this.html || !this.html.push) {
-        return this;
-    }
-
-    $(this.html[0]).on('focus', 'span', this.onEnterCellHandler(this.createOperatorControl()))
-        .on('blur', 'select', this.onLeaveCellHandler('operator'));
-
-    return this;
-};
-
-DecisionTableValueEvaluation.prototype.filledValue = function() {
-    return !!this.operator && DecisionTableValue.prototype.filledValue.call(this);
-};
-
-DecisionTableValueEvaluation.prototype.isValid = function() {
-    var res = DecisionTableValue.prototype.isValid.call(this);
-
-    if(!res.valid) {
-        $(this.html[0]).removeClass('error');
-    } else {
-        res = {
-            valid: (!!this.value.length === !!this.operator)
-        };
-        if(!res.valid) {
-            $(this.html).addClass('error');
-            res.message = this.language.ERROR_MISSING_EXPRESSION_OR_OPERATOR;
-        } else {
-            $(this.html).removeClass('error');
-        }
-    }
-
-    return res;
-};
-
-DecisionTableValueEvaluation.prototype.getOperator = function() {
-    return this.operator;
-};
-
 /**
  * @class Store
  * Description of the class Store...
@@ -16519,7 +8885,7 @@ MessagePanel.prototype.fixPositions = function () {
 };
 /*global FieldOption, Field, Element, OptionTextField, $, document, OptionSelectField,
  getRelativePosition, OptionCheckBoxField, OptionDateField, replaceExpression, editorWindow,
- translate, MultipleItemPanel, PROJECT_MODULE, CriteriaField, PMSE_DECIMAL_SEPARATOR, OptionTextArea, OptionNumberField
+ translate, MultipleItemPanel, PROJECT_MODULE, CriteriaField, PMSE_DECIMAL_SEPARATOR, TextAreaUpdaterItem, OptionNumberField
  */
 
 /**
@@ -16556,7 +8922,12 @@ var UpdaterField = function (options, parent) {
     this.fieldHeight = null;
     this.visualObject = null;
     this.language = {};
-    this.panelList = [];
+    this._variables = [];
+    this._datePanel = null;
+    this._variablesList = null;
+    this._attachedListeners = false;
+    this._decimalSeparator = null;
+    this._numberGroupingSeparator = null;
     UpdaterField.prototype.initObject.call(this, options);
 };
 
@@ -16579,12 +8950,16 @@ UpdaterField.prototype.initObject = function (options) {
         language: {
             LBL_ERROR_ON_FIELDS: 'Please, correct the fields with errors'
         },
-        hasCheckbox : false
+        hasCheckbox : false,
+        decimalSeparator: ".",
+        numberGroupingSeparator: ","
     };
     $.extend(true, defaults, options);
     this.language = defaults.language;
     this.setFields(defaults.fields);
     this.hasCheckbox = defaults.hasCheckbox;
+    this._decimalSeparator = defaults.decimalSeparator;
+    this._numberGroupingSeparator = defaults.numberGroupingSeparator;
     //this.hasCheckbox
         //.setFieldHeight(defaults.fieldHeight);
 };
@@ -16622,16 +8997,30 @@ UpdaterField.prototype.getObjectValue = function () {
     var f, auxValue = [];
 
     for (f = 0; f < this.options.length; f += 1) {
-        if (!this.options[f].disabled) {
-
-            auxValue.push(this.options[f].getJSONObject());
+        if (!this.options[f].isDisabled()) {
+            auxValue.push(this.options[f].getData());
         }
     }
     this.value = JSON.stringify(auxValue);
     return Field.prototype.getObjectValue.call(this);
-
 };
 
+UpdaterField.prototype._parseSettings = function (settings) {
+    var map = {
+        value: "name",
+        text: "label",
+        type: "fieldType",
+        len: "maxLength",
+        optionItem: "options",
+        required: "required"
+    }, parsedSettings = {}, key;
+    for (key in settings) {
+        if (settings.hasOwnProperty(key) && map[key]) {
+            parsedSettings[map[key]] = settings[key];
+        }
+    }
+    return parsedSettings;
+};
 
 /**
  * Sets child option fiels into updater container
@@ -16647,52 +9036,56 @@ UpdaterField.prototype.setOptions = function (settings) {
     this.list = settings;
     for (i = 0; i < settings.length; i += 1) {
         /*CREATE INPUT FIELD*/
-        switch (settings[i].type) {
+        settings[i] = this._parseSettings(settings[i]);
+        settings[i].parent = this;
+        settings[i].allowDisabling = this.hasCheckbox;
+        settings[i].disabled = this.hasCheckbox;
+        switch (settings[i].fieldType) {
         case 'TextField':
-            newOption =  new OptionTextField(settings[i], this);
+            newOption =  new TextUpdaterItem(settings[i]);
             break;
         case 'TextArea':
-            newOption =  new OptionTextArea(settings[i], this);
+            newOption =  new TextAreaUpdaterItem(settings[i]);
             break;
         case 'Date':
         case 'Datetime':
-            newOption =  new OptionDateField(settings[i], this);
+            newOption =  new DateUpdaterItem(settings[i]);
             break;
         case 'DropDown':
             aUsers = [];
-            if (settings[i].optionItem instanceof Array) {
+            if (settings[i].options instanceof Array) {
                 if (settings[i].value === 'assigned_user_id') {
                     aUsers = [
                         {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
                     ];
-                    customUsers = aUsers.concat(settings[i].optionItem);
-                    settings[i].optionItem = customUsers;
+                    customUsers = aUsers.concat(settings[i].options);
+                    settings[i].options = customUsers;
                 }
             } else {
-                if (settings[i].optionItem) {
-                    $.each(settings[i].optionItem, function (key, value) {
+                if (settings[i].options) {
+                    $.each(settings[i].options, function (key, value) {
                         aUsers.push({value: key, text: value});
                     });
                 }
-                settings[i].optionItem = aUsers;
+                settings[i].options = aUsers;
 
             }
-            newOption =  new OptionSelectField(settings[i], this);
+            newOption =  new DropdownUpdaterItem(settings[i]);
             break;
         case 'Checkbox':
-            newOption =  new OptionCheckBoxField(settings[i], this);
+            newOption =  new CheckboxUpdaterItem(settings[i]);
             break;
         case 'Integer':
         case 'Currency':
         case 'Decimal':
         case 'Float':
             //newOption =  new OptionNumberField(settings[i], this);
-            newOption =  new OptionNumberCriteriaField(settings[i], this);
+            newOption =  new NumberUpdaterItem(settings[i]);
             break;
         default:
-            newOption =  new OptionTextField(settings[i], this);
+            newOption =  new TextUpdaterItem(settings[i]);
             break;
         }
 
@@ -16718,6 +9111,30 @@ UpdaterField.prototype.setOptionsHTML = function () {
             }
             this.visualObject.appendChild(insert);
         }
+    }
+    return this;
+};
+
+UpdaterField.prototype.closePanels = function () {
+    if (this._datePanel) {
+        this._datePanel.close();
+    }
+    if (this._variablesList) {
+        this._variablesList.close();
+    }
+    return this;
+};
+
+UpdaterField.prototype.attachListeners = function () {
+    var that = this;
+    if (this.html && !this._attachedListeners) {
+        jQuery(this.visualObject).on('scroll', function () {
+            jQuery(this.parent.body).trigger('scroll');
+        });
+        jQuery(this.parent.body).on('scroll', function () {
+            that.closePanels();
+        });
+        this._attachedListeners = true;
     }
     return this;
 };
@@ -16796,13 +9213,13 @@ UpdaterField.prototype.setValue = function (value) {
             if (fields && fields.length > 0) {
                 for (i = 0; i < fields.length; i += 1) {
                     for (j = 0; j < this.options.length; j += 1) {
-                        if (fields[i].field === this.options[j].field) {
-                            this.options[j].disabled = false;
-                            if (this.hasCheckbox) {
+                        if (fields[i].field === this.options[j].getName()) {
+                            this.options[j].enable();    
+                            /*if (this.hasCheckbox) {
                                 this.options[j].checkboxControl.checked = true;
-                            }
-                            this.options[j].control.disabled = false;
-                            this.options[j].value = fields[i].value;
+                            }*/
+                            //this.options[j].control.disabled = false;
+                            this.options[j].setValue(fields[i].value); //this.options[j].value = fields[i].value;
                             //this.options[j].value = fields[i].value;
 //                            if (this.options[j].fieldType === 'date') {
 //                                $(this.options[j].textControl)
@@ -16811,18 +9228,18 @@ UpdaterField.prototype.setValue = function (value) {
 //                                $(this.options[j].textControl)
 //                                    .datetimepicker("option", {disabled: false});
 //                            }
-                            if (this.options[j].type === 'OptionCheckBoxField') {
+                            /*if (this.options[j].type === 'OptionCheckBoxField') {
                                 //this.options[j].control.checked = ((fields[i].value === 'on') ? true : false);
                                 this.options[j].control.checked = fields[i].value;
-                            }
-                            if (this.options[j].type === 'OptionDateField' || this.options[j].type === 'OptionNumberCriteriaField') {
+                            }*/
+                            /*if (this.options[j].type === 'OptionDateField' || this.options[j].type === 'OptionNumberCriteriaField') {
                                 //for (k = 0; k < fields[i].value)
                                 this.options[j].addCriteriaItems(fields[i].value);
                                 this.options[j].timerCriteria.enable();
                                 this.options[j].disabled = false;
 
-                            }
-                            this.options[j].control.value = fields[i].value;
+                            }*/
+                            //this.options[j].control.value = fields[i].value;
                             //
                             break;
                         }
@@ -16844,33 +9261,29 @@ UpdaterField.prototype.isValid = function () {
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
         //valid = valid && field.isValid();
-        if (field.required) {
+        if (field.isRequired()) {
             switch (field.type) {
-            case 'OptionCheckBoxField':
-                if (!field.control.checked) {
-                    valid = false;
-                }
+            case 'CheckboxUpdaterItem':
+                valid = field.getValue();
                 break;
-            case 'OptionDateField':
-                if (field.timerCriteria.getObject().length === 0) {
-                    valid = false;
-                }
+            case 'DateUpdaterItem':
+            case 'NumberUpdaterItem':
+                valid = !!field.getValue().length;
                 break;
             default:
-                if (field.control.value === '') {
+                if (field.getValue() === '') {
                     valid = false;
                 }
                 break;
             }
 
         }
-        if (field.type === 'OptionDateField' && !field.timerCriteria.isValid()) {
+        //TODO: create validation for expressions built with expressionControl.
+        /*if (field.type === 'DateUpdaterItem' && !field.timerCriteria.isValid()) {
             valid = false;
-        }
-        if (field.parent.hasCheckbox) {
-            if (!field.checkboxControl.checked) {
-                valid = true;
-            }
+        }*/
+        if (field._parent.hasCheckbox && field.isDisabled()) {
+            valid = true;
         }
 
         if (!valid) {
@@ -16896,11 +9309,33 @@ UpdaterField.prototype.isValid = function () {
  * for handling variables in sugar
  * @param {String} module
  */
-UpdaterField.prototype.getAddVariableHandler = function (module) {
+UpdaterField.prototype._onValueGenerationHandler = function (module) {
     var  that = this;
-    return function (value) {
+    return function () {
+        var newExpression, field = that.currentField, control, i, currentValue = field.getValue(), aux, aux2,
+            panel, list;
 
-        var input, currentValue, i, newExpression = "{::" + module + "::" + value + "::}", aux, aux2, field = that.currentField;
+        control = field._control;
+        if (this instanceof ExpressionControl) {
+            panel = arguments[0];
+            newExpression = panel.getValueObject();
+        } else {
+            panel = arguments[0];
+            list = arguments[1];
+            newExpression = "{::" + module + "::" + arguments[2].name  + "::}";
+            i = control.selectionStart;
+            i = i || 0;
+            aux = currentValue.substr(0, i);
+            aux2 = currentValue.substr(i);
+            newExpression = aux + newExpression + aux2;
+        }
+        
+        field.setValue(newExpression);
+        if (!(panel instanceof ExpressionControl)) {
+            panel.close();  
+        }
+    //Previous version
+        /*var input, currentValue, i, newExpression = "{::" + module + "::" + value + "::}", aux, aux2, field = that.currentField;
         if (this.parent.belongsTo.tagName.toLowerCase() === "input") {
             input = $(field.control).get(0);
             currentValue = input.value;
@@ -16951,7 +9386,7 @@ UpdaterField.prototype.getAddVariableHandler = function (module) {
             input.nodeValue = value;
             //editorWindow.getSelection().anchorOffset = 8;
         }
-        that.multiplePanel.close();
+        that.multiplePanel.close();*/
     };
 };
 
@@ -16961,23 +9396,125 @@ UpdaterField.prototype.getAddVariableHandler = function (module) {
  * finally add a windows close event for close the control panel
  * @param {Object} field
  */
-UpdaterField.prototype.showPanelOnField = function (field) {
-    var that = this, settings, inputPos, textSize, subjectInput, i;
+UpdaterField.prototype.openPanelOnItem = function (field) {
+    var that = this, settings, inputPos, textSize, subjectInput, i, 
+        variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
+        currentOwner, fieldType = field.getFieldType();
 
-    this.currentField = field;
+    if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
+        if (!this._variablesList) {
+            this._variablesList = new FieldPanel({
+                className: "updateritem-panel",
+                //height: "auto",
+                items: [
+                    {
+                        type: "list",
+                        bodyHeight: 100,
+                        collapsed: false,
+                        itemsContent: "{{label}}",
+                        fieldToFilter: "type",
+                        title: translate('LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE').replace(/%MODULE%/g, PROJECT_MODULE)
+                    }
+                ],
+                onItemValueAction: this._onValueGenerationHandler(PROJECT_MODULE),
+                onOpen: function () {
+                    jQuery(that.currentField.html).addClass("opened");
+                },
+                onClose: function () {
+                    jQuery(that.currentField.html).removeClass("opened");
+                }
+            });    
+        }
+        if (this._datePanel && this._datePanel.isOpen()) {
+            this._datePanel.close();
+        }
+        targetPanel = this._variablesList;
+        list = this._variablesList.getItems()[0];
+        currentFilters = list.getFilter();
+        //We check if the variables list has the same filter than the one we need right now, 
+        //if it do then we don't need to apply the data filtering for a new criteria
+        if (fieldType === 'TextField' || fieldType === 'TextArea' || fieldType === 'Name') {
+            if (list.getFilterMode() === 'inclusive') {
+                list.setFilterMode('exclusive') 
+                    .setDataItems(this._variables, "fieldType", ["Checkbox", "DropDown"]);      
+            }
+        } else if (!(currentFilters.length === 1 && currentFilters.indexOf(field._fieldType) > 0)) {        
+            list.setFilterMode('inclusive')         
+                .setDataItems(this._variables, "fieldType", field._fieldType);      
+        }
+        this.currentField = field;
+    } else {
+        if (!this._datePanel) {
+            this._datePanel = new ExpressionControl({
+                className: "updateritem-panel",
+                onChange: this._onValueGenerationHandler(PROJECT_MODULE),
+                appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
+                decimalSeparator: this._decimalSeparator,
+                numberGroupingSeparator: this._numberGroupingSeparator,
+                onOpen: function () {
+                    jQuery(that.currentField.html).addClass("opened");
+                },
+                onClose: function () {
+                    jQuery(that.currentField.html).removeClass("opened");
+                }
+            });
+        }
+        //Check if the panel is already configured for the current field's type
+        //in order to do it, we verify if the current field class is the same that the previous field's.
+        if (!this.currentField || (this.currentField.constructor !== field.constructor)) {
+            if (field instanceof DateUpdaterItem) {
+                this._datePanel.setOperators({
+                    arithmetic: ["+", "-"]
+                }).setConstantPanel({
+                    date: true, 
+                    timespan: true
+                });
+            } else {
+                this._datePanel.setOperators({
+                    arithmetic: true
+                }).setConstantPanel({
+                    basic: {
+                        number: true
+                    }
+                });
+            }
+            this._datePanel.setVariablePanel({
+                data: [{
+                    name: PROJECT_MODULE,
+                    value: PROJECT_MODULE,
+                    items: this._variables
+                }],
+                dataFormat: "hierarchical",
+                typeField: "fieldType",
+                typeFilter: field._fieldType,
+                textField: "label",
+                valueField: "name",
+                dataChildRoot: "items",
+                moduleTextField: "name",
+                moduleValueField: "value"
+            });
+        }
+        this.currentField = field;
+        this._datePanel.setValue(field.getValue());
+        if (this._variablesList && this._variablesList.isOpen()) {
+            this._variablesList.close();
+        }
+        targetPanel = this._datePanel;
+    }
 
-    if (!this.multiplePanel) {
-        this.multiplePanel = new MultipleItemPanel({
-            belongsTo: document.getElementById("email_subject"),
+    /*if (!this.multiplePanel) {
+        this.multiplePanel = new ExpressionControl({
+            onChange: this._onValueGenerationHandler(PROJECT_MODULE),
             matchParentWidth: false,
-            width: 18
+            expressionVisualizer: false,
+            width: 200
         });
 
         if (field.fieldType !== 'date' && field.fieldType !== 'datetime') {
 
 
             this.multiplePanel.addSubpanel({
-                title: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', translate('LBL_PMSE_LABEL_TARGETMODULE')),
+                title: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', 'pmse_Project', translate('LBL_PMSE_LABEL_TARGETMODULE')),
                 collapsable: true,
                 items: this.panelList,
                 //onOpen: this.getOnOpenHandler(PROJECT_MODULE),
@@ -16986,12 +9523,25 @@ UpdaterField.prototype.showPanelOnField = function (field) {
             document.body.appendChild(this.multiplePanel.getHTML());
         }
     } else {
-        this.multiplePanel.close();
-    }
+        //this.multiplePanel.close();
+    }*/
 
-    subjectInput = $(field.control).get(0);
-    this.multiplePanel.setBelongsTo(subjectInput);
-    this.multiplePanel.open();
+
+    subjectInput = field._control;
+    currentOwner = targetPanel.getOwner();
+    if (currentOwner !== subjectInput) {
+        targetPanel.close(); 
+        targetPanel.setOwner(subjectInput);
+        targetPanel.open();
+    } else {
+        if (targetPanel.isOpen()) {
+            targetPanel.close();
+        } else {
+            targetPanel.open();
+        }
+    }
+    
+    /*this.multiplePanel.open();
     if (this.multiplePanel.subpanels[0]) {
         this.multiplePanel.subpanels[0].open();
     }
@@ -17006,971 +9556,736 @@ UpdaterField.prototype.showPanelOnField = function (field) {
         if (that.multiplePanel) {
             that.multiplePanel.close();
         }
-    });
-
+    });*/
+    
+    return this;
 };
-UpdaterField.prototype.setPanelList = function (field) {
-    this.panelList = field;
+UpdaterField.prototype.setVariables = function (variables) {
+    this._variables = variables;
     return this;
 };
 
-/**
- * @class OptionField
- * create a base object to represent a field and create option elements in
- * common between the different types of form elements
- *
- *             //i.e.
- *             var optionField = new OptionField({
- *                  //if the field is disabled
- *                  disabled: false,
- *                  //set the field value
- *                  value: 'the_value',
- *                  //if the field will be submited
- *                  mane: 'the_mane',
- *                  //type of field
- *                  fieldType: 'Date'
- *                  //max length of field
- *                  maxLength: 470,
- *                  //if field is requiered
- *                  required: false
- *                   //if field has a config button
- *                  configBtn: false
- *              });
- *
- * @extends Element
- *
- * @param {Object} options configuration options for the field object
- * @param {Object} parent
- * @constructor
- */
-var OptionField = function (options, parent) {
-    Element.call(this, options);
-    /**
-     * Defines the parent Form
-     * @type {Form}
-     */
-    this.parent = null;
-    this.value = null;
-    this.maxLength = null;
-    this.required = null;
-    this.configBtn = null;
-    this.field = null;
-    OptionField.prototype.initObject.call(this, options, parent);
-};
-
-OptionField.prototype = new Element();
-OptionField.prototype.type = 'OptionField';
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} options
- * @param {Object} parent
- */
-OptionField.prototype.initObject = function (options, parent) {
-    var defaults;
-
-    defaults = {
-        disabled: false,
-        value: "",
-        name: null,
-        fieldType: null,
-        maxLength: 0,
-        required: false,
-        configBtn: null,
-        type : null,
-        field: null
-
-    };
-    $.extend(true, defaults, options);
-    this.disabled = defaults.disabled;
-    if (parent && parent.hasCheckbox) {
-        this.disabled = true;
-    }
-    this.setParent(parent)
-        .setRequired(defaults.required)
-        .setMaxLength(defaults.maxLength)
-        .setActive(defaults.active)
-        .setfield(defaults.value)
-        .setName(defaults.text)
-        .createControl()
-        .createConfigBtn(defaults.configBtn);
-    this.fieldType = defaults.type;
-};
-
-/**
- * Sets to current field a parent object to maintain a relationship
- * @param {Object} value
- * @chainable
- */
-OptionField.prototype.setParent = function (value) {
-    this.parent = value;
-    return this;
-};
-
-/**
- * Sets as required that field for represent with (*) char and later make validations
- * @param {Boolean} required
- * @chainable
- */
-OptionField.prototype.setRequired = function (required) {
-    this.required = !!required;
-    if (this.html) {
-        $(this.html).find('.required.noshadow').show();
-    }
-    return this;
-};
-
-/**
- * Sets field max length permitted, to make validations for save.
- * @param {Boolean} maxLength
- * @chainable
- */
-OptionField.prototype.setMaxLength = function (maxLength) {
-    maxLength = parseInt(maxLength, 10);
-    if (!isNaN(maxLength)) {
-        this.maxLength = maxLength;
-        if (this.control) {
-            if (maxLength > 0) {
-                this.control.maxLength = maxLength;
-            } else {
-                this.control.removeAttribute('maxlength');
-            }
-        }
-    }
-    return this;
-};
-
-/**
- * Sets active propertie to enable that element
- * @param {Boolean} value
- * @chainable
- */
-OptionField.prototype.setActive = function (value) {
-    this.active = value;
-    return this;
-};
-
-/**
- * Sets mane of the element.
- * @param {Boolean} value
- * @chainable
- */
-OptionField.prototype.setName = function (value) {
-    this.name = value;
-    return this;
-};
-
-/**
- * Sets field of element.
- * @param {Boolean} value
- * @chainable
- */
-OptionField.prototype.setfield = function (value) {
-    this.field = value;
-    return this;
-};
-
-/**
- * Generic method to create control element
- * @chainable
- */
-OptionField.prototype.createControl = function () {
-    return this;
-};
-
-/**
- * Generic method to create config button
- * @chainable
- */
-OptionField.prototype.createConfigBtn = function () {
-    return this;
-};
-
-/**
- * Update de html field control setting the current value
- * @chainable
- */
-OptionField.prototype.updateHTML = function () {
-    if (this.control) {
-        $(this.control).val(this.value || "");
-    }
-
-    return this;
-};
-
-/**
- * Gets JSON object (field, name, value and type) to send the server
- * @chainable
- */
-OptionField.prototype.getJSONObject = function () {
-    var obj;
-    if (this.type === 'OptionDateField' || this.type === 'OptionNumberCriteriaField') {
-        obj = {
-            field: this.field,
-            name: this.name,
-            value: this.timerCriteria.getObject(),
-            type: this.fieldType
-        };
-    } else if (this.type === 'OptionCheckBoxField') {
-        obj = {
-            field: this.field,
-            name: this.name,
-            value: this.control.checked,
-            type: this.fieldType
-        };
-    } else {
-        obj = {
-            field: this.field,
-            name: this.name,
-            value: this.control.value,
-            type: this.fieldType
-        };
-    }
-
-    return obj;
-};
-
-/**
- * Creates the basic html node structure for the given object using its
- * previously defined properties
- * @return {HTMLElement}
- */
-OptionField.prototype.createHTML = function () {
-    var div,
-        checkbox,
-        label,
-        span;
-    Element.prototype.createHTML.call(this);
-    this.style.removeProperties(['width', 'height', 'position', 'top', 'left', 'z-index']);
-    this.style.width = '100%';
-    this.style.addClasses(['row']);
-
-    /* CREATE THE CHECKBOX*/
-    div = this.createHTMLElement('div');
-    div.className = 'cell';
-    div.style.width = '20%';
-
-    if (this.parent.hasCheckbox) {
-        checkbox = document.createElement('input');
-        checkbox.id = "chk_" + this.id;
-        checkbox.type = 'checkbox';
-        checkbox.className = 'adam-updater-checkbox';
-        div.appendChild(checkbox);
-        this.checkboxControl = checkbox;
-    }
-
-    /* CREATE LABEL OF THE FIELDOPTION */
-    label = document.createElement('span');
-    label.innerHTML = this.name;
-    label.className = 'adam-updater-label';
-    div.appendChild(label);
-    label = label.cloneNode(false);
-    label.className = 'required noshadow';
-    label.textContent = ' *';
-    label.style.display = this.required ? 'inline' : 'none';
-    div.appendChild(label);
-    this.html.appendChild(div);
-
-    /* CREATE THE CONTROL */
-    div = this.createHTMLElement('div');
-    div.className = 'cell';
-    div.style.width = '70%';
-    div.appendChild(this.control);
-    if (this.configBtn) {
-        div.appendChild(this.configBtn);
-    }
-    this.html.appendChild(div);
-
-    /*CREATE THE TOOLTIP*/
-    div = this.createHTMLElement('div');
-    div.className = 'cell';
-    div.style.width = '5%';
-    if (this.errorTooltip) {
-        div.appendChild(this.errorTooltip.getHTML());
-    }
-    this.html.appendChild(div);
-
-    /*CLEAR THE STYPES*/
-    div = this.createHTMLElement('div');
-    div.className = 'clear';
-    this.html.appendChild(div);
-
-
-    this.attachListeners();
-    return this.html;
-};
-
-/**
- * Attaches event listeners to the text field , it also call some methods to set and evaluate
- * the current value (to send it to the database later).
- *
- * The events attached to this field are:
- *
- * - {@link OptionField#event-click click to mouse event}
- *
- * @chainable
- */
-OptionField.prototype.attachListeners = function () {
-    var root = this;
-
-    $(this.checkboxControl).click(function (e) {
-        if (root.checkboxControl.checked) {
-            if (root.timerCriteria) {
-                root.timerCriteria.enable();
-            } else {
-                root.control.disabled = false;
-
-            }
-            root.disabled = false;
-        } else {
-            if (root.timerCriteria) {
-                root.timerCriteria.disable();
-            } else {
-                root.control.disabled = true;
-
-                $(root.control).removeClass('required');
-            }
-            root.disabled = true;
-
-        }
-    });
-    $(this.control).on('change', function (e) {
-        root.parent.isValid();
-    });
-    return this;
-};
-
-
-//Control text field
-var OptionTextField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    OptionTextField.prototype.initObject.call(this, settings);
-};
-
-OptionTextField.prototype = new OptionField();
-
-OptionTextField.prototype.type = "OptionTextField";
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} settings
- */
-OptionTextField.prototype.initObject = function (settings) {
-    var defaults = {
-        configBtn: null
+//UpdaterItem
+    var UpdaterItem = function (settings) {
+        Element.call(this, settings);
+        this._parent = null;
+        this._name = null;
+        this._label = null;
+        this._required = null;
+        this._dom = {};
+        this._activationControl = null;
+        this._control = null;
+        this._disabled = null;
+        this._value = null;
+        this._fieldType = null;
+        this._configButton = null;
+        this._attachedListeners = false;
+        this._dirty = false;
+        this._allowDisabling = true;
+        UpdaterItem.prototype.init.call(this, settings);
     };
 
-    $.extend(true, defaults, settings);
-    //this.createConfigBtn(defaults.configBtn);
-};
-
-OptionTextField.prototype.createControl = function () {
-    var that = this;
-    this.control = document.createElement('input');
-    this.control.type = 'text';
-    this.control.style.marginLeft = '7px';
-    //if (this.disabled) {
-    this.control.disabled = this.disabled;
-    //}
-//    $(this.control).on('keydown', function(e){
-//        e.stopPropagation();
-//    }).on('keyup', function (e) {
-//            e.stopPropagation();
-//        });
-
-    $(this.control).on('blur', function () {
-        if (that.parent.multiplePanel) {
-            that.parent.multiplePanel.close();
-        }
-
-
-    });
-    return this;
-};
-OptionTextField.prototype.createConfigBtn = function () {
-    var a,
-        span,
-        that = this;
-    a = document.createElement('a');
-    a.id = "conf_" + this.id;
-
-    span = document.createElement('span');
-    span.className = 'adam-item-icon adam-menu-icon-configure';
-    span.style.top = '0px';
-    span.style.position = 'relative';
-    span.style.display = 'inline-block';
-    a.appendChild(span);
-
-    this.configBtn = a;
-    $(this.configBtn).on('click', function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if (!that.disabled) {
-            that.parent.showPanelOnField(that);
-            that.control.focus();
-        }
-    });
-
-    return this;
-};
-
-//Control text field
-var OptionTextArea = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    OptionTextArea.prototype.initObject.call(this, settings);
-};
-
-OptionTextArea.prototype = new OptionField();
-
-OptionTextArea.prototype.type = "OptionTextArea";
-OptionTextArea.prototype.initObject = function (settings) {
-    var defaults = {
-        configBtn: null
-    };
-
-    $.extend(true, defaults, settings);
-    //this.createConfigBtn(defaults.configBtn);
-};
-
-OptionTextArea.prototype.createControl = function () {
-    var that = this;
-    this.control = document.createElement('textarea');
-    this.control.type = 'text';
-    this.control.style.marginLeft = '7px';
-    //if (this.disabled) {
-    this.control.cols = "35";
-    //this.control.rows = "40";
-    this.control.disabled = this.disabled;
-    //}
-//    $(this.control).on('keydown', function(e){
-//        e.stopPropagation();
-//    }).on('keyup', function (e) {
-//            e.stopPropagation();
-//        });
-
-    $(this.control).on('blur', function () {
-        if (that.parent.multiplePanel) {
-            that.parent.multiplePanel.close();
-        }
-
-
-    });
-    return this;
-};
-OptionTextArea.prototype.createConfigBtn = function () {
-    var a,
-        span,
-        that = this;
-    a = document.createElement('a');
-    a.id = "conf_" + this.id;
-
-    span = document.createElement('span');
-    span.className = 'adam-item-icon adam-menu-icon-configure';
-    span.style.top = '0px';
-    span.style.position = 'relative';
-    span.style.display = 'inline-block';
-    a.appendChild(span);
-
-    this.configBtn = a;
-    $(this.configBtn).on('click', function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if (!that.disabled) {
-            that.parent.showPanelOnField(that);
-            that.control.focus();
-        }
-    });
-
-    return this;
-};
-
-
-
-//Control Number field
-var OptionNumberField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    OptionNumberField.prototype.initObject.call(this, settings);
-    this.configBtn = null;
-};
-
-OptionNumberField.prototype = new OptionField();
-
-OptionNumberField.prototype.type = "OptionNumberField";
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} settings
- */
-OptionNumberField.prototype.initObject = function (settings) {
-    var defaults = {
-        configBtn: null
-    };
-
-    $.extend(true, defaults, settings);
-    //this.createConfigBtn(defaults.configBtn);
-};
-
-OptionNumberField.prototype.createControl = function () {
-    var that = this;
-    this.control = document.createElement('input');
-    this.control.type = 'text';
-    this.control.style.marginLeft = '7px';
-    //if (this.disabled) {
-    this.control.disabled = this.disabled;
-    //}
-//    $(this.control).on('keydown', function(e){
-//        e.stopPropagation();
-//    }).on('keyup', function (e) {
-//            e.stopPropagation();
-//        });
-
-    $(this.control).on('blur', function () {
-        if (that.parent.multiplePanel) {
-            that.parent.multiplePanel.close();
-        }
-
-
-    });
-
-    $(this.control).on('keydown', function (event) {
-        event.stopPropagation();
-        // Allow: backspace, delete, tab, escape, and enter
-        if (event.keyCode === 46 || event.keyCode === 8 || event.keyCode === 9 || event.keyCode === 27 || event.keyCode === 13 ||
-                // Allow: Ctrl+A
-                (event.keyCode === 65 && event.ctrlKey === true) ||
-                // Allow: home, end, left, right
-                (event.keyCode >= 35 && event.keyCode <= 39)) {
-                // let it happen, don't do anything
-
-            return;
-        } else {
-            // Ensure that it is a number and stop the keypress
-            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-                event.preventDefault();
-            }
-        }
-    }).on('keyup', function (e) {
-        e.stopPropagation();
-    });
-    return this;
-};
-OptionNumberField.prototype.createConfigBtn = function () {
-    var a,
-        span,
-        that = this;
-    a = document.createElement('a');
-    a.id = "conf_" + this.id;
-
-    span = document.createElement('span');
-    span.className = 'adam-item-icon adam-menu-icon-configure';
-    span.style.top = '0px';
-    span.style.position = 'relative';
-    span.style.display = 'inline-block';
-    a.appendChild(span);
-
-    this.configBtn = a;
-    $(this.configBtn).on('click', function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if (!that.disabled) {
-            that.parent.showPanelOnField(that);
-            that.control.focus();
-        }
-    });
-
-    return this;
-};
-
-
-//Control text field
-var OptionCheckBoxField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-};
-
-OptionCheckBoxField.prototype = new OptionField();
-
-OptionCheckBoxField.prototype.type = "OptionCheckBoxField";
-
-OptionCheckBoxField.prototype.createControl = function () {
-    this.control = document.createElement('input');
-    this.control.type = 'checkbox';
-    this.control.style.marginLeft = '7px';
-    this.control.disabled = this.disabled;
-//    $(this.control).on('keydown', function(e){
-//        e.stopPropagation();
-//    }).on('keyup', function (e) {
-//            e.stopPropagation();
-//        });
-
-    return this;
-};
-
-
-
-//Criteria select field
-var OptionSelectField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    this.defaultSelection = null;
-    this.selectedIndex = null;
-    this.preserveDefaultOptions = null;
-    this.options = null;
-    this.dataSource = null;
-    OptionSelectField.prototype.initObject.call(this, settings);
-};
-
-OptionSelectField.prototype = new OptionField();
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} settings
- */
-OptionSelectField.prototype.initObject = function (settings) {
-    var defaults = {
-        dataSource: null,
-        optionItem: {},
-        defaultSelection: null,
-        preserveDefaultOptions: false
-    };
-
-    $.extend(true, defaults, settings);
-    this.options = defaults.optionItem;
-
-    this.setDefaultSelection(defaults.defaultSelection)
-        .fill(this.options)
-        .setDataSource(defaults.dataSource)
-        .setPreserveDefaultOptions(defaults.preserveDefaultOptions);
-};
-
-OptionSelectField.prototype.setPreserveDefaultOptions = function (preserve) {
-    this.preserveDefaultOptions = preserve;
-
-    return this;
-};
-
-OptionSelectField.prototype.setDefaultSelection = function (selection) {
-    this.defaultSelection = selection;
-
-    return this;
-};
-
-OptionSelectField.prototype.getSelectedText = function () {
-    var selectedOption = $(this.control).find('option:selected');
-    return selectedOption.get(0) ? selectedOption.text() : null;
-};
-
-OptionSelectField.prototype.setDataSource = function (dataSource) {
-    if (typeof dataSource === 'object') {
-        this.dataSource = $.extend(true, {
-            labelField: 'text',
-            valueField: 'value',
-            itemsField: 'result'
-        }, dataSource);
-    }
-
-    return this;
-};
-
-OptionSelectField.prototype.clear = function () {
-    $(this.control).empty();
-    this.value = "";
-
-    return this;
-};
-
-
-OptionSelectField.prototype.fill = function (data, labelField, valueField) {
-    var i, option, l, v, s, ifSelected = false, that = this,
-        defaultSelection = this.defaultSelection;
-
-    labelField = labelField || "label";
-    valueField = valueField || "value";
-
-    $(this.control).empty();
-
-    //for (var item in data) {
-    if (data) {
-        //$.each(data, function (key, value) {
-        for (i = 0; i < data.length; i += 1) {
-            l = data[i].value;
-            v = data[i].text;
-            s = false;
-            option = document.createElement('option');
-            option.label = v;
-            option.value = l;
-            option.selected = s;
-            ifSelected = s || ifSelected;
-            option.appendChild(document.createTextNode(v || l));
-            that.control.appendChild(option);
-        }
-
-       // });
-
-        if (!ifSelected) {
-            if (defaultSelection === '[first]') {
-                $(this.control).find('option:first').attr("selected", true);
-            } else if (defaultSelection === '[none]' || defaultSelection === null) {
-                this.control.selectedIndex = -1;
-            } else {
-                $(this.control).find('option[value="' + defaultSelection + '"]').attr("selected", true);
-            }
-        }
-        this.value = $(this.control).val();
-        this.selectedIndex = this.control.selectedIndex;
-    }
-
-    //this.triggerDependentFields();
-
-    return this;
-};
-
-OptionSelectField.prototype.bind = function (key) {
-    var data, control, i, iField, auxOptions = [];
-
-    if (this.dataSource) {
-        if (!this.control) {
-            this.createControl();
-        }
-
-        if (this.dataSource.source) {
-            if (key) {
-                this.dataSource.source.uid = key;
-            }
-
-            data = this.dataSource.source.getData();
-
-            control = $(this.control);
-            control.empty();
-
-            data = data || [];
-
-            iField = this.dataSource.itemsField;
-
-            data = iField ? data[iField] : data;
-
-            if (data && data.push) {
-                if (this.preserveDefaultOptions) {
-                    for (i = 0; i < this.options.length; i += 1) {
-                        control = {};
-                        control[this.dataSource.labelField] = this.options[i].label;
-                        control[this.dataSource.valueField] = this.options[i].value;
-                        auxOptions.push(control);
-                    }
-                    data = $.merge(auxOptions, data);
-                }
-                this.fill(data, this.dataSource.labelField, this.dataSource.valueField);
-            }
-        }
-//        } else if (this.dependsOn) {
-//           // this.dependsOn.triggerDependentFields();
-//        }
-    }
-    return this;
-};
-
-OptionSelectField.prototype.createControl = function () {
-    this.control = document.createElement("select");
-    this.control.style.marginLeft = '7px';
-    this.control.style.marginBottom = '0px';
-    this.control.disabled = this.disabled;
-    return this;
-};
-
-OptionSelectField.prototype.getHTML = function () {
-    this.bind();
-
-    return UpdaterField.prototype.getHTML.call(this);
-
-};
-
-OptionSelectField.prototype.onAppend = function () {
-    this.control.selectedIndex = this.selectedIndex;
-};
-
-
-//Control text field
-var OptionDateField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    OptionDateField.prototype.initObject.call(this, settings);
-};
-
-OptionDateField.prototype = new OptionField();
-
-OptionDateField.prototype.type = "OptionDateField";
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} settings
- */
-OptionDateField.prototype.initObject = function (settings) {
-    var defaults = {
-        configBtn: null
-    };
-
-    $.extend(true, defaults, settings);
-};
-
-OptionDateField.prototype.createControl = function () {
-    var html,
-        newOption = new CriteriaField({
-            name: 'evn_criteria',
-            label: translate('LBL_PMSE_LABEL_CRITERIA'),
+    UpdaterItem.prototype = new Element();
+    UpdaterItem.prototype.constructor = UpdaterItem;
+    UpdaterItem.prototype.type = "UpdaterItem";
+
+    UpdaterItem.prototype.init = function(settings) {
+        var defaults = {
+            parent: null,
+            name: this.id,
+            label: "[updater item]",
             required: false,
-            fieldWidth: 270,
-            fieldHeight: 40,
-            restClient: this.parent.proxy.restClient,
-            timerCriteria: true,
-            panels: {
-                businessRulesEvaluation: {
-                    enabled: false
-                },
-                formResponseEvaluation: {
-                    enabled: false
-                },
-                logic: {
-                    enabled: false
-                },
-                group: {
-                    enabled: false
-                },
-                userEvaluation: {
-                    enabled: false
-                },
-                fieldEvaluation: {
-                    enabled: false
-                }
-            },
-            decimalSeparator: PMSE_DECIMAL_SEPARATOR
-        }, this.parent.parent);
+            disabled: true,
+            allowDisabling: true,
+            value: "",
+            fieldType: null
+        };
 
-    newOption.setBaseModule(PROJECT_MODULE);
-    this.timerCriteria = newOption;
+        jQuery.extend(true, defaults, settings);
 
-    html = newOption.getHTML();
+        this.setParent(defaults.parent)
+            .setName(defaults.name)
+            .setLabel(defaults.label)
+            .setRequired(defaults.required)
+            .setValue(defaults.value)
+            .setFieldType(defaults.fieldType);
 
-    html.removeChild(html.firstChild);
-    this.control = html;
-    //this.control.disabled = this.disabled;
-    if (this.parent.hasCheckbox) {
-        newOption.disable();
-    }
-    newOption.attachListeners();
-
-    //$(newOption.itemsContainer).removeClass('focused');
-
-    return this;
-};
-
-OptionDateField.prototype.addCriteriaItems = function (data) {
-    var i;
-    for (i = 0; i < data.length; i += 1) {
-        this.timerCriteria.addItem(data[i]);
-    }
-    return this;
-};
-
-
-//Control text field
-var OptionNumberCriteriaField = function (settings, parent) {
-    OptionField.call(this, settings, parent);
-    OptionNumberCriteriaField.prototype.initObject.call(this, settings);
-};
-
-OptionNumberCriteriaField.prototype = new OptionField();
-
-OptionNumberCriteriaField.prototype.type = "OptionNumberCriteriaField";
-
-/**
- * Initializer of the object will all the given configuration options
- * @param {Object} settings
- */
-OptionNumberCriteriaField.prototype.initObject = function (settings) {
-    var defaults = {
-        configBtn: null
+        if (defaults.disabled) {
+            this.disable();
+        } else {
+            this.enable();
+        }
+        if (defaults.allowDisabling) {
+            this.allowDisabling();
+        } else {
+            this.disallowDisabling();
+        }
     };
 
-    $.extend(true, defaults, settings);
-};
+    UpdaterItem.prototype.allowDisabling = function () {
+        this._allowDisabling = true;
+        if (this._activationControl) {
+            this._activationControl.style.display = "";
+        }
+        return this;
+    };
 
-OptionNumberCriteriaField.prototype.createControl = function () {
-    var html,
-        newOption = new CriteriaField({
-            name: 'evn_criteria',
-            label: translate('LBL_PMSE_LABEL_CRITERIA'),
-            required: false,
-            fieldWidth: 270,
-            fieldHeight: 40,
-            restClient: this.parent.proxy.restClient,
-            //timerCriteria: true,
-            panels: {
-                businessRulesEvaluation: {
-                    enabled: false
-                },
-                formResponseEvaluation: {
-                    enabled: false
-                },
-                logic: {
-                    enabled: false
-                },
-                math: {
-                    enabled: false
-                },
-                group: {
-                    enabled: false
-                },
-                userEvaluation: {
-                    enabled: false
-                },
-                fieldEvaluation: {
-                    enabled: false
-                },
-                fixedDateEvaluation: {
-                    enabled: false
-                },
-                sugarDateEvaluation: {
-                    enabled: false
+    UpdaterItem.prototype.disallowDisabling = function () {
+        this._allowDisabling = false;
+        if (this._activationControl) {
+            this._activationControl.style.display = "none";
+        }
+    };
 
-                },
-                unitTimeEvaluation: {
-                    enabled: false
-                },
-                arithmetic: {
-                    enabled: true
-                },
-                variables: {
-                    enabled: true
-                },
-                numbers: {
-                    enabled: true
+    UpdaterItem.prototype.setParent = function (parent) {
+        if (!(parent === null || parent instanceof UpdaterField)) {
+            throw new Error("setParent(): The parameter must be an instance of UpdaterField or null.");
+        }
+        this._parent = parent;
+        return this;
+    };
+
+    UpdaterItem.prototype.setName = function (name) {
+        if (!(typeof name === 'string' && name)) {
+            throw new Error("setName(): The parameter must be a non empty string.");
+        }
+        this._name = name;
+        return this;
+    };
+
+    UpdaterItem.prototype.getName = function () {
+        return this._name;
+    };
+
+    UpdaterItem.prototype.setLabel = function (label) {
+        if (typeof label !== 'string') {
+            throw new Error("setLabel(): The parameter must be a string.");
+        }
+        this._label = label;
+        if (this._dom.labelText) {
+            this._dom.labelText.textContent = label;
+        }
+        return this;
+    };
+
+    UpdaterItem.prototype.setRequired = function (required) {
+        var requireContent = "*";
+        this._required = !!required;
+        if (this._dom.requiredContainer) {
+            if (!this._required) {
+                requireContent = "";
+            }
+            this._dom.requiredContainer.textContent = requireContent;
+        }
+        return this;
+    };
+
+    UpdaterItem.prototype.isRequired = function () {
+        return this._required;
+    };
+
+    UpdaterItem.prototype.isValid = function () {
+        return !!(this._required && this._value);
+    };
+
+    UpdaterItem.prototype.clear = function () {
+        if (this._control) {
+            this._control.value = "";
+        }
+        this._value = "";
+        return this;
+    };
+
+    UpdaterItem.prototype.disable = function () {
+        if (this._activationControl) {
+            this._activationControl.checked = false;
+            this._disableControl();
+        }
+        this.clear();
+        this._disabled = true;
+        return this;
+    };
+
+    UpdaterItem.prototype.enable = function () {
+        if (this._activationControl) {
+            this._activationControl.checked = true;
+            this._enableControl();
+        }
+        this._disabled = false;
+        return this;
+    };
+
+    UpdaterItem.prototype.isDisabled = function () {
+        return this._disabled;
+    };
+
+    UpdaterItem.prototype._setValueToControl = function (value) {
+        this._control.value = value;
+        return this;
+    };
+
+    UpdaterItem.prototype._getValueFromControl = function () {
+        return this._control.value;
+    };
+
+    UpdaterItem.prototype.setValue = function (value) {
+        if (typeof value !== 'string') {
+            throw new Error("setValue(): The parameter must be a string.");
+        }
+        if (this._control) {
+            this._setValueToControl(value);
+            this._value = this._getValueFromControl();    
+        } else {
+            this._value = value;
+        }
+        return this;
+    };
+
+    UpdaterItem.prototype.getValue = function () {
+        return this._value;
+    };
+
+    UpdaterItem.prototype.setFieldType = function (fieldType) {
+        if (!(fieldType === null || typeof fieldType === "string")) {
+            throw new Error("setFieldType(): The parameter must be a string or null.");
+        }
+        this._fieldType = fieldType;
+        return this;
+    };
+
+    UpdaterItem.prototype.getFieldType = function () {
+        return this._fieldType;
+    };
+
+    UpdaterItem.prototype._createControl = function () {
+        if (!this._control) {
+            throw new Error("_createControl(): This method must be called from anUpdaterItem's subclass.");
+        }
+        jQuery(this._control).addClass("updateritem-control");
+        return this._control;
+    };
+
+    UpdaterItem.prototype._createConfigButton = function () {
+        var button = this.createHTMLElement("a");
+        button.href = "#";
+        button.className = "adam-itemupdater-cfg icon-cog";
+        this._configButton = button;
+        return this._configButton;
+    };
+
+    UpdaterItem.prototype._disableControl = function () {
+        this._control.disabled = true;
+        return this;
+    };
+
+    UpdaterItem.prototype._enableControl = function () {
+        this._control.disabled = false;
+        return this;
+    };
+
+    UpdaterField.prototype.isDirty = function () {
+        return this._dirty;
+    };
+
+    UpdaterItem.prototype._onChange = function () {
+        var that = this;
+        return function (e) {
+            var currValue = that._value;
+            that._value = that._getValueFromControl();
+            if (that._value !== currValue) {
+                that._dirty = true;
+            }
+        };
+    };
+
+    UpdaterItem.prototype.getData = function () {
+        return {
+            name: this._label,
+            field: this._name,
+            value: this._value,
+            type: this._fieldType
+        };
+    };
+
+    UpdaterItem.prototype.attachListeners = function () {
+        var that = this;
+        if (this.html && !this._attachedListeners) {
+            jQuery(this._activationControl).on("change", function (e) {
+                if (e.target.checked) {
+                    that.enable();
+                } else {
+                    that.disable();
                 }
-            },
-            decimalSeparator: PMSE_DECIMAL_SEPARATOR
-        }, this.parent.parent);
+            });
+            jQuery(this._configButton).on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (that._parent && !that._disabled) {
+                    that._parent.openPanelOnItem(that);
+                }
+            });
+            jQuery(this._control).on("change", this._onChange());
+        }
+        return this;
+    };
 
-    newOption.setBaseModule(PROJECT_MODULE);
-    this.timerCriteria = newOption;
+    UpdaterItem.prototype.createHTML = function () {
+        var label, 
+            controlContainer, 
+            activationControl,
+            labelContent,
+            labelText, 
+            requiredContainer, 
+            messageContainer,
+            configButton,
+            messageContainer;
 
-    html = newOption.getHTML();
+        if (!this.html) {
+            Element.prototype.createHTML.call(this);
+            jQuery(this.html).addClass("updaterfield-item");
+            this.style.removeProperties(['width', 'height', 'position', 'top', 'left', 'z-index']);
 
-    html.removeChild(html.firstChild);
-    this.control = html;
-    //this.control.disabled = this.disabled;
-    if (this.parent.hasCheckbox) {
-        newOption.disable();
-    }
-    newOption.attachListeners();
+            label = this.createHTMLElement('label');
+            label.className = 'adam-itemupdater-label';
 
-    //$(newOption.itemsContainer).removeClass('focused');
+            controlContainer = this.createHTMLElement("div");
+            controlContainer.className = "adam-itemupdater-controlcontainer";
 
-    return this;
-};
+            activationControl = this.createHTMLElement("input");
+            activationControl.type = "checkbox";
+            activationControl.className = "adam-itemupdater-activation";
 
-OptionNumberCriteriaField.prototype.addCriteriaItems = function (data) {
-    var i;
-    for (i = 0; i < data.length; i += 1) {
-        this.timerCriteria.addItem(data[i]);
-    }
-    return this;
-};
+            labelContent = this.createHTMLElement("span");
+            labelContent.className = "adam-itemupdater-labelcontent";
+
+            labelText = this.createHTMLElement("span");
+            labelText.className = "adam-itemupdater-labeltext";
+
+            requiredContainer = this.createHTMLElement("span");
+            requiredContainer.className = "adam-itemupdater-required required noshadow";
+
+            messageContainer = this.createHTMLElement("div");
+            messageContainer.className = "adam-itemupdater-message";
+
+            labelContent.appendChild(labelText);
+            labelContent.appendChild(requiredContainer);
+
+            label.appendChild(activationControl);
+            label.appendChild(labelContent);
+
+            controlContainer.appendChild(this._createControl());
+            this._createConfigButton();
+            if (this._configButton) {
+                controlContainer.appendChild(this._configButton);    
+            }
+            
+            this._dom.labelText = labelText;
+            this._dom.requiredContainer = requiredContainer;
+
+            this._activationControl = activationControl;
+            this.html.appendChild(label);
+            this.html.appendChild(controlContainer);
+            this.html.appendChild(messageContainer);
+
+            this.setLabel(this._label)
+                .setRequired(this._required);
+            if (this._disabled) {
+                this.disable();
+            } else {
+                this.enable();
+            }
+            if (this._allowDisabling) {
+                this.allowDisabling();
+            } else {
+                this.disallowDisabling();
+            }
+            this.attachListeners();
+            this.setValue(this._value);
+        }
+        return this.html;
+    };
+//TextUpdaterItem
+    var TextUpdaterItem = function (settings) {
+        UpdaterItem.call(this, settings);
+        this._maxLength = null;
+        TextUpdaterItem.prototype.init.call(this, settings);
+    };
+
+    TextUpdaterItem.prototype = new UpdaterItem();
+    TextUpdaterItem.prototype.constructor = TextUpdaterItem;
+    TextUpdaterItem.prototype.type = "TextUpdaterItem";
+
+    TextUpdaterItem.prototype.init = function (settings) {
+        var defaults = {
+            maxLength: 0
+        };
+
+        jQuery.extend(true, defaults, settings);
+
+        this.setMaxLength(defaults.maxLength);
+    };
+
+    TextUpdaterItem.prototype.setMaxLength = function (maxLength) {
+        if (typeof maxLength === 'string' && /\d+/.test(maxLength)) {
+            maxLength = parseInt(maxLength, 10);
+        }
+        if (typeof maxLength !== 'number') {
+            throw new Error("setMaxLength(): The parameter must be a number.");
+        }
+        this._maxLength = maxLength;
+        if (this._control) {
+            if (maxLength) {
+                this._control.maxLength = maxLength;
+            } else {
+                this._control.removeAttribute("maxlength");
+            }
+            
+        }
+        return this;
+    };
+
+    TextUpdaterItem.prototype._createControl = function () {
+        var control = this.createHTMLElement("input");
+        control.type = "text";
+        this._control = control;
+        this.setMaxLength(this._maxLength);
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+//DateUpdaterItem
+    var DateUpdaterItem = function (settings) {
+        UpdaterItem.call(this, settings);
+        DateUpdaterItem.prototype.init.call(this, settings);
+    };
+
+    DateUpdaterItem.prototype = new UpdaterItem();
+    DateUpdaterItem.prototype.constructor = DateUpdaterItem;
+    DateUpdaterItem.prototype.type = "DateUpdaterItem";
+
+    DateUpdaterItem.prototype.init = function (settings) {
+        var defaults = {
+            value: "[]"
+        };
+
+        jQuery.extend(true, defaults, settings);
+
+        this.setValue(defaults.value);
+    };
+
+    DateUpdaterItem.prototype._setValueToControl = function (value) {
+        var friendlyValue = "", i;
+        value.forEach(function(value, index, arr) {
+            friendlyValue += " " + value.expLabel;
+        });
+        this._control.value = friendlyValue;
+        return this;
+    };
+
+    DateUpdaterItem.prototype.setValue = function (value) {
+        if (typeof value === 'string') {
+            value = value || "[]";
+            value = JSON.parse(value);
+        }
+        if (this._control) {
+            this._setValueToControl(value);   
+        }
+        this._value = value;
+        return this;
+    };
+
+    DateUpdaterItem.prototype.clear = function () {
+        UpdaterItem.prototype.clear.call(this);
+        this._value = "[]";
+        return this;
+    };
+
+    DateUpdaterItem.prototype._createControl = function () {
+        var control = this.createHTMLElement("input");
+        control.type = "text";
+        control.readOnly = true;
+        this._control = control;
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+
+    DateUpdaterItem.prototype._createConfigButton = function () {
+        return null;
+    };
+
+    DateUpdaterItem.prototype.attachListeners = function () {
+        var that = this;
+        if (this.html && !this._attachedListeners) {
+            UpdaterItem.prototype.attachListeners.call(this);
+            jQuery(this._control).on("focus", function () {
+                if (that._parent && !this._disabled) {
+                    that._parent.openPanelOnItem(that);
+                }
+            });
+            this._attachedListeners = true;
+        }
+    };
+//CheckboxUpdaterItem
+    var CheckboxUpdaterItem = function (settings) {
+        UpdaterItem.call(this, settings);
+    };
+
+    CheckboxUpdaterItem.prototype = new UpdaterItem();
+    CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
+    CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
+
+    CheckboxUpdaterItem.prototype.setValue = function (value) {
+        if (this._control) {
+            this._setValueToControl(value);
+            this._value = this._getValueFromControl();
+        } else {
+            this._value = !!value;
+        }
+        return this;
+    };
+
+    CheckboxUpdaterItem.prototype._createControl = function () {
+        var control = this.createHTMLElement('input');
+        control.type = "checkbox";
+        this._control = control;
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+
+    CheckboxUpdaterItem.prototype._createConfigButton = function () {
+        return null;
+    };
+
+    CheckboxUpdaterItem.prototype.clear = function () {
+        if (this._control) {
+            this._control.checked = false;
+        }
+        this._value = false;
+        return this;
+    };
+
+    CheckboxUpdaterItem.prototype._setValueToControl = function (value) {
+        this._control.checked = !!value;
+        return this;
+    };
+
+    CheckboxUpdaterItem.prototype._getValueFromControl = function () {
+        return this._control.checked;
+    };
+
+    CheckboxUpdaterItem.prototype._onChange = function () {
+        var that = this;
+        return function (e) {
+            var currValue = that._value;
+            that._value = that._getValueFromControl();
+            if (that._value !== currValue) {
+                that._dirty = true;
+            }
+        };
+    };
+//TextAreaUpdaterItem
+    var TextAreaUpdaterItem = function (settings) {
+        TextUpdaterItem.call(this, settings);
+    };
+
+    TextAreaUpdaterItem.prototype = new TextUpdaterItem();
+    TextAreaUpdaterItem.prototype.constructor = TextAreaUpdaterItem;
+    TextAreaUpdaterItem.prototype.type = "TextAreaUpdaterItem";
+
+    TextAreaUpdaterItem.prototype._createControl = function () {
+        var control = this.createHTMLElement('textarea');
+        this._control = control;
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+//NumberUpdaterItem
+    var NumberUpdaterItem = function (settings) {
+        UpdaterItem.call(this, settings);
+        NumberUpdaterItem.prototype.init.call(this, settings);
+    };
+
+    NumberUpdaterItem.prototype = new UpdaterItem();
+    NumberUpdaterItem.prototype.constructor = NumberUpdaterItem;
+    NumberUpdaterItem.prototype.type = "NumberUpdaterItem";
+
+    NumberUpdaterItem.prototype.init = function (settings) {
+        var defaults = {
+            value: "[]"
+        };
+        jQuery.extend(true, defaults, settings);
+        this.setValue(defaults.value);
+    };
+
+    NumberUpdaterItem.prototype._setValueToControl = function (value) {
+        var friendlyValue = "", i;
+        value.forEach(function(value, index, arr) {
+            friendlyValue += " " + value.expLabel;
+        });
+        this._control.value = friendlyValue;
+        return this;
+    };
+
+
+    NumberUpdaterItem.prototype.setValue = function (value) {
+        if (typeof value === 'string') {
+            value = value || "[]";
+            value = JSON.parse(value);
+        }
+        if (this._control) {
+            this._setValueToControl(value);   
+        }
+        this._value = value;
+        return this;
+    };
+
+    NumberUpdaterItem.prototype._createControl = function () {
+        var control = this.createHTMLElement("input");
+        control.type = "text";
+        control.readOnly = true;
+        this._control = control;
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+//DropdownUpdaterItem
+    var DropdownUpdaterItem = function (settings) {
+        UpdaterItem.call(this, settings);
+        this._options = [];
+        this._massiveAction = false;
+        this._initialized = false;
+        DropdownUpdaterItem.prototype.init.call(this, settings);
+    };
+
+    DropdownUpdaterItem.prototype = new UpdaterItem();
+    DropdownUpdaterItem.prototype.constructor = DropdownUpdaterItem;
+    DropdownUpdaterItem.prototype.type = "DropdownUpdaterItem";
+
+    DropdownUpdaterItem.prototype.init = function (settings) {
+        var defaults = {
+            options: [],
+            value: ""
+        };
+
+        jQuery.extend(true, defaults, settings);
+
+        this.setOptions(defaults.options)
+            .setValue(defaults.value);
+
+        this._initialized = true;
+    };
+
+    DropdownUpdaterItem.prototype._existsValueInOptions = function (value) {
+        var i;
+        for (i = 0; i < this._options.length; i += 1) {
+            if (this._options[i].value === value) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    DropdownUpdaterItem.prototype._getFirstAvailabelValue = function () {
+        return (this._options[0] && this._options[0].value) || "";
+    };
+
+    DropdownUpdaterItem.prototype.setValue = function (value) {
+        if (this._options) {
+            if (!(typeof value === 'string' || typeof value === 'number')) {
+                throw new Error("setValue(): The parameter must be a string.");
+            }
+            if (isInDOM(this._control)) {
+                this._setValueToControl(value);
+                this._value = this._getValueFromControl();    
+            } else {
+                if (this._existsValueInOptions(value)) {
+                    this._value = value;
+                } else {
+                    this._value = this._getFirstAvailabelValue();
+                }
+            }
+        }
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype._paintItem = function (option) {
+        var optionHTML;
+        optionHTML = this.createHTMLElement('option');
+        optionHTML.textContent = optionHTML.label = option.text;
+        optionHTML.value = optionHTML.value;
+        this._control.appendChild(optionHTML);
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype._paintItems = function () {
+        var i;
+        if (this._control) {
+            jQuery(this._control).empty();
+            for (i = 0; i < this._options.length; i += 1) {
+                this._paintItem(this._options[i]);
+            }
+        }
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype.addOption = function (option) {
+        var newOption;
+        if (typeof option === 'string' || typeof option === 'number') {
+            newOption = {
+                text: option,
+                value: option
+            };
+        } else {
+            newOption = {
+                text: option.text || option.value,
+                value: option.value || option.text
+            };
+        }
+        this._options.push(newOption);
+        if (!this._massiveAction && this.html) {
+            this._paintItem(newOption);
+        }
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype.clearOptions = function () {
+        this._options = [];
+        if (this._control) {
+            jQuery(this._control).empty();
+        }
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype.setOptions = function (options) {
+        var i;
+        if (!jQuery.isArray(options)) {
+            throw new Error("setOptions(): The parameter must be an array.");
+        }
+        this._massiveAction = true;
+        this.clearOptions();
+        for (i = 0; i < options.length; i += 1) {
+            this.addOption(options[i]);
+        }
+        this._massiveAction = false;
+        this._paintItems();
+        if (this._initialized) {
+            this.setValue(this._value);
+        }
+        return this;
+    };
+
+    DropdownUpdaterItem.prototype._createConfigButton = function () {
+        return null;
+    };
+
+    DropdownUpdaterItem.prototype._createControl = function () {
+        if (!this._control) {
+            this._control = this.createHTMLElement('select');
+        }
+        return UpdaterItem.prototype._createControl.call(this);
+    };
+
+    DropdownUpdaterItem.prototype.createHTML = function () {
+        if (!this.html) {
+            UpdaterItem.prototype.createHTML.call(this);
+            this._paintItems();
+            this.setValue(this._value);
+        }
+        return this.html;
+    };
+
 /**
  * @class Form
  * Handles form panels
@@ -18258,8 +10573,6 @@ NotePanel.prototype.addLog = function (options) {
     $(buttonAnchor).click(function (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('remove button');
-        console.log(newItem);
         App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
         proxy = new SugarProxy({
             //url: SUGAR_URL + '/rest/v10/Log/',
@@ -18376,7 +10689,6 @@ NotePanel.prototype.attachListeners = function () {
             });
             proxy.createData(data, {
                 success: function (result) {
-                    console.log(result);
                    var newLog = {
                         name: 'log' ,
                         label: root.items[0].value,
@@ -18768,3 +11080,7588 @@ ReassignForm.prototype.initObject = function (options) {
 ReassignForm.prototype.setColumns = function (columns) {
   this.columns = columns;
 };
+//This is an abstract class
+var DataItem = function(settings) {
+	Element.call(this, settings);
+	this._parent = null;
+	this._data = {};
+	this._text = null;
+	this._eventListenersAttached = false;
+	this._htmlItemContent = null;
+	this.onClick = null;
+	this._disabled = false;
+	DataItem.prototype.init.call(this, settings);
+};
+
+DataItem.prototype = new Element();
+DataItem.prototype.constructor = DataItem;
+DataItem.prototype.type = "DataItem";
+
+DataItem.prototype.init = function(settings) {
+	var defaults = {
+		data: {},
+		onClick: null,
+		text: "[item]",
+		parent: null,
+		disabled: false
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.setFullData(defaults.data)
+		.setOnClickHandler(defaults.onClick)
+		.setText(defaults.text)
+		.setParent(defaults.parent);
+
+	if (defaults.disabled) {
+		this.disable();
+	} else {
+		this.enable();
+	}
+};
+
+DataItem.prototype.disable = function () {
+	if (this.html) {
+		this.style.addClasses(["adam-disabled"]);
+	}
+	this._disabled = true;
+	return this;
+};
+
+DataItem.prototype.enable = function () {
+	if (this.html) {
+		this.style.removeClasses(["adam-disabled"]);
+	}
+	this._disabled = false;
+	return this;
+};
+
+DataItem.prototype.setParent = function (parent) {
+	if(!(parent === null || parent instanceof ItemContainer)) {
+		throw new Error("setParent(): The parameter must be an instace of ItemContainer or null.");
+	}
+	this._parent = parent;
+	return this;
+};
+
+DataItem.prototype.getParent = function () {
+	return this._parent;
+};
+
+DataItem.prototype._getFinalText = function () {
+	var regExpMatch, parts, current, i, finalText, text = this._text;
+	if(typeof text === 'string') {
+		if(regExpMatch = text.match(/^\{\{([a-zA-z0-9\.\-]+)\}\}$/)) {
+			parts = regExpMatch[1].split(".");
+			current = this._data;
+			for(i = 0; i < parts.length; i++) {
+				current = current[parts[i]];
+				if(!current) {
+					break;
+				}
+			}
+			finalText = current && typeof current !== 'object' ? current : "";
+		} else {
+			finalText = text;
+		}
+	} else {
+		finalText = this._text(this, this.getData()) || "";
+	}
+	return finalText;
+};
+
+DataItem.prototype.setText = function (text) {
+	if(!(typeof text === 'string' || typeof text === 'function')) {
+		throw new Error("setText(): The parameter must be a string or function.");
+	}
+	this._text = text;
+	if(this._htmlTextContainer) {
+		this._htmlTextContainer.textContent = this._getFinalText();
+	}
+	return this;
+};
+
+DataItem.prototype.getText = function () {
+	return this._htmlTextContainer ? this._htmlTextContainer.textContent : this._getFinalText();
+};
+
+DataItem.prototype.setOnRemoveHandler = function(handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnRemoveHandler(): The parameter must be a function or null.");
+	}
+	this.onRemove = handler;
+	return this;
+};
+
+DataItem.prototype.setOnClickHandler = function(handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnClickHandler(): The parameter must be a function or null.")
+	}
+	this.onClick = handler;
+	return this;
+};
+
+DataItem.prototype.clearData = function (key) {
+	if(key === undefined) {
+		this._data = {};
+	} else {
+		delete this._data[key];
+	}
+	return this;
+};
+
+DataItem.prototype.setData = function (key, value) {
+	this._data[key] = value;
+	return this;
+};
+
+DataItem.prototype.setFullData = function (data) {
+	var key;
+	this.clearData();
+	for (key in data) {
+		if (data.hasOwnProperty(key)) {
+			this.setData(key, data[key]);
+		}
+	}
+	if(this._htmlTextContainer) {
+		this.setText(this._text);
+	}
+	return this;
+};
+
+DataItem.prototype._onClick = function() {
+	var that = this;
+	return function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		if(typeof that.onClick === 'function' && !that._disabled) {
+			that.onClick(that);
+		}
+	};
+};
+
+DataItem.prototype.getData = function() {
+	var dataObject = {}, key;
+	for(key in this._data) {
+		dataObject[key] = this._data[key];
+	}
+	return dataObject;
+};
+
+DataItem.prototype._attachListeners = function() {
+	if (this.html && !this._eventListenersAttached) {
+		jQuery(this._htmlItemContent).on('click', this._onClick());
+		this._eventListenersAttached = true;
+	}
+	return this;
+};
+
+DataItem.prototype.createHTML = function () {
+	throw new Error("createHTML(): Calling an abstract method in DataItem.");
+};
+var SingleItem = function (settings) {
+	DataItem.call(this, settings);
+	this.onRemove = null;
+	this._htmlTextContainer = null;
+	this._htmlIconContainer = null;
+	this._htmlRemoveButton = null;
+	this._htmlItemContent = null;
+	SingleItem.prototype.init.call(this, settings);
+};
+
+SingleItem.prototype = new DataItem();
+
+SingleItem.prototype.constructor = SingleItem;
+
+SingleItem.prototype.init = function (settings) {
+	var defaults = {
+		onRemove: null,
+		removable: true
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.setOnRemoveHandler(defaults.onRemove);
+};
+
+SingleItem.prototype.disable = function () {
+	if (this.html) {
+		this._htmlRemoveButton.style.display = "none";
+	}
+	return DataItem.prototype.disable.call(this);
+};
+
+SingleItem.prototype.enable = function () {
+	if (this.html) {
+		this._htmlRemoveButton.style.display = "";
+	}
+	return DataItem.prototype.enable.call(this);
+};
+
+SingleItem.prototype.setOnRemoveHandler = function(handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnRemoveHandler(): The parameter must be a function or null.");
+	}
+	this.onRemove = handler;
+	return this;
+};
+
+SingleItem.prototype._onRemoveButtonClick = function() {
+	var that = this;
+	return function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		if(typeof that.onRemove === 'function') {
+			that.onRemove(that);
+		}
+	};
+};
+
+SingleItem.prototype._attachListeners = function() {
+	if (this.html && !this._eventListenersAttached) {
+		DataItem.prototype._attachListeners.call(this);
+		jQuery(this._htmlRemoveButton).on('click', this._onRemoveButtonClick());
+		jQuery(this.html).on("focus focusin focusout blur", function (e) {
+			e.stopPropagation();
+		})
+		this._eventListenersAttached = true;
+	}
+	return this;
+};
+
+SingleItem.prototype.createHTML = function () {
+	var textContainer, iconContainer, removeButton, itemContent;
+	if (this.html) {
+		return this.html;
+	}
+	//create the main html element to content all the other object's components.
+	this.html = this.createHTMLElement('li');
+	this.html.id = this.id;
+	this.html.className = 'adam single-item';
+	//create the object's components
+	textContainer = this.createHTMLElement('span');
+	textContainer.className = 'adam single-item-text';
+	iconContainer = this.createHTMLElement('span');
+	iconContainer.className = 'adam single-item-icon';
+	itemContent = this.createHTMLElement('a');
+	itemContent.className = 'adam single-item-content';
+	itemContent.href = '#';
+	removeButton = this.createHTMLElement('a');
+	removeButton.href = "#";
+	removeButton.className = 'adam single-item-remove icon-remove-sign';
+	//append the components to its respective parent elements;
+	itemContent.appendChild(iconContainer);
+	itemContent.appendChild(textContainer);
+	this.html.appendChild(itemContent);
+	this.html.appendChild(removeButton);
+	//save the references to the components into object's member variables.
+	this._htmlTextContainer = textContainer;
+	this._htmlIconContainer = iconContainer;
+	this._htmlRemoveButton = removeButton;
+	this._htmlItemContent = itemContent;
+
+	//Set properties that need html to b executed completly
+	this.setText(this._text);
+
+	if (this._disabled) {
+		this.disable();
+	} else {
+		this.enable();
+	}
+
+	return this._attachListeners().html;
+};
+
+var ListItem = function(settings) {
+	DataItem.call(this, settings);
+	ListItem.prototype.init.call(this, settings);
+};
+
+ListItem.prototype = new DataItem();
+ListItem.prototype.constructor = ListItem;
+ListItem.prototype.type = "ListItem";
+
+ListItem.prototype.init = function (settings) {
+	var defaults = {
+		text: "[listitem]"
+	};
+	jQuery.extend(true, defaults, settings);
+	this.setText(defaults.text);
+};
+
+ListItem.prototype.setVisible = function (value) {
+    if (_.isBoolean(value)) {
+        this.visible = value;
+        if (this.html) {
+            if (value) {
+                this.style.addProperties({display: ""});
+            } else {
+                this.style.addProperties({display: "none"});
+            }
+        }
+    }
+    return this;
+};
+
+ListItem.prototype.setText = function (text) {
+	var finalText;
+	if (!(typeof text === 'string' || typeof text === 'function')) {
+		throw new Error("setText(): The parameter must be a string or function.");
+	}
+	this._text = text;
+	if (this._htmlItemContent) {
+		finalText = this._getFinalText();
+		if(isHTMLElement(finalText)) {
+			this._htmlItemContent.appendChild(finalText);
+		} else {
+			this._htmlItemContent.textContent = finalText;
+		}
+	}
+	return this;
+};
+
+ListItem.prototype.createHTML = function () {
+	if(!this.html) {
+		this.html = this.createHTMLElement('li');
+		this.html.className = 'adam list-item';
+		this._htmlItemContent = this.html;
+		this.setText(this._text);
+		this._attachListeners();
+		this.setVisible(this.visible);
+	}
+	return this.html;
+};
+/**
+ * @class ItemContainer
+ * Control that will be used as a container for the SingleItems objects.
+ */
+var ItemContainer = function (settings) {
+	Element.call(this, settings);
+	this._items = new ArrayList();
+	this._massiveAction = false;
+	this.onAddItem = null;
+	this.onRemoveItem = null;
+	this.onSelect = null;
+	this.onInputChar = null;
+	this._textInputMode = null;
+	this._textInputs = new ArrayList();
+	this._inputValidationFunction = null;
+	this._selectedIndex = null;
+	this.onBeforeAddItemByInput = null;
+	this._className = null;
+	this.onBlur = null;
+	this.onFocus = null;
+	this._blurTimer = null;
+	this._blurred = true;
+	this._blurSemaphore = true;
+	this._disabled = false;
+	ItemContainer.prototype.init.call(this, settings);
+};
+
+ItemContainer.prototype = new  Element();
+ItemContainer.prototype.constructor = ItemContainer;
+
+ItemContainer.prototype.textInputMode = {
+	'NONE': 0,
+	'END': 1,
+	'ALL': 2
+};
+
+ItemContainer.prototype.init = function (settings) {
+	var defaults = {
+		items: [],
+		onAddItem: null,
+		onRemoveItem: null,
+		width: 200,
+		height: 80,
+		textInputMode: this.textInputMode.ALL,
+		inputValidationFunction: null,
+		onBeforeAddItemByInput: null,
+		onSelect: null,
+		onInputChar: null,
+		onBlur: null,
+		onFocus: null,
+		className: "",
+		disbaled: false
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	if (typeof defaults.textInputMode !== 'number') {
+		throw new Error("init(): The textInputMode config option must be a number");
+	}
+	this._textInputMode = defaults.textInputMode;
+
+	this.setWidth(defaults.width)
+		.setHeight(defaults.height)
+		.setItems(defaults.items)
+		.setOnAddItemHandler(defaults.onAddItem)
+		.setInputValidationFunction(defaults.inputValidationFunction)
+		.setOnBeforeAddItemByInput(defaults.onBeforeAddItemByInput)
+		.setOnRemoveItemHandler(defaults.onRemoveItem)
+		.setOnSelectHandler(defaults.onSelect)
+		.setOnInputCharHandler(defaults.onInputChar)
+		.setOnBlurHandler(defaults.onBlur)
+		.setOnFocusHandler(defaults.onFocus)
+		.setClassName(defaults.className);
+
+	if (defaults.disabled) {
+		this.disable();
+	} else {
+		this.enable();
+	}
+};
+
+ItemContainer.prototype.getText = function () {
+	var i, items = this._items.asArray(), text = "";
+	for (i = 0; i < items.length; i += 1) {
+		text += " " + items[i].getText();
+	}
+	return text.substr(1);
+};
+
+ItemContainer.prototype.setWidth = function(w) {
+	if (!(typeof w === 'number' ||
+		(typeof w === 'string' && (w === "auto" || /^\d+(\.\d+)?(em|px|pt|%)?$/.test(w))))) {
+		throw new Error("setWidth(): invalid parameter.");
+	}
+	this.width = w;
+    if (this.html) {
+        this.style.addProperties({width: this.width});
+    }
+    return this;
+};
+
+ItemContainer.prototype.disable = function () {
+	var i, items;
+	if (!this._disabled) {
+		items = this._items.asArray();
+
+		for (i = 0; i < items.length; i += 1 ) {
+			items[i].disable();
+		}
+		jQuery(this.html).find('input').attr('disabled', true);
+		this._disabled = true;
+	}
+
+	return true;
+};
+
+ItemContainer.prototype.enable = function () {
+	if (this._disabled) {
+		items = this._items.asArray();
+
+		for (i = 0; i < items.length; i += 1 ) {
+			items[i].enable();
+		}
+		jQuery(this.html).find('input').attr('disabled', false);
+		this._disabled = false;
+	}
+	return this;
+};
+
+ItemContainer.prototype.setClassName = function (className) {
+	if(typeof className !== 'string') {
+		throw new Error("setClassName(): The parameter must be a string.");
+	}
+	this.style.addClasses([className]);
+	return this;
+};
+
+ItemContainer.prototype.setOnFocusHandler = function (handler) {
+	if (!(handler === null || typeof handler === "function")) {
+		throw new Error("setOnFocusHandler(): The parameter must be a function or null.");
+	}
+	this.onFocus = handler;
+	return this;
+};
+
+ItemContainer.prototype.setOnBlurHandler = function (handler) {
+	if (!(handler === null || typeof handler === "function")) {
+		throw new Error("setOnBlurHandler(): The parameter must be a function or null.");
+	}
+	this.onBlur = handler;
+	return this;
+};
+
+ItemContainer.prototype.setOnInputCharHandler = function (handler) {
+	if (!(handler === null || typeof handler === "function")) {
+		throw new Error("setOnInputCharHandler(): The parameter must be a function or null.");
+	}
+	this.onInputChar = handler;
+	return this;
+};
+
+ItemContainer.prototype.setOnSelectHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnSelectHandler(): The parameter must be a function or null.");
+	}
+	this.onSelect = handler;
+	return this;
+};
+
+ItemContainer.prototype.setOnBeforeAddItemByInput = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnBeforeAddItemByInput(): The parameter must be a function or null.");
+	}
+	this.onBeforeAddItemByInput = handler;
+	return this;
+};
+
+ItemContainer.prototype.setInputValidationFunction = function(fn) {
+	if(!(fn === null || typeof fn === 'function')) {
+		throw new Error("setInputValidationFunction(): The parameter must be a function or null.");
+	}
+	this._inputValidationFunction = fn;
+	return this;
+};
+
+ItemContainer.prototype.setOnAddItemHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error('setOnAddItemHandler(): The parameter must be a function or null.');
+	}
+	this.onAddItem = handler;
+	return this;
+};
+
+ItemContainer.prototype.setOnRemoveItemHandler = function (handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error('setOnRemoveItemHandler(): The parameter must be a function or null.');
+	}
+	this.onRemoveItem = handler;
+	return this;
+};
+
+ItemContainer.prototype._addInputText = function (reference) {
+	var input = this.createHTMLElement("input");
+	input.className = 'adam item-container-input';
+	input.disabled = this._disabled;
+	this._textInputs.insert(input);
+	if(this.html) {
+		if(typeof reference === 'number') {
+			reference = this._items.get(reference);
+		}
+		if(reference && reference instanceof SingleItem) {
+			this.html.insertBefore(input, reference.getHTML());
+		} else {
+			this.html.appendChild(input);	
+		}
+	}
+	return this;
+};
+
+ItemContainer.prototype.clearItems = function () {
+	jQuery(this.html).empty();
+	this._items.clear();
+	this._textInputs.clear();
+	if (this._textInputMode !== this.textInputMode.NONE) {
+		this._addInputText();
+	}
+	return this;
+};
+
+ItemContainer.prototype.isParentOf = function (item) {
+	return this === item.getParent();
+};
+
+ItemContainer.prototype._paintItem = function (item, index) {
+	var referenceItem;
+	if (this.html) {
+		if(this.isParentOf(item)) {
+			if (typeof index === 'number') {
+				if (index === 0) {
+					jQuery(this.html).prepend(item.getHTML());
+				} else if (index < this._items.getSize() - 1) {
+					jQuery(this.html).find('.item-container-input').eq(index).before(item.getHTML());
+				} else {
+					jQuery(this.html).find('.item-container-input').last().before(item.getHTML());
+				}
+			} else {
+				if (this._textInputMode === this.textInputMode.NONE) {
+					this.html.appendChild(item.getHTML());	
+				} else {
+					jQuery(this.html).find('.item-container-input').last().before(item.getHTML());
+				}
+			}
+			if(this._textInputMode === this.textInputMode.ALL) {
+				this._addInputText(index || item);
+			}
+		}	
+	}
+	return this;
+};
+
+ItemContainer.prototype._paintItems = function () {
+	var i, items = this._items.asArray();
+	if (this.html) {
+		if (this._textInputMode === this.textInputMode.ALL) {
+	    	this._addInputText();
+	    }
+    	for(i = 0; i < items.length; i++) {
+			this._paintItem(items[i]);
+		}
+		if(this._textInputMode === this.textInputMode.END) {
+			this._addInputText();
+		}
+	}
+	return this;
+};
+
+ItemContainer.prototype._onRemoveItemHandler = function () {
+	var that = this;
+	return function (item) {
+		that.removeItem(item);
+		if(typeof that.onRemoveItem === 'function') {
+			that.onRemoveItem(that, item);
+		}
+	};
+};
+
+ItemContainer.prototype.addItem = function(item, index, noFocusNext) {
+	if (!(item instanceof SingleItem || typeof item === "object")) {
+		throw new Error("The paremeter must be an object literal or null.");
+	}
+	if (!(item instanceof SingleItem)) {
+		item = new SingleItem(item);
+	}
+	item.setParent(this);
+	item.setOnRemoveHandler(this._onRemoveItemHandler());
+	if (typeof index === 'number' && index >= 0) {
+		this._items.insertAt(item, index);	
+	} else {
+		this._items.insert(item);
+	}
+	
+	if (!this._massiveAction) {
+		this._paintItem(item, index);
+		if(!noFocusNext && jQuery(item.getHTML()).next().get(0) !== jQuery(':focus').get(0)) {
+			jQuery(item.getHTML()).next().focus();
+		} else {
+			this._selectedIndex += 1;
+			if (this.html) {
+				this.html.scrollTop += this.html.scrollHeight;	
+			}
+		}
+	}
+
+	if (typeof this.onAddItem === 'function') {
+		if(typeof index === 'number' && index >= 0) {
+			item = this._items.get(index);
+		} else {
+			item = this._items.get(this._items.getSize() - 1);
+		}
+		this.onAddItem(this, item, index);
+	}
+	return this;
+};
+
+ItemContainer.prototype.removeItem = function (item) {
+	if(this.isParentOf(item)) {
+		this._items.remove(item);
+		jQuery(item.getHTML()).prev('.item-container-input').remove().end()
+			.next().focus()
+			.end().remove(); 
+	}
+	return this;
+};
+
+ItemContainer.prototype.setVisible = function (value) {
+    if (_.isBoolean(value)) {
+        this.visible = value;
+        if (this.html) {
+            if (value) {
+                this.style.addProperties({display: ""});
+            } else {
+                this.style.addProperties({display: "none"});
+            }
+        }
+    }
+    return this;
+};
+
+ItemContainer.prototype.setItems = function (items) {
+	var i;
+	if(!jQuery.isArray(items)) {
+		throw new Error("setItems(): The parameter must be an array.");
+	}
+	this._massiveAction = true;
+	this.clearItems();
+	for(i = 0; i < items.length; i++) {
+		this.addItem(items[i]);
+	}
+	this._paintItems();
+	this._massiveAction = false;
+	return this;
+};
+
+ItemContainer.prototype.getItems = function () {
+	return this._items.asArray();
+};
+
+ItemContainer.prototype._getTextWidth = function (text, target) {
+	var w, $label, label = this.createHTMLElement("span"), styles = window.getComputedStyle(target);
+	label.style.padding = 0;
+	label.style.fontFamily = styles.getPropertyValue("font-family");
+	label.style.fontSize = styles.getPropertyValue("font-size");
+	label.style.fontWeight = styles.getPropertyValue("font-weight");
+	label.style.whiteSpace = 'nowrap';
+	label.style.display =  "none";
+	label.textContent = text.replace(/\s/g, "_");
+	target.parentNode.appendChild(label);
+	$label = jQuery(label);
+	w = $label.outerWidth();
+	$label.remove();
+	return w;
+};
+
+ItemContainer.prototype._isValidInput = function (input) {
+	var isValid = true;
+	if(typeof this._inputValidationFunction === 'function') {
+		isValid = this._inputValidationFunction(this, input);
+	}
+	return isValid;
+};
+
+ItemContainer.prototype.select = function (index) {
+	if(this.html && !this._disabled) {
+		if(typeof index === 'number') {
+			jQuery(this.html).find('.adam.item-container-input').eq(index).focus();	
+		} else {
+			jQuery(this.html).find('.adam.item-container-input').last().focus();
+		}
+		if(typeof this.onSelect === 'function') {
+			this.onSelect(this);
+		}
+	}
+	return this;
+};
+
+ItemContainer.prototype.getData = function () {
+	var data = [], items = this._items.asArray();
+	for (i = 0; i < items.length; i += 1) {
+		data.push(items[i].getData());
+	}
+	return data;
+};
+
+ItemContainer.prototype.getSelectedIndex = function() {
+	return this._selectedIndex;
+};
+
+ItemContainer.prototype._onBlur = function () {
+	var that = this;
+	return function () {
+		clearInterval(that._blurTimer);
+		if(typeof that.onBlur === 'function') {
+			that._blurred = true;
+			that.onBlur(that);
+		}
+	};
+};
+
+ItemContainer.prototype._attachListeners = function () {
+	var that, _tempValue = "";
+	if(this.html) {
+		that = this;
+		jQuery(this.html).on('mousedown', function() {
+			if(!that._blurred) {
+				that._blurSemaphore = false;
+			}
+		}).on('click', function () {
+			that._blurSemaphore = true;
+			that.select();
+		}).on('focusin', function(e) {
+			//console.log("focusin");
+			clearInterval(that._blurTimer);	
+			if(that._blurred && typeof that.onFocus === 'function' && that._blurSemaphore) {
+				that._blurred = false;
+				that.onFocus(that);
+			}
+		}).on('focusout', function(e) {
+			//console.log("focusout");
+			//console.log(that._blurSemaphore);
+			if (!that._blurred) {
+				that._blurTimer = setInterval(that._onBlur(), 20);	
+			}
+		}).on('focus', '.adam.item-container-input', function () {
+			that._selectedIndex = $(this.parentNode).find('input').index(this);
+		}).on('click', '.adam.item-container-input', function (e) {
+			e.stopPropagation();
+		}).on('focusout', '.adam.item-container-input', function (e) {
+			if (!that._blurSemaphore) {
+				e.stopPropagation();
+				that._blurSemaphore = true;
+			}
+		}).on('keydown', '.adam.item-container-input', function(e) {
+			var width, newValue, newItem, index, returnedValue, keyIdentifier;
+			switch (e.keyCode) {
+				case 37:
+				case 39:
+					if(e.shiftKey) {
+						index = jQuery(that.html).find('.adam.item-container-input').index(this);
+						newItem = jQuery(that.html).find('.adam.item-container-input').eq(index + (e.keyCode === 37 ? -1 : 1));
+						if(newItem.length) {
+							this.value = "";
+							this.style.width = "1px";
+							newItem.get(0).focus();
+						}
+					}
+					break;
+				case 27:
+					this.value = "";
+					break;
+				case 13:
+					e.preventDefault();
+					if (that._isValidInput(this.value)) {
+						newItem = new SingleItem({
+							text: this.value
+						});
+						index = jQuery(that.html).find('.adam.item-container-input').index(this);
+						if(typeof that.onBeforeAddItemByInput === 'function') {
+							returnedValue = that.onBeforeAddItemByInput(that, newItem, this.value, index);
+							if(returnedValue === false) {
+								newItem = null;
+							} else if (returnedValue instanceof SingleItem) {
+								newItem = returnedValue;
+							}
+						}
+						if(newItem instanceof SingleItem) {
+							that.addItem(newItem, index);	
+						}
+						this.value = "";
+						this.style.width = "1px";
+						this.select();
+					} else {
+						this.select();
+					}
+					break;
+				default:
+					try {
+						keyIdentifier = e.originalEvent.keyIdentifier;
+						//There's not a keyIdentifier property in IE, so we use the "char" property
+						if (keyIdentifier) {
+							keyIdentifier = eval('"\\u' + keyIdentifier.replace(/(U\+)/, "") + '"');
+						} else if (typeof e.char === 'string') {
+							//ie
+							keyIdentifier = e.char;
+						} else {
+							//firefox
+							keyIdentifier = String.fromCharCode(e.which);
+						}
+					} catch(e) {
+						keyIdentifier = "";
+					}
+					if (this.selectionStart !== this.selectionEnd) {
+						newValue = String.fromCharCode(e.keyCode);
+					} else {
+						newValue = this.value + keyIdentifier;
+					}
+					width = that._getTextWidth(newValue, this) || 1;
+					this.style.width = width + "px";
+			}			
+		}).on("keyup", '.adam.item-container-input', function (e) {
+			var keyIdentifier;
+			try {
+				keyIdentifier = e.originalEvent.keyIdentifier;
+				//There's not a keyIdentifier property in IE, so we use the "char" property
+				if (keyIdentifier) {
+					keyIdentifier = eval('"\\u' + keyIdentifier.replace(/(U\+)/, "") + '"');
+				} else if (typeof e.char === 'string') {
+					//ie
+					keyIdentifier = e.char;
+				} else {
+					//firefox
+					keyIdentifier = String.fromCharCode(e.which);
+				}
+			} catch(e) {}
+			if((keyIdentifier || _tempValue !== this.value) && typeof that.onInputChar === 'function') {
+				that.onInputChar(that, keyIdentifier, this.value, e.keyCode);
+			}
+			_tempValue = this.value;
+		}).on("blur", '.adam.item-container-input', function() {
+			var value = this.value;
+			if(this.value !== "") {
+				this.value = "";
+				this.style.width = "1px";
+			}
+			/*if(this.value !== value && typeof that.onInputChar === 'function') {
+				that.onInputChar(that, "", this.value);
+			}*/
+		});
+	}
+	return this;
+};
+
+ItemContainer.prototype.createHTML = function() {
+	if (!this.html) {
+		this.html = this.createHTMLElement('ul');
+		this.html.className = "adam item-container";
+		this.style.applyStyle();
+		this.style.addProperties({
+            left: this.x,
+            top: this.y,
+            width: this.width,
+            height: this.height,
+            zIndex: this.zOrder
+        });
+        this._paintItems();
+        this._attachListeners();
+        this.setVisible(this.visible);
+	}
+	return this.html;
+};
+
+var FieldPanelItem = function(settings) {
+	Element.call(this, settings);
+	this._parent = null;
+	this.onValueAction = null;
+	FieldPanelItem.prototype.init.call(this, settings);
+};
+
+FieldPanelItem.prototype = new Element();
+FieldPanelItem.prototype.constructor = FieldPanelItem;
+
+FieldPanelItem.prototype.family = "FieldPanelItem";
+FieldPanelItem.prototype.type = "FieldPanelItem";
+
+FieldPanelItem.prototype.init = function (settings) {
+	var defaults = {
+		parent: null,
+		onValueAction: null
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.setParent(defaults.parent)
+		.setOnValueActionHandler(defaults.onValueAction);
+};
+
+FieldPanelItem.prototype.setParent = function (parent) {
+	if(!(parent === null || parent instanceof FieldPanel)) {
+		throw new Error("setParent(): The parameter must be an instance of FieldPanel or null.");
+	}
+	this._parent = parent;
+
+	return this;
+};
+
+FieldPanelItem.prototype.getParent = function () {
+	return this._parent;
+};
+
+FieldPanelItem.prototype.setVisible = function (value) {
+    this.visible = !!value;
+    if (this.html) {
+        if (value) {
+            this.style.addProperties({display: ""});
+        } else {
+            this.style.addProperties({display: "none"});
+        }
+    }
+    return this;
+};
+
+FieldPanelItem.prototype.setOnValueActionHandler = function (handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnValueActionHandler(): The parameter must be a function or null.");
+	}
+	this.onValueAction = handler;
+	return this;
+};
+
+FieldPanelItem.prototype._onValueAction = function (anyArgument) {
+	if(typeof this.onValueAction === 'function') {
+		this.onValueAction(this, this.getValueObject(anyArgument));
+	}
+	return this;
+};
+
+FieldPanelItem.prototype.getValueObject =  function() {
+	throw new Error("getValueObject(): Trying to call an abstract method.");
+};
+var FieldPanelButton = function (settings) {
+	FieldPanelItem.call(this, settings);
+	this._text = null;
+	this._value = null;
+	FieldPanelButton.prototype.init.call(this, settings);
+};
+
+FieldPanelButton.prototype = new FieldPanelItem();
+FieldPanelButton.prototype.constructor = FieldPanelButton;
+
+FieldPanelButton.prototype.type = "FieldPanelButton";
+
+FieldPanelButton.prototype.init = function (settings) {
+	var defaults = {
+		text: "[button]",
+		value: ""
+	};
+
+	jQuery.extend(true, defaults, settings);
+	this.setText(defaults.text)
+		.setValue(defaults.value);
+};
+
+FieldPanelButton.prototype.setValue = function (value) {
+	if(typeof value !== 'string') {
+		throw new Error("setValue(): The parameter must be a string.");
+	}
+	this._value = value;
+	return this;
+};
+
+FieldPanelButton.prototype.setText = function (text) {
+	if(typeof text !== 'string') {
+		throw new Error("setText(): The parameter must be a string.");
+	}
+	if(this.html) {
+		this.html.textContent = text;
+	}
+	this._text = text;
+	return this;
+};
+
+FieldPanelButton.prototype._onClickHandler = function() {
+	var that = this;
+	return function (e) {
+		e.preventDefault();
+		that._onValueAction();
+	};
+};
+
+FieldPanelButton.prototype._attachListeners = function () {
+	if(this.html) {
+		jQuery(this.html).on("click", this._onClickHandler());
+	}
+	return this;
+};
+
+FieldPanelButton.prototype.createHTML = function () {
+	if(!this.html) {
+		this.html = this.createHTMLElement("a");
+		this.html.href = "#";
+		this.html.className = "adam field-panel-button btn btn-mini btn-block";
+		this.setText(this._text).setVisible(this.visible);
+		this._attachListeners();
+	}
+	return this.html;
+};
+
+FieldPanelButton.prototype.getValueObject = function() {
+	return {
+		text: this._text,
+		value: this._value
+	};
+};
+var FieldPanelButtonGroup = function(settings) {
+	FieldPanelItem.call(this, settings)
+	this._items = new ArrayList();
+	this._label = null;
+	this._htmlLabel = null;
+	this._htmlItemsContainer = null;
+	this._massiveAction = false;
+	FieldPanelButtonGroup.prototype.init.call(this, settings);
+};
+
+FieldPanelButtonGroup.prototype = new FieldPanelItem();
+FieldPanelButtonGroup.prototype.constructor = FieldPanelButtonGroup;
+FieldPanelButtonGroup.prototype.type = "FieldPanelButtonGroup";
+
+FieldPanelButtonGroup.prototype.init = function(settings) {
+	var defaults = {
+		items: [],
+		label: ""
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.setItems(defaults.items)
+		.setLabel(defaults.label);
+};
+
+FieldPanelButtonGroup.prototype.setLabel = function (label) {
+	if (typeof label !== 'string') {
+		throw new Error("setLabel(): The parameter must be a string.");
+	}
+	this._label = label;
+	if(this._htmlLabel) {
+		if (this._label) {
+			jQuery(this.html).prepend(this._htmlLabel);
+			this._htmlLabel.textContent = label;
+		} else {
+			jQuery(this._htmlLabel).remove();
+		}
+	}
+	return this;
+};
+
+FieldPanelButtonGroup.prototype.clearItems = function () {
+	this._items.clear();
+	if (this._htmlItemsContainer) {
+		jQuery(this._htmlItemsContainer).empty();
+	}
+	return this;
+};
+
+FieldPanelButtonGroup.prototype._paintItem = function (newButton) {
+	var that = this;
+	if (!newButton.html) {
+		newButton.html = this.createHTMLElement("button");
+		newButton.html.className = 'adam field-panel-button-group-button btn btn-mini';
+		newButton.html.appendChild(document.createTextNode(newButton.text));
+		jQuery(newButton.html).on("click", function() {
+			that._onValueAction(newButton);
+		});
+	}
+	this._htmlItemsContainer.appendChild(newButton.html);
+	return this;
+};
+
+FieldPanelButtonGroup.prototype.addItem = function (item) {
+	var newButton = {
+		text: item.text || item.value || "[button]",
+		value: item.value || item.text || null,
+		html: null
+	};
+	this._items.insert(newButton);
+	if (!this._massiveAction && this._htmlItemsContainer) {
+		this._paintItem(newButton);
+	}
+	return this;
+};
+
+FieldPanelButtonGroup.prototype._paintItems = function () {
+	var i, items;
+	if (this.html) {
+		items = this._items.asArray();
+		for (i = 0; i < items.length; i += 1) {
+			this._paintItem(items[i]);
+		}
+	}
+	return this;
+};
+
+FieldPanelButtonGroup.prototype.setItems = function (items) {
+	var i;
+	if(!jQuery.isArray(items)) {
+		throw new Error("setItems(): The parameter must be an array.");
+	}
+	this._massiveAction = true;
+	this.clearItems();
+	for (i = 0; i < items.length; i += 1) {
+		this.addItem(items[i]);
+	}
+	this._paintItems();
+	this._massiveAction = false;
+	return this;
+};
+
+FieldPanelButtonGroup.prototype.getItems = function () {
+	return this._items.asArray();
+};
+
+FieldPanelButtonGroup.prototype.getValueObject = function(item) {
+	return {
+		text: item.text,
+		value: item.value
+	};
+};
+
+FieldPanelButtonGroup.prototype.createHTML = function () {
+	if(!this.html) {
+		this.html = this.createHTMLElement("div");
+		this.html.className = "adam field-panel-button-group";
+		this._htmlLabel = this.createHTMLElement("span");
+		this._htmlLabel.className = "adam field-panel-button-group-label";
+		this._htmlItemsContainer = this.createHTMLElement("div");
+		this._htmlItemsContainer.className = "adam field-panel-button-container btn-group";
+
+		this.html.appendChild(this._htmlLabel);
+		this.html.appendChild(this._htmlItemsContainer);
+		this.setLabel(this._label)._paintItems().setVisible(this.visible);
+	}
+	return this.html;
+};
+//This is an abstract class
+var CollapsiblePanel = function (settings) {
+	FieldPanelItem.call(this, settings);
+	this._items = new ArrayList();
+	this._title = "";
+	this._massiveAction = false;
+	this._htmlHeader = null;
+	this._htmlTitle = null;
+	this._htmlBody = null;
+	this._bodyHeight = null;
+	this._htmlCollapsibleIcon = null;
+	this._htmlTitleContainer = null;
+	this._collapsed = null;
+	this.onCollapse = null;
+	this.onExpand = null;
+	this._attachedListeners = null;
+	this._initialized = false;
+	this._enabledAnimations = null;
+	this._disabled = false;
+	this._onEnablementStatusChange = null;
+	this._headerVisible = false;
+	CollapsiblePanel.prototype.init.call(this, settings);
+};
+
+CollapsiblePanel.prototype = new FieldPanelItem();
+CollapsiblePanel.prototype.constructor = CollapsiblePanel;
+CollapsiblePanel.prototype.type = "CollapsiblePanel";
+
+CollapsiblePanel.prototype.init = function (settings) {
+	var defaults = {
+		title: "[panel]",
+		items: [],
+		bodyHeight: "auto",
+		collapsed: true,
+		width: '100%',
+		onCollapse: null,
+		onExpand: null,
+		enabledAnimations: true,
+		disabled: false,
+		onEnablementStatusChange: null,
+		headerVisible: true
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	if (defaults.enabledAnimations) {
+		this.enableAnimations();
+	} else {
+		this.disableAnimations();
+	}
+
+	if (defaults.disabled) {
+		this.disable();
+	} else {
+		this.enable();
+	}
+
+	this.setWidth(defaults.width)
+		.setTitle(defaults.title)
+		.setItems(defaults.items)
+		.setBodyHeight(defaults.bodyHeight)
+		.setOnCollapseHandler(defaults.onCollapse)
+		.setOnExpandHandler(defaults.onExpand)
+		.setOnEnablementStatusChangeHandler(defaults.onEnablementStatusChange);
+
+	if (defaults.collapsed) {
+		this.collapse();
+	} else {
+		this.expand();
+	}
+
+	if (defaults.headerVisible) {
+		this.showHeader();
+	} else {
+		this.hideHeader();
+	}
+	this._initialized = true;
+};
+
+CollapsiblePanel.prototype.showHeader = function () {
+	this._headerVisible = true;
+	if (this._htmlHeader) {
+		this._htmlHeader.style.display = '';
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.hideHeader = function () {
+	this._headerVisible = false;
+	if (this._htmlHeader) {
+		this._htmlHeader.style.display = 'none';
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.setOnEnablementStatusChangeHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnEnablementStatusChangeHandler(): The parameter must be a function or null.");
+	}
+	this.onEnablementStatusChange = handler;
+	return this;
+};
+
+CollapsiblePanel.prototype.isDisabled = function () {
+	return this._disabled;
+};
+
+CollapsiblePanel.prototype.disable = function () {
+	if (!this._disabled) {
+		this.collapse();
+		this.style.addClasses(['collapsible-panel-disabled']);
+		this._disabled = true;
+		if (typeof this.onEnablementStatusChange === 'function') {
+			this.onEnablementStatusChange(this, false);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.enable = function () {
+	if (this._disabled) {
+		this.style.removeClasses(['collapsible-panel-disabled']);
+		this._disabled = false;
+		if (typeof this.onEnablementStatusChange === 'function') {
+			this.onEnablementStatusChange(this, true);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.setParent = function (parent) {
+	if(!(parent === null || parent instanceof FieldPanel || parent instanceof MultipleCollapsiblePanel)) {
+		throw new Error("setParent(): The parameter must be an instance of FieldPanel, MultipleCollapsiblePanel or "
+			+ "null.");
+	}
+	this._parent = parent;
+
+	return this;
+};
+
+CollapsiblePanel.prototype.enableAnimations = function	() {
+	this._enabledAnimations = true;
+	return this;
+};
+
+CollapsiblePanel.prototype.disableAnimations = function () {
+	this._enabledAnimations = false;
+	return this;
+};
+
+CollapsiblePanel.prototype.setOnExpandHandler = function(handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnExpandHandler(): The paremeter must be a function or null.");
+	}
+	this.onExpand = handler;
+	return this;
+};
+
+CollapsiblePanel.prototype.setOnCollapseHandler = function(handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnCollapseHandler(): The paremeter must be a function or null.");
+	}
+	this.onCollapse = handler;
+	return this;
+};
+
+CollapsiblePanel.prototype.setWidth = function(w) {
+	if(typeof w === 'number') {
+		Element.prototype.setWidth(w);
+	} else {
+		if(/^\d+(.\d+)?(px|%)?$/.test(w)) {
+			this.width = w;
+			if (this.html) {
+	            this.style.addProperties({width: w});
+	        }
+		} else {
+			throw new Error("setWidth(): The parameter must be a number or a valid number/unit formatted string.");
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.isCollapsed = function () {
+	return this._collapsed;
+};
+
+CollapsiblePanel.prototype.collapse = function (noAnimation) {
+	this._collapsed = true;
+	if(this._htmlBody) {
+		jQuery(this._htmlCollapsibleIcon).removeClass('icon-double-angle-down').addClass('icon-double-angle-right');
+		if(isInDOM(this.html)) {
+			if (!this._enabledAnimations || noAnimation) {
+				jQuery(this._htmlBody).stop(true, true).hide();
+			} else {
+				jQuery(this._htmlBody).stop(true, true).slideUp();
+			}
+		} else {
+			this._htmlBody.style.display = 'none';
+		}
+		if (this._initialized && typeof this.onCollapse === 'function') {
+			this.onCollapse(this);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.expand = function (noAnimation) {
+	this._collapsed = false;
+	if(this._htmlBody) {
+		jQuery(this._htmlCollapsibleIcon).removeClass('icon-double-angle-right').addClass('icon-double-angle-down');
+		if (!this._enabledAnimations || noAnimation) {
+			jQuery(this._htmlBody).stop(true, true).show();
+		} else {
+			jQuery(this._htmlBody).stop(true, true).slideDown();	
+		}
+		if (this._initialized && typeof this.onExpand === 'function') {
+			this.onExpand(this);
+		}
+	}	
+	return this;
+};
+
+CollapsiblePanel.prototype.toggleCollapse = function() {
+	if(this._collapsed) {
+		this.expand();
+	} else {
+		this.collapse();
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.setBodyHeight = function (height) {
+	this._bodyHeight = height;
+	if(this._htmlBody) {
+		this._htmlBody.style.maxHeight = isNaN(height) ? height : height + "px";
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.setTitle = function (title) {
+	if(typeof title !== 'string') {
+		throw new Error("setTitle(): The parameter must be a string.");
+	}
+
+	this._title = title;
+	if(this._htmlTitle) {
+		this._htmlTitle.textContent = title;
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.getTitle = function () {
+	return this._title;
+};
+
+CollapsiblePanel.prototype._unpaintItem = function (item) {
+	if(item.html) {
+		//IE compatibilty
+		if (item.html.remove) {
+			item.html.remove();
+		} else {
+			item.html.removeNode(true);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype._unpaintItems = function () {
+	var i, items = this._items.asArray();
+	if(this.html) {
+		for (i = 0; i < items.length; i += 1) {
+			this._unpaintItem(items[i]);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.removeItem = function (item) {
+	var itemToRemove = this.getItem(item);
+	if (itemToRemove) {
+		this._items.remove(itemToRemove);
+		this._unpaintItem(itemToRemove);
+	}
+	return 
+};
+
+CollapsiblePanel.prototype.clearItems = function () {
+	var i, items = this._items.asArray();
+	this._unpaintItems();
+	if(this._massiveAction) {
+		this._items.clear();
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype._paintItem = function (item, index) {
+	var itemAtIndex;
+	if(this.html) {
+		if (index) {
+			itemAtIndex = this._items.get(index);
+		}
+		if (itemAtIndex) {
+			this._htmlBody.insertBefore(item.getHTML(), itemAtIndex.getHTML());
+		} else {
+			this._htmlBody.appendChild(item.getHTML());	
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype._paintItems = function () {
+	var i, items;
+	if(this.html) {
+		items = this._items.asArray();
+		this._unpaintItems();
+		for(i = 0; i < items.length; i += 1) {
+			this._paintItem(items[i]);
+		}
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.addItem = function (item, index) {
+	if (typeof index === 'number') {
+		this._items.insertAt(item, index);	
+	} else if (index === null || index === undefined) {
+		this._items.insert(item);
+	} else {
+		throw new Error("addItem(): The second parameter is optional, in case of use it must be a number.");
+	}
+	if(!this._massiveAction) {
+		this._paintItem(item, index);
+	}
+	return this;
+};
+
+CollapsiblePanel.prototype.getItem = function (field) {
+	if (typeof field === 'string') {
+		return this._items.find("id", field);	
+	} else if (typeof field === 'number') {
+		return this._items.get(field);
+	} else if (typeof field instanceof FormPanelItem && this._items.indexOf(field) >= 0) {
+		return field;
+	}
+	return null;
+};
+
+CollapsiblePanel.prototype.setItems = function (items) {
+	var i;
+	if(!jQuery.isArray(items)) {
+		throw new Error("setItems(): The parameter must be an array.")
+	}
+	this._massiveAction = true;
+	this.clearItems();
+	for(i = 0; i < items.length; i++) {
+		this.addItem(items[i]);
+	}
+	this._paintItems();
+	this._massiveAction = false;
+	return this;
+};
+
+CollapsiblePanel.prototype.getItems = function () {
+	return this._items.asArray();
+};
+
+CollapsiblePanel.prototype._createBody = function () {
+	throw new Error("_createBody(): This function must be overwritten in subclases, since it's been called from an abstract one.");
+};
+
+CollapsiblePanel.prototype._attachListeners = function () {
+	var that;
+	if(this.html && !this._attachedListeners) {
+		that = this;
+		jQuery(this._htmlTitleContainer).on('click', function() {
+			if (!that._disabled) {
+				that.toggleCollapse();
+			}
+		});
+	}
+
+	return this;
+};
+
+CollapsiblePanel.prototype.createHTML = function () {
+	var htmlHeader, htmlTitle, htmlBody, htmlTitleContainer, collapsibleIcon;
+	if(!this.html) {
+		this.html = this.createHTMLElement('div');
+		this.html.id = this.id;
+		this.html.className = "adam collapsible-panel";
+		htmlHeader = this.createHTMLElement('div');
+		htmlHeader.className = "adam collapsible-panel-header";
+		htmlTitleContainer = this.createHTMLElement('h4');
+		htmlTitleContainer.className = "adam collapsible-panel-title";
+		htmlTitle = this.createHTMLElement('span');
+		collapsibleIcon = this.createHTMLElement('i');
+		collapsibleIcon.className = 'adam collapsible-panel-icon icon-double-angle-right';
+
+		htmlTitleContainer.appendChild(collapsibleIcon);
+		htmlTitleContainer.appendChild(htmlTitle);
+		htmlHeader.appendChild(htmlTitleContainer);
+		this.html.appendChild(htmlHeader);
+		htmlBody = this._createBody();
+		htmlBody.className += " adam collapsible-panel-body";
+		this._htmlBody = htmlBody;
+		this.html.appendChild(htmlBody);
+
+		this._htmlCollapsibleIcon = collapsibleIcon;
+		this._htmlTitleContainer = htmlTitleContainer;
+		this._htmlHeader = htmlHeader;
+		this._htmlTitle = htmlTitle;
+		this._htmlBody = htmlBody;
+
+		this.setBodyHeight(this._bodyHeight);
+		this.setTitle(this._title);
+
+		this._paintItems();
+		this._collapsed ? this.collapse() : this.expand();
+		this._attachListeners();
+		this.setVisible(this.visible);
+
+		if (this._headerVisible) {
+			this.showHeader();
+		} else {
+			this.hideHeader();
+		}
+
+		this.style.applyStyle();
+
+	    this.style.addProperties({
+	        width: this.width,
+	        height: "auto"
+	    });
+	}
+	
+	return this.html;
+};
+//FormPanel
+	var FormPanel = function(settings) {
+		CollapsiblePanel.call(this, settings);
+		this._htmlSubmit = null;
+		this._submitCaption = null;
+		this._htmlFooter = null;
+		this._dependencyMap = null;
+		this._submitVisible = null;
+		this.onSubmit =  null;
+		FormPanel.prototype.init.call(this, settings);
+	};
+
+	FormPanel.prototype = new CollapsiblePanel();
+	FormPanel.prototype.constructor = FormPanel;
+	FormPanel.prototype.type = "FormPanel";
+
+	FormPanel.prototype.init = function (settings) {
+		var defaults = {
+			submitCaption: translate("LBL_PMSE_FORMPANEL_SUBMIT"),
+			items: [],
+			submitVisible: true,
+			onSubmit: null
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this._dependencyMap = {};
+		this._submitVisible = !!defaults.submitVisible;
+
+		this.setItems(defaults.items)
+			.setSubmitCaption(defaults.submitCaption)
+			.setOnSubmitHandler(defaults.onSubmit);
+	};
+
+	FormPanel.prototype.setOnSubmitHandler = function (handler) {
+		if (!(handler === null || typeof handler === 'function')) {
+			throw new Error("setOnSubmitHandler(): The parameter must be a function or null.");
+		}
+		this.onSubmit = handler;
+		return this;
+	};
+
+	FormPanel.prototype.setItems = function (items) {
+		if(this._dependencyMap) {
+			CollapsiblePanel.prototype.setItems.call(this, items);
+		}
+		return this;
+	};
+
+	FormPanel.prototype._createField = function (settings) {
+		var defaults = {
+			type: 'text'
+		}, field;
+
+		jQuery.extend(true, defaults, settings);
+
+		switch (defaults.type) {
+			case 'text':
+				field = new FormPanelText(defaults);
+				break;
+			case 'integer':
+				defaults.precision = 0;
+				defaults.groupingSeparator = "";
+				field = new FormPanelNumber(defaults);
+				break;
+			case 'number':
+				defaults.precision = -1;
+				defaults.groupingSeparator = "";
+				field = new FormPanelNumber(defaults);
+				break;
+			case 'currency':
+				defaults.precision = 2;
+				field = new FormPanelNumber(defaults);
+				break;
+			case 'dropdown':
+				field = new FormPanelDropdown(defaults);
+				break;
+			case 'date':
+				field = new FormPanelDate(defaults);
+				break;
+			case 'datetime':
+				field = new FormPanelDatetime(defaults);
+				break;
+			case 'radio':
+				field = new FormPanelRadio(defaults);
+				break;
+			case 'hidden':
+				field = new FormPanelHidden(defaults);
+				break;
+			case 'checkbox':
+				field = new FormPanelCheckbox(defaults);
+				break;
+			case 'button': 
+				field = new FormPanelButton(defaults);
+				break;
+			default:
+				throw new Error("_createField(): Invalid field type.");
+		}
+		return field;
+	};
+
+	FormPanel.prototype.setSubmitCaption = function (caption) {
+		if (typeof caption !== 'string') {
+			throw new Error("setSubmitCaption(): The parameter must be a string.");
+		}
+		this._submitCaption = caption;
+		if (this._htmlSubmit) {
+			this._htmlSubmit.textContent = caption;
+		}
+		return this;
+	};
+
+	FormPanel.prototype.getItem = function (field) {
+		if (typeof field === 'string') {
+			return this._items.find("_name", field);	
+		} else if (typeof field === 'number') {
+			return this._items.get(field);
+		} else if (field instanceof FormPanelItem && this._items.indexOf(field) >= 0) {
+			return field;
+		}
+		return null;
+	};
+
+	FormPanel.prototype._paintItem = function (item, index) {
+		var itemAtIndex;
+		if(this.html) {
+			if (typeof index === 'number') {
+				itemAtIndex = this._items.get(index + 1);
+			}
+			if (itemAtIndex) {
+				this._htmlBody.insertBefore(item.getHTML(), itemAtIndex.getHTML());
+			} else {
+				this._htmlBody.insertBefore(item.getHTML(), this._htmlFooter);
+			}
+		}
+		return this;
+	};
+
+	FormPanel.prototype.addItem = function (item, index) {
+		var itemToAdd, dependency, dependant, i, dependencyField;
+		if(item instanceof FormPanelField) {
+			itemToAdd = item;
+		} else if (typeof item === 'object') {
+			itemToAdd = this._createField(item);
+		} else {
+			throw new Error('addItem(): the parameter must be an object or an instance of FormPanelField.');
+		}
+		itemToAdd.setForm(this);
+		CollapsiblePanel.prototype.addItem.call(this, itemToAdd, index);
+		if (itemToAdd instanceof FormPanelField) {
+			dependency = this._dependencyMap[itemToAdd.getName()];
+			if (dependency) {
+				for (i = 0; i < dependency.length; i += 1) {
+					if(dependencyField = this.getItem(dependency[i])) {
+						dependencyField.fireDependentFields();
+					}	
+				}	
+			}
+			itemToAdd.fireDependentFields();
+		}
+		return this;
+	};
+
+	FormPanel.prototype.replaceItem = function (newItem, itemToBeReplaced) {
+		var itemIndex;
+		itemToBeReplaced = this.getItem(itemToBeReplaced);
+		itemIndex = this._items.indexOf(itemToBeReplaced);
+		if (itemIndex >= 0) {
+			this.removeItem(itemToBeReplaced);
+			this.addItem(newItem, itemIndex);	
+		}
+		return this;
+	};
+
+	FormPanel.prototype.isValid = function () {
+		var items = this._items.asArray(), i, valid = true;
+		for (i = 0; i < items.length; i += 1) {
+			if (items[i] instanceof FormPanelField) {
+				valid = valid && items[i].isValid();
+				if(!valid) {
+					return valid;
+				}
+			}
+		}
+		return valid;
+	};
+  
+	FormPanel.prototype._createBody = function () {
+		var element = this.createHTMLElement('form');
+		element.className = 'form-panel-body';
+		return element;
+	};	
+
+	FormPanel.prototype.getValueObject = function () {
+		var i, fields = this._items.asArray(), valueObject = {
+		};
+
+		for(i = 0; i < fields.length; i += 1) {
+			if (fields[i] instanceof FormPanelField) {
+				valueObject[fields[i].getName()] = fields[i].getValue();
+			}
+		}
+		return valueObject;
+	};
+
+	FormPanel.prototype.registerSingleDependency = function (target, dependant) {
+		if(!(target instanceof FormPanelField && typeof dependant === 'string' || jQuery.isArray(dependant))) {
+			throw new Error("registerSingleDependency(): Incorrect parameters.");
+		}
+		if (!this._dependencyMap[dependant]) {
+			this._dependencyMap[dependant] = [];
+		}
+		if (this._dependencyMap[dependant].indexOf(dependant) === -1) {
+			this._dependencyMap[dependant].push(target.getName());
+		}
+		return this;
+	};
+
+	FormPanel.prototype.registerDependency = function (target, dependantFields) {
+		var i;
+		if(!(target instanceof FormPanelField && jQuery.isArray(dependantFields))) {
+			throw new Error("registerDependency(): Incorrect parameters.");
+		}
+		for(i = 0; i < dependantFields.length; i += 1) {
+			this.registerSingleDependency(target, dependantFields[i]);
+		}
+		return this;
+	};
+
+	FormPanel.prototype.showSubmit = function () {
+		this._htmlFooter.style.display = '';
+		this._submitVisible = true;
+		return this;
+	};
+
+	FormPanel.prototype.hideSubmit = function () {
+		this._htmlFooter.style.display = 'none';
+		this._submitVisible = false;
+		return this;
+	};
+
+	FormPanel.prototype.reset = function () {
+		var items = this._items.asArray(), i;
+
+		for (i = 0; i < items.length; i += 1) {
+			if (items[i] instanceof FormPanelField) {
+				items[i].reset();
+			}
+		}
+
+		return this;
+	};
+
+	FormPanel.prototype.submit = function () {
+		if (this.isValid()) {
+			$(this._htmlBody).trigger('submit');
+		}
+		return this;
+	};
+
+	FormPanel.prototype._attachListeners = function () {
+		var that;
+		if(this.html && !this._attachedListeners) {
+			that = this;
+			CollapsiblePanel.prototype._attachListeners.call(this);
+			jQuery(that._htmlBody).on('submit', function (e) {
+				var sendForm = true;
+				e.preventDefault();
+				if(that.isValid()) {
+					if (typeof that.onSubmit === 'function') {
+						sendForm = !(that.onSubmit(that) === false);
+					}
+					if (sendForm) {
+						that._onValueAction();
+					}
+				}
+			});
+			this._attachedListeners = true;
+		}
+
+		return this;
+	};
+
+	FormPanel.prototype.createHTML = function () {
+		var button, footer;
+		if (!this.html) {
+			CollapsiblePanel.prototype.createHTML.call(this);
+			footer = this.createHTMLElement("div");
+			footer.className = "adam form-panel-footer";
+			button = this.createHTMLElement("button");
+			button.className = 'adam form-panel-submit btn btn-mini';
+			footer.appendChild(button);
+			this._htmlBody.appendChild(footer);
+			this._htmlSubmit = button;
+			this._htmlFooter = footer;
+			this.setSubmitCaption(this._submitCaption);
+			this._attachListeners();
+
+			if (this._submitVisible) {
+				this.showSubmit();
+			} else {
+				this.hideSubmit();
+			}
+		}
+		return this.html;
+	};
+
+//FormPanelItem
+	var FormPanelItem = function (settings) {
+		Element.call(this, settings);
+		this._name = null; 
+		this._label = null;
+		this._disabled = null;
+		this._form = null;
+		FormPanelItem.prototype.init.call(this, settings);
+	};
+
+	FormPanelItem.prototype = new Element();
+	FormPanelItem.prototype.constructor = FormPanelItem;
+	FormPanelItem.prototype.type = "FormPanelItem";
+
+	FormPanelItem.prototype.init = function (settings) {
+		var defaults = {
+			name: this.id,
+			form: null, 
+			label: "[form-item]",
+			disabled: false,
+			height: "auto"
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setName(defaults.name)
+			.setForm(defaults.form)
+			.setLabel(defaults.label)
+			.setHeight(defaults.height);
+
+		if (defaults.disabled) {
+			this.disable();
+		} else {
+			this.enable();
+		}
+	};
+
+	FormPanelItem.prototype.setHeight = function (h) {
+		if (!(typeof h === 'number' ||
+			(typeof h === 'string' && (h === "auto" || /^\d+(\.\d+)?(em|px|pt|%)?$/.test(h))))) {
+			throw new Error("setHeight(): invalid parameter.");
+		}
+		this.height = h;
+	    if (this.html) {
+	        this.style.addProperties({height: this.height});
+	    }
+	    return this;
+	};
+
+	FormPanelItem.prototype.setName = function (name) {
+		if (typeof name !== 'string') {
+			throw new Error("setName(): The parameter must be a string.");
+		}
+		this._name = name;
+		return this;
+	};
+
+	FormPanelItem.prototype.getName = function () {
+		return this._name;
+	};
+
+	FormPanelItem.prototype.setWidth = function (width) {
+		return FormPanel.prototype.setWidth.call(this, width);
+	};
+
+	FormPanelItem.prototype.setForm = function (form) {
+		if(!(form === null || form instanceof FormPanel)) {
+			throw new Error("setForm(): The parameter must be an instance of FormPanel or null.");
+		}
+		this._form = form;
+		return this;
+	};
+
+	FormPanelItem.prototype.getForm = function () {
+		return this._form;
+	};
+
+	FormPanelItem.prototype.setLabel = function (label) {
+		if (typeof label !== 'string') {
+			throw  new Error("setLabel(): The parameter must be a string.");
+		}
+		this._label = label;
+		return this;
+	};
+
+	FormPanelItem.prototype.getLabel = function () {
+		return this._label;
+	};
+
+	FormPanelItem.prototype.enable = function () {
+		this._disabled = false;
+		return this;
+	};
+
+	FormPanelItem.prototype.disable = function () {
+		this._disabled = true;
+		return this;
+	};
+
+	FormPanelItem.prototype.isDisabled = function () {
+		return this._disabled;
+	};
+
+	FormPanelItem.prototype._attachListeners = function () {};
+
+	FormPanelItem.prototype.setVisible = function (value) {
+		if (_.isBoolean(value)) {
+	        this.visible = value;
+	        if (this.html) {
+	            if (value) {
+	                this.style.removeProperties(["display"]);
+	            } else {
+	                this.style.addProperties({display: "none"});
+	            }
+	        }
+	    }
+	    return this;
+	};
+
+	FormPanelItem.prototype._postCreateHTML = function () {
+		this._attachListeners();
+		this.style.applyStyle();
+
+        this.style.addProperties({
+            width: this.width,
+            height: this.height
+        });
+
+        if (this._disabled) {
+			this.disable();
+		} else {
+			this.enable();
+		}
+
+		this.setVisible(this.visible);
+
+		return this;
+	};
+
+	FormPanelItem.prototype.createHTML = function () {
+		var html;
+		if (!this.html) {
+			html = this.createHTMLElement("div");
+			html.id = this.id;
+			html.className = 'adam form-panel-item';
+			this.html = html;
+			this._postCreateHTML();
+		}
+		return this.html;
+	};
+
+//FormPanelButton
+	var FormPanelButton = function (settings) {
+		FormPanelItem.call(this, settings);
+		this.onClick = null;
+		this._htmlButton = null;
+		FormPanelButton.prototype.init.call(this, settings);
+	};
+
+	FormPanelButton.prototype = new FormPanelItem();
+	FormPanelButton.prototype.constructor = FormPanelButton;
+	FormPanelButton.prototype.type = "FormPanelButton";
+
+	FormPanelButton.prototype.init = function (settings) {
+		var defaults = {
+			onClick: null,
+			width: "100%"
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setOnClickHandler(defaults.onClick)
+			.setWidth(defaults.width);
+	};
+
+	FormPanelButton.prototype.setOnClickHandler = function (handler) {
+		if (!(handler === null || typeof handler === 'function')) {
+			throw new Error("setOnClickHandler(): The parameter must be a function or null.");
+		}
+		this.onClick = handler;
+		return this;
+	};
+
+	FormPanelButton.prototype.enable = function() {
+		if (this._htmlButton){
+			this._htmlButton.disabled = false;
+		}
+		return FormPanelItem.prototype.enable.call(this);
+	};
+
+	FormPanelButton.prototype.disable = function() {
+		if (this._htmlButton) {
+			this._htmlButton.disabled = true;
+		}
+		return FormPanelItem.prototype.disable.call(this);
+	};
+
+	FormPanelButton.prototype._attachListeners = function () {
+		var that = this;
+		if (this.html) {
+			jQuery(this._htmlButton).on('click', function () {
+				if (typeof that.onClick === 'function') {
+					that.onClick(that);
+				}
+			});
+		}
+
+		return this;
+	};
+
+	FormPanelButton.prototype._postCreateHTML = function() {
+		if (this._htmlButton) {
+			FormPanelItem.prototype._postCreateHTML.call(this);
+		}
+		return this;
+	};
+
+	FormPanelButton.prototype.createHTML = function () {
+		var html, button;
+		if (!this.html)	{
+			html = FormPanelItem.prototype.createHTML.call(this);
+			html.className += " form-panel-button";
+			button = this.createHTMLElement("input");
+			button.type = 'button';
+			button.value = this._label;
+			button.className = "btn btn-mini";
+			html.appendChild(button);
+
+			this._htmlButton = button;
+
+			this._postCreateHTML();
+		}
+		return this.html;
+	};
+
+//FormPanelField
+	var FormPanelField = function (settings) {
+		FormPanelItem.call(this, settings);
+		/*this._name = null;
+		this._label = null;*/
+		this._value = null;
+		this.onChange = null;
+		this._htmlControl = [];
+		this._htmlControlContainer = null;
+		this._htmlLabelContainer = null;
+		this._dependantFields = [];
+		this._dependencyHandler = null;
+		this.required = null;
+		this._disabled = null;
+		this._form = null;
+		this._initialValue = null;
+		FormPanelField.prototype.init.call(this, settings);
+	};
+
+	FormPanelField.prototype =  new FormPanelItem();
+	FormPanelField.prototype.constructor = FormPanelField;
+	FormPanelField.prototype.type = "FormPanelField";
+
+	FormPanelField.prototype.init = function (settings) {
+		var defaults = {
+			/*form: null,*/
+			/*name: this.id,*/
+			label: "[field]",
+			onChange: null,
+			dependantFields: [],
+			dependencyHandler: null,
+			value: "",
+			required: false/*,
+			disabled: false*/
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setLabel(defaults.label)
+			.setValue(defaults.value)
+			.setRequired(defaults.required)
+			.setOnChangeHandler(defaults.onChange)
+			.setDependantFields(defaults.dependantFields)
+			.setDependencyHandler(defaults.dependencyHandler);
+
+		this._initialValue = this._value;
+	};
+
+	FormPanelField.prototype.reset = function () {
+		this.setValue(this._initialValue);
+		return this;
+	};
+
+	FormPanelField.prototype.setForm = function (form) {
+		FormPanelItem.prototype.setForm.call(this, form);
+		if (form) {
+			form.registerDependency(this, this._dependantFields);
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.setRequired = function (required) {
+		this.required = !!required;
+		return this;
+	};
+
+	FormPanelField.prototype._evalRequired = function () {
+		if(this.required && !this._disabled) {
+			return !!this._value;
+		}
+		return true;
+	};
+
+	FormPanelField.prototype._validateField = function () {
+		return this;
+	};
+
+	FormPanelField.prototype.isValid = function () {
+		var isValid = this._evalRequired();
+
+		if (isValid) {
+			isValid = this._validateField();
+		}
+
+		if(!isValid && this.html) {
+			jQuery(this.html).addClass("error");
+		} else {
+			jQuery(this.html).removeClass("error");
+		}
+		return isValid;
+	};
+
+	FormPanelField.prototype.setDependencyHandler = function (handler) {
+		if(!(handler === null || typeof handler === 'function')) {
+			throw new Error("setDependencyHandler(): The parameter must be a function or null.");
+		}
+		this._dependencyHandler = handler;
+		return this;
+	};
+
+	FormPanelField.prototype._fireDependencyHandler = function (field, value) {
+		if (typeof this._dependencyHandler === 'function') {
+			this._dependencyHandler(this, field, value);
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.addDependantField = function (field) {
+		if (typeof field === 'string') {
+			this._dependantFields.push(field);
+			if(this._form) {
+				this._form.registerSingleDependency(this, field);
+			}
+		} else {
+			throw new Error("addDependantField(): The parameter must be a string (The name of the dependant field).");
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.setDependantFields = function (fields) {
+		var i;
+		if(!jQuery.isArray(fields)) {
+			throw new Error("setDependantFields(): the parameter must be an array.");
+		}
+		this._dependantFields = [];
+		for (i = 0; i < fields.length; i += 1) {
+			this.addDependantField(fields[i]);
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.setLabel = function (label) {
+		FormPanelItem.prototype.setLabel.call(this, label);
+		if(this._htmlLabelContainer) {
+			this._htmlLabelContainer.textContent = label;
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.setOnChangeHandler = function (handler) {
+		if (!(handler === null || typeof handler === 'function')) {
+			throw new Error("setOnChangeHandler(): The parameter must be a function or null.");
+		}
+		this.onChange = handler;
+		return this;
+	};
+
+	FormPanelField.prototype._setValueToControl = function(value) {
+		if(this._htmlControl[0]) {
+			this._htmlControl[0].value = value;
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.setValue = function (value) {
+		var preValue = this._value;
+		if(typeof value !== 'string') {
+			throw new Error("setValue(): The parameter must be a string.");
+		}
+		this._setValueToControl(value);
+		this._value = value;
+		if (value !== preValue) {
+			this.fireDependentFields();
+		}
+		return this;
+	};
+
+	FormPanelField.prototype.enable = function () {
+		var i;
+		if (this._htmlControl && this._htmlControl.length) {
+			for (i = 0; i < this._htmlControl.length; i += 1) {
+				this._htmlControl[i].disabled = false;	
+			}
+		}
+		return FormPanelItem.prototype.enable.call(this);
+	};
+
+	FormPanelField.prototype.disable = function () {
+		var i;
+		if (this._htmlControl && this._htmlControl.length) {
+			for (i = 0; i < this._htmlControl.length; i += 1) {
+				this._htmlControl[0].disabled = true;
+			}
+		}
+		return FormPanelItem.prototype.disable.call(this);
+	};
+
+	FormPanelField.prototype.getValue = function () {
+		return this._value;
+	};
+
+	FormPanelField.prototype._getValueFromControl = function () {
+		var value = "", i;
+
+		for (i = 0; i < this._htmlControl.length; i += 1) {
+			value += this._htmlControl[i].value;
+		}
+		return value;
+	};
+
+	FormPanelField.prototype.fireDependentFields = function () {
+		var dependantField, value = this._value;
+		if(this._form) {
+			for(i = 0; i < this._dependantFields.length; i++) {
+				dependantField = this._form.getItem(this._dependantFields[i]);
+				if (dependantField) {
+					dependantField._fireDependencyHandler(this, value);
+				}
+			}	
+		}
+		return this;
+	};
+
+	FormPanelField.prototype._onChangeHandler = function () {
+		var that = this;
+		return function () {
+			var currValue = that._value, 
+				newValue = that._getValueFromControl(),
+				valueHasChanged = currValue !== newValue,
+				i, dependantField;
+
+			if(valueHasChanged) {
+				that._value = newValue;
+				if (typeof that.onChange === 'function') {
+					that.onChange(that, newValue, currValue);
+				}
+				that.fireDependentFields();
+			}
+		}
+	};
+
+	FormPanelField.prototype._attachListeners = function () {
+		var i, control;
+		if (this.html) {
+			for (i = 0; i < this._htmlControl.length; i += 1) {
+				jQuery(this._htmlControl[i]).on('change', this._onChangeHandler());
+			}
+		}
+		return this;
+	};
+
+	FormPanelField.prototype._createControl = function () {
+		var control, i;
+		if(!this._htmlControl.length) {
+			throw new Error("_createControl(): This method shouldn't be called until the field control is created.");
+		}
+		this._setValueToControl(this._value);
+		for (i = 0; i < this._htmlControl.length; i += 1) {
+			control = this._htmlControl[i];
+			control.className += ' inherit-width adam form-panel-field-control';
+			this._htmlControlContainer.appendChild(control);
+		}
+		this.setValue(this._value);
+		return this;
+	};
+
+	FormPanelField.prototype._postCreateHTML = function () {
+		if (this._htmlControlContainer) {
+			FormPanelItem.prototype._postCreateHTML.call(this);
+		}
+
+		return this;
+	};
+
+	FormPanelField.prototype.createHTML = function () {
+		var html, htmlLabelContainer, span, htmlControlContainer;
+		if (!this.html) {
+			html = FormPanelItem.prototype.createHTML.call(this);
+			html.className += ' adam form-panel-field record-cell';
+			html.className += '	adam-' + this.type.toLowerCase();
+			htmlLabelContainer = this.createHTMLElement("div");
+			htmlLabelContainer.className = 'adam form-panel-label record-label';
+			span = this.createHTMLElement("span");
+			span.className = 'normal index';
+			htmlControlContainer =  this.createHTMLElement("span");
+			htmlControlContainer.className = "edit";
+			span.appendChild(htmlControlContainer);
+			html.appendChild(htmlLabelContainer);
+			html.appendChild(span);
+
+			this._htmlLabelContainer = htmlLabelContainer;
+			this._htmlControlContainer = htmlControlContainer;
+			this.html = html;
+
+			this._createControl()
+				.setLabel(this._label);
+
+			this._postCreateHTML();
+		}
+		return this.html;
+	};
+
+//HiddenField
+	var FormPanelHidden = function (settings) {
+		FormPanelField.call(this, settings);
+	};
+
+	FormPanelHidden.prototype = new FormPanelField();
+	FormPanelHidden.prototype.constructor = FormPanelHidden;
+	FormPanelHidden.prototype.type = "FormPanelHidden";
+
+	FormPanelHidden.prototype._createControl = function() {
+		if (!this._htmlControl.length) {
+			this._htmlControl[0] = this.createHTMLElement("input");
+			this._htmlControl[0].name = this._name;
+			this._htmlControl[0].type = "hidden";
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+
+	FormPanelHidden.prototype.createHTML = function () {
+		FormPanelField.prototype.createHTML.call(this);
+		this.html.style.display = "none";
+		return this;
+	};
+
+//TextField
+	var FormPanelText = function (settings) {
+		FormPanelField.call(this, settings);
+		this._placeholder = null;
+		this.onKeyUp = null;
+		this._maxLength = null;
+		FormPanelText.prototype.init.call(this, settings);
+	};
+
+	FormPanelText.prototype = new FormPanelField();
+	FormPanelText.prototype.constructor = FormPanelText;
+	FormPanelText.prototype.type = "FormPanelText";
+
+	FormPanelText.prototype.init = function(settings) {
+		var defaults = {
+			placeholder: "",
+			onKeyUp: null,
+			maxLength: 0
+		};
+		jQuery.extend(true, defaults, settings);
+		this.setPlaceholder(defaults.placeholder)
+			.setOnKeyUpHandler(defaults.onKeyUp)
+			.setMaxLength(defaults.maxLength);
+	};
+
+	FormPanelText.prototype.setMaxLength = function (maxLength) {
+		if (!(typeof maxLength === 'number' && maxLength >= 0)) {
+			throw new Error("setMaxLength(): The parameter must be a number major than 0.");
+		}
+		this._maxLength = maxLength;
+		if (this._htmlControl[0]) {
+			if (!maxLength) {
+				this._htmlControl[0].removeAttribute("maxlength");
+			} else {
+				this._htmlControl[0].maxLength = maxLength;
+			}
+		}
+		return this;
+	};
+
+	FormPanelText.prototype.setOnKeyUpHandler = function (handler) {
+		if (!(handler === null || typeof handler === 'function')) {
+			throw new Error("setOnKeyUpHandler(): The parameter must be a function or null");
+		}
+		this.onKeyUp = handler;
+		return this;
+	};
+
+	FormPanelText.prototype.setPlaceholder = function (placeholder) {
+		if(typeof placeholder !== 'string') {
+			throw new Error("setPlaceholder(): The parameter must be a string.")
+		}
+		this._placeholder = placeholder;
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].placeholder = placeholder;
+		}
+		return this;
+	};
+
+	FormPanelText.prototype._onKeyUp = function () {
+		var that = this;
+
+		return function (e) {
+			if (typeof that.onKeyUp === 'function') {
+				that.onKeyUp(that, that._htmlControl[0].value, e.keyCode);
+			}
+		};
+	};
+
+	FormPanelText.prototype._attachListeners = function() {
+		if (this.html) {
+			FormPanelField.prototype._attachListeners.call(this);
+			jQuery(this._htmlControl[0]).on('keyup', this._onKeyUp());
+		}
+		return this;
+	};
+
+	FormPanelText.prototype._createControl = function () {
+		if (!this._htmlControl.length) {
+			this._htmlControl[0] = this.createHTMLElement("input");
+			this._htmlControl[0].name = this._name;
+			this._htmlControl[0].type = "text";
+			this.setMaxLength(this._maxLength);
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+
+	FormPanelText.prototype.createHTML = function () {
+		if(!this.html) {
+			FormPanelField.prototype.createHTML.call(this);
+			this.setPlaceholder(this._placeholder);
+		}
+		return this.html;
+	};
+//FormPanelNumber
+	var FormPanelNumber = function (settings) {
+		FormPanelField.call(this, settings);
+		this._decimalSeparator = null;
+		this._groupingSeparator = null;
+		this._precision = null;
+		this._initialized = false;
+		FormPanelNumber.prototype.init.call(this, settings);
+	};
+
+	FormPanelNumber.prototype = new FormPanelField();
+	FormPanelNumber.prototype.constructor = FormPanelNumber;
+	FormPanelNumber.prototype.type = "FormPanelNumber";
+
+	FormPanelNumber.prototype.init = function (settings) {
+		var defaults = {
+			decimalSeparator: ".",
+			groupingSeparator: ",",
+			precision: -1,
+			value: null
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setDecimalSeparator(defaults.decimalSeparator)
+			.setGroupingSeparator(defaults.groupingSeparator)
+			.setPrecision(defaults.precision)
+			.setValue(defaults.value);
+
+		this._initialized = true;
+	};
+
+	FormPanelNumber.prototype._setValueToControl = function (value) {
+		var integer, decimal, label = "", aux, power, i, decimalSeparator;
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].value = this._parseToUserString(value);
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype._getValueFromControl = function () {
+		var groupingSeparatorRegExp, numberParts, value = this._htmlControl[0].value, numericValue;
+		
+		if (this._groupingSeparator) {
+			groupingSeparatorRegExp = new RegExp((this._isRegExpSpecialChar(this._groupingSeparator) ? "\\" : "") + this._groupingSeparator, "g");
+			value = value.replace(groupingSeparatorRegExp, "");
+		}
+		if ((numberParts = value.split(this._decimalSeparator)).length > 2) {
+			return null;
+		}
+		numberParts[1] = numberParts[1] || "0";
+		if (!/^\-?\d+$/.test(numberParts[0]) || !/^\d+$/.test(numberParts[1])) {
+			return null;
+		}
+		numericValue = parseInt(numberParts[0], 10);
+		numericValue += (parseInt(numberParts[1], 10) / Math.pow(10, numberParts[1].length));
+
+		this._htmlControl[0].value = this._parseToUserString(numericValue);
+
+		return numericValue;
+	};
+
+	FormPanelNumber.prototype.setValue = function (value) {
+		var preValue = this._value;
+		if (!this._decimalSeparator) {
+			return this;
+		}
+		if (!(value === null || typeof value === 'number')) {
+			throw new Error("setValue(): The parameter must be a number.");
+		}
+		this._setValueToControl(value);
+		this._value = value;
+		if (value !== preValue) {
+			this.fireDependentFields();
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype.setDecimalSeparator = function (decimalSeparator) {
+		if (!(typeof decimalSeparator === 'string' && decimalSeparator.length === 1)) {
+			throw new Error("setDecimalSeparator(): The parameter must be a single character.");
+		}
+		if (!isNaN(decimalSeparator) || ["+", "-", "/", "*"].indexOf(decimalSeparator) >= 0) {
+			throw new Error("setDecimalSeparator(): Invalid parameter.");
+		}
+		if (decimalSeparator === this._groupingSeparator) {
+			throw new Error("setDecimalSeparator(): The decimal separator must be different than the " 
+				+ "grouping separator.");
+		}
+		this._decimalSeparator = decimalSeparator;
+		//we make sure that the object has already been initialized
+		if (this._initialized) {
+			this.setValue(this._value);
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype.setGroupingSeparator = function (groupingSeparator) {
+		if (!(typeof groupingSeparator === 'string' && groupingSeparator.length <= 1)) {
+			throw new Error("setGroupingSeparator(): The parameter must be a single character or empty string.");
+		}
+		if (!(isNaN(groupingSeparator)  
+			|| ["+", "-", "/", "*"].indexOf(groupingSeparator) < 0)) {
+			throw new Error("setGroupingSeparator(): Invalid parameter.");
+		}
+		if (groupingSeparator === this._decimalSeparator) {
+			throw new Error("setGroupingSeparator(): The grouping separator must be different than the " 
+				+ "decimal separator.");
+		}
+		this._groupingSeparator = groupingSeparator;
+		//we make sure that the object has already been initialized
+		if (this._initialized) {
+			this.setValue(this._value);
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype.setPrecision = function (precision) {
+		if (!(typeof precision === 'number' && precision % 1 === 0)) {
+			throw new Error("setPrecision(): The parameter must be an integer.");
+		}
+		this._precision = precision;
+		//we make sure that the object has already been initialized
+		if (this._initialized) {
+			this.setValue(this._value);
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype._createControl = function () {
+		if (!this._htmlControl.length) {
+			this._htmlControl[0] = this.createHTMLElement("input");
+			this._htmlControl[0].type = "text";
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+
+	FormPanelNumber.prototype._isRegExpSpecialChar = function (c) {
+		switch (c) {
+		    case "\\":
+		    case "^":
+		    case "$":
+		    case "*":
+		    case "+":
+		    case "?":
+		    case ".":
+		    case "(":
+		    case ")":
+		    case "|":
+		    case "{":
+		    case "}":
+		        return true;
+		        break;
+	    }
+	    return false;
+	};
+
+	FormPanelNumber.prototype.isValid = function () {
+		var isValid = FormPanelField.prototype.isValid.call(this),
+			value = this._htmlControl[0].value;
+
+		if (value && this._value === null) {
+			isValid = false;
+		}
+
+		if(!isValid && this.html) {
+			jQuery(this.html).addClass("error");
+		} else {
+			jQuery(this.html).removeClass("error");
+		}
+		return isValid;
+	};
+
+	FormPanelNumber.prototype._parseToUserString = function (value) {
+		var integer, decimal, label = "", aux, power, i, decimalSeparator;
+		if (value === null) {
+			label = "";
+		} else {
+			if (this._precision >= 0) {
+				power = Math.pow(10, this._precision);
+				value = Math.round(value * power) /power;
+			}
+			decimalSeparator = this._precision === 0 ? "" : this._decimalSeparator;
+			integer = aux = Math.floor(value).toString();
+
+			if (this._precision !== 0) {
+				decimal = "";
+				decimal = value.toString().split(".")[1] || (this._precision < 0 ? "0" : "");
+				for (i = decimal.length; i < this._precision; i += 1) {
+					decimal += "0";
+				}
+			} else {
+				decimal = "";
+			}
+
+			if (this._groupingSeparator) {
+				while (aux.length > 3) {
+					label = this._groupingSeparator + aux.substr(-3) + label;
+					aux = aux.slice(0, -3);
+				}
+			}
+			label = aux + label + decimalSeparator + decimal;	
+		}
+		return label;
+	};
+
+	FormPanelNumber.prototype._onKeyDown = function () {
+		var that = this;
+		return function (e) {
+			if (that._precision === 0 && (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105) 
+				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46) {
+				e.preventDefault();
+			}
+		};
+	};
+
+	FormPanelNumber.prototype._attachListeners = function() {
+		if (this.html) {
+			jQuery(this._htmlControl[0]).on('keydown', this._onKeyDown());
+			FormPanelField.prototype._attachListeners.call(this);
+		}
+		return this;
+	};
+//FormPanelDate
+	var FormPanelDate = function (settings) {
+		FormPanelField.call(this, settings);
+		this._dom = {};
+		this._dateObject = null;
+		this._dateFormat = null;
+		FormPanelDate.prototype.init.call(this, settings);
+	};
+
+	FormPanelDate.prototype = new FormPanelField();
+	FormPanelDate.prototype.constructor = FormPanelDate;
+	FormPanelDate.prototype.type = "FormPanelDate";
+
+	FormPanelDate.prototype.init = function (settings) {
+		var defaults = {
+			dateFormat: "yyyy-mm-dd"
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setDateFormat(defaults.dateFormat);
+	};
+
+	FormPanelDate.prototype.open = function () {
+		jQuery(this._htmlControl[0]).datepicker('show');
+		return this;
+	};
+
+	FormPanelDate.prototype.close = function () {
+		jQuery(this._htmlControl[0]).datepicker('hide');
+		return this;
+	};
+
+	FormPanelDate.prototype._validateField = function () {
+		var isValid;
+
+		return this._value !== null || this._htmlControl[0].value === "";
+	};
+
+	FormPanelDate.prototype._setValueToControl = function (value) {
+		return FormPanelField.prototype._setValueToControl.call(this, this._format(value));
+	};
+	FormPanelDate.prototype._getValueFromControl = function () {
+		return this._unformat(this._htmlControl[0].value);
+	};
+	//Returns a date value in ISO format
+	FormPanelDate.prototype._unformat = function (value) {
+		//based on unformat function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3876
+		value = App.date(value, this._dateFormat.toUpperCase(), true);
+		return value.isValid() ? value.format() : null;
+	};
+	//Returns a date in user format.
+	FormPanelDate.prototype._format = function (value) {
+		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
+		if (!value) {
+			return value;
+		}
+		value = App.date(value);
+		return value.isValid() ? value.format(this._dateFormat.toUpperCase()) : null;
+	};
+	FormPanelDate.prototype.getFormattedDate = function () {
+		return this._format(this._value);
+	};
+
+	FormPanelDate.prototype._attachListeners = function() {
+		if (this.html) {
+			jQuery(this._htmlControl[0]).on('changeDate change', this._onChangeHandler())
+				.on("show", function() {
+					$('.datepicker').filter(":visible").css("z-index", 1300)
+				});
+		}
+		return this;
+	};
+
+	FormPanelDate.prototype.setDateFormat = function (dateFormat) {
+		if (typeof dateFormat !== 'string') {
+			throw new Error("setFormat(): The parameter must be a string.");
+		}
+		this._dateFormat = dateFormat;
+		if (this._htmlControl[0]) {
+			$(this._htmlControl[0]).datepicker({
+				format: this._dateFormat/*,
+				id: "xxx"*/
+			});
+		}
+		return this;
+	};
+
+	FormPanelDate.prototype._createControl = function () {
+		if (!this._htmlControl[0]) {
+			this._htmlControl[0] = this.createHTMLElement("input");
+			this._htmlControl[0].name = this._name;
+			this._htmlControl[0].type = "text";
+			this.setDateFormat(this._dateFormat);
+
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+//FormPanelDatetime
+	var FormPanelDatetime = function (settings) {
+		FormPanelDate.call(this, settings);
+		this._timeFormat = null;
+		FormPanelDatetime.prototype.init.call(this, settings);
+	};
+
+	FormPanelDatetime.prototype = new FormPanelDate();
+	FormPanelDatetime.prototype.constructor = FormPanelDatetime;
+	FormPanelDatetime.prototype.type = "FormPanelDatetime";
+
+	FormPanelDatetime.prototype.init = function (settings) {
+		var defaults = {
+			timeFormat: 'H:i'
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setTimeFormat(defaults.timeFormat);
+	};
+
+	FormPanelDatetime.prototype.openTime = function () {
+		jQuery(this._htmlControl[1]).timepicker('show');
+		return this;
+	};
+
+	FormPanelDatetime.prototype.closeTime = function () {
+		jQuery(this._htmlControl[1]).timepicker('hide');
+		return this;
+	};
+
+	FormPanelDatetime.prototype.closeAll = function() {
+		return this.close().closeTime();
+	};
+
+	FormPanelDatetime.prototype._setValueToControl = function (value) {
+		var date, time;
+		if (!this._htmlControl.length) {
+			return this;
+		}
+		if (!value) {
+			this._htmlControl[0].value = this._htmlControl[1].value = "";
+		} else {
+			date = value.split("T");
+			time = date[1];
+			date = date[0];
+			if (this._htmlControl[1]) {
+				FormPanelDate.prototype._setValueToControl.call(this, date);
+				time = time.split(/[\+\-]/);
+				time = time[0];
+				jQuery(this._htmlControl[1]).timepicker("setTime", time);
+			}
+		}
+		return this;
+	};
+
+	FormPanelDatetime.prototype._getValueFromControl = function () {
+		var value = "", date, time, isValid = false, aux;
+
+		if (this._htmlControl.length) {
+			date = this._htmlControl[0].value;
+			time = this._htmlControl[1].value;
+			if (date && time) {
+				value = SUGAR.App.date(date + " " + time, this._dateFormat.toUpperCase() + " " + SUGAR.App.date.convertFormat(this._timeFormat), true);	
+				isValid = value.isValid();
+			}
+			if (!isValid) {
+				if (date && !FormPanelDate.prototype._unformat.call(this, date)) {
+					this._htmlControl[0].value = "";
+				}
+				//if date has changed then it means that the time was wrong
+				if (time) {
+					jQuery(this._htmlControl[1]).timepicker("setTime", time);
+				}
+				value = null;
+			} else {
+				value = value.format();
+			}
+		}
+		return value;
+	};
+
+	FormPanelDatetime.prototype.setValue = function (value) {
+		var preValue = this._value, splittedDate, aux, aux2, invalidValueMessage ="setValue(): Invalid value.";
+		if (!(value === null || typeof value === 'string')) {
+			throw new Error("setValue(): The parameter must be a string.");
+		}
+		if (!(typeof value === 'string' && (value === "" || (App.date(value)).isValid()))) {
+			throw new Error(invalidValueMessage);
+		}
+		this._setValueToControl(value);
+		this._value = value;
+		if (value !== preValue) {
+			this.fireDependentFields();
+		}
+		return this;
+	};
+
+	FormPanelDatetime.prototype.setTimeFormat = function (timeFormat) {
+		var timeControl, formattedTime = "", timeParts, aux, dayPeriod;
+		switch (timeFormat) {
+			case "H:i":
+			case "h:ia":
+			case "h:iA":
+			case "h:i a":
+			case "h:i A":
+			case "H.i":
+			case "h.ia":
+			case "h.iA":
+			case "h.i a":
+			case "h.i A":
+				this._timeFormat = timeFormat;
+				break;
+			default:
+				throw new Error("setTimeFormat(): invalid format.");
+		}
+		if (timeControl = this._htmlControl[1]) {
+			if (this._dateObject) {
+				timeParts = timeFormat.split("");
+				aux = this._dateObject.getHours();
+				aux = (timeParts[0] === "h" && aux > 12) ? aux - 12 : aux;
+				aux = aux < 10 ? "0" + aux : aux;
+				formattedTime += aux + timeParts[1];
+
+				aux = this._dateObject.getMinutes();
+				formattedTime += (aux < 10 ? "0" + aux : aux);
+
+				if (timeParts.length > 3) {
+					dayPeriod = this._dateObject.getHours() < 12 ? "am" : "pm";
+					if (timeParts[3] === "a") {
+						formattedTime += dayPeriod;
+					} else if (timeParts[3] === "A") {
+						formattedTime += dayPeriod.toUpperCase();
+					} else {
+						formattedTime += " " 
+							+ (timeParts[4] === "A" ? dayPeriod.toUpperCase() : (timeParts[4] === "a" ? dayPeriod : ""));
+					}
+				}
+			}
+			this._htmlControl[1].value = formattedTime;
+			jQuery(this._htmlControl[1]).timepicker({
+				timeFormat: timeFormat,
+				appendTo: function (a) {
+					return a.parent().parent().parent().parent().parent().parent().parent();
+				}
+			});
+		}
+		return this;
+	};
+
+	FormPanelDatetime.prototype._attachListeners = function	() {
+		if (this.html) {
+			FormPanelDate.prototype._attachListeners.call(this);
+			jQuery(this._htmlControl[1]).on('change', this._onChangeHandler());
+		}
+		return this;
+	};
+
+	FormPanelDatetime.prototype._createControl = function () {
+		if (!this._htmlControl.length) {
+			this._htmlControl[1] = this.createHTMLElement("input");
+			this._htmlControl[1].type = "text";
+			this.setTimeFormat(this._timeFormat);
+			FormPanelDate.prototype._createControl.call(this);
+		}
+		return this;
+	};
+//FormPanelDropdown
+	var FormPanelDropdown = function (settings) {
+		FormPanelField.call(this, settings);
+		this._options = null;
+		this._proxy = null;
+		this._dataURL = null;
+		this._dataRoot = null;
+		this._massiveAction = false;
+		this._labelField = null;
+		this._valueField = null;
+		FormPanelDropdown.prototype.init.call(this, settings);
+	};
+
+	FormPanelDropdown.prototype = new FormPanelField();
+	FormPanelDropdown.prototype.constructor = FormPanelDropdown;
+	FormPanelDropdown.prototype.type = "FormPanelDropdown";
+
+	FormPanelDropdown.prototype.init = function (settings) {
+		var defaults = {
+			options: [],
+			value: "",
+			dataURL: null,
+			dataRoot: null,
+			labelField: "label",
+			valueField: "value"
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this._proxy = new SugarProxy();
+
+		FormPanelField.prototype.setValue.call(this, defaults.value);
+		this._options = new ArrayList();
+
+		this.setDataURL(defaults.dataURL)
+			.setDataRoot(defaults.dataRoot)
+			.setLabelField(defaults.labelField)
+			.setValueField(defaults.valueField);
+
+		if (typeof defaults._dataURL === 'string') {
+			this.load();
+		} else {
+			this.setOptions(defaults.options);	
+		}
+	};
+
+	FormPanelDropdown.prototype.setLabelField = function (field) {
+		if (typeof field !== 'string') {
+			throw new Error('setLabelField(): The parameter must be a string.');
+		}
+		this._labelField = field;
+		return this;
+	};
+
+	FormPanelDropdown.prototype.getLabelField = function (field) {
+		return this._labelField;
+	};
+
+	FormPanelDropdown.prototype.setValueField = function (field) {
+		if (!(typeof field === 'string' || typeof field === "function")) {
+			throw new Error('setValueField(): The parameter must be a string.');
+		}
+		this._valueField = field;
+		return this;
+	};
+
+	FormPanelDropdown.prototype.getValueField = function () {
+		return this._valueField;
+	};
+
+	FormPanelDropdown.prototype._showLoadingMessage = function() {
+		var option;
+		if (this._htmlControl.length) {
+			option = this.createHTMLElement('option');
+			option.value = "";
+			option.label = option.textContent = 'loading...';
+			option.className = 'adam form-apnel-dropdown-loading';
+			option.selected = true;
+			this.disable();
+			this._htmlControl[0].appendChild(option);
+		}
+		return this;
+	};
+
+	FormPanelDropdown.prototype._removeLoadingMessage = function () {
+		jQuery(this._htmlControl[0]).find('adam form-apnel-dropdown-loading').remove();
+		this.enable();
+		return this;
+	};
+
+	FormPanelDropdown.prototype._onLoadDataSuccess = function () {
+		var that = this;
+		return function (data) {
+			var items = that._dataRoot ? data[that._dataRoot] : data;
+			that._removeLoadingMessage();
+			that.setOptions(items);
+		};
+	};
+
+	FormPanelDropdown.prototype.load = function () {
+		if (typeof this._dataURL !== 'string') {
+			throw new Error("load(): The dataURL wasn't set properly.");
+		}
+		this._proxy.url = this._dataURL;
+		this.clearOptions();
+		this._showLoadingMessage();
+		this._proxy.getData(null, {
+			success: this._onLoadDataSuccess()
+		});
+		return this;
+	};
+
+	FormPanelDropdown.prototype.setDataRoot = function (root) {
+		if (!(root === null || typeof root === 'string')) {
+			throw new Error("setDataRoot(): The parameter must be a string or null.");
+		}
+		this._dataRoot = root;
+		return this;
+	};
+
+	FormPanelDropdown.prototype.setDataURL = function (url) {
+		if (!(url === null || typeof url === 'string')) {
+			throw new Error("setDataURL(): The parameter must be a string or null.");
+		}
+		this._dataURL = url;
+		return this;
+	};
+
+	FormPanelDropdown.prototype.existsValueInOptions = function (value) {
+		var i, options = this._options.asArray();
+
+		if (typeof this._valueField === "string") {
+			return !!this._options.find(this._valueField, value);
+		} else {
+			for (i = 0; i < options[i]; i += 1) {
+				if (value === this._valueField(options[i])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+	FormPanelDropdown.prototype._getFirstAvailableOption = function () {
+		var items, i;
+		if(this._options) {
+			items = this._options.asArray();
+			return items[0] || null;
+		}
+		return null;
+	};
+
+	FormPanelDropdown.prototype.getSelectedText = function () {
+		return jQuery(this.html).find("option:selected").text();
+	};
+
+	FormPanelDropdown.prototype.getSelectedData = function () {
+		return jQuery(this.html).find("option:selected").data("data");
+	};
+
+	FormPanelDropdown.prototype.setValue = function (value) {
+		var firstOption;
+		if(this._options) {
+			if(this.existsValueInOptions(value)) {
+				FormPanelField.prototype.setValue.call(this, value);
+			} else {
+				firstOption = this._getFirstAvailableOption();
+				if (firstOption) {
+					firstOption = typeof this._valueField === "function" ? this._valueField(this, firstOption) : firstOption[this._valueField];
+				} else {
+					firstOption = "";
+				}
+				FormPanelField.prototype.setValue.call(this, firstOption || "");
+			}
+		}
+		return this;
+	};
+
+	FormPanelDropdown.prototype.clearOptions = function () {
+		jQuery(this._htmlControl[0]).empty();
+		this._options.clear();
+		this._value = "";
+		return this;
+	};
+
+	FormPanelDropdown.prototype._paintOption = function (item) {
+		var option = this.createHTMLElement('option');
+		option.label = option.textContent = item[this._labelField];
+		option.value = typeof this._valueField === 'function' ? this._valueField(this, item) : item[this._valueField];
+		jQuery(option).data("data", item);
+		this._htmlControl[0].appendChild(option);
+		return this;
+	};
+
+	FormPanelDropdown.prototype.addOption = function (option) {
+		var newOption;
+		if(typeof option === 'object') {
+			newOption = cloneObject(option);
+			this._options.insert(newOption);
+			if(this.html && !this._massiveAction) {
+				this._paintOption(newOption);
+			}
+		}
+		return this;
+	};
+
+	FormPanelDropdown.prototype._paintOptions = function () {
+		var i, options = this._options.asArray();
+		if(this.html) {
+			jQuery(this._htmlControl[0]).empty();
+			for (i = 0; i < options.length; i += 1) {
+				this._paintOption(options[i]);
+			}	
+		}
+		return this;
+	};
+
+	FormPanelDropdown.prototype.setOptions = function (options) {
+		var i, value;
+		if(!jQuery.isArray(options)) {
+			throw new Error("setOptions(): The parameter must be an array.");
+		}
+		value = this._value;
+		this._massiveAction = true;
+		this.clearOptions();
+		for(i = 0; i < options.length; i += 1) {
+			this.addOption(options[i]);
+		}
+		this._paintOptions();
+		this._massiveAction = false;
+		this.setValue(value);
+		return this.html;
+	};
+
+	FormPanelDropdown.prototype.reset = function () {};
+
+	FormPanelDropdown.prototype._createControl = function () {
+		if(!this._htmlControl[0]) {
+			this._htmlControl[0] = this.createHTMLElement("select");
+			this._htmlControl[0].name = this._name;
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+
+	FormPanelDropdown.prototype.createHTML = function () {
+		if (!this.html) {
+			FormPanelField.prototype.createHTML.call(this);
+			this._paintOptions();
+			this._setValueToControl(this._value);
+			this._value = this._getValueFromControl();
+		}
+		return this;
+	};
+
+//FormPanelRadio
+	var FormPanelRadio = function (settings) {
+		FormPanelField.call(this, settings);
+		this._options = [];
+		FormPanelRadio.prototype.init.call(this, settings);
+	};
+
+	FormPanelRadio.prototype = new FormPanelField();
+	FormPanelRadio.prototype.constructor = FormPanelRadio;
+	FormPanelRadio.prototype.type = "FormPanelRadio";
+
+	FormPanelRadio.prototype.init = function(settings) {
+		var defaults = {
+			options: []
+		};
+
+		jQuery.extend(true, defaults, settings);
+
+		this.setOptions(defaults.options)
+			.setValue(defaults.value !== undefined ? defaults.value : this._value);
+	};
+
+	FormPanelRadio.prototype._setValueToControl = function (value) {
+		var i, control;
+		for (i = 0; i < this._htmlControl.length; i += 1) {
+			control = jQuery(this._htmlControl[i]).find("input").get(0);
+			if (control.value === value) {
+				control.checked = true;
+			} else {
+				control.checked = false;
+			}
+		}
+		return this;
+	};
+
+	FormPanelRadio.prototype.setValue = function (value) {
+		FormPanelField.prototype.setValue.call(this, value);
+		if (this._htmlControl.length) {
+			this._value = this._getValueFromControl();
+		}
+		return this;
+	};
+
+	FormPanelRadio.prototype.setOptions = function (options) {
+		var i;
+		if (!jQuery.isArray(options)) {
+			throw new Error("setOptions(): The parameter must be an array.");
+		}
+		for (i = 0; i < options.length; i += 1) {
+			if (options[i].selected === true) {
+				this._value = options[i].value;
+			}
+		}
+		this._options = options;
+		return this;
+	};
+
+	FormPanelRadio.prototype._getValueFromControl = function() {
+		var $items, i, value = "";
+
+		if (this._htmlControl.length) {
+			$items = jQuery(this._htmlControl[0]);
+
+			for (i = 1; i < this._htmlControl.length; i += 1) {
+				$items.add(this._htmlControl[i]);
+			}
+
+			$items = $items.find(":checked");
+
+			if ($items.length) {
+				value = $items.val();
+			}
+		}	
+
+		return value;
+	};
+
+	FormPanelRadio.prototype._createControl = function () {
+		var i, option, label;
+		if (!this._htmlControl.length) {
+			for (i = 0; i < this._options.length; i += 1) {
+				label = this.createHTMLElement('label');
+				option = this.createHTMLElement('input');
+				option.type = "radio";
+				option.name = this._name;
+				option.value = this._options[i].value;
+				option.className = "adam formpanel-radio";
+				option.checked= !!this._options[i].selected;
+				label.appendChild(option);
+				label.appendChild(document.createTextNode(this._options[i].label));
+				this._htmlControl.push(label);
+			}
+			FormPanelField.prototype._createControl.call(this);
+		}
+		return this;
+	};
+
+//FormPanelCheckbox
+	var FormPanelCheckbox = function (settings) {
+		FormPanelField.call(this, settings);
+	};
+
+	FormPanelCheckbox.prototype = new FormPanelField();
+	FormPanelCheckbox.prototype.constructor = FormPanelCheckbox;
+	FormPanelCheckbox.prototype.type = 'FormPanelCheckbox';
+
+	FormPanelCheckbox.prototype._setValueToControl = function (value) {
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].checked = !!value;
+		}
+		return this;
+	};
+
+	FormPanelCheckbox.prototype._getValueFromControl = function () {
+		return this._htmlControl[0].checked;
+	};
+
+	FormPanelCheckbox.prototype.setValue = function (value) {
+		var preValue = this._value;
+		this._setValueToControl(!!value);
+		this._value = !!value;
+		if (value !== preValue) {
+			this.fireDependentFields();
+		}
+		return this;
+	};
+
+	FormPanelCheckbox.prototype._createControl = function () {
+		if (!this._htmlControl.length) {
+			this._htmlControl[0] =  this.createHTMLElement("input");
+			this._htmlControl[0].type = "checkbox";
+			this._htmlControl[0].name = this._name;
+			FormPanelField.prototype._createControl.call(this);
+		}
+
+		return this;
+	};
+var ListPanel = function(settings) {
+	CollapsiblePanel.call(this, settings);
+	this._itemsContent = null;
+	this._data = null;
+	this._proxy = null;
+	this._dataURL = null;
+	this._autoload = null;
+	this._dataRoot = null;
+	this._htmlMessage = null;
+	this._showingLoadingMessage = null;
+	this._filter = [];
+	this._filterMode = null; 
+	this.onItemClick = null;
+	this.onLoad = null;
+	ListPanel.prototype.init.call(this, settings);
+};
+
+ListPanel.prototype = new CollapsiblePanel();
+ListPanel.prototype.constructor = ListPanel;
+ListPanel.prototype.type = "ListPanel";
+
+ListPanel.prototype.init = function (settings) {
+	var defaults = {
+		items: [],
+		itemsContent: "[list item]",
+		data: null,
+		onItemClick: null,
+		dataURL: null,
+		autoload: false,
+		dataRoot: null,
+		onLoad: null,
+		filter: [],
+		filterMode: 'inclusive', 
+		fieldToFilter: null
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this._proxy = new SugarProxy();
+	this._autoload = defaults.autoload;
+
+	this.setFilterMode(defaults.filterMode)
+		.setItemsContent(defaults.itemsContent)
+		.setOnItemClickHandler(defaults.onItemClick)
+		.setDataURL(defaults.dataURL)
+		.setDataRoot(defaults.dataRoot)
+		.setOnLoadHandler(defaults.onLoad);
+
+	if(typeof this._dataURL === 'string' && this._autoload) {
+		this.load();
+	} else {
+		if(jQuery.isArray(defaults.data)) {
+			this.setDataItems(defaults.data, defaults.fieldToFilter, defaults.filter);
+		} else {
+			this.setItems(defaults.items);
+		}
+	}
+};
+
+ListPanel.prototype.setFilterMode = function (filterMode) { 	 	
+	if (filterMode !== 'inclusive' && filterMode !== 'exclusive') { 	 	
+		throw new Error('setFilterMode(): The value for the parameter should be \"inclusive\" or \"exclusive\"'); 	 	
+	} 	 	
+	this._filterMode = filterMode; 	 	
+	return this; 	 	
+}; 	 	
+ 	 	
+ListPanel.prototype.getFilterMode = function (filterMode) { 	 	
+	return this._filterMode; 	 	
+};
+
+ListPanel.prototype.setOnLoadHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("onLoadHandler(): The parameter must be a function or null.");
+	}
+	this.onLoad = handler;
+	return this;
+};
+
+ListPanel.prototype._checkItemsNum = function () {
+	if(this._items.getSize() === 0) {
+		this.showMessage("[0 items]");
+	} else {
+		this.removeMessage();
+	}
+	return this;
+};
+
+ListPanel.prototype.setDataRoot = function (dataRoot) {
+	if (!(dataRoot === null || typeof dataRoot === 'string')) {
+		throw new Error("setDataRoot(): The parameter must be a string or null.");
+	}
+	this._dataRoot = dataRoot;
+	return this;
+};
+
+ListPanel.prototype._createMessageBox = function () {
+	var element;
+	if (!this._htmlMessage) {
+		element = this.createHTMLElement("div");
+		element.className = "adam list-panel-message";
+		this._htmlMessage = element;
+	} else {
+		element = this._htmlMessage;
+	}
+	return element;
+};
+
+ListPanel.prototype.showMessage = function (message) {
+	var element = this._createMessageBox();
+	this._showingLoadingMessage = false;
+	jQuery(element).empty();
+	if (isHTMLElement(message)) {
+		element.appendChild(message);
+	} else if (typeof message === 'string') {
+		element.textContent = message;	
+	}
+	$(this._htmlBody).prepend(this._htmlMessage);
+	return this;
+};
+
+ListPanel.prototype.removeMessage = function () {
+	jQuery(this._htmlMessage).remove();
+	this._showingLoadingMessage = false;
+	return this;
+};
+
+ListPanel.prototype._onLoadDataError = function () {
+	var that = this;
+	return function (httpError) {
+		var i = that.createHTMLElement("strong");
+		i.appendChild(document.createTextNode("An error occurred, please try again."));
+		that.showMessage(i);
+	};
+};
+
+ListPanel.prototype._onLoadDataSuccess = function() {
+	var that = this;
+	return function (data) {
+		var items = that._dataRoot ? data[that._dataRoot] : data;
+		that.removeMessage()
+			.setDataItems(items)
+			._checkItemsNum();
+		if (typeof that.onLoad === 'function') {
+			that.onLoad(that, data);
+		}
+	};
+};
+
+ListPanel.prototype._showLoadingMessage = function() {
+	var element, icon;
+	if (this._showingLoadingMessage) {
+		return this;
+	}
+	element = this.createHTMLElement("span");
+	icon = this.createHTMLElement("i");
+	icon.className = "adam list-panel-spinner icon-spinner icon-spin";
+	element.appendChild(icon);
+	element.appendChild(document.createTextNode("loading..."));
+	
+	this.showMessage(element);
+	this._showingLoadingMessage = true;
+	return this;
+};
+
+ListPanel.prototype.load = function() {
+	if(typeof this._dataURL !== 'string') {
+		throw new Error("load(): The url wasn't set properly.");
+	}
+	this._proxy.url = this._dataURL;
+	this.clearItems();
+	this._showLoadingMessage();
+	this._proxy.getData(null, {
+		success: this._onLoadDataSuccess(),
+		error : this._onLoadDataError()
+	});
+	return this;
+};
+
+ListPanel.prototype.setDataURL = function (dataURL) {
+	if(!(dataURL === null || typeof dataURL === 'string')) {
+		throw new Error("setDataURL(): The parameter must be a string or null.");
+	}
+	this._dataURL = dataURL;
+	return this;
+};
+
+ListPanel.prototype.setOnItemClickHandler = function (handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnItemClickHandler(): The parameter must be a function or null.");
+	}
+	this.onItemClick = handler;
+	return this;
+};
+
+ListPanel.prototype._onItemClickHandler = function () {
+	var that = this;
+	return function (item) {
+		if(typeof that.onItemClick === 'function') {
+			that.onItemClick(that, item);
+		}
+		that._onValueAction(item);
+	};
+};
+
+ListPanel.prototype.addDataItem = function (data) {
+	var newItem;
+	if(typeof data !== 'object') {
+		throw new Error("addDataItem(): The parameter must be an object.");
+	}
+	newItem = {
+		data: data
+	};
+	this.addItem(newItem);
+	return this;
+};
+
+ListPanel.prototype._filterData = function (data, fieldToFilter, filter) {
+	var filteredData = [], i, validationFunction = false, that = this;;
+
+	if (jQuery.isArray(filter) && filter.length) {
+		validationFunction = function (data) {
+			var i = 0;
+			if (that._filterMode === 'inclusive') {
+				return filter.indexOf(data[fieldToFilter]) >= 0;
+			} else { 	 	
+				return filter.indexOf(data[fieldToFilter]) === -1; 	 	
+			}
+		};
+	} else if (typeof filter === 'string') {
+		validationFunction = function (data) {
+			return filter.toLowerCase() === data[fieldToFilter].toLowerCase();
+		};
+	} else if (typeof filter === 'function') {
+		validationFunction = filter;
+	}
+
+	if (typeof fieldToFilter === 'string' && validationFunction) {
+		for (i = 0; i < data.length; i += 1) {
+			if (validationFunction(data[i])) {
+				filteredData.push(data[i]);
+			}
+		}
+		return filteredData;
+	}
+
+	return data;
+};
+
+ListPanel.prototype.getFilter = function () {
+	return this._filter.slice(0);
+};
+
+ListPanel.prototype.setDataItems = function (data, fieldToFilter, filter) {
+	var i;
+	if(jQuery.isArray(data)) {
+		this._massiveAction = true;
+		data = this._filterData(data, fieldToFilter, filter);
+		this.clearItems();
+		for (i = 0; i < data.length; i += 1) {
+			this.addDataItem(data[i]);
+		}
+		this._filter = filter || [];
+		this._paintItems();
+		this._massiveAction = false;
+	}
+	return this;
+};
+
+ListPanel.prototype.setItemsContent = function (itemsContent) {
+	if (!(typeof itemsContent === 'string' || typeof itemsContent === 'function')) {
+		throw new Error("setItemsContent(): The parameter must be a string or a function.");
+	}
+	this._itemsContent = itemsContent;
+	return this;
+};
+
+ListPanel.prototype.setItems = function(items) {
+	if(this._itemsContent) {
+		CollapsiblePanel.prototype.setItems.call(this, items);
+	}
+	return this;
+};
+
+ListPanel.prototype.addItem = function (item) {
+	var newItem;
+	if(item instanceof ListItem) {
+		newItem = item;
+	} else {
+		if (!item.text) {
+			item.text = this._itemsContent;
+		}
+		newItem = new ListItem(item);
+	}
+	newItem.setOnClickHandler(this._onItemClickHandler());
+	CollapsiblePanel.prototype.addItem.call(this, newItem);
+	return this;
+};
+
+ListPanel.prototype._createBody = function () {
+	var element = this.createHTMLElement('ul');
+	element.className = 'list-panel';
+	return element;
+};
+
+ListPanel.prototype.getValueObject = function (item) {
+	return item.getData();
+};
+
+/*ListPanel.prototype.createHTML = function () {
+	if(!this.html) {
+		this.html = this.createHTMLElement("div");
+		this.html.className = "adam list-panel";
+		CollapsiblePanel.prototype.createHTML.call(this);
+	}
+	return this.html;
+};*/
+var MultipleCollapsiblePanel = function (settings) {
+	CollapsiblePanel.call(this, jQuery.extend(true, {bodyHeight: 100}, settings));
+	this._selectedPanel = null;
+	this._panelList = null;
+	this._htmlContent = null;
+	this._htmlContentHeader = null;
+	this._htmlContentTitle = null;
+	this._lastSelectedPanel = null;
+	this._selectedPanel = null;
+	this._fastAccessObject = {};
+	MultipleCollapsiblePanel.prototype.init.call(this, settings);
+};
+
+MultipleCollapsiblePanel.prototype = new CollapsiblePanel();
+MultipleCollapsiblePanel.prototype.constructor = MultipleCollapsiblePanel;
+MultipleCollapsiblePanel.prototype.type = "MultipleCollapsiblePanel";
+
+MultipleCollapsiblePanel.prototype.init = function () {
+	this._panelList = new ListPanel({
+		itemsContent: this._panelListItemContent(),
+		onItemClick: this._onPanelListItemClick(),
+		collapsed: false
+	});
+};
+
+MultipleCollapsiblePanel.prototype.getItem = function (item) {
+	var searchedItem = null;
+
+	if (typeof item === 'string') {
+		searchedItem = this._items.find('id', item);
+	} else if (typeof item === 'number') {
+		searchedItem = this._items.get(item);
+	} else if (item instanceof CollapsiblePanel && this.isParentOf(item)) {
+		searchedItem = item;
+	}
+
+	return searchedItem;
+};
+
+MultipleCollapsiblePanel.prototype.disableItem = function(item) {
+	var itemToChange = this.getItem(item);
+
+	if (itemToChange) {
+		itemToChange.disable();
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.enableItem = function(item) {
+	var itemToChange = this.getItem(item);
+
+	if (itemToChange) {
+		itemToChange.enable();
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._onItemEnablementStatusChange = function () {
+	var that = this;
+	return function (item, active) {
+		var accessObject = that._fastAccessObject[item.id],
+			listItem = accessObject.listItem;
+		listItem.setVisible(active);
+		if (active) {
+			accessObject.panel.expand();
+		} else {
+			if (!that.isCollapsed() && that._selectedPanel === item) {
+				that.displayMenu(true);
+			}	
+		}
+	};
+};
+
+MultipleCollapsiblePanel.prototype._panelListItemContent = function () {
+	var that = this;
+	return function (listItem, data) {
+		var a = this.createHTMLElement("a"), 
+			span = this.createHTMLElement("span"), 
+			i = this.createHTMLElement("i");
+		a.className = "adam list-item-content";
+		i.className = "adam list-item-arrow icon-circle-arrow-right";
+		span.textContent = data["text"];
+		a.appendChild(span);
+		a.appendChild(i);
+		return a;
+	};
+};
+
+MultipleCollapsiblePanel.prototype._onPanelListItemClick = function () {
+	var that = this;
+	return function (listPanel, item) {
+		that.displayPanel(item.getData().id);
+	};
+};
+
+MultipleCollapsiblePanel.prototype._clearContent = function () {
+	var nodes;
+	if (this._htmlContent) {
+		nodes = this._htmlContent.childNodes; 
+		while (nodes.length > 1) {
+			if (nodes[0].remove) {
+				this._htmlContent.lastChild.remove();
+			} else {
+				this._htmlContent.lastChild.removeNode(true);
+			}
+		}
+	}
+
+	return true;
+};
+
+MultipleCollapsiblePanel.prototype.expand = function (noAnimation) {
+	this.displayMenu(true);
+	CollapsiblePanel.prototype.expand.call(this, noAnimation);
+	return this;
+};
+
+/*MultipleCollapsiblePanel.prototype.isParentOf = function (panel) {
+	return !!this._items.indexOf(panel);
+};*/
+
+MultipleCollapsiblePanel.prototype.displayPanel = function (panel) {
+	var panelToDisplay = this._items.find("id", panel), bodyHeight, contentHeaderHeight, w;
+	if(this._selectedPanel !== panelToDisplay) {
+		this._selectedPanel = panelToDisplay;
+		if(this.html) {
+			if (this._lastSelectedPanel !== panelToDisplay) {
+				this._selectedPanel.getHTML();
+				this._clearContent();
+				this._htmlContentTitle.textContent = this._selectedPanel.getTitle();
+				this._htmlContent.appendChild(this._selectedPanel._htmlBody);
+				bodyHeight = jQuery(this._htmlBody).innerHeight();
+				contentHeaderHeight = jQuery(this._htmlContentHeader).outerHeight();
+				this._selectedPanel._htmlBody.style.height = (bodyHeight - contentHeaderHeight) + "px";
+			}
+
+			w = $(this._htmlBody).innerWidth();
+			this._htmlContent.style.left = w + "px";
+			jQuery(this._panelList._htmlBody).animate({
+				left: "-=" + w + "px"
+			});
+			jQuery(this._htmlContent).animate({
+				left: 0
+			});
+		}
+	}
+};
+
+MultipleCollapsiblePanel.prototype.displayMenu = function (noAnimation) {
+	var w, selectedPanel;
+	if (this._selectedPanel) {
+		selectedPanel = this._selectedPanel;
+		this._lastSelectedPanel = this._selectedPanel;
+		this._selectedPanel = null;
+		this._panelList._htmlBody.scrollTop = 0;
+		w = parseInt(this._panelList._htmlBody.style.left, 10) * -1;//jQuery(this._htmlBody).innerWidth(); //jQuery(this._panelList._htmlBody).outerWidth();
+		if (noAnimation) {
+			this._panelList._htmlBody.style.left = "0px";
+			this._htmlContent.style.left = w + "px";
+		} else {
+			jQuery(this._panelList._htmlBody).add(this._htmlContent).animate({
+				left: "+=" + w + "px"
+			});
+		}
+		if (typeof selectedPanel.onCollapse === 'function') {
+			selectedPanel.onCollapse(selectedPanel);
+		}
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.setBodyHeight = function (height) {
+	if (isNaN(height)) {
+		throw new Error("setBodyHeight(): The parameter must be a number.");
+	}
+	this._bodyHeight = height;
+	if(this._htmlBody) {
+		this._htmlBody.style.maxHeight = this._htmlBody.style.height = height + "px";
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.clearItems = function () {
+	this.displayMenu();
+	if (this._panelList) {
+		this._panelList.clearItems();
+	}
+	this._items.clear();
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._paintItems = function () {
+	var i, items;
+	if (this._panelList) {
+		items = this._items.asArray();
+		this._panelList.clearItems();
+		for (i = 0; i < items.length; i += 1) {
+			this._paintItem(items[i]);
+		}
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._paintItem = function (item) {
+	var items;
+	if (this._panelList) {
+		this._panelList.addItem({
+			data: {
+				id: item.id,
+				text: item.getTitle()
+			},
+			visible: !item.isDisabled()
+		});
+		items = this._panelList.getItems();
+		this._fastAccessObject[item.id] = {
+			listItem: items[items.length - 1],
+			panel: item
+		};
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._createItem = function (item) {
+	var newItem;
+	//item.onValueAction = this._onSubpanelItemAction();
+	switch (item.type) {
+		case "form":
+			newItem = new FormPanel(item);
+			break;
+		case "list":
+			newItem = new ListPanel(item);
+			break;
+		default:
+			throw new Error("_createItem(): The parameter has an invalid \"type\" property.");
+	}
+	return newItem;
+};
+
+MultipleCollapsiblePanel.prototype.getValueObject = function (args) {
+	return args.value;
+};
+
+MultipleCollapsiblePanel.prototype._onValueAction = function (anyArgument) {
+	if(typeof this.onValueAction === 'function') {
+		this.onValueAction(anyArgument.panel, this.getValueObject(anyArgument));
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._onSubpanelItemAction = function () {
+	var that = this;
+	return function (panel, panelValue) {
+		that._onValueAction({panel: panel, value: panelValue});
+	};
+};
+
+MultipleCollapsiblePanel.prototype.addItem = function(item) {
+	var itemToAdd;
+	if (item instanceof CollapsiblePanel) {
+		itemToAdd = item;
+	} else if (typeof item === 'object') {
+		itemToAdd = this._createItem(item);
+	} else {
+		throw new Error("addItem(): The parameter must be an instance of CollapsiblePanel or an object.");
+	}
+	itemToAdd.setParent(this)
+		.setOnValueActionHandler(this._onSubpanelItemAction())
+		.setOnEnablementStatusChangeHandler(this._onItemEnablementStatusChange())
+		.disableAnimations();
+	this._items.insert(itemToAdd.expand());
+
+	if (!this._massiveAction) {
+		this._paintItem(item);
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.removeItem = function (item) {
+	var itemToRemove = this.getItem(item);
+
+	if (itemToRemove) {
+		this._items.remove(itemToRemove);
+		delete this._fastAccessObject[itemToRemove.id];
+		if (this.html) {
+			if (itemToRemove.html.remove) {
+				itemToRemove.html.remove()
+			} else {
+				itemToRemove.html.removeNode(true);
+			}
+		}
+	}
+
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._attachListeners = function () {
+	var that;
+	if(this.html && !this._attachedListeners) {
+		that = this;
+		CollapsiblePanel.prototype._attachListeners.call(this);
+		jQuery(this._htmlContentBackButton).on('click', function() {
+			that.displayMenu();
+		});
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._createBody = function () {
+	var body, content, contentHeader, contentTitle, backButton;
+	if (!this._htmlBody) {
+		body = this.createHTMLElement("div");
+		//body.className = "adam multiple-panel-body";
+		content = this.createHTMLElement("div");
+		content.className = "adam multiple-panel-content";
+		contentHeader = this.createHTMLElement("header");
+		contentHeader.className = "adam multiple-panel-contentheader";
+		contentTitle = this.createHTMLElement("span");
+		contentTitle.className = "adam multiple-panel-title";
+		backButton = this.createHTMLElement("i");
+		backButton.className = "adam multiple-panel-back icon-circle-arrow-left";
+
+		this._panelList.getHTML();
+		this._panelList._htmlBody.className += " adam-main-list";
+
+		contentHeader.appendChild(contentTitle);
+		contentHeader.appendChild(backButton);
+		content.appendChild(contentHeader);
+		body.appendChild(this._panelList._htmlBody);
+		body.appendChild(content);
+
+		this._htmlContent = content;
+		this._htmlContentHeader = contentHeader;
+		this._htmlContentTitle = contentTitle;
+		this._htmlContentBackButton = backButton;
+		this._htmlBody = body;
+	}
+	return this._htmlBody;
+};
+
+MultipleCollapsiblePanel.prototype.createHTML = function () {
+	if (!this.html) {
+		CollapsiblePanel.prototype.createHTML.call(this);
+		this.html.className += " multiple-panel";
+	}
+	return this.html;
+};
+
+/*MultipleCollapsiblePanel.prototype._onValueAction = function (anyArgument) {
+	if(typeof this.onValueAction === 'function') {
+		this.onValueAction(anyArgument.panel, this.getValueObject(anyArgument));
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.getValueObject = function (args) {
+	return args.value;
+};
+
+
+
+MultipleCollapsiblePanel.prototype.setOnCloseHandler = function(handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnCloseHandler(): The parameter must be a function or null.");
+	}
+	this.onClose = handler;
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._createItem = function (item) {
+	var newItem;
+	//item.onValueAction = this._onSubpanelItemAction();
+	switch (item.type) {
+		case "form":
+			newItem = new FormPanel(item);
+			break;
+		case "list":
+			newItem = new ListPanel(item);
+			break;
+		default:
+			throw new Error("_createItem(): The parameter has an invalid \"type\" property.");
+	}
+	return newItem;
+};
+
+MultipleCollapsiblePanel.prototype._paintItems = function () {
+	if(this._items.getSize() > 0) {
+		this.selectPanel(0);
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.addItem = function(item) {
+	var itemToAdd;
+	if (item instanceof CollapsiblePanel) {
+		itemToAdd = item;
+	} else if (typeof item === 'object') {
+		itemToAdd = this._createItem(item);
+	} else {
+		throw new Error("addItem(): The parameter must be an instance of CollapsiblePanel or an object.");
+	}
+	itemToAdd.setOnValueActionHandler(this._onSubpanelItemAction());
+	this._items.insert(itemToAdd.expand());
+	return this;
+};
+
+
+
+MultipleCollapsiblePanel.prototype.selectPanel = function (panel) {
+	var panelToDisplay;
+	if (typeof panel === 'number') {
+		panelToDisplay = this._items.get(panel);
+	} else if (panel instanceof CollapsiblePanel) {
+		if(this.isParentOf(panel)) {
+			panelToDisplay = panel;
+		} else {
+			throw new Error("selectPanel(): The panel to show must belong to the current parent panel.");
+		}
+	} else {
+		throw new Error("selectPanel(): The parameter must be a number or an instance of CollapsiblePanel.");
+	}
+	if(this._selectedPanel !== panelToDisplay) {
+		this._selectedPanel = panelToDisplay;
+		if(this.html) {
+			this._selectedPanel.getHTML();
+			this._clearBody();
+			this.setTitle(this._selectedPanel._title);
+			this._htmlBody.appendChild(this._selectedPanel._htmlBody);
+		}
+	}
+};
+
+MultipleCollapsiblePanel.prototype._createBody = function () {
+	var element = this.createHTMLElement('div');
+	element.className = 'adam multiple-panel-body';
+	return element;
+};
+
+MultipleCollapsiblePanel.prototype._addPanelToList = function (item, index) {
+	var li, a;
+	if (this._htmlPanelList) {
+		li = this.createHTMLElement('li');
+		a = this.createHTMLElement('a');
+		a.setAttribute("data-panel-index", index !== undefined ? index : this._items.getSize() - 1);
+		a.className = "adam collapsible-panel-listitem";
+		a.href = "#";
+		a.textContent = item._title;
+		li.appendChild(a);
+		this._htmlPanelList.appendChild(li);
+	} 
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._updatePanelList = function () {
+	var i, items;
+	if(this._htmlPanelList) {
+		items = this._items.asArray();
+		jQuery(this._htmlPanelList).empty();
+		for(i = 0; i < items.length; i++) {
+			this._addPanelToList(items[i], i);
+		}
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype._onPanelListItemClick = function () {
+	var that = this;
+	return function (e) {
+		var index = parseInt(this.getAttribute("data-panel-index"));
+		e.preventDefault();
+		that.selectPanel(index);
+	};
+};
+
+MultipleCollapsiblePanel.prototype._onClose = function () {
+	var that = this;
+	return function () {
+		if(typeof that.onClose === 'function') {
+			that.onClose(that);
+		}
+	};
+};
+
+MultipleCollapsiblePanel.prototype._attachListeners = function () {
+	var that;
+	if(this._htmlPanelList && this.html && !this._attachedListeners) {
+		CollapsiblePanel.prototype._attachListeners.call(this);
+		jQuery(this._htmlPanelList).on('click', '.collapsible-panel-listitem', this._onPanelsListItemClick());
+		jQuery(this._htmlCloseButton).on('click', this._onClose());
+		this._attachedListeners = true;
+	}
+	return this;
+};
+
+MultipleCollapsiblePanel.prototype.createHTML = function () {
+	var htmlButtonToolbar, listButton, closeButton, panelList, dropdownContainer;
+	if(!this.html) {
+		CollapsiblePanel.prototype.createHTML.call(this);
+		//creates the bootstrap container for button group
+		htmlButtonToolbar = this.createHTMLElement('div');
+		htmlButtonToolbar.className = 'btn-group pull-right';
+		//Create the list for the button
+		listButton = this.createHTMLElement('button');
+		listButton.className = 'btn btn-mini icon-caret-down dropdown-toggle';
+		listButton.id = this.id + "-panels-button";
+		listButton.setAttribute("data-toggle", "dropdown");
+		//Create the button for closing
+		closeButton = this.createHTMLElement('button');
+		closeButton.className = "adam collapsible-panel-closebutton btn btn-mini icon-remove";
+		//Create the panels list
+		panelList = this.createHTMLElement('ul');
+		panelList.className = "adam collapsible-panel-panelslist dropdown-menu";
+		panelList.setAttribute("role", "menu");
+		panelList.setAttribute("aria-labelledby", this.id + "-panels-button");
+
+		htmlButtonToolbar.appendChild(listButton);
+		htmlButtonToolbar.appendChild(panelList);
+		htmlButtonToolbar.appendChild(closeButton);
+		jQuery(this._htmlHeader).prepend(htmlButtonToolbar);
+
+		this._htmlButtonToolbar = htmlButtonToolbar;
+		this._htmlCloseButton = closeButton;
+		this._htmlPanelListButton = listButton;
+		this._htmlPanelList = panelList;
+		this._updatePanelList();
+
+		this._attachListeners();
+	}
+	return this.html;
+};
+
+*/
+//Singleton
+var FieldPanelItemFactory = (function () {
+	var products = {
+		"button": FieldPanelButton,
+		"buttongroup": FieldPanelButtonGroup,
+		"list": ListPanel,
+		"form": FormPanel,
+		"multiple": MultipleCollapsiblePanel,
+		"item_container": ItemContainer
+	};
+	return {
+		hasProduct: function (productName) {
+			return !!products[productName];
+		},
+		canProduce: function (productClass) {
+			var key;
+			for (key in products) {
+				if(products.hasOwnProperty(key)) {
+					if(products[key] === productClass) {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		isProduct: function(productObject) {
+			var key;
+			for (key in products) {
+				if(products.hasOwnProperty(key)) {
+					if(productObject instanceof products[key]) {
+						return true;	
+					}
+				}
+			}
+			return false;	
+		},
+		make: function(settings) {
+			var productName = settings.type, Constructor;
+			if(!this.hasProduct(productName)) {
+				throw new Error("make(): The product \"" + productName + "\" can't be produced by this factory.");
+			}
+			Constructor = products[productName];
+			return new Constructor(settings);
+		}
+	};
+}());
+var FieldPanel = function (settings) {
+	Element.call(this, settings);
+	this._open = null;
+	this._massiveAction = false;
+	this._onItemValueAction = null;
+	this._items = new ArrayList();
+	this._open = false;
+	this._owner = null;
+	this._matchOwnerWidth = true;
+	this._appendTo = null;
+	this._attachedListeners = false;
+	this._className = null;
+	this.onOpen = null;
+	this.onClose = null;
+	FieldPanel.prototype.init.call(this, settings);
+};
+
+FieldPanel.prototype = new Element();
+FieldPanel.prototype.constructor = FieldPanel;
+
+FieldPanel.prototype.init = function (settings) {
+	var defaults = {
+		items: [],
+		onItemValueAction: null,
+		open: false,
+		owner: null,
+		matchOwnerWidth: true,
+		appendTo: document.body,
+		className: "",
+		onOpen: null,
+		onClose: null
+	};
+
+	jQuery.extend(true, defaults, settings);
+	
+	this.setOwner(defaults.owner)
+		.setAppendTo(defaults.appendTo)
+		.setMatchOwnerWidth(defaults.matchOwnerWidth)
+		.setItems(defaults.items)
+		.setOnItemValueActionHandler(defaults.onItemValueAction)
+		.setClassName(defaults.className);
+
+	if (defaults.open) {
+		this.open();
+	} else {
+		this.close();
+	}
+
+	this.setOnOpenHandler(defaults.onOpen)
+		.setOnCloseHandler(defaults.onClose);
+};
+
+FieldPanel.prototype.setClassName = function (cName) {
+	if (typeof cName !== 'string') {
+		throw new Error("setClassName(): The parameter must be a string.");
+	}
+
+	this._className = cName;
+
+	if (this.html) {
+		jQuery(this.html).addClass(cName);
+	}
+
+	return this;
+};
+
+FieldPanel.prototype.setOnOpenHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("The parameter must be a function or null.");
+	}
+	this.onOpen = handler;
+	return this;
+};
+
+FieldPanel.prototype.setOnCloseHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error('The parameter must be a function or null.');
+	}
+	this.onClose = handler;
+	return this;
+};
+
+FieldPanel.prototype.setMatchOwnerWidth = function (match) {
+	this._matchOwnerWidth = !!match;
+	if (this._open) {
+		this._append();
+	}
+	return this;
+};
+
+FieldPanel.prototype.setAppendTo = function (appendTo) {
+	if (!(isHTMLElement(appendTo) || typeof appendTo === 'function' || appendTo instanceof Base)) {
+		throw new Error("setAppendTo(): The parameter must be an HTML element or an instance of Base.");
+	}
+	this._appendTo = appendTo;
+	if (this.isOpen()) {
+		this._append();
+	}
+	return this;
+};
+
+FieldPanel.prototype.setWidth = function (w) {
+	Element.prototype.setWidth.call(this, w);
+	if (this.html && typeof w === "number") {
+        this.style.addProperties({"min-width": this.width});
+    }
+	return this;
+};
+
+FieldPanel.prototype.open = function () {
+	if (!this._open) {
+		//if (this.html) {
+			this.getHTML();
+			this._append();
+			jQuery(this.getHTML()).slideDown();
+		//}
+		this._open = true;
+		if (typeof this.onOpen === 'function') {
+			this.onOpen(this);
+		}
+	}
+	return this;
+};
+
+FieldPanel.prototype.close = function () {
+	if (this._open) {
+		if (this.html) {
+			this.html.style.display = "none";
+		}
+		this._open = false;
+		if (typeof this.onClose === 'function') {
+			this.onClose(this);
+		}
+	}
+	return this;
+};
+
+FieldPanel.prototype.isOpen = function () {
+	return this._open;
+};
+
+FieldPanel.prototype.getOwner = function () {
+	return this._owner;
+};
+
+FieldPanel.prototype.setOnItemValueActionHandler = function (handler) {
+	if(!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnItemValueActionHandler(): the parameter must be a function or null.");
+	}
+	this.onItemValueAction = handler;
+	return this;
+};
+
+FieldPanel.prototype._append = function () {
+	var position, appendTo = this._appendTo, owner = this._owner, offsetHeight = 1, zIndex = 0, siblings, aux;
+	if (owner) {
+		if (!isHTMLElement(owner)) {
+			owner = owner.html;
+		}
+		offsetHeight = owner.offsetHeight;
+	}
+	if (typeof appendTo === 'function') {
+		appendTo = appendTo.call(this);
+	}
+	if (!isHTMLElement(appendTo)) {
+		appendTo = appendTo.html;
+	}
+	siblings = appendTo.children;
+	for (i = 0; i < siblings.length; i += 1) {
+		aux = jQuery(siblings[i]).zIndex();
+		if (aux > zIndex) {
+			zIndex = aux;
+		} 
+	}
+
+	this.setZOrder(zIndex + 1);
+
+	if (!owner || isInDOM(owner)) {
+		appendTo.appendChild(this.html);
+	}
+	if (owner) {
+		this.setWidth(this._matchOwnerWidth ? owner.offsetWidth : this.width);
+		position = getRelativePosition(owner, appendTo);
+	} else {
+		this.setWidth(this.width);
+		position = {left: 0, top: 0};
+	}
+	this.setPosition(position.left, position.top + offsetHeight - 1);
+	return this;
+};
+
+FieldPanel.prototype.setOwner = function (owner) {
+	if(!(owner === null || owner instanceof Element || isHTMLElement(owner))) {
+		throw new Error("setOwner(): The parameter must be an instance of Element or null.");
+	}
+
+	this._owner = owner;
+	if (this.isOpen()) {
+		this._append();
+	}
+	return this;
+};
+
+FieldPanel.prototype._onItemValueActionHandler = function () {
+	var that = this;
+
+	return function (item, valueObject) {
+		if(typeof that.onItemValueAction === 'function') {
+			that.onItemValueAction(that, item, valueObject);
+		}
+	};
+};
+
+FieldPanel.prototype.addItem = function (item) {
+	if(!FieldPanelItemFactory.isProduct(item)) {
+		item = FieldPanelItemFactory.make(item);
+	}
+	if(!FieldPanelItemFactory.isProduct(item)) {
+		throw new Error("addItem(): The parameter must be acceptable by this parent.");
+	} else {
+		item.onValueAction = this._onItemValueActionHandler();
+		this._items.insert(item);
+	}
+	if(!this._massiveAction && this.html) {
+		this._paintItem(item);
+	}
+	return this;
+};
+
+FieldPanel.prototype.clearItems = function () {
+	this._items.clear();
+	jQuery(this.html).empty();
+	return this;
+};
+
+FieldPanel.prototype._paintItem = function (item) {
+	this.html.appendChild(item.getHTML());
+	return this;
+};
+
+FieldPanel.prototype._paintItems = function () {
+	var i, items;
+	if(this.html) {
+		items = this._items.asArray();
+		for (i = 0; i < items.length; i++) {
+			this._paintItem(items[i]);
+		}
+	}
+	return this;
+};
+
+FieldPanel.prototype.setItems = function (items) {
+	var i ;
+	this._massiveAction = true;
+	this.clearItems();
+	for (i = 0; i < items.length; i++) {
+		this.addItem(items[i]);
+	}
+	this._paintItems();
+	this._massiveAction = false;
+	return this;
+};
+
+FieldPanel.prototype.getItems = function () {
+	return this._items.asArray();
+};
+
+FieldPanel.prototype.hideItem = function (itemIndex) {
+	var itemToHide = this._items.get(itemIndex);
+	if (itemToHide) {
+		itemToHide.hide();
+	}
+	return this;
+};
+
+FieldPanel.prototype.showItem = function (itemIndex) {
+	var itemToHide = this._items.get(itemIndex);
+	if (itemToHide) {
+		itemToHide.show();
+	}
+	return this;
+};
+
+FieldPanel.prototype.attachListeners = function () {
+	var that = this;
+	if (this.html && !this._attachedListeners) {
+		jQuery(document).on("click", function (e) {
+			var $selector = $(that.html);
+			if (that._owner) {
+				$selector = isHTMLElement(that._owner) ? $selector.add(that._owner) : $selector.add(that._owner.html);
+			}
+			if (!jQuery(e.target).closest($selector).length) {
+				that.close();
+			}
+		});
+		this._attachedListeners = true;
+	}
+	return this;
+};
+
+FieldPanel.prototype.createHTML = function () {
+	/*if(!this.html) {
+		this.html = this.createHTMLElement('div');
+		this.html.className = 'adam field-panel';
+		this._paintItems();
+	}*/
+
+	if(!this.html) {
+		Element.prototype.createHTML.call(this);
+		this.html.className = 'adam field-panel';
+		this._paintItems();
+
+		this.style.addProperties({
+			position: "absolute",
+			"min-width": this.width,
+            height: "auto",
+            zIndex: this.zOrder
+        });
+        this.html.style.display = this._open ? "" : "none";
+        this.setClassName(this._className);
+        this.attachListeners();
+	}
+	return this.html;
+};
+
+var MultipleItemField = function (settings, parent) {
+	Field.call(this, settings, parent);
+	this._panel = null;
+	this._onValueAction = null;
+	this._panelAppended = false;
+	this._panelSemaphore = false;
+	this._proxy = new SugarProxy();
+};
+
+MultipleItemField.prototype = new Field();
+MultipleItemField.prototype.constructor = MultipleItemField;
+MultipleItemField.prototype.type = "MultipleItemField";
+/**
+ * The function which processes the text for the items to be added to the field.
+ * @abstract
+ * @return {Function|null} The function which must return a string or an HTML Element to be used as the text for the 
+ * items to be added.
+ */
+MultipleItemField.prototype._onItemSetText = function () {
+	return function () {
+		return "[MultipleItemField Item]";
+	};
+};
+
+MultipleItemField.prototype._createItemData = function (rawData) {
+	return rawData;
+};
+
+MultipleItemField.prototype._createItem = function (data, usableItem) {
+	var newItem;
+
+	if(usableItem instanceof SingleItem) {
+		newItem = usableItem;
+	} else {
+		newItem = new SingleItem();
+	}
+	newItem.setFullData(this._createItemData(data));
+	newItem.setText(this._onItemSetText());
+	return newItem;
+};
+
+MultipleItemField.prototype.addItem = function (item, noFocus) {
+	this.controlObject.addItem(this._createItem(item), null, noFocus);
+	return this;
+};
+
+MultipleItemField.prototype._setValueToControl = function (value) {
+	var i;
+	value = value || [];
+	value = typeof value ===  'string' ? JSON.parse(value) : value;
+	if (!jQuery.isArray(value)) {
+		throw new Error("setValue(): The parameter is incorrectly formatted.");
+	}
+	for (i = 0; i < value.length; i += 1) {
+		this.addItem(value[i], true);
+	}
+	return this;
+};
+
+MultipleItemField.prototype._onChange = function () {
+	var that = this;
+	return function	() {
+		var newValue = that._getValueFromControls(), currentValue = that.value;
+		if(newValue !== currentValue) {
+			that.value = newValue;
+			that.onChange(that.value, currentValue);
+		}
+	};
+};
+
+MultipleItemField.prototype.isPanelOpen = function () {
+	return this._panel.isOpen();
+};
+
+MultipleItemField.prototype.openPanel = function () {
+	var parent;
+	if (!this.isPanelOpen()) {
+		this._panel.open();
+		this.controlObject.style.addClasses(['focused']);
+		this._panel.style.addClasses(['focused']);
+	}
+	return this;
+};
+
+MultipleItemField.prototype.closePanel = function () {
+	this._panel.close();
+	this.controlObject.style.removeClasses(['focused']);
+	this._panel.style.removeClasses(['focused']);
+	return this;
+};
+
+MultipleItemField.prototype._getValueFromControls = function () {
+	var value = this.controlObject.getData();
+	return JSON.stringify(value);
+};
+/**
+ * Valid the text input.
+ * @abstract
+ * @return {Function|null} The function must return true or false.
+ */
+MultipleItemField.prototype._isValidInput = function () {
+	return null;
+};
+/**
+ * Actions to perform before add an item by text input.
+ * @abstract
+ * @return {Function|null} The function to execute before the new item be added.
+ */
+MultipleItemField.prototype._onBeforeAddItemByInput = function () {
+	return null;
+};
+/**
+ * Action to perform when the panel fires a value action.
+ * @abstract
+ * @return {Function|null} The function to be executed when a panel's value action occurs.
+ */
+MultipleItemField.prototype._onPanelValueGeneration = function () {
+	return null;
+};
+
+MultipleItemField.prototype.getObject = function () {
+	var i, items = this.controlObject.getItems(), obj = [];
+	for (i = 0; i < items.length; i += 1) {
+		obj.push(items[i].getData());
+	}
+	return obj;
+};
+
+MultipleItemField.prototype._createPanel = function () {
+	var that = this;
+	if (this.html) {
+		if(!this._panel) {
+			throw new Error("_createPanel(): This method must be called from an overwritten _createdMethod() method in any subclasses after creatinf the panel.");
+		} else if(!(this._panel instanceof FieldPanel)) {
+			throw new Error("_createPanel(): The panel created must be an instance of FieldPanel.");
+		}
+		this._panel.setAppendTo(function () {
+			var parent = (that.parent && that.parent.parent) || null;
+			return parent ? parent.html : document.body;
+		});
+		this._panel.setOwner(this.controlObject).close();
+		this._panel.setOnItemValueActionHandler(this._onPanelValueGeneration());
+	}
+	return this;
+};
+
+MultipleItemField.prototype.scrollTo = function () {
+    var fieldsDiv = this.html.parentNode, 
+    	scrollForControlObject = getRelativePosition(this.controlObject.html, fieldsDiv).top + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
+    	that = this;
+    if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject) {
+        jQuery(this.html.parentNode).animate({
+        	scrollTop: scrollForControlObject
+        }, function() {
+        	that.openPanel();
+        });
+        return;
+    }
+
+    return this;
+};
+
+MultipleItemField.prototype._attachListeners = function () {
+	var that = this;
+	if(this.html) {
+		jQuery(this._panel.getHTML()).on('mousedown', function (e) {
+			e.stopPropagation();
+			//that.controlObject.select();
+			that._panelSemaphore = true;
+		});
+
+		$(this.parent && this.parent.body).on('scroll', function () {
+			that.closePanel();
+		});
+	}
+	return this;
+};
+
+MultipleItemField.prototype.evalRequired = function () {
+	var response = true, value;
+    if (this.required) {
+        response = !!this.controlObject.getItems().length;
+        if (!response) {
+            this.controlObject.style.addClasses(['required']);//$(this.controlObject).addClass('required');
+        } else {
+            this.controlObject.style.removeClasses(['required']);//$(this.controlObject).removeClass('required');
+        }
+    }
+    return response;
+};
+
+MultipleItemField.prototype.clear = function () {
+	if (this.controlObject) {
+		this.controlObject.clearItems();
+	}
+	this.value = this._getValueFromControls();
+	this.isValid();
+	return this;
+};
+
+MultipleItemField.prototype._createItemContainer = function () {
+	var itemsContainer, that = this;
+	if (!this.controlObject) {
+		itemsContainer = new ItemContainer({
+	    	className: "adam-field-control",
+	    	onAddItem: this._onChange(),
+	    	onRemoveItem: this._onChange(),
+	    	width: this.fieldWidth || 200,
+	    	textInputMode: ItemContainer.prototype.textInputMode.ALL,
+	    	inputValidationFunction: this._isValidInput(),
+	    	onBeforeAddItemByInput: this._onBeforeAddItemByInput(),
+	    	onBlur: function() {
+	    		if (!that._panelSemaphore) {
+	    			that.closePanel();
+	    		} /*else {
+	    			this.select(this.getSelectedIndex());
+	    		}*/
+	    		that._panelSemaphore = false;
+	    	},
+	    	onFocus: function() {
+	    		that.scrollTo();
+	    		if(!that._panel.isOpen()) {
+	    			that.openPanel();
+	    		}
+	    	}
+	    });
+	    this.controlObject = itemsContainer;
+	    this._setValueToControl(this.value);
+	}
+	return this;
+};
+
+MultipleItemField.prototype.createHTML = function () {
+	var fieldLabel, required = '', readAtt, that = this;
+	if (!this.html) {
+	    Field.prototype.createHTML.call(this);
+
+	    if (this.required) {
+	        required = '<i>*</i> ';
+	    }
+
+	    fieldLabel = this.createHTMLElement('span');
+	    fieldLabel.className = 'adam-form-label';
+	    fieldLabel.innerHTML = this.label + ': ' + required;
+	    fieldLabel.style.width = (this.parent && this.parent.labelWidth) || "30%";
+	    fieldLabel.style.verticalAlign = 'top';
+	    this.html.appendChild(fieldLabel);
+
+	    if (this.readOnly) {
+	        //TODO: implement readOnly!!!!!
+	    }
+	    this._createItemContainer().html.appendChild(this.controlObject.getHTML());
+
+	    this._createPanel();
+
+	    if (this.errorTooltip) {
+	        this.html.appendChild(this.errorTooltip.getHTML());
+	    }
+	    if (this.helpTooltip) {
+	        this.html.appendChild(this.helpTooltip.getHTML());
+	    }
+
+	    this.labelObject = fieldLabel;
+	    this._attachListeners();
+	}
+	return this.html;
+};
+var EmailPickerField = function (settings, parent) {
+	MultipleItemField.call(this, settings, parent);
+	this._teams = null;
+	this._teamsPanel = null;
+	/*this._fieldsPanel = null;*/
+	this._suggestPanel = null;
+	this._suggestTimer = null;
+	this._delaySuggestTime = null;
+	this._suggestionDataURL = null;
+	this._suggestionDataRoot = null;
+	this._suggestionItemName = null;
+	this._suggestionItemAddress = null;
+	this._relatedModulesFieldsDataURL = null;
+	this._relatedModulesFieldsDataRoot = null;
+	this._suggestionVisible = false;
+	this._teamNameField = null;
+	this._lastQuery = null;
+	EmailPickerField.prototype.init.call(this, settings);
+};
+
+EmailPickerField.prototype = new MultipleItemField();
+EmailPickerField.prototype.constructor = EmailPickerField;
+EmailPickerField.prototype.type = 'EmailPickerField';
+
+EmailPickerField.prototype.init = function (settings) {
+	var defaults = {
+		teams: [],
+		delaySuggestTime: 500,
+		suggestionDataURL: null,
+		suggestionDataRoot: null,
+		suggestionItemName: null,
+		suggestionItemAddress: "email"/*,
+		relatedModulesFieldsDataURL: null,
+		relatedModulesFieldsDataRoot: null*/,
+		teamNameField: "name"
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this._lastQuery = {};
+
+	this.setTeamNameField(defaults.teamNameField)
+		.setTeams(defaults.teams)
+		.setSuggestionDataURL(defaults.suggestionDataURL)
+		.setSuggestionDataRoot(defaults.suggestionDataRoot)
+		.setDelaySuggestTime(defaults.delaySuggestTime)
+		.setSuggestionItemName(defaults.suggestionItemName)
+		.setSuggestionItemAddress(defaults.suggestionItemAddress)/*
+		.setVariables(defaults.variables)
+		.setRelatedModulesFieldsDataURL(defaults.relatedModulesFieldsDataURL)
+		.setRelatedModulesFieldsDataRoot(defaults.relatedModulesFieldsDataRoot)*/;
+};
+
+/*EmailPickerField.prototype.setRelatedModulesFieldsDataURL = function (url) {
+	if (!(url === null || typeof url === "string")) {
+		throw new Error("setRelatedModulesFieldsDataURL(): The parameter must be a string or null.");
+	}
+	this._relatedModulesFieldsDataURL = url;
+	return this;
+};
+
+EmailPickerField.prototype.setRelatedModulesFieldsDataRoot = function (root) {
+	if (!(root === null || typeof root === 'string')) {
+		 throw new Error("setRelatedModulesFieldsDataRoot(): the parameter must be a string or null.");
+	}
+	this._relatedModulesFieldsDataRoot = root;
+	return this;
+};*/
+
+EmailPickerField.prototype.setTeamNameField = function(teamNameField) {
+	if (typeof teamNameField !== 'string') {
+		throw new Error("setTeamNameField(): The parameter must be a string.");
+	}
+	this._teamNameField = teamNameField;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionItemName = function(text) {
+	if(!(text === null || typeof text === 'string')) {
+		throw new Error("setSuggestionItemName(): The parameter must be a string or null.");
+	}
+	this._suggestionItemName = text;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionItemAddress = function(text) {
+	if(!(text === null || (typeof text === 'string' && text !== ""))) {
+		throw new Error("setSuggestionItemAddress(): The parameter must be a string different than an empty string.");
+	}
+	this._suggestionItemAddress = text;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionDataURL = function (url) {
+	if (!(url === null || typeof url === "string")) {
+		throw new Error("setSuggestionDataURL(): The parameter must be a string or null.");
+	}
+	this._suggestionDataURL = url;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionDataRoot = function(root) {
+	if (!(root === null || typeof root === "string")) {
+		throw new Error("setSuggestionDataRoot(): The parameter must be a string or root.");
+	}
+	this._suggestionDataRoot = root;
+	return this;
+};
+
+EmailPickerField.prototype.setDelaySuggestTime = function (milliseconds) {
+	if (typeof milliseconds !== "number") {
+		throw new Error("setDelaySuggestTime(): The parameter must be a number.");
+	}
+	this._delaySuggestTime = milliseconds;
+	return this;
+};
+
+EmailPickerField.prototype.setTeams = function (teams) {
+	var i;
+	if(!jQuery.isArray(teams)) {
+		throw new Error("setItems(): The parameter must be an array.");
+	}
+	this._teams = teams;
+	if(this._teamsPanel) {
+		this._teamsPanel.setDataItems(this._teams);
+		this._teamsPanel.setVisible(this._teams.length);
+	}
+	return this;
+};
+
+EmailPickerField.prototype._onItemSetText = function () {
+	return function(itemObject, data) {
+		return data.name || data.emailAddress || "";
+	};
+};
+
+EmailPickerField.prototype._createItemData = function(data) {
+	return {
+		name: data.name || data.emailAddress || "",
+		emailAddress: data.emailAddress || "",
+		module: null
+	};
+};
+
+EmailPickerField.prototype._onBeforeAddItemByInput = function () {
+	var that = this;
+	return function (itemContainer, singleItem, text, index) {
+		return that._createItem({
+			emailAddress: text
+		}, singleItem);
+	}
+};
+
+EmailPickerField.prototype._onPanelValueGeneration = function () {
+	var that = this;
+	return function (fieldPanel, fieldPanelItem, data) {
+		var newEmailItemm;
+		if(fieldPanelItem.type === "FieldPanelButton") {
+			newEmailItem = that._createItem({
+				name: data.text,
+				emailAddress: data.value
+			});
+		} else {
+			switch(fieldPanelItem.id) {
+				case "list-teams":
+					newEmailItem = that._createItem({
+						emailAddress: "Team",
+						name: data[that._teamNameField]
+					});
+					break;
+				default:
+					newEmailItem = that._createItem({
+						emailAddress: data[that._suggestionItemAddress],
+						name: data[that._suggestionItemName || that._suggestionItemAddress] 
+					});
+			}
+		}
+		that.controlObject.addItem(newEmailItem, that.controlObject.getSelectedIndex());
+	};
+};
+
+EmailPickerField.prototype._suggestionItemContent = function() {
+	var that = this;
+	return function (item, data) {
+		var name = that.createHTMLElement('strong'),
+			address = that.createHTMLElement('small'),
+			container = that.createHTMLElement('a');
+
+		container.href = "#";
+		container.className = "adam email-picker-suggest";
+		if(that._suggestionItemName) {
+			name.className = "adam email-picker-suggest-name";
+			name.textContent = data[that._suggestionItemName];
+			container.appendChild(name);
+		}
+		address.className = "adam email-picker-suggest-address";
+		address.textContent = data[that._suggestionItemAddress];
+		container.appendChild(address);
+
+		return container;
+	};
+};
+
+EmailPickerField.prototype._onLoadSuggestions = function () {
+	var that = this;
+	return function (listPanel, data) {
+		var replacementText = {
+			"%NUMBER%": listPanel.getItems().length,
+			"%TEXT%": that._lastQuery.query
+		};
+		//listPanel.setTitle(listPanel.getItems().length + " suggestion(s) for \"" + that._lastQuery.query + "\"");
+		listPanel.setTitle(translate("LBL_PMSE_EMAILPICKER_RESULTS_TITLE").replace(/%\w+%/g, function(wildcard) {
+		   return replacementText[wildcard] || wildcard;
+		}));
+	};
+};
+
+EmailPickerField.prototype._createPanel = function () {
+	var that = this;
+	if (!this._teamsPanel) {
+		this._teamsPanel = new ListPanel({
+			id: "list-teams",
+			title: translate('LBL_PMSE_EMAILPICKER_TEAMS'),
+			itemsContent: function(item, data) {
+				return data[that._teamNameField] || "";
+			}
+		});
+		this.setTeams(this._teams);
+	}
+	if (!this._suggestPanel) {
+		this._suggestPanel = new ListPanel({
+			id: "list-suggest",
+			title: translate('LBL_PMSE_EMAILPICKER_SUGGESTIONS'),
+			itemsContent: this._suggestionItemContent(),
+			visible: false,
+			bodyHeight: 150,
+			onLoad: this._onLoadSuggestions()
+		});
+	}
+	/*if (!this._fieldsPanel) {
+		this._fieldsPanel = new ListPanel({
+			id: "list-fields",
+			title: "Module Fields",
+			bodyHeight: 200,
+			onExpand: function (listPanel) {
+				listPanel.setDataURL(that._relatedModulesFieldsDataURL)
+					.setDataRoot(that._relatedModulesFieldsDataRoot)
+					.load();
+			}
+		});
+	}*/
+	this._panel = new FieldPanel({
+		items: [
+			{
+				type: 'button',
+				value: "Current User",
+				text: translate('LBL_PMSE_EMAILPICKER_CURRENT_USER')
+			}, 
+			{
+				type: 'button',
+				value: "Record Owner",
+				text: translate('LBL_PMSE_EMAILPICKER_RECORD_OWNER')
+			}, 
+			{
+				type: "button", 
+				value: "Supervisor",
+				text: translate('LBL_PMSE_EMAILPICKER_SUPERVISOR')
+			},
+			this._teamsPanel,/*
+			this._fieldsPanel,*/
+			this._suggestPanel
+		]
+	});
+	MultipleItemField.prototype._createPanel.call(this);
+	return this;
+};
+
+EmailPickerField.prototype._isValidInput = function () {
+	var that = this;
+	return function (itemContainer, text) {
+		return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/.test(text);
+	};
+};
+
+EmailPickerField.prototype._loadSuggestions = function (c) {
+	var that = this;
+	return function	() {
+		var url;
+		clearInterval(that._timer);
+		if(that._suggestionDataURL) {
+			that._lastQuery = {
+				query: c,
+				dataRoot: that._suggestionDataRoot,
+				dataURL: that._suggestionDataURL
+			};
+			url = that._suggestionDataURL.replace(/\{\$\d+\}/g, encodeURIComponent(c));
+			that._suggestPanel.setDataURL(url)
+				.setDataRoot(that._suggestionDataRoot);
+			that._suggestPanel.load();
+		}
+	};
+};
+
+EmailPickerField.prototype._showSuggestionPanel = function () {
+	var panelItems = this._panel.getItems(), i;
+
+	if (!this._suggestionVisible) {
+		for (i = 0; i < panelItems.length; i += 1) {
+			if (panelItems[i] !== this._suggestPanel) {
+				panelItems[i].setVisible(false);
+			} else {
+				panelItems[i].setVisible(true);
+			}
+		}	
+	}
+	this._suggestionVisible = true;
+	return this;
+};
+
+EmailPickerField.prototype._hideSuggestionPanel = function () {
+	var panelItems = this._panel.getItems(), i;
+
+	if (this._suggestionVisible) {
+		for (i = 0; i < panelItems.length; i += 1) {
+			if (panelItems[i] !== this._suggestPanel) {
+				panelItems[i].setVisible(true);
+			} else {
+				panelItems[i].setVisible(false);
+			}
+		}	
+	}
+	this._suggestionVisible = false;
+	return this;
+};
+
+EmailPickerField.prototype._onInputChar = function () {
+	var that = this;
+	return function (itemContainer, theChar, completeText, keyCode) {
+		var trimmedText = jQuery.trim(completeText);
+		clearInterval(that._timer);
+		if (trimmedText) {
+			if (that._suggestionDataURL) {
+				//Vefify if the current query is identical than the last one
+				if (!(that._lastQuery.query === trimmedText && that._lastQuery.dataURL === that._suggestionDataURL 
+					&& that._lastQuery.dataRoot === that._suggestionDataRoot)) {
+					that._timer = setInterval(that._loadSuggestions(trimmedText), that._delaySuggestTime);
+					that._suggestPanel.clearItems()
+						._showLoadingMessage()
+						.setTitle(translate("LBL_PMSE_EMAILPICKER_SUGGESTIONS"));
+				}
+				that._showSuggestionPanel();
+				that.openPanel(true);
+				that._suggestPanel.expand();
+			}/* else {
+				that.openPanel();
+			}*/
+		} else {
+			that._hideSuggestionPanel();
+		}
+	};
+};
+
+EmailPickerField.prototype.openPanel = function (showSuggestionPanel) {
+	if (!showSuggestionPanel) {
+		this._hideSuggestionPanel();
+	}
+	return MultipleItemField.prototype.openPanel.call(this);
+};
+
+EmailPickerField.prototype.createHTML = function () {
+	if(!this.html) {
+		MultipleItemField.prototype.createHTML.call(this);
+		this.controlObject.setOnInputCharHandler(this._onInputChar());
+	}
+	return this;
+};
+
+var ExpressionControl = function(settings) {
+	Element.call(this, settings);
+	this._panel = null;
+	this._operatorSettings = {};
+	this._operatorPanel = null;
+	this._evaluationSettings = {};
+	this._evaluationPanel = null;
+	this._evaluationPanels = {};
+	this._variableSettings = null;
+	this._variablePanel = null;
+	this._constantSettings = null;
+	this._constantPanel = null;
+	this._constantPanels = {};
+	this._attachedListeners = false;
+	this.onChange = null;
+	this._value = null;
+	this._panelSemaphore = true; //true for close the panel, false to avoid closing.
+	this._itemContainer = null;
+	this._externalItemContainer = false;
+	//this._owner = null;
+	//this._matchOwnerWidth = true;
+	this._proxy = null;
+	//this._appendTo = null;
+	this._expressionVisualizer = null;
+	this._dateFormat = null;
+	this._decimalSeparator = null;
+	this._numberGroupingSeparator = null;
+	this._auxSeparator = "|||";
+	this.onOpen = null;
+	this.onClose = null;
+	ExpressionControl.prototype.init.call(this, settings);
+};
+
+ExpressionControl.prototype = new Element();
+ExpressionControl.prototype.constructor = ExpressionControl;
+ExpressionControl.prototype.type = "ExpressionControl";
+ExpressionControl.prototype._regex = {
+	string: /("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')/,
+	datetime: /^\d{4}-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(\s((0[0-9])|(1[0-2])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/,
+	unittime: /^\d+[wdhm]$//*,
+	number: /^[+-]?\d+(\.\d+)?$/*/
+};
+
+ExpressionControl.prototype._typeToControl = {
+	"address": "text",
+	"checkbox": "checkbox",
+	"currency": "currency",
+	"date": "date", 
+	"datetime": "datetime", //
+	"decimal": "number",
+	"encrypt": "text",
+	"dropdown": "dropdown",
+	"float": "number",
+	"email": "text",
+	"name": "text",
+	//"html": "html",
+	//"iframe": "iframe",
+	//"image": "image" ,
+	"integer": "integer",
+	"multiselect": "text", //"multiselect",
+	//"flex relate": "flexrelate",
+	"phone": "text",
+	"radio": "radio",
+	//"relate": "related",
+	"textarea": "text",//"textarea",
+	"url": "text",
+	"textfield": "text" 
+};
+
+ExpressionControl.prototype.OPERATORS  = {
+	"arithmetic": [
+		{
+			text: "+",
+			value: "addition"
+		},
+		{
+			text: "-",
+			value: "substraction"
+		},
+		{
+			text: "x",
+			value: "multiplication"
+		},
+		{
+			text: "/",
+			value: "division"
+		}
+	],
+	"logic": [
+		{
+			text: "AND", 
+			value: "AND"
+		},
+		{
+			text: "OR", 
+			value:  "OR"
+		},
+		{
+			text: "NOT", 
+			value: "NOT"
+		}
+	],
+	"comparison": [
+		{
+			text: "<", 
+			value: "minor_than"
+		}, 
+		{
+			text: "<=", 
+			value: "minor_equals_than"
+		}, 
+		{
+			text: "==", 
+			value: "equals"
+		}, 
+		{
+			text: ">=", 
+			value: "major_equals_than"
+		}, 
+		{
+			text: ">", 
+			value: "major_than"
+		}, 
+		{
+			text: "!=", 
+			value: "not_equals"
+		}
+	],
+	"group": [
+		{
+			text: "(",
+			value: "("
+		}, 
+		{
+			text: ")",
+			value: ")"
+		}
+	]
+};
+
+ExpressionControl.prototype.init = function (settings) {
+	var defaults = {
+		width: 200,
+		itemContainerHeight: 80, //only applicable when it is not external
+		height: 'auto',
+		operators: true,
+		evaluation: false,
+		variable: false,
+		constant: true,
+		onChange: null,
+		owner: null,
+		itemContainer: null,
+		appendTo: document.body,
+		matchOwnerWidth: true,
+		expressionVisualizer: true,
+		dateFormat: "yyyy-mm-dd",
+		decimalSeparator: settings.numberGroupingSeparator === "." ? "," : ".",
+		numberGroupingSeparator: settings.decimalSeparator === "," ? "." : ",",
+		allowInput: true,
+		onOpen: null,
+		onClose: null,
+		className: ""
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this._proxy = new SugarProxy();
+	if (defaults.itemContainer instanceof ItemContainer) {
+		this._itemContainer = defaults.itemContainer;
+		this._externalItemContainer = true;
+	} else {
+		this._itemContainer = new ItemContainer({
+			textInputMode: defaults.allowInput ? ItemContainer.prototype.textInputMode.ALL 
+				: ItemContainer.prototype.textInputMode.NONE,
+			width: '100%',
+			height: defaults.itemContainerHeight
+		});
+	}
+
+	this._panel = new FieldPanel({
+		id: defaults.id,
+		open: false,
+		onItemValueAction: this._onPanelValueGeneration(),
+		width: this.width,
+		className: defaults.className || ""
+	});
+
+	this._itemContainer.setOnAddItemHandler(this._onChange())
+		.setOnRemoveItemHandler(this._onChange())
+		.setInputValidationFunction(this._inputValidationFunction())
+		.setOnBeforeAddItemByInput(this._onBeforeAddItemByInput());
+
+	this.setWidth(defaults.width)
+		.setHeight(defaults.height)
+		.setDateFormat(defaults.dateFormat)
+		.setDecimalSeparator(defaults.decimalSeparator)
+		.setNumberGroupingSeparator(defaults.numberGroupingSeparator)
+		.setOwner(defaults.owner)
+		.setAppendTo(defaults.appendTo)
+		.setOperators(defaults.operators)
+		.setEvaluations(defaults.evaluation)
+		.setVariablePanel(defaults.variable)
+		.setConstantPanel(defaults.constant)
+		.setOnChangeHandler(defaults.onChange)
+		.setMatchOwnerWidth(defaults.matchOwnerWidth)
+		.setOnOpenHandler(defaults.onOpen)
+		.setOnCloseHandler(defaults.onClose);
+
+	if (defaults.expressionVisualizer) {
+		this.showExpressionVisualizer();
+	} else {
+		this.hideExpressionVisualizer();
+	}
+};
+
+ExpressionControl.prototype.setOnOpenHandler = function (handler) {
+	this._panel.setOnOpenHandler(handler);
+	return this;
+};
+
+ExpressionControl.prototype.setOnCloseHandler = function (handler) {
+	this._panel.setOnCloseHandler(handler);
+	return this;
+};
+
+ExpressionControl.prototype.getText = function () {
+	return this._itemContainer.getText();
+};
+
+ExpressionControl.prototype.setDecimalSeparator = function (decimalSeparator) {
+	if (!(typeof decimalSeparator === 'string' && decimalSeparator && decimalSeparator.length === 1 
+		&& !/\d/.test(decimalSeparator) && !/[\+\-\*\/]/.test(decimalSeparator))) {
+		throw new Error("setDecimalSeparator(): The parameter must be a single character different than a digit and "
+			+ "arithmetic operator.");
+	}
+	if (decimalSeparator === this._numberGroupingSeparator) {
+		throw new Error("setDecimalSeparator(): The decimal separator must be different from the number grouping " 
+			+ "separator.");
+	}
+	this._decimalSeparator = decimalSeparator;
+	return this;
+};
+
+ExpressionControl.prototype.setNumberGroupingSeparator = function (separator) {
+	if (!(separator === null || (typeof separator === 'string' && separator.length <= 1))) {
+		throw new Error("setNumberGroupingSeparator(): The parameter is optional should be a single character or "
+			+ "null.");
+	}
+	if (separator === this._decimalSeparator) {
+		throw new Error("setNumberGroupingSeparator(): The decimal separatpr must be different from the number grouping " 
+			+ "separator.");
+	}
+	this._numberGroupingSeparator = separator;
+	return this;
+};
+
+ExpressionControl.prototype.setDateFormat = function(dateFormat) {
+	this._dateFormat = dateFormat;
+	if (this._constantPanels.date) {
+		this._constantPanels.date.getItem("date").setFormat(dateFormat);
+	}
+	return this;
+};
+
+/*ExpressionControl.prototype._parseInputToItem = function (input) {
+	var trimmedText = jQuery.trim(input), type;
+	if (typeof input !== 'string') {
+		throw new Error("_parseInputToItemData(): The parameter must be a string.");
+	}
+
+	if (trimmedText === '+' || trimmedText === '-') {
+		type = "MATH";
+	} else if (this._regex.unittime.test(trimmedText)) {
+		type = "UNIT_TIME";
+	} else {
+		type = "FIXED_DATE";
+	}
+
+	return this._createItemData(trimmedText, type);
+};*/
+
+ExpressionControl.prototype._onBeforeAddItemByInput = function () {
+	var that = this;
+	return function (itemContainer, newItem, input, index) {
+		var data = that._parseInputToItem(input);
+		if (data) {
+			newItem.setFullData(data);	
+		} else {
+			return false;
+		}
+	};
+};
+
+ExpressionControl.prototype.isLeapYear = function (year) {
+	if(year % 400 === 0 || year % 4 === 0) {
+        return true;
+    }
+    return false;
+};
+
+ExpressionControl.prototype.isValidDateTime = function (date) {
+	if (typeof date === 'string') {
+		//TODO validation acccording to the set data format
+		if (!this._regex.datetime.test(date)) {
+			return false;
+		}
+		date = date.split("-");
+		date[0] = parseInt(date[0], 10);
+		date[1] = parseInt(date[1], 10);
+		date[2] = parseInt(date[2], 10);
+
+		if (date[1] <= 0 || date[2] <= 0 || date[1] > 12 || date[2] > 31) {
+			return false;
+		}
+		if ((date[1] === 4 || date[1] === 6 || date[1] === 9) && date[0] > 30) {
+			return false;
+		}
+		if ((!this.isLeapYear(date[0]) && date[2] > 28) || date[2] > 29) {
+			return false;
+		}
+	} else {
+		//TODO validations for other arguments data type
+		return false;
+	}
+	return true;
+};
+
+ExpressionControl.prototype._inputValidationFunction = function () {
+	var that = this;
+	return function (itemContainer, input) {
+		var trimmedText = jQuery.trim(input);
+		switch (trimmedText) {
+			case '+':
+			case '-':
+			case "NOW":
+				return true;
+			default:
+				return that._regex.unittime.test(trimmedText) || that.isValidDateTime(trimmedText);
+		}
+	};
+};
+
+ExpressionControl.prototype.showExpressionVisualizer = function () {
+	if (!this._externalItemContainer) {
+		this._itemContainer.setVisible(true);
+	}
+	return this;
+};
+
+ExpressionControl.prototype.hideExpressionVisualizer = function () {
+	if (!this._externalItemContainer) {
+		this._itemContainer.setVisible(false);
+	}
+	return this;
+};
+
+ExpressionControl.prototype.setMatchOwnerWidth = function (match) {
+	this._panel.setMatchOwnerWidth(!!match);
+	return this;
+};
+
+ExpressionControl.prototype.setAppendTo = function (appendTo) {
+	this._panel.setAppendTo(appendTo);
+	return this;
+};
+
+ExpressionControl.prototype.isOpen = function() {
+	return (this._panel && this._panel.isOpen()) || false;
+};
+
+ExpressionControl.prototype.getValueObject = function () {
+	return this._itemContainer.getData();
+};
+
+ExpressionControl.prototype._onChange = function () {
+	var that = this;
+	return function (itemContainer, item, index) {
+		var oldValue = that._value;
+		that._value = itemContainer = JSON.stringify(itemContainer.getData());
+		if (typeof that.onChange === 'function') {
+			that.onChange(that, that._value, oldValue);
+		}
+	};
+};
+
+ExpressionControl.prototype.setOwner = function(owner) {
+	this._panel.setOwner(owner);
+	return this;
+};
+
+ExpressionControl.prototype.getOwner = function () {
+	return this._panel.getOwner();
+};
+
+ExpressionControl.prototype.getValue = function () {
+	return this._value;
+};
+
+ExpressionControl.prototype.setValue = function (value) {
+	var i;
+	if (typeof value === "string") {
+		value = JSON.parse(value);
+	} else if (!jQuery.isArray(value)) {
+		throw new Error("The parameter must be a array formatted string or an object.");
+	}
+
+	this._itemContainer.clearItems();
+	for (i = 0; i < value.length; i += 1) {
+		this._itemContainer.addItem(this._createItem(value[i]));
+	}
+	return this;
+};
+
+ExpressionControl.prototype.setOnChangeHandler = function (handler) {
+	if (!(handler === null || typeof handler === 'function')) {
+		throw new Error("setOnChangeHandler(): the parameter must be a function or null.");
+	}
+	this.onChange = handler;
+	return this;
+}
+
+ExpressionControl.prototype.setWidth = function (w) {
+	if (!(typeof w === 'number' ||
+		(typeof w === 'string' && (w === "auto" || /^\d+(\.\d+)?(em|px|pt|%)?$/.test(w))))) {
+		throw new Error("setWidth(): invalid parameter.");
+	}
+	this.width = w;
+    if (this.html) {
+        this.style.addProperties({width: this.width});
+    }
+    return this;
+};
+
+ExpressionControl.prototype.setHeight = function (h) {
+	if (!(typeof h === 'number' ||
+		(typeof h === 'string' && (h === "auto" || /^\d+(\.\d+)?(em|px|pt|%)?$/.test(h))))) {
+		throw new Error("setHeight(): invalid parameter.");
+	}
+	this.height = h;
+    if (this.html) {
+        this.style.addProperties({height: this.height});
+    }
+    return this;
+};
+
+ExpressionControl.prototype._getProperty = function (data, path) {
+	var levels, i;
+	if (data) {
+		levels = path.split(".");
+		for (i = 0; i < levels.length; i += 1) {
+			data = data[levels[i]];
+		}
+	}
+	return data;
+};
+
+ExpressionControl.prototype.setConstantPanel = function(settings) {
+	var defaults = true;
+
+	if (settings === false) {
+		defaults = false;
+	} else if (settings === true) {
+		defaults = {
+			basic: true,
+			date: true,
+			timespan: true
+		};
+	} else {
+		defaults = jQuery.extend(true, defaults, settings);
+	}
+
+	this._constantSettings = defaults;
+
+	if (this._constantPanel) {
+		this._createBasicConstantPanel()
+			._createDateConstantPanel()
+			._createTimespanPanel();
+	}
+
+	return this;
+};
+
+ExpressionControl.prototype.setVariablePanel = function (settings) {
+	var defaults = {
+		dataURL: null,
+		dataRoot: null,
+		data: [],
+		dataFormat: "tabular",
+		dataChildRoot: null,
+		textField: "text",
+		valueField: "value",
+		typeField: "type",
+		typeFilter: null,
+		filterMode: "inclusive", 
+		moduleTextField: null,
+		moduleValueField: null
+	};
+
+	if (settings === false) {
+		defaults = false;
+	} else {
+		jQuery.extend(true, defaults, settings);
+		if (defaults.dataURL) {
+			if (typeof defaults.dataURL !== "string") {
+				throw new Error("setVariablePanel(): The \"dataURL\" property must be a string.");
+			}
+			if (!(defaults.dataRoot === null || typeof defaults.dataRoot === "string")) {
+				throw new Error("setVariablePanel(): The \"dataRoot\" property must be a string or null.");
+			}	
+			defaults.data = [];
+		} else {
+			if (!jQuery.isArray(defaults.data)) {
+				throw new Error("setVariablePanel(): The \"data\" property must be an array.");
+			}
+		}
+		
+		if (defaults.dataFormat !== "tabular" && defaults.dataFormat !== "hierarchical") {
+			throw new Error("setVariablePanel(): The \"dataFormat\" property only can have the \"hierarchical\" or " 
+				+ "\"tabular\" values.");
+		}
+		if (typeof defaults.dataChildRoot !== "string" && defaults.dataFormat === "hierarchical") {
+			throw new Error("setVariablePanel(): You set the \"dataFormat\" property to \"hierarchical\" so the " 
+				+ "\"dataChildRoot\" property must be specified.");
+		}
+		if (typeof defaults.textField !== "string") {
+			throw new Error("setVariablePanel(): The \"textField\" property must be a string.");
+		}
+		if (typeof defaults.valueField !== "string") {
+			throw new Error("setVariablePanel(): The \"valueField\" property must be a string.");
+		}
+		if (typeof defaults.typeField !== "string") {
+			throw new Error("setVariablePanel(): The \"typeField\" property must be a string.");
+		}
+		if (!(defaults.typeFilter === null || typeof defaults.typeFilter === "string" || jQuery.isArray(defaults.typeFilter))) {
+			throw new Error("setVariablePanel(): The \"typeFilter\" property must be a string, array or null.");
+		}
+		if (typeof defaults.moduleTextField !== "string") {
+			throw new Error("setVariablePanel(): The \"moduleTextField\" property must be a string.");
+		}
+		if (typeof defaults.moduleValueField !== "string") {
+			throw new Error("setVariablePanel(): The \"moduleValueField\" property must be a string.");
+		}
+		if (defaults.filterMode !== 'inclusive' && defaults.filterMode !== 'exclusive') { 	 	
+			throw new Error("setVariablePanel(): The \"filterMode\" property must be \"exclusive\" or \"inclusive\""); 	 	
+		}
+	}
+
+	this._variableSettings = defaults;
+
+	if (this._variablePanel) {
+		this._createVariablePanel();
+	}
+
+	return this;
+};
+
+ExpressionControl.prototype.setModuleEvaluation = function (settings) {
+	var defaults = {
+		dataURL: null,
+		dataRoot: null,
+		textField: "text",
+		valueField: "value",
+		fieldDataURL: null,
+		fieldDataRoot: null,
+		fieldTextField: "text",
+		fieldValueField: "value",
+		fieldTypeField: "type"
+	}, that = this, moduleField;
+
+	if (settings === false) {
+		defaults = false;
+	} else {
+		jQuery.extend(true, defaults, settings);	
+	}
+
+	if (defaults) {
+		if (typeof defaults.dataURL !== "string") {
+			throw new Error("setModuleEvaluation(): The \"dataURL\" property must be a string.");
+		}
+		if (!(typeof defaults.dataRoot === "string" || defaults.dataRoot === null)) {
+			throw new Error("setModuleEvaluation(): The \"dataRoot\" property must be a string or null.");
+		}
+		if (typeof defaults.textField !== "string") {
+			throw new Error("setModuleEvaluation(): The \"textField\" property must be a string.");
+		}
+		if (typeof defaults.valueField !== "string") {
+			throw new Error("setModuleEvaluation(): The \"valueField\" property must be a string.");
+		}
+		if (typeof defaults.fieldDataURL !== "string") {
+			throw new Error("setModuleEvaluation(): The \"fieldDataURL\" property must be a string.");
+		}
+		if (!(typeof defaults.fieldDataRoot === "string" || defaults.fieldDataRoot === null)) {
+			throw new Error("setModuleEvaluation(): The \"fieldDataRoot\" property must be a string.");
+		}
+		if (typeof defaults.fieldTextField !== "string") {
+			throw new Error("setModuleEvaluation(): The \"fieldTextField\" property must be a string.");
+		}
+		if (typeof defaults.fieldValueField !== "string") {
+			throw new Error("setModuleEvaluation(): The \"fieldValueField\" property must be a string.");
+		}
+		if (typeof defaults.fieldTypeField !== "string") {
+			throw new Error("setModuleEvaluation(): The \"fieldTypeField\" property must be a string.");
+		}
+	}
+
+	if (!this._evaluationSettings) {
+		this._evaluationSettings = {};
+	}
+	this._evaluationSettings.module = defaults;	
+	if (this._evaluationPanel) {
+		this._createModulePanel();	
+	}
+	return this;
+};
+
+ExpressionControl.prototype.setFormResponseEvaluation = function (settings) {
+	var defaults = {
+		dataURL: null,
+		dataRoot: null,
+		textField: "text",
+		valueField: "value"
+	};
+
+	if (settings === false) {
+		defaults = false;
+	} else {
+		jQuery.extend(true, defaults, settings);
+	}
+
+	if (defaults) {
+		if (typeof defaults.dataURL !== "string") {
+			throw new Error("setFormResponseEvaluation(): The \"dataURL\" parameter must be a string.");
+		}
+		if (!(typeof defaults.dataRoot === "string" || defaults.dataRoot === null)) {
+			throw new Error("setFormResponseEvaluation(): The \"dataRoot\" parameter must be a string or null.");
+		}
+		if (typeof defaults.textField !== "string") {
+			throw new Error("setFormResponseEvaluation(): The \"textField\" parameter must be a string.");
+		}
+		if (typeof defaults.valueField !== "string") {
+			throw new Error("setFormResponseEvaluation(): The \"valueField\" parameter must be a string.");
+		}
+	}
+
+	this._evaluationSettings.formResponse = defaults;
+
+	if (this._evaluationPanels.formResponse) {
+		this._createFormResponsePanel();
+	}
+
+	return this;
+};
+
+ExpressionControl.prototype.setBusinessRuleEvaluation = function (settings) {
+	var defaults = {
+		dataURL: null,
+		dataRoot: null,
+		textField: "text",
+		valueField: "value"
+	};
+
+	if (settings === false) {
+		defaults = false;
+	} else {
+		jQuery.extend(true, defaults, settings);
+
+		if (typeof defaults.dataURL !== "string") {
+			throw new Error("setBusinessRuleEvaluation(): The parameter must be a string.");
+		}
+		if (!(typeof defaults.dataRoot === "string" || defaults.dataRoot === null)) {
+			throw new Error("setBusinessRuleEvaluation(): The parameter must be a string or null.");
+		}
+		if (typeof defaults.textField !== "string") {
+			throw new Error("setBusinessRuleEvaluation(): The parameter must be a string.");
+		}
+		if (typeof defaults.valueField !== "string") {
+			throw new Error("setBusinessRuleEvaluation(): The parameter must be a string.");
+		}
+	}
+	this._evaluationSettings.businessRule = defaults;
+	return this;
+};
+
+ExpressionControl.prototype.setUserEvaluation = function (settings) {
+	var defaults = {
+		defaultUsersDataURL: null,
+		defaultUsersDataRoot: null,
+		defaultUsersLabelField: "text",
+		defaultUsersValueField: "value",
+		userRolesDataURL: null,
+		userRolesDataRoot: null,
+		userRolesLabelField: "text",
+		userRolesValueField: "value",
+		usersDataURL: null,
+		usersDataRoot: null,
+		usersLabelField: "text",
+		usersValueField: "value"
+	};
+
+	if (settings === false) {
+		defaults = false;
+	} else {
+		jQuery.extend(true, defaults, settings);
+		if (typeof defaults.defaultUsersDataURL !== "string") {
+			throw new Error("setUserEvaluation(): The \"defaultUsersDataURL\" must be a string.");
+		}
+		if (!(typeof defaults.defaultUsersDataRoot === "string" || defaults.defaultUsersDataRoot === null)) {
+			throw new Error("setUserEvaluation(): The \"defaultUsersDataRoot\" must be a string or null.");
+		}
+		if (typeof defaults.defaultUsersLabelField !== "string") {
+			throw new Error("setUserEvaluation(): The \"defaultUsersLabelField\" must be a string.");
+		}
+		if (typeof defaults.defaultUsersValueField !== "string") {
+			throw new Error("setUserEvaluation(): The \"defaultUsersValueField\" must be a string.");
+		}
+		if (typeof defaults.userRolesDataURL !== "string") {
+			throw new Error("setUserEvaluation(): The \"userRolesDataURL\" must be a string.");
+		}
+		if (!(typeof defaults.userRolesDataRoot === "string" || defaults.userRolesDataRoot === null)) {
+			throw new Error("setUserEvaluation(): The \"userRolesDataRoot\" must be a string or null.");
+		}
+		if (typeof defaults.userRolesLabelField !== "string") {
+			throw new Error("setUserEvaluation(): The \"userRolesLabelField\" must be a string.");
+		}
+		if (typeof defaults.userRolesValueField !== "string") {
+			throw new Error("setUserEvaluation(): The \"userRolesValueField\" must be a string.");
+		}
+		if (typeof defaults.usersDataURL !== "string") {
+			throw new Error("setUserEvaluation(): The \"usersDataURL\" must be a string.");
+		}
+		if (!(typeof defaults.usersDataRoot === "string" || defaults.usersDataRoot === null)) {
+			throw new Error("setUserEvaluation(): The \"usersDataRoot\" must be a string or null.");
+		}
+		if (typeof defaults.usersLabelField !== "string") {
+			throw new Error("setUserEvaluation(): The \"usersLabelField\" must be a string.");
+		}
+		if (typeof defaults.usersValueField !== "string") {
+			throw new Error("setUserEvaluation(): The \"usersValueField\" must be a string.");
+		}
+	}
+
+	this._evaluationSettings.user = defaults;
+
+	if (this._evaluationPanel) {
+		this._createUserPanel();	
+	}
+	return this;
+};
+
+ExpressionControl.prototype.setEvaluations = function (evaluations) {
+	var panels = ["module", "form", "business_rule", "user"], i, currentEval, _evaluationSettings = {};
+
+	if (evaluations === false) {
+		this._evaluationSettings = false;// this._evaluationSettings.form = this._evaluationSettings.business_rule = this._evaluationSettings.user = false;
+	} else if (typeof evaluations === 'object') {
+		for (i = 0; i < panels.length; i += 1) {
+			currentEval = evaluations[panels[i]] || false;
+			switch (panels[i]) {
+				case "module":
+					this.setModuleEvaluation(currentEval);
+					break;
+				case "form":
+					this.setFormResponseEvaluation(currentEval);
+					break;
+				case "business_rule":
+					this.setBusinessRuleEvaluation(currentEval);
+					break;
+				case "user":
+					this.setUserEvaluation(currentEval);
+			}
+		}
+	} 
+	return this;
+};
+
+ExpressionControl.prototype.setOperators = function (operators) {
+	var key, i, usableItems, j;
+	if (this._operatorSettings !== operators) {
+		this._operatorSettings = {};
+		if (typeof operators === 'object') {
+			for (key in this.OPERATORS) {
+				if (this.OPERATORS.hasOwnProperty(key)) {
+					if (typeof operators[key] === "boolean") {
+						if (!operators[key]) {
+							this._operatorSettings[key] = false;	
+						} else {
+							this._operatorSettings[key] = this.OPERATORS[key];
+						}
+					} else if (jQuery.isArray(operators[key])) {
+						this._operatorSettings[key] = [];
+						for (i = 0; i < operators[key].length; i += 1) {
+							for (j = 0; j < this.OPERATORS[key].length; j += 1) {
+								if (this.OPERATORS[key][j].text === operators[key][i]) {
+									this._operatorSettings[key].push(this.OPERATORS[key][j]);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		} else if (typeof operators === 'boolean') {
+			if (operators) {
+				this._operatorSettings = this.OPERATORS;
+			} else {
+				this._operatorSettings = operators;
+			}
+		} else {
+			throw new Error("setOperators(): The parameter must be an object literal with settings or boolean.");
+		}
+	}
+	if (this._operatorPanel) {
+		this._createOperatorPanel();
+	}
+	return this;
+};
+
+ExpressionControl.prototype._getStringOrNumber = function (value) {
+	var aux, wildcard = "@" + (Math.random(1) * 10).toString().replace(".", "") + "@", isNum = false;
+	value = jQuery.trim(value);
+	if (this._decimalSeparator !== ".") {
+		isNum = value.indexOf(".") < 0;
+		if (isNum) {
+			aux = value.replace(this._getDecimalSeparatorRegExp(), ".");	
+		}
+	}
+	if(isNum && !isNaN(aux) && aux !== "") {
+		aux = aux.split(".");
+		value = parseInt(aux[0]);
+		value += aux[1] ? parseInt(aux[1]) / Math.pow(10, aux[1].length) : 0;
+	} else if (value.length > 1) {
+		if (value[0] === "\"" && value.slice(-1) === "\"") {
+			value = value.slice(1, -1);
+		} else if (value[0] === "'" && value.slice(-1) === "'") {
+			value = value.slice(1, -1);
+		}
+	}
+	return value;
+};
+
+ExpressionControl.prototype._createItem = function (data, usableItem) {
+	var newItem;
+
+	if(usableItem instanceof SingleItem) {
+		newItem = usableItem;
+	} else {
+		newItem = new SingleItem();
+	}
+	newItem.setFullData(data);
+	newItem.setText("{{expLabel}}");
+	return newItem;
+};
+//THIS METHOD MUST BE REPLACED FOR ANOTHER ONE WITH BETTER PERFORMANCE!!!!
+ExpressionControl.prototype._getOperatorType = function(operator) {
+	var type, key, i, items;
+	for (key in this.OPERATORS) {
+		if (this.OPERATORS.hasOwnProperty(key)) {
+			items = this.OPERATORS[key];
+			for (i = 0; i < items.length; i += 1) {
+				if(items[i].text === operator) {
+					return key.toUpperCase();
+				}
+			}
+		}
+	}
+
+	return null;
+};
+
+ExpressionControl.prototype._onPanelValueGeneration = function () {
+	var that = this;
+	return function (panel, subpanel, data) {
+		var itemData = {}, valueType, value, aux, parent = subpanel.getParent() || {}, label, valueField;
+		if (parent.id !== 'variables-list') {
+			switch (subpanel.id) {
+				case "button-panel-operators":
+					itemData = {
+						expType: that._getOperatorType(data.value),
+						expLabel: data.value,
+						expValue: data.value
+					};
+					break;
+				case "form-response-evaluation":
+					itemData = {
+						expType: "CONTROL",
+						expLabel: subpanel.getItem("form").getSelectedText() + " "
+							+ subpanel.getItem("operator").getSelectedText() + " "
+							+ data.status,
+						expOperator: data.operator,
+						expValue: data.status,
+						expField: data.form
+					};
+					break;
+				case "form-module-field-evaluation":
+					aux = data.field.split(that._auxSeparator);
+					value = that._getStringOrNumber(data.value);
+					valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
+					label = subpanel.getItem("field").getSelectedText() + " " 
+							+ subpanel.getItem("operator").getSelectedText() + " " ;
+					valueField = subpanel.getItem("value");
+					if (aux[1] === "Date") {
+						label += valueField.getFormattedDate();
+					} else if (aux[1] === 'Datetime') {
+						label += valueField.getFormattedDate() + " " + valueField._htmlControl[1].value;
+					} else {
+						label += (valueType === "string" ? "\"" + value + "\"" : data.value);
+					}
+					itemData = {
+						expType: "MODULE",
+						expSubtype: aux[1],
+						expLabel: label,
+						expValue: value,
+						expOperator: data.operator,
+						expModule: data.module,
+						expField: aux[0]
+					};
+					break;
+				case 'form-business-rule-evaluation':
+					value = that._getStringOrNumber(data.response);
+					valueType = typeof value;
+					itemData = {
+						expType: "BUSINESS_RULES",
+						expLabel: subpanel.getItem("rule").getSelectedText() + " "
+							+ subpanel.getItem("operator").getSelectedText() + " "
+							+ (valueType === "string" ? "\"" + value + "\"" : value),
+						expValue: value,
+						expOperator: data.operator,
+						expField: data.rule
+					};
+					break;
+				case 'form-user-evaluation':
+					aux = data.operator.split("|");
+					value = data.value || null;
+					label = subpanel.getItem("value").getSelectedText();
+					switch (aux[0]) {
+						case 'USER_ADMIN':
+							valueType = aux[1] === 'equals' ? "is admin" : "is not admin";
+							break;
+						case 'USER_ROLE': 
+							valueType = (aux[1] === 'equals' ? "has role" : "has not role") + " " + label;
+							break;
+						case 'USER_IDENTITY':
+							valueType = (aux[1] === 'equals' ? "==" : "!=") + " " + label;
+							break;
+					}
+					label = subpanel.getItem("user").getSelectedText() + " " + valueType;
+					itemData = {
+						expType: aux[0],
+						expLabel: label,
+						expValue: value,
+						expOperator: aux[1],
+						expField: data.user 
+					};
+					break;
+				case 'form-constant-basic':
+					if (data.type === 'number') {
+						aux = data.value.split(that._getDecimalSeparatorRegExp());
+						value = parseInt(aux[0], 10);
+						if (aux[1]) {
+							aux = parseInt(aux[1], 10) / Math.pow(10, aux[1].length);
+						} else {
+							aux = 0;
+						}
+						value += aux * (value >= 0 ? 1 : -1);
+						valueType = data.value;
+					} else if (data.type === 'boolean') {
+						value = data.value.toLowerCase() === "false" || data.value === "0" ? false : !!data.value;
+						valueType = value ? "TRUE" : "FALSE";
+					} else {
+						value = data.value;
+						valueType = "\"" +  data.value + "\"";
+					}
+					itemData = {
+						expType: 'CONSTANT',
+						expSubtype: data.type,
+						expLabel: valueType,
+						expValue: value
+					};
+					break;
+				case 'form-constant-date':
+					itemData = {
+						expType: 'CONSTANT',
+						expSubtype: "date",
+						expLabel: subpanel.getItem("date").getFormattedDate(),
+						expValue: data.date
+					};
+					break;
+				case 'form-constant-timespan':
+					itemData = {
+						expType: "CONSTANT",
+						expSubtype: "timespan",
+						expLabel: data.ammount + data.unittime,
+						expValue: data.ammount + data.unittime
+					};
+					break;
+				default:
+					throw new Error("_onPanelValueGeneration(): Invalid source data.")
+			}
+		} else {
+			itemData = {
+				expType: "VARIABLE",
+				expSubtype: data.type,
+				expLabel: data.text,
+				expValue: data.value,
+				expModule: data.module
+			};
+		}
+
+		if (subpanel instanceof FormPanel) {
+			subpanel.reset();
+		}
+		that._itemContainer.addItem(that._createItem(itemData));
+	};
+};
+
+ExpressionControl.prototype._createOperatorPanel = function () {
+	var key;
+	if (!this._operatorPanel) {
+		this._operatorPanel = new FieldPanelButtonGroup({
+			id: "button-panel-operators"
+		});
+	};
+	if (this._operatorSettings) {
+		this._operatorPanel.clearItems();
+		for (key in this._operatorSettings) {
+			if (this._operatorSettings.hasOwnProperty(key)) {
+				if (typeof this._operatorSettings[key] === "object") {
+					usableItems = this._operatorSettings[key];
+					for (i = 0; i < usableItems.length; i += 1) {
+						this._operatorPanel.addItem({
+							value: usableItems[i].text
+						});
+					}
+				}
+			}
+		}
+		this._operatorPanel.setVisible(!!this._operatorPanel.getItems().length);
+	} else {
+		this._operatorPanel.setVisible(false);
+	}
+	return this._operatorPanel;
+};
+
+ExpressionControl.prototype.addVariablesList = function (data, cfg) {
+	var i, conf, itemsContentHook = function (item, data) {
+		var mainLabel = "[item]", span1, span2, wrapperDiv;
+
+		mainLabel = data.text;
+		wrapperDiv = this.createHTMLElement('div');
+		span1 = this.createHTMLElement("span");
+		span1.className = "adam expressionbuilder-variableitem-text";
+		span1.textContent = mainLabel;
+		span2 = this.createHTMLElement("span");
+		span2.className = "adam expressionbuilder-variableitem-datatype";
+		span2.textContent = data.type;
+		wrapperDiv.appendChild(span1);
+		wrapperDiv.appendChild(span2);
+		mainLabel = wrapperDiv;
+		
+		return mainLabel;
+	};
+	conf = {
+		fieldToFilter: "type",
+		filter: cfg.typeFilter,
+		filterMode: cfg.filterMode,
+		title: cfg.moduleText,
+		data: [],
+		itemsContent: itemsContentHook
+	};
+	for (i = 0; i < data.length; i += 1) {
+		conf.data.push({
+			value: data[i][cfg.valueField],
+			text: data[i][cfg.textField],
+			type: data[i][cfg.typeField],
+			module: cfg.moduleValue
+		});
+	}
+	newList = new ListPanel(conf);
+	if (newList.getItems().length) {
+		this._variablePanel.addItem(newList);
+	}
+	return this;
+};
+
+ExpressionControl.prototype._onLoadVariableDataSuccess = function () {
+	var that = this;
+	return function (data) {
+		var settings = that._variableSettings, cfg, i, j, fields, newList, aux = {}, filterFunction;
+		if (settings.dataRoot) {
+			data = data[settings.dataRoot];
+		}
+		if (settings.dataFormat === "hierarchical") {
+			for (i = 0; i < data.length; i += 1) {
+				that.addVariablesList(
+					data[i][settings.dataChildRoot],
+					{
+						textField: settings.textField,
+						valueField: settings.valueField,
+						typeField: settings.typeField,
+						typeFilter: settings.typeFilter,
+						filterMode: settings.filterMode,
+						moduleText: data[i][settings.moduleTextField],
+						moduleValue: data[i][settings.moduleValueField]
+					}
+				);
+				/*cfg = {
+					fieldToFilter: that._variableSettings.typeField,
+					filter: that._variableSettings.typeFilter,
+					title: data[i][settings.moduleTextField],
+					data: [],
+					itemsContent: itemsContentHook
+				};
+				fields = data[i][settings.dataChildRoot];
+				for (j = 0; j < fields.length; j += 1) {
+					cfg.data.push({
+						value: fields[j][settings.valueField],
+						text: fields[j][settings.textField],
+						type: fields[j][settings.typeField],
+						module: data[i][settings.moduleValueField]
+					});
+				}
+				newList = new ListPanel(cfg);
+				if (newList.getItems().length) {
+					that._variablePanel.addItem(newList);
+				}*/
+			}
+		} else {
+			if (typeof settings.typeFilter === 'string') {
+				filterFunction = function (value) {
+					return settings.typeFilter === value;
+				};
+			} else if (jQuery.isArray(settings.typeFilter)) {
+				filterFunction = function (value) {
+					return settings.typeFilter.indexOf(value) >= 0;
+				};
+			} else {
+				filterFunction = function () {
+					return true;
+				};
+			}
+			for (i = 0; i < data.length; i += 1) {
+				if (filterFunction(data[i][settings.typeField])) {
+					if (!aux[data[i][settings.moduleValueField]]) {
+						aux[data[i][settings.moduleValueField]] = {
+							fields: []
+						};	
+					}
+					aux[data[i][settings.moduleValueField]].fields.push(data[i]);
+				}
+			}
+			j = 0;
+			for (i in aux) {
+				if (aux.hasOwnProperty(i)) {
+					that.addVariablesList(aux[i].fields, {
+						textField: settings.textField,
+						valueField: settings.valueField,
+						typeField: settings.typeField,
+						typeFilter: settings.typeFilter,
+						filterMode: settings.filterMode,
+						moduleText: aux[i].fields[0][settings.moduleTextField],
+						moduleValue: aux[i].fields[0][settings.moduleValueField]
+					});
+				}
+			}
+		}
+	};
+};
+
+ExpressionControl.prototype._onLoadVariableDataError = function () {};
+
+ExpressionControl.prototype._createVariablePanel = function () {
+	var settings = this._variableSettings, i;
+	if (!this._variablePanel) {
+		this._variablePanel = new MultipleCollapsiblePanel({
+			id: "variables-list",
+			title: translate("LBL_PMSE_EXPCONTROL_VARIABLES_PANEL_TITLE"),
+			onExpand: this._onExpandPanel()
+		});
+		this._panel.addItem(this._variablePanel);
+	}
+	if (settings) {
+		this._variablePanel.clearItems();
+		if (settings.dataURL) {
+			this._proxy.url = settings.dataURL;
+			this._proxy.getData(null, {
+				success: this._onLoadVariableDataSuccess(),
+				error : this._onLoadVariableDataError()
+			});	
+		} else {
+			(this._onLoadVariableDataSuccess())(settings.data);
+		}
+	}
+	this._variablePanel.setVisible(!!settings);
+	return this._variablePanel;
+};
+
+ExpressionControl.prototype._createModulePanel = function () {
+	var moduleField, that = this, settings = this._evaluationSettings.module, currentType;
+	if (!this._evaluationPanels.module) {
+		this._evaluationPanels.module = new FormPanel({
+			id: "form-module-field-evaluation",
+			title: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_TITLE"), 
+			items: [
+				{
+					type: "dropdown",
+					name: "module",
+					label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_MODULE"),
+					width: "100%",
+					required: true,
+					dependantFields: ['field'],
+					required: true
+				},
+				{
+					type: "dropdown",
+					name: "field",
+					label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE"),
+					width: "40%",
+					required: true,
+					dependantFields: ['value'],
+					dependencyHandler: function (dependantField, field, value) {
+						var settings = that._evaluationSettings.module,
+							url = settings.fieldDataURL.replace("{{MODULE}}", value);
+						if (value) {
+							dependantField.setDataURL(url)
+								.setDataRoot(settings.fieldDataRoot)
+								.setLabelField(settings.fieldTextField)
+								.setValueField(function (field, data) {
+									return data[settings.fieldValueField] + that._auxSeparator + data[settings.fieldTypeField];
+								})
+								.load();
+						} else {
+							dependantField.clearOptions();
+						}
+						/*field.setDataURL('_xdatax/fields.json')
+							.setDataRoot('result')
+							.setLabelField('text')
+							.load();*/
+					}
+				},
+				{
+					type: "dropdown",
+					name: "operator",
+					label: "",
+					width: "20%", 
+					labelField: "text",
+					valueField: "value",
+					required: true,
+					options: this.OPERATORS.comparison
+				},
+				{
+					type: "text",
+					name: "value",
+					label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE"),
+					width: "40%",
+					required: true,
+					dependencyHandler: function (dependantField, parentField, value) {
+						var type = value.split(that._auxSeparator)[1], 
+							form, newField, items = [], itemsObj, keys, operators, newFieldSettings;
+						type = type && that._typeToControl[type.toLowerCase()];
+						if ((type && type !== currentType) || type === 'dropdown') {
+							currentType = type;
+							form = dependantField.getForm();
+
+							newFieldSettings = {
+								type: type,
+								width: dependantField.width,
+								label: dependantField.getLabel(),
+								name: dependantField.getName()
+							};
+
+							if (type === 'dropdown') {
+								itemsObj = parentField.getSelectedData()["optionItem"];
+								keys = Object.keys(itemsObj);
+								keys.forEach(function (item, index, arr) {
+									items.push({
+										value: item,
+										label: itemsObj[item]
+									});
+								});
+								newFieldSettings.options = items;
+							}
+							
+							switch (type) {
+								case 'date':
+								case 'datetime':
+								case 'decimal':
+								case 'currency':
+								case 'float':
+								case 'integer':
+									operators = that.OPERATORS.comparison;
+									if (type !== 'date' && type !== 'datetime') {
+										newFieldSettings.precision = 
+											(type === 'integer' ? 0 : (type === 'currency' ? 2 : -1));
+										newFieldSettings.groupingSeparator = 
+											(type === 'currency' ? that._numberGroupingSeparator : "");
+										newFieldSettings.decimalSeparator = that._decimalSeparator;
+									}
+									break;
+								default:
+									operators = [that.OPERATORS.comparison[2], that.OPERATORS.comparison[5]];
+							}
+							form.getItem("operator").setOptions(operators);
+
+							newField = form._createField(newFieldSettings);
+
+							form.replaceItem(newField, dependantField);
+							newField.setDependencyHandler(dependantField._dependencyHandler);
+						}
+						
+						/*if (type && constructor = that._typeToControl[type.toLowerCase()]) {
+							
+							form.replaceItem(form._createField());
+						}*/
+					}
+				}
+			],
+			onCollapse: function (formPanel) {
+				var valueField = formPanel.getItem("value");
+
+				if (valueField instanceof FormPanelDate) {
+					valueField.closeAll();
+				}
+			}
+		});
+		this._evaluationPanel.addItem(this._evaluationPanels.module);
+	}
+	if (settings) {
+		moduleField = this._evaluationPanels.module.getItem("module");
+		moduleField.setDataURL(settings.dataURL)
+			.setDataRoot(settings.dataRoot)
+			.setLabelField(settings.textField)
+			.setValueField(settings.valueField)
+			.load();
+		this._evaluationPanel.enable();
+		this._evaluationPanel.setVisible(true);
+	} else {
+		this._evaluationPanel.disable();
+	}
+	return this._evaluationPanels.module;
+};
+
+ExpressionControl.prototype._createFormResponsePanel = function () {
+	var formField, settings;
+	if (!this._evaluationPanels.formResponse) {
+		this._evaluationPanels.formResponse = new FormPanel({
+			id: "form-response-evaluation",
+			title: translate("LBL_PMSE_EXPCONTROL_FORM_RESPONSE_EVALUATION_TITLE"),
+			items: [
+				{
+					type: "dropdown",
+					name: "form",
+					label: translate("LBL_PMSE_EXPCONTROL_FORM_RESPONSE_EVALUATION_FORM"),
+					width: "40%"
+				}, {
+					type: "dropdown",
+					name: "operator",
+					label: "",
+					width: "20%",
+					options: [
+						this.OPERATORS.comparison[2],
+						this.OPERATORS.comparison[5],
+					],
+					valueField: "value",
+					labelField: "text"
+				}, {
+					type: "dropdown",
+					name: "status",
+					label: translate("LBL_PMSE_EXPCONTROL_FORM_RESPONSE_EVALUATION_STATUS"),
+					width: "40%",
+					options: [
+						{
+							label: "Approved",
+							value: "Approved"
+						}, {
+							label: "Rejected",
+							value: "Rejected"
+						}
+					]
+				}
+			]
+		});
+	}
+	settings = this._evaluationSettings.formResponse;
+	if (settings) {
+		formField = this._evaluationPanels.formResponse.getItem("form");
+		this._evaluationPanel.addItem(this._evaluationPanels.formResponse);
+		formField.setDataURL(settings.dataURL)
+			.setDataRoot(settings.dataRoot)
+			.setLabelField(settings.textField)
+			.setValueField(settings.valueField)
+			.load();	
+	}
+	
+	return this._evaluationPanels.formResponse;
+};
+
+ExpressionControl.prototype._createBusinessRulePanel = function () {
+	var rulesField, settings = this._evaluationSettings.businessRule;
+	if (!this._evaluationPanels.businessRule) {
+		this._evaluationPanels.businessRule = new FormPanel({
+			id: "form-business-rule-evaluation",
+			type: "form",
+			title: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_TITLE"),
+			items: [
+				{
+					type: "dropdown",
+					name: "rule",
+					label: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_BR"),
+					width: "40%",
+					required: true
+				}, {
+					type: "dropdown",
+					label: "",
+					name: "operator",
+					width: "20%",
+					labelField: "text",
+					options: [
+						this.OPERATORS.comparison[2],
+						this.OPERATORS.comparison[5]
+					]
+				}, {
+					type: "text",
+					label: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_RESPONSE"),
+					name: "response",
+					width: "40%"
+				}
+			]
+		});
+	}
+	if (settings) {
+		rulesField = this._evaluationPanels.businessRule.getItem("rule");
+		this._evaluationPanel.addItem(this._evaluationPanels.businessRule);
+		rulesField.setDataURL(settings.dataURL)
+			.setDataRoot(settings.dataRoot)
+			.setLabelField(settings.textField)
+			.setValueField(settings.valueField)
+			.load();	
+	}
+	
+	return this;
+};
+
+ExpressionControl.prototype._createUserPanel = function () {
+	var userField, settings = this._evaluationSettings.user;
+	if (!this._evaluationPanels.user) {
+		this._evaluationPanels.user = new FormPanel({
+			id: "form-user-evaluation",
+			type: "form",
+			title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TITLE"),
+			items: [
+				{
+					type: "dropdown",
+					name: "user",
+					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_USER"),
+					width: "35%",
+					options: [
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_CURRENT"),
+							value: "current_user"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_SUPERVISOR"),
+							value: "supervisor"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_OWNER"),
+							value: "owner"
+						}
+					]
+				}, {
+					type: "dropdown",
+					name: "operator",
+					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_OPERATOR"),
+					width: "30%",
+					dependantFields: ['value'],
+					options: [
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_ADMIN"),
+							value: "USER_ADMIN|equals"
+						},
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_ROLE"),
+							value: "USER_ROLE|equals"
+						},
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_USER"),
+							value: "USER_IDENTITY|equals"
+						},
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_ADMIN"),
+							value: "USER_ADMIN|not_equals"
+						},
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_ROLE"),
+							value: "USER_ROLE|not_equals"
+						},
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_USER"),
+							value: "USER_IDENTITY|not_equals"
+						}
+					]
+				}, {
+					type: "dropdown",
+					name: "value",
+					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_VALUE"),
+					width: "35%",
+					required: true,
+					dependencyHandler: function(dependantField, field, value) {
+						var condition = value.split("|")[0];
+						switch (condition) {
+							case 'USER_ADMIN':
+								dependantField.clearOptions().disable();
+								break;
+							case 'USER_ROLE':
+								dependantField.setDataURL(settings.userRolesDataURL)
+									.setDataRoot(settings.userRolesDataRoot)
+									.setLabelField(settings.userRolesLabelField)
+									.setValueField(settings.userRolesValueField)
+									.load();
+								break;
+							case 'USER_IDENTITY': 
+								dependantField.setDataURL(settings.usersDataURL)
+									.setDataRoot(settings.usersDataRoot)
+									.setLabelField(settings.usersLabelField)
+									.setValueField(settings.usersValueField)
+									.load();
+						}
+					}
+				}
+			]
+		});
+		this._evaluationPanel.addItem(this._evaluationPanels.user);
+	}
+	if (settings) {
+		userField = this._evaluationPanels.user.getItem("user");
+		userField.setDataURL(settings.defaultUsersDataURL)
+			.setDataRoot(settings.defaultUsersDataRoot)
+			.setLabelField(settings.defaultUsersLabelField)
+			.setValueField(settings.defaultUsersValueField)
+			.load();
+		this._evaluationPanels.user.enable();
+	} else {
+		this._evaluationPanels.user.disable();
+	}
+	return this;
+};
+
+ExpressionControl.prototype._isRegExpSpecialChar = function (c) {
+	switch (c) {
+	    case "\\":
+	    case "^":
+	    case "$":
+	    case "*":
+	    case "+":
+	    case "?":
+	    case ".":
+	    case "(":
+	    case ")":
+	    case "|":
+	    case "{":
+	    case "}":
+	        return true;
+	        break;
+    }
+    return false;
+};
+
+ExpressionControl.prototype._getDecimalSeparatorRegExp = function () {
+	var prefix = "";
+	if (this._isRegExpSpecialChar(this._decimalSeparator)) {
+	    prefix = "\\";
+    }
+    return new RegExp(prefix + this._decimalSeparator, "g");
+};
+
+ExpressionControl.prototype._getNumberRegExp = function () {
+	var prefix = "";
+	if (this._isRegExpSpecialChar(this._decimalSeparator)) {
+	    prefix = "\\";
+    }
+    return new RegExp("^-?\\d+(" + (prefix + this._decimalSeparator) + "\\d+)?$");
+};
+
+ExpressionControl.prototype._onBasicConstantKeyUp = function () {
+	var that = this;
+	return function (field, nextValue, keyCode) {
+		var form = field.getForm(), 
+			numberButton = form.getItem("btn_number"), 
+			booleanButton = form.getItem("btn_boolean"),
+			nextValue = nextValue.toLowerCase();
+
+		if (that._getNumberRegExp().test(nextValue)) {
+			numberButton.enable();
+			booleanButton.enable();
+		} else {
+			numberButton.disable();
+			if (nextValue === "true" || nextValue === "false") {
+				booleanButton.enable();
+			} else {
+				booleanButton.disable();
+			}
+		}
+	};
+};
+
+ExpressionControl.prototype._createDateConstantPanel = function() {
+	var settings = this._constantSettings.date;
+	if (!this._constantPanels.date) {
+		this._constantPanels.date = new FormPanel({
+			id: "form-constant-date",
+			title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATE"),
+			items: [
+				{
+					type: "date",
+					name: "date",
+					label: "Date",
+					width: "100%",
+					format: this._dateFormat,
+					required: true
+				}
+			],
+			onCollapse: function (formPanel) {
+				formPanel.getItem("date").close();
+			}
+		});
+		this._constantPanel.addItem(this._constantPanels.date);
+	}
+	if (settings) {
+		this._constantPanels.date.enable();
+	} else {
+		this._constantPanels.date.disable();
+	}
+	
+	return this;
+};
+
+ExpressionControl.prototype._createTimespanPanel = function() {
+	var settings = this._constantSettings.timespan;
+	if (!this._constantPanels.timespan) {
+		this._constantPanels.timespan = new FormPanel({
+			id: "form-constant-timespan",
+			title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE"),
+			items: [
+				{
+					type: "text",
+					name: "ammount",
+					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMMOUNT"),
+					filter: "integer",
+					width: "40%",
+					required: true,
+					disabled: true
+				}, {
+					type: "dropdown",
+					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_UNIT"),
+					name: "unittime",
+					width: "60%",
+					disabled: true,
+					options: [
+						{
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_YEARS"),
+							value: "y"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MONTHS"),
+							value: "m"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_WEEKS"),
+							value: "w"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_DAYS"),
+							value: "d"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_HOURS"),
+							value: "h"
+						}, {
+							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MINUTES"),
+							value: "min"
+						}
+					]
+				}
+			]
+		});
+		this._constantPanel.addItem(this._constantPanels.timespan);
+	}
+	if (settings) {
+		this._constantPanels.timespan.enable();
+	} else {
+		this._constantPanels.timespan.disable();
+	}
+	
+	return this;
+};
+
+ExpressionControl.prototype._createBasicConstantPanel = function () {
+	var settings = this._constantSettings.basic, onClickHandler, basicForm, aux;
+	if (!this._constantPanels.basic) {
+		onClickHandler = function (clickedButton) {
+			var form = clickedButton.getForm(),
+				typeField = form.getItem("type");
+
+			typeField.setValue(clickedButton.getLabel().substr(4));
+			form.submit();
+		};
+		this._constantPanels.basic = new FormPanel({
+			id: "form-constant-basic",
+			title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC"),
+			submitVisible: false,
+			items: [
+				{
+					name: "value",
+					type: "text",
+					label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_VALUE"),
+					width: "100%",
+					onKeyUp: this._onBasicConstantKeyUp()
+				}, {
+					name: 'type',
+					type: 'hidden',
+					label: ""
+				}, {
+					type: "button",
+					label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_ADD_STRING"),
+					name: "btn_string",
+					width: "33%",
+					onClick: onClickHandler
+				}, {
+					type: "button",
+					label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_ADD_NUMBER"),
+					name: "btn_number",
+					width: "33%",
+					disabled: true,
+					onClick: onClickHandler
+				}, {
+					type: "button",
+					label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_ADD_BOOLEAN"),
+					name: "btn_boolean",
+					width: "33%",
+					onClick: onClickHandler
+				}
+			],
+			onSubmit: function (form) {
+				var typeField = form.getItem("type"), enabledButtons = 0, btn, btns, i, aux;
+
+				if(!typeField.getValue()) {
+					btns = ["btn_string", "btn_number", "btn_boolean"];
+					for (i = 0; i < btns.length; i += 1) {
+						aux = form.getItem(btns[i]);
+						if (aux.visible && !aux.isDisabled()) {
+							btn = aux;
+							enabledButtons += 1;
+						}
+					}
+					if (enabledButtons === 1) {
+						form.getItem("type").setValue(btn.getvdfvddfv().substr(4));
+					} else {
+						return false;
+					}
+				}
+			}
+		});
+		this._constantPanel.addItem(this._constantPanels.basic);
+	}
+	basicForm = this._constantPanels.basic;
+
+	if (settings) {
+		basicForm.getItem("btn_string").setVisible(settings === true || !!settings.string);
+		basicForm.getItem("btn_number").setVisible(settings === true || !!settings.number);
+		basicForm.getItem("btn_boolean").setVisible(settings === true || !!settings.boolean);
+		settings = settings === true || (settings.string || settings.number || settings.boolean);
+		if (settings) {
+			this._constantPanel.setVisible(true);
+			basicForm.enable();	
+		} else {
+			basicForm.disable();
+		}
+		
+	} else {
+		basicForm.disable();
+	}
+
+	return this;
+};
+
+ExpressionControl.prototype._onExpandPanel = function() {
+	var that = this;
+	return function(panel) {
+		var items = that._panel.getItems(), i;
+		for (i = 0; i < items.length; i += 1) {
+			if (items[i] instanceof CollapsiblePanel && items[i] !== panel) {
+				items[i].collapse();
+			}
+		}
+	};
+};
+
+ExpressionControl.prototype._createMainPanel = function () {
+	var items = [];
+	if (!this._externalItemContainer) {
+		items.push(this._itemContainer);
+	}
+	if (!this._panel.getItems().length) {
+		this._createOperatorPanel();
+		items.push(this._operatorPanel);
+
+		this._evaluationPanel = new MultipleCollapsiblePanel({
+			title: translate("LBL_PMSE_EXPCONTROL_EVALUATIONS_TITLE"),
+			onExpand: this._onExpandPanel()
+		});
+		if (this._evaluationSettings) {
+			this._createModulePanel();
+			this._createFormResponsePanel();
+			this._createBusinessRulePanel();
+			this._createUserPanel();
+		}
+		items.push(this._evaluationPanel);
+		this._evaluationPanel.setVisible(!!this._evaluationPanel.getItems().length);
+
+		this._constantPanel = new MultipleCollapsiblePanel({
+			title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TITLE"),
+			onExpand: this._onExpandPanel()
+		});
+		if (this._constantSettings) {
+			this._createBasicConstantPanel();
+			this._createDateConstantPanel();
+			this._createTimespanPanel();
+		}
+		items.push(this._constantPanel);
+		this._constantPanel.setVisible(!!this._constantPanel.getItems().length);
+
+		this._panel.setItems(items);
+		this._createVariablePanel();
+	}
+	return this._panel;
+};
+
+/*ExpressionControl.prototype._appendPanel = function () {
+	var position, appendPanelTo = this._appendTo, owner = this._owner, offsetHeight = 1, zIndex = 0, siblings, aux;
+	if (owner) {
+		if (!isHTMLElement(owner)) {
+			owner = owner.html;
+		}
+		offsetHeight = owner.offsetHeight;
+	}
+	if (typeof appendPanelTo === 'function') {
+		appendPanelTo = appendPanelTo.call(this);
+	}
+	if (!isHTMLElement(appendPanelTo)) {
+		appendPanelTo = appendPanelTo.html;
+	}
+	siblings = appendPanelTo.children;
+	for (i = 0; i < siblings.length; i += 1) {
+		aux = jQuery(siblings[i]).zIndex();
+		if (aux > zIndex) {
+			zIndex = aux;
+		} 
+	}
+
+	this.setZOrder(zIndex + 1);
+
+	if (!owner || isInDOM(owner)) {
+		appendPanelTo.appendChild(this.html);
+	}
+	if (owner) {
+		this._panel.setWidth(this._matchOwnerWidth ? owner.offsetWidth : this.width);
+		position = getRelativePosition(owner, appendPanelTo);
+	} else {
+		this._panel.setWidth(this.width);
+		position = {left: 0, top: 0};
+	}
+	this._panel.setPosition(position.left, position.top + offsetHeight - 1);
+	return this;
+};*/
+
+ExpressionControl.prototype.isPanelOpen = function () {
+	return this._panel && this._panel.isOpen();
+};
+
+ExpressionControl.prototype.open = function () {
+	this.getHTML();
+	if (!this.isPanelOpen()) {
+		this._constantPanel.collapse(true);
+		this._variablePanel.collapse(true);
+		this._evaluationPanel.collapse(true);
+	}
+	this._panel.open();
+	return this;
+};
+
+ExpressionControl.prototype.close = function () {
+	this._panel.close();
+	return this;
+};
+
+ExpressionControl.prototype.isValid = function() {
+    var i, cIsEval, pIsEval, valid = true, prev = null, current, pendingToClose = 0, dataNum = 0, msg = "invalid criteria syntax", items = this._itemContainer.getItems();
+
+    for (i = 0; i < items.length; i += 1) {
+        current = items[i].getData();
+        cIsEval = current.expType === "MODULE" || current.expType === "BUSINESS_RULES" || current.expType === "CONTROL"
+        || current.expType === "USER_ADMIN" || current.expType === "USER_ROLE"
+        || current.expType === "USER_IDENTITY" || current.expType === "CONSTANT" || current.expType === "VARIABLE";
+
+        if (cIsEval || (current.expType === "GROUP" && current.expValue === "(") || (current.expType === "LOGIC" && current.expValue === "NOT")) {
+            valid = !(prev && (pIsEval || (prev.expType === "GROUP" && prev.expValue === ")")));
+        } else {
+            valid = prev && ((prev.expType === "GROUP" && prev.expValue === ")") || (pIsEval || cIsEval));
+            valid = valid === null ? true : valid;
+        }
+
+        if (current.expType === 'GROUP') {
+            if (current.expValue === ')') {
+                valid = valid && pendingToClose > 0;
+                pendingToClose -= 1;
+            } else if (current.expValue === '(') {
+                pendingToClose += 1;
+            }
+        }
+
+        if (!valid) {
+            break;
+        }
+        prev = current;
+        pIsEval = cIsEval;
+    }
+
+    if (valid) {
+        if (prev) {
+            valid = valid && prev.expType !== 'LOGIC' && prev.expType !== 'ARITHMETIC' && !(prev.expType === 'GROUP' && prev.expValue === "(");
+        }
+        valid = valid && pendingToClose === 0;
+    }
+
+    return valid;
+};
+
+ExpressionControl.prototype.createHTML = function () {
+	var control;
+	if (!this.html) {
+		this._createMainPanel();
+		this.html = this._panel.getHTML();
+
+		this.style.applyStyle();
+
+        this.style.addProperties({
+            width: this.width,
+            height: this.height,
+            zIndex: this.zOrder
+        });
+	}
+
+	return this.html;
+};
+var CriteriaField = function (settings, parent) {
+	Field.call(this, settings, parent);
+	this._panel = null;
+	this._panelFlag = true;
+	this._listenersAttached = false;
+	this.fieldHeight = null;
+	this._disabled = null;
+	CriteriaField.prototype.init.call(this, settings);
+};
+
+CriteriaField.prototype = new Field();
+CriteriaField.prototype.constructor = CriteriaField;
+CriteriaField.prototype.type = "CriteriaField";
+
+CriteriaField.prototype.init = function(settings) {
+	var that = this, defaults = {
+		operators: {},
+		evaluation: false,
+		variable: false,
+		constant: true,
+		fieldHeight: 88,
+		fieldWidth: 200,
+		disabled: false,
+		dateFormat: "yyyy-mm-dd",
+		decimalSeparator: ".",
+		numberGroupingSeparator: ","
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.controlObject = new ItemContainer({
+		className: 'adam-field-control',
+		//width: this.fieldWidth || 200,
+		//height: 88,
+		onFocus: function () {
+			that.scrollTo();
+    		if(!that._panel.isOpen() && !that._disabled) {
+    			that.openPanel();
+    		}
+		},
+		onBlur: function () {
+			if (that._panelFlag) {
+				that.closePanel();	
+			}
+			that._panelFlag = true;
+		}
+	});
+
+	this._panel = new ExpressionControl({
+		itemContainer: this.controlObject,
+		owner: this.controlObject,
+		dateFormat: defaults.dateFormat,
+		operators: defaults.operators,
+		evaluation: defaults.evaluation,
+		variable: defaults.variable,
+		constant: defaults.constant,
+		decimalSeparator: defaults.decimalSeparator,
+		numberGroupingSeparator: defaults.numberGroupingSeparator,
+		onChange: this._onChange(),
+		appendTo: function () {
+			return (that.parent && that.parent.parent && that.parent.parent.html) || document.body;
+		}
+	});
+
+	this.setEvaluations(defaults.evaluation)
+		.setFieldWidth(defaults.fieldWidth)
+		.setFieldHeight(defaults.fieldHeight)
+		.setValue(defaults.value);
+
+	if (defaults.disabled) {
+		this.disable();
+	} else {
+		this.enable();
+	}
+};
+
+CriteriaField.prototype.disable = function () {
+	this._disabled = true;
+	this.controlObject.disable();
+	jQuery(this.labelObject).addClass('adam-form-label-disabled');
+	return this;
+};
+
+CriteriaField.prototype.enable = function () {
+	this._disabled = false;
+	this.controlObject.enable();
+	jQuery(this.labelObject).removeClass('adam-form-label-disabled');
+	return this;	
+};
+
+CriteriaField.prototype.setFieldWidth = function (width) {
+	if(!isNaN(width) && this.controlObject) {
+        this.controlObject.setWidth(this.fieldWidth = width);
+    }
+    return this;
+};
+
+CriteriaField.prototype.setFieldHeight = function (height) {
+	if(!isNaN(height)) {
+        this.controlObject.setHeight(this.fieldHeight = height);
+    }
+    return this;
+};
+
+CriteriaField.prototype.getItems = function () {
+	return this.controlObject.getItems();
+};
+
+CriteriaField.prototype.setOperators = function (settings) {
+	this._panel.setOperators(settings);
+	return this;
+};
+
+CriteriaField.prototype.setEvaluations = function (settings) {
+	this._panel.setEvaluations(settings);
+	return this;
+};
+
+CriteriaField.prototype.setVariablePanel = function (settings) {
+	this._panel.setVariablePanel(settings);
+	return this;
+};
+
+CriteriaField.prototype.setConstantPanel = function (settings) {
+	this._panel.setConstantPanel(settings);
+	return this;
+};
+
+CriteriaField.prototype.setModuleEvaluation = function (currentEval) {
+	this._panel.setModuleEvaluation(currentEval);
+	return this;
+};
+
+CriteriaField.prototype.setFormResponseEvaluation = function (currentEval) {
+	this._panel.setFormResponseEvaluation(currentEval);
+	return this;
+};
+
+CriteriaField.prototype.setBusinessRuleEvaluation = function (currentEval) {
+	this._panel.setBusinessRuleEvaluation(currentEval);
+	return this;
+};
+
+CriteriaField.prototype.setUserEvaluation = function (currentEval) {
+	this._panel.setUserEvaluation(currentEval);
+	return this;
+};
+
+CriteriaField.prototype.clear = function () {
+	this.controlObject.clearItems();
+	return this;
+};
+
+CriteriaField.prototype._onChange = function () {
+	var that = this;
+	return function (panel, newValue, oldValue) {
+		that.value = newValue;
+		that.onChange(newValue, oldValue);
+	};
+};
+
+CriteriaField.prototype.setValue = function (value) {
+	if (this.controlObject) {
+		Field.prototype.setValue.call(this, value);
+	}
+	return this;
+};
+
+CriteriaField.prototype._setValueToControl = function (value) {
+	var i;
+	value = value || [];
+	value = typeof value ===  'string' ? JSON.parse(value) : value;
+	if (!jQuery.isArray(value)) {
+		throw new Error("setValue(): The parameter is incorrectly formatted.");
+	}
+	for (i = 0; i < value.length; i += 1) {
+		this.controlObject.addItem(this._panel._createItem(value[i]), null, true);
+	}
+	return this;
+};
+
+CriteriaField.prototype.closePanel = function () {
+	if (this._panel.isPanelOpen()) {
+		this._panel.close();
+	}
+	this.controlObject.style.removeClasses(['focused']);
+	this._panel.style.removeClasses(['focused']);
+	return this;
+};
+
+CriteriaField.prototype.openPanel = function() {
+	if (!this._panel.isPanelOpen()) {
+		this._panel.open();
+		this.controlObject.style.addClasses(['focused']);
+		this._panel.style.addClasses(['focused']);
+	}
+	return this;
+};
+
+CriteriaField.prototype.scrollTo = function () {
+    var fieldsDiv = this.html.parentNode, 
+    	scrollForControlObject = getRelativePosition(this.controlObject.html, fieldsDiv).top + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
+    	that = this;
+    if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject) {
+        jQuery(this.html.parentNode).animate({
+        	scrollTop: scrollForControlObject
+        }, function() {
+        	that.openPanel();
+        });
+        return;
+    }
+
+    return this;
+};
+
+CriteriaField.prototype.evalRequired = function () {
+	var valid = true;
+	if (this.required) {
+		valid = !!this.controlObject.getItems().length;
+		if (!valid) {
+            $(this.controlObject).style.addClasses(['required']);
+        } else {
+            $(this.controlObject).style.removeClasses(['required']);
+        }
+	}
+
+	return this;
+};
+
+CriteriaField.prototype.isValid = function () {
+	var valid = this._panel.isValid();
+
+	if (valid) {
+        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
+        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
+        valid = valid && Field.prototype.isValid.call(this);
+    } else {
+        this.errorTooltip.setMessage("Invalid epxression syntax.");
+        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
+        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
+    }
+
+    if (valid) {
+        return valid && Field.prototype.isValid.call(this);
+    }
+    return valid;
+};
+
+CriteriaField.prototype._attachListeners = function() {
+	var that = this;
+	if (this.html && !this._listenersAttached) {
+		jQuery(this._panel.getHTML()).on('mousedown', function (e) {
+			e.stopPropagation();
+			that._panelFlag = false;
+		});
+		if (this.parent) {
+			$(this.parent.body).on('scroll', function () {
+				that.closePanel();
+			});
+		}
+		this._attachListeners = true;
+	}
+	return this;
+};
+
+CriteriaField.prototype.createHTML = function() {
+	var fieldLabel, required = '', readAtt, that = this;
+	if (!this.html) {
+	    Field.prototype.createHTML.call(this);
+
+	    if (this.required) {
+	        required = '<i>*</i> ';
+	    }
+
+	    fieldLabel = this.createHTMLElement('span');
+	    fieldLabel.className = 'adam-form-label';
+	    fieldLabel.innerHTML = this.label + ': ' + required;
+	    fieldLabel.style.width = (this.parent && this.parent.labelWidth) || "30%";
+	    fieldLabel.style.verticalAlign = 'top';
+	    this.html.appendChild(fieldLabel);
+
+	    if (this.readOnly) {
+	        //TODO: implement readOnly
+	    }
+	    this.html.appendChild(this.controlObject.getHTML());
+
+	    if (this.errorTooltip) {
+	        this.html.appendChild(this.errorTooltip.getHTML());
+	    }
+	    if (this.helpTooltip) {
+	        this.html.appendChild(this.helpTooltip.getHTML());
+	    }
+
+	    this.labelObject = fieldLabel;
+	    this._attachListeners();
+	}
+	return this.html;
+};
+//@ sourceURL=pmse.ui.js

@@ -1,8 +1,3 @@
-/**
- * @class View.Views.Base.Emails.ComposeAddressbookListBottomView
- * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookListBottomView
- * @extends View.Views.Base.ListBottomView
- */
 ({
     extendsFrom: "ListBottomView",
 

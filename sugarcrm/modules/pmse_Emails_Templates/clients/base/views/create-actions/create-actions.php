@@ -28,7 +28,7 @@ $viewdefs[$module_name ]['base']['view']['create-actions'] = array(
                 array(
                     'type'   => 'rowaction',
                     'name'   => 'save_open_emailstemplates',
-                    'label'  => 'LBL_PMSE_BUTTON_SAVEDESIGN',
+                    'label'  => 'LBL_PMSE_SAVE_DESIGN_BUTTON_LABEL',
                     'showOn' => 'create',
                 ),
                 array(

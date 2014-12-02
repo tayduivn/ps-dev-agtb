@@ -1,8 +1,3 @@
-/**
- * @class View.Fields.Base.EnumField
- * @alias SUGAR.App.view.fields.BaseEnumField
- * @extends View.Field
- */
 ({
     extendsFrom: 'EnumField',
     /**

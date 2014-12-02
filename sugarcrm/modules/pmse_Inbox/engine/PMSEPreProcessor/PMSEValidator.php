@@ -1,5 +1,4 @@
 <?php
-
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'PMSEValidationLevel.php';
 require_once 'PMSETerminateValidator.php';
@@ -9,21 +8,20 @@ require_once 'PMSEElementValidator.php';
 require_once 'PMSEExpressionValidator.php';
 require_once 'PMSERequest.php';
 
-
 class PMSEValidator
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $type;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $validators;
-    
+
     /**
      *
      * @var PMSELogger
@@ -37,37 +35,41 @@ class PMSEValidator
     public function __construct()
     {
         $this->logger = PMSELogger::getInstance();
-        
+
         $this->validators = array(
             'direct' => array(
                 'terminate' => PMSEValidationLevel::NoValidation,
-                'concurrency' => PMSEValidationLevel::Simple, 
-                'record' => PMSEValidationLevel::NoValidation, 
+                'concurrency' => PMSEValidationLevel::Simple,
+                'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation),
+                'expression' => PMSEValidationLevel::NoValidation
+            ),
             'hook' => array(
-                'terminate' => PMSEValidationLevel::Simple, 
-                'concurrency' => PMSEValidationLevel::NoValidation, 
-                'record' => PMSEValidationLevel::Simple, 
+                'terminate' => PMSEValidationLevel::Simple,
+                'concurrency' => PMSEValidationLevel::NoValidation,
+                'record' => PMSEValidationLevel::Simple,
                 'element' => PMSEValidationLevel::Simple,
-                'expression' => PMSEValidationLevel::Simple),
+                'expression' => PMSEValidationLevel::Simple
+            ),
             'engine' => array(
-                'terminate' => PMSEValidationLevel::NoValidation, 
-                'concurrency' => PMSEValidationLevel::NoValidation, 
-                'record' => PMSEValidationLevel::NoValidation, 
+                'terminate' => PMSEValidationLevel::NoValidation,
+                'concurrency' => PMSEValidationLevel::NoValidation,
+                'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation),
+                'expression' => PMSEValidationLevel::NoValidation
+            ),
             'queue' => array(
-                'terminate' => PMSEValidationLevel::NoValidation, 
-                'concurrency' => PMSEValidationLevel::Simple, 
-                'record' => PMSEValidationLevel::NoValidation, 
+                'terminate' => PMSEValidationLevel::NoValidation,
+                'concurrency' => PMSEValidationLevel::Simple,
+                'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation),
+                'expression' => PMSEValidationLevel::NoValidation
+            ),
         );
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -75,9 +77,9 @@ class PMSEValidator
     {
         return $this->type;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -87,7 +89,7 @@ class PMSEValidator
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -97,16 +99,16 @@ class PMSEValidator
     }
 
     /**
-     * 
+     *
      * @param type $validators
      */
     public function setValidators($validators)
     {
         $this->validators = $validators;
     }
-        
+
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -114,9 +116,9 @@ class PMSEValidator
     {
         $this->logger = $logger;
     }
-    
+
     /**
-     * 
+     *
      * @param type $type
      * @codeCoverageIgnore
      */
@@ -124,9 +126,9 @@ class PMSEValidator
     {
         $this->type = $type;
     }
-    
+
     /**
-     * 
+     *
      * @param type $name
      * @param type $level
      * @return boolean|\PMSEConcurrencyValidator|\PMSEElementValidator|\PMSERecordValidator
@@ -134,7 +136,7 @@ class PMSEValidator
      */
     public function retrieveValidator($name, $level)
     {
-        $this->logger->debug("Retrieving a ".$name." validator");
+        $this->logger->debug("Retrieving a " . $name . " validator");
         switch ($name) {
             case 'terminate':
                 return new PMSETerminateValidator($level);
@@ -156,9 +158,9 @@ class PMSEValidator
                 break;
         }
     }
-    
+
     /**
-     * 
+     *
      * @return \PMSERequest
      * @codeCoverageIgnore
      */
@@ -166,16 +168,16 @@ class PMSEValidator
     {
         return new PMSERequest();
     }
-    
+
     /**
-     * 
+     *
      * @param PMSERequest $request
      * @return type
      */
     public function validateRequest(PMSERequest $request)
     {
         $this->logger->info("Start validation process.");
-        $this->logger->debug("Request Data to be validated: " . print_r($request,true));
+        $this->logger->debug("Request Data to be validated: " . print_r($request, true));
         // A default request is always valid, if fails to validate in any validator 
         // the status is set to invalid and no further validation is required
         if (!isset($this->validators[$request->getType()])) {
@@ -187,16 +189,16 @@ class PMSEValidator
                 $validator = $this->retrieveValidator($validatorName, $validatorLevel);
                 $request = $validator->validateRequest($request);
                 if (!$request->isValid()) {
-                    $this->logger->info(get_class($validator)." validator invalidated request.");
+                    $this->logger->info(get_class($validator) . " validator invalidated request.");
                     return $request;
                 } else {
-                    $this->logger->info(get_class($validator)." validator validated request.");
+                    $this->logger->info(get_class($validator) . " validator validated request.");
                 }
-            }            
+            }
         }
         $this->logger->info("Request validated successfully");
         $request->setStatus('PROCESSED');
         return $request;
     }
-    
+
 }

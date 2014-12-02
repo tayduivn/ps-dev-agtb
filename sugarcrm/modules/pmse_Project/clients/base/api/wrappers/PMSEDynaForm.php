@@ -76,23 +76,27 @@ class PMSEDynaForm
      * @param boolean $update
      * @return boolean
      */
-    public function generateDefaultDynaform($baseModule, $keys, $update=false)
+    public function generateDefaultDynaform($baseModule, $keys, $update = false)
     {
         $this->baseModule = $baseModule;
         $params = array();
         if ($update) {
-            $this->dynaform->retrieve_by_string_fields(array('prj_id'=>$keys['prj_id'], 'pro_id'=>$keys['pro_id'], 'name'=>'Default'));
+            $this->dynaform->retrieve_by_string_fields(array(
+                    'prj_id' => $keys['prj_id'],
+                    'pro_id' => $keys['pro_id'],
+                    'name' => 'Default'
+                ));
         } else {
             $params['dyn_uid'] = PMSEEngineUtils::generateUniqueID();
         }
         $params['name'] = 'Default';
         $params['description'] = 'Default';
-        $params['prj_id'] = isset($keys['prj_id'])?$keys['prj_id']:null;
-        $params['pro_id'] = isset($keys['pro_id'])?$keys['prj_id']:null;
+        $params['prj_id'] = isset($keys['prj_id']) ? $keys['prj_id'] : null;
+        $params['pro_id'] = isset($keys['pro_id']) ? $keys['prj_id'] : null;
         $params['dyn_module'] = $this->baseModule;
         $params['dyn_name'] = "Default";
         $params['dyn_description'] = "Default";
-        $moduleViewDefs = get_custom_file_if_exists('modules/'.$baseModule.'/metadata/editviewdefs.php');
+        $moduleViewDefs = get_custom_file_if_exists('modules/' . $baseModule . '/metadata/editviewdefs.php');
         $viewdefs = array();
         if (!@include_once($moduleViewDefs)) {
             return false;

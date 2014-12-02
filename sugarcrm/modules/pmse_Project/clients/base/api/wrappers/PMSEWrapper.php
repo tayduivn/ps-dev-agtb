@@ -1,5 +1,6 @@
 <?php
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+
 /**
  * @codeCoverageIgnore
  */
@@ -16,13 +17,21 @@ class PMSEWrapper
      * @param array $joinTables
      * @return array
      */
-    public function getSelectRows($bean, $orderBy = "", $where = "", $rowOffset = 0, $limit = -1, $max = -1, $selectFields = array(), $joinTables = array())
-    {
+    public function getSelectRows(
+        $bean,
+        $orderBy = "",
+        $where = "",
+        $rowOffset = 0,
+        $limit = -1,
+        $max = -1,
+        $selectFields = array(),
+        $joinTables = array()
+    ) {
         $GLOBALS['log']->debug("get_list:  order_by = '$orderBy' and where = '$where' and limit = '$limit'");
 //        $orderBy = $this->processOrderBy($orderBy);
-        $queryArray = $this->assembleSelectQueryArray($bean, $orderBy, $where, $selectFields, array(), $joinTables, false);
-//        print_r($queryArray);
-//        exit();
+        $queryArray = $this->assembleSelectQueryArray($bean, $orderBy, $where, $selectFields, array(), $joinTables,
+            false);
+
         $recordSet = $this->processSelectQuery($bean, $queryArray, $rowOffset, $limit, $max);
         foreach ($recordSet['rowList'] as $key => $item) {
             $recordSet['rowList'][$key] = $this->decodeArray($item);
@@ -40,8 +49,15 @@ class PMSEWrapper
      * @param array $returnArray
      * @return string
      */
-    public function assembleSelectQueryArray($bean, $orderBy, $where = '', $fieldList = array(), $params = array(), $joinTables = array(), $returnArray = false)
-    {
+    public function assembleSelectQueryArray(
+        $bean,
+        $orderBy,
+        $where = '',
+        $fieldList = array(),
+        $params = array(),
+        $joinTables = array(),
+        $returnArray = false
+    ) {
         $queryArray = array();
         if (!empty($params['distinct'])) {
             $distinct = ' DISTINCT ';
@@ -212,8 +228,7 @@ class PMSEWrapper
      */
     public function create($bean, $fieldArray)
     {
-        //print_r($fieldArray);
-        //exit();
+
         foreach ($fieldArray as $key => $field) {
             $bean->$key = $fieldArray[$key];
         }

@@ -26,7 +26,7 @@
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_emailtemplates', {
                 level:'error',
-                messages: app.lang.get('LBL_EMPTY_EMAILTEMPLATES', self.module),
+                messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_EMPTY_WARNING', self.module),
                 autoClose: false
             });
         } else {
@@ -35,7 +35,7 @@
                         app.router.goBack();
                         app.alert.show('process-import-saved', {
                             level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_EMAIL_TEMPLATES_SUCCESS', self.module),
+                            messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
                     },
@@ -70,29 +70,8 @@
             for (var file in $files) {
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
-                console.log('hola mundo');
                 if (callbacks.success) callbacks.success();
 
-//                model.uploadFile(fileField, $file, {
-//                    field: fileField,
-//                    success: function() {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                            if (callbacks.success) callbacks.success();
-//                        }
-//                    },
-//                    error: function(error) {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                        }
-//                        var errors = {};
-//                        errors[error.responseText] = {};
-//                        model.trigger('error:validation:' + this.field, errors);
-//                        model.trigger('error:validation');
-//                    }
-//                });
             }
         }
         else {

@@ -16,13 +16,12 @@
     <div class="row-fluid">
         {{#if settings.attributes.date}}
             <div class="btn-group dashlet-group" data-toggle="buttons-radio">
-                <button class="btn{{#eq settings.attributes.date "true"}} active{{/eq}}" value="true" data-action="date-switcher">{{str "In Time" this.module}}</button>
-                <button class="btn{{#eq settings.attributes.date "false"}} active{{/eq}}" value="false" data-action="date-switcher">{{str "Overdue" this.module}}</button>
+                <button class="btn{{#eq settings.attributes.date "true"}} active{{/eq}}" value="true" data-action="date-switcher">{{str "LBL_PMSE_LABEL_IN_TIME" this.module}}</button>
+                <button class="btn{{#eq settings.attributes.date "false"}} active{{/eq}}" value="false" data-action="date-switcher">{{str "LBL_PMSE_LABEL_OVERDUE" this.module}}</button>
             </div>
-
-            <div class="btn-group dashlet-group"  style="padding-left: 70px;">
-                <button class="btn{{#eq settings.attributes.date "participate"}} active{{/eq}}" value="participate" data-action="participate-switcher">{{str "Participate" this.module}}</button>
-            </div>
+            <!--<div class="btn-group dashlet-group"  style="padding-left: 70px;">
+                <button class="btn{{#eq settings.attributes.date "participate"}} active{{/eq}}" value="participate" data-action="participate-switcher">{{str "LBL_BUSINESS_RULES_DASHLET_PARTICIPATE" this.module}}</button>
+            </div>-->
         {{/if}}
         {{#if settings.attributes.visibility}}
             <div class="btn-group dashlet-group" data-toggle="buttons-radio" style="padding-left: 30px;">

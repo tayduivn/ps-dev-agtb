@@ -1,12 +1,11 @@
 <?php
-
 require_once 'PMSEEngineUtils.php';
 require_once 'PMSEImporter.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 
 /**
  * Description of the ProjectImporter class
- * This class is in charge of the import of bpm files into PMSE Processes.
+ * This class is in charge of the import of bpm files into Processes.
  */
 class PMSEProjectImporter extends PMSEImporter
 {
@@ -37,7 +36,7 @@ class PMSEProjectImporter extends PMSEImporter
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $dependenciesWrapper;
 
@@ -54,7 +53,7 @@ class PMSEProjectImporter extends PMSEImporter
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -64,7 +63,7 @@ class PMSEProjectImporter extends PMSEImporter
     }
 
     /**
-     * 
+     *
      * @param type $savedElements
      * @codeCoverageIgnore
      */
@@ -72,9 +71,9 @@ class PMSEProjectImporter extends PMSEImporter
     {
         $this->savedElements = $savedElements;
     }
-        
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -84,7 +83,7 @@ class PMSEProjectImporter extends PMSEImporter
     }
 
     /**
-     * 
+     *
      * @param type $dependenciesWrapper
      * @codeCoverageIgnore
      */
@@ -92,9 +91,9 @@ class PMSEProjectImporter extends PMSEImporter
     {
         $this->dependenciesWrapper = $dependenciesWrapper;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -104,7 +103,7 @@ class PMSEProjectImporter extends PMSEImporter
     }
 
     /**
-     * 
+     *
      * @param type $defaultFlowList
      * @codeCoverageIgnore
      */
@@ -112,9 +111,9 @@ class PMSEProjectImporter extends PMSEImporter
     {
         $this->defaultFlowList = $defaultFlowList;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -124,7 +123,7 @@ class PMSEProjectImporter extends PMSEImporter
     }
 
     /**
-     * 
+     *
      * @param type $changedUidElements
      * @codeCoverageIgnore
      */
@@ -133,7 +132,7 @@ class PMSEProjectImporter extends PMSEImporter
         $this->changedUidElements = $changedUidElements;
     }
 
-    
+
     /**
      * Save the project data into the bpm project, and process beans, validates the uniqueness of
      * ids and also saves the rest.
@@ -211,8 +210,10 @@ class PMSEProjectImporter extends PMSEImporter
         $this->saveProjectActivitiesData($projectData['diagram'][0]['activities'], $keysArray);
         $this->saveProjectEventsData($projectData['diagram'][0]['events'], $keysArray);
         $this->saveProjectGatewaysData($projectData['diagram'][0]['gateways'], $keysArray);
-        $this->saveProjectElementsData($projectData['diagram'][0]['documentation'], $keysArray, 'pmse_BpmnDocumentation', false, true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['extension'], $keysArray, 'pmse_BpmnExtension', false, true);
+        $this->saveProjectElementsData($projectData['diagram'][0]['documentation'], $keysArray,
+            'pmse_BpmnDocumentation', false, true);
+        $this->saveProjectElementsData($projectData['diagram'][0]['extension'], $keysArray, 'pmse_BpmnExtension', false,
+            true);
         $this->saveProjectElementsData($projectData['diagram'][0]['pools'], $keysArray, 'pmse_BpmnLaneset', true);
         $this->saveProjectElementsData($projectData['diagram'][0]['lanes'], $keysArray, 'pmse_BpmnLane', true);
         $this->saveProjectElementsData($projectData['diagram'][0]['participants'], $keysArray, 'pmse_BpmnParticipant');
@@ -263,7 +264,13 @@ class PMSEProjectImporter extends PMSEImporter
             }
 
             if (isset($activityBean->act_default_flow) && !empty($activityBean->act_default_flow)) {
-                $this->defaultFlowList[$element['act_default_flow']] = array('bean' => 'BpmnActivity', 'search_field' => 'act_uid', 'search_field_value' => $activityBean->act_uid, 'default_flow' => $element['act_default_flow'], 'default_flow_field' => 'act_default_flow');
+                $this->defaultFlowList[$element['act_default_flow']] = array(
+                    'bean' => 'BpmnActivity',
+                    'search_field' => 'act_uid',
+                    'search_field_value' => $activityBean->act_uid,
+                    'default_flow' => $element['act_default_flow'],
+                    'default_flow_field' => 'act_default_flow'
+                );
             }
             $previousUid = $activityBean->act_uid;
             if (PMSEEngineUtils::validateUniqueUid($activityBean, 'act_uid')) { //$activityBean->validateUniqueUid()) {
@@ -378,10 +385,17 @@ class PMSEProjectImporter extends PMSEImporter
                 $boundBean->$key = $value;
             }
             if (isset($gatewayBean->gat_default_flow) && !empty($gatewayBean->gat_default_flow)) {
-                $this->defaultFlowList[$element['gat_default_flow']] = array('bean' => 'BpmnGateway', 'search_field' => 'gat_uid', 'search_field_value' => $gatewayBean->gat_uid, 'default_flow' => $element['gat_default_flow'], 'default_flow_field' => 'gat_default_flow');
+                $this->defaultFlowList[$element['gat_default_flow']] = array(
+                    'bean' => 'BpmnGateway',
+                    'search_field' => 'gat_uid',
+                    'search_field_value' => $gatewayBean->gat_uid,
+                    'default_flow' => $element['gat_default_flow'],
+                    'default_flow_field' => 'gat_default_flow'
+                );
             }
             $previousUid = $gatewayBean->gat_uid;
-            if (PMSEEngineUtils::validateUniqueUid($gatewayBean, 'gat_uid')) { //if ($gatewayBean->validateUniqueUid()) {
+            if (PMSEEngineUtils::validateUniqueUid($gatewayBean, 'gat_uid')
+            ) { //if ($gatewayBean->validateUniqueUid()) {
                 $this->changedUidElements[$previousUid] = array('new_uid' => $gatewayBean->gat_uid);
             }
             $currentID = $gatewayBean->save();
@@ -444,7 +458,8 @@ class PMSEProjectImporter extends PMSEImporter
             $previousUid = $flowBean->flo_uid;
 
             //if ($flowBean->validateUniqueUid() && isset($this->defaultFlowList[$previousUid])) {
-            if (PMSEEngineUtils::validateUniqueUid($flowBean, 'flo_uid') && isset($this->defaultFlowList[$previousUid])) {
+            if (PMSEEngineUtils::validateUniqueUid($flowBean, 'flo_uid') && isset($this->defaultFlowList[$previousUid])
+            ) {
                 $this->defaultFlowList[$previousUid]['default_flow'] = $flowBean->flo_uid;
                 $this->defaultFlowList[$flowBean->flo_uid] = $this->defaultFlowList[$previousUid];
                 unset($this->defaultFlowList[$previousUid]);
@@ -462,8 +477,14 @@ class PMSEProjectImporter extends PMSEImporter
      * @param bool $generateWithId
      * @param string $field_uid
      */
-    public function saveProjectElementsData($elementsData, $keysArray, $beanType, $generateBound = false, $generateWithId = false, $field_uid = '')
-    {
+    public function saveProjectElementsData(
+        $elementsData,
+        $keysArray,
+        $beanType,
+        $generateBound = false,
+        $generateWithId = false,
+        $field_uid = ''
+    ) {
         //$beanFactory = new ADAMBeanFactory();
         foreach ($elementsData as $element) {
             $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();

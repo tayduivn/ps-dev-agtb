@@ -1,27 +1,25 @@
 <?php
-
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-
 
 class PMSEEngineRequestHandler
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $logger;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $request;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $preProcessor;
 
@@ -32,9 +30,9 @@ class PMSEEngineRequestHandler
         $this->request->setType('engine');
         $this->preProcessor = PMSEPreProcessor::getInstance();
     }
-    
+
     /**
-     * 
+     *
      * @param type $element
      * @param type $createThread
      * @param type $bean
@@ -49,9 +47,9 @@ class PMSEEngineRequestHandler
         $this->request->setCreateThread($createThread);
         $this->request->setExternalAction($externalAction);
         $this->request->setBean($bean);
-        $this->request->setArguments($args);       
+        $this->request->setArguments($args);
         $preProcessor = $this->preProcessor->getInstance();
-        $response = $preProcessor->processRequest($this->request);                
+        $response = $preProcessor->processRequest($this->request);
         return $response;
     }
 }

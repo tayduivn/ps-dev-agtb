@@ -92,9 +92,7 @@ class PMSEEngineFilterApi extends FilterApi
         }
 
         $q = $this->getQueryObjectAux($seed, $options);
-        /*$arr['query'] = $q->compileSql();
-        $arr['args'] = $args;
-        print_r($arr); die;*/
+
 
         // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
@@ -124,11 +122,11 @@ class PMSEEngineFilterApi extends FilterApi
             foreach ($filter as $field => $values) {
                 if (is_array($values)) {
                     foreach ($values as $condition => $value) {
-                        if ($field!='in_time') {
+                        if ($field != 'in_time') {
                             if (is_array($value)) {
                                 $type = $this->applyArrayFilter($where, $condition, $field, $value);
                             } else {
-                                $type = ($field == 'act_assignment_method')? $value : $type;
+                                $type = ($field == 'act_assignment_method') ? $value : $type;
                             }
                         }
                     }
@@ -230,6 +228,7 @@ class PMSEEngineFilterApi extends FilterApi
         //INNER JOIN BPM INBOX TABLE
         $fields[] = array("date_entered", 'date_entered');
         $fields[] = array("cas_id", 'cas_id');
+        $fields[] = array("cas_sugar_module", 'cas_sugar_module');
 
         
         $q->joinTable('pmse_inbox', array('alias' => 'inbox', 'joinType' => 'INNER', 'linkingTable' => true))
@@ -318,7 +317,8 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['id2'] = $bean->fetched_row['inbox_id'];
             $arr_aux['task_name'] = $bean->fetched_row['act_name'];
             $arr_aux['cas_status'] = $bean->fetched_row['act_assignment_method'];
-            $arr_aux['case_init'] = $bean->fetched_row['user_name'];            
+            $arr_aux['case_init'] = $bean->fetched_row['user_name'];
+            $arr_aux['cas_sugar_module'] = $bean->fetched_row['cas_sugar_module'];
             $arr_aux['in_time'] = true;
             $ret[] = array_merge($this->formatBean($api, $args, $bean), $arr_aux);
         }

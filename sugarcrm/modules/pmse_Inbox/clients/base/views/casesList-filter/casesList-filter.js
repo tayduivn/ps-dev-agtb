@@ -1,10 +1,5 @@
 
 ({
-    /**
-     * @class View.ComposeAddressbookFilterView
-     * @alias SUGAR.App.view.views.ComposeAddressbookFilterView
-     * @extends View
-     */
     _moduleFilterList: [],
     _allModulesId:     'All',
     _selectedModule:   null,

@@ -7,6 +7,7 @@ var project,
     canvas,
     PROJECT_MODULE = 'Leads',
     items,
+    myLayout,
     adamUID,
     PROJECT_LOCKED_VARIABLES = [],
     PMSE_DECIMAL_SEPARATOR = '.',
@@ -34,10 +35,10 @@ var project,
         LBL_GROUP: translate('LBL_PMSE_ADAM_UI_LBL_GROUP'),
         LBL_OPERATION: translate('LBL_PMSE_ADAM_UI_LBL_OPERATION'),
         LBL_DIRECTION: translate('LBL_PMSE_ADAM_UI_LBL_DIRECTION'),
-        LBL_MODULE: translate('LBL_PMSE_LABEL_MODULE'),
+        LBL_MODULE: translate('LBL_PMSE_FORM_LABEL_MODULE'),
         LBL_FIELD: translate('LBL_PMSE_LABEL_FIELD'),
         LBL_VALUE: translate('LBL_PMSE_LABEL_VALUE'),
-        LBL_TARGET_MODULE: translate('LBL_PMSE_ADAM_UI_LBL_TARGET_MODULE'),
+        LBL_TARGET_MODULE: translate('LBL_PMSE_FORM_OPTION_TARGET_MODULE'),
         LBL_VARIABLE: translate('LBL_PMSE_ADAM_UI_LBL_VARIABLE'),
         LBL_NUMBER: translate('LBL_PMSE_ADAM_UI_LBL_NUMBER'),
         TITLE_MODULE_FIELD_EVALUATION: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELD_EVALUATION'),
@@ -51,7 +52,40 @@ var project,
         LBL_REJECTED: translate('LBL_PMSE_LABEL_REJECTED'),
         BUTTON_SUBMIT: translate('LBL_PMSE_BUTTON_ADD'),
         BUTTON_CANCEL: translate('LBL_PMSE_BUTTON_CANCEL')
-    };
+    },
+    listPanelError = new ErrorListPanel({
+            title : translate('LBL_PMSE_BPMN_WARNING_PANEL_TITLE'),
+            id : 'panel-Errors',
+            onClickItem : function (listPanel, listItem, type, messageId){
+                var shape, shapeId, canvas;
+                canvas = jCore.getActiveCanvas();
+                shapeId = listItem.getErrorId();
+                shape = canvas.customShapes.find('id', shapeId);
+                if (shape) {
+                    shape.canvas.emptyCurrentSelection();
+                    shape.canvas.addToSelection(shape);
+                    //to disable textbox of label
+                    if (shape.canvas.currentLabel) {
+                        shape.canvas.currentLabel.loseFocus();
+                    }
+                    //for property grids
+                    shape.canvas.project.updatePropertiesGrid(shape);
+                }
+            }
+        });
+
+    var countErrors = document.getElementById("countErrors");
+    //labelErrors.id = "labelErros";
+    /*countErrors.className = "btn btn-danger dropdown-toggle";
+    countErrors.id = "countErrors";
+    jQuery(countErrors).css({
+        display : "none",
+        marginLeft : "900px",
+        position : "fixed"
+
+    }).click(function(){
+        myLayout.toggle('east');
+    });*/
 
 var getAutoIncrementName = function (type) {
     var i, j, k = canvas.getCustomShapes().getSize(), exists, index = 1, auxMap = {
@@ -102,20 +136,19 @@ function renderProject (prjCode) {
     });
 
     //LAYOUT
-    var myLayout = $('#container').layout({
+    myLayout = $('#container').layout({
         east: {
-            size: 200,
-            maxSize: 270,
-            minSize: 150,
-            childOptions: {
+            size: 300,
+            maxSize: 300,
+            minSize: 200,
+            /*childOptions: {
                 center__paneSelector:   ".east-center",
                 south__paneSelector:    ".east-south",
                 south__size: '50%'
-            },
-            initClosed: true,
+            },*/
+            initClosed: false,
             onresize: function () {
-                //$('#properties-grid').progrid('setWidth', arguments[2].innerWidth);
-                //project.propertiesGrid.setWidth(arguments[2].innerWidth);
+                listPanelError.resizeWidthTitleItems();
             }
         },
         north: {
@@ -132,7 +165,35 @@ function renderProject (prjCode) {
     $('.ui-layout-north').css('overflow', 'hidden');
 
 
-    project = new AdamProject();
+    project = new AdamProject({
+        metadata: [
+            {
+                name: "teamsDataSource",
+                data: {
+                    url: "pmse_Project/CrmData/teams/public",
+                    root: "result"
+                }
+            },
+            {
+                name: "datePickerFormat",
+                data: SUGAR.App.date.toDatepickerFormat(SUGAR.App.user.attributes.preferences.datepref)
+            },
+            {
+                name: "fieldsDataSource",
+                data: {
+                    url: "pmse_Project/CrmData/allRelated/{MODULE}",
+                    root: "result"
+                }
+            },
+            {
+                name: "targetModuleFieldsDataSource",
+                data: {
+                    url: "pmse_Project/CrmData/fields/{MODULE}",
+                    root: "result"
+                }
+            }
+        ]
+    });
 
     canvas = new AdamCanvas({
         name : 'Adam',
@@ -1205,16 +1266,18 @@ function renderProject (prjCode) {
      $('#nToolTip').remove();
      });*/
 
-    $('#adam_toolbar').find('.btn-close-designer').click(function (e) {
+    /*$('#adam_toolbar').find('.btn-close-designer').click(function (e) {
         e.preventDefault();
-        var ieOrigin, baseUrl;
         //App.router.navigate('Home' , {trigger: true, replace: true });
+        App.utils.tooltip.hide($('.btn-close-designer'));
+        App.router.goBack();
+        *//*var ieOrigin, baseUrl;
         if (!window.location.origin) {
             ieOrigin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
         }
         baseUrl = App.config.siteUrl || (window.location.origin || ieOrigin) + window.location.pathname;
-        window.location = baseUrl;
-    });
+        window.location = baseUrl;*//*
+    });*/
 
     $('#ProjectTitle').hover(function (e) {
         $('.icon-edit-title').css('display', 'block');
@@ -1274,6 +1337,7 @@ function renderProject (prjCode) {
         var newZoomValue;
         newZoomValue = parseInt($(this).val());
         jCore.getActiveCanvas().applyZoom(newZoomValue);
+        jCore.getActiveCanvas().bpmnValidation();
     });
 
     project.setUid(prjCode);
@@ -1295,13 +1359,11 @@ function renderProject (prjCode) {
             PROJECT_MODULE = project.process_definition.pro_module;
             //PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
 
-            items = canvas.getDiagramTree();
-            Tree.treeReload('tree', items);
+            /*items = canvas.getDiagramTree();
+            Tree.treeReload('tree', items);*/
             project.init();
         }
     });
-
-    App.utils.tooltip.initialize($('.btn-close-designer'));
 
     App.utils.tooltip.initialize($("#AdamEventLead"));
     App.utils.tooltip.initialize($("#AdamEventOpportunity"));
@@ -1325,4 +1387,10 @@ function renderProject (prjCode) {
     App.utils.tooltip.initialize($("#ButtonUndo"));
     App.utils.tooltip.initialize($("#ButtonRedo"));
     App.utils.tooltip.initialize($("#ButtonSave"));
+
+    /*App.utils.tooltip.initialize($('.btn-close-designer'));*/
 }
+
+listPanelError.appendTo("#div-bpmn-error");
+//jQuery(".pane ui-layout-center").append(countErrors);
+

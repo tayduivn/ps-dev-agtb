@@ -1,4 +1,5 @@
 <?php
+
 class PMSE
 {
     private $version;
@@ -9,13 +10,13 @@ class PMSE
 
     private function __construct()
     {
-        $this->version = '2.0.0-${gitBranch}-${gitCommit}-${buildNumber}';
-        $this->moduleName = 'ProcessMaker';
-        $this->modulePath['pmse_Inbox']             = "modules/pmse_Inbox";
-        $this->modulePath['pmse_Project']           = "modules/pmse_Project";
-        $this->modulePath['pmse_Emails_Templates']  = "modules/pmse_Emails_Templates";
-        $this->modulePath['pmse_Business_Rules']    = "modules/pmse_Business_Rules";
-        $this->modulePath['pmse_Config']            = "modules/pmse_Config";
+        $this->version = '1.0.0';
+        $this->moduleName = 'Process Author';
+        $this->modulePath['pmse_Inbox'] = "modules/pmse_Inbox";
+        $this->modulePath['pmse_Project'] = "modules/pmse_Project";
+        $this->modulePath['pmse_Emails_Templates'] = "modules/pmse_Emails_Templates";
+        $this->modulePath['pmse_Business_Rules'] = "modules/pmse_Business_Rules";
+        $this->modulePath['pmse_Config'] = "modules/pmse_Config";
         $this->moduleLanguage = 'pmse_Project';
         $this->moduleLanguageBwc = 'pmse_Config';
     }

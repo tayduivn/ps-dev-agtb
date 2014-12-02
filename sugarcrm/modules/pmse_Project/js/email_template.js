@@ -336,7 +336,6 @@ function save() {
             }
         },
         failure: function (xhr, response) {
-            console.log(response);
             if(!usingTimer) {
                 mp.setTitle('Error');
                 mp.setMessageType('Error');
@@ -373,7 +372,6 @@ function save() {
 
 function attachListeners() {
     $('#variables_panel_button').on('click', function(e) {
-        console.log('variables_panel_button');
         e.stopPropagation();
         e.preventDefault();
        showPanelOnSubject($('#email_subject').get(0).selectionStart);
@@ -473,7 +471,6 @@ function attachListeners() {
         App.api.call("read", url, null, {
             success:function (a) {
                 App.alert.dismiss('upload');
-                console.log(TEMPLATE_NAME);
                 if (TEMPLATE_NAME !== fields[0].value) {
                     if (a.records.length > 0) {
                         errorMessage = translate('LBL_PMSE_MESSAGE_THEEMAILTEMPLATENAMEALREADYEXISTS', fields[0].value);
@@ -493,7 +490,6 @@ function attachListeners() {
 
                     App.api.call('update', url, attributes, {
                         success: function (a) {
-                            console.log('has been saved');
                             App.router.navigate('Home' , {trigger: true, replace: true });
                         }
                     });

@@ -8,7 +8,7 @@
     _render: function () {
         var value=this.model.get('cas_status');
 //        if(value==='TODO' || /Error/.test(value)){
-        if(/TODO/.test(value) || /ERROR/.test(value)){
+        if(/IN PROGRESS/.test(value) || /ERROR/.test(value)){
             this._super("_render");
         } else {
             this.hide();

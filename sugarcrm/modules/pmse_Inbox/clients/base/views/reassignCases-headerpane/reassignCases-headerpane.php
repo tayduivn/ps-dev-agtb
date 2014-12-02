@@ -2,7 +2,7 @@
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['reassignCases-headerpane'] = array(
     'template' => 'headerpane',
-    'title'    => 'LBL_TASK_TO_REASSIGN',
+    'title'    => 'LBL_PMSE_TITLE_ACTIVITY_TO_REASSIGN',
     'buttons'  => array(
         array(
             'name'      => 'cancel_button',

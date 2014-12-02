@@ -15,17 +15,17 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'History',
-                'label' => 'History',
+                'label' => 'LBL_PMSE_LABEL_HISTORY',
                 'event' => 'case:history',
                 'css_class'=>'overflow-visible',
             ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'viewNotes',
-                'label' => 'View Notes',
-                'event' => 'case:notes',
-                'css_class'=>'overflow-visible',
-            ),
+//            array(
+//                'type' => 'rowaction',
+//                'name' => 'viewNotes',
+//                'label' => 'LBL_PMSE_LABEL_NOTES',
+//                'event' => 'case:notes',
+//                'css_class'=>'overflow-visible',
+//            ),
             array(
                 'type' => 'reassignbutton',
                 'name' => 'reassignButton',
@@ -36,13 +36,13 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
             array(
                 'type' => 'executebutton',
                 'name' => 'executeButton',
-                'label' => 'LBL_EXECUTE',
+                'label' => 'LBL_PMSE_LABEL_EXECUTE',
                 'event' => 'case:execute',
             ),
             array(
                 'type' => 'cancelcasebutton',
                 'name' => 'cancelButton',
-                'label' => 'LBL_CANCEL_CASE',
+                'label' => 'LBL_PMSE_LABEL_CANCEL',
                 'event' => 'list:cancelCase:fire',
             ),
         ),
@@ -114,7 +114,7 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'label' => 'LBL_DATE_CREATED',
+                    'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
                     'name' => 'cas_create_date',

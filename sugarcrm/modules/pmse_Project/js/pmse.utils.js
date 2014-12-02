@@ -1,12 +1,14 @@
 /*global SUGAR, canvas, Document*/
 
-var translate = function (label, replace) {
+var translate = function (label, module, replace) {
     //var string = (SUGAR.language.languages.ProcessMaker[label]) ? SUGAR.language.languages.ProcessMaker[label] : label;
-    var string, language, module, arr;
-    if (!window.CURRENT_MODULE) {
-        module = 'pmse_Project';
-    } else {
-        module = window.CURRENT_MODULE;
+    var string, language, arr;
+    if (!module){
+        if (!window.CURRENT_MODULE) {
+            module = 'pmse_Project';
+        } else {
+            module = window.CURRENT_MODULE;
+        }
     }
     if (App) {
         string = (App.lang.get(module)[label]) ? App.lang.get(module)[label] : label;
@@ -99,3 +101,4 @@ var timeElapsedString = function (ptime2, ptime1, ago) {
 
 };
 
+//@ sourceURL=pmse.utils.js

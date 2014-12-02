@@ -1,12 +1,11 @@
 <?php
-
 require_once 'PMSEValidate.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Description of PMSEConcurrencyValidator
  * The concurrency validator class purpose is to filter duplicate requests
- * from the same event and process since it's possible to send twice the data 
+ * from the same event and process since it's possible to send twice the data
  * from a direct request.
  *
  */
@@ -14,7 +13,7 @@ class PMSEConcurrencyValidator implements PMSEValidate
 {
     /**
      *
-     * @var PMSELogger 
+     * @var PMSELogger
      */
     protected $logger;
 
@@ -27,9 +26,9 @@ class PMSEConcurrencyValidator implements PMSEValidate
     {
         $this->logger = PMSELogger::getInstance();
     }
-    
+
     /**
-     * 
+     *
      * @return PMSELogger
      * @codeCoverageIgnore
      */
@@ -39,7 +38,7 @@ class PMSEConcurrencyValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -48,7 +47,7 @@ class PMSEConcurrencyValidator implements PMSEValidate
         $this->logger = $logger;
     }
 
-        
+
     /**
      * Validates that if a second request from the same event and bean record
      * is received, the second request should be invalidated and thus ignored.
@@ -57,11 +56,12 @@ class PMSEConcurrencyValidator implements PMSEValidate
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request ". get_class($this));
-        $this->logger->debug("Request data".  print_r($request, true));
-        
+        $this->logger->info("Validate Request " . get_class($this));
+        $this->logger->debug("Request data" . print_r($request, true));
+
         $args = $request->getArguments();
-        if (!isset($_SESSION['locked_flows']) || !in_array($args['idFlow'], $_SESSION['locked_flows'])) {
+        $flowId = isset($args['idFlow']) ? $args['idFlow'] : $args['flow_id'];
+        if (!isset($_SESSION['locked_flows']) || !in_array($flowId, $_SESSION['locked_flows'])) {
             $request->validate();
         } else {
             $request->invalidate();

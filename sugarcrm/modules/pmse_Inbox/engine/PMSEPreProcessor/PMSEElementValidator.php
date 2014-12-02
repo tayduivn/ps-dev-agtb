@@ -1,5 +1,4 @@
 <?php
-
 require_once 'PMSEValidate.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
@@ -9,21 +8,21 @@ require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
  */
 class PMSEElementValidator implements PMSEValidate
 {
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $dbHandler;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $logger;
 
     /**
-     * 
+     *
      * @global type $db
      * @codeCoverageIgnore
      */
@@ -35,7 +34,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -45,7 +44,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -55,7 +54,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $dbHandler
      * @codeCoverageIgnore
      */
@@ -65,7 +64,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $logger
      * @codeCoverageIgnore
      */
@@ -75,21 +74,21 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param PMSERequest $request
      * @param type $flowData
      * @return PMSERequest
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request ". get_class($this));
-        $this->logger->debug("Request data". print_r($request,true));
-        
+        $this->logger->info("Validate Request " . get_class($this));
+        $this->logger->debug("Request data" . print_r($request, true));
+
         $flowData = $request->getFlowData();
         $bean = $request->getBean();
         $request->setExternalAction($this->processExternalAction($flowData));
         $request->setCreateThread($this->processCreateThread($flowData));
-        
+
         switch ($flowData['evn_type']) {
             case 'START':
                 $this->logger->info("Validate Start Event.");
@@ -106,7 +105,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $flowData
      * @return string
      */
@@ -117,29 +116,30 @@ class PMSEElementValidator implements PMSEValidate
             $result = 'RUNNING';
         } else {
             $result = 'NEW';
-        }        
+        }
         return $result;
     }
-    
+
     /**
-     * 
+     *
      * @param type $flowData
      * @return string
      */
     public function identifyEventAction($flowData)
-    { 
-        if (isset($flowData['rel_process_module']) 
-            && isset($flowData['rel_element_relationship']) 
-            && isset($flowData['rel_element_module']) 
-            && $flowData['rel_element_module']!==$flowData['rel_process_module']) {
+    {
+        if (isset($flowData['rel_process_module'])
+            && isset($flowData['rel_element_relationship'])
+            && isset($flowData['rel_element_module'])
+            && $flowData['rel_element_module'] !== $flowData['rel_process_module']
+        ) {
             return 'EVALUATE_RELATED_MODULE';
         } else {
             return 'EVALUATE_MAIN_MODULE';
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $flowData
      * @return boolean
      */
@@ -151,23 +151,23 @@ class PMSEElementValidator implements PMSEValidate
             return false;
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $flowData
      * @return boolean
      */
     public function processCreateThread($flowData)
     {
-        if ($this->identifyElementStatus($flowData)=='NEW') {
+        if ($this->identifyElementStatus($flowData) == 'NEW') {
             return true;
         } else {
             return false;
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $bean
      * @return type
      * @codeCoverageIgnore
@@ -176,9 +176,9 @@ class PMSEElementValidator implements PMSEValidate
     {
         return empty($bean->fetched_row['id']);
     }
-    
+
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @return boolean
@@ -201,27 +201,27 @@ class PMSEElementValidator implements PMSEValidate
             return false;
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @return boolean
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if (($this->isNewRecord($bean) && $flowData['evn_params']=='new') ||
-            (!$this->isNewRecord($bean) && $flowData['evn_params']=='updated'
-            && !$this->isCaseDuplicated($bean, $flowData))
+        if (($this->isNewRecord($bean) && $flowData['evn_params'] == 'new') ||
+            (!$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated'
+                && !$this->isCaseDuplicated($bean, $flowData))
         ) {
             $request->validate();
         } else {
             $request->invalidate();
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @param type $request

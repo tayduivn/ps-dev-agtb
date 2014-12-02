@@ -1,9 +1,4 @@
 ({
-    /**
-     * @class View.ComposeAddressbookListView
-     * @alias SUGAR.App.view.views.ComposeAddressbookListView
-     * @extends View.FlexListView
-     */
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination'],
 
