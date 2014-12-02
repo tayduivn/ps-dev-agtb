@@ -268,10 +268,9 @@
                     var previousModule = app.controller.context.get("module"),
                         previousLayout = app.controller.context.get("layout");
                     if (!(previousModule === module && previousLayout === "records")) {
-                        var view = (module === 'Forecasts') ? 'records' : 'list';
                         app.controller.loadView({
                             module: module,
-                            layout: view
+                            layout: 'records'
                         });
                     }
 
