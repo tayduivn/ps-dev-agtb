@@ -13,7 +13,6 @@
       padding-right: 8px;
     }
   }
-
   > span.detail,
   > span.list,
   > span[class^="panel-top"] {
@@ -121,6 +120,11 @@
     letter-spacing: normal;
     font-size: @baseFontSize;
   }
+}
+
+// Float buttons to the left like twitter bootstrap 3.0, UIUX-1954, https://github.com/sugarcrm/Mango/commit/509ca2584047525e33c18553599b5120a31cbfe7
+.btn-toolbar .btn-group > .btn {
+  float: left;
 }
 
 .touch .dashlet-header .btn-group.open {
