@@ -75,6 +75,16 @@ $dictionary['Quota'] = array(
             'type' => 'currency',
             'required' => true,
             'reportable' => false,
+            'studio' => false,
+            'readonly' => true,
+            'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'ifElse(isNumeric($amount), currencyDivide($amount, $base_rate), "")',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'currency_id' => array(
             'name' => 'currency_id',
