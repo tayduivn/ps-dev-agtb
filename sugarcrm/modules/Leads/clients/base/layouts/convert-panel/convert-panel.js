@@ -23,6 +23,12 @@
     accordionHeading: '.accordion-heading',
     accordionBody: '.accordion-body',
 
+    //turned on, but could be turned into a setting later
+    autoCompleteEnabled: true,
+
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         var convertPanelEvents;
 
@@ -57,31 +63,36 @@
         //if this panel is dependent on others - listen for changes and react accordingly
         this.addDependencyListeners();
 
-        //open the first module upon the first dupe check completion
+        //open the first module upon the first autocomplete check completion
         if (this.meta.moduleNumber === 1) {
-            this.once('lead:convert-dupecheck:complete', this.openPanel, this);
+            this.once('lead:autocomplete-check:complete', this.handleOpenRequest, this);
         }
     },
 
     /**
-     * Retrieve module specific values (like modular singular name and whether dupe check is enabled at a module level
+     * Retrieve module specific values (like modular singular name and whether
+     * dupe check is enabled at a module level).
      * @private
      */
     _setModuleSpecificValues: function() {
         var module = this.meta.module;
         this.meta.modulePlural = app.lang.getAppListStrings('moduleList')[module] || module;
-        this.meta.moduleSingular = app.lang.getAppListStrings('moduleListSingular')[module] || this.meta.modulePlural;
+        this.meta.moduleSingular = app.lang.getAppListStrings('moduleListSingular')[module] ||
+            this.meta.modulePlural;
 
         //enable or disable duplicate check
         var moduleMetadata = app.metadata.getModule(module);
-        this.meta.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || this.meta.enableDuplicateCheck || false;
+        this.meta.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) ||
+            this.meta.enableDuplicateCheck ||
+            false;
         this.meta.duplicateCheckOnStart = this.meta.enableDuplicateCheck && this.meta.duplicateCheckOnStart;
     },
 
     /**
-     * Used by toggle layout to determine where to place sub-components
+     * Used by toggle layout to determine where to place sub-components.
+     *
      * @param {Object} component
-     * @return {*}
+     * @return {jQuery}
      */
     getContainer: function(component) {
         if (component.name === 'convert-panel-header') {
@@ -92,7 +103,7 @@
     },
 
     /**
-     * Add all sub-components of the panel
+     * Add all sub-components of the panel.
      */
     addSubComponents: function() {
         this.addHeaderComponent();
@@ -101,7 +112,7 @@
     },
 
     /**
-     * Add the panel header view
+     * Add the panel header view.
      */
     addHeaderComponent: function() {
         var header = app.view.createView({
@@ -114,7 +125,8 @@
     },
 
     /**
-     * Add the dupe check layout along with events to listen for changes to dupe view
+     * Add the duplicate check layout along with events to listen for changes to
+     * the duplicate view.
      */
     addDupeCheckComponent: function() {
         var leadsModel = this.context.get('leadsModel'),
@@ -141,7 +153,7 @@
     },
 
     /**
-     * Add the create view
+     * Add the create view.
      */
     addRecordCreateComponent: function() {
         var context = this.context.getChildContext({
@@ -174,12 +186,24 @@
     },
 
     /**
-     * When duplicate results are received (or dupe check did not need to be run) toggle to the appropriate view
+     * When duplicate results are received (or dupe check did not need to be
+     * run) toggle to the appropriate view.
+     *
+     * If duplicates were found for a required module, auto select the first
+     * duplicate.
      */
     dupeCheckComplete: function() {
+        if (this.disposed) {
+            return;
+        }
+
         this.currentState.dupeCount = this.duplicateView.collection.length;
+        this.runAutoCompleteCheck();
         if (this.currentState.dupeCount !== 0) {
             this.showComponent(this.TOGGLE_DUPECHECK);
+            if (this.meta.required) {
+                this.selectFirstDuplicate();
+            }
         } else if (!this.toggledOffDupes) {
             this.showComponent(this.TOGGLE_CREATE);
             this.toggledOffDupes = true; //flag so we only toggle once
@@ -188,12 +212,68 @@
     },
 
     /**
+     * Check to see if the panel should be automatically marked as complete
+     *
+     * Required panels are marked complete when there are no duplicates and
+     * the create form passes validation.
+     */
+    runAutoCompleteCheck: function() {
+        if (this.autoCompleteEnabled && this.meta.required && this.currentState.dupeCount === 0) {
+            this.createView.once('render', this.runAutoCompleteValidation, this);
+        } else {
+            this.markAutoCompleteCheckComplete();
+        }
+    },
+
+    /**
+     * Run validation, mark panel complete if valid without any alerts
+     */
+    runAutoCompleteValidation: function() {
+        var view = this.createView,
+            model = view.model;
+
+        model.isValidAsync(view.getFields(view.module), _.bind(function(isValid) {
+            if (isValid) {
+                this.markPanelComplete(model);
+            }
+            this.markAutoCompleteCheckComplete();
+        }, this));
+    },
+
+    /**
+     * Set autocomplete check complete flag and trigger event
+     */
+    markAutoCompleteCheckComplete: function() {
+        this.autoCompleteCheckComplete = true;
+        this.trigger('lead:autocomplete-check:complete');
+    },
+
+    /**
+     * Select the first item in the duplicate check list.
+     */
+    selectFirstDuplicate: function() {
+        var list = this.duplicateView.getComponent('dupecheck-list-select');
+        if (list) {
+            list.once('render', function() {
+                var radio = this.$('input[type=radio]:first');
+                if (radio) {
+                    radio.prop('checked', true);
+                    radio.click();
+                }
+            }, this);
+        }
+    },
+
+    /**
      * Removes fields from the meta and replaces with empty html container
      * based on the modules config option - hiddenFields.
-     * For example.  Account name drop-down should not be available on contact and opportunity module.
-     * @param {Object} meta
-     * @param {Object} moduleMeta
-     * @return {*}
+     *
+     * Example: Account name drop-down should not be available on contact
+     * and opportunity module.
+     *
+     * @param {Object} meta The original metadata
+     * @param {Object} moduleMeta Metadata defining fields to hide
+     * @return {Object} The metadata after hidden fields removed
      */
     removeFieldsFromMeta: function(meta, moduleMeta) {
         if (moduleMeta.hiddenFields) {
@@ -214,7 +294,7 @@
     },
 
     /**
-     * Open/close the accordion body for this panel
+     * Toggle the accordion body for this panel.
      */
     togglePanel: function() {
         this.$(this.accordionBody).collapse('toggle');
@@ -222,21 +302,26 @@
 
     /**
      * When one panel is completed it notifies the next panel to open
-     * This function handles that request...
-     * - passing along the request to the next if already complete or is not enabled
-     * - opening the panel otherwise
+     * This function handles that request and will...
+     * - wait for auto complete check to finish before doing anything
+     * - pass along request to the next if already complete or not enabled
+     * - open the panel otherwise
      */
     handleOpenRequest: function() {
-        if (this.currentState.complete || !this.isPanelEnabled()) {
-            //already complete, pass along to the next guy
-            this.requestNextPanelOpen();
+        if (this.autoCompleteCheckComplete !== true) {
+            this.once('lead:autocomplete-check:complete', this.handleOpenRequest, this);
         } else {
-            this.openPanel();
+            if (this.currentState.complete || !this.isPanelEnabled()) {
+                this.requestNextPanelOpen();
+            } else {
+                this.openPanel();
+            }
         }
     },
 
     /**
-     * Check if the the current panel is enabled
+     * Check if the the current panel is enabled.
+     *
      * @return {boolean}
      */
     isPanelEnabled: function() {
@@ -244,13 +329,20 @@
     },
 
     /**
-     * Open the body of the panel if enabled
+     * Check if the current panel is open.
+     *
+     * @return {boolean}
+     */
+    isPanelOpen: function() {
+        return this.$(this.accordionBody).hasClass('in');
+    },
+
+    /**
+     * Open the body of the panel if enabled (and not already open).
      */
     openPanel: function() {
-        //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
-            // if the panel is already open, do not re-open it, just trigger the event
-            if (this.$(this.accordionBody).hasClass('in')) {
+            if (this.isPanelOpen()) {
                 this.context.trigger('lead:convert:' + this.meta.module + ':shown');
             } else {
                 this.$(this.accordionBody).collapse('show');
@@ -258,6 +350,12 @@
         }
     },
 
+    /**
+     * When showing create view, render the view, trigger duplication
+     * of fields with special handling (like image fields).
+     *
+     * @inheritdoc
+     */
     showComponent: function(name) {
         this._super('showComponent', [name]);
         if (this.currentToggle === this.TOGGLE_CREATE) {
@@ -266,6 +364,9 @@
         this.handleShowComponent();
     },
 
+    /**
+     * Render the create view.
+     */
     handleShowComponent: function() {
         if (this.currentToggle === this.TOGGLE_CREATE && this.createView.meta.useTabsAndPanels && !this.createViewRendered) {
             this.createView.render();
@@ -274,14 +375,16 @@
     },
 
     /**
-     * Close the body of the panel
+     * Close the body of the panel (if not already closed)
      */
     closePanel: function() {
         this.$(this.accordionBody).collapse('hide');
     },
 
     /**
-     * Handle click of Associate button - running validation if on create view or marking complete if on dupe view
+     * Handle click of Associate button - running validation if on create view
+     * or marking complete if on dupe view.
+     *
      * @param {Event} event
      */
     handleAssociateClick: function(event) {
@@ -297,8 +400,8 @@
     },
 
     /**
-     * Run validation, report errors as appropriate, mark panel complete if success
-     */
+     * Run validation, report errors, mark panel complete if valid.
+    */
     runCreateValidation: function() {
         var view = this.createView,
             model = view.model;
@@ -311,11 +414,13 @@
     },
 
     /**
-     * Mark the panel as complete, close the panel body, and tell the next panel to open
-     * @param {Object} model
+     * Mark the panel as complete, close the panel body, and tell the next panel
+     * to open.
+     *
+     * @param {Data.Bean} model
      */
     markPanelComplete: function(model) {
-        this.currentState.associatedName = this.getDisplayName(model);
+        this.currentState.associatedName = app.utils.getRecordName(model);
         this.currentState.complete = true;
         this.context.trigger('lead:convert-panel:complete', this.meta.module, model);
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
@@ -323,37 +428,18 @@
         //disable sub-panel until reset
         this.$(this.accordionBody).addClass('disabled');
 
-        this.closePanel();
-
-        //now tell the next panel to open
-        this.requestNextPanelOpen();
-    },
-
-    requestNextPanelOpen: function() {
-        this.context.trigger('lead:convert:' + (this.meta.moduleNumber + 1) + ':open');
+        //if this panel was open, close & tell the next panel to open
+        if (this.isPanelOpen()) {
+            this.closePanel();
+            this.requestNextPanelOpen();
+        }
     },
 
     /**
-     * Special logic for grabbing the display name for a module
-     * using the name fields if they exist or a 'name' field if it exists
-     *
-     * @param {Object} model
-     * @return {String}
+     * Trigger event to open the next panel in the list
      */
-    getDisplayName: function(model) {
-        var moduleFields = app.metadata.getModule(this.meta.module).fields,
-            displayName = '';
-
-        if (model.has('name')) {
-            displayName = model.get('name');
-        } else if (moduleFields.name && moduleFields.name['db_concat_fields']) {
-            _.each(moduleFields.name['db_concat_fields'], function(field) {
-                if (model.has(field)) {
-                    displayName += model.get(field) + ' ';
-                }
-            });
-        }
-        return displayName.trim();
+    requestNextPanelOpen: function() {
+        this.context.trigger('lead:convert:' + (this.meta.moduleNumber + 1) + ':open');
     },
 
     /**
@@ -377,7 +463,8 @@
     },
 
     /**
-     * Track when a duplicate has been selected and notify the panel so it can enable the Associate button
+     * Track when a duplicate has been selected and notify the panel so it can
+     * enable the Associate button
      */
     handleDupeSelectedChange: function() {
         this.currentState.dupeSelected = this.duplicateView.context.has('selection_model');
@@ -418,7 +505,8 @@
     },
 
     /**
-     * Populates the record view from the passed in model and then kick off the dupe check
+     * Populates the record view from the passed in model and then kick off the
+     * dupe check
      *
      * @param {Object} model
      */
@@ -461,7 +549,8 @@
     },
 
     /**
-     * Use the convert metadata to determine how to map the lead fields to module fields
+     * Use the convert metadata to determine how to map the lead fields to
+     * module fields
      *
      * @param {Object} model
      * @param {Object} fieldMapping
@@ -510,10 +599,11 @@
     },
 
     /**
-     * Updates the attributes on the model based on the changes from dependent modules duplicate view.
+     * Updates the attributes on the model based on the changes from dependent
+     * modules duplicate view.
      * Uses dependentModules property - fieldMappings
      *
-     * @param {String} moduleName
+     * @param {string} moduleName
      * @param {Object} model
      */
     updateFromDependentModuleChanges: function(moduleName, model) {
@@ -542,7 +632,8 @@
     },
 
     /**
-     * Resets the model to the default values so that unsaved warning prompt will not be displayed.
+     * Resets the model to the default values so that unsaved warning prompt
+     * will not be displayed.
      */
     turnOffUnsavedChanges: function() {
         var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefault());
@@ -550,7 +641,13 @@
         this.createView.model.set(defaults, {silent: true});
     },
 
+    /**
+     * Stop listening to events on duplicate view collection
+     * @inheritdoc
+     */
     _dispose: function() {
+        this.createView.off(null, null, this);
+        this.duplicateView.off(null, null, this);
         this.duplicateView.context.off(null, null, this);
         this.duplicateView.collection.off(null, null, this);
         this._super('_dispose');
