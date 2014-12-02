@@ -870,20 +870,28 @@
             };
 
             _.each(fields, function(name) {
-                var def = vardefs[name];
+                attrs[name] = [];
+            });
+
+            if (_.size(attrs) > 0) {
+                // create new virtual collection for each collection fields
+                this.model.set(attrs, options);
+            }
+
+            _.each(fields, function(name) {
+                var def = vardefs[name],
+                    collection;
 
                 if (def &&
                     def.duplicate_on_record_copy !== 'no' &&
                     (def.duplicate_on_record_copy === 'always' || !def.auto_increment) &&
                     source.has(name)
                 ) {
-                    attrs[name] = source.get(name).map(clone);
+                    // copy data from source to the new collection
+                    collection = this.get(name);
+                    collection.add(source.get(name).map(clone));
                 }
             }, this.model);
-
-            if (_.size(attrs) > 0) {
-                this.model.set(attrs, options);
-            }
         };
 
         /**
