@@ -51,7 +51,6 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
         $report = new Report($reportDef);
         $report->run_summary_query();
         $row = $report->get_summary_next_row();
-
         $this->assertNotEmpty($row['cells'], 'Empty summary results');
         $this->assertEquals($avg, $row['cells'][0], 'AVG result wrong');
         $this->assertEquals($count, $row['cells'][1], 'COUNT result wrong');
@@ -67,7 +66,7 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $prod = SugarTestProductUtilities::createProduct();
         $prod->name = 'Bug 63673 Test Prod 1';
-        $prod->quantity = 10;
+        $prod->quantity = 9;
         $prod->save();
 
         $prod = SugarTestProductUtilities::createProduct();
@@ -159,10 +158,10 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
                     }
                 }',
                 array('Bug63673Test', 'setUpProducts'),
-                '15',
+                '14.50',
                 '3',
                 '20',
-                '30',
+                '29',
             ),
         );
     }
