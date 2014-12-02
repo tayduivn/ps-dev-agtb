@@ -191,7 +191,8 @@
             $(this).removeClass('hide');
         })
         .error(function() {
-            $(this).parent().find('i').removeClass('hide');
+            $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
+            $(this).parent().find('span').removeClass('hide');
         });
         this.$('img.avatar').each(function() {
             var img = $(this);
