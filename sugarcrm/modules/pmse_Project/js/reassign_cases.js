@@ -1,12 +1,9 @@
-
 /**
  * That method builds the show History window
  * if ago options is enabled
  * @param {Number} caseId
  * @return {*}
  */
-
-
 function showReassign(caseId) {
     var restClient, proxy, logPanel, w2, label, callback, usersProxy;
 //    restClient = new RestClient();
@@ -64,8 +61,6 @@ function showReassign(caseId) {
                             for (i = 0; i < logs.result.length; i += 1) {
                                 log = logs.result[i];
                                 //get users
-                                console.log(log);
-                                console.log(log.cas_user_id);
                                 usersProxy.url = 'pmse_Inbox/userListByTeam/' + log.act_assign_team;
                                 usersProxy.getData(null, {
 
@@ -110,7 +105,7 @@ function showReassign(caseId) {
         width: 800,
         height: 350,
         modal: true,
-        title: '# ' + caseId + ': ' + translate('LBL_PMSE_LABEL_REASSIGN_CASES')
+        title: '# ' + caseId + ': ' + translate('LBL_PMSE_LABEL_REASSIGN_CASES', 'pmse_Inbox')
     });
 
     w2.addPanel(logPanel);

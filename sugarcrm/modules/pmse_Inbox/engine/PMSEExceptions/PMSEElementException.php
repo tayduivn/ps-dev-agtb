@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Define a custom exception class
  */
@@ -6,6 +7,7 @@ class PMSEElementException extends Exception
 {
     protected $flowData;
     protected $element;
+
     // Redefine the exception so message isn't optional
     public function __construct($message, $flowData, $element, $code = 0, Exception $previous = null)
     {

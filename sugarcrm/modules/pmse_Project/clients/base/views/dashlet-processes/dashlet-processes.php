@@ -1,10 +1,10 @@
 <?php
-
-$viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
+$module_name = 'pmse_Project';
+$viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
     'dashlets' => array(
         array(
-            'label' => 'PMSE Processes',
-            'description' => 'ProcessMaker Processes',
+            'label' => 'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET',
+            'description' => 'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,
                 'visibility' => 'user',
@@ -15,17 +15,15 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
             ),
             'filter' => array(
                 'module' => array(
-                    'Accounts',
-                    'Bugs',
-                    'Cases',
-                    'Contacts',
+                    //'Accounts',
+                    //'Bugs',
+                    //'Cases',
+                    //'Contacts',
                     'Home',
-                    'Leads',
-                    'Opportunities',
-                    'Prospects',
-                    'RevenueLineItems',
-//                    'pmse_Project',
-//                    'pmse_BpmProcessDefinition',
+                    //'Leads',
+                    //'Opportunities',
+                    //'Prospects',
+                    //'RevenueLineItems',
                 ),
                 'view' => 'record',
             ),
@@ -45,7 +43,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                             'module' => 'pmse_Project',
                             'link' => '#pmse_Project',
                         ),
-                        'label' => 'Create Process',
+                        'label' => 'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD',
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Project',
                     ),
@@ -56,7 +54,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                             'module' => 'pmse_Project',
                             'link' => '#pmse_Project/layout/project-import',
                         ),
-                        'label' => 'Import Process',
+                        'label' => 'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD',
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Project',
                     ),
@@ -126,7 +124,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 'prj_status' => array('$not_in' => array('INACTIVE')),
 //                'prj_status' => array('$equals' => 'ACTIVE'),
             ),
-            'label' => 'LBL_PMSE_BUTTON_ENABLE',
+            'label' => 'LBL_PMSE_PROCESS_DEFINITIONS_ENABLED',
             'link' => 'pmse_Project',
             'module' => 'pmse_Project',
             'order_by' => 'date_entered:desc',
@@ -138,7 +136,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:designer:fire',
                     'target' => 'view',
-                    'tooltip' => 'Designer',
+                    'tooltip' => 'LBL_PMSE_LABEL_DESIGN',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -147,7 +145,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:delete-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Delete',
+                    'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -156,7 +154,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:download:fire',
                     'target' => 'view',
-                    'tooltip' => 'Export',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -168,7 +166,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'event' => 'dashlet-processes:disable-record:fire',
                     'target' => 'view',
 //                    'tooltip' => 'Enable',
-                    'tooltip' => 'Disable',
+                    'tooltip' => 'LBL_PMSE_LABEL_DISABLE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -177,7 +175,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:description-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Description',
+                    'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
             ),
@@ -187,7 +185,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                 'prj_status' => array('$not_in' => array('ACTIVE')),
 //                'prj_status' => array('$equals' => 'INACTIVE'),
             ),
-            'label' => 'LBL_PMSE_BUTTON_DISABLE',
+            'label' => 'LBL_PMSE_PROCESS_DEFINITIONS_DISABLED',
             'link' => 'pmse_Project',
             'module' => 'pmse_Project',
             'order_by' => 'date_entered:desc',
@@ -199,7 +197,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:designer:fire',
                     'target' => 'view',
-                    'tooltip' => 'Designer',
+                    'tooltip' => 'LBL_PMSE_LABEL_DESIGN',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -208,7 +206,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => '',
                     'target' => 'view',
-                    'tooltip' => 'Delete',
+                    'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -217,7 +215,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => '',
                     'target' => 'view',
-                    'tooltip' => 'Export',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -229,7 +227,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'event' => 'dashlet-processes:enable-record:fire',
                     'target' => 'view',
 //                    'tooltip' => 'Disable',
-                    'tooltip' => 'Enable',
+                    'tooltip' => 'LBL_PMSE_LABEL_ENABLE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -238,7 +236,7 @@ $viewdefs['pmse_Project']['base']['view']['dashlet-processes'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:description-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Description',
+                    'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
             ),

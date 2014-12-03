@@ -1,4 +1,5 @@
 <?php
+
 class PMSEGatewayDefinitionWrapper
 {
     private $gateway;
@@ -16,77 +17,83 @@ class PMSEGatewayDefinitionWrapper
         $this->flowBean = BeanFactory::getBean('pmse_BpmnFlow');
 
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getGateway() {
+    public function getGateway()
+    {
         return $this->gateway;
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getGatewayDefinition() {
+    public function getGatewayDefinition()
+    {
         return $this->gatewayDefinition;
     }
 
     /**
-     * 
+     *
      * @param type $gateway
      * @codeCoverageIgnore
      */
-    public function setGateway($gateway) {
+    public function setGateway($gateway)
+    {
         $this->gateway = $gateway;
     }
 
     /**
-     * 
+     *
      * @param type $gatewayDefinition
      * @codeCoverageIgnore
      */
-    public function setGatewayDefinition($gatewayDefinition) {
+    public function setGatewayDefinition($gatewayDefinition)
+    {
         $this->gatewayDefinition = $gatewayDefinition;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getFlowBean() {
+    public function getFlowBean()
+    {
         return $this->flowBean;
     }
 
     /**
-     * 
+     *
      * @param type $flowBean
      * @codeCoverageIgnore
      */
-    public function setFlowBean($flowBean) {
+    public function setFlowBean($flowBean)
+    {
         $this->flowBean = $flowBean;
     }
-    
+
     /**
-     * 
+     *
      * @param type $obj
      * @codeCoverageIgnore
      */
-    public function setBpmnGateway ($obj)
+    public function setBpmnGateway($obj)
     {
         $this->gateway = $obj;
     }
 
     /**
-     * 
+     *
      * @param type $obj
      * @codeCoverageIgnore
      */
-    public function setBpmnFlow ($obj)
+    public function setBpmnFlow($obj)
     {
         $this->flowBean = $obj;
     }
@@ -99,23 +106,22 @@ class PMSEGatewayDefinitionWrapper
         $where = "flo_element_origin='" . $this->gateway->id . "' AND flo_element_origin_type='bpmnGateway' AND flo_type!='DEFAULT'";
         $resultArray = $this->flowBean->get_full_list($orderBy, $where);
         $data = array();
-        if (is_array($resultArray)){
+        if (is_array($resultArray)) {
             foreach ($resultArray as $key => $value) {
                 $tmpObject = new stdClass();
                 $tmpObject->flo_uid = $value->flo_uid;
-                $tmpObject->flo_condition =  $value->flo_condition;
-    //            $json = '{"foo-bar": 12345}';
-    //            $json = '[{"expDirection":"after","expFieldType":"TextField","expModule":"lead_direct_reports","expField":"account_name","expOperator":"equals","expValue":"Rodrigo","expType":"MODULE","expLabel":"Account Name == &quot;Rodrigo&quot;"}]';
-    //
-    //            $obj = json_decode($json);
-    //            $tmpObject->flo_condition = $obj;
+                $tmpObject->flo_condition = $value->flo_condition;
+                //            $json = '{"foo-bar": 12345}';
+                //            $json = '[{"expDirection":"after","expFieldType":"TextField","expModule":"lead_direct_reports","expField":"account_name","expOperator":"equals","expValue":"Rodrigo","expType":"MODULE","expLabel":"Account Name == &quot;Rodrigo&quot;"}]';
+                //
+                //            $obj = json_decode($json);
+                //            $tmpObject->flo_condition = $obj;
                 $data[] = $tmpObject;
                 $result['success'] = true;
             }
         }
         $result['data'] = $data;
-//        print_r($result);
-//        die;
+
         return $result;
     }
 
@@ -150,11 +156,11 @@ class PMSEGatewayDefinitionWrapper
                     $orderCounter = 0;
                     foreach ($args['data'] as $key => $value) {
 //                        if (is_array($value)) {
-                            $this->flowBean->retrieve_by_string_fields(array('flo_uid' => $value['flo_uid']));
-                            $this->flowBean->flo_condition = $value['flo_condition'];
-                            $this->flowBean->flo_eval_priority = $orderCounter;
-                            $this->flowBean->save();
-                            $orderCounter++;
+                        $this->flowBean->retrieve_by_string_fields(array('flo_uid' => $value['flo_uid']));
+                        $this->flowBean->flo_condition = $value['flo_condition'];
+                        $this->flowBean->flo_eval_priority = $orderCounter;
+                        $this->flowBean->save();
+                        $orderCounter++;
 //                        }
                     }
                     $data = array("success" => true);
@@ -163,6 +169,6 @@ class PMSEGatewayDefinitionWrapper
         }
         return $data;
     }
-    
-    
+
+
 }

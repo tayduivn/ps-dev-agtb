@@ -175,13 +175,14 @@
         });
     },
     caseApprove: function () {
-        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+//        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
 
     },
 
     validationCompleteApprove: function(isValid) {
         if (isValid) {
+            app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
             var value = this.model.attributes;
             value.frm_action = 'Approve';
             value.idFlow = this.case.flowId;
@@ -191,7 +192,6 @@
             value.moduleName = this.case.flow.cas_sugar_module;
             value.beanId = this.case.flow.cas_sugar_object_id;
             value.taskName = this.case.title.activity;
-            console.log(value);
             //this.setButtonStates(this.STATE.VIEW);
             //this.handleSave();
             var self = this;
@@ -278,7 +278,7 @@
     },
 
     caseStatus: function(){
-        ShowLog(app, this.case.flow.cas_id);
+        showImage(this.case.flow.cas_id);
     },
 
     caseAddNotes: function(){

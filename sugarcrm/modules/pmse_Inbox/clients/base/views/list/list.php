@@ -35,13 +35,13 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'link' => false,
                 ),
-                array(
+                /*array(
                     'name' => 'cas_status',
                     'label' => 'Status',
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
-                ),
+                ),*/
                 array(
                     'name' => 'case_init',
                     'label' => 'Owner',
@@ -51,7 +51,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'link' => false,
                 ),
                 array(
-                    'label' => 'LBL_DATE_CREATED',
+                    'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
                     'name' => 'date_entered',

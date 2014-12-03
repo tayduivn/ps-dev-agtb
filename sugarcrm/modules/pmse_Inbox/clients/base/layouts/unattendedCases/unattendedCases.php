@@ -35,10 +35,15 @@ $viewdefs[$module_name]['base']['layout']['unattendedCases'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => 'filter',
+                                                'view' => 'casesList-filter',
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend'
                                             ),
+//                                            array(
+//                                                'layout' => 'filter',
+//                                                'targetEl' => '.filter',
+//                                                'position' => 'prepend'
+//                                            ),
                                             /*array(
                                                 'view' => 'filter-rows',
                                                 "targetEl" => '.filter-options'

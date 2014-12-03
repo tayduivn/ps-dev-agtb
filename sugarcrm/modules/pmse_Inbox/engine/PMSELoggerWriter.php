@@ -12,14 +12,14 @@ class PMSELoggerWriter extends SugarLogger
         $this->logSize = $config->get('logger.file.maxSize', $this->logSize);
         $this->maxLogs = $config->get('logger.file.maxLogs', $this->maxLogs);
         $this->filesuffix = $config->get('logger.file.suffix', $this->filesuffix);
-        $log_dir = $config->get('log_dir' , $this->log_dir);
-        $this->log_dir = $log_dir . (empty($log_dir)?'':'/');
+        $log_dir = $config->get('log_dir', $this->log_dir);
+        $this->log_dir = $log_dir . (empty($log_dir) ? '' : '/');
         unset($config);
         $this->_doInitialization();
     }
 
     /**
-     * 
+     *
      * @param type $dateFormat
      * @codeCoverageIgnore
      */

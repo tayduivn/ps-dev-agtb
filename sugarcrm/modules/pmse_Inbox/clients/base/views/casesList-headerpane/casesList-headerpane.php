@@ -5,7 +5,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['casesList-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => "LBL_CASES_LIST_PMSE",
+    'title' => "LBL_PMSE_TITLE_PROCESSESS_LIST",
     'buttons' => array(
 //        array(
 //            'name'    => 'project_cancel_button',

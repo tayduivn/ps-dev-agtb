@@ -23,7 +23,7 @@
          app.api.call('update', url, attributes, {
              success: function (data) {
                  app.alert.dismiss('saving');
-                 app.drawer.close();
+                 app.drawer.close('saving');
              },
              error: function (err) {
              }
@@ -36,6 +36,7 @@
      * @private
      */
     _cancel: function() {
+        window.globalObjectUser=new Object();
         app.drawer.close();
     }
 })

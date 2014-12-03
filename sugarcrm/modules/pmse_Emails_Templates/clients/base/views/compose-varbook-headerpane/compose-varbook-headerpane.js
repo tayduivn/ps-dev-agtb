@@ -14,7 +14,6 @@
       */
      _done: function() {
          var massCollection = this.context.get('mass_collection');
-         //console.log(massCollection);
 
          if (massCollection) {
              app.drawer.close(massCollection);

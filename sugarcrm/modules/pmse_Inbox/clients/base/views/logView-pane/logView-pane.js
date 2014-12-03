@@ -20,7 +20,7 @@
         var logModel=$('#logPmseId').text();
         switch(logModel)
         {
-            case 'PMSE Log':
+            case app.lang.get('LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG', self.module):
                 var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/pmse');
                 app.api.call('READ', pmseInboxUrl, {},{
                     success: function(data)
@@ -29,7 +29,7 @@
                     }
                 });
                 break;
-            case 'SugarCRM Log':
+            case app.lang.get('LBL_PMSE_BUTTON_SUGARCRM_LOG', self.module):
                 var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/sugar');
                 app.api.call('READ', pmseInboxUrl, {},{
                     success: function(data)

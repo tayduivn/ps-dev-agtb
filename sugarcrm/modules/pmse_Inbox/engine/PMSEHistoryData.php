@@ -4,7 +4,6 @@
  * Interface to save pre/post variables & values data from Modules forms changes into a temporaly array.
  *
  */
-
 class PMSEHistoryData
 {
     /**
@@ -29,12 +28,13 @@ class PMSEHistoryData
      * Setting log_data object, repeated and lock false too for initialize the object .
      * @param string $module
      */
-    public function __construct ($module)
+    public function __construct($module)
     {
         $this->log_data = array(
             'module' => $module,
             'before_data' => array(),
-            'after_data' => array());
+            'after_data' => array()
+        );
         $this->repeated = false;
         $this->lock = false;
     }
@@ -44,7 +44,8 @@ class PMSEHistoryData
      * @param string $key
      * @param string $value
      */
-    public function savePredata($key, $value) {
+    public function savePredata($key, $value)
+    {
         if ($this->repeated == false && $this->lock == false) {
             $this->log_data['before_data'][$key] = $value;
         }
@@ -55,7 +56,8 @@ class PMSEHistoryData
      * @param string $key
      * @param string $value
      */
-    public function savePostData($key, $value) {
+    public function savePostData($key, $value)
+    {
         if ($this->repeated == false && $this->lock == false) {
             $this->log_data['after_data'][$key] = $value;
         }
@@ -65,7 +67,8 @@ class PMSEHistoryData
      * That method obtain the log_data property.
      * @return multitype:
      */
-    public function getLog() {
+    public function getLog()
+    {
         return $this->log_data;
     }
 
@@ -74,7 +77,8 @@ class PMSEHistoryData
      * @param string $oldValue
      * @param string $newValue
      */
-    public function verifyRepeated($oldValue, $newValue) {
+    public function verifyRepeated($oldValue, $newValue)
+    {
         $this->repeated = false;
         if ($oldValue == $newValue) {
             $this->repeated = true;
@@ -85,7 +89,8 @@ class PMSEHistoryData
      * That method sets to lock property with a condition value.
      * @param boolean $condition
      */
-    public function lock($condition) {
+    public function lock($condition)
+    {
         $this->lock = $condition;
     }
 }

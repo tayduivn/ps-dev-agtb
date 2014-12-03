@@ -130,6 +130,16 @@ ArrayList = function () {
             return this;
         },
         /**
+         * Inserts an element in a specific position
+         * @param {Object} item
+         * @chainable
+         */
+        insertAt: function(item, index) {
+            elements.splice(index, 0, item);
+            size = elements.length;
+            return this;
+        },
+        /**
          * Removes an item from the list
          * @param {Object} item
          * @return {boolean}
@@ -1089,8 +1099,6 @@ CommandStack = function (stackSize, successCallback) {
             var action;     // action to be inverse executed
 
             if (undoStack.length === 0) {
-                console.log("undo(): can't undo because there are no " +
-                    "actions to undo");
                 return false;
             }
 
@@ -1113,8 +1121,6 @@ CommandStack = function (stackSize, successCallback) {
             var action;     // action to be inverse executed
 
             if (redoStack.length === 0) {
-                console.log("redo(): can't redo because there are no " +
-                    "actions to redo");
                 return false;
             }
 
@@ -1133,8 +1139,6 @@ CommandStack = function (stackSize, successCallback) {
          * Clear both stacks
          */
         clearStack: function () {
-            console.log("CommandStack.clearStack(): WARNING - " +
-                "clearing the stacks");
             redoStack = [];
             undoStack = [];
         },
@@ -12539,12 +12543,12 @@ CustomShape.prototype.onMouseMove = function (customShape) {
  * @returns {Function}
  */
 CustomShape.prototype.onClick = function (customShape) {
+    var i, erros, id, item;
     return function (e, ui) {
         var isCtrl = false,
             canvas = customShape.canvas,
             currentSelection = canvas.currentSelection,
             currentLabel = canvas.currentLabel;
-
         if (e.ctrlKey) { // Ctrl is also pressed
             isCtrl = true;
         }
@@ -12590,6 +12594,28 @@ CustomShape.prototype.onClick = function (customShape) {
         customShape.wasDragged = false;
 //        customShape.canvas.setCurrentShape(customShape);
         e.stopPropagation();
+        //select in list item for element panel with errors 
+        if ( listPanelError !== undefined ) {
+            erros = customShape.BPMNError.asArray();
+            if ( erros.length ) {
+                id = customShape.getID();
+                item = listPanelError.items.filter( function (item) {
+                    if (item.getErrorId() === id) {
+                        return item
+                    }
+                });
+                if (item.length){
+                    item = item[0];
+                    //console.log(item.html);
+                    item.select();
+                    $("#div-bpmn-error")[0].scrollTop = item.html.offsetTop;
+                }
+            } else {
+                if (listPanelError.selectedItem){
+                    listPanelError.selectedItem.deselect();                    
+                }
+            }
+        }
     };
 };
 
@@ -15854,7 +15880,6 @@ Canvas.prototype.onRightClick = function (canvas) {
         var x = e.pageX - canvas.x + canvas.leftScroll,
             y = e.pageY - canvas.y + canvas.topScroll;
         canvas.updatedElement = element;
-        console.log(element);
         canvas.onRightClickHandler(canvas.updatedElement, x, y);
     };
 };
@@ -15873,7 +15898,11 @@ Canvas.prototype.onClick = function (canvas) {
             currentLabel.loseFocus();
             $(currentLabel.textField).focusout();
         }
-
+        if (listPanelError){
+            if (listPanelError.selectedItem){
+                listPanelError.selectedItem.deselect();
+            }
+        }
     };
 };
 
@@ -16187,7 +16216,6 @@ Canvas.prototype.triggerPortChangeEvent = function (port) {
         relatedObject: port
     }];
 
-    console.log('port change!');
     $(this.html).trigger('changeelement');
     return this;
 };
@@ -16636,8 +16664,6 @@ Canvas.prototype.copy = function () {
         this.connectionsToCopy.push(connection.stringify());
     }
 
-    console.log('shapes: ' + this.shapesToCopy.length);
-    console.log('conn: ' + this.connectionsToCopy.length);
     /*
         // testing method Canvas.prototype.transformToTree(tree)
         var tree = [];
@@ -17142,22 +17168,32 @@ CustomLine.prototype.drawLine = function (x1, y1, x2, y2) {
     dy = y2-y1;
     length = Math.sqrt(Math.pow(Math.abs(dx),2) + Math.pow(Math.abs(dy),2));
     angle  = Math.atan2(dy, dx) * 180 / Math.PI;
-
+    var auxLine=1;
+    var screenCssPixelRatio = (window.outerWidth - 8) / window.innerWidth;
+    if (screenCssPixelRatio >= .20 && screenCssPixelRatio <= .34) {
+        auxLine=4;
+    } else if (screenCssPixelRatio <= .54) {
+        auxLine=3;
+    } else if (screenCssPixelRatio <= .92) {
+        auxLine=2;
+    } else {
+        auxLine=1;
+    }
     if (dx === 0) {
         if (dy < 0){
-            this.createDiv(x2,y2,1,length);
+            this.createDiv(x2,y2,auxLine,length);
         } else {
-            this.createDiv(x1,y1,1,length);
+            this.createDiv(x1,y1,auxLine,length);
         }
     } else if(dy === 0) {
         if (dx < 0) {
-            this.createDiv(x2,y2,length,1);
+            this.createDiv(x2,y2,length,auxLine);
         } else {
-            this.createDiv(x1,y1,length,1);
+            this.createDiv(x1,y1,length,auxLine);
         }
     } else {
         transform = 'rotate('+angle+'deg)';
-        this.createDiv(x1,y1,length,1, transform);
+        this.createDiv(x1,y1,length,auxLine, transform);
     }
     this.paint();
 };
@@ -17428,3 +17464,4 @@ CustomLine.prototype.clear = function() {
 
 }(jQuery, window));
 
+//@ sourceURL=pmse.jcore.js

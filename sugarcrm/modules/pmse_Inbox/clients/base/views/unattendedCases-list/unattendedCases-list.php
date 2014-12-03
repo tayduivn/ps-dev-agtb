@@ -35,7 +35,7 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'cas_id',
-                    'label' => 'LBL_CASE_ID',
+                    'label' => 'LBL_CAS_ID',
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
@@ -70,7 +70,7 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
                     'link' => false,
                 ),
                 array(
-                    'label' => 'LBL_DATE_CREATED',
+                    'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
                     'name' => 'date_entered',

@@ -1,11 +1,13 @@
 <?php
+
 /**
  * Define a custom exception class
  */
 class PMSEFlowRouteException extends Exception
 {
     // Redefine the exception so message isn't optional
-    public function __construct($message, $code = 0, Exception $previous = null) {
+    public function __construct($message, $code = 0, Exception $previous = null)
+    {
         // some code
 
         // make sure everything is assigned properly
@@ -13,7 +15,8 @@ class PMSEFlowRouteException extends Exception
     }
 
     // custom string representation of object
-    public function __toString() {
+    public function __toString()
+    {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 

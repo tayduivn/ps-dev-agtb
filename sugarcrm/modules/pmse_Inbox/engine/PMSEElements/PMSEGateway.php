@@ -1,30 +1,29 @@
 <?php
-
 require_once 'PMSEShape.php';
-require_once 'modules/pmse_Inbox/engine/PMSEExpressionEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 
 class PMSEGateway extends PMSEShape
 {
-    protected $expressionEvaluator;
+    protected $evaluator;
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getExpressionEvaluator()
+    public function getEvaluator()
     {
-        return $this->expressionEvaluator;
+        return $this->evaluator;
     }
 
     /**
-     * 
+     *
      * @param type $expressionEvaluator
      * @codeCoverageIgnore
      */
-    public function setExpressionEvaluator($expressionEvaluator)
+    public function setEvaluator($expressionEvaluator)
     {
-        $this->expressionEvaluator = $expressionEvaluator;
+        $this->evaluator = $expressionEvaluator;
     }
 
     /**
@@ -34,7 +33,7 @@ class PMSEGateway extends PMSEShape
     public function __construct()
     {
         parent::__construct();
-        $this->expressionEvaluator = new PMSEExpressionEvaluator();
+        $this->evaluator = new PMSEEvaluator();
     }
 
 }
