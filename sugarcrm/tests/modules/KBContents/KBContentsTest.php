@@ -87,7 +87,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $query->from($this->bean);
 
         $joinSugarQuery = $this->bean->localizations->buildJoinSugarQuery($query);
-        $this->assertInternalType('array', $joinSugarQuery);
+        $this->assertInternalType('object', $joinSugarQuery);
     }
 
     public function testRevisionsLink()
@@ -99,7 +99,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $query->from($this->bean);
 
         $joinSugarQuery = $this->bean->revisions->buildJoinSugarQuery($query);
-        $this->assertInternalType('array', $joinSugarQuery);
+        $this->assertInternalType('object', $joinSugarQuery);
     }
 
     public function testResetActivRev()

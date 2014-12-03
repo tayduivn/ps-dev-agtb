@@ -421,7 +421,7 @@ $dictionary['KBContent'] = array(
             'join_table' => 'kbcontents',
             'join_key_lhs' => 'kbdocument_id',
             'join_key_rhs' => 'kbdocument_id',
-            'relationship_type' => 'many-to-many',
+            'relationship_type' => 'one-to-many',
         ),
         'revisions' => array (
             'lhs_module' => 'KBContents',
@@ -433,7 +433,7 @@ $dictionary['KBContent'] = array(
             'join_table' => 'kbcontents',
             'join_key_lhs' => 'kbarticle_id',
             'join_key_rhs' => 'kbarticle_id',
-            'relationship_type' => 'many-to-many',
+            'relationship_type' => 'one-to-many',
         ),
         'kbsapprovers_kbcontents' => array (
             'lhs_module' => 'Users',
