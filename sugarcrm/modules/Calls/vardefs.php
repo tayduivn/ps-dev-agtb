@@ -513,6 +513,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'users',
             ),
             'order_by' => 'name:asc',
+            'studio' => false,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',
