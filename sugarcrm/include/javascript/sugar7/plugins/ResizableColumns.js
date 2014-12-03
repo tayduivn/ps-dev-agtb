@@ -77,7 +77,6 @@
                             }
                         });
                         resizableColumns.syncHandleWidths();
-                        $(window).resize();
                     }
                 });
 
@@ -86,6 +85,7 @@
                 if (!_.isEmpty(cachedSizes)) {
                     $table.trigger('column:resize:restore', [cachedSizes]);
                 }
+                $(window).resize();
 
                 // Triggers an event to tell the view to save changes.
                 $table.on('column:resize:save', _.bind(function(event, columns) {
