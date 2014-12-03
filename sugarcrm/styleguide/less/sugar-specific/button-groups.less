@@ -1,22 +1,24 @@
 /* BUTTON GROUPS
   ----------------*/
 .btn-group {
-  letter-spacing: -.25em;
+  position: relative;
   .clearfix(); // clears the floated buttons
+  .ie7-restore-left-whitespace();
   // Float them, remove border radius, then re-add to first and last elements
   .btn {
+    position: relative;
+    display: inline-block;
     letter-spacing: normal;
     margin-left: -1px;
+    font-size: @baseFontSize;
+    .border-radius(0);
     // Give the line between buttons some depth
     .dropdown-toggle {
       padding-left: 8px;
       padding-right: 8px;
+      *padding-top: 5px;
+      *padding-bottom: 5px;
     }
-  }
-  > span.detail,
-  > span.list,
-  > span[class^="panel-top"] {
-    display: inline-block;
   }
   // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
   span:first-child .btn,
@@ -40,6 +42,7 @@
 
   // Reset corners for large buttons
   .btn.large:first-child {
+    margin-left: 0;
     .border-top-left-radius(@baseBorderRadius);
     .border-bottom-left-radius(@baseBorderRadius);
   }
@@ -78,7 +81,6 @@
       display: block;
       margin-top: 0;
       .border-radius(@baseBorderRadius);
-      letter-spacing: normal;
     }
   }
 }
@@ -101,10 +103,13 @@
 
 // Optional: Group multiple button groups together for a toolbar
 .btn-toolbar {
-  letter-spacing: -.25em;
   margin-top: @baseLineHeight / 2;
   margin-bottom: @baseLineHeight / 2;
   padding-left: 20px;
+  .btn-group {
+    display: inline-block;
+    .ie7-inline-block();
+  }
   label {
     letter-spacing: normal;
   }
@@ -116,15 +121,15 @@
   .btn + .btn-group {
     margin-left: 8px;
   }
-  & > .dropdown-menu {
-    letter-spacing: normal;
-    font-size: @baseFontSize;
-  }
+}
+
+.btn-toolbar > .dropdown-menu {
+  font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
 }
 
 // Float buttons to the left like twitter bootstrap 3.0, UIUX-1954, https://github.com/sugarcrm/Mango/commit/509ca2584047525e33c18553599b5120a31cbfe7
 .btn-toolbar .btn-group > .btn {
-  float: left;
+  //float: left;
 }
 
 .touch .dashlet-header .btn-group.open {
