@@ -1,0 +1,15 @@
+{{#if showProcesses}}
+    <div class="dashlet-options">
+        <div class="row-fluid">
+            <div class="span4">{{#each dashletConfig.processes_selector}}
+                {{field ../this model=../this.settings template="edit"}}
+            {{/each}}</div>
+        </div>
+    </div>
+{{/if}}
+<div class="process-users-chart">
+    <div class="nv-chart nv-chart-donut" data-content="chart">
+        <svg id="{{cid}}"></svg>
+    </div>
+    <div class="block-footer hide" data-content="nodata">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
+</div>

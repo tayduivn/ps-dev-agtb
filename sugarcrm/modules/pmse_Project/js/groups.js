@@ -29,7 +29,6 @@ $('#groups-form').attr("novalidate", "novalidate")
                         }
                     },
                     failure: function (xhr, response) {
-                        console.log(response);
                         //TODO Process HERE error at loading project
                     }
                 });
@@ -46,7 +45,6 @@ $('#groups-form').attr("novalidate", "novalidate")
                         }
                     },
                     failure: function (xhr, response) {
-                        console.log(response);
                         //TODO Process HERE error at loading project
                     }
                 });

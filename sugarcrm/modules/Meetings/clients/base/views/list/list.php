@@ -43,6 +43,14 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'status',
+                    'type' => 'event-status',
+                    'label' => 'LBL_LIST_STATUS',
+                    'link' => false,
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
                     'name' => 'date_end',
                     'link' => false,
                     'default' => false,
@@ -71,14 +79,6 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'status',
-                    'type' => 'event-status',
-                    'label' => 'LBL_LIST_STATUS',
-                    'link' => false,
-                    'default' => false,
-                    'enabled' => true,
-                ),
             ),
         ),
     ),

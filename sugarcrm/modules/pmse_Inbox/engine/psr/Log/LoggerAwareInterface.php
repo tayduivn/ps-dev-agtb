@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Describes a logger-aware instance
  */

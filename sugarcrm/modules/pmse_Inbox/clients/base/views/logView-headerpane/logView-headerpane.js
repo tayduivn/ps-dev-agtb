@@ -10,7 +10,7 @@
         this._super('initialize', [options]);
         this.getLogPmse();
         this.context.on('list:cancelCase:fire', this.cancelCases, this);
-        this.context.on('configLog:fire', this.getLogConfig, this);
+        //this.context.on('configLog:fire', this.getLogConfig, this);
     },
     getLogPmse: function() {
         app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
@@ -19,7 +19,7 @@
         app.api.call('READ', pmseInboxUrl, {},{
             success: function(data)
             {
-                $('#logPmseId').html('PMSE Log');
+                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG', self.module));
                 self.getLog(data)
             }
         });
@@ -31,7 +31,7 @@
         app.api.call('READ', pmseInboxUrl, {},{
             success: function(data)
             {
-                $('#logPmseId').html('SugarCRM Log');
+                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_SUGARCRM_LOG', self.module));
                 self.getLog(data)
             }
         });
@@ -48,12 +48,11 @@
             }
         });
     },
-    getLogConfig : function() {
-        /**
+    /*getLogConfig : function() {
+        *//**
          * Callback to add recipients, from a closing drawer, to the target Recipients field.
          * @param {undefined|Backbone.Collection} recipients
-         */
-        console.log('_showAddressBook');
+         *//*
         app.drawer.open(
             {
                 layout:  "config-log",
@@ -63,7 +62,7 @@
                 }
             }
         );
-    },
+    },*/
     getLog: function(data) {
         $("textarea").html(data);
         app.alert.dismiss('getLog');

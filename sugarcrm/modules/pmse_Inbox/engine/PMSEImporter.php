@@ -1,12 +1,14 @@
 <?php
 require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+
 /**
  * Class ADAMImporterImport a record from a file encryption
  *
  * This class imports a record of an encrypted file to a table in the database
  * @package PMSE
  */
-class PMSEImporter {
+class PMSEImporter
+{
 
     /**
      * @var $beanFactory
@@ -130,7 +132,7 @@ class PMSEImporter {
         //Unset common fields
         $projectData = PMSEEngineUtils::unsetCommonFields($projectData, array('name', 'description'));
         //unset($projectData['assigned_user_id']);
-        if (!isset($projectData['assigned_user_id'])){
+        if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
         //Check Name of project
@@ -161,12 +163,12 @@ class PMSEImporter {
     public function getNameWhitSuffix($name)
     {
         $nums = array();
-        $where = $this->bean->table_name . '.' . $this->name . " LIKE '" . $name."%'";
+        $where = $this->bean->table_name . '.' . $this->name . " LIKE '" . $name . "%'";
         $rows = $this->bean->get_full_list($this->name, $where);
         if (!is_null($rows)) {
             foreach ($rows as $row) {
                 $names[] = $row->{$this->name};
-                if (preg_match("/\([0-9]+\)$/i",$row->{$this->name}) && $row->{$this->name} != $name) {
+                if (preg_match("/\([0-9]+\)$/i", $row->{$this->name}) && $row->{$this->name} != $name) {
                     $aux = substr($row->{$this->name}, strripos($row->{$this->name}, '(') + 1, -1);
                     $nums[] = $aux;
                 }

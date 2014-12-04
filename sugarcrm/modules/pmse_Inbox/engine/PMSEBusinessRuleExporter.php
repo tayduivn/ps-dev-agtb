@@ -1,5 +1,6 @@
 <?php
 require_once('PMSEExporter.php');
+
 /**
  * Exports a record of table BusinessRules
  *
@@ -8,7 +9,8 @@ require_once('PMSEExporter.php');
  * @package PMSE
  * @codeCoverageIgnore
  */
-class PMSEBusinessRuleExporter extends PMSEExporter{
+class PMSEBusinessRuleExporter extends PMSEExporter
+{
     protected $bean;
     protected $id;
     protected $uid;

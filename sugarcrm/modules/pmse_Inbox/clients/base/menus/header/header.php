@@ -19,14 +19,14 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/casesList',
-        'label' =>'LBL_CASES_LIST_PMSE',
+        'label' =>'LBL_PMSE_TITLE_PROCESSESS_LIST',
         'acl_action'=>'list',
         'acl_module'=>$moduleName,
         'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/unattendedCases',
-        'label' =>'LBL_UNATTENDED_CASES_TITLE',
+        'label' =>'LBL_PMSE_TITLE_UNATTENDED_CASES',
         'acl_action'=>'list',
         'acl_module'=>$moduleName,
         'icon' => 'fa-bars',

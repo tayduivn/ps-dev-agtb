@@ -1,12 +1,10 @@
 <?php
-
-
 require_once 'PMSEDivergingGateway.php';
 
 class PMSEDivergingEventBasedGateway extends PMSEDivergingGateway
 {
     /**
-     * 
+     *
      * @param type $flowData
      * @param type $bean
      * @param type $externalAction
@@ -16,7 +14,7 @@ class PMSEDivergingEventBasedGateway extends PMSEDivergingGateway
     {
         $routeAction = 'ROUTE';
         $flowAction = 'CREATE';
-        $nonFlowElements = $this->getNextShapeElements($flowData);        
+        $nonFlowElements = $this->getNextShapeElements($flowData);
 
         foreach ($nonFlowElements as $element) {
             if ($element['evn_type'] != 'INTERMEDIATE' || $element['evn_behavior'] != 'CATCH' || empty($element)) {

@@ -22,7 +22,8 @@
                                 <i class="fa fa-question-circle"></i>
                             </span>
                         {{/if}}
-                        <a href="#{{buildRoute model=this action="layout/designer"}}">{{getFieldValue this "name"}}</a>
+                        <!--<a href="#{{buildRoute model=this action="layout/designer"}}">{{getFieldValue this "name"}}</a>-->
+                        <a href="#{{buildRoute model=this}}">{{getFieldValue this "name"}}</a>
                     </p>
                     {{#if ../overdueBadge}}
                         {{#with ../../overdueBadge}}

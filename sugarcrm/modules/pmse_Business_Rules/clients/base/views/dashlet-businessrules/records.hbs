@@ -13,7 +13,8 @@
                     {{/if}}
                     <p  style="padding-left: 0px;">
 
-                        <a href="#{{buildRoute model=this action="layout/businessrules"}}">{{getFieldValue this "name"}}</a>
+                        <!--<a href="#{{buildRoute model=this action="layout/businessrules"}}">{{getFieldValue this "name"}}</a>-->
+                        <a href="#{{buildRoute model=this}}">{{getFieldValue this "name"}}</a>
                     </p>
                     {{#if ../overdueBadge}}
                         {{#with ../../overdueBadge}}

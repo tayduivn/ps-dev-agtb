@@ -12,19 +12,20 @@
  */
 
 global $admin_group_header;
-//global $current_user;
 global $sugar_config;
-//global $sugar_flavor;
 
 $moduleName = 'pmse_Project';
 
-// initialize a temp array that will hold the options we want to create
 $links = array();
-// injecting the acl module name in the SESSION super global in order to
-//$current_user->getDeveloperModules();
-//if (!isset($_SESSION[$current_user->user_name.'_get_developer_modules_for_user'][$moduleName])) {
-//    $_SESSION[$current_user->user_name.'_get_developer_modules_for_user'][] = $moduleName;
-//}
+
+
+$links[$moduleName]['Settings'] = array(
+    'Settings',
+    'LBL_PMSE_ADMIN_TITLE_SETTINGS',
+    'LBL_PMSE_ADMIN_DESC_SETTINGS',
+    'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/config", {trigger: true});',
+    //'./index.php?module=' . $moduleName . '&action=about',
+);
 
 $links[$moduleName]['CasesList'] = array(
     'CasesList',
@@ -41,14 +42,6 @@ $links[$moduleName]['EngineLogs'] = array(
     'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/logView", {trigger: true});',
     //'./index.php?module=' . $moduleName . '&action=enginelogs',
 );
-
-//$links[$moduleName]['About'] = array(
-//    'About',
-//    'LBL_PMSE_ADMIN_TITLE_ABOUT',
-//    'LBL_PMSE_ADMIN_DESC_ABOUT',
-//    'javascript:parent.SUGAR.App.router.navigate("pmse_Project/layout/about", {trigger: true});',
-//    //'./index.php?module=' . $moduleName . '&action=about',
-//);
 
 $admin_group_header []= array(
     'LBL_PMSE_ADMIN_TITLE_MODULE',

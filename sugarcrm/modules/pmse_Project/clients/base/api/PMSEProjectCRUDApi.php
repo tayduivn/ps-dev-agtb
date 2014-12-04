@@ -65,6 +65,12 @@ class PMSEProjectCRUDApi extends ModuleApi
         $processDefinitionBean->deleted = 1;
         $processDefinitionBean->save();
 
+        while($relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')->retrieve_by_string_fields(array('prj_id'=>$args['record'], 'deleted'=>0))) {
+            $relatedDepBean->deleted = 1;
+            $relatedDepBean->save();
+        }
+        
+
         $bean = $this->loadBean($api, $args, 'delete');
         $bean->mark_deleted($args['record']);
 
@@ -76,7 +82,11 @@ class PMSEProjectCRUDApi extends ModuleApi
         $id = parent::updateBean($bean, $api, $args);
 
         //retrieve a Bean created
-        $projectBean = BeanFactory::retrieveBean($args['module'],$args['record']);
+        if (isset($args['record']) && !empty($args['record'])) {
+            $projectBean = BeanFactory::retrieveBean($args['module'],$args['record']);
+        } else {
+            $projectBean = $bean;
+        }
 
         //Create a Diagram row
         $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')->retrieve_by_string_fields(array('prj_id'=>$id));
@@ -116,6 +126,15 @@ class PMSEProjectCRUDApi extends ModuleApi
         $processDefinitionBean->assigned_user_id = $projectBean->assigned_user_id;
         $processDefinitionBean->save();
 
+        $relDepStatus = $projectBean->prj_status=='ACTIVE'?'INACTIVE':'ACTIVE';
+        while(
+            $relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
+            ->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_status'=>$relDepStatus))
+        ) {
+            $relatedDepBean->pro_status = $projectBean->prj_status;
+            $relatedDepBean->save();
+        }
+        
         $keysArray = array('prj_id' => $id, 'pro_id' => $pro_id);
         $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_id'=>$pro_id, 'name'=>'Default'));
         if (empty($dynaF)) {

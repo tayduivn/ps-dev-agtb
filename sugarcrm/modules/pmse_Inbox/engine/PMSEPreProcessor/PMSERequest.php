@@ -11,61 +11,61 @@ class PMSERequest
      * @var SugarBean
      */
     protected $bean;
-    
+
     /**
      *
      * @var boolean
      */
     protected $createThread;
-    
+
     /**
      *
      * @var string
      */
     protected $externalAction;
-    
+
     /**
      *
      * @var array
      */
     protected $arguments;
-    
+
     /**
      *
      * @var string
      */
     protected $type;
-    
+
     /**
      *
      * @var array
      */
     protected $validTypes = array('hook', 'direct', 'cron', 'queue', 'engine');
-    
+
     /**
      *
      * @var boolean
      */
     protected $validated;
-    
+
     /**
      *
      * @var string
      */
     protected $status;
-    
+
     /**
      *
      * @var array
      */
     protected $flowData;
-    
+
     /**
      *
      * @var array
      */
     protected $result;
-    
+
     /**
      * Class constructor
      */
@@ -75,9 +75,9 @@ class PMSERequest
         $this->validated = true;
         $this->result = '';
     }
-    
+
     /**
-     * 
+     *
      * @return type
      */
     public function getType()
@@ -86,7 +86,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getCreateThread()
@@ -95,7 +95,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getBean()
@@ -104,7 +104,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getExternalAction()
@@ -113,16 +113,16 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getArguments()
     {
         return $this->arguments;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      */
     public function getStatus()
@@ -131,7 +131,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @return type
      */
     function getResult()
@@ -140,16 +140,16 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $result
      */
     function setResult($result)
     {
         $this->result = $result;
     }
-        
+
     /**
-     * 
+     *
      * @param type $status
      */
     public function setStatus($status)
@@ -158,16 +158,16 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $arguments
      */
     public function setArguments($arguments)
     {
         $this->arguments = $arguments;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      */
     public function getFlowData()
@@ -176,7 +176,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $flowData
      */
     public function setFlowData($flowData)
@@ -185,7 +185,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $type
      */
     public function setType($type)
@@ -194,7 +194,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $createThread
      */
     public function setCreateThread($createThread)
@@ -203,7 +203,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $bean
      */
     public function setBean($bean)
@@ -212,7 +212,7 @@ class PMSERequest
     }
 
     /**
-     * 
+     *
      * @param type $externalAction
      */
     public function setExternalAction($externalAction)
@@ -228,7 +228,7 @@ class PMSERequest
         $this->status = 'VALID';
         $this->validated = true;
     }
-    
+
     /**
      * Invalidate request
      */
@@ -243,7 +243,7 @@ class PMSERequest
      * @return type
      */
     public function isValid()
-    {        
+    {
         return $this->validated;
     }
 }

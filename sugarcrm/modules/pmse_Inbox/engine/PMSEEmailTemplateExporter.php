@@ -1,5 +1,6 @@
 <?php
 require_once('PMSEExporter.php');
+
 /**
  * Exports a record of table EmailTemplate
  *
@@ -8,7 +9,8 @@ require_once('PMSEExporter.php');
  * @package PMSE
  * @codeCoverageIgnore
  */
-class PMSEEmailTemplateExporter extends  PMSEExporter {
+class PMSEEmailTemplateExporter extends PMSEExporter
+{
 
     public function __construct()
     {

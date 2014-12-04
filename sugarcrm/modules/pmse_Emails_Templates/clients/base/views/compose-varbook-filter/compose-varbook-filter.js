@@ -29,8 +29,6 @@
     buildModuleFilterList: function() {
         var allowedModules = this.collection.allowed_modules;
         var self = this;
-        //console.log(this);
-        //console.log(allowedModules);
 
         this._moduleFilterList = [
             {id: this._allModulesId, text: app.lang.get('Target Module')}

@@ -37,16 +37,8 @@
          * @param {undefined|Backbone.Collection} recipients
          */
         var addVariables = _.bind(function(variables) {
-//            console.log(recipients);
             if (variables && variables.length > 0) {
-//                console.log(variables);
-
-//                console.log(this.model);
-//                console.log(this.name);
-//                console.log(this.buildVariablesString(recipients));
                 this.model.set(this.name, this.buildVariablesString(variables));
-//                this.model.get(this.name).set('subject', 'updated');
-
             }
         }, this);
         app.drawer.open(
@@ -63,7 +55,6 @@
         );
     },
     buildVariablesString: function(recipients) {
-//        console.log(recipients);
         var result = '' , newExpression = '', currentValue, i, aux, aux2;
         _.each(recipients.models, function(model) {
             newExpression += '{::'+ model.attributes.rhs_module+'::'+model.attributes.id+'::}'

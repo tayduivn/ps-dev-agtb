@@ -25,23 +25,6 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose-varbook-list'] = arr
                 ),
             ),
         ),
-//        'orderBy' =>
-//            array (
-//                'field' => 'name',
-//                'direction' => 'desc',
-//            ),
     ),
-//    'rowactions' => array(
-//        'css_class' => 'pull-right',
-//        'actions'   => array(
-//            array(
-//                'type'       => 'rowaction',
-//                'css_class'  => 'btn',
-//                'tooltip'    => 'LBL_PREVIEW',
-//                'event'      => 'list:preview:fire',
-//                'icon'       => 'fa-eye',
-//                'acl_action' => 'view',
-//            ),
-//        ),
-//    ),
 );
+

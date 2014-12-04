@@ -1,29 +1,26 @@
-
-
 /**
  * That method builds the show History window
  * if ago options is enabled
  * @param {Number} caseId
  * @return {*}
  */
-
-
 function showHistory(caseId, caseIndex) {
-    console.log(caseId);
-    var restClient, proxy, logPanel, w2, label;
-//    restClient = new RestClient();
-//    restClient.setRestfulBehavior(SUGAR_REST);
-//    if (!SUGAR_REST) {
-//        restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
-//    }
-    proxy = new SugarProxy({
+    var restClient, proxy, logPanel, w2, label, _App;
+    if (App) {
+        _App = App;
+    } else {
+        _App = parent.SUGAR.App;
+    }
+
+    /*proxy = new SugarProxy({
         //url: SUGAR_URL + '/rest/v10/Log/',
         url: 'pmse_Inbox/historyLog/' + caseId,
         restClient: restClient,
         uid : caseId,
         callback: null
-    });
-    console.log('caseId:'+ caseId);
+    });*/
+
+    var pmseHistoryUrl = _App.api.buildURL('pmse_Inbox/historyLog', null, {id:caseId});
 
     logPanel = new HistoryPanel({
         logType: 'difList',
@@ -32,9 +29,10 @@ function showHistory(caseId, caseIndex) {
             'loaded': function (data) {
                 var logs, beforeArray = [], afterArray = [], fieldArray = [],
                     i, items, log, newLog, j;
-                proxy.getData(null, {
-                    success: function(logs) {
-                        console.log(logs);
+                //proxy.getData(null, {
+                    //success: function(logs) {
+                _App.api.call('read', pmseHistoryUrl, {}, {
+                    success: function (logs) {
                         if (logs) {
                             for (i = 0; i < logs.result.length; i += 1) {
                                 beforeArray = [];
@@ -57,22 +55,22 @@ function showHistory(caseId, caseIndex) {
                                 } else {
                                     label = log.data_info + '. <strong>' + translate('LBL_PMSE_MESSAGE_NOYETSTARTED') + '</strong> ';
                                 }
-                                console.log (log);
-                                console.log('el log');
-                                var pictureUrl = App.api.buildFileURL({
+
+                                var pictureUrl = _App.api.buildFileURL({
                                     module: 'Users',
                                     id: log.cas_user_id,
                                     field: 'picture'
                                 });
-                                console.log(pictureUrl);
+
                                 newLog = {
                                     name: 'log' + i,
                                     label: label,
                                     user: log.user,
                                     picture : pictureUrl,
                                     duration: '<strong> ' + timeElapsedString(Date.parse(log.end_date), Date.parse(log.delegate_date)) + ' <strong>',
-                                    startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
-//                                    startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
+                                    startDate: (Date.parse(log.start_date)) ? log.start_date :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
+                                    //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
+                                    //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     completed: log.completed
                                 };
                                 //parse all log var_values collected
@@ -101,7 +99,7 @@ function showHistory(caseId, caseIndex) {
                                 logPanel.addLog(newLog);
                             }
                         }
-                        App.alert.dismiss('upload');
+                        _App.alert.dismiss('upload');
                         w2.html.style.display = 'inline';
                     }
                 });
@@ -115,11 +113,11 @@ function showHistory(caseId, caseIndex) {
         width: 800,
         height: 350,
         modal: true,
-        title: '# ' + caseId + ': ' + translate('LBL_PMSE_TITLE_CASE_HISTORY')
+        title: '# ' + caseId + ': ' + translate('LBL_PMSE_TITLE_HISTORY', 'pmse_Inbox')
     });
 
     w2.addPanel(logPanel);
     w2.show();
     w2.html.style.display = 'none';
-    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+    _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 }

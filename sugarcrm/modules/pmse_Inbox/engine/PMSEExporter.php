@@ -7,7 +7,8 @@
  * by encrypting its contents, to be transported from one instance to another.
  * @package PMSE
  */
-class PMSEExporter {
+class PMSEExporter
+{
     /**
      * @var $bean
      * @access private
@@ -82,18 +83,18 @@ class PMSEExporter {
      * Method to download a file exported
      * @codeCoverageIgnore
      */
-    public function exportProject($id , ServiceBase $api)
+    public function exportProject($id, ServiceBase $api)
     {
         $projectContent = $this->getProject(array('id' => $id));
         //File Name
         $filename = str_replace(' ', '_', $projectContent['project'][$this->name]) . '.' . $this->extension;
 
-        $api->setHeader("Content-Disposition","attachment; filename=" . $filename);
-        $api->setHeader("Content-Type","application/" . $this->extension);
-        $api->setHeader("Expires","Mon, 26 Jul 1997 05:00:00 GMT" );
-        $api->setHeader("Last-Modified", TimeDate::httpTime() );
-        $api->setHeader("Cache-Control","max-age=0");
-        $api->setHeader("Pragma","public");
+        $api->setHeader("Content-Disposition", "attachment; filename=" . $filename);
+        $api->setHeader("Content-Type", "application/" . $this->extension);
+        $api->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+        $api->setHeader("Last-Modified", TimeDate::httpTime());
+        $api->setHeader("Cache-Control", "max-age=0");
+        $api->setHeader("Pragma", "public");
 
         return serialize($projectContent);
     }

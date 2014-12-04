@@ -72,11 +72,10 @@ $app_list_strings = array (
     'ReportMaker' => 'Advanced Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
-    'pmse_Inbox' => 'PMSE Engine',
-    'pmse_Project' => 'PMSE Process',
-    'pmse_Business_Rules' => 'PMSE Business Rules',
-    'pmse_Emails_Templates' => 'PMSE Emails Templates',
-    'pmse_Config' => 'PMSE Administration',
+    'pmse_Inbox' => 'Processes',
+    'pmse_Project' => 'Process Definitions',
+    'pmse_Business_Rules' => 'Process Business Rules',
+    'pmse_Emails_Templates' => 'Process Emails Templates',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -184,11 +183,10 @@ $app_list_strings = array (
     'ReportMaker' => ' Advanced Report',
     'DataSets' => 'Data Format',
     'CustomQueries' => 'Custom Query',
-    'pmse_Inbox' => 'PMSE Engine',
-    'pmse_Project' => 'PMSE Process',
-    'pmse_Business_Rules' => 'PMSE Business Rules',
-    'pmse_Emails_Templates' => 'PMSE Emails Templates',
-    'pmse_Config' => 'PMSE Administration',
+    'pmse_Inbox' => 'Process',
+    'pmse_Project' => 'Process Definition',
+    'pmse_Business_Rules' => 'Process Business Rule',
+    'pmse_Emails_Templates' => 'Process Emails Template',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -5256,6 +5254,54 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_ERROR_RETRIEVING_FREE_BUSY' => 'Error occurred while retrieving schedule.',
 
     'LBL_SAVE_AND_SEND_INVITES_BUTTON' => 'Save and Send Invites',
+
+//BEGIN SUGARCRM flav=ent ONLY
+    //PMSE Processes
+    'LBL_PMSE_PROCESSES_DASHLET' => 'Processes',
+    'LBL_PMSE_PROCESSES_DASHLET_DESCRIPTION' => 'Processes dashlet displays the templates that can be used inside of Process Author.',
+
+    //PMSE Process Definitions Dashlet
+    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Defintions',
+    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Defintions dashlet displays the templates that can be used inside of Process Author.',
+    'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definitions',
+    'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',
+
+    //PMSE Process Business Rules
+    'LBL_PMSE_BUSINESS_RULES_DASHLET' => 'Process Business Rules',
+    'LBL_PMSE_BUSINESS_RULES_DASHLET_DESCRIPTION' => 'Process Business Rules dashlet displays the templates that can be used inside of Process Author.',
+    'LNK_PMSE_BUSINESS_RULES_NEW_RECORD' => 'Create Process Business Rules',
+    'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD' => 'Import Process Business Rules',
+
+    //PMSE Email Templates Dashlet
+    'LBL_PMSE_EMAIL_TEMPLATES_DASHLET' => 'Process Email Templates',
+    'LBL_PMSE_EMAIL_TEMPLATES_DASHLET_DESCRIPTION' => 'Process Email Templates dashlet displays the templates that can be used inside of Process Author.',
+    'LNK_PMSE_EMAIL_TEMPLATES_NEW_RECORD' => 'Create Process Email Template',
+    'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD' => 'Import Process Email Templates',
+
+    //DASHBOARDS
+    'LBL_PMSE_PROCESS_USERS_CHART_NAME' => 'Pending Activities by Process',
+    'LBL_PMSE_PROCESS_USERS_CHART_NAME_RECORD' => 'Pending Activities',
+    'LBL_PMSE_PROCESS_USERS_CHART_DESCRIPTION' => 'Pending Activities by Process',
+    'LBL_PMSE_ALL_PROCESSES_LABEL' => 'All Processes',
+
+
+    'LBL_PMSE_PROCESS_STATUS_CHART_NAME' => 'Process Status Summary',
+    'LBL_PMSE_PROCESS_STATUS_CHART_DESCRIPTION' => 'Process Status Description',
+
+    'LBL_PMSE_IN_PROGESS_STATUS' => 'In Progress',
+    'LBL_PMSE_COMPLETED_STATUS' => 'Completed',
+    'LBL_PMSE_CANCELLED_STATUS' => 'Cancelled',
+    'LBL_PMSE_TERMINATED_STATUS' => 'Terminated',
+    'LBL_PMSE_ERROR_STATUS' => 'Error',
+    'LBL_PMSE_SETTINGS' => 'Settings',
+
+    'LBL_PRO_DISABLE_CONFIRMATION' => 'Are you sure you want to disable this record?',
+    'LBL_PRO_ENABLE_CONFIRMATION' => 'Are you sure you want to enable this record?',
+    'LBL_PRO_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
+
+    'LBL_PRO_ENABLE' => 'Updating',
+    'LBL_PRO_DISABLE' => 'Updating',
+//END SUGARCRM flav=ent ONLY
 
     //Tag Strings
     'LBL_TAG_NEW_TAG' => '(New Tag)',

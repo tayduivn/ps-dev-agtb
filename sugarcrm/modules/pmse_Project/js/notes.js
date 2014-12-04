@@ -34,7 +34,7 @@ showNotes = function (caseId, caseIndex, noEdit) {
         label: '',
         fieldWidth: '80%'
     });
-    console.log(caseId);
+
     App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
     np = new NotePanel({
         items :[notesTextArea],
@@ -42,11 +42,10 @@ showNotes = function (caseId, caseIndex, noEdit) {
         caseIndex : caseIndex,
         callback :{
             'loaded': function (data) {
-                console.log('loaded');
+
                 proxy.getData(null, {
                     success: function(notes) {
-                        console.log(notes);
-                        //console.log(notes.rowList.length);
+
 
                         for (i = 0 ; i < notes.rowList.length; i += 1) {
                             log = notes.rowList[i];
@@ -215,7 +214,6 @@ deleteRow =  function (id) {
 //            console.log(row.id);
             if (null != row.id && '' != row.id && id == row.id) {
                 if (rowCount <= 1) {
-                    console.log("Cannot delete all the rows.");
                     break;
                 }
                 table.deleteRow(i);

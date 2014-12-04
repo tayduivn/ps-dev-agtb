@@ -1,5 +1,6 @@
 <?php
 require_once('PMSEImporter.php');
+
 /**
  * Imports a record of encrypted file.
  *
@@ -8,7 +9,8 @@ require_once('PMSEImporter.php');
  * @package PMSE
  * @codeCoverageIgnore
  */
-class PMSEEmailTemplateImporter extends PMSEImporter {
+class PMSEEmailTemplateImporter extends PMSEImporter
+{
 
     public function __construct()
     {
