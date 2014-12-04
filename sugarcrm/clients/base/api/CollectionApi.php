@@ -84,20 +84,16 @@ class CollectionApi extends SugarApi
         $sortFields = $this->getAdditionalSortFields($args, $definition['links'], $sortSpec);
 
         $data = $this->getData($api, $args, $bean, $definition['links'], $sortFields);
-        $allRecords = $this->flattenData($data, $nextOffset);
 
-        $this->sortRecords($allRecords, $sortSpec);
-
-        $records = array_slice($allRecords, 0, $args['max_num']);
-        $remainder = array_slice($allRecords, $args['max_num']);
-        $nextOffset = $this->getNextOffset($args['offset'], $records, $nextOffset, $remainder);
+        $offset = $args['offset'];
+        $records = $this->sortData($data, $sortSpec, $args['max_num'], $offset);
 
         // remove unwanted fields from the data
         $records = $this->cleanData($records, $sortFields);
 
         return array(
             'records' => $records,
-            'next_offset' => $nextOffset,
+            'next_offset' => $offset,
         );
     }
 
@@ -126,7 +122,8 @@ class CollectionApi extends SugarApi
             $linkName = $link['name'];
             if ($args['offset'][$linkName] >= 0) {
                 $linkArgs = $this->getLinkArguments($api, $args, $bean, $link, $sortFields[$linkName]);
-                $data[$linkName] = $this->getRelateApi()->filterRelated($api, $linkArgs);
+                $response = $this->getRelateApi()->filterRelated($api, $linkArgs);
+                $data[$linkName] = $response['records'];
             }
         }
 
@@ -342,25 +339,46 @@ class CollectionApi extends SugarApi
     }
 
     /**
-     * Create one-dimensional array of records from multiple arrays
+     * Sorts collection data by preserving original order of records of the same module and populates offset
+     * with the value corresponding to the next page 
      *
-     * @param array $data Multi-dimensional array of records retrieved from links
-     * @param array $nextOffset Associative array of next offset for each link
+     * @param array $data Collection data grouped by link
+     * @param array $spec Sorting specification
+     * @param int $limit Maximum number of resulting records 
+     * @param array $offset Current offset which gets replaced with the next value
      *
-     * @return array Flattened array
+     * @return array Plain list of records
      */
-    protected function flattenData(array $data, &$nextOffset)
+    protected function sortData(array $data, array $spec, $limit, array &$offset)
     {
-        $flattened = array();
-        foreach ($data as $linkName => $response) {
-            foreach ($response['records'] as $record) {
-                $record['_link'] = $linkName;
-                $flattened[] = $record;
+        $comparator = $this->getLinkDataComparator($spec);
+
+        // put link name into every record
+        foreach ($data as $linkName => $records) {
+            foreach ($records as $i => $record) {
+                $data[$linkName][$i]['_link'] = $linkName;
             }
-            $nextOffset[$linkName] = $response['next_offset'];
         }
 
-        return $flattened;
+        $records = array();
+        while (count($records) < $limit) {
+            uasort($data, $comparator);
+            $linkName = key($data);
+            $record = array_shift($data[$linkName]);
+            if (!$record) {
+                break;
+            }
+            $records[] = $record;
+            $offset[$linkName]++;
+        }
+
+        foreach ($offset as $linkName => $_) {
+            if (!count($data[$linkName])) {
+                $offset[$linkName] = -1;
+            }
+        }
+
+        return $records;
     }
 
     /**
@@ -487,18 +505,6 @@ class CollectionApi extends SugarApi
     }
 
     /**
-     * Sorts collection data
-     *
-     * @param array $records Collection records
-     * @param array $spec Sorting specification
-     */
-    protected function sortRecords(array &$records, array $spec)
-    {
-        $comparator = $this->getRecordComparator($spec);
-        usort($records, $comparator);
-    }
-
-    /**
      * Builds column comparison function
      *
      * @param array $map Map of link name to field name for the given alias
@@ -565,40 +571,26 @@ class CollectionApi extends SugarApi
     }
 
     /**
-     * Generates the value of new offset based on initial offset and the set of records being returned
+     * Builds function for sorting links data by first record in order to decide which link to take the record from
      *
-     * @param array $offset Initial value of offset
-     * @param array $records Returned records
-     * @param array $nextOffset Collection of offsets returned by Relate API
-     * @param array $remainder Not returned records
+     * @param array $spec
      *
-     * @return array New value of offset
+     * @return callable
      */
-    protected function getNextOffset(array $offset, array $records, array $nextOffset, array $remainder)
+    protected function getLinkDataComparator(array $spec)
     {
-        $returned = $truncated = array();
+        $recordComparator = $this->getRecordComparator($spec);
 
-        foreach ($nextOffset as $linkName => $_) {
-            $returned[$linkName] = 0;
-        }
-
-        foreach ($records as $record) {
-            $returned[$record['_link']]++;
-        }
-
-        foreach ($remainder as $record) {
-            $truncated[$record['_link']] = true;
-        }
-
-        foreach ($offset as $linkName => $value) {
-            if (!isset($nextOffset[$linkName])) {
-                $nextOffset[$linkName] = $value;
-            } elseif (isset($truncated[$linkName])) {
-                $nextOffset[$linkName] = $offset[$linkName] + $returned[$linkName];
+        return function ($a, $b) use ($recordComparator) {
+            $countA = count($a);
+            $countB = count($b);
+            if (!$countA || !$countB) {
+                // non-empty array should go first
+                return $countB - $countA;
             }
-        }
 
-        return $nextOffset;
+            return $recordComparator($a[0], $b[0]);
+        };
     }
 
     /**

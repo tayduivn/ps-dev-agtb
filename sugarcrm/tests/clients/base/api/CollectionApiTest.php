@@ -34,10 +34,14 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $relateApi->expects($this->exactly(2))
             ->method('filterRelated')
             ->will($this->onConsecutiveCalls(array(
-                array('name' => 'a'),
+                'records' => array(
+                    array('name' => 'a'),
+                ),
             ), array(
-                array('name' => 'c1'),
-                array('name' => 'c2'),
+                'records' => array(
+                    array('name' => 'c1'),
+                    array('name' => 'c2'),
+                ),
             )));
 
         /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
@@ -443,266 +447,197 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider flattenDataProvider
+     * @dataProvider sortDataProvider
      */
-    public function testFlattenData(array $data, array $expectedRecords, array $expectedNextOffset)
-    {
+    public function testSortData(
+        array $data,
+        array $spec,
+        $limit,
+        array $offset,
+        array $expectedRecords,
+        array $expectedNextOffset
+    ) {
+        $this->assertNotEquals($expectedNextOffset, $offset);
+
         $records = SugarTestReflection::callProtectedMethod(
             $this->api,
-            'flattenData',
-            array($data, &$nextOffset)
+            'sortData',
+            array($data, $spec, $limit, &$offset)
         );
 
         $this->assertEquals($expectedRecords, $records);
-        $this->assertEquals($expectedNextOffset, $nextOffset);
+        $this->assertEquals($expectedNextOffset, $offset);
     }
 
-    public static function flattenDataProvider()
-    {
-        return array(
-            array(
-                array(
-                    'a' => array(
-                        'records' => array(
-                            array('name' => 'A'),
-                            array('name' => 'B'),
-                        ),
-                        'next_offset' => 2,
-                    ),
-                    'b' => array(
-                        'records' => array(
-                            array('title' => 'C'),
-                        ),
-                        'next_offset' => -1,
-                    ),
-                ),
-                array(
-                    array(
-                        'name' => 'A',
-                        '_link' => 'a',
-                    ),
-                    array(
-                        'name' => 'B',
-                        '_link' => 'a',
-                    ),
-                    array(
-                        'title' => 'C',
-                        '_link' => 'b',
-                    ),
-                ),
-                array(
-                    'a' => 2,
-                    'b' => -1,
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @dataProvider getNextOffsetProvider
-     */
-    public function testgetNextOffset(
-        array $offset,
-        array $records,
-        array $nextOffset,
-        array $remainder,
-        array $expected
-    ) {
-        $actual = SugarTestReflection::callProtectedMethod(
-            $this->api,
-            'getNextOffset',
-            array($offset, $records, $nextOffset, $remainder)
-        );
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public static function getNextOffsetProvider()
-    {
-        return array(
-            array(
-                array(
-                    'a' => 1,
-                    'b' => 1,
-                    'c' => -1,
-                ),
-                array(
-                    array(
-                        '_link' => 'a',
-                    ),
-                    array(
-                        '_link' => 'b',
-                    ),
-                ),
-                array(
-                    'a' => 3,
-                    'b' => -1,
-                ),
-                array(
-                    array(
-                        '_link' => 'a',
-                    ),
-                ),
-                array(
-                    // requested from: 1, returned: 1, truncated: yes => 1 + 1 = 2 (ignore next offset from link)
-                    'a' => 2,
-                    // requested from: 1, returned: 1, truncated: no => -1 (use next offset from link)
-                    'b' => -1,
-                    // requested from: -1 => -1 (return original value)
-                    'c' => -1,
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @dataProvider sortRecordsProvider
-     */
-    public function testSortRecords(array $records, array $spec, array $expected)
-    {
-        $actual = $records;
-        SugarTestReflection::callProtectedMethod(
-            $this->api,
-            'sortRecords',
-            array(&$actual, $spec)
-        );
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function sortRecordsProvider()
+    public function sortDataProvider()
     {
         return array(
             'strings' => array(
                 array(
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
+                    'l1' => array(
+                        array(
+                            'a' => 'x',
+                        ),
+                        array(
+                            'a' => 'z',
+                        ),
                     ),
-                    array(
-                        'a' => 'z',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'Y',
-                        '_link' => 'l',
+                    'l2' => array(
+                        array(
+                            'a' => 'Y',
+                        ),
                     ),
                 ),
                 array(
                     array(
                         'map' => array(
-                            'l' => array('a'),
+                            'l1' => array('a'),
+                            'l2' => array('a'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
                     )
                 ),
+                3,
                 array(
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'Y',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'z',
-                        '_link' => 'l',
-                    ),
+                    'l1' => 0,
+                    'l2' => 0,
                 ),
-            ),
-            'numbers' => array(
-                array(
-                    array(
-                        'a' => '10',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => '100',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => '11',
-                        '_link' => 'l',
-                    ),
-                ),
-                array(
-                    array(
-                        'map' => array(
-                            'l' => array('a'),
-                        ),
-                        'is_numeric' => true,
-                        'direction' => true,
-                    )
-                ),
-                array(
-                    array(
-                        'a' => '10',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => '11',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => '100',
-                        '_link' => 'l',
-                    ),
-                ),
-            ),
-            'reverse' => array(
-                array(
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'z',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'Y',
-                        '_link' => 'l',
-                    ),
-                ),
-                array(
-                    array(
-                        'map' => array(
-                            'l' => array('a'),
-                        ),
-                        'is_numeric' => false,
-                        'direction' => false,
-                    )
-                ),
-                array(
-                    array(
-                        'a' => 'z',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'Y',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                ),
-            ),
-            'multiple-links-and-aliasing' => array(
                 array(
                     array(
                         'a' => 'x',
                         '_link' => 'l1',
                     ),
                     array(
-                        'b' => 'z',
+                        'a' => 'Y',
                         '_link' => 'l2',
                     ),
                     array(
-                        'c' => 'y',
-                        '_link' => 'l3',
+                        'a' => 'z',
+                        '_link' => 'l1',
+                    ),
+                ),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
+                ),
+            ),
+            'numbers' => array(
+                array(
+                    'l1' => array(
+                        array(
+                            'a' => '10',
+                        ),
+                        array(
+                            'a' => '100',
+                        ),
+                    ),
+                    'l2' => array(
+                        array(
+                            'a' => '11',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'l1' => array('a'),
+                            'l2' => array('a'),
+                        ),
+                        'is_numeric' => true,
+                        'direction' => true,
+                    )
+                ),
+                3,
+                array(
+                    'l1' => 0,
+                    'l2' => 0,
+                ),
+                array(
+                    array(
+                        'a' => '10',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => '11',
+                        '_link' => 'l2',
+                    ),
+                    array(
+                        'a' => '100',
+                        '_link' => 'l1',
+                    ),
+                ),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
+                ),
+            ),
+            'reverse' => array(
+                array(
+                    'l1' => array(
+                        array(
+                            'a' => 'z',
+                        ),
+                        array(
+                            'a' => 'x',
+                        ),
+                    ),
+                    'l2' => array(
+                        array(
+                            'a' => 'Y',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'l1' => array('a'),
+                            'l2' => array('a'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => false,
+                    )
+                ),
+                3,
+                array(
+                    'l1' => 0,
+                    'l2' => 0,
+                ),
+                array(
+                    array(
+                        'a' => 'z',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'Y',
+                        '_link' => 'l2',
+                    ),
+                    array(
+                        'a' => 'x',
+                        '_link' => 'l1',
+                    ),
+                ),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
+                ),
+            ),
+            'multiple-links-and-aliasing' => array(
+                array(
+                    'l1' => array(
+                        array(
+                            'a' => 'x',
+                        ),
+                    ),
+                    'l2' => array(
+                        array(
+                            'b' => 'z',
+                        ),
+                    ),
+                    'l3' => array(
+                        array(
+                            'c' => 'y',
+                        ),
                     ),
                 ),
                 array(
@@ -716,6 +651,12 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'direction' => true,
                     )
                 ),
+                3,
+                array(
+                    'l1' => 0,
+                    'l2' => 0,
+                    'l3' => 0,
+                ),
                 array(
                     array(
                         'a' => 'x',
@@ -730,108 +671,91 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         '_link' => 'l2',
                     ),
                 ),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
+                    'l3' => -1,
+                ),
             ),
             'multiple-columns' => array(
                 array(
-                    array(
-                        'a' => 'x',
-                        'b' => 'y',
-                        '_link' => 'l',
+                    'l1' => array(
+                        array(
+                            'a' => 'x',
+                            'b' => 'x',
+                        ),
+                        array(
+                            'a' => 'y',
+                            'b' => 'y',
+                        ),
                     ),
+                    'l2' => array(
+                        array(
+                            'a' => 'x',
+                            'b' => 'y',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'l1' => array('a'),
+                            'l2' => array('a'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    ),
+                    array(
+                        'map' => array(
+                            'l1' => array('b'),
+                            'l2' => array('b'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    ),
+                ),
+                3,
+                array(
+                    'l1' => 0,
+                    'l2' => 0,
+                ),
+                array(
                     array(
                         'a' => 'x',
                         'b' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'y',
-                        'b' => 'y',
-                        '_link' => 'l',
-                    ),
-                ),
-                array(
-                    array(
-                        'map' => array(
-                            'l' => array('a'),
-                        ),
-                        'is_numeric' => false,
-                        'direction' => true,
-                    ),
-                    array(
-                        'map' => array(
-                            'l' => array('b'),
-                        ),
-                        'is_numeric' => false,
-                        'direction' => true,
-                    ),
-                ),
-                array(
-                    array(
-                        'a' => 'x',
-                        'b' => 'x',
-                        '_link' => 'l',
+                        '_link' => 'l1',
                     ),
                     array(
                         'a' => 'x',
                         'b' => 'y',
-                        '_link' => 'l',
+                        '_link' => 'l2',
                     ),
                     array(
                         'a' => 'y',
                         'b' => 'y',
-                        '_link' => 'l',
-                    ),
-                ),
-            ),
-            'equal-records' => array(
-                array(
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'y',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
+                        '_link' => 'l1',
                     ),
                 ),
                 array(
-                    array(
-                        'map' => array(
-                            'l' => array('a'),
-                        ),
-                        'is_numeric' => false,
-                        'direction' => true,
-                    ),
-                ),
-                array(
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'x',
-                        '_link' => 'l',
-                    ),
-                    array(
-                        'a' => 'y',
-                        '_link' => 'l',
-                    ),
+                    'l1' => -1,
+                    'l2' => -1,
                 ),
             ),
             'multiple-fields-in-sort-on' => array(
                 array(
-                    array(
-                        'name' => 'General Electric',
-                        '_link' => 'accounts',
+                    'accounts' => array(
+                        array(
+                            'name' => 'Alpha Bank',
+                        ),
+                        array(
+                            'name' => 'General Electric',
+                        ),
                     ),
-                    array(
-                        'first_name' => 'John',
-                        'last_name' => 'Doe',
-                        '_link' => 'contacts',
+                    'contacts' => array(
+                        array(
+                            'first_name' => 'John',
+                            'last_name' => 'Doe',
+                        ),
                     ),
                 ),
                 array(
@@ -844,7 +768,16 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'direction' => true,
                     ),
                 ),
+                3,
                 array(
+                    'accounts' => 0,
+                    'contacts' => 0,
+                ),
+                array(
+                    array(
+                        'name' => 'Alpha Bank',
+                        '_link' => 'accounts',
+                    ),
                     array(
                         'first_name' => 'John',
                         'last_name' => 'Doe',
@@ -854,6 +787,116 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'name' => 'General Electric',
                         '_link' => 'accounts',
                     ),
+                ),
+                array(
+                    'accounts' => -1,
+                    'contacts' => -1,
+                ),
+            ),
+            'limit-and-offset' => array(
+                array(
+                    'l1' => array(
+                        array(
+                            'a' => 'a',
+                        ),
+                        array(
+                            'a' => 'c',
+                        ),
+                    ),
+                    'l2' => array(
+                        array(
+                            'a' => 'b',
+                        ),
+                        array(
+                            'a' => 'd',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'l1' => array('a'),
+                            'l2' => array('a'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    )
+                ),
+                2,
+                array(
+                    'l1' => 1,
+                    'l2' => 2,
+                ),
+                array(
+                    array(
+                        'a' => 'a',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'b',
+                        '_link' => 'l2',
+                    ),
+                ),
+                array(
+                    'l1' => 2,
+                    'l2' => 3,
+                ),
+            ),
+            'database-order-preserved' => array(
+                array(
+                    'l1' => array(
+                        array(
+                            'a' => 'ä',
+                        ),
+                        array(
+                            'a' => 'a',
+                        ),
+                    ),
+                    'l2' => array(
+                        array(
+                            'a' => 'ü',
+                        ),
+                        array(
+                            'a' => 'u',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'l1' => array('a'),
+                            'l2' => array('a'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    )
+                ),
+                4,
+                array(
+                    'l1' => 0,
+                    'l2' => 0,
+                ),
+                array(
+                    array(
+                        'a' => 'ä',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'a',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'ü',
+                        '_link' => 'l2',
+                    ),
+                    array(
+                        'a' => 'u',
+                        '_link' => 'l2',
+                    ),
+                ),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
                 ),
             ),
         );
