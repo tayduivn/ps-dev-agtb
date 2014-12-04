@@ -73,7 +73,7 @@
 <script type="text/javascript">
     var SBPM_CASE_ID = '{$caseData.cas_id}';
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.libraries.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.jcore.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.ui.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/get_process_image.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.libraries.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.jcore.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.ui.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>

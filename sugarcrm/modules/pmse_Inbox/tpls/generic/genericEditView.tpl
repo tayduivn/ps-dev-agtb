@@ -73,9 +73,9 @@
 </table>
 </div>
 </form>
-<script type="text/javascript" src='{sugar_getjspath file="$modulePath/js/pmse.libraries.js"}'></script>
-<script type="text/javascript" src='{sugar_getjspath file="$modulePath/js/pmse.jcore.js"}'></script>
-<script type="text/javascript" src='{sugar_getjspath file="$modulePath/js/pmse.ui.js"}'></script>
+<script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/pmse.libraries.min.js"}'></script>
+<script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/pmse.jcore.min.js"}'></script>
+<script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/pmse.ui.min.js"}'></script>
 {$script}
 
 <script type="text/javascript">
