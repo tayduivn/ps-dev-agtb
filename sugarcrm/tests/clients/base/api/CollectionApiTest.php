@@ -68,6 +68,10 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array('name' => 'a'),
                 array('name' => 'b'),
                 array('name' => 'c'),
+            ), array(
+                'a' => array(),
+                'b' => array(),
+                'c' => array(),
             ))
         );
 
@@ -85,14 +89,14 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider getLinkArgumentsProvider
      */
-    public function testGetLinkArguments(array $args, array $link, array $expected)
+    public function testGetLinkArguments(array $args, array $link, $sortFields, array $expected)
     {
         $service = SugarTestRestUtilities::getRestServiceMock();
         $bean = new SugarBean();
         $actual = SugarTestReflection::callProtectedMethod(
             $this->api,
             'getLinkArguments',
-            array($service, $args, $bean, $link)
+            array($service, $args, $bean, $link, $sortFields)
         );
 
         $this->assertEquals($expected, $actual);
@@ -103,7 +107,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(
                 array(
-                    'fields' => 'alias,another_field',
+                    'fields' => array('alias', 'another_field'),
                     'filter' => array(
                         '$or' => array(
                             'alias' => 'a',
@@ -125,8 +129,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'alias' => 'field',
                     ),
                 ),
+                array('sort_field'),
                 array(
-                    'fields' => 'field,another_field',
+                    'fields' => array('field', 'another_field', 'sort_field'),
                     'filter' => array(
                         '$or' => array(
                             'field' => 'a',
@@ -585,7 +590,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
-                        'map' => array('l' => 'a'),
+                        'map' => array(
+                            'l' => array('a'),
+                        ),
                         'is_numeric' => false,
                         'direction' => true,
                     )
@@ -622,7 +629,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
-                        'map' => array('l' => 'a'),
+                        'map' => array(
+                            'l' => array('a'),
+                        ),
                         'is_numeric' => true,
                         'direction' => true,
                     )
@@ -659,7 +668,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
-                        'map' => array('l' => 'a'),
+                        'map' => array(
+                            'l' => array('a'),
+                        ),
                         'is_numeric' => false,
                         'direction' => false,
                     )
@@ -697,9 +708,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     array(
                         'map' => array(
-                            'l1' => 'a',
-                            'l2' => 'b',
-                            'l3' => 'c',
+                            'l1' => array('a'),
+                            'l2' => array('b'),
+                            'l3' => array('c'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
@@ -741,14 +752,14 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     array(
                         'map' => array(
-                            'l' => 'a',
+                            'l' => array('a'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
                     ),
                     array(
                         'map' => array(
-                            'l' => 'b',
+                            'l' => array('b'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
@@ -790,7 +801,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     array(
                         'map' => array(
-                            'l' => 'a',
+                            'l' => array('a'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
@@ -808,6 +819,40 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     array(
                         'a' => 'y',
                         '_link' => 'l',
+                    ),
+                ),
+            ),
+            'multiple-fields-in-sort-on' => array(
+                array(
+                    array(
+                        'name' => 'General Electric',
+                        '_link' => 'accounts',
+                    ),
+                    array(
+                        'first_name' => 'John',
+                        'last_name' => 'Doe',
+                        '_link' => 'contacts',
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            'accounts' => array('name'),
+                            'contacts' => array('last_name', 'first_name'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    ),
+                ),
+                array(
+                    array(
+                        'first_name' => 'John',
+                        'last_name' => 'Doe',
+                        '_link' => 'contacts',
+                    ),
+                    array(
+                        'name' => 'General Electric',
+                        '_link' => 'accounts',
                     ),
                 ),
             ),
@@ -1020,9 +1065,9 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider mergeRequestFieldsAndSortFieldsProvider
+     * @dataProvider getAdditionalSortFieldsProvider
      */
-    public function testMergeRequestFieldsAndSortFields($args, $expected)
+    public function testGetAdditionalSortFields(array $args, array $links, array $sortSpec, array $expected)
     {
 
         /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
@@ -1032,41 +1077,63 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actual = SugarTestReflection::callProtectedMethod(
             $api,
-            'mergeRequestFieldsAndSortFields',
-            array($args)
+            'getAdditionalSortFields',
+            array($args, $links, $sortSpec)
         );
 
-        $this->assertEquals($expected, $actual,'Merged array does not contain the desired elements');
+        $this->assertEquals($expected, $actual, 'Incorrect additional sort fields generated');
 
     }
 
-    public static function mergeRequestFieldsAndSortFieldsProvider()
+    public static function getAdditionalSortFieldsProvider()
     {
         return array(
+            array(
                 array(
-                    array('fields' => array('id','title'), 'order_by' =>  array('name' => true)),
-                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true), 'addedRequestFields' => array('name'))
+                    'fields' => array('id', 'name', 'date_entered'),
                 ),
                 array(
-                    array('fields' => array('id','title'), 'order_by' =>  array('name' => false)),
-                    array('fields' => array('id','title','name'), 'order_by' => array('name' => false), 'addedRequestFields' => array('name'))
+                    array(
+                        'name' => 'accounts',
+                    ),
+                    array(
+                        'name' => 'contacts',
+                    ),
                 ),
                 array(
-                    array('fields' => array('id','title','name'), 'order_by' =>  array('name' => true)),
-                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true))
+                    array(
+                        'map' => array(
+                            'accounts' => array(),
+                            'contacts' => array(
+                                'last_name',
+                            ),
+                        ),
+                    ),
+                    array(
+                        'map' => array(
+                            'accounts' => array(
+                                'date_entered',
+                            ),
+                            'contacts' => array(
+                                'date_entered',
+                            ),
+                        ),
+                    ),
                 ),
                 array(
-                    array('fields' => array('id','title'), 'order_by' =>  array('name' => true, 'id' => true)),
-                    array('fields' => array('id','title','name'), 'order_by' => array('name' => true, 'id' => true), 'addedRequestFields' => array('name'))
+                    'accounts' => array(),
+                    'contacts' => array(
+                        'last_name',
+                    ),
                 ),
+            ),
         );
-
     }
 
     /**
      * @dataProvider cleanDataProvider
      */
-    public function testCleanData($records, $args, $expected)
+    public function testCleanData($records, $sortFields, $expected)
     {
 
         /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
@@ -1077,7 +1144,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $api,
             'cleanData',
-            array($records, $args)
+            array($records, $sortFields)
         );
 
         $this->assertEquals($expected, $actual,'Unrequested fields not removed from return data.');
@@ -1087,20 +1154,40 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                array(array('id' => 123, 'title' => 'Sales Executive', 'name' => 'John Smith'),
-                      array('id' => 456, 'title' => 'Sgr Manager', 'name' => 'Peter Hanks')),
-                array('addedRequestFields' => array('name')),
-                array(array('id' => 123, 'title' => 'Sales Executive'),
-                      array('id' => 456, 'title' => 'Sgr Manager'))
+                array(
+                    array(
+                        'id' => 123,
+                        'title' => 'Sales Executive',
+                        'name' => 'John Smith',
+                        'last_name' => 'Smith',
+                        '_link' => 'contacts',
+                    ),
+                    array(
+                        'id' => 456,
+                        'title' => 'Sgr Manager',
+                        'name' => 'Peter Hanks',
+                        '_link' => 'users',
+                    ),
+                ),
+                array(
+                    'contacts' => array('last_name'),
+                    'users' => array(),
+                ),
+                array(
+                    array(
+                        'id' => 123,
+                        'title' => 'Sales Executive',
+                        'name' => 'John Smith',
+                        '_link' => 'contacts',
+                    ),
+                    array(
+                        'id' => 456,
+                        'title' => 'Sgr Manager',
+                        'name' => 'Peter Hanks',
+                        '_link' => 'users',
+                    ),
+                ),
             ),
-            array(
-                array(array('id' => 123, 'title' => 'Sales Executive', 'name' => 'John Smith'),
-                      array('id' => 456, 'title' => 'Sgr Manager', 'name' => 'Peter Hanks')),
-                array('addedRequestFields' => array('name','title')),
-                array(array('id' => 123),
-                      array('id' => 456))
-            ),
-
         );
     }
 }

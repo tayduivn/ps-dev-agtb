@@ -79,13 +79,13 @@ class CollectionApi extends SugarApi
 
         $definition = $this->getCollectionDefinition($bean, $args['collection_name']);
         $args = $this->normalizeArguments($args, $definition);
-        // merge requested fields and sort fields into a single list
-        $args = $this->mergeRequestFieldsAndSortFields($args);
-
-        $data = $this->getData($api, $args, $bean, $definition['links']);
-        $allRecords = $this->flattenData($data, $nextOffset);
 
         $sortSpec = $this->getSortSpec($bean, $definition['links'], $args['order_by']);
+        $sortFields = $this->getAdditionalSortFields($args, $definition['links'], $sortSpec);
+
+        $data = $this->getData($api, $args, $bean, $definition['links'], $sortFields);
+        $allRecords = $this->flattenData($data, $nextOffset);
+
         $this->sortRecords($allRecords, $sortSpec);
 
         $records = array_slice($allRecords, 0, $args['max_num']);
@@ -93,7 +93,7 @@ class CollectionApi extends SugarApi
         $nextOffset = $this->getNextOffset($args['offset'], $records, $nextOffset, $remainder);
 
         // remove unwanted fields from the data
-        $records = $this->cleanData($records, $args);
+        $records = $this->cleanData($records, $sortFields);
 
         return array(
             'records' => $records,
@@ -108,18 +108,24 @@ class CollectionApi extends SugarApi
      * @param array $args API arguments
      * @param SugarBean $bean Primary bean
      * @param array $links Collection link definitions
+     * @param array $sortFields Additional fields required for client side sort
      *
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionNotFound
      */
-    protected function getData(ServiceBase $api, array $args, SugarBean $bean, array $links)
-    {
+    protected function getData(
+        ServiceBase $api,
+        array $args,
+        SugarBean $bean,
+        array $links,
+        array $sortFields
+    ) {
         $data = array();
         foreach ($links as $link) {
             $linkName = $link['name'];
             if ($args['offset'][$linkName] >= 0) {
-                $linkArgs = $this->getLinkArguments($api, $args, $bean, $link);
+                $linkArgs = $this->getLinkArguments($api, $args, $bean, $link, $sortFields[$linkName]);
                 $data[$linkName] = $this->getRelateApi()->filterRelated($api, $linkArgs);
             }
         }
@@ -134,27 +140,37 @@ class CollectionApi extends SugarApi
      * @param array $args CollectionApi arguments
      * @param SugarBean $bean Primary bean
      * @param array $link Collection link definition
+     * @param array $sortFields Additional fields required for client side sort
      *
      * @return array RelateApi arguments
      */
-    protected function getLinkArguments(ServiceBase $api, array $args, SugarBean $bean, array $link)
-    {
+    protected function getLinkArguments(
+        ServiceBase $api,
+        array $args,
+        SugarBean $bean,
+        array $link,
+        array $sortFields
+    ) {
         $args = array_merge($args, array(
             'link_name' => $link['name'],
             'offset' => $args['offset'][$link['name']],
         ));
 
+        $fields = $this->getFieldsFromArgs($api, $args, $bean);
+
         if (isset($link['field_map'])) {
-            $fields = $this->getFieldsFromArgs($api, $args, $bean);
-            if ($fields) {
-                $args['fields'] = implode(',', $this->mapFields($fields, $link['field_map']));
-            }
+            $fields = $this->mapFields($fields, $link['field_map']);
             if (isset($args['filter'])) {
                 $args['filter'] = $this->mapFilter($args['filter'], $link['field_map']);
             }
             $args['order_by'] = $this->mapOrderBy($args['order_by'], $link['field_map']);
         }
 
+        if (count($fields) > 0 && count($sortFields) > 0) {
+            $fields = array_merge($fields, $sortFields);
+        }
+
+        $args['fields'] = $fields;
         $args['order_by'] = $this->formatOrderBy($args['order_by']);
 
         // view name is only applicable to primary module, and it doesn't make
@@ -392,8 +408,6 @@ class CollectionApi extends SugarApi
                     $field = $alias;
                 }
 
-                $map[$linkName] = $field;
-
                 $fieldDef = $relatedBean->getFieldDefinition($field);
                 if (!$fieldDef) {
                     // do not display alias since it may come from API arguments
@@ -406,6 +420,17 @@ class CollectionApi extends SugarApi
                 } else {
                     // assume field is varchar in case type is not specified
                     $isFieldNumeric = false;
+                }
+
+                if (isset($fieldDef['sort_on'])) {
+                    if ($isFieldNumeric && count($fieldDef['sort_on']) > 1) {
+                        throw new SugarApiExceptionError(
+                            'Cannot use "sort_on" more than one columns for numeric fields in collections'
+                        );
+                    }
+                    $map[$linkName] = (array) $fieldDef['sort_on'];
+                } else {
+                    $map[$linkName] = array($field);
                 }
 
                 if ($isNumeric === null) {
@@ -425,6 +450,40 @@ class CollectionApi extends SugarApi
         }
 
         return $spec;
+    }
+
+    /**
+     * Returns additional fields needed for client side sorting
+     *
+     * @param array $args API arguments
+     * @param array $links Collection link definitions
+     * @param array $sortSpec Sorting specification
+     *
+     * @return array Map of link names to their additional fields
+     */
+    protected function getAdditionalSortFields(array $args, $links, array $sortSpec)
+    {
+        $result = array();
+
+        // make sure result contains entry for every link in order to make less checks in future
+        foreach ($links as $link) {
+            $result[$link['name']] = array();
+        }
+
+        if (!empty($args['fields'])) {
+            foreach ($sortSpec as $column) {
+                foreach ($column['map'] as $linkName => $sortFields) {
+                    $addedFields = array_diff($sortFields, $args['fields']);
+                    foreach ($addedFields as $addedField) {
+                        $result[$linkName][$addedField] = true;
+                    }
+                }
+            }
+        }
+
+        $result = array_map('array_keys', $result);
+
+        return $result;
     }
 
     /**
@@ -454,12 +513,23 @@ class CollectionApi extends SugarApi
             return $a - $b;
         } : $this->collator;
 
+        $getValue = function ($row, $fields) {
+            // do not concat values in case there's only one field in order to preserve value type
+            if (count($fields) == 1) {
+                return $row[$fields[0]];
+            } else {
+                return implode(' ', array_map(function ($field) use ($row) {
+                    return $row[$field];
+                }, $fields));
+            }
+        };
+
         $factor = $direction ? 1 : -1;
 
-        return function ($a, $b) use ($comparator, $map, $factor) {
+        return function ($a, $b) use ($comparator, $map, $getValue, $factor) {
             return $comparator(
-                $a[$map[$a['_link']]],
-                $b[$map[$b['_link']]]
+                $getValue($a, $map[$a['_link']]),
+                $getValue($b, $map[$b['_link']])
             ) * $factor;
         };
     }
@@ -688,70 +758,21 @@ class CollectionApi extends SugarApi
     }
 
     /**
-     * Merge Requested Fields and Sort By Fields into a single list so that they can be retrieved from the db.
-     * @param array $args
-     * @return array $args Modified args is returned back. 'fields' is modified and 'addedRequestFields' is added
-     */
-    protected function mergeRequestFieldsAndSortFields(array $args)
-    {
-
-        // array to store fields that were added to the original fields list
-        // This array is needed so that we can cleanup the output by deleting these added Fields
-        // which were not requested in the initial call. These "added" fields will be used just
-        // for sorting
-        $addedRequestFields = array();
-
-        if (isset($args['fields']) && isset($args['order_by'])) {
-            $fieldsArray = $args['fields'];
-            $orderByFieldsArray = array_keys($args['order_by']);
-            // make a single list of requested fields and sort by fields
-            $mergedFieldsArray = array_unique(array_merge($fieldsArray, $orderByFieldsArray));
-            // Store the single list back in the args array
-            $args['fields'] = $mergedFieldsArray;
-
-            // Populate the addedRequestFields array. If a field has been requested (e.g: name) and
-            // is also in the order_by arguments, then we should not add it to the below array.
-            // This is because we want to display the name in this case since it has been
-            // explicitly asked for. The below array will contain only those fields that need to be
-            // cleaned up before the output.
-            foreach ($orderByFieldsArray as $orderField) {
-                if (!in_array($orderField, $fieldsArray)) {
-                    $addedRequestFields[] = $orderField;
-                }
-            }
-
-            if (!empty($addedRequestFields)) {
-                $args['addedRequestFields'] = $addedRequestFields;
-            }
-        }
-
-        return $args;
-    }
-
-    /**
      * Clean up the data from unwanted fields that were not requested. For the purpose of sorting
      * we may have requested additional fields from the database. However these need not be
-     * displayed to the user. Hence remove all such fields which are contained in
-     * addedRequestFields variable in the args array.
+     * displayed to the user.
      *
-     * @param $recordsArray
-     * @param $args
+     * @param array $records Resulting set of records
+     * @param array $sortFields Additionally requested sort fields
      * @return array Modified Data Array is returned back
      */
-    protected function cleanData($recordsArray, $args)
+    protected function cleanData(array $records, array $sortFields)
     {
+        $fieldsToRemove = array_map('array_flip', $sortFields);
+        $records = array_map(function ($record) use ($fieldsToRemove) {
+            return array_diff_key($record, $fieldsToRemove[$record['_link']]);
+        }, $records);
 
-        if (isset($args['addedRequestFields'])) {
-            // make the field names to be removed as the 'keys'
-            $addedRequestFields = array_flip($args['addedRequestFields']);
-            // Loop through all records
-            foreach ($recordsArray as $k => $record) {
-                // Check if any addedRequestField occurs in the record. If so delete it.
-                $recordsArray[$k] = array_diff_key($record, $addedRequestFields);
-            }
-        }
-
-        return ($recordsArray);
-
+        return $records;
     }
 }
