@@ -154,6 +154,40 @@ describe('Base.Field.Fieldset', function() {
         });
     });
 
+    describe('render "No Data" for Accounts module', function() {
+        var field;
+
+        beforeEach(function() {
+            var fieldDef = {
+                readonly: true,
+                fields: [
+                    {
+                        name: 'date_created'
+                    },
+                    {
+                        name: 'date_modified'
+                    }
+                ]
+            };
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'nodata');
+
+            SugarTest.testMetadata.set();
+            field = SugarTest.createField('base', 'fieldset', 'fieldset', 'edit', fieldDef, 'Accounts');
+            field.render();
+        });
+
+        afterEach(function() {
+            field.dispose();
+            field = null;
+            Handlebars.templates = {};
+        });
+
+        it('should show "No Data" if readonly and its data fields have data', function() {
+            expect(field.$el.text().trim()).toEqual('LBL_NO_DATA');
+        });
+    });
+
     describe('setMode', function() {
         var field;
 
