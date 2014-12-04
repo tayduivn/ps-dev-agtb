@@ -244,60 +244,210 @@ describe('Data.Base.FiltersBean', function() {
     });
 
     describe('buildSearchTermFilter', function() {
-
-        using('different metadata and terms', [
+        using('different search terms to match a contact "Luis Filipe Madeira Caeiro Figo"', [
             {
-                quickSearchMetadata: {
-                    fieldNames: ['aField'],
-                    splitTerm: false
-                },
-                term: 'aTerm',
-                expectedFilterDef: [{'aField': {$starts: 'aTerm'}}]
-            },
-            {
-                quickSearchMetadata: {
-                    fieldNames: ['first_name', 'last_name'],
-                    splitTerms: true
-                },
-                term: 'Cli',
-                expectedFilterDef: [{
+                case: 'First part of first name',
+                searchValue: 'Luis',
+                expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Cli'}},
-                        {last_name: {$starts: 'Cli'}}
+                        {first_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Luis'}}
                     ]
                 }]
-            },
+            }, {
+                case: 'First 2 parts of first name',
+                searchValue: 'Luis Filipe',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Luis Filipe'}}
+                    ]
+                }]
+            }, {
+                case: 'First name',
+                searchValue: 'Luis Filipe Madeira',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
+                    ]
+                }]
+            }, {
+                case: 'First part of last name',
+                searchValue: 'Caeiro',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Caeiro'}}
+                    ]
+                }]
+            }, {
+                case: 'Last name',
+                searchValue: 'Caeiro Figo',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {first_name: {$starts: 'Figo'}},
+                        {last_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Figo'}},
+                        {first_name: {$starts: 'Caeiro Figo'}},
+                        {last_name: {$starts: 'Caeiro Figo'}}
+                    ]
+                }]
+            }, {
+                case: 'Last name then first name',
+                searchValue: 'Caeiro Figo Luis',
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Caeiro'}},
+                        {first_name: {$starts: 'Figo Luis'}},
+                        {last_name: {$starts: 'Caeiro'}},
+                        {last_name: {$starts: 'Figo Luis'}},
+                        {first_name: {$starts: 'Caeiro Figo'}},
+                        {first_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Caeiro Figo'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Caeiro Figo Luis'}},
+                        {last_name: {$starts: 'Caeiro Figo Luis'}}
+                    ]
+                }]
+            }],
+            function(test) {
+                var tokens = test.searchValue.split(' ');
+                // Expected number of filters according to our algorithm
+                var expectedNumFilters = (tokens.length + tokens.length - 1) * 2;
+
+                it('should search by ' + test.case, function() {
+                    var filterDef;
+
+                    sinon.collection.stub(prototype, 'getModuleQuickSearchMeta')
+                        .returns({fieldNames: [['first_name', 'last_name']]});
+
+                    filterDef = prototype.buildSearchTermFilter('Contacts', test.searchValue);
+
+                    expect(filterDef[0].$or.length).toEqual(expectedNumFilters);
+                    expect(filterDef).toEqual(test.expectedFilter);
+                });
+            });
+
+        using('different quicksearch_field metadata', [
             {
-                quickSearchMetadata: {
-                    fieldNames: ['first_name', 'last_name'],
-                    splitTerms: true
-                },
-                term: 'Clint Oram',
-                expectedFilterDef: [{
-                    $and: [
-                        {first_name: {$starts: 'Clint'}},
-                        {last_name: {$starts: 'Oram'}}
+                case: 'Undefined',
+                meta: undefined,
+                expectedFilter: []
+            }, {
+                case: '1 Simple Field',
+                meta: ['simpleField1'],
+                expectedFilter: [{'simpleField1': {'$starts': 'Luis Filipe Madeira'}}]
+            }, {
+                case: '2 Simple Fields',
+                meta: ['simpleField1', 'simpleField2'],
+                expectedFilter: [
+                    {
+                        '$or': [
+                            {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                            {'simpleField2': {'$starts': 'Luis Filipe Madeira'}}
+                        ]
+                    }
+                ]
+            }, {
+                case: '1 Split Term Field',
+                meta: [['splitField1']],
+                expectedFilter: [{'splitField1': {'$starts': 'Luis Filipe Madeira'}}]
+            }, {
+                case: '1 Split Term Field composed of 2 Fields',
+                meta: [['first_name', 'last_name']],
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
                     ]
                 }]
-            },
-            {
-                quickSearchMetadata: {
-                    fieldNames: ['first_name', 'last_name'],
-                    splitTerms: true
-                },
-                term: 'Clint De Oram',
-                expectedFilterDef: [{
-                    $and: [
-                        {first_name: {$starts: 'Clint'}},
-                        {last_name: {$starts: 'De Oram'}}
+            }, {
+                case: '1 Simple Field, 1 Split Term Field',
+                meta: ['simpleField1', ['splitField1']],
+                expectedFilter: [{
+                    '$or': [
+                        {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                        {'splitField1': {'$starts': 'Luis Filipe Madeira'}}
                     ]
                 }]
+            }, {
+                case: '1 Simple Field, 1 Split Term Field composed of 2 Fields',
+                meta: ['simpleField1', ['first_name', 'last_name']],
+                expectedFilter: [{
+                    '$or': [
+                        {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
+                        {
+                            '$or': [
+                                {first_name: {$starts: 'Luis'}},
+                                {first_name: {$starts: 'Filipe Madeira'}},
+                                {last_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe Madeira'}},
+                                {first_name: {$starts: 'Luis Filipe'}},
+                                {first_name: {$starts: 'Madeira'}},
+                                {last_name: {$starts: 'Luis Filipe'}},
+                                {last_name: {$starts: 'Madeira'}},
+                                {first_name: {$starts: 'Luis Filipe Madeira'}},
+                                {last_name: {$starts: 'Luis Filipe Madeira'}}
+                            ]
+                        }
+                    ]
+                }]
+            }, {
+                case: '2 Split Term Fields',
+                meta: [['first_name', 'last_name'], ['splitField3', 'splitField4']],
+                expectedFilter: [{
+                    $or: [
+                        {first_name: {$starts: 'Luis'}},
+                        {first_name: {$starts: 'Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis'}},
+                        {last_name: {$starts: 'Filipe Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe'}},
+                        {first_name: {$starts: 'Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe'}},
+                        {last_name: {$starts: 'Madeira'}},
+                        {first_name: {$starts: 'Luis Filipe Madeira'}},
+                        {last_name: {$starts: 'Luis Filipe Madeira'}}
+                    ]
+                }]
+            }, {
+                case: '1 Split Term Field composed of 3 Fields',
+                meta: [['splitField1', 'splitField2', 'splitField3']],
+                expectedFilter: []
             }
-        ], function(dataSet) {
-            it('should build the filter definition', function() {
-                sinon.collection.stub(prototype, 'getModuleQuickSearchMeta').returns(dataSet.quickSearchMetadata);
-                var filterDef = prototype.buildSearchTermFilter(filterModuleName, dataSet.term);
-                expect(filterDef).toEqual(dataSet.expectedFilterDef);
+        ], function(test) {
+            var searchTerm = 'Luis Filipe Madeira';
+
+            it('should be valid with ' + test.case, function() {
+                var filterDef;
+
+                sinon.collection.stub(prototype, 'getModuleQuickSearchMeta')
+                    .returns({fieldNames: test.meta});
+
+                filterDef = prototype.buildSearchTermFilter('Accounts', searchTerm);
+
+                expect(filterDef).toEqual(test.expectedFilter);
             });
         });
 
@@ -316,6 +466,52 @@ describe('Data.Base.FiltersBean', function() {
                     ]}
                 ]
             }]);
+        });
+
+        it('should select the filter with the highest priority among multiple quick search filters', function() {
+            var expectedFilterFields = ['first_name', 'last_name'];
+            var unexpectedFilterFields = ['document_name', 'bazooka'];
+            var expectedSearchTerm = 'Blah';
+
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        basic: {
+                            meta: {
+                                quicksearch_field: ['name']
+                            },
+                            quicksearch_priority: 1
+                        },
+                        person: {
+                            meta: {
+                                quicksearch_field: expectedFilterFields,
+                                quicksearch_priority: 10 // Higher priority filter will be populated
+                            }
+                        },
+                        _default: {
+                            meta: {
+                                quicksearch_field: unexpectedFilterFields,
+                                quicksearch_priority: 2
+                            }
+                        }
+                    }
+                };
+            });
+
+            var actualFilter = prototype.buildSearchTermFilter('Accounts', expectedSearchTerm);
+            _.each(actualFilter, function(filter) {
+                expect(filter['$or']).toBeDefined();
+                expect(filter['$or'].length).toBe(expectedFilterFields.length);
+                _.each(filter['$or'], function(search_filter) {
+                    _.each(search_filter, function(term, field) {
+                        expect(_.indexOf(expectedFilterFields, field) >= 0).toBeTruthy();
+                        expect(_.indexOf(unexpectedFilterFields, field) >= 0).toBeFalsy();
+                        var actualTerm = term['$starts'];
+                        expect(actualTerm).toBeDefined();
+                        expect(actualTerm).toBe(expectedSearchTerm);
+                    });
+                });
+            }, this);
         });
     });
 
@@ -347,6 +543,37 @@ describe('Data.Base.FiltersBean', function() {
             it('should combine them and return a single filter', function() {
                 var filterDef = prototype.combineFilterDefinitions(dataSet.baseFilter, dataSet.searchTermFilter);
                 expect(filterDef).toEqual(dataSet.expectedFilterDef);
+            });
+        });
+    });
+
+    describe('_joinFilterDefs', function() {
+        var sampleFilterDef1 = {'name': {'$starts': 'value'}};
+        var sampleFilterDef2 = {
+            '$or': [
+                {'first_name': {'$starts': 'first name'}},
+                {'last_name': {'$starts': 'last name'}}
+            ]
+        };
+
+        it('should successfully join filter definitions passed in as individual parameters', function() {
+            var filterDef = prototype._joinFilterDefs('$or', sampleFilterDef1, sampleFilterDef2);
+            expect(filterDef).toEqual({
+                '$or': [
+                    sampleFilterDef1,
+                    sampleFilterDef2
+                ]
+            });
+        });
+
+        it('should successfully join filter definitions passed in as an array', function() {
+            var filterList = [sampleFilterDef1, sampleFilterDef2];
+            var filterDef = prototype._joinFilterDefs('$or', filterList);
+            expect(filterDef).toEqual({
+                '$or': [
+                    sampleFilterDef1,
+                    sampleFilterDef2
+                ]
             });
         });
     });
