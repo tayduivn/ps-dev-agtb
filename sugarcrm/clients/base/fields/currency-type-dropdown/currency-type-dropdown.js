@@ -81,8 +81,10 @@
 
             // Modules such as `Forecasts` uses models that aren't `Data.Bean`
             if (_.isFunction(this.model.setDefault)) {
-                this.model.setDefault(this.currencyIdFieldName, currencyFieldValue);
-                this.model.setDefault(this.baseRateFieldName, baseRateFieldValue);
+                var defaults = {};
+                defaults[this.currencyIdFieldName] = currencyFieldValue;
+                defaults[this.baseRateFieldName] = baseRateFieldValue;
+                this.model.setDefault(defaults);
             }
         }
 
