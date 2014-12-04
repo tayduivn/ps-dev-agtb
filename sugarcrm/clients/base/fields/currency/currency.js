@@ -72,10 +72,10 @@
 
             // Modules such as `Forecasts` uses models that aren't `Data.Bean`
             if (_.isFunction(this.model.setDefault)) {
-                this.model.setDefault({
-                    currencyField: currencyFieldValue,
-                    baseRateField: baseRateFieldValue
-                });
+                var defaults = {};
+                defaults[currencyField] = currencyFieldValue;
+                defaults[baseRateField] = baseRateFieldValue;
+                this.model.setDefault(defaults);
             }
         }
         // hide currency dropdown on list views
