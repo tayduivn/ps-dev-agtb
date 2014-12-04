@@ -321,6 +321,8 @@
         this.currentState.complete = true;
         this.context.trigger('lead:convert-panel:complete', this.meta.module, model);
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
+
+        app.alert.dismissAll('error');
         app.alert.show('panel_associate_complete', {
             level: 'success',
             title: app.lang.get('LBL_CONVERT_MODULE_ASSOCIATED', this.module, {moduleName:this.meta.moduleSingular}),
