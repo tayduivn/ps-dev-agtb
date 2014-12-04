@@ -395,7 +395,7 @@ class WorkFlowGlue {
             {
                 $eval_string .= build_source_array($parent_type, $type_object->lhs_field);
                 $eval_string .= " ".$this->operator_array[$type_object->operator]." ";
-                $eval_string .= " '".$this->write_escape($type_object->encrpyt_before_save($right_value))."'";
+                $eval_string .= " " . $this->write_escape($type_object->encrpyt_before_save($right_value));
                 $express_evaluated = true;
             }
 
@@ -407,7 +407,7 @@ class WorkFlowGlue {
 				$eval_string .= " " . $this->translateOperator($type_object->operator) . " ";
 
 				//escape the quotes as needed
-				$eval_string .= " '".$this->write_escape($right_value)."'";
+				$eval_string .= " " . $this->write_escape($right_value);
 
 
 
@@ -640,7 +640,7 @@ include_once("include/workflow/alert_utils.php");
 		// Get the id and the name.
 		while($row = $this->db->fetchByAssoc($result)){
 			///Start - Add the individual action components
-			$action_component_array .= "\t\t '".$row['field']."' => '".$this->write_escape($row['value'])."', \n";
+			$action_component_array .= "\t\t '" . $row['field'] . "' => " . $this->write_escape($row['value']) . ",\n";
 			if($row['ext1']!=""){
 				$action_component_array_ext .= "\t\t '".$row['field']."' => '".$row['ext1']."', \n";
 			}
@@ -669,7 +669,7 @@ include_once("include/workflow/alert_utils.php");
 		while($row = $this->db->fetchByAssoc($result)){
 			$action_component_array .= "\t '".$row['field']."' => array ( \n\n";
 			///Start - Add the individual action components
-				$action_component_array .= "\t\t\t 'value' => '".$this->write_escape($row['value'])."', \n";
+				$action_component_array .= "\t\t\t 'value' => " . $this->write_escape($row['value']) . ",\n";
 				$action_component_array .= "\t\t\t 'ext1' => '".$row['ext1']."', \n";
 				$action_component_array .= "\t\t\t 'ext2' => '".$row['ext2']."', \n";
 				$action_component_array .= "\t\t\t 'ext3' => '".$row['ext3']."', \n";
@@ -804,7 +804,7 @@ include_once("include/workflow/alert_utils.php");
 		$trigger_shell_array .= "\t '".$name."' => array ( \n\n";
 
 		foreach($sub_array as $key => $value){
-			$trigger_shell_array .= "\t\t '".$key."' => '".$this->write_escape($value)."', \n";
+			$trigger_shell_array .= "\t\t '" . $key . "' => " . $this->write_escape($value) . ",\n";
 		}
 
 		$trigger_shell_array .= "\t ), \n\n";
@@ -883,15 +883,14 @@ include_once("include/workflow/alert_utils.php");
 
 /////////////////////END PLUGIN GLUING FUNCTIONS/////////////////
 
-
-	function write_escape($value){
-
-		$target_value = html_entity_decode($value, ENT_QUOTES);
-		return addslashes($target_value);
-	//end function write_escape
-	}
-
-
-
-//end class WorkFlowGlue
+    /**
+     * Decode HTML values, and return the value for use in PHP, safe from injections
+     *
+     * @param $value - Value to be decoded/escaped
+     * @return string
+     */
+    public function write_escape($value) {
+        $target_value = html_entity_decode($value, ENT_QUOTES);
+        return "stripslashes('" . addslashes($target_value) . "')";
+    }
 }
