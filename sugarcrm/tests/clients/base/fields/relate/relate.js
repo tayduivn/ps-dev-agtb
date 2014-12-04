@@ -31,7 +31,8 @@ describe('Base.Field.Relate', function() {
 
         sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
             if (options.success) {
-                options.success();
+                var args = [].splice.call(arguments, 0);
+                options.success.call(this, args);
             }
         });
     });
@@ -510,14 +511,12 @@ describe('Base.Field.Relate', function() {
             var buildFilterDefinitionStub = sinon.collection.stub(field, 'buildFilterDefinition'),
                 queryObj = {
                     term: 'asdf',
-                    context: {
-                        fetch: sinon.collection.stub()
-                    }
+                    context: {}
                 };
 
             field.search(queryObj);
             expect(buildFilterDefinitionStub).toHaveBeenCalled();
-            expect(queryObj.context.fetch).toHaveBeenCalled();
+            expect(field.searchCollection.fetch).toHaveBeenCalled();
             field.dispose();
         });
     });
