@@ -261,7 +261,6 @@
     showComponent: function(name) {
         this._super('showComponent', [name]);
         if (this.currentToggle === this.TOGGLE_CREATE) {
-            this.createView.model.trigger('duplicate:field', this.convertLead);
             this.createViewRendered = true;
         }
         this.handleShowComponent();
@@ -477,8 +476,6 @@
             //not waiting on other modules before running dupe check, so mark as complete
             this.dupeCheckComplete();
         }
-
-        this.convertLead = model;
     },
 
     /**
@@ -500,8 +497,14 @@
         }, this);
 
         //mark the model as copied so that the currency field doesn't set currency_id to user's default value
-        if (hasChanged && model.has('currency_id')) {
-            this.createView.model.isCopied = true;
+        if (hasChanged) {
+            this.createView.once('render', function() {
+                this.createView.model.trigger('duplicate:field', model);
+            }, this);
+
+            if (model.has('currency_id')) {
+                this.createView.model.isCopied = true;
+            }
         }
 
         return hasChanged;

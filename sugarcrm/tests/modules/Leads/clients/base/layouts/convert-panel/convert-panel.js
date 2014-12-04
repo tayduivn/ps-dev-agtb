@@ -322,6 +322,88 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(dupeViewContextTriggerStub.callCount).toBe(0);
     });
 
+    it('should trigger duplicate:field on the model when attributes are copied from the leads model', function() {
+        var leadAttributes = {
+                north: 'Lead Value for NORTH',
+                picture: 'e11a95e3-3658-c6c4-73fc-5474eb6e1703'
+            },
+            leadModel = app.data.createBean('Leads', _.extend(leadAttributes, {
+                    _module: 'Leads'
+            })),
+            contactAttributes = {
+                north2: 'Contact Value for NORTH',
+                picture: ''
+            },
+            createModel = app.data.createBean('Contacts', _.extend(contactAttributes, {
+                _module: 'Contacts'
+            })),
+            fieldMappings = {
+                north2: 'north',
+                picture: 'picture'
+            };
+
+        layout.currentToggle = layout.TOGGLE_CREATE;
+        layout.meta.copyData = true;
+
+        layout.createView.model = createModel;
+        layout.createView.meta.useTabsAndPanels = true;
+
+        var createViewContextTriggerStub = sinon.stub(layout.createView.model, 'trigger');
+
+        sinon.collection.stub(app.metadata, 'getModule')
+            .withArgs('Leads', 'fields').returns(leadAttributes)
+            .withArgs('Contacts', 'fields').returns(contactAttributes);
+
+        layout.populateRecords(leadModel, fieldMappings);
+
+        expect(createModel.get('north2')).toEqual(leadAttributes.north);
+        expect(createModel.get('picture')).toEqual(leadAttributes.picture);
+
+        layout.handleShowComponent();
+        expect(createViewContextTriggerStub).toHaveBeenCalledWith('duplicate:field');
+
+        createViewContextTriggerStub.restore();
+    });
+
+    it('should not trigger duplicate:field on the model when no attributes copied from the leads model', function() {
+        var leadAttributes = {
+                north: 'Lead Value for NORTH',
+                picture: 'e11a95e3-3658-c6c4-73fc-5474eb6e1703'
+            },
+            leadModel = app.data.createBean('Leads', _.extend(leadAttributes, {
+                _module: 'Leads'
+            })),
+            contactAttributes = {
+                north2: 'Contact Value for NORTH',
+                picture: ''
+            },
+            createModel = app.data.createBean('Contacts', _.extend(contactAttributes, {
+                _module: 'Contacts'
+            })),
+            fieldMappings = {};
+
+        layout.currentToggle = layout.TOGGLE_CREATE;
+        layout.meta.copyData = true;
+
+        layout.createView.model = createModel;
+        layout.createView.meta.useTabsAndPanels = true;
+
+        var createViewContextTriggerStub = sinon.stub(layout.createView.model, 'trigger');
+
+        sinon.collection.stub(app.metadata, 'getModule')
+            .withArgs('Leads', 'fields').returns(leadAttributes)
+            .withArgs('Contacts', 'fields').returns(contactAttributes);
+
+        layout.populateRecords(leadModel, fieldMappings);
+
+        expect(createModel.get('north2')).toEqual(contactAttributes.north2);
+        expect(createModel.get('picture')).toEqual(contactAttributes.picture);
+
+        layout.handleShowComponent();
+        expect(createViewContextTriggerStub).not.toHaveBeenCalledWith('duplicate:field');
+
+        createViewContextTriggerStub.restore();
+    });
 
     it('should not populate create model with lead fields when user does not have edit access to field', function() {
         var leadModel = app.data.createBean('Leads', {
