@@ -22,6 +22,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => '#activities',
         'label' => 'LBL_ACTIVITIES',
-        'icon' => 'fa-th-list',
+        'icon' => 'fa-clock-o',
     ),
 );
