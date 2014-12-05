@@ -151,6 +151,29 @@ describe('Data.Base.FiltersBeanCollection', function() {
             ]);
         });
 
+        it('should only send one request for multiple dashlets of same module', function() {
+            sinon.collection.spy(filters, '_loadPredefinedFilters');
+
+            var filters2 = app.data.createBeanCollection('Filters');
+            filters2.setModuleName(filterModuleName);
+            sinon.collection.spy(filters2, '_loadPredefinedFilters');
+
+            var filters3 = app.data.createBeanCollection('Filters');
+            filters3.setModuleName(filterModuleName);
+            sinon.collection.spy(filters3, '_loadPredefinedFilters');
+
+            filters.load();
+            filters2.load();
+            filters3.load();
+
+            //verify only one request is sent
+            expect(fetchStub).toHaveBeenCalledOnce();
+
+            expect(filters._loadPredefinedFilters).toHaveBeenCalled();
+            expect(filters2._loadPredefinedFilters).not.toHaveBeenCalled();
+            expect(filters3._loadPredefinedFilters).not.toHaveBeenCalled();
+        });
+
         it('should load the template filter when initial_filter is defined in the filter options', function() {
             filters.load();
 
