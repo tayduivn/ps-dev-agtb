@@ -362,33 +362,43 @@ describe('Base.View.RecordList', function() {
     });
 
     describe('Auto scrolling on fields focus in inline edit mode', function() {
-        using('fields hidden to the right and to the left',
-            [
-                {left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, hiddenAtRight: false},
-                {left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, hiddenAtRight: true}
-            ],
-            function(fieldLocation) {
-
-                it('should scroll the panel to the make the focused field visible', function() {
-                    var flexListViewHtml = '<div class="flex-list-view-content"></div>';
-                    view.$el.append(flexListViewHtml);
-                    var scrollLeftSpy = sinon.collection.spy($.fn, 'scrollLeft');
-                    var bordersPosition = {left: 71, right: 600};
-                    var expectedParams;
-                    var _getBordersPositionStub = sinon.collection.stub(view, '_getBordersPosition', function() {
-                        return bordersPosition;
-                    });
-
-                    if (fieldLocation.hiddenAtRight) {
-                        expectedParams = fieldLocation.right - bordersPosition.right + fieldLocation.fieldPadding;
-                    } else {
-                        expectedParams = fieldLocation.left - bordersPosition.left - fieldLocation.fieldPadding;
-                    }
-                    view.setPanelPosition(fieldLocation);
-
-                    expect(scrollLeftSpy).toHaveBeenCalledWith(expectedParams);
-                });
+        beforeEach(function() {
+            var flexListViewHtml = '<div class="flex-list-view-content"></div>';
+            view.$el.append(flexListViewHtml);
+            var bordersPosition = {left: 71, right: 600};
+            var _getBordersPositionStub = sinon.collection.stub(view, '_getBordersPosition', function() {
+                return bordersPosition;
             });
 
+        });
+        using('fields hidden to the right, to the left or visible, in rtl or ltr mode' +
+            'and different browser rtl scrollTypes',
+            [
+                {rtl: false, left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -41},
+                {rtl: false, left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 54},
+                {rtl: false, left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0},
+                {rtl: true, scrollType: 'default', left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -41},
+                {rtl: true, scrollType: 'default', left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 54},
+                {rtl: true, scrollType: 'default', left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0},
+                {rtl: true, scrollType: 'reverse', left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 41},
+                {rtl: true, scrollType: 'reverse', left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -54},
+                {rtl: true, scrollType: 'reverse', left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0}
+            ],
+            function(params) {
+                it('should scroll the panel to the make the focused field visible', function() {
+                    if (params.rtl) {
+                        app.lang.direction = 'rtl';
+                        $.support.rtlScrollType = params.scrollType;
+                    }
+                    var scrollLeftSpy = sinon.collection.spy($.fn, 'scrollLeft');
+                    view.setPanelPosition(params);
+
+                    if (!params.expectedScroll) {
+                        expect(scrollLeftSpy).not.toHaveBeenCalled();
+                    } else {
+                        expect(scrollLeftSpy).toHaveBeenCalledWith(params.expectedScroll);
+                    }
+                });
+            });
     });
 });

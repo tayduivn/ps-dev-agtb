@@ -257,7 +257,8 @@
     },
 
     /**
-     * Retrieves the location of the edges of the list viewport.
+     * Retrieves the location of the edges of the list viewport and caches it
+     * to `this._bordersPosition`.
      *
      * @return {Object} Object with properties:
      * @return {number} return.left the position left edge.
@@ -310,7 +311,12 @@
      *   list viewport.
      * @param {number} rightBorderPosition Position of the right edge of the
      *   list viewport.
-     * @param {Object} location Location of the focused field.
+     * @param {Object} location Position of the focused element relative to its
+     *   viewport.
+     *   `location.left` is the distance between the left
+     *   border of the focused field and the left border of the viewport.
+     *   `location.right` is the distance between the right
+     *   side of the focused field and the left border of the viewport.
      * @private
      */
     _scrollToMakeFieldVisible: function(leftBorderPosition, rightBorderPosition, location) {
@@ -323,19 +329,15 @@
 
         if (fieldLeft < leftBorderPosition) {
             distanceToScroll = fieldLeft - leftBorderPosition - fieldPadding;
-            if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
-                distanceToScroll = - distanceToScroll;
-            }
-            $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
         } else if (rightBorderPosition < fieldRight) {
             distanceToScroll = fieldRight - rightBorderPosition + fieldPadding;
-            if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
-                distanceToScroll = - distanceToScroll;
-            }
-            $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
         } else {
             return;
         }
+        if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
+            distanceToScroll = - distanceToScroll;
+        }
+        $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
     },
 
     /**
