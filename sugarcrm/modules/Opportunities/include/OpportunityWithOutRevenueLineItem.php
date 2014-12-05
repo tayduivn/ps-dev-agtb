@@ -398,7 +398,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
                 sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . '
-                WHERE id = ' . $db->quoted($result['opportunity_id']) . ';';
+                WHERE id = ' . $db->quoted($result['opportunity_id']);
 
             $db->query($sql);
         }
