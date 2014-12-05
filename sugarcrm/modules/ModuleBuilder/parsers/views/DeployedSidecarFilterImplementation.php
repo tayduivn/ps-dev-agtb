@@ -173,6 +173,13 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             $savefile
         );
 
+        // Delete the working file if exists as we do in DeployedMetaDataImplementation
+        $workingFilename = $this->getMetadataFilename(MB_WORKINGMETADATALOCATION);
+
+        if (file_exists($workingFilename)) {
+            unlink($workingFilename);
+        }
+
         // clear the cache for this module
         MetaDataManager::refreshModulesCache(array($this->_moduleName));
     }
