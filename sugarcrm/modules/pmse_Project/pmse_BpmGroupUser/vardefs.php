@@ -4,6 +4,7 @@ $dictionary['pmse_BpmGroupUser'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('user_id' =>
   array (
     'required' => true,

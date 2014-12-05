@@ -3,6 +3,7 @@ $dictionary['pmse_BpmActivityStep'] = array(
 	'table'=>'pmse_bpm_activity_step',
 	'audited'=>false,
 	'activity_enabled'=>false,
+	'reassignable' => false,
 		'duplicate_merge'=>true,
 		'fields'=>array ('pro_id' =>
   array (

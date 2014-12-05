@@ -25,7 +25,7 @@ if(!$GLOBALS['current_user']->isAdminForModule('Users')) {
 	sugar_die($app_strings['EXCEPTION_NOT_AUTHORIZED']);
 }
 
-global $locale;
+global $locale, $dictionary;
 
 $db = DBManagerFactory::getInstance();
 
@@ -142,21 +142,24 @@ if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
     unset($beanListDup['ForecastManagerWorksheets']);
     //END SUGARCRM flav=pro ONLY
 
-    foreach($beanListDup as $m => $p){
-		if(empty($beanFiles[$p])){
-			unset($beanListDup[$m]);
-		} else {
-			$obj = BeanFactory::getBean($m);
-			if( !isset($obj->field_defs['assigned_user_id']) ||
-			     	(isset($obj->field_defs['assigned_user_id']) &&
-                     isset($obj->field_defs['assigned_user_id']['source']) &&
-					 $obj->field_defs['assigned_user_id']['source'] == "non-db")
-			  )
-			{
-				unset($beanListDup[$m]);
-			}
-		}
-	}
+    foreach ($beanListDup as $m => $p) {
+        if (empty($beanFiles[$p])) {
+            unset($beanListDup[$m]);
+        } else {
+            $obj = BeanFactory::getBean($m);
+            if (!isset($obj->field_defs['assigned_user_id']) || (
+                    isset($obj->field_defs['assigned_user_id']) &&
+                    isset($obj->field_defs['assigned_user_id']['source']) &&
+                    $obj->field_defs['assigned_user_id']['source'] == "non-db"
+                ) || (
+                    isset($dictionary[$obj->object_name]['reassignable']) &&
+                    !isTruthy($dictionary[$obj->object_name]['reassignable'])
+                )
+            ) {
+                unset($beanListDup[$m]);
+            }
+        }
+    }
 
     //Get the list of beans without the excluded modules
 	$beanListDup = array_diff($beanListDup, $exclude_modules);

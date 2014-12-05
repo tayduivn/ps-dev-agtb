@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnExtension'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('ext_uid' =>
   array (
     'required' => true,

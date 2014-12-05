@@ -3,6 +3,7 @@ $dictionary['pmse_BpmAccessManagement'] = array(
 	'table'=>'pmse_bpm_access_management',
 	'audited'=>false,
 	'activity_enabled'=>false,
+    'reassignable' => false,
 		'duplicate_merge'=>true,
 		'fields'=>array ('acm_uid' =>
   array (

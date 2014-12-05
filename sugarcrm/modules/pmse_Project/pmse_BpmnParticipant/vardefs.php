@@ -4,6 +4,7 @@ $dictionary['pmse_BpmnParticipant'] = array(
 	'audited'=>false,
 	'activity_enabled'=>false,
 		'duplicate_merge'=>true,
+		'reassignable'=>false,
 		'fields'=>array ('par_uid' =>
   array (
     'required' => true,

@@ -3,6 +3,7 @@ $dictionary['pmse_BpmCaseData'] = array(
 	'table'=>'pmse_bpm_case_data',
 	'audited'=>false,
 	'activity_enabled'=>false,
+    'reassignable' => false,
 		'duplicate_merge'=>true,
 		'fields'=>array ('cas_id' =>
   array (
