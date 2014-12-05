@@ -11,7 +11,8 @@ nv.models.funnel = function() {
       y = d3.scale.linear(),
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       getX = function(d) { return d.x; },
-      getY = function(d) { return d.height; },
+      getY = function(d) { return d.y; },
+      getH = function(d) { return d.height; },
       getV = function(d) { return d.value; },
       forceY = [0], // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
       clipEdge = true,
@@ -112,7 +113,7 @@ nv.models.funnel = function() {
           point.series = i;
           // if value is undefined, not a legitimate 0 value, use point.y
           if (typeof point.value == 'undefined') {
-            point.value = point.y;
+            point.value = getY(point);
           }
           funnelTotal += point.value;
           return point;
@@ -143,7 +144,7 @@ nv.models.funnel = function() {
       data = d3.layout.stack()
                .offset('zero')
                .values(function(d) { return d.values; })
-               .y(getY)(data);
+               .y(getH)(data);
 
       //------------------------------------------------------------
       // Setup Scales
@@ -152,7 +153,7 @@ nv.models.funnel = function() {
       var seriesData = (yDomain) ? [] : // if we know yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d, i) {
-                return { x: getX(d, i), y: getY(d, i), y0: d.y0 };
+                return { x: getX(d, i), y: getH(d, i), y0: d.y0 };
               });
             });
 

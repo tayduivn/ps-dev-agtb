@@ -3972,7 +3972,8 @@ nv.models.funnel = function() {
       y = d3.scale.linear(),
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       getX = function(d) { return d.x; },
-      getY = function(d) { return d.height; },
+      getY = function(d) { return d.y; },
+      getH = function(d) { return d.height; },
       getV = function(d) { return d.value; },
       forceY = [0], // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
       clipEdge = true,
@@ -4073,7 +4074,7 @@ nv.models.funnel = function() {
           point.series = i;
           // if value is undefined, not a legitimate 0 value, use point.y
           if (typeof point.value == 'undefined') {
-            point.value = point.y;
+            point.value = getY(point);
           }
           funnelTotal += point.value;
           return point;
@@ -4104,7 +4105,7 @@ nv.models.funnel = function() {
       data = d3.layout.stack()
                .offset('zero')
                .values(function(d) { return d.values; })
-               .y(getY)(data);
+               .y(getH)(data);
 
       //------------------------------------------------------------
       // Setup Scales
@@ -4113,7 +4114,7 @@ nv.models.funnel = function() {
       var seriesData = (yDomain) ? [] : // if we know yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d, i) {
-                return { x: getX(d, i), y: getY(d, i), y0: d.y0 };
+                return { x: getX(d, i), y: getH(d, i), y0: d.y0 };
               });
             });
 
@@ -4638,7 +4639,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        // if there are no active data series, activate them all
+        // if there are no active data series, inactivate them all
         if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
@@ -4658,46 +4659,62 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) {
-        return d.values.length;
-      }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'start');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+      if (!data || !data.length || !data.filter(function(d) {return d.values.length; }).length) {
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
       //add series index to each data point for reference
-      var funnelData = data.map(function(d, i) {
-          d.series = i;
-          d.values.map(function(v) {
-            v.series = d.series;
-          });
-          return d;
+      data.map(function(d, i) {
+        d.series = i;
+        d.values.map(function(v) {
+          v.series = d.series;
         });
+        d.total = d3.sum(d.values, function(d, i) {
+          return funnel.y()(d, i);
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
+        return d;
+      });
+
+      // only sum enabled series
+      var funnelData = data
+            .filter(function(d, i) {
+              return !d.disabled;
+            });
+
+      if (!funnelData.length) {
+        funnelData = [{values: []}];
+      }
+
+      var totalAmount = d3.sum(funnelData, function(d) {
+              return d.total;
+            });
+      var totalCount = d3.sum(funnelData, function(d) {
+              return d.count;
+            });
 
       //set state.disabled
-      state.disabled = funnelData.map(function(d) { return !!d.disabled; });
+      state.disabled = data.map(function(d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup Scales
 
       y = funnel.yScale(); //see below
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -4754,7 +4771,7 @@ nv.models.funnelChart = function() {
           .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(funnelData)
+          .datum(data)
           .call(legend);
 
         legend
@@ -4777,7 +4794,7 @@ nv.models.funnelChart = function() {
         .height(innerHeight);
 
       funnelWrap
-        .datum(funnelData.filter(function(d) { return !d.disabled; }))
+        .datum(funnelData)
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
           .call(funnel);
 
@@ -5036,6 +5053,23 @@ nv.models.funnelChart = function() {
           .range(tickValues.map(function(d) { return y(d); }));
 
         return tickValues;
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       //============================================================
@@ -6469,7 +6503,7 @@ nv.models.lineChart = function() {
       direction = 'ltr',
       tooltip = null,
       tooltips = true,
-      tooltipContent = function (key, x, y, e, graph) {
+      tooltipContent = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' + y + ' on ' + x + '</p>';
       },
@@ -6494,7 +6528,7 @@ nv.models.lineChart = function() {
         .tickPadding(7)
         .highlightZero(false)
         .showMaxMin(false)
-        .tickFormat(function (d) { return d; }),
+        .tickFormat(function(d) { return d; }),
       yAxis = nv.models.axis()
         .orient('left')
         .tickPadding(4)
@@ -6505,7 +6539,7 @@ nv.models.lineChart = function() {
         .align('left')
         .color(['#444']);
 
-  var showTooltip = function (e, offsetElement) {
+  var showTooltip = function(e, offsetElement) {
     var left = e.pos[0],
         top = e.pos[1],
         x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
@@ -6519,7 +6553,7 @@ nv.models.lineChart = function() {
 
   function chart(selection) {
 
-    selection.each(function (chartData) {
+    selection.each(function(chartData) {
 
       var properties = chartData.properties,
           data = chartData.data,
@@ -6534,7 +6568,7 @@ nv.models.lineChart = function() {
           maxLegendWidth = 0,
           widthRatio = 0;
 
-      chart.update = function () {
+      chart.update = function() {
         container.transition().duration(chart.delay()).call(chart);
       };
 
@@ -6543,43 +6577,36 @@ nv.models.lineChart = function() {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function (d) {
-        return d.values.length;
-      }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function (d) {
-            return d;
-          });
-
+      if (!data || !data.length || !data.filter(function(d) {return d.values.length; }).length) {
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
 
       //add series index to each data point for reference
-      data.map(function (d, i) {
+      data.map(function(d, i) {
         d.series = i;
+        d.total = d3.sum(d.values, function(d, i) {
+          return lines.y()(d, i);
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
       });
 
-      var dataLines = data.filter(function (d) {
-            return !d.disabled;
-          });
-      dataLines = dataLines.length ? dataLines : [{values:[]}];
+      var dataLines = data.filter(function(d) {
+              return !d.disabled;
+            });
+      dataLines = dataLines.length ? dataLines : [{values: []}];
+
+      var totalAmount = d3.sum(dataLines, function(d) {
+              return d.total;
+            });
 
       //set state.disabled
-      state.disabled = data.map(function (d) { return !!d.disabled; });
+      state.disabled = data.map(function(d) { return !!d.disabled; });
       state.interpolate = lines.interpolate();
       state.isArea = !lines.isArea();
 
@@ -6602,6 +6629,16 @@ nv.models.lineChart = function() {
         .scale(x);
       yAxis
         .scale(y);
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -6775,32 +6812,49 @@ nv.models.lineChart = function() {
         .transition()
           .call(yAxis);
 
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
+      }
+
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('legendClick', function (d, i) {
+      legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function (d) { return !d.disabled; }).length) {
-          data.map(function (d) {
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
+          data.map(function(d) {
             d.disabled = false;
             g.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function (d) { return !!d.disabled; });
+        state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      controls.dispatch.on('legendClick', function (d, i) {
+      controls.dispatch.on('legendClick', function(d, i) {
         if (!d.disabled) {
           return;
         }
-        controlsData = controlsData.map(function (s) {
+        controlsData = controlsData.map(function(s) {
           s.disabled = true;
           return s;
         });
@@ -6834,28 +6888,28 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('tooltipShow', function (e) {
+      dispatch.on('tooltipShow', function(e) {
         if (tooltips) {
           showTooltip(e, that.parentNode);
         }
       });
 
-      dispatch.on('tooltipHide', function () {
+      dispatch.on('tooltipHide', function() {
         if (tooltips) {
           nv.tooltip.cleanup();
         }
       });
 
-      dispatch.on('tooltipMove', function (e) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
           nv.tooltip.position(tooltip, e.pos, 's');
         }
       });
 
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function (e) {
+      dispatch.on('changeState', function(e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          data.forEach(function(series, i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
@@ -6874,7 +6928,7 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function(e) {
         if (controls.enabled()) {
           controls.dispatch.closeMenu(e);
         }
@@ -6892,15 +6946,15 @@ nv.models.lineChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  lines.dispatch.on('elementMouseover.tooltip', function (e) {
+  lines.dispatch.on('elementMouseover.tooltip', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  lines.dispatch.on('elementMouseout.tooltip', function (e) {
+  lines.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
-  lines.dispatch.on('elementMousemove.tooltip', function (e) {
+  lines.dispatch.on('elementMousemove.tooltip', function(e) {
     dispatch.tooltipMove(e);
   });
 
@@ -8528,6 +8582,7 @@ nv.models.multiBarChart = function() {
           data = chartData ? chartData.data : null,
           groupLabels = [],
           groupTotals = [],
+          totalAmount = 0,
           dataBars = [],
           seriesCount = 0,
           groupCount = 0;
@@ -8600,35 +8655,15 @@ nv.models.multiBarChart = function() {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
-        container.select('.nvd3.nv-wrap').remove();
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
 
-      //set title display option
+      // set title display option
       showTitle = showTitle && properties.title;
-
-      //set state.disabled
-      state.disabled = data.map(function(d) { return !!d.disabled; });
-      state.stacked = multibar.stacked();
 
       var controlsData = [
         { key: 'Grouped', disabled: state.stacked },
@@ -8645,9 +8680,16 @@ nv.models.multiBarChart = function() {
         });
       }
 
-      //add series index to each data point for reference
+      // add series index to each data point for reference
+      // and disable data series if total is zero
       data.map(function(d, i) {
         d.series = i;
+        d.total = d3.sum(d.values, function(d) {
+          return d.y;
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
       });
 
       // update groupTotal amounts based on enabled data series
@@ -8672,7 +8714,9 @@ nv.models.multiBarChart = function() {
           return d;
         });
 
-      // Build a trimmed array for active group only labels
+      totalAmount = d3.sum(groupTotals, function(d) { return d.t; });
+
+      // build a trimmed array for active group only labels
       groupLabels = properties.labels
         .filter(function(d, i) {
           return hideEmptyGroups ? groupTotals[i].t !== 0 : true;
@@ -8710,10 +8754,24 @@ nv.models.multiBarChart = function() {
           });
       }
 
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
+
       // safety array
       if (!dataBars.length) {
         dataBars = [{values: []}];
       }
+
+      // set state.disabled
+      state.disabled = data.map(function(d) { return !!d.disabled; });
+      state.stacked = multibar.stacked();
 
       groupCount = groupLabels.length;
       seriesCount = dataBars.length;
@@ -8880,6 +8938,23 @@ nv.models.multiBarChart = function() {
         } else {
           return 0;
         }
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       multibar
@@ -10956,7 +11031,7 @@ nv.models.pieChart = function() {
           });
         }
 
-        // if there are no active data series, activate them all
+        // if there are no active data series, inactivate them all
         if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
@@ -10974,37 +11049,44 @@ nv.models.pieChart = function() {
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
-
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
       //add series index to each data point for reference
       var pieData = data.map(function(d, i) {
-          d.series = i;
-          return d;
-        });
+            d.series = i;
+            if (!d.value) {
+              d.disabled = true;
+            }
+            return d;
+          });
+
+      var totalAmount = d3.sum(
+            // only sum enabled series
+            pieData
+              .filter(function(d, i) {
+                return !d.disabled;
+              })
+              .map(function(d, i) {
+                return d.value;
+              })
+          );
 
       //set state.disabled
       state.disabled = pieData.map(function(d) { return !!d.disabled; });
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -11102,6 +11184,23 @@ nv.models.pieChart = function() {
           .style('font-weight', 'bold');
         holeWrap
           .attr('transform', 'translate(' + (innerWidth / 2 + innerMargin.left) + ',' + (innerHeight / 2 + innerMargin.top) + ')');
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       //============================================================

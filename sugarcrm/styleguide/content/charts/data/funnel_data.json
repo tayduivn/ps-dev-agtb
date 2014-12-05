@@ -52,7 +52,7 @@
       "key": "Value Proposition",
       "count": 2,
       "values": [
-        {"series": 4, "x": 0, "y": 60, "y0": 0}
+        {"series": 4, "x": 0, "y": 0, "y0": 0}
       ]
     },
     {
