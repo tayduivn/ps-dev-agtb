@@ -13,6 +13,11 @@
   display: none;
 }
 
+.dnb-dashlet-height {
+  max-height: 250px;
+  overflow: auto;
+}
+
 /* notifications in dashlets*/
 #dnb-no-duns,
 #dnb-search-hint {
@@ -70,7 +75,7 @@ div.dnb-show-less {
 }
 
 div.dnb-show-all {
-  height: auto;
+  .dnb-dashlet-height
 }
 
 div.dnb-show-more {
