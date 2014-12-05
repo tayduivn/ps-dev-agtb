@@ -417,7 +417,7 @@ describe('Plugins.VirtualCollection', function() {
             it('should use the related modules for the links from the field definition', function() {
                 collection.fetch();
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts.*/);
             });
 
             it('should default to `name` for the fields', function() {

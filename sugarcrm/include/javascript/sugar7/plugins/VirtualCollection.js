@@ -620,7 +620,7 @@
                 params.module_list = _.keys(this.relatedModules).join(',');
                 params.fields = params.fields.join(',');
                 params.order_by = params.order_by.join(',');
-                params.max_num = options.limit || app.config.maxQueryResult;
+                params.max_num = options.limit || app.config.maxSubpanelResult;
 
                 if (options.offset) {
                     params.offset = options.offset;
