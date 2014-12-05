@@ -55,7 +55,7 @@
             this.originalSuccess(model);
 
             // check to see if we added RLIs during create
-            var addedRLIs = this.model.get('revenuelineitems') || false;
+            var addedRLIs = model.get('revenuelineitems') || false;
             addedRLIs =  (addedRLIs && addedRLIs.create && addedRLIs.create.length);
             if (!addedRLIs && options.lastSaveAction != 'saveAndCreate') {
                 this.showRLIWarningMessage(this.listContext.get('module'));
