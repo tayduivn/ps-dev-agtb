@@ -585,11 +585,15 @@ class Product extends SugarBean
         $template = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
         
         foreach ($this->template_fields as $template_field) {
-            // Empty isn't good enough here, if they set a total to 0.00 we don't copy from template.
-            // typecast the variable to int in case it's a string type
+            // do not copy from template if field is:  Not empty, or has an int value equal to zero, or a string value equal to '0' or '0.0'
             if (!empty($this->$template_field)
                 || (isset($this->$template_field)
-                    && ((int)$this->$template_field === 0 || (int)$this->$template_field === 0.0))) {
+                    && ($this->$template_field === 0
+                        || $this->$template_field === '0'
+                        || $this->$template_field === '0.0'
+                        )
+                    )
+            ) {
                 continue;
             }
             if (isset($template->$template_field)) {
