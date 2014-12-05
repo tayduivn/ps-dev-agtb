@@ -33,11 +33,14 @@
 
             app.api.call('GET', myURL, null, {
                 success: this.populateValues,
-                error:   function(error) {
-                    app.alert.show('server-error', {
-                        level: 'error',
-                        messages: 'ERR_GENERIC_SERVER_ERROR'
-                    });
+                error: function(error) {
+                    // display error if not a metadata refresh
+                    if (error.status !== 412) {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: 'ERR_GENERIC_SERVER_ERROR'
+                        });
+                    }
                     app.error.handleHttpError(error);
                 }
             });
