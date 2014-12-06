@@ -151,7 +151,6 @@ abstract class SugarACLStrategy
                 $output = 'edit';
                 break;
             case 'read':
-            case 'access':
             case 'detail':
             case 'detailview':
                 $output = 'view';
