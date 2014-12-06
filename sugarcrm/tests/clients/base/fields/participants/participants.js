@@ -649,7 +649,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
             expect(_.size(freebusyFetchSpy.args[0][0])).toBe(0);
 
-            field.model.set('date_start', '2014-08-27T08:00:00');
+            field.model.set('date_start', '2014-08-27T08:00:00-04:00');
 
             expect(_.size(freebusyFetchSpy.args[1][0])).toBe(2);
         });
