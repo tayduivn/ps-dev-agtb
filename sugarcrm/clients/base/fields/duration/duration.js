@@ -181,7 +181,7 @@
         } else {
             // Set the end date to be an hour from the start date if the end
             // date has not been set yet.
-            endDate = app.date(startDateString).add('h', 1).formatServer();
+            endDate = app.date(startDateString).add('m', 30).formatServer();
             this.model.set('date_end', endDate);
         }
     },
