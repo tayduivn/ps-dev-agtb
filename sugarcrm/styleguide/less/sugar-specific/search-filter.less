@@ -442,17 +442,15 @@
 }
 
 // dropdown menu for filter pills
+.search-related-dropdown,
 .search-filter-dropdown {
   border: 0px none;
   width: auto;
   margin-top: 5px;
   &.select2-drop.select2-drop-active {
-    .box-shadow(0px 0px 1px 0px @gray);
+    border: 1px solid darken(@grayLighter, 10%);
+    .box-shadow(none);
     .border-radius(2px);
-  }
-  .result-selected {
-    display: block;
-    font-weight: bold;
   }
   .select2-results {
     margin: 0;
@@ -468,31 +466,36 @@
       color: @dropdownLinkColorHover;
     }
   }
-  .select2-result.select2-result-border-top {
-    border-top: 1px solid darken(@grayLighter, 20%);
-  }
-  .select2-result.select2-result-border-bottom {
-    border-bottom: 1px solid darken(@grayLighter, 20%);
+}
+
+.search-filter-dropdown {
+  .result-selected {//MOOT: this selector may be no longer used
+    display: block;
+    font-weight: bold;
   }
   .select2-result {
+    &.select2-result-border-top {
+      border-top: 1px solid darken(@grayLighter, 20%);
+    }
+    &.select2-result-border-bottom {
+      border-bottom: 1px solid darken(@grayLighter, 20%);
+    }
     .select2-fa-prepend {
-        i.fa-check { padding-right: 5px; }
-        i.fa-plus { padding-left: 1px; padding-right: 7px; }
+      i.fa-check {
+        padding-right: 5px;
+      }
+      i.fa-plus {
+        padding-left: 1px;
+        padding-right: 7px;
+      }
     }
     .select2-no-icon {
-        padding-left: 20px;
+      padding-left: 20px;
     }
   }
   &:before,
   &:after {
     display: none;
-  }
-}
-
-.search-related-dropdown {
-  margin-top: 0;
-  .select2-drop-active {
-    border-top: 1px solid @linkColor;
   }
 }
 
