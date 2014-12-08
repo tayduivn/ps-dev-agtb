@@ -131,7 +131,6 @@ class CalendarEventsApi extends ModuleApi
         } else {
             $result = $this->deleteRecord($api, $args);
         }
-        $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
         return $result;
     }
 
@@ -192,8 +191,16 @@ class CalendarEventsApi extends ModuleApi
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
 
+        // Turn off The Cache Updates while deleting the multiple recurrences.
+        // The current Cache Enabled status is returned so it can be appropriately
+        // restored when all the recurrences have been deleted.
+        $cacheEnabled = vCal::setCacheUpdateEnabled(false);
         $this->deleteRecurrences($bean);
         $bean->mark_deleted($bean->id);
+        // Restore the Cache Enabled status to its previous state
+        vCal::setCacheUpdateEnabled($cacheEnabled);
+
+        $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
 
         return array('id' => $bean->id);
     }

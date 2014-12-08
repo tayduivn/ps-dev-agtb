@@ -100,7 +100,14 @@ class CalendarEvents
             $GLOBALS['log']->warning($logMessage);
         }
 
+        // Turn off The Cache Updates while deleting the multiple recurrences.
+        // The current Cache Enabled status is returned so it can be appropriately
+        // restored when all the recurrences have been deleted.
+        $cacheEnabled = vCal::setCacheUpdateEnabled(false);
         $this->markRepeatDeleted($parentBean);
+        // Restore the Cache Enabled status to its previous state
+        vCal::setCacheUpdateEnabled($cacheEnabled);
+
         return $this->saveRecurring($parentBean, $repeatDateTimeArray);
     }
 
