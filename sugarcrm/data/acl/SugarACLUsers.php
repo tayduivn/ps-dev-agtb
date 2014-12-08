@@ -45,6 +45,7 @@ class SugarACLUsers extends SugarACLStrategy
         );
 
     public $view_checks = array(
+            'access' => true,
             'view' => true,
             'ListView' => true,
             'list' => true,
