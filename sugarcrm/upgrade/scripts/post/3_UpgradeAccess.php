@@ -45,6 +45,8 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
     protected function handleHtaccess()
     {
         $htaccess_file = $this->context['source_dir']."/.htaccess";
+        $basePath = parse_url($this->upgrader->config['site_url'], PHP_URL_PATH);
+        if(empty($basePath)) $basePath = '/';
 
         /**
          * .htaccess change between 6.7 and 7.0.
@@ -53,7 +55,7 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
          */
         if (file_exists($htaccess_file)) {
 
-        $cache_headers = <<<EOQ
+            $cache_headers = <<<EOQ
 <FilesMatch "\.(jpg|png|gif|js|css|ico)$">
         <IfModule mod_headers.c>
                 Header set ETag ""
@@ -70,10 +72,21 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
 EOQ;
+            $mod_rewrite = <<<EOQ
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+    RewriteBase {$basePath}
+    RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&module=app_strings&lang=$1 [L,QSA]
+    RewriteRule ^cache/jsLanguage/(\w*)/(.._..).js$ index.php?entryPoint=jslang&module=$1&lang=$2 [L,QSA]
+</IfModule>
+EOQ;
+
         
             $htaccess_contents = file_get_contents($htaccess_file);
             $htaccess_contents = str_replace($cache_headers, '', $htaccess_contents);
-            $status =  $this->putFile($htaccess_file, $htaccess_contents); 
+            $htaccess_contents = str_replace($mod_rewrite, '', $htaccess_contents);
+            $status =  $this->putFile($htaccess_file, $htaccess_contents);
             if( $status === false){
                 $this->fail(sprintf($this->mod_strings['ERROR_HT_NO_WRITE'], $htaccess_file));
                 return;
