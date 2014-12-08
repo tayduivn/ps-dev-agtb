@@ -315,28 +315,10 @@
      * @param {Object} model
      */
     markPanelComplete: function(model) {
-        var displayMessage = (this.currentToggle === this.TOGGLE_CREATE) ?
-                'LBL_CONVERT_MODULE_ASSOCIATED_NEW_SUCCESS' : 'LBL_CONVERT_MODULE_ASSOCIATED_SUCCESS',
-            displayTitle = (this.currentToggle === this.TOGGLE_CREATE) ?
-                'LBL_CONVERT_MODULE_CREATED' : 'LBL_CONVERT_MODULE_SELECTED';
-
         this.currentState.associatedName = this.getDisplayName(model);
         this.currentState.complete = true;
         this.context.trigger('lead:convert-panel:complete', this.meta.module, model);
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
-        app.alert.show('panel_associate_complete', {
-            level: 'success',
-            title: app.lang.get(displayTitle, this.module, {moduleName: this.meta.moduleSingular}),
-            messages: app.lang.get(
-                displayMessage,
-                this.module,
-                {
-                    moduleNameLower: this.meta.moduleSingular.toLowerCase(),
-                    recordName: this.currentState.associatedName
-                }
-            ),
-            autoClose: true
-        });
 
         //disable sub-panel until reset
         this.$(this.accordionBody).addClass('disabled');
