@@ -138,8 +138,8 @@
     },
 
     evaluateResponse: function(response) {
-        this.hasData = true;
         this.total = response.properties.total;
+        this.hasData = !!this.total;
         this.chartCollection = response;
     }
 })
