@@ -197,12 +197,6 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                                 ),
                             ),
                         ),
-                        array(
-                            'name' => 'filename',
-                            'type' => 'file',
-                            'css_class' => 'hidden',
-                            'comment' => 'Used for uploading embedded files',
-                        ),
                     ),
                 ),
                 array(

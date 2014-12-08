@@ -12,7 +12,34 @@
     app.events.on('app:init', function() {
         app.plugins.register('Tinymce', ['field'], {
 
-            $embeddedFileSelector: '[name=filename]',
+            /**
+             * File input element.
+             */
+            $embeddedInput: null,
+
+            /**
+             * Name of file input.
+             */
+            fileFieldName: null,
+
+            /**
+             * {@inheritDoc}
+             */
+            onAttach: function(component) {
+                var self = this;
+                this.fileFieldName = component.options.def.name + '_file';
+                this.$embeddedInput = $('<input />', {name: this.fileFieldName, type: 'file'}).hide();
+                component.on('render', function() {
+                    component.$el.append(self.$embeddedInput);
+                });
+            },
+
+            /**
+             * {@inheritDoc}
+             */
+            onDetach: function(component) {
+                this.$embeddedInput.remove();
+            },
 
             /**
              * Handle embedded file upload process.
@@ -24,10 +51,8 @@
              * @param {Object} win A reference to the dialogue window itself.
              */
             tinyMCEFileBrowseCallback: function(field_name, url, type, win) {
-                var $embeddedInput = this.$el.parent().find(this.$embeddedFileSelector),
-                    self = this;
-
-                $embeddedInput.unbind().change(function(event) {
+                var self = this;
+                this.$embeddedInput.unbind().change(function(event) {
                     var $target = $(this),
                         fileObj = $target[0].files[0],
                         url = '';
@@ -38,23 +63,21 @@
                         return;
                     }
 
-                    var embeddedFile = app.data.createBean('EmbeddedFiles'),
-                    // Input and vardef name.
-                        fieldName = 'filename';
+                    var embeddedFile = app.data.createBean('EmbeddedFiles');
 
                     embeddedFile.save({name: fileObj.name}, {
                         success: function(model) {
                             model.uploadFile(
-                                fieldName,
+                                self.fileFieldName,
                                 $target,
                                 {
                                     success: function(rsp) {
-                                        var forceDownload = !(rsp[fieldName]['content-type'].indexOf('image') !== -1);
+                                        var forceDownload = !(rsp[self.fileFieldName]['content-type'].indexOf('image') !== -1);
                                         url = app.api.buildFileURL(
                                             {
                                                 module: 'EmbeddedFiles',
                                                 id: rsp.record.id,
-                                                field: fieldName
+                                                field: self.fileFieldName
                                             },
                                             {
                                                 htmlJsonFormat: false,
@@ -87,7 +110,7 @@
                     });
                 });
 
-                $embeddedInput.trigger('click');
+                this.$embeddedInput.trigger('click');
             },
 
             /**
