@@ -103,11 +103,11 @@
     {/if}
 
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.libraries.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.jcore.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.ui.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.utils.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/historyEntries.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/formAction.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/get_process_image.js'}"></script>
-{*<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/notes.js'}"></script>*}
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.libraries.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.jcore.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.ui.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.utils.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/historyEntries.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/formAction.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>
+{*<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>*}
