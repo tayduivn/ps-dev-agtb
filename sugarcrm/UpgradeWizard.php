@@ -47,7 +47,6 @@ if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'exportlog') {
     exit;
 }
 
-$upg->start();
 if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $token = $upg->startUpgrade();
     if(!$token) {
