@@ -51,6 +51,16 @@
     },
 
     /**
+     * {@inheritdoc}
+     */
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins, [
+            'LinkedModel'
+        ]);
+        this._super('initialize', [options]);
+    },
+
+    /**
      * {@inheritDoc}
      *
      * Store current date state in settings.
@@ -137,15 +147,15 @@
      *
      * @param {Event} event Click event.
      * @param {Object} params
-     * @param {String} params.layout Layout name.
-     * @param {String} params.link Relationship link.
      * @param {String} params.module Module name.
+     * @param {String} params.link Relationship link.
      */
     createRecord: function(event, params) {
         // FIXME: At the moment there are modules marked as bwc enabled though
         // they have sidecar support already, so they're treated as exceptions
         // and drawers are used instead.
-        var bwcExceptions = ['Emails'],
+        var self = this,
+            bwcExceptions = ['Emails'],
             meta = app.metadata.getModule(params.module) || {};
 
         if (meta.isBwcEnabled && !_.contains(bwcExceptions, params.module)) {
@@ -153,7 +163,28 @@
             return;
         }
 
-        this.createRelatedRecord(params.module, params.link);
+        if (this.module !== 'Home') {
+            this.createRelatedRecord(params.module, params.link);
+        } else {
+            app.drawer.open({
+                layout: 'create-actions',
+                context: {
+                    create: true,
+                    module: params.module
+                }
+            }, function(context, model) {
+                if (!model) {
+                    return;
+                }
+                self.context.resetLoadFlag();
+                self.context.set('skipFetch', false);
+                if (_.isFunction(self.loadData)) {
+                    self.loadData();
+                } else {
+                    self.context.loadData();
+                }
+            });
+        }
     },
 
     /**
@@ -181,52 +212,6 @@
         var route = app.bwc.buildRoute(module, null, 'EditView', params);
 
         app.router.navigate(route, {trigger: true});
-    },
-
-    /**
-     * Opens create record drawer.
-     *
-     * @param {String} module Module name.
-     * @param {String} layout Layout name, defaults to 'create-actions' if none
-     *   supplied.
-     * @protected
-     */
-    _openCreateDrawer: function(module, layout) {
-        layout = layout || 'create-actions';
-        app.drawer.open({
-            layout: layout,
-            context: {
-                create: true,
-                module: module,
-                prepopulate: this._prePopulateDrawer(module)
-            }
-        }, _.bind(function(context, newModel) {
-            if (newModel && newModel.id) {
-                this.layout.loadData();
-            }
-        }, this));
-    },
-
-    /**
-     * Pre-populates data for new records created via drawer based on supplied
-     * module name.
-     *
-     * Override this method to provide custom data.
-     *
-     * @param {String} module Module name.
-     * @return {Array} Array of pre-populated data.
-     * @protected
-     */
-    _prePopulateDrawer: function(module) {
-        var data = {
-            related: this.model
-        };
-
-        if (module === 'Emails') {
-            data['to_addresses'] = this.model;
-        }
-
-        return data;
     },
 
     /**
