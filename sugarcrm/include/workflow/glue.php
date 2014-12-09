@@ -296,9 +296,11 @@ class WorkFlowGlue {
 
 		if($type_object->exp_type=='date'){
 		$eval_string .= " !='0000-00-00' ";
+            $datetimeFunction = 'fromDbDate';
 		}
 		if($type_object->exp_type=='datetime'  || $type_object->exp_type == 'datetimecombo'){
 			$eval_string .= " !='0000-00-00 00:00:00' ";
+            $datetimeFunction = 'fromDb';
 		}
 
 		//compensates if the user changes the field sometime later
@@ -323,7 +325,8 @@ class WorkFlowGlue {
             $operator = $this->operator_array[$type_object->operator]=='<' ? '>' : '<';
 
             $eval_string .= ' && ' . sprintf(
-                'TimeDate::getInstance()->fromDB($focus->%s)->getTimestamp()',
+                'TimeDate::getInstance()->%s($focus->%s)->getTimestamp()',
+                $datetimeFunction,
                 $type_object->lhs_field
             );
             $eval_string .= " $operator ";
