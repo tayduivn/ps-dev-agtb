@@ -20,7 +20,7 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
         'Bugs' => 'Bugs',
         'Cases' => 'Cases',
         'Contacts' => 'Contacts',
-        'KBOLDDocuments' => 'KBOLDDocuments',
+        'KBContents' => 'KBContents',
     );
     //END SUGARCRM flav=ent ONLY
     
