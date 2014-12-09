@@ -1,5 +1,5 @@
 describe('Leads.Base.Layout.ConvertPanel', function() {
-    var app, layout, triggerStub, contextTriggerStub, dupeViewContextTriggerStub;
+    var app, layout, sandbox, triggerStub, contextTriggerStub, dupeViewContextTriggerStub, doValidateStub, isValidAsyncStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -8,7 +8,16 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         SugarTest.loadHandlebarsTemplate('convert-panel', 'layout', 'base', null, 'Leads');
         SugarTest.loadComponent('base', 'layout', 'toggle');
         SugarTest.testMetadata.set();
-        SugarTest.testMetadata.addViewDefinition('create', {'panels': [{'fields': [{'name': 'last_name'}]}]}, 'Contacts');
+        SugarTest.testMetadata.addViewDefinition(
+            'create',
+            {'panels': [{'fields': [{'name': 'last_name'}]}]},
+            'Contacts'
+        );
+        SugarTest.testMetadata.addLayoutDefinition(
+            'dupecheck',
+            {'components': [{'name': 'dupecheck-list', 'view': 'dupecheck-list'}]},
+            'Contacts'
+        );
         SugarTest.app.data.declareModels();
 
         layout = SugarTest.createLayout('base', 'Leads', 'convert-panel', {
@@ -27,16 +36,17 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
             }
         }, null, true);
 
-        triggerStub = sinon.stub(layout, 'trigger');
-        contextTriggerStub = sinon.stub(layout.context, 'trigger');
-        dupeViewContextTriggerStub = sinon.stub(layout.duplicateView.context, 'trigger');
+        sandbox = sinon.sandbox.create();
+        triggerStub = sandbox.stub(layout, 'trigger');
+        contextTriggerStub = sandbox.stub(layout.context, 'trigger');
+        dupeViewContextTriggerStub = sandbox.stub(layout.duplicateView.context, 'trigger');
+        doValidateStub = sandbox.stub(layout.createView.model, 'doValidate');
+        isValidAsyncStub = sandbox.stub(layout.createView.model, 'isValidAsync');
     });
 
     afterEach(function() {
-        triggerStub.restore();
-        contextTriggerStub.restore();
-        dupeViewContextTriggerStub.restore();
-        sinon.collection.restore();
+        sandbox.restore();
+        layout.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -66,13 +76,45 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(layout.currentState.dupeCount).toEqual(0);
     });
 
-    it('should not show create subview when dupe check complete, no dupes found, but already toggled previously', function() {
+    it('should not show create subview when no dupes found, but already toggled previously', function() {
         layout.duplicateView.collection.length = 0;
         layout.dupeCheckComplete();
         layout.showComponent(layout.TOGGLE_DUPECHECK);
         layout.dupeCheckComplete();
 
         expect(layout.currentToggle).toEqual(layout.TOGGLE_DUPECHECK);
+    });
+
+    it('should select first duplicate if module is required and duplicates were found', function() {
+        var duplicate1 = app.data.createBean('Contacts', {id: '123'}),
+            duplicate2 = app.data.createBean('Contacts', {id: '456'}),
+            selectFirstDuplicateSpy = sandbox.spy(layout, 'selectFirstDuplicate');
+
+        layout.meta.required = true;
+        layout.duplicateView.collection.reset([duplicate1, duplicate2]);
+        expect(selectFirstDuplicateSpy).toHaveBeenCalled();
+    });
+
+    it('should not select first duplicate if module is not required and duplicates were found', function() {
+        var duplicate1 = app.data.createBean('Contacts', {id: '123'}),
+            duplicate2 = app.data.createBean('Contacts', {id: '456'}),
+            selectFirstDuplicateSpy = sandbox.spy(layout, 'selectFirstDuplicate');
+
+        layout.meta.required = false;
+        layout.duplicateView.collection.reset([duplicate1, duplicate2]);
+        expect(selectFirstDuplicateSpy).not.toHaveBeenCalled();
+    });
+
+    it('should auto-run create validation for required modules', function() {
+        layout.meta.required = true;
+        layout.duplicateView.collection.reset();
+        expect(isValidAsyncStub).toHaveBeenCalled();
+    });
+
+    it('should not auto-run create validation for optional modules', function() {
+        layout.meta.required = false;
+        layout.duplicateView.collection.reset();
+        expect(isValidAsyncStub).not.toHaveBeenCalled();
     });
 
     it('should remove fields from metadata that are marked as to be hidden in the convert metadata', function() {
@@ -111,6 +153,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should pass along requests to open if panel is already complete', function() {
+        layout.autoCompleteCheckComplete = true;
         layout.currentState.complete = true;
         layout.handleOpenRequest();
 
@@ -118,6 +161,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should pass along requests to open if panel is disabled', function() {
+        layout.autoCompleteCheckComplete = true;
         layout.$(layout.accordionHeading).removeClass('enabled');
         layout.handleOpenRequest();
 
@@ -125,30 +169,39 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should open panel if enabled, not complete, and a request has been made to open', function() {
+        layout.autoCompleteCheckComplete = true;
         layout.currentState.complete = false;
         layout.$(layout.accordionHeading).addClass('enabled');
 
-        expect(layout.$(layout.accordionBody)).not.toHaveClass('in');
+        expect(layout.isPanelOpen()).toBe(false);
 
         layout.handleOpenRequest();
-        expect(layout.$(layout.accordionBody)).toHaveClass('in');
+        expect(layout.isPanelOpen()).toBe(true);
+    });
+
+    it('should wait to handle open request until auto-complete check has completed', function() {
+        triggerStub.restore();
+        layout.autoCompleteCheckComplete = false;
+        layout.currentState.complete = false;
+        layout.$(layout.accordionHeading).addClass('enabled');
+
+        layout.handleOpenRequest();
+        expect(layout.isPanelOpen()).toBe(false);
+
+        layout.markAutoCompleteCheckComplete();
+        expect(layout.isPanelOpen()).toBe(true);
     });
 
     describe('Associate Button Click', function() {
         var runValidationStub, markCompleteStub, clickEvent;
 
         beforeEach(function() {
-            runValidationStub = sinon.stub(layout, 'runCreateValidation');
-            markCompleteStub = sinon.stub(layout, 'markPanelComplete');
+            runValidationStub = sandbox.stub(layout, 'runCreateValidation');
+            markCompleteStub = sandbox.stub(layout, 'markPanelComplete');
             clickEvent = {
                 currentTarget: '<span></span>',
                 stopPropagation: $.noop
             };
-        });
-
-        afterEach(function() {
-            runValidationStub.restore();
-            markCompleteStub.restore();
         });
 
         it('should ignore associate button clicks if button is disabled', function() {
@@ -178,51 +231,39 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should close the current panel and fire appropriate events when marking panel complete', function() {
-        var mockModel = {id: '123', name: 'Foo Bar'};
+        var createModel = layout.createView.model;
 
-        sinon.collection.stub(layout, 'getDisplayName', function(model) {
-            return model.name;
-        });
-
-        //setup
+        createModel.set({id: '123', full_name: 'Foo Bar'});
+        layout.$(layout.accordionHeading).addClass('enabled');
         layout.openPanel();
         layout.currentState.complete = false;
-        layout.markPanelComplete(mockModel);
+        layout.markPanelComplete(createModel);
 
-        expect(layout.currentState.associatedName).toEqual(mockModel.name);
+        expect(layout.currentState.associatedName).toEqual(createModel.get('full_name'));
         expect(layout.currentState.complete).toBe(true);
-        expect(triggerStub.firstCall.args).toEqual(['lead:convert-panel:complete', mockModel.name]);
-        expect(contextTriggerStub.firstCall.args).toEqual(['lead:convert-panel:complete', layout.meta.module, mockModel]);
+        expect(triggerStub.firstCall.args).toEqual(['lead:convert-panel:complete', createModel.get('full_name')]);
+        expect(contextTriggerStub.firstCall.args).toEqual([
+            'lead:convert-panel:complete',
+            layout.meta.module,
+            createModel
+        ]);
         expect(contextTriggerStub.secondCall.args).toEqual(['lead:convert:2:open']);
     });
 
-    it('should return the name attribute on the model for the display name if it exists', function() {
-        var mockModel = app.data.createBean('Leads', {name: 'Foo Bar'});
+    it('should not attempt to close panel and open next panel when marking complete and already closed', function() {
+        var closePanelSpy,
+            requestNextPanelOpenSpy = sandbox.spy(layout, 'requestNextPanelOpen');
 
-        expect(layout.getDisplayName(mockModel)).toEqual(mockModel.get('name'));
-    });
+        layout.closePanel();
+        closePanelSpy = sandbox.spy(layout, 'closePanel');
+        layout.markPanelComplete(layout.createView.model);
 
-    it('should use the name field metadata to build the display name if no name attribute on model', function() {
-        var mockModel = app.data.createBean('Leads', {id: '123', first_name: 'Foo', last_name: 'Baz'});
-        var expectedName = 'Foo Baz';
-
-        sinon.collection.stub(app.metadata, 'getModule', function() {
-            return {
-                fields: {
-                    name: {
-                        db_concat_fields: ['first_name', 'last_name']
-                    }
-                }
-            };
-        });
-
-        expect(layout.getDisplayName(mockModel)).toEqual(expectedName);
+        expect(closePanelSpy).not.toHaveBeenCalled();
+        expect(requestNextPanelOpenSpy).not.toHaveBeenCalled();
     });
 
     it('should trigger the dupe check if dupe check enabled and all required dupe check fields are set', function() {
-        var mockModel = app.data.createBean('Leads', {foo: 'Foo', bar: 'Bar'});
-
-        layout.createView.model = mockModel;
+        layout.createView.model.set({foo: 'Foo', bar: 'Bar'});
         layout.meta.duplicateCheckRequiredFields = ['foo', 'bar'];
         layout.meta.enableDuplicateCheck = true;
         layout.triggerDuplicateCheck();
@@ -238,9 +279,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should not trigger dupe check if any required dupe check fields are not set', function() {
-        var mockModel = app.data.createBean('Leads', {foo: 'Foo'});
-
-        layout.createView.model = mockModel;
+        layout.createView.model.set({foo: 'Foo'});
         layout.meta.duplicateCheckRequiredFields = ['foo', 'bar'];
         layout.meta.enableDuplicateCheck = true;
         layout.triggerDuplicateCheck();
@@ -248,7 +287,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(dupeViewContextTriggerStub.callCount).toBe(0);
     });
 
-    it('should set the dupe count to 0 and fire appropriate trigger if dupe check is triggered but not run', function() {
+    it('should set dupe count to 0 and fire appropriate trigger if dupe check is triggered but not run', function() {
         layout.meta.enableDuplicateCheck = false;
         layout.triggerDuplicateCheck();
 
@@ -257,25 +296,25 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should populate create model with lead fields and trigger dupe check when lead model passed on context', function() {
-        var leadModel = app.data.createBean('Leads', {
-            foo: 'Foo',
-            bar: 'Bar',
-            baz: 'Baz',
-            north: 'Lead Value for NORTH',
-            south: 'Lead Value for SOUTH',
-            east: 'Lead Value for EAST',
-            _module: 'Leads'
-        });
-        var createModel = app.data.createBean('Leads', {
+        var createModel = layout.createView.model,
+            leadModel = app.data.createBean('Leads', {
+                foo: 'Foo',
+                bar: 'Bar',
+                baz: 'Baz',
+                north: 'Lead Value for NORTH',
+                south: 'Lead Value for SOUTH',
+                east: 'Lead Value for EAST',
+                _module: 'Leads'
+            });
+
+        sandbox.stub(leadModel, 'setDefault');
+        sandbox.stub(createModel, 'setDefault');
+
+        createModel.set({
             north: 'Contact Value for NORTH',
             west: 'Contact Value for WEST',
             east: 'Contact Value for EAST'
         });
-
-        sinon.collection.stub(leadModel, 'setDefault');
-        sinon.collection.stub(createModel, 'setDefault');
-
-        layout.createView.model = createModel;
         layout.meta.duplicateCheckOnStart = true;
         layout.meta.fieldMapping = {
             'contact_foo': 'foo',
@@ -283,7 +322,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
             'east': 'north'
         };
 
-        sinon.collection.stub(app.metadata, 'getModule')
+        sandbox.stub(app.metadata, 'getModule')
             .withArgs('Leads', 'fields').returns({north: 'north', south: 'south', east: 'east'})
             .withArgs('Contacts', 'fields').returns({north: 'north', west: 'west', east: 'east'});
 
@@ -300,19 +339,17 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should not populate create model with lead fields when copyData meta attribute is false', function() {
-        var leadModel = app.data.createBean('Leads', {
-            north: 'Lead Value for NORTH',
-            _module: 'Leads'
-        });
-        var createModel = app.data.createBean('Leads', {
-            north: 'Contact Value for NORTH'
-        });
+        var createModel = layout.createView.model,
+            leadModel = app.data.createBean('Leads', {
+                north: 'Lead Value for NORTH',
+                _module: 'Leads'
+            });
 
-        layout.createView.model = createModel;
+        createModel.set('north', 'Contact Value for NORTH');
         layout.meta.duplicateCheckOnStart = true;
         layout.meta.copyData = false;
 
-        sinon.collection.stub(app.metadata, 'getModule')
+        sandbox.stub(app.metadata, 'getModule')
             .withArgs('Leads', 'fields').returns({north: 'north'})
             .withArgs('Contacts', 'fields').returns({north: 'north'});
 
@@ -406,30 +443,30 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should not populate create model with lead fields when user does not have edit access to field', function() {
-        var leadModel = app.data.createBean('Leads', {
-            north: 'Lead Value for NORTH',
-            south: 'Lead Value for SOUTH',
-            east: 'Lead Value for EAST',
-            birthdate: '01/01/2010',
-            _module: 'Leads'
+        var createModel = layout.createView.model,
+            leadModel = app.data.createBean('Leads', {
+                north: 'Lead Value for NORTH',
+                south: 'Lead Value for SOUTH',
+                east: 'Lead Value for EAST',
+                birthdate: '01/01/2010',
+                _module: 'Leads'
+            });
+
+        sandbox.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+            return action !== 'edit' || field !== 'birthdate';
         });
-        var createModel = app.data.createBean('Leads', {
+        sandbox.stub(leadModel, 'setDefault');
+        sandbox.stub(createModel, 'setDefault');
+
+        createModel.set({
             north: 'Contact Value for NORTH',
             west: 'Contact Value for WEST',
             east: 'Contact Value for EAST',
             birthdate: '01/01/1975'
         });
-
-        sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
-            return action !== 'edit' || field !== 'birthdate';
-        });
-        sinon.collection.stub(leadModel, 'setDefault');
-        sinon.collection.stub(createModel, 'setDefault');
-
-        layout.createView.model = createModel;
         layout.meta.duplicateCheckOnStart = false;
 
-        sinon.collection.stub(app.metadata, 'getModule')
+        sandbox.stub(app.metadata, 'getModule')
             .withArgs('Leads', 'fields').returns({
                 north: 'north',
                 south: 'south',
@@ -466,13 +503,12 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should update create model if dependency module changes and trigger dupe check', function() {
-        var createModel = app.data.createBean('Leads');
-        var fooModel = app.data.createBean('Leads', {id: '456'});
+        var createModel = layout.createView.model,
+            fooModel = app.data.createBean('Leads', {id: '456'});
 
-        sinon.collection.stub(createModel, 'setDefault');
-        sinon.collection.stub(fooModel, 'setDefault');
+        sandbox.stub(createModel, 'setDefault');
+        sandbox.stub(fooModel, 'setDefault');
 
-        layout.createView.model = createModel;
         layout.updateFromDependentModuleChanges('Foo', fooModel);
 
         expect(createModel.get('foo_id')).toEqual('456');
@@ -480,10 +516,9 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
     });
 
     it('should not trigger dupe check if dependency module changes but no changes to create model', function() {
-        var createModel = app.data.createBean('Leads');
-        var fooModel = app.data.createBean('Leads', {nonMappedField: 'bar'});
+        var createModel = layout.createView.model,
+            fooModel = app.data.createBean('Leads', {nonMappedField: 'bar'});
 
-        layout.createView.model = createModel;
         layout.updateFromDependentModuleChanges('Foo', fooModel);
 
         expect(createModel.attributes).toEqual({});
