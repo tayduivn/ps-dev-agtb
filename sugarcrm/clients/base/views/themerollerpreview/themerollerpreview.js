@@ -33,7 +33,7 @@
         self.$(".ajaxLoading").show();
         $.get(cssLink)
             .success(function(data) {
-                $('iframe#previewTheme').contents().find('style').html(data);
+                $('iframe#previewTheme').contents().find('style').text(data);
                 self.$(".ajaxLoading").hide();
                 $('iframe#previewTheme').show();
             });
