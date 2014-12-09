@@ -60,7 +60,7 @@ ItemUpdaterField.prototype.getJsonValue = function () {
     var jsonFields = [];
     for (index = 0; index < this.options.length; index++) {
         if (this.options && this.options[index].active) {
-            field = new FieldUpdater(this.options[index], this)
+            field = new FieldUpdater(this.options[index], this);
             jsonFields.push(field.getJSONObject());
         }
     }
@@ -728,7 +728,8 @@ FieldUpdater.prototype.getJSONObject = function() {
             case "currency":
                 return /^-?\d*(\.\d+)?$/.test(value);
             case "email":
-                return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+                //return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+                return /^.+@.+$/ig.test(value);
             case "checkbox":
             case "dropdown":
             case "textfield":
