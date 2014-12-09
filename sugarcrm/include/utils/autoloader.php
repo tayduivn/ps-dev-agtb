@@ -111,26 +111,26 @@ class SugarAutoLoader
      * @var array
      */
     public static $exclude = array(
-        'cache/',
-        'custom/history/',
-        '.idea/',
-        'custom/blowfish/',
-        'custom/Extension/',
-        'custom/backup/',
-        'custom/modulebuilder/',
-        'tests/',
-        'examples/',
-        'docs/',
-        'vendor/log4php/',
-        'upload/',
-        'portal/',
-        'vendor/HTMLPurifier/',
-        'vendor/PHPMailer/',
-        'vendor/reCaptcha/',
-        'vendor/ytree/',
-        'vendor/pclzip/',
-        'vendor/nusoap/',
-        'vendor/bin/',
+        'cache',
+        'custom/history',
+        '.idea',
+        'custom/blowfish',
+        'custom/Extension',
+        'custom/backup',
+        'custom/modulebuilder',
+        'tests',
+        'examples',
+        'docs',
+        'vendor/log4php',
+        'upload',
+        'portal',
+        'vendor/HTMLPurifier',
+        'vendor/PHPMailer',
+        'vendor/reCaptcha',
+        'vendor/ytree',
+        'vendor/pclzip',
+        'vendor/nusoap',
+        'vendor/bin',
     );
 
     /**
@@ -1259,12 +1259,13 @@ class SugarAutoLoader
      */
     public static function scanDir($path)
     {
-        $data = array();
+        $path = rtrim($path, '/');
         if (in_array($path, self::$exclude) || !file_exists("./".$path)) {
             return array();
         }
 
         $iter = new DirectoryIterator("./".$path);
+        $data = array();
         foreach ($iter as $item) {
             if ($item->isDot()) {
                 continue;
