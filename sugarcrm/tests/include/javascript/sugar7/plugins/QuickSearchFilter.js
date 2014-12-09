@@ -199,6 +199,7 @@ describe("Plugins.Quicksearchfilter", function () {
 
     it('should get the highest priority field for search', function () {
         var layout = SugarTest.createLayout('base', 'Accounts', 'filter', {}, false, false, {layout: new Backbone.View()});
+        layout._moduleQuickSearchMeta = {};
         var metadataStub = sinon.stub(app.metadata, 'getModule', function() {
             return {
                 filters: {

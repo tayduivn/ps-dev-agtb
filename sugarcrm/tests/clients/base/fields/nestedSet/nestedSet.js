@@ -77,7 +77,7 @@ describe('Base.Field.NestedSet', function() {
         field.$(dSel).click();
         expect(field.$(field.ddEl).length).not.toBe(0);
         expect(field.$(field.ddEl).data('dropdown').opened).toBeTruthy();
-        document.body.click();
+        $('body').click();
         expect(field.$(field.ddEl).data('dropdown').opened).toBeFalsy();
         expect(clearSelectionSpy).toHaveBeenCalled();
     });
