@@ -60,6 +60,7 @@ class SugarAutoLoader
         'SugarWidget' => "include/generic/SugarWidgets/",
         'Zend_' => 'vendor/',
         'SugarJob' => 'include/SugarQueue/jobs/',
+        'MetaDataContext' => 'modules/ModuleBuilder/parsers/MetaDataContext/',
     );
 
     /**

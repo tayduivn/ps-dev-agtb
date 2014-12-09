@@ -15,8 +15,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/MetaDataContextInterface.php';
-
 /**
  * Role set metadata context
  */

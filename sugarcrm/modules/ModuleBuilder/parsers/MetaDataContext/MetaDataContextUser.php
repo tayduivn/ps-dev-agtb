@@ -15,8 +15,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/MetaDataContextInterface.php';
-
 /**
  * User metadata context
  */
@@ -37,13 +35,11 @@ class MetaDataContextUser implements MetaDataContextInterface
         if (!empty($GLOBALS['sugar_config']['roleBasedViews'])) {
             $roleSet = $this->getRoleSet($user);
             if ($roleSet) {
-                require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextRoleSet.php';
                 $this->context = new MetaDataContextRoleSet($roleSet);
                 return;
             }
         }
 
-        require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextDefault.php';
         $this->context = new MetaDataContextDefault();
     }
 

@@ -551,7 +551,6 @@ class MetaDataManager
     {
         $user = $this->getCurrentUser();
         if ($user && $user->id) {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextUser.php';
             return new MetaDataContextUser($user);
         }
 
@@ -565,7 +564,6 @@ class MetaDataManager
      */
     protected function getDefaultContext()
     {
-        require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextDefault.php';
         return new MetaDataContextDefault();
     }
 
@@ -3603,12 +3601,10 @@ class MetaDataManager
         $contexts = array();
         if (!$public && isset($params['role'])) {
             $roleSets = self::getRoleSetsByRoles($params['role']);
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextRoleSet.php';
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }
         } else {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextDefault.php';
             $contexts[] = new MetaDataContextDefault();
         }
 
@@ -3626,12 +3622,10 @@ class MetaDataManager
         $contexts = array();
         if (!$public) {
             $roleSets = self::getAllRoleSets();
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextRoleSet.php';
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }
         } else {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextDefault.php';
             $contexts[] = new MetaDataContextDefault();
         }
 

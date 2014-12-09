@@ -823,7 +823,6 @@ class MetaDataFiles
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
         if (!$context) {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataContext/MetaDataContextDefault.php';
             $context = new MetaDataContextDefault();
         }
         foreach ($modules as $module) {
