@@ -21,7 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class MetaDataContextUser implements MetaDataContextInterface
 {
     /**
-     * @var MetaDataContextRoleSet
+     * @var MetaDataContextInterface
      */
     protected $context;
 

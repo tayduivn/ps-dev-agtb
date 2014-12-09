@@ -835,7 +835,7 @@ Studio2 = {
         var isSynced = document.createElement('input');
         isSynced.setAttribute('type', 'hidden');
         isSynced.setAttribute('name', 'is_synced');
-        isSynced.setAttribute('value', ~~ModuleBuilder.state.isReset);
+        isSynced.setAttribute('value', ModuleBuilder.state.isReset ? 1 : 0);
         saveForm.appendChild(isSynced);
 
 		ModuleBuilder.submitForm('prepareForSave');
