@@ -49,6 +49,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'link' => false,
                     'default' => true,
                     'enabled' => true,
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'name' => 'date_end',

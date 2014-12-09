@@ -60,6 +60,7 @@ $viewdefs['Notifications']['base']['view']['list'] = array(
                     'type' => 'read',
                     'default' => true,
                     'enabled' => true,
+                    'css_class' => 'full-width',
                 ),
             ),
         ),
