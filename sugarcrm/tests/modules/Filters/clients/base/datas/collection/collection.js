@@ -151,6 +151,34 @@ describe('Data.Base.FiltersBeanCollection', function() {
             ]);
         });
 
+        it('should make only one request for multiple collections', function() {
+            // create another collection
+            var filters2 = app.data.createBeanCollection('Filters');
+            filters2.setModuleName(filterModuleName);
+
+            // clear existing `fetch` stub
+            fetchStub.restore();
+            var fetchSpy = sinon.collection.spy(app.BeanCollection.prototype, 'fetch');
+
+            // mock the server response to fake existing user defined filters
+            var fakeUserFilters = SugarTest.loadFixture('user', fixturePath);
+            var server = sinon.fakeServer.create();
+            server.respondWith("GET", /.*\/rest\/v10\/Filters.*/,
+                [200, {"Content-Type": "application/json"},
+                    JSON.stringify({records: fakeUserFilters})]);
+
+            // run 'load' for both
+            filters.load();
+            filters2.load();
+
+            // make server respond with fake data
+            server.respond();
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+            expect(filters.collection.get('user-filter-id-0')).toBeDefined();
+            expect(filters2.collection.get('user-filter-id-0')).toBeDefined();
+        });
+        
         it('should load the template filter when initial_filter is defined in the filter options', function() {
             filters.load();
 
