@@ -1006,9 +1006,10 @@ class SugarAutoLoader
      * @param string $dir
      * @param bool $get_dirs Get directories and not files
      * @param string $extension Get only files with given extension
+     * @param boolean $recursive Scan directory recursively
      * @return array List of files
      */
-    public static function getDirFiles($dir, $get_dirs = false, $extension = null)
+    public static function getDirFiles($dir, $get_dirs = false, $extension = null, $recursive = false)
     {
         // In development mode we don't have the filemap available. To avoid
         // full rebuilds on every page load, only load what we need at this
@@ -1040,7 +1041,7 @@ class SugarAutoLoader
             return array();
         }
 
-        return self::flatten($dir, $data, $get_dirs, $extension);
+        return self::flatten($dir, $data, $get_dirs, $extension, $recursive);
     }
 
     /**
@@ -1050,10 +1051,11 @@ class SugarAutoLoader
      * @param array $data Tree data
      * @param boolean $get_dirs
      * @param string $extension Filter files by extension
+     * @param boolean $recursive Use data from subdirectories
      *
      * @return array Flattened data
      */
-    protected function flatten($dir, array $data, $get_dirs, $extension)
+    protected function flatten($dir, array $data, $get_dirs, $extension, $recursive)
     {
         $result = array();
         foreach ($data as $file => $nodes) {
@@ -1066,10 +1068,10 @@ class SugarAutoLoader
             if (is_array($nodes) == $get_dirs) {
                 $result[] = $path;
             }
-            if (is_array($nodes)) {
+            if ($recursive && is_array($nodes)) {
                 $result = array_merge(
                     $result,
-                    self::flatten($path, $nodes, $get_dirs, $extension)
+                    self::flatten($path, $nodes, $get_dirs, $extension, $recursive)
                 );
             }
         }

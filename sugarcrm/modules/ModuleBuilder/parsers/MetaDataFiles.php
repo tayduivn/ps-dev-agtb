@@ -929,14 +929,14 @@ class MetaDataFiles
         foreach ($checkPaths as $path => $pathInfo) {
             // Looks at /modules/Accounts/clients/base/views/*
             // So should pull up "record","list","preview"
-            $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
+            $dirsInPath = SugarAutoLoader::getDirFiles($path, true, null, true);
             $fileList = array();
 
             foreach ($dirsInPath as $fullSubPath) {
                 $subPath = basename($fullSubPath);
                 // This should find the files in each view/layout
                 // So it should pull up list.js, list.php, list.hbs
-                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
+                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath, false, null, true);
                 foreach ($filesInDir as $fullFile) {
                     // If this file is an excluded file, skip it
                     if (self::isExcludedClientFile($fullFile)) {
