@@ -1500,7 +1500,7 @@ AdamCanvas.prototype.validateName = function (element, newText) {
 //    if (shape.type === 'AdamActivity') {
     if (nText === '') {
         if (shape.type === 'AdamActivity') {
-            msg = translate('LBL_PMSE_MESSAGE_TASKNAMEEMPTY');
+            msg = translate('LBL_PMSE_MESSAGE_ACTIVITY_NAME_EMPTY');
             rt = false;
         }
     } else {
@@ -1510,7 +1510,7 @@ AdamCanvas.prototype.validateName = function (element, newText) {
 //                    if (shape_aux.getType() === 'AdamActivity') {
                 if (shape_aux.getName().toUpperCase() === nText.toUpperCase()) {
 //                            t += 1;
-                    str = translate('LBL_PMSE_MESSAGE_TASKNAMEALREADYEXISTS');
+                    str = translate('LBL_PMSE_MESSAGE_ACTIVITY_NAME_ALREADY_EXISTS');
                     msg = str.replace('%s', nText);
                     rt = false;
                     break;

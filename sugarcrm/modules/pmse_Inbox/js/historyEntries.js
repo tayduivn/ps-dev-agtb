@@ -53,7 +53,7 @@ function showHistory(caseId, caseIndex) {
                                 if (Date.parse(log.end_date)) {
                                     label = log.data_info + '. <strong> ( ' + timeElapsedString(Date.parse(log.current_date), Date.parse(log.end_date), true) + ' )</strong> ';
                                 } else {
-                                    label = log.data_info + '. <strong>' + translate('LBL_PMSE_MESSAGE_NOYETSTARTED') + '</strong> ';
+                                    label = log.data_info + '. <strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong> ';
                                 }
 
                                 var pictureUrl = _App.api.buildFileURL({
@@ -68,7 +68,7 @@ function showHistory(caseId, caseIndex) {
                                     user: log.user,
                                     picture : pictureUrl,
                                     duration: '<strong> ' + timeElapsedString(Date.parse(log.end_date), Date.parse(log.delegate_date)) + ' <strong>',
-                                    startDate: (Date.parse(log.start_date)) ? log.start_date :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
+                                    startDate: (Date.parse(log.start_date)) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
                                     //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     completed: log.completed

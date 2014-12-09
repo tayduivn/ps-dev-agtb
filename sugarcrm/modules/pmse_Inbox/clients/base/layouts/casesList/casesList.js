@@ -32,7 +32,7 @@
     cancelCases: function(model){
         var self=this;
 
-        var msg=app.lang.get('LBL_CANCEL_MESSAGE', this.module);
+        var msg=app.lang.get('LBL_PMSE_CANCEL_MESSAGE', this.module);
         msg=msg.replace('[]',model.get('cas_title'));
         msg=msg.replace('{}',model.get('cas_id'));
 

@@ -573,8 +573,8 @@
                                 combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = module.fields[j].optionItem;
                             } else if (module.fields[j].type === 'Checkbox') {
                                 combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = {
-                                    checked: translate('LBL_DROPDOW_CHECKED'),
-                                    unchecked: translate('LBL_DROPDOWN_UNCHECKED')
+                                    checked: translate('LBL_PMSE_DROP_DOWN_CHECKED', 'pmse_Business_Rules'),
+                                    unchecked: translate('LBL_PMSE_DROP_DOWN_UNCHECKED', 'pmse_Business_Rules')
                                 };
                             }
                         }
