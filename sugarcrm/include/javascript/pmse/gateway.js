@@ -54,12 +54,6 @@ AdamGateway = function (options) {
      */
     this.gat_default_flow = null;
 
-    /**
-     * Array of markers added to this activity
-     * @type {Array}
-     */
-    this.markersArray = new jCore.ArrayList();
-
     AdamGateway.prototype.initObject.call(this, options);
 };
 

@@ -1316,4 +1316,10 @@ div.line:hover {
   color: #e61718;
 }
 
-//@ sourceURL=jcore.adam.css
+.adam-artifact-annotation-border {
+    width: 25%;
+    height: inherit;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px 0 1px 1px;
+}
