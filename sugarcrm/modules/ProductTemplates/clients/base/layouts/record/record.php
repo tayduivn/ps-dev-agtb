@@ -48,7 +48,7 @@ $viewdefs['ProductTemplates']['base']['layout']['record'] = array(
                                             ),
                                             array(
                                                 'name' => 'activitystream',
-                                                'icon' => 'fa-th-list',
+                                                'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
                                         ),
