@@ -1251,7 +1251,9 @@ class Report
                 $varDefLabel = $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['vname'];
                 $varDefLabel = translate($varDefLabel, $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['module']);
                 $finalDisplayName = $reportDisplayTableName . " > " . $varDefLabel;
-                $where_clause = str_replace($key, $finalDisplayName, $where_clause);
+                // Wrap the search and replace terms in spaces to ensure exact match
+                // and replace
+                $where_clause = str_replace(" $key ", " $finalDisplayName ", $where_clause);
             }
         } // foreach
         return $where_clause;
