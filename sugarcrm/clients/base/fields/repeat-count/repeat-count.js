@@ -42,7 +42,7 @@
 
         this.def['default'] = this.def['default'] || this.defaultCount;
         if (this.model.isNew()) {
-            this.model.set(this.name, this.def['default']);
+            this.model.setDefault(this.name, this.def['default']);
         }
 
         this.model.addValidationTask(
