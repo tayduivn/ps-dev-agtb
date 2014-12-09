@@ -267,6 +267,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
      */
     public function testConvertKBOLDDocuments()
     {
+        $this->markTestSkipped('Waiting for MT-909');
         $this->script->run();
 
         $newDocument = $this->getKBContentBeanByName($this->document->name);
@@ -285,6 +286,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
      */
     public function testConvertTags()
     {
+        $this->markTestSkipped('Waiting for MT-909');
         $this->script = $this->getMockBuilder('SugarUpgradeConvertKBOLDDocuments')
             ->setConstructorArgs(array($this->upgrader))
             ->setMethods(array('getOldDocuments', 'getOldTags'))
@@ -339,6 +341,7 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
      */
     public function testConvertTagsToCategories()
     {
+        $this->markTestSkipped('Waiting for MT-909');
         $this->script = $this->getMockBuilder('SugarUpgradeConvertKBOLDDocuments')
             ->setConstructorArgs(array($this->upgrader))
             ->setMethods(array('getOldDocuments', 'getOldTags'))
