@@ -264,7 +264,7 @@ nv.models.funnelChart = function() {
       var tickValues = resetScale(yScale, funnelData);
 
       function resetScale(scale, data) {
-        var series1 = [0];
+        var series1 = [[0]];
         var series2 = data.filter(function(d) {
                 return !d.disabled;
               })

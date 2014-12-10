@@ -5114,7 +5114,7 @@ nv.models.funnelChart = function() {
       var tickValues = resetScale(yScale, funnelData);
 
       function resetScale(scale, data) {
-        var series1 = [0];
+        var series1 = [[0]];
         var series2 = data.filter(function(d) {
                 return !d.disabled;
               })
@@ -13920,6 +13920,7 @@ nv.models.tree = function() {
   // http://mbostock.github.com/d3/talk/20111018/tree.html
   // https://groups.google.com/forum/#!topic/d3-js/-qUd_jcyGTw/discussion
   // http://ajaxian.com/archives/foreignobject-hey-youve-got-html-in-my-svg
+  // [possible improvements @ http://bl.ocks.org/robschmuecker/7880033]
 
   //============================================================
   // Public Variables with Default Settings
@@ -13988,9 +13989,9 @@ nv.models.tree = function() {
 
       var svg = d3.select(this);
       var availableSize = { // the size of the svg container minus padding
-          'width': parseInt(svg.style('width'), 10) - padding.left - padding.right,
-          'height': parseInt(svg.style('height'), 10) - padding.top - padding.bottom
-        };
+            'width': parseInt(svg.style('width'), 10) - padding.left - padding.right,
+            'height': parseInt(svg.style('height'), 10) - padding.top - padding.bottom
+          };
 
       var wrap = svg.selectAll('.nv-wrap').data([1]);
       var wrapEnter = wrap.enter().append('g')
@@ -14020,7 +14021,7 @@ nv.models.tree = function() {
       // Compute the new tree layout.
       var tree = d3.layout.tree()
             .size(null)
-            .elementsize([(horizontal ? nodeSize.height : nodeSize.width), 1])
+            .nodeSize([(horizontal ? nodeSize.height : nodeSize.width), 1])
             .separation(function separation(a, b) {
               return a.parent == b.parent ? 1 : 1;
             });
@@ -14043,8 +14044,8 @@ nv.models.tree = function() {
 
         // the size of the chart itself
         var size = [
-              d3.min(nodes, getX) + d3.max(nodes, getX) + (horizontal ? nodeSize.width :  0),
-              d3.min(nodes, getY) + d3.max(nodes, getY) + (horizontal ? 0 : nodeSize.height)
+              Math.abs(d3.min(nodes, getX)) + Math.abs(d3.max(nodes, getX)) + nodeSize.width,
+              Math.abs(d3.min(nodes, getY)) + Math.abs(d3.max(nodes, getY)) + nodeSize.height
             ],
 
             // initial chart scale to fit chart in container
@@ -14054,19 +14055,20 @@ nv.models.tree = function() {
 
             // initial chart translation to position chart in the center of container
             center = [
-              xScale < yScale ? 0 : (availableSize.width  / scale - size[0]) / 2,
-              xScale > yScale ? 0 : (availableSize.height / scale - size[1]) / 2
+              Math.abs(d3.min(nodes, getX)) +
+                (xScale < yScale ? 0 : (availableSize.width / scale - size[0]) / 2),
+              Math.abs(d3.min(nodes, getY)) +
+                (xScale < yScale ? (availableSize.height / scale - size[1]) / 2 : 0)
             ],
 
-            // this is needed because the origin of a node is at the bottom
             offset = [
-              horizontal ? nodeSize.width : padding.left / 2,
-              horizontal ? padding.top / 2 : nodeSize.height
+              nodeSize.width / (horizontal ? 1 : 2),
+              nodeSize.height / (horizontal ? 2 : 1)
             ],
 
             translate = [
-              (offset[0] + center[0]) * scale,
-              (offset[1] + center[1]) * scale
+              (center[0] + offset[0]) * scale + padding.left / (horizontal ? 2 : 1),
+              (center[1] + offset[1]) * scale + padding.top / (horizontal ? 1 : 2)
             ];
 
         backg
@@ -14078,7 +14080,7 @@ nv.models.tree = function() {
 
       chart.orientation = function(orientation) {
         horizontal = (orientation === 'horizontal' || !horizontal ? true : false);
-        tree.elementsize([(horizontal ? nodeSize.height : nodeSize.width), 1]);
+        tree.nodeSize([(horizontal ? nodeSize.height : nodeSize.width), 1]);
         chart.update(_data);
       };
 
@@ -14191,7 +14193,7 @@ nv.models.tree = function() {
         var root = nodes[0];
 
         nodes.forEach(function(d) {
-          setY(d, d.depth * (horizontal ? 2 * nodeSize.width : 2 * nodeSize.height));
+          setY(d, d.depth * 2 * (horizontal ? nodeSize.width : nodeSize.height));
         });
 
         // Update the nodes…
