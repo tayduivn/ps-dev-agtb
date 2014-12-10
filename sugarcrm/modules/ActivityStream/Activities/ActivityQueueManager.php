@@ -287,7 +287,11 @@ class ActivityQueueManager
                     continue;
                 }
 
-                if ($changeInfo['data_type'] === 'id' || $changeInfo['data_type'] === 'relate' || $changeInfo['data_type'] === 'team_list') {
+                if (isset($changeInfo['data_type']) &&
+                    ($changeInfo['data_type'] === 'id' ||
+                        $changeInfo['data_type'] === 'relate' ||
+                        $changeInfo['data_type'] === 'team_list')
+                ) {
                     if ($fieldName == 'team_set_id') {
                         $this->resolveTeamSetReferences($data, $fieldName);
                     } else {
