@@ -20,7 +20,7 @@ class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $condition = new Expression();
         $condition->lhs_field = 'date_closed';
-        $condition->exp_type = 'date';
+        $condition->exp_type = 'datetime';
         $condition->operator = 'Less Than';
         $condition->ext1 = 172800;
         $glueWorkflow = new WorkFlowGlue();
