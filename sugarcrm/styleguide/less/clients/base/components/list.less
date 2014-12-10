@@ -28,7 +28,10 @@ a.preview-list-item:hover {
   width: 7px;
   cursor: ew-resize;
   margin-left: -3px;
-  z-index: 8;
+
+  &.rc-column-resizing {
+    z-index: 8;
+  }
 }
 table.rc-table-resizing,
 table.rc-table-resizing thead,
