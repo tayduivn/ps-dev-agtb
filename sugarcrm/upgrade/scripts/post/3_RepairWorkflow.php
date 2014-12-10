@@ -21,25 +21,47 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
 
     public function run()
     {
-        if(!$this->toFlavor('pro')) return;
+        if (!$this->toFlavor('pro')) return;
 
         require_once('modules/WorkFlow/WorkFlow.php');
-    	require_once('modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php');
-    	require_once('include/workflow/glue.php');
-        // grab all workflows that are time based and have not been deleted
+        require_once('modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php');
+        require_once('include/workflow/glue.php');
+
+        // Disable time-elapsed workflows that don't have a proper Primary trigger
+        $query = "SELECT DISTINCT w.id as workflow_id, w.description as description
+                    FROM workflow w, workflow_triggershells wt
+                    WHERE w.id = wt.parent_id
+                    AND w.type = 'Time'
+                    AND frame_type = 'Primary'
+                    AND wt.type NOT IN ('compare_any_time', 'compare_specific')
+                    AND status = 1";
+        $brokenWorkflows = $this->db->query($query);
+        $descriptionFix = "THIS WORKFLOW WAS DEACTIVATED AUTOMATICALLY BY THE UPGRADE TO SUGAR 7 DUE TO INCOMPATIBILITY. PLEASE DELETE ALL CONDITIONS ON THE WORKFLOW AND RECREATE THEM.";
+        while ($row = $this->db->fetchByAssoc($brokenWorkflows)) {
+            $workflow = BeanFactory::getBean('WorkFlow', $row['workflow_id']);
+            $workflow->status = 0;
+            if (strpos($row['description'], $descriptionFix) === false) {
+                $workflow->description = "$descriptionFix\n"
+                    . $row['description'];
+            }
+            $workflow->save();
+        }
+
+        // Grab all workflows that are time based and have not been deleted
         $query = "SELECT workflow_triggershells.id trigger_id FROM workflow LEFT JOIN workflow_triggershells ON workflow_triggershells.parent_id = workflow.id WHERE workflow.deleted = 0 AND workflow.type = 'Time' AND workflow_triggershells.type = 'compare_any_time'";
         $data = $this->db->query($query);
-        if(empty($data)) {
+        if (empty($data)) {
             return;
         }
-        while($row = $this->db->fetchByAssoc($data)) {
+        while ($row = $this->db->fetchByAssoc($data)) {
     			$shell = new WorkFlowTriggerShell();
     			$glue_object = new WorkFlowGlue();
     			$shell->retrieve($row['trigger_id']);
     			$shell->eval = $glue_object->glue_normal_compare_any_time($shell);
     			$shell->save();
         }
-    	//call repair workflow
+
+    	// Call repair workflow
     	$workflow_object = new WorkFlow();
     	$workflow_object->repair_workflow();
     }
