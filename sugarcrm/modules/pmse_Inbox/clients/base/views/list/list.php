@@ -22,28 +22,28 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'cas_id',
-                    'label' => 'Case Id',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => false,
-                ),
-                array(
-                    'name' => 'cas_title',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => false,
-                ),
-                array(
-                    'name' => 'task_name',
-                    'label' => 'Task Name',
+                    'label' => 'LBL_CAS_ID',
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
                 ),
                 array(
                     'name' => 'pro_title',
-                    'label' => 'Process Name',
+                    'label' => 'LBL_PROCESS_DEFINITION_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
+                    'name' => 'task_name',
+                    'label' => 'LBL_PROCESS_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
+                    'name' => 'cas_title',
+                    'label' => 'LBL_RECORD_NAME',
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
@@ -57,7 +57,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 ),*/
                 array(
                     'name' => 'case_init',
-                    'label' => 'Owner',
+                    'label' => 'LBL_OWNER',
                     'width' => 9,
                     'default' => true,
                     'enabled' => true,

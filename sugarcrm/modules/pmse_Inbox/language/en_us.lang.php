@@ -122,10 +122,12 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_DUE_DATE' => 'Due Date',
     'LBL_PMSE_LABEL_IN_TIME' => 'In Time',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
+    'LBL_PMSE_LABEL_PROCESS' => 'Process',
 
 //    'LBL_CASE_ID'  => "Process Id",
-    'LBL_CASE_TITLE'  => "Process Title",
+    'LBL_RECORD_NAME'  => "Record Name",
     'LBL_PROCESS_NAME'  => "Process Name",
+    'LBL_PROCESS_DEFINITION_NAME'  => "Process Definition Name",
 //    'LBL_STATUS'  => "Status",
 //    'LBL_DATE_CREATED' => "Date Created",
     'LBL_OWNER' => 'Owner',
