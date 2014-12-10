@@ -27,9 +27,12 @@
      */
     _addCustomFieldsToBean: function(bean) {
         if (bean.has('sales_stage')) {
-            var dom = app.lang.getAppListStrings('sales_probability_dom');
+            var dom = app.lang.getAppListStrings('sales_probability_dom'),
+                userCurrencyId = app.user.getPreference('currency_id') || app.currency.getBaseCurrencyId();
             bean.set({
-                probability: dom[bean.get('sales_stage')]
+                probability: dom[bean.get('sales_stage')],
+                currency_id: userCurrencyId,
+                base_rate: app.metadata.getCurrency(userCurrencyId).conversion_rate
             });
         }
 
