@@ -117,7 +117,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         items,
         proxy,
         proxyUsers,
-        textArea,
+        //textArea,
         url,
         wtitle,
         wWidth,
@@ -209,12 +209,12 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         required: true
     });
 
-    textArea = new TextareaField({
-        name: 'adhoc_comment',
-        label: translate('LBL_PMSE_FORM_LABEL_NOTE', 'pmse_Inbox'),
-        fieldWidth: '300px',
-        fieldHeight: '100px'
-    });
+    //textArea = new TextareaField({
+    //    name: 'adhoc_comment',
+    //    label: translate('LBL_PMSE_FORM_LABEL_NOTE', 'pmse_Inbox'),
+    //    fieldWidth: '300px',
+    //    fieldHeight: '100px'
+    //});
     user_Name = new HiddenField({
         name: 'user_name',
         value: ''
@@ -232,7 +232,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             casInboxId,
             combo_users,
             combo_type,
-            textArea,
+            //textArea,
             task_Name,
             user_Name,
             module_Name,
@@ -240,7 +240,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             full_Name
         ];
         combo_users.setName('adhoc_user');
-        textArea.setName('adhoc_comment')
+        //textArea.setName('adhoc_comment')
     } else {
         url = 'pmse_Inbox/ReassignForm';
         wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
@@ -283,7 +283,11 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         buttons: [
             {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox') , handler: function () {
                 var cbDate=$("#reassign_user option:selected").html();
-                items[8].setValue($("#adhoc_user option:selected").html());
+                if(cbDate){
+                    items[6].setValue(cbDate);
+                }else{
+                    items[7].setValue($("#adhoc_user option:selected").html());
+                }
 //                f.submit();
                 var urlIni = _App.api.buildURL(url, null, null);
                 attributes = {
