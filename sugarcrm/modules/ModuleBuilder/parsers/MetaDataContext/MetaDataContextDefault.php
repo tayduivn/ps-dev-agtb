@@ -30,7 +30,7 @@ class MetaDataContextDefault implements MetaDataContextInterface
     public function isValid(array $file)
     {
         // it shouldn't be a context specific file
-        return strpos($file['path'], '/roles/') === false;
+        return empty($file['params']);
     }
 
     /** {@inheritDoc} */

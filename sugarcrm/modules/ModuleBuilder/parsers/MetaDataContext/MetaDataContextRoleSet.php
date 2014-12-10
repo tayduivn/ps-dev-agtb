@@ -52,15 +52,15 @@ class MetaDataContextRoleSet implements MetaDataContextInterface
     /** {@inheritDoc} */
     public function isValid(array $file)
     {
-        $role = $this->getFileRole($file['path']);
+        $role = $this->getFileRole($file);
         return !$role || isset($this->index[$role]);
     }
 
     /** {@inheritDoc} */
     public function compare(array $a, array $b)
     {
-        $aRole = $this->getFileRole($a['path']);
-        $bRole = $this->getFileRole($b['path']);
+        $aRole = $this->getFileRole($a);
+        $bRole = $this->getFileRole($b);
 
         if ($aRole && !$bRole) {
             return -1;
@@ -73,10 +73,10 @@ class MetaDataContextRoleSet implements MetaDataContextInterface
         return strcmp($aRole, $bRole);
     }
 
-    protected function getFileRole($path)
+    protected function getFileRole(array $file)
     {
-        if (preg_match('/\/roles\/([^\/]+)\//', $path, $matches)) {
-            return $matches[1];
+        if (isset($file['params']['role'])) {
+            return $file['params']['role'];
         }
 
         return null;

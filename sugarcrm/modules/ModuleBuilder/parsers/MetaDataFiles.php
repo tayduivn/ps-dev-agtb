@@ -946,12 +946,14 @@ class MetaDataFiles
                     $file = basename($fullFile);
                     $fileIndex = $fullFile;
                     if ( !isset($fileList[$fileIndex]) ) {
-                        $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
-                        if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
-                            $fileList[$fileIndex]['template'] = true;
-                        } else {
-                            $fileList[$fileIndex]['template'] = false;
-                        }
+                        $fileList[$fileIndex] = array(
+                            'path' => $fullFile,
+                            'file' => $file,
+                            'subPath' => $subPath,
+                            'platform' => $pathInfo['platform'],
+                            'template' => $pathInfo['template'] && substr($file, -4) == '.php',
+                            'params' => self::getClientFileParams($fullFile),
+                        );
                     }
                 }
             }
@@ -963,6 +965,23 @@ class MetaDataFiles
         }
 
         return call_user_func_array('array_merge', $fileLists);
+    }
+
+    /**
+     * Returns context parameters which are required for the given file to be effective
+     *
+     * @param $path
+     * @return array
+     */
+    protected static function getClientFileParams($path)
+    {
+        if (preg_match('/\/roles\/([^\/]+)\//', $path, $matches)) {
+            return array(
+                'role' => $matches[1],
+            );
+        }
+
+        return array();
     }
     /**
      * Get the content from the global files.
