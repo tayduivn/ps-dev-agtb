@@ -31,6 +31,7 @@
 
     .pmse-toolbar-buttons {
         width: 83%;
+        padding: 3px 0 0 10px;
         position: absolute;
         left: 0;
     }
@@ -40,6 +41,84 @@
         position: absolute;
         right: 0;
     }
+    .navbtn {
+        width: 28px;
+        height: 28px;
+        margin: 0 5px 0 0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        display: block;
+        float: left;
+        position: relative;
+        text-align: center;
+        background-color: #f6f6f6;
+    }
+    .navbtn.mod {
+        color: white;
+        font-family: Helvetica;
+        font-size: 10px;
+        line-height: 17px;
+        text-indent: 2px;
+        text-align: left;
+    }
+    .navbtn > [class^="icon-"] {
+        font-size: 1.35em;
+        line-height: 1.75em;
+    }
+    .navbtn .icon-rotate-45:before {
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=.5);
+    }
+    .navbtn .icon-stack {
+        margin-left: -2px;
+    }
+    .navbtn .icon-small {
+        font-size: 1.05em;
+    }
+    .navbtn .icon-xsmall {
+        font-size: .70em;
+    }
+    .navbtn .overlay {
+        position: absolute;
+        top: 5px;
+        left: 10.5px;
+        z-index: 1;
+        font-size: .85em;
+        color: #fff;
+    }
+    /* Leads */
+    .navbtn.leads {
+        background-color: #176DE5;
+    }
+    /* Opportunity */
+    .navbtn.opportunity {
+        background-color: #6D17E5;
+    }
+    /* Documents */
+    .navbtn.documents {
+        background-color: #6F1C0B;
+    }
+    /* Undo, Redo, Save */
+    .navbtn i[class*="-off"] {
+        color: #ccc;
+    }
+
+    .navdiv {
+        width: 10px;
+        height: 7px;
+        border-radius: 15px;
+        background-color: #ccc;
+        margin: 12px 5px 0 0;
+        float: left;
+    }
+    .navdiv.lg {
+        width: 50px;
+    }
+
 </style>
 <!--RECIPES HTML BEGINNIG-->
 <div id="container">
@@ -60,31 +139,71 @@
             </div>
         </div>-->
     </div>
-    <div class="pane ui-layout-north no-border" style="background-color: #CCCCCC;">
+    <div class="pane ui-layout-north no-border" style="background-color: #f6f6f6;">
         <div id="adam_toolbar">
             <div class="pmse-toolbar-buttons">
-                <span id="AdamEventLead" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_LEADS" this.module}}"><i class="adam-icon-start-lead"></i> </span>
-                <span id="AdamEventOpportunity" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_OPPORTUNITY" this.module}}"><i class="adam-icon-start-opportunity"></i> </span>
-                <span id="AdamEventDocument" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_DOCUMENTS" this.module}}"><i class="adam-icon-start-document"></i> </span>
-                <span id="AdamEventOtherModule" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_OTHER_MODULES" this.module}}"><i class="adam-icon-start-other-module"></i> </span>
-                <span class="space"></span>
-                <span id="AdamEventTimer" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_WAIT" this.module}}"><i class="adam-icon-intermediate-timer"></i> </span>
-                <span id="AdamEventReceiveMessage" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_RECEIVE_MESSAGE" this.module}}"><i class="adam-icon-intermediate-receive-message"></i> </span>
-                <span id="AdamEventMessage" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_SEND_MESSAGE" this.module}}"><i class="adam-icon-intermediate-message"></i> </span>
-                <span class="space"></span>
-                <span id="AdamUserTask" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_USER_TASK" this.module}}"><i class="adam-icon-user-task"></i> </span>
-                <span id="AdamScriptTask" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_ACTION" this.module}}"><i class="adam-icon-action"></i> </span>
-                <span class="space"></span>
-                <span id="AdamGatewayExclusive" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_EXCLUSIVE" this.module}}"><i class="adam-icon-gateway-exclusive"></i> </span>
-                <span id="AdamGatewayParallel" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_PARALLEL" this.module}}"><i class="adam-icon-gateway-parallel"></i> </span>
-                <span class="space"></span>
-                <span id="AdamEventEnd" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_END_EVENT" this.module}}"><i class="adam-icon-end"></i> </span>
-                <span class="space"></span>
-                <span id="AdamTextAnnotation" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_COMMENT" this.module}}"><i class="adam-icon-textannotation"></i> </span>
-                <span class="space"></span>
-                <span id="ButtonUndo" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_UNDO" this.module}}"><i class="adam-icon-undo-off"></i> </span>
-                <span id="ButtonRedo" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_REDO" this.module}}"><i class="adam-icon-redo-off"></i> </span>
-                <span id="ButtonSave" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_SAVE" this.module}}"><i class="adam-icon-save-off"></i> </span>
+
+                <!-- Leads -->
+                <span id="AdamEventLead" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_LEADS" this.module}}" class="navbtn mod leads">Le</span>
+
+                <!-- Opportunity -->
+                <span id="AdamEventOpportunity" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_OPPORTUNITY" this.module}}" class="navbtn mod opportunity">Op</span>
+
+                <!-- Documents -->
+                <span id="AdamEventDocument" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_DOCUMENTS" this.module}}" class="navbtn mod documents">Do</span>
+
+                <!-- Other Modules -->
+                <span id="AdamEventOtherModule" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_OTHER_MODULES" this.module}}" class="navbtn othermods"><i class="icon-plus"></i></span>
+
+                <span class="navdiv"></span>
+
+                <!-- Wait -->
+                <span id="AdamEventTimer" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_WAIT" this.module}}" class="navbtn"><i class="icon-time"></i></span>
+
+                <!-- Receive Message -->
+                <span id="AdamEventReceiveMessage" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_RECEIVE_MESSAGE" this.module}}" class="navbtn"><i class="icon-inbox"></i></span>
+
+                <!-- Send Message -->
+                <span id="AdamEventMessage" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_SEND_MESSAGE" this.module}}" class="navbtn"><i class="icon-envelope"></i></span>
+
+                <span class="navdiv"></span>
+
+                <!-- User Task -->
+                <span id="AdamUserTask" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_USER_TASK" this.module}}" class="navbtn"><i class="icon-stop"></i></span>
+
+                <!-- Action -->
+                <span id="AdamScriptTask" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_ACTION" this.module}}" class="navbtn"><i class="icon-cogs"></i></span>
+
+                <span class="navdiv"></span>
+
+                <!-- Exclusive -->
+                <span id="AdamGatewayExclusive" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_EXCLUSIVE" this.module}}" class="navbtn"><i class="icon-stop icon-rotate-45"></i></span>
+
+                <!-- Parallel -->
+                <span id="AdamGatewayParallel" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_PARALLEL" this.module}}" class="navbtn"><i class="icon-plus overlay"></i><i class="icon-stop icon-rotate-45"></i></span>
+
+                <span class="navdiv"></span>
+
+                <!-- End Event -->
+                <span id="AdamEventEnd" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_END_EVENT" this.module}}" class="navbtn"><i class="icon-circle"></i></span>
+
+                <span class="navdiv"></span>
+
+                <!-- Comment -->
+                <span id="AdamTextAnnotation" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_COMMENT" this.module}}" class="navbtn"><i class="icon-comment"></i></span>
+
+                <span class="navdiv lg"></span>
+
+                <!-- Undo -->
+                <span id="ButtonUndo" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_UNDO" this.module}}" class="navbtn"><i class="icon-undo"></i></span>
+
+                <!-- Redo -->
+                <span id="ButtonRedo" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_REDO" this.module}}" class="navbtn"><i class="icon-undo icon-flip-horizontal"></i></span>
+
+                <!-- Save -->
+                <span id="ButtonSave" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_SAVE" this.module}}" class="navbtn"><i class="icon-save"></i></span>
+
+                <!-- Zoom -->
                 <select id="zoom" class="friendly-select">
                     <option value="1">50%</option>
                     <option value="2">75%</option>
@@ -92,6 +211,7 @@
                     <option value="4">150%</option>
                     <option value="5">175%</option>
                 </select>
+
             </div>
             <div class="pmse-toolbar-title">
                 <div style="display:block; float:right;"><button class="btn btn-invisible btn-close-designer" rel="tooltip" title="" data-placement="bottom" data-original-title="Close Designer">

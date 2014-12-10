@@ -1196,16 +1196,19 @@
   margin: 2px;
   padding: 2px;
 }
-#adam_toolbar span {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
+#adam_toolbar span.navbtn {
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+}
+#adam_toolbar span.navbtn:not(.mod):hover {
+  background-color: #FFFFFF;
+}
+#adam_toolbar span.navbtn .button {
   background-color: #F5F5F5;
   border: 1px solid #999999;
-  -webkit-border-radius: 4px 4px 4px 4px;
   -moz-border-radius: 4px 4px 4px 4px;
-  -ms-border-radius: 4px 4px 4px 4px;
-  -o-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px;
   border-radius: 4px 4px 4px 4px;
   cursor: pointer;
   display: inline-block;
@@ -1214,35 +1217,8 @@
   padding: 2px;
   width: 30px;
 }
-#adam_toolbar span:hover {
+#adam_toolbar span.navbtn .button:hover {
   background-color: #FFFFFF;
-}
-#adam_toolbar span .button {
-  background-color: #F5F5F5;
-  border: 1px solid #999999;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -ms-border-radius: 4px 4px 4px 4px;
-  -o-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  cursor: pointer;
-  display: inline-block;
-  text-align: center;
-  vertical-align: middle;
-  padding: 2px;
-  width: 30px;
-}
-#adam_toolbar span .button:hover {
-  background-color: #FFFFFF;
-}
-#adam_toolbar span.space {
-  background-color: #CCCCCC;
-  border: 0px;
-  cursor: pointer;
-  width: 10px;
-}
-#adam_toolbar span.space:hover {
-  background-color: #CCCCCC;
 }
 #adam_toolbar .btn-close {
   color: #000000;
@@ -1279,13 +1255,12 @@
 .adam-activity-task {
   background-color: #d9edf7;
   border: 2px solid #0055cc;
-  -webkit-border-radius: 7px;
   -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
+  -webkit-border-radius: 7px;
   border-radius: 7px;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -1306,10 +1281,10 @@
 }
 
 div.line {
-  -webkit-transform-origin: left top;
+
   -moz-transform-origin: left top;
   -ms-transform-origin: left top;
-  -o-transform-origin: left top;
+  -webkit-transform-origin: left top;
   transform-origin: left top;
   height: 1px;
   /* Line width of 3 */
