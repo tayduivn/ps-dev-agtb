@@ -38,7 +38,6 @@ $app_list_strings = array (
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
     'Reports' => 'Reports',
-    'Reports_1'=>'Saved Reports',
     'Forecasts' => 'Forecasts',
     'ForecastWorksheets' => 'Forecast Worksheets',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
@@ -222,7 +221,6 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
-    'Reports_1'=>'Saved Report',
     'Tags' => 'Tag',
   ),
 
