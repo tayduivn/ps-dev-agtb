@@ -59,6 +59,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'default' => true,
                     'name' => 'status',
                     'type' => 'event-status',
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'enabled' => true,
