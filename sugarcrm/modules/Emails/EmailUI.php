@@ -1414,8 +1414,6 @@ eoq;
 			// lead specific
 			$focus->lead_source = 'Email';
 			$focus->lead_source_description = trim($email->name);
-			// case & bug specific
-			$focus->source = 'InboundEmail';
 
 			$from = (isset($email->from_name) && !empty($email->from_name)) ? $email->from_name : $email->from_addr;
 
@@ -1455,6 +1453,8 @@ eoq;
 				}
 			}
 		} else {
+			// case & bug specific
+			$focus->source = 'InboundEmail';
 			// bugs, cases, tasks
 			$focus->name = trim($email->name);
 		}
