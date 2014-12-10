@@ -61,6 +61,9 @@ class History implements HistoryInterface
         {
             sort ( $this->_list ) ;
         }
+
+        // Make sure to clear the old _previewFilename on instantiation
+        $this->undoRestore();
     }
 
 
