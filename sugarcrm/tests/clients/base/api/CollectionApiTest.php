@@ -81,11 +81,15 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(array(
             'a' => array(
-                array('name' => 'a'),
+                'records' => array(
+                    array('name' => 'a'),
+                ),
             ),
             'c' => array(
-                array('name' => 'c1'),
-                array('name' => 'c2'),
+                'records' => array(
+                    array('name' => 'c1'),
+                    array('name' => 'c2'),
+                ),
             ),
         ), $actual);
     }
@@ -462,11 +466,11 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $records = SugarTestReflection::callProtectedMethod(
             $this->api,
             'sortData',
-            array($data, $spec, $limit, &$offset)
+            array($data, $spec, $offset, $limit, &$nextOffset)
         );
 
         $this->assertEquals($expectedRecords, $records);
-        $this->assertEquals($expectedNextOffset, $offset);
+        $this->assertEquals($expectedNextOffset, $nextOffset);
     }
 
     public function sortDataProvider()
@@ -475,17 +479,23 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'strings' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'x',
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
+                            array(
+                                'a' => 'z',
+                            ),
                         ),
-                        array(
-                            'a' => 'z',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => 'Y',
+                        'records' => array(
+                            array(
+                                'a' => 'Y',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -525,17 +535,23 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'numbers' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => '10',
+                        'records' => array(
+                            array(
+                                'a' => '10',
+                            ),
+                            array(
+                                'a' => '100',
+                            ),
                         ),
-                        array(
-                            'a' => '100',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => '11',
+                        'records' => array(
+                            array(
+                                'a' => '11',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -575,17 +591,23 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'reverse' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'z',
+                        'records' => array(
+                            array(
+                                'a' => 'z',
+                            ),
+                            array(
+                                'a' => 'x',
+                            ),
                         ),
-                        array(
-                            'a' => 'x',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => 'Y',
+                        'records' => array(
+                            array(
+                                'a' => 'Y',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -625,19 +647,28 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'multiple-links-and-aliasing' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'x',
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'b' => 'z',
+                        'records' => array(
+                            array(
+                                'b' => 'z',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                     'l3' => array(
-                        array(
-                            'c' => 'y',
+                        'records' => array(
+                            array(
+                                'c' => 'y',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -680,20 +711,26 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'multiple-columns' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'x',
-                            'b' => 'x',
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                                'b' => 'x',
+                            ),
+                            array(
+                                'a' => 'y',
+                                'b' => 'y',
+                            ),
                         ),
-                        array(
-                            'a' => 'y',
-                            'b' => 'y',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => 'x',
-                            'b' => 'y',
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                                'b' => 'y',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -744,18 +781,24 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'multiple-fields-in-sort-on' => array(
                 array(
                     'accounts' => array(
-                        array(
-                            'name' => 'Alpha Bank',
+                        'records' => array(
+                            array(
+                                'name' => 'Alpha Bank',
+                            ),
+                            array(
+                                'name' => 'General Electric',
+                            ),
                         ),
-                        array(
-                            'name' => 'General Electric',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'contacts' => array(
-                        array(
-                            'first_name' => 'John',
-                            'last_name' => 'Doe',
+                        'records' => array(
+                            array(
+                                'first_name' => 'John',
+                                'last_name' => 'Doe',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -796,20 +839,37 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'limit-and-offset' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'a',
+                        'records' => array(
+                            array(
+                                'a' => 'a',
+                            ),
+                            array(
+                                'a' => 'c',
+                            ),
                         ),
-                        array(
-                            'a' => 'c',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => 'b',
+                        'records' => array(
+                            array(
+                                'a' => 'b',
+                            ),
+                            array(
+                                'a' => 'd',
+                            ),
                         ),
-                        array(
-                            'a' => 'd',
+                        'next_offset' => -1,
+                    ),
+                    'l3' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'e',
+                            ),
+                            array(
+                                'a' => 'f',
+                            ),
                         ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(
@@ -817,6 +877,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'map' => array(
                             'l1' => array('a'),
                             'l2' => array('a'),
+                            'l3' => array('a'),
                         ),
                         'is_numeric' => false,
                         'direction' => true,
@@ -826,6 +887,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'l1' => 1,
                     'l2' => 2,
+                    'l3' => 0,
+                    'l4' => -1,
                 ),
                 array(
                     array(
@@ -840,25 +903,33 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'l1' => 2,
                     'l2' => 3,
+                    'l3' => 0,
+                    'l4' => -1,
                 ),
             ),
             'database-order-preserved' => array(
                 array(
                     'l1' => array(
-                        array(
-                            'a' => 'ä',
+                        'records' => array(
+                            array(
+                                'a' => 'ä',
+                            ),
+                            array(
+                                'a' => 'a',
+                            ),
                         ),
-                        array(
-                            'a' => 'a',
-                        ),
+                        'next_offset' => -1,
                     ),
                     'l2' => array(
-                        array(
-                            'a' => 'ü',
+                        'records' => array(
+                            array(
+                                'a' => 'ü',
+                            ),
+                            array(
+                                'a' => 'u',
+                            ),
                         ),
-                        array(
-                            'a' => 'u',
-                        ),
+                        'next_offset' => -1,
                     ),
                 ),
                 array(

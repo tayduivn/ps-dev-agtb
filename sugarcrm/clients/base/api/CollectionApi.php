@@ -85,15 +85,14 @@ class CollectionApi extends SugarApi
 
         $data = $this->getData($api, $args, $bean, $definition['links'], $sortFields);
 
-        $offset = $args['offset'];
-        $records = $this->sortData($data, $sortSpec, $args['max_num'], $offset);
+        $records = $this->sortData($data, $sortSpec, $args['offset'], $args['max_num'], $nextOffset);
 
         // remove unwanted fields from the data
         $records = $this->cleanData($records, $sortFields);
 
         return array(
             'records' => $records,
-            'next_offset' => $offset,
+            'next_offset' => $nextOffset,
         );
     }
 
@@ -123,7 +122,7 @@ class CollectionApi extends SugarApi
             if ($args['offset'][$linkName] >= 0) {
                 $linkArgs = $this->getLinkArguments($api, $args, $bean, $link, $sortFields[$linkName]);
                 $response = $this->getRelateApi()->filterRelated($api, $linkArgs);
-                $data[$linkName] = $response['records'];
+                $data[$linkName] = $response;
             }
         }
 
@@ -344,39 +343,38 @@ class CollectionApi extends SugarApi
      *
      * @param array $data Collection data grouped by link
      * @param array $spec Sorting specification
-     * @param int $limit Maximum number of resulting records 
-     * @param array $offset Current offset which gets replaced with the next value
+     * @param array $offset Offset corresponding to the current page
+     * @param int $limit Maximum number of resulting records
+     * @param array $nextOffset Offset corresponding to the next page
      *
      * @return array Plain list of records
      */
-    protected function sortData(array $data, array $spec, $limit, array &$offset)
+    protected function sortData(array $data, array $spec, $offset, $limit, &$nextOffset)
     {
         $comparator = $this->getLinkDataComparator($spec);
 
         // put link name into every record
-        foreach ($data as $linkName => $records) {
-            foreach ($records as $i => $record) {
-                $data[$linkName][$i]['_link'] = $linkName;
+        $linkRecords = array();
+        foreach ($data as $linkName => $linkData) {
+            $linkRecords[$linkName] = $linkData['records'];
+            foreach ($linkRecords[$linkName] as $i => $_) {
+                $linkRecords[$linkName][$i]['_link'] = $linkName;
             }
+            $nextOffset[$linkName] = $linkData['next_offset'];
         }
 
         $records = array();
         while (count($records) < $limit) {
-            uasort($data, $comparator);
-            $linkName = key($data);
-            $record = array_shift($data[$linkName]);
+            uasort($linkRecords, $comparator);
+            $linkName = key($linkRecords);
+            $record = array_shift($linkRecords[$linkName]);
             if (!$record) {
                 break;
             }
             $records[] = $record;
-            $offset[$linkName]++;
         }
 
-        foreach ($offset as $linkName => $_) {
-            if (!count($data[$linkName])) {
-                $offset[$linkName] = -1;
-            }
-        }
+        $nextOffset = $this->getNextOffset($offset, $records, $nextOffset, $linkRecords);
 
         return $records;
     }
@@ -591,6 +589,44 @@ class CollectionApi extends SugarApi
 
             return $recordComparator($a[0], $b[0]);
         };
+    }
+
+    /**
+     * Generates the value of the next offset based on next offsets returned by underlying APIs, initial offset
+     * and the set of records being returned
+     *
+     * @param array $offset Initial value of offset
+     * @param array $records Returned records
+     * @param array $nextOffset Collection of offsets returned by Relate API
+     * @param array $remainder Not returned records
+     *
+     * @return array New value of offset
+     */
+    protected function getNextOffset(array $offset, array $records, array $nextOffset, array $remainder)
+    {
+        $returned = $truncated = array();
+
+        foreach ($nextOffset as $linkName => $_) {
+            $returned[$linkName] = 0;
+        }
+
+        foreach ($records as $record) {
+            $returned[$record['_link']]++;
+        }
+
+        foreach ($remainder as $linkName => $records) {
+            $truncated[$linkName] = count($records) > 0;
+        }
+
+        foreach ($offset as $linkName => $value) {
+            if (!isset($nextOffset[$linkName])) {
+                $nextOffset[$linkName] = $value;
+            } elseif ($truncated[$linkName]) {
+                $nextOffset[$linkName] = $offset[$linkName] + $returned[$linkName];
+            }
+        }
+
+        return $nextOffset;
     }
 
     /**
