@@ -22,21 +22,21 @@ class Latin{
 		passthru("git checkout master");
 		passthru("git fetch -a");
 		passthru("git reset --hard");
-		if(preg_match("/(\d+).(\d+).(\d+)(.*)/", $this->ver, $matchesVer)){
-			//$translationBranch = $matchesVer[1] . "_" . $matchesVer[2];
-			//10/23/2013 (https://sugarcrm.atlassian.net/browse/RM-723) - lets 7.1.5 mango use the 7_0 translation branch.
-			$translationBranch = $matchesVer[1] . "_0";
-			exec("git branch -r", $remoteBranches);
 
-			if (preg_grep("/$translationBranch/", $remoteBranches)) {
-				passthru("git checkout origin/" . $translationBranch);
-			} else {
-				passthru("git checkout origin/" . "master");
-			} 
-		}else{
-		    passthru("git checkout master");
-		    passthru("git pull origin master");
-		}
+        $translationBranch = "master";
+
+        if (version_compare($this->ver, "7.6.0", ">=")) {
+            $translationBranch = "7_b";     // 7_b is the translation branch for all versions >= 7.6
+        }
+        else if (version_compare($this->ver, "7.0.0", ">")) {
+            $translationBranch = "7_0";     // 7_0 is the translation branch for all versions > 7.0 and <= 7.5
+        }
+
+        exec("git branch -r", $remoteBranches);
+        if (preg_grep("/$translationBranch/", $remoteBranches)) {
+            passthru("git checkout $translationBranch");
+            passthru("git pull origin $translationBranch");
+        }
 	}
 
 	function copyFiles($path){
