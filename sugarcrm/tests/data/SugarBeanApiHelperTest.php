@@ -61,6 +61,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        if (isset($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])) {
+            unset($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir]);
+        }
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
     }
@@ -293,5 +296,19 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 100,
             ),
         );
+    }
+
+    public function testCheckNotify()
+    {
+        $GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir] = true;
+        $this->assertEquals(false, $this->beanApiHelper->checkNotify($this->bean), "Should not check_notify if exclude_notifications == true");
+
+        $GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir] = false;
+        $this->bean->assigned_user_id = 'user1';
+        $this->bean->fetched_row['assigned_user_id'] = 'user2';
+        $this->assertEquals(true, $this->beanApiHelper->checkNotify($this->bean), "Should check_notify for new assigned user");
+
+        $this->bean->fetched_row['assigned_user_id'] = 'user1';
+        $this->assertEquals(false, $this->beanApiHelper->checkNotify($this->bean), "Should not check_notify if assigned user doesn't change");
     }
 }
