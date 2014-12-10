@@ -36,11 +36,14 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
                     AND wt.type NOT IN ('compare_any_time', 'compare_specific')
                     AND status = 1";
         $brokenWorkflows = $this->db->query($query);
+        $descriptionFix = "THIS WORKFLOW WAS DEACTIVATED AUTOMATICALLY BY THE UPGRADE TO SUGAR 7 DUE TO INCOMPATIBILITY. PLEASE DELETE ALL CONDITIONS ON THE WORKFLOW AND RECREATE THEM.";
         while ($row = $this->db->fetchByAssoc($brokenWorkflows)) {
             $workflow = BeanFactory::getBean('WorkFlow', $row['workflow_id']);
             $workflow->status = 0;
-            $workflow->description = "THIS WORKFLOW WAS DEACTIVATED AUTOMATICALLY BY THE UPGRADE TO SUGAR 7 DUE TO INCOMPATIBILITY. PLEASE DELETE ALL CONDITIONS ON THE WORKFLOW AND RECREATE THEM.\n"
-                . $row['description'];
+            if (strpos($row['description'], $descriptionFix) === false) {
+                $workflow->description = "$descriptionFix\n"
+                    . $row['description'];
+            }
             $workflow->save();
         }
 
