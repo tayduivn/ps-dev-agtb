@@ -427,7 +427,6 @@
         }
 
         if (!_.contains(this.view.plugins, "Editable")) {
-            debugger;
             return options;
         }
         //Force the current value(s) into the availible options

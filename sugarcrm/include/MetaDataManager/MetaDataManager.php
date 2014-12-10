@@ -3703,13 +3703,7 @@ class MetaDataManager
         $query->where()->in('roles.id', $roles);
         $data = $query->execute();
 
-        $roleSets = array();
-        foreach ($data as $row) {
-            $roleSets[] = $clone = clone $roleSet;
-            $clone->populateFromRow($row);
-        }
-
-        return $roleSets;
+        return self::createCollectionFromDatSet($roleSet, $data);
     }
 
     /**
@@ -3720,20 +3714,35 @@ class MetaDataManager
      */
     protected static function getAllRoleSets()
     {
-        $roleSets = array();
         $roleSet = BeanFactory::getBean('ACLRoleSets');
-        if ($roleSet) {
-            $query = new SugarQuery();
-            $query->from($roleSet);
-            $query->select('id', 'hash');
-            $data = $query->execute();
+        $query = new SugarQuery();
+        $query->from($roleSet);
+        $query->select('id', 'hash');
+        $data = $query->execute();
 
-            foreach ($data as $row) {
-                $roleSets[] = $clone = clone $roleSet;
-                $clone->populateFromRow($row);
-            }
+        return self::createCollectionFromDatSet($roleSet, $data);
+    }
+
+    /**
+     * Creates collection of beans from the seed and data set
+     *
+     * @param SugarBean $seed Seed bean
+     * @param array $data Data set
+     *
+     * @return SugarBean[]
+     * @todo Move this to ACLRoleSet when it's merged
+     */
+    protected function createCollectionFromDatSet(SugarBean $seed, array $data)
+    {
+        $result = array();
+
+        // clone the seed for each row and populate it with the row data.
+        // do not construct every instance individually since it's relatively expensive
+        foreach ($data as $row) {
+            $result[] = $clone = clone $seed;
+            $clone->populateFromRow($row);
         }
 
-        return $roleSets;
+        return $result;
     }
 }
