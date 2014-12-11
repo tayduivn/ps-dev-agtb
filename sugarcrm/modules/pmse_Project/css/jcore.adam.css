@@ -1300,5 +1300,10 @@ div.line:hover {
 .adam-error-color {
   color: #e61718;
 }
+.adam-error-color.fa-exclamation-circle {
+  padding: 0 1px 3px;
+  border-radius: 50%;
+  background-color: white;
+}
 
 //@ sourceURL=jcore.adam.css

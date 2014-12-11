@@ -496,7 +496,7 @@ AdamShape.prototype.addErrors = function (newLayer, pos) {
         }
     }
     for (i = 0; i < newLayer.ZOOMSCALES; i += 1) {
-        cls = 'adam-status-' + ((i * 25) + 50) + '-warning adam-error-color fa fa-exclamation-sign';
+        cls = 'adam-status-' + ((i * 25) + 50) + '-warning adam-error-color fa fa-exclamation-circle';
         errorArrayClass.push(cls);
     }
     if (!ifExist) {
