@@ -11,9 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-<?PHP
-
-
 
 class pmse_Emails_Templates_sugar extends Basic {
 	var $new_schema = true;
