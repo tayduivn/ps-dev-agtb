@@ -280,7 +280,7 @@
             var ShowCaseUrl = 'pmse_Inbox/' +  model.get('id2') + '/layout/show-case/' +  model.get('flow_id');
             var ShowCaseUrlBwc = App.bwc.buildRoute('pmse_Inbox', '', 'showCase', {id:model.get('flow_id')});
             var SugarModule = model.get('cas_sugar_module');
-            if (App.metadata.getModule(SugarModule).isBwcEnabled) {
+            if (app.metadata.getModule(SugarModule).isBwcEnabled) {
                 model.set('show_case_url', ShowCaseUrlBwc);
             } else {
                 model.set('show_case_url', ShowCaseUrl);
