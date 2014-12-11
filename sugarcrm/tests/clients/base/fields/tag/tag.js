@@ -136,7 +136,7 @@ describe("tag field", function() {
             field = SugarTest.createField('base', fieldName, 'tag', 'edit');
             field.view.action = 'placeholder';
             superStub = sinon.collection.stub(field, '_super', function() {});
-            fakeSelect2 = { select2: function() {} };
+            fakeSelect2 = { select2: function() {}, on: function() {} };
             select2Stub = sinon.collection.stub(fakeSelect2, 'select2', function(properties, record) {
                     _.extend(properties, properties, { on: function() {} }, fakeSelect2);
                     return properties;

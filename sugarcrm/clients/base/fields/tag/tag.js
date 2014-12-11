@@ -58,7 +58,7 @@
      */
     initializeSelect2: function() {
         var self = this,
-            escapeChars = '!\"#$%&\'()*+,./:;<=>?@[\]^`{|}~';
+            escapeChars = '!\"#$%&\'()*+,./:;<=>?@[\\]^`{|}~';
 
         this.$select2 = this.$('.select2field').select2({
             placeholder: '',
@@ -131,6 +131,43 @@
         if (records.length) {
             this.$select2.select2('val', records);
         }
+
+        // Workaround to make select2 treat enter the same as it would a comma (INT-668)
+        this.$('.select2-search-field > input.select2-input').on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                if (!this.value) {
+                    return;
+                }
+
+                // Sanitize input
+                if (escapeChars.indexOf(this.value.charAt(0)) >= 0) {
+                    this.value = '\\\\' + this.value;
+                }
+
+                var tags = self.$select2.select2('data');
+
+                // If the current input already exists as a tag, just exit
+                var exists = _.find(tags, function(tag) {
+                    return tag.id === this.value;
+                }, this);
+                if (exists) {
+                    // Close the search box and return
+                    self.$select2.select2('close');
+                    // Re-opens the search box with the default message
+                    // (this is to maintain consistency with select2's OOB tokenizer)
+                    self.$select2.select2('open');
+                    return;
+                }
+
+                // Otherwise, create a tag out of current input
+                tags.push({id: this.value, text: this.value, locked: false});
+                self.$select2.select2('data', tags, true);
+                e.preventDefault();
+
+                // Close the search box
+                self.$select2.select2('close');
+            }
+        });
     },
 
     /**
@@ -162,6 +199,13 @@
     storeValues: function(e) {
         this.value = app.utils.deepCopy(this.value) || [];
         if (e.added) {
+            // Check if added is an array or a single object
+            if (_.isArray(e.added)) {
+                // Even if it is an array, only one object gets added at a time,
+                // so we just need it to be the first element
+                e.added = e.added[0];
+            }
+
             // Check to see if the tag we're adding has already been added.
             var valFound = _.find(this.value, function(vals) {
                 return (vals.name === e.added.text);
