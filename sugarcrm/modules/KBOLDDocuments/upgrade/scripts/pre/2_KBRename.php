@@ -420,6 +420,8 @@ class ConvertKBDocument
             $this->log("relationship: {$name} updated");
         }
         SugarRelationshipFactory::deleteCache();
-        SugarAutoLoader::buildCache();
+        if (class_exists('SugarAutoLoader', true) && method_exists('SugarAutoLoader', 'buildCache')) {
+            SugarAutoLoader::buildCache();
+        }
     }
 }
