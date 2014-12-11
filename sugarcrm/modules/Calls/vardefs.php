@@ -201,7 +201,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'varchar',
     'len' => '255',
     'reportable' => false,
-    'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID'
+      'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID',
+      'studio' => false,
   ),
   'accept_status' => array (
     'name' => 'accept_status',
