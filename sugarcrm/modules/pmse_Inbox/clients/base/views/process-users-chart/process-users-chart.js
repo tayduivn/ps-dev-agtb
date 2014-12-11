@@ -140,6 +140,9 @@
     evaluateResponse: function(response) {
         this.total = response.properties.total;
         this.hasData = !!this.total;
+        response.data.map(function(d) {
+            d.value = parseInt(d.value, 10);
+        });
         this.chartCollection = response;
     }
 })
