@@ -47,6 +47,7 @@ $vardefs = array(
             'importable' => false,
             'exportable' => false,
             'sortable' => false,
+            'visible' => false,
         ),
     ),
     'relationships' => array(
