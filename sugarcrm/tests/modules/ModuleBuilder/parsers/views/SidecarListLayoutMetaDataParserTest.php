@@ -472,12 +472,12 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 true
             ),
             array(
-                // relate with rname field
+                // relate with just rname field should not be sortable
                 array(
                     'type' => 'relate',
                     'rname' => 'name',
                 ),
-                true
+                false
             ),
         );
     }

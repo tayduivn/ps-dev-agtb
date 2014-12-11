@@ -724,8 +724,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         $relateSortable = false;
         if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] === 'relate') {
             $hasSortOn = isset($this->_fielddefs[$fieldName]['sort_on']) && is_array($this->_fielddefs[$fieldName]['sort_on']);
-            $hasRName = isset($this->_fielddefs[$fieldName]['rname']) && !empty($this->_fielddefs[$fieldName]['rname']);
-            $relateSortable = !($hasSortOn || $hasRName);
+            $relateSortable = !($hasSortOn);
         }
         if ($noSortByType || $noSortDBType || $relateSortable) {
             $fieldDef['sortable'] = $sortable;
