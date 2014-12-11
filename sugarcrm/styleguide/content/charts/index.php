@@ -1,4 +1,6 @@
-<!--
+<?php
+if(!defined('sugarEntry'))define('sugarEntry', true);
+/*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
  * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
@@ -7,7 +9,8 @@
  * install or use this SugarCRM file.
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
--->
+ */
+?>
 <!doctype html>
 <html>
 
