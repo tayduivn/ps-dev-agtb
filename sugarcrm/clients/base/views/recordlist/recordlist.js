@@ -267,6 +267,18 @@
      */
     _getBordersPosition: function() {
         if (!this._bordersPosition) {
+
+            /**
+             * Object containing the location of left and right edges of the
+             * list viewport.
+             *
+             * @property {Object} _bordersPosition
+             * @property {number} _bordersPosition.left The left offset of the
+             * left edge of the viewport.
+             * @property {number} _bordersPosition.right The left offset of the
+             * right edge of the viewport.
+             * @private
+             */
             this._bordersPosition = {};
             var thSelector = {};
             var $scrollPanel = this.$('.flex-list-view-content');
@@ -282,16 +294,16 @@
     },
 
     /**
-     * Set the position of the current list panel.
+     * Sets the position of the current list panel.
      *
-     * If focus item located within the viewport area,
-     * avoid adjusting panel location.
+     * Doesn't adjust panel position if the focused field is fully visible in
+     * the viewport.
      *
      * @param {Object} location Position of the focused element relative to its
      *   viewport.
-     *   `location.left` is the distance between the left
+     * @param {number} location.left The distance between the left
      *   border of the focused field and the left border of the viewport.
-     *   `location.right` is the distance between the right
+     * @param {number} location.right The distance between the right
      *   side of the focused field and the left border of the viewport.
      */
     setPanelPosition: function(location) {
@@ -313,9 +325,9 @@
      *   list viewport.
      * @param {Object} location Position of the focused element relative to its
      *   viewport.
-     *   `location.left` is the distance between the left
+     * @param {number} location.left The distance between the left
      *   border of the focused field and the left border of the viewport.
-     *   `location.right` is the distance between the right
+     * @param {number} location.right The distance between the right
      *   side of the focused field and the left border of the viewport.
      * @private
      */
@@ -354,7 +366,7 @@
 
         left += scrollLeft - leftBorderPosition;
         $scrollPanel.scrollLeft(left);
-        app.logger.warn('This method is deprecated and will be removed in 7.8');
+        app.logger.warn('"setScrollAtLeftBorder" method is deprecated and will be removed in 7.8');
     },
 
     /**
@@ -371,7 +383,7 @@
 
         right += scrollLeft - rightBorderPosition;
         $scrollPanel.scrollLeft(right);
-        app.logger.warn('This method is deprecated and will be removed in 7.8');
+        app.logger.warn('"setScrollAtRightBorder" method is deprecated and will be removed in 7.8');
     },
 
     /**
@@ -551,24 +563,6 @@
     },
 
     /**
-     * Toggle editable entire row fields.
-     *
-     * This method is not currently used.
-     *
-     * @param {Boolean} isEdit True for edit mode, otherwise toggle back to list mode.
-     */
-    toggleEdit: function(isEdit) {
-        var self = this;
-        this.viewName = isEdit ? 'edit' : 'list';
-        _.each(this.rowFields, function(editableFields, modelId) {
-            //running the toggling jon in each thread to prevent blocking browser performance
-            _.defer(function(modelId) {
-                self.toggleRow(modelId, isEdit);
-            }, modelId);
-        }, this);
-    },
-
-    /**
      * Detach the event handlers for warning delete
      */
     unbindBeforeRouteDelete: function() {
@@ -678,7 +672,8 @@
     /**
      * {@inheritDoc}
      *
-     * Unsets `_bordersPosition`.
+     * Unsets `_bordersPosition` because the value changes on resize and will
+     * have to be recalculated if the user toggles inline edit mode.
      */
     resize: function() {
         this._super('resize');

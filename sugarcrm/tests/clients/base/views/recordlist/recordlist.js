@@ -86,8 +86,8 @@ describe('Base.View.RecordList', function() {
             expect(fields.length).toBe(1);
         });
 
-        it('should set a data view on the context', function () {
-            expect(view.context.get("dataView")).toBe("list");
+        it('should set a data view on the context', function() {
+            expect(view.context.get('dataView')).toBe('list');
         });
 
         it('should have added row actions', function() {
