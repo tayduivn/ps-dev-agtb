@@ -61,11 +61,11 @@
         text-indent: 2px;
         text-align: left;
     }
-    .navbtn > [class^="icon-"] {
+    .navbtn > [class*="fa-"] {
         font-size: 1.35em;
         line-height: 1.75em;
     }
-    .navbtn .icon-rotate-45:before {
+    .navbtn .fa-rotate-45 {
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
         -ms-transform: rotate(45deg);
@@ -73,15 +73,17 @@
         transform: rotate(45deg);
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=.5);
     }
-    .navbtn .icon-stack {
+    /*
+    .navbtn .fa-stack {
         margin-left: -2px;
     }
-    .navbtn .icon-small {
+    .navbtn .fa-small {
         font-size: 1.05em;
     }
-    .navbtn .icon-xsmall {
+    .navbtn .fa-xsmall {
         font-size: .70em;
     }
+    */
     .navbtn .overlay {
         position: absolute;
         top: 5px;
@@ -158,7 +160,7 @@
                 <span class="navdiv"></span>
 
                 <!-- Wait -->
-                <span id="AdamEventTimer" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_WAIT" this.module}}" class="navbtn"><i class="icon-time"></i></span>
+                <span id="AdamEventTimer" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_WAIT" this.module}}" class="navbtn"><i class="fa fa-clock-o"></i></span>
 
                 <!-- Receive Message -->
                 <span id="AdamEventReceiveMessage" type="draggable" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_RECEIVE_MESSAGE" this.module}}" class="navbtn"><i class="fa fa-inbox"></i></span>

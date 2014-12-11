@@ -1081,7 +1081,7 @@
   vertical-align: middle;
   background-image: url("../img/pmse_sprite_with_zoom.gif");
   background-repeat: no-repeat;
-  /*margin-top: 3px;*/
+  margin-top: -8px;
   /*margin-bottom: 2px;*/
   background-position: -565px -510px;
 }
