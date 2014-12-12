@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -91,6 +92,76 @@ class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $quote Quote */
         $quote->mark_deleted('quote_unittest');
+    }
+
+    /**
+     * @dataProvider dataProviderQuoteIsClosed
+     * @param string $stage
+     * @param boolean $expected
+     */
+    public function testQuoteIsClosed($stage, $expected)
+    {
+        $quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->getMock();
+
+        $quote->quote_stage = $stage;
+
+        $this->assertEquals($expected, $quote->isClosed());
+    }
+
+    /**
+     * Data Provider for testQuoteIsClosed
+     *
+     * @return array
+     */
+    public function dataProviderQuoteIsClosed()
+    {
+        return array(
+            array('Draft', false),
+            array('Negotiation', false),
+            array('Delivered', false),
+            array('On Hold', false),
+            array('Confirmed', false),
+            array('Closed Accepted', true),
+            array('Closed Lost', true),
+            array('Closed Dead', true)
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderQuoteUpdateCurrencyBaseRate
+     * @param string $stage
+     * @param boolean $expected
+     */
+    public function testQuoteUpdateBaseRate($stage, $expected)
+    {
+        $quote = $this->getMockBuilder('Quote')
+            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->getMock();
+
+        $quote->quote_stage = $stage;
+
+        $this->assertEquals($expected, $quote->updateCurrencyBaseRate());
+    }
+
+    /**
+     * Data Provider for testQuoteUpdateCurrencyBaseRate
+     *
+     * @return array
+     */
+    public function dataProviderQuoteUpdateCurrencyBaseRate()
+    {
+        return array(
+            array('Draft', true),
+            array('Negotiation', true),
+            array('Delivered', true),
+            array('On Hold', true),
+            array('Confirmed', true),
+            array('Closed Accepted', false),
+            array('Closed Lost', false),
+            array('Closed Dead', false)
+        );
     }
 
 }

@@ -83,4 +83,104 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
             array('0.25', '89765', '21456.00', null, '985.25')
         );
     }
+
+    /**
+     *
+     * @dataProvider dataProviderUpdateCurrencyBaseRate
+     * @param string $stage
+     * @param boolean $expected
+     */
+    public function testUpdateCurrencyBaseRate($stage, $expected)
+    {
+        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product->expects($this->once())
+            ->method('load_relationship')
+            ->with('product_bundles')
+            ->willReturn(true);
+
+        $bundle = $this->getMock('ProductBundle', array('save', 'load_relationship'));
+
+        $bundle->expects($this->once())
+            ->method('load_relationship')
+            ->with('quotes')
+            ->willReturn(true);
+
+        /* @var $quote Quote */
+        $quote = $this->getMock('Quote', array('save'));
+
+        $quote->quote_stage = $stage;
+
+        $quote_link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $quote_link2->expects($this->once())
+            ->method('getBeans')
+            ->willReturn(
+                array(
+                    $quote
+                )
+            );
+
+        /* @var $product Product */
+        $bundle->quotes = $quote_link2;
+
+        $bundle_link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $bundle_link2->expects($this->once())
+            ->method('getBeans')
+            ->willReturn(
+                array(
+                    $bundle
+                )
+            );
+
+        /* @var $product Product */
+        $product->product_bundles = $bundle_link2;
+
+        $this->assertEquals($expected, $product->updateCurrencyBaseRate());
+    }
+
+    public function dataProviderUpdateCurrencyBaseRate()
+    {
+        return array(
+            array('Draft', true),
+            array('Negotiation', true),
+            array('Delivered', true),
+            array('On Hold', true),
+            array('Confirmed', true),
+            array('Closed Accepted', false),
+            array('Closed Lost', false),
+            array('Closed Dead', false)
+        );
+    }
+
+    public function testUpdateCurrencyBaseRateWithNotQuoteReturnTrue()
+    {
+        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product->expects($this->once())
+            ->method('load_relationship')
+            ->with('product_bundles')
+            ->willReturn(true);
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $link2->expects($this->once())
+            ->method('getBeans')
+            ->willReturn(
+                array()
+            );
+
+        /* @var $product Product */
+        $product->product_bundles = $link2;
+
+        $this->assertTrue($product->updateCurrencyBaseRate());
+    }
 }

@@ -455,6 +455,13 @@ html.rtl {
         padding-left: 7px;
     }
 
+    .sorting_asc span,
+    .sorting_desc span,
+    .sorting span {
+        margin-left: 16px;
+        margin-right: 0;
+    }
+
     .sorting_asc span:after,
     .sorting_desc span:after,
     .sorting span:after {
@@ -462,15 +469,14 @@ html.rtl {
         left: 0px;
     }
 
-    table.reorderable-columns {
-        .th-droppable-placeholder {
-            left: auto;
-            right: -2px;
-        }
-        th[data-fieldname] > div > div > span {
+    table.dataTable {
+        th.sorting_asc span,
+        th.sorting_desc span,
+        th.sorting span {
             padding-right: 0;
-            padding-left: 6px;
+            padding-left: 8px;
             margin-left: 0px;
+            margin-right: -8px;
         }
     }
 
@@ -753,7 +759,7 @@ html.rtl {
             margin-left: 0;
             margin-right: -44px;
         }
-        .dashlet .listed li .icon-stack,
+        .dashlet .listed li .fa-stack,
         .dashlet .listed li img {
             margin: 0 0 0 12px;
         }
@@ -761,11 +767,6 @@ html.rtl {
             padding-right: 44px;
             padding-left: 0;
         }
-    }
-
-    .sorting_asc span, .sorting_desc span, .sorting span {
-        margin-left: 16px;
-        margin-right: 0;
     }
 
     .preview-pane .preview-headerbar {
@@ -817,10 +818,11 @@ html.rtl {
         button {
             text-align: right;
             padding-right: 30px;
-            padding-left: 0;
-        }
-        button.active {
-            padding-right: 10px;
+            padding-left: 10px;
+            .fa {
+              margin-right: -22px;
+              margin-left: 5px;
+            }
         }
     }
 

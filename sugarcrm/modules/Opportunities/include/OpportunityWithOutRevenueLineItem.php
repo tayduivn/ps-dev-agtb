@@ -236,12 +236,15 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $rli = BeanFactory::getBean('RevenueLineItems');
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
+        $db->commit();
         $db->query($db->truncateTableSQL($rli->getTableName()));
-
+        $db->commit();
         $cstm_table = $rli->getTableName() . '_cstm';
 
         if ($db->tableExists($cstm_table)) {
+            $db->commit();
             $db->query($db->truncateTableSQL($cstm_table));
+            $db->commit();
         }
     }
 

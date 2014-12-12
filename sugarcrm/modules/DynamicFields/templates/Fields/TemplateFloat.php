@@ -14,30 +14,30 @@ require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateFloat extends TemplateRange
 {
-	var $type = 'float';
-	var $default = null;
-	var $default_value = null;
-	var $len = '18';
-	var $precision = '8';
+    var $type = 'float';
+    var $default = null;
+    var $default_value = null;
+    var $len = '18';
+    var $precision = '8';
 
-	function TemplateFloat(){
-		parent::__construct();
-		$this->vardef_map['precision']='ext1';
-		//$this->vardef_map['precision']='precision';
-	}
+    function TemplateFloat(){
+        parent::__construct();
+        $this->vardef_map['precision']='ext1';
+        //$this->vardef_map['precision']='precision';
+    }
 
     function get_field_def(){
-    	$def = parent::get_field_def();
-		$def['precision'] = isset($this->ext1) && $this->ext1 != '' ? $this->ext1 : $this->precision;
-    	return $def;
+        $def = parent::get_field_def();
+        $def['precision'] = isset($this->ext1) && intval($this->ext1) ? intval($this->ext1) : $this->precision;
+        return $def;
     }
 
     function get_db_type(){
-		$precision = (!empty($this->precision))? $this->precision: 6;
-    	if(empty($this->len)) {
-			return parent::get_db_type();
-		}
-		return " ".sprintf($GLOBALS['db']->getColumnType("decimal_tpl"), $this->len, $precision); 
-	}
-	
+        $precision = (!empty($this->precision))? $this->precision: 8;
+        if(empty($this->len)) {
+            return parent::get_db_type();
+        }
+        return " ".sprintf($GLOBALS['db']->getColumnType("decimal_tpl"), $this->len, $precision); 
+    }
+
 }

@@ -65,7 +65,7 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
             self::$rest,
             array('massupdate_params' => array(), 'module' => 'Accounts')
         );
-        $this->assertEquals(array('status' => 'done'), $result);
+        $this->assertEquals('done', $result['status']);
     }
 
     public function testDelete()
@@ -79,7 +79,7 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
                 'module' => 'Accounts'
             )
         );
-        $this->assertEquals(array('status' => 'done'), $result);
+        $this->assertEquals('done', $result['status']);
         $account = BeanFactory::getBean('Accounts');
         $account->retrieve($id, true, false);
         $this->assertEquals(1, $account->deleted);
@@ -95,7 +95,7 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
                 'module' => 'Accounts'
             )
         );
-        $this->assertEquals(array('status' => 'done'), $result);
+        $this->assertEquals('done', $result['status']);
         $account = BeanFactory::getBean('Accounts', $account->id);
         $this->assertEquals('RS189Test', $account->name);
     }

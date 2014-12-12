@@ -72,6 +72,11 @@ class OpportunityReports
                 // if we are setting the links_defs, the rli_table_name needs to be changed
                 $this->rli_table_name = 'revenuelineitems';
             } elseif (isset($report['full_table_list'])) {
+                if (isset($report['full_table_list']['self']['children']) &&
+                        is_array($report['full_table_list']['self']['children'])) {
+                    $this->rli_table_name = 'self_link_' . count($report['full_table_list']);
+                    $report['full_table_list']['self']['children'][$this->rli_table_name] = $this->rli_table_name;
+                }
                 $report['full_table_list'][$this->rli_table_name] = $this->rli_table_def;
             } else {
                 // if we don't have a links_def or the full_table_list, we should just bail out now.
@@ -142,6 +147,19 @@ class OpportunityReports
                 // if we are setting the links_defs, the rli_table_name needs to be changed
                 $this->rli_table_name = 'revenuelineitems';
             } elseif (isset($report['full_table_list'])) {
+                if (isset($report['full_table_list']['self']['children']) &&
+                        is_array($report['full_table_list']['self']['children'])) {
+
+                    // find the RLI module
+                    foreach($report['full_table_list']['self']['children'] as $child) {
+                        if (isset($report['full_table_list'][$child]['module']) &&
+                            $report['full_table_list'][$child]['module'] === 'RevenueLineItems') {
+                            $this->rli_table_name = $child;
+                            break;
+                        }
+                    }
+                    unset($report['full_table_list']['self']['children'][$this->rli_table_name]);
+                }
                 // if it's in the full_table_list, it should be removed from there.
                 if (isset($report['full_table_list'][$this->rli_table_name])) {
                     unset($report['full_table_list'][$this->rli_table_name]);

@@ -1792,8 +1792,8 @@ class MetaDataManager
         }
 
         // System name setting for sidecar modules
-        if (isset($administration->settings['system_name'])) {
-            $configs['appId'] = $administration->settings['system_name'];
+        if (!empty($administration->settings['system_name'])) {
+            $configs['systemName'] = $administration->settings['system_name'];
         }
 
         return $configs;

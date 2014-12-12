@@ -172,7 +172,7 @@ EOQ;
 	}
 
 
-	function getSelectOptions($id = ''){
+	function getSelectOptions($id = '', $base_rate = null){
 		global $current_user;
 		$this->javascript .="var ConversionRates = new Array(); \n";
 		$this->javascript .="var CurrencySymbols = new Array(); \n";
@@ -182,16 +182,23 @@ EOQ;
 		if(isset($this->list ) && !empty($this->list )){
 		foreach ($this->list as $data){
 			if($data->status == 'Active'){
-			if($id == $data->id){
-			$options .= '<option value="'. $data->id . '" selected>';
-			$setLastRate = true;
-			$this->javascript .= 'var lastRate = "' . $data->conversion_rate . '";';
+				$rate = $data->conversion_rate;
+				if($id == $data->id){
+					$options .= '<option value="'. $data->id . '" selected>';
+					$setLastRate = true;
 
-			}else{
-				$options .= '<option value="'. $data->id . '">'	;
-			}
-			$options .= $data->name . ' : ' . $data->symbol;
-			$this->javascript .=" ConversionRates['".$data->id."'] = '".$data->conversion_rate."';\n";
+					// if a rate was passed in, this means the record has a locked rate and shouldn't be changed,
+					/// when the currency is the same.
+					if (!is_null($base_rate)) {
+						$rate = $base_rate;
+					}
+
+					$this->javascript .= 'var lastRate = "' . $rate . '";';
+				} else {
+					$options .= '<option value="'. $data->id . '">'	;
+				}
+				$options .= $data->name . ' : ' . $data->symbol;
+			$this->javascript .=" ConversionRates['".$data->id."'] = '". $rate ."';\n";
 			$this->javascript .=" CurrencySymbols['".$data->id."'] = '".$data->symbol."';\n";
 		}}
 		if(!$setLastRate){

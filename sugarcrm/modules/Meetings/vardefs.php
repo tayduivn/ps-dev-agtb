@@ -195,6 +195,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'meeting_status_dom',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)',
     'default' => 'Planned',
+    'duplicate_on_record_copy' => 'no',
   ),
   'type' =>
    array (
@@ -335,9 +336,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'dbType' => 'varchar',
     'source'=>'non-db',
     'len' => 36,
-      'importable' => 'false',
+    'importable' => 'false',
     'studio' => false,
-	),
+    ),
 
   'contacts' =>
   array (
@@ -475,6 +476,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'link' => 'contacts',
         'rname' => 'id',
 		'source' => 'non-db',
+        'studio' => false,
 	),
 	'repeat_type' =>
 	array(
@@ -580,6 +582,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                 'users',
             ),
             'order_by' => 'name:asc',
+            'studio' => false,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',

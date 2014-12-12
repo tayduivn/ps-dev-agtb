@@ -369,7 +369,7 @@
         //pass current translated module name and current page's model data
         title = template(_.extend({
             module: moduleName,
-            appId: app.config.appId
+            appId: app.config.systemName || app.config.appId
         }, model ? model.attributes : {}));
         // title may contain XML entities because Handlebars escapes characters
         // by replacing them for use in HTML, so the true text needs to be

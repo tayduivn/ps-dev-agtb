@@ -417,7 +417,7 @@ describe('Plugins.VirtualCollection', function() {
             it('should use the related modules for the links from the field definition', function() {
                 collection.fetch();
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts.*/);
             });
 
             it('should default to `name` for the fields', function() {
@@ -678,10 +678,6 @@ describe('Plugins.VirtualCollection', function() {
                 collection = target.get(attribute);
 
                 expect(collection.length).toBe(4);
-
-                _.each(collection.links, function(link) {
-                    expect(link.length).toBe(0);
-                });
             });
 
             it('should copy the exact state of the collection field to the new bean', function() {
@@ -689,6 +685,22 @@ describe('Plugins.VirtualCollection', function() {
                 target.copy(model);
 
                 expect(target.get(attribute).length).toBe(3);
+            });
+
+            it('should not have any defaults set on the link', function() {
+                target.copy(model);
+                collection = target.get(attribute);
+
+                _.each(collection.links, function(link) {
+                    expect(link.defaults.length).toBe(0);
+                });
+            });
+
+            it('should have the correct number of links added', function() {
+                target.copy(model);
+                collection = target.get(attribute);
+
+                expect(collection.links.contacts.length).toBe(4);
             });
         });
 

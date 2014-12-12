@@ -627,7 +627,7 @@ function addFilterInput(cell,filter) {
 			addFilterInputText(row,filter);
 		}
 	}
-	else if ((field_type == 'user_name')||(field_type == 'assigned_user_name')) {
+	else if (field_type == 'username' || field_type == 'assigned_user_name') {
 		if(users_array=="") {
 			loadXML();
 		}
@@ -1355,10 +1355,10 @@ function _sort_by_field_name(a,b) {
 		b['vname'] = b['name'];
 	}
 	
-	if ( a['type'] == 'name' ||  a['type'] == 'user_name' ) {
+	if ( a['type'] == 'name' ||  a['type'] == 'username' ) {
 		return -1;
 	} 
-	else if ( b['type'] == 'name' ||  b['type'] == 'user_name' ) {
+	else if ( b['type'] == 'name' ||  b['type'] == 'username' ) {
 		return 1;
 	} 
 	else { 

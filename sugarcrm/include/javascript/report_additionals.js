@@ -600,7 +600,7 @@ function addFilterInput(cell,filter) {
 			addFilterInputText(row,filter);
 		}
 	}
-	else if ((field_type == 'user_name')||(field_type == 'assigned_user_name')) {
+	else if (field_type == 'username' || field_type == 'assigned_user_name') {
 		if(users_array=="") {
 			loadXML();
 		}

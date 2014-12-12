@@ -100,7 +100,7 @@
              * maintain the mobile app behavior which auto invites the parent record
              */
             turnOffAutoInviteParent: function() {
-                this.model.set('auto_invite_parent', false);
+                this.model.setDefault('auto_invite_parent', false);
             },
 
             /**
