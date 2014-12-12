@@ -187,7 +187,3 @@ $dictionary['Tracker'] = array(
 		   )
    	),
 );
-require_once "modules/Trackers/tracker_sessionsMetaData.php";
-require_once "modules/Trackers/tracker_perfMetaData.php";
-require_once "modules/Trackers/tracker_queriesMetaData.php";
-require_once "modules/Trackers/tracker_tracker_queriesMetaData.php";
