@@ -12514,3 +12514,8 @@ $app_list_strings['dnb_contact_kw_scope'] = array(
     'Bio' => 'Bio',
     'Both' => 'Both'
 );
+//BEGIN SUGARCRM flav=ent ONLY
+$app_list_strings['business_rule_type_list'] = array(
+    'single' => 'Single-Hit',
+);
+//END SUGARCRM flav=ent ONLY
