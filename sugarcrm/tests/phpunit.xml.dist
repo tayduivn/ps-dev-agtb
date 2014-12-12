@@ -160,7 +160,7 @@
             <exclude>./tests/modules/Opportunities/ProductLineItemRollupTest.php</exclude>
             <exclude>./tests/modules/Quotas/QuotaTest.php</exclude>
         </testsuite>
-        <testsuite name="ProcessAuto">
+        <testsuite name="ProcessAuthor">
             <directory>./pmse/package/modules</directory>
             <exclude>./pmse/package/modules/mockClasses</exclude>
             <exclude>./pmse/package/modules/pmse_Inbox/engine/CryptTest.php</exclude>

@@ -137,7 +137,7 @@ require_once 'SugarTestSugarEmailAddressUtilities.php';
 require_once 'SugarTestCaseUtilities.php';
 require_once 'SugarTestTagUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
-require_once 'SugarProcessAutoUtilities.php';
+require_once 'SugarProcessAuthorUtilities.php';
 
 // custom helper support
 $customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';
