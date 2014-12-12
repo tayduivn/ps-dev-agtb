@@ -192,6 +192,14 @@ EOL;
 
         sugar_file_put_contents($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile, $file_contents);
 
+        // set the current loaded instance up
+        if (isset($GLOBALS['dictionary']['RevenueLineItem'])) {
+            $GLOBALS['dictionary']['RevenueLineItem']['importable'] = true;
+            $GLOBALS['dictionary']['RevenueLineItem']['unified_search'] = true;
+        }
+
+        $this->cleanupUnifiedSearchCache();
+
         SugarAutoLoader::ensureDir($this->appExtFolder . '/Include');
         
         // we need to run the code we are putting in the custom file

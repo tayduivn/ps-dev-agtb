@@ -171,6 +171,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             }
         }
 
+        // set the current loaded instance up
+        if (isset($GLOBALS['dictionary']['RevenueLineItem'])) {
+            $GLOBALS['dictionary']['RevenueLineItem']['importable'] = false;
+            $GLOBALS['dictionary']['RevenueLineItem']['unified_search'] = false;
+        }
+
         if (SugarAutoLoader::fileExists($this->appExtFolder . '/Include/' . $this->rliModuleExtFile)) {
             SugarAutoLoader::unlink($this->appExtFolder . '/Include/' . $this->rliModuleExtFile);
         }
@@ -182,6 +188,8 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         if (SugarAutoLoader::fileExists($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile)) {
             SugarAutoLoader::unlink($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile);
         }
+
+        $this->cleanupUnifiedSearchCache();
 
         // hide the RLI module in workflows
         $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(false);
