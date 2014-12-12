@@ -31,10 +31,12 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
         $query = "SELECT DISTINCT w.id as workflow_id, w.description as description
                     FROM workflow w, workflow_triggershells wt
                     WHERE w.id = wt.parent_id
+                    AND w.deleted = 0
+                    AND wt.deleted = 0
                     AND w.type = 'Time'
-                    AND frame_type = 'Primary'
+                    AND wt.frame_type = 'Primary'
                     AND wt.type NOT IN ('compare_any_time', 'compare_specific')
-                    AND status = 1";
+                    AND w.status = 1";
         $brokenWorkflows = $this->db->query($query);
         $descriptionFix = "THIS WORKFLOW WAS DEACTIVATED AUTOMATICALLY BY THE UPGRADE TO SUGAR 7 DUE TO INCOMPATIBILITY. PLEASE DELETE ALL CONDITIONS ON THE WORKFLOW AND RECREATE THEM.";
         while ($row = $this->db->fetchByAssoc($brokenWorkflows)) {
@@ -48,7 +50,12 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
         }
 
         // Grab all workflows that are time based and have not been deleted
-        $query = "SELECT workflow_triggershells.id trigger_id FROM workflow LEFT JOIN workflow_triggershells ON workflow_triggershells.parent_id = workflow.id WHERE workflow.deleted = 0 AND workflow.type = 'Time' AND workflow_triggershells.type = 'compare_any_time'";
+        $query = "SELECT workflow_triggershells.id trigger_id
+                    FROM workflow LEFT JOIN workflow_triggershells ON workflow_triggershells.parent_id = workflow.id
+                    WHERE workflow.deleted = 0
+                    AND workflow_triggershells.deleted = 0
+                    AND workflow.type = 'Time'
+                    AND workflow_triggershells.type = 'compare_any_time'";
         $data = $this->db->query($query);
         if (empty($data)) {
             return;
