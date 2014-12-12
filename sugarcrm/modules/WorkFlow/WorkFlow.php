@@ -1322,7 +1322,7 @@ check_logic_hook_file($module_name, $event, $action_array);
                 }
 
                 $pastTrigger = BeanFactory::getBean('Expressions');
-                $pastTriggers = $trigger->get_linked_beans('future_triggers', 'Expression');
+                $pastTriggers = $trigger->get_linked_beans('past_triggers', 'Expression');
                 if (!empty($pastTriggers)) {
                     $pastTrigger = $pastTriggers[0];
                 }
