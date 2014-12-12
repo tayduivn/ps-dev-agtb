@@ -32,29 +32,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *
 * name 		This represents name of the field. This is a required field.
 * type 		This represents type of the field. This is a required field and valid values are:
-*           ï¿½   int
-*           ï¿½   long
-*           ï¿½   varchar
-*           ï¿½   text
-*           ï¿½   date
-*           ï¿½   datetime
-*           ï¿½   double
-*           ï¿½   float
-*           ï¿½   uint
-*           ï¿½   ulong
-*           ï¿½   time
-*           ï¿½   short
-*           ï¿½   enum
+*           -   int
+*           -   long
+*           -   varchar
+*           -   text
+*           -   date
+*           -   datetime
+*           -   double
+*           -   float
+*           -   uint
+*           -   ulong
+*           -   time
+*           -   short
+*           -   enum
 * length    This is used only when the type is varchar and denotes the length of the string.
 *           The max value is 255.
 * enumvals  This is a list of valid values for an enum separated by "|".
-*           It is used only if the type is ï¿½enumï¿½;
+*           It is used only if the type is -enum-;
 * required  This field dictates whether it is a required value.
-*           The default value is ï¿½FALSEï¿½.
+*           The default value is -FALSE-.
 * isPrimary This field identifies the primary key of the table.
-*           If none of the fields have this flag set to ï¿½TRUEï¿½,
+*           If none of the fields have this flag set to -TRUE-,
 *           the first field definition is assume to be the primary key.
-*           Default value for this field is ï¿½FALSEï¿½.
+*           Default value for this field is -FALSE-.
 * default   This field sets the default value for the field definition.
 *
 *
