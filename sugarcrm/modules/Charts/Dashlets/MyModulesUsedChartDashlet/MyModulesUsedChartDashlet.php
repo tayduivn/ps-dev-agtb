@@ -17,7 +17,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-//FILE SUGARCRM flav=pro ONLY
 
 require_once('include/Dashlets/DashletGenericChart.php');
 

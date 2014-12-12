@@ -14,7 +14,6 @@
  * This test verifies the fixes to properly store the items in the BreadCrumbStack class
  * 
  */
-//FILE SUGARCRM flav=pro ONLY
 
 require_once 'SugarTestUserUtilities.php';
 require_once 'SugarTestAccountUtilities.php';

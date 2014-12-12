@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('data/SugarBean.php');
 
 class TrackerSession extends SugarBean {

@@ -14,9 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: RebuildWorkFlow.php 51719 2009-10-22 17:18:00Z mitani $
  * Description:  
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
-
-
 
 require_once('include/workflow/plugin_utils.php');
 

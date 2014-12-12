@@ -1,4 +1,4 @@
--- //FILE SUGARCRM flav=pro ONLY 
+-- 
 -- project
 ALTER TABLE `project` ADD COLUMN `estimated_start_date` date NOT NULL AFTER `deleted`;
 ALTER TABLE `project` ADD COLUMN `status` varchar(255) NULL AFTER `estimated_start_date`;

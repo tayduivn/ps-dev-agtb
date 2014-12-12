@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent ONLY
+
 /**
  * This class moves test metadata files into legacy locations to test the upgrade
  * routine. Will back up any existing legacy and sidecar files, and restore them,

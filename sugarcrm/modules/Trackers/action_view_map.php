@@ -9,5 +9,5 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 $action_view_map['trackersettings']= 'trackersettings';

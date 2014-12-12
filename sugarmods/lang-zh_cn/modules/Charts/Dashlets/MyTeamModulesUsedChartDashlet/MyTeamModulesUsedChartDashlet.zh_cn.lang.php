@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: MyPipelineBySalesStageDashlet.en_us.lang.php 16286 2006-08-22 20:14:45Z wayne $
 
-//FILE SUGARCRM flav=pro ONLY 
+
 
 $dashletStrings['MyTeamModulesUsedChartDashlet'] = array('LBL_TITLE'       => '团队成员使用过的模块（最近30天）',
                                                      'LBL_DESCRIPTION' => '团队成员使用过的模块（最近30天）',

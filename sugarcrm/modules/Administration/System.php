@@ -17,10 +17,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
-
-
-
 
 class System extends SugarBean {
     var $new_schema = true;

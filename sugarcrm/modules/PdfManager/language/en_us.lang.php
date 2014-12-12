@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 $mod_strings = array (
   'LBL_TEAM' => 'Teams',

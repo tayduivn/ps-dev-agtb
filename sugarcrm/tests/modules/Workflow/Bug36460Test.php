@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('include/workflow/glue.php');
 class Bug36460Test extends Sugar_PHPUnit_Framework_TestCase
 {

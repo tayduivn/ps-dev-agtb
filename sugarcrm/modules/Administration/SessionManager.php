@@ -16,9 +16,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
-
-
 
 // Expression is a general object for expressions, filters, and calculations
 class SessionManager extends SugarBean {

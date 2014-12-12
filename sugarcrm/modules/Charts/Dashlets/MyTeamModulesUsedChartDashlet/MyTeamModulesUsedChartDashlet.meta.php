@@ -13,8 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: MyPipelineBySalesStageDashlet.meta.php 16280 2006-08-22 19:47:48Z awu $
 
-//FILE SUGARCRM flav=pro ONLY
- 
+
 global $app_strings, $current_language;
 
 $dashletMeta['MyTeamModulesUsedChartDashlet'] = array('title'       => 'LBL_TITLE',  
