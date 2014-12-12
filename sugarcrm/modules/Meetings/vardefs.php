@@ -195,6 +195,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'meeting_status_dom',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)',
     'default' => 'Planned',
+    'duplicate_on_record_copy' => 'no',
   ),
   'type' =>
    array (
