@@ -2394,7 +2394,7 @@ EOQ;
         set_register_value('reports_to_hierarchy', $this->id, $ids);
         return $ids;
     }
-    //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=int ONLY
 
     /**
      * Replace instance variables in email templates for a particular message part.
