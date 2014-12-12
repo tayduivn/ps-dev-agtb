@@ -1,8 +1,8 @@
 <?php
-echo "HELLOO FROM SUGAR";
-error_reporting( E_ALL | E_STRICT );
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
+
+//error_reporting( E_ALL | E_STRICT );
+//ini_set('display_startup_errors', 1);
+//ini_set('display_errors', 1);
 
 // Define path to application directory
 defined('MODULES_PATH')
