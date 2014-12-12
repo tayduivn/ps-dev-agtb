@@ -26,11 +26,9 @@
 	<td scope="col" width="10%"  nowrap><slot><a href="{ORDER_BY}status" class="listViewThLinkS1">{MOD.LBL_STATUS}{arrow_start}{status_arrow}{arrow_end}</a></slot></td>
 	<td scope="col" width="10%"  nowrap><slot><a href="{ORDER_BY}date_start" class="listViewThLinkS1">{MOD.LBL_DATE_START}{arrow_start}{date_start_arrow}{arrow_end}</a></slot></td>
 	<td scope="col" width="10%"  nowrap><slot><a href="{ORDER_BY}date_end" class="listViewThLinkS1">{MOD.LBL_DATE_END}{arrow_start}{date_end_arrow}{arrow_end}</a></slot></td>
-   	<!--//BEGIN SUGARCRM flav=pro ONLY -->
    	<!-- BEGIN: pro_nav -->
 	<td scope="col" width="10%"  nowrap><slot><a href="{ORDER_BY}team_name" class="listViewThLinkS1">{APP.LBL_LIST_TEAM}{arrow_start}{team_name_arrow}{arrow_end}</a></slot></td>
 	<!-- END: pro_nav -->
-   	<!--//END SUGARCRM flav=pro ONLY -->
    	<!-- BEGIN: open_source -->
    	<!-- END: open_source -->
 
@@ -47,11 +45,9 @@
 		<td valign=TOP ><slot>{TEAMNOTICE.STATUS}</slot></td>
 		<td valign=TOP  nowrap><slot>{TEAMNOTICE.DATE_START}</slot></td>
 		<td valign=TOP  nowrap><slot>{TEAMNOTICE.DATE_END}</slot></td>
-		<!--//BEGIN SUGARCRM flav=pro ONLY -->
-   		<!-- BEGIN: pro -->
+		<!-- BEGIN: pro -->
    		<td nowrap="nowrap" valign="top"><slot>{TEAMNOTICE.TEAM_NAME}</slot></td>
    		<!-- END: pro -->
-   		<!--//END SUGARCRM flav=pro ONLY -->
    		<!-- BEGIN: open_source -->
    		<!-- END: open_source -->
     	<td nowrap align="center" valign=TOP ><slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=TeamNotices&record={TEAMNOTICE.ID}&return_module=TeamNotices&return_action=index&return_id=">{DELETE_INLINE_PNG}</a>&nbsp;<a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=TeamNotices&record={TEAMNOTICE.ID}&return_module=TeamNotices&return_action=index&return_id=">{APP.LNK_DELETE}</a></slot></td>

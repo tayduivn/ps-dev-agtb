@@ -35,9 +35,7 @@ $viewdefs[$module_name]['QuickCreate'] = array(
 	   'lbl_account_information'=>array(
 		        array(array('name'=>'name', 'displayParams'=>array('required'=>true)), 'assigned_user_name'),
 			    array('website',
-			     //BEGIN SUGARCRM flav=pro ONLY 
 			      array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
-			     //END SUGARCRM flav=pro ONLY 
 			    ),
 		        array('industry', array('name'=>'phone_office')),
 		        array($_object_name . '_type',  'phone_fax'), 

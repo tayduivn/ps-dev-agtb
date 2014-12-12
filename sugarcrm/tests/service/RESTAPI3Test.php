@@ -881,7 +881,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
@@ -892,7 +891,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('item_summary', $summaryText);
         $trackerManager->saveMonitor($monitor, true, true);
      }
-     //END SUGARCRM flav=pro ONLY
      public function testGetUpcomingActivities()
      {
          $expected = $this->_createUpcomingActivities(); //Seed the data.

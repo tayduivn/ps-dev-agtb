@@ -725,7 +725,6 @@ EOJS;
 								$trackerScriptArray .= "'$id',";
 				                $trackerScript = empty($trackerScript) ? $dashlet->displayScript() : $trackerScript;
 							}
-							//BEGIN SUGARCRM flav=pro ONLY
 							$toggleHeaderToolsetScript .= "SUGAR.mySugar.attachToggleToolsetEvent('$id');";
 
 						} catch (Exception $ex) {
@@ -773,7 +772,6 @@ EOJS;
 
 		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	function changeLayout(){
 		if (isset($_REQUEST['changeLayoutParams']) && $_REQUEST['changeLayoutParams']){

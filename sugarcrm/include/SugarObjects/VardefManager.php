@@ -193,7 +193,6 @@ class VardefManager{
                 'indices',
                 'name_format_map',
                 'visibility',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'acls',
             );
 
@@ -214,7 +213,6 @@ class VardefManager{
                $GLOBALS['dictionary'][$object]['duplicate_check'] = $templates[$template]['duplicate_check'];
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if(isset($templates[$template]['favorites']) && !isset($GLOBALS['dictionary'][$object]['favorites']))
             {
             	$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];

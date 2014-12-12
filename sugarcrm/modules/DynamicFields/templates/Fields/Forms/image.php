@@ -30,9 +30,7 @@ function get_body(&$ss, $vardef){
     $ss->assign('LINK_TARGET', $link_target);
     $ss->assign('LINK_TARGET_LABEL', $app_list_strings['link_target_dom'][$link_target]);
     
-    //BEGIN SUGARCRM flav=pro ONLY 
     $ss->assign('hideReportable', true);
-    //END SUGARCRM flav=pro ONLY 
     $ss->assign('hideImportable', 'false');
     $ss->assign('hideDuplicatable', 'false');
     return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/image.tpl');

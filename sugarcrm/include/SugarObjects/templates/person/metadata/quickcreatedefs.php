@@ -31,9 +31,7 @@ $viewdefs[$module_name]['QuickCreate'] = array(
     
     array (
       array('name'=>'last_name', 'displayParams'=>array('required'=>true)),
-      //BEGIN SUGARCRM flav=pro ONLY 
       array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
-      //END SUGARCRM flav=pro ONLY 
     ),
     
     array (

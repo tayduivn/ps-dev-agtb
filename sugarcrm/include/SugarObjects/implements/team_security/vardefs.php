@@ -86,7 +86,6 @@ $vardefs = array(
 			'len' => 36,
 			'custom_type' => 'teamset',
             'studio' => array(
-                   //BEGIN SUGARCRM flav=pro ONLY
                    // Bug 56832 - Exclude list/detail/edit view from portal
                    'portallistview' => false,
                    'portalrecordview' => false,
@@ -134,7 +133,6 @@ $vardefs = array(
 		'studio' => 'false',
 		'reportable'=>false,
         ),
-	//END SUGARCRM flav=pro ONLY
 ),
 
 'relationships'=>array(

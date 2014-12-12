@@ -37,10 +37,7 @@ class BeanFactory {
      * @static
      * @param String $module
      * @param String $id
-     * @param Array $params A name/value array of parameters. Names: encode, deleted,
-     * //BEGIN SUGARCRM flav=pro ONLY
-     *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
+     * @param Array $params A name/value array of parameters. Names: encode, deleted, disable_row_level_security
      *        If $params is boolean we revert to the old arguments (encode, deleted), and use $params as $encode.
      *        This will be changed to using only $params in later versions.
      * @param Bool $deleted @see SugarBean::retrieve

@@ -39,9 +39,7 @@ class Subscription extends Basic
      * @param  SugarBean $record
      * @param  string    $type   Return type for data
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return mixed
      */
     public static function getSubscribedUsers(SugarBean $record, $type = 'array', $params = array())
@@ -59,9 +57,7 @@ class Subscription extends Basic
      * @param  User   $user
      * @param  string $type Return type for data
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return mixed
      */
     public static function getSubscribedRecords(User $user, $type = 'array', $params = array())
@@ -78,9 +74,7 @@ class Subscription extends Basic
      * @param  User      $user
      * @param  SugarBean $record
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return string|null       GUID of subscription or null
      */
     public static function checkSubscription(User $user, SugarBean $record, $params = array())
@@ -101,9 +95,7 @@ class Subscription extends Basic
      * @param  User  $user
      * @param  array $records An array of associative arrays (not SugarBeans).
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return array Associative array where keys are IDs of the record a user
      * is subscribed to.
      */
@@ -141,9 +133,7 @@ class Subscription extends Basic
      * @param  User      $user
      * @param  SugarBean $record
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return Subscription|null
      */
     public static function getSubscription(User $user, SugarBean $record, $params = array())
@@ -160,9 +150,7 @@ class Subscription extends Basic
      * @param  User      $user
      * @param  SugarBean $record
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return string|bool       GUID of the subscription or false.
      */
     public static function subscribeUserToRecord(User $user, SugarBean $record, $params = array())

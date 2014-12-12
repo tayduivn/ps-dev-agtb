@@ -171,7 +171,6 @@ $sqs_objects = array(
                      'EditView_assigned_user_name' => $qsd->getQSUser(),
                      'EditView_kbdoc_approver_name' => getQSApprover());
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($focus->field_defs);
@@ -185,7 +184,6 @@ $quicksearch_js .= '<script type="text/javascript" language="javascript">
 						</script>';
 */
 $javascript = get_set_focus_js().$quicksearch_js;
-//END SUGARCRM flav=pro ONLY
 $tag = BeanFactory::getBean('KBTags');
 $xtpl->assign("TAG_NAME", $tag->tag_name);
  //tree header.

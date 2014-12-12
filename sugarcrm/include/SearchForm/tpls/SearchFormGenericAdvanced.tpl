@@ -37,12 +37,10 @@
     {{if $accesskeycount==1}} {{assign var='ACCKEY' value=$APP.LBL_FIRST_INPUT_SEARCH_KEY}} {{else}} {{assign var='ACCKEY' value=''}} {{/if}}
 
 	
-	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	{{if !empty($colData.field.name)}}
 	
 		{if $fields.{{$colData.field.name}}.acl > 0}
 	{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
 	{counter assign=index}
 	{math equation="left % right"
    		  left=$index
@@ -73,11 +71,9 @@
 		{{sugar_field parentFieldArray='fields' accesskey=$ACCKEY vardef=$fields[$colData.field.name] displayType=$displayType displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
    	{{/if}}
    	</td>
-   	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{/if}
 		{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
 {{/foreach}}
 	</tr>
 <tr>

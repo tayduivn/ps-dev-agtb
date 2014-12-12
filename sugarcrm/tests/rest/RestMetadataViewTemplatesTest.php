@@ -69,7 +69,6 @@ class RestMetadataViewTemplatesTest extends RestTestBase
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
         SugarAutoLoader::put($filesToCheck['mobile'][0],'MOBILE CODE', true);
         $this->_clearMetadataCache();
@@ -83,13 +82,10 @@ class RestMetadataViewTemplatesTest extends RestTestBase
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get mobile code when base code was there.");
-        //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
-        //BEGIN SUGARCRM flav=com ONLY
         SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
         $this->_clearMetadataCache();
-        //END SUGARCRM flav=com ONLY
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get base code when it was the direct option");

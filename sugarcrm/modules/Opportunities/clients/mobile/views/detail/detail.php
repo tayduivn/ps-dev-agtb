@@ -31,9 +31,7 @@ $fields = array(
     'sales_status',
     //'sales_stage',
     'assigned_user_name',
-    //BEGIN SUGARCRM flav=pro ONLY
     'team_name',
-    //BEGIN SUGARCRM flav=pro ONLY
 );
 
 // here we add `sales_stage` for PRO/CORP flavors
@@ -53,9 +51,7 @@ $fields = array(
     'sales_stage',
     //'sales_status',
     'assigned_user_name',
-    //BEGIN SUGARCRM flav=pro ONLY
     'team_name',
-    //BEGIN SUGARCRM flav=pro ONLY
 );
 //END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
 

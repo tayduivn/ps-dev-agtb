@@ -120,7 +120,6 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    //BEGIN SUGARCRM flav=pro ONLY
     $sessionManager = new SessionManager();
     $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$contact_portal_auth['user_name'],  'portal_active'=>'1', 'deleted'=>0) );
     if(!empty($contact) && !User::checkPasswordMD5($contact_portal_auth['password'], $contact->portal_password)) {
@@ -156,7 +155,6 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 }
-//END SUGARCRM flav=pro ONLY
 /*
 this validates the session and starts the session;
 */

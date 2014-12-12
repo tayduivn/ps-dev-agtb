@@ -132,7 +132,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'And: Returned too many results');
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -217,7 +216,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(2,count($reply['reply']['records']),'FavMulRelated: Returned too many results');
 
     }
-    //BEGIN SUGARCRM flav=pro ONLY
 
     /**
      * @group rest
