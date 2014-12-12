@@ -125,4 +125,18 @@ describe('Plugins.AddAsInvitee', function() {
         view.addAsInvitee(person);
         expect(view.model.get('invitees').get('123')).not.toBeUndefined();
     });
+
+    it('should invite the assigned user', function() {
+        var user;
+
+        user = new app.Bean({id: '123', _module: 'Users', name: 'Jack'});
+        user.module = user.get('_module');
+        sandbox.stub(app.data, 'createBean').withArgs('Users').returns(user);
+
+        view.model.set('invitees', new Backbone.Collection());
+        view.model.set('assigned_user_id', user.id);
+        expect(view.model.get('invitees').get(user.id)).toBeUndefined();
+        view.model.set('assigned_user_name', user.get('name'));
+        expect(view.model.get('invitees').get(user.id)).not.toBeUndefined();
+    });
 });
