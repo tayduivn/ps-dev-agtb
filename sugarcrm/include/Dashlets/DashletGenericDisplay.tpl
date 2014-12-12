@@ -157,10 +157,10 @@
                         {* //BEGIN SUGARCRM flav=pro ONLY *}
                         class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
                         {* //END SUGARCRM flav=pro ONLY *}
-                        title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage name="edit_inline.png" attr='border="0" ' alt="$alt_edit"}</a>
+                        title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home'>{sugar_getimage name="edit_inline.png" attr='border="0" ' alt="$alt_edit"}</a>
 				{/if}
 				{if $pageData.access.view}
-					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" ' alt="$alt_view"}</a>
+					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" ' alt="$alt_view"}</a>
 				{/if}
 			</td>
 			{/if}
