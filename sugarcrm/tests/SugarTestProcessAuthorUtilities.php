@@ -10,62 +10,58 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// Define path to application directory
-defined('MODULES_PATH')
-    || define('MODULES_PATH', realpath(dirname(__FILE__) . '/../package/SugarModules/'));
-
 defined('MOCK_CLASSES_PATH')
     || define('MOCK_CLASSES_PATH', realpath(dirname(__FILE__) . '/package/mockClasses/'));
 
 
 function autoload_classes($class_name)
 {
-    $file = MODULES_PATH. '/modules/pmse_Project/' . $class_name. '.php';
+    $file = 'modules/pmse_Project/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Project/clients/base/api/wrappers/' . $class_name. '.php';
+    $file = 'modules/pmse_Project/clients/base/api/wrappers/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/' . $class_name. '.php';
+    $file = 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
 
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
 
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/parser/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/parser/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
 
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/wrappers/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/wrappers/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/PMSEElements/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/PMSEElements/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/PMSEExceptions/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/PMSEExceptions/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/PMSEPreProcessor/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/PMSEPreProcessor/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
     
-    $file = MODULES_PATH. '/modules/pmse_Inbox/engine/PMSEHandlers/' . $class_name. '.php';
+    $file = 'modules/pmse_Inbox/engine/PMSEHandlers/' . $class_name. '.php';
     if (file_exists($file)) {
         require_once($file);
     }
