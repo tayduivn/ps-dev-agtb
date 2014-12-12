@@ -249,8 +249,9 @@ class SugarCurrency
      *
      * @see SugarBean::save()
      * @param SugarBean $bean
+     * @param bool @isUpdate This is bean in an update save()?
      */
-    public static function verifyCurrencyBaseRateSet(SugarBean $bean)
+    public static function verifyCurrencyBaseRateSet(SugarBean $bean, $isUpdate = true)
     {
         if ($bean->getFieldDefinition('currency_id')
             && $bean->getFieldDefinition('base_rate')
@@ -264,7 +265,8 @@ class SugarCurrency
                 $beanCurrencyCheck = call_user_func(array($bean, 'updateCurrencyBaseRate'));
             }
 
-            if ($beanCurrencyCheck || !isset($bean->base_rate) || static::hasCurrencyIdChanged($bean)) {
+            // we should only check if the currencyId has changed if we the be is doing an update, not an insert
+            if ($beanCurrencyCheck || !isset($bean->base_rate) || (static::hasCurrencyIdChanged($bean) && $isUpdate)) {
                 $bean->base_rate = $currency->conversion_rate;
             }
         }
@@ -298,6 +300,8 @@ class SugarCurrency
      */
     protected static function hasCurrencyIdChanged($bean)
     {
+
+
         // if both are defined, compare
         if (isset($bean->currency_id) && isset($bean->fetched_row['currency_id'])) {
             if ($bean->currency_id != $bean->fetched_row['currency_id']) {

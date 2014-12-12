@@ -1792,7 +1792,7 @@ class SugarBean
 
         // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
         if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
-            SugarCurrency::verifyCurrencyBaseRateSet($this);
+            SugarCurrency::verifyCurrencyBaseRateSet($this, $isUpdate);
         }
 
         require_once("data/BeanFactory.php");
@@ -3583,15 +3583,21 @@ class SugarBean
             $list_column = array_map('trim', $list_column);
 
             $list_column_name = $list_column[0];
+
+            // check if it contains table name, eg tasks.name
+            if (($pos = strpos($list_column_name, ".")) !== false) {
+                $list_column_name = substr($list_column_name, $pos + 1);
+            }
+
             if (isset($bean_queried->field_defs[$list_column_name])) {
                 $field_defs = $bean_queried->field_defs[$list_column_name];
                 $source = isset($field_defs['source']) ? $field_defs['source'] : 'db';
 
                 if (empty($field_defs['table']) && !$suppress_table_name) {
                     if ($source == 'db') {
-                        $list_column[0] = $bean_queried->table_name . '.' . $list_column[0] ;
+                        $list_column[0] = $bean_queried->table_name . '.' . $list_column_name ;
                     } elseif ($source == 'custom_fields') {
-                        $list_column[0] = $bean_queried->table_name . '_cstm.' . $list_column[0] ;
+                        $list_column[0] = $bean_queried->table_name . '_cstm.' . $list_column_name ;
                     }
                 }
 

@@ -350,6 +350,11 @@ class CalendarUtils
         Activity::disable();
 
 		$clone = clone $bean;
+
+        //this is a new bean being created - so throw away cloned fetched_row
+        //attribute that incorrectly makes it look like an existing bean
+        $clone->fetched_row = false;
+
 		foreach ($timeArray as $date_start) {
 			$clone->id = "";
 			$clone->date_start = $date_start;

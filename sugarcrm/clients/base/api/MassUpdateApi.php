@@ -97,7 +97,10 @@ class MassUpdateApi extends SugarApi {
 
         // should pass success status once uid is empty.
         if (empty($mu_params['uid']) && empty($mu_params['entire'])) {
-            return array('status'=>'done');
+            return array(
+                'status' => 'done',
+                'failed' => 0,
+            );
         }
 
         if (isset($mu_params['entire']) && empty($mu_params['entire'])) {
@@ -125,9 +128,10 @@ class MassUpdateApi extends SugarApi {
         $mu_params['action'] = $action;
 
         $massUpdateJob = new SugarJobMassUpdate();
-        $massUpdateJob->runUpdate($mu_params);
-        
-        return array('status'=>'done');
+        $result = $massUpdateJob->runUpdate($mu_params);
+        $result['status'] = 'done';
+
+        return $result;
     }
 
     /**

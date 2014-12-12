@@ -52,14 +52,17 @@ describe('Base.Fields.Float', function() {
 
         });
 
-        it('should format/unformat zero', function() {
+        it('should format/unformat zero with/without precision', function() {
             var preferenceStub = sinon.collection.stub(app.user, 'getPreference');
 
             preferenceStub.withArgs('decimal_separator').returns('.');
             preferenceStub.withArgs('decimal_precision').returns(4);
 
-            expect(field.format(0.00)).toEqual('0.0000');
+            expect(field.format(0.00)).toEqual('0');
             expect(parseFloat(field.unformat('0.0000'))).toEqual(0);
+
+            field.def.precision = 8;
+            expect(field.format(0.00)).toEqual('0.00000000');        
         });
 
         it('should not format/unformat a non number string', function() {

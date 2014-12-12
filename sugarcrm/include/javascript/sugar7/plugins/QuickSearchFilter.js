@@ -9,131 +9,69 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on("app:init", function() {
+    app.events.on('app:init', function() {
         app.plugins.register('QuickSearchFilter', ['layout', 'view', 'field'], {
             /**
-             * Metadata about how quick search should be performed
-             * @private
-             */
-            _moduleQuickSearchMeta: {},
-
-            /**
-             * Retrieve the highest priority quick search metadata
+             * Retrieve and cache the quick search metadata.
              *
-             * @param {String} searchModule
-             * @return {Object} Field names and whether to split search terms
-             * @private
+             * @param {string} searchModule Module name against which quick
+             *   search is applied.
+             *
+             * @return {Object} Quick search metadata (with highest priority).
+             * @return {Array} return.fieldNames The fields to be used in
+             *   quick search.
+             * @return {boolean} return.splitTerms Whether to split the search
+             *   terms when there are multiple search fields.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#getModuleQuickSearchMeta} instead.
              */
-            _getQuickSearchMetaByPriority: function(searchModule) {
-                var meta = app.metadata.getModule(searchModule),
-                    filters = meta ? meta.filters : [],
-                    fieldNames = [],
-                    priority = 0,
-                    splitTerms = false;
+            getModuleQuickSearchMeta: function(searchModule) {
+                app.logger.warn('Plugins.QuickSearchFilter.getModuleQuickSearchMeta is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.getModuleQuickSearchMeta');
 
-                _.each(filters, function(value) {
-                    if (value && value.meta && value.meta.quicksearch_field &&
-                        priority < value.meta.quicksearch_priority) {
-                        fieldNames = value.meta.quicksearch_field;
-                        priority = value.meta.quicksearch_priority;
-                        if (_.isBoolean(value.meta.quicksearch_split_terms)) {
-                            splitTerms = value.meta.quicksearch_split_terms;
-                        }
-                    }
-                });
-
-                return {
-                    fieldNames: fieldNames,
-                    splitTerms: splitTerms
-                };
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.getModuleQuickSearchMeta(searchModule);
             },
 
             /**
-             * Retrieve and cache the quick search metadata
+             * Retrieve just the array of field names for a quick search.
              *
-             * @param searchModule
-             * @return {Object} Quick search metadata (with highest priority)
-             * @return {Array} return.fieldNames The fields to be used in quick search
-             * @return {Boolean} return.splitTerms Whether to split the search terms
-             * when there are multiple search fields
-             */
-            getModuleQuickSearchMeta: function (searchModule) {
-                this._moduleQuickSearchMeta[searchModule] = this._moduleQuickSearchMeta[searchModule] ||
-                    this._getQuickSearchMetaByPriority(searchModule);
-                return this._moduleQuickSearchMeta[searchModule];
-            },
-
-            /**
-             * Retrieve just the array of field names for a quick search
-             * @param searchModule
-             * @return {Array}
+             * @param {string} searchModule Module name against which quick
+             *   search is applied.
+             *
+             * @return {Array} An array of field names for the searchModule.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#getModuleQuickSearchMeta} instead.
              */
             getModuleQuickSearchFields: function(searchModule) {
-                return this.getModuleQuickSearchMeta(searchModule).fieldNames;
+                app.logger.warn('Plugins.QuickSearchFilter.getModuleQuickSearchFields is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.getModuleQuickSearchMeta');
+
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.getModuleQuickSearchMeta(searchModule).fieldNames;
             },
 
             /**
-             * Get the filter definition based on quick search metadata
+             * Get the filter definition based on quick search metadata.
              *
-             * @param searchModule
-             * @param searchTerm
-             * @return {Array}
+             * @param {string} searchModule Module name against which quick
+             *   search is applied.
+             * @param {string} searchTerm Search input entered.
+             *
+             * @return {Array} The search filter definition of quick search,
+             *   otherwise an empty array.
+             *
+             * @deprecated since 7.6. Will be removed in 7.8.
+             *   Use {@link Data.FiltersBean#buildSearchTermFilter} instead.
              */
             getFilterDef: function(searchModule, searchTerm) {
-                var searchFilter = [], returnFilter = [], searchMeta, fieldNames, terms;
+                app.logger.warn('Plugins.QuickSearchFilter.getFilterDef is deprecated since 7.6. ' +
+                    'Please update your code to use Data.FiltersBean.buildSearchTermFilter');
 
-                //Special case where no specific module is selected
-                if (searchModule === 'all_modules') {
-                    return returnFilter;
-                }
-                // We allow searching based on the basic search filter.
-                // For example, the Contacts module will search the records
-                // whose first name or last name begins with the typed string.
-                // To extend the search results, you should update the metadata for basic search filter
-                searchMeta = this.getModuleQuickSearchMeta(searchModule);
-                fieldNames = searchMeta.fieldNames;
-
-                if (searchTerm) {
-                    //strip leading or trailing whitespace
-                    searchTerm = searchTerm.trim();
-
-                    //For Person Type modules, need to split the terms and build a smart filter definition
-                    if (fieldNames.length === 2 && searchMeta.splitTerms) {
-                        terms = searchTerm.split(' ');
-                        var firstTerm = _.first(terms.splice(0, 1));
-                        var otherTerms = terms.join(' ');
-                        //First field starts with first term, second field starts with other terms
-                        //If only one term, use $or and search for the term on both fields
-                        terms = otherTerms ? [firstTerm, otherTerms] : null;
-                    } else if (fieldNames.length > 2) {
-                        app.logger.fatal('Filtering by 3 quicksearch fields is not yet supported.');
-                    }
-                    _.each(fieldNames, function(name, index) {
-                        var o = {};
-                        if (terms) {
-                            o[name] = {'$starts': terms[index]};
-                        } else {
-                            o[name] = {'$starts': searchTerm};
-                        }
-                        searchFilter.push(o);
-                    });
-                    if (terms) {
-                        returnFilter.push(searchFilter.length > 1 ? {'$and': searchFilter} : searchFilter[0]);
-                    } else {
-                        returnFilter.push(searchFilter.length > 1 ? {'$or': searchFilter} : searchFilter[0]);
-                    }
-
-                    // See MAR-1362 for details.
-                    if (searchModule === 'Users' || searchModule === 'Employees') {
-                        returnFilter[0] = ({
-                            '$and': [
-                                {'status': {'$not_equals': 'Inactive'}},
-                                returnFilter[0]
-                            ]
-                        });
-                    }
-                }
-                return returnFilter;
+                var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+                return filtersBeanPrototype.buildSearchTermFilter(searchModule, searchTerm);
             }
         });
     });

@@ -148,7 +148,8 @@ h4.merge-interface-header {
     }
     .box {
       border-radius: 3px;
-      .box-shadow(0 0 1px #aaaaaa);
+      border: 1px solid darken(@grayLighter, 10%);
+      .box-shadow(0 2px 4px darken(@grayLighter, 5%));
       overflow: hidden;
       .merge-edit {
         display: none;
@@ -166,7 +167,6 @@ h4.merge-interface-header {
   .col.primary-edit-mode { /* PRIMARY */
     .box {
       background: #F7F7F7;
-      border:1px solid #CECECE;
       .merge-row {
         &.even,
         &.odd {

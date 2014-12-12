@@ -31,6 +31,9 @@ $mi->silent = true;
 $mi->rebuild_tabledictionary();
 $mi->rebuild_vardefs();
 
+require_once 'include/MetaDataManager/MetaDataManager.php';
+MetaDataManager::disableCache();
+
 require_once('modules/TableDictionary.php');
 
 
@@ -702,8 +705,8 @@ SugarAutoLoader::buildCache();
 
 // Build the base platform metadata caches after everything else is done.
 installLog("Populating metadata cache");
+MetaDataManager::enableCache();
 $app_list_strings = return_app_list_strings_language('en_us');
-require_once 'include/MetaDataManager/MetaDataManager.php';
 MetaDataManager::setupMetadata(array('base'), array('en_us'));
 
 // TODO: Remove the following. (See MAR-1314)

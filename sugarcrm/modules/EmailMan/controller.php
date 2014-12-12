@@ -12,19 +12,19 @@
 
 class EmailManController extends SugarController
 {
-	function action_Save(){
-
-        
+    function action_Save()
+    {
         require_once('include/OutboundEmail/OutboundEmail.php');
         require_once('modules/Configurator/Configurator.php');
 
         $configurator = new Configurator();
         global $sugar_config;
         global $current_user, $mod_strings;
-        if ( !is_admin($current_user)
+        if (!is_admin($current_user)
                 && !is_admin_for_module($GLOBALS['current_user'],'Emails')
-                && !is_admin_for_module($GLOBALS['current_user'],'Campaigns') ){
-        sugar_die($mod_strings['LBL_UNAUTH_ACCESS']);
+                && !is_admin_for_module($GLOBALS['current_user'],'Campaigns')
+        ){
+            sugar_die($mod_strings['LBL_UNAUTH_ACCESS']);
         }
 
         //Do not allow users to spoof for sendmail if the config flag is not set.
@@ -38,8 +38,6 @@ class EmailManController extends SugarController
             $oe->saveSystem();
         }
 
-
-
         $focus = BeanFactory::getBean('Administration');
 
         if(isset($_POST['tracking_entities_location_type'])) {
@@ -52,12 +50,17 @@ class EmailManController extends SugarController
         if( !isset($_POST['mail_smtpauth_req']) )
         {
             $_POST['mail_smtpauth_req'] = 0;
-		    if (empty($_POST['campaignConfig'])) {
-			    $_POST['notify_allow_default_outbound'] = 0; // If smtp auth is disabled ensure outbound is disabled.
-		    }
+            if (empty($_POST['campaignConfig'])) {
+                $_POST['notify_allow_default_outbound'] = 0; // If smtp auth is disabled ensure outbound is disabled.
+            }
         }
 
         $focus->saveConfig();
+
+        // mark user metadata changed so the user preferences get refreshed
+        // (user preferences contain email client preference)
+        $mm = MetadataManager::getManager();
+        $mm->setUserMetadataHasChanged($current_user);
 
         // save User defaults for emails
         $configurator->config['email_default_delete_attachments'] = (isset($_REQUEST['email_default_delete_attachments'])) ? true : false;
@@ -88,9 +91,5 @@ class EmailManController extends SugarController
         ksort($sugar_config);
 
         $configurator->handleOverride();
-
-
     }
-
 }
-?>

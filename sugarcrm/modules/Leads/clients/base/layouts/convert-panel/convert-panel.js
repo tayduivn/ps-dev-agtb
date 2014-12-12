@@ -425,6 +425,8 @@
         this.context.trigger('lead:convert-panel:complete', this.meta.module, model);
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
 
+        app.alert.dismissAll('error');
+        
         //disable sub-panel until reset
         this.$(this.accordionBody).addClass('disabled');
 

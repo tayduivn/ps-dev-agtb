@@ -259,7 +259,8 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
         $fakeApi = new RestService();
         $fakeApi->user = $GLOBALS['current_user'];
         $helper = ApiHelper::getHelper($fakeApi, $seed);
-        
+
+        $failed = 0;
         foreach ($ids as $id) {
             // Doing a full retrieve because we are writing we may need dependent fields for workflow that we don't know about
             $bean = BeanFactory::retrieveBean($module,$id);
@@ -283,9 +284,9 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                 $bean->save();
             } catch ( SugarApiExceptionNotAuthorized $e ) {
                 // ACL's might not let them modify this bean, but we should still do the rest
+                $failed++;
                 continue;
             }
-            
         }
 
         if (count($prospectLists) > 0) {
@@ -303,6 +304,10 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                 $GLOBALS['log']->error("Could not add prospects to prospect list, could not find a relationship to the ProspectLists module.");
             }
         }
+
+        return array(
+            'failed' => $failed,
+        );
     }
 
 }

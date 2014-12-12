@@ -20,14 +20,14 @@ class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $condition = new Expression();
         $condition->lhs_field = 'date_closed';
-        $condition->exp_type = 'date';
+        $condition->exp_type = 'datetime';
         $condition->operator = 'Less Than';
         $condition->ext1 = 172800;
         $glueWorkflow = new WorkFlowGlue();
         $actualCondition = $glueWorkflow->glue_date('future', $condition, true);
         // Bug 50258 - fixed date logic
         $expectedConditionChunk = preg_quote(
-            'TimeDate::getInstance()->fromDB($focus->date_closed)->getTimestamp() > (time() - 172800)',
+            'TimeDate::getInstance()->fromDb($focus->date_closed)->getTimestamp() > (time() - 172800)',
             '~'
         );
         $matched = preg_match("~$expectedConditionChunk~i", $actualCondition);

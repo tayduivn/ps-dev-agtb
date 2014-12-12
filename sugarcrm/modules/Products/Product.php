@@ -622,4 +622,41 @@ class Product extends SugarBean
         
 
     }
+
+    /**
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
+     */
+    public function updateCurrencyBaseRate()
+    {
+        // if we are in the quote save, ignore this as it's a new record
+        // and it's not linked yet, so we need to keep the base_rate set from the quote.
+        if ($this->ignoreQuoteSave) {
+            return false;
+        }
+        // need to go though product bundles
+        $this->load_relationship('product_bundles');
+        // grab the first and only one
+        $bundle = array_pop($this->product_bundles->getBeans());
+
+        // make sure we have a bundle
+        if (empty($bundle)) {
+            return true;
+        }
+
+        // load the bundle -> quotes relationship
+        $bundle->load_relationship('quotes');
+
+        // get the beans
+        $quote = array_pop($bundle->quotes->getBeans());
+
+        if (empty($quote)) {
+            return true;
+        }
+
+        // if the quote is not closed, we should update the base rate
+        return !$quote->isClosed();
+
+    }
 }

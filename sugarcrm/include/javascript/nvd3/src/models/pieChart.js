@@ -218,7 +218,7 @@ nv.models.pieChart = function() {
         .transition().duration(durationMs)
           .call(pie);
 
-      if (hole) {
+      if (hole && pie.donut()) {
         holeWrap.select('text').remove();
         holeWrap.append('text')
           .text(hole)

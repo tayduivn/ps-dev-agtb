@@ -53,18 +53,13 @@ describe('Base.View.DupeCheckList', function() {
     });
 
     it('should turn off sorting on all fields', function(){
-        var allNonSortable;
-
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
         view.render();
-        var fields = view.meta.panels[0].fields;
 
-        expect(fields.length).toBeGreaterThan(0);
-        allNonSortable = _.all(fields, function (field) {
-            return (field.sortable === false);
-        });
-        expect(allNonSortable).toBeTruthy();
+        expect(view.$('.sorting').length).toBe(0);
+        expect(view.$('.sorting_asc').length).toBe(0);
+        expect(view.$('.sorting_desc').length).toBe(0);
     });
 
     it('should removing all links except rowactions', function(){

@@ -27,9 +27,11 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         if (!empty($this->meetingIds)) {
             $ids = implode("','", $this->meetingIds);
+            $GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id IN ('" . $ids . "')");
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . $ids . "')");
             $this->meetingIds = array();
         }
+        SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();
     }
@@ -95,9 +97,46 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $calEvents->saveRecurringEvents($meeting);
 
         $eventsCreated = $calEvents->getEventsCreated();
-        $this->meetingIds = array_merge($this->meetingIds, array_keys($eventsCreated));
-
+        foreach($eventsCreated as $eventCreated) {
+            $this->meetingIds[] = $eventCreated['id'];
+        }
         $this->assertEquals($args['repeat_count'], count($eventsCreated) + 1, "Unexpected Number of Recurring Meetings Created");
+    }
+
+    public function testCalendarEvents_SaveRecurringEvents_CurrentAssignedUserAutoAccepted()
+    {
+        global $current_user;
+        $args['date_start'] = '2030-08-15 13:00:00';
+        $args['date_end']   = '2030-08-15 18:15:00';
+        $args['name'] = "Test Meeting";
+        $args['duration_hours'] = '1';
+        $args['duration_minutes'] = '30';
+        $args['repeat_type'] = 'Daily';
+        $args['repeat_interval'] = 1;
+        $args['repeat_count'] = 2;
+        $args['repeat_until'] = null;
+        $args['repeat_dow'] = null;
+        $args['assigned_user_id'] = $current_user->id;
+
+        $meeting = $this->newMeeting('', $args);
+
+        $calEvents = new CalendarEventsTest_CalendarEvents();
+        $calEvents->saveRecurringEvents($meeting);
+
+        $eventsCreated = $calEvents->getEventsCreated();
+        foreach($eventsCreated as $eventCreated) {
+            $this->meetingIds[] = $eventCreated['id'];
+        }
+
+        $parentMeetingAcceptStatus = $meeting->users->rows[$current_user->id]['accept_status'];
+
+        $childMeeting = BeanFactory::getBean('Meetings', $eventsCreated[0]['id']);
+        $childMeeting->load_relationship('users');
+        $childMeeting->users->load();
+        $childMeetingAcceptStatus = $childMeeting->users->rows[$current_user->id]['accept_status'];
+
+        $this->assertEquals($parentMeetingAcceptStatus, 'accept', 'Current user should have auto-accepted in parent meeting');
+        $this->assertEquals($childMeetingAcceptStatus, 'accept', 'Current user should have auto-accepted in child meeting');
     }
 
     /**
@@ -117,7 +156,6 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $meeting->save();
         }
-        $this->meetingIds[] = $meeting->id;
         return $meeting;
     }
 }

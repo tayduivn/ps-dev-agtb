@@ -121,6 +121,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 	'required' => true,
 	'importable' => 'required',
     'default' => 'Planned',
+    'duplicate_on_record_copy' => 'no',
 	'studio' => array('detailview'=>false)
   ),
   'direction' =>
@@ -513,6 +514,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'users',
             ),
             'order_by' => 'name:asc',
+            'studio' => false,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',

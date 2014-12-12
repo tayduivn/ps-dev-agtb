@@ -269,6 +269,15 @@
     },
 
     /**
+     * Calculate number of failed updates.
+     *
+     * @return {Number} Number of failed updates.
+     */
+    getFailedRecords: function() {
+        return this.collection.numFailures;
+    },
+
+    /**
      * Resume the mass job once user were requested to resume.
      * Update screen in proper way.
      */
@@ -341,7 +350,8 @@
      */
     hideProgress: function() {
         var size = this.getCompleteRecords(),
-            discardSize = this.collection.discards.length;
+            discardSize = this.collection.discards.length,
+            failed = this.getFailedRecords();
         if (discardSize > 0) {
             //permission warning
             var message = app.lang.get(this.LABELSET['SUCCESS'], this.module, {
@@ -356,12 +366,12 @@
                 autoClose: true,
                 autoCloseDelay: 8000
             });
-        } else if (this.totalRecord !== size) {
+        } else if (this.totalRecord !== size || failed > 0) {
             //incomplete
             app.alert.show('massupdate_final_notice', {
                 level: 'warning',
                 messages: app.lang.get(this.LABELSET['WARNING_INCOMPLETE'], this.module, {
-                    num: this.getRemainder()
+                    num: this.getRemainder() + failed
                 }),
                 autoClose: true,
                 autoCloseDelay: 8000
