@@ -37,7 +37,6 @@ describe('View.Fields.Base.RepeatCountField', function() {
         sandbox.stub(field, '_super');
         sandbox.stub(field.model, 'isNew').returns(true);
         sandbox.stub(field.model, 'addValidationTask');
-        field.model.set(field.name, 0, {silent: true});
 
         field.initialize();
 
