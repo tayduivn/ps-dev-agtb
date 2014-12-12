@@ -71,19 +71,22 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             $KBContent->populateFromRow($data);
             $KBContent->save();
 
-            $KBContent->load_relationship('tags_link');
-            foreach ($tagSet as $tag) {
-                $this->log("Convert the KBOLDTag {$tag['kboldtag_id']} to a tag.");
-                $tag = BeanFactory::getBean('KBOLDTags', $tag['kboldtag_id']);
+            $KBContent->load_relationship('tags');
+            if (!empty($KBContent->tags)) {
+                foreach ($tagSet as $tag) {
+                    $this->log("Convert the KBOLDTag {$tag['kboldtag_id']} to a tag.");
+                    $tag = BeanFactory::getBean('KBOLDTags', $tag['kboldtag_id']);
 
-                // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
-                // are converted to the set "c1, c2, p4".
-                $newTag = BeanFactory::getBean('Tags');
-                $newTag->name = $tag->tag_name;
-                $newTag->save();
-                $KBContent->tags_link->add($newTag);
+                    // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
+                    // are converted to the set "c1, c2, p4".
+                    $newTag = BeanFactory::getBean('Tags');
+                    $newTag->name = $tag->tag_name;
+                    $newTag->save();
+                    $KBContent->tags->add($newTag);
+                }
+            } else {
+                $this->log("Can't load tags.");
             }
-
             $KBContent->load_relationship('attachments');
 
             // Converts attached files to Notes.

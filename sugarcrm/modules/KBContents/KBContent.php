@@ -111,7 +111,7 @@ class KBContent extends SugarBean {
     {
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('KBContents');
-        return $config['languages'] ? $config['languages'] : array();
+        return isset($config['languages']) ? $config['languages'] : array();
     }
 
     /**
