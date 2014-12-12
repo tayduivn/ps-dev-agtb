@@ -35,10 +35,8 @@
  						'home'=>'home',
                         'visibilityeditor' => 'visibilityeditor',
  						'exportcustomizations'=>'exportcustomizations',
-                        //BEGIN SUGARCRM flav=pro ONLY
                         'roledropdownfilter' => 'roledropdownfilter',
                         'depdropdown' => 'depdropdown',
-                        //END SUGARCRM flav=pro ONLY
  						//BEGIN SUGARCRM flav=ent ONLY
  						'portalstyle' => 'portalstyle',
  						'portalpreview' => 'portalpreview',

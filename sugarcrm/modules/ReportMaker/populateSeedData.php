@@ -90,9 +90,7 @@ $query_object2 = BeanFactory::getBean('CustomQueries');
 $query_object2->name = "Opportunity Query 2";
 $query_object2->description = "Opportunities by Account";
 $query_object2->query_locked = "off";
-//BEGIN SUGARCRM flav=pro ONLY
 $query_object2->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 
 $query_object2->custom_query = "SELECT
 	accounts.name \"Account Name\",

@@ -71,10 +71,8 @@ $listViewDefs[$module_name] = array(
     'CREATED_BY_NAME' => array(
         'width' => '10', 
         'label' => 'LBL_CREATED'),
-//BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '10', 
         'label' => 'LBL_TEAM',
         'default' => false),
-//END SUGARCRM flav=pro ONLY
 );

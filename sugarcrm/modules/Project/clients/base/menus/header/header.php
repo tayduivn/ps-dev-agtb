@@ -19,7 +19,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-plus',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Project&action=ProjectTemplatesEditView&return_module=Project&return_action=ProjectTemplatesDetailView',
         'label' =>'LNK_NEW_PROJECT_TEMPLATES',
@@ -27,7 +26,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-plus',
     ),
-    //END SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Project&action=index',
         'label' =>'LNK_PROJECT_LIST',
@@ -35,7 +33,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     // Project Templates
     array(
         'route'=>'#bwc/index.php?module=Project&action=ProjectTemplatesListView',
@@ -44,7 +41,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //END SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=ProjectTask&action=index',
         'label' =>'LNK_PROJECT_TASK_LIST',
@@ -52,7 +48,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'ProjectTask',
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Project&action=Dashboard&return_module=Project&return_action=DetailView',
         'label' =>'LNK_PROJECT_DASHBOARD',
@@ -60,5 +55,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //END SUGARCRM flav=pro ONLY
 );

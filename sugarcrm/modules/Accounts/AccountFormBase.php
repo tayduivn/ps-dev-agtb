@@ -249,23 +249,15 @@ $user_id = $current_user->id;
 			<input type="hidden" name="assigned_user_id" value='${user_id}'>
 			<input type="hidden" name="action" value="Save">
 EOQ;
-//BEGIN SUGARCRM flav=pro ONLY
 if(SugarACL::checkField('Accounts', 'name', 'edit', array("owner_override" => true))) {
-//END SUGARCRM flav=pro ONLY
 	$form .= "$lbl_account_name&nbsp;<span class='required'>$lbl_required_symbol</span><br><input name='name' type='text' value=''><br>";
-//BEGIN SUGARCRM flav=pro ONLY
 }
 if(SugarACL::checkField('Accounts', 'phone_office', 'edit', array("owner_override" => true))) {
-//END SUGARCRM flav=pro ONLY
 	$form .= "$lbl_phone<br><input name='phone_office' type='text' value=''><br>";
-//BEGIN SUGARCRM flav=pro ONLY
 }
 if(SugarACL::checkField('Accounts', 'website', 'edit', array("owner_override" => true))) {
-//END SUGARCRM flav=pro ONLY
 		$form .= "$lbl_website<br><input name='website' type='text' value='http://'><br>";
-//BEGIN SUGARCRM flav=pro ONLY
 }
-//END SUGARCRM flav=pro ONLY
 $form .='</p>';
 
 
@@ -321,21 +313,17 @@ if (isset($contact->assigned_user_id)) {
     if(!isset($contact->email_opt_out)){
     	$contact->email_opt_out = '';
     }
-//BEGIN SUGARCRM flav=pro ONLY
 if (isset($contact->team_id)) {
 	$team_id=$contact->team_id;
 } else {
 	$team_id=$current_user->default_team;
 }
-//END SUGARCRM flav=pro ONLY
 		$form="";
         $default_desc="";
         if (!empty($contact->description)) {
             $default_desc=$contact->description;
         }
-//BEGIN SUGARCRM flav=pro ONLY
 		$form .=  "<input type=hidden name=".$prefix."team_id value=".$team_id.">";
-//END SUGARCRM flav=pro ONLY
 	$form .= <<<EOQ
 		<input type="hidden" name="${prefix}record" value="">
 		<input type="hidden" name="${prefix}phone_fax" value="{$contact->phone_fax}">
@@ -453,9 +441,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			$get .= get_teams_url('Accounts');
-			//END SUGARCRM flav=pro ONLY
 
 
 			//create list of suspected duplicate account id's in redirect get string
@@ -500,9 +486,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
    	 	$trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){
-	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-	        //END SUGARCRM flav=pro ONLY
 	        $monitor->setValue('action', 'detailview');
 	        $monitor->setValue('user_id', $GLOBALS['current_user']->id);
 	        $monitor->setValue('module_name', 'Accounts');

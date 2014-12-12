@@ -90,9 +90,8 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
     {
 		$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count ".
                     "FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		$this->getSeedBean()->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE opportunities.deleted=0 ";
 		if ( count($this->pbls_ids) > 0 )
             $query .= "AND opportunities.assigned_user_id IN ('".implode("','",$this->pbls_ids)."') ";

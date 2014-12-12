@@ -48,7 +48,6 @@ $dictionary['AddressBook'] = array ('table' => 'address_book',
 	), /* end indices */
 );
 
-//BEGIN SUGARCRM flav=pro ONLY
 $dictionary['AddressBookMailingList'] = array ('table' => 'address_book_lists',
 	'fields' => array (
 		'id' => array(
@@ -124,4 +123,3 @@ $dictionary['AddressBookMailingListItems'] = array ('table' => 'address_book_lis
 		),
 	), /* end indices */
 );
-//END SUGARCRM flav=pro ONLY

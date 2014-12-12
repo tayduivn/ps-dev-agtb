@@ -243,14 +243,12 @@ class Importer
             {
                 $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
                     require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                     $sugar_field = new SugarFieldTeamset('Teamset');
                     $rowValue = implode(', ',$sugar_field->getTeamsFromRequest($field));
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 if( empty($rowValue))
                 {
@@ -625,12 +623,10 @@ class Importer
         {
             $focus->assigned_user_id = $current_user->id;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord )
         {
             $focus->team_id = $current_user->default_team;
         }
-        //END SUGARCRM flav=pro ONLY
         /*
         * Bug 34854: Added all conditions besides the empty check on date modified.
         */

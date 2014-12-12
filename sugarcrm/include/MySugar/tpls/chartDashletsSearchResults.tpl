@@ -22,7 +22,6 @@
 	{/foreach}
 </table>
 {/if}
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if count($myFavoriteReports)}
 <h3>{sugar_translate label='LBL_MY_FAVORITE_REPORT_CHARTS' module='Home'}</h3>
 <table width="100%">
@@ -63,4 +62,3 @@
 	{/foreach}
 </table>
 {/if}
-<!--//END SUGARCRM flav=pro ONLY -->

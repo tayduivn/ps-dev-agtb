@@ -14,11 +14,9 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestConfigModuleApiTest extends RestTestBase {
     protected $configs = array(
-        //BEGIN SUGARCRM flav=pro ONLY
         array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'),
         array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
-        //END SUGARCRM flav=pro ONLY
     );
     public function setUp()
     {
@@ -69,7 +67,6 @@ class RestConfigModuleApiTest extends RestTestBase {
         $this->assertEquals('404', $restReply['info']['http_code']);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -123,6 +120,5 @@ class RestConfigModuleApiTest extends RestTestBase {
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals('My voice is my passport, verify me', $restReply['reply']['AdministrationSaveTest']);
     }
-    //END SUGARCRM flav=pro ONLY
 
 }

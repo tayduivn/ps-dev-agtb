@@ -68,13 +68,11 @@
                 <td><slot><input class="checkbox" type="checkbox" disabled {$RECEIVE_NOTIFICATIONS}></slot></td>
                 <td><slot>{$MOD.LBL_RECEIVE_NOTIFICATIONS_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav=pro ONLY -->
                 <tr>
                 <td width="15%" scope="row"><slot>{$MOD.LBL_DEFAULT_TEAM|strip_semicolon}:</slot></td>
                 <td><slot>{$DEFAULT_TEAM_LIST}&nbsp;</slot></td>
                 <td><slot>{$MOD.LBL_DEFAULT_TEAM_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//END SUGARCRM flav=pro ONLY -->
                 <tr>
                 <td scope="row" valign="top"><slot>{$MOD.LBL_REMINDER|strip_semicolon}:</td>
                 <td valign="top" nowrap><slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot></td>
@@ -163,7 +161,6 @@
             </table>
         </div>
 
-        <!--//BEGIN SUGARCRM flav=pro ONLY -->
         {if $SHOW_PDF_OPTIONS}
         <div id='pdf'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
@@ -194,7 +191,6 @@
             </table>
         </div>
         {/if}
-        <!--//END SUGARCRM flav=pro ONLY -->
 
         <div id='calendar_options'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">

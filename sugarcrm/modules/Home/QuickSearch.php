@@ -90,7 +90,6 @@ class quicksearchQuery
         return $this->getJsonEncodedData($results);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Returns non private teams as search results
      *
@@ -105,7 +104,6 @@ class quicksearchQuery
 
         return $this->getFormattedJsonResults($data, $args);
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Returns search results from external API
@@ -128,7 +126,6 @@ class quicksearchQuery
         return $this->getJsonEncodedData($data);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     function fts_query()
     {
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
@@ -137,7 +134,6 @@ class quicksearchQuery
         $view->init();
         echo $view->display(TRUE, TRUE);
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Internal function to construct where clauses
@@ -208,7 +204,6 @@ class quicksearchQuery
                             );
                         }
                     }
-                    //BEGIN SUGARCRM flav=pro ONLY
                     elseif ($focus instanceof Team) {
                         array_push(
                             $conditionArray,
@@ -217,7 +212,6 @@ class quicksearchQuery
 
                         $condition['exclude_private_teams'] = true;
                     }
-                    //END SUGARCRM flav=pro ONLY
                     else {
                         array_push(
                             $conditionArray,
@@ -302,11 +296,9 @@ class quicksearchQuery
                     }
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 if($results[$i] instanceof Team){
                     $results[$i]->name = Team::getDisplayName($results[$i]->name, $results[$i]->name_2);
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 if (isset($listData[$field])) {
                     $data['fields'][$i][$field] = $listData[$field];

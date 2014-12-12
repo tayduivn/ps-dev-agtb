@@ -126,9 +126,7 @@ $mod_strings = array(
     'LBL_DISCOUNT_AMOUNT' => 'Discount Amount',
     'LBL_EXT_PRICE' => 'Ext. Price',
     'LBL_CURRENCY_SYMBOL_NAME' => 'Currency Symbol Name',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
-    //END SUGARCRM flav=pro ONLY
     'LNK_IMPORT_PRODUCTS' => 'Import Quoted Line Items',
     'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
     //For export labels

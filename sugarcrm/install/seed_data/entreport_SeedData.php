@@ -21,9 +21,7 @@ $query_object1 = new CustomQuery();
 $query_object1->name = $mod_strings['LBL_Q']."1";
 $query_object1->description = $mod_strings['LBL_Q1_DESC'];
 $query_object1->query_locked = "off";
-//BEGIN SUGARCRM flav=pro ONLY
 $query_object1->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 
 $m_closed = $query_object1->db->convert('opportunities.date_closed', 'month');
 $today = $query_object1->db->convert('', 'today');
@@ -90,9 +88,7 @@ $query_object2 = new CustomQuery();
 $query_object2->name = $mod_strings['LBL_Q']."2";
 $query_object2->description = $mod_strings['LBL_Q2_DESC'];
 $query_object2->query_locked = "off";
-//BEGIN SUGARCRM flav=pro ONLY
 $query_object2->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 
 $query_object2->custom_query = "SELECT
 	accounts.name \"Account Name\",
@@ -124,9 +120,7 @@ $report_object->name = $mod_strings['LBL_R1'];
 $report_object->title = $mod_strings['LBL_R1'];
 $report_object->description = $mod_strings['LBL_R1_DESC'];
 $report_object->report_align = "center";
-//BEGIN SUGARCRM flav=pro ONLY
 $report_object->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 $report_object->save();
 
 $report_id = $report_object->id;
@@ -151,9 +145,7 @@ $format_object->prespace_y = "off";
 $format_object->use_prev_header = "off";
 $format_object->table_width_type = "%";
 $format_object->custom_layout = "Enabled";
-//BEGIN SUGARCRM flav=pro ONLY
 $format_object->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 $format_object->header_back_color = "blue";
 $format_object->body_back_color = "white";
 $format_object->header_text_color = "white";
@@ -180,9 +172,7 @@ $format_object2->prespace_y = "on";
 $format_object2->use_prev_header = "on";
 $format_object2->table_width_type = "%";
 $format_object2->custom_layout = "Enabled";
-//BEGIN SUGARCRM flav=pro ONLY
 $format_object2->team_id = 1;
-//END SUGARCRM flav=pro ONLY
 
 $format_object->save();
 $format_object->enable_custom_layout();

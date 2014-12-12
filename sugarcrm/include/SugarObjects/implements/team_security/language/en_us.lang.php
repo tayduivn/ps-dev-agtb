@@ -12,7 +12,5 @@
 $mod_strings = array(
 'LBL_TEAM'=>'Teams',
 'LBL_TEAMS'=>'Teams',
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_TEAM_ID'=>'Team Id',
-//END SUGARCRM flav=pro ONLY
 );

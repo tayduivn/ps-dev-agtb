@@ -11,9 +11,7 @@
  */
 
 $vardefs = array(
-//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => true,
-//END SUGARCRM flav=pro ONLY
     'fields' => array(
         'id' => array(
                 'name' => 'id',

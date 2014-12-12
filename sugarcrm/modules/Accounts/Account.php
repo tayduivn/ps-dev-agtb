@@ -92,13 +92,11 @@ class Account extends Company {
 	var $module_dir = 'Accounts';
 	var $emailAddress;
 
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $team_id;
 	var $quote_id;
 	var $rel_quote_account_table = "quotes_accounts";
 	var $quote_table = "quotes";
-//END SUGARCRM flav=pro ONLY
 
 	var $table_name = "accounts";
 	var $object_name = "Account";
@@ -106,16 +104,12 @@ class Account extends Company {
 	var $new_schema = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'opportunity_id', 'bug_id', 'case_id', 'contact_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id', 'parent_name', 'member_id'
-//BEGIN SUGARCRM flav=pro ONLY
 	, "quote_id"
-//END SUGARCRM flav=pro ONLY
 	);
 	var $relationship_fields = Array('opportunity_id'=>'opportunities', 'bug_id' => 'bugs', 'case_id'=>'cases',
 									'contact_id'=>'contacts', 'task_id'=>'tasks', 'note_id'=>'notes',
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails','member_id'=>'members',
-									//BEGIN SUGARCRM flav=pro ONLY
 									'quote_id'=>'quotes',
-									//END SUGARCRM flav=pro ONLY
 									'project_id'=>'project',
 									);
 
@@ -138,14 +132,12 @@ class Account extends Company {
 	public function __construct() {
         parent::__construct();
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 
         //Email logic
 		if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'

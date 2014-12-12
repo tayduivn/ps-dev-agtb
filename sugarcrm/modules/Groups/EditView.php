@@ -43,7 +43,6 @@ $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("USER_NAME", $focus->user_name);
 $xtpl->assign("DESCRIPTION", $focus->description);
-//BEGIN SUGARCRM flav=pro ONLY
 $r = $focus->db->query('SELECT id, name FROM teams WHERE deleted = 0 AND private = 0');
 $k = array('' => '');
 if(is_resource($r)) {
@@ -54,7 +53,6 @@ if(is_resource($r)) {
 if(!empty($focus->default_team)) { $team_id = $focus->default_team; }
 else $team_id = '';
 $xtpl->assign('TEAMS', get_select_options_with_id($k, $team_id));
-//END SUGARCRM flav=pro ONLY
 
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);

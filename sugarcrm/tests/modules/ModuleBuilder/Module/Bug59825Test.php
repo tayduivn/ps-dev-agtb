@@ -74,13 +74,11 @@ class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
             array('type' => MB_DASHLETSEARCH),
             array('type' => MB_POPUPLIST),
             array('type' => MB_QUICKCREATE),
-            //BEGIN SUGARCRM flav=pro ONLY
             // Wireless types
             // This simulates StudioModule::getWirelessLayouts()
             array('type' => MB_WIRELESSEDITVIEW),
             array('type' => MB_WIRELESSDETAILVIEW),
             array('type' => MB_WIRELESSLISTVIEW),
-            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=ent ONLY
             // Portal types not including search, which was the cause of the bug
             // This simulates StudioModule::getPortalLayoutSources()

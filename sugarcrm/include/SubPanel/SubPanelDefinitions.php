@@ -107,7 +107,6 @@ class aSubPanel
             if (isset($subpanel_layout) && is_array($subpanel_layout)) {
                 $this->set_panel_definition($subpanel_layout);
 
-				//BEGIN SUGARCRM flav=pro ONLY
                 if (!$forApi) {
                     SugarACL::listFilter(
                         $this->_instance_properties['module'],
@@ -115,7 +114,6 @@ class aSubPanel
                         array("owner_override" => true)
                     );
                 }
-				//END SUGARCRM flav=pro ONLY
 			}
 		}
 
@@ -532,7 +530,6 @@ class aSubPanel
      */
     protected function set_panel_definition(array $definition)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         // Check if there is a list_field defs, done in two line to make lines
         // more readable
         $hasListFields = isset($definition['list_fields'])
@@ -549,11 +546,9 @@ class aSubPanel
                 $definition['list_fields']
             );
         }
-        //END SUGARCRM flav=pro ONLY
         $this->panel_definition = $definition;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Expands list fields by adding those ones which existing fields depend on.
      *
@@ -599,7 +594,6 @@ class aSubPanel
 
         return $fields;
     }
-    //END SUGARCRM flav=pro ONLY
 }
 ;
 

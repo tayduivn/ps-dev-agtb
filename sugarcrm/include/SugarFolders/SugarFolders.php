@@ -192,10 +192,8 @@ class SugarFolder {
 		$this->has_child = 0;
 		$this->is_group = 1;
 		$this->assign_to_id = $fields['groupFoldersUser'];
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = $fields['team_id'];
 		$this->team_set_id = $fields['team_set_id'];
-		//END SUGARCRM flav=pro ONLY
 
 		$this->save();
 	}
@@ -373,9 +371,7 @@ ENDQ;
                 emails_text
             on
                 emails.id = emails_text.email_id
-                //BEGIN SUGARCRM flav=pro ONLY
                 " . $this->addTeamSecurityClause() . "
-                //END SUGARCRM flav=pro ONLY
             WHERE
                 (type = '{$type}' OR status = '{$status}')
                 AND assigned_user_id = '{$current_user->id}'
@@ -384,7 +380,6 @@ ENDQ;
 		return $q . $ret;
 	} // fn
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function addTeamSecurityClause() {
 		global $current_user;
 		if(!is_admin($current_user)) {
@@ -399,7 +394,6 @@ ENDQ;
             return ' AND emails.team_set_id IN (' . implode(',', array_unique($teamsIds)) . ') ';
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * returns array of items for listView display in yui-ext Grid
@@ -452,9 +446,7 @@ ENDQ;
                     emails_text
                 on
                     emails.id = emails_text.email_id
-                    //BEGIN SUGARCRM flav=pro ONLY
                     " . $this->addTeamSecurityClause() . "
-                    //END SUGARCRM flav=pro ONLY
                 WHERE
                     folders_rel.folder_id = '{$folderId}'
                     AND folders_rel.deleted = 0
@@ -522,9 +514,7 @@ ENDQ;
                     emails
                 ON
                     emails.id = folders_rel.polymorphic_id
-                    //BEGIN SUGARCRM flav=pro ONLY
                     " . $this->addTeamSecurityClause() . "
-                    //END SUGARCRM flav=pro ONLY
                 WHERE
                     folder_id = '{$folderId}'
                     AND folders_rel.deleted = 0
@@ -562,9 +552,7 @@ ENDQ;
                     emails
                 on
                     fr.folder_id = '{$folderId}'
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    " . $this->addTeamSecurityClause() . "
-                    //END SUGARCRM flav=pro ONLY
+				" . $this->addTeamSecurityClause() . "
                     AND fr.deleted = 0
                     AND fr.polymorphic_id = emails.id
                     AND emails.status = 'unread'
@@ -627,12 +615,10 @@ ENDQ;
 		$rootWhere = '';
         $teamSecurityClause = '';
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$bean = new SugarBean();
 		$bean->disable_row_level_security = false;
 		$bean->add_team_security_where_clause($teamSecurityClause,'f');
 		$bean->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
 
 
     	$rootWhere .= "AND (f.parent_folder IS NULL OR f.parent_folder = '')";
@@ -1150,7 +1136,6 @@ ENDQ;
 
 	    $this->createSubscriptionForUser($current_user->id);
 
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    if ($this->is_group)
 	    {
 	        require_once("modules/Teams/Team.php");
@@ -1159,7 +1144,6 @@ ENDQ;
 	        foreach($usersList as $userObject)
 	           $this->createSubscriptionForUser($userObject->id);
 	    }
-	    //END SUGARCRM flav=pro ONLY
 	}
 
 
@@ -1183,10 +1167,8 @@ ENDQ;
 		$id = $fields['record'];
 		$name = $fields['name'];
 		$parent_folder = $fields['parent_folder'];
-		//BEGIN SUGARCRM flav=pro ONLY
 		$team_id = $fields['team_id'];
 		$team_set_id = $fields['team_set_id'];
-		//END SUGARCRM flav=pro ONLY
 		// first do the retrieve
 		$this->retrieve($id);
 		if ($this->has_child) {
@@ -1208,10 +1190,8 @@ ENDQ;
 
 		$this->name = $name;
 		$this->parent_folder = $parent_folder;
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = $team_id;
 		$this->team_set_id = $team_set_id;
-		//END SUGARCRM flav=pro ONLY
 
         $q2 = $this->getUpdateQuery(array(
                 'dynamic_query',

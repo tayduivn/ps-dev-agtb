@@ -107,7 +107,7 @@ $popup_request_data = array(
 $encoded_users_popup_request_data = $json->encode($popup_request_data);
 $xtpl->assign('encoded_campaigns_popup_request_data' , $json->encode($popup_request_data));
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 $popup_request_data = array(
 	'call_back_function' => 'set_return',
 	'form_name' => 'EditView',
@@ -117,7 +117,6 @@ $popup_request_data = array(
 		),
 	);
 $xtpl->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
-//END SUGARCRM flav=pro ONLY
 //create the cancel button
 $cancel_buttons_html = "<input class='button' onclick=\"this.form.action.value='".$_REQUEST['return_action']."'; this.form.module.value='".$_REQUEST['return_module']."';\" type='submit' name='cancel' value='".$app_strings['LBL_BACK']."'/>";
 $xtpl->assign("CANCEL_BUTTON", $cancel_buttons_html );
@@ -195,21 +194,19 @@ $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $sqs_objects = array('account_name' => $qsd->getQSParent(),
 					'assigned_user_name' => $qsd->getQSUser(),
 					'campaign_name' => $qsd->getQSCampaigns(),
-//BEGIN SUGARCRM flav=pro ONLY
+
 					'team_name' => $qsd->getQSTeam()
-//END SUGARCRM flav=pro ONLY
 
 					);
-//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($lead->field_defs, 'WebToLeadCreation');
 $sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
-//END SUGARCRM flav=pro ONLY
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
 $xtpl->assign("JAVASCRIPT", $quicksearch_js);
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 if (empty($lead->id) && !isset($_REQUEST['isDuplicate'])) {
 	$xtpl->assign("TEAM_OPTIONS", get_select_options_with_id(get_team_array(), $current_user->default_team));
 	$xtpl->assign("TEAM_NAME", $current_user->default_team_name);
@@ -223,7 +220,6 @@ else {
 $code = $teamSetField->getClassicView();
 $xtpl->assign("TEAM_SET_FIELD", $code);
 $xtpl->parse("main.pro");
-//END SUGARCRM flav=pro ONLY
 
 
 if (empty($lead->assigned_user_id) && empty($lead->id))  $lead->assigned_user_id = $current_user->id;
@@ -246,10 +242,9 @@ $javascript->addFieldGeneric('campaign_name', '', 'LBL_RELATED_CAMPAIGN' ,'true'
 $javascript->addFieldGeneric('assigned_user_name', '', 'LBL_ASSIGNED_TO' ,'true');
 $javascript->addToValidateBinaryDependency('campaign_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_LEAD_NOTIFY_CAMPAIGN'], 'false', '', 'campaign_id');
 $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_ASSIGNED_TO'], 'false', '', 'assigned_user_id');
-//BEGIN SUGARCRM flav=pro ONLY
+
 $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'true');
 $javascript->addToValidateBinaryDependency('team_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_TEAM'], 'false', '', 'team_id');
-//END SUGARCRM flav=pro ONLY
 echo $javascript->getScript();
 
 $json = getJSONobj();

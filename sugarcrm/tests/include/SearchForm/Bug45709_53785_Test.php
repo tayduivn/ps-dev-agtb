@@ -11,9 +11,7 @@
  */
 
 require_once "modules/Tasks/Task.php";
-//BEGIN SUGARCRM flav=pro ONLY
 require_once "modules/Teams/Team.php";
-//END SUGARCRM flav=pro ONLY
 require_once "modules/Contacts/Contact.php";
 require_once "include/SearchForm/SearchForm2.php";
 
@@ -43,21 +41,17 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->task = SugarTestTaskUtilities::createTask();
     	$this->task->contact_id = $this->contact->id;
     	$this->task->save();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
     	$this->team->name = '45709';
     	$this->team->name_2 = '53785';
     	$this->team->save();
-        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTaskUtilities::removeAllCreatedTasks();
-        //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
-        //END SUGARCRM flav=pro ONLY
         SugarTestHelper::tearDown();
     }
 
@@ -106,7 +100,6 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->task->id, $row2['id'], "Couldn't find the expected related task");
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @ticket 53785
      */
@@ -144,5 +137,4 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	// Check if the team was successfully loaded
     	$this->assertEquals($this->team->id, $row['id'], "Didn't find the correct team id");
     }
-    //END SUGARCRM flav=pro ONLY
 }

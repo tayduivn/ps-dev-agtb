@@ -110,9 +110,7 @@ if ($quote->getRelatedOpportunityCount() > 0) {
     $opp->assigned_user_name = $quote->assigned_user_name;
     $opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? 'Self Generated' : null; //'Self Generated';
     $opp->opportunity_type = isset($app_list_strings['opportunity_type_dom']['New Business']) ? $app_list_strings['opportunity_type_dom']['New Business'] : null; //'New Business';
-    //BEGIN SUGARCRM flav=pro ONLY
     $opp->team_id = $quote->team_id;
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     $opp->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null; //'Proposal/Price Quote';
     $opp->probability = isset($app_list_strings['sales_probability_dom']['Proposal/Price Quote']) ? $app_list_strings['sales_probability_dom']['Proposal/Price Quote'] : null; //'Proposal/Price Quote';

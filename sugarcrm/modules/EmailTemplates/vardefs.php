@@ -12,9 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $dictionary['EmailTemplate'] = array(
     'table' => 'email_templates',
-//BEGIN SUGARCRM flav=pro ONLY
+
     'favorites' => false,
-//END SUGARCRM flav=pro ONLY
     'comment' => 'Templates used in email processing',
 	'fields' => array(
 		'id' => array(
@@ -146,7 +145,7 @@ $dictionary['EmailTemplate'] = array(
     		 'id_name' => 'assigned_user_id',
     		 'table' => 'users',
           ),
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		'base_module' => array(
 			'name' => 'base_module',
 			'vname' => 'LBL_BASE_MODULE',
@@ -168,7 +167,6 @@ $dictionary['EmailTemplate'] = array(
 			'len' => '255',
 			'reportable'=>false,
 		),
-		//END SUGARCRM flav=pro ONLY
         'text_only' => array(
             'name' => 'text_only',
             'vname' => 'LBL_TEXT_ONLY',
@@ -211,7 +209,6 @@ $dictionary['EmailTemplate'] = array(
 );
 
 VardefManager::createVardef('EmailTemplates','EmailTemplate', array(
-//BEGIN SUGARCRM flav=pro ONLY
+
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));

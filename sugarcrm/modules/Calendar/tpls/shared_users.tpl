@@ -83,7 +83,6 @@
 	<input type="hidden" name="edit_shared" value="">
 	<input type="hidden" name="view" value="shared">
 	
-	{* //BEGIN SUGARCRM flav=pro ONLY *}
 	<table cellpadding="1" cellspacing="1" border="0" class="edit view" align="center" width="100%">
 		<tr>
 			<td valign='top' nowrap><b>{$MOD.LBL_FILTER_BY_TEAM}</b></td>
@@ -93,7 +92,6 @@
 				</select>
 		</tr>
 	</table>
-	{* //END SUGARCRM flav=pro ONLY *}
 	
 	<table cellpadding="0" cellspacing="3" border="0" align="center" width="100%">
 		<tr><th valign="top" align="center" colspan="2">{$MOD.LBL_SELECT_USERS}</th></tr>

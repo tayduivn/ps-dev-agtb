@@ -89,9 +89,7 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('noneLinkString',$app_strings['LBL_LINK_NONE']);
         $this->ss->assign('recordsLinkString',$app_strings['LBL_LINK_RECORDS']);
         $this->ss->assign('selectLinkString',$app_strings['LBL_LINK_SELECT']);
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
-        //END SUGARCRM flav=pro ONLY
 
         // Bug 24677 - Correct the page total amount on the last page of listviews
         $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];

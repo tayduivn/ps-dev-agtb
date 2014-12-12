@@ -74,9 +74,7 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarThemeRegistry::buildRegistry();
         $themeObject = SugarThemeRegistry::current();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->assertRegExp('/Racer X/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');
-        //END SUGARCRM flav=pro ONLY
 
     }
 

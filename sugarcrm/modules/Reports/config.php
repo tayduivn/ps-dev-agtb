@@ -126,11 +126,9 @@ $module_map = array(
 	'meetings'		=> 'Meetings',
 	'opportunities'	=> 'Opportunities',
 	'tasks'			=> 'Tasks',
-//BEGIN SUGARCRM flav=pro ONLY
 	'contracts'		=> 'Contracts',
     'timeperiods'   => 'TimePeriods',
     'quotas'        => 'Quotas',
-//END SUGARCRM flav=pro ONLY
 
 );
 
@@ -153,10 +151,8 @@ $my_report_titles = array(
 	'Emails'		=> $local_mod_strings['LBL_MY_EMAIL_REPORTS'],
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 	'Contracts'		=> $local_mod_strings['LBL_MY_CONTRACT_REPORTS'],
-//END SUGARCRM flav=pro ONLY
 );
 
 $my_team_report_titles = array(
@@ -176,10 +172,8 @@ $my_team_report_titles = array(
     'Meetings'      => $local_mod_strings['LBL_MY_TEAM_MEETING_REPORTS'],
     'Tasks'         => $local_mod_strings['LBL_MY_TEAM_TASK_REPORTS'],
     'Emails'        => $local_mod_strings['LBL_MY_TEAM_EMAIL_REPORTS'],
-//BEGIN SUGARCRM flav=pro ONLY
 
     'Contracts'     => $local_mod_strings['LBL_MY_TEAM_CONTRACT_REPORTS'],
-//END SUGARCRM flav=pro ONLY
 );
 
 $published_report_titles = array(
@@ -200,9 +194,7 @@ $published_report_titles = array(
 	'Tasks'			=> $local_mod_strings['LBL_PUBLISHED_TASK_REPORTS'],
 	'Emails'		=> $local_mod_strings['LBL_PUBLISHED_EMAIL_REPORTS'],
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 	'Contracts'		=> $local_mod_strings['LBL_PUBLISHED_CONTRACT_REPORTS'],
-//END SUGARCRM flav=pro ONLY
 );
 ?>

@@ -224,9 +224,7 @@ global $timedate;
 				$where .= " opportunities.lead_source IN	($legendItems) ";
 			}
 			$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$opp->add_team_security_where_clause($query);
-			//END SUGARCRM flav=pro ONLY
 			$query .= "WHERE ".$where." AND opportunities.deleted=0 ";
 			$query .= "GROUP BY lead_source ORDER BY total DESC";
 
@@ -394,9 +392,7 @@ global $timedate;
 			$where .= " opportunities.lead_source IN	($legendItems) ";
 		}
 		$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE ".$where." AND opportunities.deleted=0 ";
 		$query .= "GROUP BY lead_source ORDER BY total DESC";
 

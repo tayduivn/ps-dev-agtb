@@ -71,13 +71,11 @@ $mod_strings = array (
 	'LNK_PROJECT_LIST'	=> 'View Project List',
 	'LNK_NEW_PROJECT_TASK'	=> 'Create Project Task',
 	'LNK_PROJECT_TASK_LIST'	=> 'View Project Tasks',
-	//BEGIN SUGARCRM flav=pro ONLY
     'LNK_PROJECT_DASHBOARD' => 'View My Projects Dashboard',
     'LNK_PROJECT_TASKS_DASHBOARD'   => 'My Project Tasks Dashboard',   
 	'LNK_NEW_PROJECT_TEMPLATES' => 'Create Project Template',
 	'LNK_PROJECT_TEMPLATES_LIST' => 'View Project Templates',
     'LNK_PROJECT_RESOURCE_REPORT' => 'Resource Report',
-    //END SUGARCRM flav=pro ONLY
 	
 	'LBL_DEFAULT_SUBPANEL_TITLE' => 'Projects',
 	'LBL_ACTIVITIES_TITLE'=>'Activities',
@@ -94,13 +92,11 @@ $mod_strings = array (
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
     
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
 	
 	'LBL_RESOURCES_SUBPANEL_TITLE' => 'Resources',
 	'LBL_RESOURCE_NAME' => 'Resource Name',
 	'LBL_RESOURCE_TYPE' => 'Resource Type',
-	//END SUGARCRM flav=pro ONLY
 
     'LBL_TASK_ID' => 'ID',
     'LBL_TASK_NAME' => 'Task Name',
@@ -110,18 +106,14 @@ $mod_strings = array (
     'LBL_FINISH' => 'Finish',
     'LBL_PREDECESSORS' => 'Predecessors',
     'LBL_PERCENT_COMPLETE' => '% Complete',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_RESOURCE_NAMES' => 'Resource',
-    //END SUGARCRM flav=pro ONLY
     'LBL_MORE'  => 'More...',
 
     'LBL_PERCENT_BUSY' => '% Busy',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_USER_RESOURCE' => 'User Resource',
     'LBL_CONTACTS_RESOURCE' => 'Contact Resource',
     'LBL_PROJECT_HOLIDAYS' => 'Holiday',
     'LBL_LIST_RESOURCE' => 'Resource:',
-    //END SUGARCRM flav=pro ONLY
     'LBL_TASK_ID_WIDGET' => 'id',
     'LBL_TASK_NAME_WIDGET' => 'description',
     'LBL_DURATION_WIDGET' => 'duration',
@@ -129,15 +121,10 @@ $mod_strings = array (
     'LBL_FINISH_WIDGET' => 'date_finish',
     'LBL_PREDECESSORS_WIDGET' => 'predecessors_',
     'LBL_PERCENT_COMPLETE_WIDGET' => 'percent_complete',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_RESOURCE_NAMES_WIDGET' => 'resource',
-    //END SUGARCRM flav=pro ONLY
     'LBL_EDIT_PROJECT_TASKS_TITLE'=> 'Edit Project Tasks',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_VIEW_GANTT_TITLE' => 'View Gantt',
-    //END SUGARCRM flav=pro ONLY
     
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_INSERT_BUTTON' => 'Insert Rows',
     'LBL_INDENT_BUTTON' => 'Indent',
     'LBL_OUTDENT_BUTTON' => 'Outdent',
@@ -233,7 +220,6 @@ $mod_strings = array (
     'LBL_RESOURCE_REPORT' => 'Resource Report',
     
     'LBL_PERSONAL_HOLIDAY' => '-- Personal Holiday --',
-    //END SUGARCRM flav=pro ONLY
     'LBL_OPPORTUNITIES' => 'Opportunities',
 	'LBL_LAST_WEEK' => 'Previous',
 	'LBL_NEXT_WEEK' => 'Next',

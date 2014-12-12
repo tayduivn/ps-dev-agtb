@@ -23,9 +23,7 @@ $fields_array['Contact'] = array ('column_fields' => Array("id"
 		,"modified_user_id"
 		,"assigned_user_id"
 		, "created_by"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"salutation"
 		,"first_name"
 		,"last_name"
@@ -62,12 +60,10 @@ $fields_array['Contact'] = array ('column_fields' => Array("id"
 		,"campaign_id"
 		),
         'list_fields' => Array('id', 'first_name', 'last_name', 'account_name', 'account_id', 'title', 'phone_work', 'assigned_user_name', 'assigned_user_id', "case_role", 'case_rel_id', 'opportunity_role', 'opportunity_rel_id'
-//BEGIN SUGARCRM flav=pro ONLY
 	, 'quote_role'
 	, 'quote_rel_id'
 	, "team_id"
 	, "team_name"
-//END SUGARCRM flav=pro ONLY
     ,'invalid_email'
 		),
         'required_fields' => array("last_name"=>1),

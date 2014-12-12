@@ -109,9 +109,7 @@ class iFrameDashlet extends Dashlet {
 
         $sugar_edition = 'COM';
         //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar_edition = 'PRO';
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $sugar_edition = 'ENT';
         //END SUGARCRM flav=ent ONLY

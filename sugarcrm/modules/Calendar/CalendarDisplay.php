@@ -459,13 +459,10 @@ class CalendarDisplay {
 				$ss->assign("edit_shared",true);
 			}
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			$teams = get_team_array(false);
 			array_unshift($teams, '');
 			$ss->assign("teams_options",get_select_options_with_id($teams, $this->cal->shared_team_id));
-			//END SUGARCRM flav=pro ONLY
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(!empty($this->cal->shared_team_id)){
 				$team = BeanFactory::getBean('Teams', $this->cal->shared_team_id);
                			$users = $team->get_team_members(true);
@@ -486,7 +483,6 @@ class CalendarDisplay {
 				}
 				$ss->assign("users_options",get_select_options_with_id($user_ids, $this->cal->shared_ids));
 			}else
-			//END SUGARCRM flav=pro ONLY
 			$ss->assign("users_options",get_select_options_with_id(get_user_array(false), $this->cal->shared_ids));
 
 			$tpl = "modules/Calendar/tpls/shared_users.tpl";

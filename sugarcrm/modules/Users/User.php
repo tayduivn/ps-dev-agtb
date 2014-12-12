@@ -60,9 +60,7 @@ class User extends Person {
 	var $team_id;
 
 	var $receive_notifications;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $default_team;
-	//END SUGARCRM flav=pro ONLY
 
 	var $reports_to_name;
 	var $reports_to_id;
@@ -103,9 +101,7 @@ class User extends Person {
 
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
 
 		$this->_loadUserPreferencesFocus();
 	}
@@ -505,10 +501,8 @@ class User extends Person {
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
-		//END SUGARCRM flav=pro ONLY
 
 		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
 
@@ -572,7 +566,6 @@ class User extends Person {
 		// set some default preferences when creating a new user
 		$setNewUserPreferences = empty($this->id) || !empty($this->new_with_id);
 
-		//BEGIN SUGARCRM flav=pro ONLY
 
 		// If the 'Primary' team changed then the team widget has set 'team_id' to a new value and we should
 		// assign the same value to default_team because User module uses it for setting the 'Primary' team
@@ -581,14 +574,11 @@ class User extends Person {
             $this->default_team = $this->team_id;
         }
 
-		//END SUGARCRM flav=pro ONLY
-
         // track the current reports to id to be able to use it if it has changed
         $old_reports_to_id = isset($this->fetched_row['reports_to_id']) ? $this->fetched_row['reports_to_id'] : '';
 
 		parent::save($check_notify);
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
         if($this->status != 'Reserved' && !$this->portal_only) {
 		   // If this is not an update, then make sure the new user logic is executed.
@@ -610,7 +600,6 @@ class User extends Person {
                 }
             }
 		}
-		//END SUGARCRM flav=pro ONLY
 
         // If reports to has changed, call update team memberships to correct the membership tree
         if ($old_reports_to_id != $this->reports_to_id) {
@@ -957,13 +946,11 @@ EOQ;
 			return false;
 		}
 
-        // BEGIN SUGARCRM flav=pro ONLY
 		// Check new password against rules set by admin
 		if (!$this->check_password_rules($new_password)) {
 		    $this->error_string = $mod_strings['ERR_PASSWORD_CHANGE_FAILED_1'].$current_user->user_name.$mod_strings['ERR_PASSWORD_CHANGE_FAILED_3'];
 		    return false;
 		}
-        // END SUGARCRM flav=pro ONLY
 
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
@@ -979,7 +966,6 @@ EOQ;
 		return true;
 	}
 
-    // BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Check new password against rules set by admin
 	 * @param string $password
@@ -1025,7 +1011,6 @@ EOQ;
 
 	    return true;
 	}
-    // END SUGARCRM flav=pro ONLY
 
 	function is_authenticated() {
 		return $this->authenticated;
@@ -1053,7 +1038,6 @@ EOQ;
 			$this->reports_to_name = '';
 		}
 
-        //BEGIN SUGARCRM flav=pro ONLY
 
         // Must set team_id for team widget purposes (default_team is primary team id)
         if (empty($this->team_id))
@@ -1072,8 +1056,6 @@ EOQ;
             $this->default_team_name = '';
             $this->team_set_id = '';
         }
-
-        //END SUGARCRM flav=pro ONLY
 
 		$this->_create_proper_name_field();
 	}
@@ -1183,7 +1165,6 @@ EOQ;
 
 		$user_fields['REPORTS_TO_NAME'] = $this->reports_to_name;
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($_REQUEST['module']) && $_REQUEST['module'] == 'Teams' &&
 			(isset($_REQUEST['record']) && !empty($_REQUEST['record'])) ) {
 			$q = "SELECT count(*) c FROM team_memberships WHERE deleted=0 AND user_id = '{$this->id}' AND team_id = '{$_REQUEST['record']}' AND explicit_assign = 1";
@@ -1196,7 +1177,6 @@ EOQ;
 				$user_fields['UPLINE'] = translate('LBL_TEAM_UPLINE_EXPLICIT','Users');
 			}
 		}
-		//END SUGARCRM flav=pro ONLY
 
 		return $user_fields;
 	}
@@ -1206,7 +1186,6 @@ EOQ;
 	}
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * returns the private team_id of the user, or if an ID is passed, of the
 	 * target user
@@ -1267,7 +1246,6 @@ EOQ;
 		$team = BeanFactory::getBean('Teams');
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
-	//END SUGARCRM flav=pro ONLY
 
 
     /**
@@ -1338,9 +1316,7 @@ EOQ;
 		$total = 0;
 		if(strlen($groupIds) > 0) {
 			$groupQuery = 'SELECT count(*) AS c FROM emails ';
-			//BEGIN SUGARCRM flav=pro ONLY
 			$this->add_team_security_where_clause($groupQuery);
-			//END SUGARCRM flav=pro ONLY
 			$groupQuery .= ' WHERE emails.deleted=0 AND emails.assigned_user_id IN ('.$groupIds.') AND emails.type = \'inbound\' AND emails.status = \'unread\'';
 			$r = $this->db->query($groupQuery);
 			if(is_resource($r)) {
@@ -1468,12 +1444,10 @@ EOQ;
         $clientPref = $this->getPreference('email_link_type');
         $client     = (!empty($clientPref)) ? $clientPref : $GLOBALS['sugar_config']['email_default_client'];
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // check for presence of a mobile device, if so use its email client
         if (isset($_SESSION['isMobile'])){
             $client = 'other';
         }
-        //END SUGARCRM flav=pro ONLY
 
         return $client;
     }
@@ -1647,7 +1621,6 @@ EOQ;
 	}
 
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	public function getPrivateTeamID()
 	{
 	    return self::staticGetPrivateTeamID($this->id);
@@ -1662,7 +1635,6 @@ EOQ;
 
 	    return $teamFocus->id;
 	}
-    //END SUGARCRM flav=pro ONLY
     /*
      *
      * Here are the multi level admin access check functions.
@@ -1730,12 +1702,10 @@ EOQ;
             }
 
             if (($this->isAdmin() && isset($actions[$module][$key]))
-            //BEGIN SUGARCRM flav=pro ONLY
                 || (isset($actions[$module][$key]['admin']['aclaccess']) &&
                     (($isDev&&$actions[$module][$key]['admin']['aclaccess'] == ACL_ALLOW_DEV) ||
                      ($isAdmin&&$actions[$module][$key]['admin']['aclaccess'] == ACL_ALLOW_ADMIN) ||
                      $actions[$module][$key]['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) )
-            //END SUGARCRM flav=pro ONLY
                 ) {
                 $myModules[] = $module;
             }
@@ -1768,11 +1738,9 @@ EOQ;
         if ($this->isAdmin()) {
             return true;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         if (count($this->getDeveloperModules())>0) {
             return true;
         }
-        //END SUGARCRM flav=pro ONLY
         return false;
     }
     /**
@@ -2010,7 +1978,6 @@ EOQ;
         $condition = 0;
         $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
         $password = "";
-		//BEGIN SUGARCRM flav=pro ONLY
 
         // Count the number of requirements
         if ($res['onenumber'] == '1')
@@ -2034,18 +2001,14 @@ EOQ;
         $length = $res['minpwdlength'] <= $condition ? $condition : $res['minpwdlength'];
         if ($length < 6)
         {
-		//END SUGARCRM flav=pro ONLY
             $length = '6';
-		//BEGIN SUGARCRM flav=pro ONLY
         }
-		//END SUGARCRM flav=pro ONLY
 
         // Create random characters for the ones that doesnt have requirements
         for ($i=0; $i < $length - $condition; $i ++)  // loop and create password
         {
             $password = $password . substr ($charBKT, rand() % strlen($charBKT), 1);
         }
-		//BEGIN SUGARCRM flav=pro ONLY
         if ($res['onelower'] == '1') // If a lower caracter is required, i add one in the password
         {
             if (strlen($password) != '0') // If there is other characters in the password, I insert one in a random position
@@ -2090,7 +2053,6 @@ EOQ;
                 $password = $password . substr ($SPECIAL, rand() % strlen($SPECIAL), 1);
             }
         }
-	    //END SUGARCRM flav=pro ONLY
 
         return $password;
     }

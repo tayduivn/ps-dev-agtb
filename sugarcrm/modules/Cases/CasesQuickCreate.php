@@ -58,7 +58,6 @@ class CasesQuickCreate extends QuickCreate {
 		$encoded_popup_request_data = $json->encode($popup_request_data);
 		$this->ss->assign('encoded_popup_request_data', $encoded_popup_request_data);        
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$popup_request_data = array(
 			'call_back_function' => 'set_return',
 			'form_name' => 'casesQuickCreate',
@@ -68,7 +67,6 @@ class CasesQuickCreate extends QuickCreate {
 			),
 		);
 		$this->ss->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
-		//END SUGARCRM flav=pro ONLY
         
     }   
 }

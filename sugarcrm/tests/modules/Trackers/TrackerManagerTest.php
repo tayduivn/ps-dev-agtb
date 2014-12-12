@@ -56,9 +56,8 @@ class TrackerManagerTest extends Sugar_PHPUnit_Framework_TestCase {
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', 1);
-		//BEGIN SUGARCRM flav=pro ONLY
+
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-		//END SUGARCRM flav=pro ONLY
         $trackerManager->save();
         
         $count2 = 0;
@@ -70,7 +69,7 @@ class TrackerManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($count1, $count2);		
     }
     
-//BEGIN SUGARCRM flav=pro ONLY
+
     function testPausing3() {
     	
     	$query = "select count(id) as total from tracker_queries";
@@ -97,8 +96,7 @@ class TrackerManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($count1, $count2);
 		$GLOBALS['sugar_config']['dump_slow_queries'] = $dumpSlowQuery;
     	$GLOBALS['sugar_config']['slow_query_time_msec'] = $slowQueryTime;
-    }    
-//END SUGARCRM flav=pro ONLY
+    }
 
 }  
 ?>

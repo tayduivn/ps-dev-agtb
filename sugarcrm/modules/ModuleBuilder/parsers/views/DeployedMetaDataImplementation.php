@@ -129,14 +129,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                 case MB_PORTALLISTVIEW:
                 case MB_PORTALRECORDVIEW:
                 //END SUGARCRM flav=ent ONLY
-                //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW:
                 case MB_WIRELESSDETAILVIEW:
                 case MB_WIRELESSBASICSEARCH:
                 case MB_WIRELESSADVANCEDSEARCH:
                 case MB_WIRELESSLISTVIEW:
                     $_viewtype = 'mobile';
-                //END SUGARCRM flav=pro ONLY
                 if (in_array($view, array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW, MB_SIDECARDUPECHECKVIEW))) {
                     $_viewtype = 'base';
                 }
@@ -149,7 +147,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                     }
                 //END SUGARCRM flav=ent ONLY
 
-                //BEGIN SUGARCRM flav=pro ONLY
 					// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
 					// First, need to identify which SugarObject template would be the best to use
 					$type = $module->getType () ;
@@ -172,7 +169,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_saveToFile ( $this->_sourceFilename, $loaded , false ) ; // write out without the placeholder module_name and object
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
-				//END SUGARCRM flav=pro ONLY
 				case MB_DASHLETSEARCH:
         		case MB_DASHLET:
 	        		$type = $module->getType () ;

@@ -120,9 +120,7 @@ $temp_field_array = $focus->merge_bean->field_defs;
 $field_count = 1;
 $json = new JSON(JSON_LOOSE_TYPE);
 $diff_field_count=0;
-//BEGIN SUGARCRM flav=pro ONLY
 $focus->merge_bean->ACLFilterFieldList($temp_field_array, array(), array("min_access" => SugarACL::ACL_READ_WRITE));
-//END SUGARCRM flav=pro ONLY
 foreach ($temp_field_array as $field_array) {
     if (show_field($field_array)) {
 
@@ -261,7 +259,6 @@ foreach ($temp_field_array as $field_array) {
                 $xtpl->assign("THEME", $theme);
                 $xtpl->parse("main.".$section_name.".merge_cell_edit_datetime");
                 break;
-            //BEGIN SUGARCRM flav=pro ONLY
             case ('teamset') :
 
 				require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
@@ -273,7 +270,6 @@ foreach ($temp_field_array as $field_array) {
 				$xtpl->assign('TEAM_FIELD_QUICKSEARCH', $teamsWidget->createQuickSearchCode(true));
 				$xtpl->parse("main.".$section_name.".merge_cell_edit_teamset");
                 break;
-            //END SUGARCRM flav=pro ONLY
             default :
                 break;
         }
@@ -319,13 +315,11 @@ foreach ($temp_field_array as $field_array) {
                	    display_field_value($mergeBeanArray[$id]-> $field_array['name']);
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
-                //BEGIN SUGARCRM flav=pro ONLY
                 case ('teamset') :
 					require_once('modules/Teams/TeamSetManager.php');
 					display_field_value(TeamSetManager::getCommaDelimitedTeams($mergeBeanArray[$id]->team_set_id, $mergeBeanArray[$id]->team_id, true));
 					$field_name="main.".$section_name.".merge_cell_field_value";
 	            	break;
-	            //END SUGARCRM flav=pro ONLY
                 default :
                     display_field_value($mergeBeanArray[$id]-> $field_array['name']);
                     $field_name="main.".$section_name.".merge_cell_field_value";

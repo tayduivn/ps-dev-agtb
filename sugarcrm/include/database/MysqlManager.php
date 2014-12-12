@@ -32,29 +32,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *
 * name 		This represents name of the field. This is a required field.
 * type 		This represents type of the field. This is a required field and valid values are:
-*           �   int
-*           �   long
-*           �   varchar
-*           �   text
-*           �   date
-*           �   datetime
-*           �   double
-*           �   float
-*           �   uint
-*           �   ulong
-*           �   time
-*           �   short
-*           �   enum
+*           ï¿½   int
+*           ï¿½   long
+*           ï¿½   varchar
+*           ï¿½   text
+*           ï¿½   date
+*           ï¿½   datetime
+*           ï¿½   double
+*           ï¿½   float
+*           ï¿½   uint
+*           ï¿½   ulong
+*           ï¿½   time
+*           ï¿½   short
+*           ï¿½   enum
 * length    This is used only when the type is varchar and denotes the length of the string.
 *           The max value is 255.
 * enumvals  This is a list of valid values for an enum separated by "|".
-*           It is used only if the type is �enum�;
+*           It is used only if the type is ï¿½enumï¿½;
 * required  This field dictates whether it is a required value.
-*           The default value is �FALSE�.
+*           The default value is ï¿½FALSEï¿½.
 * isPrimary This field identifies the primary key of the table.
-*           If none of the fields have this flag set to �TRUE�,
+*           If none of the fields have this flag set to ï¿½TRUEï¿½,
 *           the first field definition is assume to be the primary key.
-*           Default value for this field is �FALSE�.
+*           Default value for this field is ï¿½FALSEï¿½.
 * default   This field sets the default value for the field definition.
 *
 *
@@ -157,11 +157,9 @@ class MysqlManager extends DBManager
 		$this->query_time = microtime(true) - $this->query_time;
 		$GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		if($this->dump_slow_queries($sql)) {
 		$this->track_slow_queries($sql);
 		}
-		//END SUGARCRM flav=pro ONLY
 
 		if($keepResult)
 			$this->lastResult = $result;

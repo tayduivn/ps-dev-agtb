@@ -72,7 +72,7 @@ if(!empty($_REQUEST['assigned_user_id'])){
     $web_assigned_user = $_REQUEST['assigned_user_id'];
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 
 if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
 	require_once('include/SugarFields/SugarFieldHandler.php');
@@ -87,7 +87,6 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
 	require_once('modules/Teams/TeamSetManager.php');
 	TeamSetManager::add($web_team_set_id_user, 'leads');
 }
-//END SUGARCRM flav=pro ONLY
 
  $lead = BeanFactory::getBean('Leads');
  $fieldsMetaData = BeanFactory::getBean('EditCustomFields');
@@ -495,14 +494,13 @@ if(!empty($web_redirect_url)){
 if(!empty($web_assigned_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='assigned_user_id' name='assigned_user_id' value='$web_assigned_user'></td></tr>";
 }
-//BEGIN SUGARCRM flav=pro ONLY
+
 if(!empty($web_team_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='team_id' name='team_id' value='$web_team_user'></td></tr>";
 }
 if(!empty($web_team_set_id_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='team_set_id' name='team_set_id' value='$web_team_set_id_user'></td></tr>";
 }
-//END SUGARCRM flav=pro ONLY
 $req_fields='';
 if(isset($required_fields) && $required_fields != null ){
     foreach($required_fields as $req){

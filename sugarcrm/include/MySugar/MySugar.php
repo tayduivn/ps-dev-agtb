@@ -72,7 +72,6 @@ class MySugar{
 				$dashlet_module = 'Home';
 			}
 
-		    //BEGIN SUGARCRM flav=pro ONLY
 		    if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'chart'){
 		    	$report_id = $_REQUEST['id'];
 				//co: fixes bug 20398 to respect ACL in dashlets
@@ -82,14 +81,11 @@ class MySugar{
 		    							 'reportId' => $report_id );
 		    }
 		    else{
-		    //END SUGARCRM flav=pro ONLY
 			    $dashlets[$guid] = array('className' => $dashletsFiles[$_REQUEST['id']]['class'],
 										 'module' => $dashlet_module,
 										 'options' => $options,
 			                             'fileLocation' => $dashletsFiles[$_REQUEST['id']]['file']);
-			//BEGIN SUGARCRM flav=pro ONLY
 		    }
-		    //END SUGARCRM flav=pro ONLY
 
 		    // add to beginning of the array
 		    array_unshift($pages[$_REQUEST['activeTab']]['columns'][0]['dashlets'], $guid);
@@ -170,7 +166,6 @@ class MySugar{
 		}
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function displayChartDashlet(){
 		global $current_user;
 
@@ -192,9 +187,7 @@ class MySugar{
 		    header("Location: index.php?action=index&module=". $this->type);
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function getChartScript(){
 		global $current_user;
 
@@ -211,7 +204,6 @@ class MySugar{
 		    header("Location: index.php?action=index&module=". $this->type);
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	function deleteDashlet(){
 
@@ -222,14 +214,10 @@ class MySugar{
 		    $pages = $current_user->getPreference('pages', $this->type);
 		    $dashlets = $current_user->getPreference('dashlets', $this->type);
 
-		    //BEGIN SUGARCRM flav=pro ONLY
 			if(!isset($_REQUEST['activePage']) || $_REQUEST['activePage'] == '' || $_REQUEST['activePage'] == 'null')
-			//END SUGARCRM flav=pro ONLY
 				$activePage = '0';
-		    //BEGIN SUGARCRM flav=pro ONLY
 			else
 				$activePage = $_REQUEST['activePage'];
-			//END SUGARCRM flav=pro ONLY
 
 			foreach($pages[$activePage]['columns'] as $colNum => $column) {
 		        foreach($column['dashlets'] as $num => $dashletId) {
@@ -293,17 +281,14 @@ if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 7) {
     document.getElementById('dashletsList').style.overflow = 'hidden';
 }
 EOJS;
-        //BEGIN SUGARCRM flav=pro ONLY
 		if ($this->type != 'Home'){
 			$script .= 'SUGAR.mySugar.populateReportCharts();';
 		}
-		//END SUGARCRM flav=pro ONLY
 
 		$json = getJSONobj();
 		echo 'response = ' . $json->encode(array('html' => $html, 'script' => $script));
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function getReportCharts(){
 		$category = $_REQUEST['category'];
 
@@ -325,7 +310,6 @@ EOJS;
 
 		echo 'response = ' . $json->encode(array('html' => $html));
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	function searchModuleToolsDashlets($searchStr, $category){
 		require_once('include/MySugar/DashletsDialog/DashletsDialog.php');
@@ -380,12 +364,10 @@ EOJS;
 		$DashletsDialog = new DashletsDialog();
 
 		$DashletsDialog->getDashlets('charts');
-		//BEGIN SUGARCRM flav=pro ONLY
 		$DashletsDialog->getReportCharts('global');
 		$DashletsDialog->getReportCharts('myTeams');
 		$DashletsDialog->getReportCharts('mySaved');
 		$DashletsDialog->getReportCharts('myFavorites');
-		//END SUGARCRM flav=pro ONLY
 
 		$allDashlets = $DashletsDialog->dashlets;
 
@@ -403,12 +385,10 @@ EOJS;
 		$sugar_smarty->assign('lblSearchResults', $app_strings['LBL_SEARCH_RESULTS']);
 		$sugar_smarty->assign('searchString', $searchStr);
 		$sugar_smarty->assign('charts', $searchResult['Charts']);
-		//BEGIN SUGARCRM flav=pro ONLY
 		$sugar_smarty->assign('globalReports', $searchResult['global']);
 		$sugar_smarty->assign('myTeamReports', $searchResult['myTeams']);
 		$sugar_smarty->assign('mySavedReports', $searchResult['mySaved']);
 		$sugar_smarty->assign('myFavoriteReports', $searchResult['myFavorites']);
-		//END SUGARCRM flav=pro ONLY
 
 		return $sugar_smarty->fetch('include/MySugar/tpls/chartDashletsSearchResults.tpl');
 	}
@@ -479,7 +459,6 @@ EOJS;
 		}
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function addTab(){
 		if (isset($_REQUEST['numColumns'])){
 			$numCols = (int)$_REQUEST['numColumns'];
@@ -493,7 +472,6 @@ EOJS;
 		$json = getJSONobj();
 		echo 'result = ' . $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	//BEGIN SUGARCRM flav=int ONLY
 	function pageNameCheck(){
@@ -513,7 +491,6 @@ EOJS;
 	}
 	//END SUGARCRM flav=int ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function addPage(){
 		global $current_user, $sugar_version, $sugar_config, $sugar_flavor;
 		global $app_strings;
@@ -595,9 +572,7 @@ EOJS;
 
 		return $sugar_smarty->fetch('include/MySugar/tpls/retrievePage.tpl');
 	}
-	//END SUGARCRM flav=pro ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function deletePage(){
 		global $current_user;
 
@@ -623,9 +598,7 @@ EOJS;
 
 		header("Location: index.php?module=" . $this->type . "&action=index");
 	}
-	//END SUGARCRM flav=pro ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
     /**
      * @todo the css is not fully inherited in this file
 	 */
@@ -754,7 +727,6 @@ EOJS;
 							}
 							//BEGIN SUGARCRM flav=pro ONLY
 							$toggleHeaderToolsetScript .= "SUGAR.mySugar.attachToggleToolsetEvent('$id');";
-							//END SUGARCRM flav=pro ONLY
 
 						} catch (Exception $ex) {
                             $display[$colNum]['dashlets'][$id]['display'] = $ex->getMessage();
@@ -803,7 +775,6 @@ EOJS;
 	}
 	//END SUGARCRM flav=pro ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function changeLayout(){
 		if (isset($_REQUEST['changeLayoutParams']) && $_REQUEST['changeLayoutParams']){
 			echo "var numCols = '" .$_REQUEST['numColumns'] . "';";
@@ -939,9 +910,7 @@ EOJS;
 			}
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function savePageTitle(){
 		global $current_user;
 
@@ -955,5 +924,4 @@ EOJS;
 
         return to_html($pages[$_REQUEST['pageId']]['pageTitle'], ENT_QUOTES);
 	}
-	//END SUGARCRM flav=pro ONLY
 }

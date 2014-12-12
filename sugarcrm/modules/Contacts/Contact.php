@@ -29,9 +29,7 @@ class Contact extends Person {
 	var $created_by_name;
 	var $modified_by_name;
 
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $salutation;
 	var $first_name;
@@ -95,21 +93,17 @@ class Contact extends Person {
     var $primary_address_street_3;
     var $campaign_id;
     var $sync_contact;
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $quote_role;
 	var $quote_rel_id;
 	var $quote_id;
-//END SUGARCRM flav=pro ONLY
 	var $full_name; // l10n localized name
 	var $invalid_email;
 	var $table_name = "contacts";
 	var $rel_account_table = "accounts_contacts";
 	//This is needed for upgrade.  This table definition moved to Opportunity module.
 	var $rel_opportunity_table = "opportunities_contacts";
-//BEGIN SUGARCRM flav=pro ONLY
 	var $rel_quotes_table = "quotes_contacts";
-//END SUGARCRM flav=pro ONLY
 
     //Marketo
     var $mkto_sync;
@@ -124,9 +118,7 @@ class Contact extends Person {
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('bug_id', 'assigned_user_name', 'account_name', 'account_id', 'opportunity_id', 'case_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id'
-//BEGIN SUGARCRM flav=pro ONLY
 	,'quote_id'
-//END SUGARCRM flav=pro ONLY
 	);
 
 	var $relationship_fields = Array(
@@ -246,18 +238,14 @@ class Contact extends Person {
                 accounts.id as account_id,
                 accounts.assigned_user_id account_id_owner,
                 users.user_name as assigned_user_name ";
-//BEGIN SUGARCRM flav=pro ONLY
 		$select_query .= ",teams.name AS team_name ";
-//END SUGARCRM flav=pro ONLY
         $select_query .= $custom_join['select'];
  		$ret_array['select'] = $select_query;
 
  		$from_query = "
                 FROM contacts ";
-//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
  		$this->addVisibilityFrom($from_query, array('where_condition' => true));
-//END SUGARCRM flav=pro ONLY
 
 		$from_query .=		"LEFT JOIN users
 	                    ON contacts.assigned_user_id=users.id
@@ -265,9 +253,7 @@ class Contact extends Person {
 	                    ON contacts.id=accounts_contacts.contact_id  and accounts_contacts.deleted = 0
 	                    LEFT JOIN accounts
 	                    ON accounts_contacts.account_id=accounts.id AND accounts.deleted=0 ";
-//BEGIN SUGARCRM flav=pro ONLY
 		$from_query .=		"LEFT JOIN teams ON contacts.team_id=teams.id AND (teams.deleted=0) ";
-//END SUGARCRM flav=pro ONLY
 		$from_query .= "LEFT JOIN email_addr_bean_rel eabl  ON eabl.bean_id = contacts.id AND eabl.bean_module = 'Contacts' and eabl.primary_address = 1 and eabl.deleted=0 ";
         $from_query .= "LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
         $from_query .= $custom_join['join'];
@@ -515,7 +501,6 @@ class Contact extends Person {
             $focus_user = BeanFactory::getBean('Users');
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         static $focus_team;
 
         // cache this object since we'll be reusing it a bunch
@@ -523,7 +508,6 @@ class Contact extends Person {
 
             $focus_team = BeanFactory::getBean('Teams');
         }
-        //END SUGARCRM flav=pro ONLY
 
 		if ( empty($list_of_users) ) {
             return;
@@ -549,7 +533,6 @@ class Contact extends Person {
                     $this->user_sync->add($user_id ? $user_id : $focus_user->id);
                     return;
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
                 if ( $focus_team->retrieve($eachItem)
                         || $focus_team->retrieve_team_id($eachItem)) {
                     // it is a team, add all team members
@@ -562,7 +545,6 @@ class Contact extends Person {
                         $this->user_sync->add($hash['user_id']);
                     }
 				}
-				//END SUGARCRM flav=pro ONLY
 			}
 		}
 	}

@@ -54,9 +54,7 @@ $viewdefs['Leads']['DetailView'] = array (
             'headerTpl'=>'modules/Leads/tpls/DetailViewHeader.tpl',
         ),
         'maxColumns' => '2',
-        //BEGIN SUGARCRM flav=pro ONLY
         'useTabs' => true,
-        //END SUGARCRM flav=pro ONLY
         'widths' => array (
             array (
                 'label' => '10',
@@ -79,7 +77,6 @@ $viewdefs['Leads']['DetailView'] = array (
             array (
                 'name' => 'full_name',
                 'label' => 'LBL_NAME',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'displayParams' => array (
                     'enableConnectors' => true,
                     'module' => 'Leads',
@@ -87,8 +84,7 @@ $viewdefs['Leads']['DetailView'] = array (
                     array (
                       0 => 'ext_rest_twitter',
                     ),
-                ),
-                //END SUGARCRM flav=pro ONLY            
+                ),            
             ),
             'phone_work',
         ),
@@ -106,15 +102,13 @@ $viewdefs['Leads']['DetailView'] = array (
         array (
             array (
               'name' => 'account_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'displayParams' => array (
                    'enableConnectors' => true,
                    'module' => 'Leads',
                    'connectors' => 
                    array (
                    ),
-                ),
-                //END SUGARCRM flav=pro ONLY 
+                ), 
             ),
             'website'
         ),      
@@ -195,9 +189,7 @@ $viewdefs['Leads']['DetailView'] = array (
           ),
         ),
         array (
-          //BEGIN SUGARCRM flav=pro ONLY
-          'team_name', 
-          //END SUGARCRM flav=pro ONLY
+          'team_name',
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',

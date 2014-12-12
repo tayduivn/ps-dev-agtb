@@ -15,9 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['Project'] = array(
     'table' => 'project',
-//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
-//END SUGARCRM flav=pro ONLY
     'unified_search' => true,
     'full_text_search' => true,
     'unified_search_default_enabled' => false,
@@ -175,7 +173,6 @@ $dictionary['Project'] = array(
             'type' => 'enum',
             'options' => 'projects_priority_options',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'is_template' => array(
             'name' => 'is_template',
             'vname' => 'LBL_IS_TEMPLATE',
@@ -185,7 +182,6 @@ $dictionary['Project'] = array(
             'comment' => 'Should be checked if the project is a template',
             'massupdate' => false,
         ),
-        //END SUGARCRM flav=pro ONLY
 		'total_estimated_effort' =>
   		array (
   			'name' => 'total_estimated_effort',
@@ -210,7 +206,6 @@ $dictionary['Project'] = array(
     		'ignore_role'=>true,
 				'vname'=>'LBL_ACCOUNTS',
   		),
-//BEGIN SUGARCRM flav=pro ONLY
 		'quotes' =>
   		array (
   			'name' => 'quotes',
@@ -220,7 +215,6 @@ $dictionary['Project'] = array(
     		'ignore_role'=>true,
 				'vname'=>'LBL_QUOTES',
   		),
-//END SUGARCRM flav=pro ONLY
 
 		'contacts' =>
   		array (
@@ -373,7 +367,6 @@ $dictionary['Project'] = array(
             'vname'=>'LBL_REVENUELINEITEMS',
             'workflow' => false
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
 		'user_resources' =>
   			array (
   			'name' => 'user_resources',
@@ -403,7 +396,6 @@ $dictionary['Project'] = array(
 			'module'=>'Holidays',
 			'bean_name'=>'Holiday',
   		),
-  		//END SUGARCRM flav=pro ONLY
 	),
 	'indices' => array(
 		array('name' =>'projects_primary_key_index',
@@ -459,7 +451,6 @@ $dictionary['Project'] = array(
            array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
            'rhs_module'=> 'Project', 'rhs_table'=> 'project', 'rhs_key' => 'created_by',
            'relationship_type'=>'one-to-many')
-        //BEGIN SUGARCRM flav=pro ONLY
         ,'projects_users_resources' => array(
             'lhs_module'        => 'Project',
             'lhs_table'         => 'project',
@@ -500,14 +491,11 @@ $dictionary['Project'] = array(
             'relationship_role_column'=>'related_module',
             'relationship_role_column_value'=>'Project',
         ),
-        //END SUGARCRM flav=pro ONLY
 
 	),
 );
 
 VardefManager::createVardef('Project','Project', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

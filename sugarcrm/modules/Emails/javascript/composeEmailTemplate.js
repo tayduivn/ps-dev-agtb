@@ -25,11 +25,9 @@ SUGAR.email2.templates['compose'] = '<div id="composeLayout{idx}" class="ylayout
 '		<input type="hidden" id="sendBcc" name="sendBcc">' +
 '		<input type="hidden" id="sendCc" name="sendCc">' +
 '		<input type="hidden" id="setEditor" name="setEditor">' +
-//BEGIN SUGARCRM flav=pro ONLY
 '		<input type="hidden" id="selectedTeam" name="selectedTeam">' +
 '		<input type="hidden" id="teamIds" name="teamIds">' +
 '		<input type="hidden" id="primaryteam" name="primaryteam">' +
-//END SUGARCRM flav=pro ONLY
 '		<input type="hidden" id="saveToSugar" name="saveToSugar">' +
 '		<input type="hidden" id="parent_id" name="parent_id">' +
 '		<input type="hidden" id="parent_type" name="parent_type">' +
@@ -212,7 +210,6 @@ SUGAR.email2.templates['compose'] = '<div id="composeLayout{idx}" class="ylayout
 '						</td>' +
 '					</tr>' +
 '				</table>' +
-//BEGIN SUGARCRM flav=pro ONLY
 '				<br />' +
 '				<table border="0" width="100%">' +
 '					<tr>' +
@@ -227,7 +224,6 @@ SUGAR.email2.templates['compose'] = '<div id="composeLayout{idx}" class="ylayout
 '					</tr>' +
 '				</table>' +
 '				<br />' +
-//END SUGARCRM flav=pro ONLY
 '				<table border="0" width="100%">' +
 '					<tr>' +
 '						<td NOWRAP style="padding:2px;">' +

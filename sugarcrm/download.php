@@ -104,45 +104,35 @@ else {
 		if($file_type == 'documents') {
 			// cn: bug 9674 document_revisions table has no 'name' column.
 			$query = "SELECT filename name FROM document_revisions INNER JOIN documents ON documents.id = document_revisions.document_id ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(!$focus->disable_row_level_security){
     			// We need to confirm that the user is a member of the team of the item.
                 $focus->add_team_security_where_clause($query);
 			}
-            //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE document_revisions.id = '".$db->quote($_REQUEST['id'])."' ";
 		} elseif($file_type == 'kbdocuments') {
 				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";
-            //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
             }
-            //END SUGARCRM flav=pro ONLY
             $query .= "WHERE document_revisions.id = '" . $db->quote($_REQUEST['id']) ."'";
 		}  elseif($file_type == 'notes') {
 			$query = "SELECT filename name FROM notes ";
-            //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
             }
-            //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE notes.id = '" . $db->quote($_REQUEST['id']) ."'";
             $check_image = true;
         }  elseif ($file_type === 'pdfmanager') {
             $query = "SELECT header_logo name FROM pdfmanager ";
-            //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
             }
-            //END SUGARCRM flav=pro ONLY
             $query .= "WHERE pdfmanager.id = '" . $db->quote($_REQUEST['id']) ."'";
 		} elseif( !isset($_REQUEST['isTempFile']) && !isset($_REQUEST['tempName'] ) && isset($_REQUEST['type']) && $file_type!='temp' ){ //make sure not email temp file.
 			$query = "SELECT filename name FROM ". $file_type ." ";
-            //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
             }
-            //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE ". $file_type .".id= '".$db->quote($_REQUEST['id'])."'";
 		}elseif( $file_type == 'temp'){
 			$doQuery = false;

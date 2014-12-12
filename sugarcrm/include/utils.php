@@ -191,7 +191,6 @@ function make_sugar_config(&$sugar_config)
         'systexpirationlogin' => '',
         ) : $passwordsetting,
         //END SUGARCRM flav=com ONLY
-     //BEGIN SUGARCRM flav=pro ONLY
         'passwordsetting' => empty($passwordsetting) ? array (
         'minpwdlength' => '',
         'maxpwdlength' => '',
@@ -221,7 +220,6 @@ function make_sugar_config(&$sugar_config)
         'lockoutexpirationtype' => '1',
         'lockoutexpirationlogin' => '',
         ) : $passwordsetting,
-        //END SUGARCRM flav=pro ONLY
         'use_sprites' => function_exists('imagecreatetruecolor'),
         'search_wildcard_infront' => false,
         'search_wildcard_char' => '%',
@@ -334,10 +332,8 @@ function get_sugar_config_defaults()
     'large_scale_test' => false,
     'list_max_entries_per_page' => 20,
     'list_max_entries_per_subpanel' => 5,
-    //BEGIN SUGARCRM flav=pro ONLY
     'wl_list_max_entries_per_page' => 10,
     'wl_list_max_entries_per_subpanel' => 3,
-    //END SUGARCRM flav=pro ONLY
     'lock_default_user_name' => false,
     'log_memory_usage' => false,
     'portal_view' => 'single_user',
@@ -421,7 +417,6 @@ function get_sugar_config_defaults()
         'systexpirationlogin' => '',
         ) : $passwordsetting,
         //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     'snip_url' => 'http://ease.sugarcrm.com:20010/',
     'passwordsetting' => array (
         'minpwdlength' => '',
@@ -453,7 +448,6 @@ function get_sugar_config_defaults()
         'lockoutexpirationlogin' => '',
         ),
         'use_sprites' => function_exists('imagecreatetruecolor'),
-    //END SUGARCRM flav=pro ONLY
         'use_real_names' => true,
 
         'search_wildcard_infront' => false,
@@ -687,7 +681,6 @@ function get_assigned_user_name($assigned_user_id, $is_group = '')
 
     return '';
 }
-//BEGIN SUGARCRM flav=pro ONLY
 function get_assigned_team_name($assigned_team_id)
 {
     if (!empty($GLOBALS['sugar_config']['disable_user_cache'])) {
@@ -785,7 +778,6 @@ function get_team_array($add_blank = false)
 
     return $team_array;
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * retrieves the user_name column value (login)
@@ -1581,7 +1573,6 @@ function displayStudioForCurrentUser()
     if ( $current_user->isAdmin() ) {
         return true;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
     }
@@ -1596,7 +1587,6 @@ function displayStudioForCurrentUser()
     $_SESSION['display_studio_for_user'] = false;
 
     return false;
-    //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav!=pro ONLY
     return true;
@@ -1606,7 +1596,6 @@ function displayStudioForCurrentUser()
 
 function displayWorkflowForCurrentUser()
 {
-    //BEGIN SUGARCRM flav=pro ONLY
     if ( is_admin($GLOBALS['current_user']) ) {
         return true;
     }
@@ -1637,7 +1626,6 @@ function displayWorkflowForCurrentUser()
             return true;
         }
     }
-    //END SUGARCRM flav=pro ONLY
     $_SESSION['display_workflow_for_user'] = false;
 
     return false;
@@ -1720,11 +1708,9 @@ function is_admin_for_any_module($user)
     if ($user->isAdmin()) {
         return true;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     $GLOBALS['log']->deprecated("is_admin_for_any_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForAnyModule() instead");
 
     return $user->isDeveloperForAnyModule();
-    //END SUGARCRM flav=pro ONLY
     return false;
 }
 
@@ -1738,11 +1724,9 @@ function is_admin_for_module($user,$module)
     if ($user->isAdmin()) {
         return true;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");
 
     return $user->isDeveloperForModule($module);
-    //END SUGARCRM flav=pro ONLY
     return false;
 }
 
@@ -1986,7 +1970,7 @@ function parse_calendardate($local_format)
     preg_match('/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/', $local_format, $matches);
     $calendar_format = "%" . $matches[1] . "-%" . $matches[2] . "-%" . $matches[3];
 
-    return str_replace(array("y", "ￄ1�7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
+    return str_replace(array("y", "ï¿1ï¿½7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
 }
 
 function translate($string, $mod='', $selectedValue='')
@@ -2849,10 +2833,8 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
         $temp_result = Array();
         $query = "SELECT {$focus->table_name}.id, {$display_columns} as display from {$focus->table_name} ";
-        //BEGIN SUGARCRM flav=pro ONLY
         // Bug 36162 - We need to confirm that the user is a member of the team of the item.
         $focus->add_team_security_where_clause($query);
-        //END SUGARCRM flav=pro ONLY
         $query .= "where ";
         if ($where != '') {
             $query .= $where." AND ";
@@ -2905,12 +2887,10 @@ function parse_list_modules(&$listArray)
         if (array_key_exists($optionName, $modListHeader)) {
             $returnArray[$optionName] = $optionVal;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         // special case for products
         if (array_key_exists('Products', $modListHeader)) {
             $returnArray['ProductTemplates'] = $listArray['ProductTemplates'];
         }
-        //END SUGARCRM flav=pro ONLY
 
         // special case for projects
         if (array_key_exists('Project', $modListHeader)) {
@@ -3394,14 +3374,12 @@ function sugar_cleanup($exit = false)
     }
     Tracker::logPage();
     // Now write the cached tracker_queries
-    //BEGIN SUGARCRM flav=pro ONLY
     if (class_exists("TrackerManager")) {
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_queries')) {
             $trackerManager->saveMonitor($monitor, true);
         }
     }
-    //END SUGARCRM flav=pro ONLY
     if (!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
         if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
             $GLOBALS['current_user']->savePreferencesToDB();
@@ -4455,7 +4433,6 @@ function rebuildConfigFile($sugar_config, $sugar_version)
 {
     // add defaults to missing values of in-memory sugar_config
     $sugar_config = sugarArrayMerge(get_sugar_config_defaults(), $sugar_config );
-    //BEGIN SUGARCRM flav=pro ONLY
     if (isset($sugar_config['sugarbeet'])) {
         //$sugar_config['sugarbeet'] is only set in COMM
         unset($sugar_config['sugarbeet']);
@@ -4465,7 +4442,6 @@ function rebuildConfigFile($sugar_config, $sugar_version)
         //no need to write to config.php
         unset($sugar_config['disable_team_access_check']);
     }
-    //END SUGARCRM flav=pro ONLY
     // need to override version with default no matter what
     $sugar_config['sugar_version'] = $sugar_version;
 
@@ -4777,7 +4753,6 @@ function loadBean($module)
     return BeanFactory::getBean($module);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * Checks for hit from a mobile browser
  *
@@ -4845,7 +4820,6 @@ function checkForMobile()
 
     return $isMobile;
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * Returns true if the application is being accessed on a touch screen interface ( like an iPad )
@@ -4910,12 +4884,10 @@ function load_link_class($properties)
     return $class;
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 function getTeamSetNameJoin($table_name)
 {
     return TeamSet::getTeamNameJoinSql($table_name);
 }
-//END SUGARCRM flav=pro ONLY
 
 function inDeveloperMode()
 {
@@ -5223,13 +5195,13 @@ function verify_image_file($path, $jpeg = false)
                 return false;
             }
             $data = '';
-            // read the whole file in chunks
+            //Â readÂ theÂ wholeÂ fileÂ inÂ chunks
             while (!feof($fp)) {
                 $data .= fread($fp,8192);
             }
 
             fclose($fp);
-            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|imgÂ |pre(>|Â )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
                  $data, $m)) {
                 $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
 

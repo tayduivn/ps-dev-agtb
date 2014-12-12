@@ -20,9 +20,7 @@ class Call extends SugarBean {
 	var $date_modified;
 	var $assigned_user_id;
 	var $modified_user_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $name;
 	var $status;
@@ -59,9 +57,7 @@ class Call extends SugarBean {
 	var $assigned_user_name;
 	var $note_id;
     var $outlook_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 	var $update_vcal = true;
 	var $contacts_arr = array();
 	var $users_arr = array();
@@ -118,7 +114,6 @@ class Call extends SugarBean {
 		    $this->field_name_map[$field['name']] = $field;
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
@@ -126,7 +121,6 @@ class Call extends SugarBean {
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 
 
 
@@ -260,9 +254,7 @@ class Call extends SugarBean {
 
 			$query .= "
 			users.user_name as assigned_user_name";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
-			//END SUGARCRM flav=pro ONLY
         $query .= $custom_join['select'];
 
 			// this line will help generate a GMT-metric to compare to a locale's timezone
@@ -273,10 +265,8 @@ class Call extends SugarBean {
 			}
 			$query .= " FROM calls ";
 
-//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
 			if ( preg_match("/contacts/",$where)){
 				$query .=	"LEFT JOIN calls_contacts
 	                    ON calls.id=calls_contacts.call_id
@@ -288,9 +278,7 @@ class Call extends SugarBean {
 		$query .= "LEFT JOIN calls_users
 			ON calls.id=calls_users.call_id and calls_users.deleted=0 ";
 			}
-			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= " LEFT JOIN teams ON calls.team_id=teams.id";
-			//END SUGARCRM flav=pro ONLY
 			$query .= "
 			LEFT JOIN users
 			ON calls.assigned_user_id=users.id ";

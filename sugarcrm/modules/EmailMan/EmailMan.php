@@ -59,9 +59,7 @@ class EmailMan extends SugarBean{
 
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security=true;
-		//END SUGARCRM flav=pro ONLY
 
 	}
 
@@ -319,9 +317,7 @@ class EmailMan extends SugarBean{
                     $this->ref_email->new_with_id=true;
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 $this->ref_email->team_id = 1;
-                //END SUGARCRM flav=pro ONLY
                 $this->ref_email->to_addrs= '';
                 $this->ref_email->to_addrs_ids = '';
                 $this->ref_email->to_addrs_names = '';
@@ -428,9 +424,7 @@ class EmailMan extends SugarBean{
 
         $email = BeanFactory::getBean('Emails');
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $email->team_id = 1;
-        //END SUGARCRM flav=pro ONLY
 
         $email->to_addrs         = "{$module->name}&lt;{$module->email1}&gt;";
         $email->to_addrs_ids     = "{$module->id};";

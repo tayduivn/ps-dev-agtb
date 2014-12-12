@@ -20,9 +20,7 @@ $viewdefs['Leads']['EditView'] = array(
 											)                				
                             ),
                             'maxColumns' => '2', 
-                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30')
@@ -120,11 +118,9 @@ $viewdefs['Leads']['EditView'] = array(
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY
 		  array (
 		    'name'=>'team_name', 'displayParams'=>array('display'=>true),
 		  ),
-		  //END SUGARCRM flav=pro ONLY
         ),
   ),  
 ),

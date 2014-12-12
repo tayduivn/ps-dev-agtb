@@ -81,7 +81,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInvalidCurrency()
     {
         $this->_ifs->dec_sep = '.';
-        $this->_ifs->currency_symbol = '�';
+        $this->_ifs->currency_symbol = 'ï¿½';
 
         $this->assertNotEquals($this->_ifs->currency('$123.23',array()),123.23);
     }
@@ -1020,7 +1020,6 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($bad_names,array());
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testValidSyncToOutlookTeam()
     {
         $team = SugarTestTeamUtilities::createAnonymousTeam();
@@ -1040,7 +1039,6 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }
-    //END SUGARCRM flav=pro ONLY
     public function testInvalidSyncToOutlook()
     {
         $value = "jghu8h8yhuh8hhi889898898";

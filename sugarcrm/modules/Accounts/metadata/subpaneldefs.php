@@ -262,7 +262,6 @@ $layout_defs['Accounts'] = array(
 			'subpanel_name' => 'ForTargets',
 			'title_key' => 'LBL_CAMPAIGNS',
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 70,
 			'sort_order' => 'desc',
@@ -276,7 +275,5 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 			),
 		),
-
-        //END SUGARCRM flav=pro ONLY
 	),
 );

@@ -37,9 +37,7 @@ $dictionary['Contact'] = array(
             'options' => 'lead_source_dom',
             'len' => '255',
             'comment' => 'How did the contact come about',
-            //BEGIN SUGARCRM flav=pro ONLY
             'merge_filter' => 'enabled',
-            //END SUGARCRM flav=pro ONLY
         ),
         'account_name' => array(
             'name' => 'account_name',
@@ -378,7 +376,6 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROJECTS',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'project_resource' => array(
             'name' => 'project_resource',
             'type' => 'link',
@@ -406,7 +403,6 @@ $dictionary['Contact'] = array(
             'bean_name' => 'Quote',
             'vname' => 'LBL_QUOTES_BILL_TO',
         ),
-        //END SUGARCRM flav=pro ONLY
         'tasks' => array(
             'name' => 'tasks',
             'type' => 'link',
@@ -825,7 +821,6 @@ $dictionary['Contact'] = array(
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'contact_products' => array(
             'lhs_module' => 'Contacts',
             'lhs_table' => 'contacts',
@@ -835,7 +830,6 @@ $dictionary['Contact'] = array(
             'rhs_key' => 'contact_id',
             'relationship_type' => 'one-to-many',
         ),
-        //END SUGARCRM flav=pro ONLY
         'contact_campaign_log' => array(
             'lhs_module' => 'Contacts',
             'lhs_table' => 'contacts',
@@ -880,9 +874,7 @@ $dictionary['Contact'] = array(
     'uses' => array(
         'default',
         'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-//END SUGARCRM flav=pro ONLY
         'person',
     ),
 );

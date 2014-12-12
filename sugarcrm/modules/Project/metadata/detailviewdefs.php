@@ -118,7 +118,7 @@ $viewdefs['Project']['DetailView'] = array(
                 ),
 				//END SUGARCRM flav=com ONLY
 
-				//BEGIN SUGARCRM flav=pro ONLY
+
 				array( 'customCode' =>
                         '{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
                         'class="button" type="submit" '.
@@ -184,7 +184,6 @@ $viewdefs['Project']['DetailView'] = array(
                         ),
                     ),
 				),
-				//END SUGARCRM flav=pro ONLY
  			),
  		),
 	),
@@ -225,9 +224,8 @@ $viewdefs['Project']['DetailView'] = array(
 		  ),
 		),
 		array (
-			//BEGIN SUGARCRM flav=pro ONLY
-		 	'team_name',
-		  	//END SUGARCRM flav=pro ONLY  
+
+		 	'team_name',  
 			array (
 				'name' => 'created_by_name',
 				'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}&nbsp;',

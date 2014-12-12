@@ -126,7 +126,6 @@ if (!isset($focus->id)) {
 	$focus->group_id = $groupId;
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 // teams
 if(!empty($_REQUEST['team_id'])) {
 	$focus->team_id = $_REQUEST['team_id'];
@@ -145,8 +144,6 @@ foreach($focus->field_defs as $field=>$def) {
 	} // if
 
 } // if
-
-//END SUGARCRM flav=pro ONLY
 
 if( isset($_REQUEST['is_auto_import']) && $_REQUEST['is_auto_import'] == 'on' )
 {
@@ -208,11 +205,9 @@ $focus->save();
 //Reset the value so no other saves are affected.
 $GLOBALS['sugar_config']['disable_team_access_check'] = $previousTeamAccessCheck;
 
-//BEGIN SUGARCRM flav=pro ONLY
 //For new group IE accounts, create default subscriptions for all direct team members.
 if( empty($_REQUEST['id']) && empty($focus->groupfolder_id) )
     $focus->createUserSubscriptionsForGroupAccount();
-//END SUGARCRM flav=pro ONLY
 
 //Only sync IE accounts with a group folder.  Need to sync new records as team set assignment is processed
 //after save.

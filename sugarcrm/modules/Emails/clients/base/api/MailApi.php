@@ -434,7 +434,6 @@ class MailApi extends ModuleApi
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         /*--- Validate Teams ---*/
         if (isset($args[self::TEAMS])) {
             if (!is_array($args[self::TEAMS])) {
@@ -458,7 +457,6 @@ class MailApi extends ModuleApi
                 }
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         /*--- Validate Related ---*/
         if (isset($args[self::RELATED])) {

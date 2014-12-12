@@ -29,9 +29,8 @@ $viewdefs['Contacts']['DetailView'] = array(
                                                         ),
                                        ),
                         'maxColumns' => '2',
-                        //BEGIN SUGARCRM flav=pro ONLY
+
                         'useTabs' => true,
-                        //END SUGARCRM flav=pro ONLY
                         'widths' => array(
                                         array('label' => '10', 'field' => '30'),
                                         array('label' => '10', 'field' => '30')
@@ -54,7 +53,7 @@ $viewdefs['Contacts']['DetailView'] = array(
           array (
             'name' => 'full_name',
             'label' => 'LBL_NAME',
-            //BEGIN SUGARCRM flav=pro ONLY
+
             'displayParams' => 
               array (
                 'enableConnectors' => true,
@@ -63,8 +62,7 @@ $viewdefs['Contacts']['DetailView'] = array(
                 array (
                   0 => 'ext_rest_twitter',
                 ),
-            ),
-            //END SUGARCRM flav=pro ONLY         
+            ),         
           ),
 
 	      //BEGIN SUGARCRM flav!=com ONLY
@@ -238,9 +236,8 @@ $viewdefs['Contacts']['DetailView'] = array(
         ),
 
         array (
-          //BEGIN SUGARCRM flav=pro ONLY
+
           'team_name',
-          //END SUGARCRM flav=pro ONLY
 
           array (
             'name' => 'date_entered',

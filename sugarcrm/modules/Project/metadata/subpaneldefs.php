@@ -29,7 +29,7 @@ $modules_exempt_from_availability_check = array('Holidays'=>'Holidays',
 $layout_defs['Project'] = array(
 	// list of what Subpanels to show in the DetailView
 	'subpanel_setup' => array(
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		'projectresources' => array(
 			'order' => 10,
 			'sort_order' => 'desc',
@@ -58,7 +58,6 @@ $layout_defs['Project'] = array(
 				),
 			)
 		),
-		//END SUGARCRM flav=pro ONLY
 
        'projecttask' => array(
 			'order' => 20,
@@ -66,9 +65,8 @@ $layout_defs['Project'] = array(
 			'sort_by' => 'project_task_id',
 			'module' => 'ProjectTask',
 			'top_buttons' => array(
-				//BEGIN SUGARCRM flav=pro ONLY
+
 				array('widget_class' => 'SubPanelEditProjectTasksButton', ),
-				//END SUGARCRM flav=pro ONLY
 				//BEGIN SUGARCRM flav=com ONLY
 				array('widget_class' => 'SubPanelTopCreateButton', ),
 				//END SUGARCRM flav=com ONLY
@@ -196,7 +194,7 @@ $layout_defs['Project'] = array(
 			'add_subpanel_data' => 'opportunity_id',
 			'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
+
         'quotes' => array(
             'top_buttons' => array(
 			    array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Quotes'),
@@ -210,7 +208,6 @@ $layout_defs['Project'] = array(
 			'add_subpanel_data' => 'quote_id',
 			'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
 		),
-        //END SUGARCRM flav=pro ONLY
         'cases' => array(
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Cases'),
@@ -237,7 +234,7 @@ $layout_defs['Project'] = array(
             'add_subpanel_data' => 'bug_id',
             'title_key' => 'LBL_BUGS_SUBPANEL_TITLE',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
+
         'products' => array(
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Products'),
@@ -251,8 +248,7 @@ $layout_defs['Project'] = array(
             'add_subpanel_data' => 'product_id',
             'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
         ),
-        //END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		'holidays' => array(
 			'order' => 30,
 			'sort_by' => 'holiday_date',
@@ -267,10 +263,9 @@ $layout_defs['Project'] = array(
               ),
 			'title_key' => 'LBL_PROJECT_HOLIDAYS_TITLE',
 		),
-		//END SUGARCRM flav=pro ONLY
    ),
 );
-//BEGIN SUGARCRM flav=pro ONLY
+
 global $current_user, $app;
 // check if $app present - if in Studio/MB then loading a subpanel definition through the SubpanelDefinitions class 'requires' this file without an $app
 if (isset($app) && isset($app->controller))
@@ -289,7 +284,6 @@ $focus = BeanFactory::getBean('Project', $projectId);
 		
 	}
 }
-//END SUGARCRM flav=pro ONLY
 $layout_defs['ProjectTemplates'] = array(
 	// list of what Subpanels to show in the DetailView
 	'subpanel_setup' => array(

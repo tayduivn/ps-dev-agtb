@@ -140,9 +140,7 @@ array (
             'customCode' => '{$fields.assigned_user_name.value}',
             'label' => 'LBL_ASSIGNED_TO',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY
 	      'team_name',
-	      //END SUGARCRM flav=pro ONLY
         ),
         array (
           array (

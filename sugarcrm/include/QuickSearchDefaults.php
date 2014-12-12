@@ -173,7 +173,6 @@ class QuickSearchDefaults
         return $qsCampaign;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
     function getQSTeam($t_name = 'team_name', $t_id = 'team_id') {
         global $app_strings;
@@ -191,7 +190,6 @@ class QuickSearchDefaults
                     'order' => 'name', 'limit' => '30', 'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsTeam;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Loads Quick Search Object for any object (if suitable method is defined)

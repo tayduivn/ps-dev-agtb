@@ -203,9 +203,8 @@ $TMPL_DRPDWN_GENERATE =get_select_options_with_id($email_templates_arr, $res['ge
 
 $sugar_smarty->assign("TMPL_DRPDWN_LOST", $TMPL_DRPDWN_LOST);
 $sugar_smarty->assign("TMPL_DRPDWN_GENERATE", $TMPL_DRPDWN_GENERATE);
-//BEGIN SUGARCRM flav=pro ONLY
+
 $LOGGED_OUT_DISPLAY= (isset($res['lockoutexpiration']) && $res['lockoutexpiration'] == '0') ? 'none' : '';
 $sugar_smarty->assign("LOGGED_OUT_DISPLAY_STATUS", $LOGGED_OUT_DISPLAY);
-//END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->display('modules/Administration/PasswordManager.tpl');

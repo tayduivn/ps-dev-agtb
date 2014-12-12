@@ -48,9 +48,7 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
                 }
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             $bean->ACLFilterFields();
-            //END SUGARCRM flav=pro ONLY
             $arr = array_change_key_case($bean->toArray(), CASE_UPPER);
             $results = $adFunction($arr);
 

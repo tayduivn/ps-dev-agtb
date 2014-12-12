@@ -21,9 +21,7 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
     public $pbss_date_start;
     public $pbss_date_end;
     public $pbss_sales_stages = array();
-    //BEGIN SUGARCRM flav=pro ONLY
     public $pbss_chart_type = 'fun';
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * @see DashletGenericChart::$_seedName
@@ -67,9 +65,7 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
 
         $this->_searchFields['pbss_sales_stages']['options'] = $app_list_strings['sales_stage_dom'];
         $this->_searchFields['pbss_sales_stages']['input_name0'] = $selected_datax;
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->_searchFields['pbss_chart_type']['options'] = $app_list_strings['pipeline_chart_dom'];
-        //END SUGARCRM flav=pro ONLY
 
         return parent::displayOptions();
     }
@@ -107,14 +103,10 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
         $subtitle = translate('LBL_OPP_SIZE', 'Charts') . " " . $currency_symbol . "1" . translate('LBL_OPP_THOUSANDS', 'Charts');
 
         $pipeline_total_string = translate('LBL_TOTAL_PIPELINE', 'Charts') . $sugarChart->currency_symbol . format_number($sugarChart->getTotal(), 0, 0, array('convert'=>true)) . $sugarChart->thousands_symbol;
-		//BEGIN SUGARCRM flav=pro ONLY
 		if ($this->pbss_chart_type == 'hbar')
-		//END SUGARCRM flav=pro ONLY
             $sugarChart->setProperties($pipeline_total_string, $subtitle, 'horizontal group by chart');
-		//BEGIN SUGARCRM flav=pro ONLY
 		else
             $sugarChart->setProperties($pipeline_total_string, $subtitle, 'funnel chart 3D');
-		//END SUGARCRM flav=pro ONLY
 
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
@@ -184,9 +176,7 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
                         count(*) AS opp_count,
                         sum(amount_usdollar/1000) AS total
                     FROM users,opportunities  ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->getSeedBean()->add_team_security_where_clause($query);
-        //END SUGARCRM flav=pro ONLY
         $query .= " WHERE opportunities.date_closed >= ". db_convert("'".$this->pbss_date_start."'",'date').
                         " AND opportunities.date_closed <= ".db_convert("'".$this->pbss_date_end."'",'date') .
                         " AND opportunities.assigned_user_id = users.id  AND opportunities.deleted=0 ";

@@ -18,10 +18,8 @@ class RestMetadataViewTemplatesTest extends RestTestBase
     {
         parent::setUp();
 
-//BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
-//END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
 
@@ -44,12 +42,10 @@ class RestMetadataViewTemplatesTest extends RestTestBase
                 'clients/base/views/edit/edit.hbs',
                 'custom/clients/base/views/edit/edit.hbs',
             ),
-            //BEGIN SUGARCRM flav=pro ONLY
             'mobile' => array(
                 'clients/mobile/views/edit/edit.hbs',
                 'custom/clients/mobile/views/edit/edit.hbs',
             ),
-            //END SUGARCRM flav=pro ONLY
         );
         SugarTestHelper::saveFile($filesToCheck['base']);
         SugarTestHelper::saveFile($filesToCheck['mobile']);

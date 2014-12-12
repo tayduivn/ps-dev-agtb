@@ -50,9 +50,7 @@ class ViewList extends SugarView{
         require($metadataFile);
 
         $this->listViewDefs = $listViewDefs;
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->bean->ACLFilterFieldList($this->listViewDefs[$module], array("owner_override" => true));
-        //END SUGARCRM flav=pro ONLY
 
         if(!empty($this->bean->object_name) && isset($_REQUEST[$module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {//if you click the pagination button, it will populate the search criteria here
             if(!empty($_REQUEST['current_query_by_page'])) {//The code support multi browser tabs pagination

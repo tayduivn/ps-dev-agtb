@@ -70,12 +70,11 @@ $sqs_objects = array('parent_name' => $qsd->getQSParent(),
                     'subscription_name' => getProspectListQSObjects('prospect_list_type_default', 'subscription_name','wiz_step3_subscription_name_id'),
                     );
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($focus->field_defs, 'wizform');
 $sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
-//END SUGARCRM flav=pro ONLY
 
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
 
@@ -107,7 +106,7 @@ $popup_request_data = array(
     );
 $ss->assign('encoded_users_popup_request_data', $json->encode($popup_request_data));
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 $popup_request_data = array(
     'call_back_function' => 'set_return',
     'form_name' => 'wizform',
@@ -117,7 +116,6 @@ $popup_request_data = array(
         ),
     );
 $ss->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
-//END SUGARCRM flav=pro ONLY
 
 if (!empty($focus->budget)) {
     $focus->budget = SugarCurrency::formatAmountUserLocale($focus->budget, $focus->currency_id, false);
@@ -204,7 +202,7 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 if (empty($focus->id) && !isset($_REQUEST['isDuplicate'])) {
     $ss->assign("TEAM_OPTIONS", get_select_options_with_id(get_team_array(), $current_user->default_team));
     $ss->assign("TEAM_NAME", $current_user->default_team_name);
@@ -215,8 +213,6 @@ else {
     $ss->assign("TEAM_NAME", $focus->team_name);
     $ss->assign("TEAM_ID", $focus->team_id);
 }
-
-//END SUGARCRM flav=pro ONLY
 echo $currency->getJavascript();
 
 $seps = get_number_seperators();
@@ -581,14 +577,13 @@ function create_email_steps(){
 
 
 function create_wiz_step_divs($steps,$ss){
-//BEGIN SUGARCRM flav=pro ONLY
+
 //Assign the Teamset field
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $focus = BeanFactory::getBean('Campaigns');
 $code = $teamSetField->getClassicView($focus->field_defs, 'wizform');
 $ss->assign("TEAM_SET_FIELD", $code);
-//END SUGARCRM flav=pro ONLY
     $step_html = '';
     if(isset($steps)  && !empty($steps)){
         $i=1;

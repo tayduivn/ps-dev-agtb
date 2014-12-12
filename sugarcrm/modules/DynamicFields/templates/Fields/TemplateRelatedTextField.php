@@ -58,9 +58,7 @@ class TemplateRelatedTextField extends TemplateText{
     function get_html_search(){
         $searchable=array();
         $def = $this->bean->field_name_map[$this->name];
-        //BEGIN SUGARCRM flav=pro ONLY
         $searchable = array('team_id');
-        //END SUGARCRM flav=pro ONLY
         if(!empty($def['id_name']) && in_array($def['id_name'], $searchable)){
             $name = $def['id_name'];
             return "<select size='3' name='{$name}[]' tabindex='1' multiple='multiple'>{".strtoupper($name). "_FILTER}</select>";
@@ -72,9 +70,7 @@ class TemplateRelatedTextField extends TemplateText{
     function get_xtpl_search(){
         $searchable=array();
         $def = $this->bean->field_name_map[$this->name];
-        //BEGIN SUGARCRM flav=pro ONLY
         $searchable = array('team_id');
-        //END SUGARCRM flav=pro ONLY
         $returnXTPL = array();
         if(!empty($def['id_name']) && in_array($def['id_name'], $searchable)){
             $name = $def['id_name'];

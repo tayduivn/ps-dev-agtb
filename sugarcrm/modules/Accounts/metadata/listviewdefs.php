@@ -22,14 +22,12 @@ array (
     'link' => true,
     'default' => true,
   ),
-//BEGIN SUGARCRM flav=pro ONLY
   'TEAM_NAME' => 
   array(
         'width' => '10', 
         'label' => 'LBL_LIST_TEAM',
         'default' => false
   ),
-//END SUGARCRM flav=pro ONLY
   'BILLING_ADDRESS_CITY' => 
   array (
     'width' => '10%',

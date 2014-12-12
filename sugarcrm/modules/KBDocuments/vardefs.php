@@ -13,9 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['KBDocument'] = array(
   'table' => 'kbdocuments',
-//BEGIN SUGARCRM flav=pro ONLY
+
   'favorites' => false,
-//END SUGARCRM flav=pro ONLY
   'unified_search' => true,
   'full_text_search' => true,
   'comment' => 'Knowledge Document management and FTS',
@@ -120,9 +119,8 @@ $dictionary['KBDocument'] = array(
     'type' => 'bool',
     'default'=> 0,
     'reportable'=>true,
-  	//BEGIN SUGARCRM flav=pro ONLY
+
    	'studio'=>'false',
-	//END SUGARCRM flav=pro ONLY
   //BEGIN SUGARCRM flav=ent ONLY
   	'studio'=>'visible',
 	//END SUGARCRM flav=ent ONLY
@@ -544,8 +542,7 @@ $dictionary['KBDocument'] = array(
 );
 
 VardefManager::createVardef('KBDocuments','KBDocument', array(
-//BEGIN SUGARCRM flav=pro ONLY
+
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 

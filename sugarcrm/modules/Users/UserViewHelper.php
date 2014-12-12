@@ -261,12 +261,10 @@ class UserViewHelper {
         global $current_user;
 
         $this->ss->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
             $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
             $this->ss->assign("REGEX",$pwd_regex);
         }
-        //END SUGARCRM flav=pro ONLY
 
 
         $enable_syst_generate_pwd=false;
@@ -433,7 +431,6 @@ class UserViewHelper {
             $this->ss->assign('DISPLAY_EXTERNAL_AUTH',true);
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->bean->id)) {
             require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 
@@ -456,7 +453,6 @@ class UserViewHelper {
             $this->ss->assign('IS_PORTALONLY', '1');
             $this->usertype='PORTAL_ONLY';
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
     protected function setupAdvancedTabNavSettings() {
@@ -634,7 +630,6 @@ class UserViewHelper {
     }
 
     protected function setupAdvancedTabPdfSettings() {
-        //BEGIN SUGARCRM flav=pro ONLY
         ///////////////////////////////////////////////////////////////////////////////
         /////////  PDF SETTINGS
         global $focus_user;
@@ -673,7 +668,6 @@ class UserViewHelper {
             ///////// END PDF SETTINGS
             ////////////////////////////////////////////////////////////////////////////////
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
     protected function setupEmailSettings() {

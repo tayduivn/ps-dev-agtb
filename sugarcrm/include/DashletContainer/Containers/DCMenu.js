@@ -250,7 +250,6 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 	DCMenu.iFrame = function(url, width, height){
 		setBody("<iframe style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>");
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
         Y.one(item).setAttribute("title", SUGAR.language.get('app_strings', 'LBL_REMOVE_FROM_FAVORITES'));
@@ -273,7 +272,6 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 	DCMenu.tagFavorites = function(item,module, record, tag){
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=tag&fav_id=' + record + '&fav_module=' + module + '&tag=' + tag);
 	}
-	//END SUGARCRM flav=pro ONLY
 
     function quickRequest(type, url, success)
     {

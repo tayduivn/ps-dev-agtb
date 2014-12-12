@@ -26,9 +26,7 @@ class Tracker extends SugarBean
     var $acltype = 'Tracker';
     var $acl_category = 'Trackers';
     var $disable_custom_fields = true;
-    //BEGIN SUGARCRM flav=pro ONLY
     var $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     var $column_fields = Array(
         "id",
         "monitor_id",
@@ -118,7 +116,6 @@ class Tracker extends SugarBean
         $_SESSION['lpage']=time();
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * create_tables
      * Override this method to insert ACLActions for the tracker beans
@@ -138,18 +135,15 @@ class Tracker extends SugarBean
         }
         parent::create_tables();
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * bean_implements
      * Override method to support ACL roles
      */
     function bean_implements($interface){
-        //BEGIN SUGARCRM flav=pro ONLY
         switch($interface){
             case 'ACL': return true;
         }
-        //END SUGARCRM flav=pro ONLY
         return false;
     }
 }

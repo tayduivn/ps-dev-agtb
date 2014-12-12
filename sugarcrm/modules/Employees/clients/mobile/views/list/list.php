@@ -114,7 +114,7 @@ $viewdefs['Employees']['mobile']['view']['list'] = array(
                     'width' => '10%',
                     'default' => true,
                 ),
-//BEGIN SUGARCRM flav=pro ONLY
+
                 array(
                     'name' => 'team_name',
                     'width' => '10',
@@ -122,6 +122,5 @@ $viewdefs['Employees']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-//END SUGARCRM flav=pro ONLY
             ))));
 ?>

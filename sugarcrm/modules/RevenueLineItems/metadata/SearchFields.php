@@ -51,7 +51,6 @@ $searchFields['RevenueLineItems'] = array (
         'options' => 'manufacturer_dom',
         'template_var' => 'MANUFACTURER_OPTIONS'
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'favorites_only' => array (
         'query_type' => 'format',
         'operator' => 'subquery',
@@ -63,7 +62,6 @@ $searchFields['RevenueLineItems'] = array (
             'id'
         )
     ),
-    //END SUGARCRM flav=pro ONLY
     //Range Search Support
     'range_date_entered' => array (
         'query_type' => 'default',

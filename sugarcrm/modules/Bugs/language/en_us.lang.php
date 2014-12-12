@@ -81,10 +81,8 @@ $mod_strings = array (
   'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LNK_BUG_REPORTS' => 'View Bug Reports',
 	'LBL_SHOW_IN_PORTAL' => 'Show in Portal',
-	//END SUGARCRM flav=pro ONLY
 	'LBL_BUG_INFORMATION' => 'Overview',
 
     //For export labels

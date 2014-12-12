@@ -193,7 +193,6 @@ function hideOverlay() {
 }
 
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 function confirmReassignRecords() {
     var status = document.getElementsByName('status');
     if(verify_data(document.EditView)) {
@@ -232,7 +231,6 @@ function confirmReassignRecords() {
         return false;
     }
 }
-<!--//END SUGARCRM flav=pro ONLY -->
 
 function verify_data(form)
 {

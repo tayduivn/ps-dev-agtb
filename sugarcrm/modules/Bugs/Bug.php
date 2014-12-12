@@ -20,9 +20,7 @@ class Bug extends SugarBean {
 	var $date_modified;
 	var $modified_user_id;
 	var $assigned_user_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $bug_number;
 	var $description;
 	var $name;
@@ -47,10 +45,8 @@ class Bug extends SugarBean {
 	var $email_id;
 	var $assigned_user_name;
 	var $type;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $system_id;
-	//END SUGARCRM flav=pro ONLY
 
 	//BEGIN Additional fields being added to Bug Tracker
 
@@ -124,23 +120,17 @@ class Bug extends SugarBean {
                                bugs.*
 
                                 ,users.user_name as assigned_user_name, releases.id release_id, releases.name release_name";
-                                //BEGIN SUGARCRM flav=pro ONLY
                                 $query .= ", teams.name AS team_name";
-                                //END SUGARCRM flav=pro ONLY
         $query .= $custom_join['select'];
                                 $query .= " FROM bugs ";
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
 		$query .= "				LEFT JOIN releases ON bugs.found_in_release=releases.id
 								LEFT JOIN users
                                 ON bugs.assigned_user_id=users.id";
-                                //BEGIN SUGARCRM flav=pro ONLY
                                 $query .= " LEFT JOIN teams ON bugs.team_id=teams.id";
-                                //END SUGARCRM flav=pro ONLY
                                 $query .= "  ";
         $query .= $custom_join['join'];
             $where_auto = '1=1';
@@ -255,9 +245,7 @@ class Bug extends SugarBean {
 	   $the_array['RELEASE']= $this->release_name;
 	   $the_array['BUG_NUMBER'] = $this->bug_number;
 	   $the_array['ENCODED_NAME']=$this->name;
-    	//BEGIN SUGARCRM flav=pro ONLY
     	$the_array['BUG_NUMBER'] = format_number_display($this->bug_number,$this->system_id);
-    	//END SUGARCRM flav=pro ONLY
 
     	return  $the_array;
 	}
@@ -308,7 +296,6 @@ class Bug extends SugarBean {
 	}
 
 	function save($check_notify = FALSE){
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id))
 		{
 
@@ -319,7 +306,6 @@ class Bug extends SugarBean {
 			}
 			$this->system_id = $system_id;
 		}
-		//END SUGARCRM flav=pro ONLY
 		return parent::save($check_notify);
 	}
 }

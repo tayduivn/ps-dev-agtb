@@ -32,9 +32,7 @@ $viewdefs['Quotes']['mobile']['view']['edit'] = array(
                 'quote_type',
                 'description',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

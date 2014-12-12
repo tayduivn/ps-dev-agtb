@@ -47,10 +47,8 @@ class SugarTestUserUtilities
         if ($is_admin) {
             $user->is_admin = 1;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         $user->default_team = '1'; //Set Default Team to Global
         $user->team_id = '1';
-        //END SUGARCRM flav=pro ONLY
         if ( $save ) {
             $user->save();
         }
@@ -67,10 +65,8 @@ class SugarTestUserUtilities
             $in = "'" . implode("', '", $user_ids) . "'";
             $GLOBALS['db']->query("DELETE FROM users WHERE id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id IN ({$in})");
-            //BEGIN SUGARCRM flav=pro ONLY
             $GLOBALS['db']->query("DELETE FROM teams WHERE associated_user_id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM team_memberships WHERE user_id IN ({$in})");
-            //END SUGARCRM flav=pro ONLY
             // delete any created email address rows
             $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Users' AND bean_id IN ({$in}))");
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE bean_module='Users' AND bean_id IN ({$in})");

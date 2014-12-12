@@ -79,9 +79,7 @@
 					<td align='center'>
 						<table id="new_module" onclick="ModuleBuilder.addModule('{$package->name}')" class='wizardButton' onmousedown="ModuleBuilder.buttonDown(this);return false;" onmouseout="ModuleBuilder.buttonOut(this);">
 						<tr>
-						{* //BEGIN SUGARCRM flav=pro ONLY *}
 						<td  align='center'>{sugar_image name="NewModule" width=32 height=32}</td>
-						{* //END SUGARCRM flav=pro ONLY *}
 						{* //BEGIN SUGARCRM flav=com ONLY *}
 						<td  align='center'>{sugar_image name="NewModule" width=48 height=48}</td>
 						{* //END SUGARCRM flav=com ONLY *}
@@ -102,9 +100,7 @@
 						<td align='center'>
 						<table id= "existing_module" onclick="ModuleBuilder.viewModule('{$package->name}', '{$name}')" class='wizardButton' onmousedown="ModuleBuilder.buttonDown(this);return false;" onmouseout="ModuleBuilder.buttonOut(this);">
 						  <tr>
-							  {* //BEGIN SUGARCRM flav=pro ONLY *}
 						      <td  align='center'>{sugar_image name=$imgurl width=32 height=32}</td>
-							  {* //END SUGARCRM flav=pro ONLY *}
 							  {* //BEGIN SUGARCRM flav=com ONLY *}
 						      <td  align='center'>{sugar_image name=$type width=48 height=48}</td>
 							  {* //END SUGARCRM flav=com ONLY *}

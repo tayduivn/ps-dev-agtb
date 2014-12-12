@@ -14,9 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: vardefs.php 56510 2010-05-17 18:54:49Z jenny $
 $dictionary['ProjectTask'] = array('audited'=>true,
     'table' => 'project_task',
-//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
-//END SUGARCRM flav=pro ONLY
     'unified_search' => true,
     'full_text_search' => true,
     'unified_search_default_enabled' => false,
@@ -85,7 +83,6 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'required' => false,
             'type' => 'text',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'resource_id' => array(
             'name' => 'resource_id',
             'vname' => 'LBL_RESOURCE_ID',
@@ -100,7 +97,6 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'type' => 'text',
             'source' => 'non-db',
         ),
-        //END SUGARCRM flav=pro ONLY
         'predecessors' => array(
             'name' => 'predecessors',
             'vname' => 'LBL_PREDECESSORS',
@@ -474,8 +470,6 @@ array (
 );
 
 VardefManager::createVardef('ProjectTask','ProjectTask', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

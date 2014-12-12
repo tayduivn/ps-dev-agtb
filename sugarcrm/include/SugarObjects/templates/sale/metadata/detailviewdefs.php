@@ -35,9 +35,7 @@ $viewdefs[$module_name]['DetailView'] = array(
         array('lead_source' ,array('name'=>'date_entered', 'customCode'=>'{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}'),
         ),
         array(
-		 //BEGIN SUGARCRM flav=pro ONLY
 		'team_name',
-		 //END SUGARCRM flav=pro ONLY
 		'probability'),
         array('assigned_user_name', array('name'=>'date_modified', 'label'=>'LBL_DATE_MODIFIED', 'customCode'=>'{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}')),
                 array(array('name' => 'description', 'nl2br' => true)),

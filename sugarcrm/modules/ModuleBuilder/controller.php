@@ -169,24 +169,18 @@ class ModuleBuilderController extends SugarController
                 case MB_DETAILVIEW :
                 case MB_QUICKCREATE :
                 case MB_RECORDVIEW :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'layoutView';
                     break;
                 case MB_LISTVIEW :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSLISTVIEW :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'listView';
                     break;
                 case MB_BASICSEARCH :
                 case MB_ADVANCEDSEARCH :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSBASICSEARCH :
                 case MB_WIRELESSADVANCEDSEARCH :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'searchView';
                     break;
                 case MB_DASHLET :
@@ -478,7 +472,6 @@ class ModuleBuilderController extends SugarController
                 //Ensure the vardefs are up to date for this module before we rebuild the cache now.
                 VardefManager::loadVardef($module, $obj, true);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well.
                 $relatedMods = array();
                 if (!empty($field->dependency)) {
@@ -497,7 +490,6 @@ class ModuleBuilderController extends SugarController
                         VardefManager::loadVardef($mName, $oName, true);
                     }
                 }
-                //END SUGARCRM flav=pro ONLY
                 //#28707 ,clear all the js files in cache
                 $repair->module_list = array();
                 $repair->clearJsFiles();
@@ -565,7 +557,6 @@ class ModuleBuilderController extends SugarController
 
         //Ensure the vardefs are up to date for this module before we rebuild the cache now.
         VardefManager::loadVardef($module, $obj, true);
-        //BEGIN SUGARCRM flav=pro ONLY
         //Make sure to clear the vardef for related modules as well
         $relatedMods = array();
         if (!empty($field->dependency))
@@ -576,7 +567,6 @@ class ModuleBuilderController extends SugarController
             $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
             VardefManager::clearVardef($mName, $oName);
         }
-        //END SUGARCRM flav=pro ONLY
 
         // now clear the cache so that the results are immediately visible
         TemplateHandler::clearCache($module);

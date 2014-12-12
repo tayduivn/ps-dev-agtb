@@ -305,11 +305,9 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference("email_link_type", "sugar");
         $_SESSION["isMobile"] = true;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $expected = "other";
         $actual   = $this->_user->getEmailClientPreference();
         $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and PRO+");
-        //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=com ONLY
         $expected = "sugar";

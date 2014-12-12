@@ -33,12 +33,10 @@ $listViewDefs['Campaigns'] = array(
         'label' => 'LBL_LIST_END_DATE',
         'default' => true),        
         
-//BEGIN SUGARCRM flav=pro ONLY
 	'TEAM_NAME' => array(
 		'width' => '15', 
 		'label' => 'LBL_LIST_TEAM',
         'default' => false),
-//END SUGARCRM flav=pro ONLY
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '8', 
 		'label' => 'LBL_LIST_ASSIGNED_USER',

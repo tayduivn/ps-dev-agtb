@@ -97,7 +97,6 @@ $vardefs = array (
 
 		),
 
-			//BEGIN SUGARCRM flav=pro ONLY
 	    'system_id' => array (
 			'name' => 'system_id',
 			'vname' => 'LBL_SYSTEM_ID',
@@ -105,7 +104,6 @@ $vardefs = array (
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'The offline client device that created the bug'
 		),
-			//END SUGARCRM flav=pro ONLY
 
 
 			//not in cases.

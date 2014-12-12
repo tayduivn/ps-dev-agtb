@@ -117,7 +117,7 @@ $popup_request_data = array(
 $xtpl->assign('encoded_approvers_popup_request_data', $json->encode($popup_request_data));
 
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 $popup_request_data = array(
 	'call_back_function' => 'set_return',
 	'form_name' => 'EditView',
@@ -128,7 +128,6 @@ $popup_request_data = array(
 	);
 $json = getJSONobj();
 $xtpl->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
-//END SUGARCRM flav=pro ONLY
 
 $popup_request_data = array(
 	'call_back_function' => 'set_return',
@@ -162,7 +161,7 @@ $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $javascript = get_set_focus_js().get_validate_record_js();
 
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('include/QuickSearchDefaults.php');
 require_once('modules/KBDocuments/SearchUtils.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
@@ -177,7 +176,6 @@ require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($focus->field_defs);
 $sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
-//END SUGARCRM flav=pro ONLY
 
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '; enableQS();</script>';
 /*
@@ -316,7 +314,7 @@ else{
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], ''));
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 if (empty($focus->team_id)) {
 	$xtpl->assign("TEAM_NAME", $current_user->default_team_name);
 	$xtpl->assign("TEAM_ID", $current_user->default_team);
@@ -364,11 +362,9 @@ $code = $teamSetField->getClassicView();
 $xtpl->assign("TEAM_SET_FIELD", $code);
 $xtpl->parse("main.pro");
 /* comment out the non-pro code
-//END SUGARCRM flav=pro ONLY
 $xtpl->parse("main.open_source");
-//BEGIN SUGARCRM flav=pro ONLY
+
 */
-//END SUGARCRM flav=pro ONLY
 
 global $timedate;
 $xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());

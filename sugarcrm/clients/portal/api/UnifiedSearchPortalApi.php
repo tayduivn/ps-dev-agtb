@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/UnifiedSearchApi.php';
 
 class UnifiedSearchPortalApi extends UnifiedSearchApi {
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This function is used to determine the search engine to use
      * @param $api ServiceBase The API class of the request
@@ -25,5 +24,4 @@ class UnifiedSearchPortalApi extends UnifiedSearchApi {
     {
         return 'SugarSearchEngine';
     }
-    //END SUGARCRM flav=pro ONLY
 }

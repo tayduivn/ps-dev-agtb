@@ -267,9 +267,7 @@ echo get_validate_chart_js();
 							count( * ) AS opp_count,
 							sum(amount_usdollar/1000) AS total
 						FROM users,opportunities  ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$opp->add_team_security_where_clause($query);
-			//END SUGARCRM flav=pro ONLY
 			$query .= "WHERE " .$where;
 			$query .= " GROUP BY opportunities.sales_stage,users.user_name,opportunities.assigned_user_id";
 
@@ -457,9 +455,7 @@ echo get_validate_chart_js();
 						count( * ) AS opp_count,
 						sum(amount_usdollar/1000) AS total
 					FROM users,opportunities  ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where;
 		$query .= " GROUP BY opportunities.sales_stage,users.user_name,opportunities.assigned_user_id";
 

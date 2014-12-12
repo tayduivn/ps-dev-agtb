@@ -77,10 +77,8 @@ if($_REQUEST['category_name'] == 'All'){
 //WDong Bug 23195: Strings not localized in Role Management.
 echo getClassicModuleTitle($_REQUEST['category_name'],array($app_list_strings['moduleList'][$_REQUEST['category_name']]), false);
 echo $sugar_smarty->fetch('modules/ACLRoles/EditRole.tpl');
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/ACLFields/EditView.php');
 echo ACLFieldsEditView::getView($_REQUEST['category_name'],  $role->id);
-//END SUGARCRM flav=pro ONLY
 echo '</form>';
 }
 sugar_cleanup(true);

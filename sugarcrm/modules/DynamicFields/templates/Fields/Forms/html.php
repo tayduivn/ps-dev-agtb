@@ -24,9 +24,7 @@ function get_body($ss, $vardef)
     }
     $ss->assign('HTML_EDITOR', $edValue);
     $ss->assign('preSave', 'document.popup_form.presave();');
-    //BEGIN SUGARCRM flav=pro ONLY
     $ss->assign('hideReportable', true);
-    //END SUGARCRM flav=pro ONLY
 	///////////////////////////////////
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/html.tpl');
 }

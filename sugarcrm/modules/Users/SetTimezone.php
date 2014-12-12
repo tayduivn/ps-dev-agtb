@@ -29,7 +29,6 @@ global $mod_strings;
 
 $admin = Administration::getSettings("notify");
 
-//BEGIN SUGARCRM flav=pro ONLY
 if ( isset($_SESSION['isMobile']) ) {
 	session_destroy();
 	session_start();
@@ -37,7 +36,6 @@ if ( isset($_SESSION['isMobile']) ) {
     header("Location: index.php?module=Users&action=Login&mobile=1");
     sugar_cleanup(true);
 }
-//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	HELPER FUNCTIONS

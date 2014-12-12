@@ -292,10 +292,9 @@ class PopupSmarty extends ListViewSmarty{
         $this->searchForm->lv = $lv;
         $this->searchForm->displaySavedSearch = false;
 
-        //BEGIN SUGARCRM flav=pro ONLY
+
 		SugarACL::listFilter($this->module, $this->searchForm->fieldDefs, array("owner_override" => true),
 		    array("use_value" => true, "suffix" => '_advanced', "add_acl" => true));
-		//END SUGARCRM flav=pro ONLY
 
         $this->searchForm->populateFromRequest('advanced_search');
         $searchWhere = $this->_get_where_clause();
@@ -382,7 +381,7 @@ class PopupSmarty extends ListViewSmarty{
                 }
             }
         }
-        //BEGIN SUGARCRM flav=pro ONLY
+
         //check for team_set_count
         if(!empty($this->filter_fields['team_name']) && empty($this->filter_fields['team_count'])){
         	$this->filter_fields['team_count'] = true;
@@ -393,7 +392,6 @@ class PopupSmarty extends ListViewSmarty{
         	//Add the team_id entry so that we can retrieve the team_id to display primary team
 			$this->filter_fields['team_id'] = true;
         }
-        //END SUGARCRM flav=pro ONLY
 
 		if (!empty($_REQUEST['query']) || (!empty($GLOBALS['sugar_config']['save_query']) && $GLOBALS['sugar_config']['save_query'] != 'populate_only')) {
 			$data = $this->lvd->getListViewData($this->seed, $searchWhere, 0, -1, $this->filter_fields, $params, 'id');

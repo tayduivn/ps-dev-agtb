@@ -77,9 +77,7 @@ class WorkFlowSchedule extends SugarBean {
     // This is the list of fields that are required
     var $required_fields =  array("module"=>1, 'bean_id'=>1, 'workflow_id'=>1);
 
-    //BEGIN SUGARCRM flav=pro ONLY
     var $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version

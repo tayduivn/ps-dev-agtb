@@ -58,9 +58,7 @@ $viewdefs[$module_name]['DetailView'] = array(
   ),
 
   array (
-   //BEGIN SUGARCRM flav=pro ONLY
 	  'team_name',
-	//END SUGARCRM flav=pro ONLY
     array('name'=>'assigned_user_name', 'label'=>'LBL_ASSIGNED_TO'),
   ),
 

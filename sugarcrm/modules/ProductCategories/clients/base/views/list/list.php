@@ -21,7 +21,6 @@ $viewdefs['ProductCategories']['base']['view']['list'] = array(
                     'default' => true,
                     'link' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'parent_name',
                     'enabled' => true,
@@ -32,7 +31,6 @@ $viewdefs['ProductCategories']['base']['view']['list'] = array(
                     'id' => 'parent_id',
                     'label' => 'LBL_PARENT_CATEGORY',
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'description',
                     'enabled' => true,

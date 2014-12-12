@@ -54,14 +54,12 @@ if(isset($_REQUEST['domerge'])){
 	
 	$opp = BeanFactory::getBean('Opportunities');
 	$opp->update_currency_id($currencies, $_REQUEST['mergeTo'] );
-//BEGIN SUGARCRM flav=pro ONLY
 	
 	$product = BeanFactory::getBean('ProductTemplates');
 	$product->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 
 	$quote = BeanFactory::getBean('Quotes');
 	$quote->update_currency_id($currencies, $_REQUEST['mergeTo'] );
-//END SUGARCRM flav=pro ONLY
 	foreach($currencies as $cur){
 		if($cur != $_REQUEST['mergeTo'])
 		$focus->mark_deleted($cur);

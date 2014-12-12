@@ -95,9 +95,7 @@ $viewdefs['Documents']['EditView'] = array(
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
-        //BEGIN SUGARCRM flav=pro ONLY
         array('name'=>'team_name','displayParams'=>array('required'=>true)),
-        //END SUGARCRM flav=pro ONLY
     ),
   ),
 )

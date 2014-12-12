@@ -21,7 +21,6 @@ $searchFields[$module_name] =
 		$_object_name. '_number'=> array('query_type'=>'default','operator'=>'in'),
 		'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
 		'assigned_user_id'=> array('query_type'=>'default'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -30,7 +29,6 @@ $searchFields[$module_name] =
 			                        and sugarfavorites.module = \''.$module_name.'\'
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		'open_only' => array(
 			'query_type'=>'default',
 			'db_field'=>array('status'),

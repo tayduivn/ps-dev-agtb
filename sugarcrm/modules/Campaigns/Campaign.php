@@ -29,10 +29,8 @@ class Campaign extends SugarBean {
     var $currency_id;
     var $base_rate;
 	var $modified_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 	var $name;
 	var $start_date;
 	var $end_date;

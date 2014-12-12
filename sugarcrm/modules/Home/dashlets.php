@@ -20,7 +20,6 @@ $defaultDashlets = array(
 						'MyLeadsDashlet'=>'Leads',
 						 );
 
-//BEGIN SUGARCRM flav=pro ONLY
 $defaultSalesChartDashlets = array( translate('DEFAULT_REPORT_TITLE_6', 'Reports') => 'Opportunities',
 	                     );    
 
@@ -56,7 +55,5 @@ $defaultTrackingDashlets = array('TrackerDashlet'=>'Trackers',
 							    );
 							    
 $defaultTrackingReportDashlets =  array(translate('DEFAULT_REPORT_TITLE_27', 'Reports')=>'Trackers');
-
-//END SUGARCRM flav=pro ONLY
 
 if (SugarAutoLoader::fileExists('custom/modules/Home/dashlets.php')) include_once('custom/modules/Home/dashlets.php');

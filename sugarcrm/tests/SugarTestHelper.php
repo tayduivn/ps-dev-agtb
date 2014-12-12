@@ -70,13 +70,11 @@ $repair->show_output = false;
 $repair->clearJsLangFiles();
 $repair->clearJsFiles();
 
-//BEGIN SUGARCRM flav=pro ONLY
 // make sure the client license has been validated
 $license = new Administration();
 $license = $license->retrieveSettings('license', true);
 if ( !isset($license->settings['license_vk_end_date']))
     $license->saveSetting('license', 'vk_end_date', date('Y-m-d',strtotime('+1 year')));
-//END SUGARCRM flav=pro ONLY
 // mark that we got by the admin wizard already
 $focus = new Administration();
 $focus->retrieveSettings();
@@ -113,7 +111,6 @@ require_once 'SugarTestReflection.php';
 require_once 'SugarTestConfigUtilities.php';
 require_once 'SugarTestDashboardUtilities.php';
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestRevenueLineItemUtilities.php';
@@ -131,7 +128,6 @@ require_once 'SugarTestProspectUtilities.php';
 require_once 'SugarTestProspectListsUtilities.php';
 require_once 'SugarTestNotificationUtilities.php';
 require_once 'SugarTestWebLogicHookUtilities.php';
-//END SUGARCRM flav=pro ONLY
 require_once 'SugarTestRelationshipUtilities.php';
 require_once 'SugarTestSugarEmailAddressUtilities.php';
 require_once 'SugarTestCaseUtilities.php';

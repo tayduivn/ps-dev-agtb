@@ -53,9 +53,7 @@ class Scheduler extends SugarBean {
 	var $new_schema				= true;
 	var $process_save_dates 	= true;
 	var $order_by;
-	//BEGIN SUGARCRM flav=pro ONLY
 	public $disable_row_level_security = true;
-	//END SUGARCRM flav=pro ONLY
 
 	public static $job_strings;
 
@@ -791,7 +789,6 @@ class Scheduler extends SugarBean {
 		// truncate scheduler-related tables
 		$this->db->query('DELETE FROM schedulers');
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$sched1 = BeanFactory::getBean('Schedulers');
 		$sched1->name				= $mod_strings['LBL_OOTB_WORKFLOW'];
 		$sched1->job				= 'function::processWorkflow';
@@ -814,7 +811,6 @@ class Scheduler extends SugarBean {
 		$sched2->modified_user_id	= '1';
 		$sched2->catch_up			= '1';
 		$sched2->save();
-		//END SUGARCRM flav=pro ONLY
 
         $sched3 = BeanFactory::getBean('Schedulers');
         $sched3->name               = $mod_strings['LBL_OOTB_TRACKER'];
@@ -877,7 +873,6 @@ class Scheduler extends SugarBean {
         $sched7->save();
 
 
-//BEGIN SUGARCRM flav=pro ONLY
         $sched9 = BeanFactory::getBean('Schedulers');
         $sched9->name               = $mod_strings['LBL_UPDATE_TRACKER_SESSIONS'];
         $sched9->job                = 'function::updateTrackerSessions';
@@ -889,7 +884,6 @@ class Scheduler extends SugarBean {
         $sched9->modified_user_id   = '1';
         $sched9->catch_up           = '1';
         $sched9->save();
-//END SUGARCRM flav=pro ONLY
 
 
         $sched12 = BeanFactory::getBean('Schedulers');

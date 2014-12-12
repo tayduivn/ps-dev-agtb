@@ -85,10 +85,8 @@ function create_category($parent_id){
 	$category = BeanFactory::getBean('ProductCategories');
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] ." Widgets";
 	$category->parent_id = $parent_id;
-    //BEGIN SUGARCRM flav=pro ONLY
     $key = array_rand($sugar_demodata['users']);
     $category->assigned_user_id = $sugar_demodata['users'][$key]['id'];
-    //END SUGARCRM flav=pro ONLY
 	$category->save();
 	$cat_id = $category->id;
 	unset($category);

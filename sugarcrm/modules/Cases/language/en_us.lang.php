@@ -70,11 +70,9 @@ $mod_strings = array (
 	'LBL_TYPE' => 'Type',
 	'LBL_WORK_LOG' => 'Work Log',
 	'LNK_IMPORT_CASES' => 'Import Cases',
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LNK_CASE_REPORTS' => 'View Case Reports',
 	'LBL_SHOW_IN_PORTAL' => 'Show in Portal',
 	'LBL_CREATE_KB_DOCUMENT' => 'Create Article',
-	//END SUGARCRM flav=pro ONLY
 
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',

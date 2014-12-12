@@ -98,9 +98,7 @@ class ViewShowDuplicates extends SugarView
             $input .= "<input type='hidden' name='relate_id' value='{$_POST['Leadsrelate_id']}'>\n";
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $input .= get_teams_hidden_inputs('Leads');
-        //END SUGARCRM flav=pro ONLY
 
         $emailAddress = BeanFactory::getBean('EmailAddresses');
         $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($lead);

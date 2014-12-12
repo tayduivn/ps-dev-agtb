@@ -120,14 +120,12 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'readonly' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_TEAM',
                     'default' => false,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

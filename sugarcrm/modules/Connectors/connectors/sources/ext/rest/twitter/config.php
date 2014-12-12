@@ -25,10 +25,8 @@ $config = array (
   ),
   'order' => 5,
   'properties' => array (
-      //BEGIN SUGARCRM flav=pro ONLY
       'oauth_consumer_key' => '',
       'oauth_consumer_secret' => '',
-      //END SUGARCRM flav=pro ONLY
       ),
 );
 

@@ -29,9 +29,7 @@ class QuickCreate extends EditView {
         parent::process();
 
         $this->ss->assign('ASSIGNED_USER_ID', $current_user->id);
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('TEAM_ID', $current_user->default_team);
-        //END SUGARCRM flav=pro ONLY
 
         $this->ss->assign('REQUEST', array_merge($_GET, $_POST));
         $this->ss->assign('CALENDAR_LANG', "en");

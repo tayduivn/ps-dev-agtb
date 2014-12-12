@@ -19,9 +19,7 @@ $dashletData['MyQuotesDashlet']['searchFields'] = array('quote_stage'           
                                                        'name'             => array('default' => ''),
 												       'date_quote_expected_closed'             => array('default' => ''),
                                                        //'date_modified'    => array('default' => ''),
-                                                       //BEGIN SUGARCRM flav=pro ONLY
                                                        'team_id'          => array('default' => '', 'label' => 'LBL_TEAMS'),
-                                                       //END SUGARCRM flav=pro ONLY
                                                        'assigned_user_id' => array('type'    => 'assigned_user_name',
 																				   'label'   => 'LBL_ASSIGNED_TO',
                                                                                    'default' => $current_user->name));

@@ -17,9 +17,7 @@ global $current_user;
 
 $dashletData['<module_name>Dashlet']['searchFields'] = array('date_entered'     => array('default' => ''),
                                                           'date_modified'    => array('default' => ''),
-                                                          //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => ''),
-                                                          //END SUGARCRM flav=pro ONLY
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name));
 $dashletData['<module_name>Dashlet']['columns'] =  array(   'document_name' => array('width'   => '40', 
@@ -35,8 +33,6 @@ $dashletData['<module_name>Dashlet']['columns'] =  array(   'document_name' => a
                                                                             'label'   => 'LBL_CREATED'),
                                                       'assigned_user_name' => array('width'   => '8', 
                                                                                      'label'   => 'LBL_LIST_ASSIGNED_USER'),
-                                                      //BEGIN SUGARCRM flav=pro ONLY
                                                       'team_name' => array('width'   => '15', 
                                                                            'label'   => 'LBL_LIST_TEAM'),
-                                                      //END SUGARCRM flav=pro ONLY
                                                );

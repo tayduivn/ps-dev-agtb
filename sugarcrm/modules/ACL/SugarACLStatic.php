@@ -23,7 +23,6 @@ class SugarACLStatic extends SugarACLStrategy
      */
     public function checkAccess($module, $action, $context)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         // Check if we have to apply team security based on ACLs
         // If user had admin rights then team security is disabled
         if($action == "team_security") {
@@ -43,7 +42,6 @@ class SugarACLStatic extends SugarACLStrategy
                 return true;
             }
         }
-        //END SUGARCRM flav=pro ONLY
         $user = $this->getCurrentUser($context);
         if($user && $user->isAdmin()) {
             return true;
@@ -51,11 +49,9 @@ class SugarACLStatic extends SugarACLStrategy
 
         // make sure we have the correct action name
         $action = !empty($_REQUEST['bwcFrame']) ? strtolower($action) : $this->fixUpActionName($action);
-        //BEGIN SUGARCRM flav=pro ONLY
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);
         }
-        //END SUGARCRM flav=pro ONLY
         if(!empty($context['bean'])) {
             return $this->beanACL($module, $action, $context);
         }
@@ -93,7 +89,6 @@ class SugarACLStatic extends SugarACLStrategy
         'detailview' => 'view',
         'save' => 'edit',
     );
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Check access to fields
      * @param string $module
@@ -143,7 +138,6 @@ class SugarACLStatic extends SugarACLStrategy
 
         return ($field_access == 4 || $field_access == $access);
     }
-//END SUGARCRM flav=pro ONLY
     /**
      * Check bean ACLs
      * @param string $module

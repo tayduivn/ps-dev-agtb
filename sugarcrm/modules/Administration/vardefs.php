@@ -128,7 +128,6 @@ $dictionary['UpgradeHistory'] = array(
     ),
 );
 
-//BEGIN SUGARCRM flav=pro ONLY
 $dictionary['System'] = array ( 'table' => 'systems',
                          'fields' => array (
                                 'id' => array(
@@ -273,6 +272,5 @@ $dictionary['System'] = array ( 'table' => 'systems',
                                      'fields'=>array('session_id')),
                              )
                     );
-                    //END SUGARCRM flav=pro ONLY
 
 ?>

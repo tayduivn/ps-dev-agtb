@@ -14,31 +14,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $default_modules_sources = array (
   'Accounts' =>
   array (
-    //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
-    //END SUGARCRM flav=pro ONLY
      //'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Contacts' =>
   array (
-    //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
-    //END SUGARCRM flav=pro ONLY
      //'ext_rest_insideview' => 'ext_rest_insideview',
   ),
 
   'Leads' =>
   array (
-    //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
-    //END SUGARCRM flav=pro ONLY
     // 'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Prospects' =>
   array (
-    //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
-    //END SUGARCRM flav=pro ONLY
   ),
   'Opportunities' =>
   array (

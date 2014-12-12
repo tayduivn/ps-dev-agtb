@@ -160,7 +160,6 @@ var AjaxObject = {
 			document.getElementById('type' + idx).value = a.type;
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
         var teamOptions = document.getElementById('teamOptions' + idx);
         teamOptions.innerHTML = "";
 
@@ -170,8 +169,6 @@ var AjaxObject = {
 	        teamOptions.innerHTML = teamOptionsString;
 	        SUGAR.util.evalScript(teamOptionsString);
         }
-
-		//END SUGARCRM flav=pro ONLY
 
 		// apply attachment values
 		SUGAR.email2.composeLayout.loadAttachments(a.attachments);
@@ -794,7 +791,6 @@ AjaxObject.detailView = {
 	    var get = "";
 	    var found_teams = false;
 	    var warning_message = mod_strings.LBL_WARN_NO_USERS;
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    //Ensure a valid team selection.
 	    if( typeof validate['Distribute'] == 'undefined' )
 	       addToValidate('Distribute', 'team_name', 'teamset_mass', false, 'Team');
@@ -822,7 +818,6 @@ AjaxObject.detailView = {
 	           teamUpdateType = el[j].value;
 	    }
 	    get = get + "&team_update_type=" + teamUpdateType;
-	    //END SUGARCRM flav=pro ONLY
 	    if(!found_teams && assign_user_id == '' )
 	    {
 	        alert(warning_message);
@@ -992,13 +987,11 @@ AjaxObject.detailView = {
         } // if
 		var get = "";
         var editView = document.getElementById('ImportEditView');
-        //BEGIN SUGARCRM flav=pro ONLY
         var teamIdsArray = SUGAR.collection.prototype.getTeamIdsfromUI('ImportEditView', 'team_name');
 		if (teamIdsArray != null && teamIdsArray.length > 0)   {
             get = get + "&team_ids=" + teamIdsArray.join(",") + "&primary_team_id=" + SUGAR.collection.prototype.getPrimaryTeamidsFromUI('ImportEditView', 'team_name');
             //var team_id = editView.team_id.value;
         }
-		//END SUGARCRM flav=pro ONLY
         if (editView.assigned_user_id != null) {
             get = get + "&user_id=" + editView.assigned_user_id.value
             //var user_id = editView.assigned_user_id.value;
@@ -1670,7 +1663,6 @@ var callbackContextmenus = {
 		scope   : AjaxObject
 	}
 };
-//BEGIN SUGARCRM flav=pro ONLY
 var updateMailingLists = {
 	success	: function(o) {
 		SUGAR.email2.userPrefs.emailLists = YAHOO.lang.JSON.parse(o.responseText);
@@ -1680,7 +1672,6 @@ var updateMailingLists = {
 	timeout	: AjaxObject.timeout,
 	scope	: AjaxObject
 };
-//END SUGARCRM flav=pro ONLY
 
 var callbackCheckEmail2 = {
 	success : function(o) {

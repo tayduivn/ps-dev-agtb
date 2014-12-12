@@ -19,9 +19,7 @@
 		</div>
 
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 <!--    <div id="tab_rules" class="tab-content">
 			{* include file="modules/Emails/templates/emailSettingsRules.tpl" *}
 		</div> -->
-<!--//END SUGARCRM flav=pro ONLY -->
 	</div>

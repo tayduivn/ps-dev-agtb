@@ -254,9 +254,7 @@ $dictionary['InboundEmail'] = array('table' => 'inbound_email', 'comment' => 'In
 
 
 VardefManager::createVardef('InboundEmail','InboundEmail', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 
 ?>

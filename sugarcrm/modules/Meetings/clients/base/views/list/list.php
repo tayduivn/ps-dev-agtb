@@ -73,14 +73,12 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'readonly' => true,
                 ),
                 /*-------------------------------*/
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_LIST_TEAM',
                     'default' => false,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

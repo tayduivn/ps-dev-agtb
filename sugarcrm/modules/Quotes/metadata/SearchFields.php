@@ -21,7 +21,6 @@ $searchFields['Quotes'] =
         'assigned_user_id'=> array('query_type'=>'default'),
         'quote_type'=> array('query_type'=>'default', 'options' => 'quote_type_dom', 'template_var' => 'TYPE_OPTIONS', 'options_add_blank' => true),
         'quote_num'=> array('query_type'=>'default','operator'=>'in'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -30,7 +29,6 @@ $searchFields['Quotes'] =
 			                        and sugarfavorites.module = \'Quotes\'
 			                        and sugarfavorites.assigned_user_id = {0}',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		'open_only' => array(
 			'query_type'=>'default',
 			'db_field'=>array('quote_stage'),

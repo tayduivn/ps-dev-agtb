@@ -68,7 +68,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'create-article-action',
                     'name' => 'create_kbdocument_button',
@@ -79,7 +78,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:find_duplicates_button:click',

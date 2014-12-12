@@ -17,7 +17,7 @@
 {assign var="alt_end" value=$navStrings.end}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
-    <tr class="pagination" role=”presentation”>
+    <tr class="pagination" role=âpresentationâ>
         <td colspan='{$colCount+1}' align='right'>
             <table border='0' cellpadding='0' cellspacing='0' width='100%'>
                 <tr>
@@ -154,9 +154,7 @@
                     {capture name='tmp1' assign='alt_edit'}{sugar_translate label="LNK_EDIT"}{/capture}
                     {capture name='tmp1' assign='alt_view'}{sugar_translate label="LBL_VIEWINLINE"}{/capture}
 					<a
-                        {* //BEGIN SUGARCRM flav=pro ONLY *}
                         class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
-                        {* //END SUGARCRM flav=pro ONLY *}
                         title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home'>{sugar_getimage name="edit_inline.png" attr='border="0" ' alt="$alt_edit"}</a>
 				{/if}
 				{if $pageData.access.view}

@@ -37,9 +37,7 @@ class Notifications extends Basic
     public $is_read;
     public $severity;
     public $disable_custom_fields = true;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
-    //END SUGARCRM flav=pro  ONLY
 
 
     public function __construct()

@@ -666,9 +666,7 @@ class MetaDataManager
      */
     public function getModuleData($moduleName, MetaDataContextInterface $context = null)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
-        //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
         if (!empty($vardefs['fields']) && is_array($vardefs['fields'])) {
             require_once 'include/MassUpdate.php';
@@ -692,9 +690,7 @@ class MetaDataManager
 
         // Indicate whether a Module has activity stream enabled
         $data['activityStreamEnabled'] = ActivityQueueManager::isEnabledForModule($moduleName);
-        //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
-        //END SUGARCRM flav=pro ONLY
 
         // TODO we need to have this kind of information on the module itself not hacked around on globals
         $data['isBwcEnabled'] = in_array($moduleName, $GLOBALS['bwcModules']);
@@ -702,12 +698,10 @@ class MetaDataManager
         $seed = BeanFactory::newBean($moduleName);
         $data['globalSearchEnabled'] = $this->getGlobalSearchEnabled($seed, $vardefs, $this->platforms[0]);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($seed)) {
             $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
             $data['favoritesEnabled'] = $favoritesEnabled;
         }
-        //END SUGARCRM flav=pro ONLY
         // Currently no way to disable following
         // But this flag is here in case we add that feature in the future
         $data['followingEnabled'] = true;
@@ -1764,10 +1758,8 @@ class MetaDataManager
         $data['flavor'] = $GLOBALS['sugar_flavor'];
         $data['version'] = $GLOBALS['sugar_version'];
         $data['build'] = $GLOBALS['sugar_build'];
-        //BEGIN SUGARCRM flav=pro ONLY
         // Product Name for Professional edition.
         $data['product_name'] = "SugarCRM Professional";
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         // Product Name for Enterprise edition.
         $data['product_name'] = "SugarCRM Enterprise";
@@ -1793,7 +1785,6 @@ class MetaDataManager
             $data['system_tweettocase_on'] = true;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
             $data['fts'] = array(
@@ -1805,7 +1796,6 @@ class MetaDataManager
                 'enabled' => false,
             );
         }
-        //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=ent ONLY
         //Adds the portal status to the server info collection.

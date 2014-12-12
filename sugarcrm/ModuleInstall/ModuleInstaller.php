@@ -3042,11 +3042,9 @@ private function dir_file_count($path){
                     break;
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
                 return $_SESSION['get_workflow_admin_modules_for_user'];
             }
-            //END SUGARCRM flav=pro ONLY
         }
     }
 

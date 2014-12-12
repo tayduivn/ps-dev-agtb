@@ -206,10 +206,8 @@ if ($redirect!='0') {
 		echo"<script>function validateCaptchaAndSubmit(){document.getElementById('user_password').value=document.getElementById('new_password').value;document.getElementById('ChangePasswordForm').submit();}</script>";
 	}
 $pwd_settings=$GLOBALS['sugar_config']['passwordsetting'];
-//BEGIN SUGARCRM flav=pro ONLY
 $pwd_regex=str_replace( "\\","\\\\",$pwd_settings['customregex']);
 $sugar_smarty->assign("REGEX",$pwd_regex);
-//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_dev.png'));
@@ -247,11 +245,9 @@ $sugar_smarty->assign('SITE_URL', $GLOBALS['sugar_config']['site_url']);
 //BEGIN SUGARCRM flav!=pro ONLY
 $rules = "'','',''";
 //END SUGARCRM flav!=pro ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 $rules = "'" . $GLOBALS["sugar_config"]["passwordsetting"]["minpwdlength"]
 	   . "','" . $GLOBALS['sugar_config']['passwordsetting']['maxpwdlength']
 	   . "','" . $GLOBALS['sugar_config']['passwordsetting']['customregex'] . "'";
-//END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('SUBMIT_BUTTON','<input title="'.$mod_strings['LBL_LOGIN_BUTTON_TITLE']
 	.'" class="button" '

@@ -106,9 +106,7 @@ function commitAjaxFinalTouches($persistence) {
 			$task->created_by = $current_user->id;
 			$task->date_entered = $nowDateTime;
 			$task->date_modified = $nowDateTime;
-			//BEGIN SUGARCRM flav=pro ONLY
 			$task->team_id = '1';
-			//END SUGARCRM flav=pro ONLY
 			$task->save();
 		}
 
@@ -127,9 +125,7 @@ function commitAjaxFinalTouches($persistence) {
 			$email->bcc_addrs_arr = array();
 			$email->date_entered = $nowDateTime;
 			$email->date_modified = $nowDateTime;
-			//BEGIN SUGARCRM flav=pro ONLY
 			$email->team_id = '1';
-			//END SUGARCRM flav=pro ONLY
 			$email->send();
 			$email->save();
 		}

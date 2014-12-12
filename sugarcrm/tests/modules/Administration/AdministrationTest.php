@@ -13,11 +13,9 @@
 class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $configs = array(
-        //BEGIN SUGARCRM flav=pro ONLY
         array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'),
         array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
-        //END SUGARCRM flav=pro ONLY
     );
 
     public static function setUpBeforeClass()
@@ -55,7 +53,6 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($results);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsOneRow()
     {
         /* @var $admin Administration */
@@ -148,6 +145,4 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
             array('{"foo":"bar"}',array('foo'=>'bar')),
         );
     }
-
-    //END SUGARCRM flav=pro ONLY
 }

@@ -44,9 +44,7 @@ class MyMeetingsDashlet extends DashletGeneric {
         $this->hasScript = true;  // dashlet has javascript attached to it                
 
         $this->seedBean = BeanFactory::getBean('Meetings');
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->seedBean->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
     }
 
     function process($lvsParams = array()) {

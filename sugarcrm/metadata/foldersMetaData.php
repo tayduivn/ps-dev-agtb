@@ -60,7 +60,6 @@ $dictionary['folders'] = array(
 			'type'			=> 'id',
 			'required'		=> false,
 		),
-		//BEGIN SUGARCRM flav=pro ONLY
 		array(
 			'name'			=> 'team_id',
 			'type'			=> 'id',
@@ -71,7 +70,6 @@ $dictionary['folders'] = array(
 			'type'			=> 'id',
 			'required'		=> false,
 		),
-		//END SUGARCRM flav=pro ONLY
 
 		array(
 			'name'			=> 'created_by',

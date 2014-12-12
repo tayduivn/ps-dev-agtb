@@ -266,9 +266,7 @@
 <script>
 {literal}
 
-//BEGIN SUGARCRM flav=pro ONLY
 Studio2.calcFieldList = {/literal}{$calc_field_list}{literal};
-//END SUGARCRM flav=pro ONLY
 
 
 var editPanelProperties = function (panelId, view) {

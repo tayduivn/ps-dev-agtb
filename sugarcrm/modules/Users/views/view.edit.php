@@ -107,9 +107,7 @@ var $useForSubpanel = true;
         }else{
             $this->ss->assign('NEW_USER','0');
             $this->ss->assign('NEW_USER_TYPE','DISABLED');
-            //BEGIN SUGARCRM flav=pro ONLY
             $this->ss->assign('REASSIGN_JS', "return confirmReassignRecords();");
-            //END SUGARCRM flav=pro ONLY
         }
 
         ////	END NEW USER CREATION ONLY

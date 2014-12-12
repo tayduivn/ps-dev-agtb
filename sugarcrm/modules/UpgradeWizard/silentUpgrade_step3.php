@@ -265,11 +265,9 @@ if (!$sugar_version)
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
-//END SUGARCRM flav=pro ONLY
 
 if($ce_to_pro_ent) {
 	//add the global team if it does not exist
@@ -301,13 +299,11 @@ if($ce_to_pro_ent) {
     }
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 // we need to add templates when either conversion from CE to Pro+, or upgrade of Pro+ flavors from older versions
 // this needs to be outside of if($ce_to_pro_ent) because it does not cover second case where $ce_to_pro_ent is 'SugarPro'
 logThis("Starting to add pdf template", $path);
 addPdfManagerTemplate();
 logThis("Finished adding pdf template", $path);
-//END SUGARCRM flav=pro ONLY
 
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
@@ -332,7 +328,6 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
 
-//BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
 if (version_compare($sugar_version, '6.7.0', '<')) {
     require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
@@ -343,7 +338,6 @@ if (version_compare($sugar_version, '6.7.0', '<')) {
     // do the config update to add the 'support' platform to any config with the category of 'portal'
     updatePortalConfigToContainPlatform();
 }
-//END SUGARCRM flav=PRO ONLY
 
 // Bug 57216 - Upgrade wizard dying on metadata upgrader because needed files were
 // already called but news needed to replace them. This moves the metadata upgrader

@@ -313,7 +313,6 @@ if(is_admin($current_user)
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
 $sugar_smarty->assign("CANEDIT",$current_user->id == $focus->assigned_user_id || $current_user->is_admin);
-//BEGIN SUGARCRM flav=pro ONLY
 
 // Bug #43092
 // Based on teamset ID, get a list of teams, and use that to check if this user
@@ -334,8 +333,6 @@ if (isset($focus->team_set_id)) {
 // in the project's list of teams.
 $sugar_smarty->assign("CANEDIT",(bool)array_intersect(array_values($list_of_teams),array_keys($current_user->get_my_teams()))  || $current_user->id == $focus->assigned_user_id || $current_user->is_admin);
 
-//END SUGARCRM flav=pro ONLY
-
 require_once('include/Sugarpdf/sugarpdf_config.php');
 $sugar_smarty->assign("PDF_CLASS", PDF_CLASS);
 
@@ -345,10 +342,8 @@ $javascript = new javascript();
 $javascript->setFormName('EditView');
 $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
-//BEGIN SUGARCRM flav=pro ONLY
 $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'true');
 $javascript->addToValidateBinaryDependency('team_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_TEAM'], 'false', '', 'team_id');
-//END SUGARCRM flav=pro ONLY
 $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_ASSIGNED_TO'], 'false', '', 'assigned_user_id');
 
 echo $javascript->getScript();

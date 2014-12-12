@@ -30,10 +30,8 @@ class SavedReport extends SugarBean
 	var $created_by_name;
 	var $modified_by_name;
 	var $is_published;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 	var $chart_type;
 
 	//variables for joining the report schedules table
@@ -60,9 +58,7 @@ class SavedReport extends SugarBean
                 ,"date_entered"
                 ,"date_modified"
                 ,"assigned_user_id"
-				//BEGIN SUGARCRM flav=pro ONLY
                 ,"team_id"
-				//END SUGARCRM flav=pro ONLY
                 ,"modified_user_id"
                 ,"created_by"
 		,"is_published"
@@ -105,12 +101,8 @@ class SavedReport extends SugarBean
 		$this->content = $content;
 		$this->deleted = 0;
 		$this->report_type = $report_type;
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = $team_id;
-		//END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->module = $module;
-		//END SUGARCRM flav=pro ONLY
 		$this->is_published = $is_published;
 		$this->chart_type = $chart_type;
 
@@ -139,26 +131,18 @@ class SavedReport extends SugarBean
 			}
 
 			if ( $flag == 'no'
-			//BEGIN SUGARCRM flav=pro ONLY
 			&& $this->team_id == '1'
-			//END SUGARCRM flav=pro ONLY
 			)
 			{
 				$owner_user = BeanFactory::getBean('Users', $this->assigned_user_id);
-				//BEGIN SUGARCRM flav=pro ONLY
 				$default_team = $owner_user->getPrivateTeamID();
-				//END SUGARCRM flav=pro ONLY
 				$query = "UPDATE $this->table_name set is_published='no' ";
-				//BEGIN SUGARCRM flav=pro ONLY
 				$query .= ", team_id='{$default_team}' ";
-				//END SUGARCRM flav=pro ONLY
 				$query .= " where id='".$this->id."'";
 			}
 			else {
 				$query = "UPDATE $this->table_name set is_published='$flag'";
-				//BEGIN SUGARCRM flav=pro ONLY
 				$query .= ", team_id='1' ";
-				//END SUGARCRM flav=pro ONLY
 				$query .= " where id='".$this->id."'";
 
 			}
@@ -214,7 +198,6 @@ class SavedReport extends SugarBean
 	}
 
 	function get_scheduled_query(){
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		$query = "	SELECT
 					$this->schedules_table.id as schedule_id,
@@ -243,7 +226,6 @@ class SavedReport extends SugarBean
 			$this->next_run = "";
 		}
 	//end get_scheduled_query
-	//END SUGARCRM flav=pro ONLY
 	}
 
 
@@ -269,9 +251,7 @@ class SavedReport extends SugarBean
                                 ON $this->table_name.id=$this->schedules_table.report_id
 								AND $this->schedules_table.deleted=0
 								";
-			//BEGIN SUGARCRM flav=pro ONLY
             $this->add_team_security_where_clause($query,'','INNER',false,true);
-			//END SUGARCRM flav=pro ONLY
                 $where_auto = '1=1';
 				if($show_deleted == 0){
                 	$where_auto = "$this->table_name.deleted=0";

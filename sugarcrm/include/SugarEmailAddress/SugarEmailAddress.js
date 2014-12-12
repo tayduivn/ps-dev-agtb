@@ -420,11 +420,9 @@
 		    
 		    // Add validation to field
             this.EmailAddressValidation(this.emailView, this.id+ 'emailAddress' + this.numberEmailAddresses,this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
-            //BEGIN SUGARCRM flav=pro ONLY
             var form = Dom.getAncestorByTagName(insertInto, "form");
             if (SUGAR.forms.AssignmentHandler.VARIABLE_MAP[form.name])
                 SUGAR.forms.AssignmentHandler.registerForm(form.name, form);
-		    //END SUGARCRM flav=pro ONLY
             this.numberEmailAddresses++;
 			this.addInProgress = false;
 		}, //addEmailAddress
@@ -491,11 +489,9 @@
                Dom.get(this.id + 'emailAddressPrimaryFlag0').value = this.id + 'emailAddress0';
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             //if the form has already been registered, re-register it with the new element
             if (SUGAR.forms.AssignmentHandler.VARIABLE_MAP[form.name])
                 SUGAR.forms.AssignmentHandler.registerForm(form.name, form);
-            //END SUGARCRM flav=pro ONLY
         },
 		
 		toggleCheckbox : function (el)

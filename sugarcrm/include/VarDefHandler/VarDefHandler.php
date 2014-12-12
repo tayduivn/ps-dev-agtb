@@ -12,9 +12,7 @@
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('include/workflow/workflow_utils.php');
-//END SUGARCRM flav=pro ONLY
 /**
  * Vardef Handler Object
  * @api
@@ -37,11 +35,9 @@ class VarDefHandler {
 		if($meta_array_name!=null){
 			global $vardef_meta_array;
 			include("include/VarDefHandler/vardef_meta_arrays.php");
-			//BEGIN SUGARCRM flav=pro ONLY
 			//BEGIN WFLOW PLUGINS
 			get_plugin("workflow", "vardef_handler_hook", $this);
 			//END WFLOW PLUGINS
-			//END SUGARCRM flav=pro ONLY
 			$this->target_meta_array = $vardef_meta_array[$meta_array_name];
 		}
 

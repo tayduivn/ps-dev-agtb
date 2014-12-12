@@ -29,9 +29,7 @@ $viewdefs['Documents']['mobile']['view']['edit'] = array(
                 'active_date',
                 'exp_date',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

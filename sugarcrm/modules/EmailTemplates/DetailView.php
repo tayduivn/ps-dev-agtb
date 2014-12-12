@@ -128,11 +128,9 @@ if($focus->ACLAccess('EditView')) {
 	//$xtpl->out("EDIT");
 
 }
-//BEGIN SUGARCRM flav=pro ONLY
 
 require_once('modules/Teams/TeamSetManager.php');
 $xtpl->assign('TEAM', TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
-//END SUGARCRM flav=pro ONLY
 if(!empty($focus->body)) {
 	$xtpl->assign('ALT_CHECKED', 'CHECKED');
 }

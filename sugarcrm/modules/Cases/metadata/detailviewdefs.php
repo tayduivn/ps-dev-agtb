@@ -76,9 +76,8 @@ $viewdefs['Cases']['DetailView'] = array(
           ),
         ),
         array (
-		  //BEGIN SUGARCRM flav=pro ONLY
+
 		  'team_name',
-		  //END SUGARCRM flav=pro ONLY
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',

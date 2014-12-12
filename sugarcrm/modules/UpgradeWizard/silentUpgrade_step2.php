@@ -415,7 +415,6 @@ if(empty($errors)) {
 @deleteCache();
 
 ///////////////////////////////////////////////////////////////////////////////
-//BEGIN SUGARCRM flav=pro ONLY
 if($ce_to_pro_ent){
 	if(function_exists('upgradeDashletsForSalesAndMarketing')){
 		logThis('Upgrading tracker dashlets for sales and marketing start .', $path);
@@ -425,7 +424,6 @@ if($ce_to_pro_ent){
 }
 
 fix_report_relationships($path);
-//END SUGARCRM flav=pro ONLY
 
 if($ce_to_pro_ent)
 {

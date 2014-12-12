@@ -45,7 +45,7 @@ class ProjectViewTemplatesDetail extends ViewDetail
 		else{
 			$this->ss->assign('OWNER_ONLY', false);
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		if(ACLController::checkAccess('ProjectTask', 'edit', true)) {
 			$this->ss->assign('EDIT_RIGHTS_ONLY', true);
 		}
@@ -55,7 +55,6 @@ class ProjectViewTemplatesDetail extends ViewDetail
 
 		$this->ss->assign('SAVE_AS', $mod_strings['LBL_SAVE_AS_PROJECT']);
 		$this->ss->assign("IS_TEMPLATE", 1);
-		//END SUGARCRM flav=pro ONLY
  		parent::display();
  	}
 

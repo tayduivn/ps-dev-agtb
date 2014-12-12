@@ -90,7 +90,6 @@ class ParserFactory
                 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 
                 return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
-            //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
             //BEGIN SUGARCRM flav=ent ONLY
@@ -125,17 +124,14 @@ class ParserFactory
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
-            //END SUGARCRM flav=pro ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :
-            //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSBASICSEARCH :
             case MB_WIRELESSADVANCEDSEARCH :
                 // Make sure we have the right client
                 if ($lView == MB_WIRELESSBASICSEARCH || $lView == MB_WIRELESSADVANCEDSEARCH) {
                     $client = MB_WIRELESS;
                 }
-            //END SUGARCRM flav=pro ONLY
                 // When it comes to search, mobile is like BWC
                 if (isModuleBWC($moduleName) || $client == MB_WIRELESS) {
                     require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';

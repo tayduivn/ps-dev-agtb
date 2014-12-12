@@ -125,9 +125,7 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     // adding custom fields:
     require_once('modules/DynamicFields/templates/Files/DetailView.php');
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $smarty->assign("TEAM_NAME", $focus->team_name);
-    //END SUGARCRM flav=pro ONLY
 
     //if this is a newsletter, we need to build dropdown
     $selected_marketing_id = '';

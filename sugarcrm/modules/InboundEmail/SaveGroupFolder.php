@@ -24,14 +24,12 @@ $folder = new SugarFolder();
 $_REQUEST['name'] = $_REQUEST['groupFolderAddName'];
 $_REQUEST['parent_folder'] = $_REQUEST['groupFoldersAdd'];
 $_REQUEST['group_id'] = $_REQUEST['groupFoldersUser'];
-//BEGIN SUGARCRM flav=pro ONLY
 require_once("modules/Teams/TeamSet.php");
 $_REQUEST['team_id'] = $_REQUEST['primaryTeamId'];
 $teamSet = BeanFactory::getBean('TeamSets');
 $teamIds = explode(",", $_REQUEST['teamIds']);
 $team_set_id = $teamSet->addTeams($teamIds);
 $_REQUEST['team_set_id'] = $team_set_id;
-//END SUGARCRM flav=pro ONLY
 if (empty($_REQUEST['record'])) {
 	$folder->setFolder($_REQUEST);
 } else {

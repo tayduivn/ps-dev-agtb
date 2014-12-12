@@ -33,18 +33,13 @@ function quickEditSave()
 
     if(check_form('form_DCQuickCreate_Users'))
     {
-        <!--//BEGIN SUGARCRM flav=pro ONLY -->
         if(quickEditconfirmReassignRecords())
         {
-        <!--//END SUGARCRM flav=pro ONLY -->
         DCMenu.save(document.form_DCQuickCreate_Users.id, 'Users_subpanel_save_button');
-        <!--//BEGIN SUGARCRM flav=pro ONLY -->
         }
-        <!--//END SUGARCRM flav=pro ONLY -->
     }
 }
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 function quickEditconfirmReassignRecords() {
         var status = document.getElementsByName('status');
         if(status[0] && status[0].value == 'Inactive')
@@ -61,5 +56,4 @@ function quickEditconfirmReassignRecords() {
         return true;
 }
 {/literal}
-<!--//END SUGARCRM flav=pro ONLY -->
 </script>

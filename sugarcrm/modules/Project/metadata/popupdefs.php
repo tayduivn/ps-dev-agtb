@@ -16,9 +16,7 @@ $popupMeta = array('moduleMain' => 'Project',
 						'orderBy' => 'name',
 						'whereClauses' => 
 							array('name' => 'project.name'),
-						//BEGIN SUGARCRM flav=pro ONLY
 						'whereStatement' => " project.is_template = 0 ",
-						//END SUGARCRM flav=pro ONLY
 						'searchInputs' =>
 							array('name')
 						);

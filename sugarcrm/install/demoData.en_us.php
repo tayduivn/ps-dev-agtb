@@ -21494,7 +21494,7 @@ $sugar_demodata['currency_seed_data'][] = array(
 	'name' => 'Euro',
 	'conversion_rate' => 0.9,
 	'iso4217' => 'EUR',
-	'symbol' => '€',
+	'symbol' => 'â¬',
 );
 
 //producttemplate
@@ -21570,7 +21570,7 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'qty_in_stock' => '65',
 ); 
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 // KBDocuments
 $sugar_demodata['kbdocument_seed_data_kbtags'] = array(
     'OS and Interface',
@@ -21634,8 +21634,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
         'Basic Usage',
         'Hardware',
         ),
-); 
-//END SUGARCRM flav=pro ONLY
+);
 
 $sugar_demodata['contract_seed_data'][] = array(
 	'name' => 'IT Tech Support for UK Datacenter',

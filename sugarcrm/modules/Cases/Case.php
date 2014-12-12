@@ -20,9 +20,7 @@ class aCase extends Basic {
 	var $date_modified;
 	var $modified_user_id;
 	var $assigned_user_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $case_number;
 	var $resolution;
 	var $description;
@@ -46,10 +44,8 @@ class aCase extends Basic {
 	var $call_id;
 	var $email_id;
 	var $assigned_user_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $system_id;
-	//END SUGARCRM flav=pro ONLY
 
 	var $table_name = "cases";
 	var $rel_account_table = "accounts_cases";
@@ -185,9 +181,7 @@ class aCase extends Basic {
 		$temp_array['CASE_NUMBER'] = $this->case_number;
 		$temp_array['SET_COMPLETE'] =  "<a href='index.php?return_module=Home&return_action=index&action=EditView&module=Cases&record=$this->id&status=Closed'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Cases')." border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE','Cases'))."</a>";
 		//$temp_array['ACCOUNT_NAME'] = $this->account_name; //overwrites the account_name value returned from the cases table.
-		//BEGIN SUGARCRM flav=pro ONLY
 		$temp_array['CASE_NUMBER'] = format_number_display($this->case_number,$this->system_id);
-		//END SUGARCRM flav=pro ONLY
 		return $temp_array;
 	}
 
@@ -238,7 +232,6 @@ class aCase extends Basic {
 	}
 
 	function save($check_notify = FALSE){
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id))
 		{
 
@@ -249,7 +242,6 @@ class aCase extends Basic {
 			}
 			$this->system_id = $system_id;
 		}
-		//END SUGARCRM flav=pro ONLY
 		return parent::save($check_notify);
 	}
 

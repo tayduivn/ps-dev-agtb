@@ -344,7 +344,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $nameValueArray['mobile_max_list_entries'] = self::$helperObject->get_name_value('mobile_max_list_entries', $sugar_config['wl_list_max_entries_per_page'] );
             $nameValueArray['mobile_max_subpanel_entries'] = self::$helperObject->get_name_value('mobile_max_subpanel_entries', $sugar_config['wl_list_max_entries_per_subpanel'] );
 
-//BEGIN SUGARCRM flav=pro ONLY
             if($application == 'mobile')
             {
                 $modules = $availModuleNames = array();
@@ -357,7 +356,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
                 $nameValueArray['vardefs_md5'] = self::get_module_fields_md5(session_id(), $availModuleNames);
             }
-//END SUGARCRM flav=pro ONLY
 
             $currencyObject = BeanFactory::getBean('Currencies', $cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
@@ -397,11 +395,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);
     	       break;
-//BEGIN SUGARCRM flav=pro ONLY
     	    case 'mobile':
     	        $modules = self::$helperObject->get_visible_mobile_modules($availModules);
     	        break;
-//END SUGARCRM flav=pro ONLY
     	    case 'all':
     	    default:
     	        $modules = self::$helperObject->getModulesFromList(array_flip($availModules), $availModules);
@@ -465,7 +461,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         return $results;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Get the base64 contents of a quote pdf.
      *
@@ -549,7 +544,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Retrieve the layout metadata for a given module given a specific type and view.

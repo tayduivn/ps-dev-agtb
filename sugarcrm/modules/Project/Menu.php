@@ -29,7 +29,6 @@ if(ACLController::checkAccess('Project', 'edit', true)) {
     );
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 // Create Project Template
 if(ACLController::checkAccess('Project', 'edit', true)) {
     $module_menu[] = array(
@@ -38,7 +37,6 @@ if(ACLController::checkAccess('Project', 'edit', true)) {
         'CreateProjectTemplate'
     );
 }
-//END SUGARCRM flav=pro ONLY
 	
 // Project List
 if(ACLController::checkAccess('Project', 'list', true)) {
@@ -49,7 +47,6 @@ if(ACLController::checkAccess('Project', 'list', true)) {
     );
 }
 	
-//BEGIN SUGARCRM flav=pro ONLY
 // Project Templates
 if(ACLController::checkAccess('Project', 'list', true)) {
     $module_menu[] = array(
@@ -58,7 +55,6 @@ if(ACLController::checkAccess('Project', 'list', true)) {
         'ProjectTemplate'
     );
 }
-//END SUGARCRM flav=pro ONLY
 	
 // Project Tasks
 if(ACLController::checkAccess('ProjectTask', 'list', true)) {
@@ -69,7 +65,6 @@ if(ACLController::checkAccess('ProjectTask', 'list', true)) {
     );
 }
 	
-//BEGIN SUGARCRM flav=pro ONLY
 if(ACLController::checkAccess('Project', 'list', true)) {
     $module_menu[] = array(
         "index.php?module=Project&action=Dashboard&return_module=Project&return_action=DetailView",
@@ -77,6 +72,5 @@ if(ACLController::checkAccess('Project', 'list', true)) {
         'Project'
     );
 }
-//END SUGARCRM flav=pro ONLY
 
 ?>

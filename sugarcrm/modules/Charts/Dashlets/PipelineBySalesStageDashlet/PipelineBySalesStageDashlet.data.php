@@ -19,13 +19,12 @@ $dashletData['PipelineBySalesStageDashlet']['searchFields'] = array(
                 'vname' => 'LBL_CLOSE_DATE_START',
                 'type'  => 'datepicker',
             ),
-        //BEGIN SUGARCRM flav=pro ONLY
+
         'pbss_chart_type' => array(
                 'name'  => 'pbss_chart_type',
                 'vname' => 'LBL_CHART_TYPE',
                 'type'  => 'singleenum',
             ),
-        //END SUGARCRM flav=pro ONLY
         'pbss_date_end' => array(
                 'name'  => 'pbss_date_end',
                 'vname' => 'LBL_CLOSE_DATE_END',

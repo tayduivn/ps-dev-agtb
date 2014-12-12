@@ -30,13 +30,11 @@
         </td>
         <td>&nbsp;</td>
     </tr>
-    <!--//BEGIN SUGARCRM flav=pro ONLY -->
     <tr>
     	   <td scope="row" nowrap="nowrap" valign="top">{$app_strings.LBL_TEAMS}:&nbsp;</td>
     	   <td >{$TEAM_SET_FIELD_FOR_ASSIGNEDTO}</td>
     	   <td>&nbsp;</td>
     </tr>
-    	<!--//END SUGARCRM flav=pro ONLY -->
     <tr><td>&nbsp</td><td>&nbsp</td></tr>
     <tr>
     	   <td>&nbsp;</td>

@@ -28,7 +28,6 @@
     	<input type="text" value="{$dashlet_title}" size="30" name="pbss_dashlet_title"/>
     </td>
 </tr>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 <tr>
 	<td valign='top' nowrap class='dataLabel'>{$LBL_CHART_TYPE} <br /></td>
 	<td valign='top' class='dataField'>
@@ -37,7 +36,6 @@
     	</select>
     </td>
 </tr>
-<!--//END SUGARCRM flav=pro ONLY -->
 <tr>
     <td valign='top' nowrap class='dataLabel'>{$LBL_DATE_START} <br><i>{$user_date_format}</i></td>
     <td valign='top' class='dataField'>

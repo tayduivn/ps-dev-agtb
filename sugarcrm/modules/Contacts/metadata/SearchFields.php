@@ -37,7 +37,6 @@ $searchFields['Contacts'] =
 		'assigned_user_id'=> array('query_type'=>'default'),
         'account_id'=> array('query_type'=>'default','db_field'=>array('accounts.id')),
         'campaign_name'=> array('query_type'=>'default'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -46,8 +45,6 @@ $searchFields['Contacts'] =
 			                        and sugarfavorites.module = \'Contacts\' 
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
 		'sync_contact' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -56,7 +53,6 @@ $searchFields['Contacts'] =
 			                    WHERE contacts_users.deleted=0 
 			                        and contacts_users.user_id = \'{1}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		//Range Search Support 
 	    'range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
 	    'start_range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),

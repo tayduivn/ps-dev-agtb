@@ -156,7 +156,6 @@ class ImportFieldSanitize
             $focus_user = BeanFactory::getBean('Users');
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         static $focus_team;
 
         // cache this object since we'll be reusing it a bunch
@@ -164,7 +163,6 @@ class ImportFieldSanitize
 
             $focus_team = BeanFactory::getBean('Teams');
         }
-        //END SUGARCRM flav=pro ONLY
 
         if ( !empty($value) && strtolower($value) != "all" ) {
             $theList   = explode(",",$value);
@@ -173,10 +171,8 @@ class ImportFieldSanitize
             foreach ($theList as $eachItem) {
                 if ( $focus_user->retrieve_user_id($eachItem)
                         || $focus_user->retrieve($eachItem)
-                        //BEGIN SUGARCRM flav=pro ONLY
                         || $focus_team->retrieve($eachItem)
                         || $focus_team->retrieve_team_id($eachItem)
-                        //END SUGARCRM flav=pro ONLY
                 ) {
                     // all good
                 }

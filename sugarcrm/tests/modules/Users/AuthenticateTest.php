@@ -113,7 +113,6 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
             );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testMobileAuthenicationRedirect()
     {
         $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
@@ -150,5 +149,4 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
             $url
             );
     }
-    //END SUGARCRM flav=pro ONLY
 }

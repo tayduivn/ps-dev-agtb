@@ -56,7 +56,6 @@ class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->bugid, $bug->id);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testAddDistinct()
     {
         $query = "SELECT accounts.*,accounts_cstm.selected_c FROM accounts  INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
@@ -69,8 +68,6 @@ class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id", $query);
         $this->assertContains("accounts_cstm.selected_c", $query);
     }
-
-    //END SUGARCRM flav=pro ONLY
 
 }
 

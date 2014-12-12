@@ -77,9 +77,7 @@ class SchedulersJob extends Basic
 	public function __construct()
 	{
         parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         if(!empty($GLOBALS['sugar_config']['jobs']['min_retry_interval'])) {
             $this->min_interval = $GLOBALS['sugar_config']['jobs']['min_retry_interval'];
         }

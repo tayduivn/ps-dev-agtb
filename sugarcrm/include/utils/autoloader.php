@@ -420,13 +420,11 @@ class SugarAutoLoader
 			self::$classMapDirty = true;
 			return true;
 		}
-        //BEGIN SUGARCRM flav=pro ONLY
         if($file = self::getFilenameForExpressionClass($class)) {
             self::$classMap[$uclass] = $file;
             self::$classMapDirty = true;
             return true;
         }
-        //END SUGARCRM flav=pro ONLY
 
 		// Try known dirs
 		foreach(self::$dirMap as $dir) {
@@ -771,7 +769,6 @@ class SugarAutoLoader
         return false;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * getFilenameForExpressionClass
      *
@@ -800,7 +797,6 @@ class SugarAutoLoader
         }
         return false;
     }
-    //END SUGARCRM flav=pro ONLY
 
 
     /**

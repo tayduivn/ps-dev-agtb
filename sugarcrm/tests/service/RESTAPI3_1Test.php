@@ -108,7 +108,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test the available modules returned from the login call to make sure they are correct.
      *
@@ -126,7 +125,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
-//END SUGARCRM flav=pro ONLY
 
     public function testGetSingleModuleLanguage()
     {
@@ -193,7 +191,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
         $this->assertTrue( isset($results['Leads']['LBL_LEAD_SOURCE']) );
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testGetQuotesPDFContents()
     {
         $quote = new Quote();
@@ -247,7 +244,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
-    //END SUGARCRM flav=pro ONLY
 
     function _aclEditViewFieldProvider()
     {
@@ -322,7 +318,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
         public static function _wirelessGridModuleLayoutProvider()
         {
             return array(
@@ -418,7 +413,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
             $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
             $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
         }
-        //END SUGARCRM flav=pro ONLY
     public function testGetEmployee()
     {
         // make sure the current_user isn't an admin

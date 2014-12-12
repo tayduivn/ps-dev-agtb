@@ -130,7 +130,6 @@ function ConvertDiscClient(){
                 $sugar_config['disc_client']    = true;
                 $sugar_config['sync_site_url']  = $server_url;
 
-				//BEGIN SUGARCRM flav=pro ONLY
                	//attempt to obtain the system_id from the server
         		$result = $soapclient->call('get_unique_system_id', array('session'=>$session, 'unique_key'=>$sugar_config['unique_key']));
          		if( $soapclient->error_str ){
@@ -145,7 +144,6 @@ function ConvertDiscClient(){
 					}
 					$admin->saveSetting('system', 'system_id', $system_id);
         		}
-        		//END SUGARCRM flav=pro ONLY
             }
 
             // run the file sync

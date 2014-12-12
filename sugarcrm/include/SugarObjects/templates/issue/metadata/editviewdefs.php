@@ -35,9 +35,7 @@ $viewdefs[$module_name]['EditView'] = array(
     
     array (
       'priority',
-      //BEGIN SUGARCRM flav=pro ONLY
       array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
-	  //END SUGARCRM flav=pro ONLY
     ),
     
     array (

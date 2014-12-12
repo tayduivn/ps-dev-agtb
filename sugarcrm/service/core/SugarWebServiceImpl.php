@@ -1008,7 +1008,6 @@ function get_available_modules($session){
 	return array('modules'=> $modules);
 } // fn
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 /**
  * Return the ID of the default team for the user that is logged into the current session.
@@ -1030,9 +1029,6 @@ function get_user_team_id($session){
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_user_team_id');
 	return $current_user->default_team;
 } // fn
-
-
-//END SUGARCRM flav=pro ONLY
 
 /**
 *   Once we have successfuly done a mail merge on a campaign, we need to notify Sugar of the targets
@@ -1099,9 +1095,7 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 
 	$sql = 'SELECT COUNT(*) result_count FROM ' . $seed->table_name . ' ';
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	$seed->add_team_security_where_clause($sql);
-	//END SUGARCRM flav=pro ONLY
 
     $customJoin = $seed->getCustomJoin();
     $sql .= $customJoin['join'];
@@ -1129,7 +1123,6 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 /**
  * Retrieve a list of Reports info based on provided IDs.
@@ -1169,8 +1162,6 @@ function get_report_entries($session, $ids, $select_fields ){
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_entries');
 	return array('field_list'=>$field_list, 'entry_list'=>$output_list);
 } // fn
-
-//END SUGARCRM flav=pro ONLY
 
 
 } // clazz

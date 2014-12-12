@@ -24,13 +24,11 @@ if(isset($_POST['timezone']) || isset($_GET['timezone'])) {
 	$current_user->setPreference('ut', 1);
 	$current_user->savePreferencesToDB();
 	session_write_close();
-	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('modules/Users/password_utils.php');
 	if((($GLOBALS['sugar_config']['passwordsetting']['userexpiration'] > 0) &&
         	$_SESSION['hasExpiredPassword'] == '1'))
         header('Location: index.php?module=Users&action=ChangePassword');
     else
-    //END SUGARCRM flav=pro ONLY
 	   header('Location: index.php?action=index&module=Home');
    exit();
 }

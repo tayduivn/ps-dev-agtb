@@ -12,9 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $dictionary['Release'] = array(
   'table' => 'releases',
-//BEGIN SUGARCRM flav=pro ONLY
   'favorites' => false,
-//END SUGARCRM flav=pro ONLY
   'fields' => array (
   'id' =>
   array (

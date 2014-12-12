@@ -45,9 +45,7 @@ class SugarChart
         $this->chart_yAxis['yMin'] = 0;
         $this->chart_yAxis['yMax'] = 0;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->chart_properties['gauge_target_list'] = array();
-        //END SUGARCRM flav=pro ONLY
 
         if ($GLOBALS['current_user']->getPreference('currency')) {
 
@@ -121,9 +119,7 @@ class SugarChart
         $this->chart_properties['type'] = $type;
         $this->chart_properties['legend'] = $legend;
         $this->chart_properties['labels'] = $labels;
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->chart_properties['print'] = $print;
-        //END SUGARCRM flav=pro ONLY
         $this->chart_properties['thousands'] = $thousands;
     }
 
@@ -234,13 +230,9 @@ class SugarChart
         $this->chart_yAxis['yStep'] = $step;
 
         // to compensate, the yMax should be at least one step above the max value
-        //BEGIN SUGARCRM flav=pro ONLY
         if ($this->chart_properties['type'] != 'gauge chart') {
-        //END SUGARCRM flav=pro ONLY
             $this->chart_yAxis['yMax'] += $this->chart_yAxis['yStep'];
-        //BEGIN SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
         $yAxis = $this->tab("<yAxis>", 1);
 
@@ -380,7 +372,6 @@ class SugarChart
         }
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     function processGauge($position, $target, $phases = array())
     {
         if (empty($phases)) {
@@ -407,7 +398,6 @@ class SugarChart
 
         return $data;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Convert the amount given to the User's currency.
@@ -673,11 +663,9 @@ class SugarChart
         if ($this->chart_properties['type'] == 'group by chart') {
             $data .= $this->xmlDataForGroupByChart();
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         elseif ($this->chart_properties['type'] == 'gauge chart') {
             $data .= $this->xmlDataForGaugeChart();
         }
-        //END SUGARCRM flav=pro ONLY
         elseif ($this->chart_properties['type'] == 'bar chart' || $this->chart_properties['type'] == 'horizontal bar chart') {
             $data .= $this->xmlDataBarChart();
         } else {

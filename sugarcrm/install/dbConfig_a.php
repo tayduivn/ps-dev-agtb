@@ -222,7 +222,7 @@ $out3 =<<<EOQ3
 </table>
 EOQ3;
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 $GLOBALS['sugar_config']['default_language'] = 'en_us';
 $app_list_strings = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
 $ftsTypeDropdown = "<select name='setup_fts_type' id='setup_fts_type'>";
@@ -256,7 +256,6 @@ $outFTS =<<<EOQ3
 </tr>
 </table>
 EOQ3;
-//END SUGARCRM flav=pro ONLY
 
 
 $out4 =<<<EOQ4
@@ -395,13 +394,12 @@ function callDBCheck(){
 
 EOQ4;
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 $out4 .= <<<FTSTEST
     postData += "&setup_fts_type=" + $('#setup_fts_type').val();
     postData += "&setup_fts_host=" + $('#setup_fts_host').val();
     postData += "&setup_fts_port=" + $('#setup_fts_port').val();
 FTSTEST;
-//END SUGARCRM flav=pro ONLY
 
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
@@ -481,22 +479,18 @@ EOQ5;
 
 echo $out;
 echo $out2;
-//BEGIN SUGARCRM flav=pro ONLY
+
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
-//END SUGARCRM flav=pro ONLY
     echo $out3;
-//BEGIN SUGARCRM flav=pro ONLY
+
     echo $outFTS;
 }
-//END SUGARCRM flav=pro ONLY
 echo $out4;
-//BEGIN SUGARCRM flav=pro ONLY
+
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
-//END SUGARCRM flav=pro ONLY
     echo $out_dd;
-//BEGIN SUGARCRM flav=pro ONLY
+
 }
-//END SUGARCRM flav=pro ONLY
 echo $out5;
 
 ?>

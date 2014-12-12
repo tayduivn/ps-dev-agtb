@@ -203,12 +203,10 @@ class LeadConvert
     {
         $moduleName = $moduleDef['module'];
         if (!empty($this->lead)) {
-            //BEGIN SUGARCRM flav=pro ONLY
             if (empty($this->modules[$moduleName]->team_name)) {
                 $this->modules[$moduleName]->team_id = $this->lead->team_id;
                 $this->modules[$moduleName]->team_set_id = $this->lead->team_set_id;
             }
-            //END SUGARCRM flav=pro ONLY
             if (empty($this->modules[$moduleName]->assigned_user_id)) {
                 $this->modules[$moduleName]->assigned_user_id = $this->lead->assigned_user_id;
             }

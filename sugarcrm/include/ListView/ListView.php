@@ -293,9 +293,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $this->xTemplate->assign("COL_COUNT", count($thepanel->get_list_fields()));
         $this->xTemplate->parse($xtemplateSection.".nodata");
     }
-	//BEGIN SUGARCRM flav=pro ONLY
 	$module_name = '';
-	//END SUGARCRM flav=pro ONLY
     while(list($aVal, $aItem) = each($data))
     {
         $subpanel_item_count++;
@@ -319,7 +317,6 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             $aItem->parent_name_owner =  $parent_data[$aItem->id]['parent_name_owner'];
             $aItem->parent_name_mod =  $parent_data[$aItem->id]['parent_name_mod'];
         }}
-		//BEGIN SUGARCRM flav=pro ONLY
 		if (isset($subpanel_list[strtolower($aItem->module_name)]))
         {
             if ($module_name != $aItem->module_name)
@@ -335,12 +332,9 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         {
             $aItem->updateDependentField();
         }
-		//END SUGARCRM flav=pro ONLY
         $fields = $aItem->get_list_view_data();
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $aItem->ACLFilterFieldList($fields);
-        //END SUGARCRM flav=pro ONLY
         if(isset($processed_ids[$aItem->id])) {
             continue;
 
@@ -1843,10 +1837,8 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             // Process the  order by before processing the pro_nav.  The pro_nav requires the order by values to be set
             $this->processOrderBy($html_varName);
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if($this->xTemplate->exists('main.pro_nav'))
                 $this->xTemplate->parse('main.pro_nav');
-            //END SUGARCRM flav=pro ONLY
 
             $this->processListRows($list,$xTemplateSection, $html_varName);
         }

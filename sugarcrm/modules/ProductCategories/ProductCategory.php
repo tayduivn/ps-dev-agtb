@@ -30,7 +30,6 @@ class ProductCategory extends SugarBean
     public $modified_by_name;
     public $name;
     public $description;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $parent_id;
     public $assigned_user_id;
 
@@ -43,12 +42,9 @@ class ProductCategory extends SugarBean
     public $default_tree_type; //specified in save_branch function
 
 //END TREEVIEW
-//END SUGARCRM flav=pro ONLY
 
     public $table_name = "product_categories";
-    //BEGIN SUGARCRM flav=pro ONLY
     public $category_tree_table = "category_tree";
-    //END SUGARCRM flav=pro ONLY
     public $products_table = "product_templates";
     public $rel_products = "products";
 
@@ -57,7 +53,6 @@ class ProductCategory extends SugarBean
     public $new_schema = true;
 
     public $importable = true;
-//BEGIN SUGARCRM flav=pro ONLY
 //TREEVIEW
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = Array(
@@ -69,13 +64,10 @@ class ProductCategory extends SugarBean
 
 //END TREEVIEW
     /*
-    //END SUGARCRM flav=pro ONLY
 
         // This is used to retrieve related fields from form posts.
         public $additional_column_fields = Array();
-    //BEGIN SUGARCRM flav=pro ONLY
      */
-//END SUGARCRM flav=pro ONLY
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -94,9 +86,7 @@ class ProductCategory extends SugarBean
     public function __construct()
     {
         parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
 
     }
 
@@ -225,7 +215,6 @@ class ProductCategory extends SugarBean
         return $the_where;
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /////////////TreeView 2.0/////////////////////////////////////////////////////////////
 //Below are the maps and definitions for the Product Catalog Tree/////////////////////
 
@@ -635,7 +624,6 @@ class ProductCategory extends SugarBean
 
 
 ////////////End TreeView 2.0//////////////////////////////////////////////////////////
-//END SUGARCRM flav=pro ONLY
 
     /**
      * Save a Product Category

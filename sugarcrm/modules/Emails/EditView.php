@@ -369,12 +369,10 @@ $xtpl->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 						'EditView_assigned_user_name' => $qsd->getQSUser(),
 						);
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$teamSetField->initClassicView($focus->field_defs);
 	$sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
-	//END SUGARCRM flav=pro ONLY
 
 	$json = getJSONobj();
 
@@ -508,7 +506,6 @@ $popup_request_data = array(
 	);
 $xtpl->assign('encoded_users_popup_request_data', $json->encode($popup_request_data));
 
-//BEGIN SUGARCRM flav=pro ONLY
 $popup_request_data = array(
 	'call_back_function' => 'set_return',
 	'form_name' => 'EditView',
@@ -518,7 +515,6 @@ $popup_request_data = array(
 		),
 	);
 $xtpl->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
-//END SUGARCRM flav=pro ONLY
 
 //
 ///////////////////////////////////////
@@ -663,7 +659,6 @@ $xtpl->assign('encoded_document_popup_request_data', $json->encode($popup_reques
 
 $parse_open = true;
 
-//BEGIN SUGARCRM flav=pro ONLY
 if (empty($focus->id) && !isset($_REQUEST['isDuplicate'])) {
 	$xtpl->assign('TEAM_OPTIONS', get_select_options_with_id(get_team_array(), $current_user->default_team));
 	$xtpl->assign('TEAM_NAME', $current_user->default_team_name);
@@ -679,7 +674,6 @@ $xtpl->assign("TEAM_SET_FIELD", $code);
 
 $xtpl->parse('main.pro_team');
 $parse_open = false;
-//END SUGARCRM flav=pro ONLY
 if($parse_open) {
 	$xtpl->parse('main.open_source_1');
 }
@@ -773,10 +767,8 @@ if($email_type == 'out') {
 $javascript->addAllFields('',$skip_fields);
 $javascript->addToValidateBinaryDependency('parent_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_MEMBER_OF'], 'false', '', 'parent_id');
 $javascript->addToValidateBinaryDependency('parent_type', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_MEMBER_OF'], 'false', '', 'parent_id');
-//BEGIN SUGARCRM flav=pro ONLY
 $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'true');
 $javascript->addToValidateBinaryDependency('team_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_TEAM'], 'false', '', 'team_id');
-//END SUGARCRM flav=pro ONLY
 $javascript->addToValidateBinaryDependency('user_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_ASSIGNED_TO'], 'false', '', 'assigned_user_id');
 if($email_type == 'archived') {
 	$javascript->addFieldIsValidDate('date_start', 'date', $mod_strings['LBL_DATE'], $mod_strings['ERR_DATE_START'], true);

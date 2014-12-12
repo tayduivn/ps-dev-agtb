@@ -42,12 +42,10 @@ public function getDuplicateQuery($focus, $prefix='')
 
     // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
     // add team security
-    //BEGIN SUGARCRM flav=pro ONLY
     if( !empty($focus) && !$focus->disable_row_level_security )
     {
         $focus->add_team_security_where_clause($query);
     }
-    //END SUGARCRM flav=pro ONLY
 
     $query .= ' where contacts.deleted = 0 AND ';
 
@@ -95,13 +93,11 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 	} else {
 		$user_id = $current_user->id;
 	}
-//BEGIN SUGARCRM flav=pro ONLY
 	if (isset($contact->team_id)) {
 		$team_id=$contact->team_id;
 	} else {
 		$team_id=$current_user->default_team;
 	}
-//END SUGARCRM flav=pro ONLY
 
 	//Retrieve Email address and set email1, email2
 	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
@@ -125,10 +121,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 	}
 
 	$form="";
-//BEGIN SUGARCRM flav=pro ONLY
 	$form .=  "<input type=hidden name=".$prefix."team_id value=".$team_id.">";
-
-//END SUGARCRM flav=pro ONLY
 
 
 	if ($formname == 'ConvertProspect') {
@@ -524,9 +517,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			$get .= get_teams_url('Contacts');
-			//END SUGARCRM flav=pro ONLY
 
 			//create list of suspected duplicate contact id's in redirect get string
 			$i=0;
@@ -600,9 +591,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
     	$trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){
-	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-	        //END SUGARCRM flav=pro ONLY
 	        $monitor->setValue('action', 'detailview');
 	        $monitor->setValue('user_id', $GLOBALS['current_user']->id);
 	        $monitor->setValue('module_name', 'Contacts');

@@ -311,7 +311,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'len' => '11',
     'reportable' => false,
     'default'=>0,
-    'comment' => 'Meeting update sequence for meetings as per iCalendar standards',
+    'comment' => 'Meeting update sequence for meetings as per iCalendar standards', 
       'studio' => false,
   ),
   'contact_name' =>
@@ -437,7 +437,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
       'vname'        => 'LBL_PROSPECTS',
       'module'       => 'Prospects',
   ),
-//BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array(
       'name' => 'quotes',
@@ -445,8 +444,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
       'relationship' => 'quote_meetings',
       'source'=>'non-db',
       'vname'=>'LBL_QUOTES',
-  ),    
-//END SUGARCRM flav=pro ONLY
+  ),
   'cases' =>
   array (
   	'name' => 'cases',
@@ -644,8 +642,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                             );
 
 VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

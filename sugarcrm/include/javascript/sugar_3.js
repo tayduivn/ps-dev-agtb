@@ -219,7 +219,7 @@ SUGAR.tour = function() {
             tourModal = $('<div id="'+params.id+'" class="modal '+params.className+' tour slides"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
             tourModal.modal("hide");
 
-            screenShotModal = $('<div id="'+params.id+'_screenshot" class="modal '+params.className+' tour screenshot"><div class="modal-header"><a class="close" data-dismiss="modal">×</a><h3>Screen Shot</h3></div><div class="modal-body"></div></div>').modal();
+            screenShotModal = $('<div id="'+params.id+'_screenshot" class="modal '+params.className+' tour screenshot"><div class="modal-header"><a class="close" data-dismiss="modal">Ã</a><h3>Screen Shot</h3></div><div class="modal-body"></div></div>').modal();
             screenShotModal.modal("hide");
 
             var tourIdSel = "#"+params.id;
@@ -272,7 +272,7 @@ SUGAR.tour = function() {
                         var modalId =  (modals[i].target == undefined)? "tour_"+i+"_modal" : modals[i].target.replace("#","")+"_modal";
                         modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.className+' tour slides"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 //                        modalArray[i].modal('show');
-                        var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">×</a><h3>"+modals[i].title+"</h3></div>";
+                        var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">Ã</a><h3>"+modals[i].title+"</h3></div>";
 
                         modalContent += "<div class=\"modal-body\">"+modals[i].content+"</div>" ;
 
@@ -1124,7 +1124,6 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
     }
     return results;
 }
-//BEGIN SUGARCRM flav=pro ONLY
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
@@ -1141,7 +1140,6 @@ function isFieldHidden(field, type)
 
     return Dom.hasClass(td, 'vis_action_hidden');
 }
-//END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');

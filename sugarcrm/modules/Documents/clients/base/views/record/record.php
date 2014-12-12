@@ -80,9 +80,7 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                 'related_doc_rev_number',
                 //END SUGARCRM flav!=sales ONLY
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
         array(

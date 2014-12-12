@@ -30,14 +30,10 @@ $fields_array['Note'] = array ('column_fields' => Array("id"
 		, "parent_id"
 		, "contact_id"
 		, "portal_flag"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		),
         'list_fields' =>  Array('id', 'name', 'parent_type', 'parent_name', 'parent_id','date_modified', 'contact_id', 'contact_name','filename','file_mime_type'
-//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
-//END SUGARCRM flav=pro ONLY
 	),
     'required_fields' =>  array("name"=>1),
 );

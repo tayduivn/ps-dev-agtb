@@ -20,9 +20,8 @@
 						'basic_search' => array(
 						 	'name',
 						 	
-		      //BEGIN SUGARCRM flav=pro ONLY
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-		      //END SUGARCRM flav=pro ONLY
 							),
 						'advanced_search' => array(
 							'name', 
@@ -36,9 +35,8 @@
 							'support_term',
 							'website',	
 							
-		      //BEGIN SUGARCRM flav=pro ONLY
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-		      //END SUGARCRM flav=pro ONLY
 						),
 					),
  			   );

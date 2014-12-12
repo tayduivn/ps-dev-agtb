@@ -14,9 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $current_user;
 
 $dashletData['MyNotesDashlet']['searchFields'] = array('date_entered'     => array('default' => ''),
-														//BEGIN SUGARCRM flav=pro ONLY
+
 														'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
-														//END SUGARCRM flav=pro ONLY
 														'assigned_user_id' => array('type'    => 'assigned_user_name',
 																					'label'   => 'LBL_ASSIGNED_TO', 
 																					'default' => $current_user->name),
@@ -100,12 +99,11 @@ $dashletData['MyNotesDashlet']['columns'] = array (
 											    'link' => false,
 											    'default' => false,
 											  ),
-											  //BEGIN SUGARCRM flav=pro ONLY
+
 											  'team_name' => array(
 											    'width' => '2', 
 											    'label' => 'LBL_LIST_TEAM',
 											    'default' => false
-											  ),        
-											  //END SUGARCRM flav=pro ONLY
+											  ),
 											);
 											?>

@@ -92,11 +92,9 @@ array (
             array (
               'name' => 'assigned_user_name',
             ),
-            //BEGIN SUGARCRM flav=pro ONLY
             array (
               'name' => 'team_name',
             ),
-            //END SUGARCRM flav=pro ONLY
         ),
       ),
     ),

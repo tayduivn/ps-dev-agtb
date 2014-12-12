@@ -98,11 +98,9 @@
                 'include/javascript/phpjs/get_html_translation_table.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/html_entity_decode.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
-				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
                 'sidecar/lib/sugarlogic/expressions.js'        => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js' => 'include/javascript/sugar_grp1.js',
-	            //END SUGARCRM flav=pro ONLY
                 'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			// solo jquery libraries
@@ -122,9 +120,7 @@
 
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
-               //BEGIN SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Teamset/Teamset.js' => 'include/javascript/sugar_field_grp.js',
-               //END SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Datetimecombo/Datetimecombo.js' => 'include/javascript/sugar_field_grp.js',
            ),
             $sugar_grp1_yui = array(
@@ -195,10 +191,8 @@
             'include/javascript/yui/ygDDList.js' => 'include/javascript/sugar_grp_emails.js',
             'include/SugarEmailAddress/SugarEmailAddress.js' => 'include/javascript/sugar_grp_emails.js',
             'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_grp_emails.js',
-            //BEGIN SUGARCRM flav=pro ONLY
             'include/SugarRouting/javascript/SugarRouting.js' => 'include/javascript/sugar_grp_emails.js',
             'include/SugarDependentDropdown/javascript/SugarDependentDropdown.js' => 'include/javascript/sugar_grp_emails.js',
-            //END SUGARCRM flav=pro ONLY
             'modules/InboundEmail/InboundEmail.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUIShared.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUI.js' => 'include/javascript/sugar_grp_emails.js',
@@ -257,11 +251,9 @@
 
                    'sidecar/lib/momentjs/min/langs.min.js' => 'include/javascript/sugar_sidecar.min.js',
 
-                   //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',
                    'sidecar/lib/sugarlogic/sidecarExpressionContext.js' => 'include/javascript/sugar_sidecar.min.js',
-                   //END SUGARCRM flav=pro ONLY
 
                     // Plugins for Sugar 7.
                     'include/javascript/sugar7/plugins/FieldErrorCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
@@ -285,11 +277,9 @@
                     'include/javascript/sugar7/plugins/HistoricalSummary.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MetadataEventDriven.js' =>
                         'include/javascript/sugar_sidecar.min.js',
-                    //BEGIN SUGARCRM flav=pro ONLY
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
                     'modules/Forecasts/clients/base/plugins/DisableDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'modules/Forecasts/clients/base/plugins/DisableMassDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    //END SUGARCRM flav=pro ONLY
                     'include/javascript/sugar7/plugins/MassQuote.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/RelativeTime.js'  => 'include/javascript/sugar_sidecar.min.js',

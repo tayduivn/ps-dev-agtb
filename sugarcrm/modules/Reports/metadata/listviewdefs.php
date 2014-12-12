@@ -30,7 +30,6 @@ $listViewDefs['Reports'] = array(
         'orderBy' => 'report_type',
         'related_fields' => array('report_type'),
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_TEAM',
@@ -38,7 +37,6 @@ $listViewDefs['Reports'] = array(
         'related_fields' => array('team_id'),
         'orderBy' => 'team_id'
         ),
-    //END SUGARCRM flav=pro ONLY
     'ASSIGNED_USER_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_ASSIGNED_USER',

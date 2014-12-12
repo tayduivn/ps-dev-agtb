@@ -398,7 +398,6 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 	$query .= " inner join $mod->table_name m1 on rt.$mod_key = m1.id ";
 	$query .= " inner join $mod2->table_name m2 on rt.$mod2_key = m2.id  ";
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	//rrs bug: 29890 - if record on Offline Client is assigned to a team the user does not have access to
 	//then it will not sync to server, but the relationship will.  We will assume the user would like to ignore team
 	//level security; however, I have added it as an variable "DISABLE_ROW_LEVEL_SECURITY" to this file (see above) so that it can be changed
@@ -424,7 +423,6 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 						                   AND tm2.deleted=0 group by tst.team_set_id) m2_tf on m2_tf.team_set_id  = m2.team_set_id ";
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	if(!empty($relationship_query)){
 		$query .= ' WHERE ' . $relationship_query;

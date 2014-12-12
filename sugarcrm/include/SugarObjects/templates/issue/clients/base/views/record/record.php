@@ -73,12 +73,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'span' => 12,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,

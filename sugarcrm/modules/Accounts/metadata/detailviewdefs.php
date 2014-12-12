@@ -21,9 +21,7 @@ $viewdefs['Accounts']['DetailView'] = array(
 //END SUGARCRM flav!= com ONLY
 )),
                             'maxColumns' => '2',
-                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30')
@@ -47,9 +45,7 @@ $viewdefs['Accounts']['DetailView'] = array(
                 'module' => 'Accounts',
                 'connectors' => 
                 array (
-                  //BEGIN SUGARCRM flav=pro ONLY
                   0 => 'ext_rest_twitter',
-                  //END SUGARCRM flav=pro ONLY
                 ),
             ),          
           ),
@@ -193,9 +189,7 @@ $viewdefs['Accounts']['DetailView'] = array(
           ),
         ),
         array (
-		  //BEGIN SUGARCRM flav=pro ONLY
-		  'team_name', 
-		  //END SUGARCRM flav=pro ONLY
+		  'team_name',
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',

@@ -104,9 +104,7 @@ if(!empty($_POST['Contactsrelate_id'])) {
     $input .= "<input type='hidden' name='relate_id' value='{$_POST['Contactsrelate_id']}'>\n";
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 $input .= get_teams_hidden_inputs('Accounts');
-//END SUGARCRM flav=pro ONLY
 
 $emailAddress = BeanFactory::getBean('EmailAddresses');
 $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($account);

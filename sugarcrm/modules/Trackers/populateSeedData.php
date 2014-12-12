@@ -54,11 +54,9 @@ function start() {
 	    $this->action = $this->actions[array_rand($this->actions)];
 	    $this->date = $this->randomTimestamp();
 		$this->populate_tracker();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->populate_tracker_perf();
 		$this->populate_tracker_sessions();
 		$this->populate_tracker_queries();
-		//END SUGARCRM flav=pro ONLY
 		$this->trackerManager->save();
 	}
 }
@@ -71,9 +69,7 @@ function populate_tracker() {
 	    $monitor->setValue('visible', (($monitor->action == 'detailview') || ($monitor->action == 'editview')) ? 1 : 0);
 	    $monitor->setValue('date_modified', $this->randomTimestamp());
 	    $monitor->setValue('session_id', $this->getSessionId());
-		//BEGIN SUGARCRM flav=pro ONLY
 	    $monitor->setValue('team_id', 1);
-		//END SUGARCRM flav=pro ONLY
 	    if($this->action != 'settimezone' && isset($this->beanIdMap[$this->module][array_rand($this->beanIdMap[$this->module])])) {
 	       $monitor->setValue('item_id', $this->beanIdMap[$this->module][array_rand($this->beanIdMap[$this->module])]);
 	       $monitor->setValue('item_summary', 'random stuff'); //don't really need this
@@ -81,7 +77,6 @@ function populate_tracker() {
 	}
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 function populate_tracker_perf() {
     if($monitor2 = $this->trackerManager->getMonitor('tracker_perf')){
 	    $responseTime = rand(10, 20);
@@ -141,7 +136,6 @@ function populate_tracker_queries() {
     	$monitor5->setValue('query_id', $monitor4->query_id);
 	}
 }
-//END SUGARCRM flav=pro ONLY
 
 function randomTimestamp() {
    global $timedate;

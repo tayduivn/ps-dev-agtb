@@ -57,7 +57,6 @@ $searchFields['Products'] = array (
     'support_term' => array (
         'query_type' => 'default'
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'favorites_only' => array (
         'query_type' => 'format',
         'operator' => 'subquery',
@@ -69,7 +68,6 @@ $searchFields['Products'] = array (
             'id'
         )
     ),
-    //END SUGARCRM flav=pro ONLY
     //Range Search Support
     'range_date_entered' => array (
         'query_type' => 'default',

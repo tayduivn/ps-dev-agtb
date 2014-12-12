@@ -78,7 +78,7 @@ class ReportsController extends SugarController
 	{
 		$this->view = 'classic';
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	public function action_get_teamset_field() 
 	{
 		require_once('include/SugarFields/Fields/Teamset/ReportsSugarFieldTeamsetCollection.php');
@@ -88,7 +88,6 @@ class ReportsController extends SugarController
 		$view->init_tpl();
 		echo $view->display();
 	}
-	//END SUGARCRM flav=pro ONLY
 	public function action_get_quicksearch_defaults() 
 	{
 		global $global_json;

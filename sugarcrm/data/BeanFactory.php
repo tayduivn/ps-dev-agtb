@@ -85,13 +85,11 @@ class BeanFactory {
             {
                 // $bean = new $beanClass();
                 $bean = SugarBean::_createBean($beanClass);
-                //BEGIN SUGARCRM flav=pro ONLY
                 // Pro+ versions, to disable team check if we have rights
                 // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
                 if (!empty($params['disable_row_level_security'])) {
                     $bean->disable_row_level_security = true;
                 }
-                //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
 
                 if(empty($result)) {

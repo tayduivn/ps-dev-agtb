@@ -15,11 +15,10 @@ require('config.php');
 global $sugar_config;
 global $timedate;
 global $mod_strings;
-//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('modules/Teams/Team.php');
 $Team = new Team();
 $Team_id = $Team->retrieve_team_id('Administrator');
-//END SUGARCRM flav=pro ONLY
 
 //Sent when the admin generate a new password
 $EmailTemp = new EmailTemplate();
@@ -29,9 +28,8 @@ $EmailTemp->subject = $mod_strings['advanced_password_new_account_email']['subje
 $EmailTemp->body = $mod_strings['advanced_password_new_account_email']['txt_body'];
 $EmailTemp->body_html = $mod_strings['advanced_password_new_account_email']['body'];
 $EmailTemp->deleted = 0;
-//BEGIN SUGARCRM flav=pro ONLY
+
 $EmailTemp->team_id = $Team_id;
-//END SUGARCRM flav=pro ONLY
 $EmailTemp->published = 'off';
 $EmailTemp->text_only = 0;
 $id =$EmailTemp->save();
@@ -45,9 +43,8 @@ $EmailTemp->subject = $mod_strings['advanced_password_forgot_password_email']['s
 $EmailTemp->body = $mod_strings['advanced_password_forgot_password_email']['txt_body'];
 $EmailTemp->body_html = $mod_strings['advanced_password_forgot_password_email']['body'];
 $EmailTemp->deleted = 0;
-//BEGIN SUGARCRM flav=pro ONLY
+
 $EmailTemp->team_id = $Team_id;
-//END SUGARCRM flav=pro ONLY
 $EmailTemp->published = 'off';
 $EmailTemp->text_only = 0;
 $id =$EmailTemp->save();

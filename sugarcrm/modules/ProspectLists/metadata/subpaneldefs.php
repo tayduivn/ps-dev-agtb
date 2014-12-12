@@ -27,9 +27,7 @@ $layout_defs['ProspectLists'] = array(
 			'top_buttons' => array(
 			    array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
-				//BEGIN SUGARCRM flav=pro ONLY
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
-				//END SUGARCRM flav=pro ONLY
 			),
 		),
         'contacts' => array(
@@ -43,9 +41,7 @@ $layout_defs['ProspectLists'] = array(
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
-				//BEGIN SUGARCRM flav=pro ONLY
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
-				//END SUGARCRM flav=pro ONLY
 			),
 		),
         'leads' => array(
@@ -59,9 +55,7 @@ $layout_defs['ProspectLists'] = array(
 			'top_buttons' => array(
 			    array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
-				//BEGIN SUGARCRM flav=pro ONLY
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
-				//END SUGARCRM flav=pro ONLY
 			),
 		),        
 		'users' => array(
@@ -74,9 +68,7 @@ $layout_defs['ProspectLists'] = array(
 			'title_key' => 'LBL_USERS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
-				//BEGIN SUGARCRM flav=pro ONLY
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
-				//END SUGARCRM flav=pro ONLY
 			),
 		),		
         'accounts' => array(
@@ -91,9 +83,7 @@ $layout_defs['ProspectLists'] = array(
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
-				//BEGIN SUGARCRM flav=pro ONLY
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
-				//END SUGARCRM flav=pro ONLY
             ),
 		),
 	),

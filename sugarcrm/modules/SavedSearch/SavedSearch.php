@@ -20,10 +20,8 @@ class SavedSearch extends SugarBean {
 	var $assigned_user_id;
 	var $assigned_user_name;
 	var $modified_by_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $team_name;
-//END SUGARCRM flav=pro ONLY
 	var $name;
 	var $description;
 	var $contents;

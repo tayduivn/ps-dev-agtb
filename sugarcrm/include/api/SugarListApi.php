@@ -87,11 +87,9 @@ abstract class SugarListApi extends SugarApi {
                     $direction = 'ASC';
                 }
                 if ( $seed != null ) {
-                    //BEGIN SUGARCRM flav=pro ONLY
                     if ( $this->checkAcls && !$seed->ACLFieldAccess($column,'list') ) {
                         throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$seed->module_dir);
                     }
-                    //END SUGARCRM flav=pro ONLY
                     if ( !isset($seed->field_defs[$column]) ) {
                         throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$seed->module_dir);
                     }

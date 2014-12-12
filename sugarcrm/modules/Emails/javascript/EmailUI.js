@@ -2155,11 +2155,9 @@ SE.folders = {
     },
 
 
-   	//BEGIN SUGARCRM flav=pro ONLY
 	retrieveTeamInfo : function() {
        AjaxObject.startRequest(callbackTeamInfoForSettings, urlStandard + '&emailUIAction=retrieveTeamsInfoForSettings');
 	},
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Updates TreeView with Sugar Folders
@@ -3476,7 +3474,6 @@ SE.settings = {
         SE.accounts.lazyLoad();
     },
 
-    <!--//BEGIN SUGARCRM flav=pro ONLY -->
     evalTeamData : function() {
     	if(isAdmin) {
 	    	var teamSettingsFolderString = SUGAR.email2.composeLayout.teamsSettingsFolder;
@@ -3484,7 +3481,6 @@ SE.settings = {
     	}
 	    SE.settings.displayedTeamData = true;
     },
-	<!--//END SUGARCRM flav=pro ONLY -->
 
     lazyLoadRules : function() {
         if(false) {

@@ -159,7 +159,6 @@ class ListViewDisplay {
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
 
         //check for team_set_count
         if(!empty($filter_fields['team_name']) && empty($filter_fields['team_count'])){
@@ -168,7 +167,6 @@ class ListViewDisplay {
             //Add the team_id entry so that we can retrieve the team_id to display primary team
             $filter_fields['team_id'] = true;
         }
-        //END SUGARCRM flav=pro ONLY
 
         return $filter_fields;
 	}

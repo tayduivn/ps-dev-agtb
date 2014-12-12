@@ -25,9 +25,8 @@ class KBDocument extends SugarBean {
 	var $kbdoc_approver_name;
     var $kbdoc_approver_id;
 	var $assigned_user_id;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $active_date;
 	var $exp_date;
 	var $document_revision_id;
@@ -264,14 +263,13 @@ class KBDocument extends SugarBean {
         {
             $ret_array['select'] .= $custom_join['select'];
         }
-        //BEGIN SUGARCRM flav=pro ONLY
+
         if (!is_admin($current_user) && !$this->disable_row_level_security){
             $ret_array['select'] .= ", kbdocuments.team_id ";
         }
-        //END SUGARCRM flav=pro ONLY
         $ret_array['from'] = " FROM kbdocuments left join kbdocuments_views_ratings kvr ON kbdocuments.id = kvr.kbdocument_id  LEFT JOIN  users jt0 ON jt0.id= kbdocuments.assigned_user_id AND jt0.deleted=0  LEFT JOIN  users jt1 ON jt1.id= kbdocuments.kbdoc_approver_id AND jt1.deleted=0 ";
         $ret_array['from'] .= $custom_join['join'];
-         //BEGIN SUGARCRM flav=pro ONLY
+
         $this->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $this->addVisibilityWhere($where, array('where_condition' => true));
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
@@ -285,7 +283,6 @@ class KBDocument extends SugarBean {
 
         $ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
         }
-        //END SUGARCRM flav=pro ONLY
         // Bug 57679 - All KBDocs coming back, even deleted ones
         $where_deleted = '';
         if($show_deleted == 0)
@@ -656,16 +653,14 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		}
 
 		$list = Array();
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		$disable_security_flag = ($template->disable_row_level_security) ? true : false;
 		$authors = array();
-		//END SUGARCRM flav=pro ONLY
 		while($row = $this->db->fetchByAssoc($result))
 		{
 		    $template = $template->getCleanCopy();
-			//BEGIN SUGARCRM flav=pro ONLY
+
 			$template->disable_row_level_security = $disable_security_flag;
-			//END SUGARCRM flav=pro ONLY
 			$record = $template->retrieve($row['id']);
 
 			if($record != null)

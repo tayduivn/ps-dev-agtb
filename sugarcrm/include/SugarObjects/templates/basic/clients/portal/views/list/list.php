@@ -24,7 +24,6 @@ $viewdefs[$module_name]['portal']['view']['list'] = array(
                     'enabled' => true,
                     'link' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_TEAM',
@@ -32,7 +31,6 @@ $viewdefs[$module_name]['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',

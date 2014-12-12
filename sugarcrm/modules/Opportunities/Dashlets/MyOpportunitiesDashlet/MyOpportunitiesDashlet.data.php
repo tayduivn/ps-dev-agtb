@@ -17,9 +17,7 @@ global $current_user;
 
 $dashletData['MyOpportunitiesDashlet']['searchFields'] = array('date_entered'     => array('default' => ''),
                                                                'opportunity_type' => array('default' => ''),
-                                                                //BEGIN SUGARCRM flav=pro ONLY
                                                                'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
-                                                                //END SUGARCRM flav=pro ONLY
                                                                'sales_stage'      => array('default' => 
                                                                     array('Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition', 'Id. Decision Makers', 'Perception Analysis', 'Proposal/Price Quote', 'Negotiation/Review')),
                                                                'assigned_user_id' => array('type'    => 'assigned_user_name',
@@ -63,9 +61,7 @@ $dashletData['MyOpportunitiesDashlet']['columns'] = array('name' => array('width
                                                                                         'label'   => 'LBL_LIST_ASSIGNED_USER'),
 														  'next_step' => array('width' => '10', 
 														        'label' => 'LBL_NEXT_STEP'),                                                                         
-                                                          //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_name' => array('width'   => '15', 
                                                                                'label'   => 'LBL_LIST_TEAM'),
-                                                           //END SUGARCRM flav=pro ONLY
                                                            );
 ?>

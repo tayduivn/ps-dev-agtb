@@ -24,12 +24,10 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'duplicate_merge' => 'disabled',
     'audited' =>true,
   	'studio' => array(
-          'fields' => 'false',
-          'listview' => false,
-          //BEGIN SUGARCRM flav=pro ONLY
+          'fields' => 'false', 
+          'listview' => false, 
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
-          //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'portalrecordview' => false,
@@ -60,13 +58,11 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
        'quickcreate' => false,
        'basic_search' => false,
        'advanced_search' => false,
-	   //BEGIN SUGARCRM flav=pro ONLY
 	   'wirelesseditview' => false,
 	   'wirelessdetailview' => false,
 	   'wirelesslistview' => 'visible',
 	   'wireless_basic_search' => false,
 	   'wireless_advanced_search' => false,
-	   //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
        'portalrecordview' => 'visible',
@@ -88,12 +84,10 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'duplicate_merge' => 'disabled',
     'audited' =>true,
   	'studio' => array(
-          'fields' => 'false',
-          'listview' => false,
-          //BEGIN SUGARCRM flav=pro ONLY
+          'fields' => 'false', 
+          'listview' => false, 
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
-          //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'portalrecordview' => false,
@@ -125,13 +119,11 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
        'quickcreate' => false,
        'basic_search' => false,
        'advanced_search' => false,
-       //BEGIN SUGARCRM flav=pro ONLY
        'wirelesseditview' => false,
        'wirelessdetailview' => false,
        'wirelesslistview' => 'visible',
        'wireless_basic_search' => false,
        'wireless_advanced_search' => false,
-       //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
        'portalrecordview' => 'visible',
@@ -277,14 +269,10 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 
 )
                                                       , 'indices' => array (
-              //BEGIN SUGARCRM flav=pro ONLY
        /*
-       //END SUGARCRM flav=pro ONLY
       array('name' =>'bug_number', 'type' =>'index', 'fields'=>array('bug_number')),
-       //BEGIN SUGARCRM flav=pro ONLY
         */
        array('name' =>'bug_number', 'type' =>'unique', 'fields'=>array('bug_number', 'system_id')),
-       //END SUGARCRM flav=pro ONLY
 
        array('name' =>'idx_bug_name', 'type' =>'index', 'fields'=>array('name')),
 
@@ -373,9 +361,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
  );
 
 VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 'issue',
 ));
 
