@@ -24,6 +24,7 @@ $fields = array(
         'name' => 'account_name',
         'enabled' => true,
         'default' => true,
+        'sortable' => true,
     ),
     array(
         'name' => 'status',
@@ -97,12 +98,14 @@ $fields = array(
         'name' => 'opportunity_name',
         'enabled' => true,
         'default' => true,
+        'sortable' => true,
     ),
     array(
         'name' => 'account_name',
         'readonly' => true,
         'enabled' => true,
         'default' => true,
+        'sortable' => true,
     ),
     array(
         'name' => 'sales_stage',
