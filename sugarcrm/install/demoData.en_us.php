@@ -21494,7 +21494,7 @@ $sugar_demodata['currency_seed_data'][] = array(
 	'name' => 'Euro',
 	'conversion_rate' => 0.9,
 	'iso4217' => 'EUR',
-	'symbol' => 'â¬',
+	'symbol' => '€',
 );
 
 //producttemplate

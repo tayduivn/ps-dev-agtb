@@ -795,7 +795,7 @@ EOHTML;
 
         //BEGIN SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
-        $copyright = 'Ã©â¢ï¿½Ã¤Â¸Â­Ã¥âºÂ½Ã¥ÅÂ°Ã¥ÅÂºÃ¤Â½Â¿Ã§ï¿½1ï¿1ï¿½7ï¿½Â1ï¿½7ï¿½1ï¿½7r> &copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> Ã§â°ËÃ¦ï¿½ÆÃ¦â°â¬Ã¦Åâ1ï¿½7ï¿½1ï¿½7r>';
+        $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
 
         //END SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 

@@ -1970,7 +1970,7 @@ function parse_calendardate($local_format)
     preg_match('/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/', $local_format, $matches);
     $calendar_format = "%" . $matches[1] . "-%" . $matches[2] . "-%" . $matches[3];
 
-    return str_replace(array("y", "ï¿1ï¿½7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
+    return str_replace(array("y", "ￄ1�7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
 }
 
 function translate($string, $mod='', $selectedValue='')
@@ -5195,13 +5195,13 @@ function verify_image_file($path, $jpeg = false)
                 return false;
             }
             $data = '';
-            //Â readÂ theÂ wholeÂ fileÂ inÂ chunks
+            // read the whole file in chunks
             while (!feof($fp)) {
                 $data .= fread($fp,8192);
             }
 
             fclose($fp);
-            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|imgÂ |pre(>|Â )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
                  $data, $m)) {
                 $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
 

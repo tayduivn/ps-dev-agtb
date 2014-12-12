@@ -17,7 +17,7 @@
 {assign var="alt_end" value=$navStrings.end}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
-    <tr class="pagination" role=âpresentationâ>
+    <tr class="pagination" role="presentation">
         <td colspan='{$colCount+1}' align='right'>
             <table border='0' cellpadding='0' cellspacing='0' width='100%'>
                 <tr>
