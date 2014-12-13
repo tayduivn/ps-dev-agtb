@@ -97,10 +97,10 @@ set_include_path(implode(PATH_SEPARATOR, array(
 //    require_once $nativeFunctionsFile;
 //}
 
-//$nativeFunctionsFile = TEST_FILES_PATH.'/modules/nativeFunctions.php';
-//if (file_exists($nativeFunctionsFile)) {
-//    require_once $nativeFunctionsFile;
-//}
+$nativeFunctionsFile = TEST_FILES_PATH.'/modules/nativeFunctions.php';
+if (file_exists($nativeFunctionsFile)) {
+    require_once $nativeFunctionsFile;
+}
 //require_once TEST_FILES_PATH.'modules/cryptoFunctions.php';
 $path = get_include_path();
 
