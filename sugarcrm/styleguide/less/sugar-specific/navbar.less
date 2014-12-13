@@ -343,14 +343,20 @@
   }
   .profileactions-profile {
     > a {
-      text-indent: 30px;
+      //text-indent: 30px;
+      > span {
+          display: inline-block;
+          width: 14px;
+          height: 0;
         .avatar {
-        position: absolute;
-        left: 11px;
+          position: absolute;
+          left: 11px;
+          top: 7px;
+        }
       }
     }
   }
-  .fa-user {
+  .dropdown-toggle .fa-user {
     width: 26px;
     height: 26px;
     line-height: 26px;
