@@ -332,6 +332,13 @@
                     }
                     app.router.record(module, id, action, layout);
                 }
+            },
+            {
+                name: "not_found",
+                route: /^.*$/,
+                callback: function() {
+                    app.error.handleHttpError({status: 404});
+                }
             }
         ];
 
