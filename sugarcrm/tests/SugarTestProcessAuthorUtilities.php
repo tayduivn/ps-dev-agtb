@@ -11,7 +11,7 @@
  */
 
 defined('MOCK_CLASSES_PATH')
-    || define('MOCK_CLASSES_PATH', realpath(dirname(__FILE__) . '/package/mockClasses/'));
+    || define('MOCK_CLASSES_PATH', realpath(dirname(__FILE__) . '/mockClasses/'));
 
 
 function autoload_classes($class_name)
@@ -85,12 +85,11 @@ spl_autoload_register('autoload_api_classes');
 spl_autoload_register('autoload_mock_classes');
 
 defined('TEST_FILES_PATH')
-    || define('TEST_FILES_PATH', realpath(dirname(__FILE__) . '/package/mockFiles/'));
+    || define('TEST_FILES_PATH', realpath(dirname(__FILE__) . '/mockFiles/'));
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
     TEST_FILES_PATH,
-    get_include_path(),
-    MODULES_PATH
+    get_include_path()
 )));
 
 //$nativeFunctionsFile = './mockFiles/modules/nativeFunctions.php';
@@ -98,10 +97,10 @@ set_include_path(implode(PATH_SEPARATOR, array(
 //    require_once $nativeFunctionsFile;
 //}
 
-$nativeFunctionsFile = TEST_FILES_PATH.'/modules/nativeFunctions.php';
-if (file_exists($nativeFunctionsFile)) {
-    require_once $nativeFunctionsFile;
-}
+//$nativeFunctionsFile = TEST_FILES_PATH.'/modules/nativeFunctions.php';
+//if (file_exists($nativeFunctionsFile)) {
+//    require_once $nativeFunctionsFile;
+//}
 //require_once TEST_FILES_PATH.'modules/cryptoFunctions.php';
 $path = get_include_path();
 

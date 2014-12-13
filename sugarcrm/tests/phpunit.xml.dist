@@ -161,17 +161,18 @@
             <exclude>./tests/modules/Quotas/QuotaTest.php</exclude>
         </testsuite>
         <testsuite name="ProcessAuthor">
-            <directory>./pmse/package/modules</directory>
-            <exclude>./pmse/package/modules/mockClasses</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/CryptTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEAccessManagerTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEElements/PMSEChangeFieldTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEEngineUtilsTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandlerTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSELoggerTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEImporterTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Inbox/engine/PMSEProjectImporterTest.php</exclude>
-            <exclude>./pmse/package/modules/pmse_Project/clients/base/api/wrappers/PMSEDynaFormTest.php</exclude>
+            <directory>./pmse/modules</directory>
+            <exclude>./pmse/modules/mockClasses</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/CryptTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEAccessManagerTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEElements/PMSEChangeFieldTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEEngineUtilsTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandlerTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSELoggerTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEImporterTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEProjectImporterTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEDynaFormTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandlerTest.php</exclude>
         </testsuite>
     </testsuites>
     <filter>
