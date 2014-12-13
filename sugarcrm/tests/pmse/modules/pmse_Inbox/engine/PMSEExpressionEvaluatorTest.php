@@ -1362,7 +1362,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expType": "CONSTANT",
                 "expSubtype": "date",
                 "expLabel": "2014-10-16 00:00:00",
-                "expValue": "2014-10-16T00:00:00-04:00"
+                "expValue": "2014-10-16T00:00:00-08:00"
             },
             {
                 "expType": "ARITHMETIC",
@@ -1384,7 +1384,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $expectedToken = new stdClass();
-        $expectedToken->expValue = "2014-10-21T00:00:00-04:00";
+        $expectedToken->expValue = "2014-10-21T00:00:00-08:00";
         $expectedToken->expLabel = "2014-10-21 00:00:00";
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
@@ -1405,7 +1405,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expType": "CONSTANT",
                 "expSubtype": "date",
                 "expLabel": "2014-05-16 00:00:00",
-                "expValue": "2014-05-16T00:00:00-04:00"
+                "expValue": "2014-05-16T00:00:00-08:00"
             },
             {
                 "expType": "ARITHMETIC",
@@ -1482,7 +1482,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $expectedToken = new stdClass();
-        $expectedToken->expValue = "2014-10-20T03:15:00-04:00";
+        $expectedToken->expValue = "2014-10-20T03:15:00-08:00";
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
@@ -1778,7 +1778,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(null)
                 ->getMock();
-        $date = "2014-10-16T00:00:00-04:00";
+        $date = "2014-10-16T00:00:00-08:00";
         $operator = '-';
         $interval = "5m";
         $expected = "2014-05-16 00:00:00";

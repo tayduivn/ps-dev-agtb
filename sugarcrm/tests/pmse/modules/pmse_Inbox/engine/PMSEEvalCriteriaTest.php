@@ -271,7 +271,7 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals('Holas', $this->object->typeData('Holas','address'));
         $this->assertEquals(true, $this->object->typeData(true,'bool'));
-        $this->assertEquals(1381377600, $this->object->typeData('10/10/2013','date'));
+        $this->assertEquals(1381388400, $this->object->typeData('10/10/2013','date'));
         $this->assertEquals(12345, $this->object->typeData(12345,'enum'));
         $this->assertEquals(12.34, $this->object->typeData(12.34,'float'));
         $this->assertEquals(123456, $this->object->typeData(123456,'integer'));
