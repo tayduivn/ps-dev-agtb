@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 defined('MOCK_CLASSES_PATH')
     || define('MOCK_CLASSES_PATH', realpath(dirname(__FILE__) . '/mockClasses/'));
 
@@ -85,7 +85,7 @@ spl_autoload_register('autoload_api_classes');
 spl_autoload_register('autoload_mock_classes');
 
 defined('TEST_FILES_PATH')
-    || define('TEST_FILES_PATH', realpath(dirname(__FILE__) . '/mockFiles/'));
+    || define('TEST_FILES_PATH', realpath(dirname(__FILE__) . '/mockFiles'));
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
     TEST_FILES_PATH,

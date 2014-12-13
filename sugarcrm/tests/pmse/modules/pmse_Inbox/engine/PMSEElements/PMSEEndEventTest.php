@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -111,68 +112,67 @@ class PMSEEndEventTest extends PHPUnit_Framework_TestCase {
     /**
      * Test the method that counts the number of open threads.
      */
-    public function testCountNumberOpenThreads()
-    {
-        $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
-            ->setMethods(NULL)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $sugarBeanMock = $this->getMockBuilder('SugarBean')
-            ->disableOriginalConstructor()
-            ->setMethods(NULL)
-            ->getMock();
-        
-        $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveSugarQueryObject', 'retrieveBean'))
-            ->getMock();
-        $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
-        
-        $caseFlowHandlerMock->expects($this->exactly(1))
-            ->method('retrieveBean')
-            ->will($this->returnValue($sugarBeanMock));
-        
-        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(array('from','select','fieldRaw','where','equals','execute'))
-            ->getMock();
-        
-        $sugarQueryMock->expects($this->once())
-            ->method('from')
-            ->will($this->returnValue($sugarQueryMock));
-        $sugarQueryMock->expects($this->once())
-            ->method('select')
-            ->will($this->returnValue($sugarQueryMock));
-        $sugarQueryMock->expects($this->once())
-            ->method('fieldRaw')
-            ->will($this->returnValue($sugarQueryMock));
-        $sugarQueryMock->expects($this->exactly(2))
-            ->method('where')
-            ->will($this->returnValue($sugarQueryMock));
-        $sugarQueryMock->expects($this->exactly(2))
-            ->method('equals')
-            ->will($this->returnValue($sugarQueryMock));
-        
-        $resultArray = array(
-            array('open'=>1)
-        );
-        
-        $sugarQueryMock->expects($this->once())
-            ->method('execute')
-            ->will($this->returnValue($resultArray));
-        
-        $caseFlowHandlerMock->expects($this->once())
-            ->method('retrieveSugarQueryObject')
-            ->will($this->returnValue($sugarQueryMock));
-        
-        $flowData = array(
-            'cas_id' => 1,
-            'cas_index' => 2,
-            'cas_previous' => 1
-        );
-        
-        $result = $this->endEvent->countNumberOpenThreads($flowData);
-        $this->assertEquals(1, $result);
-    }
+//    public function testCountNumberOpenThreads()
+//    {
+//        $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
+//            ->setMethods(NULL)
+//            ->disableOriginalConstructor()
+//            ->getMock();
+//
+//        $sugarBeanMock = $this->getMockBuilder('SugarBean')
+//            ->disableOriginalConstructor()
+//            ->setMethods(NULL)
+//            ->getMock();
+//
+//        $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
+//            ->setMethods(array('retrieveSugarQueryObject', 'retrieveBean'))
+//            ->getMock();
+//        $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
+//
+//        $caseFlowHandlerMock->expects($this->exactly(1))
+//            ->method('retrieveBean')
+//            ->will($this->returnValue($sugarBeanMock));
+//
+//        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
+//            ->disableOriginalConstructor()
+//            ->setMethods(array('from','select','fieldRaw','where','equals','execute'))
+//            ->getMock();
+//
+//        $sugarQueryMock->expects($this->once())
+//            ->method('from')
+//            ->will($this->returnValue($sugarQueryMock));
+//        $sugarQueryMock->expects($this->once())
+//            ->method('select')
+//            ->will($this->returnValue($sugarQueryMock));
+//        $sugarQueryMock->expects($this->once())
+//            ->method('fieldRaw')
+//            ->will($this->returnValue($sugarQueryMock));
+//        $sugarQueryMock->expects($this->exactly(2))
+//            ->method('where')
+//            ->will($this->returnValue($sugarQueryMock));
+//        $sugarQueryMock->expects($this->exactly(2))
+//            ->method('equals')
+//            ->will($this->returnValue($sugarQueryMock));
+//
+//        $resultArray = array(
+//            array('open'=>1)
+//        );
+//
+//        $sugarQueryMock->expects($this->once())
+//            ->method('execute')
+//            ->will($this->returnValue($resultArray));
+//
+//        $caseFlowHandlerMock->expects($this->once())
+//            ->method('retrieveSugarQueryObject')
+//            ->will($this->returnValue($sugarQueryMock));
+//
+//        $flowData = array(
+//            'cas_id' => 1,
+//            'cas_index' => 2,
+//            'cas_previous' => 1
+//        );
+//
+//        $result = $this->endEvent->countNumberOpenThreads($flowData);
+//        $this->assertEquals(1, $result);
+//    }
 }
- 
