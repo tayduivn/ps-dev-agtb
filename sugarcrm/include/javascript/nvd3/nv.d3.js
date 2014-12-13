@@ -798,6 +798,20 @@ nv.utils.dropShadow = function (id, defs, options) {
 //   fill="yellow" filter="url(#f1)" />
 // </svg>
 
+nv.utils.stringSetLengths = function (_data, _container, _format) {
+  var lengths = [];
+  _container.append('g').attr('class', 'tmp-text-strings');
+  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
+      .data(_data).enter()
+        .append('text')
+        .text(_format);
+  calcContainers
+    .each(function (d,i) {
+      lengths.push(this.getBBox().width);
+    });
+  _container.select('.tmp-text-strings').remove();
+  return lengths;
+};
 
 nv.utils.maxStringSetLength = function (_data, _container, _format) {
   var maxLength = 0;
@@ -833,6 +847,13 @@ nv.utils.isRTLChar = function(c) {
   var rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
       rtlCharReg_ = new RegExp('[' + rtlChars_ + ']');
   return rtlCharReg_.test(c);
+};
+
+nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
+  var angleInRadians = angleInDegrees * Math.PI / 180.0;
+  var x = centerX + radius * Math.cos(angleInRadians);
+  var y = centerY + radius * Math.sin(angleInRadians);
+  return [x, y];
 };
 nv.models.axis = function() {
 
@@ -10421,10 +10442,11 @@ nv.models.pie = function() {
       showLeaders = true,
       pieLabelsOutside = true,
       donutLabelsOutside = true,
-      labelThreshold = 0.02, //if slice percentage is under this, don't show label
+      labelThreshold = 0.01, //if slice percentage is under this, don't show label
       donut = false,
       labelSunbeamLayout = false,
-      leaderLength = 10,
+      leaderLength = 20,
+      textOffset = 5,
       startAngle = false,
       endAngle = false,
       donutRatio = 0.447,
@@ -10445,50 +10467,22 @@ nv.models.pie = function() {
           availableHeight = height - margin.top - margin.bottom,
           container = d3.select(this);
 
+      // Setup the Pie chart and choose the data element
+      var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.disabled ? 0 : getY(d); });
+
       //------------------------------------------------------------
       // recalculate width and height based on label length
-      var valuePadding = 0;
+      var labelLengths = [];
       if (showLabels && pieLabelsOutside) {
-        valuePadding = nv.utils.maxStringSetLength(
+        labelLengths = nv.utils.stringSetLengths(
             data.map(function(d) { return d.key; }),
             container,
             function(d) { return d; }
           );
-        valuePadding = Math.round(valuePadding) + (showLeaders ? leaderLength + 5 : 0);
-        valuePadding *= 2;
       }
 
-      var radius = Math.min(availableWidth - valuePadding, availableHeight) / 2,
-          arcRadius = radius - (showLabels && pieLabelsOutside ? 20 : 0);
-
-      var arc = d3.svg.arc()
-            .innerRadius(0)
-            .outerRadius(arcRadius);
-
-      if (startAngle) {
-        arc.startAngle(startAngle);
-      }
-      if (endAngle) {
-        arc.endAngle(endAngle);
-      }
-      if (donut) {
-        arc.innerRadius(arcRadius * donutRatio);
-      }
-
-      var labelsArc = d3.svg.arc()
-            .innerRadius(0)
-            .outerRadius(arcRadius);
-
-      if (pieLabelsOutside) {
-        if (!donut || donutLabelsOutside) {
-          labelsArc
-            .innerRadius(radius)
-            .outerRadius(radius);
-        } else {
-          labelsArc
-            .outerRadius(arcRadius * donutRatio);
-        }
-      }
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
       var wrap = container.selectAll('.nv-wrap.nv-pie').data([data]);
@@ -10499,7 +10493,7 @@ nv.models.pie = function() {
 
       //set up the gradient constructor function
       chart.gradient = function(d, i) {
-        var params = {x: 0, y: 0, r: radius, s: (donut ? (donutRatio * 100) + '%' : '0%'), u: 'userSpaceOnUse'};
+        var params = {x: 0, y: 0, r: pieRadius, s: (donut ? (donutRatio * 100) + '%' : '0%'), u: 'userSpaceOnUse'};
         return nv.utils.colorRadialGradient(d, id + '-' + i, params, color(d, i), wrap.select('defs'));
       };
 
@@ -10519,11 +10513,6 @@ nv.models.pie = function() {
             id: id
           });
         });
-
-      // Setup the Pie chart and choose the data element
-      var pie = d3.layout.pie()
-            .sort(null)
-            .value(function(d) { return d.disabled ? 0 : getY(d); });
 
       var slices = wrap.select('.nv-pie').selectAll('.nv-slice')
             .data(pie);
@@ -10583,38 +10572,97 @@ nv.models.pie = function() {
               d3.event.stopPropagation();
             });
 
-      ae.append('path')
-          .style('stroke', '#ffffff')
-          .style('stroke-width', 3)
-          .style('stroke-opacity', 1)
-          .each(function(d) {
-            this._current = d;
+          ae.append('path')
+              .style('stroke', '#ffffff')
+              .style('stroke-width', 3)
+              .style('stroke-opacity', 0)
+              .each(function(d, i) {
+                this._current = d;
+              });
+
+          ae.append('g')
+              .attr('transform', 'translate(0,0)')
+              .attr('class', 'nv-label');
+
+          ae.select('.nv-label')
+              .append('rect')
+              .style('fill-opacity', 0)
+              .style('stroke-opacity', 0);
+          ae.select('.nv-label')
+              .append('text')
+              .style('fill-opacity', 0);
+
+          ae.append('polyline')
+              .attr('class', 'nv-label-leader')
+              .style('stroke-opacity', 0);
+
+      // UPDATE
+      //------------------------------------------------------------
+
+      var maxWidthRadius = availableWidth / 2,
+          maxHeightRadius = availableHeight / 2;
+
+      if (showLabels && pieLabelsOutside) {
+        var widthRadii = [availableWidth / 2 + leaderLength],
+            heightRadii = [availableHeight / 2 + leaderLength];
+
+        slices.select('path')
+          .each(function(d, i) {
+            if (!labelOpacity(d)) {
+              return;
+            }
+            var Θ = d.startAngle + (d.endAngle - d.startAngle) / 2,
+                sin = Math.abs(Math.sin(Θ)),
+                cos = Math.abs(Math.cos(Θ)),
+                bW = maxWidthRadius - leaderLength - textOffset - labelLengths[i],
+                bH = maxHeightRadius - 7,
+                rW = sin ? bW / sin : bW, //don't divide by zero, fool
+                rH = cos ? bH / cos : bH;
+            widthRadii.push(rW);
+            heightRadii.push(rH);
           });
 
-      ae.append('g')
-          .attr('transform', 'translate(0,0)')
-          .attr('class', 'nv-label');
+        maxWidthRadius = d3.min(widthRadii);
+        maxHeightRadius = d3.min(heightRadii);
+      }
 
-      ae.select('.nv-label')
-          .append('rect')
-          .style('fill-opacity', 0)
-          .style('stroke-opacity', 0);
-      ae.select('.nv-label')
-          .append('text')
-          .style('fill-opacity', 0);
+      var labelRadius = Math.min(maxWidthRadius, maxHeightRadius),
+          pieRadius = labelRadius - (showLabels && pieLabelsOutside ? leaderLength : 0);
 
-      ae.append('polyline')
-          .attr('class', 'nv-label-leader')
-          .style('stroke-opacity', 0);
+      var pieArc = d3.svg.arc()
+            .innerRadius(0)
+            .outerRadius(pieRadius);
+
+      if (startAngle) {
+        pieArc.startAngle(startAngle);
+      }
+      if (endAngle) {
+        pieArc.endAngle(endAngle);
+      }
+      if (donut) {
+        pieArc.innerRadius(pieRadius * donutRatio);
+      }
+
+      var labelArc = d3.svg.arc()
+            .innerRadius(0)
+            .outerRadius(pieRadius);
+
+      if (pieLabelsOutside) {
+        if (!donut || donutLabelsOutside) {
+          labelArc
+            .innerRadius(labelRadius)
+            .outerRadius(labelRadius);
+        } else {
+          labelArc
+            .outerRadius(pieRadius * donutRatio);
+        }
+      }
 
       slices
         .classed('nv-active', function(d) { return d.data.active === 'active'; })
         .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; })
         .attr('class', function(d) { return classes(d.data, d.data.series); })
         .attr('fill', function(d) { return fill(d.data, d.data.series); });
-
-      slices.select('path')
-        .attr('d', arc);
 
       // removed d3 transition in MACAROON-133 because
       // there is a "Maximum call stack size exceeded at Date.toString" error
@@ -10624,45 +10672,40 @@ nv.models.pie = function() {
       //   .attr('d', arc)
       //   .attrTween('d', arcTween);
 
+      slices.select('path')
+        .attr('d', pieArc)
+        .style('stroke-opacity', function(d) {
+          return d.startAngle === d.endAngle ? 0 : 1;
+        });
+
       if (showLabels) {
         // This does the normal label
         slices.select('.nv-label')
           .attr('transform', function(d) {
             if (labelSunbeamLayout) {
-              d.outerRadius = arcRadius + 10; // Set Outer Coordinate
-              d.innerRadius = arcRadius + 15; // Set Inner Coordinate
+              d.outerRadius = pieRadius + 10; // Set Outer Coordinate
+              d.innerRadius = pieRadius + 15; // Set Inner Coordinate
               var rotateAngle = (d.startAngle + d.endAngle) / 2 * (180 / Math.PI);
-              if ((d.startAngle + d.endAngle) / 2 < Math.PI) {
-                rotateAngle -= 90;
-              } else {
-                rotateAngle += 90;
-              }
-              return 'translate(' + labelsArc.centroid(d) + ') rotate(' + rotateAngle + ')';
+              rotateAngle += 90 * alignedRight(d);
+              return 'translate(' + labelArc.centroid(d) + ') rotate(' + rotateAngle + ')';
             } else {
-              var labelsPosition = labelsArc.centroid(d),
-                  alignedRight = (d.startAngle + d.endAngle) / 2 < Math.PI ? 1 : -1,
-                  leadOffset = showLeaders ? (leaderLength + 5) * alignedRight : 0;
+              var labelsPosition = labelArc.centroid(d),
+                  leadOffset = showLeaders ? (leaderLength + textOffset) * alignedRight(d) : 0;
               return 'translate(' + [labelsPosition[0] + leadOffset, labelsPosition[1]] + ')';
             }
           });
 
         slices.select('.nv-label text')
           .text(function(d) {
-            var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
-                label = getX(d.data);
-            return (label && percent > labelThreshold) ? label : '';
+            return labelOpacity(d) ? getX(d.data) : '';
           })
           .attr('dy', '.35em')
           .style('fill', '#555')
-          .style('fill-opacity', function(d) {
-            var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
-                label = getX(d.data);
-            return (label && percent > labelThreshold) ? 1 : 0;
-          })
+          .style('fill-opacity', labelOpacity)
           .style('text-anchor', function(d) {
             //center the text on it's origin or begin/end if orthogonal aligned
             //labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle'
-            var anchor = (d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end';
+            var anchor = alignedRight(d) === 1 ? 'start' : 'end';
             if (!pieLabelsOutside) {
               anchor = 'middle';
             }
@@ -10673,6 +10716,9 @@ nv.models.pie = function() {
         if (!pieLabelsOutside) {
           slices.select('.nv-label')
             .each(function(d) {
+              if (!labelOpacity(d)) {
+                return;
+              }
               var slice = d3.select(this),
                   textBox = slice.select('text').node().getBBox();
               slice.select('rect')
@@ -10684,32 +10730,26 @@ nv.models.pie = function() {
                   return 'translate(' + [textBox.x - 5, textBox.y - 5] + ')';
                 })
                 .style('fill', '#fff')
-                .style('fill-opacity', function(d) {
-                  var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
-                      label = getX(d.data);
-                  return (label && percent > labelThreshold) ? 0.4 : 0;
-                });
+                .style('fill-opacity', labelOpacity);
             });
         } else if (showLeaders) {
           slices.select('.nv-label-leader')
             .attr('points', function(d) {
-              var alignedRight = (d.startAngle + d.endAngle) / 2 < Math.PI ? 1 : -1,
-                  leadOffset = showLeaders ? leaderLength * alignedRight : 0,
+              if (!labelOpacity(d)) {
+                return '0,0';
+              }
+              var leadOffset = showLeaders ? leaderLength * alignedRight(d) : 0,
                   outerArcPoints = d3.svg.arc()
-                    .innerRadius(arcRadius)
-                    .outerRadius(arcRadius)
+                    .innerRadius(pieRadius)
+                    .outerRadius(pieRadius)
                     .centroid(d),
-                  labelsArcPoints = labelsArc.centroid(d),
-                  leadArcPoints = [labelsArcPoints[0] + leadOffset, labelsArcPoints[1]];
-              return outerArcPoints + ' ' + labelsArcPoints + ' ' + leadArcPoints;
+                  labelArcPoints = labelArc.centroid(d),
+                  leadArcPoints = [labelArcPoints[0] + leadOffset, labelArcPoints[1]];
+              return outerArcPoints + ' ' + labelArcPoints + ' ' + leadArcPoints;
             })
             .style('stroke', '#aaa')
             .style('fill', 'none')
-            .style('stroke-opacity', function(d) {
-              var percent = (d.endAngle - d.startAngle) / (2 * Math.PI),
-                  label = getX(d.data);
-              return (label && percent > labelThreshold) ? 1 : 0;
-            });
+            .style('stroke-opacity', labelOpacity);
         }
       } else {
         slices.select('.nv-label-leader').style('stroke-opacity', 0);
@@ -10717,10 +10757,13 @@ nv.models.pie = function() {
         slices.select('.nv-label text').style('fill-opacity', 0);
       }
 
-      // Computes the angle of an arc, converting from radians to degrees.
-      function angle(d) {
-        var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-        return a > 90 ? a - 180 : a;
+      function labelOpacity(d) {
+        var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
+        return percent > labelThreshold ? 1 : 0;
+      }
+
+      function alignedRight(d) {
+        return (d.startAngle + d.endAngle) / 2 < Math.PI ? 1 : -1;
       }
 
       function arcTween(d) {
@@ -10732,7 +10775,7 @@ nv.models.pie = function() {
 
         return function(t) {
           var iData = i(t);
-          return arc(iData);
+          return pieArc(iData);
         };
       }
 
@@ -10740,7 +10783,7 @@ nv.models.pie = function() {
         b.innerRadius = 0;
         var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
         return function(t) {
-          return arc(i(t));
+          return pieArc(i(t));
         };
       }
 

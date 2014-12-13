@@ -37,7 +37,7 @@
                 .y(function(d) {
                     return d.value;
                 })
-                .margin({top: 0, right: 0, bottom: 10, left: 0})
+                .margin({top: 0, right: 0, bottom: 0, left: 0})
                 .donut(true)
                 .donutLabelsOutside(true)
                 .donutRatio(0.447)
