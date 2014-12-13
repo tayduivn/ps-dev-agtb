@@ -173,6 +173,8 @@
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEProjectImporterTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEDynaFormTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandlerTest.php</exclude>
+            <exclude>./pmse/modules/pmse_Inbox/engine/parser/PMSEDataParserGatewayTest.php</exclude>
+
         </testsuite>
     </testsuites>
     <filter>
