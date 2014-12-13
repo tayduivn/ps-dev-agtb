@@ -101,7 +101,8 @@
      * @return {String} The value of the input.
      */
     getFilterName: function() {
-        return this.$('input').val();
+        var filterName = this.$('input').val();
+        return filterName.trim();
     },
 
     /**
@@ -160,16 +161,6 @@
     },
 
     /**
-     * Checks if filtername has nothing but spaces.
-     *
-     * @param {Boolean} true if all spaces, `false` otherwise.
-     */
-    hasOnlySpaces: function(){
-        var filterName = this.getFilterName();
-        return (filterName.length === 0 || !filterName.trim());
-    },
-
-    /**
      * Toggle save button.
      *
      * @param {Boolean} enable `true` to enable the button, `false` otherwise.
@@ -177,8 +168,7 @@
 
     toggleSave: function(enable) {
         this.saveState = _.isUndefined(enable) ? !this.saveState : !!enable;
-        var hasOnlySpaces = this.hasOnlySpaces();
-        var isEnabled = !hasOnlySpaces && this.getFilterName() && this.saveState;
+        var isEnabled = this.getFilterName() && this.saveState;
         this.$('.save_button').toggleClass('disabled', !isEnabled);
     },
 
