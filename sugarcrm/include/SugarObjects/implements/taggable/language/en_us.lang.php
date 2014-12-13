@@ -13,5 +13,6 @@
 $mod_strings = array(
     'LBL_TAGS_LINK' => 'Tags',
     'LBL_TAGS' => 'Tags',
+    'LBL_TAGS_LOWER' => 'Tags',
     'LBL_TAGS_SELECT_CREATE' => 'Select or create a new tag',
 );
