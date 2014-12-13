@@ -209,7 +209,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'include/Expressions/Expression/Numeric/CurrencyDivideExpression.php';
             $files[] = 'include/Expressions/Expression/Numeric/CurrencySumRelatedExpression.php';
         }
-        
+
         if (version_compare($this->from_version, '7.5', '<')) {
             $files[] = 'clients/portal/fields/date';
             $files[] = 'clients/portal/fields/datetimecombo';
@@ -239,6 +239,12 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/ProductBundles/Ext/LogicHooks/RelationshipChange.php';
             $files[] = 'modules/ProductBundles/ProductBundleHooks.php';
             $files[] = 'modules/ProductBundles/ProductBundlesApiHelper.php';
+            // UIUX-1687 Remove files orphaned by Font Awesome upgrade
+            $files[] = 'styleguide/assets/css/loader-sugarone.css';
+            $files[] = 'styleguide/less/twitter-bootstrap/font-awesome/bootstrap.less';
+            $files[] = 'styleguide/assets/font';
+            $files[] = 'vendor/lessphp/docs/docs.md';
+            $files[] = 'vendor/lessphp/plessc';
         }
 
         if (version_compare($this->from_version, '7.6', '<=')) {
