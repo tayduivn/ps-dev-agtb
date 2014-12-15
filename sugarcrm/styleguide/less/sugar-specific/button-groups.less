@@ -3,7 +3,6 @@
 .btn-group {
   position: relative;
   .clearfix(); // clears the floated buttons
-  .ie7-restore-left-whitespace();
   // Float them, remove border radius, then re-add to first and last elements
   .btn {
     position: relative;
@@ -16,8 +15,6 @@
     .dropdown-toggle {
       padding-left: 8px;
       padding-right: 8px;
-      *padding-top: 5px;
-      *padding-bottom: 5px;
     }
   }
   // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
@@ -108,7 +105,6 @@
   padding-left: 20px;
   .btn-group {
     display: inline-block;
-    .ie7-inline-block();
   }
   label {
     letter-spacing: normal;
@@ -125,11 +121,6 @@
 
 .btn-toolbar > .dropdown-menu {
   font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
-}
-
-// Float buttons to the left like twitter bootstrap 3.0, UIUX-1954, https://github.com/sugarcrm/Mango/commit/509ca2584047525e33c18553599b5120a31cbfe7
-.btn-toolbar .btn-group > .btn {
-  //float: left;
 }
 
 .touch .dashlet-header .btn-group.open {
