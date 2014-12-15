@@ -248,6 +248,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/ForecastManagerWorksheets/clients/base/fields/rowactions';
         }
 
+        if (version_compare($this->from_version, '7.7', '<')) {
+            $files[] = 'clients/base/views/interactionschart';
+        }
+
         $this->fileToDelete($files);
     }
 
