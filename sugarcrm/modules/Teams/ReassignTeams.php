@@ -33,7 +33,6 @@ if(isset($_REQUEST['team_id']) && isset($_REQUEST['teams'])) {
 		
 		//Redirect to listview
 		header("Location: index.php?module=Teams&action=index");
-		sugar_die();	   
 	}
 	$error_message = string_format($mod_strings['ERR_INVALID_TEAM_REASSIGNMENT'], array(Team::getDisplayName($new_team->name, $new_team->name_2, false)));
 }

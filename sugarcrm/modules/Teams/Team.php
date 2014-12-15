@@ -698,6 +698,11 @@ class Team extends SugarBean
 			   	   $sql = "UPDATE {$module} SET team_id = '{$this->id}' WHERE team_id = '{$old_team->id}'";
 			   	   $GLOBALS['log']->info("Updating team_id column values in {$module} table from '{$old_team->id}' to '{$this->id}'");
 			   	   $this->db->query($sql);
+
+			   	   $sql = "UPDATE team_sets_teams SET team_id = '{$this->id}' WHERE team_id = '{$old_team->id}'";
+			   	   $GLOBALS['log']->info("Updating team_id column values in team_sets_teams table from '{$old_team->id}' to '{$this->id}'");
+			   	   $this->db->query($sql);
+
 			   }
 			}
 			$old_team->delete_team();
