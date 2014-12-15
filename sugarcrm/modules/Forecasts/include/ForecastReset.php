@@ -127,7 +127,7 @@ class ForecastReset
         }
 
         // we don't truncate the manager worksheets, we need to delete the committed records first
-        $sql = 'DELETE FROM forecast_manager_worksheets where draft = 0;';
+        $sql = 'DELETE FROM forecast_manager_worksheets WHERE draft = 0';
         $db->query($sql);
         $db->commit();
 

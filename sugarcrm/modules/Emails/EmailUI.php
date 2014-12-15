@@ -1453,6 +1453,8 @@ eoq;
 				}
 			}
 		} else {
+			// case & bug specific
+			$focus->source = 'InboundEmail';
 			// bugs, cases, tasks
 			$focus->name = trim($email->name);
 		}
