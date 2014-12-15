@@ -274,6 +274,19 @@ class LegacyJsonServer
                     "accounts_contacts lnk WHERE ac.id = lnk.account_id " .
                     "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
                 array_push($cond_arr, $account_name);
+            } elseif ($condition['name'] === 'full_name') {
+                $query_parts = explode(' ', $condition['value']);
+                $first_name_query = array_shift($query_parts);
+                $name_query = "({$table}first_name like '" . $GLOBALS['db']->quote($first_name_query) . "%'";
+                if (count($query_parts) > 0) {
+                    $last_name_query = implode($query_parts);
+                    $full_name_group = 'and';
+                } else {
+                    $last_name_query = $first_name_query;
+                    $full_name_group = 'or';
+                }
+                $name_query .= " {$full_name_group} {$table}last_name like '" . $GLOBALS['db']->quote($last_name_query) . "%')";
+                array_push($cond_arr, $name_query);
             } else {
                 if ($condition['op'] == 'contains') {
                     $cond_arr[] = $table . $GLOBALS['db']->getValidDBName($condition['name']) . " like '%" . $GLOBALS['db']->quote($condition['value']) . "%'";
