@@ -5308,14 +5308,6 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.'
 );
 
-$app_list_strings['interactions_options'] = array (
-    '7' => 'Last 7 Days',
-    '30' => 'Last 30 Days',
-    '90' => 'Last Quarter',
-    'favorites' => 'Favorites',
-    'custom' => 'My Custom Filter',
-);
-
 $app_list_strings['activity_user_options'] = array (
     '7' => 'Last 7 Days',
     '30' => 'Last 30 Days',
