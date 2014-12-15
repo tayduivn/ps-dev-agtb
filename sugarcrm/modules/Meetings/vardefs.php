@@ -299,7 +299,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '255',
     'reportable' => false,
-    'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID'
+      'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID',
+      'studio' => false,
   ),
    'sequence' =>
   array (
@@ -310,15 +311,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'reportable' => false,
     'default'=>0,
     'comment' => 'Meeting update sequence for meetings as per iCalendar standards',
-      //BEGIN SUGARCRM flav=pro ONLY
-      'studio' => array(
-          'related' => false,
-          'formula' => false,
-          'rollup' => false,
-      ),
-      //END SUGARCRM flav=pro ONLY
+      'studio' => false,
   ),
-
   'contact_name' =>
   array (
     'name' => 'contact_name',
