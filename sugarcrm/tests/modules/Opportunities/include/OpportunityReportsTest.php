@@ -105,7 +105,7 @@ class OpportunityReportsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->db->addQuerySpy(
             'select_saved_reports',
-            '/FROM saved_reports WHERE module = \'Opportunities\'/',
+            '/saved_reports.module = \'Opportunities\' AND saved_reports.content LIKE \'%/',
             array(
                 array(
                     'id' => $id,
@@ -188,7 +188,7 @@ class OpportunityReportsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->db->addQuerySpy(
             'select_saved_reports',
-            '/FROM saved_reports WHERE module = \'Opportunities\'/',
+            '/saved_reports.module = \'Opportunities\' AND saved_reports.content LIKE \'%/',
             array(
                 array(
                     'id' => $id,
