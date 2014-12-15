@@ -470,13 +470,19 @@ html.rtl {
     }
 
     table.dataTable {
-        th.sorting_asc span,
-        th.sorting_desc span,
-        th.sorting span {
-            padding-right: 0;
-            padding-left: 8px;
-            margin-left: 0px;
-            margin-right: -8px;
+        th.sorting_asc,
+        th.sorting_desc,
+        th.sorting {
+            span {
+                padding-right: 0;
+                padding-left: 8px;
+                margin-left: 0px;
+                margin-right: -8px;
+            }
+            > div {
+                margin-right: 8px;
+                margin-left: 0;
+            }
         }
     }
 
