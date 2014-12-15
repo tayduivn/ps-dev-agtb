@@ -2826,9 +2826,10 @@ class MetaDataManager
             foreach ($this->getFields() as $field) {
                 $fields[$field['name']] = $field;
             }
+            $this->db->commit();
             if (empty($values['id'])) {
                 $values['id'] = create_guid();
-                return $this->db->insertParams(
+                $return = $this->db->insertParams(
                     static::$cacheTable,
                     $fields,
                     $values,
@@ -2837,7 +2838,7 @@ class MetaDataManager
                     $this->db->supports('prepared_statements')
                 );
             } else {
-                return $this->db->updateParams(
+                $return = $this->db->updateParams(
                     static::$cacheTable,
                     $fields,
                     $values,
@@ -2847,6 +2848,9 @@ class MetaDataManager
                     $this->db->supports('prepared_statements')
                 );
             }
+            $this->db->commit();
+
+            return $return;
         }
         return false;
     }
