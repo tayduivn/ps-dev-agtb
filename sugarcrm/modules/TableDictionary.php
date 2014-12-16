@@ -46,6 +46,7 @@ include("metadata/prospect_list_campaignsMetaData.php");
 include("metadata/prospect_lists_prospectsMetaData.php");
 include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
+include("metadata/acl_role_sets_acl_rolesMetaData.php");
 //include("metadata/project_relationMetaData.php");
 include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");

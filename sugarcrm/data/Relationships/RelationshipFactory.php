@@ -69,6 +69,11 @@ class SugarRelationshipFactory {
 
         $def = $this->relationships[$relationshipName];
 
+        $class = $this->getCustomRelationshipClass($def, $relationshipName);
+        if ($class) {
+            return new $class($def);
+        }
+
         $type = isset($def['true_relationship_type']) ? $def['true_relationship_type'] : $def['relationship_type'];
         switch($type) {
             case "many-to-many":
@@ -101,6 +106,46 @@ class SugarRelationshipFactory {
         $GLOBALS['log']->fatal ("$relationshipName had an unknown type $type ");
 
         return false;
+    }
+
+    /**
+     * Returns custom relationship class based on relationship definition, or NULL if it's not defined or incorrect
+     *
+     * @param array $def Relationship definition
+     * @param string $name Relationship name
+     *
+     * @return string|null
+     */
+    protected function getCustomRelationshipClass(array $def, $name)
+    {
+        global $log;
+
+        if (!isset($def['relationship_file'], $def['relationship_class'])) {
+            return null;
+        }
+
+        if (!isset($def['relationship_file'])) {
+            $log->fatal("Relationship file for $name is not specified");
+            return null;
+        }
+
+        if (!isset($def['relationship_class'])) {
+            $log->fatal("Relationship class for $name is not specified");
+            return null;
+        }
+
+        if (!file_exists($def['relationship_file'])) {
+            $log->fatal("Relationship file {$def['relationship_file']} does not exist");
+            return null;
+        }
+
+        require_once $def['relationship_file'];
+        if (!class_exists($def['relationship_class'])) {
+            $log->fatal("Relationship class {$def['relationship_class']} does not exist");
+            return null;
+        }
+
+        return $def['relationship_class'];
     }
 
     public function getRelationshipDef($relationshipName)

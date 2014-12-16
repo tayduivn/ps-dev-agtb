@@ -106,6 +106,12 @@ $dictionary['ACLRole'] = array('table' => 'acl_roles', 'comment' => 'ACL Role de
     'source'=>'non-db',
 	'vname'=>'LBL_USERS',
   ),
+        'acl_role_sets' => array(
+            'name' => 'acl_role_sets',
+            'type' => 'link',
+            'source' => 'non-db',
+            'relationship' => 'acl_role_sets_acl_roles',
+        ),
 ),
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Users')),
 'indices' => array (
@@ -117,6 +123,30 @@ $dictionary['ACLRole'] = array('table' => 'acl_roles', 'comment' => 'ACL Role de
 
                             );
 
- 
+$dictionary['ACLRoleSet'] = array(
+    'table' => 'acl_role_sets',
+    'fields' => array(
+        'hash' => array(
+            'name' => 'hash',
+            'type' => 'varchar',
+            'len' => 32,
+            'isnull' => false,
+        ),
+        'acl_roles' => array(
+            'name' => 'acl_roles',
+            'type' => 'link',
+            'source' => 'non-db',
+            'relationship' => 'acl_role_sets_acl_roles',
+            'duplicate_merge' => 'disabled',
+        ),
+    ),
+    'indices' => array(
+        array(
+            'name' => 'idx_acl_role_sets_hash',
+            'type' => 'unique',
+            'fields' => array('hash'),
+        ),
+    ),
+);
 
-?>
+VardefManager::createVardef('ACLRoleSets', 'ACLRoleSet');
