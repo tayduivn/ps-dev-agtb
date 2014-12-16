@@ -114,7 +114,7 @@
     </div>
 </div>
 
-<div id='panels' style='float:left; overflow-y:auto; overflow-x:hidden'>
+<div id='panels' style='float:left; overflow-y:auto; overflow-x:hidden' class="max-columns-{$maxColumns}">
 
 <h3>{$layouttitle}</h3>
 {counter name='idCounter' assign='idCounter' start='1'}
