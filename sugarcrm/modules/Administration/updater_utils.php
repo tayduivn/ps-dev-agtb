@@ -319,19 +319,24 @@ function shouldCheckSugar(){
 function authenticateDownloadKey()
 {
     // Retreive license if required
-    if (empty($GLOBALS['license']->settings['license_validation_key']) && shouldCheckSugar()) {
+    if ((!is_array($GLOBALS['license']->settings['license_validation_key']) ||
+         empty($GLOBALS['license']->settings['license_validation_key'])) &&
+         shouldCheckSugar()) {
         check_now(get_sugarbeat());
     }
 
     // Validation key is required
-    if (empty($GLOBALS['license']->settings['license_validation_key'])) {
+    if (!is_array($GLOBALS['license']->settings) ||
+        empty($GLOBALS['license']->settings['license_validation_key'])) {
         return false;
     }
 
     // We are good if a validation is already set
-    if (!empty($GLOBALS['license']->settings['license_validation_key']['validation'])) {
+    if (is_array($GLOBALS['license']->settings) &&
+        is_array($GLOBALS['license']->settings['license_validation_key']) &&
+        !empty($GLOBALS['license']->settings['license_validation_key']['validation'])) {
         return true;
-    }
+    };
 
     // Populate data from globals
     $fromGlobals = array(
