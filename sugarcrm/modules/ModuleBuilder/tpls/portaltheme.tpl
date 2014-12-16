@@ -26,7 +26,7 @@
         <div class="alert alert-process">
             <strong>{$LBL_LOADING}</strong>
             <div class="loading">
-                <i class="l1 fa fa-circle"></i><i class="l2 fa fa-circle"></i><i class="l3 fa fa-circle"></i>
+                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
             </div>
         </div>
     </div>

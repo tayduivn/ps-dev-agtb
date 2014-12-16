@@ -18,7 +18,7 @@
         <title>SugarCRM</title>
         <link rel="shortcut icon" href="{sugar_getjspath file='themes/default/images/sugar_icon.ico'}">
         <!-- CSS -->
-        <link rel="stylesheet" href="themes/default/css/loading.css" type="text/css">
+        <link rel="stylesheet" href="styleguide/assets/css/loading.css" type="text/css">
         {foreach from=$css_url item=url}
             <link rel="stylesheet" href="{sugar_getjspath file=$url}"/>
         {/foreach}
@@ -35,7 +35,7 @@
                         <div class="alert alert-process">
                             <strong>{$LBL_LOADING}</strong>
                             <div class="loading">
-                                <i class="l1 fa fa-circle"></i><i class="l2 fa fa-circle"></i><i class="l3 fa fa-circle"></i>
+                                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
                             </div>
                         </div>
                     </div>

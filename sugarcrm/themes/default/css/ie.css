@@ -41,10 +41,6 @@
 }
 /* /SC-3435 */
 
-table.reorderable-columns th[data-fieldname] > div {
-  .calcWidth(~"100% - 8px");
-}
-
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;
