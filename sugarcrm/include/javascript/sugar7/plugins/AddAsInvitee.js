@@ -92,7 +92,8 @@
             },
 
             /**
-             * Adds the assigned user as an invitee if the assigned user is changed.
+             * Adds the assigned user as an invitee if the assigned user is
+             * changed.
              *
              * @param {Data.Bean} model
              */
@@ -110,8 +111,8 @@
             },
 
             /**
-             * Person is a possible invitee if it has an id, is one of the possible invitee
-             * modules and is not already in the invitee list
+             * Person is a possible invitee if it has an id and is one of the
+             * possible invitee modules.
              *
              * @param {Object} person
              * @return {Boolean}
@@ -122,8 +123,7 @@
 
                 return (!_.isEmpty(person.id) &&
                     _.contains(inviteeModuleList, person.module) &&
-                    !_.isUndefined(invitees) &&
-                    _.isUndefined(invitees.get(person.id)));
+                    !_.isUndefined(invitees));
             },
 
             /**
@@ -141,7 +141,7 @@
              * @param {Object} person
              */
             addAsInvitee: function(person) {
-                this.model.get('invitees').add(person);
+                this.model.get('invitees').add(person, {merge: true});
             }
         });
     });

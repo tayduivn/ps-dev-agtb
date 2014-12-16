@@ -59,21 +59,21 @@ describe('Plugins.AddAsInvitee', function() {
 
     using('different parent/invitee values', [
         [
-            'is possible new invitee if parent has id, is a lead, and not already an invitee',
+            'is possible new invitee if parent has id and is a lead',
             'Leads',
             '123',
             [],
             true
         ],
         [
-            'is possible new invitee if parent has id, is a contact, and not already an invitee',
+            'is possible new invitee if parent has id and is a contact',
             'Contacts',
             '456',
             [],
             true
         ],
         [
-            'is not a possible new invitee if not a lead or contact',
+            'is not a possible new invitee if not a lead, contact, or user',
             'Foo',
             '789',
             [],
@@ -94,11 +94,11 @@ describe('Plugins.AddAsInvitee', function() {
             false
         ],
         [
-            'is not a possible new invitee if invitee is already in the list',
+            'is possible new invitee even if invitee is already in the list',
             'Leads',
             '123',
             [{ id: '123', module: 'Leads' }],
-            false
+            true
         ]
     ], function(expectation, parentType, parentId, invitees, isPossibleInvitee) {
         it(expectation, function() {
