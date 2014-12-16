@@ -150,6 +150,10 @@
         _.each(this._components, function(component, index){
             component.index = this.index + '' + index;
         }, this);
+
+        //init components of the most recently created row
+        this._components[this._components.length-2].initComponents();
+
         this.setMode(this.model.mode);
     },
 

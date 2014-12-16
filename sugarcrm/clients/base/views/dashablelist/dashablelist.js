@@ -514,7 +514,7 @@
             return;
         }
 
-        this.layout._addComponentsFromDef([{
+        this.layout.initComponents([{
             layout: 'dashablelist-filter'
         }]);
     },

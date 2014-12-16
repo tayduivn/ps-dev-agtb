@@ -106,7 +106,7 @@
             return;
         }
 
-        this.layout._addComponentsFromDef([{
+        this.layout.initComponents([{
             layout: 'asdashlet-filter'
         }]);
     },

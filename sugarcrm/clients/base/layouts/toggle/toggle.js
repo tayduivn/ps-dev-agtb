@@ -29,13 +29,29 @@
      */
     defaultToggle: null,
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         this.toggleComponents = [];
         this.componentsList = {};
         this.availableToggles = this.options.meta.available_toggles || this.availableToggles;
         this.defaultToggle = this.options.meta.default_toggle || this.defaultToggle;
 
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    initComponents: function(components, context, module) {
+        this._super('initComponents', [components, context, module]);
+
+        _.each(this.componentsList, function(comp) {
+            if (_.isFunction(comp.initComponents)) {
+                comp.initComponents(null, context, module);
+            }
+        });
 
         if (this.defaultToggle) {
             this.showComponent(this.defaultToggle);
