@@ -341,9 +341,9 @@ class SavedReport extends SugarBean
 			$unpublish = $unpublish_line;
 			$publish_my_reports = $publish_line;
 		} else {
-			$delete = "<!--not_in_theme!--><img src=\"include/images/blank.gif\" width=\"1\" height=\"1\" alt=\"\">";
-			$unpublish = "<!--not_in_theme!--><img src=\"include/images/blank.gif\" width=\"1\" height=\"1\" alt=\"\">";
-			$publish_my_reports = "<!--not_in_theme!--><img src=\"include/images/blank.gif\" width=\"1\" height=\"1\" alt=\"\">";
+			$delete = "<!--not_in_theme!--><img src=\"".getJSPath("include/images/blank.gif")."\" width=\"1\" height=\"1\" alt=\"\">";
+			$unpublish = "<!--not_in_theme!--><img src=\"".getJSPath("include/images/blank.gif")."\" width=\"1\" height=\"1\" alt=\"\">";
+			$publish_my_reports = "<!--not_in_theme!--><img src=\"".getJSPath("include/images/blank.gif")."\" width=\"1\" height=\"1\" alt=\"\">";
 		}
 
 		$delete_my_reports = $delete_line;

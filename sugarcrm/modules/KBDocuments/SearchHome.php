@@ -207,10 +207,10 @@ if(isset($_POST['clear_loaded'])){
 
     //print out the needed script tags for tree
 
-    echo"        <link rel='stylesheet' href='vendor/ytree/TreeView/css/folders/tree.css'>
-    <script language='JavaScript' src='vendor/ytree/TreeView/TreeView.js'></script>
-    <script language='JavaScript' src='vendor/ytree/TreeView/TaskNode.js'></script>
-    <script language='JavaScript' src='vendor/ytree/treeutil.js'></script>";
+    echo"        <link rel='stylesheet' href='".getVersionedPath('vendor/ytree/TreeView/css/folders/tree.css')."'>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/TreeView/TreeView.js')."'></script>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/TreeView/TaskNode.js')."'></script>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/treeutil.js')."'></script>";
 
     $ss->assign('BROWSETAB', return_browse_tab());
 

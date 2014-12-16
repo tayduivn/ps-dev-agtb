@@ -1112,7 +1112,7 @@ eoq;
 		global $app_strings;
 
 		$tree = new Tree("frameFolders");
-		$tree->tree_style= 'vendor/ytree/TreeView/css/check/tree.css';
+		$tree->tree_style= getVersionedPath('vendor/ytree/TreeView/css/check/tree.css');
 
 		$nodes = array();
 		$ie = BeanFactory::getBean('InboundEmail');
