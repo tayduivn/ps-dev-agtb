@@ -204,8 +204,6 @@ $viewdefs[$module_name] =
                                                                 'readonly' => true,
                                                                 'css_class' => 'hidden',
                                                             ),
-                                                        //3 => 'subject',
-                                                        //4 => 'body_html',
                                                     ),
                                             ),
                                     ),

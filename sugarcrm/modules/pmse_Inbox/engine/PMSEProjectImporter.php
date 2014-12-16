@@ -160,7 +160,6 @@ class PMSEProjectImporter extends PMSEImporter
         unset($projectData[$this->id]);
         //Unset common fields
         $this->unsetCommonFields($projectData);
-        //unset($projectData['assigned_user_id']);
         if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
@@ -180,22 +179,19 @@ class PMSEProjectImporter extends PMSEImporter
                 $projectObject->$processFieldKey = $processFieldContent;
             }
         }
-        // PMSEEngineUtils::validateUniqueUid($projectObject, 'prj_uid');
         $projectObject->prj_uid = PMSEEngineUtils::generateUniqueID();
         $keysArray['prj_id'] = $projectObject->save();
 
-        $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram'); //new BpmnDiagram();
+        $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
         unset($projectData['diagram'][0]['dia_id']);
         foreach ($projectData['diagram'][0] as $diaFieldKey => $diaFieldContent) {
             $diagramBean->$diaFieldKey = $diaFieldContent;
         }
         $diagramBean->prj_id = $keysArray['prj_id'];
-        //$diagramBean->new_with_id = true;
-        //PMSEEngineUtils::validateUniqueUid($diagramBean, 'dia_uid'); //$diagramBean->validateUniqueUid();
-        $diagramBean->dia_uid = PMSEEngineUtils::generateUniqueID(); //$diagramBean->validateUniqueUid();
+        $diagramBean->dia_uid = PMSEEngineUtils::generateUniqueID();
         $keysArray['dia_id'] = $diagramBean->save();
 
-        $processBean = BeanFactory::newBean('pmse_BpmnProcess'); //new BpmnProcess();
+        $processBean = BeanFactory::newBean('pmse_BpmnProcess');
         $processBean->prj_id = $keysArray['prj_id'];
         $processBean->dia_id = $keysArray['dia_id'];
         $processBean->pro_name = $projectObject->prj_name;
@@ -203,14 +199,11 @@ class PMSEProjectImporter extends PMSEImporter
         foreach ($projectData['process'] as $key => $value) {
             $processBean->$key = $value;
         }
-        $processBean->pro_uid = PMSEEngineUtils::generateUniqueID(); //$processBean->validateUniqueUid();
+        $processBean->pro_uid = PMSEEngineUtils::generateUniqueID();
         $projectData['diagram'][0]['documentation'] = isset($projectData['diagram'][0]['documentation']) ? $projectData['diagram'][0]['documentation'] : array();
 
         $keysArray['pro_id'] = $processBean->save();
 
-        //$definitionTmpArray = array();
-        //$definitionTmpArray[] = $projectData['definition'];
-        //$this->saveProjectElementsData($definitionTmpArray, $keysArray, 'pmse_BpmProcessDefinition', false, true);
         $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
         $processDefinitionBean->prj_id = $keysArray['prj_id'];
         unset($projectData['definition']['pro_id']);
@@ -221,7 +214,6 @@ class PMSEProjectImporter extends PMSEImporter
         $processDefinitionBean->new_with_id = true;
         $processDefinitionBean->save();
 
-//        $this->saveProjectElementsData($projectData['rulesets'], $keysArray, 'BpmRuleSet');
         $this->saveProjectActivitiesData($projectData['diagram'][0]['activities'], $keysArray);
         $this->saveProjectEventsData($projectData['diagram'][0]['events'], $keysArray);
         $this->saveProjectGatewaysData($projectData['diagram'][0]['gateways'], $keysArray);
@@ -304,7 +296,6 @@ class PMSEProjectImporter extends PMSEImporter
             $boundBean->element_id = $keysArray['dia_id'];
             $boundBean->bou_element_type = 'bpmnActivity';
             $boundBean->bou_element = $currentID;
-            //PMSEEngineUtils::validateUniqueUid($boundBean, 'bou_uid'); //we already generate an unique id above.
             $boundBean->save();
             $definitionBean->id = $currentID;
             $definitionBean->pro_id = $keysArray['pro_id'];
@@ -325,9 +316,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectEventsData($eventsData, $keysArray)
     {
         foreach ($eventsData as $element) {
-            $eventBean = BeanFactory::getBean('pmse_BpmnEvent'); //new BpmnEvent();
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();
-            $definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition'); //new BpmEventDefinition();
+            $eventBean = BeanFactory::getBean('pmse_BpmnEvent');
+            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             foreach ($element as $key => $value) {
@@ -361,7 +352,6 @@ class PMSEProjectImporter extends PMSEImporter
             $boundBean->element_id = $keysArray['dia_id'];
             $boundBean->bou_element_type = 'bpmnEvent';
             $boundBean->bou_element = $currentID;
-            //$boundBean->validateUniqueUid();
             $boundBean->save();
             $definitionBean->id = $currentID;
             $definitionBean->pro_id = $keysArray['pro_id'];
@@ -383,8 +373,8 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectGatewaysData($gatewaysData, $keysArray)
     {
         foreach ($gatewaysData as $element) {
-            $gatewayBean = BeanFactory::getBean('pmse_BpmnGateway'); //new BpmnGateway();
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();
+            $gatewayBean = BeanFactory::getBean('pmse_BpmnGateway');
+            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             foreach ($element as $key => $value) {
@@ -423,7 +413,6 @@ class PMSEProjectImporter extends PMSEImporter
             $boundBean->element_id = $keysArray['dia_id'];
             $boundBean->bou_element_type = 'bpmnGateway';
             $boundBean->bou_element = $currentID;
-            //$boundBean->validateUniqueUid();
             $boundBean->save();
         }
     }
@@ -469,7 +458,6 @@ class PMSEProjectImporter extends PMSEImporter
 
             $previousUid = $flowBean->flo_uid;
             $flowBean->flo_uid = PMSEEngineUtils::generateUniqueID();
-            //if ($flowBean->validateUniqueUid() && isset($this->defaultFlowList[$previousUid])) {
             if (isset($this->defaultFlowList[$previousUid])
             ) {
                 $this->defaultFlowList[$previousUid]['default_flow'] = $flowBean->flo_uid;
@@ -497,10 +485,8 @@ class PMSEProjectImporter extends PMSEImporter
         $generateWithId = false,
         $field_uid = ''
     ) {
-        //$beanFactory = new ADAMBeanFactory();
-        foreach ($elementsData as $element) {
+         foreach ($elementsData as $element) {
             $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();
-//            $elementBean = new $beanType();
             $elementBean = BeanFactory::getBean($beanType); //$beanFactory->getBean($beanType);
 
             $element['prj_id'] = $keysArray['prj_id'];
@@ -519,9 +505,8 @@ class PMSEProjectImporter extends PMSEImporter
                     $uid = $key;
                 }
             }
-            //$elementBean->new_with_id = $generateWithId;
             $savedId = $elementBean->save();
-            //$elementUid = $savedId; //$elementBean->getPrimaryFieldUID();
+
             if (!empty($savedId)) {
                 $this->savedElements[$beanType][$elementBean->$uid] = $savedId;
             }
