@@ -25,6 +25,11 @@ var AdamShape = function (options) {
      * @private
      */
     this.label = this.labels.get(0);
+    /**
+     * ArrayList of markers added to this shape
+     * @type {jCore.ArrayList}
+     */
+    this.markersArray = new jCore.ArrayList();
 };
 AdamShape.prototype = new jCore.CustomShape();
 

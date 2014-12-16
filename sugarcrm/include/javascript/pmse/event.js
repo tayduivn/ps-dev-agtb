@@ -131,12 +131,6 @@ var AdamEvent = function (options) {
      */
     this.numberRelativeToActivity = 0;
 
-    /**
-     * Array of markers added to this activity
-     * @type {Array}
-     */
-    this.markersArray = new jCore.ArrayList();
-
     AdamEvent.prototype.initObject.call(this, options);
 };
 
