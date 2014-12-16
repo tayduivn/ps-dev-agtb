@@ -25,12 +25,6 @@ class PMSEGatewayDefinitionWrapperTest extends PHPUnit_Framework_TestCase {
     protected function setUp()
     {
         parent::setUp();
-        $GLOBALS['log'] = $this->getMockBuilder("Log")
-                ->disableAutoload()
-                ->disableOriginalConstructor()
-                ->setMethods(array('debug'))
-                ->getMock();
-        
         $this->mocGateway = $this->getMockBuilder("pmse_BpmnGateway")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
@@ -148,4 +142,4 @@ class PMSEGatewayDefinitionWrapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expectedResult, $result);
     }
 
-} 
+}
