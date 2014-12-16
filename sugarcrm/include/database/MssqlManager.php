@@ -323,17 +323,8 @@ class MssqlManager extends DBManager
 
         $this->lastsql = $sql;
 
-        //change the casing to lower for easier string comparison, and trim whitespaces
-        $sql = strtolower(trim($sql)) ;
-
-        //set default sql
-        $limitUnionSQL = $sql;
-        $order_by_str = 'order by';
-
         //make array of order by's.  substring approach was proving too inconsistent
-        $orderByArray = explode($order_by_str, $sql);
-        $unionOrderBy = '';
-        $rowNumOrderBy = '';
+        $orderByArray = preg_split('/order by/i', $sql);
 
         //count the number of array elements
         $unionOrderByCount = count($orderByArray);
@@ -359,7 +350,7 @@ class MssqlManager extends DBManager
 
             //if last element contains a "select", then this is part of the union query,
             //and there is no order by to use
-            if (strpos($unionOrderBy, "select")) {
+            if (stripos($unionOrderBy, "select")) {
                 $unionsql = $sql;
                 //with no guidance on what to use for required order by in rownumber function,
                 //resort to using name column.
