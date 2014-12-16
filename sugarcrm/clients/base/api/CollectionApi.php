@@ -670,7 +670,15 @@ class CollectionApi extends SugarApi
      */
     protected function getDefaultLimit()
     {
-        return $this->getRelateApi()->getDefaultLimit();
+        global $sugar_config;
+        global $log;
+
+        if (empty($sugar_config['list_max_entries_per_subpanel'])) {
+            $log->warn('Default subpanel entry limit is not configured');
+            return 5;
+        }
+
+        return $sugar_config['list_max_entries_per_subpanel'];
     }
 
     /**
