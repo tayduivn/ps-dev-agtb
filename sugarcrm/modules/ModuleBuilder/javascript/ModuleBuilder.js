@@ -329,7 +329,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view: layout,
 					sid: id,
 					subpanel: subpanel
-				}
+				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
 					ModuleBuilder.getContent("module=ModuleBuilder&action=editLayout" +
