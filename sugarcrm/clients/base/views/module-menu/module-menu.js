@@ -312,7 +312,7 @@
             route = $currentTarget.data('route');
 
         event.preventDefault();
-        if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
+        if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey || $currentTarget.data('openwindow') === true) {
             event.stopPropagation();
             window.open(route, '_blank');
             return false;
