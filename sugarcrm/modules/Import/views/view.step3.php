@@ -236,8 +236,12 @@ class ImportViewStep3 extends ImportView
                 if ( isset($properties['type'])
                         && isset($mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])]) )
                     $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
-                if ( isset($properties['comment']) )
-                    $fieldtype .= ' - ' . $properties['comment'];
+
+                $comment = isset($properties['comments']) ? $properties['comments'] : (isset($properties['comment']) ? $properties['comment'] : '');
+                if (!empty($comment)) {
+                    $fieldtype .= ' - ' . $comment;
+                }
+
                 $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
                     . htmlentities($fieldtype, null, 'UTF-8') . '"'
                     . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
@@ -307,8 +311,12 @@ class ImportViewStep3 extends ImportView
                     if ( isset($properties['type'])
                             && isset($mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])]) )
                         $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
-                    if ( isset($properties['comment']) )
-                        $fieldtype .= ' - ' . $properties['comment'];
+
+                    $comment = isset($properties['comments']) ? $properties['comments'] : (isset($properties['comment']) ? $properties['comment'] : '');
+                    if (!empty($comment)) {
+                        $fieldtype .= ' - ' . $comment;
+                    }
+
                     $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
                         . htmlentities($fieldtype, null, 'UTF-8') . '"'
                         . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';

@@ -53,15 +53,19 @@ class OpportunityReports
 
     public function migrateToRevenueLineItems()
     {
-        $sql = "SELECT id, content FROM saved_reports WHERE module = 'Opportunities' AND deleted = 0
-                AND content LIKE '%\"name\":\"sales_stage\"%';";
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'content'));
+        $sq->from(BeanFactory::getBean('Reports'), array('team_security' => false));
+        $sq->where()
+            ->equals('module', 'Opportunities')
+            ->contains('content', '"name":"sales_stage"');
 
-        $results = $this->db->query($sql);
+        $results = $sq->execute('array', false);
 
         $fixedReports = array();
 
         // since we are dealing with json data, don't have fetchByAssoc encode the data
-        while ($row = $this->db->fetchByAssoc($results, false)) {
+        foreach($results as $row) {
             // reset the name, just in case.
             $this->rli_table_name = 'Opportunities:revenuelineitems';
             $report = json_decode($row['content'], true);
@@ -115,7 +119,7 @@ class OpportunityReports
 
             $sql = 'UPDATE saved_reports
                     SET content = ' . $this->db->quoted($json_def) . '
-                    WHERE id = ' . $this->db->quoted($row['id']) . ';';
+                    WHERE id = ' . $this->db->quoted($row['id']);
 
             $this->db->query($sql);
 
@@ -127,14 +131,19 @@ class OpportunityReports
 
     public function migrateToOpportunities()
     {
-        $sql = "SELECT id, content FROM saved_reports WHERE module = 'Opportunities' AND deleted = 0
-                AND content LIKE '%\"name\":\"sales_stage\"%';";
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'content'));
+        $sq->from(BeanFactory::getBean('Reports'), array('team_security' => false));
+        $sq->where()
+            ->equals('module', 'Opportunities')
+            ->contains('content', '"name":"sales_stage"');
 
-        $results = $this->db->query($sql);
+        $results = $sq->execute('array', false);
+
         $fixedReports = array();
 
         // since we are dealing with json data, don't have fetchByAssoc encode the data
-        while ($row = $this->db->fetchByAssoc($results, false)) {
+        foreach($results as $row) {
             // reset the name, just in case.
             $this->rli_table_name = 'Opportunities:revenuelineitems';
             $report = json_decode($row['content'], true);
@@ -201,7 +210,7 @@ class OpportunityReports
 
             $sql = 'UPDATE saved_reports
                     SET content = ' . $this->db->quoted($json_def) . '
-                    WHERE id = ' . $this->db->quoted($row['id']) . ';';
+                    WHERE id = ' . $this->db->quoted($row['id']);
 
             $this->db->query($sql);
 

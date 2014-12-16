@@ -150,7 +150,6 @@
         _.each(this._components, function(component, index){
             component.index = this.index + '' + index;
         }, this);
-        this.render();
         this.setMode(this.model.mode);
     },
 

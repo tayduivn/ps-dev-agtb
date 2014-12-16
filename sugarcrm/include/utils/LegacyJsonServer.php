@@ -301,8 +301,11 @@ class LegacyJsonServer
         $result = implode(" $group ", $cond_arr);
 
         //if filtering users table ensure status is Active
-        if ($table == 'users.' && count($cond_arr) > 0) {
-            $result = $result . " and users.status='Active'";
+        if ($table == 'users.') {
+            if (count($cond_arr) > 0) {
+                $result = $result . " and ";
+            }
+            $result = $result . "users.status='Active'";
         }
 
         //add parenthesis because visibility will be added as an additional 'AND' clause
