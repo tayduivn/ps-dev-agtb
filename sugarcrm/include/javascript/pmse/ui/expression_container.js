@@ -186,7 +186,7 @@ ExpressionContainer.prototype.handleClick = function (element) {
     } else {
         App.alert.show('expression-variable-click', {
             level: 'warning',
-            messages: 'Please define first the column type.',
+            messages: translate('LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE', 'pmse_Business_Rules'),
             autoClose: true
         });
     }

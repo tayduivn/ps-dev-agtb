@@ -47,14 +47,26 @@ $mod_strings = array (
 
     'LBL_PMSE_BUSINESS_RULES_SINGLE_HIT' => 'Process Business Rules Single Hit',
 
-    'LBL_PMSE_BUSINESS_RULES_IMPORT_TEXT' => 'Automatically create a new Process Email Template record by importing a *.pet file from your file system.',
+    'LBL_PMSE_BUSINESS_RULES_IMPORT_TEXT' => 'Automatically create a new Process Business Rule record by importing a *.pbr file from your file system.',
     'LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS' => 'Process Email Template was successfully imported into the system.',
     'LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING' => 'Please select a valid *.pbr file.',
+
+    'LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE' => 'Please define first the column type.',
+    'LBL_PMSE_MESSAGE_LABEL_EMPTY_RETURN_VALUE' => 'The "Return" conclusion is empty',
+    'LBL_PMSE_MESSAGE_LABEL_MISSING_EXPRESSION_OR_OPERATOR' => 'missing expression or operator',
+    'LBL_PMSE_MESSAGE_LABEL_DELETE_ROW' => 'Do you really want to delete this rule set?',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_ROWS' => 'The decision table must have at least 1 row',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS' => 'The decision table must have at least 1 condition column',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS' => 'The decision table must have at least 1 conclusion column',
 
     'LBL_PMSE_LABEL_CONDITIONS' => 'Conditions',
     'LBL_PMSE_LABEL_RETURN' => 'Return',
     'LBL_PMSE_LABEL_CONCLUSIONS' => 'Conclusions',
 
+    'LBL_PMSE_TOOLTIP_ADD_CONDITION' => 'Add condition',
     'LBL_PMSE_TOOLTIP_ADD_CONCLUSION' => 'Add conclusion',
     'LBL_PMSE_TOOLTIP_ADD_ROW' => 'Add row',
+
+    'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
+    'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',
 );

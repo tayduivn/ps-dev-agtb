@@ -1507,7 +1507,7 @@ AdamEvent.prototype.createConfigureAction = function () {
 
             datecriteria = new CriteriaField({
                 name: 'evn_criteria',
-                label: translate('LBL_PMSE_LABEL_CRITERIA'),
+                label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
                 required: false,
                 fieldWidth: 300,
                 fieldHeight: 80,
