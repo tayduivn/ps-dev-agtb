@@ -1,13 +1,10 @@
-ddescribe('Base.View.FilterActions', function() {
+describe('Base.View.FilterActions', function() {
 
     var view, app, parentLayout;
 
     beforeEach(function() {
-
         parentLayout = new Backbone.View();
         view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
-        SugarTest.loadHandlebarsTemplate('filter-actions', 'view', 'base');
-        SugarTest.testMetadata.set();
         view.layout = parentLayout;
         view.initialize(view.options);
         app = SUGAR.App;
@@ -18,18 +15,28 @@ ddescribe('Base.View.FilterActions', function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        view.dispose();
         view = null;
     });
 
-    // SC-3503
     it('should not enable save button if name has blank spaces', function() {
-        //var expectedResult = "";
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('filter-actions', 'view', 'base');
+        SugarTest.testMetadata.set();
+        var view1 = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
+        view1.render();
+        view1.initialize(view1.options);
         var name = '';
-        view.model.set({'name': name});
-        var viewSetFilterStub = sinon.collection.stub(view, 'toggleSave');
-        expect(viewSetFilterStub).not.toHaveBeenCalled();
+        view1.$('input').val(name);
+        expect(view1.getFilterName()).toBeFalsy();
+        name = '   abc  ';
+        view1.$('input').val(name);
+        expect(view1.getFilterName()).toBeTruthy();
+        name = '     ';
+        view1.$('input').val(name);
+        expect(view1.getFilterName()).toBeFalsy();
+        view1.dispose();
     });
-    //
 
     it('should call set filter name on filter:create:open', function() {
         var name = 'test';
@@ -43,10 +50,7 @@ ddescribe('Base.View.FilterActions', function() {
     it('should call toggleSave on filter:toggle:savestate', function() {
         var stub = sinon.collection.stub(view, 'toggleSave');
         view.initialize(view.options);
-        sinon.collection.stub(view, 'getFilterName', function() {
-            var filterName = '  cgt  ';
-            return filterName.trim();
-        });
+        sinon.collection.stub(view, 'getFilterName').returns('cgt');
         parentLayout.trigger('filter:toggle:savestate');
         expect(stub).toHaveBeenCalled();
     });
@@ -69,10 +73,7 @@ ddescribe('Base.View.FilterActions', function() {
        var spy = sinon.spy();
         view.context.off();
         view.context.on('filter:create:save', spy);
-        sinon.collection.stub(view, 'getFilterName', function() {
-            var filterName = '  cgt  ';
-            return filterName.trim();
-        });
+        sinon.collection.stub(view, 'getFilterName').returns('cgt');
         view.triggerSave();
         expect(spy).toHaveBeenCalled();
         view.context.off();
@@ -106,19 +107,13 @@ ddescribe('Base.View.FilterActions', function() {
         });
 
         it('should trigger validate', function() {
-            sinon.collection.stub(view, 'getFilterName', function() {
-                var filterName = '  cgt  ';
-                return filterName.trim();
-            });
+            sinon.collection.stub(view, 'getFilterName').returns('cgt');
             view.filterNameChanged();
             expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
         });
 
         it('should save edit state when filter definition is valid', function() {
-            sinon.collection.stub(view, 'getFilterName', function() {
-                var filterName = '  cgt  ';
-                return filterName.trim();
-            });
+            sinon.collection.stub(view, 'getFilterName').returns('cgt');
             view.filterNameChanged();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
         });
