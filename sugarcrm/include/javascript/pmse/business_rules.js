@@ -17,7 +17,6 @@ function addDecisionTable(data) {
     $.extend(true, data, {
         language: {
             SINGLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_SINGLEHIT', module),
-            MULTIPLE_HIT: translate('LBL_PMSE_BUSINESSRULES_LABEL_MULTIPLEHIT', module),
             CONDITIONS: translate('LBL_PMSE_LABEL_CONDITIONS', module),
             CONCLUSIONS: translate('LBL_PMSE_LABEL_CONCLUSIONS', module),
             ADD_ROW: translate('LBL_PMSE_TOOLTIP_ADD_ROW', module),

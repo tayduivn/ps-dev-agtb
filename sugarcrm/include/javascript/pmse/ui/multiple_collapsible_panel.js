@@ -88,7 +88,7 @@ MultipleCollapsiblePanel.prototype._panelListItemContent = function () {
 			span = this.createHTMLElement("span"), 
 			i = this.createHTMLElement("i");
 		a.className = "adam list-item-content";
-		i.className = "adam list-item-arrow icon-circle-arrow-right";
+		i.className = "adam list-item-arrow fa fa-arrow-circle-right";
 		span.textContent = data["text"];
 		a.appendChild(span);
 		a.appendChild(i);
@@ -327,7 +327,7 @@ MultipleCollapsiblePanel.prototype._createBody = function () {
 		contentTitle = this.createHTMLElement("span");
 		contentTitle.className = "adam multiple-panel-title";
 		backButton = this.createHTMLElement("i");
-		backButton.className = "adam multiple-panel-back icon-circle-arrow-left";
+		backButton.className = "adam multiple-panel-back fa fa-arrow-circle-left";
 
 		this._panelList.getHTML();
 		this._panelList._htmlBody.className += " adam-main-list";

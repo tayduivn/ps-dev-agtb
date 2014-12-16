@@ -376,6 +376,7 @@
                 'include/javascript/pmse/ui/list_item.js' => 'include/javascript/pmse.br.min.js',
                 'include/javascript/pmse/ui/close_list_item.js' => 'include/javascript/pmse.br.min.js',
                 'include/javascript/pmse/ui/item_container_control.js' => 'include/javascript/pmse.br.min.js',
+                'include/javascript/pmse/ui/field_panel_item.js' => 'include/javascript/pmse.br.min.js',
                 'include/javascript/pmse/ui/field_panel_button.js' => 'include/javascript/pmse.br.min.js',
                 'include/javascript/pmse/ui/field_panel_button_group.js' => 'include/javascript/pmse.br.min.js',
                 'include/javascript/pmse/ui/collapsible_panel.js' => 'include/javascript/pmse.br.min.js',

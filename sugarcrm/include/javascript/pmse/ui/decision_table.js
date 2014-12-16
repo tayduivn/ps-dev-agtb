@@ -421,7 +421,7 @@
     DecisionTable.prototype.createRemoveButton = function() {
         //var input = this.createHTMLElement('input');
         var minusNode = this.createHTMLElement('span');
-        minusNode.className = 'icon-minus decision-table-remove';
+        minusNode.className = 'fa fa-minus decision-table-remove';
         //minusNode.innerHTML = '&nbsp;';
         //input.tabIndex = 0;
         //input.type = 'text';
@@ -802,9 +802,9 @@
         //this.dom.title = cell;
 
         plusNode = this.createHTMLElement('span');
-        plusNode.className = 'icon-plus';
+        plusNode.className = 'fa fa-plus';
         plusNode2 = this.createHTMLElement('span');
-        plusNode2.className = 'icon-plus';
+        plusNode2.className = 'fa fa-plus';
 
         //create the table subheaders
         row = this.createHTMLElement('tr');
