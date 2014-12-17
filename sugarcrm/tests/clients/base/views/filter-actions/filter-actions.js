@@ -4,13 +4,13 @@ describe('Base.View.FilterActions', function() {
 
     beforeEach(function() {
         parentLayout = new Backbone.View();
-        view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('filter-actions', 'view', 'base');
         SugarTest.testMetadata.set();
-        sinon.collection.stub(view, 'getFilterName').returns('cgt');
+        view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
         view.layout = parentLayout;
         view.initialize(view.options);
+        view.render();
         app = SUGAR.App;
     });
 
@@ -19,6 +19,7 @@ describe('Base.View.FilterActions', function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        SugarTest.testMetadata.dispose();
         view.dispose();
         view = null;
     });
@@ -27,7 +28,6 @@ describe('Base.View.FilterActions', function() {
         view.dispose();
         view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
         view.render();
-        view.initialize(view.options);
         var name = '';
         view.$('input').val(name);
         expect(view.getFilterName()).toBeFalsy();
@@ -37,8 +37,6 @@ describe('Base.View.FilterActions', function() {
         name = '     ';
         view.$('input').val(name);
         expect(view.getFilterName()).toBeFalsy();
-        view.dispose();
-        SugarTest.testMetadata.dispose();
     });
 
     it('should call set filter name on filter:create:open', function() {
@@ -93,7 +91,6 @@ describe('Base.View.FilterActions', function() {
 
         beforeEach(function() {
             layoutTriggerStub = sinon.collection.stub(view.layout, 'trigger');
-
             component = {
                 saveFilterEditState: $.noop
             };

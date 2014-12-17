@@ -165,7 +165,6 @@
      *
      * @param {Boolean} enable `true` to enable the button, `false` otherwise.
      */
-
     toggleSave: function(enable) {
         this.saveState = _.isUndefined(enable) ? !this.saveState : !!enable;
         var isEnabled = this.getFilterName() && this.saveState;
