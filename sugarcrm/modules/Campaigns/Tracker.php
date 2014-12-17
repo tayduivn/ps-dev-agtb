@@ -55,7 +55,7 @@ if(preg_match('/^[0-9A-Za-z\-]*$/', $track))
 
 	$row = $db->fetchByAssoc($res);
 
-	$redirect_URL = $row['tracker_url'];
+    $redirect_URL = str_replace('&amp;','&',$row['tracker_url']);
 	sugar_cleanup();
 	header("Location: $redirect_URL");
 }
