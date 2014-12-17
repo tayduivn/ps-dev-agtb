@@ -136,8 +136,8 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
 
         $kbcontent = $this->getKBContentBeanByName($this->document->name);
         if ($kbcontent) {
-            if ($kbcontent->load_relationship('tags_link')) {
-                $tags = $kbcontent->tags_link->getBeans();
+            if ($kbcontent->load_relationship('tags')) {
+                $tags = $kbcontent->tags->getBeans();
                 foreach ($tags as $tag) {
                     $tag->mark_deleted($tag->id);
                 }
@@ -267,12 +267,11 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
      */
     public function testConvertKBOLDDocuments()
     {
-        $this->markTestSkipped('Waiting for MT-909');
         $this->script->run();
 
         $newDocument = $this->getKBContentBeanByName($this->document->name);
         $this->assertNotNull($newDocument);
-        $this->assertEquals($this->document->body, $newDocument->kbolddocument_body);
+        $this->assertEquals($this->document->body, $newDocument->kbdocument_body);
         $this->assertEquals(
             array_search($this->document->status_id, $GLOBALS['app_list_strings']['kbdocument_status_dom']),
             $newDocument->status
@@ -323,8 +322,8 @@ class ConvertKBOLDDocumentsTest extends UpgradeTestCase
         $this->script->run();
 
         $newDocument = $this->getKBContentBeanByName($this->document->name);
-        $newDocument->load_relationship('tags_link');
-        $newTags = $newDocument->tags_link->getBeans();
+        $newDocument->load_relationship('tags');
+        $newTags = $newDocument->tags->getBeans();
 
         $actualTagNames = array_map(
             function ($value) {

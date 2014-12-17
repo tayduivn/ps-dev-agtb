@@ -12,6 +12,8 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/SugarFields/Fields/Tag/SugarFieldTag.php';
+
 /**
  * Converts KBOLDDocuments to KBContents.
  */
@@ -25,6 +27,11 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
      * @var array Where key is a converted KB tag ID and a value is KBS category ID.
      */
     protected $convertedTagsTopics = array();
+
+    /**
+     * @var array ID => Name.
+     */
+    protected $newTags = array();
 
     public function run()
     {
@@ -46,7 +53,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 
             $data = $KBOLDDocument->toArray();
             unset($data['id']);
-            $data['kbolddocument_body'] = $KBOLDDocument->body;
+            $data['kbdocument_body'] = $KBOLDDocument->body;
             $data['kbsapprover_id'] = $KBOLDDocument->kbdoc_approver_id;
 
             $app_list_strings = return_app_list_strings_language('en_us');
@@ -73,16 +80,33 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 
             $KBContent->load_relationship('tags');
             if (!empty($KBContent->tags)) {
+                $tagField = new SugarFieldTag('tag');
+                $tagParams['tag'] = array();
                 foreach ($tagSet as $tag) {
                     $this->log("Convert the KBOLDTag {$tag['kboldtag_id']} to a tag.");
                     $tag = BeanFactory::getBean('KBOLDTags', $tag['kboldtag_id']);
+                    $apiParams = array('name' => $tag->tag_name);
 
                     // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
                     // are converted to the set "c1, c2, p4".
-                    $newTag = BeanFactory::getBean('Tags');
-                    $newTag->name = $tag->tag_name;
-                    $newTag->save();
+                    $index = array_search($tag->tag_name, $this->newTags);
+                    if ($index === false) {
+                        $newTag = BeanFactory::getBean('Tags');
+                        $newTag->name = $tag->tag_name;
+                        $newTag->save();
+
+                        $this->newTags[$newTag->id] = $newTag->name;
+                        $apiParams['id'] = $newTag->id;
+                    } else {
+                        $newTag = BeanFactory::getBean('Tags', $index);
+                    }
                     $KBContent->tags->add($newTag);
+
+                    array_push($tagParams['tag'], $apiParams);
+                }
+                if (!empty($tagParams['tag'])) {
+                    $tagField->apiSave($KBContent, $tagParams, 'tag', array('link' => 'tags'));
+                    $KBContent->save();
                 }
             } else {
                 $this->log("Can't load tags.");
