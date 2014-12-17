@@ -129,8 +129,8 @@ class ViewLayoutView extends SugarView
                     'disabled' => $disableLayout,
                 ) ;
                 $buttons [] = array ( 
-	                'id' => 'historyDefault' , 
-	                'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 
+	                'id' => 'historyRestoreDefaultLayout' ,
+	                'text' => translate ( 'LBL_RESTORE_DEFAULT_LAYOUT' ) ,
 	                'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
                 	'disabled' => $disableLayout, 
                 ) ;
@@ -150,8 +150,8 @@ class ViewLayoutView extends SugarView
                     'disabled' => $disableLayout, 
                 ) ;
                 $buttons [] = array ( 
-                    'id' => 'historyDefault' , 
-                    'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 
+                    'id' => 'historyRestoreDefaultLayout' ,
+                    'text' => translate ( 'LBL_RESTORE_DEFAULT_LAYOUT' ) ,
                     'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
                     'disabled' => $disableLayout, 
                 ) ;
