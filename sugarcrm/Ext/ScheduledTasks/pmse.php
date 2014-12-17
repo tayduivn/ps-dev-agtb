@@ -12,27 +12,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-array_push($job_strings, 'PMSEEngineCron');
-
-function PMSEEngineCron()
-{
-    require_once ("modules/pmse_Inbox/engine/PMSEHandlers/PMSEHookHandler.php");
-
-    $hookHandler = new PMSEHookHandler();
-    $hookHandler->executeCron();
-    return true;
+if (empty($job_strings)) {
+    $job_strings = array();
 }
 
+array_push($job_strings, 'PMSEEngineCron');
 
-function PMSEJobRun ($job) {
-    require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
-    require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
+if (!function_exists("PMSEEngineCron")) {
+    function PMSEEngineCron()
+    {
+        require_once("modules/pmse_Inbox/engine/PMSEHandlers/PMSEHookHandler.php");
 
-    if (!empty($job->data)) {
-        $flowData = (array)json_decode($job->data);
-        $externalAction = 'RESUME_EXECUTION';
-        $jobQueueHandler = new PMSEJobQueueHandler();
-        return ($jobQueueHandler->executeRequest($flowData, FALSE, null, $externalAction));
+        $hookHandler = new PMSEHookHandler();
+        $hookHandler->executeCron();
+
+        return true;
+    }
+}
+
+if (!function_exists("PMSEJobRun")) {
+    function PMSEJobRun($job)
+    {
+        require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
+        require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
+
+        if (!empty($job->data)) {
+            $flowData = (array)json_decode($job->data);
+            $externalAction = 'RESUME_EXECUTION';
+            $jobQueueHandler = new PMSEJobQueueHandler();
+
+            return ($jobQueueHandler->executeRequest($flowData, false, null, $externalAction));
+        }
+
+        return false;
     }
     return false;
 }
