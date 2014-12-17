@@ -224,8 +224,8 @@ class Audit extends SugarBean
 
         $row['field_name'] = 'team_name';
         require_once 'modules/Teams/TeamSetManager.php';
-        $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
-        $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
+        $row['before_value_string'] = TeamSetManager::getTeamsFromSet($row['before_value_string']);
+        $row['after_value_string'] = TeamSetManager::getTeamsFromSet($row['after_value_string']);
 
         $row = $this->formatRowForApi($row);
         return $row;
