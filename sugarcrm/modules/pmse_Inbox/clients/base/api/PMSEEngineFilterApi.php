@@ -88,7 +88,6 @@ class PMSEEngineFilterApi extends FilterApi
 
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
-        //$seed = BeanFactory::newBean($args['module']); // the seed must be a bpmFlow Bean
         $seed = BeanFactory::newBean('pmse_BpmFlow');
 
         if (!$seed->ACLAccess($acl)) {
@@ -106,8 +105,6 @@ class PMSEEngineFilterApi extends FilterApi
 
         $q = $this->getQueryObjectAux($seed, $options);
 
-
-        // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
@@ -320,6 +317,7 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['case_init'] = $bean->fetched_row['user_name'];
             $arr_aux['cas_sugar_module'] = $bean->fetched_row['cas_sugar_module'];
             $arr_aux['in_time'] = true;
+            $arr_aux['id'] = $bean->fetched_row['inbox_id'];
             $ret[] = array_merge($this->formatBean($api, $args, $bean), $arr_aux);
         }
 
