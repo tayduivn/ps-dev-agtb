@@ -628,7 +628,7 @@ class SugarController
                 $successful_update = $total_records - $failed_update;
                 if ($successful_update == $total_records) {
                    //show succesful deletion message if this is a delete update
-                    if(empty($_REQUEST['Delete'])){
+                    if(!empty($_REQUEST['Delete'])){
                         $massupdate_status = $app_strings['TPL_MASSDELETE_SUCCESS'];
                         $massupdate_status = str_replace("{{num}}", $successful_update, $massupdate_status);
                     }else{
@@ -636,8 +636,13 @@ class SugarController
                         $massupdate_status = $app_strings['LBL_MASS_UPDATE_SUCCESS'];
                     }
                 } else {
-                    $massupdate_status = $app_strings['TPL_MASSUPDATE_SUCCESS'] .
-                        " " . $app_strings['TPL_MASSUPDATE_WARNING_PERMISSION'];
+                    if(!empty($_REQUEST['Delete'])){
+                        $massupdate_status = $app_strings['TPL_MASSDELETE_SUCCESS'];
+                    }else{
+                        $massupdate_status = $app_strings['TPL_MASSUPDATE_SUCCESS'];
+                    }
+
+                    $massupdate_status .= " " . $app_strings['TPL_MASSUPDATE_WARNING_PERMISSION'];
                     $massupdate_status = str_replace("{{num}}", $successful_update, $massupdate_status);
                     $massupdate_status = str_replace("{{remain}}", $failed_update, $massupdate_status);
                 }
