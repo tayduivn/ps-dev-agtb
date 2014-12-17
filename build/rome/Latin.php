@@ -26,18 +26,18 @@ class Latin
         passthru("git checkout master");
         passthru("git fetch -a");
         passthru("git reset --hard");
-        if (preg_match("/(\d+).(\d+).(\d+)(.*)/", $this->ver, $matchesVer)) {
-            $translationBranch = $matchesVer[1] . "_0";
-            exec("git branch -r", $remoteBranches);
+        $translationBranch = "master";
+        if (version_compare($this->ver, "7.6.0", ">=")) {
+            $translationBranch = "7_b";     // 7_b is the translation branch for all versions >= 7.6
+        }
+        else if (version_compare($this->ver, "7.0.0", ">")) {
+            $translationBranch = "7_0";     // 7_0 is the translation branch for all versions > 7.0 and <= 7.5
+        }
 
-            if (preg_grep("/$translationBranch/", $remoteBranches)) {
-                passthru("git checkout origin/" . $translationBranch);
-            } else {
-                passthru("git checkout origin/" . "master");
-            }
-        } else {
-            passthru("git checkout master");
-            passthru("git pull origin master");
+        exec("git branch -r", $remoteBranches);
+        if (preg_grep("/$translationBranch/", $remoteBranches)) {
+            passthru("git checkout $translationBranch");
+            passthru("git pull origin $translationBranch");
         }
     }
 
