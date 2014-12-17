@@ -17328,7 +17328,7 @@ var jCore = (function ($, window) {
                     }
                     break;
                 case 8:  //BACKSPACE
-                    if (activeCanvas && activeCanvas.currentSelection.getSize()) {
+                    if (activeCanvas && (activeCanvas.currentSelection.getSize() || activeCanvas.currentConnection)) {
                         e.preventDefault();
                     }
                     break;
@@ -17345,6 +17345,8 @@ var jCore = (function ($, window) {
                     if (activeCanvas && !activeCanvas.currentLabel) {
                         activeCanvas.removeElements();
                     }
+                } else if (activeCanvas.currentConnection) {
+                    activeCanvas.removeElements();
                 }
                 break;
             case 13:    // ENTER
