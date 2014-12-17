@@ -25,9 +25,6 @@ describe('Base.View.FilterActions', function() {
     });
 
     it('should check for blank spaces in getFilterName', function() {
-        view.dispose();
-        view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
-        view.render();
         var name = '';
         view.$('input').val(name);
         expect(view.getFilterName()).toBeFalsy();
