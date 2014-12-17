@@ -627,8 +627,12 @@ class SugarController
                 $failed_update = count($arr);
                 $successful_update = $total_records - $failed_update;
                 if ($successful_update == $total_records) {
-                   //only show succesful update message if the update is not a deletion
+                   //show succesful deletion message if this is a delete update
                     if(empty($_REQUEST['Delete'])){
+                        $massupdate_status = $app_strings['TPL_MASSDELETE_SUCCESS'];
+                        $massupdate_status = str_replace("{{num}}", $successful_update, $massupdate_status);
+                    }else{
+                        //show succesful update message if this is not a delete request
                         $massupdate_status = $app_strings['LBL_MASS_UPDATE_SUCCESS'];
                     }
                 } else {
