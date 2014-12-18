@@ -36,16 +36,19 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this._super('initialize', [options]);
-
         // remove the fiscal year metadata since we cant use the enabled check
-        var fieldsMeta = _.filter(_.first(this.meta.panels).fields, function(field) {
+        var fieldsMeta = _.filter(_.first(options.meta.panels).fields, function(field) {
             if(field.name === 'timeperiod_fiscal_year') {
                 this.fiscalYearMeta = _.clone(field);
             }
-
+            // return all fields except fiscal year
             return field.name !== 'timeperiod_fiscal_year';
         }, this);
+
+        // put updated fields back into options
+        _.first(options.meta.panels).fields = fieldsMeta;
+
+        this._super('initialize', [options]);
 
         // check if Forecasts is set up, if so, make the timeperiod field readonly
         if(!this.model.get('is_setup')) {
