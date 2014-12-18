@@ -541,56 +541,68 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(field.$('[data-render=timeline-header] .timeblock').filter(':nth-child(odd)').hasClass('alt')).toBe(true);
             expect(field.$('[data-render=timeline-header] .timeblock').filter(':nth-child(even)').hasClass('alt')).toBe(false);
         });
+    });
 
-        it('should mark the timeblocks that make up the meeting', function() {
-            var $blocks, $scheduledBlocks, start, end;
+    describe('rendering the meeting start and end overlay', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+            field.model.set(field.name, participants);
+            field.model.off();
+            field.model.set('date_start', '2014-08-27T08:45');
+            field.model.set('date_end', '2014-08-27T10:15');
 
-            field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
-            start = $blocks.index($scheduledBlocks.first());
-            end = $blocks.index($scheduledBlocks.last());
-
-            expect(start).toBe(19);
-            expect(end).toBe(24);
+            sandbox.stub(field, 'getTimeFormat', function() {
+                return 'ha';
+            });
         });
 
-        it('should mark the first and the last timeblocks that make up the meeting', function() {
-            var $blocks, $scheduledBlocks;
+        it('should only happen for Users', function() {
+            var $overlays;
 
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.first().hasClass('start')).toBe(true);
-            expect($scheduledBlocks.last().hasClass('end')).toBe(true);
+            expect($overlays.length).toBe(2);
+            expect($overlays.first().closest('.participant').data('id')).toBe(1);
+            expect($overlays.last().closest('.participant').data('id')).toBe(2);
         });
 
-        it('should mark the timeblock as start and end when the meeting is 15 minutes long', function() {
-            var $blocks, $scheduledBlocks;
+        it('should display the right border when the length of the meeting does not go past the timeline', function() {
+            var $overlays;
 
-            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
-            field.model.set('date_end', '2014-08-27T09:00:00-04:00');
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.length).toBe(1);
-            expect($scheduledBlocks.hasClass('start')).toBe(true);
-            expect($scheduledBlocks.hasClass('end')).toBe(true);
+            expect($overlays.hasClass('right_border')).toBe(true);
         });
 
-        it('should mark the timeblock to have the same start and end time when the meeting is 0 minutes long', function() {
-            var $blocks, $scheduledBlocks;
+        it('should not display the right border when the length of the meeting goes past the timeline', function() {
+            var $overlays;
 
-            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
-            field.model.set('date_end', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T16:00');
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.start-end');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.length).toBe(1);
-            expect($blocks.index($scheduledBlocks.first())).toBe(19);
+            expect($overlays.hasClass('right_border')).toBe(false);
+        });
+
+        it('should make width 1px if the meeting is 0 minutes long', function() {
+            var $overlays;
+
+            field.model.set('date_end', '2014-08-27T08:45');
+            field.render();
+            $overlays = field.$('.start_end_overlay');
+
+            expect($overlays.width()).toBe(1);
         });
     });
 
