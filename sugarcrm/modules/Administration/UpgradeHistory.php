@@ -32,6 +32,7 @@ class UpgradeHistory extends SugarBean
     var $description;
     var $id_name;
     var $manifest;
+    public $patch;
     var $enabled;
     var $tracker_visibility = false;
     var $table_name = "upgrade_history";

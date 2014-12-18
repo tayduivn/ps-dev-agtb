@@ -77,7 +77,7 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
         return array_merge(
             glob($this->path . '/*/*.php'),
             glob('custom/' . $this->path . '/*/*.php'),
-            glob('custom/application/Ext/Language/*/*/roledropdownfilter.ext.php')
+            glob('custom/application/Ext/DropdownFilters/*/dropdownfilters.ext.php')
         );
     }
 

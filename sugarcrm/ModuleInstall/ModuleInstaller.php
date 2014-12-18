@@ -53,6 +53,13 @@ class ModuleInstaller{
 	 */
 	protected $affectedModules = array();
 
+    /**
+     * The specification of the patch that should be applied to the module definition during installation
+     *
+     * @var array
+     */
+    protected $patch = array();
+
 	function ModuleInstaller(){
 		$this->ms = new ModuleScanner();
 		$this->modules = $this->getModuleDirs();
@@ -61,7 +68,17 @@ class ModuleInstaller{
         $this->extensions = $extensions;
 	}
 
-   /*
+    /**
+     * Sets patch specification
+     *
+     * @param $patch
+     */
+    public function setPatch($patch)
+    {
+        $this->patch = $patch;
+    }
+
+   /**
     * ModuleInstaller->install includes the manifest.php from the base directory it has been given. If it has been asked to do an upgrade it checks to see if there is
     * an upgrade_manifest defined in the manifest; if not it errors. It then adds the bean into the custom/Extension/application/Ext/Include/<module>.php - sets beanList, beanFiles
     * and moduleList - and then calls ModuleInstaller->merge_files('Ext/Include', 'modules.ext.php', '', true) to merge the individual module files into a combined file
@@ -121,7 +138,9 @@ class ModuleInstaller{
 						.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				include($this->base_dir . '/manifest.php');
+            $data = $this->readManifest();
+            extract($data);
+
 				if($is_upgrade && !empty($previous_version)){
 					//check if the upgrade path exists
 					if(!empty($upgrade_manifest)){
@@ -242,7 +261,8 @@ class ModuleInstaller{
 	}
 
 	function pre_execute(){
-		require_once($this->base_dir . '/manifest.php');
+        $data = $this->readManifest();
+        extract($data);
 		if(isset($this->installdefs['pre_execute']) && is_array($this->installdefs['pre_execute'])){
 			foreach($this->installdefs['pre_execute'] as $includefile){
 				require_once(str_replace('<basepath>', $this->base_dir, $includefile));
@@ -251,7 +271,8 @@ class ModuleInstaller{
 	}
 
 	function post_execute(){
-		require_once($this->base_dir . '/manifest.php');
+        $data = $this->readManifest();
+        extract($data);
 		if(isset($this->installdefs['post_execute']) && is_array($this->installdefs['post_execute'])){
 			foreach($this->installdefs['post_execute'] as $includefile){
 				require_once(str_replace('<basepath>', $this->base_dir, $includefile));
@@ -260,7 +281,8 @@ class ModuleInstaller{
 	}
 
 	function pre_uninstall(){
-		require_once($this->base_dir . '/manifest.php');
+        $data = $this->readManifest();
+        extract($data);
 		if(isset($this->installdefs['pre_uninstall']) && is_array($this->installdefs['pre_uninstall'])){
 			foreach($this->installdefs['pre_uninstall'] as $includefile){
 				require_once(str_replace('<basepath>', $this->base_dir, $includefile));
@@ -269,7 +291,8 @@ class ModuleInstaller{
 	}
 
 	function post_uninstall(){
-		require_once($this->base_dir . '/manifest.php');
+        $data = $this->readManifest();
+        extract($data);
 		if(isset($this->installdefs['post_uninstall']) && is_array($this->installdefs['post_uninstall'])){
 			foreach($this->installdefs['post_uninstall'] as $includefile){
 				require_once(str_replace('<basepath>', $this->base_dir, $includefile));
@@ -1726,7 +1749,8 @@ class ModuleInstaller{
 				}
 
 				global $moduleList;
-				include($this->base_dir . '/manifest.php');
+            $data = $this->readManifest();
+            extract($data);
 				$this->installdefs = $installdefs;
 				$this->id_name = $this->installdefs['id'];
 				$installed_modules = array();
@@ -1950,11 +1974,9 @@ class ModuleInstaller{
      */
     protected function mergeModuleFiles($module_path, $ext_path, $name, $filter)
     {
-        static $php_tags = array('<?php', '?>', '<?PHP', '<?');
-        $extension = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
-        $shouldSave = false;
         if (stristr($ext_path, '__PH_SUBTYPE__')) {
-            return $this->mergeExtensionFiles($module_path);
+            $this->mergeExtensionFiles($module_path);
+            return;
         } else {
             if ($module_path == 'application') {
                 $paths = array($ext_path);
@@ -1966,11 +1988,10 @@ class ModuleInstaller{
             $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
         }
 
+        $files = array();
         foreach ($paths as $path) {
             if (is_dir($path)) {
                 $dir = dir($path);
-                $shouldSave = true;
-                $override = $files = array();
                 while (false !== ($entry = $dir->read())) {
                     if ($entry == '.' || $entry == '..') {
                         continue;
@@ -1979,41 +2000,97 @@ class ModuleInstaller{
                     $filterCheck = empty($filter) || substr_count($entry, $filter) > 0;
                     $isPHPFile = strtolower(substr($entry, -4)) == ".php";
                     if (is_file($fullpath) && $filterCheck && $isPHPFile) {
-                        if (substr($entry, 0, 9) == '_override') {
-                            $override[] = $fullpath;
-                        } else {
-                            // Logic here it to take the newest touched file and
-                            // read it last. This allows for customizations from
-                            // any source and the most recent change to win out.
-                            $files[$fullpath] = filemtime($fullpath);
-                        }
+                        $GLOBALS['log']->debug(__METHOD__ . ": found {$path}{$entry}");
+                        $files[] = $fullpath;
                     }
                 }
-
-                // Sort the files array then read them for their contents
-                asort($files, SORT_NUMERIC);
-                foreach ($files as $filepath => $mtime) {
-                    $file = file_get_contents($filepath);
-                    $GLOBALS['log']->debug(__METHOD__ . ": found {$path}{$entry}");
-                    $extension .= "\n//Merged from $filepath\n". str_replace($php_tags, '', $file);
-                }
-
-                foreach ($override as $entry) {
-                    $file = file_get_contents($entry);
-                    $extension .= "\n". str_replace($php_tags, '', $file);
-                }
             }
         }
-        if ($shouldSave) {
-            if (!file_exists($cache_path)) {
-                mkdir_recursive($cache_path, true);
+
+        $this->cacheExtensionFiles($files, $cache_path . '/' . $name);
+    }
+
+    /**
+     * Saves the contents of the source files to the cache file or removes it
+     * depending on the number of the source files
+     *
+     * @param array $sourceFiles Source file paths
+     * @param string $cacheFile Cache file paths
+     */
+    protected function cacheExtensionFiles(array $sourceFiles, $cacheFile)
+    {
+        if (count($sourceFiles) > 0) {
+            $sourceFiles = $this->sortExtensionFiles($sourceFiles);
+            $contents = $this->getExtensionFileContents($sourceFiles);
+            $dirName = dirname($cacheFile);
+            if (!file_exists($dirName)) {
+                mkdir_recursive($dirName, true);
             }
-            SugarAutoLoader::put("$cache_path/$name", $extension, true);
+            SugarAutoLoader::put($cacheFile, $contents, true);
         } else {
-            if (file_exists("$cache_path/$name")) {
-                SugarAutoLoader::unlink("$cache_path/$name", true);
+            if (file_exists($cacheFile)) {
+                SugarAutoLoader::unlink($cacheFile, true);
             }
         }
+    }
+
+    /**
+     * Sorts file paths and returns sorted copy
+     *
+     * @param array $files File paths
+     * @return array Sorted file paths
+     */
+    protected function sortExtensionFiles(array $files)
+    {
+        // prepare helper data structure with all necessary attributes for proper sorting
+        $sorted = array();
+        foreach ($files as $path) {
+            $sorted[$path] = array(
+                'path' => $path,
+                'is_override' => substr(basename($path), 0, 9) === '_override',
+                'mtime' => filemtime($path),
+            );
+        }
+
+        // Sort the files array then read them for their contents
+        uasort($sorted, function ($a, $b) {
+            // put override files after regular ones
+            if ($a['is_override'] != $b['is_override']) {
+                return $a['is_override'] - $b['is_override'];
+            }
+
+            // Logic here it to take the newest touched file and
+            // read it last. This allows for customizations from
+            // any source and the most recent change to win out.
+            if ($a['mtime'] != $b['mtime']) {
+                return $a['mtime'] - $b['mtime'];
+            }
+
+            // eventually sort files by file name in order to have consistent order
+            return strcmp($a['path'], $b['path']);
+        });
+
+        return array_keys($sorted);
+    }
+
+    /**
+     * Returns merged contents of the given files
+     *
+     * @param array $files Sorted file paths
+     * @return string The contents
+     */
+    protected function getExtensionFileContents($files)
+    {
+        static $php_tags = array('<?php', '?>', '<?PHP', '<?');
+
+        $contents = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+
+        foreach ($files as $path) {
+            $file = file_get_contents($path);
+            $contents .= "\n//Merged from $path\n" . str_replace($php_tags, '', $file);
+        }
+
+        return $contents;
     }
 
     /**
@@ -2389,7 +2466,8 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require($this->base_dir . '/manifest.php');
+            $data = $this->readManifest();
+            extract($data);
 				if($is_upgrade && !empty($previous_version)){
 					//check if the upgrade path exists
 					if(!empty($upgrade_manifest)){
@@ -2461,7 +2539,8 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require($this->base_dir . '/manifest.php');
+            $data = $this->readManifest();
+            extract($data);
 				$this->installdefs = $installdefs;
 				$this->id_name = $this->installdefs['id'];
 				$installed_modules = array();
@@ -3079,5 +3158,207 @@ private function dir_file_count($path){
         return $modules;
     }
 
-}
+    /**
+     * Installs dropdown filters extension
+     */
+    protected function install_dropdown_filters()
+    {
+        if (!isset($this->installdefs['dropdown_filters'])) {
+            return;
+        }
 
+        foreach ($this->installdefs['dropdown_filters'] as $item) {
+            $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+            $to = $this->getDropdownFilterPath($item);
+            $GLOBALS['log']->debug("Installing dropdown_filters from $from");
+            $dirName = dirname($to);
+            if (!file_exists($dirName)) {
+                mkdir_recursive($dirName, true);
+            }
+            copy($from, $to);
+        }
+    }
+
+    /**
+     * Uninstalls dropdown filters extension
+     */
+    protected function uninstall_dropdown_filters()
+    {
+        if (!isset($this->installdefs['dropdown_filters'])) {
+            return;
+        }
+
+        foreach ($this->installdefs['dropdown_filters'] as $item) {
+            $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+            $GLOBALS['log']->debug("Uninstalling dropdown_filters from $from");
+            $path = $this->getDropdownFilterPath($item);
+            if (file_exists($path)) {
+                unlink($path);
+            } else {
+                $disabledPath = $this->getDropdownFilterPath($item, true);
+                if (file_exists($disabledPath)) {
+                    unlink($disabledPath);
+                }
+            }
+        }
+    }
+
+    /**
+     * Disables dropdown filters extension
+     */
+    protected function disable_dropdown_filters()
+    {
+        if (!isset($this->installdefs['dropdown_filters'])) {
+            return;
+        }
+
+        foreach ($this->installdefs['dropdown_filters'] as $item) {
+            $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+            $GLOBALS['log']->debug("Disabling dropdown_filters from $from");
+            $path = $this->getDropdownFilterPath($item);
+            if (file_exists($path)) {
+                $disabledPath = $this->getDropdownFilterPath($item, true);
+                $dirName = dirname($disabledPath);
+                mkdir_recursive($dirName, true);
+                rename($path, $disabledPath);
+            }
+        }
+    }
+
+    /**
+     * Enables dropdown filters extension
+     */
+    protected function enable_dropdown_filters()
+    {
+        if (!isset($this->installdefs['dropdown_filters'])) {
+            return;
+        }
+
+        foreach ($this->installdefs['dropdown_filters'] as $item) {
+            $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+            $GLOBALS['log']->debug("Enabling dropdown_filters from $from");
+            $disabledPath = $this->getDropdownFilterPath($item, true);
+            if (file_exists($disabledPath)) {
+                $path = $this->getDropdownFilterPath($item);
+                $dirName = dirname($path);
+                mkdir_recursive($dirName, true);
+                rename($disabledPath, $path);
+            }
+        }
+    }
+
+    /**
+     * Rebuilds cache files for dropdown filters extension
+     */
+    protected function rebuild_dropdown_filters()
+    {
+        $baseDir = 'custom/Extension/application/Ext/DropdownFilters/roles';
+        $roles = ACLRole::getAllRoles();
+        foreach ($roles as $role) {
+            $roleDir = $baseDir . '/' . $role->id;
+            $files = array();
+            if (is_dir($roleDir)) {
+                $it = new FilesystemIterator($roleDir);
+                foreach ($it as $file) {
+                    if ($file->isFile()) {
+                        $files[] = $file->getPathname();
+                    }
+                }
+            }
+            $cacheFile = 'custom/application/Ext/DropdownFilters/' . $role->id . '/dropdownfilters.ext.php';
+            $this->cacheExtensionFiles($files, $cacheFile);
+        }
+    }
+
+    /**
+     * Return extension file path
+     *
+     * @param string $item Extension item
+     * @param bool $isDisabled Whether the extension should be disabled
+     *
+     * @return string
+     */
+    protected function getDropdownFilterPath($item, $isDisabled = false)
+    {
+        $path = 'custom/Extension/application/Ext/DropdownFilters';
+        if ($isDisabled) {
+            $path .= '/' . DISABLED_PATH;
+        }
+        $path .= '/' . str_replace('<basepath>/SugarModules/include/dropdown_filters/', '', $item['from']);
+        $path = $this->patchPath($path);
+
+        return $path;
+    }
+
+    /**
+     * Reads package manifest
+     *
+     * @return array Scope variables initialized in manifest file
+     */
+    protected function readManifest()
+    {
+        $installdefs = array();
+        require $this->base_dir . '/manifest.php';
+        $installdefs = $this->patchInstallDefs($installdefs);
+        return compact('manifest', 'installdefs');
+    }
+
+    /**
+     * Patches package installation definitions
+     *
+     * @param array $installdefs Original installation definitions
+     * @return array Patched installation definitions
+     */
+    public function patchInstallDefs(array $installdefs)
+    {
+        foreach ($installdefs as $sectionName => $section) {
+            if (is_array($section)) {
+                foreach ($section as $i => $def) {
+                    if (isset($def['to'])) {
+                        $patched = $this->patchPath($def['to']);
+                        if ($patched !== null) {
+                            $installdefs[$sectionName][$i]['to'] = $patched;
+                        } else {
+                            unset($installdefs[$sectionName][$i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $installdefs;
+    }
+
+    /**
+     * Patches destination path according to the current patch specification.
+     *
+     * @param string $path Destination path
+     * @return string|null Patched path or NULL if the file shouldn't be copied
+     */
+    protected function patchPath($path)
+    {
+        foreach ($this->patch as $param => $map) {
+            foreach ($map as $search => $replace) {
+                if ($search == $replace) {
+                    continue;
+                }
+
+                $search = $param . '/' . $search;
+                if ($replace) {
+                    // if replacement is not empty, try to replace the value
+                    $patched = str_replace($search, $param . '/' . $replace, $path, $count);
+                    if ($count > 0) {
+                        return $patched;
+                    }
+                } else {
+                    // if replacement is empty, it means that the file should be excluded from the package
+                    if (strpos($path, $search) !== false) {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        return $path;
+    }
+}
