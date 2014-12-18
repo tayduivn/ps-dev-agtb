@@ -176,4 +176,20 @@ describe('Base.View.FilterActions', function() {
             });
         });
     });
+
+    describe("getFilterName validation", function() {
+        using("valid values", ["abc", "  abc", "abc  ", "  abc   "], function(value){
+            it("should return true for valid usernames", function() {
+                view.$('input').val(value);
+                expect(view.getFilterName()).toBeTruthy();
+            })
+        })
+
+        using("invalid values", ["", "   "], function(value){
+            it("should return false for invalid usernames", function() {
+                view.$('input').val(value);
+                expect(view.getFilterName()).toBeFalsy();
+            })
+        })
+    })
 });
