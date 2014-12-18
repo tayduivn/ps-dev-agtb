@@ -747,13 +747,7 @@ class VardefManager{
      * @return string The filename for the vardef cache
      */
     static function getCacheFileName($module, $object){
-        global $beanList, $beanFiles;
-        if (isset($beanList[$module]) && isset($beanFiles[$beanList[$module]])) {
-            $pi = pathinfo($beanFiles[$beanList[$module]]);
-            return create_cache_directory($pi['dirname'] . "/" . $object . 'vardefs.php');
-        } else {
-            return create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
-        }
+        return create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
     }
 
 }

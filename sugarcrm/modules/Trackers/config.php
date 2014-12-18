@@ -34,7 +34,7 @@ $tracker_config =
     array (
       'bean' => 'TrackerSession',
       'name' => 'tracker_sessions',
-      'metadata' => 'modules/Trackers/tracker_sessionsMetaData.php',
+      'metadata' => 'metadata/tracker_sessionsMetaData.php',
       'store' => 
       array (
         0 => 'TrackerSessionsDatabaseStore',
@@ -44,7 +44,7 @@ $tracker_config =
     array (
       'bean' => 'TrackerPerf',
       'name' => 'tracker_perf',
-      'metadata' => 'modules/Trackers/tracker_perfMetaData.php',
+      'metadata' => 'metadata/tracker_perfMetaData.php',
       'store' => 
       array (
         0 => 'DatabaseStore',
@@ -54,7 +54,7 @@ $tracker_config =
     array (
       'bean' => 'TrackerQuery',
       'name' => 'tracker_queries',
-      'metadata' => 'modules/Trackers/tracker_queriesMetaData.php',
+      'metadata' => 'metadata/tracker_queriesMetaData.php',
       'store' => 
       array (
         0 => 'TrackerQueriesDatabaseStore',
@@ -63,7 +63,7 @@ $tracker_config =
     'tracker_tracker_queries' => 
     array (
       'name' => 'tracker_tracker_queries',
-      'metadata' => 'modules/Trackers/tracker_tracker_queriesMetaData.php',
+      'metadata' => 'metadata/tracker_tracker_queriesMetaData.php',
       'store' => 
       array (
         0 => 'DatabaseStore',

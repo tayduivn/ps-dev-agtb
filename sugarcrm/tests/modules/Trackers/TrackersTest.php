@@ -14,14 +14,8 @@ require_once('modules/Trackers/TrackerPerf.php');
 require_once('modules/Trackers/TrackerQuery.php');
 require_once('modules/Trackers/TrackerSession.php');
 
-require_once 'include/api/SugarApi.php';
-require_once 'include/api/RestService.php';
-require_once 'clients/portal/api/CurrentUserPortalApi.php';
-
 class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public $service;
-
     private $files = array(
         "tracker_perfvardefs.php",
         "tracker_queriesvardefs.php",
@@ -33,55 +27,9 @@ class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['reload_vardefs'] = true;
         SugarCache::$isCacheReset = false;
-
-        SugarTestHelper::setUp("app_list_strings");
-
-        $contact = SugarTestContactUtilities::createContact();
-
-        $_SESSION['contact_id'] = $contact->id;
-
-        $this->currentUserApi= new CurrentUserPortalApi();
-        $this->currentUserApi->portal_contact = $contact;
-        $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
-    {
-        foreach ($this->files as $file) {
-            $filepath = sugar_cached("modules/Trackers/" . $file);
-            @unlink($filepath);
-        }
-    }
-
-    public function testCacheRewriteAPI()
-    {
-        $timestamp = array();
-
-        // Store cached file timestamps
-        foreach ($this->files as $file) {
-            $filepath = sugar_cached("modules/Trackers/" . $file);
-            touch($filepath, 123);
-            $this->assertFileExists($filepath, "Cache file '$file' does not exist.");
-            $timestamp[$file] = filemtime($filepath);
-        }
-
-        // Call to /me
-        $this->currentUserApi->retrieveCurrentUser($this->service, array());
-
-        // Check if cache is re-created
-        foreach ($this->files as $file) {
-            $filepath = sugar_cached("modules/Trackers/" . $file);
-            $this->assertFileExists($filepath, "Cache file '$file' does not exist after REST API call.");
-            // file does not have correct timestamp
-            $this->assertEquals(
-                $timestamp[$file],
-                filemtime($filepath),
-                "File '$file' is re-created on API call."
-            );
-        }
-    }
-
-    public function testCacheRewriteClassInstantiation()
+    public function testCacheRewrite()
     {
         $timestamp = array();
 
