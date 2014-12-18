@@ -164,13 +164,12 @@
 
 .adam-window {
   background-color: #f0f0f0;
-  -webkit-border-radius: 7px;
+
   -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
+  -webkit-border-radius: 7px;
   border-radius: 7px;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
   padding: 8px;
@@ -225,18 +224,16 @@ a.adam-button {
   text-decoration: none;
   color: #222222;
   background-color: #f0f0f0;
-  -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-table;
   margin: 6px;
   padding: 5px 24px;
   border: 1px solid #A0A0A0;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   vertical-align: middle;
 }
@@ -275,8 +272,8 @@ a.adam-button:hover {
 .adam-field .adam-field-control:focus,
 .adam-field .adam-field-control.focused {
   border-color: rgba(82, 168, 236, 0.8);
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
   outline: 0 none;
 }
@@ -330,32 +327,31 @@ a.adam-tooltip-error-off {
 
 .adam-tooltip-message {
   background-color: #FFFFEE;
-  -webkit-border-radius: 5px;
+
   -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   border: solid 1px #888888;
   width: 128px;
   padding: 6px;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   text-align: center;
 }
 
 .required, .adam.item-container.required {
   border-color: rgba(127, 0, 0, 0.8);
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
   outline: 0 none;
   color: red;
 }
 
 .required.noshadow {
-  -webkit-box-shadow: none;
   -moz-box-shadow: none;
+  -webkit-box-shadow: none;
   box-shadow: none;
 }
 
@@ -517,10 +513,8 @@ a.adam-tooltip-error-off {
   border: 1px solid #c0c0c0;
   border-bottom: none;
   padding: 3px 9px;
-  -webkit-border-radius: 7px 7px 0em 0em/7px 7px 0em 0em;
   -moz-border-radius: 7px 7px 0em 0em/7px 7px 0em 0em;
-  -ms-border-radius: 7px 7px 0em 0em/7px 7px 0em 0em;
-  -o-border-radius: 7px 7px 0em 0em/7px 7px 0em 0em;
+  -webkit-border-radius: 7px;
   border-radius: 7px 7px 0em 0em/7px 7px 0em 0em;
   margin: 0px;
   cursor: pointer;
@@ -565,10 +559,8 @@ a.adam-tooltip-error-off {
   right: 0;
   background-color: red;
   padding: 0 1px;
-  -webkit-border-radius: 2px 2px 2px 2px;
   -moz-border-radius: 2px 2px 2px 2px;
-  -ms-border-radius: 2px 2px 2px 2px;
-  -o-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px;
   border-radius: 2px 2px 2px 2px;
 }
 
@@ -586,8 +578,8 @@ a.adam-tooltip-error-off {
 
 .adam-message-panel {
   background-color: #f0f0f0;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
   padding: 8px;
@@ -714,8 +706,8 @@ a.adam-tooltip-error-off {
   padding: 2px;
   position: static;
   margin: auto;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -748,11 +740,10 @@ a.adam-tooltip-error-off {
   padding: 2px 2px 0 2px;
   background-color: #F8F8F8;
   border: 1px solid #CCC;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjxzdG9wIG9mZnNldD0iMTAlIiBzdG9wLWNvbG9yPSIjZWFlYWVhIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(10%, #eaeaea));
   background: -webkit-linear-gradient(top, #ffffff 0%, #eaeaea 10%);
-  background: -moz-linear-gradient(top, #ffffff 0%, #eaeaea 10%);
-  background: -o-linear-gradient(top, #ffffff 0%, #eaeaea 10%);
-  background: linear-gradient(top, #ffffff 0%, #eaeaea 10%);
+  background: linear-gradient(to bottom, #ffffff 0%, #eaeaea 10%);
   box-sizing: border-box;
 }
 
@@ -837,15 +828,13 @@ a.adam-tooltip-error-off {
   background-image: -moz-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
   background-image: -o-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
   background-image: linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%); */
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU1NTU1NSIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjNTU1NTU1Ii8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiM0NDQ0NDQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1NTU1NTUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #555555), color-stop(50%, #555555), color-stop(50%, #444444), color-stop(100%, #555555));
-  background: -webkit-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
   background: -moz-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
-  background: -o-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
-  background: linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
-  -webkit-border-radius: inherit;
+  background: -webkit-linear-gradient(top, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
+  background: linear-gradient(to bottom, #555555 0%, #555555 50%, #444444 50%, #555555 100%);
   -moz-border-radius: inherit;
-  -ms-border-radius: inherit;
-  -o-border-radius: inherit;
+  -webkit-border-radius: inherit;
   border-radius: inherit;
   border-width: 0;
   white-space: nowrap;
@@ -1132,8 +1121,8 @@ a.adam-tooltip-error-off {
   border-color: rgba(82, 168, 236, 0.8);
   outline: 0;
   outline: thin dotted \9;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
