@@ -80,7 +80,7 @@ $dependencies['ForecastWorksheets']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $best_case))',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
             ),
         ),
         array(
@@ -89,7 +89,7 @@ $dependencies['ForecastWorksheets']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case))',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
             ),
         ),
     )
@@ -109,7 +109,7 @@ $dependencies['ForecastWorksheets']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $best_case))',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
             ),
         ),
         array(
@@ -118,7 +118,7 @@ $dependencies['ForecastWorksheets']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case))',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
             ),
         ),
     )
