@@ -762,6 +762,19 @@ function handleSugarConfig() {
         );
     }
 
+    // Setup WebSocket configuration
+    if (!empty($_SESSION['websockets'])) {
+        $sugar_config['websockets'] = array(
+            'server' => array(
+                'url' => $_SESSION['websockets']['server']['url'],
+            ),
+            'client' => array(
+                'url' => $_SESSION['websockets']['client']['url'],
+            ),
+            'public_secret' => $_SESSION['websockets']['public_secret'],
+        );
+    }
+
     /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
        these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
     $sugar_config['logger']	= array(

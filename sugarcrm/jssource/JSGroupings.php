@@ -340,6 +340,7 @@
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/socket.io.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
             ),

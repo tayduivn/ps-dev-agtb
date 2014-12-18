@@ -194,6 +194,13 @@ if(isset($_REQUEST['checkDBSettings']) && ($_REQUEST['checkDBSettings'])){
 }
 }
 
+// this is a WebSocket Configuration check
+if (isset($_REQUEST['checkWSConfiguration']) && ($_REQUEST['checkWSConfiguration'])) {
+    require_once('install/checkWSConfiguration.php');
+    echo checkWSConfiguration();
+    return;
+}
+
 //maintaining the install_type if earlier set to custom
 if(isset($_REQUEST['install_type']) && $_REQUEST['install_type'] == 'custom'){
 	$_SESSION['install_type'] = $_REQUEST['install_type'];
@@ -224,6 +231,8 @@ $workflow = array(  'welcome.php',
 $workflow[] =  'systemOptions.php';
 $workflow[] = 'dbConfig_a.php';
 //$workflow[] = 'dbConfig_b.php';
+
+$workflow[] = 'websocketConfig.php';
 
 if (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false) {
     $workflow[] = 'siteConfig_a.php';

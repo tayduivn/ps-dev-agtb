@@ -55,7 +55,7 @@ class AdministrationController extends SugarController
             }
             SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
         }
-        
+
         // BR-29 When changing module tabs the megamenu is not updated on the client
         MetaDataManager::refreshCache(array('base'));
 
@@ -141,7 +141,7 @@ class AdministrationController extends SugarController
             //Users doesn't appear in the normal module list, but its value is cached on login.
             sugar_cache_clear("CONTROLLER_wireless_module_registry_Users");
             sugar_cache_reset();
-            
+
             // Bug 59121 - Clear the metadata cache for the mobile platform
             MetaDataManager::refreshCache(array('mobile'));
         }
@@ -193,6 +193,68 @@ class AdministrationController extends SugarController
 
         echo json_encode(array('valid' => $valid, 'status' => $status));
         sugar_cleanup(true);
+    }
+
+    /**
+     * action_saveWebSocketsConfiguration
+     *
+     * This method handles the saving websockets configuration.
+     */
+    public function action_saveWebSocketsConfiguration()
+    {
+        $websocket_client_url = !empty($_REQUEST['websocket_client_url']) ? urldecode($_REQUEST['websocket_client_url']) : '';
+        $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
+        $websocket_public_secret = !empty($_REQUEST['websocket_public_secret']) ? urldecode($_REQUEST['websocket_public_secret']) : '';
+
+        $errors = array();
+
+        if (!empty($websocket_client_url) && !empty($websocket_server_url) && !empty($websocket_public_secret)) {
+            if (!(SugarSocket::checkWSSettings($websocket_client_url, 'client'))) {
+                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = str_replace("{{WSURL}}", 'Client', $GLOBALS['mod_strings']['ERR_WEB_SOCKET_ERROR']);
+            }
+
+            if (!(SugarSocket::checkWSSettings($websocket_server_url, 'server'))) {
+                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = str_replace("{{WSURL}}", 'Server', $GLOBALS['mod_strings']['ERR_WEB_SOCKET_ERROR']);
+            }
+        } else {
+            if (empty($websocket_client_url)) {
+                $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_URL'];
+            }
+            if (empty($websocket_server_url)) {
+                $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
+            }
+            if (empty($websocket_public_secret)) {
+                $errors['ERR_WEB_SOCKET_SECRET'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SECRET'];
+            }
+        }
+
+        if (count($errors) == 0) {
+            $result['status'] = true;
+
+            $this->cfg = new Configurator();
+            $this->cfg->config['websockets'] = array(
+                'server' => array(
+                    'url' => $websocket_server_url
+                ),
+                'client' => array(
+                    'url' => $websocket_client_url
+                ),
+                'public_secret' => $websocket_public_secret,
+            );
+            $this->cfg->handleOverride();
+        } else {
+            $result['status'] = false;
+            $validationErr = array();
+            foreach ($errors as $key => $erMsg) {
+                array_push($validationErr, $erMsg);
+            }
+            $result = array(
+                'status' => false,
+                'errMsg' => implode(PHP_EOL, $validationErr)
+            );
+        }
+
+        echo json_encode($result);
     }
 
     /**

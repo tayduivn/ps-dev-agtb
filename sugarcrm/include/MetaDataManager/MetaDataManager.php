@@ -286,6 +286,13 @@ class MetaDataManager
         'calendar' => array(
             'max_repeat_count' => true,
         ),
+        'site_url' => true,
+        'websockets' => array(
+            'client' => array(
+                'url' => true,
+            ),
+            'public_secret' => true,
+        ),
         'lead_conv_activity_opt' => true,
     );
 
