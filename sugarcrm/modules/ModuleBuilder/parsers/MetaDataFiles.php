@@ -865,6 +865,19 @@ class MetaDataFiles
         }
     }
 
+
+    /**
+     * Get a list of client files:
+     * 1) Get a list of directories;
+     * 2) Get the files in these directories.
+     *
+     * @param array  $platforms A list of platforms to build for. Uses the first
+     *                          platform in the list as the platform.
+     * @param string $type      The type of file to retrieve for building metadata.
+     * @param string $module    The module to retrieve for building metadata.
+     *
+     * @return array
+     */
     public static function getClientFiles( $platforms, $type, $module = '' )
     {
         $checkPaths = array();
@@ -901,6 +914,20 @@ class MetaDataFiles
         }
 
         // Second, get a list of files in those directories, sorted by "relevance"
+        $fileList = self::getClientFileList($checkPaths);
+        return $fileList;
+    }
+
+    /**
+     * Get a list of files in the given directories.
+     *
+     * @param array $checkPaths A list of directories to include files.
+     *
+     * @return array
+     */
+    public static function getClientFileList($checkPaths)
+    {
+
         $fileList = array();
         foreach ($checkPaths as $path => $pathInfo) {
             // Looks at /modules/Accounts/clients/base/views/*
@@ -933,7 +960,55 @@ class MetaDataFiles
         }
         return $fileList;
     }
+    /**
+     * Get the content from the global files.
+     *
+     * @param array  $platform The platform for building metadata.
+     * @param string $type     The type of file to retrieve for building metadata.
+     * @param string $subPath  The subPath of file to retrieve for building metadata.
+     *
+     * @return array
+     */
+    public static function getGlobalFileContent($platform, $type, $subPath)
+    {
+        $checkPaths = array();
 
+        //Add the global base files as the default ones for the extension files
+        //Used when the corresponding files in custom module, module & template cannot be found
+        //See the previously checked files in getClientFiles().
+        $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform' => $platform, 'template' => false);
+        $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform' => $platform, 'template' => false);
+
+        //Find the files in the paths
+        $fileList = self::getClientFileList($checkPaths);
+
+        //Get the content of the files to find the metadata in $subPath
+        $results = array();
+        foreach ($fileList as $fileIndex => $fileInfo) {
+            $extension = substr($fileInfo['path'], -3);
+            if ($extension == 'php') {
+                $viewdefs = array();
+                if (isset($results[$subPath]['meta'])) {
+                    continue;
+                }
+                require $fileInfo['path'];
+                if (isset($viewdefs[$platform][$type][$subPath])) {
+                    $results[$subPath]['meta'] = $viewdefs[$platform][$type][$subPath];
+                }
+            }
+        }
+        return $results[$subPath]['meta'];
+    }
+
+    /**
+     * Get the content of the given files to build metadata.
+     *
+     * @param array  $fileList A list of files to retrieve for building metadata.
+     * @param string $type     The type of file to retrieve for building metadata.
+     * @param string $module   The module to retrieve for building metadata.
+     *
+     * @return array
+     */
     public static function getClientFileContents( $fileList, $type, $module = '' )
     {
         $results = array();
@@ -963,8 +1038,18 @@ class MetaDataFiles
                     break;
                 case 'php':
                     $viewdefs = array();
-                    if ( isset($results[$fileInfo['subPath']]['meta']) && !strstr($fileInfo['path'], '.ext')) {
+                    if ( isset($results[$fileInfo['subPath']]['meta']) && !strstr($fileInfo['path'], '.ext.php')) {
                         continue;
+                    }
+                    //When an extension file is found and NO corresponding metadata has been found so far
+                    if (!empty($module) && strstr($fileInfo['path'], '.ext.php') &&
+                        !isset($results[$fileInfo['subPath']]['meta'])) {
+                        //need to check the global files for metadata
+                        $results[$fileInfo['subPath']]['meta'] = self::getGlobalFileContent(
+                            $fileInfo['platform'],
+                            $type,
+                            $fileInfo['subPath']
+                        );
                     }
                     //Viewdefs must be maintained between files to allow for extension files that append to out of box meta.
                     if (!empty($results[$fileInfo['subPath']]['meta'])) {

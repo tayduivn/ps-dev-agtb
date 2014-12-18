@@ -75,7 +75,7 @@ $mod_strings = array (
     'LBL_PMSE_ADAM_DESIGNER_WAIT' => 'Wait',
     'LBL_PMSE_ADAM_DESIGNER_RECEIVE_MESSAGE' => 'Receive Message',
     'LBL_PMSE_ADAM_DESIGNER_SEND_MESSAGE' => 'Send Message',
-    'LBL_PMSE_ADAM_DESIGNER_USER_TASK' => 'User Task',
+    'LBL_PMSE_ADAM_DESIGNER_USER_TASK' => 'Activity',
     'LBL_PMSE_ADAM_DESIGNER_EXCLUSIVE' => 'Exclusive',
     'LBL_PMSE_ADAM_DESIGNER_PARALLEL' => 'Parallel',
     'LBL_PMSE_ADAM_DESIGNER_COMMENT' => 'Comment',
@@ -96,7 +96,7 @@ $mod_strings = array (
     'LBL_PMSE_ADAM_DESIGNER_EXCLUSIVE_GATEWAY' => 'Exclusive Gateway',
     'LBL_PMSE_ADAM_DESIGNER_PARALLEL_GATEWAY' => 'Parallel Gateway',
     'LBL_PMSE_ADAM_DESIGNER_END_EVENT' => 'End Event',
-//    'LBL_PMSE_ADAM_DESIGNER_TEXT_ANNOTATION' => 'Text Annotation',
+    'LBL_PMSE_ADAM_DESIGNER_TEXT_ANNOTATION' => 'Text Annotation',
 
 
     /**GENERAL**/
@@ -160,7 +160,7 @@ $mod_strings = array (
     'LBL_PMSE_FORM_LABEL_OTHER_DERIVATION_OPTIONS' => 'Other Routing Options',
     'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Record Owner',
     'LBL_PMSE_FORM_LABEL_TEAM' => 'Team',
-    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Reassign Task',
+    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Reassign Activity',
 
     'LBL_PMSE_FORM_TITLE_USER_DEFINITION' => 'User Definition',
     'LBL_PMSE_FORM_LABEL_ASSIGNMENT_METHOD' => 'Assignment Method',
@@ -187,6 +187,9 @@ $mod_strings = array (
     'LBL_PMSE_FORM_TITLE_CHANGE_FIELDS' => 'Change Fields',
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_TEAM' => 'Round Robin',
+
+    'LBL_PMSE_MESSAGE_ACTIVITY_NAME_EMPTY' => 'The name of activity is empty.',
+    'LBL_PMSE_MESSAGE_ACTIVITY_NAME_ALREADY_EXISTS' => 'The name "%s" already exists in shape family.',
 
     /**EVENTS**/
     // CONTEXT MENU
@@ -277,7 +280,7 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_USER_EVALUATION_VALUE' => 'Value',
     'LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATE' => 'Fixed Date',
     'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE' => 'Time Span',
-    'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMMOUNT' => 'Ammount',
+    'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMOUNT' => 'Value',
     'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_UNIT' => 'Unit',
     'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_YEARS' => 'years',
     'LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MONTHS' => 'months',

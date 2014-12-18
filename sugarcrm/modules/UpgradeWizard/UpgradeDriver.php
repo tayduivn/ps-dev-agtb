@@ -1562,11 +1562,12 @@ abstract class UpgradeDriver
 
     /**
      * Save config.php
+     * @return boolean
      */
     public function saveConfig()
     {
         ksort($this->config);
-        write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
+        return write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
     }
 
     protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
@@ -1671,10 +1672,13 @@ abstract class UpgradeDriver
                     $this->cleanCaches();
                     list($this->from_version, $this->from_flavor) = $this->state['old_version'];
                     if (!$this->runScripts("post")) {
-                        $this->error("Post-upgrade stage failed!");
+                        $this->error("Post-upgrade stage failed! Error executing post scripts");
                         return false;
                     }
-                    $this->saveConfig();
+                    if (!$this->saveConfig()) {
+                        $this->error("Post-upgrade stage failed! Cannot write config.php at {$this->context['source_dir']}");
+                        return false;
+                    }
                     $this->cleanCaches();
                     break;
                 case "cleanup":

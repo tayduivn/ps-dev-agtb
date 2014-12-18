@@ -3208,7 +3208,7 @@ class SugarBean
 
             if (!isset($options['skipSecondaryQuery'])
                 || $options['skipSecondaryQuery'] == false) {
-                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $this->db->getFieldType($def);
                 $sugarField = $sfh->getSugarField($type);
 
                 if ($sugarField->fieldNeedsSecondaryQuery($field, $this)) {

@@ -145,7 +145,21 @@ AdamArtifact.prototype.createHTML = function () {
  * Extends the paint method to draw text annotation lines
  */
 AdamArtifact.prototype.paint = function () {
-    //TODO Rewrite this method using Segments object
+    var layerName = "border-layer",
+        layer = this.findLayer(this.id + "Layer-" + layerName),
+        borderDiv;
+
+    if (!layer) {
+        this.createLayer({
+            layerName: layerName,
+            x: 0,
+            y:0
+        });
+        layer = this.findLayer(this.id + "Layer-" + layerName);
+        borderDiv = document.createElement('div');
+        borderDiv.className = "adam-artifact-annotation-border";
+        layer.html.appendChild(borderDiv);
+    }
 };
 
 

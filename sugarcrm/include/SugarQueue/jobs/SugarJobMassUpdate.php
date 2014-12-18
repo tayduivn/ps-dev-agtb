@@ -281,7 +281,8 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
 
             try {
                 $errors = $helper->populateFromApi($bean, $data, array('massUpdate'=>true));
-                $bean->save();
+                $check_notify = $helper->checkNotify($bean);
+                $bean->save($check_notify);
             } catch ( SugarApiExceptionNotAuthorized $e ) {
                 // ACL's might not let them modify this bean, but we should still do the rest
                 $failed++;

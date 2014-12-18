@@ -98,6 +98,10 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
         // Make a copy of the field defs array
         $fieldDefs = $this->_fielddefs;
 
+        // to include combo fields which are not in  _fielddefs
+        $comboFieldDefs = $this->implementation->getComboFieldDefs();
+        $fieldDefs = array_merge($fieldDefs, $comboFieldDefs);
+
         // Grab our original viewdefs since there are fields on here we'll need
         $viewDefs = $this->implementation->getOriginalViewdefs();
 
@@ -201,11 +205,20 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
 
         $lastGroup = isset($this->columns['LBL_AVAILABLE']) ? 2 : 1;
 
+        $comboFieldDefs = $this->implementation->getComboFieldDefs();
+
         for ($i = 0; isset($_POST['group_' . $i]) && $i < $lastGroup; $i++) {
             foreach ($_POST['group_' . $i] as $fieldname) {
                 $fieldname = strtolower($fieldname);
                 //Check if the field was previously on the layout
-                $newPaneldefs[$fieldname] = !empty($this->_viewdefs['fields'][$fieldname]) ? $this->_viewdefs['fields'][$fieldname] : array();
+                if (!empty($this->_viewdefs['fields'][$fieldname])) {
+                    $newPaneldefs[$fieldname] = $this->_viewdefs['fields'][$fieldname];
+                } else if (!empty($comboFieldDefs[$fieldname]) && isset($comboFieldDefs[$fieldname]['dbFields'])) {
+                    // combo fields such as address_street
+                    $newPaneldefs[$fieldname] = $comboFieldDefs[$fieldname];
+                } else {
+                    $newPaneldefs[$fieldname] = array();
+                }
             }
         }
 

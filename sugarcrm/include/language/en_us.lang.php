@@ -5262,14 +5262,14 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     //PMSE Process Definitions Dashlet
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Defintions',
-    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Defintions dashlet displays the templates that can be used inside of Process Author.',
+    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of Process Author.',
     'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definitions',
     'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',
 
     //PMSE Process Business Rules
     'LBL_PMSE_BUSINESS_RULES_DASHLET' => 'Process Business Rules',
     'LBL_PMSE_BUSINESS_RULES_DASHLET_DESCRIPTION' => 'Process Business Rules dashlet displays the templates that can be used inside of Process Author.',
-    'LNK_PMSE_BUSINESS_RULES_NEW_RECORD' => 'Create Process Business Rules',
+    'LNK_PMSE_BUSINESS_RULES_NEW_RECORD' => 'Create Process Business Rule',
     'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD' => 'Import Process Business Rules',
 
     //PMSE Email Templates Dashlet
@@ -12519,3 +12519,8 @@ $app_list_strings['dnb_contact_kw_scope'] = array(
     'Bio' => 'Bio',
     'Both' => 'Both'
 );
+//BEGIN SUGARCRM flav=ent ONLY
+$app_list_strings['business_rule_type_list'] = array(
+    'single' => 'Single-Hit',
+);
+//END SUGARCRM flav=ent ONLY

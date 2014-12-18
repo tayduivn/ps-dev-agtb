@@ -41,6 +41,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'readonly' => true,
+                    'related_fields' => array('status'),
                 ),
                 array(
                     'name' => 'status',

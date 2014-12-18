@@ -15,7 +15,9 @@ require_once('modules/Calendar/Calendar.php');
 
 class vCal extends SugarBean {
 
-    public static $cache_enabled = true;
+    private static $cacheUpdate_enabled = true;
+
+    private static $backtrace_log_enabled = 'none';  // 'none', 'cache', 'freebusy', 'all'
 
     // Stored fields
 	var $id;
@@ -58,6 +60,18 @@ class vCal extends SugarBean {
 		parent::__construct();
 		$this->disable_row_level_security = true;
 	}
+
+    /**
+     * Enable or Disable Cache Updates
+     * @param bool - CacheUpdate status - true if enabled else false
+     * @return bool - Previous cache setting returned so it can be later restored.
+     */
+    public static function setCacheUpdateEnabled($enabled)
+    {
+        $previousValue = static::$cacheUpdate_enabled;
+        static::$cacheUpdate_enabled = $enabled;
+        return $previousValue;
+    }
 
 	function get_summary_text()
 	{
@@ -113,10 +127,6 @@ class vCal extends SugarBean {
 		$str = '';
 		global $DO_USER_TIME_OFFSET,$timedate;
 
-        if (!static::$cache_enabled) {
-            return $str;
-        }
-
         $DO_USER_TIME_OFFSET = true;
 		if(empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->id)) {
 		    $GLOBALS['current_user'] = $user_bean;
@@ -165,6 +175,12 @@ class vCal extends SugarBean {
     function get_vcal_freebusy($user_focus, $cached = true, SugarDateTime $startDate = null, SugarDateTime $endDate = null)
     {
         global $locale, $timedate;
+
+        if (static::$backtrace_log_enabled == 'freebusy' || static::$backtrace_log_enabled == 'all') {
+            $trace = $this->getBackTrace("VCAL:FREEBUSY - ");
+            $GLOBALS['log']->fatal("VCAL:FREEBUSY - get_vcal_freebusy()\n" . $trace);
+        }
+
         $str = "BEGIN:VCALENDAR\n";
         $str .= "VERSION:2.0\n";
         $str .= "PRODID:-//SugarCRM//SugarCRM Calendar//EN\n";
@@ -205,14 +221,12 @@ class vCal extends SugarBean {
         $str .= "DTSTART:$utc_start_time\n";
         $str .= "DTEND:$utc_end_time\n";
 
-        if (static::$cache_enabled) {
-            if ($realTimeSearch || (!$cached && $timeOffset != 0)) {
-                // insert the freebusy lines
-                $str .= $this->create_sugar_freebusy($user_focus,$start_date_time,$end_date_time);
-            } else {
-                // retrieve cached freebusy lines from vcals
-                $str .= $this->get_freebusy_lines_cache($user_focus);
-            }
+        if ($realTimeSearch || (!$cached && $timeOffset != 0)) {
+            // insert the freebusy lines
+            $str .= $this->create_sugar_freebusy($user_focus, $start_date_time, $end_date_time);
+        } else {
+            // retrieve cached freebusy lines from vcals
+            $str .= $this->get_freebusy_lines_cache($user_focus);
         }
 
         // UID:20030724T213406Z-10358-1000-1-12@phoenix
@@ -234,7 +248,17 @@ class vCal extends SugarBean {
         // caches vcal for Activities in Sugar database
         public static function cache_sugar_vcal_freebusy(&$user_focus)
         {
+            if (!static::$cacheUpdate_enabled) {
+                return;
+            }
+
             $focus = BeanFactory::getBean('vCals');
+
+            if (static::$backtrace_log_enabled == 'cache' || static::$backtrace_log_enabled == 'all') {
+                $trace = $focus->getBackTrace("VCAL:CACHE - ");
+                $GLOBALS['log']->fatal("VCAL:CACHE - cache_sugar_vcal_freebusy()\n" . $trace);
+            }
+
             // set freebusy members and save
             $arr = array('user_id'=>$user_focus->id,'type'=>'vfb','source'=>'sugar');
             $focus->retrieve_by_string_fields($arr);
@@ -269,6 +293,18 @@ class vCal extends SugarBean {
 		$str .= "END:VCALENDAR\n";
 
 		return $str;
+    }
+
+    private function getBacktrace($prepend = "", $ignore = 2)
+    {
+        $trace = '';
+        foreach (debug_backtrace() as $k => $v) {
+            if ($k < $ignore) {
+                continue;
+            }
+            $trace .= $prepend . '#' . ($k - $ignore) . ' ' . $v['file'] . '(' . $v['line'] . '): ' . (isset($v['class']) ? $v['class'] . '->' : '') . $v['function'] . "()\n";
+        }
+        return $trace;
 	}
 
 }
