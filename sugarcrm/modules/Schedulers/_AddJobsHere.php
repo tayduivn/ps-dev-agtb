@@ -595,8 +595,3 @@ $extfile = SugarAutoLoader::loadExtension('schedulers');
 if($extfile) {
     require $extfile;
 }
-
-$extfile = SugarAutoLoader::loadExtension('app_schedulers');
-if($extfile) {
-    require $extfile;
-}
