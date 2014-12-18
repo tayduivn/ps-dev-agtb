@@ -95,10 +95,7 @@
             this.getFilterOptions(true);
         }, this);
 
-        this.filters = app.data.createBeanCollection('Filters');
-        this.filters.setModuleName(this.getSearchModule());
-        this.filters.setFilterOptions(this.getFilterOptions());
-        this.filters.load();
+        this._createFiltersCollection();
     },
 
     /**
