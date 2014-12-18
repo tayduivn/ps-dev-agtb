@@ -53,6 +53,12 @@
     useStates: true,
 
     /**
+     * Value of extraModule.field
+     * @property {String}
+     */
+    currentFieldValue: null,
+
+    /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
@@ -66,9 +72,14 @@
             null;
         this.extraModule = this.meta.extra_provider || {};
         if (this.context.get('module') === this.extraModule.module &&
-            this.context.get('action') === 'record'
+            (this.context.get('action') === 'detail' || this.context.get('action') === 'edit')
         ) {
             this.useStates = false;
+            this.changedCallback = _.bind(this.modelFieldChanged, this);
+            this.savedCallback = _.bind(this.modelSaved, this);
+            this.context.get('model').on('change:' + this.extraModule.field, this.modelFieldChanged, this);
+            this.context.get('model').on('data:sync:complete', this.modelSaved, this);
+            this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
         }
     },
 
@@ -254,7 +265,9 @@
      * @param {Function} callback Async callback to use with async.js
      */
     loadAdditionalLeaf: function(id, callback) {
-        if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id] < Date.now() - this.cacheLifetime) {
+        var collection = app.data.createBeanCollection(this.extraModule.module),
+            self = this;
+        if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id].timestamp < Date.now() - this.cacheLifetime) {
             delete this.loadedLeafs[id];
         }
         if (_.isEmpty(this.extraModule)
@@ -263,13 +276,14 @@
             || _.isEmpty(this.extraModule.field)
             || !_.isUndefined(this.loadedLeafs[id])
         ) {
+            if (!_.isUndefined(this.loadedLeafs[id])) {
+                this.addLeafs(this.loadedLeafs[id].models, id);
+            }
             if (_.isFunction(callback)) {
                 callback.call();
             }
             return;
         }
-        var collection = app.data.createBeanCollection(this.extraModule.module),
-            self = this;
         collection.options = {
             params: {
                 order_by: 'date_entered:desc'
@@ -286,19 +300,7 @@
         collection.filterDef[0]['active_rev'] = {$equals: 1};
         collection.fetch({
             success: function(data) {
-                self.removeChildrens(id, 'document');
-                if (data.length !== 0) {
-                    self.hideChildNodes(id);
-                    _.each(data.models, function(value) {
-                        var insData = {
-                            id: value.id,
-                            name: value.get('name')
-                        };
-                        this.insertNode(insData, id, 'document');
-                    }, self);
-                    self.showChildNodes(id);
-                    self.loadedLeafs[id] = Date.now();
-                }
+                self.addLeafs(data.models || [], id);
                 if (_.isFunction(callback)) {
                     callback.call();
                 }
@@ -310,10 +312,77 @@
      * {@inheritDoc}
      */
     loadData: function(options) {
-        this.loadedLeafs = {};
+        if (!options || _.isUndefined(options.saveLeafs) || options.saveLeafs === false) {
+            this.loadedLeafs = {};
+        }
+
         if (options && options.complete) {
             this._render();
             options.complete();
         }
+    },
+
+    /**
+     * Override behavior of JSTree plugin.
+     * @param {BeanCollection} collection
+     */
+    onNestedSetSyncComplete: function(collection) {
+        if (this.disposed || this.collection.root !== collection.root) {
+            return;
+        }
+        this.layout.reloadDashlet({complete: function() {}, saveLeafs: true});
+    },
+
+    /**
+     * Handle change of this.extraModule.field.
+     * @param {Bean} model
+     * @param {String} value
+     */
+    modelFieldChanged: function(model, value) {
+        delete this.loadedLeafs[this.currentFieldValue];
+        this.currentFieldValue = value;
+    },
+
+    /**
+     * Handle save of context model.
+     */
+    modelSaved: function() {
+        delete this.loadedLeafs[this.currentFieldValue];
+        this.onNestedSetSyncComplete(this.collection);
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _dispose: function() {
+        if (this.useStates === false) {
+            this.context.get('model').off('change:' + this.extraModule.field, this.changedCallback);
+            this.context.get('model').off('data:sync:complete', this.savedCallback);
+        }
+        this._super('_dispose', []);
+    },
+
+    /**
+     * Add documents as leafs for categories.
+     * @param {Array} models
+     * @param {String} id
+     */
+    addLeafs: function(models, id) {
+        this.removeChildrens(id, 'document');
+        if (models.length !== 0) {
+            this.hideChildNodes(id);
+            _.each(models, function(value) {
+                var insData = {
+                    id: value.id,
+                    name: value.get('name')
+                };
+                this.insertNode(insData, id, 'document');
+            }, this);
+            this.showChildNodes(id);
+        }
+        this.loadedLeafs[id] = {
+            timestamp: Date.now(),
+            models: models
+        };
     }
 })

@@ -84,6 +84,10 @@
              * @param {Data.NestedSetCollection} collection Synced collection.
              */
             onNestedSetSyncComplete: function(collection) {
+                if (_.isFunction(Object.getPrototypeOf(this).onNestedSetSyncComplete)) {
+                    Object.getPrototypeOf(this).onNestedSetSyncComplete.call(this, collection);
+                    return;
+                }
                 this._refreshContextMenu();
                 if (this.disposed || _.isUndefined(this.collection) ||
                     this.collection.root !== collection.root
