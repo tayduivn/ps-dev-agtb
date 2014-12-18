@@ -211,11 +211,9 @@
      * @private
      */
     _loadTemplate: function() {
+        var originalType = this.type;
+        this.type = 'fieldset';
         this._super('_loadTemplate');
-
-        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions')
-            && (this.action === 'edit')) {
-            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
-        }
+        this.type = originalType;
     }
 })
