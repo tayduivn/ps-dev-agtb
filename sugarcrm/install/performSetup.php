@@ -34,8 +34,11 @@ $mi->rebuild_vardefs();
 require_once 'include/MetaDataManager/MetaDataManager.php';
 MetaDataManager::disableCache();
 
+include "modules/Trackers/tracker_perfMetaData.php";
+include "modules/Trackers/tracker_queriesMetaData.php";
+include "modules/Trackers/tracker_sessionsMetaData.php";
+include "modules/Trackers/tracker_tracker_queriesMetaData.php";
 require_once('modules/TableDictionary.php');
-
 
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
