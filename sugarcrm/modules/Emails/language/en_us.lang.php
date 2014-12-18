@@ -325,6 +325,7 @@ $mod_strings = array (
     'LBL_ADD_CC' => 'Add Cc',
     'LBL_CC_BUTTON' => 'Cc',
     'LBL_ADD_BCC' => 'Add Bcc',
+    'LBL_MOVE_TO_BCC' => 'Move To Bcc',
     'LBL_BCC_BUTTON' => 'Bcc',
     'LBL_ADD_TO_ADDR' => 'Add To',
     'LBL_SELECTED_ADDR' => 'Selected',
