@@ -24,18 +24,6 @@ describe('Base.View.FilterActions', function() {
         view = null;
     });
 
-    it('should check for blank spaces in getFilterName', function() {
-        var name = '';
-        view.$('input').val(name);
-        expect(view.getFilterName()).toBeFalsy();
-        name = '   abc  ';
-        view.$('input').val(name);
-        expect(view.getFilterName()).toBeTruthy();
-        name = '     ';
-        view.$('input').val(name);
-        expect(view.getFilterName()).toBeFalsy();
-    });
-
     it('should call set filter name on filter:create:open', function() {
         var name = 'test';
         view.model.set({'name': name});
