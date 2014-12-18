@@ -108,8 +108,10 @@
          *
          * @property {number}
          */
-        this.maxDisplayedItems = 3;
         app.view.Field.prototype.initialize.call(this, options);
+
+        this._select2formatSelectionTemplate = app.template.get("f.relate.pill");
+
         var populateMetadata = app.metadata.getModule(this.getSearchModule());
 
         if (_.isEmpty(populateMetadata)) {
@@ -118,7 +120,7 @@
         _.each(this.def.populate_list, function(target, source) {
             if (_.isUndefined(populateMetadata.fields[source])) {
                 app.logger.error('Fail to populate the related attributes: attempt to access undefined key - ' +
-                    this.getSearchModule() + '::' + source);
+                this.getSearchModule() + '::' + source);
             }
         }, this);
 
@@ -152,7 +154,6 @@
             this.filters.load();
         }
     },
-
     /**
      * Creates a {@link Data.BeanCollection} for the search results pertaining
      * to the search module.
@@ -260,24 +261,18 @@
                         return callback({id: id, text: text});
                     }
                     ids = id.split(self.separator);
-                    displayedItems = ids.slice(0, self.maxDisplayedItems);
                     text = text.split(self.separator);
-                    callback(_.map(displayedItems, function(value, index) {
+                    callback(_.map(ids, function(value, index) {
                         return {id: value, text: text[index]};
                     }));
-                    if (ids.length > self.maxDisplayedItems) {
-                        self.moreItems = true;
-                        var howManyMore = ids.length - self.maxDisplayedItems;
-                        var $more = $('<li class="select2-search-choice more">' +
-                            '<div>' + howManyMore + ' more...</div>' +
-                            '</li>').insertBefore('.select2-search-field');
-                        $more.click(function() {
-                            plugin.opts.element.trigger($.Event('searchmore'));
-                        });
-                    }
                 },
                 formatInputTooShort: function() {
                     return '';
+                },
+                formatSelection: function(obj){
+                    var ctx = {};
+                    ctx.text = obj.text || obj.id;
+                    return self._select2formatSelectionTemplate(ctx);
                 },
                 formatSearching: function() {
                     return app.lang.get('LBL_LOADING', self.module);
