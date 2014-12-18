@@ -717,17 +717,17 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
                     } elseif ($type == 'flows' && strtolower($element['action']) == 'update') {
                         if (isset($element['flo_element_origin_type'])) {
-                            $originBean = 'pmse_' . ucfirst($element['flo_element_origin_type']);
-//                            $originBean = new $originBean();
-                            $originBean = $this->getBean($originBean);
-                            $originBean->retrieve_by_string_fields(array('id' => $element['flo_element_origin']));
+                            $originBean = ucfirst($element['flo_element_origin_type']);
+                            $originEntity = $this->getClassEntity($originBean);
+                            $originBean = $this->getBean($originEntity['bean']);
+                            $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
                             $element['flo_element_origin'] = $originBean->id;
                         }
                         if (isset($element['flo_element_dest_type'])) {
-                            $destinationBean = 'pmse_' . ucfirst($element['flo_element_dest_type']);
-//                            $destinationBean = new $destinationBean();
-                            $destinationBean = $this->getBean($destinationBean);
-                            $destinationBean->retrieve_by_string_fields(array('id' => $element['flo_element_dest']));
+                            $destinationBean = ucfirst($element['flo_element_dest_type']);
+                            $destinationEntity = $this->getClassEntity($destinationBean);
+                            $destinationBean = $this->getBean($destinationEntity['bean']);
+                            $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
                             $element['flo_element_dest'] = $destinationBean->id;
                         }
                         if (isset($element['flo_state'])) {

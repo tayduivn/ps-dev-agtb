@@ -421,7 +421,7 @@
     DecisionTable.prototype.createRemoveButton = function() {
         //var input = this.createHTMLElement('input');
         var minusNode = this.createHTMLElement('span');
-        minusNode.className = 'icon-minus decision-table-remove';
+        minusNode.className = 'fa fa-minus decision-table-remove';
         //minusNode.innerHTML = '&nbsp;';
         //input.tabIndex = 0;
         //input.type = 'text';
@@ -583,8 +583,8 @@
                                 combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = module.fields[j].optionItem;
                             } else if (module.fields[j].type === 'Checkbox') {
                                 combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = {
-                                    checked: translate('LBL_DROPDOW_CHECKED'),
-                                    unchecked: translate('LBL_DROPDOWN_UNCHECKED')
+                                    checked: translate('LBL_PMSE_DROP_DOWN_CHECKED', 'pmse_Business_Rules'),
+                                    unchecked: translate('LBL_PMSE_DROP_DOWN_UNCHECKED', 'pmse_Business_Rules')
                                 };
                             }
                         }
@@ -802,9 +802,9 @@
         //this.dom.title = cell;
 
         plusNode = this.createHTMLElement('span');
-        plusNode.className = 'icon-plus';
+        plusNode.className = 'fa fa-plus';
         plusNode2 = this.createHTMLElement('span');
-        plusNode2.className = 'icon-plus';
+        plusNode2.className = 'fa fa-plus';
 
         //create the table subheaders
         row = this.createHTMLElement('tr');

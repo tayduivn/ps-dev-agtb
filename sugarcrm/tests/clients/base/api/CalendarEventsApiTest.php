@@ -770,7 +770,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
 
-    public function testDeleteRecord_SingleOccurrence_rebuildFBCacheInvoked()
+    public function testDeleteRecord_SingleOccurrence_rebuildFBCacheNotInvoked()
     {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
@@ -785,7 +785,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             array('rebuildFreeBusyCache')
         );
 
-        $calendarEvents->expects($this->once())
+        $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
@@ -800,7 +800,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
     }
 
-    public function testDeleteRecord_AllOccurrences_rebuildFBCacheInvoked()
+    public function testDeleteRecord_AllOccurrences_rebuildFBCacheNotInvoked()
     {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
@@ -815,7 +815,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             array('rebuildFreeBusyCache')
         );
 
-        $calendarEvents->expects($this->once())
+        $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(

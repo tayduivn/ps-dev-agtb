@@ -108,6 +108,7 @@ class ParserDropDown extends ModuleBuilderParser
             save_custom_app_list_strings_contents($contents, $selected_lang, $dir);
         }
         sugar_cache_reset();
+        sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
 
         // Clear out the api metadata languages cache for selected language

@@ -60,8 +60,8 @@ $dictionary['acl_roles_users'] = array (
 	'relationships' => array ('acl_roles_users' => array('lhs_module'=> 'ACLRoles', 'lhs_table'=> 'acl_roles', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'id',
 							  'relationship_type'=>'many-to-many',
-							  'join_table'=> 'acl_roles_users', 'join_key_lhs'=>'role_id', 'join_key_rhs'=>'user_id')),
-	
-)
-                                  
-?>
+							  'join_table'=> 'acl_roles_users', 'join_key_lhs'=>'role_id', 'join_key_rhs'=>'user_id',
+        'relationship_class' => 'ACLRoleUserRelationship',
+        'relationship_file' => 'modules/ACLRoles/ACLRoleUserRelationship.php',
+    )),
+);

@@ -173,4 +173,22 @@ describe('Module Menu', function() {
         expect(refreshStub).not.toHaveBeenCalled();
         expect(navigateStub).not.toHaveBeenCalled();
     });
+
+    it('should open new tab for external link', function() {
+        var windowOpenStub = sinon.collection.stub(window, 'open'),
+            testlink = 'http://testdomain.com';
+
+        sinon.collection.stub(app.metadata, 'getModule', function() {
+            return { menu: { header: {meta: [{
+                label: 'LBL_MENU_1',
+                route : testlink,
+                openwindow: true
+            }]}}};
+        });
+
+        view.render();
+        view.$('[data-route]').click();
+
+        expect(windowOpenStub).toHaveBeenCalledWith(testlink, '_blank');
+    });
 });

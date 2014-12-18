@@ -1643,59 +1643,59 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
 };
 
 ExpressionControl.prototype._createTimespanPanel = function() {
-	var settings = this._constantSettings.timespan;
-	if (!this._constantPanels.timespan) {
-		this._constantPanels.timespan = new FormPanel({
-			id: "form-constant-timespan",
-			title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE"),
-			items: [
-				{
-					type: "text",
-					name: "ammount",
-					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMMOUNT"),
-					filter: "integer",
-					width: "40%",
-					required: true,
-					disabled: true
-				}, {
-					type: "dropdown",
-					label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_UNIT"),
-					name: "unittime",
-					width: "60%",
-					disabled: true,
-					options: [
-						{
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_YEARS"),
-							value: "y"
-						}, {
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MONTHS"),
-							value: "m"
-						}, {
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_WEEKS"),
-							value: "w"
-						}, {
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_DAYS"),
-							value: "d"
-						}, {
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_HOURS"),
-							value: "h"
-						}, {
-							label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MINUTES"),
-							value: "min"
-						}
-					]
-				}
-			]
-		});
-		this._constantPanel.addItem(this._constantPanels.timespan);
-	}
-	if (settings) {
-		this._constantPanels.timespan.enable();
-	} else {
-		this._constantPanels.timespan.disable();
-	}
-	
-	return this;
+    var settings = this._constantSettings.timespan;
+    if (!this._constantPanels.timespan) {
+        this._constantPanels.timespan = new FormPanel({
+            id: "form-constant-timespan",
+            title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE"),
+            items: [
+                {
+                    type: "text",
+                    name: "ammount",
+                    label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMOUNT"),
+                    filter: "integer",
+                    width: "40%",
+                    required: true,
+                    disabled: true
+                }, {
+                    type: "dropdown",
+                    label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_UNIT"),
+                    name: "unittime",
+                    width: "60%",
+                    disabled: true,
+                    options: [
+                        {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_YEARS"),
+                            value: "y"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MONTHS"),
+                            value: "m"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_WEEKS"),
+                            value: "w"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_DAYS"),
+                            value: "d"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_HOURS"),
+                            value: "h"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MINUTES"),
+                            value: "min"
+                        }
+                    ]
+                }
+            ]
+        });
+        this._constantPanel.addItem(this._constantPanels.timespan);
+    }
+    if (settings) {
+        this._constantPanels.timespan.enable();
+    } else {
+        this._constantPanels.timespan.disable();
+    }
+
+    return this;
 };
 
 ExpressionControl.prototype._createBasicConstantPanel = function () {

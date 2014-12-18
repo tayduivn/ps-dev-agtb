@@ -102,14 +102,14 @@ describe('Sugar7 sync alerts', function() {
             var options = { showAlerts: true };
             app.events.trigger('data:sync:start', 'read', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
         });
 
         it('should display an alert on data:sync:start if options.showAlerts.process = true', function() {
             var options = { showAlerts: { process: true } };
             app.events.trigger('data:sync:start', 'read', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
         });
 
         it('should not display an alert on data:sync:start by default', function() {
@@ -124,22 +124,22 @@ describe('Sugar7 sync alerts', function() {
             expect(alertStubs.show).not.toHaveBeenCalled();
         });
 
-        it('should hide the alert on data:sync:success', function() {
+        it('should hide the alert on data:sync:complete', function() {
             var options = { showAlerts: { process: true } };
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
 
-        it('should dismiss the alert only on the last data:sync:success', function() {
+        it('should dismiss the alert only on the last data:sync:complete', function() {
             var options = { showAlerts: { process: true } };
             app.events.trigger('data:sync:start', 'read', model, options);
             app.events.trigger('data:sync:start', 'read', model, options);
             app.events.trigger('data:sync:start', 'read', model, options);
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
             expect(alertStubs.dismiss).not.toHaveBeenCalled();
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
             expect(alertStubs.dismiss).not.toHaveBeenCalled();
-            app.events.trigger('data:sync:success', 'read', model, options);
+            app.events.trigger('data:sync:complete', 'read', model, options);
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
 

@@ -174,11 +174,6 @@ var AdamActivity = function (options) {
      * @type {Array}
      */
     this.boundaryArray = new jCore.ArrayList();
-    /**
-     * Array of markers added to this activity
-     * @type {Array}
-     */
-    this.markersArray = new jCore.ArrayList();
 
     AdamActivity.prototype.initObject.call(this, options);
 };

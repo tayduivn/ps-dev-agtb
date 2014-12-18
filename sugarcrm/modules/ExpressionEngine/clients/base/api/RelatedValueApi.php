@@ -54,6 +54,9 @@ class RelatedValueApi extends SugarApi
         $focus = $this->loadBean($api, $args);
         $ret = array();
         foreach ($fields as $rfDef) {
+            if (!isset($rfDef['link']) || !isset($rfDef['type'])) {
+                continue;
+            }
             $link = $rfDef['link'];
             $type = $rfDef['type'];
             $rField = '';

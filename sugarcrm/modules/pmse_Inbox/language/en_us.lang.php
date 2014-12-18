@@ -85,6 +85,7 @@ $mod_strings = array (
     'LBL_PMSE_HISTORY_LOG_WITH_EVENT'  => " with the Event %s ",
     'LBL_PMSE_HISTORY_LOG_WITH_GATEWAY'  => " with the Gateway %s was evaluated and routed to the next task ",
     'LBL_PMSE_HISTORY_LOG_NOT_REGISTED_ACTION'  => "not registed action",
+    'LBL_PMSE_HISTORY_LOG_NO_YET_STARTED' => '( not yet started )',
 
     'LBL_PMSE_LABEL_APPROVE' => 'Approve',
     'LBL_PMSE_LABEL_REJECT' => 'Reject',
@@ -113,8 +114,7 @@ $mod_strings = array (
     'LBL_PMSE_BUTTON_SUGARCRM_LOG' => 'SugarCRM Log',
     'LBL_PMSE_BUTTON_REFRESH' => 'Refresh',
 
-    'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Select the user to assign the case',
-
+    'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Select the user to assign the process',
 
     'LBL_PMSE_LABEL_CURRENT_ACTIVITY' => 'Current Activity',
     'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Data',
@@ -128,7 +128,7 @@ $mod_strings = array (
     'LBL_PROCESS_NAME'  => "Process Name",
 //    'LBL_STATUS'  => "Status",
 //    'LBL_DATE_CREATED' => "Date Created",
-    'LBL_OWNER' => 'Owner',
+    'LBL_OWNER' => 'Assigned User',
 
 //    'LBL_CASES_LIST_TITLE'  => "Search Process Title",
     'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Processes List',
@@ -166,7 +166,7 @@ $mod_strings = array (
 //    'LBL_NSC_MESSAGE'=>"This process was ",
 //    'LBL_NSC_CANCELED'=>" cancelled due that the record related to this Process has been removed",
 //    'LBL_NSC_CLAIM'=>" claimed by other user",
-//    'LBL_CANCEL_MESSAGE'=>"Are you sure to want cancel the process: [] with Process Id: {}",
+    'LBL_PMSE_CANCEL_MESSAGE'=>"Are you sure to want cancel the process: [] with Process Id: {}",
 //
     'LBL_ASSIGNED_USER'=>"User Assigned",
 //
