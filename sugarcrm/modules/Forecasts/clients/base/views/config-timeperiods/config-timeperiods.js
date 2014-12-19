@@ -28,14 +28,31 @@
     fiscalYearField: undefined,
 
     /**
+     * Holds the timeperiod_fiscal_year metadata so it doesn't render until the view needs it
+     */
+    fiscalYearMeta: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
+        // remove the fiscal year metadata since we cant use the enabled check
+        var fieldsMeta = _.filter(_.first(options.meta.panels).fields, function(field) {
+            if(field.name === 'timeperiod_fiscal_year') {
+                this.fiscalYearMeta = _.clone(field);
+            }
+            // return all fields except fiscal year
+            return field.name !== 'timeperiod_fiscal_year';
+        }, this);
+
+        // put updated fields back into options
+        _.first(options.meta.panels).fields = fieldsMeta;
+
         this._super('initialize', [options]);
 
         // check if Forecasts is set up, if so, make the timeperiod field readonly
         if(!this.model.get('is_setup')) {
-            _.each(_.first(this.meta.panels).fields, function(field) {
+            _.each(fieldsMeta, function(field) {
                 if(field.name == 'timeperiod_start_date') {
                     field.click_to_edit = true;
                 }
@@ -111,21 +128,16 @@
 
             var $el = this.$('#timeperiod_start_date_subfield');
             if ($el) {
-                var fiscalYearFieldMeta = _.find(_.first(this.meta.panels).fields, function(field) {
-                    return field.name == 'timeperiod_fiscal_year';
-                });
-
-                fiscalYearFieldMeta = this.updateFieldMetadata(fiscalYearFieldMeta);
-
-                var fieldSettings = {
-                    view: this,
-                    def: fiscalYearFieldMeta,
-                    viewName: 'edit',
-                    context: this.context,
-                    module: this.module,
-                    model: this.model,
-                    meta: app.metadata.getField('enum')
-                };
+                var fiscalYearFieldMeta = this.updateFieldMetadata(this.fiscalYearMeta),
+                    fieldSettings = {
+                        view: this,
+                        def: fiscalYearFieldMeta,
+                        viewName: 'edit',
+                        context: this.context,
+                        module: this.module,
+                        model: this.model,
+                        meta: app.metadata.getField('enum')
+                    };
 
                 this.fiscalYearField = app.view.createField(fieldSettings);
 
