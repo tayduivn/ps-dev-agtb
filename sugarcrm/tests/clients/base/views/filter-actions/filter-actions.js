@@ -167,16 +167,16 @@ describe('Base.View.FilterActions', function() {
 
     describe('getFilterName validation', function() {
         using('valid values', [
-            {str: 'a', result: 'a'},
-            {str: ' a', result: 'a'},
-            {str: 'a ', result: 'a'},
-            {str: '  a  ', result: 'a'},
-            {str: '', result: ''},
-            {str: '   ', result: ''}
-            ],function(data){
+            {str: 'a', expected: 'a'},
+            {str: ' a', expected: 'a'},
+            {str: 'a ', expected: 'a'},
+            {str: '  a  ', expected: 'a'},
+            {str: '', expected: ''},
+            {str: '   ', expected: ''}
+        ], function(data) {
             it('should return true/false for valid/invalid user names', function() {
-                view.$('input').val(data['str']);
-                expect(view.getFilterName()).toBe(data['result']);
+                view.$('input').val(data.str);
+                expect(view.getFilterName()).toBe(data.expected);
             });
         });
     });
