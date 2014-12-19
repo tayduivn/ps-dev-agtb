@@ -138,23 +138,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testMeetingContactIdSet()
-    {
-        global $db, $current_user;
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->name = 'Super Awesome Meeting Town USA';
-        $meeting->contact_id = $this->contact->id;
-        $meeting->assigned_user_id = $current_user->id;
-        $meeting->date_start = date('Y-m-d H:i:s');
-        $meeting->save();
-
-        $q = "SELECT mu.contact_id FROM meetings_contacts mu WHERE mu.meeting_id = '{$meeting->id}'";
-        $r = $db->query($q);
-        $a = $db->fetchByAssoc($r);
-        $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
-
-    }
-
     public function testLoadFromRow()
     {
         /** @var Meeting $meeting */
