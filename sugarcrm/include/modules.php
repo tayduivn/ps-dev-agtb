@@ -131,7 +131,6 @@ $beanList['Relationships'] = 'Relationship';
 $beanList['Employees']      = 'Employee';
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Reports']        = 'SavedReport';
-$beanList['Reports_1']      = 'SavedReport';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Teams']          = 'Team';
