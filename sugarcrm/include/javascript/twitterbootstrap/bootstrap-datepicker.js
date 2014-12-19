@@ -50,7 +50,7 @@
 			    // Only proxy on the first one (e.g. calendar icon; if a SugarCRM datetimecombo, we'll have a
 			    // "clock" for time and we don't want to open the calendar when that's clicked (UIUX-1110 / SP-1362)
 			    // Clicking on clock time icon is handled by the datetimecombo.js controller in SugarCRM.
-				this.element.parent().find('.add-on:first').on({
+				this.element.parent().find('.add-on[data-icon=calendar]').on({
 					click: $.proxy(this.focusShow, this)
 				});
 			}
