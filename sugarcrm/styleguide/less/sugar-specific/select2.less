@@ -597,7 +597,9 @@
     max-height: 100px;
     overflow: auto;
     .select2-search-choice {
-      padding-right: 20px;
+      padding-right: 15px;
+      width: 70px;    /* fallback for browsers without support for calc() */
+      max-width: calc(100% - 10px);
       .select2-search-choice-close {
         position: absolute;
         right: 2px;
