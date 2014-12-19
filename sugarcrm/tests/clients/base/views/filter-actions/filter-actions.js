@@ -165,19 +165,19 @@ describe('Base.View.FilterActions', function() {
         });
     });
 
-    describe("getFilterName validation", function() {
-        using("valid values", ["abc", "  abc", "abc  ", "  abc   "], function(value){
-            it("should return true for valid usernames", function() {
-                view.$('input').val(value);
-                expect(view.getFilterName()).toBeTruthy();
-            })
-        })
-
-        using("invalid values", ["", "   "], function(value){
-            it("should return false for invalid usernames", function() {
-                view.$('input').val(value);
-                expect(view.getFilterName()).toBeFalsy();
-            })
-        })
-    })
+    describe('getFilterName validation', function() {
+        using('valid values', [
+            {str: 'a', result: 'a'},
+            {str: ' a', result: 'a'},
+            {str: 'a ', result: 'a'},
+            {str: '  a  ', result: 'a'},
+            {str: '', result: ''},
+            {str: '   ', result: ''}
+            ],function(data){
+            it('should return true/false for valid/invalid user names', function() {
+                view.$('input').val(data['str']);
+                expect(view.getFilterName()).toBe(data['result']);
+            });
+        });
+    });
 });
