@@ -108,7 +108,7 @@ class ParserFactory
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
 
-                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
+                return new SidecarGridLayoutMetaDataParser($view, $moduleName, $packageName, $client, $params);
             case MB_WIRELESSLISTVIEW:
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
