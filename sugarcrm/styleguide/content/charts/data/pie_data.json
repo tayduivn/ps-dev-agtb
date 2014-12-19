@@ -17,7 +17,11 @@
     },
     {
       "key": "Self Generated"
-      , "value": 150
+      , "value": 140
+    },
+    {
+      "key": "Walk In"
+      , "value": 10
     },
     {
       "key": "Employee"
