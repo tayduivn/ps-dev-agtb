@@ -3577,6 +3577,7 @@ class MetaDataManager
                    'file'=>$info['basename'],
                    'subPath'=>$info['dirname'],
                    'platform'=>$platform,
+                    'params' => MetaDataFiles::getClientFileParams($file),
                );
             },
             $parser->getAllFiles()

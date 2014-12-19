@@ -63,7 +63,8 @@ class ParserRoleDropDown extends ModuleBuilderParser
     public function getAllFiles() {
         return array_merge(
             glob($this->path . '/*/*.php'),
-            glob('custom/' . $this->path . '/*/*.php')
+            glob('custom/' . $this->path . '/*/*.php'),
+            glob('custom/application/Ext/Language/*/*/roledropdown.ext.php')
         );
     }
 
