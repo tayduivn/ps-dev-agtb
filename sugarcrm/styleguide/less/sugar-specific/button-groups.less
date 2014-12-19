@@ -7,7 +7,6 @@
   .btn {
     position: relative;
     display: inline-block;
-    letter-spacing: normal;
     margin-left: -1px;
     font-size: @baseFontSize;
     .border-radius(0);
@@ -106,21 +105,21 @@
   .btn-group {
     display: inline-block;
   }
-  label {
-    letter-spacing: normal;
-  }
-  .btn {
-    letter-spacing: normal;
+  label,
+  .label,
+  .btn,
+  .dropdown-menu {
+    font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
   }
   //.btn + .btn,
   .btn-group + .btn,
   .btn + .btn-group {
     margin-left: 8px;
   }
-}
-
-.btn-toolbar > .dropdown-menu {
-  font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
+  .dashlet-toolbar .label {
+    font-size: @baseFontSize;
+    font-weight: normal;
+  }
 }
 
 .touch .dashlet-header .btn-group.open {
