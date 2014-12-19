@@ -80,7 +80,12 @@
     },
 
     evaluateResponse: function(response) {
-        this.hasData = true;
+        var total = d3.sum(response.data, function(d) {
+                return d3.sum(d.values, function(h) {
+                  return h.y;
+                });
+              });
+        this.hasData = !!total;
         this.chartCollection = response;
     }
 })

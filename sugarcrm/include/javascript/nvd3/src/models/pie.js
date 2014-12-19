@@ -209,9 +209,16 @@ nv.models.pie = function() {
         .attr('class', function(d) { return classes(d.data, d.data.series); })
         .attr('fill', function(d) { return fill(d.data, d.data.series); });
 
-      slices.select('path').transition().duration(durationMs)
-        .attr('d', arc)
-        .attrTween('d', arcTween);
+      slices.select('path')
+        .attr('d', arc);
+
+      // removed d3 transition in MACAROON-133 because
+      // there is a "Maximum call stack size exceeded at Date.toString" error
+      // in PMSE that stops d3 from calling transitions
+      // this may be a logger issue or some recursion somewhere in PMSE
+      // slices.select('path').transition().duration(durationMs)
+      //   .attr('d', arc)
+      //   .attrTween('d', arcTween);
 
       if (showLabels) {
         // This does the normal label
