@@ -2094,20 +2094,25 @@ ENDP;
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
 
         // get names of 'stock' fields, that are defined in original vardefs.php
-        $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
-        $stockFields = (!empty($stockFields[$seed->object_name]) && is_array($stockFields[$seed->object_name]['fields'])) ?
-            array_keys($stockFields[$seed->object_name]['fields']) : array();
+        $stockFieldsDef = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
+        if (!empty($stockFieldsDef[$seed->object_name]['fields']) && is_array($stockFieldsDef[$seed->object_name]['fields'])) {
+            $stockFieldsDef = $stockFieldsDef[$seed->object_name]['fields'];
+        } else {
+            $stockFieldsDef = array();
+        }
+        $stockFields = array_keys($stockFieldsDef);
 
         foreach ($fieldDefs as $key => $value) {
             if (!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $nameValue = (!empty($value['name'])) ? $value['name'] : '';
-                $this->updateStatus("badVardefsKey", $key, $nameValue, $module);
-                continue;
+                if (empty($stockFieldsDef[$key]) || $stockFieldsDef[$key] != $value) {
+                    $nameValue = (!empty($value['name'])) ? $value['name'] : '';
+                    $this->updateStatus("badVardefsKey", $key, $nameValue, $module);
+                    continue;
+                }
             }
-
 
             // Check "name" field type, @see CRYS-130
             if ($key == 'name' && $value['type'] != 'name') {
