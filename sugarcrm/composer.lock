@@ -4,21 +4,15 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f4270b0f9b7834d09fa0584bcd539ab5",
+    "hash": "e3478997283138a09cbc3d29bf35e520",
     "packages": [
         {
             "name": "onelogin/php-saml",
             "version": "2.1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml.git",
+                "url": "https://github.com/sugarcrm/php-saml",
                 "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
-                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
-                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
@@ -112,16 +106,16 @@
     "packages-dev": [
         {
             "name": "ocramius/instantiator",
-            "version": "1.1.3",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/Instantiator.git",
-                "reference": "e24a12178906ff2e7471b8aaf3a0eb789b59f881"
+                "reference": "51bbc28391ff3c16fb6fd8bf8e10b5f9bb944bed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/Instantiator/zipball/e24a12178906ff2e7471b8aaf3a0eb789b59f881",
-                "reference": "e24a12178906ff2e7471b8aaf3a0eb789b59f881",
+                "url": "https://api.github.com/repos/Ocramius/Instantiator/zipball/51bbc28391ff3c16fb6fd8bf8e10b5f9bb944bed",
+                "reference": "51bbc28391ff3c16fb6fd8bf8e10b5f9bb944bed",
                 "shasum": ""
             },
             "require": {
@@ -163,7 +157,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2014-08-25 14:48:16"
+            "time": "2014-10-04 23:28:28"
         },
         {
             "name": "ocramius/lazy-map",
@@ -915,18 +909,12 @@
             "time": "2014-08-31 03:22:04"
         }
     ],
-    "aliases": [
-
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
+    "stability-flags": [],
     "prefer-stable": false,
     "platform": {
         "php": ">=5.3.0"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }
