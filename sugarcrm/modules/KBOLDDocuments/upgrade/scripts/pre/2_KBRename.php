@@ -250,6 +250,8 @@ class ConvertKBDocument
         $this->renameFiles($files);
         $this->copyTables($this->tablemap);
         $this->updateRelationships($this->relationmap);
+        $this->updateCustomFields(0);
+        $this->updateCustomFields(1);
     }
 
     /**
@@ -422,6 +424,47 @@ class ConvertKBDocument
         SugarRelationshipFactory::deleteCache();
         if (class_exists('SugarAutoLoader', true) && method_exists('SugarAutoLoader', 'buildCache')) {
             SugarAutoLoader::buildCache();
+        }
+    }
+
+    /**
+     * Update custom fields for module.
+     * @param int $deleted
+     */
+    public function updateCustomFields($deleted)
+    {
+        $fmd = new FieldsMetaData();
+        $pattern = $this->getPattern();
+        $db = DBManagerFactory::getInstance();
+        $query = $fmd->create_new_list_query('', '', array(), array(), $deleted);
+        $result = $db->query($query, false);
+        $fields = array();
+        while (($row = $db->fetchByAssoc($result)) !== false) {
+            array_push($fields, $row);
+        }
+        foreach ($fields as $field) {
+            $count = 0;
+            $id = $field['id'];
+            $field['custom_module'] = preg_replace_callback(
+                $pattern,
+                array($this, 'searchAndRepalce'),
+                $field['custom_module'],
+                -1,
+                $count
+            );
+            if ($count > 0) {
+                $field['id'] = preg_replace_callback(
+                    $pattern,
+                    array($this, 'searchAndRepalce'),
+                    $field['id'],
+                    -1,
+                    $count
+                );
+                $sql = "UPDATE {$fmd->table_name}
+                  SET id={$db->quoted($field['id'])}, custom_module={$db->quoted($field['id'])}
+                  WHERE id={$db->quoted($id)}";
+                $db->query($sql);
+            }
         }
     }
 }
