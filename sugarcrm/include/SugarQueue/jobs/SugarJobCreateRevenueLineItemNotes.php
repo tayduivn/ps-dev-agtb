@@ -107,13 +107,15 @@ class SugarJobCreateRevenueLineItemNotes extends JobNotification implements Runn
             foreach ($rli_data as $rli) {
                 $desc .= $rli['name'] . "\n";
                 foreach ($rli as $field => $value) {
-                    if ($field === 'currency_id') {
-                        if (!isset($currencies[$value])) {
-                            $currencies[$value] = SugarCurrency::getCurrencyByID($value);
+                    if (isset($labels[$field])) {
+                        if ($field === 'currency_id') {
+                            if (!isset($currencies[$value])) {
+                                $currencies[$value] = SugarCurrency::getCurrencyByID($value);
+                            }
+                            $desc .= " - " . $labels[$field] . ": " . $currencies[$value]->name . "\n";
+                        } elseif ($field !== 'name' && $field !== 'opportunity_id') {
+                            $desc .= " - " . $labels[$field] . ": " . $value . "\n";
                         }
-                        $desc .= " - " . $labels[$field] . ": " . $currencies[$value]->name . "\n";
-                    } elseif ($field !== 'name' && $field !== 'opportunity_id') {
-                        $desc .= " - " . $labels[$field] . ": " . $value . "\n";
                     }
                 }
 
