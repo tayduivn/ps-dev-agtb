@@ -576,7 +576,7 @@ FLEXLIST GENERIC */
   &.left-actions.scroll-width .dataTable {
     th:first-child {
       > span {
-        z-index: 10;
+        z-index: 11;
         border-right: @tableBorder;
         &:after {
           .right-shadow(43px);
@@ -615,8 +615,8 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         top: 0;
-        right: 0;
-        padding: 7px 7px 7px 8px;
+        right: 1px;
+        padding: 7px;
         background-color: inherit;
         &.open {
           z-index: 999;
@@ -1043,9 +1043,9 @@ table th.nosort span:after {
       &.active {
         font-weight: bold;
       }
-      .fa-check {
+      .fa {
         margin-right: 5px;
-        margin-left: -20px;
+        margin-left: -22px;
       }
     }
     li {

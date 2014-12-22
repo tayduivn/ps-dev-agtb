@@ -1,14 +1,21 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     className: 'emailtemplates',
 
-
     loadData: function () {
-        //console.log(this);
         this.et_uid = this.options.context.attributes.modelId;
         var self = this;
         App.api.call("read", App.api.buildURL("pmse_Emails_Templates/getFields", null, {id: this.et_uid }), {}, {
             success: function (a) {
-                //console.log(a);
                 self.et_uid = self.options.context.attributes.modelId;
                 self.body = a.body;
                 self.bodyHtml = a.body_html;
@@ -22,14 +29,9 @@
                 self.relatedModules = a.related_modules;
                 self.targetModule = a.base_module;
 
-
                 self.render();
                 $(init(self));
             }
         });
-
-
-        //
     }
-
 })

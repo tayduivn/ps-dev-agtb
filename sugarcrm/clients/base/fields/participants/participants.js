@@ -54,7 +54,7 @@
      * The current user is added to the collection if the model is new.
      */
     initialize: function(options) {
-        var currentUser;
+        var currentUser, fieldValue;
 
         this._super('initialize', [options]);
 
@@ -67,8 +67,17 @@
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
 
         if (this.model.isNew()) {
+            fieldValue = this.model.get(this.name);
             currentUser = _.extend({_module: 'Users'}, app.utils.deepCopy(app.user));
-            this.model.set(this.name, [currentUser]);
+
+            if (fieldValue instanceof app.BeanCollection) {
+                fieldValue.add(currentUser);
+            } else {
+                // create a new virtual collection
+                this.model.set(this.name, []);
+                // add to the virtual collection
+                this.model.get(this.name).add(currentUser);
+            }
         }
 
         // get template for timeline header
@@ -841,8 +850,8 @@
             participants.search({
                 query: query.term,
                 success: success,
-                search_fields: ['first_name', 'last_name', 'email', 'account_name'],
-                fields: ['id', 'full_name', 'email', 'account_name', 'picture'],
+                search_fields: ['full_name', 'email', 'account_name'],
+                fields: ['id', 'full_name', 'first_name', 'last_name', 'email', 'account_name', 'picture'],
                 complete: function() {
                     query.callback(data);
                 }

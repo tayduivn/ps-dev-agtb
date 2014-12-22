@@ -36,3 +36,4 @@ VardefManager::createVardef(
         'assignable'
     )
 );
+

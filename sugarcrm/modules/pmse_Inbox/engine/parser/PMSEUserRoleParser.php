@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 /**
  * Convert a role user  condition into a criteria
  * based one in order to evaluate a more compatible format
@@ -57,6 +71,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
         $this->dbHandler = $db;
         $this->currentUser = $current_user;
     }
+
     /**
      * gets the globla $db
      * @codeCoverageIgnore
@@ -135,7 +150,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
      * @param array $params
      * @return object
      */
-    public function parseCriteriaToken($criteriaToken, $params=array())
+    public function parseCriteriaToken($criteriaToken, $params = array())
     {
         //$tokenValueArray = explode($delimiter, $criteriaToken->expLabel);
         $tokenDelimiter = '::';
@@ -198,7 +213,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                             $token->expValue . "' AND user_id = '" .
                             $this->currentUser->id . "' AND deleted = 0;";
                         $result = $this->dbHandler->query($get_acl_roles);
-                        $output = $result->num_rows>=1 ? $token->expValue : "";
+                        $output = $result->num_rows >= 1 ? $token->expValue : "";
                         break;
                     case 'owner':
                         $this->userBean->retrieve($this->evaluatedBean->assigned_user_id);
@@ -211,7 +226,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                                 $token->expValue . "' AND user_id = '" .
                                 $this->userBean->id . "' AND deleted = 0;";
                             $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows>=1 ? $token->expValue : "";
+                            $output = $result->num_rows >= 1 ? $token->expValue : "";
                         } else {
                             // @codeCoverageIgnoreStart
                             $output = '';
@@ -229,7 +244,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                                 $token->expValue . "' AND user_id = '" .
                                 $userSup->id . "' AND deleted = 0;";
                             $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows>=1 ? $token->expValue : "";
+                            $output = $result->num_rows >= 1 ? $token->expValue : "";
                         } else {
                             // @codeCoverageIgnoreStart
                             $output = '';

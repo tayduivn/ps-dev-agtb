@@ -129,8 +129,8 @@ class ViewLayoutView extends SugarView
                     'disabled' => $disableLayout,
                 ) ;
                 $buttons [] = array ( 
-	                'id' => 'historyDefault' , 
-	                'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 
+	                'id' => 'historyRestoreDefaultLayout' ,
+	                'text' => translate ( 'LBL_RESTORE_DEFAULT_LAYOUT' ) ,
 	                'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
                 	'disabled' => $disableLayout, 
                 ) ;
@@ -150,8 +150,8 @@ class ViewLayoutView extends SugarView
                     'disabled' => $disableLayout, 
                 ) ;
                 $buttons [] = array ( 
-                    'id' => 'historyDefault' , 
-                    'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 
+                    'id' => 'historyRestoreDefaultLayout' ,
+                    'text' => translate ( 'LBL_RESTORE_DEFAULT_LAYOUT' ) ,
                     'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
                     'disabled' => $disableLayout, 
                 ) ;
@@ -200,7 +200,7 @@ class ViewLayoutView extends SugarView
         $smarty->assign ( 'displayAsTabs', $parser->getUseTabs() ) ;
         $smarty->assign ( 'tabDefs', $parser->getTabDefs() ) ;
         $smarty->assign ( 'syncDetailEditViews', $parser->getSyncDetailEditViews() ) ;
-        $smarty->assign ( 'fieldwidth', 150 ) ;
+        $smarty->assign('fieldwidth', 300 / $parser->getMaxColumns());
         // Bug 57260 - LBL_PANEL_DEFAULT not translated for undeployed modules in layout editor
         $smarty->assign ( 'translate', true ) ;
 

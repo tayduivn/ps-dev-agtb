@@ -1,44 +1,24 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'Assigned User Id',
-  'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
-  'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Date Created',
-  'LBL_DATE_MODIFIED' => 'Date Modified',
-  'LBL_MODIFIED' => 'Modified By',
-  'LBL_MODIFIED_ID' => 'Modified By Id',
-  'LBL_MODIFIED_NAME' => 'Modified By Name',
-  'LBL_CREATED' => 'Created By',
-  'LBL_CANCEL' => 'Cancel',
-  'LBL_CREATED_ID' => 'Created By Id',
-  'LBL_DESCRIPTION' => 'Description',
-  'LBL_DELETED' => 'Deleted',
-  'LBL_NAME' => 'Business Rule Name',
-  'LBL_CREATED_USER' => 'Created by User',
-  'LBL_MODIFIED_USER' => 'Modified by User',
-  'LBL_LIST_NAME' => 'Name',
-  'LBL_EDIT_BUTTON' => 'Edit',
-  'LBL_REMOVE' => 'Remove',
-  'LBL_TEAM' => 'Teams',
-  'LBL_TEAMS' => 'Teams',
-  'LBL_TEAM_ID' => 'Team Id',
-  'LBL_LIST_FORM_TITLE' => 'PMSE Business Rules List',
-  'LBL_MODULE_NAME' => 'PMSE Business Rules',
-  'LBL_MODULE_TITLE' => 'PMSE Business Rules',
-  'LBL_MODULE_NAME_SINGULAR' => 'PMSE Business Rules',
-  'LBL_HOMEPAGE_TITLE' => 'My PMSE Business Rules',
-  'LNK_NEW_RECORD' => 'Create PMSE Business Rules',
-  'LNK_LIST' => 'View PMSE Business Rules',
-  'LNK_IMPORT_PMSE_BUSINESS_RULES' => 'Import PMSE Business Rules',
-  'LBL_SEARCH_FORM_TITLE' => 'Search PMSE Business Rules',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
-  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activity Stream',
-  'LBL_PMSE_BUSINESS_RULES_SUBPANEL_TITLE' => 'PMSE Business Rules',
-  'LBL_NEW_FORM_TITLE' => 'New PMSE Business Rules',
-  'LNK_IMPORT_VCARD' => 'Import PMSE Business Rules vCard',
-  'LBL_IMPORT' => 'Import PMSE Business Rules',
-  'LBL_IMPORT_VCARDTEXT' => 'Automatically create a new PMSE Business Rules record by importing a vCard from your file system.',
+
+  'LBL_MODULE_NAME' => 'Process Business Rules',
+  'LBL_MODULE_TITLE' => 'Process Business Rules',
+  'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rules',
+
   'LBL_RST_UID' => 'Business Rule ID',
   'LBL_RST_TYPE' => 'Business Rule Type',
   'LBL_RST_DEFINITION' => 'Business Rule Definition',
@@ -50,20 +30,43 @@ $mod_strings = array (
   'LBL_RST_CREATE_DATE' => 'Business Rule Create Date',
   'LBL_RST_UPDATE_DATE' => 'Business Rule Update Date',
 
-    'LBL_PMSE_BUTTON_CREATEBUSINESSRULES' => 'Create Business Rules',
-    'LBL_PMSE_BUTTON_IMPORTBUSINESSRULES' => 'Import Business Rules',
-    'LBL_DASHLET_CONFIGURE_MY_BUSINESSRULES' => 'My Business Rules',
-    'LBL_PMSE_BUTTON_BUSINESSRULES' => 'Business Rules',
-    'LBL_PMSE_BUTTON_SAVE' => 'Save',
-    'LBL_PMSE_BUTTON_CANCEL' => 'Cancel',
-    'LBL_PMSE_DASHLET_TITLE_BUSSINESRULESBUILDER' => 'Business Rules Builder',
-    'LBL_IMPORT_BUSINESSRULESTEXT' => 'Automatically create a new PMSE Business Rules record by importing a pbr file from your file system.',
-    'LNK_IMPORT_BUSINESSRULES' => 'Import PMSE Business Rules',
-    'LBL_EMPTY_BUSINESSRULES' => 'Please select a .pbr file',
-    'LBL_IMPORT_BUSINESS_RULES_SUCCESS' => 'The Business rules was successfully imported',
-    'LBL_IMPORT_BUTTON_LABEL' => 'Import',
-    'LBL_SAVE_EXIT_BUTTON_LABEL' => 'Save and Exit',
-    'LBL_PMSE_BUTTON_SAVEDESIGN' => 'Save and Design',
+    'LNK_LIST' => 'View Process Business Rules',
+
+    'LBL_PMSE_TITLE_BUSINESS_RULES_BUILDER' => 'Business Rules Builder',
+
     'LBL_PMSE_LABEL_DESIGN' => 'Design',
-    'LBL_PMSE_DASHLET_LABEL_EXPORT' => 'Export',
+    'LBL_PMSE_LABEL_EXPORT' => 'Export',
+    'LBL_PMSE_LABEL_DELETE' => 'Delete',
+
+    'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL' => 'Save & Exit',
+    'LBL_PMSE_SAVE_DESIGN_BUTTON_LABEL' => 'Save & Design',
+    'LBL_PMSE_IMPORT_BUTTON_LABEL' => 'Import',
+
+    'LBL_PMSE_MY_BUSINESS_RULES' => 'My Process Business Rules',
+    'LBL_PMSE_ALL_BUSINESS_RULES' => 'All Process Business Rules',
+
+    'LBL_PMSE_BUSINESS_RULES_SINGLE_HIT' => 'Process Business Rules Single Hit',
+
+    'LBL_PMSE_BUSINESS_RULES_IMPORT_TEXT' => 'Automatically create a new Process Business Rule record by importing a *.pbr file from your file system.',
+    'LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS' => 'Process Email Template was successfully imported into the system.',
+    'LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING' => 'Please select a valid *.pbr file.',
+
+    'LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE' => 'Please define first the column type.',
+    'LBL_PMSE_MESSAGE_LABEL_EMPTY_RETURN_VALUE' => 'The "Return" conclusion is empty',
+    'LBL_PMSE_MESSAGE_LABEL_MISSING_EXPRESSION_OR_OPERATOR' => 'missing expression or operator',
+    'LBL_PMSE_MESSAGE_LABEL_DELETE_ROW' => 'Do you really want to delete this rule set?',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_ROWS' => 'The decision table must have at least 1 row',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS' => 'The decision table must have at least 1 condition column',
+    'LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS' => 'The decision table must have at least 1 conclusion column',
+
+    'LBL_PMSE_LABEL_CONDITIONS' => 'Conditions',
+    'LBL_PMSE_LABEL_RETURN' => 'Return',
+    'LBL_PMSE_LABEL_CONCLUSIONS' => 'Conclusions',
+
+    'LBL_PMSE_TOOLTIP_ADD_CONDITION' => 'Add condition',
+    'LBL_PMSE_TOOLTIP_ADD_CONCLUSION' => 'Add conclusion',
+    'LBL_PMSE_TOOLTIP_ADD_ROW' => 'Add row',
+
+    'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
+    'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',
 );

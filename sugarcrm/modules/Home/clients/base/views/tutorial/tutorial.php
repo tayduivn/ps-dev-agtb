@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -29,36 +29,37 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'text' => 'LBL_TOUR_CUBE',
                 'full' => true,
                 'horizAdj' => -11,
+                'vertAdj'=> -5,
             ),
             array(
                 'name' => '[data-route="#Accounts"]',
                 'text' => 'LBL_TOUR_NAV_BAR',
                 'full' => true,
-                'vertAdj'=> -5,
+                'vertAdj'=> -13,
             ),
             array(
                 'name' => '.search-query',
                 'text' => 'LBL_TOUR_SEARCH',
                 'full' => true,
+                'vertAdj'=> -8,
             ),
             array(
                 'name' => '.notification-list',
                 'text' => 'LBL_TOUR_NOTIFICATIONS',
                 'full' => true,
-                'horizAdj'=> -5,
-                'vertAdj'=> 8,
+                'horizAdj'=> -8,
             ),
             array(
                 'name' => '#userActions',
                 'text' => 'LBL_TOUR_AVATAR',
                 'full' => true,
-                'vertAdj'=> 8,
+                'horizAdj'=> -3,
             ),
             array(
                 'name' => '#createList',
                 'text' => 'LBL_TOUR_ADD',
                 'full' => true,
-                'vertAdj'=> 8,
+                'horizAdj'=> -3,
             ),
             array(
                 'name' => '[data-action="tour"]',

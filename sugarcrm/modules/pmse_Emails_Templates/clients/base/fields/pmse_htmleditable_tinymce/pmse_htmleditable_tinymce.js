@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 ({
     fieldSelector: '.htmleditable', //iframe or textarea selector
@@ -172,8 +182,10 @@
                 });
                 editor.addButton('mybutton', {
                     title : 'Fields Selector',
-                    //image : 'modules/pmse_Project/img/icon_conf_32.png',
-                    class: 'adam-menu-icon-user',
+                    image : 'modules/pmse_Project/img/icon_processmaker_32.gif',
+//                    class: 'adam-menu-icon-cog',
+//                    class: 'icon-cog',
+//                    icon : false,
                     onclick : function() {
 //                        alert('My button custom button');
                         self._showVariablesBook();
@@ -267,13 +279,8 @@
          * Callback to add recipients, from a closing drawer, to the target Recipients field.
          * @param {undefined|Backbone.Collection} recipients
          */
-        console.log('_showAddressBook');
         var addVariables = _.bind(function(variables) {
-//            console.log(recipients);
-//            console.log(this.model);
-//            console.log(this.name)
             if (variables && variables.length > 0) {
-//                this.model.get(this.name).add(recipients.models);
                 this.model.set(this.name, this.buildVariablesString(variables));
             }
 
@@ -292,7 +299,6 @@
         );
     },
     buildVariablesString: function(recipients) {
-//        console.log(recipients);
         var result = '' , newExpression = '', currentValue, i, aux, aux2;
         _.each(recipients.models, function(model) {
             newExpression += '{::'+ model.attributes.rhs_module+'::'+model.attributes.id+'::}'

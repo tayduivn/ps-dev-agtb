@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -53,7 +53,7 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '[data-view="activitystream"]',
                 'text' => 'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE',
                 'full' => true,
-                'horizAdj' =>5,
+                'horizAdj' =>-10,
                 'vertAdj' => -10,
             ),
             array(
@@ -100,7 +100,7 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '.show-hide-toggle',
                 'text' => 'LBL_TOUR_RECORD_SHOWMORE',
                 'full' => true,
-                'horizAdj' =>-11,
+                'horizAdj' => 30,
                 'vertAdj' => -13,
             ),
             array(

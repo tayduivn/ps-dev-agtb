@@ -153,7 +153,7 @@ describe("Base.Layout.Filterpanel", function(){
         it('should set activity stream toggle to inactive when activity stream not enabled', function(){
             var meta = {'availableToggles': [
                 {'name': 'list', 'icon': 'fa fa-table', 'label': 'LBL_LISTVIEW'},
-                {'name': 'activitystream', 'icon': 'fa fa-th-list', 'label': 'LBL_ACTIVITY_STREAM'}
+                {'name': 'activitystream', 'icon': 'fa fa-clock-o', 'label': 'LBL_ACTIVITY_STREAM'}
             ], 'components': [
                 {'layout': 'filter', 'targetEl': '.filter', 'position': 'prepend'},
                 {'view': 'filter-actions', 'targetEl': '.filter-options'},

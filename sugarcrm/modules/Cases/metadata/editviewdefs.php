@@ -37,6 +37,7 @@ $viewdefs['Cases']['EditView'] = array(
 
 	  array (
 	      'type',
+	      'source',
 	  ),
 	  array (
 	    array (

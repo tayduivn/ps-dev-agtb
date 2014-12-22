@@ -89,6 +89,8 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
     public static function correctProvider()
     {
         return array(
+            // contains table anme
+            array('bean.name DESC', 'bean.name DESC'),
             // existing field is accepted
             array('name', 'bean.name'),
             // valid order is accepted
@@ -117,8 +119,8 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
             array('title'),
             // non-existing field is removed together with order
             array('title asc'),
-            // field name containing table name is removed
-            array('bean.name'),
+            // non-existing field with table name is removed
+            array('bean.title')
         );
     }
 

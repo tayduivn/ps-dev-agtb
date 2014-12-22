@@ -1,5 +1,19 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'PMSELicenseManager.php';
+
 /**
  * The access Manager class evaluates and processes the license data in order
  * to provide or deny access to some module features based on the data
@@ -249,9 +263,11 @@ class PMSEAccessManager
             }
 
             $this->licensePermissions->canExecuteBusinessRules = $this->licenseData->lic_enabled_br;
-            $_SESSION['PMSE'] = blowfishEncode(blowfishGetKey('ProcessMaker'), base64_encode(serialize($this->licensePermissions)));
+            $_SESSION['PMSE'] = blowfishEncode(blowfishGetKey('ProcessMaker'),
+                base64_encode(serialize($this->licensePermissions)));
         } else {
-            $this->licensePermissions = unserialize(base64_decode(blowfishDecode(blowfishGetKey('ProcessMaker'), $_SESSION['PMSE'])));
+            $this->licensePermissions = unserialize(base64_decode(blowfishDecode(blowfishGetKey('ProcessMaker'),
+                        $_SESSION['PMSE'])));
         }
         return $this->licensePermissions;
     }
@@ -393,7 +409,7 @@ class PMSEAccessManager
         $where = "category='HOME'";
         $preferences = $this->preferenceRetriever->get_full_list($orderBy, $where);
         $result = array();
-        if (!empty($preferences)){
+        if (!empty($preferences)) {
             foreach ($preferences as $preference) {
                 $result[] = $this->processDashletData($preference->assigned_user_id, $preference->contents);
             }
@@ -409,7 +425,7 @@ class PMSEAccessManager
     {
         $sql = "SELECT * FROM pmse_bpm_inbox";
         //$params = array('from' => ' FROM bpm_inbox ', 'where' => '');
-        $casesNumber = (int) $this->casesBean->create_list_count_query($sql); //$this->casesBean->getCountRows($params);
+        $casesNumber = (int)$this->casesBean->create_list_count_query($sql); //$this->casesBean->getCountRows($params);
         return $casesNumber;
     }
 
@@ -436,7 +452,7 @@ class PMSEAccessManager
         $where = "category='HOME' AND assigned_user_id='{$user->id}'";
         $preferences = $this->preferenceRetriever->get_full_list($orderBy, $where);
         $result = array();
-        if (!empty($preferences)){
+        if (!empty($preferences)) {
             foreach ($preferences as $preference) {
                 $result[] = $this->processDashletData($preference->assigned_user_id, $preference->contents);
             }
@@ -457,7 +473,9 @@ class PMSEAccessManager
         $result->dashlets = array();
         $dashletData = unserialize(base64_decode($dashletData));
         foreach ($dashletData['dashlets'] as $dashlet) {
-            if ((in_array($dashlet['className'], $this->adminDashlets) || in_array($dashlet['className'], $this->userDashlets)) && !in_array($dashlet['className'], $result->dashlets)) {
+            if ((in_array($dashlet['className'], $this->adminDashlets) || in_array($dashlet['className'],
+                        $this->userDashlets)) && !in_array($dashlet['className'], $result->dashlets)
+            ) {
                 $result->dashlets[] = $dashlet['className'];
             }
         }
@@ -488,8 +506,9 @@ class PMSEAccessManager
         $string = base64_encode(serialize($licenseActivationData));
         $this->accessManager->retrieve_by_string_fields(array('acm_status' => 'ACTIVE'));
         $this->accessManager->acm_activation_data = $string;
-        if (!empty($this->accessManager->fetched_row))
+        if (!empty($this->accessManager->fetched_row)) {
             $this->accessManager->save();
+        }
         return $licenseActivationData;
     }
 }

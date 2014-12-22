@@ -112,19 +112,24 @@ class ForecastReset
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
         foreach ($this->tables as $table) {
+            $db->commit();
             $db->query($db->truncateTableSQL($table));
+            $db->commit();
         }
 
         // truncate the forecast_manager_worksheets_audit table if it exists
         $fmw = BeanFactory::getBean('ForecastManagerWorksheets');
         $audit_table = $fmw->get_audit_table_name();
         if ($db->tableExists($audit_table)) {
+            $db->commit();
             $db->query($db->truncateTableSQL($audit_table));
+            $db->commit();
         }
 
         // we don't truncate the manager worksheets, we need to delete the committed records first
-        $sql = 'DELETE FROM forecast_manager_worksheets where draft = 0;';
+        $sql = 'DELETE FROM forecast_manager_worksheets WHERE draft = 0';
         $db->query($sql);
+        $db->commit();
 
         // now update all the draft records to have best, likely and worst set to 0
         // and all the other additional behind the scenes fields set to 0.
@@ -142,6 +147,7 @@ class ForecastReset
                   closed_amount = 0,
                   manager_saved = 0';
         $db->query($sql);
+        $db->commit();
     }
 
     /**

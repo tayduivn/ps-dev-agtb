@@ -14,6 +14,7 @@ require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 Activity::disable();
+/* @var $focus Quote */
 $focus = BeanFactory::getBean('Quotes');
 $focus = populateFromPost('', $focus);
 
@@ -38,7 +39,6 @@ if (!empty($_POST['assigned_user_id']) &&
 } else {
     $check_notify = false;
 }
-
 //bug55337 - Inline edit to different stage, cause total amount to display 0
 if (!isset($_REQUEST['from_dcmenu'])) {
     $focus->tax = 0;
@@ -78,6 +78,11 @@ if (isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])) {
     unset($_REQUEST['relate_id']);
 }
 
+// since the ProductBundles and Products get the BaseRate from the Quote
+// make sure it's set correctly before we do any of that processing.
+// This will ensure that SugarLogic doesn't do weird conversion.
+SugarCurrency::verifyCurrencyBaseRateSet($focus, !$focus->new_with_id);
+
 global $beanFiles;
 require_once($beanFiles['Product']);
 $GLOBALS['log']->debug("Saving associated products");
@@ -98,13 +103,14 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
     $pb = BeanFactory::getBean('ProductBundles');
 
     if (substr_count($total_keys[$k], 'group_') == 0) {
-        $pb->id = $total_keys[$k];
+        $pb->retrieve($total_keys[$k]);
     }
 
     $pb->team_id = $focus->team_id;
     $pb->team_set_id = $focus->team_set_id;
     $pb->shipping = (string)unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
     $pb->currency_id = $focus->currency_id;
+    $pb->base_rate = $focus->base_rate;
     $pb->taxrate_id = $focus->taxrate_id;
     $pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
     $pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
@@ -189,6 +195,7 @@ for ($i = 0; $i < $product_count; $i++) {
                 }
 
                 $product->currency_id = $focus->currency_id;
+                $product->base_rate = $focus->base_rate;
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 $product->team_id = $focus->team_id;

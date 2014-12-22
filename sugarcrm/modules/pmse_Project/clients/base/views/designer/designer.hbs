@@ -1,3 +1,15 @@
+{{!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+--}}
 <style>
     div.designer
     {
@@ -35,11 +47,18 @@
         <div id="jcore_designer" style='background-image: url("modules/pmse_Project/img/grid_20.png");'></div>
     </div>
     <div class="pane ui-layout-east">
-        <div class="pane east-center no-border"><div id="adam_tree"></div></div>
+        <div id="div-bpmn-error" style="padding: 14px; width: 100%; background-color: #f6f6f6; height: 95%; box-sizing: border-box; overflow:auto"></div>
+        <div id = "statusBar" class="adam-error-color" style="height: 5%; width: auto; background: #f6f6f6; position: relative; border-top:1px solid #ddd; box-sizing: border-box; padding: 2px 0 0 5px;">
+            <div>
+                <i class="adam-status-100-warning icon-exclamation-sign"></i>
+                <span id="countErrors" style="position: absolute; left: 28px; padding-top: 2px;"></span>
+            </div>
+        </div>
+        <!--<div class="pane east-center no-border"><div id="adam_tree"></div></div>
         <div class="pane east-south no-border">
             <div id="properties-grid">
             </div>
-        </div>
+        </div>-->
     </div>
     <div class="pane ui-layout-north no-border" style="background-color: #CCCCCC;">
         <div id="adam_toolbar">
@@ -92,9 +111,10 @@
     </div>
 </div>
 <!--ADAM HTML ENDING-->
-<script type="text/javascript" src="modules/pmse_Project/js/pmse.libraries.min.js"></script>
-<script type="text/javascript" src="modules/pmse_Project/js/pmse.jcore.min.js"></script>
-<script type="text/javascript" src="modules/pmse_Project/js/pmse.ui.min.js"></script>
-<script type="text/javascript" src="modules/pmse_Project/js/pmse.designer.min.js"></script>
-<script type="text/javascript" src="modules/pmse_Project/js/pmse.utils.min.js"></script>
-<script type="text/javascript" src="modules/pmse_Project/js/designer.js"></script>
+
+<script type="text/javascript" src="cache/include/javascript/pmse.libraries.min.js"></script>
+<script type="text/javascript" src="cache/include/javascript/pmse.jcore.min.js"></script>
+<script type="text/javascript" src="cache/include/javascript/pmse.ui.min.js"></script>
+<script type="text/javascript" src="cache/include/javascript/pmse.designer.min.js"></script>
+<!--<script type="text/javascript" src="modules/pmse_Project/js/pmse.utils.js"></script>-->
+<!--<script type="text/javascript" src="modules/pmse_Project/js/designer.js"></script>-->

@@ -113,6 +113,11 @@ class UserDemoData {
                 if($role['name'] == "Sales Administrator") {
                     $u->load_relationship('aclroles');
                     $u->aclroles->add($role['id']);
+
+                    // re-save user manually. otherwise the relation to role set will not be saved
+                    // because One2MBeanRelationship::add() doesn't call SugarRelationship::addToResaveList()
+                    // in workflow and during installation
+                    $u->save();
                     break;
                 }
             }

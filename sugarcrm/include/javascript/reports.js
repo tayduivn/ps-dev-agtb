@@ -1,5 +1,3 @@
-//FILE SUGARCRM flav=pro ONLY
-
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -3017,7 +3015,7 @@ SUGAR.reports = function() {
 			else if (qualifier_name == 'empty' || qualifier_name == 'not_empty') {
 			    SUGAR.reports.addFilterNoInput(row,filter);
 				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);	
-				if (((field_type == 'user_name')||(field_type == 'assigned_user_name')) && qualifier_name == 'empty' && typeof(filter.name) =='undefined') {
+				if ((field_type == 'username' || field_type == 'assigned_user_name') && qualifier_name == 'empty' && typeof(filter.name) =='undefined') {
 					alert(SUGAR.language.get("Reports", 'LBL_USER_EMPTY_HELP'));							
 				}
 		 	}
@@ -3068,7 +3066,7 @@ SUGAR.reports = function() {
 				}
 				
 			}
-			else if ((field_type == 'user_name')||(field_type == 'assigned_user_name')) {
+			else if (field_type == 'username' || field_type == 'assigned_user_name') {
 				if(users_array=="") {
 					SUGAR.reports.loadXML();
 				}

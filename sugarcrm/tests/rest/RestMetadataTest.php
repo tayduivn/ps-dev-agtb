@@ -23,7 +23,13 @@ class RestMetadataTest extends RestTestBase {
         	if (is_file($file)) {
         		SugarAutoLoader::unlink($file, true);
             }
+
+            if (file_exists($file . '.testbackup')) {
+                rename($file . '.testbackup', $file);
+            }
         }
+
+        sugar_cache_clear('app_strings.en_us');
 
         parent::tearDown();
     }
@@ -70,6 +76,10 @@ class RestMetadataTest extends RestTestBase {
         $langContent = "<?php\n\$app_strings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'] = 'UnitTest';\n";
 
         $fileLoc = "custom/include/language/en_us.lang.php";
+        if (file_exists($fileLoc)) {
+            rename($fileLoc, $fileLoc . '.testbackup');
+        }
+
         $this->createdFiles[] = $fileLoc;
         SugarAutoLoader::ensureDir('custom/include/language');
         SugarAutoLoader::put($fileLoc, $langContent, true);

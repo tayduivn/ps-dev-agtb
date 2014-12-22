@@ -1,44 +1,59 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'engine/PMSE.php';
 //require_once 'engine/PMSEEngine.php';
 require_once('modules/pmse_Inbox/engine/PMSEImageGenerator.php');
+require_once('modules/pmse_Inbox/clients/base/api/PMSEEngineApi.php');
+
 class pmse_InboxController extends SugarController
 {
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $ajaxApi;
     /**
      *
-     * @var type 
+     * @var type
      * @deprecated since version pmse2
      */
     protected $accessManager;
     /**
      *
-     * @var type 
+     * @var type
      * @deprecated since version pmse2
      */
     protected $licenseManager;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $beanFactory;
 //    protected $engine;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $moduleName;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $modulePath;
 
@@ -114,7 +129,7 @@ class pmse_InboxController extends SugarController
     public function action_showCase()
     {
         //if ($this->accessManager->casesCanBeExecuted()) {
-            $this->view = 'showCase';
+        $this->view = 'showCase';
         //} else {
         //    $this->view = 'limitReached';
         //}
@@ -140,7 +155,7 @@ class pmse_InboxController extends SugarController
 //    }
 
     /**
-     * 
+     *
      * @global type $beanList
      * @global type $current_user
      * @global type $beanFiles
@@ -149,85 +164,25 @@ class pmse_InboxController extends SugarController
      */
     public function action_routeCase()
     {
-//        global $beanList, $current_user, $beanFiles;
-//
-//        if (!isset($_REQUEST['moduleName']) || $_REQUEST['moduleName'] == '') {
-//            $GLOBALS ['log']->fatal('moduleName Empty cannot complete the route case');
-//            header('Location: index.php');
-//        }
-//
-//        $engine = $this->engine;
-//        $cas_id = $_REQUEST['cas_id'];
-//        // first we are saving the form action response, and then saving the bean
-//        //$pmObject = $this->engine;
-//        //$pmObject->saveFormAction($_REQUEST);
-//        // processing according if is a reassigned case or just a route flow.
-//        $cas_index = $_REQUEST['cas_index'];
-//        //If Process is Completed break...
-//        $bpmI = $engine->getBPMInboxStatus($cas_id);
-//        if ($bpmI === false) {
-//            $encodedId = PMSEEngineUtils::simpleEncode($cas_id . '-' . $cas_index);
-//            header('Location: index.php?module=ProcessMaker&action=noShowCase&id='.$encodedId);
-//            die();
-//        }
-//
-//        $case = BeanFactory::getBean('pmse_BpmFlow');// BpmFlow();
-//        $case->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index));
-//
-//        $caseData['cas_id'] = $cas_id;
-//        $caseData['cas_index'] = $cas_index;
-//        $caseData['cas_thread'] = $case->cas_thread;
-//
-//        $moduleBean = $beanList[$_REQUEST['moduleName']];
-//        $_REQUEST['record'] = $_REQUEST['beanId'];
-//        $moduleFormBase = $moduleBean . 'FormBase';
-//        $beanObject = BeanFactory::getBean($_REQUEST['moduleName']);
-//        $beanObject->retrieve($_REQUEST['beanId']);
-//        if (isset($_REQUEST['assigned_user_id'])) {
-//            unset($_REQUEST['assigned_user_id']);
-//        }
-//        $historyData = new PMSEHistoryData($_REQUEST['moduleName']);
-//        foreach ($_REQUEST as $key => $value) {
-//            $historyData->lock(!array_key_exists($key, $beanObject->fetched_row));
-//            if (isset($beanObject->$key)) {
-//                $historyData->verifyRepeated($beanObject->$key, $value);
-//                $historyData->savePredata($key, $beanObject->$key);
-//                $beanObject->$key = $value;
-//                $historyData->savePostdata($key, $value);
-//            }
-//        }
-//        $beanObject->save();
-//
-//        $_REQUEST['frm_action'] = 'Change on Form registered';
-//        $_REQUEST['frm_comment'] = 'Form';
-//        $_REQUEST['log_data'] = $historyData->getLog();
-//        $engine->saveFormAction($_REQUEST);
-//
-//        if ((strtoupper($_REQUEST['Type']) == 'ROUTE') && $engine->isRoundTrip($caseData)) {
-//            // back to the original sender.
-//            $engine->roundTripReassign($caseData);
-//        } elseif ((strtoupper($_REQUEST['Type']) == 'ROUTE') && $engine->isOneWay($caseData)) {
-//            $engine->oneWayReassign($caseData);
-//        } elseif ((strtoupper($_REQUEST['Type']) == 'CLAIM')) {
-//            $idReclaimCase = $engine->reclaimCaseByUser($cas_id, $cas_index);
-//        } else {
-//            // The regular path.
-//            $engine->followFlow($cas_id, $cas_index);
-//        }
-//
-//        if(isset($idReclaimCase))
-//            header('Location: index.php?module=pmse_Inbox&action=showCase&id=' . $idReclaimCase);
-//        else
-//            header('Location: index.php');
+        $data = $_REQUEST;
+        $data['frm_action'] = $data['Type'];
+        $data['taskName'] = '';
+        $engineApi = new PMSEEngineApi();
+        $result = $engineApi->engineRoute(array(), $data);
+        header('Location: index.php');
     }
-
+    
     public function action_showPNG()
     {
-        $case = new PMSEImageGenerator();
-        $img = $case->get_image($_REQUEST['case']);
+//        $case = new PMSEImageGenerator();
+//        $img = $case->get_image($_REQUEST['case']);
+//        header('Content-Type: image/png');
+//        imagepng($img);
+//        imagedestroy($img);
+        require_once('modules/pmse_Inbox/clients/base/api/PMSEImageGeneratorApi.php');
         header('Content-Type: image/png');
-        imagepng($img);
-        imagedestroy($img);
+        $img = new PMSEImageGeneratorApi();
+        $img->getProcessImage(null, array('record' => $_REQUEST['case']));
     }
 
     public function action_showHistoryEntries()
@@ -285,8 +240,9 @@ class pmse_InboxController extends SugarController
 //            echo json_encode($result);
 //        }
 //    }
-    public function action_testLogger() {
-        echo 'Entro';
+
+    public function action_testLogger()
+    {
         require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
         $log = PMSELogger::getInstance();
         $log->emergency('This is a LogLevel::EMERGENCY');
@@ -299,7 +255,7 @@ class pmse_InboxController extends SugarController
         $log->debug('This is a LogLevel::DEBUG');
 
         $params['tags'] = array(
-            array (
+            array(
                 "id" => "seed_sally_id",
                 "name" => "Sally Bronsen",
                 "module" => "Users"
@@ -323,13 +279,14 @@ class pmse_InboxController extends SugarController
         $log->activity('This a message user: %0  whit %1 for the record: %2 end of the message.', $params);
     }
 
-    public function action_testImage () {
+    public function action_testImage()
+    {
         require_once 'modules/pmse_Inbox/engine/PMSEImageGenerator.php';
         $image = new PMSEImageGenerator();
 
         $img = $image->get_image(8);
         header('Content-Type: image/png');
-        imagepng($img,'D:\Projects\TEST.png');
+        imagepng($img, 'D:\Projects\TEST.png');
         imagedestroy($img);
         //echo '<img src="D:\Projects\TEST.png">';
     }

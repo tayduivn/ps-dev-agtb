@@ -1,4 +1,16 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
@@ -10,13 +22,13 @@ class PMSERelatedDependencyWrapper
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $relationship;
 
     /**
      *
-     * @var PMSELogger 
+     * @var PMSELogger
      */
     protected $logger;
 
@@ -29,9 +41,9 @@ class PMSERelatedDependencyWrapper
         $this->logger = PMSELogger::getInstance();
         $this->relationship = BeanFactory::getBean('Relationships');
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -41,7 +53,7 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -51,7 +63,7 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @param type $relationship
      * @codeCoverageIgnore
      */
@@ -61,7 +73,7 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -71,7 +83,7 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @param type $module
      * @param type $id
      * @return type
@@ -81,9 +93,9 @@ class PMSERelatedDependencyWrapper
     {
         return BeanFactory::getBean($module, $id);
     }
-    
+
     /**
-     * 
+     *
      * @param type $id
      * @return type
      * @codeCoverageIgnore
@@ -92,8 +104,8 @@ class PMSERelatedDependencyWrapper
     {
         return BeanFactory::getBean('pmse_BpmRelatedDependency', $id);
     }
-    
-    /** 
+
+    /**
      * That method process the event related dependencies, here process criterias too.
      * @param object event
      */
@@ -106,22 +118,22 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @param type $eventCriteria
      * @param type $eventData
      * @return \stdClass
      */
     public function processEventCriteria($eventCriteria, $eventData)
     {
-        
+
         $criteria = json_decode($eventCriteria);
-        $this->logger->debug("Obtaining dependencies for the following criteria". print_r($criteria,true));
-        
+        $this->logger->debug("Obtaining dependencies for the following criteria" . print_r($criteria, true));
+
         $resultArray = array();
         if ($eventData['evn_behavior'] !== 'CATCH') {
             return $resultArray;
         }
-        
+
         if (is_array($criteria) && !empty($criteria)) {
             $criteriaModules = array();
             foreach ($criteria as $token) {
@@ -131,7 +143,7 @@ class PMSERelatedDependencyWrapper
                     $processDefBean = $this->getBean('pmse_BpmProcessDefinition');
                     $processDefBean->retrieve_by_string_fields(array('id' => $tmpObj->pro_id));
                     $tmpObj->rel_process_module = $processDefBean->pro_module;
-                    $tmpObj->rel_element_id = $eventData['id'];                    
+                    $tmpObj->rel_element_id = $eventData['id'];
                     $tmpObj->rel_element_type = $eventData['evn_type'] . '_EVENT';
                     $tmpObj->rel_element_relationship = $token->expModule;
                     $tmpObj->pro_module = $processDefBean->pro_module;
@@ -141,7 +153,7 @@ class PMSERelatedDependencyWrapper
                     $tmpObj->evn_id = $eventData['id'];
 
                     foreach ($eventData as $key => $value) {
-                        if ($key!='id') {
+                        if ($key != 'id') {
                             $tmpObj->$key = $value;
                         }
                     }
@@ -152,7 +164,7 @@ class PMSERelatedDependencyWrapper
                         $resultArray[] = $tmpObj;
                         $criteriaModules[] = $tmpObj->rel_element_module;
                     }
-                    
+
                 }
             }
         } else {
@@ -167,7 +179,7 @@ class PMSERelatedDependencyWrapper
             $tmpObj->evn_id = $eventData['id'];
             //unset($eventData['id']);
             foreach ($eventData as $key => $value) {
-                if ($key!='id') {
+                if ($key != 'id') {
                     $tmpObj->$key = $value;
                 }
             }
@@ -177,32 +189,36 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
-     * 
+     *
      * @param type $tmpObject
      * @param type $tmpToken
      */
     public function getRelatedElementModule($tmpObject, $tmpToken)
     {
-        $this->logger->debug("Obtaining Related Module for the token: ". print_r($tmpToken,true));
+        $this->logger->debug("Obtaining Related Module for the token: " . print_r($tmpToken, true));
 
         if ($tmpObject->rel_process_module == $tmpToken->expModule) {
             $tmpObject->rel_element_module = $tmpToken->expModule;
         } else {
-            $tmpObject->rel_element_module = $this->relationship->get_other_module($tmpToken->expModule, $tmpObject->rel_process_module, $this->relationship->db);
+            $tmpObject->rel_element_module = $this->relationship->get_other_module($tmpToken->expModule,
+                $tmpObject->rel_process_module, $this->relationship->db);
         }
     }
 
     /**
      * That method removes all related dependencies by evn_id and pro_id
      * @param object event
-     * 
+     *
      */
     public function removeRelatedDependencies($eventData)
     {
-        $this->logger->debug("Removing Related Dependencies for the event: ". print_r($eventData, true));
+        $this->logger->debug("Removing Related Dependencies for the event: " . print_r($eventData, true));
 
         $relatedDependency = $this->getRelatedDependency();
-        while ($element = $relatedDependency->retrieve_by_string_fields(array('evn_id' => $eventData['id'], 'pro_id' => $eventData['pro_id']))) {
+        while ($element = $relatedDependency->retrieve_by_string_fields(array(
+                'evn_id' => $eventData['id'],
+                'pro_id' => $eventData['pro_id']
+            ))) {
             $element->deleted = 1;
             $element->save();
         }
@@ -222,7 +238,7 @@ class PMSERelatedDependencyWrapper
             $relatedDependency->new_with_id = false;
             $relatedDependency->save();
         }
-        $this->logger->debug("Creating ". count($resultArray). " Related Dependencies.");
+        $this->logger->debug("Creating " . count($resultArray) . " Related Dependencies.");
 
     }
 }

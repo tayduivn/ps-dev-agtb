@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';

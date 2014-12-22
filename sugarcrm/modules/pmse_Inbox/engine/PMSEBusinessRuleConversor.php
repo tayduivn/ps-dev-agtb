@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 /**
  * Parses a condition of a business rule to a standard criterion to the value of the condition
  * one json is entered as a parameter to parser and get the new value of each case
@@ -8,11 +22,17 @@
 class PMSEBusinessRuleConversor
 {
     /**
+     *
+     * @var type 
+     */
+    protected $evaluatedBean;
+    
+    /**
      * Case modulo
      * @var type string
      */
     protected $baseModule;
-    
+
     /**
      * Gets the module case
      * @return string name module case
@@ -32,7 +52,7 @@ class PMSEBusinessRuleConversor
     {
         $this->baseModule = $baseModule;
     }
-    
+
     /**
      * Sets the bean
      * @param object $name set object bean
@@ -42,7 +62,7 @@ class PMSEBusinessRuleConversor
     {
         $this->evaluatedBean = $evaluatedBean;
     }
-    
+
     /**
      * Method that parser the conditions
      * @param object $businessRule token contains all the conditions and results
@@ -50,10 +70,10 @@ class PMSEBusinessRuleConversor
      */
     public function transformBusinessRule($businessRule)
     {
-        if(isset($businessRule)){
+        if (isset($businessRule)) {
             $this->baseModule = $businessRule->base_module;
             foreach ($businessRule->ruleset as $key => $ruleset) {
-                $businessRule->ruleset[$key]->conditions = $this->transformConditions($ruleset->conditions);
+                $businessRule->ruleset[$key]->conditions = $this->transformCondition($ruleset->conditions);
             }
         }
         return $businessRule;
@@ -64,10 +84,15 @@ class PMSEBusinessRuleConversor
      * @param array $conditionList token contains all the conditions
      * @return array
      */
-    public function transformConditions($conditionList)
+    public function transformCondition($conditionList = array())
     {
         $criteriaArray = array();
         $counter = 0;
+        
+        if (is_array($conditionList) && empty($conditionList)) {
+            $criteriaArray = $this->retrieveDefaultCondition();
+        }
+        
         foreach ($conditionList as $condition) {
             if ($counter > 0) {
                 $andObject = new stdClass();
@@ -90,23 +115,24 @@ class PMSEBusinessRuleConversor
     public function transformToken($businessRuleToken)
     {
         $criteriaToken = new stdClass();
-        if(is_object($businessRuleToken)){
+        if (is_object($businessRuleToken)) {
             $criteriaToken->expField = $businessRuleToken->variable_name;
             $criteriaToken->expOperator = $this->transformConditionOperator($businessRuleToken->condition);
             $criteriaToken->expDirection = "after";
             $criteriaToken->expType = "MODULE";
             $valueToken = $this->processValueExpression($businessRuleToken->value);
-            $criteriaToken->expFieldType = $valueToken->type;
+            $criteriaToken->expSubtype = $valueToken->type;
             $criteriaToken->expValue = $valueToken->value;
-            $separator = $criteriaToken->expFieldType=="STRING"?"&":"";
-            $criteriaToken->expLabel = $criteriaToken->expField." ".$businessRuleToken->condition." ".$separator.$valueToken->value.$separator;
-            $criteriaToken->expModule = $this->baseModule;
+            $separator = $criteriaToken->expSubtype == "STRING" ? "&" : "";
+            $criteriaToken->expLabel = $criteriaToken->expField . " " . $businessRuleToken->condition . " " . $separator . $valueToken->value . $separator;
+            $criteriaToken->expModule = $businessRuleToken->variable_module;
+//            $criteriaToken->expModule = $this->baseModule;
         }
         return $criteriaToken;
     }
-    
+
     /**
-     * Process that evaluates the exprecion
+     * Process that evaluates the expression
      * variable of type sugar or int, float, double and bool
      * @param array $businessRuleValueToken array containing all the tokens
      * @return object
@@ -116,40 +142,41 @@ class PMSEBusinessRuleConversor
         $response = new stdClass();
         $dataEval = array();
         foreach ($businessRuleValueToken as $token) {
-            if($token->type != 'VAR'){
-                switch(strtoupper($token->type)){
+            if ($token->expType != 'VARIABLE') {
+                switch (strtoupper($token->expSubtype)) {
                     case 'INT':
-                        $dataEval[] = (int)$token->value;
+                        $dataEval[] = (int)$token->expValue;
                         break;
                     case 'FLOAT':
-                        $dataEval[] = (float)$token->value;
+                        $dataEval[] = (float)$token->expValue;
                         break;
                     case 'DOUBLE':
-                        $dataEval[] = (double)$token->value;
+                        $dataEval[] = (double)$token->expValue;
                         break;
                     case 'BOOL':
-                        $dataEval[] = $token->value=='TRUE'?true:false;
+                    case 'BOOLEAN':
+                        $dataEval[] = $token->expValue == 'TRUE' ? true : false;
                         break;
                     default :
-                        $dataEval[] = $token->value;
+                        $dataEval[] = $token->expValue;
                         break;
                 }
-            }else{
-                $fields = $token->value;
+            } else {
+                $fields = $token->expValue;
                 $dataEval[] = $this->evaluatedBean->$fields;
             }
         }
-        $evaluation = new PMSEEvalCriteria();
-        if(count($dataEval) > 1){
-            $response->value = $evaluation->evaluationsRecursive($dataEval);
+        if (count($dataEval) > 1) {
+            $evaluator = new PMSEEvaluator();
+            $response->value = $evaluator->evaluateExpression(json_encode($dataEval), $this->evaluatedBean);
             $response->type = gettype($response->value);
-        }else{
+        } else {
             $response->value = $dataEval[0];
-            $response->type = $token->type;
+            $response->type = $token->expSubtype;
         }
         return $response;
     }
-    
+
     /**
      * Operator transforms a literal syntax
      * @param string $condition operator sign
@@ -192,7 +219,7 @@ class PMSEBusinessRuleConversor
                 break;
         }
     }
-    
+
     /**
      * Method that returns the value to returned in a business rule
      * @param array $conclusions values ​​where this conclusion
@@ -207,18 +234,18 @@ class PMSEBusinessRuleConversor
             }
         }
     }
-    
+
     /**
      * Method that sets the value of the conclusion
-     * @param array $conclusions 
+     * @param array $conclusions
      * @param array $appData
      * @return array
      */
     public function processAppData($conclusions, $appData = array())
     {
-        if(isset($conclusions)){
+        if (isset($conclusions)) {
             foreach ($conclusions as $conclusion) {
-                if ($conclusion->conclusion_type=='variable') {
+                if ($conclusion->conclusion_type == 'variable') {
                     $valueToken = $this->processValueExpression($conclusion->value);
                     $appData[$conclusion->conclusion_value] = $valueToken->value;
                 }
@@ -226,7 +253,7 @@ class PMSEBusinessRuleConversor
         }
         return $appData;
     }
-    
+
     /**
      * Converts the conclusion to a string
      * @param array $conclusions
@@ -236,15 +263,26 @@ class PMSEBusinessRuleConversor
     public function processConditionResult($conclusions, $appData = array())
     {
         $result = '';
-        if(isset($conclusions)){
+        if (isset($conclusions)) {
             $appData = $this->processAppData($conclusions, $appData);
             foreach ($appData as $key => $value) {
-                $value = is_string($value)?"'".$value."'":$value;
-                $result .= "{::".$this->baseModule."::".$key."::} = ".$value.";";
+                $value = is_string($value) ? "'" . $value . "'" : $value;
+                $result .= "{::" . $this->baseModule . "::" . $key . "::} = " . $value . ";";
             }
         }
         return $result;
     }
-    //put your code here
+    
+    public function retrieveDefaultCondition()
+    {
+        $condition = new stdClass();
+        $condition->expValue = true;
+        $condition->expLabel = 'true';
+        $condition->expType = 'CONSTANT';
+        $condition->expSubtype = 'BOOLEAN';
+        return array($condition);
+    }
+    
 }
+
 ?>

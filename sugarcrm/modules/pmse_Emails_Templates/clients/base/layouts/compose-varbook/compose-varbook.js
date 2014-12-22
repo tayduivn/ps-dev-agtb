@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 ({
     /**
@@ -32,21 +42,14 @@
         var callbacks,
             baseModule,
             url;
-        //model = this
-        //console.log(options);
-        //console.log(model);
-        //console.log(this);
         options = options || {};
 
         // only fetch from the approved modules
         if (_.isEmpty(options.module_list) || this.module_list.length > 1) {
-            //options.module_list = ['all'];
             options.module_list = [this.baseModule];
         } else {
             options.module_list = [this.module_list[0]];
         }
-
-//        options.params.order_by = 'name:desc';
 
         // this is a hack to make pagination work while trying to minimize the affect on existing configurations
         // there is a bug that needs to be fixed before the correct approach (config.maxQueryResult vs. options.limit)

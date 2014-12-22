@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 /**
  * CRUD Wrapper to manage records related to History Logs
  *
@@ -8,13 +22,13 @@
 class PMSEHistoryLogWrapper
 {
     /**
-     * 
+     *
      * @var string
      */
     private $pre_data;
 
     /**
-     * 
+     *
      * @var string
      */
     private $post_data;
@@ -30,13 +44,13 @@ class PMSEHistoryLogWrapper
      * @var long
      */
     private $end_time;
-    
+
     /**
      *
      * @var object
      */
     private $formAction;
-    
+
     /**
      *
      * @var object
@@ -48,7 +62,7 @@ class PMSEHistoryLogWrapper
      * @var object
      */
     private $flowItself;
-    
+
     /**
      *
      * @var integer
@@ -86,12 +100,12 @@ class PMSEHistoryLogWrapper
     public function _get(array $args)
     {
 
-        if (! isset($args) || !is_array($args) || sizeof($args) <= 0) {
+        if (!isset($args) || !is_array($args) || sizeof($args) <= 0) {
 
             $this->data->error = translate('LBL_PMSE_ADAM_WRAPPER_HISTORYLOG_ARGUMENTEMPTY', 'pmse_Project');
             $this->data->result = false;
         } else {
-            $this->case_id = (isset($args['filter'])?$args['filter']:0);
+            $this->case_id = (isset($args['filter']) ? $args['filter'] : 0);
             $this->data->case_fetch = $this->case_id;
             $this->data->result = $this->assemblyEntries();
             $this->data->success = sizeof($this->data->result) > 0;
@@ -149,7 +163,7 @@ class PMSEHistoryLogWrapper
     /**
      *
      * Moved function from BpmInboxViewShowHistoryEntries class [view.showhistoryentries.php]
-     * Using variable members and some fields added. 
+     * Using variable members and some fields added.
      */
     public function assemblyEntries()
     {
@@ -158,7 +172,7 @@ class PMSEHistoryLogWrapper
         $where = 'pmse_bpm_flow.cas_id=' . $this->case_id;
         //$caseDerivations = $this->flow->getSelectRows('', $where);
         //$caseDerivations = $this->getSelectRows($this->flow,'cas_index asc', $where);
-        $caseDerivations  = $this->flow->get_full_list('cas_index asc', $where);
+        $caseDerivations = $this->flow->get_full_list('cas_index asc', $where);
         //$caseDerivations = $caseDerivations['rowList'];
 
         foreach ($caseDerivations as $key => $caseData) {
@@ -181,22 +195,31 @@ class PMSEHistoryLogWrapper
 
             if ($caseData->cas_previous == 0) {
                 //cas_flow_status field should set something instead be empty.
-                $dataString  = sprintf(translate('LBL_PMSE_HISTORY_LOG_CREATED_CASE', 'pmse_Inbox'), $caseData->cas_id);
+                $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CREATED_CASE', 'pmse_Inbox'), $caseData->cas_id);
             } else {
                 if ($caseData->cas_flow_status == 'CLOSED') {
-                    $dataString  = sprintf(translate('LBL_PMSE_HISTORY_LOG_DERIVATED_CASE', 'pmse_Inbox'), $caseData->bpmn_id);
+                    $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_DERIVATED_CASE', 'pmse_Inbox'),
+                        $caseData->bpmn_id);
                 } else {
-                    $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CURRENTLY_HAS_CASE', 'pmse_Inbox'), $caseData->bpmn_id);
+                    $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CURRENTLY_HAS_CASE', 'pmse_Inbox'),
+                        $caseData->bpmn_id);
                 }
             }
 
             $action = '';
             if ($caseData->bpmn_type == 'bpmnActivity') {
-                $currentCaseState = $this->getActionStatusAndAction($caseData->cas_flow_status, $caseData->cas_sugar_action);
-                $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'), $this->getActivityName($caseData->bpmn_id));
+                $currentCaseState = $this->getActionStatusAndAction($caseData->cas_flow_status,
+                    $caseData->cas_sugar_action);
+                $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
+                    $this->getActivityName($caseData->bpmn_id));
                 if ($caseData->cas_flow_status != 'FORM') {
-                    $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'), $this->getActivityModule($caseData), $currentCaseState);
-                    $res = $this->formAction->retrieve_by_string_fields(array('cas_id' => $caseData->cas_id, 'act_id' => $caseData->bpmn_id, 'user_id' => $caseData->cas_user_id));
+                    $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
+                        $this->getActivityModule($caseData), $currentCaseState);
+                    $res = $this->formAction->retrieve_by_string_fields(array(
+                            'cas_id' => $caseData->cas_id,
+                            'act_id' => $caseData->bpmn_id,
+                            'user_id' => $caseData->cas_user_id
+                        ));
                     if (isset($this->formAction->frm_action) && !empty($this->formAction->frm_action)) {
                         $action = strtoupper($this->formAction->frm_action);
                     } else {
@@ -209,16 +232,25 @@ class PMSEHistoryLogWrapper
                     }
                 } else {
                     $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_STILL_ASSIGNED', 'pmse_Inbox'));
-                    $entry['completed'] = false; 
+                    $entry['completed'] = false;
                 }
-            } else if ($caseData->bpmn_type == 'bpmnEvent') {
-                $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'), $this->getEventName($caseData->bpmn_id));
-                $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_EVENT', 'pmse_Inbox'), $name);
-                $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'), $this->getActivityModule($caseData), $currentCaseState);
-            } else if ($caseData->bpmn_type == 'bpmnGateway') {
-                $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'), $this->getEventName($caseData->bpmn_id));
-                $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_GATEWAY', 'pmse_Inbox'), $name);
-                $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'), $this->getActivityModule($caseData), $currentCaseState);
+            } else {
+                if ($caseData->bpmn_type == 'bpmnEvent') {
+                    $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
+                        $this->getEventName($caseData->bpmn_id));
+                    $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_EVENT', 'pmse_Inbox'), $name);
+                    $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
+                        $this->getActivityModule($caseData), $currentCaseState);
+                } else {
+                    if ($caseData->bpmn_type == 'bpmnGateway') {
+                        $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
+                            $this->getEventName($caseData->bpmn_id));
+                        $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_GATEWAY', 'pmse_Inbox'),
+                            $name);
+                        $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
+                            $this->getActivityModule($caseData), $currentCaseState);
+                    }
+                }
             }
             $entry['data_info'] = $dataString;
             $entries[] = $entry;
@@ -270,13 +302,12 @@ class PMSEHistoryLogWrapper
         if (empty($activityDefinitionBean) || empty($activityDefinitionBean->act_field_module)) {
             return $beanList[$caseData->cas_sugar_module];
         }
-        //print_r('howertfwergtwla');
+
         $related_module_data = $this->getRelationshipData($activityDefinitionBean->act_field_module);
-        //print_r($related_module_data);
+
         if ($related_module_data == null) {
             return $activityDefinitionBean->act_field_module;
         }
-        //print_r('hola');
         return $related_module_data['rhs_module'];
     }
 
@@ -307,31 +338,35 @@ class PMSEHistoryLogWrapper
         if ($caseData->cas_sugar_action == 'SCRIPTTASK') {
             $entry['image'] = 'modules/pmse_Project/img/icon_processmaker_32.png';
             $entry['user'] = 'modules/pmse_Project';
-        } else if ($caseData->bpmn_type == 'bpmnActivity' ||
-                   $caseData->cas_sugar_action == 'DetailView' ||
-                   $caseData->cas_sugar_action == 'EditView' ||
-                   $caseData->cas_previous == 0) {
-            if (isset( $this->currentUser->picture)) {
-                if ( $this->currentUser->picture == '' ||  $this->currentUser->picture == null) {
-                    $entry['image'] = 'include/images/default-profile.png';
-                } else {
-                    $entry['image'] = 'index.php?entryPoint=download&id='. $this->currentUser->picture.'&type=SugarFieldImage&isTempFile=1';
-                }
-            } else {
-                $entry['image'] = 'include/images/default-profile.png';
-            }
-            $entry['user'] =  $this->currentUser->full_name;
-            global $current_user;
-            $entry['current_user'] = $current_user->full_name;
         } else {
-            //TODO check if there is other conditions to set. 
-            $entry['image'] = 'modules/pmse_Project/img/icon_processmaker_32.png';
-            $entry['user'] = 'modules/pmse_Project';
+            if ($caseData->bpmn_type == 'bpmnActivity' ||
+                $caseData->cas_sugar_action == 'DetailView' ||
+                $caseData->cas_sugar_action == 'EditView' ||
+                $caseData->cas_previous == 0
+            ) {
+                if (isset($this->currentUser->picture)) {
+                    if ($this->currentUser->picture == '' || $this->currentUser->picture == null) {
+                        $entry['image'] = 'include/images/default-profile.png';
+                    } else {
+                        $entry['image'] = 'index.php?entryPoint=download&id=' . $this->currentUser->picture . '&type=SugarFieldImage&isTempFile=1';
+                    }
+                } else {
+                    $entry['image'] = 'include/images/default-profile.png';
+                }
+                $entry['user'] = $this->currentUser->full_name;
+                global $current_user;
+                $entry['current_user'] = $current_user->full_name;
+            } else {
+                //TODO check if there is other conditions to set.
+                $entry['image'] = 'modules/pmse_Project/img/icon_processmaker_32.png';
+                $entry['user'] = 'modules/pmse_Project';
+            }
         }
         // @codeCoverageIgnoreStart
         if (trim($entry['user']) == '') {
 
-            $entry['user'] = sprintf(translate('LBL_PMSE_HISTORY_LOG_NOTFOUND_USER', 'pmse_Inbox'), $caseData->cas_user_id);
+            $entry['user'] = sprintf(translate('LBL_PMSE_HISTORY_LOG_NOTFOUND_USER', 'pmse_Inbox'),
+                $caseData->cas_user_id);
 
         }
         // @codeCoverageIgnoreEnd
@@ -348,21 +383,27 @@ class PMSEHistoryLogWrapper
     {
         if ($status == 'CLOSED') {
             $returnStatus = translate('LBL_PMSE_HISTORY_LOG_TASK_HAS_BEEN', 'pmse_Inbox');
-        } else if ($status == 'FORM') {
-            $returnStatus = translate('LBL_PMSE_HISTORY_LOG_TASK_WAS', 'pmse_Inbox');
         } else {
-            //status field is empty at this point.
-            $returnStatus = translate('LBL_PMSE_HISTORY_LOG_TASK_WAS', 'pmse_Inbox');
+            if ($status == 'FORM') {
+                $returnStatus = translate('LBL_PMSE_HISTORY_LOG_TASK_WAS', 'pmse_Inbox');
+            } else {
+                //status field is empty at this point.
+                $returnStatus = translate('LBL_PMSE_HISTORY_LOG_TASK_WAS', 'pmse_Inbox');
+            }
         }
 
         if ($action == 'SCRIPTTASK') {
             $returnAction = translate('LBL_PMSE_HISTORY_LOG_EDITED', 'pmse_Inbox');
-        } else if ($action == 'DetailView') {
-            $returnAction = translate('LBL_PMSE_HISTORY_LOG_ROUTED', 'pmse_Inbox');
-        } else if ($action == 'None') {
-            $returnAction = translate('LBL_PMSE_HISTORY_LOG_CREATED', 'pmse_Inbox');
         } else {
-            $returnAction = translate('LBL_PMSE_HISTORY_LOG_DONE_UNKNOWN', 'pmse_Inbox');
+            if ($action == 'DetailView') {
+                $returnAction = translate('LBL_PMSE_HISTORY_LOG_ROUTED', 'pmse_Inbox');
+            } else {
+                if ($action == 'None') {
+                    $returnAction = translate('LBL_PMSE_HISTORY_LOG_CREATED', 'pmse_Inbox');
+                } else {
+                    $returnAction = translate('LBL_PMSE_HISTORY_LOG_DONE_UNKNOWN', 'pmse_Inbox');
+                }
+            }
         }
         return sprintf(" (%s %s)", $returnStatus, $returnAction);
     }
@@ -375,6 +416,7 @@ class PMSEHistoryLogWrapper
     {
         $this->formAction = $mock;
     }
+
     /**
      * Set bpmFlow object for this service instance.
      * @param mock instance $mock
@@ -383,6 +425,7 @@ class PMSEHistoryLogWrapper
     {
         $this->flow = $mock;
     }
+
     /**
      * Set bpmUser object for this service instance.
      * @param mock instance $mock
@@ -391,6 +434,7 @@ class PMSEHistoryLogWrapper
     {
         $this->currentUser = $mock;
     }
+
     /**
      * Set DB object for this service instance.
      * @param mock instance $mock

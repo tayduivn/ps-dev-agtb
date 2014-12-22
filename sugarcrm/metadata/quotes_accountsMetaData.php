@@ -13,7 +13,7 @@ if (!defined('sugarEntry') || !sugarEntry)
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 $dictionary['quotes_accounts'] = array(
     'table' => 'quotes_accounts',
     'true_relationship_type' => 'one-to-many',

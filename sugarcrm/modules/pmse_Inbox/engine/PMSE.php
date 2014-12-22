@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 class PMSE
 {
     private $version;
@@ -9,13 +23,13 @@ class PMSE
 
     private function __construct()
     {
-        $this->version = '2.0.0-${gitBranch}-${gitCommit}-${buildNumber}';
-        $this->moduleName = 'ProcessMaker';
-        $this->modulePath['pmse_Inbox']             = "modules/pmse_Inbox";
-        $this->modulePath['pmse_Project']           = "modules/pmse_Project";
-        $this->modulePath['pmse_Emails_Templates']  = "modules/pmse_Emails_Templates";
-        $this->modulePath['pmse_Business_Rules']    = "modules/pmse_Business_Rules";
-        $this->modulePath['pmse_Config']            = "modules/pmse_Config";
+        $this->version = '1.0.0';
+        $this->moduleName = 'Process Author';
+        $this->modulePath['pmse_Inbox'] = "modules/pmse_Inbox";
+        $this->modulePath['pmse_Project'] = "modules/pmse_Project";
+        $this->modulePath['pmse_Emails_Templates'] = "modules/pmse_Emails_Templates";
+        $this->modulePath['pmse_Business_Rules'] = "modules/pmse_Business_Rules";
+        $this->modulePath['pmse_Config'] = "modules/pmse_Config";
         $this->moduleLanguage = 'pmse_Project';
         $this->moduleLanguageBwc = 'pmse_Config';
     }

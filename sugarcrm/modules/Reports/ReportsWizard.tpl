@@ -30,9 +30,9 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 <!--
 <style>
 .x-tree-node-collapsed .x-tree-node-icon{literal}{{/literal}
-	background-image:url({$IMG}blank.gif);{literal}}{/literal}
+	background-image:url({$IMG}blank.gif?v={VERSION_MARK});{literal}}{/literal}
 .x-tree-node-expanded .x-tree-node-icon{literal}{{/literal}
-	background-image:url({$IMG}blank.gif);{literal}}{/literal}
+	background-image:url({$IMG}blank.gif?v={VERSION_MARK});{literal}}{/literal}
 </style>
 -->
 <form name="ReportsWizardForm" id="ReportsWizardForm" method="post" action="index.php">

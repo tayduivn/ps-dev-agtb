@@ -139,6 +139,9 @@ require_once 'SugarTestTagUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
 require_once 'SugarTestKBContentUtilities.php';
 
+//BEGIN SUGARCRM flav=ent ONLY
+require_once 'SugarTestProcessAuthorUtilities.php';
+//END SUGARCRM flav=ent ONLY
 // custom helper support
 $customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';
 if (file_exists($customHelperIncludeFile)) {

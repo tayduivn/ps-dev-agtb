@@ -171,6 +171,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             }
         }
 
+        // set the current loaded instance up
+        if (isset($GLOBALS['dictionary']['RevenueLineItem'])) {
+            $GLOBALS['dictionary']['RevenueLineItem']['importable'] = false;
+            $GLOBALS['dictionary']['RevenueLineItem']['unified_search'] = false;
+        }
+
         if (SugarAutoLoader::fileExists($this->appExtFolder . '/Include/' . $this->rliModuleExtFile)) {
             SugarAutoLoader::unlink($this->appExtFolder . '/Include/' . $this->rliModuleExtFile);
         }
@@ -182,6 +188,8 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         if (SugarAutoLoader::fileExists($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile)) {
             SugarAutoLoader::unlink($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile);
         }
+
+        $this->cleanupUnifiedSearchCache();
 
         // hide the RLI module in workflows
         $affected_modules = $this->toggleRevenueLineItemsLinkInWorkFlows(false);
@@ -228,12 +236,15 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $rli = BeanFactory::getBean('RevenueLineItems');
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
+        $db->commit();
         $db->query($db->truncateTableSQL($rli->getTableName()));
-
+        $db->commit();
         $cstm_table = $rli->getTableName() . '_cstm';
 
         if ($db->tableExists($cstm_table)) {
+            $db->commit();
             $db->query($db->truncateTableSQL($cstm_table));
+            $db->commit();
         }
     }
 
@@ -379,7 +390,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $stage_cases = implode(',', $stage_cases);
 
         $sq = new SugarQuery();
-        $sq->select(array('id', 'name', 'opportunity_id'))
+        $sq->select(array('opportunity_id'))
             ->fieldRaw($sqlCase, 'sales_stage')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage IN (' . $stage_cases . ') THEN date_closed END)', 'dc_closed')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage NOT IN (' . $stage_cases . ') THEN date_closed END)', 'dc_open')
@@ -394,8 +405,8 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 date_closed_timestamp = ' . $db->quoted((!empty($result['dct_open']) ? $result['dct_open'] : $result['dct_closed'])) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
-                sales_status = "", commit_stage = ""
-                WHERE id = ' . $db->quoted($result['opportunity_id']) . ';';
+                sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . '
+                WHERE id = ' . $db->quoted($result['opportunity_id']);
 
             $db->query($sql);
         }

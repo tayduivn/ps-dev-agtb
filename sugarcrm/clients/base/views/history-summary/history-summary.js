@@ -200,12 +200,29 @@
             field.model.set({
                 status: fieldStatus
             });
-        } else if (fieldType === 'preview-button') {
-            // set the field module to the model's module for preview button
-            field.model.module = fieldModule;
         }
 
-        this._super("_renderField", [field]);
+        this._super('_renderField', [field]);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _render: function() {
+        this._super('_render');
+        this._sanitizeModels();
+    },
+
+    /**
+     * Sets `model.module` to be in accordance with
+     * model's `_module` attribute for each model.
+     *
+     * @private
+     */
+    _sanitizeModels: function() {
+        this.collection.map(function(model) {
+            model.module = model.get('_module');
+        });
     },
 
     /**

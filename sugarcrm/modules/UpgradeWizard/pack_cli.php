@@ -84,7 +84,7 @@ $stub = <<<'STUB'
 <?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "CliUpgrader.php"; CliUpgrader::start(); __HALT_COMPILER();
+require_once "CliUpgrader.php"; $upgrader = new CliUpgrader(); $upgrader->start(); __HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
 

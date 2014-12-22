@@ -236,9 +236,14 @@ class ImportViewStep3 extends ImportView
                 if ( isset($properties['type'])
                         && isset($mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])]) )
                     $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
-                if ( isset($properties['comment']) )
-                    $fieldtype .= ' - ' . $properties['comment'];
-                $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname . htmlentities($fieldtype) . '"'
+
+                $comment = isset($properties['comments']) ? $properties['comments'] : (isset($properties['comment']) ? $properties['comment'] : '');
+                if (!empty($comment)) {
+                    $fieldtype .= ' - ' . $comment;
+                }
+
+                $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
+                    . htmlentities($fieldtype, null, 'UTF-8') . '"'
                     . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
             }
 
@@ -306,10 +311,15 @@ class ImportViewStep3 extends ImportView
                     if ( isset($properties['type'])
                             && isset($mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])]) )
                         $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
-                    if ( isset($properties['comment']) )
-                        $fieldtype .= ' - ' . $properties['comment'];
-                    $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname . $fieldtype . '"' . $selected . $req_class . '>'
-                        . $displayname . $req_mark . '</option>\n';
+
+                    $comment = isset($properties['comments']) ? $properties['comments'] : (isset($properties['comment']) ? $properties['comment'] : '');
+                    if (!empty($comment)) {
+                        $fieldtype .= ' - ' . $comment;
+                    }
+
+                    $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname
+                        . htmlentities($fieldtype, null, 'UTF-8') . '"'
+                        . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
                 }
 
                 // get default field value
@@ -511,7 +521,7 @@ EOCSS;
             $print_required_array .= "required['$name'] = '". sanitize($display) . "';\n";
         }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
-
+        $removeButtonImage = "index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png&v=".getVersionedPath('');
         return <<<EOJAVASCRIPT
 
     document.getElementById('goback').onclick = function()
@@ -632,7 +642,7 @@ document.getElementById('addrow').onclick = function(){
     removeButton.id = 'deleterow_' + rownum;
     removeButton.className = "removeButton";
     var imgButton = document.createElement("img");
-    imgButton.src = "index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png";
+    imgButton.src = "{$removeButtonImage}";
     removeButton.appendChild(imgButton);
 
 

@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Sync',
   'LBL_MODULE_NAME_SINGULAR' => 'Sync',

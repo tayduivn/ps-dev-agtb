@@ -1,5 +1,20 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 require_once('PMSEHandlers/PMSEHookHandler.php');
 //require_once('PMSEEngine.php');
@@ -22,16 +37,16 @@ class PMSELogicHook
 
         return $hookHandler->runStartEventBeforeSave($bean, $event, $arguments, array(), $isNewRecord);
     }
-    
+
     function after_save($bean, $event, $arguments)
     {
         if ($this->verifyModules($bean)) {
             return true;
-        }        
+        }
         $handler = new PMSEHookHandler();
         return $handler->runStartEventAfterSave($bean, $event, $arguments);
     }
-    
+
     function after_delete($bean, $event, $arguments)
     {
         if ($this->verifyModules($bean)) {
@@ -41,9 +56,9 @@ class PMSELogicHook
         $handler = new PMSEHookHandler();
         return $handler->terminateCaseAfterDelete($bean, $event, $arguments);
     }
-    
+
     /**
-     * 
+     *
      * @param type $bean
      * @param type $event
      * @param type $arguments
@@ -56,14 +71,22 @@ class PMSELogicHook
         return true;
     }
 
-    private function verifyModules ($bean)
+    private function verifyModules($bean)
     {
         include('PMSEModules.php');
         $pmseModulesList = (isset($pmseModulesList)) ? $pmseModulesList : array();
         //returns immediately if the bean is a common module
         $result = false;
         if (isset($bean->module_name)) {
-            $commonModules = array_merge(array('Teams', 'Users', 'UserPreferences', 'Subscriptions', 'OAuthToken', 'Dashboards', 'Activities'), $pmseModulesList);
+            $commonModules = array_merge(array(
+                    'Teams',
+                    'Users',
+                    'UserPreferences',
+                    'Subscriptions',
+                    'OAuthToken',
+                    'Dashboards',
+                    'Activities'
+                ), $pmseModulesList);
             //if ($bean->object_name == 'OAuthToken') {
             //    return true;
             //}
@@ -73,11 +96,12 @@ class PMSELogicHook
         }
 
         //if module is pmse_Inbox and we are routing a case, then returns immediately
-        if (isset($_REQUEST['__sugar_url'])) {
-            $url = preg_split('/\//', $_REQUEST['__sugar_url']);
-            if (strtolower($url[1]) == 'pmse_inbox' && strtolower($url[2]) == 'engine_route') {
-                return true;
-            }
+        if (    
+                (isset($_REQUEST['Type']) && !empty($_REQUEST['Type']))
+                || 
+                (isset($_REQUEST['frm_action']) && !empty($_REQUEST['frm_action']))
+            ) {
+            return true;
         }
 
         //if the record is going to be updated by the engine, we need to skip the "partial update" section
@@ -88,7 +112,7 @@ class PMSELogicHook
     }
 
     /**
-     * 
+     *
      * @param type $bean_name
      * @return type
      * @deprecated since version pmse2
@@ -134,8 +158,10 @@ class PMSELogicHook
         //    ->on()
         //    ->equalsField('b.id', 'a.id')
         //    ->equals('b.evn_status', 'ACTIVE');
-        $q->joinRaw("LEFT JOIN pmse_bpm_event_definition b ON (b.id=a.id AND b.evn_status = 'ACTIVE')", array('alias'=>'b'));
-        $q->joinRaw("INNER JOIN pmse_bpm_process_definition c ON (a.prj_id = c.prj_id AND c.pro_status='ACTIVE')", array('alias'=>'c'));
+        $q->joinRaw("LEFT JOIN pmse_bpm_event_definition b ON (b.id=a.id AND b.evn_status = 'ACTIVE')",
+            array('alias' => 'b'));
+        $q->joinRaw("INNER JOIN pmse_bpm_process_definition c ON (a.prj_id = c.prj_id AND c.pro_status='ACTIVE')",
+            array('alias' => 'c'));
         $q->where()->queryAnd()
             ->addRaw("a.evn_type= 'START' AND b.evn_status = 'ACTIVE' AND c.pro_status='ACTIVE'" . $where);
         $q->select->fieldRaw('b.evn_status, b.evn_type, b.evn_module, b.evn_criteria, b.evn_params, b.evn_script');
@@ -144,10 +170,10 @@ class PMSELogicHook
         $rows = $q->execute();
         return $rows;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param type $bean_name
      * @return type
      * @deprecated since version pmse2

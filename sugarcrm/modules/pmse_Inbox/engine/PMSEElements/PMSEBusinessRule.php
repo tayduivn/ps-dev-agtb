@@ -1,13 +1,24 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleReader.php';
 require_once 'PMSEScriptTask.php';
 
 class PMSEBusinessRule extends PMSEScriptTask
 {
-    
     /**
-     * 
+     *
      * @param type $appData
      * @param type $global
      * @return \PMSEBusinessRuleReader
@@ -20,23 +31,23 @@ class PMSEBusinessRule extends PMSEScriptTask
     }
 
     /**
-     * This method prepares the response of the current element based on the 
-     * $bean object and the $flowData, an external action such as 
+     * This method prepares the response of the current element based on the
+     * $bean object and the $flowData, an external action such as
      * ROUTE or ADHOC_REASSIGN could be also processed.
-     * 
-     * This method probably should be override for each new element, but it's 
-     * not mandatory. However the response structure always must pass using 
+     *
+     * This method probably should be override for each new element, but it's
+     * not mandatory. However the response structure always must pass using
      * the 'prepareResponse' Method.
-     * 
+     *
      * As defined in the example:
-     * 
+     *
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
      * $response['flow_filters'] = array('first_id', 'second_id'); //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
      *
-     * 
+     *
      * @param type $flowData
      * @param type $bean
      * @param type $externalAction
@@ -61,7 +72,7 @@ class PMSEBusinessRule extends PMSEScriptTask
         //$query = "select * from pmse_bpm_flow where cas_id = $cas_id and cas_sugar_module = '$sugarModule'";
         //$result = $bean->db->Query($query);
         //$row = $bean->db->fetchByAssoc($result);
-        
+
         $sugarRecord = $flowData['cas_sugar_object_id'];
 
         //get the ruleset
@@ -121,11 +132,13 @@ class PMSEBusinessRule extends PMSEScriptTask
             $historyData = $this->retrieveHistoryData($sugarModule);
             if (is_array($newAppData) && count($newAppData) > 0) {
                 foreach ($newAppData as $key => $value) {
-                    if (isset($bean->{$key})) {
-                        $historyData->savePredata($key, $bean->{$key});
-                        $bean->{$key} = $value;
-                        $historyData->savePostData($key, $value);
-                    }
+                    // if the $key attribute doesn't exists it's not saved.
+                    // so it's not necessarily validate the attribute existence.
+                    //if (isset($bean->{$key})) {
+                    $historyData->savePredata($key, $bean->{$key});
+                    $bean->{$key} = $value;
+                    $historyData->savePostData($key, $value);
+                    //}
                 }
                 $bean->skipPartialUpdate = true;
                 $bean->save();

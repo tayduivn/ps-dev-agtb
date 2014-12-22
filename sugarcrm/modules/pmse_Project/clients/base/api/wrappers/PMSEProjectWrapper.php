@@ -1,86 +1,99 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEWrapper.php';
 require_once 'PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 
 class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 {
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $project;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $diagram;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $process;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $processDefinition;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $activityBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $artifactBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $gatewayBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $eventBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $flowBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $activityDefinitionBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $eventDefinitionBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $boundBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $observers;
 
@@ -114,7 +127,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -124,7 +137,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -134,7 +147,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -144,7 +157,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -154,7 +167,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -164,7 +177,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -174,7 +187,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -184,7 +197,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -194,7 +207,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -204,7 +217,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -214,7 +227,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -224,7 +237,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -234,7 +247,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -244,7 +257,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $observers
      * @codeCoverageIgnore
      */
@@ -254,7 +267,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $project
      * @codeCoverageIgnore
      */
@@ -264,7 +277,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $diagram
      * @codeCoverageIgnore
      */
@@ -274,7 +287,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $process
      * @codeCoverageIgnore
      */
@@ -284,7 +297,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $processDefinition
      * @codeCoverageIgnore
      */
@@ -294,7 +307,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $activityBean
      * @codeCoverageIgnore
      */
@@ -304,7 +317,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $artifactBean
      * @codeCoverageIgnore
      */
@@ -314,7 +327,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $gatewayBean
      * @codeCoverageIgnore
      */
@@ -324,7 +337,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $eventBean
      * @codeCoverageIgnore
      */
@@ -334,7 +347,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $flowBean
      * @codeCoverageIgnore
      */
@@ -344,7 +357,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $activityDefinitionBean
      * @codeCoverageIgnore
      */
@@ -354,7 +367,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $eventDefinitionBean
      * @codeCoverageIgnore
      */
@@ -364,7 +377,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $boundBean
      * @codeCoverageIgnore
      */
@@ -374,12 +387,12 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $beanName
      * @return type
      * @codeCoverageIgnore
      */
-    public function getBean($beanName, $id=null)
+    public function getBean($beanName, $id = null)
     {
         return BeanFactory::getBean($beanName, $id);
     }
@@ -391,20 +404,15 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function retrieveProject($projectId)
     {
-        //print_r($this->project);
-        //$this->project->retrieve_by_string_fields(array('id'=>$projectId));
-        //print_r($this->project->fetched_row);
-        //echo 'aa';
-        //print_r($projectId);
-        //exit();
         $response = array();
         if ($this->project->retrieve_by_string_fields(array('id' => $projectId))) {
-            //print_r('aa');
+
             $processObject = $this->process->retrieve_by_string_fields(array('prj_id' => $projectId));
             $processDefinitionData = array();
             if ($this->processDefinition->retrieve_by_string_fields(array('prj_id' => $this->project->id))) {
                 $processDefinitionData = $this->sanitizeKeyFields($this->processDefinition->fetched_row);
-                $lockedVariables = unserialize(html_entity_decode($processDefinitionData['pro_locked_variables'], ENT_QUOTES));
+                $lockedVariables = unserialize(html_entity_decode($processDefinitionData['pro_locked_variables'],
+                        ENT_QUOTES));
                 $processDefinitionData['pro_locked_variables'] = is_null($lockedVariables) || !$lockedVariables ? array() : $lockedVariables;
                 $processDefinitionData['pro_terminate_variables'] = trim($processDefinitionData['pro_terminate_variables']);
             }
@@ -421,7 +429,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $response['success'] = true;
             $response['project'] = $this->project->fetched_row;
         } else {
-            //print_r('bb');
             $response['success'] = false;
         }
         return $response;
@@ -434,8 +441,16 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         if (!is_null($this->project->retrieve_by_string_fields(array('id' => $projectId)))) {
             $this->diagram->retrieve_by_string_fields(array('prj_id' => $this->project->id));
             $this->process->retrieve_by_string_fields(array('prj_id' => $this->project->id));
-            $this->processDefinition->retrieve_by_string_fields(array('prj_id' => $this->project->id, 'id' => $this->process->id));
-            $arrayKeys = array('prj_id' => $this->project->id, 'prj_uid' => $this->project->id, 'dia_id' => $this->diagram->id, 'pro_id' => $this->process->id);
+            $this->processDefinition->retrieve_by_string_fields(array(
+                    'prj_id' => $this->project->id,
+                    'id' => $this->process->id
+                ));
+            $arrayKeys = array(
+                'prj_id' => $this->project->id,
+                'prj_uid' => $this->project->id,
+                'dia_id' => $this->diagram->id,
+                'pro_id' => $this->process->id
+            );
             $this->updateDiagram($args['data'], $arrayKeys);
             $response = array("success" => true);
         } else {
@@ -459,11 +474,9 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         $processData = array();
         $retrievedData = array();
         $conditions = array("prj_id" => $prjID);
-//        print_r($conditions);
-//        exit();
+
         if (!is_null($this->diagram->retrieve_by_string_fields($conditions))) {
             // list of activities based in the project id
-            //print_r($this->activityBean);
             $selected = array(
                 'pmse_bpmn_activity.*',
                 'pmse_bpmn_bound.bou_x',
@@ -473,8 +486,11 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 'pmse_bpmn_bound.bou_container',
                 'pmse_bpmn_bound.bou_uid'
             );
-            $data = $this->getSelectRows($this->activityBean, "", "pmse_bpmn_activity.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnActivity'", 0, -1, -1, $selected, array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_activity.id=pmse_bpmn_bound.bou_element')));
-            //print_r($data);
+            $data = $this->getSelectRows($this->activityBean, "",
+                "pmse_bpmn_activity.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnActivity'", 0, -1,
+                -1, $selected,
+                array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_activity.id=pmse_bpmn_bound.bou_element')));
+
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     if (isset($row['act_default_flow']) && !empty($row['act_default_flow'])) {
@@ -482,7 +498,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                         $row['act_default_flow'] = !is_null($tmpObject) ? $tmpObject->flo_uid : '';
                     }
                     $row['bou_element'] = $row['bou_uid'];
-                    //print_r($row);
+
                     $row['act_name'] = $row['name'];
                     $row = $this->sanitizeFields($row);
                     $activityData[] = $row;
@@ -500,7 +516,9 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 'pmse_bpmn_bound.bou_container',
                 'pmse_bpmn_bound.bou_uid'
             );
-            $data = $this->getSelectRows($this->eventBean, "", "pmse_bpmn_event.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnEvent'", 0, -1, -1, $selected, array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_event.id=pmse_bpmn_bound.bou_element')));
+            $data = $this->getSelectRows($this->eventBean, "",
+                "pmse_bpmn_event.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnEvent'", 0, -1, -1,
+                $selected, array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_event.id=pmse_bpmn_bound.bou_element')));
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -532,7 +550,10 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 'pmse_bpmn_bound.bou_container',
                 'pmse_bpmn_bound.bou_uid'
             );
-            $data = $this->getSelectRows($this->gatewayBean, "", "pmse_bpmn_gateway.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnGateway'", 0, -1, -1, $selected, array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_gateway.id=pmse_bpmn_bound.bou_element')));
+            $data = $this->getSelectRows($this->gatewayBean, "",
+                "pmse_bpmn_gateway.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnGateway'", 0, -1,
+                -1, $selected,
+                array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_gateway.id=pmse_bpmn_bound.bou_element')));
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -556,7 +577,10 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 'pmse_bpmn_bound.bou_container',
                 'pmse_bpmn_bound.bou_uid'
             );
-            $data = $this->getSelectRows($this->artifactBean, "", "pmse_bpmn_artifact.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnArtifact'", 0, -1, -1, $selected, array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_artifact.id=pmse_bpmn_bound.bou_element')));
+            $data = $this->getSelectRows($this->artifactBean, "",
+                "pmse_bpmn_artifact.prj_id='" . $prjID . "' AND pmse_bpmn_bound.bou_element_type='bpmnArtifact'", 0, -1,
+                -1, $selected,
+                array(array('INNER', 'pmse_bpmn_bound', 'pmse_bpmn_artifact.id=pmse_bpmn_bound.bou_element')));
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     $row['bou_element'] = $row['bou_uid'];
@@ -567,15 +591,18 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             }
             $this->diagram->fetched_row['artifacts'] = $artifactData;
             // list of flows based in the project id
-            $data = $this->getSelectRows($this->flowBean, "", "pmse_bpmn_flow.prj_id='" . $prjID . "'", 0, -1, -1, array());
+            $data = $this->getSelectRows($this->flowBean, "", "pmse_bpmn_flow.prj_id='" . $prjID . "'", 0, -1, -1,
+                array());
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     $row = $this->sanitizeKeyFields($row);
                     $row['prj_id'] = $prjID;
                     $originE = $this->getEntityUid($row['flo_element_origin_type']);
-                    $row['flo_element_origin'] = $this->getElementUid($row['flo_element_origin'], $originE['bean'], $originE['uid']);
+                    $row['flo_element_origin'] = $this->getElementUid($row['flo_element_origin'], $originE['bean'],
+                        $originE['uid']);
                     $destE = $this->getEntityUid($row['flo_element_dest_type']);
-                    $row['flo_element_dest'] = $this->getElementUid($row['flo_element_dest'], $destE['bean'], $destE['uid']);
+                    $row['flo_element_dest'] = $this->getElementUid($row['flo_element_dest'], $destE['bean'],
+                        $destE['uid']);
                     $row['flo_state'] = json_decode($row['flo_state']);
                     $flowData[] = $row;
                 }
@@ -627,25 +654,21 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
     public function updateDiagram($diagramArray, $keysArray)
     {
-        //return array("success"=>true, "data" => $keysArray);
-        //$beanFactory = new ADAMBeanFactory();
-        //print_r($diagramArray);
+
 
         $var = $diagramArray['flows'];
         unset($diagramArray['flows']);
         $diagramArray['flows'] = $var;
-        //print_r($diagramArray['flows']);
-        //exit();
+
         foreach ($diagramArray as $type => $elementsGroup) {
-            //echo $type;
-            //exit();
+
             $entityData = $this->getEntityData($type);
             if (!empty($entityData) && is_array($elementsGroup)) {
                 foreach ($elementsGroup as $element) {
                     //$this->flowBean = new BpmnFlow();
                     if (isset($element['gat_default_flow'])) {
                         if ($element['gat_default_flow'] != null && !empty($element['gat_default_flow'])) {
-                            $tmpObject = $this->flowBean->retrieve_by_string_fields(array("id" => $element['gat_default_flow']));
+                            $tmpObject = $this->flowBean->retrieve_by_string_fields(array("flo_uid" => $element['gat_default_flow']));
                             $element['gat_default_flow'] = isset($tmpObject->id) ? $tmpObject->id : '';
                         } else {
                             $element['gat_default_flow'] = null;
@@ -666,16 +689,12 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     }
                     if ($type == 'flows' && strtolower($element['action']) != 'remove' && strtolower($element['action']) != 'update') {
                         $originBean = ucfirst($element['flo_element_origin_type']);
-//                        $originBean = new $originBean();
-                        //print_r('pmse_'.$originBean);
-                        //exit();
+
                         $originEntity = $this->getClassEntity($originBean);
                         $originBean = $this->getBean($originEntity['bean']);
 
                         $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
-                        //$originPK = $this->getPrimaryFieldName($originBean);
-                        //print_r($originPK);
-                        //exit();
+
                         $element['flo_element_origin'] = $originBean->id;
                         $destinationBean = ucfirst($element['flo_element_dest_type']);
 //                        $destinationBean = new $destinationBean();
@@ -686,7 +705,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                         $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
                         //$destinationPK = $destinationBean->getPrimaryFieldName();
                         $element['flo_element_dest'] = $destinationBean->id;
-                        $tmpStateArray= array_values($element['flo_state']);
+                        $tmpStateArray = array_values($element['flo_state']);
                         $firstElement = array_shift($tmpStateArray);
                         $tmpEndState = array_values($element['flo_state']);
                         $lastElement = end($tmpEndState);
@@ -695,21 +714,20 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                         $element['flo_x2'] = $lastElement['x'];
                         $element['flo_y2'] = $lastElement['y'];
                         $element['flo_state'] = json_encode($element['flo_state']);
-                        //print_r($element);
-                        //exit();
+
                     } elseif ($type == 'flows' && strtolower($element['action']) == 'update') {
                         if (isset($element['flo_element_origin_type'])) {
-                            $originBean = 'pmse_' . ucfirst($element['flo_element_origin_type']);
-//                            $originBean = new $originBean();
-                            $originBean = $this->getBean($originBean);
-                            $originBean->retrieve_by_string_fields(array('id' => $element['flo_element_origin']));
+                            $originBean = ucfirst($element['flo_element_origin_type']);
+                            $originEntity = $this->getClassEntity($originBean);
+                            $originBean = $this->getBean($originEntity['bean']);
+                            $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
                             $element['flo_element_origin'] = $originBean->id;
                         }
                         if (isset($element['flo_element_dest_type'])) {
-                            $destinationBean = 'pmse_' . ucfirst($element['flo_element_dest_type']);
-//                            $destinationBean = new $destinationBean();
-                            $destinationBean = $this->getBean($destinationBean);
-                            $destinationBean->retrieve_by_string_fields(array('id' => $element['flo_element_dest']));
+                            $destinationBean = ucfirst($element['flo_element_dest_type']);
+                            $destinationEntity = $this->getClassEntity($destinationBean);
+                            $destinationBean = $this->getBean($destinationEntity['bean']);
+                            $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
                             $element['flo_element_dest'] = $destinationBean->id;
                         }
                         if (isset($element['flo_state'])) {
@@ -946,7 +964,10 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
                 if ($entityData['bean'] != 'BpmnFlow') {
                     $bound = $this->getBean('pmse_BpmnBound');
-                    $bound->retrieve_by_string_fields(array('bou_element' => $elementID, 'bou_element_type' => $entityData['bound_element']));
+                    $bound->retrieve_by_string_fields(array(
+                            'bou_element' => $elementID,
+                            'bou_element_type' => $entityData['bound_element']
+                        ));
                     if (isset($elementArray['bou_x'])) {
                         $bound->bou_x = $elementArray['bou_x'];
                     }
@@ -990,11 +1011,18 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     $tmpDefinition = $this->getBean('pmse_BpmEventDefinition');
                     $tmpDefinition->retrieve_by_string_fields(array('id' => $bean->$primaryField));
                     $this->delete($tmpDefinition);
+                    if (!empty($tmpDefinition->fetched_row)) {
+                        $relDepWrapper = new PMSERelatedDependencyWrapper();
+                        $relDepWrapper->removeRelatedDependencies($tmpDefinition->fetched_row);
+                    }                    
                 }
 
                 if ($this->delete($bean) && $entityData['bean'] != 'BpmnFlow') {
                     $bound = $this->getBean('pmse_BpmnBound');
-                    $bound->retrieve_by_string_fields(array('bou_element' => $bean->fetched_row[$primaryField], 'bou_element_type' => $entityData['bound_element']));
+                    $bound->retrieve_by_string_fields(array(
+                            'bou_element' => $bean->fetched_row[$primaryField],
+                            'bou_element_type' => $entityData['bound_element']
+                        ));
                     $this->delete($bound);
                 }
                 break;
@@ -1004,7 +1032,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @param type $elementEntity
      * @param type $uidField
@@ -1013,18 +1041,16 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     public function getElementUid($id, $elementEntity, $uidField)
     {
         $bean = $this->getBean($elementEntity);
-        //print_r($bean); die;
 
         $bean->retrieve_by_string_fields(array($this->getPrimaryFieldName($bean) => $id));
-        //print_r($bean->fetched_row);
+
         $returnUidValue = isset($bean->$uidField) ? $bean->$uidField : '';
-        //print_r($returnUidValue);
-        //exit();
+
         return $returnUidValue;
     }
 
     /**
-     * 
+     *
      * @param type $projectId
      * @return type
      */
@@ -1039,7 +1065,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $args
      */
     public function updateProcessDefinition($args)
@@ -1065,7 +1091,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function attach($observer)
@@ -1077,7 +1103,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function detach($observer)
@@ -1091,7 +1117,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      */
     public function notify()
     {

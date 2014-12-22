@@ -382,6 +382,14 @@
                  _chunkSize: 20,
 
                 /**
+                 * Number of update failures
+                 *
+                 * @property {Number} numFailures Number of failures.
+                 * @protected
+                 */
+                 numFailures: 0,
+
+                /**
                  * Set number of records per chunk.
                  *
                  * @param {Number} chunkSize Number of records.
@@ -456,7 +464,7 @@
                     this.updateChunk();
                     var callbacks = {
                             success: function(data, response) {
-                                model.attempt = 0;
+                                model.numFailures += data.failed;
                                 model.updateProgress();
                                 model.trigger('massupdate:done');
                                 if (model.length === 0) {

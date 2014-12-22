@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -26,17 +36,16 @@
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_businessrules', {
                 level:'error',
-                messages: app.lang.get('LBL_EMPTY_BUSINESSRULES', self.module),
+                messages: app.lang.get('LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING', self.module),
                 autoClose: false
             });
         } else {
-            console.log('begin');
             app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function (data) {
                         app.router.goBack();
                         app.alert.show('process-import-saved', {
                             level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_BUSINESS_RULES_SUCCESS', self.module),
+                            messages: app.lang.get('LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
                     },

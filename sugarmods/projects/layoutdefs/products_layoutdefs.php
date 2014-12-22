@@ -1,5 +1,5 @@
 <?php 
-// FILE SUGARCRM flav=pro ONLY 
+
 $layout_defs['Products']['subpanel_setup']['projects'] = array(
     'order' => 40,
     'module' => 'Project',

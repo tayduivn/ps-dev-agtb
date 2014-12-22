@@ -53,7 +53,9 @@ body > .le_panel .le_edit, #toolbox .le_panel .le_edit {
 
 #panels .le_row .le_field, #availablefields .le_field,  #layoutPreview .le_row .le_field {display:block;}
 .le_row .le_field {display:none;}
-
+#panels.max-columns-1 .le_row .le_field {
+    width: 330px;
+}
 
 .field_tabindex,.field_label,.field_name, .panel_id, .field_fieldset_fields {display:none;}
 #availablefields .le_field {clear:both;}

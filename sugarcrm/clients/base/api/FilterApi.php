@@ -262,15 +262,15 @@ class FilterApi extends SugarApi
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        self::addFilters($args['filter'], $q->where(), $q);
+        static::addFilters($args['filter'], $q->where(), $q);
 
         if (!empty($args['my_items'])) {
-            self::addOwnerFilter($q, $q->where(), '_this');
+            static::addOwnerFilter($q, $q->where(), '_this');
         }
 
         if (!empty($args['favorites'])) {
             self::$isFavorite = true;
-            self::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
+            static::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
 
@@ -611,19 +611,19 @@ class FilterApi extends SugarApi
             }
             foreach ($filterDef as $field => $filter) {
                 if ($field == '$or') {
-                    self::addFilters($filter, $where->queryOr(), $q);
+                    static::addFilters($filter, $where->queryOr(), $q);
                 } elseif ($field == '$and') {
-                    self::addFilters($filter, $where->queryAnd(), $q);
+                    static::addFilters($filter, $where->queryAnd(), $q);
                 } elseif ($field == '$favorite') {
-                    self::addFavoriteFilter($q, $where, $filter);
+                    static::addFavoriteFilter($q, $where, $filter);
                 } elseif ($field == '$owner') {
-                    self::addOwnerFilter($q, $where, $filter);
+                    static::addOwnerFilter($q, $where, $filter);
                 } elseif ($field == '$creator') {
-                    self::addCreatorFilter($q, $where, $filter);
+                    static::addCreatorFilter($q, $where, $filter);
                 } elseif ($field == '$tracker') {
-                    self::addTrackerFilter($q, $where, $filter);
+                    static::addTrackerFilter($q, $where, $filter);
                 } elseif ($field == '$following') {
-                    self::addFollowFilter($q, $where, $filter);
+                    static::addFollowFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
                     $fieldInfo = self::verifyField($q, $field);

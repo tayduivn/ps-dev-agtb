@@ -161,13 +161,13 @@ abstract class SugarApi {
      * @return id Bean id
      */
     protected function updateBean(SugarBean $bean, ServiceBase $api, $args) {
-
+        $helper = ApiHelper::getHelper($api,$bean);
         $options = array();
         if(!empty($args['_headers']['X_TIMESTAMP'])) {
             $options['optimistic_lock'] = $args['_headers']['X_TIMESTAMP'];
         }
         try {
-            $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args, $options);
+            $errors = $helper->populateFromApi($bean,$args, $options);
         } catch(SugarApiExceptionEditConflict $conflict) {
             $api->action = 'view';
             $data = $this->formatBean($api, $args, $bean);
@@ -181,25 +181,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
 
-        // This code replicates the behavior in Sugar_Controller::pre_save()
-        $check_notify = TRUE;
-        // check update
-        // if Notifications are disabled for this module set check notify to false
-        if(!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir]) && $GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir] == true) {
-            $check_notify = FALSE;
-        } else {
-            // some modules, like Users don't have an assigned_user_id
-            if(isset($bean->assigned_user_id)) {
-                // if the assigned user hasn't changed, set check notify to false
-                if(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id) {
-                    $check_notify = FALSE;
-                    // if its the same user, don't send
-                } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
-                    $check_notify = FALSE;
-                }
-            }
-        }
-
+        $check_notify = $helper->checkNotify($bean);
         $bean->save($check_notify);
 
         /*

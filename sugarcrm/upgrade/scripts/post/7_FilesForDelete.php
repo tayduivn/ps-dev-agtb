@@ -209,7 +209,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'include/Expressions/Expression/Numeric/CurrencyDivideExpression.php';
             $files[] = 'include/Expressions/Expression/Numeric/CurrencySumRelatedExpression.php';
         }
-        
+
         if (version_compare($this->from_version, '7.5', '<')) {
             $files[] = 'clients/portal/fields/date';
             $files[] = 'clients/portal/fields/datetimecombo';
@@ -226,16 +226,26 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
 
         if (version_compare($this->from_version, '7.6', '<')) {
             $files[] = 'clients/base/fields/fieldset-with-labels';
-            $files[] = 'modules/Contacts/clients/base/views/create-actions.php';
+            $files[] = 'modules/Contacts/clients/base/views/create-actions/create-actions.php';
             $files[] = 'modules/ForecastWorksheets/clients/base/views/list-bottom';
-            $files[] = 'modules/Leads/clients/base/views/create-actions.php';
-            $files[] = 'modules/Opportunities/clients/base/views/create-actions.php';
+            $files[] = 'modules/Leads/clients/base/views/create-actions/create-actions.php';
+            $files[] = 'modules/Opportunities/clients/base/views/create-actions/create-actions.php';
             $files[] = 'modules/Opportunities/clients/base/api/OpportunitiesApi.php';
             $files[] = 'modules/Opportunities/clients/base/api/help/OpportunitiesPipelineChartApi.html';
-            $files[] = 'modules/Products/clients/base/views/create-actions.php';
-            $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions.php';
+            $files[] = 'modules/Opportunities/Ext/LogicHooks/ProcessHiddenRevenueLineItem.php';
+            $files[] = 'modules/Products/clients/base/views/create-actions/create-actions.php';
+            $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions/create-actions.php';
             $files[] = 'modules/ForecastSchedule';
             $files[] = 'modules/Reports/upgrade/scripts/post/2_FixOpportunityReports.php';
+            $files[] = 'modules/ProductBundles/Ext/LogicHooks/RelationshipChange.php';
+            $files[] = 'modules/ProductBundles/ProductBundleHooks.php';
+            $files[] = 'modules/ProductBundles/ProductBundlesApiHelper.php';
+            // UIUX-1687 Remove files orphaned by Font Awesome upgrade
+            $files[] = 'styleguide/assets/css/loader-sugarone.css';
+            $files[] = 'styleguide/less/twitter-bootstrap/font-awesome/bootstrap.less';
+            $files[] = 'styleguide/assets/font';
+            $files[] = 'vendor/lessphp/docs/docs.md';
+            $files[] = 'vendor/lessphp/plessc';
         }
 
         if (version_compare($this->from_version, '7.6', '<=')) {
@@ -243,6 +253,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Products/clients/base/api/ProductsPipelineChartApi.php';
             $files[] = 'modules/Opportunities/clients/base/api/OpportunitiesPipelineChartApi.php';
             $files[] = 'modules/ForecastManagerWorksheets/clients/base/fields/rowactions';
+        }
+
+        if (version_compare($this->from_version, '7.7', '<')) {
+            $files[] = 'clients/base/views/interactionschart';
         }
 
         $this->fileToDelete($files);

@@ -329,10 +329,15 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view: layout,
 					sid: id,
 					subpanel: subpanel
-				}
+				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
-					ModuleBuilder.getContent(ModuleBuilder.contentURL);
+					ModuleBuilder.getContent("module=ModuleBuilder&action=editLayout" +
+						"&view=" + layout +
+						"&view_module=" + module +
+						"&subpanel=" + subpanel +
+						"&view_package=" + ModuleBuilder.MBpackage
+					);
 					ModuleBuilder.state.isDirty = true;
 				});
 			},
@@ -403,6 +408,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					eval(saveBtn.getAttributeNode('onclick').value);
 				}
 				ModuleBuilder.state.popup_window.hide();
+
+				ModuleBuilder.getContent(ModuleBuilder.state.intended_view.url, ModuleBuilder.state.intended_view.successCall);
 			},
 			onDontSaveClick: function(){
 				//set dirty to false
@@ -478,20 +485,17 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				eval(url.substring(11));
 				return;
 			}
-			
+
 			//save a pointer to intended action
 			ModuleBuilder.state.intended_view.url = url;
 			ModuleBuilder.state.intended_view.successCall = successCall;
 			if(ModuleBuilder.state.isDirty){ //prompt to save current data.
 				//check if we are editing a property of the current view (such views open up in new tabs)
 				//if so we leave the state dirty and return
-				temp_url = url.toLowerCase();
-				if(null == temp_url.match(/&action=editproperty/)){
-					ModuleBuilder.state.popup();
-					ModuleBuilder.state.popup_window.show();
-					return;
-				}
 
+				ModuleBuilder.state.popup();
+				ModuleBuilder.state.popup_window.show();
+				return;
 			}else{
 				ModuleBuilder.state.current_view.url = url;
 				ModuleBuilder.state.current_view.successCall = successCall;

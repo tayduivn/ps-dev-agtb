@@ -1,6 +1,21 @@
 <?php
-
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
@@ -33,8 +48,9 @@ class PMSEProjectApi extends ModuleApi
         $this->eventDefinitionWrapper = new PMSEEventDefinitionWrapper();
         $this->gatewayDefinitionWrapper = new PMSEGatewayDefinitionWrapper();
     }
+
     /**
-     * 
+     *
      * @return type
      */
     public function registerApiRest()
@@ -43,39 +59,39 @@ class PMSEProjectApi extends ModuleApi
             'createProject' => array(
                 'reqType' => 'POST',
                 'path' => array('pmse_Project'),
-                'pathVars'=> array('module'),
+                'pathVars' => array('module'),
                 'method' => 'createProject',
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
             ),
             'updateProject' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','?'),
-                'pathVars'=> array('module','record'),
+                'path' => array('pmse_Project', '?'),
+                'pathVars' => array('module', 'record'),
                 'method' => 'updateProject',
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
             ),
             'readCustomProject' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','project','?'),
-                'pathVars' => array('module','customAction','record'),
+                'path' => array('pmse_Project', 'project', '?'),
+                'pathVars' => array('module', 'customAction', 'record'),
                 'method' => 'retrieveCustomProject',
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
             ),
             'updateCustomProject' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','project','?'),
-                'pathVars'=> array('module','customAction','record'),
+                'path' => array('pmse_Project', 'project', '?'),
+                'pathVars' => array('module', 'customAction', 'record'),
                 'method' => 'updateCustomProject',
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
             ),
             'readCrmData' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','CrmData', '?', '?'),
-                'pathVars' => array('module','', 'data', 'filter'),
+                'path' => array('pmse_Project', 'CrmData', '?', '?'),
+                'pathVars' => array('module', '', 'data', 'filter'),
                 'method' => 'getCrmData',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html',
@@ -83,8 +99,8 @@ class PMSEProjectApi extends ModuleApi
             ),
             'updateCrmData' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','CrmData', '?', '?'),
-                'pathVars' => array('module','', 'record', 'filter'),
+                'path' => array('pmse_Project', 'CrmData', '?', '?'),
+                'pathVars' => array('module', '', 'record', 'filter'),
                 'method' => 'putCrmData',
                 'shortHelp' => 'Put data to the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html',
@@ -92,8 +108,8 @@ class PMSEProjectApi extends ModuleApi
             ),
             'readCrmDataWithoutFilters' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','CrmData', '?'),
-                'pathVars' => array('module','', 'data'),
+                'path' => array('pmse_Project', 'CrmData', '?'),
+                'pathVars' => array('module', '', 'data'),
                 'method' => 'getCrmData',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html',
@@ -101,8 +117,8 @@ class PMSEProjectApi extends ModuleApi
             ),
             'readActivityDefinition' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','ActivityDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'ActivityDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'getActivityDefinition',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html',
@@ -110,8 +126,8 @@ class PMSEProjectApi extends ModuleApi
             ),
             'updateActivityDefinition' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','ActivityDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'ActivityDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'putActivityDefinition',
                 'shortHelp' => 'Put the CrmData to the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html',
@@ -119,40 +135,40 @@ class PMSEProjectApi extends ModuleApi
             ),
             'readEventDefinition' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','EventDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'EventDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'getEventDefinition',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html'
             ),
             'updateEventDefinition' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','EventDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'EventDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'putEventDefinition',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html'
             ),
             'readGatewayDefinition' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','GatewayDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'GatewayDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'getGatewayDefinition',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html'
             ),
             'updateGatewayDefinition' => array(
                 'reqType' => 'PUT',
-                'path' => array('pmse_Project','GatewayDefinition', '?'),
-                'pathVars' => array('module','', 'record'),
+                'path' => array('pmse_Project', 'GatewayDefinition', '?'),
+                'pathVars' => array('module', '', 'record'),
                 'method' => 'putGatewayDefinition',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html'
             ),
             'verifyRunningProcess' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Project','?', 'verify'),
-                'pathVars' => array('module','record', 'verify'),
+                'path' => array('pmse_Project', '?', 'verify'),
+                'pathVars' => array('module', 'record', 'verify'),
                 'method' => 'verifyRunningProcess',
                 'shortHelp' => 'Get the CrmData from the backend',
                 'longHelp' => 'modules/ProcessMaker/api/help/project_get_help.html'
@@ -169,11 +185,12 @@ class PMSEProjectApi extends ModuleApi
         return $this->projectWrapper->retrieveProject($args['record']);
     }
 
-    public function updateCustomProject($api, $args) {
+    public function updateCustomProject($api, $args)
+    {
         //global $current_user;
         $api->action = "update";
         $this->requireArgs($args, array('record'));
-        
+
         return $this->projectWrapper->updateProject($args['record'], $args);
     }
 
@@ -188,7 +205,7 @@ class PMSEProjectApi extends ModuleApi
     {
         global $current_user;
         $api->action = 'save';
-        $this->requireArgs($args,array('module'));
+        $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::newBean($args['module']);
 
@@ -202,7 +219,8 @@ class PMSEProjectApi extends ModuleApi
                 $args['module'],
                 $args['id'],
                 array('strict_retrieve' => true, 'disable_row_level_security' => true)
-            )) {
+            )
+            ) {
                 throw new SugarApiExceptionInvalidParameter(
                     'Record already exists: ' . $args['id'] . ' in module: ' . $args['module']
                 );
@@ -216,7 +234,7 @@ class PMSEProjectApi extends ModuleApi
         $args['record'] = $id;
 
         //retrieve a Bean created
-        $projectBean = BeanFactory::retrieveBean($args['module'],$args['record']);
+        $projectBean = BeanFactory::retrieveBean($args['module'], $args['record']);
 
         //Create a Diagram row
         $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
@@ -274,27 +292,29 @@ class PMSEProjectApi extends ModuleApi
 //
 //    }
 
-    public function updateProject($api, $args) {
+    public function updateProject($api, $args)
+    {
         $api->action = 'view';
-        $this->requireArgs($args,array('module','record'));
+        $this->requireArgs($args, array('module', 'record'));
 
         $bean = $this->loadBean($api, $args, 'save');
         $api->action = 'save';
         $this->updateBean($bean, $api, $args);
 
-        $args['pro_module'] = isset($args['prj_module'])?$args['prj_module']:null;
-        $args['pro_status'] = isset($args['prj_status'])?$args['prj_status']:null;
+        $args['pro_module'] = isset($args['prj_module']) ? $args['prj_module'] : null;
+        $args['pro_status'] = isset($args['prj_status']) ? $args['prj_status'] : null;
 
         $observer = new PMSEProcessObserver();
         $this->projectWrapper->attach($observer);
         $this->projectWrapper->updateProcessDefinition($args);
     }
 
-    public function deleteRecord($api, $args) {
-        $this->requireArgs($args, array('module','record'));
+    public function deleteRecord($api, $args)
+    {
+        $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'delete');
         $bean->mark_deleted($args['record']);
-        return array('id'=>$bean->id);
+        return array('id' => $bean->id);
     }
 
     /**
@@ -343,7 +363,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getCrmData($api,  $args)
+    public function getCrmData($api, $args)
     {
         return $this->crmDataWrapper->_get($args);
     }
@@ -354,7 +374,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function putCrmData( $api, $args)
+    public function putCrmData($api, $args)
     {
         $processObserver = new PMSEProcessObserver();
         $this->crmDataWrapper->attach($processObserver);
@@ -367,7 +387,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getActivityDefinition($api,  $args)
+    public function getActivityDefinition($api, $args)
     {
         return $this->activityDefinitionWrapper->_get($args);
     }
@@ -383,7 +403,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getEventDefinition($api,  $args)
+    public function getEventDefinition($api, $args)
     {
         return $this->eventDefinitionWrapper->_get($args);
     }
@@ -395,7 +415,7 @@ class PMSEProjectApi extends ModuleApi
         $this->eventDefinitionWrapper->_put($args);
     }
 
-    public function getGatewayDefinition($api,  $args)
+    public function getGatewayDefinition($api, $args)
     {
         return $this->gatewayDefinitionWrapper->_get($args);
     }
@@ -408,7 +428,8 @@ class PMSEProjectApi extends ModuleApi
     public function verifyRunningProcess($api, $args)
     {
         $result = false;
-        $projectBean = BeanFactory::getBean($args['module'],$args['record'], array('strict_retrieve' => true, 'disable_row_level_security' => true));
+        $projectBean = BeanFactory::getBean($args['module'], $args['record'],
+            array('strict_retrieve' => true, 'disable_row_level_security' => true));
         $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
         $casesBean = BeanFactory::getBean('pmse_Inbox')->retrieve_by_string_fields(array("pro_id" => $processBean->id));
         if ($processBean && $casesBean) {

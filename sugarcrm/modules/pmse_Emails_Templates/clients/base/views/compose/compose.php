@@ -1,5 +1,18 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
@@ -14,32 +27,15 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
         array(
             'type'      => 'button',
             'name'      => 'save_button',
-            'label'     => 'Save',
+            'label'     => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn-primary',
         ),
         array(
             'type'      => 'button',
             'name'      => 'save_buttonExit',
-            'label'     => 'Save & Exit',
+            'label'     => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
             'css_class' => 'btn-primary',
         ),
-//        array(
-//            'type'    => 'actiondropdown',
-//            'name'    => 'main_dropdown',
-//            'primary' => true,
-//            'buttons' => array(
-////                array(
-////                    'name'  => 'save_button',
-////                    'type'  => 'rowaction',
-////                    'label' => 'Save',
-////                ),
-////                array(
-////                    'name'  => 'draft_button',
-////                    'type'  => 'rowaction',
-////                    'label' => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
-////                ),
-//            ),
-//        ),
         array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
@@ -57,57 +53,23 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                 array(
                     'name'           => 'base_module',
                     'type'           => 'readonly',
-                    'label'          => 'Target Module',
+                    'label'          => 'LBL_BASE_MODULE',
                     'span'           => 12,
                     'cell_css_class' => 'controls-one btn-fit',
 
                 ),
                 array(
                     'name'            => 'name',
-                    'label'           => 'Name',
+                    'label'           => 'LBL_NAME',
                     'span'            => 12,
                     'label_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'description',
-                    'label'           => 'Description',
+                    'label'           => 'LBL_DESCRIPTION',
                     'span'            => 12,
                     'label_css_class' => 'controls-one btn-fit',
                 ),
-//                array(
-//                    'name'            => 'from_name',
-//                    'label'           => 'From Name',
-//                    'span'            => 12,
-//                    'label_css_class' => 'controls-one btn-fit',
-//                ),
-//                array(
-//                    'name'            => 'email_config',
-//                    'label'           => 'LBL_FROM',
-//                    'type'            => 'sender',
-//                    'span'            => 12,
-//                    'css_class'       => 'inherit-width',
-//                    'label_css_class' => 'begin-fieldgroup',
-//                    'endpoint'        => array(
-//                        'module' => 'OutboundEmailConfiguration',
-//                        'action' => 'list',
-//                    )
-//                ),
-//                array(
-//                    'name'           => 'from_address',
-//                    'type'           => 'from_address',
-//                    'label'          => 'From Address',
-//                    'span'           => 12,
-//                    'cell_css_class' => 'controls-one btn-fit',
-//                    'required'       => false,
-//                ),
-
-//                array(
-//                    'name'           => 'bcc_addresses',
-//                    'type'           => 'recipients',
-//                    'label'          => 'bcc',
-//                    'span'           => 12,
-//                    'cell_css_class' => 'controls-one btn-fit',
-//                ),
                 array(
                     'name'            => 'subject',
                     'type'           => 'subject',
@@ -115,58 +77,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                     'span'            => 12,
                     'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
-//                    'label_css_class' => 'controls-one btn-fit',
-//                    'id' => 'etsubject',
                 ),
-//                array(
-//                    'name'        => 'attachments',
-//                    'label'       => 'Attachments',
-//                    'type'        => 'attachments',
-//                ),
-//                array(
-//                    'name'           => 'actionbar',
-//                    'type'           => 'compose-actionbar',
-//                    'span'           => 12,
-//                    'dismiss_label'  => true,
-//                    'buttonSections' => array(
-//                        array(
-//                            'name'      => 'attachments_dropdown',
-//                            'css_class' => 'btn-group',
-//                            'type'      => 'actiondropdown',
-//                            'buttons'   => array(
-//                                array(
-//                                    'name'  => 'upload_new_button',
-//                                    'type'  => 'attachment-button',
-//                                    'icon'  => 'fa-paperclip',
-//                                    'label' => 'LBL_ATTACHMENT',
-//                                ),
-//                                array(
-//                                    'name'  => 'attach_sugardoc_button',
-//                                    'type'  => 'rowaction',
-//                                    'label' => 'LBL_ATTACH_SUGAR_DOC',
-//                                ),
-//                            ),
-//                        ),
-//                        array(
-//                            'name'      => 'other_actions',
-//                            'css_class' => 'pull-right',
-//                            'buttons'   => array(
-//                                array(
-//                                    'name'  => 'signature_button',
-//                                    'type'  => 'button',
-//                                    'icon'  => 'fa-pencil',
-//                                    'label' => 'LBL_EMAIL_SIGNATURES',
-//                                ),
-//                                array(
-//                                    'name'  => 'template_button',
-//                                    'type'  => 'button',
-//                                    'icon'  => 'fa-file-o',
-//                                    'label' => 'LBL_EMAIL_TEMPLATES',
-//                                ),
-//                            ),
-//                        ),
-//                    ),
-//                ),
                 array(
                     'name'          => 'body_html',
                     'type'          => 'pmse_htmleditable_tinymce',

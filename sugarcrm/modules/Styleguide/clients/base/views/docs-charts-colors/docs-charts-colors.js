@@ -123,6 +123,7 @@
           .colorData('default')
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge1 svg')
@@ -141,6 +142,7 @@
           .colorData('default', {gradient: true})
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge2 svg')
@@ -160,6 +162,7 @@
           .colorData('default')
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge3 svg')
@@ -179,6 +182,7 @@
           .colorData('default', {gradient: true})
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge4 svg')
@@ -198,6 +202,7 @@
           .colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length})
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge5 svg')
@@ -217,6 +222,7 @@
           .colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length, gradient: true})
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge6 svg')
@@ -237,6 +243,7 @@
           .colorData('class')
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.default)
           .transitionMs(4000);
 
       d3.select('#gauge7 svg')
@@ -256,6 +263,7 @@
           .colorData('class', {gradient: true})
           .ringWidth(50)
           .maxValue(9)
+          .direction(app.lang.direction)
           .transitionMs(4000);
 
       d3.select('#gauge8 svg')

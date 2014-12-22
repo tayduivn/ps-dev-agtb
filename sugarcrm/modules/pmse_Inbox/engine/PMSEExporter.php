@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 /**
  * Exports a record of a table in the database
@@ -7,7 +20,8 @@
  * by encrypting its contents, to be transported from one instance to another.
  * @package PMSE
  */
-class PMSEExporter {
+class PMSEExporter
+{
     /**
      * @var $bean
      * @access private
@@ -82,18 +96,18 @@ class PMSEExporter {
      * Method to download a file exported
      * @codeCoverageIgnore
      */
-    public function exportProject($id , ServiceBase $api)
+    public function exportProject($id, ServiceBase $api)
     {
         $projectContent = $this->getProject(array('id' => $id));
         //File Name
         $filename = str_replace(' ', '_', $projectContent['project'][$this->name]) . '.' . $this->extension;
 
-        $api->setHeader("Content-Disposition","attachment; filename=" . $filename);
-        $api->setHeader("Content-Type","application/" . $this->extension);
-        $api->setHeader("Expires","Mon, 26 Jul 1997 05:00:00 GMT" );
-        $api->setHeader("Last-Modified", TimeDate::httpTime() );
-        $api->setHeader("Cache-Control","max-age=0");
-        $api->setHeader("Pragma","public");
+        $api->setHeader("Content-Disposition", "attachment; filename=" . $filename);
+        $api->setHeader("Content-Type", "application/" . $this->extension);
+        $api->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+        $api->setHeader("Last-Modified", TimeDate::httpTime());
+        $api->setHeader("Cache-Control", "max-age=0");
+        $api->setHeader("Pragma", "public");
 
         return serialize($projectContent);
     }

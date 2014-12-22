@@ -40,7 +40,7 @@ r46451 - 2009-04-23 16:57:40 -0700 (Thu, 23 Apr 2009) - jenny - tcpdf initial ch
 */
 
 
-//FILE SUGARCRM flav=pro ONLY
+
  // core font definition file for TCPDF (www.tcpdf.org)
 $type='core';
 $dw=500;

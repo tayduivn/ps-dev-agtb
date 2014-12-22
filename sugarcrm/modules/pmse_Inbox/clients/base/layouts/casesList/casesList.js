@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * @class ComposeAddressbookLayout
@@ -17,7 +27,7 @@
 //        this.context.on('list:executeCase:fire', this.executeCases, this);
     },
     viewStatus: function(model){
-        ShowLog(app, model.get('cas_id'));
+        showImage(model.get('cas_id'));
     },
     viewHistory: function(model){
         showHistory(model.get('cas_id'));
@@ -32,9 +42,14 @@
     cancelCases: function(model){
         var self=this;
 
+        var msg=app.lang.get('LBL_PMSE_CANCEL_MESSAGE', this.module);
+        msg=msg.replace('[]',model.get('cas_title'));
+        msg=msg.replace('{}',model.get('cas_id'));
+
         app.alert.show('cancelCase-id', {
             level: 'confirmation',
-            messages:app.lang.get('LBL_CANCEL_MESSAGE', this.module)+model.get('cas_title')+' with Cas Id: '+model.get('cas_id')+'?',
+            messages:msg,
+//            messages:app.lang.get('LBL_CANCEL_MESSAGE', this.module)+model.get('cas_title')+' with Cas Id: '+model.get('cas_id')+'?',
             autoClose: false,
             onConfirm: function(){
                 app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
@@ -46,8 +61,9 @@
                 app.api.call('update', pmseInboxUrl, value,{
                     success: function(data)
                     {
+                        self.reloadList();
                         app.alert.dismiss('upload');
-                        window.location.reload();
+//                        window.location.reload();
                     }
                 });
             },
@@ -62,14 +78,16 @@
 //        this.executeCasesList(this.buildVariablesString(massCollection));
 //    },
     executeCasesList: function(idCases){
+        var self=this;
         var value = this.model.attributes;
         value.cas_id = idCases;
         var pmseInboxUrl = app.api.buildURL(this.module + '/reactivateFlows','',{},{});
         app.api.call('update', pmseInboxUrl, value,{
             success: function(data)
             {
+                self.reloadList();
                 app.alert.dismiss('upload');
-                window.location.reload();
+//                window.location.reload();
             }
         });
     },
@@ -137,5 +155,14 @@
     search: function(modules, term) {
         // reset offset to 0 on a search. make sure that it resets and does not update.
         this.collection.fetch({query: term, module_list: modules, offset: 0, update: false});
+    },
+    reloadList: function() {
+        var self = this;
+        self.context.reloadData({
+            recursive:false,
+            error:function(error){
+                console.log(error);
+            }
+        });
     }
 })

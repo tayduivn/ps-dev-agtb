@@ -13,28 +13,6 @@
 
 class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    protected function setUp()
-    {
-        global $reload_vardefs;
-        parent::setUp();
-        SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        $reload_vardefs = true;
-    }
-
-    protected function tearDown()
-    {
-        global $reload_vardefs;
-        SugarTestRelationshipUtilities::removeAllCreatedRelationships();
-        SugarTestHelper::tearDown();
-        parent::tearDown();
-        $reload_vardefs = false;
-    }
-
     public function setRelationshipInfoDataProvider()
     {
         return array(
@@ -56,18 +34,17 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-
     /**
      * @dataProvider setRelationshipInfoDataProvider
      */
     public function testSetRelationshipInfoViaRequestVars($id, $rel, $expected)
     {
-        $bean = new MockAccountSugarBean();
+        $bean = new Account();
 
         $_REQUEST['relate_to'] = $rel;
         $_REQUEST['relate_id'] = $id;
 
-        $return = $bean->set_relationship_info();
+        $return = SugarTestReflection::callProtectedMethod($bean, 'set_relationship_info');
 
         $this->assertSame($expected, $return);
     }
@@ -77,191 +54,183 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetRelationshipInfoViaBeanProperties($id, $rel, $expected)
     {
-        $bean = new MockAccountSugarBean();
+        $bean = new Account();
 
         $bean->not_use_rel_in_req = true;
         $bean->new_rel_id = $id;
         $bean->new_rel_relname = $rel;
 
-        $return = $bean->set_relationship_info();
+        $return = SugarTestReflection::callProtectedMethod($bean, 'set_relationship_info');
 
         $this->assertSame($expected, $return);
     }
 
     public function testHandlePresetRelationshipsAdd()
     {
-        $acc = SugarTestAccountUtilities::createAccount();
+        $contactId = 'some_contact_id';
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->expects($this->once())
+            ->method('load_relationship')
+            ->with('contacts');
 
-        $macc = new MockAccountSugarBean();
-        $macc->disable_row_level_security = true;
-        $macc->retrieve($acc->id);
+        $account->contacts = $this->getMock('Link2', array('add'), array(), '', false);
+        $account->contacts->expects($this->once())
+            ->method('add')
+            ->with($contactId)
+            ->willReturn(true);
 
-        // create an contact
-        $contact = SugarTestContactUtilities::createContact();
-
-        // set the contact id from the bean.
-        $macc->contact_id = $contact->id;
-
-        $new_rel_id = $macc->handle_preset_relationships($contact->id, 'contacts');
-
+        $account->contact_id = $contactId;
+        $new_rel_id = SugarTestReflection::callProtectedMethod(
+            $account,
+            'handle_preset_relationships',
+            array($contactId, 'contacts')
+        );
         $this->assertFalse($new_rel_id);
-
-        // make sure the relationship exists
-
-        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0";
-        $result = $GLOBALS['db']->query($sql);
-        $row = $GLOBALS['db']->fetchByAssoc($result);
-
-        $this->assertSame(array('account_id' => $macc->id, 'contact_id' => $contact->id), $row);
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-
-        unset($macc);
-
     }
 
     public function testHandlePresetRelationshipsDelete()
     {
-        $acc = SugarTestAccountUtilities::createAccount();
+        $contactId = 'some_contact_id';
+        $accountId = 'some_account_id';
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->id = $accountId;
+        $account->expects($this->once())
+            ->method('load_relationship')
+            ->with('contacts');
 
-        $macc = new MockAccountSugarBean();
-        $macc->disable_row_level_security = true;
-        $macc->retrieve($acc->id);
+        $account->contacts = $this->getMock('Link2', array('delete'), array(), '', false);
+        $account->contacts->expects($this->once())
+            ->method('delete')
+            ->with($accountId, $contactId)
+            ->willReturn(true);
 
-        // create an contact
-        $contact = SugarTestContactUtilities::createContact();
-
-
-        // insert a dummy row
-        $rel_row_id = create_guid();
-        $sql = "INSERT INTO accounts_contacts (id, account_id, contact_id) VALUES ('" . $rel_row_id . "','" . $macc->id . "','" . $contact->id . "')";
-        $GLOBALS['db']->query($sql);
-        $GLOBALS['db']->commit();
-
-        // set the contact id from the bean.
-        $macc->rel_fields_before_value['contact_id'] = $contact->id;
-
-        $new_rel_id = $macc->handle_preset_relationships($contact->id, 'contacts');
-
-        $this->assertEquals($contact->id, $new_rel_id);
-
-        // make sure the relationship exists
-
-        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0";
-        $result = $GLOBALS['db']->query($sql);
-        $row = $GLOBALS['db']->fetchByAssoc($result);
-
-        $this->assertFalse($row);
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-
-        unset($macc);
-
+        $account->rel_fields_before_value['contact_id'] = $contactId;
+        $new_rel_id = SugarTestReflection::callProtectedMethod(
+            $account,
+            'handle_preset_relationships',
+            array($contactId, 'contacts')
+        );
+        $this->assertEquals($contactId, $new_rel_id);
     }
 
-    /**
-     * @large
-     */
     public function testHandleRemainingRelateFields()
     {
-        // create a test relationship
-        // save cache reset value
-        $_cacheResetValue = SugarCache::$isCacheReset;
-        //$rel = $this->createRelationship('Accounts');
+        $thisId = 'this_id';
+        $relateId = 'relate_id';
 
-        $rel = SugarTestRelationshipUtilities::createRelationship(array(
-                    'relationship_type' => 'one-to-many',
-                    'lhs_module' => 'Accounts',
-                    'rhs_module' => 'Accounts',
-                ));
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->expects($this->atLeastOnce())
+            ->method('load_relationship')
+            ->with('relate_field_link')
+            ->willReturn(true);
 
-        if($rel == false) {
-            $this->fail('Relationship Not Created');
-        }
+        $account->relate_field_link = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->relate_field_link->expects($this->once())
+            ->method('add')
+            ->with($relateId)
+            ->willReturn(true);
+        $account->relate_field_link->expects($this->once())
+            ->method('delete')
+            ->with($thisId, $relateId)
+            ->willReturn(true);
 
-        // Getting the name on a self-referencing relationship is hard, we want the right hand side
-        // so we have to manually tweak it.
-        $rel_name = $rel->getName().'_right';
-        $id = $rel->getIDName('Accounts');
-
-        $acc1 = SugarTestAccountUtilities::createAccount();
-        $acc2 = SugarTestAccountUtilities::createAccount();
-
-        $macc = new MockAccountSugarBean();
-        $macc->disable_row_level_security = true;
-        $macc->retrieve($acc2->id);
-
-        $macc->$id = $acc1->id;
-
-        $ret = $macc->handle_remaining_relate_fields();
-        $this->assertContains($rel_name, $ret['add']['success']);
-
-        $macc->rel_fields_before_value[$id] = $acc1->id;
-        $macc->$id = '';
-        $ret = $macc->handle_remaining_relate_fields();
-
-        $this->assertContains($rel_name, $ret['remove']['success']);
-
-        unset($macc);
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        // reset the isCacheReset Value since this is all one request.
-        SugarCache::$isCacheReset = $_cacheResetValue;
-    }
-
-    public function handleRequestRelateProvider()
-    {
-        return array(
-            array('member_of', true),
-            array('MEMBER_OF', true),
-            array(time(), false),
+        $account->field_defs['relate_field'] = array(
+            'name' => 'relate_field',
+            'id_name' => 'relate_field_id',
+            'type' => 'relate',
+            'save' => true,
+            'link' => 'relate_field_link',
         );
+        $account->field_defs['relate_field_id'] = array(
+            'name' => 'relate_field_id',
+            'type' => 'id',
+        );
+        $account->field_defs['relate_field_link'] = array(
+            'name' => 'relate_field_link',
+            'type' => 'link',
+        );
+
+        SugarBean::clearLoadedDef('Account');
+
+        $account->id = $thisId;
+        $account->relate_field_id = $relateId;
+        $ret = SugarTestReflection::callProtectedMethod($account, 'handle_remaining_relate_fields');
+        $this->assertContains('relate_field_link', $ret['add']['success']);
+
+        $account->rel_fields_before_value['relate_field_id'] = $relateId;
+        $account->relate_field_id = '';
+        $ret = SugarTestReflection::callProtectedMethod($account, 'handle_remaining_relate_fields');
+        $this->assertContains('relate_field_link', $ret['remove']['success']);
     }
 
-    /**
-     *
-     * @dataProvider handleRequestRelateProvider
-     * @param $rel_link_name
-     */
-    public function testHandleRequestRelate($rel_link_name, $expected)
+    public function testHandleRequestRelate()
     {
-        $acc1 = SugarTestAccountUtilities::createAccount();
-        $acc2 = SugarTestAccountUtilities::createAccount();
+        $relateId = 'relate_id';
 
-        $macc = new MockAccountSugarBean();
-        $macc->retrieve($acc2->id);
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->expects($this->any())
+            ->method('load_relationship')
+            ->with('member_of')
+            ->willReturn(true);
 
+        $account->member_of = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->member_of->expects($this->once())
+            ->method('add')
+            ->with($relateId)
+            ->willReturn(true);
 
-        $ret = $macc->handle_request_relate($acc1->id, $rel_link_name);
-
-        $this->assertSame($expected, $ret);
-
-        unset($macc);
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-
-    }
-}
-
-class MockAccountSugarBean extends Account
-{
-    public function set_relationship_info(array $exclude = array())
-    {
-        return parent::set_relationship_info($exclude);
+        $ret = SugarTestReflection::callProtectedMethod(
+            $account,
+            'handle_request_relate',
+            array($relateId, 'member_of')
+        );
+        $this->assertTrue($ret);
     }
 
-    public function handle_preset_relationships($new_rel_id, $new_rel_name, $exclude = array())
+    public function testHandleRequestRelateWithWrongLetterCase()
     {
-        return parent::handle_preset_relationships($new_rel_id, $new_rel_name, $exclude);
+        $relateId = 'relate_id';
+
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->expects($this->at(0))
+            ->method('load_relationship')
+            ->with('MEMBER_OF')
+            ->willReturn(false);
+
+        $account->expects($this->at(1))
+            ->method('load_relationship')
+            ->with('member_of')
+            ->willReturn(true);
+
+        $account->member_of = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->member_of->expects($this->once())
+            ->method('add')
+            ->with($relateId)
+            ->willReturn(true);
+
+        $ret = SugarTestReflection::callProtectedMethod(
+            $account,
+            'handle_request_relate',
+            array($relateId, 'MEMBER_OF')
+        );
+        $this->assertTrue($ret);
     }
 
-    public function handle_remaining_relate_fields($exclude = array())
+    public function testHandleRequestRelateWhenLinkNameDoesNotExist()
     {
-        return parent::handle_remaining_relate_fields($exclude);
-    }
+        $rel_link_name = 'some_non_existing_link_name';
+        $relateId = 'relate_id';
 
-    public function handle_request_relate($new_rel_id, $new_rel_link)
-    {
-        return parent::handle_request_relate($new_rel_id, $new_rel_link);
+        $account = $this->getMock('Account', array('load_relationship'));
+        $account->expects($this->any())
+            ->method('load_relationship')
+            ->willReturn(false);
+
+        $ret = SugarTestReflection::callProtectedMethod(
+            $account,
+            'handle_request_relate',
+            array($relateId, $rel_link_name)
+        );
+        $this->assertFalse($ret);
     }
 }

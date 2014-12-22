@@ -1,10 +1,23 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 $moduleName = 'pmse_Business_Rules';
 $viewdefs[$moduleName]['base']['menu']['header'] = array(
     array(
         'route' => "#$moduleName/create",
-        'label' => 'LNK_NEW_RECORD',
+        'label' => 'LNK_PMSE_BUSINESS_RULES_NEW_RECORD',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
         'icon' => 'fa-plus',
@@ -18,7 +31,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/businessrules-import',
-        'label' =>'LNK_IMPORT_PMSE_BUSINESS_RULES',
+        'label' =>'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
         'acl_action'=>'upload',
         'acl_module'=>$moduleName,
         'icon' => 'fa-upload',

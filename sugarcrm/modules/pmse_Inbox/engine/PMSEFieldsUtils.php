@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 function bpminbox_get_username_by_id($userid)
 {
@@ -96,8 +109,8 @@ function bpminbox_get_display_text($temp_module, $field, $field_value, $adv_type
         return $app_list_strings['wflow_adv_enum_type_dom'][$ext1] . " " . $field_value . " step(s)";
     }
 
-    if ($target_type==='bool') {
-        $field_value = (bool) $field_value;
+    if ($target_type === 'bool') {
+        $field_value = (bool)$field_value;
     }
 
     require_once('include/SugarFields/SugarFieldHandler.php');
@@ -213,7 +226,8 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
             return $locale->getLocaleFormattedName($source_object->first_name, $source_object->last_name);
         } else {
             //use the past value
-            return $locale->getLocaleFormattedName($source_object->fetched_row['first_name'], $source_object->fetched_row['last_name']);
+            return $locale->getLocaleFormattedName($source_object->fetched_row['first_name'],
+                $source_object->fetched_row['last_name']);
         }
     } elseif ($field_name == 'modified_by_name' && $use_past_array) {
         return $source_object->old_modified_by_name;
@@ -242,10 +256,12 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
         if ($use_past_array == false && $field_name != "date_entered") {
             //use the future value
 
-            return bpminbox_get_display_text($source_object, $field_name, $source_object->$field_name, null, null, $context);
+            return bpminbox_get_display_text($source_object, $field_name, $source_object->$field_name, null, null,
+                $context);
         } else {
             //use the past value
-            return bpminbox_get_display_text($source_object, $field_name, $source_object->fetched_row[$field_name], null, null, $context);
+            return bpminbox_get_display_text($source_object, $field_name, $source_object->fetched_row[$field_name],
+                null, null, $context);
         }
     }
     //In future, check for maybe currency type
@@ -254,8 +270,8 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
 
 /**
  *
- * @param string $field_name_mapped   e.g. 'amount_usdollar'
- * @param object $source_object  e.g. Opportunities
+ * @param string $field_name_mapped e.g. 'amount_usdollar'
+ * @param object $source_object e.g. Opportunities
  */
 function get_bean_field_type($field_name_mapped, $bean_source_object)
 {

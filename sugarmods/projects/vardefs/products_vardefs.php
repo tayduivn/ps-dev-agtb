@@ -1,5 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
+
 //BEGIN PRODUCTS VARDEFS 
 // adding project field
 $dictionary['Product']['fields']['projects'] = array (

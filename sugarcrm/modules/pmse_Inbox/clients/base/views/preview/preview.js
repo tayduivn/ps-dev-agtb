@@ -1,8 +1,30 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     extendsFrom: 'PreviewView',
-
+    events:{"click .minify":"toggleMinify"},
+    toggleMinify: function(evt) {
+        var $el = this.$('.dashlet-toggle > i'),
+            collapsed = $el.is('.icon-chevron-up');
+            if(collapsed){
+                $('.dashlet-toggle > i').removeClass('icon-chevron-up');
+            $('.dashlet-toggle > i').addClass('icon-chevron-down');
+        }else{
+                $('.dashlet-toggle > i').removeClass('icon-chevron-down');
+                $('.dashlet-toggle > i').addClass('icon-chevron-up');
+            }
+        $('.dashlet').toggleClass('collapsed');
+        $('.dashlet-content').toggleClass('hide');
+    },
     _renderPreview: function(model, collection, fetch, previewId){
-        console.log(model.get('cas_id'));
         var self = this;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer

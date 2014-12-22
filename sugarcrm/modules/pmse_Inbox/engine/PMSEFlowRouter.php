@@ -1,29 +1,41 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 /**
- * The flow router class is in charge of manage all the routing and derivation 
- * of all the instances of PMSEElement subclasses and also of evaluating the 
+ * The flow router class is in charge of manage all the routing and derivation
+ * of all the instances of PMSEElement subclasses and also of evaluating the
  * execution result of those classes.
  *
  */
 require_once 'PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'PMSEHandlers/PMSEJobQueueHandler.php';
-
 require_once 'PMSEExceptions/PMSEFlowRouteException.php';
 
 class PMSEFlowRouter
 {
 
     /**
-     * The case flow handler attribute manages all the Database operations 
+     * The case flow handler attribute manages all the Database operations
      * related to the pmse_bpm_flow table.
-     * @var type 
+     * @var type
      */
     private $caseFlowHandler;
-    
+
     /**
-     * This attribute is in charge of manage the 
+     * This attribute is in charge of manage the
      * queue and run of asynchronous elements
-     * @var type 
+     * @var type
      */
     private $jobQueueHandler;
 
@@ -74,7 +86,7 @@ class PMSEFlowRouter
     }
 
     /**
-     * 
+     *
      * @codeCoverageIgnore
      * @deprecated
      */
@@ -84,7 +96,7 @@ class PMSEFlowRouter
     }
 
     /**
-     * 
+     *
      * @codeCoverageIgnore
      * @deprecated since version 0.00001
      */
@@ -137,10 +149,10 @@ class PMSEFlowRouter
     }
 
     /**
-     * Run the engine recursively this method is the main entry point for 
+     * Run the engine recursively this method is the main entry point for
      * the engine, modifications and updates to this method should be done
      * with extreme precaution.
-     * 
+     *
      * @param type $flowData
      * @param type $createThread
      * @param type $bean
@@ -148,26 +160,26 @@ class PMSEFlowRouter
      * @deprecated since version pmse2
      * @codeCoverageIgnore
      */
-    public function runEngine($flowData, $createThread = false, $bean = null, $externalAction = '')
-    {
-        $routeData = $this->routeFlow($flowData, $createThread, $bean, $externalAction);
-        if (!empty($routeData['next_elements'])) {
-            $createThread = sizeof($routeData['next_elements']) > 1;
-            foreach ($routeData['next_elements'] as $elementData) {
-                $this->runEngine($elementData, $createThread, $bean);
-            }
-        } else {
-            // Quick fix to the 0 output printed by some element, 
-            // Please don't remove until the fix to the element is committed
-            // FIXED ob_get_clean();
-            return true;
-        }
-        return false;
-    }
+//    public function runEngine($flowData, $createThread = false, $bean = null, $externalAction = '')
+//    {
+//        $routeData = $this->routeFlow($flowData, $createThread, $bean, $externalAction);
+//        if (!empty($routeData['next_elements'])) {
+//            $createThread = sizeof($routeData['next_elements']) > 1;
+//            foreach ($routeData['next_elements'] as $elementData) {
+//                $this->runEngine($elementData, $createThread, $bean);
+//            }
+//        } else {
+//            // Quick fix to the 0 output printed by some element, 
+//            // Please don't remove until the fix to the element is committed
+//            // FIXED ob_get_clean();
+//            return true;
+//        }
+//        return false;
+//    }
 
     /**
      * This entry point is used by the RunJob function that wakes up queued jobs
-     * 
+     *
      * @param type $flowData
      * @param type $createThread
      * @param type $bean
@@ -176,20 +188,20 @@ class PMSEFlowRouter
      * @deprecated
      * @codeCoverageIgnore
      */
-    public function wakeUpEngine($flowData, $createThread = false, $bean = null, $executionResult = array())
-    {
-        $elements = $this->retrieveFollowingElements($executionResult, $flowData);
-        $createThread = sizeof($elements) > 1;
-        foreach ($elements as $elementData) {
-            $this->runEngine($elementData, $createThread, $bean);
-        }
-    }
+//    public function wakeUpEngine($flowData, $createThread = false, $bean = null, $executionResult = array())
+//    {
+//        $elements = $this->retrieveFollowingElements($executionResult, $flowData);
+//        $createThread = sizeof($elements) > 1;
+//        foreach ($elements as $elementData) {
+//            $this->runEngine($elementData, $createThread, $bean);
+//        }
+//    }
 
     /**
-     * The route Flow is the method that manages the execution data results and 
-     * also save the new flow and close the previous one, modifications and updates 
+     * The route Flow is the method that manages the execution data results and
+     * also save the new flow and close the previous one, modifications and updates
      * to this method should be done with extreme caution.
-     * 
+     *
      * @param type $resultData Description
      * @param type $previousFlowData
      * @param type $createThread
@@ -202,10 +214,12 @@ class PMSEFlowRouter
             case 'UPDATE':
                 unset($resultData['flow_data']['cas_index']); // The case index should not be overriden
                 unset($resultData['flow_data']['cas_previous']); // The case index should not be overriden
-                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'], false, $resultData['flow_id']);
+                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'], false,
+                    $resultData['flow_id']);
                 break;
             case 'CREATE':
-                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'], $createThread);
+                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'],
+                    $createThread);
                 $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($previousFlowData);
                 break;
             case 'CLOSE':
@@ -213,7 +227,7 @@ class PMSEFlowRouter
                 break;
             case 'NONE':
             default :
-                $resultData['processed_flow'] = $resultData['flow_data'];                
+                $resultData['processed_flow'] = $resultData['flow_data'];
                 break;
         }
         $resultData['next_elements'] = $this->retrieveFollowingElements($resultData, $resultData['processed_flow']);
@@ -223,7 +237,7 @@ class PMSEFlowRouter
     /**
      * It processes an element based in the assumption that should be executed
      * Synchronously or Asynchronously
-     * 
+     *
      * @param array $flowData
      * @param type $bean
      * @param type $externalAction
@@ -231,26 +245,26 @@ class PMSEFlowRouter
      * @deprecated since version pmse2
      * @codeCoverageIgnore
      */
-    public function processElement($flowData, $bean, $externalAction = '')
-    {
-        $executionResult = array();
-        $pmseElement = $this->retrieveElement($flowData);
-        switch ($pmseElement->getExecutionMode()) {
-            case 'ASYNC':
-                $executionResult = $this->queueJob($flowData, $bean);
-                break;
-            case 'SYNC':
-            default:
-                $executionResult = $pmseElement->run($flowData, $bean, $externalAction);
-                break;
-        }
-        return $executionResult;
-    }
+//    public function processElement($flowData, $bean, $externalAction = '')
+//    {
+//        $executionResult = array();
+//        $pmseElement = $this->retrieveElement($flowData);
+//        switch ($pmseElement->getExecutionMode()) {
+//            case 'ASYNC':
+//                $executionResult = $this->queueJob($flowData, $bean);
+//                break;
+//            case 'SYNC':
+//            default:
+//                $executionResult = $pmseElement->run($flowData, $bean, $externalAction);
+//                break;
+//        }
+//        return $executionResult;
+//    }
 
     /**
-     * This retrieve the set of next elements to be executed based on the 
+     * This retrieve the set of next elements to be executed based on the
      * route_action response attribute
-     * 
+     *
      * @param array $executionResult
      * @param array $flowData
      * @return array
@@ -282,38 +296,38 @@ class PMSEFlowRouter
     }
 
     /**
-     * This method uses the Job Queue Handler instance in order to save a new 
+     * This method uses the Job Queue Handler instance in order to save a new
      * job in the Sugar Job Queue
-     * 
+     *
      * @param type $flowData
      * @return type
      */
     public function queueJob($flowData)
     {
-        $jobData = new stdClass();        
+        $jobData = new stdClass();
         $jobData->id = $flowData['cas_id'] . '-' . $flowData['cas_index'];
         $jobData->data = $flowData;
         return $this->jobQueueHandler->submitPMSEJob($jobData);
     }
-    
-    
+
+
     /**
      * Freeze the execution of a determined element.
-     * 
+     *
      * @param type $flowData
      * @return type
      * @deprecated since version pmse2
      * @codeCoverageIgnore
      */
-    public function invalidateElement(PMSEElement $element, $flowData)
-    {
-        $flowData['cas_flow_status'] = 'INVALID';
-        return $element->prepareResponse($flowData, 'INVALID', 'CREATE');
-    }
+//    public function invalidateElement(PMSEElement $element, $flowData)
+//    {
+//        $flowData['cas_flow_status'] = 'INVALID';
+//        return $element->prepareResponse($flowData, 'INVALID', 'CREATE');
+//    }
 
     /**
      * This function filters the returning flows based on the execution response
-     * 
+     *
      * @param type $nextElements
      * @param type $filterFlows
      * @return type
@@ -330,5 +344,5 @@ class PMSEFlowRouter
         return array_values($nextElements);
     }
 
-    
+
 }

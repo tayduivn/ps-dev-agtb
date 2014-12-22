@@ -1,6 +1,21 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
 //require_once 'clients/base/api/FileApi.php';
 require_once 'clients/base/api/FileTempApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSEImageGenerator.php';
@@ -9,13 +24,15 @@ require_once 'modules/pmse_Inbox/engine/PMSEImageGenerator.php';
  * API Class to handle temporary image (attachment) interactions with a field in
  * a bean that can be new, so no record id is associated yet.
  */
-class PMSEImageGeneratorApi extends FileTempApi {
+class PMSEImageGeneratorApi extends FileTempApi
+{
     /**
      * Dictionary registration method, called when the API definition is built
      *
      * @return array
      */
-    public function registerApiRest() {
+    public function registerApiRest()
+    {
         return array(
             'getFileContents' => array(
                 'reqType' => 'GET',
@@ -39,6 +56,7 @@ class PMSEImageGeneratorApi extends FileTempApi {
             ),
         );
     }
+
     /**
      * Gets a single file for rendering
      *
@@ -47,7 +65,8 @@ class PMSEImageGeneratorApi extends FileTempApi {
      * @return string
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
      */
-    public function getFile($api, $args) {
+    public function getFile($api, $args)
+    {
         $this->getProcessImage($api, $args);
         $args['temp_id'] = $args['record'];
         parent::getTempImage($api, $args);
@@ -64,13 +83,14 @@ class PMSEImageGeneratorApi extends FileTempApi {
     {
         parent::getTempImage($api, $args);
     }
-    private function getProcessImage($api, $args)
+
+    public function getProcessImage($api, $args)
     {
         $path = 'upload://tmp/';
         $image = new PMSEImageGenerator();
         $img = $image->get_image($args['record']);
         $file = new UploadStream();
-        if (!$file->checkDir($path)){
+        if (!$file->checkDir($path)) {
             $file->createDir($path);
         }
         $file_path = UploadFile::realpath($path) . '/' . $args['record'];

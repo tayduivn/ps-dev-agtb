@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -720,8 +720,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         // sorting fields of certain types will cause database engine problems
         $noSortByType = isset($this->_fielddefs[$fieldName]['type']) && isset($this->nonSortableTypes[$this->_fielddefs[$fieldName]['type']]);
         $noSortDBType = isset($this->_fielddefs[$fieldName]['dbType']) && $this->_fielddefs[$fieldName]['dbType'] == 'id';
-        if ($noSortByType || $noSortDBType) {
-            $fieldDef['sortable'] = false;
+        $sortable = (isset($this->_fielddefs[$fieldName]['sortable'])) ? isTruthy($this->_fielddefs[$fieldName]['sortable']) : false;
+        $relateSortable = false;
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] === 'relate') {
+            $hasSortOn = isset($this->_fielddefs[$fieldName]['sort_on']) && is_array($this->_fielddefs[$fieldName]['sort_on']);
+            $relateSortable = !($hasSortOn);
+        }
+        if ($noSortByType || $noSortDBType || $relateSortable) {
+            $fieldDef['sortable'] = $sortable;
         }
 
         return $fieldDef;

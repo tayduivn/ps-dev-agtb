@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -72,6 +72,9 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
 
         // create custom localization file
         $this->file = 'custom/include/language/' . $this->language . '.lang.php';
+        if (file_exists($this->file)) {
+            rename($this->file, $this->file . '.bak');
+        }
         $dirName = dirname($this->file);
         if (!file_exists($dirName)) {
             mkdir($dirName, 0777, true);
@@ -88,7 +91,12 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        SugarAutoLoader::unlink($this->file, true);
+        if (file_exists($this->file . '.bak')) {
+            rename($this->file . '.bak', $this->file);
+        } else {
+            SugarAutoLoader::unlink($this->file, true);
+        }
+
 
         unset($GLOBALS['mod_strings']);
     }

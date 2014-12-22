@@ -1,10 +1,23 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
     'dashlets' => array(
         array(
-            'label' => 'PMSE Email Templates',
-            'description' => 'ProcessMaker Email Templates',
+            'label' => 'LBL_PMSE_EMAIL_TEMPLATES_DASHLET',
+            'description' => 'LBL_PMSE_EMAIL_TEMPLATES_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,
                 'visibility' => 'user',
@@ -15,16 +28,8 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
             ),
             'filter' => array(
                 'module' => array(
-//                    'Accounts',
-//                    'Bugs',
-//                    'Cases',
-//                    'Contacts',
                     'Home',
-//                    'Leads',
-//                    'Opportunities',
-//                    'Prospects',
                     'pmse_Emails_Templates',
-//                    'pmse_BpmProcessDefinition',
                 ),
                 'view' => 'record',
             ),
@@ -44,7 +49,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                             'module' => 'pmse_Emails_Templates',
                             'link' => '#pmse_Emails_Templates',
                         ),
-                        'label' => 'Create Email Template',
+                        'label' => 'LNK_PMSE_EMAIL_TEMPLATES_NEW_RECORD',
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Emails_Templates',
                     ),
@@ -55,7 +60,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                             'module' => 'pmse_Emails_Templates',
                             'link' => '#pmse_Emails_Templates/layout/emailtemplates-import'
                         ),
-                        'label' => 'Import Email Template',
+                        'label' => 'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD',
                         'acl_action' => 'importRecord',
                         'acl_module' => 'pmse_Emails_Templates',
                     ),
@@ -73,12 +78,6 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                         'action' => 'refreshClicked',
                         'label' => 'LBL_DASHLET_REFRESH_LABEL',
                     ),
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'toggleClicked',
-//                        'label' => 'LBL_DASHLET_MINIMIZE',
-//                        'event' => 'minimize',
-//                    ),
                     array(
                         'type' => 'dashletaction',
                         'action' => 'removeClicked',
@@ -121,13 +120,9 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
     'tabs' => array(
         array(
             'active' => true,
-            'filters' => array(
-                //'assigned_user_id' => array('$not_in' => array('')),
-                //'cas_assigned_status' => array('$equals' => 'ASSIGNED'),
-            ),
-//            'label' => 'LBL_PMSE_BUTTON_ASSIGNED',
-            'label' => 'PMSE Email Templates',
-            'link' => 'pmse_Emails_Templates',
+            'filters' => array(),
+            'label' => 'LBL_PMSE_EMAIL_TEMPLATES_DASHLET',
+            'link' => 'LBL_PMSE_EMAIL_TEMPLATES_DASHLET',
             'module' => 'pmse_Emails_Templates',
             'order_by' => 'date_entered:desc',
             'record_date' => 'date_entered',
@@ -138,7 +133,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:edit:fire',
                     'target' => 'view',
-                    'tooltip' => 'Edit',
+                    'tooltip' => 'LBL_EDIT_BUTTON',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -147,7 +142,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:delete-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Delete',
+                    'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -156,7 +151,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:download:fire',
                     'target' => 'view',
-                    'tooltip' => 'Export',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -165,7 +160,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:description-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Description',
+                    'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
             ),

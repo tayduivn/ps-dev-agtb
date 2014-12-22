@@ -58,5 +58,8 @@ $mod_strings = array (
 
     'LBL_QUOTA_TYPE' => 'Type',
     'LBL_AMOUNT_BASE_CURRENCY' => 'Base Currency Amount',
-    'LBL_CREATED_BY' => 'Created By'
+    'LBL_CREATED_BY' => 'Created By',
+
+    'LBL_DIRECT' => 'Direct',
+    'LBL_ROLLUP' => 'Rollup'
 );

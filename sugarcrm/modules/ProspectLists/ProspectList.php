@@ -237,6 +237,12 @@ FROM prospect_lists_prospects plp
         $this->entry_count = $this->get_entry_count();
 	}
 
+    public function updateRelatedCalcFields($linkName = "")
+    {
+        parent::updateRelatedCalcFields($linkName);
+        $this->entry_count = $this->get_entry_count();
+    }
+
 
 	function update_currency_id($fromid, $toid){
 	}

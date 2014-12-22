@@ -1,5 +1,16 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEObserver.php';
 require_once 'include/SugarQuery/SugarQuery.php';
@@ -15,7 +26,7 @@ class PMSEProcessObserver implements PMSEObserver
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $sugarQuery;
 
@@ -24,9 +35,9 @@ class PMSEProcessObserver implements PMSEObserver
      * @var PMSELogger
      */
     protected $logger;
-    
+
     /**
-     * 
+     *
      * @codeCoverageIgnore
      */
     public function __construct()
@@ -34,9 +45,9 @@ class PMSEProcessObserver implements PMSEObserver
         $this->sugarQuery = new SugarQuery();
         $this->logger = PMSELogger::getInstance();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -46,7 +57,7 @@ class PMSEProcessObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -56,7 +67,7 @@ class PMSEProcessObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param type $sugarQuery
      * @codeCoverageIgnore
      */
@@ -66,7 +77,7 @@ class PMSEProcessObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -74,9 +85,9 @@ class PMSEProcessObserver implements PMSEObserver
     {
         $this->logger = $logger;
     }
-        
+
     /**
-     * 
+     *
      * @param type $id
      * @return type
      * @codeCoverageIgnore
@@ -85,16 +96,16 @@ class PMSEProcessObserver implements PMSEObserver
     {
         return BeanFactory::getBean('pmse_BpmRelatedDependency', $id);
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEObservable $subject
      * @return type
      */
     public function update($subject)
     {
         if (method_exists($subject, 'getProcessDefinition')) {
-            $this->logger->debug("Trigger update of a Related Relationship for a Process Definition update");
+            $this->logger->debug("Trigger update of a Related Relationship for a Process Definitions update");
 
             $processDefinition = $subject->getProcessDefinition();
             $processDefinitionData = $processDefinition->fetched_row;
@@ -108,7 +119,7 @@ class PMSEProcessObserver implements PMSEObserver
             $this->sugarQuery->select($fields);
             $this->sugarQuery->from($relatedDependency);
             $this->sugarQuery->where()->queryAnd()
-                    ->addRaw("pro_id='{$processDefinitionData['id']}' AND prj_id='{$processDefinitionData['prj_id']}' AND deleted=0");
+                ->addRaw("pro_id='{$processDefinitionData['id']}' AND prj_id='{$processDefinitionData['prj_id']}' AND deleted=0");
 
             $result = $this->sugarQuery->compileSql();
             $this->logger->debug("Retrieve dependencies query: {$result}");
@@ -119,25 +130,33 @@ class PMSEProcessObserver implements PMSEObserver
                 $bean->pro_status = $processDefinitionData['pro_status'];
                 $bean->pro_locked_variables = $processDefinitionData['pro_locked_variables'];
                 $bean->pro_terminate_variables = $processDefinitionData['pro_terminate_variables'];
-                if ($bean->pro_module !== $processDefinitionData['pro_module'] && $row['rel_element_type'] == 'TERMINATE'){
-                    $bean->deleted = TRUE;
+                if ($bean->pro_module !== $processDefinitionData['pro_module'] && $row['rel_element_type'] == 'TERMINATE') {
+                    $bean->deleted = true;
                 }
                 $bean->save();
             }
-            
-            $fakeEventData = array(
-                'id' => 'TERMINATE',
-                'evn_type' => 'GLOBAL_TERMINATE',
-                'evn_criteria' => $processDefinitionData['pro_terminate_variables'],
-                'evn_behavior' => 'CATCH',
-                'pro_id' => $processDefinitionData['id']
-            );
-            
-            $depWrapper = new PMSERelatedDependencyWrapper();
-            $depWrapper->processRelatedDependencies($fakeEventData);
+
+            $this->processRelatedDependencies($processDefinitionData);
             $depNumber = count($rows);
             $this->logger->debug("Updating {$depNumber} dependencies");
         }
         return $result;
+    }
+    
+    /**
+     * 
+     * @param type $processDefinitionData
+     */
+    public function processRelatedDependencies($processDefinitionData)
+    {
+        $fakeEventData = array(
+            'id' => 'TERMINATE',
+            'evn_type' => 'GLOBAL_TERMINATE',
+            'evn_criteria' => $processDefinitionData['pro_terminate_variables'],
+            'evn_behavior' => 'CATCH',
+            'pro_id' => $processDefinitionData['id']
+        );
+        $depWrapper = new PMSERelatedDependencyWrapper();
+        $depWrapper->processRelatedDependencies($fakeEventData);
     }
 }

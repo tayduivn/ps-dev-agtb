@@ -1,10 +1,20 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
 require_once 'PMSEObservers/PMSEObservable.php';
 
-/**
- * 
- */
 
 class PMSEEventDefinitionWrapper implements PMSEObservable
 {
@@ -27,81 +37,89 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
         $this->processDefinition = BeanFactory::getBean('pmse_BpmProcessDefinition');
         $this->crmDataWrapper = new PMSECrmDataWrapper();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getEvent() {
+    public function getEvent()
+    {
         return $this->event;
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getEventDefinition() {
+    public function getEventDefinition()
+    {
         return $this->eventDefinition;
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getProcessDefinition() {
+    public function getProcessDefinition()
+    {
         return $this->processDefinition;
     }
 
     /**
-     * 
+     *
      * @param type $event
      * @codeCoverageIgnore
      */
-    public function setEvent($event) {
+    public function setEvent($event)
+    {
         $this->event = $event;
     }
 
     /**
-     * 
+     *
      * @param type $eventDefinition
      * @codeCoverageIgnore
      */
-    public function setEventDefinition($eventDefinition) {
+    public function setEventDefinition($eventDefinition)
+    {
         $this->eventDefinition = $eventDefinition;
     }
 
     /**
-     * 
+     *
      * @param type $processDefinition
      * @codeCoverageIgnore
      */
-    public function setProcessDefinition($processDefinition) {
+    public function setProcessDefinition($processDefinition)
+    {
         $this->processDefinition = $processDefinition;
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
-    public function getCrmDataWrapper() {
+    public function getCrmDataWrapper()
+    {
         return $this->crmDataWrapper;
     }
 
     /**
-     * 
+     *
      * @param type $crmDataWrapper
      * @codeCoverageIgnore
      */
-    public function setCrmDataWrapper($crmDataWrapper) {
+    public function setCrmDataWrapper($crmDataWrapper)
+    {
         $this->crmDataWrapper = $crmDataWrapper;
     }
 
     /**
-     * 
+     *
      * @param array $args
      * @return type
      */
@@ -118,10 +136,10 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
         }
         $relatedOutput = array();
         if (isset($args['related'])) {
-            $related = explode(',',$args['related']);
+            $related = explode(',', $args['related']);
             $output = array();
             if (is_array($related)) {
-                foreach($related as $search) {
+                foreach ($related as $search) {
                     $output[$search] = $this->crmDataWrapper->getRelatedSearch($search, $args);
                 }
             }
@@ -133,7 +151,7 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param array $args
      */
     public function _put(array $args)
@@ -170,16 +188,16 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
                     }
                     $this->eventDefinition->save();
                     //if ($this->event->evn_behavior == 'CATCH') {
-                        $this->notify();
+                    $this->notify();
                     //}
-                    
+
                 }
             }
         }
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function attach($observer)
@@ -191,7 +209,7 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function detach($observer)
@@ -205,7 +223,7 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * Notify changes to all observers.
      */
     public function notify()

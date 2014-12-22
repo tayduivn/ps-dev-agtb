@@ -46,15 +46,19 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
         });
         sinon.sandbox.stub(_, 'defer', function() {});
 
-        sinon.sandbox.stub(app.user, 'getCurrency', function() {
+        sinon.sandbox.stub(app.metadata, 'getCurrency', function() {
             return {
-                currency_id: '-99'
+                currency_id: '-99',
+                conversion_rate: '1.0'
             }
         });
-        sinon.sandbox.stub(app.currency, 'getBaseCurrency', function() {
-            return {
-                conversion_rate: '1'
-            }
+
+        sinon.sandbox.stub(app.user, 'getPreference', function() {
+            return '-99';
+        });
+
+        sinon.sandbox.stub(app.currency, 'getBaseCurrencyId', function() {
+            return '-98';
         });
 
         sinon.sandbox.stub(app.metadata, 'getModule', function() {
@@ -112,6 +116,40 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
             it('should have probability', function() {
                 expect(result.has('probability')).toBeTruthy();
                 expect(result.get('probability')).toBe(10);
+            });
+
+            it('should have currency_id', function() {
+                expect(result.has('currency_id')).toBeTruthy();
+                expect(result.get('currency_id')).toBe('-99');
+            });
+
+            it('should have base_rate', function() {
+                expect(result.has('base_rate')).toBeTruthy();
+                expect(result.get('base_rate')).toBe('1.0');
+            });
+        });
+
+        describe("should use base defaults if no user prefs exist", function() {
+            var result;
+            beforeEach(function() {
+                view.model.set({
+                    sales_stage: 'Prospecting'
+                });
+                view.collection.reset();
+            });
+
+            afterEach(function() {
+                result = null;
+            });
+
+            it('should have use base currency if no user preferred currency exists', function() {
+                app.user.getPreference.restore();
+                sinon.sandbox.stub(app.user, 'getPreference', function() {
+                    return undefined;
+                });
+                view._addBeanToList(true);
+                result = view.collection.models[0];
+                expect(result.get('currency_id')).toBe('-98');
             });
         });
     });

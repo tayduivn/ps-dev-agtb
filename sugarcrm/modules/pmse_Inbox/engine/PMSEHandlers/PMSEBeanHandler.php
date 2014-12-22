@@ -1,36 +1,46 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once('modules/pmse_Inbox/engine/PMSEFieldsUtils.php');
 require_once('modules/pmse_Inbox/engine/PMSELogger.php');
-
+require_once('modules/pmse_Inbox/engine/PMSEEvaluator.php');
 
 class PMSEBeanHandler
 {
+    /**
+     *
+     * @var PMSELogger
+     */
+    protected $logger;
 
     /**
      *
-     * @var PMSELogger 
-     */
-    protected $logger;
-    
-    /**
-     *
-     * @var PMSEEvalCriteria 
+     * @var PMSEEvalCriteria
      */
     protected $evaluator;
-    
+
     /**
      * @codeCoverageIgnore
      */
     public function __construct()
     {
         $this->logger = PMSELogger::getInstance();
-        $this->evaluator = new PMSEEvalCriteria();
+        $this->evaluator = new PMSEEvaluator();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -40,7 +50,7 @@ class PMSEBeanHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -50,7 +60,7 @@ class PMSEBeanHandler
     }
 
     /**
-     * 
+     *
      * @param $evaluator
      * @codeCoverageIgnore
      */
@@ -58,9 +68,9 @@ class PMSEBeanHandler
     {
         $this->evaluator = $evaluator;
     }
-        
+
     /**
-     * 
+     *
      * @param type $logger
      * @codeCoverageIgnore
      */
@@ -68,9 +78,9 @@ class PMSEBeanHandler
     {
         $this->logger = $logger;
     }
-       
+
     /**
-     * 
+     *
      * @param type $module
      * @param type $id
      * @return type
@@ -80,7 +90,7 @@ class PMSEBeanHandler
     {
         return BeanFactory::getBean($module, $id);
     }
-        
+
     /**
      * get the related modules of a determined bean passed as parameter
      * @global type $beanList
@@ -145,7 +155,7 @@ class PMSEBeanHandler
         }
         return $bean;
     }
-    
+
     /**
      * TODO: this function should move to utilities lib
      * Get the relationship data based on a relationship name.
@@ -159,8 +169,8 @@ class PMSEBeanHandler
         $row = $db->fetchByAssoc($result);
         return $row;
     }
-    
-     /**
+
+    /**
      * Merge Bean data into an email template
      * @param type $bean
      * @param type $template
@@ -174,12 +184,12 @@ class PMSEBeanHandler
         $parsed_template = $this->mergeTemplate($bean, $template, $component_array, $evaluate);
         return trim($parsed_template);
     }
-    
+
     /**
-     * Merge determined bean data into an determined text template, this could be 
-     * an email template, expression template, or another type of text with 
+     * Merge determined bean data into an determined text template, this could be
+     * an email template, expression template, or another type of text with
      * bean variables in it.
-     * 
+     *
      * @global type $beanList
      * @param type $bean
      * @param type $template
@@ -205,9 +215,11 @@ class PMSEBeanHandler
 
                     if ($field_array['value_type'] == 'future') {
                         if ($evaluate) {
-                            $replacement_value = bpminbox_check_special_fields($field_array['name'], $bean, false, array());
+                            $replacement_value = bpminbox_check_special_fields($field_array['name'], $bean, false,
+                                array());
                         } else {
-                            $replacement_value = bpminbox_check_special_fields($field_array['name'], $bean, false, array());
+                            $replacement_value = bpminbox_check_special_fields($field_array['name'], $bean, false,
+                                array());
                         }
                     }
                     if ($field_array['value_type'] == 'past') {
@@ -224,7 +236,8 @@ class PMSEBeanHandler
                     $rel_handler = $bean->call_relationship_handler("module_dir", true);
                     if (isset($bean->field_defs[$module_name])) {
                         $rel_handler->rel1_relationship_name = $bean->field_defs[$module_name]['relationship'];
-                        $rel_module = get_rel_module_name($bean->module_dir, $rel_handler->rel1_relationship_name, $bean->db);
+                        $rel_module = get_rel_module_name($bean->module_dir, $rel_handler->rel1_relationship_name,
+                            $bean->db);
                         $rel_handler->rel1_module = $rel_module;
                         $rel_handler->rel1_bean = get_module_info($rel_module);
                     } else {
@@ -253,7 +266,8 @@ class PMSEBeanHandler
                                 $replacement_value = $this->get_href_link($rel_object);
                             } else {
                                 //use future always for rel because fetched should always be the same
-                                $replacement_value = bpminbox_check_special_fields($field_array['name'], $rel_object, false, array());
+                                $replacement_value = bpminbox_check_special_fields($field_array['name'], $rel_object,
+                                    false, array());
                             }
                         } else {
                             $replacement_value = "Invalid Value";
@@ -289,7 +303,7 @@ class PMSEBeanHandler
         }
         return $template;
     }
-    
+
     /**
      * Executes a cast in order to process the value of a determined expression.
      * @param type $expression
@@ -301,8 +315,8 @@ class PMSEBeanHandler
         $response = new stdClass();
         $dataEval = array();
         foreach ($expression as $value) {
-            if ($value->expType != 'SUGAR_VAR') {
-                switch(strtoupper($value->expType)){
+            if ($value->expType != 'VARIABLE') {
+                switch (strtoupper($value->expSubtype)) {
                     case 'INT':
                         $dataEval[] = (int)$value->expValue;
                         break;
@@ -316,7 +330,7 @@ class PMSEBeanHandler
                         $dataEval[] = (float)$value->expValue;
                         break;
                     case 'BOOL':
-                        $dataEval[] = $value->expValue=='TRUE'?true:false;
+                        $dataEval[] = $value->expValue == 'TRUE' ? true : false;
                         break;
                     default:
                         $dataEval[] = $value->expValue;
@@ -328,15 +342,15 @@ class PMSEBeanHandler
             }
         }
         if (count($dataEval) > 1) {
-            $response->value = $this->evaluator->evaluationsRecursive($dataEval);
+            $response->value = $this->evaluator->evaluateExpression(json_encode($expression), $bean);
             $response->type = gettype($response->value);
         } else {
             $response->value = $dataEval[0];
-            $response->type = $value->expType;
+            $response->type = $value->expSubtype;
         }
         return $response->value;
     }
-    
+
     /**
      * Parse the variables strings
      * @param type $template
@@ -382,7 +396,7 @@ class PMSEBeanHandler
 
         return $component_array;
     }
-    
+
     /**
      * Method to evaluate the activation date for any flow
      * @param $expre Date +/- unit time (minutes,hours,days, month, year) adding or substracting
@@ -409,8 +423,8 @@ class PMSEBeanHandler
                 case 'UNIT_TIME':
                     switch ($evn->expUnit) {
                         case 'minutes':
-                            $arrayUnitPos['minutes'] = isset($arrayUnitPos['minutes'])?$arrayUnitPos['minutes']:0;
-                            $arrayUnitNeg['minutes'] = isset($arrayUnitNeg['minutes'])?$arrayUnitNeg['minutes']:0;
+                            $arrayUnitPos['minutes'] = isset($arrayUnitPos['minutes']) ? $arrayUnitPos['minutes'] : 0;
+                            $arrayUnitNeg['minutes'] = isset($arrayUnitNeg['minutes']) ? $arrayUnitNeg['minutes'] : 0;
                             if ($expre[$keyevn - 1]->expValue == '+') {
                                 $arrayUnitPos['minutes'] = $arrayUnitPos['minutes'] + $evn->expValue;
                             } else {
@@ -418,8 +432,8 @@ class PMSEBeanHandler
                             }
                             break;
                         case 'hours':
-                            $arrayUnitPos['hours'] = isset($arrayUnitPos['hours'])?$arrayUnitPos['hours']:0;
-                            $arrayUnitNeg['hours'] = isset($arrayUnitNeg['hours'])?$arrayUnitNeg['hours']:0;
+                            $arrayUnitPos['hours'] = isset($arrayUnitPos['hours']) ? $arrayUnitPos['hours'] : 0;
+                            $arrayUnitNeg['hours'] = isset($arrayUnitNeg['hours']) ? $arrayUnitNeg['hours'] : 0;
                             if ($expre[$keyevn - 1]->expValue == '+') {
                                 $arrayUnitPos['hours'] = $arrayUnitPos['hours'] + $evn->expValue;
                             } else {
@@ -427,8 +441,8 @@ class PMSEBeanHandler
                             }
                             break;
                         case 'days':
-                            $arrayUnitPos['days'] = isset($arrayUnitPos['days'])?$arrayUnitPos['days']:0;
-                            $arrayUnitNeg['days'] = isset($arrayUnitNeg['days'])?$arrayUnitNeg['days']:0;
+                            $arrayUnitPos['days'] = isset($arrayUnitPos['days']) ? $arrayUnitPos['days'] : 0;
+                            $arrayUnitNeg['days'] = isset($arrayUnitNeg['days']) ? $arrayUnitNeg['days'] : 0;
                             if ($expre[$keyevn - 1]->expValue == '+') {
                                 $arrayUnitPos['days'] = $arrayUnitPos['days'] + $evn->expValue;
                             } else {
@@ -436,8 +450,8 @@ class PMSEBeanHandler
                             }
                             break;
                         case 'months':
-                            $arrayUnitPos['months'] = isset($arrayUnitPos['months'])?$arrayUnitPos['months']:0;
-                            $arrayUnitNeg['months'] = isset($arrayUnitNeg['months'])?$arrayUnitNeg['months']:0;
+                            $arrayUnitPos['months'] = isset($arrayUnitPos['months']) ? $arrayUnitPos['months'] : 0;
+                            $arrayUnitNeg['months'] = isset($arrayUnitNeg['months']) ? $arrayUnitNeg['months'] : 0;
                             if ($expre[$keyevn - 1]->expValue == '+') {
                                 $arrayUnitPos['months'] = $arrayUnitPos['months'] + $evn->expValue;
                             } else {
@@ -445,8 +459,8 @@ class PMSEBeanHandler
                             }
                             break;
                         case 'years':
-                            $arrayUnitPos['year'] = isset($arrayUnitPos['year'])?$arrayUnitPos['year']:0;
-                            $arrayUnitNeg['year'] = isset($arrayUnitNeg['year'])?$arrayUnitNeg['year']:0;
+                            $arrayUnitPos['year'] = isset($arrayUnitPos['year']) ? $arrayUnitPos['year'] : 0;
+                            $arrayUnitNeg['year'] = isset($arrayUnitNeg['year']) ? $arrayUnitNeg['year'] : 0;
                             if ($expre[$keyevn - 1]->expValue == '+') {
                                 $arrayUnitPos['year'] = $arrayUnitPos['year'] + $evn->expValue;
                             } else {
@@ -489,9 +503,9 @@ class PMSEBeanHandler
         }
         return array($today, $dueDate);
     }
-    
+
     /**
-     * 
+     *
      * @param type $module
      * @return \DeployedRelationships
      * @codeCoverageIgnore
@@ -500,9 +514,9 @@ class PMSEBeanHandler
     {
         return new DeployedRelationships($module);
     }
-    
+
     /**
-     * 
+     *
      * @global type $app_list_strings
      * @global type $sugar_config
      * @param type $bean

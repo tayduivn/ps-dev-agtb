@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
 
 $viewdefs['PdfManager']['mobile']['view']['edit'] = array(
     'templateMeta' => array('maxColumns' => '1',

@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 /**
  * Class that routed to class to be parcera according to their type
  * in each class a different treatment is performed
@@ -10,6 +23,7 @@ require_once 'PMSEDataParserInterface.php';
 require_once 'PMSEFieldParser.php';
 require_once 'PMSEBusinessRuleParser.php';
 require_once 'PMSEFormResponseParser.php';
+require_once 'PMSEUserRoleParser.php';
 
 class PMSEDataParserGateway implements PMSEDataParserInterface
 {
@@ -100,7 +114,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
     public function parseCriteriaArray($criteriaArray, $bean, $currentUser, $beanList = array(), $params = array())
     {
         $parsedArray = array();
-        if (!empty($criteriaArray) && is_array($criteriaArray)){
+        if (!empty($criteriaArray) && is_array($criteriaArray)) {
             foreach ($criteriaArray as $key => $criteriaToken) {
                 $isDefault = false;
                 switch ($criteriaToken->expType) {
@@ -113,6 +127,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
                         $this->dataParser = new PMSEFormResponseParser();
                         break;
                     case 'MODULE':
+                    case 'VARIABLE':
                     case 'DEFAULT_MODULE':
                         $this->dataParser = new PMSEFieldParser();
                         break;
@@ -143,7 +158,7 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
      * @param array $params if additional parameters
      * @return object the modified token
      */
-    public function parseCriteriaToken($criteriaToken, $params=array())
+    public function parseCriteriaToken($criteriaToken, $params = array())
     {
         return $this->dataParser->parseCriteriaToken($criteriaToken, $params);
     }

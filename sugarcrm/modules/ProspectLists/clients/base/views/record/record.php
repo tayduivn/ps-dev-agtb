@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -65,13 +65,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'divider',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name' => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',

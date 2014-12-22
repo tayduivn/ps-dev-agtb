@@ -1,11 +1,22 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
 require_once 'include/SugarQuery/SugarQuery.php';
 
 class PMSECaseFlowHandler
 {
-
     protected $bpmFlow;
     protected $bpmnFlow;
     protected $sugarQueryObject;
@@ -22,7 +33,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param type $module
      * @param type $beanId
      * @return type
@@ -34,7 +45,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * Select PMSEElement implementation, but since the PMSEExecuter is now 
+     * Select PMSEElement implementation, but since the PMSEExecuter is now
      * in charge of that role this function is irrelevant
      * @param type $elementName
      * @return PMSEElement
@@ -46,94 +57,94 @@ class PMSECaseFlowHandler
         $modulePath = 'modules/pmse_Inbox/engine/PMSEElements';
         switch ($elementName) {
             case 'PMSEStartEvent':
-                require_once $modulePath.'/PMSEStartEvent.php';
+                require_once $modulePath . '/PMSEStartEvent.php';
                 return new PMSEStartEvent();
                 break;
             case 'PMSEEndEvent':
-                require_once $modulePath.'/PMSEEndEvent.php';
+                require_once $modulePath . '/PMSEEndEvent.php';
                 return new PMSEEndEvent();
                 break;
             case 'PMSEEndSendMessageEvent':
-                require_once $modulePath.'/PMSEEndSendMessageEvent.php';
+                require_once $modulePath . '/PMSEEndSendMessageEvent.php';
                 return new PMSEEndSendMessageEvent();
                 break;
             case 'PMSETerminateEvent':
-                require_once $modulePath.'/PMSETerminateEvent.php';
+                require_once $modulePath . '/PMSETerminateEvent.php';
                 return new PMSETerminateEvent();
                 break;
             case 'PMSESendMessageEvent':
-                require_once $modulePath.'/PMSESendMessageEvent.php';
+                require_once $modulePath . '/PMSESendMessageEvent.php';
                 return new PMSESendMessageEvent();
                 break;
             case 'PMSEReceiveMessageEvent':
-                require_once $modulePath.'/PMSEReceiveMessageEvent.php';
+                require_once $modulePath . '/PMSEReceiveMessageEvent.php';
                 return new PMSEReceiveMessageEvent();
                 break;
             case 'PMSETimerEvent':
-                require_once $modulePath.'/PMSETimerEvent.php';
+                require_once $modulePath . '/PMSETimerEvent.php';
                 return new PMSETimerEvent();
                 break;
             case 'PMSEUserTask':
-                require_once $modulePath.'/PMSEUserTask.php';
+                require_once $modulePath . '/PMSEUserTask.php';
                 return new PMSEUserTask();
                 break;
             case 'PMSEBusinessRule':
-                require_once $modulePath.'/PMSEBusinessRule.php';
+                require_once $modulePath . '/PMSEBusinessRule.php';
                 return new PMSEBusinessRule();
                 break;
             case 'PMSEChangeField':
-                require_once $modulePath.'/PMSEChangeField.php';
+                require_once $modulePath . '/PMSEChangeField.php';
                 return new PMSEChangeField();
                 break;
             case 'PMSERoundRobin':
-                require_once $modulePath.'/PMSERoundRobin.php';
+                require_once $modulePath . '/PMSERoundRobin.php';
                 return new PMSERoundRobin();
                 break;
             case 'PMSEAssignUser':
-                require_once $modulePath.'/PMSEAssignUser.php';
+                require_once $modulePath . '/PMSEAssignUser.php';
                 return new PMSEAssignUser();
                 break;
             case 'PMSEAddRelatedRecord':
-                require_once $modulePath.'/PMSEAddRelatedRecord.php';
+                require_once $modulePath . '/PMSEAddRelatedRecord.php';
                 return new PMSEAddRelatedRecord();
                 break;
             case 'PMSEConvergingParallelGateway':
-                require_once $modulePath.'/PMSEConvergingParallelGateway.php';
+                require_once $modulePath . '/PMSEConvergingParallelGateway.php';
                 return new PMSEConvergingParallelGateway();
                 break;
             case 'PMSEDivergingParallelGateway':
-                require_once $modulePath.'/PMSEDivergingParallelGateway.php';
+                require_once $modulePath . '/PMSEDivergingParallelGateway.php';
                 return new PMSEDivergingParallelGateway();
                 break;
             case 'PMSEConvergingExclusiveGateway':
-                require_once $modulePath.'/PMSEConvergingExclusiveGateway.php';
+                require_once $modulePath . '/PMSEConvergingExclusiveGateway.php';
                 return new PMSEConvergingExclusiveGateway();
                 break;
             case 'PMSEDivergingExclusiveGateway':
-                require_once $modulePath.'/PMSEDivergingExclusiveGateway.php';
+                require_once $modulePath . '/PMSEDivergingExclusiveGateway.php';
                 return new PMSEDivergingExclusiveGateway();
                 break;
             case 'PMSEDivergingInclusiveGateway':
-                require_once $modulePath.'/PMSEDivergingInclusiveGateway.php';
+                require_once $modulePath . '/PMSEDivergingInclusiveGateway.php';
                 return new PMSEDivergingInclusiveGateway();
                 break;
             case 'PMSEDivergingEventBasedGateway':
-                require_once $modulePath.'/PMSEDivergingEventBasedGateway.php';
+                require_once $modulePath . '/PMSEDivergingEventBasedGateway.php';
                 return new PMSEDivergingEventBasedGateway();
                 break;
             case 'PMSESequenceFlow':
-                require_once $modulePath.'/PMSESequenceFlow.php';
+                require_once $modulePath . '/PMSESequenceFlow.php';
                 return new PMSESequenceFlow();
                 break;
             default:
-                require_once $modulePath.'/PMSEElement.php';
+                require_once $modulePath . '/PMSEElement.php';
                 return new PMSEElement();
                 break;
         }
     }
 
     /**
-     * 
+     *
      * @return \SugarQuery
      * @codeCoverageIgnore
      */
@@ -143,7 +154,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -153,7 +164,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -163,7 +174,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param type $bpmFlow
      * @codeCoverageIgnore
      */
@@ -171,9 +182,9 @@ class PMSECaseFlowHandler
     {
         $this->bpmFlow = $bpmFlow;
     }
-    
+
     /**
-     * 
+     *
      * @param type $bpmnFlow
      * @codeCoverageIgnore
      */
@@ -183,7 +194,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param type $flowData
      * @return type
      */
@@ -205,14 +216,14 @@ class PMSECaseFlowHandler
 
         $sugarQueryObject->from($this->bpmFlow);
         $sugarQueryObject->where()->queryAnd()
-                ->addRaw('cas_index=' . $flowData['cas_index'] . ' AND cas_id=' . $flowData['cas_id']);
+            ->addRaw('cas_index=' . $flowData['cas_index'] . ' AND cas_id=' . $flowData['cas_id']);
 
         $currentFlow = $sugarQueryObject->execute();
         return $currentFlow[0];
     }
 
     /**
-     * 
+     *
      * @param type $flowData
      * @return int
      */
@@ -227,8 +238,8 @@ class PMSECaseFlowHandler
 
         $sugarQueryObject->from($this->bpmFlow);
         $sugarQueryObject->where()
-                ->queryAnd()
-                ->addRaw('cas_id=' . $flowData['cas_id']);
+            ->queryAnd()
+            ->addRaw('cas_id=' . $flowData['cas_id']);
 
         $result = $sugarQueryObject->execute();
         $maxIndex = 1;
@@ -241,7 +252,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param array $flowData
      * @return string
      */
@@ -249,7 +260,7 @@ class PMSECaseFlowHandler
     {
         $flowData['id'] = '';
 
-        $isFlow = $flowData['bpmn_type']=='bpmnFlow'? true: false;
+        $isFlow = $flowData['bpmn_type'] == 'bpmnFlow' ? true : false;
         $bpmnFlowBean = $this->retrieveBean('pmse_BpmnFlow');
         $sugarQueryObject = $this->retrieveSugarQueryObject();
         if ($isFlow) {
@@ -257,7 +268,7 @@ class PMSECaseFlowHandler
                 array('flo_element_dest', 'bpmn_id'),
                 array('flo_element_dest_type', 'bpmn_type'),
             );
-            $where = "id='".$flowData['bpmn_id']."'";
+            $where = "id='" . $flowData['bpmn_id'] . "'";
         } else {
             $fields = array(
                 array('id', 'bpmn_id'),
@@ -268,8 +279,8 @@ class PMSECaseFlowHandler
         $sugarQueryObject->select($fields);
         $sugarQueryObject->from($bpmnFlowBean);
         $sugarQueryObject->where()
-                ->queryAnd()
-                ->addRaw($where);
+            ->queryAnd()
+            ->addRaw($where);
 
         $raw = $sugarQueryObject->compileSql();
         $flows = $sugarQueryObject->execute();
@@ -286,7 +297,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param type $caseID
      * @param type $caseIndex
      * @param type $threadIndex
@@ -302,9 +313,9 @@ class PMSECaseFlowHandler
         $result['pmse_element'] = $bpmnElement;
         return $result;
     }
-    
+
     /**
-     * 
+     *
      * @param type $flowData
      * @return type
      * @deprecated since version pmse2
@@ -329,12 +340,12 @@ class PMSECaseFlowHandler
                 $bpmnElement = $this->retrievePMSEElement();
                 break;
         }
-        
+
         return $bpmnElement;
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @return boolean
      * @deprecated since version pmse2
@@ -346,7 +357,7 @@ class PMSECaseFlowHandler
         $definitionBean = $this->retrieveBean('pmse_BpmActivityDefinition');
         $bpmnBean->retrieve($id);
         $definitionBean->retrieve($id);
-        
+
         $bpmElement = false;
         switch ($bpmnBean->act_task_type) {
             case 'SCRIPTTASK':
@@ -375,14 +386,14 @@ class PMSECaseFlowHandler
                 $bpmElement = false;
                 break;
         }
-        
-        $bpmElement->setExecutionMode ($definitionBean->execution_mode);
+
+        $bpmElement->setExecutionMode($definitionBean->execution_mode);
         $raw = $bpmElement->getExecutionMode();
         return $bpmElement;
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @return boolean
      * @deprecated since version pmse2
@@ -469,7 +480,7 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @return boolean
      * @deprecated since version pmse2
@@ -500,7 +511,7 @@ class PMSECaseFlowHandler
         $preparedData = $this->processFlowData($flowData);
         return $preparedData;
     }
-    
+
     public function saveFlowData($flowData, $createThread = false, $flowId = null)
     {
         if ($createThread) {
@@ -510,21 +521,21 @@ class PMSECaseFlowHandler
         $flowBean = $this->retrieveBean('pmse_BpmFlow', $flowId);
         foreach ($flowData as $key => $value) {
             if (property_exists($flowBean, $key)) {
-                $flowBean->$key = $value;    
+                $flowBean->$key = $value;
             }
         }
         if ($flowId !== null) {
-           $flowBean->new_with_id = false;
-        }        
+            $flowBean->new_with_id = false;
+        }
         $flowBean->save();
-        
+
         return $flowBean->toArray();
     }
-    
+
     public function processFlowData($flowData)
     {
         $preparedFlow = array();
-        $preparedFlow['id'] = isset($flowData['id'])?$flowData['id']:'';
+        $preparedFlow['id'] = isset($flowData['id']) ? $flowData['id'] : '';
         $preparedFlow['cas_id'] = $flowData['cas_id'];
         $preparedFlow['cas_index'] = $flowData['max_index'] + 1;
         $preparedFlow['cas_previous'] = $flowData['cas_current_index'];
@@ -549,29 +560,29 @@ class PMSECaseFlowHandler
         $preparedFlow['cas_delayed'] = 0;
         $preparedFlow['new_with_id'] = true;
         //Set these attributes if a related record is being evaluated
-        $preparedFlow['rel_process_module'] = isset($flowData['rel_process_module'])?$flowData['rel_process_module']:'';
-        $preparedFlow['rel_element_relationship'] = isset($flowData['rel_element_relationship'])?$flowData['rel_element_relationship']:'';
-        $preparedFlow['rel_element_module'] = isset($flowData['rel_element_module'])?$flowData['rel_element_module']:'';
+        $preparedFlow['rel_process_module'] = isset($flowData['rel_process_module']) ? $flowData['rel_process_module'] : '';
+        $preparedFlow['rel_element_relationship'] = isset($flowData['rel_element_relationship']) ? $flowData['rel_element_relationship'] : '';
+        $preparedFlow['rel_element_module'] = isset($flowData['rel_element_module']) ? $flowData['rel_element_module'] : '';
         //Set these attributes if a start event is being evaluated
-        $preparedFlow['evn_criteria'] = isset($flowData['evn_criteria'])?$flowData['evn_criteria']:'';
-        
+        $preparedFlow['evn_criteria'] = isset($flowData['evn_criteria']) ? $flowData['evn_criteria'] : '';
+
         return $preparedFlow;
     }
-    
+
     public function createThread($flowData)
     {
         $parentThreadIndex = $flowData['cas_thread'];
         $thread = $this->retrieveBean('pmse_BpmThread'); //new BpmThread();
         $currentThreadIndex = 0;
-        
+
         $sugarQueryObject = $this->retrieveSugarQueryObject();
         // retrieve the max thread index
         $sugarQueryObject->select(array('cas_thread_index'));
         $sugarQueryObject->from($thread);
         $sugarQueryObject->where()
-                ->queryAnd()
-                ->addRaw('cas_id=' . $flowData['cas_id']);
-        
+            ->queryAnd()
+            ->addRaw('cas_id=' . $flowData['cas_id']);
+
         $raw = $sugarQueryObject->compileSql();
         $rows = $sugarQueryObject->execute();
 
@@ -601,7 +612,7 @@ class PMSECaseFlowHandler
         }
         return $flowData;
     }
-    
+
     public function closeFlow($casId, $casIndex)
     {
         $flowBean = $this->retrieveBean('pmse_BpmFlow');
@@ -610,7 +621,7 @@ class PMSECaseFlowHandler
         $flowBean->cas_flow_status = 'CLOSED';
         return $flowBean->save();
     }
-    
+
     /**
      * Set close to a Bpm Thread Record
      * @global type $db
@@ -638,7 +649,7 @@ class PMSECaseFlowHandler
         $db->query($query, true, "Error updating bpm_thread record ");
         //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] thread $cas_thread_index closed $query");
     }
-    
+
     /**
      * Set close to a Bpm Thread Record
      * @global type $db
@@ -646,7 +657,8 @@ class PMSECaseFlowHandler
      * @param type $cas_thread_index
      * @return boolean
      */
-    public function closeThreadByCaseIndex($cas_id, $cas_index) {
+    public function closeThreadByCaseIndex($cas_id, $cas_index)
+    {
         global $db;
         //get current values
         $flowBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
@@ -660,30 +672,30 @@ class PMSECaseFlowHandler
         $db->query($query, true, "Error updating bpm_thread record ");
         //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] thread $currentThreadIndex closed");
     }
-    
+
     /**
      * This method sets the cas_status of a case to any status
      * depending of the parameters passed to it.
-     * TODO: the method should be called by anyone that wants to change a 
+     * TODO: the method should be called by anyone that wants to change a
      * case status, and also needs to be transformed to a SugarQuery object
      * @global type $db
      * @param type $cas_id
      * @param type $status
      */
-    public function changeCaseStatus($cas_id, $status = 'TODO')
+    public function changeCaseStatus($cas_id, $status = 'IN PROGRESS')
     {
         global $db;
         $query = "update pmse_inbox set " .
             " cas_status = '{$status}' " .
-            " where cas_id = $cas_id ";
+            " where cas_id = $cas_id  AND cas_status<>'COMPLETED' AND cas_status<>'TERMINATED'";
         $db->query($query, true, "Error updating bpm_inbox record ");
     }
-    
+
     /**
      * This method sets the cas_status of a case to COMPLETED or TERMINATED
      * depending of the method used to close it.
-     * TODO: the method should only call the changeCaseStatus method since the 
-     * implementation is basically the same, and also needs to be transformed to 
+     * TODO: the method should only call the changeCaseStatus method since the
+     * implementation is basically the same, and also needs to be transformed to
      * a SugarQuery object
      * @global type $db
      * @param type $cas_id
@@ -700,7 +712,7 @@ class PMSECaseFlowHandler
 
         //$this->bpmLog('DEBUG', "[$cas_id][] has been marked as completed");
     }
-    
+
     /**
      * Set the terminated status to the cas_flow_status field.
      * @global type $db
@@ -717,7 +729,7 @@ class PMSECaseFlowHandler
         $db->query($query, true, "Error updating bpm_flow record");
         //$this->bpmLog('DEBUG', "[$cas_id][] Activities has been marked as terminate");
     }
-    
+
     /**
      * Set the close status for the Thread with the cas_id and cas_thread_index as parameters
      * @global type $db
@@ -747,21 +759,25 @@ class PMSECaseFlowHandler
     public function saveFormAction($params = array())
     {
         global $current_user;
-        
+
         $cas_id = $params['cas_id'];
         $cas_index = $params['cas_index'];
         $flowBeanObject = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $flowBeanObject->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index));
 
         $caseBeanObject = $this->retrieveBean('pmse_BpmCaseData'); //new BpmCaseData();
-        $caseBeanObject->retrieve_by_string_fields(array('cas_id' => (int) $cas_id));
+        $caseBeanObject->retrieve_by_string_fields(array('cas_id' => (int)$cas_id));
         $caseBeanObject->cas_data = serialize($params);
         $caseBeanObject->save();
 
         //ADD COMMENT IN BPM_NOTES
         if (isset($params['not_type']) && !empty($params['not_type'])) {
             $noteBean = $this->retrieveBean('pmse_BpmNotes'); //new BpmNotes();
-            $noteBean->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index, 'not_type' => $params['not_type']));
+            $noteBean->retrieve_by_string_fields(array(
+                    'cas_id' => $cas_id,
+                    'cas_index' => $cas_index,
+                    'not_type' => $params['not_type']
+                ));
             $noteBean->cas_id = $cas_id;
             $noteBean->cas_index = $cas_index;
             $noteBean->not_user_id = $current_user->id;
@@ -779,12 +795,12 @@ class PMSECaseFlowHandler
         $previousFormActionBeanObject = $this->retrieveBean('pmse_BpmFormAction'); //new BpmFormAction();
         $previousFormActionBeanObject->retrieve_by_string_fields(array('cas_id' => $cas_id, 'frm_last' => 1));
 
-        if (isset($previousFormActionBeanObject->fetched_row) || !empty($previousFormActionBeanObject->fetched_row)) {
+        if (isset($previousFormActionBeanObject->fetched_row) && !empty($previousFormActionBeanObject->fetched_row)) {
             $formActionBeanObject->frm_index = $previousFormActionBeanObject->frm_index + 1;
             $formActionBeanObject->frm_last = 1;
-            $previousFormActionBeanObject->frm_last = 0;
-            //TODO resolve a error in frm_last, field empty
-            //$previousFormActionBeanObject->save();
+            $previousFormActionBeanObject->frm_last = 2;
+            //TODO check & verify the fix for the error in frm_last, field empty
+            $previousFormActionBeanObject->save();
         } else {
             $formActionBeanObject->frm_index = 1;
             $formActionBeanObject->frm_last = 1;
@@ -797,13 +813,16 @@ class PMSECaseFlowHandler
         foreach ($params as $key => $value) {
             $formActionBeanObject->$key = $value;
         }
-        
+
         $formActionBeanObject->cas_data = $caseBeanObject->cas_data;
         if (isset($params['log_data'])) {
             //$this->bpmLog('INFO', "Saving changed data " . serialize($params['log_data']));
             $formActionBeanObject->cas_pre_data = serialize($params['log_data']);
         }
         $formActionBeanObject->frm_action = isset($params['Type']) ? $params['Type'] : $params['frm_action'];
+        $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Approve'?'Approved':$formActionBeanObject->frm_action;
+        $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Reject'?'Rejected':$formActionBeanObject->frm_action;
+        
         $currentDate = new DateTime();
         $formActionBeanObject->frm_date = $currentDate->format('Y-m-d H:i:s');
         global $current_user;
@@ -815,18 +834,18 @@ class PMSECaseFlowHandler
         }
         $formActionBeanObject->save();
     }
-    
+
     public function retrieveFlowIterations($flowData)
     {
         $flowBean = $this->retrieveBean('pmse_BpmFlow');
-        
+
         $this->sugarQueryObject = $this->retrieveSugarQueryObject();
         $this->sugarQueryObject->select(array('id'));
         $this->sugarQueryObject->from($flowBean);
         $this->sugarQueryObject->where()
-                ->queryAnd()
-                ->addRaw('cas_id=' . $flowData['cas_id']. ' AND bpmn_id=\'' . $flowData['bpmn_id'].'\'');
-        
+            ->queryAnd()
+            ->addRaw('cas_id=' . $flowData['cas_id'] . ' AND bpmn_id=\'' . $flowData['bpmn_id'] . '\'');
+
         $rows = $this->sugarQueryObject->execute();
         return $rows;
     }
@@ -849,8 +868,8 @@ class PMSECaseFlowHandler
         //finally close the entire case
         $this->closeCase($flowData['cas_id'], $inboxStatus);
     }
-    
-    public function numberOfCasesByStatus($flowData, $status = 'TODO')
+
+    public function numberOfCasesByStatus($flowData, $status = 'IN PROGRESS')
     {
         $q = $this->retrieveSugarQueryObject();
         $q->select(array('id'));
@@ -860,5 +879,5 @@ class PMSECaseFlowHandler
         $query = $q->compileSql();
         $rows = $q->execute();
         return sizeof($rows);
-    }        
+    }
 }

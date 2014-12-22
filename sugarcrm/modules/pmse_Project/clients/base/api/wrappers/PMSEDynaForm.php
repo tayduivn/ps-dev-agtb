@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 /**
  * The ADAMDynaForm class is a helper class wich have some functionality delegated
@@ -76,23 +89,27 @@ class PMSEDynaForm
      * @param boolean $update
      * @return boolean
      */
-    public function generateDefaultDynaform($baseModule, $keys, $update=false)
+    public function generateDefaultDynaform($baseModule, $keys, $update = false)
     {
         $this->baseModule = $baseModule;
         $params = array();
         if ($update) {
-            $this->dynaform->retrieve_by_string_fields(array('prj_id'=>$keys['prj_id'], 'pro_id'=>$keys['pro_id'], 'name'=>'Default'));
+            $this->dynaform->retrieve_by_string_fields(array(
+                    'prj_id' => $keys['prj_id'],
+                    'pro_id' => $keys['pro_id'],
+                    'name' => 'Default'
+                ));
         } else {
             $params['dyn_uid'] = PMSEEngineUtils::generateUniqueID();
         }
         $params['name'] = 'Default';
         $params['description'] = 'Default';
-        $params['prj_id'] = isset($keys['prj_id'])?$keys['prj_id']:null;
-        $params['pro_id'] = isset($keys['pro_id'])?$keys['prj_id']:null;
+        $params['prj_id'] = isset($keys['prj_id']) ? $keys['prj_id'] : null;
+        $params['pro_id'] = isset($keys['pro_id']) ? $keys['prj_id'] : null;
         $params['dyn_module'] = $this->baseModule;
         $params['dyn_name'] = "Default";
         $params['dyn_description'] = "Default";
-        $moduleViewDefs = get_custom_file_if_exists('modules/'.$baseModule.'/metadata/editviewdefs.php');
+        $moduleViewDefs = get_custom_file_if_exists('modules/' . $baseModule . '/metadata/editviewdefs.php');
         $viewdefs = array();
         if (!@include_once($moduleViewDefs)) {
             return false;

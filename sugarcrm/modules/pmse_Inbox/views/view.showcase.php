@@ -1,8 +1,22 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 require_once('include/EditView/EditView2.php');
 require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
 require_once('modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php');
+
 class pmse_InboxViewShowCase extends SugarView
 {
     public $type = 'edit';
@@ -25,7 +39,7 @@ class pmse_InboxViewShowCase extends SugarView
     public $populateBean;
     public $pmse;
     private $wrapper;
-    
+
     public function pmse_InboxViewShowCase()
     {
         $this->pmse = PMSE::getInstance();
@@ -37,7 +51,7 @@ class pmse_InboxViewShowCase extends SugarView
      * This method assembles and renders the display of the custom template
      * for the edit and detail actions for the ProcessMaker Module.
      * @param type $module The name of the module to be rendered
-     * @param type $id     The id of the record to be rendered
+     * @param type $id The id of the record to be rendered
      * @param type $viewMode This parameter can be 'bpm' 'detail' or 'edit'
      *                        in order to render the adequate template and
      *                        view definition
@@ -55,12 +69,11 @@ class pmse_InboxViewShowCase extends SugarView
                 $this->type = 'detail';
                 $viewMode = 'detail';
             }
-            
+
             $this->module = $module;
-            
+
             $metadataFile = $this->getMetaDataFile();//$this->getMetaDataFile($this->bean, $viewMode);
-            //print_r($metadataFile);
-            //die;
+
             $viewdefs = '';
 
             if (isset($GLOBALS['sugar_config']['disable_vcr'])) {
@@ -87,11 +100,11 @@ class pmse_InboxViewShowCase extends SugarView
             } else {
                 $this->defs = $viewdefs[$this->bean->module_name]['EditView'];
             }
-           
+
             $this->focus = $this->bean;
             $tpl = get_custom_file_if_exists('modules/pmse_Inbox/tpls/' . $this->view . '.tpl');
             $this->th = new TemplateHandler();
-            $this->th->ss = & $this->ss;
+            $this->th->ss = &$this->ss;
             $this->tpl = $tpl;
             //$tplFile = $this->th->cacheDir . $this->th->templateDir . $this->bean->module_name . '/' . $this->view . '.tpl';
             if ($this->th->checkTemplate($this->bean->module_name, $this->view)) {
@@ -114,8 +127,8 @@ class pmse_InboxViewShowCase extends SugarView
             $this->returnId = $this->ev->returnId;
             $this->returnRelationship = $this->ev->returnRelationship;
             $this->returnName = $this->ev->returnName;
-            
-    
+
+
 //            $this->processData();
             return $this->setupAll(false, false, $this->bean->module_name, $readonly);
         }
@@ -124,13 +137,36 @@ class pmse_InboxViewShowCase extends SugarView
     public function getButtonArray($buttonList = array(), $casId = '', $casIndex = '', $teamId = '')
     {
         $buttons = array(
-            'claim' => array('id' => 'claimBtn', 'name' => 'Type', 'value' => 'Claim', 'type' => 'button', 'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\');'),
+            'claim' => array(
+                'id' => 'claimBtn',
+                'name' => 'Type',
+                'value' => 'Claim',
+                'type' => 'button',
+                'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\');'
+            ),
             'approve' => array('id' => 'ApproveBtn', 'name' => 'Type', 'value' => 'Approve', 'type' => 'submit'),
             'reject' => array('id' => 'RejectBtn', 'name' => 'Type', 'value' => 'Reject', 'type' => 'submit'),
-            'reassign' => array('id' => 'ReassignBtn', 'name' => 'Type', 'value' => 'Reassign', 'type' => 'button', 'onclick' => 'reassignForm(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $teamId . '\');'),
-            'adhoc' => array('id' => 'AdhocBtn', 'name' => 'Type', 'value' => 'Ad-Hoc User', 'type' => 'button', 'onclick' => 'adhocForm(\'' . $casId . '\', \'' . $casIndex . '\');'),
+            'reassign' => array(
+                'id' => 'ReassignBtn',
+                'name' => 'Type',
+                'value' => 'Reassign',
+                'type' => 'button',
+                'onclick' => 'reassignForm(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $teamId . '\');'
+            ),
+            'adhoc' => array(
+                'id' => 'AdhocBtn',
+                'name' => 'Type',
+                'value' => 'Ad-Hoc User',
+                'type' => 'button',
+                'onclick' => 'adhocForm(\'' . $casId . '\', \'' . $casIndex . '\');'
+            ),
             'route' => array('id' => 'RouteBtn', 'name' => 'Type', 'value' => 'Route Task', 'type' => 'submit'),
-            'cancel' => array('name' => 'Cancel', 'value' => 'Cancel', 'type' => 'button', 'onclick' => 'history.back(1);')
+            'cancel' => array(
+                'name' => 'Cancel',
+                'value' => 'Cancel',
+                'type' => 'button',
+                'onclick' => 'history.back(1);'
+            )
         );
         $customButtons = array();
 
@@ -171,14 +207,16 @@ class pmse_InboxViewShowCase extends SugarView
         global $current_user;
         //extrac cas_id and cas_index
         $beanFlow = BeanFactory::getBean('pmse_BpmFlow', $id_flow);
-        $cas_id= $beanFlow->cas_id;
+        $cas_id = $beanFlow->cas_id;
         $cas_index = $beanFlow->cas_index;
 
         $caseBean = BeanFactory::newBean('pmse_Inbox'); //BpmInbox();
         $joinTables = array(
             array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id')
         );
-        $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc', "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array(), $joinTables);
+        $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
+            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*', 'pmse_inbox.id idInbox'), $joinTables);
+//            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array(), $joinTables);
         $totalRecords = $records['totalRows'];
         $caseData = $records['rowList'][0];
 
@@ -191,7 +229,7 @@ class pmse_InboxViewShowCase extends SugarView
         $totalNotes = 0;//$rsNotes['totalRows'];
 
         $smarty = new Sugar_Smarty();
-//        print_r($caseData);
+
         $smarty->assign('caseData', $caseData);
         $simpleRouting = false;
 
@@ -215,17 +253,15 @@ class pmse_InboxViewShowCase extends SugarView
                 global $db;
                 $sql = "SELECT *  FROM pmse_bpmn_activity
                         INNER JOIN pmse_bpm_activity_definition ON pmse_bpm_activity_definition.id = pmse_bpmn_activity.id
-                        WHERE pmse_bpmn_activity.id='".$caseData['bpmn_id']."'";
+                        WHERE pmse_bpmn_activity.id='" . $caseData['bpmn_id'] . "'";
                 $resultActi = $db->Query($sql);
-                
-//                $activityBean = BeanFactory::getBean('pmse_BpmnActivity');//new BpmnActivity();
-//                $joinTables = array(
-//                    array('INNER', 'pmse_bpm_activity_definition', 'pmse_bpm_activity_definition.id = pmse_bpmn_activity.id')
-//                );
-//                $this->activityRow = $this->wrapper->getSelectRows($activityBean,'id desc', "pmse_bpmn_activity.id={$caseData['bpmn_id']}", 0, -1, -1, array(), $joinTables);
-//                die();
+
+
                 $this->activityRow = $db->fetchByAssoc($resultActi);//$this->activityRow['rowList'][0];
                 $activityName = $this->activityRow['act_name'];
+                $taskName = $this->activityRow['name'];
+                $smarty->assign('nameTask', $taskName);
+                $smarty->assign('flowId', $id_flow);
                 // assigning a third parameter 'bpm' 'edit' or 'detail' can change
                 // the display mode of the template
                 // edit, detail , bpm
@@ -257,16 +293,13 @@ class pmse_InboxViewShowCase extends SugarView
                 $data_aux = new stdClass();
                 $data_aux->cas_task_start_date = $caseData['cas_task_start_date'];
                 $data_aux->cas_delegate_date = $caseData['cas_delegate_date'];
-                $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'],$data_aux);
-                $expected_time= $expTime['expected_time'];
+                $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
+                $expected_time = $expTime['expected_time'];
                 $expected_time_warning = $expTime['expected_time_warning'];
-                if($expected_time_warning==true)
-                {
-                    $expected_time_message="Overdue";
-                }
-                else
-                {
-                    $expected_time_message="Due Date";
+                if ($expected_time_warning == true) {
+                    $expected_time_message = "Overdue";
+                } else {
+                    $expected_time_message = "Due Date";
                 }
 //                if (!empty($expected_time)) {
 //                    if ($time_data->getNow()->ts > $expected_time) {
@@ -282,22 +315,23 @@ class pmse_InboxViewShowCase extends SugarView
 
                 $displayMode = array('displayMode' => 'bpm', 'dyn_uid' => $this->activityRow['act_type']);
                 //INIT CLAIM CASE AND DEFINE DISPLAY MODE
-                $reclaimCaseByUser=false;
-                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date']=='') && ($this->activityRow['act_assignment_method']=='selfservice')) {
-                    $reclaimCaseByUser=true;
+                $reclaimCaseByUser = false;
+                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
+                    $reclaimCaseByUser = true;
 //                    $displayMode = 'detail';
 
                 }
                 //
-                $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'], $displayMode, $reclaimCaseByUser);
-                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date']=='') && ($this->activityRow['act_assignment_method']=='selfservice')) {
+                $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'],
+                    $displayMode, $reclaimCaseByUser);
+                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $displayMode = 'detail';
 
                 }
                 //BUTTON SECTIONS
                 $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
                 if ($reclaimCaseByUser) {
-                    $this->defs['BPM']['buttons']['claim']= true;
+                    $this->defs['BPM']['buttons']['claim'] = true;
                 } elseif (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '')) {
                     $this->defs['BPM']['buttons']['approve'] = (strtoupper($this->activityRow['act_response_buttons']) == 'APPROVE') ? true : false;
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
@@ -321,22 +355,24 @@ class pmse_InboxViewShowCase extends SugarView
 //                if ($expected_time <> 0) {
 //                    $smarty->assign('expected_time', $time_data->to_display_date_time(date('Y-m-d H:i:s', $expected_time), true, true, $current_user));
 //                }
-                $smarty->assign('expected_time',$expected_time);
+                $smarty->assign('expected_time', $expected_time);
                 $smarty->assign('reclaimCaseByUser', $reclaimCaseByUser);
                 $smarty->assign('totalNotes', $totalNotes);
                 $smarty->assign('SUGAR_URL', $sugar_config['site_url']);
-                $smarty->assign('SUGAR_AJAX_URL', $sugar_config['site_url'] . "/index.php?module=pmse_Inbox&action=ajaxapi");
+                $smarty->assign('SUGAR_AJAX_URL',
+                    $sugar_config['site_url'] . "/index.php?module=pmse_Inbox&action=ajaxapi");
                 $apiSupported = 'false';
                 $smarty->assign('SUGAR_REST', $apiSupported);
 
                 //verify if is a claim case form if not add validate fields
-                if(!$reclaimCaseByUser){
+                if (!$reclaimCaseByUser) {
                     $valid = $this->validationsRequiredFields();
                     $smarty->assign('validations', $valid);
                 } else {
                     $smarty->assign('validations', array());
                 }
-                $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index, $this->focus->team_id);
+                $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
+                    $this->focus->team_id);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);
                 } else {
@@ -349,7 +385,7 @@ class pmse_InboxViewShowCase extends SugarView
 //                if ($simpleRouting) {
 //                    $openHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseRouteSimple.tpl';
 //                } else {
-                    $openHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseRoute.tpl';
+                $openHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseRoute.tpl';
 //                }
                 $closeHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseCloseHeader.tpl';
                 $openFooterTemplate = 'modules/pmse_Inbox/tpls/showCaseOpenFooter.tpl';
@@ -362,8 +398,6 @@ class pmse_InboxViewShowCase extends SugarView
 
                 //                $adhocAssignableUsers = $activityRow['act_adhoc']==1?$engine->getAdhocAssignableUserList($cas_id, $cas_index):array();
                 //                $reassignableUsers = $activityRow['act_reassign']==1?$engine->getReassignableUserList($cas_id, $cas_index):array();
-
-
 
 
                 //DISPLAY SECTION
@@ -379,7 +413,7 @@ class pmse_InboxViewShowCase extends SugarView
                 if ($displayMode == 'detail') {
                     $smarty->display($openFooterTemplate);
                 }
-                
+
                 //$this->_displaySubPanels();
                 $smarty->display($closeFooterTemplate);
 
@@ -412,7 +446,7 @@ class pmse_InboxViewShowCase extends SugarView
         $this->th->ss->assign('APP', $app_strings);
         $this->th->ss->assign('MOD', $mod_strings);
         $this->fieldDefs = $this->setDefaultAllFields($this->fieldDefs); // default editview
-        if ($readonly){
+        if ($readonly) {
             $this->fieldDefs = $this->setReadOnlyAllFields($this->fieldDefs);
         } else {
             $this->fieldDefs = $this->processReadOnlyFields($this->fieldDefs);
@@ -427,14 +461,17 @@ class pmse_InboxViewShowCase extends SugarView
         $this->th->ss->assign('returnId', $this->returnId);
         $this->th->ss->assign('isDuplicate', $this->isDuplicate);
         $this->th->ss->assign('def', $this->defs);
-        $this->th->ss->assign('useTabs', isset($this->defs['templateMeta']['useTabs']) && isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['useTabs'] : false);
-        $this->th->ss->assign('maxColumns', isset($this->defs['templateMeta']['maxColumns']) ? $this->defs['templateMeta']['maxColumns'] : 2);
+        $this->th->ss->assign('useTabs',
+            isset($this->defs['templateMeta']['useTabs']) && isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['useTabs'] : false);
+        $this->th->ss->assign('maxColumns',
+            isset($this->defs['templateMeta']['maxColumns']) ? $this->defs['templateMeta']['maxColumns'] : 2);
         $this->th->ss->assign('module', $moduleName);
         $this->th->ss->assign('current_user', $current_user);
         $this->th->ss->assign('bean', $this->focus);
 //        $this->th->ss->assign('isAuditEnabled', $this->focus->is_AuditEnabled());
         $this->th->ss->assign('gridline', $current_user->getPreference('gridline') == 'on' ? '1' : '0');
-        $this->th->ss->assign('tabDefs', isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
+        $this->th->ss->assign('tabDefs',
+            isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
         $this->th->ss->assign('VERSION_MARK', getVersionedPath(''));
 
         global $js_custom_version;
@@ -468,7 +505,8 @@ class pmse_InboxViewShowCase extends SugarView
         }
 
         if (isset($this->defs['templateMeta']['form']['closeFormBeforeCustomButtons'])) {
-            $this->th->ss->assign('closeFormBeforeCustomButtons', $this->defs['templateMeta']['form']['closeFormBeforeCustomButtons']);
+            $this->th->ss->assign('closeFormBeforeCustomButtons',
+                $this->defs['templateMeta']['form']['closeFormBeforeCustomButtons']);
         }
 
         if (isset($this->defs['templateMeta']['form']['enctype'])) {
@@ -489,8 +527,10 @@ class pmse_InboxViewShowCase extends SugarView
         $this->th->ss->assign('form_name', $form_name);//$form_name change by id form showCaseForm
         $this->th->ss->assign('set_focus_block', get_set_focus_js());
 
-        $this->th->ss->assign('form', isset($this->defs['templateMeta']['form']) ? $this->defs['templateMeta']['form'] : null);
-        $this->th->ss->assign('includes', isset($this->defs['templateMeta']['includes']) ? $this->defs['templateMeta']['includes'] : null);
+        $this->th->ss->assign('form',
+            isset($this->defs['templateMeta']['form']) ? $this->defs['templateMeta']['form'] : null);
+        $this->th->ss->assign('includes',
+            isset($this->defs['templateMeta']['includes']) ? $this->defs['templateMeta']['includes'] : null);
         $this->th->ss->assign('view', $this->view);
 
 
@@ -558,7 +598,7 @@ class pmse_InboxViewShowCase extends SugarView
         } else {
             $nameTemplateTmp = 'PMSEDetailView';
         }
-        $this->th->buildTemplate($this->bean->module_name, $nameTemplateTmp , $this->tpl, $ajaxSave, $this->defs);
+        $this->th->buildTemplate($this->bean->module_name, $nameTemplateTmp, $this->tpl, $ajaxSave, $this->defs);
         $this->th->deleteTemplate($this->bean->module_name, $form_name);
         $newTplFile = $this->th->cacheDir . $this->th->templateDir . $this->bean->module_name . '/' . $nameTemplateTmp . '.tpl';
         $str .= $this->th->ss->fetch($newTplFile);
@@ -625,16 +665,16 @@ class pmse_InboxViewShowCase extends SugarView
     public function setDefaultAllFields($fieldDefs)
     {
         foreach ($fieldDefs as $fieldKey => $field) {
-                $fieldDefs[$fieldKey]['viewType'] = 'EditView';
+            $fieldDefs[$fieldKey]['viewType'] = 'EditView';
         }
         return $fieldDefs;
     }
 
-    
+
     public function setReadOnlyAllFields($fieldDefs)
     {
         foreach ($fieldDefs as $fieldKey => $field) {
-                $fieldDefs[$fieldKey]['viewType'] = 'DetailView';
+            $fieldDefs[$fieldKey]['viewType'] = 'DetailView';
         }
         return $fieldDefs;
     }
@@ -665,11 +705,11 @@ class pmse_InboxViewShowCase extends SugarView
         $requiredFields = '';
         foreach ($this->fieldDefs as $fieldKey => $field) {
             if ($this->fieldDefs[$fieldKey]['required'] && $field['viewType'] != 'DetailView') {
-                $requiredFields .= '"'.$this->fieldDefs[$fieldKey]['name'].'",';
+                $requiredFields .= '"' . $this->fieldDefs[$fieldKey]['name'] . '",';
             }
         }
-        if(!empty($requiredFields)){
-            $requiredFields = '['.substr($requiredFields, 0, -1).']';
+        if (!empty($requiredFields)) {
+            $requiredFields = '[' . substr($requiredFields, 0, -1) . ']';
         }
         return $requiredFields;
     }
@@ -694,8 +734,8 @@ class pmse_InboxViewShowCase extends SugarView
         }
         return $panels;
     }
-    
-    
+
+
     /**
      * para visualizar los panel
      */
@@ -703,15 +743,16 @@ class pmse_InboxViewShowCase extends SugarView
     {
         if (!empty($this->bean->id) &&
             (SugarAutoLoader::existingCustom('modules/' . $this->module . '/metadata/subpaneldefs.php') ||
-             SugarAutoLoader::loadExtension("layoutdefs", $this->module))) {
+                SugarAutoLoader::loadExtension("layoutdefs", $this->module))
+        ) {
             $GLOBALS['focus'] = $this->bean;
 //            echo $this->SubPanelRelatedModules();
-            require_once ('include/SubPanel/SubPanelTiles.php');
+            require_once('include/SubPanel/SubPanelTiles.php');
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
         }
     }
-    
+
 
     public function getAjaxRelationships($relationships)
     {
@@ -736,7 +777,8 @@ class pmse_InboxViewShowCase extends SugarView
                 case 'many-to-many':
                     $rel['relationship_type_render'] = translate('LBL_MANYTOMANY');
                     break;
-                default: $rel['relationship_type_render'] = '';
+                default:
+                    $rel['relationship_type_render'] = '';
             }
             $rel ['name'] = $relationshipName;
             if ($rel ['is_custom'] && isset($rel ['from_studio']) && $rel ['from_studio']) {

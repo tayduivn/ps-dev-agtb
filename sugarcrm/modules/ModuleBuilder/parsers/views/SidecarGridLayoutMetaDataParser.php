@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -376,6 +376,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // Set up the panel index so we know where the header panel meta needs to
         // be injected if there is header panel meta to be injected
         $panelIndex = 0;
+        $maxColumns = $this->getMaxColumns();
         foreach ($panels as $pName => $panel) {
             // This will only happen for record views at the moment. The header
             // panel index is set in _convertFromCanonicalForm.
@@ -387,10 +388,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
             $panelName = strtoupper($pName);
             $fields = array();
-            // get number of panel columns default to 2
-            $panelColumns = 2;
+            // get number of panel columns
             if (!empty($this->extraPanelMeta[$panelName]['columns'])) {
                 $panelColumns = $this->extraPanelMeta[$panelName]['columns'];
+            } else {
+                $panelColumns = $maxColumns;
             }
             $singleSpanUnit = $this->maxSpan/$panelColumns;
 
@@ -649,6 +651,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
+        $maxColumns = $this->getMaxColumns();
 
         // Get the header panel index for use in removing and injecting the header
         // panel meta when editing record views
@@ -673,9 +676,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
 
             // Get panel column value
-            $panelColumns = 2;
             if (!empty($panel['columns'])) {
                 $panelColumns = $panel['columns'];
+            } else {
+                $panelColumns = $maxColumns;
             }
 
             // panels now have meta at this level so we need to store that

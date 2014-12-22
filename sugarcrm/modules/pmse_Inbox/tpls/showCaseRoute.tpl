@@ -1,7 +1,19 @@
+{*
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+*}
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.libraries.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam.css'}" rel="stylesheet" />
-<link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui-extend.css'}" rel="stylesheet" />
+{*<link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui-extend.css'}" rel="stylesheet" />*}
 <!---------------  START WORKFLOW SHOWCASE ------------>
 <form action="index.php?module=pmse_Inbox&action=routeCase" id="showCaseForm" method="POST">
     {foreach from=$customButtons key='key' item='item'}
@@ -60,19 +72,20 @@
                                     {/if}
                                     {if $act_adhoc}
                                         {if !$reclaimCaseByUser}
-                                            <li><a href="javascript:adhocForm({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_CHANGE_OWNER'}"><span class="adam-icon-record_owner"></span></a></li>
+                                            <li><a href="javascript:adhocFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_CHANGE_OWNER'}"><span class="adam-icon-record_owner"></span></a></li>
                                         {/if}
                                     {/if}
                                     {if $act_reassign}
                                         {if !$reclaimCaseByUser}
-                                            <li><a href="javascript:reassignForm({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a></li>
+                                            {*<li><a href="javascript:reassignForm({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a></li>*}
+                                            <li><a href="javascript:reassignFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a></li>
                                         {/if}
                                     {/if}
                                     <li><a href="javascript:showHistory({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_HISTORY'}"><span class="adam-icon-history"></span></a></li>
-                                    <li><a href="javascript:ShowLog({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_STATUS'}"><span class="adam-icon-status"></span></a></li>
-                                    {if $act_note}
+                                    <li><a href="javascript:showImage({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_STATUS'}"><span class="adam-icon-status"></span></a></li>
+                                    {*{if $act_note}
                                         <li><a href="javascript:showNotes({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_NOTES'}"><span class="adam-icon-notes" style="position: relative;"><div id="countNotes" {if $totalNotes == 0} style="display:none;" {/if} >{$totalNotes}</div></span></a></li>
-                                    {/if}
+                                    {/if}*}
                                 </ul>
                             </div>
                         </td>
@@ -102,10 +115,11 @@
     {/if}
 
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.libraries.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.jcore.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/pmse.ui.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/6historial.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/historyEntries.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/formAction.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Project/js/notes.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.libraries.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.jcore.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.ui.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.utils.min.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/historyEntries.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/formAction.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>
+{*<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>*}

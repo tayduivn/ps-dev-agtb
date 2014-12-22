@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
@@ -15,17 +28,17 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'History',
-                'label' => 'History',
+                'label' => 'LBL_PMSE_LABEL_HISTORY',
                 'event' => 'case:history',
                 'css_class'=>'overflow-visible',
             ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'viewNotes',
-                'label' => 'View Notes',
-                'event' => 'case:notes',
-                'css_class'=>'overflow-visible',
-            ),
+//            array(
+//                'type' => 'rowaction',
+//                'name' => 'viewNotes',
+//                'label' => 'LBL_PMSE_LABEL_NOTES',
+//                'event' => 'case:notes',
+//                'css_class'=>'overflow-visible',
+//            ),
             array(
                 'type' => 'reassignbutton',
                 'name' => 'reassignButton',
@@ -36,13 +49,13 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
             array(
                 'type' => 'executebutton',
                 'name' => 'executeButton',
-                'label' => 'LBL_EXECUTE',
+                'label' => 'LBL_PMSE_LABEL_EXECUTE',
                 'event' => 'case:execute',
             ),
             array(
                 'type' => 'cancelcasebutton',
                 'name' => 'cancelButton',
-                'label' => 'LBL_CANCEL_CASE',
+                'label' => 'LBL_PMSE_LABEL_CANCEL',
                 'event' => 'list:cancelCase:fire',
             ),
         ),
@@ -114,7 +127,7 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'label' => 'LBL_DATE_CREATED',
+                    'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
                     'name' => 'cas_create_date',

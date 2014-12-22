@@ -1,4 +1,16 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
@@ -6,43 +18,44 @@ require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Description of PMSEJobQueue
- * The PMSEJobQueue class creates and assign a queued job that executes a BPM 
+ * The PMSEJobQueue class creates and assign a queued job that executes a BPM
  * element such as a gateway, activity or event.
  *
  */
-class PMSEJobQueueHandler {
-    
+class PMSEJobQueueHandler
+{
+
     /**
      * @var SchedulersJob this attribute stores an instance of the SchedulersJob class
      */
     protected $schedulersJob;
-    
+
     /**
      * @var SugarJobQueue this attribute stores an instance of the SchedulersJob class
      */
     protected $sugarJobQueue;
-    
+
     /**
-     * @var User this attribute stores an instance of the User class, 
+     * @var User this attribute stores an instance of the User class,
      * especificcally the current logged user that executes the process
      */
     protected $currentUser;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
-    protected  $request;
-    
+    protected $request;
+
     /**
      *
-     * @var type 
+     * @var type
      */
-    protected  $preProcessor;
-    
+    protected $preProcessor;
+
     /**
-     * 
-     * @var type 
+     *
+     * @var type
      */
     protected $logger;
 
@@ -51,20 +64,22 @@ class PMSEJobQueueHandler {
      * @global type $current_user
      * @codeCoverageIgnore
      */
-    public function __construct() {
+    public function __construct()
+    {
         global $current_user;
         $this->schedulersJob = new SchedulersJob();
         $this->sugarJobQueue = new SugarJobQueue();
         $this->logger = PMSELogger::getInstance();
         $this->currentUser = $current_user;
     }
-    
+
     /**
      * Retrieve the Scheduler Job attribute
      * @return type
      * @codeCoverageIgnore
      */
-    public function getSchedulersJob() {
+    public function getSchedulersJob()
+    {
         return $this->schedulersJob;
     }
 
@@ -73,7 +88,8 @@ class PMSEJobQueueHandler {
      * @return type
      * @codeCoverageIgnore
      */
-    public function getSugarJobQueue() {
+    public function getSugarJobQueue()
+    {
         return $this->sugarJobQueue;
     }
 
@@ -82,7 +98,8 @@ class PMSEJobQueueHandler {
      * @param type $schedulersJob
      * @codeCoverageIgnore
      */
-    public function setSchedulersJob($schedulersJob) {
+    public function setSchedulersJob($schedulersJob)
+    {
         $this->schedulersJob = $schedulersJob;
     }
 
@@ -91,16 +108,18 @@ class PMSEJobQueueHandler {
      * @param type $sugarJobQueue
      * @codeCoverageIgnore
      */
-    public function setSugarJobQueue($sugarJobQueue) {
+    public function setSugarJobQueue($sugarJobQueue)
+    {
         $this->sugarJobQueue = $sugarJobQueue;
     }
-    
+
     /**
      * Get Current User attribute
      * @return type
      * @codeCoverageIgnore
      */
-    public function getCurrentUser() {
+    public function getCurrentUser()
+    {
         return $this->currentUser;
     }
 
@@ -109,12 +128,13 @@ class PMSEJobQueueHandler {
      * @param type $currentUser
      * @codeCoverageIgnore
      */
-    public function setCurrentUser($currentUser) {
+    public function setCurrentUser($currentUser)
+    {
         $this->currentUser = $currentUser;
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -124,7 +144,7 @@ class PMSEJobQueueHandler {
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -134,7 +154,7 @@ class PMSEJobQueueHandler {
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -144,7 +164,7 @@ class PMSEJobQueueHandler {
     }
 
     /**
-     * 
+     *
      * @param type $logger
      * @codeCoverageIgnore
      */
@@ -152,9 +172,9 @@ class PMSEJobQueueHandler {
     {
         $this->logger = $logger;
     }
-        
+
     /**
-     * 
+     *
      * @param type $request
      * @codeCoverageIgnore
      */
@@ -164,7 +184,7 @@ class PMSEJobQueueHandler {
     }
 
     /**
-     * 
+     *
      * @param type $preProcessor
      * @codeCoverageIgnore
      */
@@ -173,9 +193,11 @@ class PMSEJobQueueHandler {
         $this->preProcessor = $preProcessor;
     }
 
-        
+
     /**
      * Prepare Pre-Processor
+     * Cannot be tested since the PMSEPreProcessor uses an static method call
+     * @codeCoverageIgnore
      */
     public function preparePreProcessor()
     {
@@ -184,37 +206,38 @@ class PMSEJobQueueHandler {
         $this->request->setType('queue');
         $this->preProcessor = PMSEPreProcessor::getInstance();
     }
-    
-    
+
+
     /**
      * Submit a Job top the Sugar job queue handler
      * @param type $params
      * @return type
      */
-    public function submitPMSEJob($params) {
+    public function submitPMSEJob($params)
+    {
         // logger calls
         $this->logger->info('Submit PMSE job.');
-        $this->logger->debug('PMSE Job parameters: ' . print_r($params,true));
+        $this->logger->debug('PMSE Job parameters: ' . print_r($params, true));
 
         $this->schedulersJob->name = "PMSE Job - {$params->id}";
         //data we are passing to the job
         $this->schedulersJob->data = json_encode($this->filterData($params->data));
         //function to call
-        $this->schedulersJob->target = "function::PMSEJobRun"; 
+        $this->schedulersJob->target = "function::PMSEJobRun";
         $this->schedulersJob->message = "Executing a PMSE queued task.";
         //set the user the job runs as
         $this->schedulersJob->assigned_user_id = $this->currentUser->id;
         //push into the queue to run
         $jobId = $this->sugarJobQueue->submitJob($this->schedulersJob);
         //log the job id
-        $this->logger->info('PMSE Job created with id: '.$jobId);
+        $this->logger->info('PMSE Job created with id: ' . $jobId);
         return $jobId;
     }
-    
+
     public function executeRequest($args = array(), $createThread = false, $bean = null, $externalAction = '')
     {
         $this->logger->info('Processing a direct request.');
-        $this->logger->debug('Direct request params: ' . print_r($args,true));
+        $this->logger->debug('Direct request params: ' . print_r($args, true));
 
         $this->preparePreProcessor();
         $this->request->setCreateThread($createThread);
@@ -228,7 +251,7 @@ class PMSEJobQueueHandler {
 
     public function filterData($dataArray)
     {
-        $this->logger->debug('Pre-Filtered Data: ' . print_r($dataArray,true));
+        $this->logger->debug('Pre-Filtered Data: ' . print_r($dataArray, true));
 
         $validFields = array(
             'evn_criteria',
@@ -259,14 +282,14 @@ class PMSEJobQueueHandler {
             'cas_index',
             'id'
         );
-        
+
         foreach ($dataArray as $key => $value) {
             if (!in_array($key, $validFields)) {
                 unset($dataArray[$key]);
             }
         }
 
-        $this->logger->debug('Filtered Data: ' . print_r($dataArray,true));
+        $this->logger->debug('Filtered Data: ' . print_r($dataArray, true));
         return $dataArray;
     }
 }

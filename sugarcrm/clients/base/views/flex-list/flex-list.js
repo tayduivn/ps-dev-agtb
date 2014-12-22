@@ -1037,7 +1037,6 @@
 
         if (this.$helper && this.$helper.length > 0) {
             this.$helper.find('div').width(this.$spy.get(0).scrollWidth);
-            this.$helper.scrollLeft(this.$spy.scrollLeft());
             this._toggleScrollHelper();
         }
     }

@@ -304,7 +304,7 @@ abstract class UpgradeDriver
      * Execution will start here
      * This function must form context, create a class and run it
      */
-    static public function start()
+    public function start()
     {
         die("Must override this function in a driver");
     }
@@ -319,8 +319,6 @@ abstract class UpgradeDriver
      */
     public function init()
     {
-        list($version, $build) = static::getVersion();
-        $this->log("Upgrader v.$version (build $build) starting");
         chdir($this->context['source_dir']);
         $this->loadConfig();
         $this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
@@ -883,10 +881,6 @@ abstract class UpgradeDriver
 
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
-        $db = DBManagerFactory::getInstance();
-        if (version_compare($this->from_version, 7, '<') && !$db instanceof MysqlManager) {
-            return $this->error("Can't upgrade version 6.x on non-Mysql database", true);
-        }
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {
@@ -1568,11 +1562,12 @@ abstract class UpgradeDriver
 
     /**
      * Save config.php
+     * @return boolean
      */
     public function saveConfig()
     {
         ksort($this->config);
-        write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
+        return write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
     }
 
     protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
@@ -1677,10 +1672,13 @@ abstract class UpgradeDriver
                     $this->cleanCaches();
                     list($this->from_version, $this->from_flavor) = $this->state['old_version'];
                     if (!$this->runScripts("post")) {
-                        $this->error("Post-upgrade stage failed!");
+                        $this->error("Post-upgrade stage failed! Error executing post scripts");
                         return false;
                     }
-                    $this->saveConfig();
+                    if (!$this->saveConfig()) {
+                        $this->error("Post-upgrade stage failed! Cannot write config.php at {$this->context['source_dir']}");
+                        return false;
+                    }
                     $this->cleanCaches();
                     break;
                 case "cleanup":

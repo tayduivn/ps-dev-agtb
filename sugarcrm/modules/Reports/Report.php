@@ -141,6 +141,13 @@ class Report
      */
     protected $group_order_by_arr = array();
 
+    /**
+     *
+     * SugarBeans in JOIN
+     * @var array
+     */
+    public $extModules = array();
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -1251,7 +1258,9 @@ class Report
                 $varDefLabel = $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['vname'];
                 $varDefLabel = translate($varDefLabel, $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['module']);
                 $finalDisplayName = $reportDisplayTableName . " > " . $varDefLabel;
-                $where_clause = str_replace($key, $finalDisplayName, $where_clause);
+                // Wrap the search and replace terms in spaces to ensure exact match
+                // and replace
+                $where_clause = str_replace(" $key ", " $finalDisplayName ", $where_clause);
             }
         } // foreach
         return $where_clause;
@@ -1865,6 +1874,13 @@ class Report
         $query .= $this->from . "\n";
 
         $where_auto = " " . $this->focus->table_name . ".deleted=0 \n";
+
+        foreach($this->extModules as $tableAlias => $extModule) {
+            if (isset($extModule->deleted)) {
+               $where_auto .= " AND " . $tableAlias . ".deleted=0 \n";             
+            }            
+        }
+        
         // Start ACL check
         global $current_user, $mod_strings;
         if (!is_admin($current_user)) {
@@ -2582,6 +2598,8 @@ class Report
         } else if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
         }
+
+        $this->extModules[$secondaryTableAlias] = $extModule;
 
         if (isset($extModule->field_defs['name']['db_concat_fields'])) {
             $select_piece = db_concat($secondaryTableAlias, $extModule->field_defs['name']['db_concat_fields']);

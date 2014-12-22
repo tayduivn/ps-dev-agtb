@@ -26,7 +26,7 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-// FILE SUGARCRM flav=pro ONLY 
+
 
 require_once('XTemplate/xtpl.php');
 require_once('data/Tracker.php');

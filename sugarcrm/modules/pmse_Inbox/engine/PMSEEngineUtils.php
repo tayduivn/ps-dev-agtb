@@ -1,9 +1,22 @@
 <?php
-/**
- * Class contains utilities as encoder and decoders for codes url, remove bound fields, 
- * generates random unique id code, get entity dictionary and checks if a field required, visible and editField
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+
+/**
+ * Class contains utilities as encoder and decoders for codes url, remove bound fields,
+ * generates random unique id code, get entity dictionary and checks if a field required, visible and editField
+ */
 class PMSEEngineUtils
 {
 
@@ -139,16 +152,338 @@ class PMSEEngineUtils
     public static function reservedWordsSql()
     {
         //Reserved words SQL
-        $reservedWordsSql = array("ACCESSIBLE", "ACTION", "ADD", "ALL", "ALTER", "ANALYZE", "AND", "ANY", "AS", "ASC", "ASENSITIVE", "AUTHORIZATION", "BACKUP", "BEFORE", "BEGIN", "BETWEEN", "BIGINT", "BINARY", "BIT", "BLOB", "BOTH", "BREAK", "BROWSE", "BULK", "BY", "CALL", "CASCADE", "CASE", "CHANGE", "CHAR", "CHARACTER", "CHECK", "CHECKPOINT", "CLOSE", "CLUSTERED", "COALESCE", "COLLATE", "COLUMN", "COMMIT", "COMPUTE", "CONDITION", "CONSTRAINT", "CONTAINS", "CONTAINSTABLE", "CONTINUE", "CONVERT", "CREATE", "CROSS", "CURRENT", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER", "CURSOR", "DATABASE", "DATABASES", "DATE", "DAY_HOUR", "DAY_MICROSECOND", "DAY_MINUTE", "DAY_SECOND", "DBCC", "DEALLOCATE", "DEC", "DECIMAL", "DECLARE", "DEFAULT", "DELAYED", "DELETE", "DENY", "DESC", "DESCRIBE", "DETERMINISTIC", "DISK", "DISTINCT", "DISTINCTROW",
-            "DISTRIBUTED", "DIV", "DOUBLE", "DROP", "DUAL", "DUMMY", "DUMP", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "END", "ENUM", "ERRLVL", "ESCAPE", "ESCAPED", "EXCEPT", "EXEC", "EXECUTE", "EXISTS", "EXIT", "EXPLAIN", "FALSE", "FETCH", "FILE", "FILLFACTOR", "FLOAT", "FLOAT4", "FLOAT8", "FOR", "FORCE", "FOREIGN", "FREETEXT", "FREETEXTTABLE", "FROM", "FULL", "FULLTEXT", "FUNCTION", "GENERAL", "GOTO", "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "HOLDLOCK", "HOUR_MICROSECOND", "HOUR_MINUTE", "HOUR_SECOND", "IDENTITY", "IDENTITYCOL", "IDENTITY_INSERT", "IF", "IGNORE", "IGNORE_SERVER_IDS", "IN", "INDEX", "INFILE", "INNER", "INOUT", "INSENSITIVE", "INSERT", "INT", "INT1", "INT2", "INT3", "INT4", "INT8", "INTEGER", "INTERSECT", "INTERVAL", "INTO", "IS", "ITERATE", "JOIN", "KEY", "KEYS", "KILL", "LEADING", "LEAVE", "LEFT", "LIKE", "LIMIT", "LINEAR", "LINENO", "LINES",
-            "LOAD", "LOCALTIME", "LOCALTIMESTAMP", "LOCK", "LONG", "LONGBLOB", "LONGTEXT", "LOOP", "LOW_PRIORITY", "MASTER_HEARTBEAT_PERIOD", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MEDIUMBLOB", "MEDIUMINT", "MEDIUMTEXT", "MIDDLEINT", "MINUTE_MICROSECOND", "MINUTE_SECOND", "MOD", "MODIFIES", "NATIONAL", "NATURAL", "NO", "NOCHECK", "NONCLUSTERED", "NOT", "NO_WRITE_TO_BINLOG", "NULL", "NULLIF", "NUMERIC", "OF", "OFF", "OFFSETS", "ON", "OPEN", "OPENDATASOURCE", "OPENQUERY", "OPENROWSET", "OPENXML", "OPTIMIZE", "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", "OVER", "PERCENT", "PLAN", "PRECISION", "PRIMARY", "PRINT", "PROC", "PROCEDURE", "PUBLIC", "PURGE", "RAISERROR", "RANGE", "READ", "READS", "READTEXT", "READ_WRITE", "REAL", "RECONFIGURE", "REFERENCES", "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE",
-            "REPLICATION", "REQUIRE", "RESIGNAL", "RESTORE", "RESTRICT", "RETURN", "REVOKE", "RIGHT", "RLIKE", "ROLLBACK", "ROWCOUNT", "ROWGUIDCOL", "RULE", "SAVE", "SCHEMA", "SCHEMAS", "SECOND_MICROSECOND", "SELECT", "SENSITIVE", "SEPARATOR", "SESSION_USER", "SET", "SETUSER", "SHOW", "SHUTDOWN", "SIGNAL", "SLOW", "SMALLINT", "SOME", "SPATIAL", "SPECIFIC", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT", "SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STARTING", "STATISTICS", "STRAIGHT_JOIN", "SYSTEM_USER", "TABLE", "TERMINATED", "TEXT", "TEXTSIZE", "THEN", "TIME", "TIMESTAMP", "TINYBLOB", "TINYINT", "TINYTEXT", "TO", "TOP", "TRAILING", "TRAN", "TRANSACTION", "TRIGGER", "TRUE", "TRUNCATE", "TSEQUAL", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "UPDATETEXT", "USAGE", "USE", "USER", "USING", "UTC_DATE", "UTC_TIME",
-            "UTC_TIMESTAMP", "VALUES", "VARBINARY", "VARCHAR", "VARCHARACTER", "VARYING", "VIEW", "WAITFOR", "WHEN", "WHERE", "WHILE", "WITH", "WRITE", "WRITETEXT", "XOR", "YEAR_MONTH", "ZEROFILL");
+        $reservedWordsSql = array(
+            "ACCESSIBLE",
+            "ACTION",
+            "ADD",
+            "ALL",
+            "ALTER",
+            "ANALYZE",
+            "AND",
+            "ANY",
+            "AS",
+            "ASC",
+            "ASENSITIVE",
+            "AUTHORIZATION",
+            "BACKUP",
+            "BEFORE",
+            "BEGIN",
+            "BETWEEN",
+            "BIGINT",
+            "BINARY",
+            "BIT",
+            "BLOB",
+            "BOTH",
+            "BREAK",
+            "BROWSE",
+            "BULK",
+            "BY",
+            "CALL",
+            "CASCADE",
+            "CASE",
+            "CHANGE",
+            "CHAR",
+            "CHARACTER",
+            "CHECK",
+            "CHECKPOINT",
+            "CLOSE",
+            "CLUSTERED",
+            "COALESCE",
+            "COLLATE",
+            "COLUMN",
+            "COMMIT",
+            "COMPUTE",
+            "CONDITION",
+            "CONSTRAINT",
+            "CONTAINS",
+            "CONTAINSTABLE",
+            "CONTINUE",
+            "CONVERT",
+            "CREATE",
+            "CROSS",
+            "CURRENT",
+            "CURRENT_DATE",
+            "CURRENT_TIME",
+            "CURRENT_TIMESTAMP",
+            "CURRENT_USER",
+            "CURSOR",
+            "DATABASE",
+            "DATABASES",
+            "DATE",
+            "DAY_HOUR",
+            "DAY_MICROSECOND",
+            "DAY_MINUTE",
+            "DAY_SECOND",
+            "DBCC",
+            "DEALLOCATE",
+            "DEC",
+            "DECIMAL",
+            "DECLARE",
+            "DEFAULT",
+            "DELAYED",
+            "DELETE",
+            "DENY",
+            "DESC",
+            "DESCRIBE",
+            "DETERMINISTIC",
+            "DISK",
+            "DISTINCT",
+            "DISTINCTROW",
+            "DISTRIBUTED",
+            "DIV",
+            "DOUBLE",
+            "DROP",
+            "DUAL",
+            "DUMMY",
+            "DUMP",
+            "EACH",
+            "ELSE",
+            "ELSEIF",
+            "ENCLOSED",
+            "END",
+            "ENUM",
+            "ERRLVL",
+            "ESCAPE",
+            "ESCAPED",
+            "EXCEPT",
+            "EXEC",
+            "EXECUTE",
+            "EXISTS",
+            "EXIT",
+            "EXPLAIN",
+            "FALSE",
+            "FETCH",
+            "FILE",
+            "FILLFACTOR",
+            "FLOAT",
+            "FLOAT4",
+            "FLOAT8",
+            "FOR",
+            "FORCE",
+            "FOREIGN",
+            "FREETEXT",
+            "FREETEXTTABLE",
+            "FROM",
+            "FULL",
+            "FULLTEXT",
+            "FUNCTION",
+            "GENERAL",
+            "GOTO",
+            "GRANT",
+            "GROUP",
+            "HAVING",
+            "HIGH_PRIORITY",
+            "HOLDLOCK",
+            "HOUR_MICROSECOND",
+            "HOUR_MINUTE",
+            "HOUR_SECOND",
+            "IDENTITY",
+            "IDENTITYCOL",
+            "IDENTITY_INSERT",
+            "IF",
+            "IGNORE",
+            "IGNORE_SERVER_IDS",
+            "IN",
+            "INDEX",
+            "INFILE",
+            "INNER",
+            "INOUT",
+            "INSENSITIVE",
+            "INSERT",
+            "INT",
+            "INT1",
+            "INT2",
+            "INT3",
+            "INT4",
+            "INT8",
+            "INTEGER",
+            "INTERSECT",
+            "INTERVAL",
+            "INTO",
+            "IS",
+            "ITERATE",
+            "JOIN",
+            "KEY",
+            "KEYS",
+            "KILL",
+            "LEADING",
+            "LEAVE",
+            "LEFT",
+            "LIKE",
+            "LIMIT",
+            "LINEAR",
+            "LINENO",
+            "LINES",
+            "LOAD",
+            "LOCALTIME",
+            "LOCALTIMESTAMP",
+            "LOCK",
+            "LONG",
+            "LONGBLOB",
+            "LONGTEXT",
+            "LOOP",
+            "LOW_PRIORITY",
+            "MASTER_HEARTBEAT_PERIOD",
+            "MASTER_SSL_VERIFY_SERVER_CERT",
+            "MATCH",
+            "MAXVALUE",
+            "MEDIUMBLOB",
+            "MEDIUMINT",
+            "MEDIUMTEXT",
+            "MIDDLEINT",
+            "MINUTE_MICROSECOND",
+            "MINUTE_SECOND",
+            "MOD",
+            "MODIFIES",
+            "NATIONAL",
+            "NATURAL",
+            "NO",
+            "NOCHECK",
+            "NONCLUSTERED",
+            "NOT",
+            "NO_WRITE_TO_BINLOG",
+            "NULL",
+            "NULLIF",
+            "NUMERIC",
+            "OF",
+            "OFF",
+            "OFFSETS",
+            "ON",
+            "OPEN",
+            "OPENDATASOURCE",
+            "OPENQUERY",
+            "OPENROWSET",
+            "OPENXML",
+            "OPTIMIZE",
+            "OPTION",
+            "OPTIONALLY",
+            "OR",
+            "ORDER",
+            "OUT",
+            "OUTER",
+            "OUTFILE",
+            "OVER",
+            "PERCENT",
+            "PLAN",
+            "PRECISION",
+            "PRIMARY",
+            "PRINT",
+            "PROC",
+            "PROCEDURE",
+            "PUBLIC",
+            "PURGE",
+            "RAISERROR",
+            "RANGE",
+            "READ",
+            "READS",
+            "READTEXT",
+            "READ_WRITE",
+            "REAL",
+            "RECONFIGURE",
+            "REFERENCES",
+            "REGEXP",
+            "RELEASE",
+            "RENAME",
+            "REPEAT",
+            "REPLACE",
+            "REPLICATION",
+            "REQUIRE",
+            "RESIGNAL",
+            "RESTORE",
+            "RESTRICT",
+            "RETURN",
+            "REVOKE",
+            "RIGHT",
+            "RLIKE",
+            "ROLLBACK",
+            "ROWCOUNT",
+            "ROWGUIDCOL",
+            "RULE",
+            "SAVE",
+            "SCHEMA",
+            "SCHEMAS",
+            "SECOND_MICROSECOND",
+            "SELECT",
+            "SENSITIVE",
+            "SEPARATOR",
+            "SESSION_USER",
+            "SET",
+            "SETUSER",
+            "SHOW",
+            "SHUTDOWN",
+            "SIGNAL",
+            "SLOW",
+            "SMALLINT",
+            "SOME",
+            "SPATIAL",
+            "SPECIFIC",
+            "SQL",
+            "SQLEXCEPTION",
+            "SQLSTATE",
+            "SQLWARNING",
+            "SQL_BIG_RESULT",
+            "SQL_CALC_FOUND_ROWS",
+            "SQL_SMALL_RESULT",
+            "SSL",
+            "STARTING",
+            "STATISTICS",
+            "STRAIGHT_JOIN",
+            "SYSTEM_USER",
+            "TABLE",
+            "TERMINATED",
+            "TEXT",
+            "TEXTSIZE",
+            "THEN",
+            "TIME",
+            "TIMESTAMP",
+            "TINYBLOB",
+            "TINYINT",
+            "TINYTEXT",
+            "TO",
+            "TOP",
+            "TRAILING",
+            "TRAN",
+            "TRANSACTION",
+            "TRIGGER",
+            "TRUE",
+            "TRUNCATE",
+            "TSEQUAL",
+            "UNDO",
+            "UNION",
+            "UNIQUE",
+            "UNLOCK",
+            "UNSIGNED",
+            "UPDATE",
+            "UPDATETEXT",
+            "USAGE",
+            "USE",
+            "USER",
+            "USING",
+            "UTC_DATE",
+            "UTC_TIME",
+            "UTC_TIMESTAMP",
+            "VALUES",
+            "VARBINARY",
+            "VARCHAR",
+            "VARCHARACTER",
+            "VARYING",
+            "VIEW",
+            "WAITFOR",
+            "WHEN",
+            "WHERE",
+            "WHILE",
+            "WITH",
+            "WRITE",
+            "WRITETEXT",
+            "XOR",
+            "YEAR_MONTH",
+            "ZEROFILL"
+        );
         return $reservedWordsSql;
     }
-    
+
     /**
-     * 
+     *
      * @param type $type
      * @param type $entity
      * @return string
@@ -275,7 +610,7 @@ class PMSEEngineUtils
                     return false;
                 }
             }
-        }        
+        }
         if (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') {
             if ($def ['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id')) {
                 return true;
@@ -309,11 +644,12 @@ class PMSEEngineUtils
         // bug 19656: this test changed after 5.0.0b - we now remove all ID type fields - whether set as type, or dbtype, from the fielddefs
         return
             (
-            (
-            (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') && isset($def ['type']) && $def ['type'] != 'id' && $def ['type'] != 'parent_type' && (empty($def ['dbType']) || $def ['dbType'] != 'id') && ( isset($def ['name']) && strcmp($def ['name'], 'deleted') != 0 )
-            ) ||
-            // exclude fields named *_name regardless of their type...just convention
-            (isset($def ['name']) && substr($def ['name'], -5) === '_name' ) );
+                (
+                    (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') && isset($def ['type']) && $def ['type'] != 'id' && $def ['type'] != 'parent_type' && (empty($def ['dbType']) || $def ['dbType'] != 'id') && (isset($def ['name']) && strcmp($def ['name'],
+                            'deleted') != 0)
+                ) ||
+                // exclude fields named *_name regardless of their type...just convention
+                (isset($def ['name']) && substr($def ['name'], -5) === '_name'));
     }
 
     /**
@@ -414,8 +750,10 @@ class PMSEEngineUtils
             $eId = $module . $widget_id;
             if (isset($_REQUEST[$eId . 'emailAddressPrimaryFlag'])) {
                 $primaryValue = $_REQUEST[$eId . 'emailAddressPrimaryFlag'];
-            } else if (isset($_REQUEST[$module . 'emailAddressPrimaryFlag'])) {
-                $primaryValue = $_REQUEST[$module . 'emailAddressPrimaryFlag'];
+            } else {
+                if (isset($_REQUEST[$module . 'emailAddressPrimaryFlag'])) {
+                    $primaryValue = $_REQUEST[$module . 'emailAddressPrimaryFlag'];
+                }
             }
 
             if ($primaryValue) {
@@ -501,7 +839,7 @@ class PMSEEngineUtils
 //        }
 //        return false;
 //    }
-    
+
     /**
      * Method that calculates the day, hour and minute of a case
      * @param object $expectedTimeObject
@@ -513,7 +851,7 @@ class PMSEEngineUtils
         //$time_data = $GLOBALS['timedate'];
         $unixTime = strtotime((!empty($caseData->cas_task_start_date) && $caseData->cas_task_start_date != '0000-00-00 00:00:00') ? $caseData->cas_task_start_date : $caseData->cas_delegate_date);
         $expectedTime = '';
-        if (!empty($expectedTimeObject) && !empty($expectedTimeObject->time) ) {
+        if (!empty($expectedTimeObject) && !empty($expectedTimeObject->time)) {
             switch ($expectedTimeObject->unit) {
                 case 'day':
                     $expectedTime = $unixTime + ($expectedTimeObject->time * (24 * 60 * 60));
@@ -536,19 +874,21 @@ class PMSEEngineUtils
      * @param $id
      * @return bool
      */
-    public static function getBPMInboxStatus($id) {
+    public static function getBPMInboxStatus($id)
+    {
         $result = false;
         $bean = BeanFactory::getBean('pmse_Inbox', $id);
         //$bean = $bpmInbox->retrieve_by_string_fields(array('cas_id' => $cas_id));
         if (!empty($bean)) {
-            if ($bean->cas_status == 'TODO') {
+            if ($bean->cas_status == 'IN PROGRESS') {
                 $result = true;
             }
         }
         return $result;
     }
 
-    public static function validateUniqueUid(&$bean, $field_uid='') {
+    public static function validateUniqueUid(&$bean, $field_uid = '')
+    {
         $replaced = false;
         if ($field_uid != '') {
             $beanAux = BeanFactory::getBean($bean->object_name);
@@ -618,9 +958,10 @@ class PMSEEngineUtils
         return $projectData;
     }
 
-    public static function getAllFieldsBean($module) {
+    public static function getAllFieldsBean($module)
+    {
         $bean = BeanFactory::newBean($module);
-        if (!empty($bean)){
+        if (!empty($bean)) {
             return $bean->column_fields;
         }
     }

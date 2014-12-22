@@ -12,19 +12,20 @@
   className: 'container-fluid',
 
   // charts custom
-  _renderHtml: function () {
+  _renderHtml: function() {
     this._super('_renderHtml');
 
     // Funnel Chart
-    d3.json("styleguide/content/charts/data/funnel_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/funnel_data.json', function(data) {
       nv.addGraph(function() {
         var chart = nv.models.funnelChart()
               .showTitle(false)
-              .tooltipContent( function(key, x, y, e, graph) {
-                  return '<p>Stage: <b>' + key + '</b></p>' +
-                         '<p>Amount: <b>$' +  parseInt(y, 10) + 'K</b></p>' +
-                         '<p>Percent: <b>' +  x + '%</b></p>';
-                });
+              .direction(app.lang.direction)
+              .tooltipContent(function(key, x, y, e, graph) {
+                return '<p>Stage: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' + parseInt(y, 10) + 'K</b></p>' +
+                       '<p>Percent: <b>' + x + '%</b></p>';
+              });
 
         chart.yAxis
             .tickFormat(d3.format(',.1f'));
@@ -39,19 +40,20 @@
     });
 
     // Gauge Chart
-    d3.json("styleguide/content/charts/data/gauge_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/gauge_data.json', function(data) {
       nv.addGraph(function() {
         var gauge = nv.models.gaugeChart()
               .x(function(d) { return d.key; })
               .y(function(d) { return d.y; })
               .showLabels(true)
               .showTitle(false)
-              .colorData( 'default' )
+              .colorData('default')
               .ringWidth(50)
               .maxValue(9)
+              .direction(app.lang.direction)
               .transitionMs(4000);
 
-        d3.select("#gauge svg")
+        d3.select('#gauge svg')
             .datum(data)
           .transition().duration(500)
             .call(gauge);
@@ -61,21 +63,18 @@
     });
 
     // Treemap flare chart
-    d3.json("styleguide/content/charts/data/flare.json", function(data) {
+    d3.json('styleguide/content/charts/data/flare.json', function(data) {
       nv.addGraph(function() {
 
         var chart = nv.models.treemapChart()
-              .leafClick( function(d) {
-                  alert('leaf clicked');
+              .leafClick(function(d) {
+                alert('leaf clicked');
               })
               .showTitle(false)
               .tooltips(true)
               .getSize(function(d) { return d.size; })
-              //.showControls(false)
-              //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
-              //.colorData( 'class' )
-              .colorData( 'default' )
-          ;
+              .direction(app.lang.direction)
+              .colorData('default');
 
         d3.select('#treemap1 svg')
             .datum(data)
@@ -87,10 +86,10 @@
     });
 
     // Tree org chart
-    d3.json("styleguide/content/charts/data/tree_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/tree_data.json', function(data) {
       nv.addGraph(function() {
 
-        var nodeRenderer = function(d){
+        var nodeRenderer = function(d) {
           return '<img src="styleguide/content/charts/img/' + d.image +
             '" class="rep-avatar" width="32" height="32"><div class="rep-name">' + d.name +
             '</div><div class="rep-title">' + d.title + '</div>';
@@ -102,12 +101,12 @@
               .nodeRenderer(nodeRenderer)
               .zoomExtents({ 'min': 0.25, 'max': 4 });
 
-        d3.select("#org svg")
+        d3.select('#org svg')
             .datum(data)
           .transition().duration(700)
             .call(chart);
 
-        nv.utils.windowResize(function(){ chart.resize(); });
+        nv.utils.windowResize(function() { chart.resize(); });
 
         return chart;
       });
@@ -115,14 +114,14 @@
 
     // Bubble chart
     nv.addGraph(function() {
-      var format = d3.time.format("%Y-%m-%d"),
+      var format = d3.time.format('%Y-%m-%d'),
           now = new Date(),
           duration = 12,
-          startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : Math.ceil((now.getMonth())/3)-1+duration), 1),
-          endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth()+3), 0),
-          dateRange = [startDate,endDate];
+          startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : Math.ceil((now.getMonth()) / 3) - 1 + duration), 1),
+          endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0),
+          dateRange = [startDate, endDate];
 
-      d3.json("styleguide/content/charts/data/bubble_data.json", function(data) {
+      d3.json('styleguide/content/charts/data/bubble_data.json', function(data) {
         /*var bubble_data = {
               data: d3.nest()
                       .key(function(d){ return d.assigned_user_name;})
@@ -153,18 +152,16 @@
         var chart = nv.models.bubbleChart()
             .x(function(d) { return format.parse(d.x); })
             .y(function(d) { return d.y; })
-            .tooltipContent( function(key, x, y, e, graph) {
+            .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Assigned: <b>' + key + '</b></p>' +
-                       '<p>Amount: <b>$' +  d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
-                       '<p>Cloase Date: <b>' +  d3.time.format('%x')(format.parse(e.point.x)) + '</b></p>';
+                       '<p>Amount: <b>$' + d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
+                       '<p>Cloase Date: <b>' + d3.time.format('%x')(format.parse(e.point.x)) + '</b></p>';
               })
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
-            .colorData( 'graduated', {c1: '#d9edf7', c2: '#134158', l: data.data.length} )
-            //.colorData( 'class' )
-            //.colorData( 'default' )
-          ;
+            .direction(app.lang.direction)
+            .colorData('graduated', {c1: '#d9edf7', c2: '#134158', l: data.data.length});
 
         d3.select('#bubble svg')
             .datum(data)
@@ -179,13 +176,14 @@
     });
 
     // Treemap opportunities chart
-    d3.json("styleguide/content/charts/data/treemap_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/treemap_data.json', function(data) {
       nv.addGraph(function() {
         var chart = nv.models.treemapChart()
               .leafClick(function(d) { alert('leaf clicked'); })
               .getSize(function(d) { return d.value; })
               .showTitle(false)
               .tooltips(false)
+              .direction(app.lang.direction)
               .colorData('class');
         d3.select('#treemap2 svg')
             .datum(parseData(data.records))
@@ -195,7 +193,7 @@
       });
     });
 
-    function parseData (data) {
+    function parseData(data) {
       var root = {
             name: 'Opportunities',
             children: [],
@@ -205,21 +203,21 @@
             dy: parseInt(document.getElementById('treemap2').offsetHeight, 10),
             depth: 0,
             colorIndex: '0root_Opportunities'
-          }
-        , colorIndices = ['0root_Opportunities']
-        , colors = d3.scale.category20().range();
+          },
+          colorIndices = ['0root_Opportunities'],
+          colors = d3.scale.category20().range();
 
       var today = new Date();
-          today.setUTCHours(0,0,0,0);
+          today.setUTCHours(0, 0, 0, 0);
 
-      var day_ms = 1000*60*60*24
-        , d1 = new Date(today.getTime() + 31*day_ms);
+      var day_ms = 1000 * 60 * 60 * 24,
+          d1 = new Date(today.getTime() + 31 * day_ms);
 
       var data = data.filter(function(model) {
         // Filter for 30 days from now.
         var d2 = new Date(model.date_closed || '1970-01-01');
-        return (d2-d1)/day_ms <= 30;
-      }).map(function(d){
+        return (d2 - d1) / day_ms <= 30;
+      }).map(function(d) {
         // Include properties to be included in leaves
         return {
           assigned_user_name: d.assigned_user_name,
@@ -247,13 +245,13 @@
             colorIndices.push('2oppgroup_' + key2);
           }
           _.each(value2, function(record) {
-            record.className = 'stage_'+record.sales_stage.toLowerCase().replace(' ', '');
+            record.className = 'stage_' + record.sales_stage.toLowerCase().replace(' ', '');
             record.value = parseInt(record.amount_usdollar, 10);
             record.colorIndex = '2oppgroup_' + key2;
           });
           child.push({
             name: key2,
-            className: 'stage_'+key2.toLowerCase().replace(' ', ''),
+            className: 'stage_' + key2.toLowerCase().replace(' ', ''),
             children: value2,
             colorIndex: '2oppgroup_' + key2
           });
@@ -269,7 +267,7 @@
       });
 
       function accumulate(d) {
-        if(d.children) {
+        if (d.children) {
           return d.value = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0);
         }
         return d.value;
@@ -283,8 +281,7 @@
       function setColorIndex(d) {
         var i, l;
         d.colorIndex = colorIndices.indexOf(d.colorIndex);
-        if ( d.children )
-        {
+        if (d.children) {
           l = d.children.length;
           for (i = 0; i < l; i += 1) {
             setColorIndex(d.children[i]);

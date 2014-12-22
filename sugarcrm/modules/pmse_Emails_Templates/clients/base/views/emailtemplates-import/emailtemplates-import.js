@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -26,7 +36,7 @@
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_emailtemplates', {
                 level:'error',
-                messages: app.lang.get('LBL_EMPTY_EMAILTEMPLATES', self.module),
+                messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_EMPTY_WARNING', self.module),
                 autoClose: false
             });
         } else {
@@ -35,7 +45,7 @@
                         app.router.goBack();
                         app.alert.show('process-import-saved', {
                             level: 'success',
-                            messages: app.lang.get('LBL_IMPORT_EMAIL_TEMPLATES_SUCCESS', self.module),
+                            messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
                     },
@@ -70,29 +80,8 @@
             for (var file in $files) {
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
-                console.log('hola mundo');
                 if (callbacks.success) callbacks.success();
 
-//                model.uploadFile(fileField, $file, {
-//                    field: fileField,
-//                    success: function() {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                            if (callbacks.success) callbacks.success();
-//                        }
-//                    },
-//                    error: function(error) {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                        }
-//                        var errors = {};
-//                        errors[error.responseText] = {};
-//                        model.trigger('error:validation:' + this.field, errors);
-//                        model.trigger('error:validation');
-//                    }
-//                });
             }
         }
         else {

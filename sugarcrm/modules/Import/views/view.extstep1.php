@@ -1,5 +1,5 @@
 <?php
- //FILE SUGARCRM flav=pro ONLY
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -130,8 +130,12 @@ class ImportViewExtStep1 extends ImportViewStep3
                 if ( isset($properties['type'])
                         && isset($mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])]) )
                     $fieldtype = ' [' . $mod_strings['LBL_IMPORT_FIELDDEF_' . strtoupper($properties['type'])] . '] ';
-                if ( isset($properties['comment']) )
-                    $fieldtype .= ' - ' . $properties['comment'];
+
+                $comment = isset($properties['comments']) ? $properties['comments'] : (isset($properties['comment']) ? $properties['comment'] : '');
+                if (!empty($comment)) {
+                    $fieldtype .= ' - ' . $comment;
+                }
+
                 $options[$displayname.$fieldname] = '<option value="'.$fieldname.'" title="'. $displayname . htmlentities($fieldtype) . '"'
                     . $selected . $req_class . '>' . $displayname . $req_mark . '</option>\n';
             }

@@ -133,7 +133,8 @@ class TeamSetLink extends Link {
 				//we added 'disable_team_access_check' config entry to allow for admins to revert back to the way things were
 				//pre 5.5. So that they could disable this check and if the assigned_user was not a member of one of the
 				//teams on this record we would just leave it alone.
-				if(empty($GLOBALS['sugar_config']['disable_team_access_check']) && empty($this->_bean->in_workflow)){
+				//Exclude user's module so additional teams are NOT added to a user record
+				if(($this->_bean->module_dir != 'Users') && empty($GLOBALS['sugar_config']['disable_team_access_check']) && empty($this->_bean->in_workflow)){
 					$assigned_user_id = null;
 					if(isset($this->_bean->assigned_user_id)){
 						$assigned_user_id = $this->_bean->assigned_user_id;

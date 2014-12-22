@@ -1,30 +1,39 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEBeanHandler.php';
 
-
 class PMSEEmailHandler
 {
+    /**
+     *
+     * @var PMSEBeanHandler
+     */
+    private $beanUtils;
 
     /**
      *
-     * @var PMSEBeanHandler 
-     */
-    private $beanUtils;
-    
-    /**
-     *
-     * @var Administration 
+     * @var Administration
      */
     private $admin;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     private $locale;
-    
+
     /**
      *
      * @var PMSELogger
@@ -32,7 +41,7 @@ class PMSEEmailHandler
     private $logger;
 
     /**
-     * 
+     *
      * @global type $locale
      * @codeCoverageIgnore
      */
@@ -45,9 +54,9 @@ class PMSEEmailHandler
         $this->admin = new Administration();
 
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -57,7 +66,7 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -67,7 +76,7 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -77,7 +86,7 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -87,16 +96,16 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @param Administration $admin
      */
     public function setAdmin(Administration $admin)
     {
         $this->admin = $admin;
     }
-        
+
     /**
-     * 
+     *
      * @param type $beanUtils
      * @codeCoverageIgnore
      */
@@ -106,7 +115,7 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @param type $locale
      * @codeCoverageIgnore
      */
@@ -116,7 +125,7 @@ class PMSEEmailHandler
     }
 
     /**
-     * 
+     *
      * @param type $logger
      * @codeCoverageIgnore
      */
@@ -124,9 +133,9 @@ class PMSEEmailHandler
     {
         $this->logger = $logger;
     }
-    
+
     /**
-     * 
+     *
      * @param type $param
      * @return \SugarPHPMailer
      * @codeCoverageIgnore
@@ -135,9 +144,9 @@ class PMSEEmailHandler
     {
         return new SugarPHPMailer();
     }
-        
+
     /**
-     * 
+     *
      * @param type $module
      * @param type $beanId
      * @return type
@@ -346,15 +355,17 @@ class PMSEEmailHandler
 
         if (isset($addresses->to)) {
             foreach ($addresses->to as $key => $email) {
-                $mailObject->AddAddress($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddAddress($email->address,
+                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
-            $msgError ='addresses field \'TO\' is not defined';
+            $msgError = 'addresses field \'TO\' is not defined';
         }
 
         if (isset($addresses->cc)) {
             foreach ($addresses->cc as $key => $email) {
-                $mailObject->AddCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddCC($email->address,
+                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
             $this->logger->info('addresses field \'CC\' is not defined');
@@ -362,7 +373,8 @@ class PMSEEmailHandler
 
         if (isset($addresses->bcc)) {
             foreach ($addresses->bcc as $key => $email) {
-                $mailObject->AddBCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddBCC($email->address,
+                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
             $this->logger->info('addresses field \'BCC\' is not defined');
@@ -414,7 +426,7 @@ class PMSEEmailHandler
         $result = $mailObject->Send();
 
         //if (isset($mailObject->ErrorInfo)) {
-            //$this->bpmLog('ERROR', "mail error: " . $mailObject->ErrorInfo);
+        //$this->bpmLog('ERROR', "mail error: " . $mailObject->ErrorInfo);
         //}
         return array('result' => $result, 'ErrorMessage' => $msgError, 'ErrorInfo' => $mailObject->ErrorInfo);
     }
@@ -471,7 +483,7 @@ class PMSEEmailHandler
             }
 
             $primaryValue = false;
-            
+
             $eId = $module . $widget_id;
             if (isset($_REQUEST[$eId . 'emailAddressPrimaryFlag'])) {
                 $primaryValue = $_REQUEST[$eId . 'emailAddressPrimaryFlag'];

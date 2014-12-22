@@ -1,9 +1,23 @@
 <?php
-$viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = array(
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+$module_name = 'pmse_Business_Rules';
+$viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
     'dashlets' => array(
         array(
-            'label' => 'PMSE Business Rules',
-            'description' => 'ProcessMaker Business Rules',
+            'label' => 'LBL_PMSE_BUSINESS_RULES_DASHLET',
+            'description' => 'LBL_PMSE_BUSINESS_RULES_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,
                 'visibility' => 'user',
@@ -43,7 +57,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                             'module' => 'pmse_Business_Rules',
                             'link' => '#pmse_Business_Rules',
                         ),
-                        'label' => 'Create Business Rules',
+                        'label' => 'LNK_PMSE_BUSINESS_RULES_NEW_RECORD',
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Business_Rules',
                     ),
@@ -54,7 +68,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                             'module' => 'pmse_Business_Rules',
                             'link' => '#pmse_Business_Rules/layout/businessrules-import'
                         ),
-                        'label' => 'Import Business Rules',
+                        'label' => 'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
 //                        'acl_action' => 'importRecord',
                         'acl_module' => 'pmse_Business_Rules',
                     ),
@@ -107,149 +121,17 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'type' => 'enum',
                     'options' => 'tasks_limit_options',
                 ),
-//                array(
-//                    'name' => 'visibility',
-//                    'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
-//                    'type' => 'enum',
-//                    'options' => 'tasks_visibility_options',
-//                ),
-//                array(
-//                    'name' => 'limit',
-//                    'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
-//                    'type' => 'enum',
-//                    'options' => 'tasks_limit_options',
-//                ),
             ),
         ),
     ),
-   /* 'tabs' => array(
-        array(
-            'active' => true,
-            'filters' => array(
-//                'prj_status' => array('$not_in' => array('INACTIVE')),
-            ),
-            'label' => 'LBL_PMSE_BUTTON_BUSINESSRULES',
-            'link' => 'pmse_Business_Rules',
-            'module' => 'pmse_Business_Rules',
-            'order_by' => 'date_entered:asc',
-            'record_date' => 'date_entered',
-            'row_actions' => array(
-                array(
-                    'type' => 'rowaction',
-                    'icon' => 'fa-edit',
-                    'css_class' => 'btn btn-mini',
-                    'event' => 'dashlet-businessrules:businessRulesLayout:fire',
-                    'target' => 'view',
-                    'tooltip' => 'Edit',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'icon' => 'fa-times',
-                    'css_class' => 'btn btn-mini',
-                    'event' => 'dashlet-businessrules:delete-record:fire',
-                    'target' => 'view',
-                    'tooltip' => 'Delete',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'icon' => 'fa-download-alt',
-                    'css_class' => 'btn btn-mini',
-                    'event' => 'dashlet-businessrules:download:fire',
-                    'target' => 'view',
-                    'tooltip' => 'Export',
-                    'acl_action' => 'edit',
-                ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-eye-slash',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => 'dashlet-processes:disable-record:fire',
-//                    'target' => 'view',
-//                    'tooltip' => 'Disable',
-//                    'acl_action' => 'edit',
-//                ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-info-circle',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => '',
-//                    'target' => 'view',
-//                    'tooltip' => 'Description',
-//                    'acl_action' => 'edit',
-//                ),
-            ),
-        ),
-//        array(
-//            'filters' => array(
-//                'prj_status' => array('$not_in' => array('ACTIVE')),
-//            ),
-//            'label' => 'LBL_PMSE_BUTTON_DISABLE',
-//            'link' => 'pmse_Project',
-//            'module' => 'pmse_Project',
-//            'order_by' => 'date_entered:asc',
-//            'record_date' => 'date_entered',
-//            'row_actions' => array(
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-pencil',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => 'dessigner',
-//                    'target' => 'view',
-//                    'tooltip' => 'Designer',
-//                    'acl_action' => 'edit',
-//                ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-times',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => '',
-//                    'target' => 'view',
-//                    'tooltip' => 'Delete',
-//                    'acl_action' => 'edit',
-//                ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-download',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => '',
-//                    'target' => 'view',
-//                    'tooltip' => 'Export',
-//                    'acl_action' => 'edit',
-//                ),
-//                array(
-//                    'type' => 'rowaction',
-//     icon               'icon' => 'fa-eye',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => 'dashlet-processes:enable-record:fire',
-//                    'target' => 'view',
-//                    'tooltip' => 'Enable',
-//                    'acl_action' => 'edit',
-//                ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa-info-circle',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => '',
-//                    'target' => 'view',
-//                    'tooltip' => 'Description',
-//                    'acl_action' => 'edit',
-//                ),
-//            ),
-//        ),
-    ),*/
-
 
     'tabs' => array(
         array(
             'active' => true,
             'filters' => array(
-                //'custom_source' => 'PMSE',
-                //'cas_ownership' => array('$equals' => 'MYCASES'),
                 'rst_type' => array('$not_in' => array('multiple')),
             ),
-            'label' => 'Single Hit',
+            'label' => 'LBL_PMSE_BUSINESS_RULES_SINGLE_HIT',
             'link' => 'pmse_Business_Rules',
             'module' => 'pmse_Business_Rules',
             'order_by' => 'date_entered:desc',
@@ -261,7 +143,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:businessRulesLayout:fire',
                     'target' => 'view',
-                    'tooltip' => 'Edit',
+                    'tooltip' => 'LBL_EDIT_BUTTON',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -270,7 +152,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:delete-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Delete',
+                    'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -279,7 +161,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',
-                    'tooltip' => 'Export',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -288,19 +170,17 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:description-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Description',
+                    'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
             ),
         ),
-        array(
+        /*array(
             'filters' => array(
-                //'custom_source' => 'PMSE',
-                //'cas_ownership' => array('$equals' => 'selfservice'),
                 'rst_type' => array('$not_in' => array('single')),
             ),
             //'fields' => array('cas_id','cas_enrique'),
-            'label' => 'Multiple Hit',
+            'label' => 'LBL_BUSINESS_RULES_DASHLET_MULTIPLE_HIT',
             'link' => 'pmse_Business_Rules',
             'module' => 'pmse_Business_Rules',
             'order_by' => 'date_entered:desc',
@@ -312,7 +192,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:businessRulesLayout:fire',
                     'target' => 'view',
-                    'tooltip' => 'Edit',
+                    'tooltip' => 'LBL_EDIT_BUTTON',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -321,7 +201,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:delete-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Delete',
+                    'tooltip' => 'LBL_BUSINESS_RULES_DASHLET_DELETE',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -330,7 +210,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',
-                    'tooltip' => 'Export',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -339,10 +219,10 @@ $viewdefs['pmse_Business_Rules']['base']['view']['dashlet-businessrules'] = arra
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:description-record:fire',
                     'target' => 'view',
-                    'tooltip' => 'Description',
+                    'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
             ),
-        ),
+        ),*/
     ),
 );

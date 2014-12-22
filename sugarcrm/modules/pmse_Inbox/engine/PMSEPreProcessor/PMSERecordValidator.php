@@ -1,9 +1,19 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEValidate.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-
 
 class PMSERecordValidator implements PMSEValidate
 {
@@ -12,15 +22,15 @@ class PMSERecordValidator implements PMSEValidate
      * @var Integer
      */
     protected $level;
-    
+
     /**
      *
      * @var PMSELogger
      */
     protected $logger;
-    
+
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -31,7 +41,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -41,7 +51,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -51,7 +61,7 @@ class PMSERecordValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -59,9 +69,9 @@ class PMSERecordValidator implements PMSEValidate
     {
         $this->logger = $logger;
     }
-        
+
     /**
-     * 
+     *
      * @param type $level
      * @codeCoverageIgnore
      */
@@ -69,20 +79,20 @@ class PMSERecordValidator implements PMSEValidate
     {
         $this->level = $level;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSERequest $request
      * @return \PMSERequest
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request ". get_class($this));
-        $this->logger->debug("Request data". print_r($request,true));
+        $this->logger->info("Validate Request " . get_class($this));
+        $this->logger->debug("Request data" . print_r($request, true));
 
         $request->validate();
         return $request;
     }
 
-    
+
 }

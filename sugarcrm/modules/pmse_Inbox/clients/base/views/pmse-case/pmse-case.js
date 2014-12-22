@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     inlineEditMode: false,
 
@@ -175,13 +185,14 @@
         });
     },
     caseApprove: function () {
-        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+//        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
 
     },
 
     validationCompleteApprove: function(isValid) {
         if (isValid) {
+            app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
             var value = this.model.attributes;
             value.frm_action = 'Approve';
             value.idFlow = this.case.flowId;
@@ -191,7 +202,6 @@
             value.moduleName = this.case.flow.cas_sugar_module;
             value.beanId = this.case.flow.cas_sugar_object_id;
             value.taskName = this.case.title.activity;
-            console.log(value);
             //this.setButtonStates(this.STATE.VIEW);
             //this.handleSave();
             var self = this;
@@ -278,7 +288,7 @@
     },
 
     caseStatus: function(){
-        ShowLog(app, this.case.flow.cas_id);
+        showImage(this.case.flow.cas_id);
     },
 
     caseAddNotes: function(){

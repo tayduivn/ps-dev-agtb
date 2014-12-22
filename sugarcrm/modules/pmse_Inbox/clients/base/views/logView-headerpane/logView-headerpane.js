@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 ({
     extendsFrom: 'HeaderpaneView',
@@ -10,7 +20,7 @@
         this._super('initialize', [options]);
         this.getLogPmse();
         this.context.on('list:cancelCase:fire', this.cancelCases, this);
-        this.context.on('configLog:fire', this.getLogConfig, this);
+        //this.context.on('configLog:fire', this.getLogConfig, this);
     },
     getLogPmse: function() {
         app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
@@ -19,7 +29,7 @@
         app.api.call('READ', pmseInboxUrl, {},{
             success: function(data)
             {
-                $('#logPmseId').html('PMSE Log');
+                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG', self.module));
                 self.getLog(data)
             }
         });
@@ -31,7 +41,7 @@
         app.api.call('READ', pmseInboxUrl, {},{
             success: function(data)
             {
-                $('#logPmseId').html('SugarCRM Log');
+                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_SUGARCRM_LOG', self.module));
                 self.getLog(data)
             }
         });
@@ -48,12 +58,11 @@
             }
         });
     },
-    getLogConfig : function() {
-        /**
+    /*getLogConfig : function() {
+        *//**
          * Callback to add recipients, from a closing drawer, to the target Recipients field.
          * @param {undefined|Backbone.Collection} recipients
-         */
-        console.log('_showAddressBook');
+         *//*
         app.drawer.open(
             {
                 layout:  "config-log",
@@ -63,7 +72,7 @@
                 }
             }
         );
-    },
+    },*/
     getLog: function(data) {
         $("textarea").html(data);
         app.alert.dismiss('getLog');

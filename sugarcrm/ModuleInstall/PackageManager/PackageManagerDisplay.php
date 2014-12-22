@@ -54,7 +54,7 @@ class PackageManagerDisplay{
         }
 
         $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
-        $tree->tree_style = 'include/ytree/TreeView/css/check/tree.css';
+        $tree->tree_style = getVersionedPath('include/ytree/TreeView/css/check/tree.css');
         $ss->assign('TREEHEADER', $tree->generate_header());
 
         $ss->assign('installation', ($install ? 'true' : 'false'));
@@ -161,7 +161,7 @@ class PackageManagerDisplay{
         	//return false;
         }
         $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
-        $tree->tree_style= 'vendor/ytree/TreeView/css/check/tree.css';
+        $tree->tree_style= getVersionedPath('vendor/ytree/TreeView/css/check/tree.css');
         $ss->assign('TREEHEADER',$tree->generate_header());
 		$ss->assign('module_load', 'false');
 		$ss->assign('MODULE_SELECTOR', PackageManagerDisplay::buildGridOutput($tree, $mod_strings, $isAlive, $show_login));

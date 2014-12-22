@@ -1,4 +1,16 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEObserver.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
@@ -9,10 +21,10 @@ class PMSEEventObserver implements PMSEObserver
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $relatedDependency;
-    
+
     /**
      *
      * @var PMSELogger
@@ -27,9 +39,9 @@ class PMSEEventObserver implements PMSEObserver
         $this->relatedDependency = new PMSERelatedDependencyWrapper();
         $this->logger = PMSELogger::getInstance();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -39,7 +51,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -49,7 +61,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param type $relatedDependency
      * @codeCoverageIgnore
      */
@@ -59,7 +71,7 @@ class PMSEEventObserver implements PMSEObserver
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -67,9 +79,9 @@ class PMSEEventObserver implements PMSEObserver
     {
         $this->logger = $logger;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEObservable $subject
      */
     public function update($subject)
@@ -81,7 +93,7 @@ class PMSEEventObserver implements PMSEObserver
             $eventDefinition = $subject->getEventDefinition();
             $eventDefinitionData = $eventDefinition->fetched_row;
             $processDefinition = $subject->getProcessDefinition();
-            $processDefinitionData = ($processDefinition->fetched_row)? $processDefinition->fetched_row: array();
+            $processDefinitionData = ($processDefinition->fetched_row) ? $processDefinition->fetched_row : array();
             $completeData = $eventData + $eventDefinitionData + $processDefinitionData;
             $this->relatedDependency->processRelatedDependencies($completeData);
         }

@@ -1,10 +1,23 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'pmse_Business_Rules';
 $viewdefs[$module_name]['base']['view']['businessrules-headerpane'] = array(
     'template' => 'headerpane',
-    'title' => "LBL_PMSE_DASHLET_TITLE_BUSSINESRULESBUILDER",
+    'title' => "LBL_PMSE_TITLE_BUSINESS_RULES_BUILDER",
     'buttons' => array(
         array(
             'name'    => 'project_cancel_button',
@@ -22,7 +35,7 @@ $viewdefs[$module_name]['base']['view']['businessrules-headerpane'] = array(
         array(
             'name'    => 'project_finish_button',
             'type'    => 'button',
-            'label'   => 'LBL_SAVE_EXIT_BUTTON_LABEL',
+            'label'   => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
             'acl_action' => 'create',
             'css_class' => 'btn-primary',
         ),

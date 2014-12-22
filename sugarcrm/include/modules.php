@@ -56,6 +56,7 @@ $moduleList[] = 'Bugs';
 $beanList = array();
 //ACL Objects
 $beanList['ACLRoles']       = 'ACLRole';
+$beanList['ACLRoleSets']    = 'ACLRoleSet';
 $beanList['ACLActions']     = 'ACLAction';
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['ACLFields']       = 'ACLField';
@@ -233,6 +234,8 @@ $beanFiles['ACLAction'] = 'modules/ACLActions/ACLAction.php';
 $beanFiles['ACLRole'] = 'modules/ACLRoles/ACLRole.php';
 $beanFiles['Relationship']  = 'modules/Relationships/Relationship.php';
 
+// do not add any bean files before this point, otherwise the application may fail to install
+$beanFiles['ACLRoleSet'] = 'modules/ACLRoles/ACLRoleSet.php';
 $beanFiles['Lead']          = 'modules/Leads/Lead.php';
 $beanFiles['aCase']         = 'modules/Cases/Case.php';
 $beanFiles['Bug']           = 'modules/Bugs/Bug.php';

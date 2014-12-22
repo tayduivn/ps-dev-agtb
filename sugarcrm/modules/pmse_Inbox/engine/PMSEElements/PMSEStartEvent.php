@@ -1,10 +1,21 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEEvent.php';
 
 class PMSEStartEvent extends PMSEEvent
 {
-
     /**
      *
      * @param type $flowData
@@ -43,10 +54,10 @@ class PMSEStartEvent extends PMSEEvent
             foreach ($bean as $key => $attribute) {
                 if ($bean->$key instanceof Link2) {
                     if (
-                        ($bean->$key->relationship->def['lhs_module']==$processDefinitionBean->pro_module
-                            && $bean->$key->relationship->def['rhs_module']==$bean->module_name) ||
-                        ($bean->$key->relationship->def['lhs_module']==$bean->module_name
-                            && $bean->$key->relationship->def['rhs_module']==$processDefinitionBean->pro_module)
+                        ($bean->$key->relationship->def['lhs_module'] == $processDefinitionBean->pro_module
+                            && $bean->$key->relationship->def['rhs_module'] == $bean->module_name) ||
+                        ($bean->$key->relationship->def['lhs_module'] == $bean->module_name
+                            && $bean->$key->relationship->def['rhs_module'] == $processDefinitionBean->pro_module)
                     ) {
                         $relatedBeanList = $bean->$key->getBeans();
                         if ($relatedBean = array_pop($relatedBeanList)) {
@@ -88,7 +99,8 @@ class PMSEStartEvent extends PMSEEvent
         $processBean = BeanFactory::getBean('pmse_BpmnProcess', $pro_id); //new BpmnProcess();
 
         if (!$processBean->fetched_row) {
-            $this->bpmLog('ERROR', "[$cas_id][1] process name not found using Process Id: $pro_id");
+            $this->logger->error("[$cas_id][1] process name not found using Process Id: $pro_id");
+            //$this->bpmLog('ERROR', "[$cas_id][1] process name not found using Process Id: $pro_id");
             $pro_title = 'unknown';
         } else {
             $pro_title = $processBean->name;
@@ -120,16 +132,16 @@ class PMSEStartEvent extends PMSEEvent
         $case_aux = $this->dbHandler->Query($sql);
         $row_aux = $this->dbHandler->fetchByAssoc($case_aux);
         if (is_array($row_aux)) {
-            $cas_id_aux = (int) $row_aux['cas_id'] + 1;
+            $cas_id_aux = (int)$row_aux['cas_id'] + 1;
         } else {
             $cas_id_aux = 1;
         }
         //create a ProcessMaker row
-        $case =  BeanFactory::getBean('pmse_Inbox'); //new BpmInbox();
+        $case = BeanFactory::getBean('pmse_Inbox'); //new BpmInbox();
         $case->name = $cas_title;
         $case->cas_id = $cas_id; //0 value for autoincrement
         $case->cas_parent = 0;
-        $case->cas_status = 'TODO';
+        $case->cas_status = 'IN PROGRESS';
         $case->cas_title = $cas_title;
         $case->pro_id = $pro_id;
         $case->pro_title = $pro_title;
@@ -155,7 +167,7 @@ class PMSEStartEvent extends PMSEEvent
                 $cas_id = $case->cas_id;
             }
             if ($updateCaseWithNumber) {
-                $case->cas_title = "Case # $cas_id";
+                $case->cas_title = "Process # $cas_id";
                 $case->new_with_id = false;
                 $case->save();
             }

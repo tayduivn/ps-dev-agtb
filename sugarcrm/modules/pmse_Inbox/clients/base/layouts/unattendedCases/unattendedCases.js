@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * @inheritDoc
@@ -5,7 +15,8 @@
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
-        //this.collection.allowed_modules = ['Accounts', 'Contacts', 'Leads', 'Prospects', 'Users'];
+        this.collection.allowed_modules = ['Cases Title', 'Process Name'];
+        this.context.on('compose:addressbook:search', this.search, this);
         //this.context.on('compose:addressbook:search', this.search, this);
     },
     /**

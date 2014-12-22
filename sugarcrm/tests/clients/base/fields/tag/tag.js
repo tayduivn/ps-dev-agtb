@@ -136,7 +136,7 @@ describe("tag field", function() {
             field = SugarTest.createField('base', fieldName, 'tag', 'edit');
             field.view.action = 'placeholder';
             superStub = sinon.collection.stub(field, '_super', function() {});
-            fakeSelect2 = { select2: function() {} };
+            fakeSelect2 = { select2: function() {}, on: function() {} };
             select2Stub = sinon.collection.stub(fakeSelect2, 'select2', function(properties, record) {
                     _.extend(properties, properties, { on: function() {} }, fakeSelect2);
                     return properties;
@@ -167,22 +167,6 @@ describe("tag field", function() {
             field._render();
 
             expect(field.$select2.createSearchChoice(name)).toBe(false);
-        });
-
-        it('createSearchChoice should call parseRecords when finding an old choice', function() {
-            var parseRecordsStub = sinon.collection.stub(field, 'parseRecords', function(object) {
-                return object;
-            });
-            var findStub = sinon.collection.stub(field.filterResults, 'find', function() {
-                return {placeholder: true};
-            });
-
-            field._render();
-            field.$select2.createSearchChoice(name);
-
-            // Expect parseRecords to have been called, and with an array as the argument
-            expect(parseRecordsStub.callCount).toBeGreaterThan(0);
-            expect(parseRecordsStub.args[0].length).toBeDefined();
         });
 
         it('existing tags that contain special characters as the first character should be handled specially', function() {

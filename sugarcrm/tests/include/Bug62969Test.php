@@ -26,6 +26,10 @@ class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
+        if (SugarAutoLoader::fileExists($this->customFile)) {
+            copy($this->customFile, $this->customFile . '.bak');
+        }
+
         // create a custom language file
         $customLangFileContent = <<<EOQ
 <?php
@@ -57,6 +61,10 @@ EOQ;
     {
         // delete from loader map
         SugarAutoLoader::unlink($this->customFile, true);
+
+        if (file_exists($this->customFile . '.bak')) {
+            copy($this->customFile . '.bak', $this->customFile);
+        }
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];

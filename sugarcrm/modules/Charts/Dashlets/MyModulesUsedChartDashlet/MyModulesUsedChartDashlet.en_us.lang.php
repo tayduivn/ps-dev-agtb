@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: MyPipelineBySalesStageDashlet.en_us.lang.php 16286 2006-08-22 20:14:45Z wayne $
 
-//FILE SUGARCRM flav=pro ONLY
 
 $dashletStrings['MyModulesUsedChartDashlet'] = array('LBL_TITLE'       => 'My Modules Used (Last 30 Days)',
                                                      'LBL_DESCRIPTION' => 'My Modules Used (Last 30 Days)',

@@ -1,4 +1,4 @@
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -2510,7 +2510,7 @@ SUGAR.grid = function() {
 
 		closeTaskDetails: function(){
 			document.getElementById("task_detail_area_div").style.display = "none";
-			document.getElementById("task_detail_area_div").innerHTML = '<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" border="0" />';
+			document.getElementById("task_detail_area_div").innerHTML = '<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif&v='+SUGAR.VERSION_MARK+'" border="0" />';
 		},
 
 		sortNumber: function(a, b) {

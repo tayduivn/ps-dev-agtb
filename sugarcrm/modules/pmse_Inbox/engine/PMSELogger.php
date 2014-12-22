@@ -1,7 +1,20 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'psr/Log/AbstractLogger.php';
 require_once 'PMSELoggerWriter.php';
-
+require_once 'PMSESettings.php';
 
 class PMSELogger extends AbstractLogger
 {
@@ -20,23 +33,23 @@ class PMSELogger extends AbstractLogger
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $logWriter;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $logLevels = array(
         LogLevel::EMERGENCY => 0,
-        LogLevel::ALERT     => 1,
-        LogLevel::CRITICAL  => 2,
-        LogLevel::ERROR     => 3,
-        LogLevel::WARNING   => 4,
-        LogLevel::NOTICE    => 5,
-        LogLevel::INFO      => 6,
-        LogLevel::DEBUG     => 7,
+        LogLevel::ALERT => 1,
+        LogLevel::CRITICAL => 2,
+        LogLevel::ERROR => 3,
+        LogLevel::WARNING => 4,
+        LogLevel::NOTICE => 5,
+        LogLevel::INFO => 6,
+        LogLevel::DEBUG => 7,
     );
 
     /**
@@ -50,13 +63,16 @@ class PMSELogger extends AbstractLogger
      * @codeCoverageIgnore
      * @param string $logLevel
      */
-    private function __construct($logLevel = LogLevel::DEBUG)
+    private function __construct(/*$logLevel = LogLevel::DEBUG*/)
     {
         $this->logWriter = new PMSELoggerWriter();
+        $settings = PMSESettings::getInstance();
+        $logger_level = $settings->getSettings();
+        $this->logLevel = $logger_level['logger_level'];
     }
-    
+
     /**
-     * 
+     *
      * @return PMSELoggerWritter
      * @codeCoverageIgnore
      */
@@ -66,7 +82,7 @@ class PMSELogger extends AbstractLogger
     }
 
     /**
-     * 
+     *
      * @param PMSELoggerWritter $logWriter
      * @codeCoverageIgnore
      */
@@ -74,10 +90,11 @@ class PMSELogger extends AbstractLogger
     {
         $this->logWriter = $logWriter;
     }
-    
+
     /**
      * Retrieve unique instance of the PMSELogger singleton
      * @return type
+     * @codeCoverageIgnore
      */
     public static function getInstance()
     {
@@ -138,7 +155,7 @@ class PMSELogger extends AbstractLogger
     }
 
     /**
-     * 
+     *
      * @param type $level
      * @param type $message
      */
@@ -151,14 +168,14 @@ class PMSELogger extends AbstractLogger
      * Formats the message for logging.
      *
      * @param  string $message The message to log
-     * @param  array  $context The context
+     * @param  array $context The context
      * @return string
      * @codeCoverageIgnore
      */
     private function formatMessage($message, $context)
     {
-        if (! empty($context)) {
-            $message .= PHP_EOL.$this->indent($this->contextToString($context));
+        if (!empty($context)) {
+            $message .= PHP_EOL . $this->indent($this->contextToString($context));
         }
         return "{$message}";
     }
@@ -177,14 +194,14 @@ class PMSELogger extends AbstractLogger
         foreach ($context as $key => $value) {
             $export .= "{$key}: ";
             $export .= preg_replace(array(
-                    '/=>\s+([a-zA-Z])/im',
-                    '/array\(\s+\)/im',
-                    '/^  |\G  /m',
-                ), array(
-                    '=> $1',
-                    'array()',
-                    '    ',
-                ), str_replace('array (', 'array(', var_export($value, true)));
+                '/=>\s+([a-zA-Z])/im',
+                '/array\(\s+\)/im',
+                '/^  |\G  /m',
+            ), array(
+                '=> $1',
+                'array()',
+                '    ',
+            ), str_replace('array (', 'array(', var_export($value, true)));
             $export .= PHP_EOL;
         }
         return str_replace(array('\\\\', '\\\''), array('\\', '\''), rtrim($export));
@@ -200,7 +217,7 @@ class PMSELogger extends AbstractLogger
      */
     private function indent($string, $indent = '    ')
     {
-        return $indent.str_replace("\n", "\n".$indent, $string);
+        return $indent . str_replace("\n", "\n" . $indent, $string);
     }
 
     /**
@@ -208,12 +225,13 @@ class PMSELogger extends AbstractLogger
      * @return string  log_dir value
      * @codeCoverageIgnore
      */
-    public function getLogFileNameWithPath() {
+    public function getLogFileNameWithPath()
+    {
         return $this->logWriter->getLogFileNameWithPath();
     }
 
     /**
-     * 
+     *
      * @param type $message
      * @param type $params
      * @codeCoverageIgnore
@@ -223,8 +241,8 @@ class PMSELogger extends AbstractLogger
         $data = new stdClass();
         $data->value = $message; //"This a message user: @[Users:seed_sally_id:Sally Bronsen] whit @[Users:seed_sarah_id:Sarah Smith] for the record: @[Leads:52f46f19-7a10-4dd5-28ed-53b4671f964d:Stephanie Plunk] end of the message.";
         $module_id = isset($params['module_id']) ? $params['module_id'] : null;
-        $module_name = isset($params['module_name']) ? $params['module_name'] : null;
-        if (isset($params['tags']) && !empty($params['tags']) && is_array($params['tags'])){
+        $module_name = isset($params['module_name']) ? $params['module_name'] : 'SugarBean';
+        if (isset($params['tags']) && !empty($params['tags']) && is_array($params['tags'])) {
             $data->tags = $params['tags'];
             $i = 0;
             foreach ($params['tags'] as $value) {
@@ -243,5 +261,5 @@ class PMSELogger extends AbstractLogger
         $beanActivity->data = json_encode($data);
         $beanActivity->save();
     }
-    
+
 }

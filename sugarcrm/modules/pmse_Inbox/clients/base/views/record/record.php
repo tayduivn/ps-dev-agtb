@@ -1,11 +1,24 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type' => 'button',
             'name' => 'cancel_button',
-            'label' => 'Cancel Edit',
+            'label' => 'Cancel Edit llllll',
             'css_class' => 'btn-invisible btn-link',
             'showOn' => 'edit',
         ),
@@ -13,14 +26,14 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'type' => 'rowaction',
             'event' => 'approve:case',
             'name' => 'approve_button',
-            'label' => 'Approve',
+            'label' => 'LBL_PMSE_LABEL_APPROVE',
             'css_class' => 'btn btn-primary',
         ),
         array(
             'type' => 'rowaction',
             'event' => 'reject:case',
             'name' => 'reject_button',
-            'label' => 'Reject',
+            'label' => 'LBL_PMSE_LABEL_REJECT',
             'css_class' => 'btn btn-primary',
         ),
         array(
@@ -33,13 +46,13 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'type' => 'rowaction',
                     'event' => 'cancel:case',
                     'name' => 'Cancel',
-                    'label' => 'Cancel',
+                    'label' => 'LBL_PMSE_LABEL_CANCEL',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'name' => 'history',
-                    'label' => 'History',
+                    'label' => 'LBL_PMSE_LABEL_HISTORY',
                     'acl_action' => 'create',
                     'route' => array(
                         'action'=>'create'
@@ -48,15 +61,15 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 array(
                     'type' => 'pdfaction',
                     'name' => 'download-pdf',
-                    'label' => 'Status',
+                    'label' => 'LBL_PMSE_LABEL_STATUS',
                     'acl_action' => 'view',
                 ),
-                array(
-                    'type' => 'pdfaction',
-                    'name' => 'email-pdf',
-                    'label' => 'Add notes',
-                    'acl_action' => 'view',
-                ),
+//                array(
+//                    'type' => 'pdfaction',
+//                    'name' => 'email-pdf',
+//                    'label' => 'Add notes',
+//                    'acl_action' => 'view',
+//                ),
                 array(
                     'type' => 'divider',
                 ),
@@ -64,14 +77,14 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'type' => 'rowaction',
                     'event' => '',
                     'name' => 'find_duplicates_button',
-                    'label' => 'Change Owner',
+                    'label' => 'LBL_PMSE_LABEL_CHANGE_OWNER',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => '',
                     'name' => 'duplicate_button',
-                    'label' => 'Reassign',
+                    'label' => 'LBL_PMSE_LABEL_REASSIGN',
                     'acl_action' => 'create',
                 ),
             ),

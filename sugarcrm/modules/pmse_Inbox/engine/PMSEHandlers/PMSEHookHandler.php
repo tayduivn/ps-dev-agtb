@@ -1,38 +1,49 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
-
 class PMSEHookHandler
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $request;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $preProcessor;
-    
+
     /**
      *
      * @var PMSELogger
      */
     protected $logger;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $dbHandler;
 
     /**
-     * 
+     *
      */
     public function __construct()
     {
@@ -43,9 +54,9 @@ class PMSEHookHandler
         $this->logger = PMSELogger::getInstance();
         $this->dbHandler = $db;
     }
-    
+
     /**
-     * 
+     *
      * @param type $element
      * @param type $createThread
      * @param type $bean
@@ -68,7 +79,7 @@ class PMSEHookHandler
     }
 
     /**
-     * 
+     *
      * @global type $db
      * @param type $bean
      * @param type $event
@@ -76,7 +87,7 @@ class PMSEHookHandler
      * @param type $startEvents
      * @param type $isNewRecord
      */
-    public function runStartEventBeforeSave ($bean, $event, $arguments, $startEvents,  $isNewRecord = true)
+    public function runStartEventBeforeSave($bean, $event, $arguments, $startEvents, $isNewRecord = true)
     {
         $this->logger->info("Executing Before save for bean module {$bean->module_name}");
         $record['id'] = $bean->id;
@@ -86,7 +97,7 @@ class PMSEHookHandler
         if (!$isNewRecord) {
             $queryDupli = "select * from pmse_bpm_flow where " .
                 "cas_sugar_object_id = '" . $record['id'] . "' " .
-                "and cas_sugar_module = '" .$record['module_name'] . "' " .
+                "and cas_sugar_module = '" . $record['module_name'] . "' " .
                 "and cas_index = 1 ";
             $resultDupli = $this->dbHandler->Query($queryDupli);
             $rowDupli = $this->dbHandler->fetchByAssoc($resultDupli);
@@ -125,7 +136,7 @@ class PMSEHookHandler
     }
 
     /**
-     * 
+     *
      * @global type $db
      * @global type $redirectBeforeSave
      * @param type $bean
@@ -135,19 +146,19 @@ class PMSEHookHandler
      * @param type $isNewRecord
      * @return boolean
      */
-    public function runStartEventAfterSave ($bean, $event, $arguments)
+    public function runStartEventAfterSave($bean, $event, $arguments)
     {
         $this->logger->info("Executing Before save for bean module {$bean->module_name}, with id {$bean->id}");
-        $this->executeRequest($arguments, false, $bean, '');        
+        $this->executeRequest($arguments, false, $bean, '');
     }
 
-    
+
     public function terminateCaseAfterDelete($bean, $event, $arguments)
     {
         $this->logger->info("Executing Terminate Case for a deleted bean module {$bean->module_name}, with id {$bean->id}");
         $this->executeRequest($arguments, false, $bean, 'TERMINATE_CASE');
     }
-    
+
     /**
      * Execute the cron tasks.
      */
@@ -156,12 +167,12 @@ class PMSEHookHandler
         $this->logger->info("Executing PMSE scheduled tasks");
         $this->wakeUpSleepingFlows();
     }
-    
+
     /**
      * Execute all the flows marked as SLEEPING
      */
     private function wakeUpSleepingFlows()
-    {        
+    {
         $this->logger->info("Checking flows with status sleeping");
         $today = date('Y-m-d H:i:s');
 
@@ -169,10 +180,13 @@ class PMSEHookHandler
         $flowBean = BeanFactory::getBean('pmse_BpmFlow');//new BpmFlow();
 
         //$flows = $flowBean->getSelectRows('', "bpmn_type = 'bpmnEvent' and cas_flow_status = 'SLEEPING' and cas_due_date <= '$today' ");
-        $flows = $flowBean->get_full_list('', "bpmn_type = 'bpmnEvent' and cas_flow_status = 'SLEEPING' and cas_due_date <= '$today' ");
+        $flows = $flowBean->get_full_list(
+            '',
+            "bpmn_type = 'bpmnEvent' and cas_flow_status = 'SLEEPING' and cas_due_date <= '$today' "
+        );
         $n = 0;
-        foreach ($flows as $flow) {          
-            $this->newFollowFlow($flow->fetched_row, false, null, 'WAKE_UP');                        
+        foreach ($flows as $flow) {
+            $this->newFollowFlow($flow->fetched_row, false, null, 'WAKE_UP');
             $n++;
         }
         if ($n == 0) {
@@ -181,13 +195,12 @@ class PMSEHookHandler
             $this->logger->info("Processed $n flows with status sleeping");
         }
     }
-    
-    
+
     public function newFollowFlow($flowData, $createThread = false, $bean = null, $externalAction = '')
     {
         require_once 'modules/pmse_Inbox/engine/PMSEExecuter.php';
         $fr = new PMSEExecuter();
         return $fr->runEngine($flowData, $createThread, $bean, $externalAction);
     }
-    
+
 }

@@ -34,6 +34,7 @@ $dictionary['Task'] = array(
             'len' => 100,
             'required' => true,
             'default' => 'Not Started',
+            'duplicate_on_record_copy' => 'no',
         ),
         'date_due_flag' => array(
             'name' => 'date_due_flag',

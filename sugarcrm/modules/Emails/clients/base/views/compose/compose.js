@@ -817,7 +817,8 @@
         if (app.drawer) {
             app.drawer.off(null, null, this);
         }
-        this._super("_dispose");
+        app.alert.dismiss('email-client-status');
+        this._super('_dispose');
     },
 
     /**

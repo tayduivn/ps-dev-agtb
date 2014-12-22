@@ -158,12 +158,22 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
     });
 
     it("should render title appropriately when complete/reset", function() {
-        var associatedModuleLabel = 'ASSOCIATED_MODULE';
+        var selectedModuleLabel = 'SELECTED_MODULE',
+            newModuleLabel = 'CREATED_MODULE';
 
+        toggleSubView('create');
         completePanel();
-        expect(view.$('.title').text()).toContain(associatedModuleLabel);
+        expect(view.$('.title').text()).toContain(newModuleLabel);
+        expect(view.$('.title').text()).not.toContain(selectedModuleLabel);
+
         resetPanel();
-        expect(view.$('.title').text()).not.toContain(associatedModuleLabel);
+        expect(view.$('.title').text()).not.toContain(selectedModuleLabel);
+        expect(view.$('.title').text()).not.toContain(newModuleLabel);
+
+        toggleSubView('dupecheck');
+        completePanel();
+        expect(view.$('.title').text()).toContain(selectedModuleLabel);
+        expect(view.$('.title').text()).not.toContain(newModuleLabel);
     });
 
     it("should hide/show dupe results when complete/reset", function() {

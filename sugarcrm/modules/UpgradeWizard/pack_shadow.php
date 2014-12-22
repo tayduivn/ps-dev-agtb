@@ -54,7 +54,7 @@ $stub = <<<'STUB'
 <?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-require_once "ShadowUpgrader.php"; ShadowUpgrader::start(); __HALT_COMPILER();
+require_once "ShadowUpgrader.php"; $upgrader = new ShadowUpgrader(); $upgrader->start(); __HALT_COMPILER();
 STUB;
 $phar->setStub($stub);
 

@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 
 require_once 'PMSERunnable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
@@ -10,27 +23,26 @@ require_once 'include/SugarQuery/SugarQuery.php';
 
 class PMSEElement implements PMSERunnable
 {
-
     /**
      * The case Flow handler manages the operations related to the BpmFlow
      * Bean or flow operations.
-     * 
+     *
      * @var PMSECaseFlowHandler $caseFlowHandler
      */
     protected $caseFlowHandler;
 
     /**
      * The bean handler manages operations related to the Sugar Beans
-     * 
+     *
      * @var PMSEBeanHandler $beanHandler
      */
     protected $beanHandler;
 
     /**
-     * The execution mode is the execution mode of the element, it could be 
+     * The execution mode is the execution mode of the element, it could be
      * 'SYNC' for Synchronous elements and processes and
      * 'ASYNC' for Asynchronous elements and processes.
-     * 
+     *
      * @var string
      */
     protected $executionMode;
@@ -43,17 +55,17 @@ class PMSEElement implements PMSERunnable
     protected $userAssignmentHandler;
 
     /**
-     * The email handler manages all the operations related to the sending 
+     * The email handler manages all the operations related to the sending
      * of emails using the engine
-     * 
+     *
      * @var
      */
     protected $emailHandler;
 
     /**
-     * The db handler is an abstraction of the global sugar $db 
+     * The db handler is an abstraction of the global sugar $db
      * Database Handler object
-     * @var type 
+     * @var type
      */
     protected $dbHandler;
 
@@ -63,7 +75,7 @@ class PMSEElement implements PMSERunnable
      * @var
      */
     protected $logger;
-    
+
     /**
      * Class constructor
      * @codeCoverageIgnore
@@ -81,7 +93,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return SugarQuery $sugarQueryObject
      * @codeCoverageIgnore
      */
@@ -91,7 +103,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return string
      * @codeCoverageIgnore
      */
@@ -101,7 +113,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param string $executionMode
      * @codeCoverageIgnore
      */
@@ -111,7 +123,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return PMSECaseFlowHandler
      * @codeCoverageIgnore
      */
@@ -121,7 +133,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param PMSECaseFlowHandler $caseFlowHandler
      * @codeCoverageIgnore
      */
@@ -131,7 +143,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -141,7 +153,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param PMSEBeanHandler $beanHandler
      * @codeCoverageIgnore
      */
@@ -151,7 +163,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -161,7 +173,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param PMSEUserAssignmentHandler $userAssignmentHandler
      * @codeCoverageIgnore
      */
@@ -189,7 +201,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -199,7 +211,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param type $dbHandler
      * @codeCoverageIgnore
      */
@@ -207,9 +219,9 @@ class PMSEElement implements PMSERunnable
     {
         $this->dbHandler = $dbHandler;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -219,7 +231,7 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -228,24 +240,24 @@ class PMSEElement implements PMSERunnable
         $this->logger = $logger;
     }
 
-    
+
     /**
-     * This method prepares the response of the current element based on the 
-     * $bean object and the $flowData, an external action such as 
+     * This method prepares the response of the current element based on the
+     * $bean object and the $flowData, an external action such as
      * ROUTE or ADHOC_REASSIGN could be also processed.
-     * 
-     * This method probably should be override for each new element, but it's 
-     * not mandatory. However the response structure always must pass using 
+     *
+     * This method probably should be override for each new element, but it's
+     * not mandatory. However the response structure always must pass using
      * the 'prepareResponse' Method.
-     * 
+     *
      * As defined in the example:
-     * 
+     *
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
      * $response['flow_filters'] = array('first_id', 'second_id'); //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
-     * 
+     *
      * @param array $flowData
      * @param SugarBean $bean
      * @param string $externalAction The external action for the router
@@ -259,17 +271,17 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * This method sorts all the execution data in one single array that 
+     * This method sorts all the execution data in one single array that
      * is evaluated by the Flow Router class.
-     * 
+     *
      * An example could be like this one:
-     * 
+     *
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
      * $response['flow_filters'] = array('first_id', 'second_id'); //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
-     * 
+     *
      * @param type $data
      * @param type $routeAction
      * @param type $dataId
@@ -282,7 +294,7 @@ class PMSEElement implements PMSERunnable
         $response['flow_action'] = $flowAction;
         $response['flow_data'] = $data;
         $response['flow_filters'] = $filters;
-        $response['flow_id'] = isset($data['id'])?$data['id']:'';
+        $response['flow_id'] = isset($data['id']) ? $data['id'] : '';
         return $response;
     }
 
@@ -297,28 +309,29 @@ class PMSEElement implements PMSERunnable
     }
 
     /**
-     * 
+     *
      * @param type $flowData
      */
     public function getNextShapeElements($flowData)
     {
         $nextElements = $this->caseFlowHandler->retrieveFollowingElements($flowData);
         $eventBean = $this->caseFlowHandler->retrieveBean('pmse_BpmnEvent');
-        
+
         $nextShapeElements = array();
         foreach ($nextElements as $element) {
             $sugarQueryObject = $this->retrieveSugarQueryObject();
             $sugarQueryObject->select(array(
                 'id',
-                'evn_type', 
+                'evn_type',
                 'evn_behavior'
             ));
 
             $sugarQueryObject->from($eventBean, array('alias' => 'a'));
-            $sugarQueryObject->joinRaw("LEFT JOIN pmse_bpmn_flow b ON (b.flo_element_dest = a.id)", array('alias'=>'b'));
+            $sugarQueryObject->joinRaw("LEFT JOIN pmse_bpmn_flow b ON (b.flo_element_dest = a.id)",
+                array('alias' => 'b'));
             $sugarQueryObject->where()->queryAnd()
-                ->addRaw('b.id=\'' . $element['bpmn_id'].'\'');
-            
+                ->addRaw('b.id=\'' . $element['bpmn_id'] . '\'');
+
             $queryResult = $sugarQueryObject->execute();
             $result = array_pop($queryResult);
             array_push($nextShapeElements, $result);

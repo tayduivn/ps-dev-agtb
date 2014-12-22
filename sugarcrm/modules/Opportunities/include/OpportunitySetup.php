@@ -146,6 +146,7 @@ abstract class OpportunitySetup
         $this->bean = BeanFactory::getBean('Opportunities');
 
         $rnr_modules = $this->fixRevenueLineItemModule();
+        SugarBean::clearLoadedDef('RevenueLineItem');
 
         // lets fix the workflows module
         $this->processWorkFlows();
@@ -453,20 +454,24 @@ abstract class OpportunitySetup
 
         while ($row = $db->fetchRow($results)) {
             $tabArray = unserialize(base64_decode($row['value']));
-            // find the key
-            $key = array_search($value, $tabArray);
-            if ($key === false && $show === true) {
-                $tabArray[] = $value;
-            } elseif ($key !== false & $show === false) {
-                unset($tabArray[$key]);
-            }
 
-            $sql = "UPDATE config
-                SET value = '" . base64_encode(serialize($tabArray)) . "'
-                WHERE category = 'MySettings'
-                AND name = '" . $setting . "'
-                AND (platform = 'base' OR platform IS NULL OR platform = '')";
-            $db->query($sql);
+            // in the setup, this might not be set yet.
+            if (is_array($tabArray)) {
+                // find the key
+                $key = array_search($value, $tabArray);
+                if ($key === false && $show === true) {
+                    $tabArray[] = $value;
+                } elseif ($key !== false & $show === false) {
+                    unset($tabArray[$key]);
+                }
+
+                $sql = "UPDATE config
+                    SET value = '" . base64_encode(serialize($tabArray)) . "'
+                    WHERE category = 'MySettings'
+                    AND name = '" . $setting . "'
+                    AND (platform = 'base' OR platform IS NULL OR platform = '')";
+                $db->query($sql);
+            }
         }
     }
 
@@ -695,6 +700,23 @@ EOL;
         }
 
         return $rnr_modules;
+    }
+
+    /**
+     * Cleanup the Unified Search Files
+     */
+    protected function cleanupUnifiedSearchCache()
+    {
+        // since we changed the unified search setting remove the cache file
+        $file = sugar_cached('modules/unified_search_modules.php');
+        if (SugarAutoLoader::fileExists($file)) {
+            SugarAutoLoader::unlink($file);
+        }
+        // remove the unified search display settings
+        $file = 'custom/modules/unified_search_modules_display.php';
+        if (SugarAutoLoader::fileExists($file)) {
+            SugarAutoLoader::unlink($file);
+        }
     }
 
     abstract public function doDataConvert();

@@ -24,6 +24,7 @@
               .tooltips(true)
               .stacked(true)
               .showControls(false)
+              .direction(app.lang.direction)
               .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Outcome: <b>' + key + '</b></p>' +
                        '<p>Lead Source: <b>' + x + '</b></p>' +
@@ -42,6 +43,7 @@
               .tooltips(true)
               .showControls(false)
               .stacked(false)
+              .direction(app.lang.direction)
               .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Outcome: <b>' + key + '</b></p>' +
                        '<p>Lead Source: <b>' + x + '</b></p>' +

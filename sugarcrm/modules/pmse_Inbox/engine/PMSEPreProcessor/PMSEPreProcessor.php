@@ -1,31 +1,41 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'modules/pmse_Inbox/engine/PMSEExecuter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEExpressionEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'PMSEValidator.php';
 require_once 'PMSERequest.php';
 
-
 class PMSEPreProcessor
 {
-
     /**
      *
-     * @var type 
+     * @var type
      */
     private static $instance;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $executer;
 
     /**
      *
-     * @var PMSEValidator 
+     * @var PMSEValidator
      */
     private $validator;
 
@@ -34,18 +44,18 @@ class PMSEPreProcessor
      * @var PMSELogger
      */
     protected $logger;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $caseFlowHandler;
-    
+
     /**
      *
-     * @var type 
+     * @var type
      */
-    protected $expressionEvaluator;
+    protected $evaluator;
 
     /**
      * Pre Processor constructor method
@@ -60,7 +70,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -73,7 +83,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param type $module
      * @param type $id
      * @codeCoverageIgnore
@@ -82,9 +92,9 @@ class PMSEPreProcessor
     {
         return BeanFactory::getBean($module, $id);
     }
-    
+
     /**
-     * 
+     *
      * @param type $module
      * @param type $id
      * @codeCoverageIgnore
@@ -93,9 +103,9 @@ class PMSEPreProcessor
     {
         return new PMSERequest();
     }
-    
+
     /**
-     * 
+     *
      * @param type $module
      * @param type $id
      * @codeCoverageIgnore
@@ -104,9 +114,9 @@ class PMSEPreProcessor
     {
         return new SugarQuery();
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -114,9 +124,9 @@ class PMSEPreProcessor
     {
         return $this->validator;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -126,7 +136,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param type $executer
      * @codeCoverageIgnore
      */
@@ -134,9 +144,9 @@ class PMSEPreProcessor
     {
         $this->executer = $executer;
     }
-        
+
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -146,7 +156,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param PMSELogger $logger
      * @codeCoverageIgnore
      */
@@ -154,9 +164,9 @@ class PMSEPreProcessor
     {
         $this->logger = $logger;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEValidate $validator
      * @codeCoverageIgnore
      */
@@ -166,7 +176,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param type $request
      * @param type $createThread
      * @param type $bean
@@ -176,7 +186,7 @@ class PMSEPreProcessor
     public function processRequest(PMSERequest $request)
     {
         $flowDataList = $this->getFlowDataList($request);
-        if($request->getExternalAction() == 'TERMINATE_CASE') {
+        if ($request->getExternalAction() == 'TERMINATE_CASE') {
             $this->terminateCaseByBeanAndProcess($request->getBean());
         }
 
@@ -189,7 +199,7 @@ class PMSEPreProcessor
             $request->validate();
             // validatind the request with the initial Data
             $validatedRequest = $this->validator->validateRequest($request);
-            
+
             if ($validatedRequest->isValid()) {
                 $data = $validatedRequest->getFlowData();
                 if ($data['evn_type'] != 'GLOBAL_TERMINATE') {
@@ -197,7 +207,9 @@ class PMSEPreProcessor
                     $_SESSION['pmse_start_time'] = microtime(true);
 
                     $result = $this->executer->runEngine(
-                        $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(), $validatedRequest->getBean(), $validatedRequest->getExternalAction(), $validatedRequest->getArguments()
+                        $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(),
+                        $validatedRequest->getBean(), $validatedRequest->getExternalAction(),
+                        $validatedRequest->getArguments()
                     );
                     $this->logger->info('Execution of case: #' . $data['cas_id'] . ' completed');
                 }
@@ -227,7 +239,7 @@ class PMSEPreProcessor
         $query = $sugarQuery->compileSql();
         return $flows;
     }
-    
+
     public function retrieveProcessBean($bean, $data = array())
     {
         if (isset($data['pro_module']) && $bean->parent_type == $data['pro_module']) {
@@ -235,7 +247,7 @@ class PMSEPreProcessor
         }
         return $bean;
     }
-    
+
     public function terminateCaseByBeanAndProcess($bean, $data = array())
     {
         $processBean = $this->retrieveProcessBean($bean, $data);
@@ -253,7 +265,7 @@ class PMSEPreProcessor
             }
         }
     }
-    
+
     /**
      * Optimized version of get all events method.
      * @param type $bean
@@ -304,31 +316,32 @@ class PMSEPreProcessor
         $q = $this->retrieveSugarQuery();
         $q->select($fields);
         $q->from($relatedDependency, array('alias' => 'hp'));
-        $q->joinRaw("LEFT JOIN pmse_bpm_flow flow ON rel_element_id = flow.bpmn_id AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')", array('alias' => 'flow'));
+        $q->joinRaw("LEFT JOIN pmse_bpm_flow flow ON rel_element_id = flow.bpmn_id AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')",
+            array('alias' => 'flow'));
         $q->where()->queryAnd()
-                ->addRaw("(((evn_type = 'START' OR evn_type = 'GLOBAL_TERMINATE')" .
-                        " AND (hp.deleted IS NULL OR hp.deleted=0)" .
-                        " AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status<>'WAITING')" .                        
-                        " AND ((evn_module = '$bean->module_name' AND rel_element_module='') OR rel_element_module='$bean->module_name'))" . // " AND evn_module = '$bean->module_name')".
-                        " OR (evn_type = 'INTERMEDIATE'" .
-                        " AND evn_marker = 'MESSAGE'" .
-                        " AND evn_behavior = 'CATCH'" .
-                        " AND hp.deleted = 0" .
-                        " AND flow.cas_flow_status = 'WAITING'" .
-                        " AND rel_element_module = '$bean->module_name'))" .
-                        " AND pro_status <> 'INACTIVE'");
+            ->addRaw("(((evn_type = 'START' OR evn_type = 'GLOBAL_TERMINATE')" .
+                " AND (hp.deleted IS NULL OR hp.deleted=0)" .
+                " AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status<>'WAITING')" .
+                " AND ((evn_module = '$bean->module_name' AND rel_element_module='') OR rel_element_module='$bean->module_name'))" . // " AND evn_module = '$bean->module_name')".
+                " OR (evn_type = 'INTERMEDIATE'" .
+                " AND evn_marker = 'MESSAGE'" .
+                " AND evn_behavior = 'CATCH'" .
+                " AND hp.deleted = 0" .
+                " AND flow.cas_flow_status = 'WAITING'" .
+                " AND rel_element_module = '$bean->module_name'))" .
+                " AND pro_status <> 'INACTIVE'");
 
         $q->select->fieldRaw('flow.id, flow.cas_id, flow.cas_index, flow.bpmn_id, flow.bpmn_type, flow.cas_user_id, flow.cas_thread, flow.cas_sugar_module, flow.cas_sugar_object_id');
         $query = $q->compileSql();
         $start = microtime(true);
-        $rows  = $q->execute();
-        $time  = (microtime(true) - $start) * 1000;
+        $rows = $q->execute();
+        $time = (microtime(true) - $start) * 1000;
         $this->logger->debug('Query in order to retrieve all valid start and receive message events: ' . $query . ' \n in ' . $time . ' milliseconds');
         return $rows;
     }
 
     /**
-     * 
+     *
      * @param type $data
      * @return type
      * @codeCoverageIgnore
@@ -340,9 +353,9 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param type $data
-     * @return type     
+     * @return type
      */
     public function getFlowsByCasId($casId)
     {
@@ -390,34 +403,60 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param PMSERequest $request
      * @return type
      */
     public function getFlowDataList(PMSERequest $request)
     {
         $args = $request->getArguments();
+        $flows = array();
         switch ($request->getType()) {
             case 'direct':
-                return $this->getFlowById($args['idFlow']);
+                switch (true) {
+                    case isset($args['idFlow']):
+                        $flows = $this->getFlowById($args['idFlow']);
+                        break;
+                    case isset($args['flow_id']):
+                        $flows = $this->getFlowById($args['flow_id']);
+                        break;
+                    case (isset($args['cas_id'])&&isset($args['cas_index'])):
+                        $flows = $this->getFlowByCasIdCasIndex($args);
+                        $args['idFlow'] = $flows[0]['id'];
+                        $request->setArguments($args);
+                        break;
+                }
+                
                 break;
             case 'hook':
-                return $this->getAllEvents($request->getBean());
+                $flows = $this->getAllEvents($request->getBean());
                 break;
             case 'queue':
-                return $this->getFlowById($args['id']);
+                $flows = $this->getFlowById($args['id']);
                 break;
             case 'engine':
-                return $this->getFlowsByCasId($args['cas_id']);
-                break;
-            default:
-                return array();
+                $flows = $this->getFlowsByCasId($args['cas_id']);
                 break;
         }
+        return $flows;
     }
 
+    public function getFlowByCasIdCasIndex($arguments)
+    {
+        $tmpBean = BeanFactory::getBean('pmse_BpmFlow');
+        $q = new SugarQuery();
+        $q->select(array('cas_sugar_module', 'cas_sugar_object_id', 'id'));
+        $q->from($tmpBean);
+        $q->where()->equals('cas_id', $arguments['cas_id']);
+        $q->where()->equals('cas_index', $arguments['cas_index']);
+        $result = $q->execute();
+        $element = array_pop($result);
+        $bean = BeanFactory::retrieveBean('pmse_BpmFlow', $element['id']);
+        return array($bean->toArray());
+    }
+    
     /**
-     * 
+     *
      * @param type $flowData
      * @return type
      * @codeCoverageIgnore
@@ -431,7 +470,7 @@ class PMSEPreProcessor
     }
 
     /**
-     * 
+     *
      * @param type $bean
      * @param type $flowData
      * @return type
@@ -439,8 +478,13 @@ class PMSEPreProcessor
      */
     public function processBean($bean, $flowData)
     {
-        if (is_null($bean) && isset($flowData['cas_sugar_module']) && isset($flowData['cas_sugar_object_id'])) {
-            $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+        if (is_null($bean)) {
+            if (isset($flowData['cas_sugar_module']) && isset($flowData['cas_sugar_object_id'])) {
+                $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+            }
+            if (isset($flowData['cas_id']) && isset($flowData['cas_index'])) {
+                
+            }
         }
         return $bean;
     }

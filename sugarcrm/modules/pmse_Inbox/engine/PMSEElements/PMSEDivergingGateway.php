@@ -1,10 +1,21 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEGateway.php';
 
 class PMSEDivergingGateway extends PMSEGateway
 {
-
     /**
      * @param type $flowData
      */
@@ -16,9 +27,9 @@ class PMSEDivergingGateway extends PMSEGateway
         $rows = $bpmnFlowBean->get_full_list($orderBy, $where);
         return $rows;
     }
-    
+
     /**
-     * 
+     *
      * @param type $flow
      * @param type $bean
      * @param type $flowData
@@ -30,18 +41,18 @@ class PMSEDivergingGateway extends PMSEGateway
             //$this->bpmLog('INFO', "[$cas_id][$cas_index] following the default flow");
             return true;
         }
-        
+
         if ($flow->flo_condition == '') {
             return false;
         }
 
         $params = array('db' => $this->getDbHandler(), 'cas_id' => $flowData['cas_id']);
-        $resultEvaluation = $this->expressionEvaluator->evaluateExpression($flow->flo_condition, $bean, $params);
+        $resultEvaluation = $this->evaluator->evaluateExpression($flow->flo_condition, $bean, $params);
         return $resultEvaluation;
     }
-    
+
     /**
-     * 
+     *
      * @param type $type
      * @param type $flows
      * @param type $bean

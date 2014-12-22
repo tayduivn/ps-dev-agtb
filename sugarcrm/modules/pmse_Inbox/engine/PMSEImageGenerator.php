@@ -1,4 +1,17 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'include/SugarQuery/SugarQuery.php';
 require_once 'PMSE.php';
 
@@ -36,6 +49,7 @@ class PMSEImageGenerator
     {
         $this->pmse = PMSE::getInstance();
     }
+
     public function get_image($cas_id)
     {
         if (isset($cas_id)) {
@@ -57,10 +71,10 @@ class PMSEImageGenerator
         return $files;
     }
 
-    private function get_running_elements ()
+    private function get_running_elements()
     {
         $q = new SugarQuery();
-        
+
         $fields = array(
             'id',
             'cas_id',
@@ -84,9 +98,9 @@ class PMSEImageGenerator
             ->equals('cas_id', $this->cas_id);
         //$q->groupBy('bpmn_id');
         $q->orderBy('cas_index');
-        //$sql = $q->compileSql(); echo $sql; die;
+
         $rows = $q->execute();
-        //echo '<pre>'; print_r($rows); echo '</pre>'; die();
+
 
         $arrElements = array();
         $auxArray = array();
@@ -110,7 +124,7 @@ class PMSEImageGenerator
             }
             $arrElements = $auxArray;
         }
-        //echo '<pre>'; print_r($arrElements); echo '</pre>'; die();
+
         return $arrElements;
     }
 
@@ -130,7 +144,7 @@ class PMSEImageGenerator
                 $tmp->flows = $this->get_project_flow($prj_id, $row->id);
                 $response[] = $tmp;
             }
-            //echo '<pre>'; print_r($response); echo '</pre>'; die;
+
             return $response;
         }
     }
@@ -263,7 +277,7 @@ class PMSEImageGenerator
         $q->select()->field($boundFields);
         $q->where()
             ->equals('prj_id', $prj_id);
-        //$sql = $q->compileSql(); echo $sql; die;
+
         $rows = $q->execute();
 
         return $rows;
@@ -536,12 +550,14 @@ class PMSEImageGenerator
         $aNotSupportedColor = imagecolorallocate($img, 0xC0, 0xC0, 0xC0);
         $aNotSupportedFillColor = $white;
 
-        //echo '<pre>';  print_r($pngData); echo '</pre>'; die;
+
         foreach ($pngData as $figure) {
             $element_running = $this->get_element_running($figure[10]);
             $shape_image = $element_running->in_flow ? $imgSprite : $imgSpriteBW;
-            $aTaskColor = $element_running->in_flow ? imagecolorallocate($img, 0x33, 0x66, 0x99) : imagecolorallocate($img, 0xC0, 0xC0, 0xC0);
-            $aTaskFillColor = $element_running->in_flow ? imagecolorallocate($img, 0xF0, 0xF5, 0xFB) : imagecolorallocate($img, 230, 230, 230);
+            $aTaskColor = $element_running->in_flow ? imagecolorallocate($img, 0x33, 0x66,
+                0x99) : imagecolorallocate($img, 0xC0, 0xC0, 0xC0);
+            $aTaskFillColor = $element_running->in_flow ? imagecolorallocate($img, 0xF0, 0xF5,
+                0xFB) : imagecolorallocate($img, 230, 230, 230);
             switch ($figure[0]) {
                 case 'bpmnActivity':
                     $X1 = $figure[1] - $x1;
@@ -549,8 +565,42 @@ class PMSEImageGenerator
                     $X2 = $X1 + $figure[3];
                     $Y2 = $Y1 + $figure[4];
                     $properties = explode('_', $figure[7]);
-                    $points = array($X1 + 3, $Y1, $X2 - 3, $Y1, $X2, $Y1 + 3, $X2, $Y2 - 3, $X2 - 3, $Y2, $X1 + 3, $Y2, $X1, $Y2 - 3, $X1, $Y1 + 3);
-                    $points2 = array($X1 + 5, $Y1 + 2, $X2 - 5, $Y1 + 2, $X2 - 2, $Y1 + 5, $X2 - 2, $Y2 - 5, $X2 - 5, $Y2 - 2, $X1 + 5, $Y2 - 2, $X1 + 2, $Y2 - 5, $X1 + 2, $Y1 + 5);
+                    $points = array(
+                        $X1 + 3,
+                        $Y1,
+                        $X2 - 3,
+                        $Y1,
+                        $X2,
+                        $Y1 + 3,
+                        $X2,
+                        $Y2 - 3,
+                        $X2 - 3,
+                        $Y2,
+                        $X1 + 3,
+                        $Y2,
+                        $X1,
+                        $Y2 - 3,
+                        $X1,
+                        $Y1 + 3
+                    );
+                    $points2 = array(
+                        $X1 + 5,
+                        $Y1 + 2,
+                        $X2 - 5,
+                        $Y1 + 2,
+                        $X2 - 2,
+                        $Y1 + 5,
+                        $X2 - 2,
+                        $Y2 - 5,
+                        $X2 - 5,
+                        $Y2 - 2,
+                        $X1 + 5,
+                        $Y2 - 2,
+                        $X1 + 2,
+                        $Y2 - 5,
+                        $X1 + 2,
+                        $Y1 + 5
+                    );
                     switch ($figure[5]) {
                         case 'TASK':
                             $borderColor = $aTaskColor;
@@ -564,7 +614,24 @@ class PMSEImageGenerator
                     }
                     //CURRENT CASE
                     if ($element_running->running) {
-                        $points_active = array($X1 + 3, $Y1, $X2 - 3, $Y1, $X2, $Y1 + 3, $X2, $Y2 - 3, $X2 - 3, $Y2, $X1 + 3, $Y2, $X1, $Y2 - 3, $X1, $Y1 + 3);
+                        $points_active = array(
+                            $X1 + 3,
+                            $Y1,
+                            $X2 - 3,
+                            $Y1,
+                            $X2,
+                            $Y1 + 3,
+                            $X2,
+                            $Y2 - 3,
+                            $X2 - 3,
+                            $Y2,
+                            $X1 + 3,
+                            $Y2,
+                            $X1,
+                            $Y2 - 3,
+                            $X1,
+                            $Y1 + 3
+                        );
                         if ($current_user->id == $element_running->usr_id) {
                             imagefilledpolygon($img, $points, 8, $green_1);
                             imagepolygon($img, $points_active, 8, $green);
@@ -577,7 +644,8 @@ class PMSEImageGenerator
                         imagepolygon($img, $points, 8, $borderColor);
                     }
                     if ($element_running->terminated) {
-                        imagecopymerge ($img, $shape_image, $X2 - 15, $figure[2] - $y1 + 3, $xSpriteMap['icon_terminated'][0], $xSpriteMap['icon_terminated'][1], 12, 12, 100);
+                        imagecopymerge($img, $shape_image, $X2 - 15, $figure[2] - $y1 + 3,
+                            $xSpriteMap['icon_terminated'][0], $xSpriteMap['icon_terminated'][1], 12, 12, 100);
                     }
                     if ($figure[5] == 'TRANSACTION') {
                         imagepolygon($img, $points2, 8, $borderColor);
@@ -586,22 +654,26 @@ class PMSEImageGenerator
                         if (isset($figure[9]) && $figure[9] != '') {
                             $css = 'scripttask_' . strtolower($figure[9]);
                             $spriteCoords = $xSpriteMap[$css];
-                            imagecopymerge($img, $shape_image, $figure[1] - $x1 - 2, $figure[2] - $y1 - 2, $spriteCoords[0], $spriteCoords[1], 39, 39, 100);
+                            imagecopymerge($img, $shape_image, $figure[1] - $x1 - 2, $figure[2] - $y1 - 2,
+                                $spriteCoords[0], $spriteCoords[1], 39, 39, 100);
                         } else {
                             $css = 'TASK_' . strtoupper($properties[0]);
                             $spriteCoords = $xSpriteMap[$css];
-                            imagecopymerge($img, $shape_image, $figure[1] - $x1 + 4, $figure[2] - $y1 + 4, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                            imagecopymerge($img, $shape_image, $figure[1] - $x1 + 4, $figure[2] - $y1 + 4,
+                                $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
                         }
                     }
                     if ($figure[5] == 'TASK' && $properties[1] != 'NONE') {
                         $css = 'LOOP_' . strtoupper($properties[1]);
                         $spriteCoords = $xSpriteMap[$css];
-                        imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                        imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2,
+                            $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
                     }
                     if ($figure[5] != 'TASK' && $figure[5] != 'TASKCALLACTIVITY' && $properties[3] == 1) {
                         if ($properties[1] == 'NONE' && $properties[2] == 0) {
                             $spriteCoords = $xSpriteMap['LOOP_NONE'];
-                            imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                            imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2,
+                                $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
                         } else {
                             $t = 1;
                             if ($properties[2] == 1) {
@@ -612,17 +684,27 @@ class PMSEImageGenerator
                             }
                             if ($t == 3) {
                                 $spriteCoords = $xSpriteMap["LOOP_" . $properties[1]];
-                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 36) / 2, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 36) / 2,
+                                    $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12,
+                                    100);
                                 $spriteCoords = $xSpriteMap['LOOP_NONE'];
-                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2,
+                                    $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12,
+                                    100);
                                 $spriteCoords = $xSpriteMap['ACTIVITY_ADHOC'];
-                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 13, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                                imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 13,
+                                    $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12,
+                                    100);
                             } else {
                                 if ($properties[1] != 'NONE') {
                                     $spriteCoords = $xSpriteMap["LOOP_" . $properties[1]];
-                                    imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 7, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                                    imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 7,
+                                        $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12,
+                                        100);
                                     $spriteCoords = $xSpriteMap['LOOP_NONE'];
-                                    imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 6, $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12, 100);
+                                    imagecopymerge($img, $shape_image, $figure[1] - $x1 + ($figure[3] - 12) / 2 + 6,
+                                        $figure[2] - $y1 + $figure[4] - 12, $spriteCoords[0], $spriteCoords[1], 12, 12,
+                                        100);
                                 } else {
                                     //unknow process ??
                                 }
@@ -632,9 +714,11 @@ class PMSEImageGenerator
                     //Print Text
                     if (isset($figure[9]) && $figure[9] != '') {
                         $tt = explode('_', $figure[7]);
-                        $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0], $tt[0]);
+                        $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0],
+                            $tt[0]);
                     } else {
-                        $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0], $figure[5]);
+                        $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0],
+                            $figure[5]);
                     }
                     break;
                 case 'bpmnEvent':
@@ -655,12 +739,15 @@ class PMSEImageGenerator
                         $event_active_filename = $this->pmse->getModulePath() . '/img/event_active.gif';
                         $event_active = imagecreatefromgif($event_active_filename);
                         if ($mk['1'] == 'TIMER') {
-                            imagecopymerge($img, $event_active, $figure[1] - $x1 - 4, $figure[2] - $y1 - 4, 0, 0, $figure[3] + 8, $figure[4] + 8, 100);
+                            imagecopymerge($img, $event_active, $figure[1] - $x1 - 4, $figure[2] - $y1 - 4, 0, 0,
+                                $figure[3] + 8, $figure[4] + 8, 100);
                         } else {
-                            imagecopymerge($img, $event_active, $figure[1] - $x1 - 4, $figure[2] - $y1 - 4, 0, 41, $figure[3] + 8, $figure[4] + 8, 100);
+                            imagecopymerge($img, $event_active, $figure[1] - $x1 - 4, $figure[2] - $y1 - 4, 0, 41,
+                                $figure[3] + 8, $figure[4] + 8, 100);
                         }
                     } else {
-                        imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1, $spriteCoords[0], $spriteCoords[1], $figure[3] + 3, $figure[4] + 3, 100);
+                        imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1, $spriteCoords[0],
+                            $spriteCoords[1], $figure[3] + 3, $figure[4] + 3, 100);
                     }
 
                     if ($marker != 'EMPTY') {
@@ -670,13 +757,15 @@ class PMSEImageGenerator
                             // echo '<br>MARKER: <br>&nbsp&nbsp&nbsp&nbsp' . $marker .'<br>'; print_r($xSpriteMap[$marker]) . '<br>';
                             $spriteCoords2 = $xSpriteMap[$marker];
                             if (!($element_running->running && $mk[1] == 'TIMER')) {
-                                imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1, $spriteCoords2[0], $spriteCoords2[1], $figure[3], $figure[4], 100);
+                                imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1,
+                                    $spriteCoords2[0], $spriteCoords2[1], $figure[3], $figure[4], 100);
                             }
                         }
                     }
 
                     if ($element_running->terminated) {
-                        imagecopymerge ($img, $shape_image, $X2, $figure[2] - $y1, $xSpriteMap['icon_terminated'][0], $xSpriteMap['icon_terminated'][1], 12, 12, 100);
+                        imagecopymerge($img, $shape_image, $X2, $figure[2] - $y1, $xSpriteMap['icon_terminated'][0],
+                            $xSpriteMap['icon_terminated'][1], 12, 12, 100);
                     }
 
                     $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0]);
@@ -689,7 +778,8 @@ class PMSEImageGenerator
                     $Y2 = $Y1 + $figure[4] + 5;
                     $css = $figure[5];
                     $spriteCoords = $xSpriteMap[$css];
-                    imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1, $spriteCoords[0], $spriteCoords[1], $figure[3], $figure[4], 100);
+                    imagecopymerge($img, $shape_image, $figure[1] - $x1, $figure[2] - $y1, $spriteCoords[0],
+                        $spriteCoords[1], $figure[3], $figure[4], 100);
                     $this->print_text($img, $figure[6], 10, 0, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0]);
                     break;
                 case 'bpmnArtifact':
@@ -709,7 +799,8 @@ class PMSEImageGenerator
                         imageline($img, $xX1, $xY1, $xX1 + 15, $xY1, $black);
                         imageline($img, $xX1, $xY2, $xX1 + 15, $xY2, $black);
                     }
-                    $this->print_text($img, $figure[5], 10, 0, $black, $font, $xX1, $xY1, $xX2, $xY2, $figure[0], $figure[5]);
+                    $this->print_text($img, $figure[5], 10, 0, $black, $font, $xX1, $xY1, $xX2, $xY2, $figure[0],
+                        $figure[5]);
                     break; //this break wasn't here ...
                 case 'bpmnFlow':
                     $X1 = $figure[1] - $x1;
@@ -718,7 +809,7 @@ class PMSEImageGenerator
                     $Y2 = $Y1 + $figure[4];
                     imagesetthickness($img, 1);
                     $lines = json_decode($figure[9]);
-                    //echo '<pre>'; print_r($figure[9]); echo '</pre>'; die;
+
                     if ($element_running->in_flow) {
                         $line_color = $black;
                         $shape_image = $imgSprite;
@@ -731,13 +822,16 @@ class PMSEImageGenerator
                         // echo '<br>Point'. ($key + 1) . ': (' . $lines[$key+1]->x . ', ' . $lines[$key+1]->y .')';
                         if (isset($lines[$key + 1]) && $lines[$key + 1]->x != '' && $lines[$key + 1]->y != '') {
                             if ($figure[2] == 'MESSAGE' || $figure[2] == 'ASSOCIATION' || $figure[2] == 'DATAASSOCIATION') {
-                                imagedashedline($img, $lines[$key]->x - $x1, $lines[$key]->y - $y1, $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1, $line_color);
+                                imagedashedline($img, $lines[$key]->x - $x1, $lines[$key]->y - $y1,
+                                    $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1, $line_color);
                             } else {
-                                imageline($img, $lines[$key]->x - $x1, $lines[$key]->y - $y1, $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1, $line_color);
+                                imageline($img, $lines[$key]->x - $x1, $lines[$key]->y - $y1, $lines[$key + 1]->x - $x1,
+                                    $lines[$key + 1]->y - $y1, $line_color);
                             }
-                            if ((int) ((sizeof($lines) - 1) / 2) == $key) {
+                            if ((int)((sizeof($lines) - 1) / 2) == $key) {
                                 ($element_running->count > 1) ? $cf = ' (' . $element_running->count . ')' : $cf = '';
-                                $this->print_text($img, $figure[1] . $cf, 10, 0, $black, $font, $lines[$key]->x - $x1, $lines[$key]->y, $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1);
+                                $this->print_text($img, $figure[1] . $cf, 10, 0, $black, $font, $lines[$key]->x - $x1,
+                                    $lines[$key]->y, $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1);
                             }
                         }
 
@@ -750,18 +844,28 @@ class PMSEImageGenerator
                     if ($lines[sizeof($lines) - 1]->x == $lines[sizeof($lines) - 2]->x) {
                         if ($lines[sizeof($lines) - 1]->y < $lines[sizeof($lines) - 2]->y) {
                             $spriteCoords = $xSpriteMap['arrow_target_bottom'];
-                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - (int) ($decorator_width / 2) - $x1, $lines[sizeof($lines) - 1]->y - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                            imagecopymerge($img, $shape_image,
+                                $lines[sizeof($lines) - 1]->x - (int)($decorator_width / 2) - $x1,
+                                $lines[sizeof($lines) - 1]->y - $y1, $spriteCoords[0], $spriteCoords[1],
+                                $decorator_width, $decorator_height, 100);
                         } else {
                             $spriteCoords = $xSpriteMap['arrow_target_top'];
-                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - (int) ($decorator_width / 2) - $x1, $lines[sizeof($lines) - 1]->y - $decorator_height - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                            imagecopymerge($img, $shape_image,
+                                $lines[sizeof($lines) - 1]->x - (int)($decorator_width / 2) - $x1,
+                                $lines[sizeof($lines) - 1]->y - $decorator_height - $y1, $spriteCoords[0],
+                                $spriteCoords[1], $decorator_width, $decorator_height, 100);
                         }
                     } elseif (($lines[sizeof($lines) - 1]->y == $lines[sizeof($lines) - 2]->y)) {
                         if ($lines[sizeof($lines) - 1]->x < $lines[sizeof($lines) - 2]->x) {
                             $spriteCoords = $xSpriteMap['arrow_target_right'];
-                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - $x1, $lines[sizeof($lines) - 1]->y - (int) ($decorator_height / 2) - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - $x1,
+                                $lines[sizeof($lines) - 1]->y - (int)($decorator_height / 2) - $y1, $spriteCoords[0],
+                                $spriteCoords[1], $decorator_width, $decorator_height, 100);
                         } else {
                             $spriteCoords = $xSpriteMap['arrow_target_left'];
-                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - $decorator_width - $x1, $lines[sizeof($lines) - 1]->y - (int) ($decorator_height / 2) - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                            imagecopymerge($img, $shape_image, $lines[sizeof($lines) - 1]->x - $decorator_width - $x1,
+                                $lines[sizeof($lines) - 1]->y - (int)($decorator_height / 2) - $y1, $spriteCoords[0],
+                                $spriteCoords[1], $decorator_width, $decorator_height, 100);
                         }
                     }
 
@@ -776,18 +880,26 @@ class PMSEImageGenerator
                         if ($lines[0]->x == $lines[1]->x) {
                             if ($lines[0]->y < $lines[1]->y) {
                                 $spriteCoords = $xSpriteMap['arrow' . $source_decorator . '_source_top'];
-                                imagecopymerge($img, $shape_image, $lines[0]->x - (int) ($decorator_width / 2) - $x1, $lines[0]->y - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                                imagecopymerge($img, $shape_image, $lines[0]->x - (int)($decorator_width / 2) - $x1,
+                                    $lines[0]->y - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width,
+                                    $decorator_height, 100);
                             } else {
                                 $spriteCoords = $xSpriteMap['arrow' . $source_decorator . '_source_bottom'];
-                                imagecopymerge($img, $shape_image, $lines[0]->x - (int) ($decorator_width / 2) - $x1, $lines[0]->y - $decorator_height - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                                imagecopymerge($img, $shape_image, $lines[0]->x - (int)($decorator_width / 2) - $x1,
+                                    $lines[0]->y - $decorator_height - $y1, $spriteCoords[0], $spriteCoords[1],
+                                    $decorator_width, $decorator_height, 100);
                             }
                         } elseif (($lines[0]->y == $lines[1]->y)) {
                             if ($lines[0]->x < $lines[1]->x) {
                                 $spriteCoords = $xSpriteMap['arrow' . $source_decorator . '_source_right'];
-                                imagecopymerge($img, $shape_image, $lines[0]->x - $x1, $lines[0]->y - (int) ($decorator_height / 2) - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                                imagecopymerge($img, $shape_image, $lines[0]->x - $x1,
+                                    $lines[0]->y - (int)($decorator_height / 2) - $y1, $spriteCoords[0],
+                                    $spriteCoords[1], $decorator_width, $decorator_height, 100);
                             } else {
                                 $spriteCoords = $xSpriteMap['arrow' . $source_decorator . '_source_left'];
-                                imagecopymerge($img, $shape_image, $lines[0]->x - $decorator_width - $x1, $lines[0]->y - (int) ($decorator_height / 2) - $y1, $spriteCoords[0], $spriteCoords[1], $decorator_width, $decorator_height, 100);
+                                imagecopymerge($img, $shape_image, $lines[0]->x - $decorator_width - $x1,
+                                    $lines[0]->y - (int)($decorator_height / 2) - $y1, $spriteCoords[0],
+                                    $spriteCoords[1], $decorator_width, $decorator_height, 100);
                             }
                         }
                     }
@@ -825,10 +937,10 @@ class PMSEImageGenerator
         }
         $h = count($line) * 16;
         foreach ($line as $value) {
-            $w = strlen(trim($value))*6;
+            $w = strlen(trim($value)) * 6;
             $X = ($x1 + ((($x2 - $x1) - $w) / 2)) - 10;
             if ($type == 'bpmnActivity' && $stype == 'TASK') {
-                $Y = $y1 + (($y2 - $y1)/2) - floor($h/2) + $yy;
+                $Y = $y1 + (($y2 - $y1) / 2) - floor($h / 2) + $yy;
             } elseif ($type == 'bpmnActivity' && $stype == 'SCRIPTTASK') {
                 $Y = $y2 + $yy + 10;
             } else {
@@ -849,7 +961,7 @@ class PMSEImageGenerator
         foreach ($arr as $word) {
             $sa_ = $sa;
             $sa .= ' ' . $word;
-            $w = strlen(trim($sa))*6;
+            $w = strlen(trim($sa)) * 6;
             if ($w >= $width) {
                 $sf[] = $sa_;
                 $sa = $word;
@@ -860,10 +972,11 @@ class PMSEImageGenerator
         $sf[] = $sa;
         return $sf;
     }
+
     private function get_element_running($id)
     {
         $element = $this->running_elements[$id];
-        if (isset($element) && !empty($element)){
+        if (isset($element) && !empty($element)) {
             $element->in_flow = true;
         } else {
             $element = new stdClass();

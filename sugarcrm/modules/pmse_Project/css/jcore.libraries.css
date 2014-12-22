@@ -1,4 +1,40 @@
 /*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/*
+ * Default Layout Theme
+ *
+ * Created for jquery.layout 
+ *
+ * Copyright (c) 2010 
+ *   Fabrizio Balliano (http://www.fabrizioballiano.net)
+ *   Kevin Dalman (http://allpro.net)
+ *
+ * Dual licensed under the GPL (http://www.gnu.org/licenses/gpl.html)
+ * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
+ *
+ * Last Updated: 2010-02-10
+ * NOTE: For best code readability, view this with a fixed-space font and tabs equal to 4-chars
+ */
+
+/*
+ *	DEFAULT FONT
+ *	Just to make demo-pages look better - not actually relevant to Layout!
+ */
+/*body {*/
+/*font-family: Geneva, Arial, Helvetica, sans-serif;*/
+/*font-size:   100%;*/
+/**font-size:  80%;*/
+/*}*/
+
+/*
  *	PANES & CONTENT-DIVs
  */
 .ui-layout-pane { /* all 'panes' */
@@ -256,3 +292,4 @@ table.progrid-table tr td *{
     margin-left: 3px;
 }
 
+//@ sourceURL=jcore.libraries.css

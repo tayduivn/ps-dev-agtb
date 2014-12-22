@@ -47,6 +47,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'related_fields' => array('status'),
                 ),
                 array(
                     'name' => 'date_end',
@@ -59,6 +60,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'default' => true,
                     'name' => 'status',
                     'type' => 'event-status',
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'enabled' => true,
@@ -77,7 +79,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                 array(
                     'name' => 'date_entered',
                     'enabled' => true,
-                    'default' => false,
+                    'default' => true,
                     'readonly' => true,
                 ),
             ),

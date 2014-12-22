@@ -1,12 +1,16 @@
-/**
- * View for the email composition layout that contains the HTML editor.
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
     extendsFrom: 'RecordView',
-//    className: 'compose',
-//    _lastSelectedSignature: null,
-//    ATTACH_TYPE_SUGAR_DOCUMENT: 'document',
-//    ATTACH_TYPE_TEMPLATE: 'template',
+
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
     buttons: null,
@@ -14,30 +18,20 @@
     initialize: function(options) {
         _.bindAll(this);
         var self = this;
-        this._super("initialize", [options]);
-//        options.meta = _.extend({}, app.metadata.getView(null, 'compose'), options.meta);
-//        app.view.View.prototype.initialize.call(this, options);
+
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+
         this.events = _.extend({}, this.events, {
-//            'click .cc-option': 'showSenderOptionField',
-//            'click .bcc-option': 'showSenderOptionField',
-//            'click [name=draft_button]': 'saveAsDraft',
             'click [name=save_button]': 'save',
             'click [name=save_buttonExit]': 'saveExit',
             'click [name=cancel_button]': 'cancel'
         });
-//        this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
-//        this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
-//        this.context.on("actionbar:signature_button:clicked", this.launchSignatureDrawer, this);
-//        this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
+
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
-//        this.on('more-less:toggled', this.handleMoreLessToggled, this);
-//        app.drawer.on('drawer:resize', this.resizeEditor, this);
+
         this.action = 'edit';
         this.createMode = true;
         this._lastSelectedSignature = app.user.getPreference("signature_default");
-
-
-
     },
 
     _render: function () {
@@ -48,38 +42,24 @@
         this._super("_render");
         if (this.createMode) {
             if (this.getField('name')) {
-                this.setTitle(app.lang.get('LBL_PMSE_DASHLET_TITLE_EMAILTEMPLATE', this.module) + ' | ' + this.getField('name').value);
+                this.setTitle(app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_DASHLET', this.module) + ' | ' + this.getField('name').value);
             }
         }
-//        url = app.api.buildURL('pmse_Emails_Templates', 'modules/find', null, {'module': this.model.get('base_module')});
-//        app.api.call('read', url, null, {
-//                success:function (modules){
-//                    console.log(modules);
-//                    self.modulesList= modules;
-//
-//                }
-//            }
-//        );
-        //console.log(this);
-        //module = this.model.get('base_module');
-        //console.log(module);
     },
 
     /**
      * Cancel and close the drawer
      */
     cancel: function() {
-//            this.model.revertAttributes();
             this.toggleEdit(false);
             this.inlineEditMode = false;
-            App.router.navigate('Home' , {trigger: true, replace: true });
+            App.router.navigate("pmse_Emails_Templates", {trigger: true});
     },
 
     /**
      * Send the email immediately or warn if user did not provide subject or body
      */
     save: function() {
-//        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
         this.model.doValidate(this.getFields(this.module), _.bind(function(isValid) {
             if (isValid) {
                 this.validationCompleteApprove(this.model,false);
@@ -87,30 +67,26 @@
         }, this));
     },
     validationCompleteApprove: function (model,exit) {
-        var url, attributes, bodyHtml, subject;//, from_address;
-        //console.log(this);
+        var url, attributes, bodyHtml, subject, route = this.context.get("module");
+
         url = App.api.buildURL('pmse_Emails_Templates', null, {id: this.context.attributes.modelId});
         bodyHtml = model.get('body_html');//bodyHtml = this.model.get('body_html');
         subject = model.get('subject');//subject = this.model.get('subject');
-//        from_address = model.get('from_address');//from_address = this.model.get('from_address');
-//        console.log(from_address);
+
         attributes = {
             body_html: bodyHtml,
             subject: subject,
             description:model.get('description'),//description:this.model.get('description'),
             name: model.get('name')//name: this.model.get('name'),
-//            from_name: model.get('from_name'),//from_name: this.model.get('from_name'),
-//            from_address: model.get('from_address')//from_address: this.model.get('from_address')
         };
         App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoclose: false});
         App.api.call('update', url, attributes, {
             success: function (data) {
-                //alert('update')
                 App.alert.dismiss('upload');
                 if(exit)
                 {
                     model.revertAttributes();
-                    App.router.redirect('Home');
+                    App.router.redirect(route);
                 }
             },
             error: function (err) {
@@ -119,7 +95,6 @@
         });
     },
     saveExit: function() {
-//        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
         this.model.doValidate(this.getFields(this.module), _.bind(function(isValid) {
             if (isValid) {
                 this.validationCompleteApprove(this.model,true);

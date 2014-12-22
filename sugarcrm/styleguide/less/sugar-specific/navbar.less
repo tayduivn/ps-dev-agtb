@@ -93,7 +93,7 @@
         .fa-caret-down {
           color: @white;
         }
-        .btn.btn-invisible.btn-link {
+        .btn.btn-invisible.btn-link:not(.cube) {
           text-decoration: none;
           color: @navbarLinkColorActive;
           .border-radius(~"0 !important");
@@ -200,7 +200,7 @@
       li a {
         display: block;
         padding: 8px 10px;
-        text-indent: 30px;
+        text-indent: 16px;
         position: relative;
         &:hover {
           color: @dropdownLinkColorHover;
@@ -213,7 +213,7 @@
         i.fa {
           position: relative;
           top: -1px;
-          text-indent: -26px;
+          text-indent: -12px;
           color: @grayLight;
           vertical-align: middle;
         }
@@ -341,11 +341,22 @@
   .dropdown-toggle .avatar {
     min-width: 26px;
   }
-  .profileactions-profile .avatar {
-    position: absolute;
-    left: 11px;
+  .profileactions-profile {
+    > a {
+      //text-indent: 30px;
+      > span {
+          display: inline-block;
+          width: 14px;
+          height: 0;
+        .avatar {
+          position: absolute;
+          left: 11px;
+          top: 7px;
+        }
+      }
+    }
   }
-  .fa-user {
+  .dropdown-toggle .fa-user {
     width: 26px;
     height: 26px;
     line-height: 26px;

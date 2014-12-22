@@ -1,4 +1,16 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
@@ -11,7 +23,7 @@ class PMSEUserTask extends PMSEActivity
 
     public function __construct()
     {
-        $this->engineFields = array (
+        $this->engineFields = array(
             'idInbox',
             'idFlow',
             //'moduleName',
@@ -28,23 +40,23 @@ class PMSEUserTask extends PMSEActivity
     }
 
     /**
-     * This method prepares the response of the current element based on the 
-     * $bean object and the $flowData, an external action such as 
+     * This method prepares the response of the current element based on the
+     * $bean object and the $flowData, an external action such as
      * ROUTE or ADHOC_REASSIGN could be also processed.
-     * 
-     * This method probably should be override for each new element, but it's 
-     * not mandatory. However the response structure always must pass using 
+     *
+     * This method probably should be override for each new element, but it's
+     * not mandatory. However the response structure always must pass using
      * the 'prepareResponse' Method.
-     * 
+     *
      * As defined in the example:
-     * 
+     *
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
      * $response['flow_filters'] = array('first_id', 'second_id'); //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
      *
-     * 
+     *
      * @param type $flowData
      * @param type $bean
      * @param type $externalAction
@@ -52,8 +64,9 @@ class PMSEUserTask extends PMSEActivity
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
-        $redirectAction = empty($externalAction)? 'ASSIGN': $this->processUserAction($flowData);
-        $saveBeanData = !empty($arguments)? true: false;
+//        $redirectAction = empty($externalAction)? 'ASSIGN': $this->processUserAction($flowData);
+        $redirectAction = $this->processAction($flowData, $externalAction);
+        $saveBeanData = !empty($arguments) ? true : false;
         switch ($redirectAction) {
             case 'ASSIGN':
                 $userId = $this->userAssignmentHandler->taskAssignment($flowData);
@@ -61,27 +74,40 @@ class PMSEUserTask extends PMSEActivity
                 $flowAction = 'CREATE';
                 $routeAction = 'WAIT';
                 $saveBeanData = false;
-            break;
+                break;
+            case 'REASSIGN':
+                $flowData['cas_index']--;
+                $flowData['cas_adhoc_type'] = isset($arguments['adhoc_type']) ? $arguments['adhoc_type'] : $flowData['cas_adhoc_type'];
+                $flowData['user_name'] = isset($arguments['user_name']) ? $arguments['user_name'] : '';
+                $flowData['full_name'] = isset($arguments['full_name']) ? $arguments['full_name'] : '';
+                $this->userAssignmentHandler->adhocReassign($flowData, $arguments['adhoc_user']);
+                $userId = $flowData['cas_user_id'];
+                $flowData['cas_flow_status'] = 'FORM';
+                $flowAction = 'CLOSE';
+                $routeAction = 'WAIT';
+                break;
             case 'ROUND_TRIP':
                 $flowData['cas_index']--;
-                $userId = $this->userAssignmentHandler->roundTripReassign($flowData);
+                $this->userAssignmentHandler->roundTripReassign($flowData);
                 $flowData['cas_flow_status'] = 'FORM';
+                $userId = $flowData['cas_user_id'];
                 $flowAction = 'CLOSE';
                 $routeAction = 'WAIT';
-            break;
+                break;
             case 'ONE_WAY':
                 $flowData['cas_index']--;
-                $userId = $this->userAssignmentHandler->oneWayReassign($flowData);
+                $this->userAssignmentHandler->oneWayReassign($flowData);
                 $flowData['cas_flow_status'] = 'FORM';
+                $userId = $flowData['cas_user_id'];
                 $flowAction = 'CLOSE';
                 $routeAction = 'WAIT';
-            break;
+                break;
             case 'ROUTE':
                 $userId = $flowData['cas_user_id'];
                 $flowData['cas_flow_status'] = 'FORM';
                 $flowAction = 'UPDATE';
                 $routeAction = 'ROUTE';
-            break;
+                break;
         }
 
         $flowData['cas_user_id'] = $userId;
@@ -96,8 +122,29 @@ class PMSEUserTask extends PMSEActivity
         return $result;
     }
 
+    public function processAction($flowData, $externalAction)
+    {
+        switch ($externalAction) {
+            case '':
+                $action = 'ASSIGN';
+                break;
+            case 'REASSIGN':
+                $action = 'REASSIGN';
+                break;
+            case 'APPROVE':
+            case 'REJECT':
+            case 'ROUTE':
+                $action = $this->processUserAction($flowData);
+                break;
+            default:
+                $action = 'ROUTE';
+                break;
+        }
+        return $action;
+    }
+
     /**
-     * Process the response based on the EXternal action and the type of 
+     * Process the response based on the EXternal action and the type of
      * @param type $flowData
      * @return string
      */
@@ -107,13 +154,13 @@ class PMSEUserTask extends PMSEActivity
         switch (true) {
             case $this->userAssignmentHandler->isRoundTrip($flowData):
                 $action = 'ROUND_TRIP';
-            break;
+                break;
             case $this->userAssignmentHandler->isOneWay($flowData):
                 $action = 'ONE_WAY';
-            break;
+                break;
             default:
                 $action = 'ROUTE';
-            break;
+                break;
         }
         return $action;
     }
@@ -130,9 +177,9 @@ class PMSEUserTask extends PMSEActivity
         $bpmInboxId = $fields['idInbox'];
         $moduleName = $fields['moduleName'];
         $moduleId = $fields['beanId'];
-        
+
         foreach ($beanData as $key => $value) {
-            if (in_array($key, $this->engineFields)){
+            if (in_array($key, $this->engineFields)) {
                 unset($fields[$key]);
             }
         }
@@ -165,9 +212,9 @@ class PMSEUserTask extends PMSEActivity
         $fields['log_data'] = $historyData->getLog();
         $this->caseFlowHandler->saveFormAction($fields);
     }
-    
+
     /**
-     * Lock the flow id in order to allow only one request of an element 
+     * Lock the flow id in order to allow only one request of an element
      * at a time
      * @param type $id
      */

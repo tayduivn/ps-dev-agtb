@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 [class^="adam-icon-"],
 [class*=" adam-icon-"] {
   display: inline-block;
@@ -125,7 +135,9 @@
 [class^="adam-marker-"],
 [class*=" adam-marker-"],
 [class^="adam-decorator_"],
-[class*=" adam-decorator_"] {
+[class*=" adam-decorator_"],
+[class^="adam-status-"],
+[class*=" adam-status-"] {
   display: inline-block;
   background-image: url("../img/pmse_sprite_with_zoom.gif");
   background-repeat: no-repeat;
@@ -256,6 +268,20 @@
   background-position: -145px -99px;
 }
 
+.adam-status-100-error {
+  background-position: -65px -363px !important;
+}
+
+.adam-status-100-warning {
+  vertical-align: top;
+  font-size: 20px;
+  /*background: white; border-radius: 17px;*/
+}
+
+.adam-status-100-info {
+  background-position: -91px -363px !important;
+}
+
 .adam-shape-75-event-start {
   background-position: -170px -3px;
 }
@@ -378,6 +404,18 @@
 
 .adam-decorator_default_75_source_top {
   background-position: -281px -75px;
+}
+
+.adam-status-75-error {
+  background-position: -65px -378px !important;
+}
+
+.adam-status-75-warning {
+  background-position: -74px -378px !important;
+}
+
+.adam-status-75-info {
+  background-position: -85px -378px !important;
 }
 
 .adam-shape-50-event-start {
@@ -504,6 +542,18 @@
   background-position: -379px -55px;
 }
 
+.adam-status-50-error {
+  background-position: -66px -392px !important;
+}
+
+.adam-status-50-warning {
+  background-position: -72px -392px !important;
+}
+
+.adam-status-50-info {
+  background-position: -80px -392px !important;
+}
+
 .adam-shape-125-event-start {
   background-position: -3px -150px;
 }
@@ -628,6 +678,18 @@
   background-position: -180px -270px;
 }
 
+.adam-status-125-error {
+  background-position: -7px -388px !important;
+}
+
+.adam-status-125-warning {
+  background-position: -22px -388px !important;
+}
+
+.adam-status-125-info {
+  background-position: -39px -388px !important;
+}
+
 .adam-shape-150-event-start {
   background-position: -200px -120px;
 }
@@ -750,6 +812,18 @@
 
 .adam-decorator_default_150_source_top {
   background-position: -412px -260px;
+}
+
+.adam-status-150-error {
+  background-position: -5px -363px !important;
+}
+
+.adam-status-150-warning {
+  background-position: -23px -363px !important;
+}
+
+.adam-status-150-info {
+  background-position: -39px -363px !important;
 }
 
 .adam-shape-50-activity-scripttask-none {
@@ -1194,23 +1268,12 @@
 }
 
 #ProjectTitle {
-    font-family: Arial,Verdana,Helvetica,sans-serif;
-    color: #000000;
-    font-weight: bold;
-    font-size: 11pt;
-    margin: 7px 0 0 0;
-}
-
-.pmse-toolbar-buttons {
-    width: 83%;
-    position: absolute;
-    left: 0;
-}
-
-.pmse-toolbar-title {
-    width: 17%;
-    position: absolute;
-    right: 0;
+  font-family: Arial,Verdana,Helvetica,sans-serif;
+  color: #000000;
+  font-weight: bold;
+  font-size: 12pt;
+  float: right;
+  padding: 8px;
 }
 
 .adam-activity-task {
@@ -1242,19 +1305,31 @@
   z-index: 1034;
 }
 
-div.line{
-    -webkit-transform-origin: left top;
-       -moz-transform-origin: left top;
-        -ms-transform-origin: left top;
-            transform-origin: left top;
-
-    height: 1px; /* Line width of 3 */
-    background: #000000; /* Black fill */
+div.line {
+  -webkit-transform-origin: left top;
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -o-transform-origin: left top;
+  transform-origin: left top;
+  height: 1px;
+  /* Line width of 3 */
+  background: #000000;
+  /* Black fill */
+}
+div.line:hover {
+  background: #C30;
+  box-shadow: 0 0 8px #C30;
+  opacity: 1;
 }
 
-div.line:hover{
-    background: #C30;
-    box-shadow: 0 0 8px #C30;
-    opacity: 1;
+.adam-error-color {
+  color: #e61718;
 }
 
+.adam-artifact-annotation-border {
+    width: 25%;
+    height: inherit;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px 0 1px 1px;
+}

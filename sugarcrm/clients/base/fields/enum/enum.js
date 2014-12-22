@@ -206,22 +206,22 @@
                     }
                 });
                 if (this.def.ordered) {
-                    $el.select2("container").find("ul.select2-choices").sortable({
+                    $el.select2('container').find('ul.select2-choices').sortable({
                         containment: 'parent',
                         start: function() {
-                            $el.select2("onSortStart");
+                            $el.select2('onSortStart');
                         },
                         update: function() {
-                            $el.select2("onSortEnd");
+                            $el.select2('onSortEnd');
                         }
                     });
                 }
-            } else if(this.tplName === 'disabled') {
+            } else if (this.tplName === 'disabled') {
                 $el.select2(select2Options);
                 $el.select2('disable');
             }
             //Setup selected value in Select2 widget
-            if(!_.isUndefined(this.value)){
+            if (!_.isUndefined(this.value)) {
                 // To make pills load properly when autoselecting a string val
                 // from a list val needs to be an array
                 if (!_.isArray(this.value)) {
@@ -233,7 +233,7 @@
             }
         } else {
             // Set loading message in place of empty DIV while options are loaded via API
-            this.$el.html(app.lang.get("LBL_LOADING"));
+            this.$el.html(app.lang.get('LBL_LOADING'));
         }
         return this;
     },

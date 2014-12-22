@@ -1,5 +1,19 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 require_once('modules/pmse_Inbox/engine/PMSE.php');
+
 /**
  * Helps to encode and encrypt elements that corresponding to the license management module
  *
@@ -88,7 +102,7 @@ class Crypt
         $len = strlen($encrypted);
         while ($i + 80 < $len) {
             $output .= substr($encrypted, $i, 80) . "\n";
-            $i+=80;
+            $i += 80;
         }
         $output .= substr($encrypted, $i) . "\n";
         $output .= "----- END LICENSE REQUEST -----\n";
@@ -155,6 +169,7 @@ class Crypt
             return trim($bf->decrypt($data));
         }
     }
+
     /**
      * Decode the activation code for purposes of the module
      * @param string key - key to base encoding off of
@@ -195,7 +210,8 @@ class Crypt
             $serverCode = substr($parts[2], 0, 2);
             if (!in_array($serverCode, $this->validServerCode)) {
                 // @codeCoverageIgnoreStart
-                throw new Exception(sprintf(translate('LBL_PMSE_CRYPT_ERROR_ACSERVERINVALID', $this->moduleName), $serverCode));
+                throw new Exception(sprintf(translate('LBL_PMSE_CRYPT_ERROR_ACSERVERINVALID', $this->moduleName),
+                        $serverCode));
                 // @codeCoverageIgnoreEnd
             }
 

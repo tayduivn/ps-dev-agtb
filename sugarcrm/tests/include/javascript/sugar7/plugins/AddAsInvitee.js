@@ -59,21 +59,21 @@ describe('Plugins.AddAsInvitee', function() {
 
     using('different parent/invitee values', [
         [
-            'is possible new invitee if parent has id, is a lead, and not already an invitee',
+            'is possible new invitee if parent has id and is a lead',
             'Leads',
             '123',
             [],
             true
         ],
         [
-            'is possible new invitee if parent has id, is a contact, and not already an invitee',
+            'is possible new invitee if parent has id and is a contact',
             'Contacts',
             '456',
             [],
             true
         ],
         [
-            'is not a possible new invitee if not a lead or contact',
+            'is not a possible new invitee if not a lead, contact, or user',
             'Foo',
             '789',
             [],
@@ -94,11 +94,11 @@ describe('Plugins.AddAsInvitee', function() {
             false
         ],
         [
-            'is not a possible new invitee if invitee is already in the list',
+            'is possible new invitee even if invitee is already in the list',
             'Leads',
             '123',
             [{ id: '123', module: 'Leads' }],
-            false
+            true
         ]
     ], function(expectation, parentType, parentId, invitees, isPossibleInvitee) {
         it(expectation, function() {
@@ -124,5 +124,19 @@ describe('Plugins.AddAsInvitee', function() {
         expect(view.model.get('invitees').get('123')).toBeUndefined();
         view.addAsInvitee(person);
         expect(view.model.get('invitees').get('123')).not.toBeUndefined();
+    });
+
+    it('should invite the assigned user', function() {
+        var user;
+
+        user = new app.Bean({id: '123', _module: 'Users', name: 'Jack'});
+        user.module = user.get('_module');
+        sandbox.stub(app.data, 'createBean').withArgs('Users').returns(user);
+
+        view.model.set('invitees', new Backbone.Collection());
+        view.model.set('assigned_user_id', user.id);
+        expect(view.model.get('invitees').get(user.id)).toBeUndefined();
+        view.model.set('assigned_user_name', user.get('name'));
+        expect(view.model.get('invitees').get(user.id)).not.toBeUndefined();
     });
 });

@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 /**
  * Class criteria that evaluates whether logical, arithmetic, relationship
  * this expression must be of type json content into an array
@@ -40,7 +54,7 @@ class PMSEEvalCriteria
         $arrayExpre = $expre;
         $this->condition = '';
         if (!empty($arrayExpre)) {
-            $ar = array( );
+            $ar = array();
             $this->condition = '{::';
             foreach ($arrayExpre as $value) {
                 $this->condition .= isset($value->expModule) ? '_' . $value->expModule . '_' : '';
@@ -54,27 +68,33 @@ class PMSEEvalCriteria
                         $this->condition .= '::' . $this->logicSimbol($value->expValue) . '::';
                         break;
                     case 'MODULE':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
                     case 'CONTROL':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
                     case 'BUSINESS_RULES':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
                     case 'USER_ADMIN':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
                     case 'USER_ROLE':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
                     case 'USER_IDENTITY':
-                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue, $value->expFieldType);
+                        $ar[] = $this->evalRelations($value->currentValue, $value->expOperator, $value->expValue,
+                            $value->expFieldType);
                         $this->condition .= isset($value->expLabel) ? '[' . $value->expLabel . ']' : '';
                         break;
 //                    default:
@@ -82,10 +102,11 @@ class PMSEEvalCriteria
                 }
             }
             $this->condition .= '::}';
-            if ($this->evaluationsRecursive($ar) == 1)
+            if ($this->evaluationsRecursive($ar) == 1) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         } else {
             return true;
         }
@@ -103,31 +124,36 @@ class PMSEEvalCriteria
         if (!empty($arrayExpre)) {
             $arrayExpresion = array();
             foreach ($arrayExpre->ruleset as $conditions) {
-                $row = (object) $conditions;
+                $row = (object)$conditions;
                 foreach ($row->conditions as $value) {
                     $arrayValues = $value->value;
                     $val = array_shift($value->value);
                     if (empty($value->value)) {
-                        if($val->type == 'VAR')
-                            $arrayExpresion[] = isset ($value->expFieldType)?$this->evalRelations($value->variable_value, $value->condition, $val->variable_value, $value->expFieldType):'';
-                        else
-                            $arrayExpresion[] = isset ($value->expFieldType)?$this->evalRelations($value->variable_value, $value->condition, $val->value, $value->expFieldType):'';
+                        if ($val->type == 'VAR') {
+                            $arrayExpresion[] = isset ($value->expFieldType) ? $this->evalRelations($value->variable_value,
+                                $value->condition, $val->variable_value, $value->expFieldType) : '';
+                        } else {
+                            $arrayExpresion[] = isset ($value->expFieldType) ? $this->evalRelations($value->variable_value,
+                                $value->condition, $val->value, $value->expFieldType) : '';
+                        }
                     } else {
                         $arr = array();
                         foreach ($arrayValues as $val) {
                             $arr[] = $val->type == 'VAR' ? $val->variable_value : $val->value;
                         }
                         $res = $this->evaluationsRecursive($arr);
-                        $arrayExpresion[] = isset($value->expFieldType)?$this->evalRelations($value->variable_value, $value->condition, $res, $value->expFieldType):'';
+                        $arrayExpresion[] = isset($value->expFieldType) ? $this->evalRelations($value->variable_value,
+                            $value->condition, $res, $value->expFieldType) : '';
                     }
                     $arrayExpresion[] = 'AND';
                 }
             }
             array_pop($arrayExpresion);
-            if ($this->evaluationsRecursive($arrayExpresion) == 1)
+            if ($this->evaluationsRecursive($arrayExpresion) == 1) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         } else {
             return true;
         }
@@ -193,7 +219,7 @@ class PMSEEvalCriteria
     /**
      * Check to see if there groups and get their positions
      * @param array $array Array in which groups will verify if there
-     * @param array $this->arrayGroups the number of groups is stored in this attribute
+     * @param array $this ->arrayGroups the number of groups is stored in this attribute
      */
     public function verifyGroups($array)
     {
@@ -210,11 +236,13 @@ class PMSEEvalCriteria
                     }
                     $i++;
                 }
-                if (!empty($arrSubGroup))
+                if (!empty($arrSubGroup)) {
                     $arrGroup[$sig] = $arrSubGroup;
+                }
             }
-            if (!empty($arrGroup))
+            if (!empty($arrGroup)) {
                 $arrayGroupsExist[] = $arrGroup;
+            }
         }
         $this->arrayGroups = $arrayGroupsExist;
     }
@@ -232,8 +260,9 @@ class PMSEEvalCriteria
             foreach ($group as $arr) {
                 $count = count($arr) - $count;
             }
-            if ($count != 0)
+            if ($count != 0) {
                 $value = false;
+            }
         }
         return $value;
     }
@@ -248,13 +277,14 @@ class PMSEEvalCriteria
         foreach ($this->allOperators as $funOpe => $operators) {
             foreach ($operators as $sig) {
                 $j = 0;
-                if(count($array) <= 1){
+                if (count($array) <= 1) {
                     break;
                 }
                 while ((count($array) - 1) >= $j) {
                     $ele = isset($array[$j]) ? $array[$j] : '';
                     if ("$ele" == $sig && "$ele" != 'NOT') {
-                        $array[$j - 1] = $this->routeFunctionOperator($funOpe, $array[$j - 1], $array[$j], $array[$j + 1]);
+                        $array[$j - 1] = $this->routeFunctionOperator($funOpe, $array[$j - 1], $array[$j],
+                            $array[$j + 1]);
                         unset($array[$j + 1]);
                         unset($array[$j]);
                         $j = 0;
@@ -281,7 +311,7 @@ class PMSEEvalCriteria
      * @param string $value2 assess value
      * @return type
      */
-    public function routeFunctionOperator($function, $value1, $operations, $value2 = NULL)
+    public function routeFunctionOperator($function, $value1, $operations, $value2 = null)
     {
         switch ($function) {
             case 'evalAritmetic':
@@ -317,10 +347,11 @@ class PMSEEvalCriteria
                 $ret = $value1 - $value2;
                 break;
             case '/':
-                if ($value2 > 0)
+                if ($value2 > 0) {
                     $ret = $value1 / $value2;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'x':
                 $ret = $value1 * $value2;
@@ -341,58 +372,75 @@ class PMSEEvalCriteria
      */
     public function evalRelations($value1, $relational, $value2, $typeDate = 'typeDefault')
     {
-        $arrayRelationsSig = array( "==", ">", ">=", "!=", "<", "<=" );
-        $arrayRelationsLit = array( "equals", "major_than", "major_equals_than", "not_equals", "minor_than", "minor_equals_than", "within", "not_within" );
+        $arrayRelationsSig = array("==", ">", ">=", "!=", "<", "<=");
+        $arrayRelationsLit = array(
+            "equals",
+            "major_than",
+            "major_equals_than",
+            "not_equals",
+            "minor_than",
+            "minor_equals_than",
+            "within",
+            "not_within"
+        );
         $pos = false;
         $relLit = $relational;
-        if (in_array($relational, $arrayRelationsLit))
+        if (in_array($relational, $arrayRelationsLit)) {
             $pos = true;
+        }
         if (in_array($relational, $arrayRelationsSig)) {//transform sign the literal
             $clave = array_search($relational, $arrayRelationsSig);
             $relLit = $arrayRelationsLit[$clave];
             $pos = true;
         }
-        if ($pos === false)
+        if ($pos === false) {
             return 0;
+        }
         $value1 = $this->typeData($value1, $typeDate);
         $value2 = $this->typeData($value2, $typeDate);
         $this->condition .= ':(' . $value1 . '):'; // . $relSig . ' ' . $value2 . '::';
         switch ($relLit) {
             case 'equals':
-                if ($value1 == $value2)
+                if ($value1 == $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'major_than':
-                if ($value1 > $value2)
+                if ($value1 > $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'major_equals_than':
-                if ($value1 >= $value2)
+                if ($value1 >= $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'not_equals':
-                if ($value1 != $value2)
+                if ($value1 != $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'minor_than':
-                if ($value1 < $value2)
+                if ($value1 < $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'minor_equals_than':
-                if ($value1 <= $value2)
+                if ($value1 <= $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
 //            case 'within'://revisar
 //                break;
@@ -409,26 +457,29 @@ class PMSEEvalCriteria
      * @param boolean $value2 takes the values ​​1 or 0 in the case of NOT is null
      * @return int
      */
-    public function evalLogic($value1, $logical, $value2 = NULL)
+    public function evalLogic($value1, $logical, $value2 = null)
     {
         switch ($logical) {
             case 'AND':
-                if ($value1 && $value2)
+                if ($value1 && $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'OR':
-                if ($value1 || $value2)
+                if ($value1 || $value2) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             case 'NOT':
-                if ($value1 == 0)
+                if ($value1 == 0) {
                     $ret = 1;
-                else
+                } else {
                     $ret = 0;
+                }
                 break;
             default:
                 $ret = 0;
@@ -462,13 +513,13 @@ class PMSEEvalCriteria
             case 'name'://varchar
             case 'varchar'://varchar
             case 'parent_type'://varchar
-                $newValue = (string) $value;
+                $newValue = (string)$value;
                 break;
             case 'bool'://bool 
             case 'boolean':
             case 'radioenum':
             case 'checkbox':
-                $newValue = (boolean) $value;
+                $newValue = (boolean)$value;
                 break;
             case 'date'://date
             case 'datetime'://datetime
@@ -477,13 +528,13 @@ class PMSEEvalCriteria
                 break;
             case 'enum'://int
             case 'int':
-                $newValue = (int) $value;
+                $newValue = (int)$value;
                 break;
             case 'float':
-                $newValue = (float) $value;
+                $newValue = (float)$value;
                 break;
             case 'integer':
-                $newValue = (integer) $value;
+                $newValue = (integer)$value;
                 break;
             case 'decimal'://decimal
                 $newValue = $value; ////////////////////////////////

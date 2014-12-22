@@ -1,4 +1,4 @@
--- //FILE SUGARCRM flav=pro ONLY 
+-- 
 -- project
 ALTER TABLE `project` DROP COLUMN `estimated_start_date`;
 ALTER TABLE `project` DROP COLUMN `status`;

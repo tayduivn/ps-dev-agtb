@@ -25,6 +25,7 @@
               .tooltips(true)
               .useVoronoi(false)
               .showControls(false)
+              .direction(app.lang.direction)
               .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Category: <b>' + key + '</b></p>' +
                          '<p>Amount: <b>$' + parseInt(y, 10) + 'M</b></p>' +
@@ -63,6 +64,7 @@
               .tooltips(true)
               .useVoronoi(false)
               .showControls(false)
+              .direction(app.lang.direction)
               .colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: data.data.length});
               //.colorData( 'class' )
               //.colorData( 'default' )

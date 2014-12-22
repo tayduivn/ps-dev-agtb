@@ -1,4 +1,20 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+require_once 'PMSEDynaForm.php';
+require_once 'PMSEObservers/PMSEObservable.php';
+
 /**
  * Class PMSEWrapperCrmData
  *
@@ -8,45 +24,137 @@
  *
  * @package PMSE
  */
-require_once 'PMSEDynaForm.php';
-require_once 'PMSEObservers/PMSEObservable.php';
-
-/**
- * 
- */
 class PMSECrmDataWrapper implements PMSEObservable
 {
-    /**#@+
-     * @access private
+    /**
+     *
+     * @var type 
      */
     protected $defaultDynaform;
-    protected $beanFactory;
-    protected $studioBrowser;
-
-    protected $processDefinition;
-    protected $activityDefinitionBean;
-    protected $dynaformBean;
-    protected $teamsBean;
-    protected $projectBean;
-    protected $processBean;
-    protected $activityBean;
-    protected $ruleSetBean;
-    protected $emailTemplateBean;
-    protected $inboxBean;
-    protected $usersBean;
-    protected $emailBean;
-    protected $inboundEmailBean;
-    protected $sugarQueryObject;
-
-    protected $beanList;
-    protected $aclRoleObject;
-    protected $db;
-    protected $observers;
-
-    /**#@-*/
 
     /**
+     *
+     * @var type 
+     */
+    protected $beanFactory;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $studioBrowser;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $processDefinition;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $activityDefinitionBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $dynaformBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $teamsBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $projectBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $processBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $activityBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $ruleSetBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $emailTemplateBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $inboxBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $usersBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $emailBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $inboundEmailBean;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $sugarQueryObject;
+
+    /**
+     *
+     * @var type 
      * 
+     */
+    protected $beanList;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $aclRoleObject;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $db;
+
+    /**
+     *
+     * @var array 
+     */
+    protected $observers;
+
+    /**
+     *
      * @global type $beanList
      * @global type $db
      * @codeCoverageIgnore
@@ -184,7 +292,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -194,7 +302,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $teamsBean
      * @codeCoverageIgnore
      */
@@ -204,7 +312,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -214,7 +322,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $usersBean
      * @codeCoverageIgnore
      */
@@ -501,7 +609,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -511,7 +619,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $defaultDynaform
      * @codeCoverageIgnore
      */
@@ -519,7 +627,27 @@ class PMSECrmDataWrapper implements PMSEObservable
     {
         $this->defaultDynaform = $defaultDynaform;
     }
-    
+
+    /**
+     * 
+     * @return type
+     * @codeCoverageIgnore
+     */
+    function getObservers()
+    {
+        return $this->observers;
+    }
+
+    /**
+     * 
+     * @param type $observers
+     * @codeCoverageIgnore
+     */
+    function setObservers($observers)
+    {
+        $this->observers = $observers;
+    }
+        
     /**
      * @codeCoverageIgnore
      */
@@ -542,6 +670,14 @@ class PMSECrmDataWrapper implements PMSEObservable
                 break;
             case 'allFields':
                 $output = $this->getTargetAndRelatedFields($filter);
+                $outputType = 1;
+                break;
+            case 'oneToOneFields':
+                $output = $this->getTargetAndRelatedFields($filter, 'one-to-one');
+                $outputType = 1;
+                break;
+            case 'oneToManyFields':
+                $output = $this->getTargetAndRelatedFields($filter, 'one-to-many');
                 $outputType = 1;
                 break;
             case 'fields_ruleset':
@@ -567,6 +703,10 @@ class PMSECrmDataWrapper implements PMSEObservable
                 break;
             case 'related':
                 $output = $this->retrieveRelatedBeans($filter);
+                $outputType = 1;
+                break;
+            case 'oneToOneRelatedModules':
+                $output = $this->retrieveRelatedBeans($filter, 'one-to-one');
                 $outputType = 1;
                 break;
             case 'rulesets':
@@ -606,6 +746,18 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->addRelatedRecord($filter);
                 $outputType = 1;
                 break;
+            case 'allRelated':
+                $output = $this->getAllRelated($filter);
+                $outputType = 1;
+                break;
+            case 'oneToOneRelated':
+                $output = $this->getAllRelated($filter, 'one-to-one');
+                $outputType = 1;
+                break;
+            case 'oneToManyRelated':
+                $output = $this->getAllRelated($filter, 'one-to-many');
+                $outputType = 1;
+                break;
             //case 'Log':
             //    $output = $this->retrieveHistoryLog($filter);
             //    $outputType = 1;
@@ -628,6 +780,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
+     * Return the structure of an invalid request.
      * @codeCoverageIgnore
      */
     public function invalidRequest()
@@ -787,7 +940,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds
+     * Retrieve list of Fieds 
      * @param string $filter
      * @param array $additionalArgs
      * @return object
@@ -841,13 +994,18 @@ class PMSECrmDataWrapper implements PMSEObservable
                         'email'
                     )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
                 $tmpField['optionItem'] = 'none';
-                if ($field['type'] == 'enum') {
+                if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
                         $tmpField['optionItem'] = null;
                     } else {
                         $tmpField['optionItem'] = $app_list_strings[$field['options']];
                     }
                 }
+                
+                if ($field['type'] == 'bool') {
+                    $tmpField['optionItem'] = array("TRUE" =>true, "FALSE" => false);
+                }
+                
                 if (isset($field['required'])) {
                     $tmpField['required'] = $field['required'];
                 }
@@ -868,7 +1026,14 @@ class PMSECrmDataWrapper implements PMSEObservable
         return $res;
     }
 
-    public function getTargetAndRelatedFields($filter = '')
+    /**
+     * Retrieve the target and a related module based on a relationship
+     * then retrieves a list of fields of both modules.
+     * @param type $filter
+     * @param type $relationship
+     * @return array
+     */
+    public function getTargetAndRelatedFields($filter = '', $relationship = 'all')
     {
         $result = array();
 //        $bean = BeanFactory::getBean($args['module'], $args['id']);
@@ -889,7 +1054,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         } else {
             $result['fields'] = array();
         }
-        $related_modules = $this->retrieveRelatedBeans($filter);
+        $related_modules = $this->retrieveRelatedBeans($filter, $relationship);
         if ($related_modules['success']) {
             for ($i = 0; $i < count($related_modules['result']); $i++) {
                 $fields = $this->retrieveFields($related_modules['result'][$i]['value']);
@@ -959,8 +1124,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 //        $res->success = true;
         $output = array();
         if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
-//            print_r( $projectBean->fetched_row);
-//            die();
+
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
 
             $where = '';
@@ -980,7 +1144,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Task.
+     * Retrieve list of Activities (USERTASK|SCRIPTTASK).
      * @param string $filter
      * @return object
      */
@@ -1030,8 +1194,8 @@ class PMSECrmDataWrapper implements PMSEObservable
 //                $joinedTables = array();
 //                $select = array();
                 break;
-//            default:
-//                $where = 'pmse_bpmn_activity.act_task_type=\'USERTASK\' AND pmse_project.id=\'' . $filter . '\'';
+            default:
+                $where = 'a.act_task_type=\'USERTASK\' AND a.prj_id=\'' . $filter . '\'';
 //                $joinedTables = array(
 //                    array('INNER', 'pmse_bpm_activity_definition', 'pmse_bpm_activity_definition.id=pmse_bpmn_activity.id'),
 //                    array('INNER', 'pmse_bpm_dynamic_forms', 'pmse_bpm_dynamic_forms.dyn_uid=pmse_bpm_activity_definition.act_type'),
@@ -1049,15 +1213,14 @@ class PMSECrmDataWrapper implements PMSEObservable
 //                );
                 // replaced the a.prj_id for the c.prj_id field in the last join in order to remove duplicate rows
                 // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=a.prj_id)", array('alias' => 'd'));
-//                $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=c.prj_id)", array('alias' => 'd'));
-//                break;
+                // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=c.prj_id)", array('alias' => 'd'));
+                break;
         }
         $this->sugarQueryObject->where()->queryAnd()
             ->addRaw($where);
         // TODO add debug log here
-        // $sql = $this->sugarQueryObject->compileSql();
         $activityList = $this->sugarQueryObject->execute();
-        
+
 //        $activityList = $this->getSelectRows($activityBean,'', $where, 0, -1, -1, $select, $joinedTables);
 //        $activityList = $activityList['rowList'];
         $output = array();
@@ -1157,7 +1320,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return object
      */
-    public function retrieveRelatedBeans($filter)
+    public function retrieveRelatedBeans($filter, $relationship = 'all')
     {
 //        $res = new stdClass();
 //        $res->search = $filter;
@@ -1202,9 +1365,24 @@ class PMSECrmDataWrapper implements PMSEObservable
                     }
                 }
             }
-            $output = array_merge($output_11, $output_1m);
+            switch ($relationship) {
+                case 'one-to-one':
+                    $output = $output_11;
+                break;
+                case 'one-to-many':
+                    $output = $output_1m;
+                break;
+                case 'all':
+                default:
+                    $output = array_merge($output_11, $output_1m);
+                break;
+            }
+            
         }
 
+        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>');
+        array_unshift($output, $filterArray);
+        
         $res['result'] = $output;
         //$res->result = $output;
         return $res;
@@ -1800,7 +1978,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         }
         $arr_Now = array();
         $arr_Now['value'] = 'current_date_time';
-        $arr_Now['text'] =  'Current Date Time';
+        $arr_Now['text'] = 'Current Date Time';
         array_unshift($output, $arr_Now);
         $res['result'] = $output;
         return $res;
@@ -1885,8 +2063,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
                     $field['type']
                 );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr($tmpField['relationship'],'email')) 
-                                    || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                $tmpField['type'] = (isset($tmpField['relationship']) && stristr($tmpField['relationship'], 'email'))
+                || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
@@ -2118,9 +2296,9 @@ class PMSECrmDataWrapper implements PMSEObservable
         $output['result'] = $result;
         return $output;
     }
-    
+
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function attach($observer)
@@ -2132,7 +2310,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param PMSEObserver $observer
      */
     public function detach($observer)
@@ -2146,7 +2324,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      */
     public function notify()
     {
@@ -2155,4 +2333,26 @@ class PMSECrmDataWrapper implements PMSEObservable
         }
     }
 
+    /**
+     * @param $filter
+     * @return array
+     */
+    private function getAllRelated($filter, $relationship = 'all')
+    {
+        $result = array();
+        $result['success'] = true;
+        $res = $this->retrieveRelatedBeans($filter, $relationship);
+        $arr = array();
+        if (is_array($res['result']) && !empty($res['result'])) {
+            foreach ($res['result'] as $key => $value) {
+                $aux = $this->addRelatedRecord($value['value']);
+                $value['fields'] = $aux['result'];
+                $arr[] = $value;
+            }
+        } else {
+            $result['success'] = false;
+        }
+        $result['result'] = $arr;
+        return $result;
+    }
 }

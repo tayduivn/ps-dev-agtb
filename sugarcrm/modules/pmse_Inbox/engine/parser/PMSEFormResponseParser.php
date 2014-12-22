@@ -1,4 +1,18 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+
 /**
  * Performs the analysis of case actions are: APPROVE, REJECT and ROUTE
  * according to the type of evaluation you want returns current value or null
@@ -102,7 +116,7 @@ class PMSEFormResponseParser implements PMSEDataParserInterface
             $existsID = stristr($idStr, $criteriaToken->expField);
             if ($existsUID || $existsID) {
                 $tokenValue = $row['frm_action'];
-                $tokenUid = $existsUID?$row['act_uid']:$row['act_id'];
+                $tokenUid = $existsUID ? $row['act_uid'] : $row['act_id'];
                 break;
             } else {
                 $row = $db->fetchByAssoc($result);

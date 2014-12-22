@@ -429,4 +429,80 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey("erma", $results['fo']['meta'], "The Accounts metadata extension was not merged with the base meta");
     }
 
+    /**
+     * Test merging the extension file to the global file.
+     *
+     * @return none
+     */
+    public function testMergeModuleExtFiles2Base()
+    {
+
+        //Load the base file
+        $baseFilePath = 'clients/base/layouts/fo/fo.php';
+        $this->createdFiles[] = $baseFilePath;
+        $this->createdDirs[] = dirname($baseFilePath);
+        SugarAutoLoader::ensureDir(dirname($baseFilePath));
+        $baseMetaContents = '<?php'."\n".'$viewdefs["base"]["layout"]["fo"] = array("erma"=>"baseLayouts");';
+        SugarAutoLoader::put($baseFilePath, $baseMetaContents);
+
+        //Load the extension file
+        $extFilePath = 'custom/modules/Cases/Ext/clients/base/layouts/fo/fo.ext.php';
+        $this->createdFiles[] = $extFilePath;
+        $this->createdDirs[] = dirname($extFilePath);
+        SugarAutoLoader::ensureDir(dirname($extFilePath));
+        $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["layout"]["fo"]["ext"] = "baseCaseByExt";';
+        SugarAutoLoader::put($extFilePath, $caseExtMetaContents);
+
+        $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'layout', 'Cases');
+        $this->assertArrayHasKey($extFilePath, $caseFileList, "Didn't find the Cases fo extension");
+
+        $results  = MetaDataFiles::getClientFileContents($caseFileList, "layout", "Cases");
+        $this->assertArrayHasKey("fo", $results, "Didn't load the Cases fo meta.");
+        $this->assertArrayHasKey("ext", $results['fo']['meta'], "Didn't load the Cases fo meta extension correctly");
+        $this->assertArrayHasKey(
+            "erma",
+            $results['fo']['meta'],
+            "The Cases metadata extension was not merged with the base meta"
+        );
+    }
+
+    /**
+     * Test merging the extension file to the template file.
+     *
+     * @return none
+     */
+    public function testMergeModuleExtFiles2Template()
+    {
+
+        //Load the template file
+        $templateFilePath = 'include/SugarObjects/templates/basic/clients/base/views/fo/fo.php';
+        $this->createdFiles[] = $templateFilePath;
+        $this->createdDirs[] = dirname($templateFilePath);
+        SugarAutoLoader::ensureDir(dirname($templateFilePath));
+        $baseMetaContents = '<?php'."\n".'$module_name = "<module_name>";'."\n".
+            '$viewdefs[$module_name]["base"]["view"]["fo"] = array("erma"=>"baseViews");';
+        SugarAutoLoader::put($templateFilePath, $baseMetaContents);
+
+        //Load the extension file
+        $extFilePath = 'custom/modules/Cases/Ext/clients/base/views/fo/fo.ext.php';
+        $this->createdFiles[] = $extFilePath;
+        $this->createdDirs[] = dirname($extFilePath);
+        SugarAutoLoader::ensureDir(dirname($extFilePath));
+        $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["view"]["fo"]["ext"] = "baseCaseByExt";';
+        SugarAutoLoader::put($extFilePath, $caseExtMetaContents);
+
+        $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'view', 'Cases');
+        $this->assertArrayHasKey($templateFilePath, $caseFileList, "Didn't find the template fo section.");
+        $this->assertArrayHasKey($extFilePath, $caseFileList, "Didn't find the Cases fo extension");
+
+        $results  = MetaDataFiles::getClientFileContents($caseFileList, "view", "Cases");
+        $this->assertArrayHasKey("fo", $results, "Didn't load the Cases fo meta.");
+        $this->assertArrayHasKey("ext", $results['fo']['meta'], "Didn't load the Cases fo meta extension correctly");
+        $this->assertArrayHasKey(
+            "erma",
+            $results['fo']['meta'],
+            "The Cases metadata extension was not merged with the base meta"
+        );
+    }
+
 }

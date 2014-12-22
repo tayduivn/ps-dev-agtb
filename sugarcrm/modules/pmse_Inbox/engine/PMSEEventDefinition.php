@@ -1,9 +1,22 @@
 <?php
-/**
- * 
- * @deprecated
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+
+/**
+ *
+ * @deprecated
+ */
 class PMSEEventDefinition
 {
     private $relDepBean;
@@ -22,6 +35,7 @@ class PMSEEventDefinition
         $this->definition = BeanFactory::getBean('pmse_BpmEventDefinition'); //new BpmEventDefinition();
         $this->db = $db;
     }
+
     /**
      * That method decode the event criteria string and insert into an array when
      * the expType is MODULE for evaluate purpose.
@@ -34,7 +48,7 @@ class PMSEEventDefinition
     {
         $criteria = json_decode($eventCriteria);
         $resultArray = array();
-        if (is_array($criteria)){
+        if (is_array($criteria)) {
             foreach ($criteria as $token) {
                 if ($token->expType == 'MODULE') {
                     $tmpObj = new stdClass();
@@ -44,15 +58,16 @@ class PMSEEventDefinition
                     $tmpBean->retrieve_by_string_fields(array('id' => $tmpObj->pro_id));
                     $tmpObj->rel_process_module = $tmpBean->pro_module;
                     $tmpObj->rel_element_id = $event->evn_id;
-                    $tmpObj->rel_element_type = $event->evn_type.'_EVENT';
+                    $tmpObj->rel_element_type = $event->evn_type . '_EVENT';
                     $tmpObj->rel_element_relationship = $token->expModule;
 
-                    if ($tmpObj->rel_process_module==$token->expModule){
+                    if ($tmpObj->rel_process_module == $token->expModule) {
                         $tmpObj->rel_element_module = $token->expModule;
                     } else {
                         // @codeCoverageIgnoreStart
                         $relBean = new Relationship();
-                        $tmpObj->rel_element_module = $relBean->get_other_module($token->expModule, $tmpObj->rel_process_module, $this->db);
+                        $tmpObj->rel_element_module = $relBean->get_other_module($token->expModule,
+                            $tmpObj->rel_process_module, $this->db);
                         // @codeCoverageIgnoreEnd
                     }
 
@@ -62,6 +77,7 @@ class PMSEEventDefinition
         }
         return $resultArray;
     }
+
     /**
      * That method removes all related dependencies by evn_id and pro_id
      * @param object event
@@ -69,10 +85,14 @@ class PMSEEventDefinition
      */
     private function removeEventRelatedDependencies($event)
     {
-        $this->relDepBean->retrieve_by_string_fields(array('rel_element_id' => $event->evn_id, 'pro_id' => $event->pro_id));
+        $this->relDepBean->retrieve_by_string_fields(array(
+                'rel_element_id' => $event->evn_id,
+                'pro_id' => $event->pro_id
+            ));
         $this->relDepBean->deleted = 1;
         $this->relDepBean->save();
     }
+
     /**
      * That method creates all dependencies related to this event and save them
      * @param array resultArray
@@ -80,7 +100,6 @@ class PMSEEventDefinition
      */
     private function createEventRelatedDependencies($resultArray)
     {
-        //print_r($resultArray);
         foreach ($resultArray as $object) {
             //$relObject = new BpmRelatedDependency();
             $relObject = BeanFactory::getBean('pmse_BpmRelatedDependency');
@@ -91,12 +110,14 @@ class PMSEEventDefinition
             $var = 2;
         }
     }
+
     /**
      * That method process the event related dependencies, here process criterias too.
      * @param object event
      * @codeCoverageIgnore
      */
-    public function processEventRelatedDependencies($event) {
+    public function processEventRelatedDependencies($event)
+    {
         $relatedArray = $this->processEventCriteria($event->evn_criteria, $event);
         $this->removeEventRelatedDependencies($event);
         $this->createEventRelatedDependencies($relatedArray);

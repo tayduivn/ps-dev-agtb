@@ -41,6 +41,7 @@ class Comment extends Basic
         $this->retrieve();
         $sfh = new SugarFieldHandler();
         $data = array();
+        require_once 'include/api/RestService.php';
         $service = new RestService();
         foreach ($this->field_defs as $fieldName => $properties) {
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];

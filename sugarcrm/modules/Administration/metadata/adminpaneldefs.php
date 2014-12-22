@@ -216,7 +216,13 @@ $admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',fal
 
 //BEGIN SUGARCRM flav=ent ONLY
 $admin_option_defs = array(
-    'pmse_Project' => array(
+    'pmse_Inbox' => array(
+        'Settings' => array(
+            'Settings',
+            'LBL_PMSE_ADMIN_TITLE_SETTINGS',
+            'LBL_PMSE_ADMIN_DESC_SETTINGS',
+            'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/config", {trigger: true});',
+        ),
         'CasesList' => array(
             'CasesList',
             'LBL_PMSE_ADMIN_TITLE_CASESLIST',

@@ -95,10 +95,8 @@
             this.getFilterOptions(true);
         }, this);
 
-        this.filters = app.data.createBeanCollection('Filters');
-        this.filters.setModuleName(this.getSearchModule());
-        this.filters.setFilterOptions(this.getFilterOptions());
-        this.filters.load();
+        this._createFiltersCollection();
+        this._createSearchCollection();
     },
 
     /**
@@ -113,6 +111,21 @@
             this.filters.setModuleName(searchModule);
             this.filters.setFilterOptions(this.getFilterOptions());
             this.filters.load();
+        }
+    },
+
+    /**
+     * Creates a {@link Data.BeanCollection} for the search results pertaining
+     * to the search module.
+     *
+     * @protected
+     */
+    _createSearchCollection: function() {
+        var searchModule = this.getSearchModule();
+        if (searchModule && app.metadata.getModule(searchModule)) {
+            this.searchCollection = app.data.createBeanCollection(searchModule);
+        } else {
+            this.searchCollection = null;
         }
     },
 
@@ -603,21 +616,19 @@
      */
     search: _.debounce(function (query) {
         var term = query.term || '',
-            self = this, searchCollection,
+            self = this,
             searchModule = this.getSearchModule(),
             params = {},
             limit = self.def.limit || 5,
             relatedModuleField = this.getRelatedModuleField();
 
-        searchCollection = query.context || app.data.createBeanCollection(searchModule);
-
         if (query.context) {
-            params.offset = searchCollection.next_offset;
+            params.offset = this.searchCollection.next_offset;
         }
 
-        params.filter = self.buildFilterDefinition(term);
+        params.filter = this.buildFilterDefinition(term);
 
-        searchCollection.fetch({
+        this.searchCollection.fetch({
             //Don't show alerts for this request
             showAlerts: false,
             update: true,
@@ -626,8 +637,8 @@
             context: self,
             params: params,
             limit: limit,
-            success: function (data) {
-                var fetch = {results: [], more: data.next_offset > 0, context: searchCollection};
+            success: function(data) {
+                var fetch = {results: [], more: data.next_offset > 0, context: data};
                 if (fetch.more) {
                     var fieldEl = self.$(self.fieldTag),
                     //For teamset widget, we should specify which index element to be filled in
@@ -646,10 +657,14 @@
                         text: model.get(relatedModuleField) + ''
                     });
                 });
-                query.callback(fetch);
+                if (query.callback && _.isFunction(query.callback)) {
+                    query.callback(fetch);
+                }
             },
-            error: function () {
-                query.callback({results: []});
+            error: function() {
+                if (query.callback && _.isFunction(query.callback)) {
+                    query.callback({results: []});
+                }
                 app.logger.error("Unable to fetch the bean collection.");
             }
         });

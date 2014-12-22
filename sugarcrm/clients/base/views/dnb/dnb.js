@@ -1394,13 +1394,13 @@
             var settingsFlag = this.settings.get(key);
             //if the settings flag is defined and is selected then
             //add that property to the filtered data dictionary
-            if (!_.isUndefined(settingsFlag) && settingsFlag === '1') {
+            if (!_.isUndefined(settingsFlag) && settingsFlag === true) {
                 this.filteredDD[key] = value;
             } else if (_.isUndefined(settingsFlag)) {
                 //if the settings flag is not defined
                 //select it by default
                 this.filteredDD[key] = value;
-                this.settings.set(key, '1');
+                this.settings.set(key, true);
             }
         }, this);
     },
