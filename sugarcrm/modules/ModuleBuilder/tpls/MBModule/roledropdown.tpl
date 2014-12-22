@@ -30,34 +30,6 @@
         {if ($refreshTree)}
             <input type='hidden' name='refreshTree' value='1'>
         {/if}
-        <style>
-            {literal}
-            .listContainer {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-
-            .listContainer li {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-
-            .listContainer li .fieldValue {
-                line-height: 30px;
-            }
-
-            li.deleted {
-                background-color: #AAA;
-            }
-
-            .deleted td.first {
-                text-decoration: line-through;
-            }
-
-            {/literal}
-        </style>
         <table>
             <tr>
                 <td colspan='2'>
