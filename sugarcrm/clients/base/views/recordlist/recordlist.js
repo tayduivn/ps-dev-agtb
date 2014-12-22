@@ -60,7 +60,8 @@
 
         //Extend the prototype's events object to setup additional events for this controller
         this.events = _.extend({}, this.events, {
-            'click [name=inline-cancel]' : 'resize'
+            'click [name=inline-cancel]' : 'resize',
+            'keydown': '_setScrollPosition'
         });
 
         this.on('render', this._setRowFields, this);
@@ -257,6 +258,20 @@
     },
 
     /**
+     * Stores the current scrolling position of the list content when tab key is
+     * pressed.
+     *
+     * @param {Event} event The keydown event.
+     * @private
+     */
+    _setScrollPosition: function(event) {
+        if (event.keyCode === 9) {
+            var $flexListContent = this.$('.flex-list-view-content');
+            $flexListContent.data('previousScrollLeftValue', $flexListContent.scrollLeft());
+        }
+    },
+
+    /**
      * Retrieves the location of the edges of the list viewport and caches it
      * to `this._bordersPosition`.
      *
@@ -274,9 +289,9 @@
              *
              * @property {Object} _bordersPosition
              * @property {number} _bordersPosition.left The left offset of the
-             * left edge of the viewport.
+             *   left edge of the viewport.
              * @property {number} _bordersPosition.right The left offset of the
-             * right edge of the viewport.
+             *   right edge of the viewport.
              * @private
              */
             this._bordersPosition = {};
