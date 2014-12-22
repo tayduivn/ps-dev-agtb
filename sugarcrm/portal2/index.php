@@ -26,7 +26,7 @@ ensureJSCacheFilesExist();
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        <link rel="stylesheet" href="./assets/loading.css" type="text/css">
+        <link rel="stylesheet" href="../styleguide/assets/css/loading.css" type="text/css">
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
         <script src="../include/javascript/modernizr.js"></script>
 
@@ -54,7 +54,7 @@ ensureJSCacheFilesExist();
                         <div class="alert alert-process">
                             <strong>Loading</strong>
                             <div class="loading">
-                                <i class="l1 fa fa-circle"></i><i class="l2 fa fa-circle"></i><i class="l3 fa fa-circle"></i>
+                                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
                             </div>
                         </div>
                     </div>
