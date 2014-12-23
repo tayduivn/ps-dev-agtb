@@ -66,10 +66,14 @@
 
                 if (dateStartField && !dateStartField.disposed && dateEndField && !dateEndField.disposed) {
                     dateStartField.clearErrorDecoration();
+                    dateEndField.clearErrorDecoration();
 
                     if (!this.isDateRangeValid()) {
                         dateStartField.decorateError({
                             isBefore: app.lang.get(dateEndField.label || dateEndField.vname || dateEndField.name, model.module)
+                        });
+                        dateEndField.decorateError({
+                            isAfter: app.lang.get(dateStartField.label || dateStartField.vname || dateStartField.name, model.module)
                         });
                     }
                 }
