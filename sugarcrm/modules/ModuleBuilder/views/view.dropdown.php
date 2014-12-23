@@ -180,7 +180,7 @@ class ViewDropdown extends SugarView
      */
     protected function getAvailableRoleList($name)
     {
-        $parser = new ParserRoleDropDown();
+        $parser = new ParserRoleDropDownFilter();
         return MBHelper::getAvailableRoleList(function (array $params) use ($parser, $name) {
             return $parser->hasMetadata($name, $params['role']);
         });

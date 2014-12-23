@@ -4,19 +4,19 @@ require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 
 /**
  * Parser for role based dropdowns
- * Stores data in (custom/)include/language/roles/<role_id> directory
+ * Stores data in (custom/)include/dropdown_filters/roles/<role_id> directory
  *
  */
-class ParserRoleDropDown extends ModuleBuilderParser
+class ParserRoleDropDownFilter extends ModuleBuilderParser
 {
-    protected $path = 'include/language/roles';
-    protected $varName = 'roledropdown';
+    protected $path = 'include/dropdown_filters/roles';
+    protected $varName = 'role_dropdown_filters';
 
     /**
      * Returns array of options by given role name and dropdown name
      *
-     * @param $role role name
-     * @param $dropdown dropdown name
+     * @param string $role Role ID
+     * @param string $dropdown Dropdown name
      * @return array
      */
     public function getOne($role, $dropdown)
@@ -27,7 +27,7 @@ class ParserRoleDropDown extends ModuleBuilderParser
         }
         require $filePath;
         if (empty(${$this->varName}[$dropdown])) {
-            $GLOBALS['log']->error("ParserRoleDropDown :: Cannot find \$$this->varName[$dropdown] in $filePath");
+            $GLOBALS['log']->error("ParserRoleDropDownFilter :: Cannot find \$$this->varName[$dropdown] in $filePath");
             return array();
         }
         return ${$this->varName}[$dropdown];
@@ -60,11 +60,12 @@ class ParserRoleDropDown extends ModuleBuilderParser
     /**
      * @return array list of all Role Based language files.
      */
-    public function getAllFiles() {
+    public function getAllFiles()
+    {
         return array_merge(
             glob($this->path . '/*/*.php'),
             glob('custom/' . $this->path . '/*/*.php'),
-            glob('custom/application/Ext/Language/*/*/roledropdown.ext.php')
+            glob('custom/application/Ext/Language/*/*/roledropdownfilter.ext.php')
         );
     }
 
@@ -127,7 +128,7 @@ class ParserRoleDropDown extends ModuleBuilderParser
     {
         $dir = 'custom/' . $this->getFileDir($role);
         if (!SugarAutoLoader::ensureDir($dir)) {
-            $GLOBALS['log']->error("ParserRoleDropDown :: Cannot create directory $dir");
+            $GLOBALS['log']->error("ParserRoleDropDownFilter :: Cannot create directory $dir");
             return false;
         }
         $result = write_array_to_file(

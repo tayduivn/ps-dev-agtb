@@ -3565,9 +3565,9 @@ class MetaDataManager
             $context = $this->getCurrentUserContext();
         }
 
-        require_once 'modules/ModuleBuilder/parsers/parser.roledropdown.php';
+        require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
 
-        $parser = new ParserRoleDropDown();
+        $parser = new ParserRoleDropDownFilter();
         $platform = $this->platforms[0];
         $files = array_map(
             function ($file) use ($platform) {

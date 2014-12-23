@@ -81,7 +81,7 @@
             this.listenTo(this.model, "sync", function(model){
                 var options = app.lang.getAppListStrings(self.def.options);
                 if (options) {
-                    self.items = self._filterRoleOptions(options);
+                    self.items = self._filterOptions(options);
                 }
             });
         }
@@ -395,7 +395,7 @@
     _initSelection: function($ele, callback){
         var data = [];
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
-        options = this.items = this._filterRoleOptions(options);
+        options = this.items = this._filterOptions(options);
         var values = $ele.val();
         if (this.def.isMultiSelect) {
             values = values.split(this.def.separator || ',');
@@ -411,12 +411,13 @@
     },
 
     /**
+     * Returns dropdown list options which can be used for editing 
      *
-     * @param options
-     * @returns {A}
+     * @param {Object} Dropdown list options
+     * @returns {Object}
      * @private
      */
-    _filterRoleOptions: function (options) {
+    _filterOptions: function (options) {
         var currentValue,
             syncedVal,
             newOptions = {},

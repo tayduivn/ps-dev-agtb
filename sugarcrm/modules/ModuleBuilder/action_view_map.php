@@ -36,7 +36,7 @@
                         'visibilityeditor' => 'visibilityeditor',
  						'exportcustomizations'=>'exportcustomizations',
                         //BEGIN SUGARCRM flav=pro ONLY
-                        'roledropdown' => 'roledropdown',
+                        'roledropdownfilter' => 'roledropdownfilter',
                         'depdropdown' => 'depdropdown',
                         //END SUGARCRM flav=pro ONLY
  						//BEGIN SUGARCRM flav=ent ONLY

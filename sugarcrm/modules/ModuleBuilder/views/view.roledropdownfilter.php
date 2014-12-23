@@ -11,9 +11,12 @@
  */
 require_once 'modules/ModuleBuilder/views/view.dropdown.php';
 
-class ViewRoleDropdown extends ViewDropdown
+/**
+ * Role based dropdown filter editor
+ */
+class ViewRoleDropdownFilter extends ViewDropdown
 {
-    protected $template = 'modules/ModuleBuilder/tpls/MBModule/roledropdown.tpl';
+    protected $template = 'modules/ModuleBuilder/tpls/MBModule/roledropdownfilter.tpl';
 
     protected $defaultParams = array(
         'refreshTree' => false,
@@ -46,7 +49,7 @@ class ViewRoleDropdown extends ViewDropdown
      */
     protected function getRoleOptions($params)
     {
-        $parser = new ParserRoleDropDown();
+        $parser = new ParserRoleDropDownFilter();
         $options = $parser->getOne($params['dropdown_role'], $params['dropdown_name']);
         if (!$options) {
             $options = $this->getDefaultRoleOptions($params);

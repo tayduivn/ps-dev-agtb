@@ -17,7 +17,7 @@
           href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MBModule/dropdown.css'}"></link>
     <form name='dropdown_form' onsubmit="return false">
         <input type='hidden' name='module' value='ModuleBuilder'>
-        <input type='hidden' name='action' value='saveroledropdown'>
+        <input type='hidden' name='action' value='saveroledropdownfilter'>
         <input type='hidden' name='to_pdf' value='true'>
         <input type='hidden' name='view_module' value='{$module_name}'>
         <input type='hidden' name='view_package' value='{$package_name}'>
@@ -163,7 +163,7 @@
             if ($(this).val() === '') {
                 this.form.action.value = 'dropdown';
             } else {
-                this.form.action.value = 'roledropdown';
+                this.form.action.value = 'roledropdownfilter';
             }
             ModuleBuilder.handleSave("dropdown_form");
         });

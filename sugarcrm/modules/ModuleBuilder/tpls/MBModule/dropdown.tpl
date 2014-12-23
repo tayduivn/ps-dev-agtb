@@ -43,7 +43,7 @@
                 </td>
                 <td style="text-align: right">
                     <label>{sugar_translate label='LBL_ROLE'}
-                        {html_options name='dropdown_role' options=$roles onchange='this.form.action.value="roledropdown";ModuleBuilder.handleSave("dropdown_form")'}
+                        {html_options name='dropdown_role' options=$roles onchange='this.form.action.value="roledropdownfilter";ModuleBuilder.handleSave("dropdown_form")'}
                     </label>
                 </td>
             </tr>

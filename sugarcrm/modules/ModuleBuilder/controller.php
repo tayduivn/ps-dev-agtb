@@ -39,7 +39,7 @@ require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationship
 
 // Used in action_SaveDropDown
 require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
-require_once 'modules/ModuleBuilder/parsers/parser.roledropdown.php';
+require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
 
 // Used in action_searchViewSave
 // Bug56789 - Without a client, the wrong viewdef file was getting picked up
@@ -702,13 +702,13 @@ class ModuleBuilderController extends SugarController
         $this->view = 'dropdowns';
     }
 
-    public function action_SaveRoleDropDown()
+    public function action_SaveRoleDropDownFilter()
     {
         $params = $_REQUEST;
         if(empty($params['dropdown_role']) || empty($params['dropdown_name']) || empty($params['dropdown_keys'])) {
             return;
         }
-        $parser = new ParserRoleDropDown();
+        $parser = new ParserRoleDropDownFilter();
         $parser->handleSave($params['dropdown_role'], $params['dropdown_name'], $params['dropdown_keys']);
         $this->view = 'dropdowns';
     }
