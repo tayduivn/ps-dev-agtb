@@ -280,13 +280,14 @@
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
+                maximumSelectionSize: 20,
                 query: _.bind(this.search, this)
             }).on('select2-open', function() {
                 var plugin = $(this).data('select2');
                 if (!plugin.searchmore) {
                     var $content = $('<li class="select2-result">').append(
                             $('<div/>').addClass('select2-result-label')
-                                .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
+                                .html(app.lang.get('LBL_MODIFY_SELECTION', self.module))
                         ).mousedown(function() {
                             plugin.opts.element.trigger($.Event('searchmore'));
                             plugin.close();
