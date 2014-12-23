@@ -25,7 +25,7 @@
         if (isBwcEnabled) {
             buttonsToRemove.push('create_button');
         } else {
-            additionalEvents['click .btn[name=create_button]'] = 'createAndSelect';
+            additionalEvents['click [name=create_button]'] = 'createAndSelect';
             this.events = _.extend({}, this.events, additionalEvents);
         }
 

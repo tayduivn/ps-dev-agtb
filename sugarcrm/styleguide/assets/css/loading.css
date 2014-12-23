@@ -9,31 +9,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 body {
+    margin: 0;
+}
+
+.alert {
+    padding:5px 10px;
+    margin: 0;
+    background-color: #f6f6f6;
+    border: 1px solid #d0d0d0;
+    border-radius: 3px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
     line-height: 18px;
-    margin: 0;
     color: #555;
-}
-
-@font-face {
-    font-family: 'FontAwesome';
-    src: url('../../styleguide/assets/fonts/fontawesome-webfont.eot?v=4.2.0');
-    src: url('../../styleguide/assets/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'), url('../../styleguide/assets/fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'), url('../../styleguide/assets/fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'), url('../../styleguide/assets/fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-.alert{
-    padding:5px 10px;
-    background-color: #f6f6f6;
-    border: 1px solid #d0d0d0;
     -webkit-box-shadow: 0 2px 1px rgba(0,0,0,0.1);
     -moz-box-shadow: 0 2px 1px rgba(0,0,0,0.1);
     box-shadow: 0 2px 1px rgba(0,0,0,0.1);
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    border-radius: 3px;
 }
 
 .alert-top {
@@ -43,7 +36,7 @@ body {
     text-align: center;
 }
 
-.alert-top> div {
+.alert-top > div {
     display: table;
     margin: auto;
 }
@@ -56,35 +49,13 @@ body {
 .loading i {
   color: #717171;
   display: inline-block;
-  font-size: 4px;
   margin: 0 2px;
+  font-family: serif;
+  font-weight: 900;
+  font-style: normal;
   -moz-animation: move 1s infinite linear;
   -webkit-animation: move 1s infinite linear;
   animation: move 1s infinite linear;
-}
-
-.fa-circle:before {
-    content: "\f111";
-}
-
-.loading .fa {
-    line-height: normal;
-    vertical-align: baseline;
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: inherit;
-    -webkit-font-smoothing: antialiased;
-}
-
-.loading .fa:before {
-    text-decoration: inherit;
-    display: inline-block;
-    speak: none;
-}
-
-.nav li .loading .fa-circle {
-    width: auto;
 }
 
 .loading .l1 {
