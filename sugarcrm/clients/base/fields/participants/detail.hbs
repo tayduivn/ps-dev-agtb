@@ -52,6 +52,9 @@
                     {{str "LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE" ../../module}}
                 </div>
             {{/notEq}}
+            {{#eq module 'Users'}}
+                <div class="start_end_overlay"></div>
+            {{/eq}}
             <div class="container">
                 <div class="timeblock">
                     <span></span>

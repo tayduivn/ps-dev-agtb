@@ -88,6 +88,9 @@
 
         // caches the string "More {{field label}}..." for use in the template
         this.showMoreTemplate = app.lang.get('LBL_SHOW_MORE_GENERIC', this.module, {name: this.label});
+
+        // adjust the start and end date/time indicator on the scheduler to fit the resized window
+        $(window).on('resize.' + this.cid, _.bind(this.adjustStartAndEnd, this));
     },
 
     /**
@@ -127,7 +130,7 @@
             this.clearFreeBusyInformationCache();
             this.renderTimelineInfo();
         }, this);
-        this.model.on('change:date_end', this.markStartAndEnd, this);
+        this.model.on('change:date_end', this.adjustStartAndEnd, this);
         this.model.on('sync:' + this.name, this.hideShowMoreButton, this);
 
         // Fetch free/busy information again on save to get the latest.
@@ -207,7 +210,7 @@
 
         if ((this.getTimelineBlocks().length > 0) && (!_.isEmpty(startAndEndDates))) {
             this.renderTimelineHeader();
-            this.markStartAndEnd();
+            this.adjustStartAndEnd();
             this.fetchFreeBusyInformation();
         }
     },
@@ -250,49 +253,56 @@
     },
 
     /**
-     * Mark the start and end datetime on the timeline for all participants.
+     * Adjust the start and end overlay on the timeline for all users.
      */
-    markStartAndEnd: function() {
+    adjustStartAndEnd: function() {
         var startAndEndDates = this.getStartAndEndDates(),
-            timelineBlockStart,
-            timelineBlockEnd,
-            $timelineBlocks;
+            timelineBlockStartIndex, //index of timeline block when the meeting starts
+            timelineBlockEndIndex, //index of timeline block when the meeting ends
+            $timelineBlocks, //all timeline blocks in a given timeline
+            $startBlock, //timeline block when the meeting starts
+            $endBlock, //timeline block when the meeting ends
+            overlayLeft, //left position of the overlay
+            overlayWidth = 1, //width of the overlay
+            $startEndOverlays = this.$('.start_end_overlay'), //all overlays
+            firstUserOverlay, //first user overlay
+            firstUserData; //first user module and ID
 
-        this.getTimelineBlocks().removeClass('schedule start end start-end');
-
-        if (_.isEmpty(startAndEndDates)) {
+        if (_.isEmpty(startAndEndDates) || ($startEndOverlays.length === 0)) {
             return;
         }
 
-        timelineBlockStart = startAndEndDates.meetingStart.diff(startAndEndDates.timelineStart, 'hours', true) * 4;
-        timelineBlockEnd = (startAndEndDates.meetingEnd.diff(startAndEndDates.timelineStart, 'hours', true) * 4) - 1;
+        // Get timeline blocks that represents the start and end datetime for the meeting
+        firstUserOverlay = $startEndOverlays.first();
+        firstUserData = firstUserOverlay.closest('.participant').data();
+        $timelineBlocks = this.getTimelineBlocks(firstUserData.module, firstUserData.id);
+        timelineBlockStartIndex = startAndEndDates.meetingStart.diff(startAndEndDates.timelineStart, 'hours', true) * 4;
+        timelineBlockEndIndex = (startAndEndDates.meetingEnd.diff(startAndEndDates.timelineStart, 'hours', true) * 4) - 1;
+        $startBlock = $timelineBlocks.eq(timelineBlockStartIndex);
+        $endBlock = $timelineBlocks.eq(timelineBlockEndIndex);
 
-        this.getFieldValue().each(function(participant) {
-            $timelineBlocks = this.getTimelineBlocks(participant.module, participant.get('id'));
+        if ($endBlock.length === 0) {
+            $endBlock = $timelineBlocks.last();
+            $startEndOverlays.removeClass('right_border');
+        } else {
+            $startEndOverlays.addClass('right_border');
+        }
 
-            // start and end datetime is the same
-            if (timelineBlockStart - timelineBlockEnd === 1) {
-                $timelineBlocks.eq(timelineBlockStart).addClass('start-end');
-                return;
-            }
+        // calculate the left position of the overlay
+        overlayLeft = $startBlock.position().left;
 
-            // mark start and end datetime range
-            $timelineBlocks.each(function(index, timelineBlock) {
-                var $block = $(timelineBlock);
+        // calculate the width of the overlay for meetings that last more than 0 minutes
+        if (timelineBlockEndIndex - timelineBlockStartIndex >= 0) {
+            // Note: Need to use getBoundingClientRect() so that we can get subpixel measurements.
+            overlayWidth = $endBlock.position().left - overlayLeft + $endBlock.get(0).getBoundingClientRect().width;
+            // subtract left and right border width
+            overlayWidth -= parseInt(firstUserOverlay.css('border-left-width'), 10) + parseInt(firstUserOverlay.css('border-right-width'), 10);
+        }
 
-                if ((index >= timelineBlockStart) && (index <= timelineBlockEnd)) {
-                    $block.addClass('schedule');
-                }
-
-                if (index === timelineBlockStart) {
-                    $block.addClass('start');
-                }
-
-                if (index === timelineBlockEnd) {
-                    $block.addClass('end');
-                }
-            });
-        }, this);
+        $startEndOverlays.css({
+            left: overlayLeft + 'px',
+            width: overlayWidth + 'px'
+        });
     },
 
     /**
@@ -719,6 +729,7 @@
         this.$('[name=newRow]').css('display', 'table-row');
         $(event.currentTarget).hide();
         this.getFieldElement().select2('open');
+        this.adjustStartAndEnd();
     },
 
     /**
@@ -746,6 +757,7 @@
             this.$('[name=newRow]').hide();
             this.$('button[data-action=addRow]').show();
             this.$('.participants-schedule').removeClass('new');
+            this.adjustStartAndEnd();
         }
     },
 
@@ -880,5 +892,15 @@
         });
 
         return this.searchResultTemplate(result);
+    },
+
+    /**
+     * Remove resize event.
+     * @inheritdoc
+     * @private
+     */
+    _dispose: function() {
+        $(window).off('resize.' + this.cid);
+        this._super('_dispose');
     }
 })
