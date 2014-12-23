@@ -1116,7 +1116,7 @@ function fade_error_style(normalStyle, percent) {
 function isFieldTypeExceptFromEmptyCheck(fieldType)
 {
     var results = false;
-    var exemptList = ['bool','file'];
+    var exemptList = ['bool','file','checkboxset'];
     for(var i=0;i<exemptList.length;i++)
     {
         if(fieldType == exemptList[i])
