@@ -911,7 +911,7 @@ class MetaDataFiles
         }
 
         // Second, get a list of files in those directories, sorted by "relevance"
-        $fileList = self::getClientFileList($checkPaths);
+        $fileList = self::getClientFileList($checkPaths, $context);
         return $fileList;
     }
 
