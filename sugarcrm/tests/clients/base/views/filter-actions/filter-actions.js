@@ -174,7 +174,7 @@ describe('Base.View.FilterActions', function() {
             {str: '', expected: ''},
             {str: '   ', expected: ''}
         ], function(data) {
-            it('should return true/false for valid/invalid user names', function() {
+            it('should trim filtername properly', function() {
                 view.$('input').val(data.str);
                 expect(view.getFilterName()).toBe(data.expected);
             });
