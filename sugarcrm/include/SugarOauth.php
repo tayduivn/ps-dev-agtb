@@ -149,6 +149,8 @@
                 $this->_last = $token = parent::getRequestToken($params);
                 return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
             }catch(Zend_Oauth_Exception $e){
+                //print out the exception message to the logs and return blank array
+                $GLOBALS['log']->fatal("code {$e->getCode()} : {$e->getMessage()}" );
                 return array('oauth_token' => '', 'oauth_token_secret' => '');
             }
         }
