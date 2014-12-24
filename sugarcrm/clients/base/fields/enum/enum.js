@@ -191,10 +191,6 @@
                     plugin.container.attr('dir', this.dir);
                     plugin.results.attr('dir', this.dir);
                 }
-
-                if (plugin && plugin.focusser) {
-                    plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-                }
                 $el.select2("container").addClass("tleft");
                 $el.on('change', function(ev) {
                     var value = ev.val;
@@ -204,7 +200,7 @@
                     if (self.model) {
                         self.model.set(self.name, self.unformat(value));
                     }
-                });
+                }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
                 if (this.def.ordered) {
                     $el.select2('container').find('ul.select2-choices').sortable({
                         containment: 'parent',
