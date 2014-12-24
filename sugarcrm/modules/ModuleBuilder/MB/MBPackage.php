@@ -34,6 +34,16 @@ class MBPackage{
         'ULT'  => array('ENT', 'ULT'),
     );
 
+    /**
+     * Exportable customizations in "include/" directory. Key is variable name, value is root directory.
+     *
+     * @var array
+     */
+    protected static $includes = array(
+        'language' => 'app_list_strings',
+        'dropdown_filters' => 'role_dropdown_filters',
+    );
+
     function MBPackage($name){
         $this->name = $name;
         $this->load();
@@ -368,21 +378,22 @@ function buildInstall($path){
 
         //creation of the installdefs[] array for the manifest when exporting customizations
     function customBuildInstall($modules, $path, $extensions = array()){
-        $columns=$this->getColumnsName();
         $installdefs = array ('id' => $this->name, 'relationships' => array());
-        $include_path="$path/SugarModules/include/language";
-        $it = $this->getDirectoryIterator($include_path);
-        foreach ($it as $file) {
-            $subPathName = $it->getSubPathname();
-            $def = array(
-                'from'=> '<basepath>/SugarModules/include/language/'. $subPathName,
-                'to_module'=> 'application',
-            );
-            $baseName = $file->getBasename();
-            if (strpos($baseName, '.lang.') !== false) {
-                $def['language'] = substr($baseName, 0, strpos($baseName, '.'));
+        foreach (self::$includes as $type => $varName) {
+            $include_path = $path . '/SugarModules/include/' . $type;
+            $it = $this->getDirectoryIterator($include_path);
+            foreach ($it as $file) {
+                $subPathName = $it->getSubPathname();
+                $def = array(
+                    'from'=> '<basepath>/SugarModules/include/' . $type . '/' . $subPathName,
+                    'to_module'=> 'application',
+                );
+                $baseName = $file->getBasename();
+                if ($type == 'language') {
+                    $def['language'] = substr($baseName, 0, strpos($baseName, '.'));
+                }
+                $installdefs[$type][] = $def;
             }
-            $installdefs['language'][] = $def;
         }
 
         foreach($modules as $value){
@@ -671,11 +682,14 @@ function buildInstall($path){
             }
         }
 
-        $this->copyCustomDropdownValuesForModules($modules,$path);
-        if(file_exists($path)){
-            $manifest = $this->getManifest(true).$this->customBuildInstall($modules,$path);
-            sugar_file_put_contents($path .'/manifest.php', $manifest);
+        $this->copyCustomIncludesForModules($modules, $path);
+        if (!is_dir($path)) {
+            sugar_die('Build directory has not been created');
         }
+
+        $manifest = $this->getManifest(true) . $this->customBuildInstall($modules, $path);
+        sugar_file_put_contents($path .'/manifest.php', $manifest);
+
         if(file_exists('modules/ModuleBuilder/MB/LICENSE.txt')){
             copy('modules/ModuleBuilder/MB/LICENSE.txt', $path . '/LICENSE.txt');
         }
@@ -717,33 +731,27 @@ function buildInstall($path){
             }
         }
     }
-    private function copyCustomDropdownValuesForModules($modules, $path)
+    private function copyCustomIncludesForModules($modules, $path)
     {
-        $it = $this->getDirectoryIterator('custom/include/language');
-        foreach ($it as $file) {
-            $app_list_strings = $roledropdown = array();
-            if (strpos($file->getBasename(), '.lang.') !== false) {
-                $varName = 'app_list_strings';
-            } elseif (strpos($file, '/roles/') !== false) {
-                $varName = 'roledropdown';
-            } else {
-                continue;
-            }
+        foreach (self::$includes as $type => $varName) {
+            $it = $this->getDirectoryIterator('custom/include/' . $type);
+            $$varName = array();
+            foreach ($it as $file) {
+                include $file;
 
-            include $file;
-
-            $dropdowns = $this->getCustomDropDownStringsForModules($modules, $$varName);
-            if (count($dropdowns) > 0) {
-                $contents = "<?php \n";
-                foreach ($dropdowns as $name => $arr) {
-                    $contents .= override_value_to_string($varName, $name, $arr);
+                $values = $this->getCustomOptionsForModules($modules, $$varName);
+                if (count($values) > 0) {
+                    $contents = "<?php \n";
+                    foreach ($values as $name => $arr) {
+                        $contents .= override_value_to_string($varName, $name, $arr);
+                    }
+                    $subPathName = $it->getSubPathname();
+                    $subPathName = str_replace('.lang', '', $subPathName);
+                    $subPathName = substr($subPathName, 0, -4) . '.' . $this->name . substr($subPathName, -4);
+                    $destination = $path . '/SugarModules/include/' . $type . '/' . $subPathName;
+                    mkdir_recursive(dirname($destination));
+                    sugar_file_put_contents($destination, $contents);
                 }
-                $subPathName = $it->getSubPathname();
-                $subPathName = str_replace('.lang', '', $subPathName);
-                $subPathName = substr($subPathName, 0, -4) . '.' . $this->name . substr($subPathName, -4);
-                $destination = $path . '/SugarModules/include/language/' . $subPathName;
-                mkdir_recursive(dirname($destination));
-                sugar_file_put_contents($destination, $contents);
             }
         }
     }
@@ -766,7 +774,8 @@ function buildInstall($path){
         return new EmptyIterator();
     }
 
-    function getCustomDropDownStringsForModules($modules, $list_strings) {
+    protected function getCustomOptionsForModules($modules, $list_strings)
+    {
         $options = array();
         foreach($modules as $module)
         {
@@ -795,7 +804,7 @@ function buildInstall($path){
         global $mod_strings;
         global $modInvisList;
 
-        $modulesWithCustomDropdowns = $this->getModulesWithCustomDropdowns();
+        $modulesWithCustomDropdowns = $this->getModulesWithCustomIncludes();
         $modules = array_merge($this->getSubdirectories('custom/modules/'), $modulesWithCustomDropdowns);
         $modules = array_unique($modules);
 
@@ -898,22 +907,24 @@ function buildInstall($path){
     }
 
     /**
-     * Returns array of module names that use custom dropdowns
+     * Returns array of module names that use customizations in include/ directory
      * 
      * @return array
      */
-    protected function getModulesWithCustomDropdowns()
+    protected function getModulesWithCustomIncludes()
     {
         global $beanList;
 
-        $app_list_strings = $roledropdown = array();
-        $it = $this->getDirectoryIterator('custom/include/language');
-        foreach ($it as $file) {
-            include $file;
+        $app_list_strings = $role_dropdown_filters = array();
+        foreach (self::$includes as $type => $varName) {
+            $it = $this->getDirectoryIterator('custom/include/' . $type);
+            foreach ($it as $file) {
+                include $file;
+            }
         }
 
         $modules = array();
-        if (count($app_list_strings) > 0 || count($roledropdown) > 0) {
+        if (count($app_list_strings) > 0 || count($role_dropdown_filters) > 0) {
             foreach ($beanList as $module => $_) {
                 $bean = BeanFactory::getBean($module);
                 if (!isset($bean->field_defs) || !is_array($bean->field_defs)) {
@@ -921,10 +932,13 @@ function buildInstall($path){
                 }
 
                 foreach ($bean->field_defs as $field => $def) {
-                    if (isset($def['options'])
-                        && (isset($app_list_strings[$def['options']]) || isset($roledropdown[$def['options']]))) {
-                        $modules[] = $module;
-                        break;
+                    if (isset($def['options'])) {
+                        foreach (self::$includes as $varName) {
+                            if (isset(${$varName}[$def['options']])) {
+                                $modules[] = $module;
+                                continue 3;
+                            }
+                        }
                     }
                 }
             }
