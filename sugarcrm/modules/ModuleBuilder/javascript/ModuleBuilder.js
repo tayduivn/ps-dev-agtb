@@ -318,7 +318,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}
 				
 			},
-			revert: function(module, layout, id, subpanel){
+            revert: function(module, layout, id, subpanel, isDefault) {
 				var prevTab = ModuleBuilder.tabPanel.getTabIndex("preview:" + id);
 				if(prevTab) ModuleBuilder.tabPanel.removeTab(prevTab);
 				
@@ -335,13 +335,21 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
-					ModuleBuilder.getContent("module=ModuleBuilder&action=editLayout" +
-						"&view=" + layout +
-						"&view_module=" + module +
-						"&subpanel=" + subpanel +
-						"&view_package=" + ModuleBuilder.MBpackage
-					);
-                    ModuleBuilder.state.markAsDirty();
+                    ModuleBuilder.getContent(ModuleBuilder.paramsToUrl({
+                        module: "ModuleBuilder",
+                        action: "editLayout",
+                        view: layout,
+                        view_module: module,
+                        subpanel: subpanel,
+                        view_package: ModuleBuilder.MBpackage
+                    }), function(content) {
+                        ModuleBuilder.updateContent(content);
+                        if (isDefault) {
+                            ModuleBuilder.state.markAsReset();
+                        } else {
+                            ModuleBuilder.state.markAsDirty();
+                        }
+                    });
 				});
 			},
             resetToDefault: function(module, layout) {

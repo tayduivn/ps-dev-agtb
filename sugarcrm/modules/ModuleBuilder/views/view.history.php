@@ -94,11 +94,18 @@ class ViewHistory extends SugarView
         $snapshots = array ( ) ;
         for ( $i = 0 ; $i <= $this->pageSize && $ts > 0 ; $i ++ )
         {
-            $dbDate = $timedate->fromTimestamp($ts)->asDb();
-            $displayTS = $timedate->to_display_date_time ( $dbDate ) ;
-            if ($page * $this->pageSize + $i + 1 == $count)
-                $displayTS = translate("LBL_MB_DEFAULT_LAYOUT");
-            $snapshots [ $ts ] = $displayTS ;
+            if ($page * $this->pageSize + $i + 1 == $count) {
+                $label = translate('LBL_MB_DEFAULT_LAYOUT');
+                $isDefault = true;
+            } else {
+                $dbDate = $timedate->fromTimestamp($ts)->asDb();
+                $label = $timedate->to_display_date_time($dbDate);
+                $isDefault = false;
+            }
+            $snapshots[$ts] = array(
+                'label' => $label,
+                'isDefault' => $isDefault,
+            );
             $ts = $this->history->getNext () ;
         }
         if (count ( $snapshots ) > $this->pageSize)
