@@ -427,7 +427,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         if ($this->params && $this->locationSupportsParameters($location)) {
             $filename = $this->getFileNameByParameters($view, $moduleName, $location, $client, $this->params);
             // if no role layout is found, revert to the default version
-            if (file_exists($filename)) {
+            if (file_exists($filename) || !$this->locationUseDefault($location)) {
                 return $filename;
             }
         }
@@ -516,6 +516,24 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             case MB_CUSTOMMETADATALOCATION:
             case MB_WORKINGMETADATALOCATION:
             case MB_HISTORYMETADATALOCATION:
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if default metadata file should be used
+     * in case if the file corresponding to the given parameters doesn't exist
+     *
+     * @param string $location
+     * @return bool
+     */
+    protected function locationUseDefault($location)
+    {
+        switch ($location) {
+            case MB_BASEMETADATALOCATION:
+            case MB_CUSTOMMETADATALOCATION:
                 return true;
         }
 
