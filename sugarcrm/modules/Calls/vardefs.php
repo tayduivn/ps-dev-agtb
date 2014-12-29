@@ -523,6 +523,13 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'comment' => 'Flag to allow for turning off auto invite of parent record -  (Meta-data only)',
         'massupdate' => false,
     ),
+    'contact_parent' => array(
+        'name' => 'contact_parent',
+        'type' => 'link',
+        'relationship' => 'contact_calls_parent',
+        'source' => 'non-db',
+        'reportable' => false
+    ),
 ),
 'indices' => array (
 	array(
