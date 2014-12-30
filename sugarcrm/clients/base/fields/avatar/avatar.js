@@ -42,7 +42,11 @@
                 // load the module icon template
                 template = app.template.getField(this.type, 'module-icon', this._getModuleName());
                 if (template) {
-                    this.$('.image_field').replaceWith(template({module: this._getModuleName(), labelSizeClass: className}));
+                    this.$('.image_field').replaceWith(template({
+                        module: this._getModuleName(),
+                        labelSizeClass: className,
+                        tooltipPlacement: app.lang.direction === 'ltr' ? 'right' : 'left'
+                    }));
                 }
             } else {
                 // add the image_rounded class to the image_field div when there is an avatar to display
