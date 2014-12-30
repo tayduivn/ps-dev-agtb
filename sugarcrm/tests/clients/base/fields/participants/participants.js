@@ -352,6 +352,12 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
         });
 
+        it("should disable a participant's delete button when the participant is marked as not deletable", function() {
+            field.model.set(field.name, {_module: 'Leads', id: '1', name: 'Foo Bar', deletable: false});
+            field.render();
+            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
+        });
+
         it('should add a participant when a new participant is selected', function() {
             var spy = sandbox.spy(field.getFieldValue(), 'add');
             field.render();
