@@ -334,6 +334,13 @@
             .box-sizing(border-box);
           }
         }
+        &[data-type="textarea"] {
+          textarea {
+            .calcWidth(~"100% - 12px");
+            height: 18px;
+            margin: 0px;
+          }
+        }
         &[data-type="fullname"] {
           min-width: 288px;
           max-width: 288px !important;
