@@ -321,16 +321,6 @@
                     'include/javascript/sugar7/plugins/AddAsInvitee.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
-           //BEGIN SUGARCRM flav=ent ONLY
-            $sugar_grp_portal2 = array_merge(
-                array('sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'portal2/portal.min.js'), // preserve ordering
-                array(
-                    'portal2/error.js'               => 'portal2/portal.min.js',
-                    'portal2/user.js'                => 'portal2/portal.min.js',
-                    'portal2/portal.js'              => 'portal2/portal.min.js',
-                )
-            ),
-           //END SUGARCRM flav=ent ONLY
 
             $sugar_grp_sugar7 = array(
                 'include/javascript/sugar7.js' => 'include/javascript/sugar_grp7.min.js',
@@ -348,7 +338,11 @@
                 'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
+            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_sugar7_portal2 = array(
+                'portal2/error.js' => 'portal2/portal.min.js',
+                'portal2/user.js' => 'portal2/portal.min.js',
+                'portal2/portal.js' => 'portal2/portal.min.js',
                 'include/javascript/sugar7/bwc.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils-filters.js' => 'portal2/sugar_portal.min.js',
@@ -359,8 +353,6 @@
                 'include/javascript/sugar7/language.js' => 'portal2/portal.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
             ),
-
-            //BEGIN SUGARCRM flav=ent ONLY
 
             $pmse_br = array(
                 'include/javascript/pmse/ui/utils.js' => 'include/javascript/pmse.br.min.js',
