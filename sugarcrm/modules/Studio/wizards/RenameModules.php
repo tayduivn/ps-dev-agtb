@@ -905,11 +905,27 @@ class RenameModules
         $typeDisplayList = getTypeDisplayList();
 
         foreach (array_keys($this->changedModules) as $moduleName) {
+            //Save changes to the "*type_display*" app_list_strings entry.
             foreach ($typeDisplayList as $typeDisplay) {
                 if (isset($app_list_strings[$typeDisplay]) && isset($app_list_strings[$typeDisplay][$moduleName])) {
                     $newParams['dropdown_name'] = $typeDisplay;
                     DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, array($moduleName => $this->changedModules[$moduleName])));
                  }
+            }
+            //save changes to moduleIconList
+            if (isset($app_list_strings['moduleIconList']) && isset($app_list_strings['moduleIconList'][$moduleName])) {
+                $newParams['dropdown_name'] = 'moduleIconList';
+
+                //recreate the moduleIconList array to be passed in using the format defined in  getAllModulesFromRequests()
+                $newIconList = $app_list_strings['moduleIconList'];
+                $modPackages = $this->getAllModulesFromRequest();
+                foreach ($newIconList as $modKey => $modVal){
+                    $newIconList[$modKey] = $modPackages[$modKey];
+                }
+
+                //save modified moduleIconList array
+                $newIconList[$moduleName] = $this->changedModules[$moduleName];
+                DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $newIconList));
             }
         }
         return $this;
