@@ -28,23 +28,6 @@ ensureJSCacheFilesExist();
         <!-- CSS -->
         <link rel="stylesheet" href="../styleguide/assets/css/loading.css" type="text/css">
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
-        <script src="../include/javascript/modernizr.js"></script>
-
-        <? if(inDeveloperMode()): ?>
-            <script src="../sidecar/minified/sidecar.js"></script>
-        <? else: ?>
-            <script src="../sidecar/minified/sidecar.min.js"></script>
-        <? endif; ?>
-
-        <!-- Sidecar Scripts -->
-        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
-
-        <!-- Portal specific JS -->
-        <script src="../cache/portal2/portal.min.js"></script>
-        <script src="config.js"></script>
-
-        <!-- App Scripts -->
-        <script src="../cache/portal2/sugar_portal.min.js"></script>
     </head>
     <body>
         <div id="sidecar">
@@ -65,6 +48,17 @@ ensureJSCacheFilesExist();
                 <div id="drawers"></div>
             </div>
         </div>
+
+        <script src="../include/javascript/modernizr.js"></script>
+
+        <!-- Sidecar Scripts -->
+        <script src="../sidecar/minified/sidecar<? if (!inDeveloperMode()): ?>.min<? endif; ?>.js"></script>
+        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
+
+        <!-- Portal specific JS -->
+        <script src="../cache/portal2/sugar_portal.min.js"></script>
+        <script src="config.js"></script>
+
         <script>
             var syncResult, view, layout, html;
             var App = SUGAR.App.init({
