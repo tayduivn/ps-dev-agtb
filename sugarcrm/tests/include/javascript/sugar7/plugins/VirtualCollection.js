@@ -757,6 +757,44 @@ describe('Plugins.VirtualCollection', function() {
                 expect(model.get(attribute) === collection).toBe(false);
                 expect(model.get(attribute).length).toBe(collection.length);
             });
+
+            describe('setting the next offsets', function() {
+                it('should set the next offsets from the server response', function() {
+                    var response = {
+                        records: contacts,
+                        next_offset: {
+                            contacts: -1,
+                            accounts: 0
+                        }
+                    };
+
+                    model.set(attribute, response);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(-1);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
+
+                it('should set the next offsets from the options', function() {
+                    var options = {
+                        offsets: {
+                            contacts: -1,
+                            accounts: 0
+                        }
+                    };
+
+                    model.set(attribute, contacts, options);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(-1);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
+
+                it('should infer the next offsets when not provided', function() {
+                    model.set(attribute, contacts);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(6);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
+            });
         });
 
         describe('has the bean changed?', function() {
