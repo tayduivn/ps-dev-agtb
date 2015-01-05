@@ -42,7 +42,7 @@ nv.models.lineChart = function() {
       yAxis = nv.models.axis()
         .orient('left')
         .tickPadding(4)
-        .tickFormat(d3.format(',.1f')),
+        .tickFormat(d3.format('s')),
       legend = nv.models.legend()
         .align('right'),
       controls = nv.models.legend()
