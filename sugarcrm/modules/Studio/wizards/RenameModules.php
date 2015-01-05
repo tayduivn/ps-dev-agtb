@@ -916,7 +916,7 @@ class RenameModules
             if (isset($app_list_strings['moduleIconList']) && isset($app_list_strings['moduleIconList'][$moduleName])) {
                 $newParams['dropdown_name'] = 'moduleIconList';
 
-                //recreate the moduleIconList array to be passed in using the format defined in  getAllModulesFromRequests()
+                //recreate the moduleIconList array to be passed in using the format defined in getAllModulesFromRequest()
                 $newIconList = $app_list_strings['moduleIconList'];
                 $modPackages = $this->getAllModulesFromRequest();
                 foreach ($newIconList as $modKey => $modVal){
