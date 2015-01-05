@@ -167,6 +167,10 @@ html.rtl {
             }
           }
         }
+        .normal .index {
+            margin-left: -14px;
+            margin-right: 0;
+        }
         [dir=ltr] {
             text-align: right;
         }
@@ -183,12 +187,6 @@ html.rtl {
         .record-cell .uneditable-input {
             margin-right: -7px;
             margin-left: 0;
-        }
-        .record-cell[data-type="language"] .select2-container .select2-choice,
-        .record-cell[data-type="enum"] .select2-container .select2-choice,
-        .record-cell[data-type="relate"] .select2-container .select2-choice {
-            padding-left: 0;
-            padding-right: 6px;
         }
         .record-cell[data-type="teamset"] {
             .btn {
@@ -217,7 +215,6 @@ html.rtl {
 
     .select2-container.select2-allowclear .select2-choice .select2-chosen {
         margin-left: 36px;
-        margin-right: 0;
     }
 
     .select2-container .select2-choice abbr {
@@ -233,11 +230,9 @@ html.rtl {
         float: right;
     }
 
-    .record .record-cell[data-type="language"] .select2-container .select2-choice,
-    .record .record-cell[data-type="enum"] .select2-container .select2-choice,
-    .record .record-cell[data-type="relate"] .select2-container .select2-choice {
-        padding-left: 0;
-        padding-right: 6px;
+    .record .record-cell .normal > span.edit div[class^="flex-relate"] {
+        position: relative;
+        right: 15px;
     }
 
     .subpanels-layout .subpanel-header h4 {
@@ -1042,18 +1037,19 @@ html.rtl {
     }
 
     .input-append {
+        .add-on {
+          right: -28px;
+          left: auto;
+        }
         &.error .add-on {
             right: -26px;
             left: auto;
         }
-
         &.date.error .add-on.error-tooltip,
         &.datetime.error .add-on.error-tooltip {
             right: -42px;
             left: auto;
         }
-
-
         &.date.error .add-on.error-tooltip + .add-on,
         &.datetime.error .add-on.error-tooltip + .add-on {
             right: -50px;
@@ -1069,6 +1065,31 @@ html.rtl {
     .record .record-cell[data-type="relate"] .input-append.error .add-on.error-tooltip {
         left: 24px;
         right: auto;
+    }
+
+    .record .record-cell .date.datetime {
+        .ui-timepicker-input,
+        .ui-timepicker-list {
+            margin-left: 0;
+            margin-right: -24px;
+        }
+        &.error {
+            .ui-timepicker-input,
+            .ui-timepicker-list {
+                margin-left: 0;
+                margin-right: -46px;
+            }
+        }
+    }
+
+    .record .fieldset-inline.edit .fieldset-field[data-type="label"] {
+        padding-right: 4px;
+        padding-left: 12px;
+    }
+
+    .record .fieldset-inline .fieldset-field {
+        padding-right: 0;
+        padding-left: 8px;
     }
 
     .resource-info {
