@@ -86,7 +86,7 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
 
         $results = $this->db->query($sql);
 
-        $insertSQL = 'INSERT INTO forecast_worksheets VALUES';
+        $insertSQL = 'INSERT INTO forecast_worksheets ';
 
         /* @var $fw ForecastWorksheet */
         $fw = BeanFactory::getBean('ForecastWorksheets');
@@ -99,7 +99,7 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
                 $row[$key] = $this->db->massageValue($convertedValue, $fieldDefs);
             }
 
-            $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
+            $this->db->query($insertSQL . '(' . join(',', array_keys($row)) . ') VALUES (' . join(',', $row) . ');');
         }
 
         $this->log('Done Creating Forecast Worksheet Draft Records');
