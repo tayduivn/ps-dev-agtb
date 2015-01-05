@@ -66,10 +66,14 @@
 
                 if (dateStartField && !dateStartField.disposed && dateEndField && !dateEndField.disposed) {
                     dateStartField.clearErrorDecoration();
+                    dateEndField.clearErrorDecoration();
 
                     if (!this.isDateRangeValid()) {
                         dateStartField.decorateError({
                             isBefore: app.lang.get(dateEndField.label || dateEndField.vname || dateEndField.name, model.module)
+                        });
+                        dateEndField.decorateError({
+                            isAfter: app.lang.get(dateStartField.label || dateStartField.vname || dateStartField.name, model.module)
                         });
                     }
                 }
@@ -211,11 +215,9 @@
      * @private
      */
     _loadTemplate: function() {
+        var originalType = this.type;
+        this.type = 'fieldset';
         this._super('_loadTemplate');
-
-        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions')
-            && (this.action === 'edit')) {
-            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
-        }
+        this.type = originalType;
     }
 })

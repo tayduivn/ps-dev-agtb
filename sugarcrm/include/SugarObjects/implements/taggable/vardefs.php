@@ -39,13 +39,17 @@ $vardefs = array(
         'tag_lower' => array(
             'name' => 'tag_lower',
             'vname' => 'LBL_TAGS_LOWER',
-            'type' => 'text',
+            'type' => 'mapped',
+            'parentField' => 'tag',
+            'mapFunction' => 'getLowercase',
+            'dbType' => 'text',
             'studio' => false,
             'reportable' => false,
             'importable' => false,
             'exportable' => false,
             'sortable' => false,
             'hideacl' => true,
+            'visible' => false,
         ),
     ),
     'relationships' => array(

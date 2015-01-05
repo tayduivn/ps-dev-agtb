@@ -277,7 +277,9 @@
                 }
             ];
         }
-        if (this.view.action === 'list' && this.view.name !== 'merge-duplicates') {
+        // FIXME: SC-3836 will replace special-casing view names/actions via
+        // action based templates.
+        if (this.view.action === 'list' && this.view.name !== 'merge-duplicates' && this.view.name !== 'audit') {
             //Display primary team in list view
             var primaryTeam = _.find(value, function (team) {
                 return team.primary;

@@ -534,6 +534,14 @@ html.rtl {
                 margin-right: auto;
             }
         }
+        &.right-actions:not(.scroll-width) .dataTable td:last-child > span {
+            left: 0;
+            right: auto;
+            .btn.rowaction {
+                margin-right: auto;
+                margin-left: auto;
+            }
+        }
         &.left-actions.scroll-width .dataTable th:first-child {
             border-left: none;
             > span {

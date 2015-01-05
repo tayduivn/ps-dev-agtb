@@ -19,7 +19,7 @@ class HistoryTest extends PHPUnit_Framework_TestCase
      * @var string
      */
     private $_path;
-    
+
     /**
      * @var History
      */
@@ -30,14 +30,14 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         $this->_path = tempnam(sys_get_temp_dir() . 'tmp', 'history');
         $this->_history = new History($this->_path);
     }
-    
+
     public function tearDown()
     {
         // Bug 54466 Clean up all test files that were created
         $dirname = $this->getHistoryDir();
-        $files = glob($dirname . '/history*');
+        $files = array_filter(glob($dirname . '/history*'), 'is_file');
         foreach ($files as $file) {
-            unlink($file);
+            @unlink($file);
         }
     }
 
@@ -62,7 +62,7 @@ class HistoryTest extends PHPUnit_Framework_TestCase
     public function testPositioning()
     {
         $tempFile = tempnam(sys_get_temp_dir() . 'tmp', 'history');
-        
+
         // Pause for a second in between each append for different timestamps
         $el1 = $this->_history->append($tempFile);
         $el2 = $this->_history->append($tempFile);
@@ -73,17 +73,17 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         $getLast  = $this->_history->getLast();
         $getNth1  = $this->_history->getNth(1);
         $getNext  = $this->_history->getNext();
-        
+
         // Assertions
         $this->assertEquals($el3, $getFirst, "$el3 was not the timestamp returned by getFirst() [$getFirst]");
         $this->assertEquals($el1, $getLast, "$el1 was not the timestamp returned by getLast() [$getLast]");
         $this->assertEquals($el2, $getNth1, "$el2 was not the timestamp returned by getNth(1) [$getNth1]");
         $this->assertEquals($el1, $getNext, "$el1 was not the timestamp returned by getNext() [$getNext]");
-        
+
         // Last assertion
         $getNext  = $this->_history->getNext();
         $this->assertFalse($getNext, "Expected getNext() [$getNext] to return false");
-        
+
         // Clean up
         unlink($tempFile);
     }
@@ -92,5 +92,4 @@ class HistoryTest extends PHPUnit_Framework_TestCase
     {
         return dirname($this->_path);
     }
-    
 }

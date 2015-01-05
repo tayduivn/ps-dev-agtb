@@ -98,7 +98,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        // if there are no active data series, activate them all
+        // if there are no active data series, inactivate them all
         if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
@@ -118,46 +118,62 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) {
-        return d.values.length;
-      }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'start');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+      if (!data || !data.length || !data.filter(function(d) {return d.values.length; }).length) {
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
       //add series index to each data point for reference
-      var funnelData = data.map(function(d, i) {
-          d.series = i;
-          d.values.map(function(v) {
-            v.series = d.series;
-          });
-          return d;
+      data.map(function(d, i) {
+        d.series = i;
+        d.values.map(function(v) {
+          v.series = d.series;
         });
+        d.total = d3.sum(d.values, function(d, i) {
+          return funnel.y()(d, i);
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
+        return d;
+      });
+
+      // only sum enabled series
+      var funnelData = data
+            .filter(function(d, i) {
+              return !d.disabled;
+            });
+
+      if (!funnelData.length) {
+        funnelData = [{values: []}];
+      }
+
+      var totalAmount = d3.sum(funnelData, function(d) {
+              return d.total;
+            });
+      var totalCount = d3.sum(funnelData, function(d) {
+              return d.count;
+            });
 
       //set state.disabled
-      state.disabled = funnelData.map(function(d) { return !!d.disabled; });
+      state.disabled = data.map(function(d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup Scales
 
       y = funnel.yScale(); //see below
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -214,7 +230,7 @@ nv.models.funnelChart = function() {
           .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(funnelData)
+          .datum(data)
           .call(legend);
 
         legend
@@ -237,7 +253,7 @@ nv.models.funnelChart = function() {
         .height(innerHeight);
 
       funnelWrap
-        .datum(funnelData.filter(function(d) { return !d.disabled; }))
+        .datum(funnelData)
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
           .call(funnel);
 
@@ -496,6 +512,23 @@ nv.models.funnelChart = function() {
           .range(tickValues.map(function(d) { return y(d); }));
 
         return tickValues;
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       //============================================================

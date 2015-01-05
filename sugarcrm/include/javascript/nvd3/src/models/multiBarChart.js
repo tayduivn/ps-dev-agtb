@@ -88,6 +88,7 @@ nv.models.multiBarChart = function() {
           data = chartData ? chartData.data : null,
           groupLabels = [],
           groupTotals = [],
+          totalAmount = 0,
           dataBars = [],
           seriesCount = 0,
           groupCount = 0;
@@ -160,35 +161,15 @@ nv.models.multiBarChart = function() {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
-        container.select('.nvd3.nv-wrap').remove();
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
 
-      //set title display option
+      // set title display option
       showTitle = showTitle && properties.title;
-
-      //set state.disabled
-      state.disabled = data.map(function(d) { return !!d.disabled; });
-      state.stacked = multibar.stacked();
 
       var controlsData = [
         { key: 'Grouped', disabled: state.stacked },
@@ -205,9 +186,16 @@ nv.models.multiBarChart = function() {
         });
       }
 
-      //add series index to each data point for reference
+      // add series index to each data point for reference
+      // and disable data series if total is zero
       data.map(function(d, i) {
         d.series = i;
+        d.total = d3.sum(d.values, function(d) {
+          return d.y;
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
       });
 
       // update groupTotal amounts based on enabled data series
@@ -232,7 +220,9 @@ nv.models.multiBarChart = function() {
           return d;
         });
 
-      // Build a trimmed array for active group only labels
+      totalAmount = d3.sum(groupTotals, function(d) { return d.t; });
+
+      // build a trimmed array for active group only labels
       groupLabels = properties.labels
         .filter(function(d, i) {
           return hideEmptyGroups ? groupTotals[i].t !== 0 : true;
@@ -270,10 +260,24 @@ nv.models.multiBarChart = function() {
           });
       }
 
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
+
       // safety array
       if (!dataBars.length) {
         dataBars = [{values: []}];
       }
+
+      // set state.disabled
+      state.disabled = data.map(function(d) { return !!d.disabled; });
+      state.stacked = multibar.stacked();
 
       groupCount = groupLabels.length;
       seriesCount = dataBars.length;
@@ -440,6 +444,23 @@ nv.models.multiBarChart = function() {
         } else {
           return 0;
         }
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       multibar

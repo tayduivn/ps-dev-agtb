@@ -50,6 +50,15 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        // patch metadata for if opps_view_by is Opportunities, not RLIs
+        if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'Opportunities') {
+            _.each(_.first(options.meta.panels).fields, function(field) {
+                if (field.label_module && field.label_module === 'RevenueLineItems') {
+                    field.label_module = 'Opportunities';
+                }
+            });
+        }
+
         this._super('initialize', [options]);
 
         this.allOptions = [];
