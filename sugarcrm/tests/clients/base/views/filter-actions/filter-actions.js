@@ -4,9 +4,13 @@ describe('Base.View.FilterActions', function() {
 
     beforeEach(function() {
         parentLayout = new Backbone.View();
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('filter-actions', 'view', 'base');
+        SugarTest.testMetadata.set();
         view = SugarTest.createView('base', 'Accounts', 'filter-actions', {}, false, false, parentLayout);
         view.layout = parentLayout;
         view.initialize(view.options);
+        view.render();
         app = SUGAR.App;
     });
 
@@ -15,6 +19,8 @@ describe('Base.View.FilterActions', function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        SugarTest.testMetadata.dispose();
+        view.dispose();
         view = null;
     });
 
@@ -85,7 +91,6 @@ describe('Base.View.FilterActions', function() {
 
         it('should trigger validate', function() {
             view.filterNameChanged();
-            expect(layoutTriggerStub).toHaveBeenCalled();
             expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
         });
 
@@ -156,6 +161,22 @@ describe('Base.View.FilterActions', function() {
                 var filter = new Backbone.Model({is_template: value});
                 view.toggle(filter);
                 expect(view.$el.hasClass('hide')).toBe(value);
+            });
+        });
+    });
+
+    describe('getFilterName validation', function() {
+        using('valid values', [
+            {str: 'a', expected: 'a'},
+            {str: ' a', expected: 'a'},
+            {str: 'a ', expected: 'a'},
+            {str: '  a  ', expected: 'a'},
+            {str: '', expected: ''},
+            {str: '   ', expected: ''}
+        ], function(data) {
+            it('should trim filtername properly', function() {
+                view.$('input').val(data.str);
+                expect(view.getFilterName()).toBe(data.expected);
             });
         });
     });

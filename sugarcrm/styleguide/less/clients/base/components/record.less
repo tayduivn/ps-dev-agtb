@@ -1076,7 +1076,7 @@
               }
               span {
                 width: 25%;
-                height: 26px;
+                height: inherit;
                 display: inline-block;
                 float: left;
                 border-left: 1px solid rgba(204,204,204,.5);
@@ -1084,24 +1084,22 @@
                 &:first-child {
                   border: none;
                 }
-                &.schedule {
-                  border-top: 2px solid #ccc;
-                  border-bottom: 2px solid #ccc;
-                  &.start {
-                    border-left: 2px solid rgb(55,136,14);
-                  }
-                  &.end {
-                    border-right: 2px solid rgb(190,0,20);
-                  }
-                }
-                &.start-end {
-                  border-left: 2px solid rgb(55,136,14);
-                }
                 &.busy {
-                  background-color: rgb(101,101,101);
-                  border-color: rgb(70,70,70);
+                  background-color: rgba(0,0,0,.2);
+                  border-left: 1px solid #bbb;
                 }
               }
+            }
+          }
+          .start_end_overlay {
+            position: absolute;
+            top: 4px;
+            height: 24px;
+            background-color: rgba(23, 109, 229, .65);
+            box-shadow: inset 1px 0 0 0 rgba(225, 225, 225, .5), inset -1px 0 0 0 rgba(225, 225, 225, .5);
+            border-left: 3px solid rgba(51, 128, 13, 1);
+            &.right_border {
+              border-right: 3px solid rgba(230, 23, 24, 1);
             }
           }
         }

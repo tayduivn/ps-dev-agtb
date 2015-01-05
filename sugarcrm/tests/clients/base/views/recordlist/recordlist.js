@@ -86,8 +86,8 @@ describe('Base.View.RecordList', function() {
             expect(fields.length).toBe(1);
         });
 
-        it('should set a data view on the context', function () {
-            expect(view.context.get("dataView")).toBe("list");
+        it('should set a data view on the context', function() {
+            expect(view.context.get('dataView')).toBe('list');
         });
 
         it('should have added row actions', function() {
@@ -359,5 +359,46 @@ describe('Base.View.RecordList', function() {
                 expect(view.rowFields[model.id].length).toEqual(4);
             });
         });
+    });
+
+    describe('Auto scrolling on fields focus in inline edit mode', function() {
+        beforeEach(function() {
+            var flexListViewHtml = '<div class="flex-list-view-content"></div>';
+            view.$el.append(flexListViewHtml);
+            var bordersPosition = {left: 71, right: 600};
+            var _getBordersPositionStub = sinon.collection.stub(view, '_getBordersPosition', function() {
+                return bordersPosition;
+            });
+
+        });
+        using('fields hidden to the right, to the left or visible, in rtl or ltr mode' +
+            'and different browser rtl scrollTypes',
+            [
+                {rtl: false, left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -41},
+                {rtl: false, left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 54},
+                {rtl: false, left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0},
+                {rtl: true, scrollType: 'default', left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -41},
+                {rtl: true, scrollType: 'default', left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 54},
+                {rtl: true, scrollType: 'default', left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0},
+                {rtl: true, scrollType: 'reverse', left: 34, right: 138, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 41},
+                {rtl: true, scrollType: 'reverse', left: 570, right: 650, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: -54},
+                {rtl: true, scrollType: 'reverse', left: 300, right: 380, top: 380, bottom: 408, fieldPadding: 4, expectedScroll: 0}
+            ],
+            function(params) {
+                it('should scroll the panel to the make the focused field visible', function() {
+                    if (params.rtl) {
+                        app.lang.direction = 'rtl';
+                        $.support.rtlScrollType = params.scrollType;
+                    }
+                    var scrollLeftSpy = sinon.collection.spy($.fn, 'scrollLeft');
+                    view.setPanelPosition(params);
+
+                    if (!params.expectedScroll) {
+                        expect(scrollLeftSpy).not.toHaveBeenCalled();
+                    } else {
+                        expect(scrollLeftSpy).toHaveBeenCalledWith(params.expectedScroll);
+                    }
+                });
+            });
     });
 });

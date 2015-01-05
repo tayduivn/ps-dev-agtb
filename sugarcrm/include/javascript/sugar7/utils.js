@@ -548,7 +548,7 @@
             /**
              * Returns if the current browser has touch events
              *
-             * @returns {Boolean}
+             * @return {boolean}
              */
             isTouchDevice: function() {
                 return Modernizr.touch;

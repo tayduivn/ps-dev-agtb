@@ -101,7 +101,8 @@
      * @return {String} The value of the input.
      */
     getFilterName: function() {
-        return this.$('input').val();
+        var filterName = this.$('input').val();
+        return filterName.trim();
     },
 
     /**

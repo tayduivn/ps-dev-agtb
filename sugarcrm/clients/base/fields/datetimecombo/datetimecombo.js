@@ -163,7 +163,7 @@
                 false :
                 !!this.def.time.disable_text_input,
             className: this.def.time.css_class || 'prevent-mousedown',
-            appendTo: this.view.$el
+            appendTo: this.$el
         };
 
         this._enableDuration(options);
@@ -283,6 +283,9 @@
                 }
 
                 this.model.set(this.name, datetime);
+            }, this),
+            focus: _.bind(function() {
+                this.handleFocus();
             }, this)
         });
     },

@@ -497,7 +497,10 @@
              * Attach focus handler in order to pass the current element's location.
              */
             bindDomChange: function() {
-                this.$(this.fieldTag).on('focus', _.bind(this.handleFocus, this));
+                // Need to delay the function with debounce because Chrome 39
+                // auto-scrolls the viewport on tabbing and we want to make sure
+                // that the `handleFocus` is run afterwards.
+                this.$(this.fieldTag).on('focus', _.bind(_.debounce(this.handleFocus, 40), this));
                 _fieldProto.bindDomChange.call(this);
             },
 
@@ -505,19 +508,32 @@
              * {@inheritDoc}
              * Calculate current offset location and pass it to the parent's view.
              */
-            handleFocus: function(evt) {
+            handleFocus: function() {
                 if (this.disposed) {
                     return;
                 }
-                var left = this.$el.offset().left,
-                    right = this.$el.outerWidth() + left,
-                    top = this.$el.offset().top,
-                    bottom = this.$el.outerHeight() + top;
+                //Sometimes, chrome 39 auto-scrolls on tab. So here we reset the
+                //flex list to its scrolling position. Storing the value in data
+                //attributes is done by the recordList.
+                var $flexList = this.$el.closest('.flex-list-view-content');
+                if (!_.isUndefined($flexList)) {
+                    var previousScrollLeftValue = $flexList.data('previousScrollLeftValue');
+                    if (!_.isUndefined(previousScrollLeftValue) && $flexList.scrollLeft() !== previousScrollLeftValue) {
+                        $flexList.scrollLeft(previousScrollLeftValue);
+                        $flexList.removeData('previousScrollLeftValue');
+                    }
+                }
+                var left = this.$el.position().left;
+                var right = this.$el.outerWidth() + left;
+                var top = this.$el.offset().top;
+                var bottom = this.$el.outerHeight() + top;
+                var fieldPadding = parseInt(this.$el.parent().css('padding-left'), 10);
                 this.view.trigger('field:focus:location', {
                     left: left,
                     right: right,
                     top: top,
-                    bottom: bottom
+                    bottom: bottom,
+                    fieldPadding: fieldPadding
                 });
             },
 

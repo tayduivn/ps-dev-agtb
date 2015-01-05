@@ -37,7 +37,7 @@
                 containerCssClass: inList?'select2-narrow':'',
                 width: inList?'off':'100%',
                 minimumResultsForSearch: 5
-            }).on("change", function(e) {
+            }).on('change', function(e) {
                 var module = e.val;
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
@@ -46,12 +46,8 @@
                     module: module
                 });
                 self.$(self.fieldTag).select2('val', '');
-            });
+            }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
 
-            var plugin = this.$(this.typeFieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
                 this.model.setDefault(this.def.type_name, domParentTypeVal);

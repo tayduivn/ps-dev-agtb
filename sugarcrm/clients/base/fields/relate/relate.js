@@ -224,23 +224,24 @@
                 }).on('searchmore', function() {
                     $(this).select2('close');
                     self.openSelectDrawer();
-                }).on("change", function (e) {
+                }).on('change', function(e) {
                     var id = e.val,
                         plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
+                        value = (id) ? plugin.selection.find('span').text() : $(this).data('id'),
                         collection = plugin.context,
                         attributes = {};
                     if (_.isUndefined(id)) {
                         return;
                     }
-                    //Update the source element or else reverting back to the original value will not trigger a change event.
-                    plugin.opts.element.data("id", id);
+                    // Update the source element or else reverting back to the
+                    // original value will not trigger a change event.
+                    plugin.opts.element.data('id', id);
                     if (collection && !_.isEmpty(id)) {
                         // if we have search results use that to set new values
                         var model = collection.get(id);
                         attributes.id = model.id;
                         attributes.value = model.get('name');
-                        _.each(model.attributes, function (value, field) {
+                        _.each(model.attributes, function(value, field) {
                             if (app.acl.hasAccessToModel('view', model, field)) {
                                 attributes[field] = attributes[field] || model.get(field);
                             }
@@ -254,27 +255,23 @@
                         attributes.id = '';
                         attributes.value = '';
                     }
-
                     self.setValue(attributes);
-                });
-            var plugin = this.$(this.fieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
+                }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+
         } else if (this.tplName === 'disabled') {
             this.$(this.fieldTag).select2({
                 width: '100%',
-                initSelection: function (el, callback) {
+                initSelection: function(el, callback) {
                     var $el = $(el),
                         id = $el.data('id'),
                         text = $el.val();
                     callback({id: id, text: text});
                 },
-                formatInputTooShort: function () {
+                formatInputTooShort: function() {
                     return '';
                 },
-                formatSearching: function () {
-                    return app.lang.get("LBL_LOADING", self.module);
+                formatSearching: function() {
+                    return app.lang.get('LBL_LOADING', self.module);
                 },
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
