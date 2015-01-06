@@ -23,7 +23,8 @@
     plugins: ['EllipsisInline'],
 
     /**
-     * Set default start date time if date_start has not been set.
+     * Set default start date time if date_start has not been set. Add custom validation
+     * to make sure that the date range is valid before saving.
      * @inheritdoc
      */
     initialize: function(options) {
@@ -43,6 +44,12 @@
                 'duration_minutes': this.model.get('duration_minutes')
             });
         }
+
+        // Date range should be valid before saving the record.
+        this.model.addValidationTask('duration_date_range_' + this.cid, _.bind(function(fields, errors, callback) {
+            _.extend(errors, this.validate());
+            callback(null, fields, errors);
+        }, this));
     },
 
     /**
@@ -56,7 +63,8 @@
         // In detail mode, re-render the field if either start or end date changes.
         this.model.on('change:date_start change:date_end', function(model) {
             var dateStartField,
-                dateEndField;
+                dateEndField,
+                errors;
 
             this.updateDurationHoursAndMinutes();
 
@@ -67,14 +75,11 @@
                 if (dateStartField && !dateStartField.disposed && dateEndField && !dateEndField.disposed) {
                     dateStartField.clearErrorDecoration();
                     dateEndField.clearErrorDecoration();
+                    errors = this.validate();
 
-                    if (!this.isDateRangeValid()) {
-                        dateStartField.decorateError({
-                            isBefore: app.lang.get(dateEndField.label || dateEndField.vname || dateEndField.name, model.module)
-                        });
-                        dateEndField.decorateError({
-                            isAfter: app.lang.get(dateStartField.label || dateStartField.vname || dateStartField.name, model.module)
-                        });
+                    if (errors) {
+                        dateStartField.decorateError(errors.date_start);
+                        dateEndField.decorateError(errors.date_end);
                     }
                 }
             } else {
@@ -83,6 +88,28 @@
         }, this);
 
         this._super('bindDataChange');
+    },
+
+    /**
+     * Check to see if there are any errors on the field. Returns undefined if it is valid.
+     * @returns {Object} Errors
+     */
+    validate: function() {
+        var errors,
+            dateStartField = this.view.getField('date_start'),
+            dateEndField = this.view.getField('date_end');
+
+        if (!this.isDateRangeValid()) {
+            errors = {};
+            errors.date_start = {
+                isBefore: dateEndField.label
+            };
+            errors.date_end = {
+                isAfter: dateStartField.label
+            };
+        }
+
+        return errors;
     },
 
     /**
