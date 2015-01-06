@@ -550,7 +550,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.state.current_view.url = url;
 				ModuleBuilder.state.current_view.successCall = successCall;
 			}
-			
+			ModuleBuilder.centerContentURL = ModuleBuilder.contentURL || url;
 			ModuleBuilder.contentURL =  url;
 			if (typeof(successCall) != 'function') {
 				if (ModuleBuilder.callInProgress)
@@ -608,6 +608,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				SUGAR.util.evalScript(t.exec(ajaxResponse.data));
 				return true;
 			}
+			// If the center panel isn't being updated, revert the content URL since we only care about the center panel
+			// for reload purposes
+			if (!ajaxResponse.center) {
+				ModuleBuilder.contentURL = ModuleBuilder.centerContentURL;
+			}
 			
 			for (var maj in ajaxResponse) {
 				var name = 'mb' + maj;
@@ -654,8 +659,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						}
 					} else {
 						//Store Center pane changes in browser history
-						YAHOO.util.History.navigate('mbContent', ModuleBuilder.contentURL);
 						if (name == 'mbcenter') {
+							YAHOO.util.History.navigate('mbContent', ModuleBuilder.contentURL);
 							ModuleBuilder.closeAllTabs();
 							comp = ModuleBuilder.tabPanel.getTab(0);
 						}
