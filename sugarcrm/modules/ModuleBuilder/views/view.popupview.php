@@ -157,10 +157,20 @@ class ViewPopupview extends ViewListView
         $buttons = array ( ) ;
         if (! $this->fromModuleBuilder)
         {
-            $buttons [] = array ( 'name' => 'savebtn' , 'image' => $imageSave , 'text' => $GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVEPUBLISH' ] , 'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");ModuleBuilder.state.isDirty=false;ModuleBuilder.submitForm(\"edittabs\" )'" ) ;
+            $buttons[] = array(
+                'name' => 'savebtn',
+                'image' => $imageSave,
+                'text' => $GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
+                'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");"
+                    . "ModuleBuilder.state.markAsClean();ModuleBuilder.submitForm(\"edittabs\")'");
         } else
         {
-            $buttons [] = array ( 'name' => 'mbsavebtn' , 'image' => $imageSave , 'text' => $GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVE' ] , 'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");ModuleBuilder.state.isDirty=false;ModuleBuilder.submitForm(\"edittabs\" )'" ) ;
+            $buttons[] = array(
+                'name' => 'mbsavebtn',
+                'image' => $imageSave,
+                'text' => $GLOBALS['mod_strings']['LBL_BTN_SAVE'],
+                'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");"
+                    . "ModuleBuilder.state.markAsClean();ModuleBuilder.submitForm(\"edittabs\")'");
         }
         $buttons [] = array ( 'name' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY' ) , 'actionScript' => "onclick='$histaction'" ) ;
         $smarty->assign ( 'buttons', $this->_buildImageButtons ( $buttons ) ) ;

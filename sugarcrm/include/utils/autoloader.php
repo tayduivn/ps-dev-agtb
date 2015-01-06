@@ -60,6 +60,7 @@ class SugarAutoLoader
         'SugarWidget' => "include/generic/SugarWidgets/",
         'Zend_' => 'vendor/',
         'SugarJob' => 'include/SugarQueue/jobs/',
+        'MetaDataContext' => 'modules/ModuleBuilder/parsers/MetaDataContext/',
     );
 
     /**
@@ -111,26 +112,26 @@ class SugarAutoLoader
      * @var array
      */
     public static $exclude = array(
-        'cache/',
-        'custom/history/',
-        '.idea/',
-        'custom/blowfish/',
-        'custom/Extension/',
-        'custom/backup/',
-        'custom/modulebuilder/',
-        'tests/',
-        'examples/',
-        'docs/',
-        'vendor/log4php/',
-        'upload/',
-        'portal/',
-        'vendor/HTMLPurifier/',
-        'vendor/PHPMailer/',
-        'vendor/reCaptcha/',
-        'vendor/ytree/',
-        'vendor/pclzip/',
-        'vendor/nusoap/',
-        'vendor/bin/',
+        'cache',
+        'custom/history',
+        '.idea',
+        'custom/blowfish',
+        'custom/Extension',
+        'custom/backup',
+        'custom/modulebuilder',
+        'tests',
+        'examples',
+        'docs',
+        'vendor/log4php',
+        'upload',
+        'portal',
+        'vendor/HTMLPurifier',
+        'vendor/PHPMailer',
+        'vendor/reCaptcha',
+        'vendor/ytree',
+        'vendor/pclzip',
+        'vendor/nusoap',
+        'vendor/bin',
     );
 
     /**
@@ -1005,9 +1006,10 @@ class SugarAutoLoader
      * @param string $dir
      * @param bool $get_dirs Get directories and not files
      * @param string $extension Get only files with given extension
+     * @param boolean $recursive Scan directory recursively
      * @return array List of files
      */
-    public static function getDirFiles($dir, $get_dirs = false, $extension = null)
+    public static function getDirFiles($dir, $get_dirs = false, $extension = null, $recursive = false)
     {
         // In development mode we don't have the filemap available. To avoid
         // full rebuilds on every page load, only load what we need at this
@@ -1034,20 +1036,46 @@ class SugarAutoLoader
         	}
         	$data = $data[$part];
         }
-        $result = array();
+
         if (!is_array($data)) {
-            return $result;
+            return array();
         }
-        foreach ($data as $file => $data) {
+
+        return self::flatten($dir, $data, $get_dirs, $extension, $recursive);
+    }
+
+    /**
+     * Flattens the result of self::getDirFiles()
+     *
+     * @param string $dir Base directory
+     * @param array $data Tree data
+     * @param boolean $get_dirs
+     * @param string $extension Filter files by extension
+     * @param boolean $recursive Use data from subdirectories
+     *
+     * @return array Flattened data
+     */
+    protected function flatten($dir, array $data, $get_dirs, $extension, $recursive)
+    {
+        $result = array();
+        foreach ($data as $file => $nodes) {
             // check extension if given
             if (!empty($extension) && pathinfo($file, PATHINFO_EXTENSION) != $extension) {
                 continue;
             }
+            $path = $dir . '/' . $file;
             // get dirs or files depending on $get_dirs
-            if (is_array($data) == $get_dirs) {
-                $result[] = "$dir/$file";
+            if (is_array($nodes) == $get_dirs) {
+                $result[] = $path;
+            }
+            if ($recursive && is_array($nodes)) {
+                $result = array_merge(
+                    $result,
+                    self::flatten($path, $nodes, $get_dirs, $extension, $recursive)
+                );
             }
         }
+
         return $result;
     }
 
@@ -1234,19 +1262,20 @@ class SugarAutoLoader
      */
     public static function scanDir($path)
     {
-        $data = array();
+        $path = rtrim($path, '/');
         if (in_array($path, self::$exclude) || !file_exists("./".$path)) {
             return array();
         }
 
         $iter = new DirectoryIterator("./".$path);
+        $data = array();
         foreach ($iter as $item) {
             if ($item->isDot()) {
                 continue;
             }
             $filename = $item->getFilename();
             if ($item->isDir()) {
-                $data[$filename] = self::scanDir($path.$filename."/");
+                $data[$filename] = self::scanDir($path . '/' . $filename);
             } else {
                 if (!in_array(pathinfo($filename, PATHINFO_EXTENSION), self::$exts)) {
                     continue;

@@ -89,7 +89,7 @@ YAHOO.extend(Studio2.ListDD, YAHOO.util.DDProxy, {
 	
 	endDrag: function(e){
         Studio2.clearScrollObj();
-		ModuleBuilder.state.isDirty=true;
+        ModuleBuilder.state.markAsDirty();
 		var clickEl = this.getEl();
 		var clickExEl = new YAHOO.util.Element(clickEl);
 		dragEl = this.getDragEl();

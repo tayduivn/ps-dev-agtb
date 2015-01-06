@@ -176,10 +176,20 @@ class History implements HistoryInterface
 
         if (file_exists ( $filename ))
         {
-            copy ( $filename, $this->_previewFilename ) ;
+            $this->savePreview($filename);
             return $timestamp ;
         }
         return null ;
+    }
+
+    /**
+     * Saves given file for preview
+     *
+     * @param $filename File name
+     */
+    public function savePreview($filename)
+    {
+        copy($filename, $this->_previewFilename);
     }
 
     /*

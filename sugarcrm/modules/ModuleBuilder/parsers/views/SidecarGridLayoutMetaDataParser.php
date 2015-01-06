@@ -889,7 +889,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
             // Clear out the cache just for the platform we are on
             $client = empty($this->client) ? 'base' : $this->client;
-            MetaDataManager::refreshModulesCache(array($this->_moduleName), array($client));
+            MetaDataManager::refreshModulesCache(
+                array($this->_moduleName),
+                array($client),
+                $this->implementation->getParams()
+            );
             parent::_clearCaches();
         }
     }
