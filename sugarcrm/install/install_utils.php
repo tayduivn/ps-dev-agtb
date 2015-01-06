@@ -970,7 +970,7 @@ AddType     application/javascript  .js
 <IfModule mod_mime.c>
     AddType application/x-font-woff .woff
 </IfModule>
-<FilesMatch "\.(jpg|png|gif|js|css|ico|woff)$">
+<FilesMatch "\.(jpg|png|gif|js|css|ico|woff|svg)$">
         <IfModule mod_headers.c>
                 Header set ETag ""
                 Header set Cache-Control "max-age=2592000"
@@ -985,6 +985,7 @@ AddType     application/javascript  .js
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
         ExpiresByType application/x-font-woff "access plus 1 month"
+        ExpiresByType image/svg "access plus 1 month"
 </IfModule>
 # END SUGARCRM RESTRICTIONS
 
