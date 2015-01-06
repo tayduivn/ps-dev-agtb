@@ -8,6 +8,9 @@ describe('Base.View.Create', function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'headerpane');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'tabspanels');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'businesscard');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('actiondropdown', 'field', 'base', 'detail');
