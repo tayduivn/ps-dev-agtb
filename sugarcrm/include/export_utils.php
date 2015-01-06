@@ -420,6 +420,9 @@ function getExportContentFromResult(
 
     $pre_id = '';
 
+    // Setup the "header" row with proper delimiters
+    $content .= "\"" . implode("\"" . getDelimiter() . "\"", array_values($field_labels)) . "\"\r\n";
+
     if($populate){
         //this is a sample request with no data, so create fake datarows
          $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
@@ -522,9 +525,6 @@ function getExportContentFromResult(
                     ? $email_data[$bean_id] : '';
             }
         }
-
-        // Setup the "header" row with proper delimiters
-        $content .= "\"" . implode("\"" . getDelimiter() . "\"", array_values($field_labels)) . "\"\r\n";
 
         // Write the export data
         foreach ($records as $record) {

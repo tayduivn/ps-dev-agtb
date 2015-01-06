@@ -145,10 +145,8 @@ class Audit extends SugarBean
 
             //If the team_set_id field has a log entry, we retrieve the list of teams to display
             if ($row['field_name'] == 'team_set_id') {
-                $row['field_name'] = 'team_name';
-                require_once 'modules/Teams/TeamSetManager.php';
-                $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
-                $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
+                $return[] = $this->handleTeamSetField($row);
+                continue;
             }
             //END SUGARCRM flav=pro ONLY
 
@@ -167,22 +165,10 @@ class Audit extends SugarBean
             // convert the date
             $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
             $row['date_created'] = $timedate->asIso($dateCreated);
+            $row = $this->formatRowForApi($row);
 
-            $row['before'] = $row['after'] = null;
-
-            if (empty($row['before_value_string']) && empty($row['after_value_string'])) {
-                $row['before'] = $row['before_value_text'];
-                $row['after'] = $row['after_value_text'];
-            } else {
-                $row['before'] = $row['before_value_string'];
-                $row['after'] = $row['after_value_string'];
-            }
-            unset($row['before_value_string']);
-            unset($row['after_value_string']);
-            unset($row['before_value_text']);
-            unset($row['after_value_text']);
-
-            $fieldType = $bean->field_defs[$row['field_name']]['type'];
+            $fieldName = $row['field_name'];
+            $fieldType = $bean->field_defs[$fieldName]['type'];
             switch ($fieldType) {
                 case 'date':
                 case 'time':
@@ -198,9 +184,10 @@ class Audit extends SugarBean
                 case 'relate':
                 case 'link':
                     // get the other side
-                    if (isset($bean->field_defs[$row['field_name']['module']])) {
-                        $otherSideBeanBefore = BeanFactory::getBean($bean->field_defs[$row['field_name']['module']], $row['before']);
-                        $otherSideBeanAfter = BeanFactory::getBean($bean->field_defs[$row['field_name']['module']], $row['after']);
+                    if (isset($bean->field_defs[$fieldName]['module'])) {
+                        $module = $bean->field_defs[$fieldName]['module'];
+                        $otherSideBeanBefore = BeanFactory::getBean($module, $row['before']);
+                        $otherSideBeanAfter = BeanFactory::getBean($module, $row['after']);
                         if ($otherSideBeanBefore instanceof SugarBean) {
                             $row['before'] = $otherSideBeanBefore->get_summary_text();
                         }
@@ -219,6 +206,58 @@ class Audit extends SugarBean
         }
 
         return $return;
+    }
+
+    /**
+     * Handles the special-cased `team_set_id` field when fetching rows for the
+     * Audit Log API. It is needed in order to prevent processing this field as
+     * type `relate`.
+     *
+     * @param array $row A row of database-queried audit table results.
+     * @return array The API-formatted $row.
+     */
+    protected function handleTeamSetField($row = array())
+    {
+        if (empty($row)) {
+            return $row;
+        }
+
+        $row['field_name'] = 'team_name';
+        require_once 'modules/Teams/TeamSetManager.php';
+        $row['before_value_string'] = TeamSetManager::getTeamsFromSet($row['before_value_string']);
+        $row['after_value_string'] = TeamSetManager::getTeamsFromSet($row['after_value_string']);
+
+        $row = $this->formatRowForApi($row);
+        return $row;
+    }
+
+    /**
+     * Formats a db-fetched row for the Audit Log API with `before` and `after`
+     * values.
+     *
+     * @param array $row A row of database-queried audit table results.
+     * @return array The API-formatted $row.
+     */
+    protected function formatRowForApi($row = array())
+    {
+        if (empty($row)) {
+            return $row;
+        }
+
+        if (empty($row['before_value_string']) && empty($row['after_value_string'])) {
+            $row['before'] = $row['before_value_text'];
+            $row['after'] = $row['after_value_text'];
+        } else {
+            $row['before'] = $row['before_value_string'];
+            $row['after'] = $row['after_value_string'];
+        }
+
+        unset($row['before_value_string']);
+        unset($row['before_value_text']);
+        unset($row['after_value_string']);
+        unset($row['after_value_text']);
+
+        return $row;
     }
 
     /**

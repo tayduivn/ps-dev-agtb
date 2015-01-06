@@ -31,7 +31,7 @@
                     {{/if}}
                 {{/if}}
                     <p style="margin-left: 0;padding-left: 0px;">
-                        <a href="#{{getFieldValue this "show_case_url"}}">Case&nbsp;&nbsp;#&nbsp;&nbsp;{{getFieldValue this "cas_id"}}&nbsp;-&nbsp; {{getFieldValue this "name"}}</a>
+                        <a href="#{{getFieldValue this "show_case_url"}}">{{str "LBL_PMSE_LABEL_PROCESS" this.module}}&nbsp;&nbsp;#&nbsp;&nbsp;{{getFieldValue this "cas_id"}}&nbsp;-&nbsp; {{getFieldValue this "name"}}</a>
                         <!--<a href="#pmse_Inbox/{{getFieldValue this "id2"}}/layout/show-case/{{getFieldValue this "flow_id"}}">Case&nbsp;&nbsp;#&nbsp;&nbsp;{{getFieldValue this "cas_id"}}&nbsp;-&nbsp; {{getFieldValue this "name"}}</a>-->
                         <!--{{buildRoute module="pmse_Inbox" id=attributes.id view="show-case" action=attributes.flow_id}}-->
                     </p>

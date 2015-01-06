@@ -568,15 +568,14 @@ class SugarFieldBase {
      * @param array $properties - Any properties for this field
      */
     public function save($bean, $params, $field, $properties, $prefix = '') {
-         if ( isset($params[$prefix.$field]) ) {
-             if(isset($properties['len']) && isset($properties['type']) && $this->isTrimmable($properties['type'])){
-                 $bean->$field = trim($this->unformatField($params[$prefix.$field], $properties));
-             }
-             else {
-                 $bean->$field = $this->unformatField($params[$prefix.$field], $properties);
-         	 }
-         }
-     }
+        if (isset($params[$prefix.$field])) {
+            if (isset($properties['len']) && isset($properties['type']) && $this->isTrimmable($properties['type'])) {
+                $bean->$field = trim($this->unformatField($params[$prefix.$field], $properties));
+            } else {
+                $bean->$field = $this->unformatField($params[$prefix.$field], $properties);
+            }
+        }
+    }
 
     /**
      * This should be called when the bean is saved from the API. Most fields can just use default, which calls the field's individual ->save() function instead.

@@ -84,7 +84,7 @@ nv.models.pieChart = function() {
           });
         }
 
-        // if there are no active data series, activate them all
+        // if there are no active data series, inactivate them all
         if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
@@ -102,37 +102,44 @@ nv.models.pieChart = function() {
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
-
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
       //add series index to each data point for reference
       var pieData = data.map(function(d, i) {
-          d.series = i;
-          return d;
-        });
+            d.series = i;
+            if (!d.value) {
+              d.disabled = true;
+            }
+            return d;
+          });
+
+      var totalAmount = d3.sum(
+            // only sum enabled series
+            pieData
+              .filter(function(d, i) {
+                return !d.disabled;
+              })
+              .map(function(d, i) {
+                return d.value;
+              })
+          );
 
       //set state.disabled
       state.disabled = pieData.map(function(d) { return !!d.disabled; });
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -230,6 +237,23 @@ nv.models.pieChart = function() {
           .style('font-weight', 'bold');
         holeWrap
           .attr('transform', 'translate(' + (innerWidth / 2 + innerMargin.left) + ',' + (innerHeight / 2 + innerMargin.top) + ')');
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       //============================================================

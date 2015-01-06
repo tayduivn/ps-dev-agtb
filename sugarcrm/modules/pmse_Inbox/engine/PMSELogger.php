@@ -241,7 +241,7 @@ class PMSELogger extends AbstractLogger
         $data = new stdClass();
         $data->value = $message; //"This a message user: @[Users:seed_sally_id:Sally Bronsen] whit @[Users:seed_sarah_id:Sarah Smith] for the record: @[Leads:52f46f19-7a10-4dd5-28ed-53b4671f964d:Stephanie Plunk] end of the message.";
         $module_id = isset($params['module_id']) ? $params['module_id'] : null;
-        $module_name = isset($params['module_name']) ? $params['module_name'] : 'SugarBean';
+        $module_name = isset($params['module_name']) ? $params['module_name'] : 'pmse_Inbox';
         if (isset($params['tags']) && !empty($params['tags']) && is_array($params['tags'])) {
             $data->tags = $params['tags'];
             $i = 0;

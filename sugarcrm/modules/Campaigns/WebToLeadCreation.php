@@ -130,29 +130,38 @@ if(isset($lead->field_defs['webtolead_email1']) && isset($lead->field_defs['emai
 }
 
 $count= 0;
-foreach($lead->field_defs as $field_def)
-{
-	$email_fields = false;
-    if($field_def['name']== 'email1' || $field_def['name']== 'email2')
-    {
-    	$email_fields = true;
-    }
-	  if($field_def['name']!= 'account_name'){
-	    if( ( $field_def['type'] == 'relate' && empty($field_def['custom_type']) )
-	    	|| $field_def['type'] == 'assigned_user_name' || $field_def['type'] =='link'
-	    	|| (isset($field_def['source'])  && $field_def['source']=='non-db' && !$email_fields) || $field_def['type'] == 'id')
-	    {
-	        continue;
-	    }
-	   }
-	    if($field_def['name']== 'deleted' || $field_def['name']=='converted' || $field_def['name']=='date_entered'
-	        || $field_def['name']== 'date_modified' || $field_def['name']=='modified_user_id'
-	        || $field_def['name']=='assigned_user_id' || $field_def['name']=='created_by'
-	        || $field_def['name']=='team_id')
-	    {
-	    	continue;
-	    }
 
+// Used to prevent certain fields from appearing on the select list
+$fieldBlacklist = array(
+    'deleted' => 1,
+    'converted' => 1,
+    'date_entered' => 1,
+    'date_modified' => 1,
+    'modified_user_id' => 1,
+    'assigned_user_id' => 1,
+    'created_by' => 1,
+    'team_id' => 1,
+    'tag_lower' => 1,
+);
+
+foreach ($lead->field_defs as $field_def) {
+    $email_fields = false;
+    if ($field_def['name']== 'email1' || $field_def['name']== 'email2') {
+        $email_fields = true;
+    }
+
+    if ($field_def['name']!= 'account_name') {
+        if ( ( $field_def['type'] == 'relate' && empty($field_def['custom_type']) )
+            || $field_def['type'] == 'assigned_user_name' || $field_def['type'] =='link'
+            || (isset($field_def['source'])  && $field_def['source']=='non-db' && !$email_fields) || $field_def['type'] == 'id')
+        {
+            continue;
+        }
+    }
+
+    if (!empty($fieldBlacklist[$field_def['name']])) {
+        continue;
+    }
 
     $field_def['vname'] = preg_replace('/:$/','',translate($field_def['vname'],'Leads'));
 

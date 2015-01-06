@@ -222,10 +222,17 @@ class SugarUpgradeScanModules extends UpgradeScript
             return true;
         }
         $status = true;
+        $dictionary = array();
+        if (is_file('modules/' . $module . '/vardefs.php')) {
+            include('modules/' . $module . '/vardefs.php');
+        }
+
         foreach($GLOBALS['dictionary'][$object]['fields'] as $key => $value) {
             if(empty($value['name']) || $key != $value['name']) {
-                $this->log("Bad vardefs - key $key, name {$value['name']}");
-                $status = false;
+                if (empty($dictionary[$object]['fields'][$key]) || $dictionary[$object]['fields'][$key] != $value) {
+                    $this->log("Bad vardefs - key $key, name {$value['name']}");
+                    $status = false;
+                }
             }
 
             // Check "name" field type, @see CRYS-130
