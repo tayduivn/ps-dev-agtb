@@ -158,6 +158,8 @@
                 }
             });
             if (this.isFetchingOptions){
+                // Set loading message in place of empty DIV while options are loaded via API
+                this.$el.html(app.lang.get('LBL_LOADING'));
                 return this;
             }
         }
@@ -197,59 +199,54 @@
         }
         var select2Options = this.getSelect2Options(optionsKeys);
         var $el = this.$(this.fieldTag);
-        if (!_.isEmpty(optionsKeys)) {
-            //FIXME remove check for tplName SC-2608
-            if (this.tplName === 'edit' || this.tplName === 'list-edit' || this.tplName === 'massupdate') {
-                $el.select2(select2Options);
-                var plugin = $el.data('select2');
+        //FIXME remove check for tplName SC-2608
+        if (this.tplName === 'edit' || this.tplName === 'list-edit' || this.tplName === 'massupdate') {
+            $el.select2(select2Options);
+            var plugin = $el.data('select2');
 
-                if (this.dir) {
-                    plugin.container.attr('dir', this.dir);
-                    plugin.results.attr('dir', this.dir);
-                }
+            if (this.dir) {
+                plugin.container.attr('dir', this.dir);
+                plugin.results.attr('dir', this.dir);
+            }
 
-                if (plugin && plugin.focusser) {
-                    plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            if (plugin && plugin.focusser) {
+                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            }
+            $el.select2("container").addClass("tleft");
+            $el.on('change', function(ev) {
+                var value = ev.val;
+                if (_.isUndefined(value)) {
+                    return;
                 }
-                $el.select2("container").addClass("tleft");
-                $el.on('change', function(ev) {
-                    var value = ev.val;
-                    if (_.isUndefined(value)) {
-                        return;
-                    }
-                    if (self.model) {
-                        self.model.set(self.name, self.unformat(value));
+                if (self.model) {
+                    self.model.set(self.name, self.unformat(value));
+                }
+            });
+            if (this.def.ordered) {
+                $el.select2('container').find('ul.select2-choices').sortable({
+                    containment: 'parent',
+                    start: function() {
+                        $el.select2('onSortStart');
+                    },
+                    update: function() {
+                        $el.select2('onSortEnd');
                     }
                 });
-                if (this.def.ordered) {
-                    $el.select2('container').find('ul.select2-choices').sortable({
-                        containment: 'parent',
-                        start: function() {
-                            $el.select2('onSortStart');
-                        },
-                        update: function() {
-                            $el.select2('onSortEnd');
-                        }
-                    });
-                }
-            } else if (this.tplName === 'disabled') {
-                $el.select2(select2Options);
-                $el.select2('disable');
             }
-            //Setup selected value in Select2 widget
-            if (!_.isUndefined(this.value)) {
-                // To make pills load properly when autoselecting a string val
-                // from a list val needs to be an array
-                if (!_.isArray(this.value)) {
-                    this.value = [this.value];
-                }
-                // Trigger the `change` event only if we automatically set the
-                // default value.
-                $el.select2('val', this.value, !!defaultValue);
+        } else if (this.tplName === 'disabled') {
+            $el.select2(select2Options);
+            $el.select2('disable');
+        }
+        //Setup selected value in Select2 widget
+        if (!_.isUndefined(this.value)) {
+            // To make pills load properly when autoselecting a string val
+            // from a list val needs to be an array
+            if (!_.isArray(this.value)) {
+                this.value = [this.value];
             }
-        } else {
-            // Set loading message in place of empty DIV while options are loaded via API
-            this.$el.html(app.lang.get('LBL_LOADING'));
+            // Trigger the `change` event only if we automatically set the
+            // default value.
+            $el.select2('val', this.value, !!defaultValue);
         }
         return this;
     },
@@ -331,10 +328,6 @@
          */
         if(!this.def.isMultiSelect) {
             select2Options.placeholder = app.lang.get("LBL_SEARCH_SELECT");
-        }
-        // Options are being loaded via app.api.enum
-        if(_.isEmpty(optionsKeys)){
-            select2Options.placeholder = app.lang.get("LBL_LOADING");
         }
 
         /* From http://ivaynberg.github.com/select2/#documentation:
