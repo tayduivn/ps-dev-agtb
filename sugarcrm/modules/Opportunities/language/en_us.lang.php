@@ -107,7 +107,6 @@ $mod_strings = array(
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
     'LBL_CAMPAIGN_OPPORTUNITY' => 'Campaign Opportunity',
-    'LBL_CAMPAIGN_LINK' => 'Campaign Link',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
     'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
