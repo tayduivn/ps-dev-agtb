@@ -483,7 +483,7 @@ class SidecarMetaDataUpgrader
             if (empty($file)) {
                 continue;
             }
-            $file['isDCEnabled'] = true;
+            $file['isDCEnabled'] = $this->isQuickCreateVisible($sidecarMetadataPath, $module, true);
             $file['order'] = $position++;
             $this->files[] = $file;
         }
@@ -505,11 +505,35 @@ class SidecarMetaDataUpgrader
             if (empty($file)) {
                 continue;
             }
-            $file['isDCEnabled'] = false;
+            $file['isDCEnabled'] = $this->isQuickCreateVisible($sidecarMetadataPath, $module, false);
             $file['order'] = $position++;
             $this->files[] = $file;
         }
     }
+
+    /**
+     * Is the Quick Create file visible, if it's visible it should stay visible on the metadata upgrade
+     *
+     * @param string $quickCreateFile The Sidecar Metadata file
+     * @param string $module What module are we working with
+     * @param bool $default If visible is not found in the defs, it should return this value
+     * @return bool
+     */
+    protected function isQuickCreateVisible($quickCreateFile, $module, $default = false)
+    {
+        $viewdefs = array();
+        if (file_exists("custom/{$quickCreateFile}")) {
+            include "custom/{$quickCreateFile}";
+        } elseif (file_exists($quickCreateFile)) {
+            include "{$quickCreateFile}";
+        } else {
+            return $default;
+        }
+
+        $def = $viewdefs[$module]['base']['menu']['quickcreate'];
+        return (isset($def['visible'])) ? $def['visible'] : $default;
+    }
+
 
     protected function setMenuFiles()
     {
