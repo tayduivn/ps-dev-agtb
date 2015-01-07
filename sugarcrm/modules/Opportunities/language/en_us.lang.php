@@ -156,7 +156,7 @@ $mod_strings = array(
 
     // Config
     'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'Opportunity Hierarchy',
-    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'Values calculated from Revenue Line Items to Opportunities',
+    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'Set the Expected Close Date field on the resulting Opportunity records to be the earliest or latest close dates of the existing Revenue Line Items',
 
     //Dashlet
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
