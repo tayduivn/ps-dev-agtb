@@ -1409,7 +1409,7 @@ class HealthCheckScanner
 
             // check subpanel module. This param should refer to existing module
             if (!empty($panel['module']) && empty($this->beanList[$panel['module']])) {
-                $this->updateStatus("subpanelLinkNonExistModule", $panel['module']);
+                $this->updateStatus("subpanelLinkNonExistModule", $panel['module'], $deffile);
             }
 
             if (!empty($panel['get_subpanel_data']) && strpos($panel['get_subpanel_data'], 'function:') !== false) {
