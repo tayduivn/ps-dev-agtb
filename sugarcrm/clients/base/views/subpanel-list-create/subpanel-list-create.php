@@ -17,14 +17,12 @@ $viewdefs['base']['view']['subpanel-list-create'] = array(
                 'css_class' => 'btn',
                 'icon' => 'fa-plus',
                 'event' => 'list:addrow:fire',
-                'tooltip' => 'LBL_ADD_BUTTON'
             ),
             array(
                 'type' => 'rowaction',
                 'css_class' => 'btn',
                 'icon' => 'fa-minus',
                 'event' => 'list:deleterow:fire',
-                'tooltip' => 'LBL_DELETE_BUTTON'
             ),
         ),
     ),
