@@ -23,20 +23,13 @@
     currentOppsViewBySetting: undefined,
 
     /**
-     * Stores if Forecasts is set up or not
-     */
-    isForecastsSetup: false,
-
-    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        // get the initial opps_view_by setting
         this.currentOppsViewBySetting = this.model.get('opps_view_by');
-
-        // get the boolean form of if Forecasts is configured
-        this.isForecastsSetup = !!app.metadata.getModule('Forecasts', 'config').is_setup;
     },
 
     /**
@@ -44,31 +37,8 @@
      */
     bindDataChange: function() {
         this.model.on('change:opps_view_by', function() {
-            if (this.isForecastsSetup && this.currentOppsViewBySetting !== this.model.get('opps_view_by')) {
-                this.displayWarningAlert();
-            }
-
             this.showRollupOptions();
         }, this);
-    },
-
-    /**
-     * Displays the Forecast warning confirm alert
-     */
-    displayWarningAlert: function() {
-        app.alert.show('forecast-warning', {
-            level: 'confirmation',
-            title: app.lang.get('LBL_WARNING'),
-            messages: app.lang.get('LBL_OPPS_CONFIG_ALERT', 'Opportunities'),
-            onConfirm: _.bind(function() {
-                this.showRollupOptions();
-            }, this),
-            onCancel: _.bind(function() {
-                this.model.set({
-                    opps_view_by: this.currentOppsViewBySetting
-                });
-            }, this)
-        });
     },
 
     /**

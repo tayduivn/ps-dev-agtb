@@ -41,12 +41,6 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
             context: context
         };
 
-        sinon.collection.stub(app.metadata, 'getModule', function() {
-            return {
-                is_setup: false
-            }
-        });
-
         sinon.collection.stub(app.template, 'getView', function(view) {
             return function() {
                 return view;
@@ -67,41 +61,6 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
         it('should set currentOppsViewBySetting', function() {
             view.initialize(options);
             expect(view.currentOppsViewBySetting).toEqual('Opportunities');
-        });
-    });
-
-    describe('bindDataChange()', function() {
-        beforeEach(function() {
-            sinon.collection.stub(view, 'showRollupOptions');
-        });
-        it('should call displayWarningAlert if isForecastsSetup and change is different than current', function() {
-            sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.isForecastsSetup = true;
-            view.currentOppsViewBySetting = 'Opportunities';
-            view.bindDataChange();
-            view.model.set('opps_view_by', 'RevenueLineItems');
-            expect(view.displayWarningAlert).toHaveBeenCalled();
-            expect(view.showRollupOptions).toHaveBeenCalled();
-        });
-
-        it('should not call displayWarningAlert if isForecastsSetup == false', function() {
-            sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.isForecastsSetup = false;
-            view.currentOppsViewBySetting = 'Opportunities';
-            view.bindDataChange();
-            view.model.set('opps_view_by', 'RevenueLineItems');
-            expect(view.displayWarningAlert).not.toHaveBeenCalled();
-            expect(view.showRollupOptions).toHaveBeenCalled();
-        });
-
-        it('should not call displayWarningAlert if changing to the same as current', function() {
-            sinon.collection.stub(view, 'displayWarningAlert', function() {});
-            view.isForecastsSetup = true;
-            view.currentOppsViewBySetting = 'RevenueLineItems';
-            view.bindDataChange();
-            view.model.set('opps_view_by', 'RevenueLineItems');
-            expect(view.displayWarningAlert).not.toHaveBeenCalled();
-            expect(view.showRollupOptions).toHaveBeenCalled();
         });
     });
 
