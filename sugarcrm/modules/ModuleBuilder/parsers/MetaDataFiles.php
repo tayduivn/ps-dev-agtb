@@ -972,8 +972,10 @@ class MetaDataFiles
      *
      * @param $path
      * @return array
+     * @todo Make this back protected after handling role based LOV is reworked
+     * @see MetaDataManager::getEditableDropdownFilters()
      */
-    protected static function getClientFileParams($path)
+    public static function getClientFileParams($path)
     {
         if (preg_match('/\/roles\/([^\/]+)\//', $path, $matches)) {
             return array(

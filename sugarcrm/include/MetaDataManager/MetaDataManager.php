@@ -58,6 +58,7 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
+    const MM_EDITDDFILTERS  = 'editable_dropdown_filters';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -152,6 +153,7 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
+        self::MM_EDITDDFILTERS  => 'getEditableDropdownFilters'
     );
 
     /**
@@ -2173,7 +2175,7 @@ class MetaDataManager
                 $data = $this->$method($data, $context);
             } else {
                 $method = $this->sectionMap[$section];
-                $data[$section] = $this->$method();
+                $data[$section] = $this->$method($data, $context);
             }
         }
 
@@ -3199,6 +3201,7 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
+            self::MM_EDITDDFILTERS
         );
     }
 
@@ -3546,6 +3549,53 @@ class MetaDataManager
     }
 
     /**
+     * Returns editable dropdown filters
+     *
+     * @param array $data Existing data
+     * @param MetaDataContextInterface $context Metadata context
+     *
+     * @return array
+     */
+    public function getEditableDropdownFilters($data = array(), MetaDataContextInterface $context = null)
+    {
+        if ($this->public) {
+            return array();
+        }
+        if (is_null($context)) {
+            $context = $this->getCurrentUserContext();
+        }
+
+        require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
+
+        $parser = new ParserRoleDropDownFilter();
+        $platform = $this->platforms[0];
+        $files = array_map(
+            function ($file) use ($platform) {
+                $info = pathinfo($file);
+                return array(
+                   'path'=>$file,
+                   'file'=>$info['basename'],
+                   'subPath'=>$info['dirname'],
+                   'platform'=>$platform,
+                    'params' => MetaDataFiles::getClientFileParams($file),
+               );
+            },
+            $parser->getAllFiles()
+        );
+        $files = array_filter($files, function (array $file) use ($context) {
+            return $context->isValid($file);
+        });
+
+        uasort($files, function ($a, $b) use ($context) {
+            return $context->compare($a, $b);
+        });
+
+        $values = $parser->getDropDownFiltersFromFiles($files);
+
+        return $values;
+    }
+
+    /**
      * Lazily loads metadata hacks instance
      *
      * @return MetaDataHacks
@@ -3654,13 +3704,7 @@ class MetaDataManager
         $query->where()->in('roles.id', $roles);
         $data = $query->execute();
 
-        $roleSets = array();
-        foreach ($data as $row) {
-            $roleSets[] = $clone = clone $roleSet;
-            $clone->populateFromRow($row);
-        }
-
-        return $roleSets;
+        return self::createCollectionFromDatSet($roleSet, $data);
     }
 
     /**
@@ -3677,12 +3721,29 @@ class MetaDataManager
         $query->select('id', 'hash');
         $data = $query->execute();
 
-        $roleSets = array();
+        return self::createCollectionFromDatSet($roleSet, $data);
+    }
+
+    /**
+     * Creates collection of beans from the seed and data set
+     *
+     * @param SugarBean $seed Seed bean
+     * @param array $data Data set
+     *
+     * @return SugarBean[]
+     * @todo Move this to ACLRoleSet when it's merged
+     */
+    protected function createCollectionFromDatSet(SugarBean $seed, array $data)
+    {
+        $result = array();
+
+        // clone the seed for each row and populate it with the row data.
+        // do not construct every instance individually since it's relatively expensive
         foreach ($data as $row) {
-            $roleSets[] = $clone = clone $roleSet;
+            $result[] = $clone = clone $seed;
             $clone->populateFromRow($row);
         }
 
-        return $roleSets;
+        return $result;
     }
 }

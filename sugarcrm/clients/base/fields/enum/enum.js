@@ -71,6 +71,22 @@
      */
     _keysOrder: null,
 
+    initialize: function(){
+        this._super("initialize", arguments);
+
+        //Reset the availible options based on the user's access and the model's values
+        if (_.isString(this.def.options)) {
+            var self = this;
+
+            this.listenTo(this.model, "sync", function(model){
+                var options = app.lang.getAppListStrings(self.def.options);
+                if (options) {
+                    self.items = self._filterOptions(options);
+                }
+            });
+        }
+    },
+
     /**
      * @inheritDoc
      *
@@ -379,6 +395,7 @@
     _initSelection: function($ele, callback){
         var data = [];
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
+        options = this.items = this._filterOptions(options);
         var values = $ele.val();
         if (this.def.isMultiSelect) {
             values = values.split(this.def.separator || ',');
@@ -391,6 +408,48 @@
         } else {
             callback(data);
         }
+    },
+
+    /**
+     * Returns dropdown list options which can be used for editing 
+     *
+     * @param {Object} Dropdown list options
+     * @returns {Object}
+     * @private
+     */
+    _filterOptions: function (options) {
+        var currentValue,
+            syncedVal,
+            newOptions = {},
+            filter = app.metadata.getEditableDropdownFilter(this.def.options);
+
+        if (_.isEmpty(filter)) {
+            return options;
+        }
+
+        if (!_.contains(this.view.plugins, "Editable")) {
+            return options;
+        }
+        //Force the current value(s) into the availible options
+        syncedVal = this.model.getSyncedAttributes();
+        currentValue = _.isUndefined(syncedVal[this.name]) ? this.model.get(this.name) : syncedVal[this.name];
+        if (_.isString(currentValue)) {
+            currentValue = [currentValue];
+        }
+
+        var currentIndex = {};
+        _.each(currentValue, function(value){
+            currentIndex[value] = true;
+        });
+
+        //Now remove the disabled options
+        _.each(filter, function(visible, key) {
+            if (visible || key in currentIndex) {
+                newOptions[key] = options[key];
+            }
+        });
+
+        return newOptions;
     },
 
     /**
@@ -453,7 +512,7 @@
 
         if (!this._keysOrder) {
             this._keysOrder = {};
-            keys = _.map(app.lang.getAppListKeys(this.def.options), function(key) {
+            keys = _.map(this.items, function(key) {
                 return key.toString();
             });
             if (!_.isEqual(keys, _.keys(this.items))) {

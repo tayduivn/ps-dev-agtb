@@ -57,3 +57,9 @@ li.list2 {
 }
 
 #user_actions { float:right }
+
+.listContainer {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}

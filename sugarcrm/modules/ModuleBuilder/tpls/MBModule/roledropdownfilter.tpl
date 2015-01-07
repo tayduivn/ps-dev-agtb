@@ -17,10 +17,11 @@
           href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MBModule/dropdown.css'}"></link>
     <form name='dropdown_form' onsubmit="return false">
         <input type='hidden' name='module' value='ModuleBuilder'>
-        <input type='hidden' name='action' value='{$action}'>
+        <input type='hidden' name='action' value='saveroledropdownfilter'>
         <input type='hidden' name='to_pdf' value='true'>
         <input type='hidden' name='view_module' value='{$module_name}'>
         <input type='hidden' name='view_package' value='{$package_name}'>
+        <input type='hidden' name='dropdown_role' value='{$dropdown_role}'>
         <input type='hidden' id='list_value' name='list_value' value=''>
         {* This indicates that this dropdown is being created from a new field *}
         {if ($fromNewField)}
@@ -43,7 +44,7 @@
                 </td>
                 <td style="text-align: right">
                     <label>{sugar_translate label='LBL_ROLE'}
-                        {html_options name='dropdown_role' options=$roles onchange='this.form.action.value="roledropdownfilter";ModuleBuilder.handleSave("dropdown_form")'}
+                        {html_options name='dropdown_role' selected=$dropdown_role options=$roles}
                     </label>
                 </td>
             </tr>
@@ -66,7 +67,7 @@
             <tr>
                 <td colspan="3" class='mbLBLL'>
                     {sugar_translate label='LBL_DROPDOWN_LANGUAGE'}:&nbsp;
-                    {html_options name='dropdown_lang' options=$available_languages selected=$selected_lang onchange='this.form.action.value="dropdown";ModuleBuilder.handleSave("dropdown_form")'}
+                    {html_options name='dropdown_lang' options=$available_languages selected=$selected_lang}
                 </td>
             </tr>
             <tr>
@@ -82,20 +83,24 @@
                            onclick='SimpleList.sortAscending()'>
                     <input type='button' class='button' value='{sugar_translate label='LBL_BTN_SORT_DESCENDING'}'
                            onclick='SimpleList.sortDescending()'>
+                    <input type="button" class="button" id="select-all" value="{sugar_translate label="LBL_LISTVIEW_OPTION_ENTIRE"}">
+                    <input type="button" class="button" id="select-none" value="{sugar_translate label="LBL_LISTVIEW_NONE"}">
                 </td>
             </tr>
             <tr>
                 <td colspan='3'>
                     <ul id="ul1" class="listContainer">
-                        {foreach from=$options key='name' item='val'}
-                            {if ($name === "")}
-                                {capture assign=name}{sugar_translate label='LBL_BLANK'}{/capture}
-                                {assign var=val value=$name}
-                                {assign var=is_blank value=true}
-                            {else}
-                                {assign var=is_blank value=false}
-                            {/if}
-                            <li class="draggable" id="{$name}">
+                        {foreach from=$role_options key='id' item='checked'}
+                            {if isset($options[$id])}
+                                {if ($options[$id] === "")}
+                                    {capture assign=id}{sugar_translate label='LBL_BLANK'}{/capture}
+                                    {assign var=val value=$id}
+                                    {assign var=is_blank value=true}
+                                {else}
+                                    {assign var=val value=$options[$id]}
+                                    {assign var=is_blank value=false}
+                                {/if}
+                            <li class="draggable{if !$checked} deleted{/if}" id="{$id}">
                                 <table width='100%'>
                                     <tr>
                                         <td class="first">
@@ -104,44 +109,20 @@
                                             {else}
                                                 <b>{$val}</b>
                                             {/if}
-                                            <input id='value_{$name}' value='{$val|escape}' type='hidden'>
-			               <span class='fieldValue' id='span_{$name}'>[{$val}]</span>
-			               <span class='fieldValue' id='span_edit_{$name}' style='display:none'>
-			                   <input type='text' id='input_{$name}' value="{$val}"
-                                      onBlur='SimpleList.setDropDownValue("{$name}", this.value, true)'>
-			               </span>
+                                            <span class='fieldValue' id='span_{$id}'>[{$val}]</span>
                                         </td>
                                         <td align='right'>
-                                            <a href='javascript:void(0)'
-                                               onclick='SimpleList.editDropDownValue("{$name}", true)'>
-                                                {$editImage}</a>
-                                            &nbsp;
-                                            <a href='javascript:void(0)'
-                                               onclick='SimpleList.deleteDropDownValue("{$name}", true)'>
-                                                {$deleteImage}</a>
+                                            <input id='value_{$id}' value='{$options[$id]|escape}' type='hidden'>
+                                            <input type="hidden" value="0" name="dropdown_keys[{$id}]">
+                                            <input type="checkbox" value="1" {if $checked}checked{/if}
+                                                   name="dropdown_keys[{$id}]">
                                         </td>
                                     </tr>
                                 </table>
                             </li>
+                            {/if}
                         {/foreach}
                     </ul>
-                </td>
-            </tr>
-            <tr>
-                <td colspan='3'>
-                    <table width='100%'>
-                        <tr>
-                            <td class='mbLBLL'>{sugar_translate label='LBL_DROPDOWN_ITEM_NAME'}:</td>
-                            <td class='mbLBLL'>{sugar_translate label='LBL_DROPDOWN_ITEM_LABEL'}:</td>
-                        </tr>
-                        <tr>
-                            <td><input type='text' id='drop_name' name='drop_name' maxlength='100'></td>
-                            <td><input type='text' id='drop_value' name='drop_value'></td>
-                            <td><input type='button' id='dropdownaddbtn'
-                                       value='{sugar_translate label='LBL_ADD_BUTTON'}' class='button'>
-                            </td>
-                        </tr>
-                    </table>
                 </td>
             </tr>
         </table>
@@ -158,11 +139,33 @@
         SimpleList.init({/literal}'{$editImage}'{literal}, {/literal}'{$deleteImage}'{literal});
         ModuleBuilder.helpSetup('dropdowns', 'editdropdown');
 
-        var addListenerFields = ['drop_name', 'drop_value']
+        var addListenerFields = ['drop_name', 'drop_value'];
         YAHOO.util.Event.addListener(addListenerFields, "keydown", function (e) {
             if (e.keyCode == 13) {
                 YAHOO.util.Event.stopEvent(e);
             }
+        });
+
+        $("#ul1").on("change", "input[type=checkbox]", function() {
+            var $this = $(this);
+            $this.closest("li").toggleClass("deleted", !$this.prop("checked"));
+        });
+
+        $("#select-all").click(function() {
+            $("input[type=checkbox]", "#ul1").prop("checked", true).trigger("change");
+        });
+
+        $("#select-none").click(function() {
+            $("input[type=checkbox]", "#ul1").prop("checked", false).trigger("change");
+        });
+
+        $('select').on('change', function () {
+            if ($(this).val() === '') {
+                this.form.action.value = 'dropdown';
+            } else {
+                this.form.action.value = 'roledropdownfilter';
+            }
+            ModuleBuilder.handleSave("dropdown_form");
         });
 
     </script>
