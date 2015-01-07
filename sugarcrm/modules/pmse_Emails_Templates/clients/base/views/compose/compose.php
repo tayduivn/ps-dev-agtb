@@ -72,11 +72,11 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                 ),
                 array(
                     'name'            => 'subject',
-                    'type'           => 'subject',
+                    'type'            => 'subject',
                     'label'           => 'LBL_SUBJECT',
                     'span'            => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
-                    'required'       => true,
+                    'cell_css_class'  => 'btn-fit',
+                    'required'        => true,
                 ),
                 array(
                     'name'          => 'body_html',

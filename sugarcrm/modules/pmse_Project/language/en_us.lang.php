@@ -102,6 +102,7 @@ $mod_strings = array (
     /**GENERAL**/
     'LBL_PMSE_MESSAGE_CANCEL_CONFIRM' => ' Some settings had changed. Do you want to discard the changes?',
     'LBL_PMSE_MESSAGE_REMOVE_ALL_START_CRITERIA' => 'The module is changing so the criteria will be removed as well, since it got no fields relation with the new module.',
+    'LBL_PMSE_MESSAGE_INVALID_CONNECTION' => 'Invalid connection',
 
     'LBL_PMSE_CONTEXT_MENU_SETTINGS' => 'Settings...',
     'LBL_PMSE_CONTEXT_MENU_DELETE' => 'Delete',

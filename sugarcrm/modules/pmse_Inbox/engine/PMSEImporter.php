@@ -150,9 +150,9 @@ class PMSEImporter
         }
         //Check Name of project
         if (isset($projectData[$this->suffix . 'name']) && !empty($projectData[$this->suffix . 'name'])) {
-            $name = $this->getNameWhitSuffix($projectData[$this->suffix . 'name']);
+            $name = $this->getNameWithSuffix($projectData[$this->suffix . 'name']);
         } else {
-            $name = $this->getNameWhitSuffix($projectData[$this->name]);
+            $name = $this->getNameWihtSuffix($projectData[$this->name]);
         }
         $projectData[$this->name] = $name;
         foreach ($projectData as $key => $field) {
@@ -173,7 +173,7 @@ class PMSEImporter
      * @param $name
      * @return string
      */
-    public function getNameWhitSuffix($name)
+    public function getNameWithSuffix($name)
     {
         $nums = array();
         $where = $this->bean->table_name . '.' . $this->name . " LIKE '" . $name . "%'";
@@ -217,8 +217,11 @@ class PMSEImporter
             'mbu_first_name',
             'mbu_last_name',
             'my_favorite',
+            'dia_id',
+            'prj_id',
+            'pro_id'
         );
-        //UNSET comun fields
+        //UNSET common fields
         foreach ($projectData as $key => $value) {
             if (in_array($key, $special_fields)) {
                 unset($projectData[$key]);
