@@ -973,7 +973,7 @@ class OracleManager extends DBManager
 	    		$nowCol = $this->describeField($fieldDef['name'], $tablename);
 	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
 	    			// Bug 42467: prevent Oracle from modifying *LOB fields
-	    			if($colArray['colType'] != $nowCol['type']) {
+	    			if(empty($nowCol['type']) || $colArray['colType'] != $nowCol['type']) {
                         // we can't change type from lob, sorry
                         return '';
 	    			}
