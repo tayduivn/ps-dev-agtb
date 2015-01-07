@@ -24,6 +24,7 @@ ensureJSCacheFilesExist();
     <head>
         <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
         <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="UTF-8">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
         <!-- CSS -->
         <link rel="stylesheet" href="./assets/loading.css" type="text/css">
