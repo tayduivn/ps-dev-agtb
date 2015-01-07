@@ -54,7 +54,7 @@ class MetaDataFileDeployed implements MetaDataFileInterface
 
         $path = $this->file->getPath();
         if ($paths[$this->location]) {
-            array_unshift($path, $paths[$this->location]);
+            $path = array_merge(explode('/', trim($paths[$this->location], '/')), $path);
         }
 
         return $path;

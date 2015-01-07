@@ -28,10 +28,12 @@ class Bug45683Test extends Sugar_PHPUnit_Framework_TestCase {
         $_REQUEST['view_package'] = 'testPkg';
         $_REQUEST['view_module'] = $this->module_name;
         $_REQUEST['dropdown_name'] = 'testDD';
+        $_REQUEST['dropdown_lang'] = 'en_us';
     }
 
     public function tearDown() {
         unset($_REQUEST['dropdown_name']);
+        unset($_REQUEST['dropdown_lang']);
         unset($_REQUEST['view_module']);
         unset($_REQUEST['view_package']);
         $this->mbmod->delete();
@@ -42,7 +44,7 @@ class Bug45683Test extends Sugar_PHPUnit_Framework_TestCase {
     public function testModuleNameDoesNotGetOverwrittenOnDisplay() {
 
         $view = new ViewDropdown();
-        $smarty = $view->generateSmarty();
+        $smarty = $view->generateSmarty($_REQUEST);
         
         $this->assertSame($this->module_name, $smarty->get_template_vars('module_name'));
     }

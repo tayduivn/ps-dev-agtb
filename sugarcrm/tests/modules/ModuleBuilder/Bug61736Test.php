@@ -62,7 +62,9 @@ class Bug61736Test extends Sugar_PHPUnit_Framework_TestCase
     protected static $_createModuleRequestVars = array(
         'name' => 'bbb',
         'label' => 'BBB',
+        'label_singular' => 'BBB',
         'package' => 'p1',
+        'has_tab' => '1',
         'type' => 'basic',
     );
     
