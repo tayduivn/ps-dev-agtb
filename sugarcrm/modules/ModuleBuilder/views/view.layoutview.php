@@ -328,7 +328,10 @@ class ViewLayoutView extends SugarView
                 'actionScript' => "onclick='ModuleBuilder.copyFromView(\"{$this->editModule}\", \"{$this->editLayout}\")'",
                 'disabled' => $disableLayout,
             );
-        } elseif ($this->editLayout == MB_RECORDVIEW && !empty($GLOBALS['sugar_config']['roleBasedViews'])
+        } elseif (!empty($GLOBALS['sugar_config']['roleBasedViews'])
+            && ($this->editLayout == MB_RECORDVIEW
+                || $this->editLayout == MB_WIRELESSEDITVIEW
+                || $this->editLayout == MB_WIRELESSDETAILVIEW)
             && $implementation->isDeployed()) {
             $availableRoles = $this->getRoleList($implementation);
             $buttons [] = array('type' => 'spacer', 'width' => '33px');
