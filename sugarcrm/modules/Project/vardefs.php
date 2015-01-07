@@ -53,7 +53,7 @@ $dictionary['Project'] = array(
 			'vname' => 'LBL_ASSIGNED_USER_ID',
 			'required' => false,
 			'isnull' => false,
-			'reportable'=>true,
+			'reportable'=>false,
 			'comment' => 'User assigned to this record'
 		),
 		'modified_user_id' => array(
