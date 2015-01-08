@@ -184,7 +184,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     barChart.yAxis
                         .tickSize(0)
                         .axisLabel(params.show_y_label)
-                        .tickFormat(d3.format(',.0f'));
+                        .tickFormat(d3.format('s'));
 
                     if (params.show_x_label) {
                         barChart.xAxis
@@ -273,6 +273,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .highlightZero(false)
                         .axisLabel(params.show_x_label)
                         .tickFormat(function(d, i) { return xLabels[d]; });
+
+                    lineChart.yAxis
+                        .tickFormat(d3.format('s'));
 
                     that.chartObject = lineChart;
 
