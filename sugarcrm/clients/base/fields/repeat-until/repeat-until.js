@@ -42,7 +42,7 @@
     /**
      * Custom validator for the `repeat_until` field.
      *
-     * This validates `repeat_until` to ensure the date is after the end date,
+     * This validates `repeat_until` to ensure the date is on or after the start date,
      * but only if this field is editable.
      *
      * @param {Object} fields The list of field names and their definitions.
@@ -51,25 +51,19 @@
      * @private
      */
     _doValidateRepeatUntil: function(fields, errors, callback) {
-        var validationResult,
-            repeatUntil = this.model.get(this.name);
+        var isOnOrAfterStartDate,
+            startDate = this.model.get('date_start'),
+            repeatUntil = this.model.get(this.name),
+            startDateField = this.view.getField('date_start');
 
-        if (!_.isEmpty(repeatUntil) && this.action === 'edit') {
-            validationResult = app.validation.validators.isAfter(
-                {
-                    type: 'date',
-                    validation: {
-                        type: 'isafter',
-                        compareto: 'date_end'
-                    }
-                },
-                repeatUntil,
-                this.model
-            );
-            if (!_.isEmpty(validationResult)) {
-                errors[this.name] = {'isAfter': validationResult};
+        if (!_.isEmpty(repeatUntil) && (this.action === 'edit') && startDateField) {
+            startDate = app.date(startDate).minutes(0).hours(0);
+            isOnOrAfterStartDate = !app.date(repeatUntil).isBefore(startDate);
+            if (!isOnOrAfterStartDate || !startDate.isValid()) {
+                errors[this.name] = {'isAfter': startDateField.label};
             }
         }
+
         callback(null, fields, errors);
     },
 
