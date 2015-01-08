@@ -90,6 +90,7 @@ $mod_strings = array (
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
     'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
     'LBL_LIST_MY_CALLS' => 'My Calls',
+    'LBL_MY_SCHEDULED_CALLS' => 'My Scheduled Calls',
     'LBL_SELECT_FROM_DROPDOWN' => 'Please make a selection from the Related To dropdown list first.',
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
 	'LBL_ASSIGNED_TO_ID' => 'Assigned User',
