@@ -30,7 +30,7 @@ class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
      * @var array
      */
     private static $custom_field_def = array(
-        'name'        => 'test_bugPAT667',
+        'name'        => 'test_bugpat667',
         'type'        => 'multienum',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Accounts',
