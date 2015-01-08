@@ -29,6 +29,8 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_STATUS',
           'enabled' => true,
           'default' => true,
+            'type' => 'event-status',
+            'css_class' => 'full-width',
         ),
         array(
           'name' => 'date_start',
