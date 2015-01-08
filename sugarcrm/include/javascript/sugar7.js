@@ -618,6 +618,14 @@
         }
     });
 
+    // remove filters from the cache on application logout
+    app.events.on('app:logout', function() {
+        var filters = app.data.getCollectionClasses().Filters;
+        if (filters) {
+            filters.prototype.resetFiltersCacheAndRequests();
+        }
+    });
+
     /**
      * Shortcuts should be disabled in setup wizard.
      */

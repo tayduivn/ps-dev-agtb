@@ -187,4 +187,22 @@ describe('Sugar7.Routes', function() {
             expect(response).toBe(false);
         });
     });
+
+    describe('Logout event', function() {
+
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.testMetadata.set();
+            SugarTest.app.data.declareModels();
+            SugarTest.declareData('base', 'Filters');
+        });
+
+        it('should clear the filters from cache', function() {
+            var filters = app.data.getCollectionClasses().Filters;
+            sinon.collection.spy(filters.prototype, 'resetFiltersCacheAndRequests');
+            app.trigger('app:logout');
+            expect(filters.prototype.resetFiltersCacheAndRequests).toHaveBeenCalled();
+        });
+
+    });
 });
